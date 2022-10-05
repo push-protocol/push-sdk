@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@pushprotocol/restapi": ["packages/restapi/src/index.ts"],
-      "@pushprotocol/socket": ["packages/socket/src/index.ts"]
+      "@pushprotocol/socket": ["packages/socket/src/index.ts"],
+      "@pushprotocol/uiweb": ["packages/uiweb/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
