@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@pushprotocol/restapi": ["packages/restapi/src/index.ts"]
+      "@pushprotocol/restapi": ["packages/restapi/src/index.ts"],
+      "@pushprotocol/socket": ["packages/socket/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
