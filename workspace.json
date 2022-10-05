@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "restapi": "packages/restapi",
-    "socket": "packages/socket"
+    "socket": "packages/socket",
+    "uiweb": "packages/uiweb"
   }
 }
