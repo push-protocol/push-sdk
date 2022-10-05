@@ -1,5 +1,5 @@
 # restapi
-This package gives access to EPNS backend APIs
+This package gives access to Push backend APIs
 
 ## How to use in your app?
 
@@ -113,7 +113,7 @@ Allowed Options (params with * are mandatory)
 #### **searching for channel(s)**
 ```typescript
 const channelsData = await PushAPI.channels.search({
-  query: 'epns', // a search query
+  query: 'push', // a search query
   page: 1, // page index
   limit: 20, // no of items per page
   env: 'staging'
@@ -151,7 +151,7 @@ Allowed Options (params with * are mandatory)
 | signer*    | -  | -       | Signer object                       |
 | channelAddress*    | string  | -       | channel address (CAIP)                 |
 | userAddress*    | string  | -       | user address   (CAIP)            |                    |
-| verifyingContractAddress      | string | - | EPNS communicator contract address|
+| verifyingContractAddress      | string | - | Push communicator contract address|
 | onSuccess      | function | -   | on success callback |
 | onError      | function | -   | on error callback |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
@@ -178,14 +178,14 @@ Allowed Options (params with * are mandatory)
 | signer*    | -  | -       | Signer object                       |
 | channelAddress*    | string  | -       | channel address (CAIP)         |
 | userAddress*    | string  | -       | user address  (CAIP)                       |                   |
-| verifyingContractAddress      | string | - | EPNS communicator contract address|
+| verifyingContractAddress      | string | - | Push communicator contract address|
 | onSuccess      | function | -   | on success callback |
 | onError      | function | -   | on error callback |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
 
-<sup>*</sup>EPNS communicator contract address
+<sup>*</sup>Push communicator contract address
 ```
 ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ETH Goerli - 0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC
@@ -450,7 +450,7 @@ Allowed Options (params with * are mandatory)
 
 ### UTILS
 #### **parsing notifications**
-Utils method to parse raw EPNS Feeds API response into a pre-defined shape as below.
+Utils method to parse raw Push Feeds API response into a pre-defined shape as below.
 ```typescript
 // fetch some raw feeds data
 const apiResponse = await PushAPI.user.getFeeds({
