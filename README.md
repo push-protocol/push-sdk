@@ -53,7 +53,7 @@ touch main.js
 For *CommonJS* Syntax
 ```typescript
 // import in main.js
-const PushAPI = require("@pushprotocol/restapi"
+const PushAPI = require("@pushprotocol/restapi");
 ```
 
 **OR**
