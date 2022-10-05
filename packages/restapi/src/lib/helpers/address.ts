@@ -84,7 +84,7 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
     if (isValidETHAddress(address)) {
       return getFallbackETHCAIPAddress(env, address);
     } else {
-      throw Error(`Invalid Address! ${msg} ADDRESS: ${address}`);
+      throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
     }
   }
 }
