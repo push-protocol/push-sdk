@@ -1,0 +1,31 @@
+export interface ChainIdToSourceType {
+  [key: number]: string
+}
+
+export const CHAIN_ID_TO_SOURCE: ChainIdToSourceType = {
+    1: "ETH_MAINNET",
+    5: "ETH_TEST_GOERLI",
+    137: "POLYGON_MAINNET",
+    80001: "POLYGON_TEST_MUMBAI",
+};
+
+export const SOURCE_TYPES = {
+  ETH_MAINNET: 'ETH_MAINNET',
+  ETH_TEST_GOERLI: 'ETH_TEST_GOERLI',
+  POLYGON_MAINNET: 'POLYGON_MAINNET',
+  POLYGON_TEST_MUMBAI: 'POLYGON_TEST_MUMBAI',
+  THE_GRAPH: 'THE_GRAPH'
+};
+
+export const IDENTITY_TYPE = {
+  MINIMAL: 0,
+  IPFS: 1,
+  DIRECT_PAYLOAD: 2,
+  SUBGRAPH: 3
+};
+
+export const NOTIFICATION_TYPE = {
+  BROADCAST: 1,
+  TARGETTED: 3,
+  SUBSET: 4
+};
