@@ -1,0 +1,8 @@
+{
+  "name": "@pushprotocol/uiembed",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}

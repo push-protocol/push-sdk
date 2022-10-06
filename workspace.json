@@ -6,6 +6,7 @@
     "ledgerlive": "packages/ledgerlive",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
+    "uiembed": "packages/uiembed",
     "uiweb": "packages/uiweb"
   }
 }

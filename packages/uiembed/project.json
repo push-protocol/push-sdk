@@ -1,0 +1,49 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/uiembed/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/uiembed",
+        "main": "packages/uiembed/src/index.ts",
+        "tsConfig": "packages/uiembed/tsconfig.lib.json",
+        "assets": ["packages/uiembed/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true,
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/uiembed/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/uiembed"],
+      "options": {
+        "jestConfig": "packages/uiembed/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "ci-version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular",
+        "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
+        "postTargets": ["uiembed:build", "uiembed:ci-publish"]
+      }
+    },
+    "ci-publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs uiembed"
+      }
+    }
+  },
+  "tags": []
+}
