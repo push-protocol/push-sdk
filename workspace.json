@@ -2,6 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "demoreact": "packages/demoreact",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiweb": "packages/uiweb"
