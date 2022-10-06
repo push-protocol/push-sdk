@@ -1,0 +1,49 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ledgerlive/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/ledgerlive",
+        "main": "packages/ledgerlive/src/index.ts",
+        "tsConfig": "packages/ledgerlive/tsconfig.lib.json",
+        "assets": ["packages/ledgerlive/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true,
+        "buildableProjectDepsInPackageJsonType": "dependencies"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/ledgerlive/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ledgerlive"],
+      "options": {
+        "jestConfig": "packages/ledgerlive/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "ci-version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular",
+        "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
+        "postTargets": ["ledgerlive:build", "ledgerlive:ci-publish"]
+      }
+    },
+    "ci-publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs ledgerlive"
+      }
+    }
+  },
+  "tags": []
+}
