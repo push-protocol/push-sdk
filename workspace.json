@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "demoreact": "packages/demoreact",
+    "ledgerlive": "packages/ledgerlive",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiweb": "packages/uiweb"
