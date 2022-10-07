@@ -4,7 +4,6 @@ import * as utils from './utils';
 import * as payloads from './payloads';
 import * as chat from './chat';
 
-// types for restapi
 export * from './types';
 
 export {
