@@ -28,7 +28,7 @@ or any component with the ID ***sdk-trigger-id***
 
 After the wallet connect happens in your app flow trigger the below code snippet.
 
-**Note:** You have to have the wallet connected with an account to execute the below code because internally the SDK calls the EPNS `get_feeds()` API which needs the account address. You will see notifications if you have opted-in to a channel using [EPNS](https://staging-app.epns.io/)
+**Note:** You have to have the wallet connected with an account to execute the below code because internally the SDK calls the PUSH `get_feeds()` API which needs the account address. You will see notifications if you have opted-in to a channel using [PUSH](https://staging.push.org/)
 
 ```typescript
   useEffect(() => {
