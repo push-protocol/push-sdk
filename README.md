@@ -20,6 +20,7 @@ Click on the packages to view more details.
 - [@pushprotocol/uiweb](./packages/uiweb/README.md)
 - [@pushprotocol/socket](./packages/socket/README.md)
 - [@pushprotocol/uiembed](./packages/uiembed/README.md)
+- [@pushprotocol/reactnative](./packages/reactnative/README.md)
 
 
 ## Sample Usage
