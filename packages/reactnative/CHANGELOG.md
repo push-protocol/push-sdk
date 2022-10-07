@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.1.0](https://github.com/ethereum-push-notification-service/sdk/compare/reactnative-0.0.2...reactnative-0.1.0) (2022-10-07)
+
+
+### Features
+
+* **reactnative:** stable 0.1.0 ([fbcaac1](https://github.com/ethereum-push-notification-service/sdk/commit/fbcaac12df32935d798903bbafafd9e41a6553b6))
+
+
+
 ## [0.0.2](https://github.com/ethereum-push-notification-service/sdk/compare/reactnative-0.0.1...reactnative-0.0.2) (2022-10-07)
 
 
