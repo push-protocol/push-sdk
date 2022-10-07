@@ -1,6 +1,6 @@
 # uiweb
 
-Package for React based UI web components to be used by dApps.
+Package for React based UI web components to be used by DAPPs.
 
 ## How to use in your app?
 
