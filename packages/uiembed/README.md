@@ -1,5 +1,5 @@
 # uiembed
-This package helps to embed sidbar notifications to any dApp
+This package helps to embed Push notifications in a sidebar to any dApp
 
 ## How to use in your app?
 
