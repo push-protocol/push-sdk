@@ -5,6 +5,7 @@
     "demonative": "apps/demonative",
     "demoreact": "packages/demoreact",
     "ledgerlive": "packages/ledgerlive",
+    "reactnative": "packages/reactnative",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiembed": "packages/uiembed",

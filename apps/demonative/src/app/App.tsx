@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { ScrollView, SafeAreaView, StyleSheet, View, Text, Button, TextInput } from 'react-native';
 import * as PushAPI from '@pushprotocol/restapi';
+import { Notification } from '@pushprotocol/reactnative';
 import { DEFAULT_NOTIFICATIONS } from './data';
 
 /**
@@ -67,27 +68,20 @@ export default function App() {
         <View style={styles.list}>
           {notifData.map((oneNotification: any, idx: number) => {
             const {cta, title, message, app, icon, image, blockchain, appbot } = oneNotification;
-
               return (
-                  <Text>
-                    {title}: {message}
-                  </Text>
-              )
-
-              // return (
-              //   <Notification
-              //     key={idx}
-              //     notificationTitle={title}
-              //     notificationBody={message}
-              //     cta={cta}
-              //     app={app}
-              //     icon={icon}
-              //     image={image}
-              //     chainName={blockchain}
-              //     appbot={appbot}
-              //     youTubeAPIKey={config.YOUTUBE_API_KEY}
-              //   />
-              // );
+                <Notification
+                  key={idx}
+                  notificationTitle={title}
+                  notificationBody={message}
+                  cta={cta}
+                  app={app}
+                  icon={icon}
+                  image={image}
+                  chainName={blockchain}
+                  appbot={appbot}
+                  youTubeAPIKey={config.YOUTUBE_API_KEY}
+                />
+              );
             })}
           </View>
         </ScrollView>
