@@ -1,6 +1,6 @@
 # socket
 
-This package helps to connect to Push backend using websockets built on top of [Socket.IO](https://socket.io/docs/v4/client-api/)
+This package helps to connect to Push backend using Websockets built on top of [Socket.IO](https://socket.io/docs/v4/client-api/)
 
 ## How to use in your app?
 
