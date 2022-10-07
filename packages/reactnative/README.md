@@ -36,7 +36,7 @@ yarn ios
 ```
 
 #### [ViewPropTypes Error](https://github.com/facebook/react-native/issues/33734#issuecomment-1190506381) - 
-If you get below error
+If only you get below error
 ```
 Invariant Violation: ViewPropTypes has been removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
 ```
