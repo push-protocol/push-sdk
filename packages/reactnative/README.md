@@ -1,6 +1,6 @@
-# uimobile
+# reactnative
 
-Package for React Native based mobile apps.
+Package for React Native Views for React Native based mobile apps.
 
 ## How to use in your Mobile app?
 
