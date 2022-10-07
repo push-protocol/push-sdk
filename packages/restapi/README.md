@@ -188,7 +188,7 @@ Allowed Options (params with * are mandatory)
 <sup>*</sup>Push communicator contract address
 ```
 ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
-ETH Goerli - 0x87da9Af1899ad477C67FeA31ce89c1d2435c77DC
+ETH Goerli - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ```
 
 #### **sending notification**
