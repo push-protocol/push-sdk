@@ -1,8 +1,10 @@
 import axios from "axios";
-import { walletToCAIP10 } from "../chat/helpers";
+import { generateKeyPair, walletToCAIP10 } from "../chat/helpers";
 import Constants from "../constants";
-import { encryptWithRPCEncryptionPublicKeyReturnRawData, generateKeyPair, getAPIBaseUrls, getPublicKey } from "../helpers";
-import { IConnectedUser, IUser, SignerType } from "../types";
+import { encryptWithRPCEncryptionPublicKeyReturnRawData, getAPIBaseUrls } from "../helpers";
+import { getPublicKey } from "../helpers";
+import { IUser } from "../types";
+import { get } from "./getUser";
 
 export type UserCreateOptionsType = {
   env?: string;
@@ -20,7 +22,7 @@ export const create = async (
   try {
     const account = signer.getAddress();
     // get User to check if user already exists
-    const user: IUser = get()
+    const user: IUser = await get({ account });
 
     if(user) {
       return { status: "success", message: "User already exists" };
