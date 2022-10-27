@@ -110,3 +110,31 @@ export interface ISendNotificationInputOptions {
     };
     recipients: any;
   };
+
+  export type SignerType = {
+    _signTypedData: (
+      domain: unknown,
+      types: unknown,
+      value: unknown
+    ) => Promise<string>
+  }
+
+  export interface IUser {
+    did: string;
+    wallets: string;
+    profilePicture: string | null;
+    publicKey: string;
+    encryptedPrivateKey: string;
+    encryptionType: string;
+    signature: string;
+    sigType: string;
+    about: string | null;
+    name: string | null;
+    numMsg: number;
+    allowedNumMsg: number;
+    linkedListHash?: string | null;
+  }
+  
+  export interface IConnectedUser extends IUser {
+    privateKey: string | null;
+  }
