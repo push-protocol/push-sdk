@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IUser } from '../types';
-import { getPartialCAIP } from '../helpers/address';
+import { walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
@@ -15,7 +15,7 @@ export type GetUserOptionsType = {
 
 export const get = async (options: GetUserOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
-  const caip10 = getPartialCAIP(account);
+  const caip10 = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
   return axios
