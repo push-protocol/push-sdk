@@ -88,3 +88,16 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
     }
   }
 }
+
+// P = Partial CAIP
+export const walletToPCAIP10 = ({ account }: { account: string; }): string => {
+  if (account.includes('eip155:')) {
+    return account
+  }
+  return 'eip155:' + account
+}
+
+export const pCAIP10ToWallet = (wallet: string): string => {
+  wallet = wallet.replace('eip155:', '')
+  return wallet
+}
