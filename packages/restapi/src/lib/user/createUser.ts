@@ -11,6 +11,10 @@ export type UserCreateOptionsType = {
   signer: any;
 }
 
+/*
+  POST /v1/users/
+*/
+
 export const create = async (
   options : UserCreateOptionsType
 ) => {
@@ -19,42 +23,41 @@ export const create = async (
     signer
   } = options || {};
 
-  try {
-    const account = signer.getAddress();
-    // get User to check if user already exists
-    const user: IUser = await get({ account });
+  const account = signer.getAddress();
+  // get User to check if user already exists
+  const user: IUser = await get({ account });
 
-    if(user) {
-      return { status: "success", message: "User already exists" };
-    }
-    
-    const keyPairs = await generateKeyPair();
-
-    const walletPublicKey = await getPublicKey(account);
-    const encryptedPrivateKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-      keyPairs.privateKeyArmored,
-      walletPublicKey
-    );
-    const caip10: string = walletToCAIP10({ account });
-
-    const API_BASE_URL = getAPIBaseUrls(env);
-
-    const requestUrl = `${API_BASE_URL}/v1/users/`;
-
-    const body = {
-      caip10,
-      did: caip10,
-      publicKey: keyPairs.publicKeyArmored,
-      encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
-      encryptionType: 'x25519-xsalsa20-poly1305',
-      signature: 'xyz',
-      sigType: 'a',
-    };
-
-    const apiResponse = await axios.post(requestUrl, body);
-
-    return { status: "success", message: "User successfully created" };
-  } catch (err) {
-    return { status: "error", message: err instanceof Error ? err.message : JSON.stringify(err) };
+  if(user) {
+    return { status: "success", message: "User already exists" };
   }
+  
+  const keyPairs = await generateKeyPair();
+
+  const walletPublicKey = await getPublicKey(account);
+  const encryptedPrivateKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
+    keyPairs.privateKeyArmored,
+    walletPublicKey
+  );
+  const caip10: string = walletToCAIP10({ account });
+
+  const API_BASE_URL = getAPIBaseUrls(env);
+
+  const requestUrl = `${API_BASE_URL}/v1/users/`;
+
+  const body = {
+    caip10,
+    did: caip10,
+    publicKey: keyPairs.publicKeyArmored,
+    encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
+    encryptionType: 'x25519-xsalsa20-poly1305',
+    signature: 'xyz',
+    sigType: 'a',
+  };
+
+  const apiResponse = await axios.post(requestUrl, body);
+
+  return axios.post(requestUrl, body)
+    .catch((err) => {
+      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+    });
 }
