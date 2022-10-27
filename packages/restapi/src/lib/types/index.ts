@@ -132,7 +132,7 @@ export interface IFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
-  publicKey: string | null;
+  publicKey: string;
   about: string | null;
   threadhash: string | null;
   intent: string | null;
