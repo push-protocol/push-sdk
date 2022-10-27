@@ -110,3 +110,19 @@ export interface ISendNotificationInputOptions {
     };
     recipients: any;
   };
+
+  export interface IUser {
+    did: string;
+    wallets: string;
+    profilePicture: string | null;
+    publicKey: string;
+    encryptedPrivateKey: string;
+    encryptionType: string;
+    signature: string;
+    sigType: string;
+    about: string | null;
+    name: string | null;
+    numMsg: number;
+    allowedNumMsg: number;
+    linkedListHash?: string | null;
+  }

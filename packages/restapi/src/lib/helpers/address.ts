@@ -88,3 +88,10 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
     }
   }
 }
+
+export const getPartialCAIP = (account: string): string => {
+  if (account.includes('eip155:')) {
+    return account
+  }
+  return 'eip155:' + account
+}
