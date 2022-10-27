@@ -117,7 +117,7 @@ export const decryptMessages = async ({
     if (savedMsg.encType !== 'PlainText' && savedMsg.encType !== null) {
       // To do signature verification it depends on who has sent the message
       let signatureValidationPubliKey: string = '';
-      if (savedMsg.fromCAIP10 === walletToPCAIP10({ account })) {
+      if (savedMsg.fromCAIP10 === walletToPCAIP10(account)) {
         signatureValidationPubliKey = connectedUser.publicKey;
       } else {
         if (!currentChat.publicKey) {

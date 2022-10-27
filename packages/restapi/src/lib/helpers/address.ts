@@ -90,7 +90,7 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
 }
 
 // P = Partial CAIP
-export const walletToPCAIP10 = ({ account }: { account: string; }): string => {
+export const walletToPCAIP10 = (account:string): string => {
   if (account.includes('eip155:')) {
     return account
   }
