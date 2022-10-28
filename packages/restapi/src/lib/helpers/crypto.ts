@@ -19,3 +19,12 @@ export const encryptWithRPCEncryptionPublicKeyReturnRawData = (text: string, enc
 
   return encryptedSecret;
 };
+
+export const decryptWithWalletRPCMethod = async (encryptedMessage: string, account: string) => {
+  const result = await (window as any).ethereum.request({
+    method: 'eth_decrypt',
+    params: [encryptedMessage, account],
+  });
+
+  return result;
+};
