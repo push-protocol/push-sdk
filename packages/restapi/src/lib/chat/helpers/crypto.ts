@@ -74,7 +74,7 @@ export const decryptFeeds = async ({
   connectedUser: IConnectedUser;
 }): Promise<IFeeds[]> => {
   if (connectedUser.privateKey) {
-    for (let feed of feeds) {
+    for (const feed of feeds) {
       if (feed.msg.encType !== 'PlainText' && feed.msg.encType !== null) {
         // To do signature verification it depends on who has sent the message
         let signatureValidationPubliKey: string;
@@ -116,7 +116,7 @@ export const decryptMessages = async ({
   if (connectedUser.privateKey) {
     if (savedMsg.encType !== 'PlainText' && savedMsg.encType !== null) {
       // To do signature verification it depends on who has sent the message
-      let signatureValidationPubliKey: string = '';
+      let signatureValidationPubliKey = '';
       if (savedMsg.fromCAIP10 === walletToPCAIP10(account)) {
         signatureValidationPubliKey = connectedUser.publicKey;
       } else {
