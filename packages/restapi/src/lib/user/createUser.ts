@@ -1,7 +1,6 @@
-import axios from "axios";
-import { generateKeyPair, walletToCAIP10 } from "../chat/helpers";
+import { createUserService, generateKeyPair, walletToCAIP10 } from "../chat/helpers";
 import Constants from "../constants";
-import { encryptWithRPCEncryptionPublicKeyReturnRawData, getAPIBaseUrls } from "../helpers";
+import { encryptWithRPCEncryptionPublicKeyReturnRawData } from "../helpers";
 import { getPublicKey } from "../helpers";
 import { Signer } from "ethers";
 
@@ -33,25 +32,15 @@ export const create = async (
   );
   const caip10: string = walletToCAIP10({ account });
 
-  const API_BASE_URL = getAPIBaseUrls(env);
-
-  const requestUrl = `${API_BASE_URL}/v1/users/`;
-
   const body = {
-    caip10,
-    did: caip10,
+    user: caip10,
     publicKey: keyPairs.publicKeyArmored,
     encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
     encryptionType: 'x25519-xsalsa20-poly1305',
     signature: 'xyz',
     sigType: 'a',
+    env
   };
 
-  return axios.post(requestUrl, body)
-  .then((response) => {
-    return response.data;
-  })
-  .catch((err) => {
-    console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-  });
+  return createUserService(body);
 }
