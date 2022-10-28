@@ -10,11 +10,11 @@ import Constants from '../constants';
 
 export type ChatOptionsType = {
   user: string; // caip10
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev'
 }
 
 export const getChat = async (
-  options : ChatOptionsType
+  options: ChatOptionsType
 ) => {
   const {
     user,
@@ -22,11 +22,8 @@ export const getChat = async (
   } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/w2w/users/${user}/messages`;
-
-
+  const apiEndpoint = `${API_BASE_URL}/v1/w2w/users/${user}/chats`;
   const requestUrl = `${apiEndpoint}`;
-
   return axios.get(requestUrl)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
