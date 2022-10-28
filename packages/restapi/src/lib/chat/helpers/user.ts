@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Signer } from 'ethers';
 import Constants from '../../constants';
 import { get, create } from '../../user';
-import { getAPIBaseUrls, decryptWithWalletRPCMethod } from '../../helpers';
-import { IConnectedUser, IUser } from '../../types';
+import { getAPIBaseUrls } from '../../helpers';
+import { AccountEnvOptionsType, IUser } from '../../types';
 
 const checkConnectedUser = (connectedUser: IUser): boolean => {
   if (
@@ -21,11 +21,12 @@ const checkConnectedUser = (connectedUser: IUser): boolean => {
 };
 
 export const createUserIfNecessary = async (
-  account: string,
+  options: AccountEnvOptionsType
 ): Promise<IUser> => {
-  const connectedUser = await get({ account: account });
+  const { account, env = Constants.ENV.PROD } = options || {};
+  const connectedUser = await get({ account: account, env });
   if (!checkConnectedUser(connectedUser)) {
-    const createdUser: IUser = await create({ account: account });
+    const createdUser: IUser = await create({ account: account, env });
     return createdUser;
   } else {
     return connectedUser;
@@ -34,9 +35,10 @@ export const createUserIfNecessary = async (
 
 export const checkIfPvtKeyExists = async (
   account: string,
-  privateKey: string | null
+  privateKey: string | null,
+  env: string
 ): Promise<boolean> => {
-  const user = await get({ account: account });
+  const user = await get({ account: account, env: env || Constants.ENV.PROD });
   if (user.encryptedPrivateKey && !privateKey) {
     return true;
   }

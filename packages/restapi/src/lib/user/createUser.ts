@@ -2,18 +2,15 @@ import { createUserService, generateKeyPair } from "../chat/helpers";
 import Constants from "../constants";
 import { encryptWithRPCEncryptionPublicKeyReturnRawData,isValidETHAddress,walletToPCAIP10 } from "../helpers";
 import { getPublicKey } from "../helpers";
+import { AccountEnvOptionsType } from "../types";
 
-export type UserCreateOptionsType = {
-  env?: string;
-  account: string;
-}
 
 /*
   POST /v1/users/
 */
 
 export const create = async (
-  options : UserCreateOptionsType
+  options : AccountEnvOptionsType
 ) => {
   const {
     env = Constants.ENV.PROD,

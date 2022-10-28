@@ -2,19 +2,18 @@ import axios from 'axios';
 import { decryptWithWalletRPCMethod, getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
 import { checkIfPvtKeyExists, createUserIfNecessary,getEncryptedRequest } from './helpers';
+import { AccountEnvOptionsType } from '../types';
 
 
 /**
  *  POST /v1/chat/request
  */
 
-export type ChatStartOptionsType = {
+export interface ChatStartOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
   messageType?: 'Text' | 'Image' | 'File';
   receiverAddress: string;
   privateKey?: string;
-  account:string;
-  env?:string;
 };
 
 export const start = async (options: ChatStartOptionsType) => {
@@ -29,11 +28,11 @@ export const start = async (options: ChatStartOptionsType) => {
 
   
 
-  if(await checkIfPvtKeyExists(account,privateKey))
+  if(await checkIfPvtKeyExists(account,privateKey,env))
   {
     throw new Error("Decrypted private key required as input");
   }
-  let senderCreatedUser = await createUserIfNecessary(account);
+  let senderCreatedUser = await createUserIfNecessary({account:account,env:env});
   const decryptedPrivateKey = await decryptWithWalletRPCMethod(
     senderCreatedUser.encryptedPrivateKey,
     account
@@ -42,7 +41,8 @@ export const start = async (options: ChatStartOptionsType) => {
     (await getEncryptedRequest(
       receiverAddress,
       { ...senderCreatedUser,privateKey: privateKey || decryptedPrivateKey },
-      messageContent
+      messageContent,
+      env
     )) || {};
 
 

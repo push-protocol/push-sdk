@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IUser } from '../types';
+import { AccountEnvOptionsType, IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
@@ -8,12 +8,7 @@ import Constants from '../constants';
  *  GET /v1/users/
  */
 
-export type GetUserOptionsType = {
-  account: string;
-  env?: string;
-};
-
-export const get = async (options: GetUserOptionsType): Promise<IUser> => {
+export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
   if(!isValidETHAddress(account))
   {

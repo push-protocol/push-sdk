@@ -9,7 +9,7 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import { walletToPCAIP10 } from '../../helpers';
-import {createUserService} from "./user";
+import { createUserService } from './user';
 
 interface IEncryptedRequest {
   message: string;
@@ -161,21 +161,26 @@ export const decryptMessages = async ({
 export const getEncryptedRequest = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  message: string
+  message: string,
+  env: string
 ): Promise<IEncryptedRequest | void> => {
-  const receiverCreatedUser: IUser = await get({ account: receiverAddress });
+  const receiverCreatedUser: IUser = await get({
+    account: receiverAddress,
+    env,
+  });
   if (!receiverCreatedUser) {
     if (!ethers.utils.isAddress(receiverAddress)) {
-        console.log("Invalid receiver's address");
-        return;
+      console.log("Invalid receiver's address");
+      return;
     }
     await createUserService({
-      user:receiverAddress,
-      publicKey:'',
+      user: receiverAddress,
+      publicKey: '',
       encryptedPrivateKey: '',
       encryptionType: '',
-      signature:'pgp',
-      sigType:'pgp',
+      signature: 'pgp',
+      sigType: 'pgp',
+      env,
     });
     // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
     return {
