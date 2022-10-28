@@ -1,6 +1,6 @@
 export * from './getChat';
 export * from './getUsers';
 export * from './createUser';
-export * from './sendMessage';
+export * from './send';
 export * from './updateIntent';
 export * from './updateUser';
