@@ -34,7 +34,8 @@ export const start = async (options: ChatStartOptionsType) => {
   {
     return {err:"Decrypted private key required as input"};
   }
-  const senderCreatedUser = await createUserIfNecessary(signer);
+  let senderCreatedUser = await createUserIfNecessary(signer);
+  // senderCreatedUser = {...senderCreatedUser,privateKey:senderCreatedUser.privateKey || privateKey};
 
   // const { message, encryptionType, aesEncryptedSecret, signature } =
   //   (await getEncryptedRequest(

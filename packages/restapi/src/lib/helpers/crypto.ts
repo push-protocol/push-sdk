@@ -1,6 +1,6 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
 
-export const getPublicKey =  async (account: string): Promise<string> => {
+export const getPublicKey = async (account: string): Promise<string> => {
   console.log('Fetching Public Key');
   const keyB64 = await (window as any).ethereum.request({
     method: 'eth_getEncryptionPublicKey',

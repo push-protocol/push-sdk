@@ -9,6 +9,7 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import { walletToPCAIP10 } from '../../helpers';
+import {createUserService} from "./user";
 
 interface IEncryptedRequest {
   message: string;
@@ -88,7 +89,7 @@ export const decryptFeeds = async ({
   connectedUser: IConnectedUser;
 }): Promise<IFeeds[]> => {
   if (connectedUser.privateKey) {
-    for (let feed of feeds) {
+    for (const feed of feeds) {
       if (feed.msg.encType !== 'PlainText' && feed.msg.encType !== null) {
         // To do signature verification it depends on who has sent the message
         let signatureValidationPubliKey: string;
@@ -130,7 +131,7 @@ export const decryptMessages = async ({
   if (connectedUser.privateKey) {
     if (savedMsg.encType !== 'PlainText' && savedMsg.encType !== null) {
       // To do signature verification it depends on who has sent the message
-      let signatureValidationPubliKey: string = '';
+      let signatureValidationPubliKey = '';
       if (savedMsg.fromCAIP10 === walletToPCAIP10(account)) {
         signatureValidationPubliKey = connectedUser.publicKey;
       } else {
@@ -157,59 +158,62 @@ export const decryptMessages = async ({
   return savedMsg;
 };
 
-// export const getEncryptedRequest = async (
-//   receiverAddress: string,
-//   senderCreatedUser: IConnectedUser,
-//   message: string
-// ): Promise<IEncryptedRequest | void> => {
-//   const receiverCreatedUser: IUser = await get({ account: receiverAddress });
-//   let caip10: string;
-//   if (!receiverCreatedUser) {
-//     if (!ethers.utils.isAddress(receiverAddress)) {
-//         console.log("Invalid receiver's address");
-//         return;
-//     } else {
-//       caip10 = walletToPCAIP10(receiverAddress);
-//     }
-//     //Fix me:helper function needed to creat user without pvt key
-//     await create({ account: caip10 });
-//     // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
-//     return {
-//       message: message,
-//       encryptionType: 'PlainText',
-//       aesEncryptedSecret: '',
-//       signature: '',
-//     };
-//   } else {
-//     // It's possible for a user to be created but the PGP keys still not created
-//     if (
-//       !receiverCreatedUser.publicKey.includes(
-//         '-----BEGIN PGP PUBLIC KEY BLOCK-----'
-//       )
-//     ) {
-//       return {
-//         message: message,
-//         encryptionType: 'PlainText',
-//         aesEncryptedSecret: '',
-//         signature: '',
-//       };
-//     } else {
-//       const {
-//         cipherText,
-//         encryptedSecret,
-//         signature: pgpSignature,
-//       } = await encryptAndSign({
-//         plainText: message,
-//         toPublicKeyArmored: receiverCreatedUser.publicKey,
-//         fromPublicKeyArmored: senderCreatedUser.publicKey,
-//         privateKeyArmored: senderCreatedUser.privateKey,
-//       });
-//       return {
-//         message: cipherText,
-//         encryptionType: 'pgp',
-//         aesEncryptedSecret: encryptedSecret,
-//         signature: pgpSignature,
-//       };
-//     }
-//   }
-// };
+export const getEncryptedRequest = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  message: string
+): Promise<IEncryptedRequest | void> => {
+  const receiverCreatedUser: IUser = await get({ account: receiverAddress });
+  if (!receiverCreatedUser) {
+    if (!ethers.utils.isAddress(receiverAddress)) {
+        console.log("Invalid receiver's address");
+        return;
+    }
+    await createUserService({
+      user:receiverAddress,
+      publicKey:'',
+      encryptedPrivateKey: '',
+      encryptionType: '',
+      signature:'pgp',
+      sigType:'pgp',
+    });
+    // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
+    return {
+      message: message,
+      encryptionType: 'PlainText',
+      aesEncryptedSecret: '',
+      signature: '',
+    };
+  } else {
+    // It's possible for a user to be created but the PGP keys still not created
+    if (
+      !receiverCreatedUser.publicKey.includes(
+        '-----BEGIN PGP PUBLIC KEY BLOCK-----'
+      )
+    ) {
+      return {
+        message: message,
+        encryptionType: 'PlainText',
+        aesEncryptedSecret: '',
+        signature: '',
+      };
+    // } else {
+    //   const {
+    //     cipherText,
+    //     encryptedSecret,
+    //     signature: pgpSignature,
+    //   } = await encryptAndSign({
+    //     plainText: message,
+    //     toPublicKeyArmored: receiverCreatedUser.publicKey,
+    //     fromPublicKeyArmored: senderCreatedUser.publicKey,
+    //     privateKeyArmored: senderCreatedUser.privateKey,
+    //   });
+    //   return {
+    //     message: cipherText,
+    //     encryptionType: 'pgp',
+    //     aesEncryptedSecret: encryptedSecret,
+    //     signature: pgpSignature,
+    //   };
+    }
+  }
+};

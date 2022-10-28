@@ -1,6 +1,9 @@
+import axios from "axios";
 import { Signer } from "ethers";
-import { IUser } from "../../types";
-import { get } from "../../user";
+import Constants from "../../constants";
+import { get,create } from "../../user";
+import { getAPIBaseUrls } from "../../helpers";
+import { IConnectedUser, IUser } from "../../types";
 
 const checkConnectedUser = (connectedUser: IUser): boolean => {
   if (
@@ -17,12 +20,12 @@ const checkConnectedUser = (connectedUser: IUser): boolean => {
   } else return false;
 }
 
-export const createUserIfNecessary = async(signer: Signer): Promise<IUser> =>{
+export const createUserIfNecessary = async(signer: Signer): Promise<IUser | IConnectedUser> =>{
   const account = await signer.getAddress();
   const connectedUser = await get({account:account}); 
   if (!checkConnectedUser(connectedUser)) {
-    // const createdUser: IUser = await create({signer:signer});
-    return connectedUser;
+    const createdUser: IUser = await create({signer:signer});
+    return createdUser;
   } else {
     return connectedUser;
   }
@@ -39,3 +42,48 @@ export const checkIfPvtKeyExists = async(signer: Signer,privateKey:string | null
   return false;
 }
 
+type CreateUserOptionsType = {
+  user: string;
+  publicKey?: string;
+  encryptedPrivateKey?: string;
+  encryptionType?: string;
+  signature?: string;
+  sigType?: string;
+  env?: string;
+}
+
+export const createUserService = async (
+  options : CreateUserOptionsType
+) => {
+  const {
+    user,
+    publicKey = '',
+    encryptedPrivateKey = '',
+    encryptionType = '',
+    signature = '',
+    sigType = '',
+    env = Constants.ENV.PROD,
+  } = options || {};
+
+  const API_BASE_URL = getAPIBaseUrls(env);
+
+  const requestUrl = `${API_BASE_URL}/v1/users/`;
+
+  const body = {
+    caip10: user,
+    did: user,
+    publicKey,
+    encryptedPrivateKey,
+    encryptionType,
+    signature,
+    sigType,
+  };
+
+  return axios.post(requestUrl, body)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+    });
+}
