@@ -180,3 +180,8 @@ export interface IMessageIPFS {
 export interface IMessageIPFSWithCID extends IMessageIPFS {
   cid: string;
 }
+
+export interface AccountEnvOptionsType {
+  env?: string;
+  account: string;
+}

@@ -1,28 +1,26 @@
-import { createUserService, generateKeyPair, walletToCAIP10 } from "../chat/helpers";
+import { createUserService, generateKeyPair } from "../chat/helpers";
 import Constants from "../constants";
-import { encryptWithRPCEncryptionPublicKeyReturnRawData } from "../helpers";
+import { encryptWithRPCEncryptionPublicKeyReturnRawData,isValidETHAddress,walletToPCAIP10 } from "../helpers";
 import { getPublicKey } from "../helpers";
-import { Signer } from "ethers";
+import { AccountEnvOptionsType } from "../types";
 
-export type UserCreateOptionsType = {
-  env?: string;
-  signer: Signer;
-}
 
 /*
   POST /v1/users/
 */
 
 export const create = async (
-  options : UserCreateOptionsType
+  options : AccountEnvOptionsType
 ) => {
   const {
     env = Constants.ENV.PROD,
-    signer
+    account
   } = options || {};
 
-  const account = await signer.getAddress();
-  
+  if(!isValidETHAddress(account))
+  {
+    throw new Error(`Invalid address!`);
+  }
   const keyPairs = await generateKeyPair();
 
   const walletPublicKey = await getPublicKey(account);
@@ -30,7 +28,7 @@ export const create = async (
     keyPairs.privateKeyArmored,
     walletPublicKey
   );
-  const caip10: string = walletToCAIP10({ account });
+  const caip10: string = walletToPCAIP10(account);
 
   const body = {
     user: caip10,

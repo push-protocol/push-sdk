@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { IUser } from '../types';
-import { walletToPCAIP10 } from '../helpers/address';
+import { AccountEnvOptionsType, IUser } from '../types';
+import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
@@ -8,13 +8,12 @@ import Constants from '../constants';
  *  GET /v1/users/
  */
 
-export type GetUserOptionsType = {
-  account: string;
-  env?: string;
-};
-
-export const get = async (options: GetUserOptionsType): Promise<IUser> => {
+export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
+  if(!isValidETHAddress(account))
+  {
+    throw new Error(`Invalid address!`);
+  }
   const caip10 = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
