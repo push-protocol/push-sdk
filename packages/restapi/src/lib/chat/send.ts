@@ -1,18 +1,18 @@
 import axios from 'axios';
-import {
-  decryptWithWalletRPCMethod,
-  getAPIBaseUrls,
-  walletToPCAIP10,
-} from '../helpers';
+import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { createUserIfNecessary, getEncryptedRequest } from './helpers';
 import { ChatStartOptionsType } from '../types';
+import {
+  checkIfPvtKeyExists,
+  createUserIfNecessary,
+  getEncryptedRequest,
+} from './helpers';
 
 /**
- *  POST /v1/chat/request
+ *  POST /v1/chat/message
  */
 
-export const start = async (options: ChatStartOptionsType) => {
+export const send = async (options: ChatStartOptionsType) => {
   const {
     messageContent = '',
     messageType = 'Text',
@@ -22,24 +22,29 @@ export const start = async (options: ChatStartOptionsType) => {
     env = Constants.ENV.PROD,
   } = options || {};
 
+  if (!isValidETHAddress(account)) {
+    throw new Error(`Invalid address!`);
+  }
+  if (await checkIfPvtKeyExists(account, privateKey, env))
+    throw new Error(`Decrypted private key required as input`);
+  
+
+  //check for chat.start or send
   let senderCreatedUser = await createUserIfNecessary({
     account: account,
     env: env,
   });
-  const decryptedPrivateKey = await decryptWithWalletRPCMethod(
-    senderCreatedUser.encryptedPrivateKey,
-    account
-  );
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
-      { ...senderCreatedUser, privateKey: privateKey || decryptedPrivateKey },
+      { ...senderCreatedUser, privateKey },
       messageContent,
       env
     )) || {};
-
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
+  const apiEndpoint = `${API_BASE_URL}/v1/w2w/messages`;
+
+  const requestUrl = `${apiEndpoint}`;
 
   const body = {
     fromDID: walletToPCAIP10(account),
@@ -60,6 +65,6 @@ export const start = async (options: ChatStartOptionsType) => {
       return response.data;
     })
     .catch((err) => {
-      throw new Error(err);
+      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     });
 };
