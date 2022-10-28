@@ -15,11 +15,11 @@ export type ChatCreateUserOptionsType = {
   encryptionType?: string;
   signature?: string;
   sigType?: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const createUser = async (
-  options : ChatCreateUserOptionsType
+  options: ChatCreateUserOptionsType
 ) => {
   const {
     user,

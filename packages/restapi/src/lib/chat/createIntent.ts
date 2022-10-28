@@ -17,11 +17,11 @@ export type ChatCreateIntentOptionsType = {
   signature?: string;
   encryptedSecret?: string;
   sigType?: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const createIntent = async (
-  options : ChatCreateIntentOptionsType
+  options: ChatCreateIntentOptionsType
 ) => {
   const {
     from,

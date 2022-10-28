@@ -12,11 +12,11 @@ export type ChatUpdateUserOptionsType = {
   user: string;
   profilePictureCID?: string;
   name?: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const updateUser = async (
-  options : ChatUpdateUserOptionsType
+  options: ChatUpdateUserOptionsType
 ) => {
   const {
     user,

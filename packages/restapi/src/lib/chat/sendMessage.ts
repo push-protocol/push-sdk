@@ -17,11 +17,11 @@ export type ChatSendMessageOptionsType = {
   encType: string;
   encryptedSecret: string;
   sigType: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const sendMessage = async (
-  options : ChatSendMessageOptionsType
+  options: ChatSendMessageOptionsType
 ) => {
   const {
     from,

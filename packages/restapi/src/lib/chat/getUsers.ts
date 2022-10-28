@@ -9,11 +9,11 @@ import Constants from '../constants';
  */
 
 export type ChatUsersOptionsType = {
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const getUsers = async (
-  options : ChatUsersOptionsType
+  options: ChatUsersOptionsType
 ) => {
   const {
     env = Constants.ENV.PROD,

@@ -10,15 +10,15 @@ import Constants from '../constants';
 
 export type ChatUpdateIntentOptionsType = {
   from: string;
-  to: string; 
+  to: string;
   signature: string;
   status: string;
   sigType: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export const updateIntent = async (
-  options : ChatUpdateIntentOptionsType
+  options: ChatUpdateIntentOptionsType
 ) => {
   const {
     from,
