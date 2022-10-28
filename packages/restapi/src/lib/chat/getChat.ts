@@ -14,7 +14,7 @@ export type ChatOptionsType = {
 }
 
 export const getChat = async (
-  options : ChatOptionsType
+  options: ChatOptionsType
 ) => {
   const {
     user,

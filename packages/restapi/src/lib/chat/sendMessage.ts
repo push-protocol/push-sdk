@@ -21,7 +21,7 @@ export type ChatSendMessageOptionsType = {
 }
 
 export const sendMessage = async (
-  options : ChatSendMessageOptionsType
+  options: ChatSendMessageOptionsType
 ) => {
   const {
     from,

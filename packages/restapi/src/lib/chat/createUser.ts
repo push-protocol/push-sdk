@@ -19,7 +19,7 @@ export type ChatCreateUserOptionsType = {
 }
 
 export const createUser = async (
-  options : ChatCreateUserOptionsType
+  options: ChatCreateUserOptionsType
 ) => {
   const {
     user,
