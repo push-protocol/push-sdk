@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { decryptWithWalletRPCMethod, getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { checkIfPvtKeyExists, createUserIfNecessary,getEncryptedRequest } from './helpers';
+import { checkIfPvtKeyExists, createUserIfNecessary, getEncryptedRequest } from './helpers';
 import { AccountEnvOptionsType } from '../types';
-
 
 /**
  *  POST /v1/chat/request
@@ -26,13 +25,12 @@ export const start = async (options: ChatStartOptionsType) => {
     env = Constants.ENV.PROD,
   } = options || {};
 
-  
 
-  if(await checkIfPvtKeyExists(account,privateKey,env))
-  {
+
+  if (await checkIfPvtKeyExists(account, privateKey, env)) {
     throw new Error("Decrypted private key required as input");
   }
-  let senderCreatedUser = await createUserIfNecessary({account:account,env:env});
+  const senderCreatedUser = await createUserIfNecessary({ account: account, env: env });
   const decryptedPrivateKey = await decryptWithWalletRPCMethod(
     senderCreatedUser.encryptedPrivateKey,
     account
@@ -40,14 +38,14 @@ export const start = async (options: ChatStartOptionsType) => {
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
-      { ...senderCreatedUser,privateKey: privateKey || decryptedPrivateKey },
+      { ...senderCreatedUser, privateKey: privateKey || decryptedPrivateKey },
       messageContent,
       env
     )) || {};
 
 
-    const API_BASE_URL = getAPIBaseUrls(env);
-    const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
+  const API_BASE_URL = getAPIBaseUrls(env);
+  const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
 
   const body = {
     fromDID: walletToPCAIP10(account),

@@ -10,7 +10,7 @@ import Constants from '../constants';
 
 export type ChatUpdateIntentOptionsType = {
   from: string;
-  to: string; 
+  to: string;
   signature: string;
   status: string;
   sigType: string;
@@ -18,7 +18,7 @@ export type ChatUpdateIntentOptionsType = {
 }
 
 export const updateIntent = async (
-  options : ChatUpdateIntentOptionsType
+  options: ChatUpdateIntentOptionsType
 ) => {
   const {
     from,

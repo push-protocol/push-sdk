@@ -13,7 +13,7 @@ export type ChatUsersOptionsType = {
 }
 
 export const getUsers = async (
-  options : ChatUsersOptionsType
+  options: ChatUsersOptionsType
 ) => {
   const {
     env = Constants.ENV.PROD,
