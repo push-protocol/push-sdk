@@ -197,23 +197,23 @@ export const getEncryptedRequest = async (
         aesEncryptedSecret: '',
         signature: '',
       };
-    // } else {
-    //   const {
-    //     cipherText,
-    //     encryptedSecret,
-    //     signature: pgpSignature,
-    //   } = await encryptAndSign({
-    //     plainText: message,
-    //     toPublicKeyArmored: receiverCreatedUser.publicKey,
-    //     fromPublicKeyArmored: senderCreatedUser.publicKey,
-    //     privateKeyArmored: senderCreatedUser.privateKey,
-    //   });
-    //   return {
-    //     message: cipherText,
-    //     encryptionType: 'pgp',
-    //     aesEncryptedSecret: encryptedSecret,
-    //     signature: pgpSignature,
-    //   };
+    } else {
+      const {
+        cipherText,
+        encryptedSecret,
+        signature: pgpSignature,
+      } = await encryptAndSign({
+        plainText: message,
+        toPublicKeyArmored: receiverCreatedUser.publicKey,
+        fromPublicKeyArmored: senderCreatedUser.publicKey,
+        privateKeyArmored: senderCreatedUser.privateKey!,
+      });
+      return {
+        message: cipherText,
+        encryptionType: 'pgp',
+        aesEncryptedSecret: encryptedSecret,
+        signature: pgpSignature,
+      };
     }
   }
 };

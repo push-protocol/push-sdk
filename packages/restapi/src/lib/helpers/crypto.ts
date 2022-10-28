@@ -1,4 +1,5 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
+import { isValidETHAddress } from "./address";
 
 export const getPublicKey = async (account: string): Promise<string> => {
   console.log('Fetching Public Key');
@@ -18,4 +19,15 @@ export const encryptWithRPCEncryptionPublicKeyReturnRawData = (text: string, enc
   });
 
   return encryptedSecret;
+};
+
+export const decryptWithWalletRPCMethod = async (encryptedMessage: string, account: string) => {
+  if(!isValidETHAddress(account))
+    throw new Error(`Invalid address!`);
+  const result = await (window as any).ethereum.request({
+    method: 'eth_decrypt',
+    params: [encryptedMessage, account],
+  });
+
+  return result;
 };

@@ -1,9 +1,9 @@
-import axios from "axios";
-import { Signer } from "ethers";
-import Constants from "../../constants";
-import { get,create } from "../../user";
-import { getAPIBaseUrls } from "../../helpers";
-import { IConnectedUser, IUser } from "../../types";
+import axios from 'axios';
+import { Signer } from 'ethers';
+import Constants from '../../constants';
+import { get, create } from '../../user';
+import { getAPIBaseUrls, decryptWithWalletRPCMethod } from '../../helpers';
+import { IConnectedUser, IUser } from '../../types';
 
 const checkConnectedUser = (connectedUser: IUser): boolean => {
   if (
@@ -18,29 +18,30 @@ const checkConnectedUser = (connectedUser: IUser): boolean => {
   ) {
     return true;
   } else return false;
-}
+};
 
-export const createUserIfNecessary = async(signer: Signer): Promise<IUser | IConnectedUser> =>{
-  const account = await signer.getAddress();
-  const connectedUser = await get({account:account}); 
+export const createUserIfNecessary = async (
+  account: string,
+): Promise<IUser> => {
+  const connectedUser = await get({ account: account });
   if (!checkConnectedUser(connectedUser)) {
-    const createdUser: IUser = await create({signer:signer});
+    const createdUser: IUser = await create({ account: account });
     return createdUser;
   } else {
     return connectedUser;
   }
-}
+};
 
-
-export const checkIfPvtKeyExists = async(signer: Signer,privateKey:string | null): Promise<boolean> =>{
-  const account = await signer.getAddress();
-  const user = await get({account:account});
-  if(user.encryptedPrivateKey && !privateKey)
-  {
+export const checkIfPvtKeyExists = async (
+  account: string,
+  privateKey: string | null
+): Promise<boolean> => {
+  const user = await get({ account: account });
+  if (user.encryptedPrivateKey && !privateKey) {
     return true;
   }
   return false;
-}
+};
 
 type CreateUserOptionsType = {
   user: string;
@@ -50,11 +51,9 @@ type CreateUserOptionsType = {
   signature?: string;
   sigType?: string;
   env?: string;
-}
+};
 
-export const createUserService = async (
-  options : CreateUserOptionsType
-) => {
+export const createUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
     publicKey = '',
@@ -79,11 +78,12 @@ export const createUserService = async (
     sigType,
   };
 
-  return axios.post(requestUrl, body)
+  return axios
+    .post(requestUrl, body)
     .then((response) => {
       return response.data;
     })
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     });
-}
+};
