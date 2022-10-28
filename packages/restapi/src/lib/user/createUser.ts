@@ -3,12 +3,11 @@ import { generateKeyPair, walletToCAIP10 } from "../chat/helpers";
 import Constants from "../constants";
 import { encryptWithRPCEncryptionPublicKeyReturnRawData, getAPIBaseUrls } from "../helpers";
 import { getPublicKey } from "../helpers";
-import { IUser } from "../types";
-import { get } from "./getUser";
+import { Signer } from "ethers";
 
 export type UserCreateOptionsType = {
   env?: string;
-  signer: any;
+  signer: Signer;
 }
 
 /*
@@ -23,13 +22,7 @@ export const create = async (
     signer
   } = options || {};
 
-  const account = signer.getAddress();
-  // get User to check if user already exists
-  const user: IUser = await get({ account });
-
-  if(user) {
-    return { status: "success", message: "User already exists" };
-  }
+  const account = await signer.getAddress();
   
   const keyPairs = await generateKeyPair();
 
@@ -54,10 +47,11 @@ export const create = async (
     sigType: 'a',
   };
 
-  const apiResponse = await axios.post(requestUrl, body);
-
   return axios.post(requestUrl, body)
-    .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-    });
+  .then((response) => {
+    return response.data;
+  })
+  .catch((err) => {
+    console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+  });
 }
