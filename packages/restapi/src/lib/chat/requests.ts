@@ -9,13 +9,13 @@ import { Message } from '../types';
  *  GET '/v1/w2w/users/:did/requests
  */
 
-export type ChatOptionsType = {
+export type RequestOptionsType = {
     user: string; // caip10
     env?: string;
 }
 
 export const requests = async (
-    options: ChatOptionsType
+    options: RequestOptionsType
 ): Promise<Message[]> => {
     const {
         user,
