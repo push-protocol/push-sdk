@@ -16,7 +16,7 @@ export type ChatUpdateUserOptionsType = {
 }
 
 export const updateUser = async (
-  options : ChatUpdateUserOptionsType
+  options: ChatUpdateUserOptionsType
 ) => {
   const {
     user,

@@ -25,7 +25,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       throw new Error(`Invalid address!`);
     }
 
-    let connectedUser = await getConnectedUser(account, privateKey, env);
+    const connectedUser = await getConnectedUser(account, privateKey, env);
 
     const conversationResponse = await conversationHash({
       conversationId: receiverAddress,
