@@ -185,3 +185,16 @@ export interface AccountEnvOptionsType {
   env?: string;
   account: string;
 }
+
+export interface ChatOptionsType extends AccountEnvOptionsType  {
+  messageContent?: string;
+  messageType?: 'Text' | 'Image' | 'File';
+  receiverAddress: string;
+  privateKey?: string;
+  connectedUser: IConnectedUser;
+  env?:string;
+};
+
+export interface ConversationHashOptionsType extends AccountEnvOptionsType {
+  conversationId: string;
+};

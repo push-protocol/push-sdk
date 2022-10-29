@@ -1,56 +1,41 @@
 import axios from 'axios';
-import { decryptWithWalletRPCMethod, getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
+import {
+  decryptWithWalletRPCMethod,
+  getAPIBaseUrls,
+  walletToPCAIP10,
+} from '../helpers';
 import Constants from '../constants';
-import { checkIfPvtKeyExists, createUserIfNecessary, getEncryptedRequest } from './helpers';
-import { AccountEnvOptionsType } from '../types';
+import { getEncryptedRequest } from './helpers';
+import { ChatOptionsType } from '../types';
 
 /**
  *  POST /v1/chat/request
  */
 
-export interface ChatStartOptionsType extends AccountEnvOptionsType {
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File';
-  receiverAddress: string;
-  privateKey?: string;
-};
-
-export const start = async (options: ChatStartOptionsType) => {
+export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const {
     messageContent = '',
     messageType = 'Text',
     receiverAddress,
-    account,
-    privateKey = null,
+    connectedUser,
     env = Constants.ENV.PROD,
   } = options || {};
 
-
-
-  if (await checkIfPvtKeyExists(account, privateKey, env)) {
-    throw new Error("Decrypted private key required as input");
-  }
-  const senderCreatedUser = await createUserIfNecessary({account:account,env:env});
-  const decryptedPrivateKey = await decryptWithWalletRPCMethod(
-    senderCreatedUser.encryptedPrivateKey,
-    account
-  );
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
-      { ...senderCreatedUser, privateKey: privateKey || decryptedPrivateKey },
+      connectedUser,
       messageContent,
       env
     )) || {};
-
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
 
   const body = {
-    fromDID: walletToPCAIP10(account),
+    fromDID: connectedUser.wallets.split(',')[0],
     toDID: walletToPCAIP10(receiverAddress),
-    fromCAIP10: walletToPCAIP10(account),
+    fromCAIP10: connectedUser.wallets.split(',')[0],
     toCAIP10: walletToPCAIP10(receiverAddress),
     message,
     messageType,
