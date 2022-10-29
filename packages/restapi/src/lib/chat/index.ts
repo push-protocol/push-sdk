@@ -4,3 +4,4 @@ export * from './createUser';
 export * from './send';
 export * from './updateIntent';
 export * from './updateUser';
+export * from "./conversationHash";

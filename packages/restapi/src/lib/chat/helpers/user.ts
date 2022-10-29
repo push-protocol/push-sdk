@@ -2,8 +2,18 @@ import axios from 'axios';
 import { Signer } from 'ethers';
 import Constants from '../../constants';
 import { get, create } from '../../user';
-import { getAPIBaseUrls } from '../../helpers';
-import { AccountEnvOptionsType, IUser } from '../../types';
+import { decryptWithWalletRPCMethod, getAPIBaseUrls } from '../../helpers';
+import { AccountEnvOptionsType,ConversationHashOptionsType, IConnectedUser, IUser } from '../../types';
+
+type CreateUserOptionsType = {
+  user: string;
+  publicKey?: string;
+  encryptedPrivateKey?: string;
+  encryptionType?: string;
+  signature?: string;
+  sigType?: string;
+  env?: string;
+};
 
 const checkConnectedUser = (connectedUser: IUser): boolean => {
   if (
@@ -33,27 +43,29 @@ export const createUserIfNecessary = async (
   }
 };
 
-export const checkIfPvtKeyExists = async (
+export const getConnectedUser = async (
   account: string,
   privateKey: string | null,
   env: string
-): Promise<boolean> => {
+): Promise<IConnectedUser> => {
   const user = await get({ account: account, env: env || Constants.ENV.PROD });
-  if (user.encryptedPrivateKey && !privateKey) {
-    return true;
+  if (user.encryptedPrivateKey) {
+    if(privateKey)
+     return {...user,privateKey};
+    else {
+      throw new Error(`Decrypted private key required as input`);
+    }
   }
-  return false;
+  else{
+     const newUser = await create({account,env});
+     const decryptedPrivateKey = await decryptWithWalletRPCMethod(
+      newUser.encryptedPrivateKey,
+      account
+    );
+    return{...newUser,privateKey:decryptedPrivateKey};
+  }
 };
 
-type CreateUserOptionsType = {
-  user: string;
-  publicKey?: string;
-  encryptedPrivateKey?: string;
-  encryptionType?: string;
-  signature?: string;
-  sigType?: string;
-  env?: string;
-};
 
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
@@ -87,5 +99,27 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     })
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+    });
+};
+
+
+export const getConversationHashService = async (options: ConversationHashOptionsType):Promise<string> => {
+  const {
+    conversationId,
+    account,
+    env = Constants.ENV.PROD,
+  } = options || {};
+
+  const API_BASE_URL = getAPIBaseUrls(env);
+
+  const requestUrl = `${API_BASE_URL}/users/${account}/conversations/${conversationId}/hash`;
+
+  return axios
+    .get(requestUrl)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
     });
 };

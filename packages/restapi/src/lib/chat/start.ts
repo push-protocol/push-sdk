@@ -5,35 +5,26 @@ import {
   walletToPCAIP10,
 } from '../helpers';
 import Constants from '../constants';
-import { createUserIfNecessary, getEncryptedRequest } from './helpers';
-import { ChatStartOptionsType } from '../types';
+import { getEncryptedRequest } from './helpers';
+import { ChatOptionsType } from '../types';
 
 /**
  *  POST /v1/chat/request
  */
 
-export const start = async (options: ChatStartOptionsType) => {
+export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const {
     messageContent = '',
     messageType = 'Text',
     receiverAddress,
-    account,
-    privateKey = null,
+    connectedUser,
     env = Constants.ENV.PROD,
   } = options || {};
 
-  let senderCreatedUser = await createUserIfNecessary({
-    account: account,
-    env: env,
-  });
-  const decryptedPrivateKey = await decryptWithWalletRPCMethod(
-    senderCreatedUser.encryptedPrivateKey,
-    account
-  );
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
-      { ...senderCreatedUser, privateKey: privateKey || decryptedPrivateKey },
+      connectedUser,
       messageContent,
       env
     )) || {};
@@ -42,9 +33,9 @@ export const start = async (options: ChatStartOptionsType) => {
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
 
   const body = {
-    fromDID: walletToPCAIP10(account),
+    fromDID: connectedUser.wallets.split(',')[0],
     toDID: walletToPCAIP10(receiverAddress),
-    fromCAIP10: walletToPCAIP10(account),
+    fromCAIP10: connectedUser.wallets.split(',')[0],
     toCAIP10: walletToPCAIP10(receiverAddress),
     message,
     messageType,
