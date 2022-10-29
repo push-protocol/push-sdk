@@ -32,7 +32,7 @@ export const start = async (options: ChatStartOptionsType) => {
   {
     throw new Error("Decrypted private key required as input");
   }
-  let senderCreatedUser = await createUserIfNecessary({account:account,env:env});
+  const senderCreatedUser = await createUserIfNecessary({account:account,env:env});
   const decryptedPrivateKey = await decryptWithWalletRPCMethod(
     senderCreatedUser.encryptedPrivateKey,
     account
