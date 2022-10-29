@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { Signer } from 'ethers';
 import Constants from '../../constants';
 import { get, create } from '../../user';
 import { decryptWithWalletRPCMethod, getAPIBaseUrls } from '../../helpers';
-import { AccountEnvOptionsType,ConversationHashOptionsType, IConnectedUser, IUser } from '../../types';
+import { AccountEnvOptionsType, ConversationHashOptionsType, IConnectedUser, IUser } from '../../types';
 
 type CreateUserOptionsType = {
   user: string;
@@ -50,19 +49,19 @@ export const getConnectedUser = async (
 ): Promise<IConnectedUser> => {
   const user = await get({ account: account, env: env || Constants.ENV.PROD });
   if (user.encryptedPrivateKey) {
-    if(privateKey)
-     return {...user,privateKey};
+    if (privateKey)
+      return { ...user, privateKey };
     else {
       throw new Error(`Decrypted private key required as input`);
     }
   }
-  else{
-     const newUser = await create({account,env});
-     const decryptedPrivateKey = await decryptWithWalletRPCMethod(
+  else {
+    const newUser = await create({ account, env });
+    const decryptedPrivateKey = await decryptWithWalletRPCMethod(
       newUser.encryptedPrivateKey,
       account
     );
-    return{...newUser,privateKey:decryptedPrivateKey};
+    return { ...newUser, privateKey: decryptedPrivateKey };
   }
 };
 
@@ -103,7 +102,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 };
 
 
-export const getConversationHashService = async (options: ConversationHashOptionsType):Promise<string> => {
+export const getConversationHashService = async (options: ConversationHashOptionsType): Promise<string> => {
   const {
     conversationId,
     account,
