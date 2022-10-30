@@ -43,10 +43,14 @@ export const requests = async (
         }
         let otherPeer: IUser;
         let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
+        let gotOtherPeer = false;
         for (const message of messages) {
             if (message.fromCAIP10 !== user) {
-                otherPeer = await getUser({ account: message.fromCAIP10, env })
-                signatureValidationPubliKey = otherPeer.publicKey
+                if (!gotOtherPeer) {
+                    otherPeer = await getUser({ account: message.fromCAIP10, env })
+                    gotOtherPeer = true;
+                }
+                signatureValidationPubliKey = otherPeer!.publicKey
             } else {
                 signatureValidationPubliKey = connectedUser.publicKey
             }
