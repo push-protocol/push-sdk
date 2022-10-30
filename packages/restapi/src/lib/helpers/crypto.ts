@@ -1,6 +1,5 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
 import { aesDecrypt, pgpDecrypt, verifySignature } from "../chat/helpers";
-import { IUser } from "../types";
 import { isValidETHAddress } from "./address";
 
 export const getPublicKey = async (account: string): Promise<string> => {
