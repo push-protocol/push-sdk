@@ -57,7 +57,7 @@ export const verifySignature = async ({
     signature,
     verificationKeys: publicKey
   })
-  const { verified, keyID } = verificationResult.signatures[0]
+  const { verified } = verificationResult.signatures[0]
   try {
     await verified
   } catch (e) {

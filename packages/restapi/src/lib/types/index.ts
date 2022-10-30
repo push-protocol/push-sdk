@@ -199,7 +199,7 @@ export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
 
-export interface Message {
+export interface Chat {
   did: string;
   wallets: string;
   profilePicture: string | null;

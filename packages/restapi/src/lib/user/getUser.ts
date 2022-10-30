@@ -10,8 +10,7 @@ import Constants from '../constants';
 
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
-  if(!isValidETHAddress(account))
-  {
+  if (!isValidETHAddress(account)) {
     throw new Error(`Invalid address!`);
   }
   const caip10 = walletToPCAIP10(account);

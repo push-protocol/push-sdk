@@ -3,7 +3,7 @@ import {
     getAPIBaseUrls,
 } from '../helpers';
 import Constants from '../constants';
-import { Message } from '../types';
+import { Chat } from '../types';
 
 /**
  *  GET '/v1/w2w/users/:did/requests
@@ -16,7 +16,7 @@ export type RequestOptionsType = {
 
 export const requests = async (
     options: RequestOptionsType
-): Promise<Message[]> => {
+): Promise<Chat[]> => {
     const {
         user,
         env = Constants.ENV.PROD,
@@ -26,7 +26,7 @@ export const requests = async (
     const requestUrl = `${apiEndpoint}`;
     try {
         const response = await axios.get(requestUrl)
-        const requests: Message[] = JSON.parse(response.data);
+        const requests: Chat[] = JSON.parse(response.data);
         return requests;
     } catch (err) {
         console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
