@@ -26,12 +26,19 @@ export const history = async (
     env = Constants.ENV.PROD,
   } = options || {};
 
-  if(limit < FetchLimit.MIN || limit > FetchLimit.MAX) {
-    if(limit < FetchLimit.MIN)
-      throw new Error(`Limit must be more than equal to ${FetchLimit.MIN}`);
-    else
-      throw new Error(`Limit must be less than equal to ${FetchLimit.MAX}`);
+  try {
+    if(limit < FetchLimit.MIN || limit > FetchLimit.MAX) {
+      if(limit < FetchLimit.MIN)
+        throw new Error(`Limit must be more than equal to ${FetchLimit.MIN}`);
+      else
+        throw new Error(`Limit must be less than equal to ${FetchLimit.MAX}`);
+    }
+  
+    return getMessagesService({threadhash, limit, env});
+  } catch (err) {
+    console.error(
+      '[EPNS-SDK] - Error - fetchMessages - ',
+      JSON.stringify(err)
+    );
   }
-
-  return getMessagesService({threadhash, limit, env});
 }
