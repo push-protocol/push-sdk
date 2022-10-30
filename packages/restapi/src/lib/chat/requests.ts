@@ -11,7 +11,7 @@ import { getInboxLists } from './helpers';
 
 export type RequestOptionsType = {
   account: string; // caip10
-  pgpPrivateKey: string;
+  pgpPrivateKey?: string;
   env?: string;
 };
 

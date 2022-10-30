@@ -11,7 +11,7 @@ import { getInboxLists } from './helpers';
 
 export type ChatsOptionsType = {
   account: string;
-  pgpPrivateKey: string;
+  pgpPrivateKey?: string;
   env?: string;
 };
 
