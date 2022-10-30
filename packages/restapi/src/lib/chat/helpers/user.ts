@@ -1,18 +1,7 @@
-import axios from 'axios';
 import Constants from '../../constants';
 import { get, create } from '../../user';
-import { decryptWithWalletRPCMethod, getAPIBaseUrls } from '../../helpers';
-import { AccountEnvOptionsType, ConversationHashOptionsType, IConnectedUser, IUser } from '../../types';
-
-type CreateUserOptionsType = {
-  user: string;
-  publicKey?: string;
-  encryptedPrivateKey?: string;
-  encryptionType?: string;
-  signature?: string;
-  sigType?: string;
-  env?: string;
-};
+import { decryptWithWalletRPCMethod } from '../../helpers';
+import { AccountEnvOptionsType, IConnectedUser, IUser } from '../../types';
 
 const checkConnectedUser = (connectedUser: IUser): boolean => {
   if (
@@ -63,62 +52,4 @@ export const getConnectedUser = async (
     );
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
-};
-
-
-export const createUserService = async (options: CreateUserOptionsType) => {
-  const {
-    user,
-    publicKey = '',
-    encryptedPrivateKey = '',
-    encryptionType = '',
-    signature = '',
-    sigType = '',
-    env = Constants.ENV.PROD,
-  } = options || {};
-
-  const API_BASE_URL = getAPIBaseUrls(env);
-
-  const requestUrl = `${API_BASE_URL}/v1/users/`;
-
-  const body = {
-    caip10: user,
-    did: user,
-    publicKey,
-    encryptedPrivateKey,
-    encryptionType,
-    signature,
-    sigType,
-  };
-
-  return axios
-    .post(requestUrl, body)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-    });
-};
-
-
-export const getConversationHashService = async (options: ConversationHashOptionsType): Promise<string> => {
-  const {
-    conversationId,
-    account,
-    env = Constants.ENV.PROD,
-  } = options || {};
-
-  const API_BASE_URL = getAPIBaseUrls(env);
-
-  const requestUrl = `${API_BASE_URL}/users/${account}/conversations/${conversationId}/hash`;
-
-  return axios
-    .get(requestUrl)
-    .then((response) => {
-      return response.data;
-    })
-    .catch((err) => {
-      throw new Error(err);
-    });
 };

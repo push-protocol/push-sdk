@@ -190,7 +190,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
   messageType?: 'Text' | 'Image' | 'File';
   receiverAddress: string;
-  privateKey?: string;
+  pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
   env?: string;
 };
