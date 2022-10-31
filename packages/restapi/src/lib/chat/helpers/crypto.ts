@@ -206,7 +206,7 @@ export const getEncryptedRequest = async (
       const {
         cipherText,
         encryptedSecret,
-        signature: pgpSignature,
+        signature,
       } = await encryptAndSign({
         plainText: message,
         toPublicKeyArmored: receiverCreatedUser.publicKey,
@@ -217,7 +217,7 @@ export const getEncryptedRequest = async (
         message: cipherText,
         encryptionType: 'pgp',
         aesEncryptedSecret: encryptedSecret,
-        signature: pgpSignature,
+        signature: signature,
       };
     }
   }

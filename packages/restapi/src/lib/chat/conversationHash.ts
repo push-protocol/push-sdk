@@ -1,5 +1,5 @@
-import axios from 'axios';
 import Constants from '../constants';
+import { isValidETHAddress } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
 import { getConversationHashService } from './helpers';
 
@@ -8,7 +8,9 @@ export const conversationHash = async (
 ) => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
   try {
-
+    if (!isValidETHAddress(account)) {
+        throw new Error(`Invalid address!`);
+      }
     const response = await getConversationHashService({
       conversationId: conversationId,
       account,
@@ -17,9 +19,7 @@ export const conversationHash = async (
     return response;
   } catch (err) {
     console.error(
-      '[EPNS-SDK] - Error - conversationHash() - ',
-      JSON.stringify(err)
-    );
+      '[EPNS-SDK] - Error - conversationHash() - ',err);
     return err;
   }
 };

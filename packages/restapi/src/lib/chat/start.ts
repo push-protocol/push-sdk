@@ -37,7 +37,7 @@ export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
     toDID: walletToPCAIP10(receiverAddress),
     fromCAIP10: connectedUser.wallets.split(',')[0],
     toCAIP10: walletToPCAIP10(receiverAddress),
-    message,
+    messageContent: message,
     messageType,
     signature,
     encType: encryptionType,

@@ -10,6 +10,7 @@ import { start } from './start';
  *  POST /v1/chat/message
  */
 
+
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',
@@ -24,16 +25,18 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
     if (!isValidETHAddress(account)) {
       throw new Error(`Invalid address!`);
     }
+    if (!isValidETHAddress(receiverAddress)) {
+      throw new Error(`Invalid address!`);
+    }
 
- 
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
-    const conversationResponse = await conversationHash({
+    const conversationResponse:any = await conversationHash({
       conversationId: receiverAddress,
       account,
       env,
     });
-    if (!conversationResponse) {
+    if (!(conversationResponse?.threadhash)) {
       return start({
         messageContent: messageContent,
         messageType: 'Text',
@@ -45,19 +48,18 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       const { message, encryptionType, aesEncryptedSecret, signature } =
         (await getEncryptedRequest(
           receiverAddress,
-          { ...connectedUser,privateKey: pgpPrivateKey },
+          connectedUser,
           messageContent,
           env
         )) || {};
       const API_BASE_URL = getAPIBaseUrls(env);
-      const apiEndpoint = `${API_BASE_URL}/v1/w2w/messages`;
-
+      const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
       const body = {
         fromDID: walletToPCAIP10(account),
         toDID: walletToPCAIP10(receiverAddress),
         fromCAIP10: walletToPCAIP10(account),
         toCAIP10: walletToPCAIP10(receiverAddress),
-        message,
+        messageContent: message,
         messageType,
         signature,
         encType: encryptionType,

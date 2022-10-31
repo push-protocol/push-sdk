@@ -35,7 +35,7 @@ export async function getCID(cid: string, options: IPFSOptionsType): Promise<Mes
     const requestUrl = `${apiEndpoint}`;
     try {
         const response = await axios.get(requestUrl)
-        const message: Message = JSON.parse(response.data);
+        const message: Message = response.data;
         return message;
     } catch (err) {
         console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);

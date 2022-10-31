@@ -28,7 +28,7 @@ export const chats = async (options: ChatsOptionsType): Promise<Message[]> => {
       throw new Error(`Invalid address!`);
     }
     const response = await axios.get(requestUrl);
-    const chats: Chat[] = JSON.parse(response.data);
+    const chats: Chat[] = response.data;
     const messages: Message[] = await getInboxLists({
       lists: chats,
       user,

@@ -10,6 +10,7 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { IUser } from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
+import ChatTest from './ChatTest';
 
 const GetUserTest = () => {
   const { account } = useContext<any>(Web3Context);
@@ -58,6 +59,7 @@ const GetUserTest = () => {
 
   return (
     <div>
+      <ChatTest />
       <h2>Get User Test page</h2>
 
       <Loader show={isLoading} />
