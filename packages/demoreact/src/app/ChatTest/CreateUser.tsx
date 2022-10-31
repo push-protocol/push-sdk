@@ -23,7 +23,7 @@ const CreateUserTest = () => {
       setLoading(true);
 
       // object for connected user data
-      const response = await PushAPI.user.get({
+      const response = await PushAPI.user.create({
         account: isCAIP ? walletToPCAIP10(account) : account,
         env
       });

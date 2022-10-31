@@ -56,9 +56,6 @@ const ChatTest = () => {
           <Link to="/hash" className="nav-button">
             CHAT.CONVERSATIONHASH
           </Link>
-          <Link to="/latest" className="nav-button">
-            CHAT.LATEST
-          </Link>
           <Link to="/history" className="nav-button">
             CHAT.HISTORY
           </Link>
