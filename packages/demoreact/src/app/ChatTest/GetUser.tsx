@@ -9,13 +9,13 @@ import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { IUser } from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from 'packages/restapi/src/lib/helpers';
+import { walletToPCAIP10 } from '../helpers';
 
 const GetUserTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
-  const [connectedUser, setConnectedUser] = useState<IUser | {}>({});
+  const [connectedUser, setConnectedUser] = useState<any>({});
   const [decryptedPrivateKey, setDecryptedPrivateKey] = useState<string | null>(
     null
   );
@@ -39,21 +39,21 @@ const GetUserTest = () => {
   };
 
   const testPrivateKeyDecryption = async () => {
-    // try {
-    //   setLoading(true);
-    //   if (Object.keys(connectedUser).length) {
-    //     const response = await PushAPI.chat.decryptWithWalletRPCMethod(
-    //       connectedUser.encryptedPrivateKey!,
-    //       isCAIP ? walletToPCAIP10(account) : account
-    //     );
+    try {
+      setLoading(true);
+      if (Object.keys(connectedUser).length > 0) {
+        const response = await PushAPI.chat.decryptWithWalletRPCMethod(
+          (connectedUser as IUser).encryptedPrivateKey,
+          isCAIP ? walletToPCAIP10(account) : account
+        );
 
-    //     setDecryptedPrivateKey(response);
-    //   } else return;
-    // } catch (e) {
-    //   console.error(e);
-    // } finally {
-    //   setLoading(false);
-    // }
+        setDecryptedPrivateKey(response);
+      } else return;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

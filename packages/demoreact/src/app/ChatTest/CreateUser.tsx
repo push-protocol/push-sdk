@@ -8,14 +8,13 @@ import {
 import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { IUser } from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from 'packages/restapi/src/lib/helpers';
+import { walletToPCAIP10 } from '../helpers';
 
 const CreateUserTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
-  const [connectedUser, setConnectedUser] = useState<IUser | {}>({});
+  const [connectedUser, setConnectedUser] = useState<any>({});
 
 
   const testCreateUser = async () => {
@@ -35,7 +34,6 @@ const CreateUserTest = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <div>
