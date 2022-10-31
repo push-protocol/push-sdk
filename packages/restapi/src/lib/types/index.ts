@@ -186,15 +186,29 @@ export interface AccountEnvOptionsType {
   account: string;
 }
 
-export interface ChatOptionsType extends AccountEnvOptionsType  {
+export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
   messageType?: 'Text' | 'Image' | 'File';
   receiverAddress: string;
-  privateKey?: string;
+  pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
-  env?:string;
+  env?: string;
 };
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
+
+export interface Chat {
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string | null;
+  about: string | null;
+  name: string | null;
+  threadhash: string | null;
+  intent: string | null;
+  intentSentBy: string | null;
+  intentTimestamp: Date;
+  combinedDID: string;
+}

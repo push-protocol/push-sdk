@@ -16,7 +16,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
     messageType = 'Text',
     receiverAddress,
     account,
-    privateKey = null,
+    pgpPrivateKey = null,
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -25,7 +25,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       throw new Error(`Invalid address!`);
     }
 
-    const connectedUser = await getConnectedUser(account, privateKey, env);
+    const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
     const conversationResponse = await conversationHash({
       conversationId: receiverAddress,
@@ -44,7 +44,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       const { message, encryptionType, aesEncryptedSecret, signature } =
         (await getEncryptedRequest(
           receiverAddress,
-          { ...connectedUser, privateKey },
+          { ...connectedUser,privateKey: pgpPrivateKey },
           messageContent,
           env
         )) || {};

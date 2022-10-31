@@ -9,7 +9,7 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import { walletToPCAIP10 } from '../../helpers';
-import { createUserService } from './user';
+import { createUserService } from './service';
 
 interface IEncryptedRequest {
   message: string;

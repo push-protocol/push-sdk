@@ -9,7 +9,7 @@ import { AccountEnvOptionsType } from '../types';
  *  POST '/v1/chat/request/accept
  */
 
-export interface ApproveRequestOptionsType extends AccountEnvOptionsType {
+interface ApproveRequestOptionsType extends AccountEnvOptionsType {
   senderAddress: string; // chat request sender address
   // privateKey?: string; // private key for signature
   status?: string;

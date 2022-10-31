@@ -6,6 +6,9 @@ export interface AddressValidatorsType {
 }
 
 export function isValidETHAddress(address: string) {
+  if (address.includes('eip155:')) {
+    return ethers.utils.isAddress((address.split(':'))[1]);
+  }
   return ethers.utils.isAddress(address);
 }
 
