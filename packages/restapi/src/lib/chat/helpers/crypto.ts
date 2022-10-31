@@ -168,7 +168,7 @@ export const getEncryptedRequest = async (
     account: receiverAddress,
     env,
   });
-  if (!receiverCreatedUser.publicKey) {
+  if (!receiverCreatedUser?.publicKey) {
     if (!ethers.utils.isAddress(receiverAddress)) {
       console.log("Invalid receiver's address");
       return;

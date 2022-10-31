@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Constants from '../../constants';
-import { getAPIBaseUrls, getQueryParams } from '../../helpers';
+import { getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType } from '../../types';
 
 type CreateUserOptionsType = {
@@ -29,8 +29,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
   const body = {
-    caip10: user,
-    did: user,
+    caip10: walletToPCAIP10(user),
+    did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
     encryptionType,

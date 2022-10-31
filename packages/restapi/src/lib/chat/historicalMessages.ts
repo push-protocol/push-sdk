@@ -36,9 +36,7 @@ export const history = async (
   
     return getMessagesService({threadhash, limit, env});
   } catch (err) {
-    console.error(
-      '[EPNS-SDK] - Error - fetchMessages - ',
-      JSON.stringify(err)
-    );
+    console.error(`[EPNS-SDK] - API fetchMessages -: `, err);
+    throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);
   }
 }

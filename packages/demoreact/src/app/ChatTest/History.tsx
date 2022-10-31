@@ -36,7 +36,8 @@ const HistoryTest = () => {
 
       // object for response
       const response = await PushAPI.chat.history({
-        threadhash: threadhash,
+        threadhash,
+        limit,
         env,
       });
 

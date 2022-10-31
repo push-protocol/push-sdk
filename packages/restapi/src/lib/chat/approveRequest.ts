@@ -4,6 +4,7 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
+import { createUserIfNecessary } from './helpers';
 
 /**
  *  POST '/v1/chat/request/accept
@@ -33,21 +34,21 @@ export const approve = async (
 
   // TODO: make signature
   const signature = '1';
-
+  const connectedUser = await createUserIfNecessary({account,env});
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
 
   const requestUrl = `${apiEndpoint}`;
 
   const body = {
-    fromDID: walletToPCAIP10(account),
-    toDID: walletToPCAIP10(senderAddress),
+    fromDID: walletToPCAIP10(senderAddress),
+    toDID: walletToPCAIP10(account),
     signature,
     status,
-    sigtype:'sigType',
+    sigType:'sigType',
   };
 
-  return axios.post(requestUrl, body)
+  return axios.put(requestUrl, body)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     });
