@@ -12,8 +12,8 @@ import { AccountEnvOptionsType } from '../types';
 interface ApproveRequestOptionsType extends AccountEnvOptionsType {
   senderAddress: string; // chat request sender address
   // privateKey?: string; // private key for signature
-  status?: string;
-  sigType?: string;
+  status?: 'Approved';
+  // sigType?: string;
 }
 
 export const approve = async (
@@ -21,11 +21,11 @@ export const approve = async (
 ) => {
   const {
     status = "Approved",
-    sigType = 'sigType',
+    // sigType = 'sigType',
     // privateKey = null,
-    env = Constants.ENV.PROD,
     account,
-    senderAddress
+    senderAddress,
+    env = Constants.ENV.PROD,
   } = options || {};
 
   // get user with raw privateKey
@@ -44,7 +44,7 @@ export const approve = async (
     toDID: walletToPCAIP10(senderAddress),
     signature,
     status,
-    sigType,
+    sigtype:'sigType',
   };
 
   return axios.post(requestUrl, body)

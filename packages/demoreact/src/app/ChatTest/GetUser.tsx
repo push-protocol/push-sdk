@@ -66,10 +66,9 @@ const GetUserTest = () => {
         <SectionItem>
           <SectionButton onClick={testGetUser}>get user data</SectionButton>
         </SectionItem>
-
-        <SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
           <div>
-            {Object.keys(connectedUser).length ? (
+            {connectedUser ? (
               <CodeFormatter>
                 {JSON.stringify(connectedUser, null, 4)}
               </CodeFormatter>

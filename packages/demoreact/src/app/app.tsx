@@ -17,6 +17,9 @@ import SocketTest from './SocketTest';
 import ChatTest from './ChatTest/ChatTest';
 import GetUserTest from './ChatTest/GetUser';
 import CreateUserTest from './ChatTest/CreateUser';
+import SendMessageTest from './ChatTest/SendMessageTest';
+import ApproveRequestTest from './ChatTest/ApproveRequestTest';
+import GetChatsTest from './ChatTest/GetChats';
 
 interface Web3ReactState {
   chainId?: number;
@@ -206,6 +209,9 @@ export function App() {
                 {/* chat method  routes */}
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/send" element={<SendMessageTest />} />
+                <Route path="/approve" element={<ApproveRequestTest />} />
+                <Route path="/approve" element={<GetChatsTest />} />
               </Routes>
             </SocketContext.Provider>
           </Web3Context.Provider>
