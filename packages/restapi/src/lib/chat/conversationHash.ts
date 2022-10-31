@@ -20,5 +20,6 @@ export const conversationHash = async (
       '[EPNS-SDK] - Error - conversationHash() - ',
       JSON.stringify(err)
     );
+    return err;
   }
 };
