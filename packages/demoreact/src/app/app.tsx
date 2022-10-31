@@ -211,7 +211,7 @@ export function App() {
                 <Route path="/create" element={<CreateUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
-                <Route path="/approve" element={<GetChatsTest />} />
+                <Route path="/chats" element={<GetChatsTest />} />
               </Routes>
             </SocketContext.Provider>
           </Web3Context.Provider>

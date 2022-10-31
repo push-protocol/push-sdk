@@ -37,9 +37,10 @@ export const getConnectedUser = async (
   env: string
 ): Promise<IConnectedUser> => {
   const user = await get({ account: account, env: env || Constants.ENV.PROD });
-  if (user.encryptedPrivateKey) {
-    if (privateKey)
+  if (user?.encryptedPrivateKey) {
+    if (privateKey) { 
       return { ...user, privateKey };
+    }
     else {
       throw new Error(`Decrypted private key required as input`);
     }

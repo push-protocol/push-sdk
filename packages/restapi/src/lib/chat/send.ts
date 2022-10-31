@@ -25,6 +25,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       throw new Error(`Invalid address!`);
     }
 
+ 
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
     const conversationResponse = await conversationHash({
@@ -74,9 +75,6 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         });
     }
   } catch (err) {
-    console.error(
-      `[EPNS-SDK] - API  - Error - send() -: `,
-      JSON.stringify(err)
-    );
+    console.error(`[EPNS-SDK] - API  - Error - send() -:  `, err);
   }
 };
