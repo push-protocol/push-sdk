@@ -11,30 +11,30 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
-const GetChatsTest = () => {
+const GetRequestsTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string | undefined>(
     undefined
   );
-  const [getChatsResponse, setGetChatsResponse] = useState<any>('');
+  const [getRequestsResponse, setGetRequestsResponse] = useState<any>('');
 
   const updatePgpPrivateKey = (e: React.SyntheticEvent<HTMLElement>) => {
     setPgpPrivateKey((e.target as HTMLInputElement).value);
   };
 
-  const testGetChats = async () => {
+  const testGetRequests = async () => {
     try {
       setLoading(true);
 
-      const response = await PushAPI.chat.chats({
+      const response = await PushAPI.chat.requests({
         account: isCAIP ? walletToPCAIP10(account) : account,
         pgpPrivateKey,
         env,
       });
 
-      setGetChatsResponse(response);
+      setGetRequestsResponse(response);
     } catch (e) {
       console.error(e);
     } finally {
@@ -45,7 +45,7 @@ const GetChatsTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>Get Chats Test page</h2>
+      <h2>Get Requests Test page</h2>
 
       <Loader show={isLoading} />
 
@@ -62,16 +62,16 @@ const GetChatsTest = () => {
               />
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
-              <SectionButton onClick={testGetChats}>get chats</SectionButton>
+              <SectionButton onClick={testGetRequests}>get requests</SectionButton>
             </SectionItem>
           </div>
         </SectionItem>
 
         <SectionItem>
           <div>
-            {getChatsResponse ? (
+            {getRequestsResponse ? (
               <CodeFormatter>
-                {JSON.stringify(getChatsResponse, null, 4)}
+                {JSON.stringify(getRequestsResponse, null, 4)}
               </CodeFormatter>
             ) : null}
           </div>
@@ -81,4 +81,4 @@ const GetChatsTest = () => {
   );
 };
 
-export default GetChatsTest;
+export default GetRequestsTest;
