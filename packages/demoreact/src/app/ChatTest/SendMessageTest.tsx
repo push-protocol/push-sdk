@@ -10,7 +10,6 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
-import { decryptWithWalletRPCMethod } from 'packages/restapi/src/lib/helpers';
 
 const SendMessageTest = () => {
   const { account } = useContext<any>(Web3Context);
@@ -18,9 +17,6 @@ const SendMessageTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [messageContent, setMessageContent] = useState<string>('');
   const [receiverAddress, setReceiverAddress] = useState<string>('');
-  const [pgpPrivateKey, setPgpPrivateKey] = useState<string | undefined>(
-    undefined
-  );
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -30,10 +26,6 @@ const SendMessageTest = () => {
 
   const updateReceiverAddress = (e: React.SyntheticEvent<HTMLElement>) => {
     setReceiverAddress((e.target as HTMLInputElement).value);
-  };
-
-  const updatePgpPrivateKey = (e: React.SyntheticEvent<HTMLElement>) => {
-    setPgpPrivateKey((e.target as HTMLInputElement).value);
   };
 
   const testSendMessage = async () => {
@@ -89,15 +81,6 @@ const SendMessageTest = () => {
                 type="text"
                 onChange={updateReceiverAddress}
                 value={receiverAddress}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>Decrypted Pgp Private Key</label>
-              <input
-                type="text"
-                onChange={updatePgpPrivateKey}
-                value={pgpPrivateKey}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

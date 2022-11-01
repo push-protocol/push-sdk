@@ -15,14 +15,7 @@ const GetRequestsTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
-  const [pgpPrivateKey, setPgpPrivateKey] = useState<string | undefined>(
-    undefined
-  );
   const [getRequestsResponse, setGetRequestsResponse] = useState<any>('');
-
-  const updatePgpPrivateKey = (e: React.SyntheticEvent<HTMLElement>) => {
-    setPgpPrivateKey((e.target as HTMLInputElement).value);
-  };
 
   const testGetRequests = async () => {
     try {
@@ -59,20 +52,9 @@ const GetRequestsTest = () => {
       <Section>
         <SectionItem>
           <div>
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>Decrypted Pgp Private Key</label>
-              <input
-                type="text"
-                onChange={updatePgpPrivateKey}
-                value={pgpPrivateKey}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-            <SectionItem style={{ marginTop: 20 }}>
-              <SectionButton onClick={testGetRequests}>
-                get requests
-              </SectionButton>
-            </SectionItem>
+            <SectionButton onClick={testGetRequests}>
+              get requests
+            </SectionButton>
           </div>
         </SectionItem>
 

@@ -15,14 +15,7 @@ const GetChatsTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
-  const [pgpPrivateKey, setPgpPrivateKey] = useState<string | undefined>(
-    undefined
-  );
   const [getChatsResponse, setGetChatsResponse] = useState<any>('');
-
-  const updatePgpPrivateKey = (e: React.SyntheticEvent<HTMLElement>) => {
-    setPgpPrivateKey((e.target as HTMLInputElement).value);
-  };
 
   const testGetChats = async () => {
     try {
@@ -59,18 +52,7 @@ const GetChatsTest = () => {
       <Section>
         <SectionItem>
           <div>
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>Decrypted Pgp Private Key</label>
-              <input
-                type="text"
-                onChange={updatePgpPrivateKey}
-                value={pgpPrivateKey}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-            <SectionItem style={{ marginTop: 20 }}>
-              <SectionButton onClick={testGetChats}>get chats</SectionButton>
-            </SectionItem>
+            <SectionButton onClick={testGetChats}>get chats</SectionButton>
           </div>
         </SectionItem>
 

@@ -33,10 +33,10 @@ const ChatTest = () => {
       <Section>
         <NavMenu>
           <Link to="/get" className="nav-button">
-            CHAT.GET
+            USER.GET
           </Link>
           <Link to="/create" className="nav-button">
-            CHAT.CREATE
+            USER.CREATE
           </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND
