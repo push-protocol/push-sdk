@@ -28,7 +28,7 @@ export const requests = async (
       throw new Error(`Invalid address!`);
     }
     const response = await axios.get(requestUrl);
-    const requests: Chat[] = response.data;
+    const requests: Chat[] = response.data.requests;
     const messages: Message[] = await getInboxLists({
       lists: requests,
       user,
