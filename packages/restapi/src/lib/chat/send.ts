@@ -10,7 +10,6 @@ import { start } from './start';
  *  POST /v1/chat/message
  */
 
-
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',
@@ -18,6 +17,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
     receiverAddress,
     account,
     pgpPrivateKey = null,
+    apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -31,17 +31,18 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
 
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
-    const conversationResponse:any = await conversationHash({
+    const conversationResponse: any = await conversationHash({
       conversationId: receiverAddress,
       account,
       env,
     });
-    if (!(conversationResponse?.threadHash)) {
+    if (!conversationResponse?.threadHash) {
       return start({
         messageContent: messageContent,
         messageType: 'Text',
         receiverAddress,
         connectedUser,
+        apiKey,
         env,
       });
     } else {
