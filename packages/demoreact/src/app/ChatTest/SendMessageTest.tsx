@@ -10,6 +10,7 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
+import { decryptWithWalletRPCMethod } from 'packages/restapi/src/lib/helpers';
 
 const SendMessageTest = () => {
   const { account } = useContext<any>(Web3Context);
@@ -38,13 +39,20 @@ const SendMessageTest = () => {
   const testSendMessage = async () => {
     try {
       setLoading(true);
-
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
       const response = await PushAPI.chat.send({
         messageContent,
         messageType: 'Text',
         receiverAddress,
         account: isCAIP ? walletToPCAIP10(account) : account,
-        pgpPrivateKey,
+        pgpPrivateKey: pvtkey,
         env,
       });
 

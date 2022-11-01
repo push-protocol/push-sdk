@@ -36,7 +36,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       account,
       env,
     });
-    if (!(conversationResponse?.threadhash)) {
+    if (!(conversationResponse?.threadHash)) {
       return start({
         messageContent: messageContent,
         messageType: 'Text',

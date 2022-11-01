@@ -27,10 +27,17 @@ const GetChatsTest = () => {
   const testGetChats = async () => {
     try {
       setLoading(true);
-
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
       const response = await PushAPI.chat.chats({
         account: isCAIP ? walletToPCAIP10(account) : account,
-        pgpPrivateKey,
+        pgpPrivateKey: pvtkey,
         env,
       });
 

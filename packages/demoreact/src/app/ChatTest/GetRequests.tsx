@@ -27,10 +27,17 @@ const GetRequestsTest = () => {
   const testGetRequests = async () => {
     try {
       setLoading(true);
-
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
       const response = await PushAPI.chat.requests({
         account: isCAIP ? walletToPCAIP10(account) : account,
-        pgpPrivateKey,
+        pgpPrivateKey: pvtkey,
         env,
       });
 
@@ -62,7 +69,9 @@ const GetRequestsTest = () => {
               />
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
-              <SectionButton onClick={testGetRequests}>get requests</SectionButton>
+              <SectionButton onClick={testGetRequests}>
+                get requests
+              </SectionButton>
             </SectionItem>
           </div>
         </SectionItem>

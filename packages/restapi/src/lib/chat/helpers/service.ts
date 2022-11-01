@@ -58,7 +58,7 @@ export const getConversationHashService = async (options: ConversationHashOption
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/chat/users/${account}/conversations/${conversationId}/hash`;
+  const requestUrl = `${API_BASE_URL}/v1/chat/users/${walletToPCAIP10(account)}/conversations/${walletToPCAIP10(conversationId)}/hash`;
 
   return axios
     .get(requestUrl)
