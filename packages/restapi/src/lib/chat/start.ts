@@ -33,7 +33,7 @@ export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
   const headers = {
-    'API-KEY': apiKey ?? '',
+    'authorization': `Bearer ${apiKey}`,
   };
   const body = {
     fromDID: connectedUser.wallets.split(',')[0],
