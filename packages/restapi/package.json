@@ -12,8 +12,5 @@
     "@metamask/eth-sig-util": "^5.0.0",
     "crypto-js": "^4.1.1",
     "openpgp": "^5.5.0"
-  },
-  "devDependencies": {
-    "@types/node": "18.11.9"
   }
 }
