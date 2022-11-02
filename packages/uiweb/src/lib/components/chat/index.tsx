@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
 import Constants from './constants';
+import * as PushAPI from '@pushprotocol/restapi';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
@@ -31,6 +32,7 @@ export const Chat: React.FC<ChatProps> = ({
   env = Constants.ENV.PROD,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [connectedUser, setConnectedUser] = useState<any>({});
 
   const chatPropsData = {
     provider,
@@ -44,8 +46,12 @@ export const Chat: React.FC<ChatProps> = ({
 
   const chatMainStateData = {
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
+    connectedUser,
+    setConnectedUser,
   }
+
+
 
   return (
     <Container>
@@ -74,7 +80,7 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   width: fit-content;
-  margin: 1.5rem;
+  margin: 0 3rem 2rem 0;
   align-items: center;
   justify-content: center;
 `;

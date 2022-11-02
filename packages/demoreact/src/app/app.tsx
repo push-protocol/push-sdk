@@ -14,7 +14,17 @@ import ChannelsTest from './ChannelsTest';
 import EmbedTest from './EmbedTest';
 import PayloadsTest from './PayloadsTest';
 import SocketTest from './SocketTest';
-import {ChatSupportTest} from './ChatSupportTest';
+import { ChatSupportTest } from './ChatSupportTest';
+import ChatTest from './ChatTest/ChatTest';
+import GetUserTest from './ChatTest/GetUser';
+import CreateUserTest from './ChatTest/CreateUser';
+import SendMessageTest from './ChatTest/SendMessageTest';
+import ApproveRequestTest from './ChatTest/ApproveRequestTest';
+import GetChatsTest from './ChatTest/GetChats';
+import ConversationHashTest from './ChatTest/ConversationHash';
+import HistoryTest from './ChatTest/History';
+import GetRequestsTest from './ChatTest/GetRequests';
+
 interface Web3ReactState {
   chainId?: number;
   account?: string | null | undefined;
@@ -181,6 +191,9 @@ export function App() {
                       <Link to="/embed" className="nav-button">
                         EMBDED
                       </Link>
+                      <Link to="/chat" className="nav-button">
+                        CHAT
+                      </Link>
                     </NavMenu>
                   }
                 />
@@ -194,8 +207,20 @@ export function App() {
                 <Route path="/socket" element={<SocketTest />} />
 
                 <Route path="/embed" element={<EmbedTest />} />
+
+                <Route path="/chat" element={<ChatTest />} />
+
+                {/* chat method  routes */}
+                <Route path="/get" element={<GetUserTest />} />
+                <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/send" element={<SendMessageTest />} />
+                <Route path="/approve" element={<ApproveRequestTest />} />
+                <Route path="/chats" element={<GetChatsTest />} />
+                <Route path="/hash" element={<ConversationHashTest />} />
+                <Route path="/history" element={<HistoryTest />} />
+                <Route path="/requests" element={<GetRequestsTest />} />
               </Routes>
-              <ChatSupportTest/>
+              <ChatSupportTest />
             </SocketContext.Provider>
           </Web3Context.Provider>
         ) : null}

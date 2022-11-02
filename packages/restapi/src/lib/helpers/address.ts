@@ -6,6 +6,9 @@ export interface AddressValidatorsType {
 }
 
 export function isValidETHAddress(address: string) {
+  if (address.includes('eip155:')) {
+    return ethers.utils.isAddress((address.split(':'))[1]);
+  }
   return ethers.utils.isAddress(address);
 }
 
@@ -87,4 +90,17 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
       throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
     }
   }
+}
+
+// P = Partial CAIP
+export const walletToPCAIP10 = (account:string): string => {
+  if (account.includes('eip155:')) {
+    return account
+  }
+  return 'eip155:' + account
+}
+
+export const pCAIP10ToWallet = (wallet: string): string => {
+  wallet = wallet.replace('eip155:', '')
+  return wallet
 }

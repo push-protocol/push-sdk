@@ -17,9 +17,10 @@ export const ChatSupportTest = () => {
   const { library } = useWeb3React();
   return (
     <Chat
-      supportAddress="dfhsk"
+      supportAddress="0x5F17064F559f6fC2563F9830B2EafB8D1e070a11"
       provider={library.provider}
       apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
+      env='dev'
     />
   );
 };
