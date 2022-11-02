@@ -1,23 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import MinimizeIcon from '../../icons/chat/minimize.svg';
 import styled from 'styled-components';
+import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { handleOnChatIconClick } from '../../helpers';
 
-export type ChatProps = {
-  modalTitle: string;
-  handleOnChatIconClick: () => void;
-};
+export const ModalHeader: React.FC = () => {
+  const { modalTitle } = useContext<any>(ChatPropsContext);
+  const { isModalOpen, setIsModalOpen } = useContext<any>(ChatMainStateContext);
 
-export const ModalHeader: React.FC<ChatProps> = ({
-  modalTitle,
-  handleOnChatIconClick,
-}) => {
   return (
     <Container>
       <Span>{modalTitle}</Span>
       <Image
         src={MinimizeIcon}
         alt="minimize chat"
-        onClick={()=>handleOnChatIconClick()}
+        onClick={() => handleOnChatIconClick({ isModalOpen, setIsModalOpen })}
       />
     </Container>
   );
