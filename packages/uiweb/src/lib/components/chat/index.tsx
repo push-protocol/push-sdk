@@ -4,6 +4,8 @@ import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
 import Constants from './constants';
 import styled from 'styled-components';
+import { handleOnChatIconClick } from '../../helpers';
+import { ChatMainStateContext, ChatPropsContext } from '../../context';
 
 export type ChatProps = {
   provider: Web3Provider;
@@ -30,27 +32,35 @@ export const Chat: React.FC<ChatProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleOnChatIconClick = () => {
-    console.log(isModalOpen);
-    setIsModalOpen(!isModalOpen);
-  };
+  const chatPropsData = {
+    provider,
+    supportAddress,
+    greetingMsg,
+    modalTitle,
+    primaryColor,
+    apiKey,
+    env
+  }
+
+  const chatMainStateData = {
+    isModalOpen,
+    setIsModalOpen
+  }
+
   return (
     <Container>
-      {!isModalOpen && (
-        <Button bgColor={primaryColor} onClick={() => handleOnChatIconClick()}>
-          <Image src={ChatIcon} alt="chat" />
-        </Button>
-      )}
-      {isModalOpen && (
-        <Modal
-          supportAddress={supportAddress}
-          provider={provider}
-          greetingMsg={greetingMsg}
-          modalTitle={modalTitle}
-          handleOnChatIconClick={() => handleOnChatIconClick()}
-          env={env}
-        />
-      )}
+      <ChatPropsContext.Provider value={chatPropsData}>
+        <ChatMainStateContext.Provider value={chatMainStateData}>
+          {!isModalOpen && (
+            <Button bgColor={primaryColor} onClick={() => handleOnChatIconClick({isModalOpen, setIsModalOpen})}>
+              <Image src={ChatIcon} alt="chat" />
+            </Button>
+          )}
+          {isModalOpen && (
+            <Modal />
+          )}
+        </ChatMainStateContext.Provider>
+      </ChatPropsContext.Provider>
     </Container>
   );
 };

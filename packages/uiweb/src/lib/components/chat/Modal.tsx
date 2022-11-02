@@ -1,33 +1,11 @@
 import React from 'react';
-import { Web3Provider } from '@ethersproject/providers';
 import styled from 'styled-components';
 import { ModalHeader } from './ModalHeader';
 
-export type ChatProps = {
-  provider: Web3Provider;
-  supportAddress: string;
-  greetingMsg: string;
-  modalTitle: string;
-  primaryColor?: string;
-  handleOnChatIconClick: () => void;
-  env: string;
-};
-
-export const Modal: React.FC<ChatProps> = ({
-  provider,
-  supportAddress,
-  greetingMsg,
-  modalTitle,
-  primaryColor,
-  handleOnChatIconClick,
-  env,
-}) => {
+export const Modal: React.FC = () => {
   return (
     <Container>
-      <ModalHeader
-        modalTitle={modalTitle}
-        handleOnChatIconClick={()=>handleOnChatIconClick()}
-      />
+      <ModalHeader />
     </Container>
   );
 };
