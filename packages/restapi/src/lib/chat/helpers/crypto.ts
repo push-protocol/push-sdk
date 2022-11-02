@@ -170,8 +170,7 @@ export const getEncryptedRequest = async (
   });
   if (!receiverCreatedUser?.publicKey) {
     if (!ethers.utils.isAddress(receiverAddress)) {
-      console.log("Invalid receiver's address");
-      return;
+      throw new Error(`Invalid receiver address!`);
     }
     await createUserService({
       user: receiverAddress,
