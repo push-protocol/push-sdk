@@ -14,10 +14,10 @@ export const Modal: React.FC = () => {
   const [chats, setChats] = useState<any>({});
   useEffect(() => {
     const getChats = async () => {
-      // const threadhash = await PushAPI.chat.conversationHash({account:,conversationId:supportAddress});
+      const threadhash = await PushAPI.chat.conversationHash({account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',conversationId:supportAddress});
       const chats = await PushAPI.chat.history({
-        threadhash:
-          'bafyreigima2xvehxzqkbafaotwvggfhk5bpsce3k6ewqhkvbisfa4phaju',
+        account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',
+        threadhash: threadhash.threadHash,
         limit: 3,
         env,
       });
@@ -30,20 +30,17 @@ export const Modal: React.FC = () => {
     <Container>
       <ModalHeader />
       <AddressInfo />
-      {/* {!connectedUser &&
+      {!connectedUser &&
         chats.length &&
-        chats.map((chat: IMessageIPFS) => { */}
+        chats.map((chat: IMessageIPFS) => 
           <Chats
-            msg={chats[0]}
-            caip10={walletToPCAIP10('0x58689458347f54d1d36cB287C1Cb2017800ecBB4')}
+            msg={chat}
+            caip10={walletToPCAIP10(
+              '0x58689458347f54d1d36cB287C1Cb2017800ecBB4'
+            )}
             messageBeingSent={true}
           />
-           <Chats
-            msg={chats[1]}
-            caip10={walletToPCAIP10('0x58689458347f54d1d36cB287C1Cb2017800ecBB4')}
-            messageBeingSent={true}
-          />
-        {/* })} */}
+        )}
       {connectedUser && <Span>Connect your wallet to conitnue</Span>}
     </Container>
   );

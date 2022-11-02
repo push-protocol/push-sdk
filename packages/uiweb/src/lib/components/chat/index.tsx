@@ -52,7 +52,6 @@ export const Chat: React.FC<ChatProps> = ({
   }
 
 
-
   return (
     <Container>
       <ChatPropsContext.Provider value={chatPropsData}>
