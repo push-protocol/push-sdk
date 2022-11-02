@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 
 export const Modal: React.FC = () => {
   return (
     <Container>
       <ModalHeader />
+      <ChatInput />
     </Container>
   );
 };
@@ -13,6 +15,7 @@ export const Modal: React.FC = () => {
 //styles
 const Container = styled.div`
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   box-sizing: border-box;
   background: #ffffff;

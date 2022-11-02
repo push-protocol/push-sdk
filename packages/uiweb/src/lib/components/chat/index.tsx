@@ -31,6 +31,9 @@ export const Chat: React.FC<ChatProps> = ({
   env = Constants.ENV.PROD,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [messageBeingSent, setMessageBeingSent] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('');
+  const [footerError, setFooterError] = useState<string>('');
 
   const chatPropsData = {
     provider,
@@ -44,7 +47,13 @@ export const Chat: React.FC<ChatProps> = ({
 
   const chatMainStateData = {
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
+    messageBeingSent, 
+    setMessageBeingSent,
+    message,
+    setMessage,
+    footerError,
+    setFooterError
   }
 
   return (
