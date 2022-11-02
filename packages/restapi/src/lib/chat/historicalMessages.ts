@@ -1,6 +1,8 @@
 import Constants from '../constants';
+import { pCAIP10ToWallet } from '../helpers';
 import { AccountEnvOptionsType } from '../types';
-import { getMessagesService } from './helpers';
+import { get } from '../user';
+import { decryptConversation, getMessagesService } from './helpers';
 
 /**
  *  GET /v1/chat/conversationhash/:threadhash
@@ -12,8 +14,9 @@ enum FetchLimit {
   MAX = 30
 }
 
-export interface HistoricalMessagesOptionsType extends Omit<AccountEnvOptionsType, "account"> {
+export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
   threadhash: string;
+  pgpPrivateKey?: string;
   limit?: number;
 }
 
@@ -23,6 +26,8 @@ export const history = async (
   const {
     threadhash,
     limit = FetchLimit.DEFAULT,
+    pgpPrivateKey = '',
+    account,
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -34,9 +39,13 @@ export const history = async (
         throw new Error(`Limit must be less than equal to ${FetchLimit.MAX}`);
     }
   
-    return getMessagesService({threadhash, limit, env});
+    const messages = await getMessagesService({threadhash, limit, env});
+    const connectedUser = await get({ account: pCAIP10ToWallet(account), env });
+    return await decryptConversation({messages,connectedUser,toDecrypt:true,pgpPrivateKey,env});
   } catch (err) {
     console.error(`[EPNS-SDK] - API fetchMessages -: `, err);
     throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);
   }
 }
+
+

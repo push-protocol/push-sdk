@@ -6,13 +6,14 @@ import {
   SectionButton,
 } from '../components/StyledComponents';
 import Loader from '../components/Loader';
-import { EnvContext } from '../context';
+import { EnvContext, Web3Context } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const HistoryTest = () => {
   const { env } = useContext<any>(EnvContext);
+  const { account } = useContext<any>(Web3Context);
   const [isLoading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>({});
   const [threadhash, setThreadhash] = useState<string>('');
@@ -35,8 +36,18 @@ const HistoryTest = () => {
       setLoading(true);
 
       // object for response
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
       const response = await PushAPI.chat.history({
         threadhash,
+        account,
+        pgpPrivateKey:pvtkey,
         limit,
         env,
       });
