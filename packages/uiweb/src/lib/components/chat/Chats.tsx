@@ -9,16 +9,16 @@ type ChatsPropType = {
 };
 
 type MessageWrapperType = {
-    align?:string;
-    height?:string;
-}
+  align?: string;
+  height?: string;
+};
 
-type FileMessageContent ={
-    content: string;
-    name: string;
-    type: string;
-    size: number;
-  }
+type FileMessageContent = {
+  content: string;
+  name: string;
+  type: string;
+  size: number;
+};
 
 export const Chats: React.FC<ChatsPropType> = ({
   msg,
@@ -51,76 +51,78 @@ export const Chats: React.FC<ChatsPropType> = ({
               </MessageWrapper>
             )}
           </>
-        ) : msg.messageType === 'Image' ? (
-          <>
-            {msg.fromCAIP10 === caip10 ? (
-              <MessageWrapper height="138px" align="row-reverse">
-                <SenderMessage color="transparent">
-                  <ImageMessage
-                    src={
-                      (JSON.parse(msg.messageContent) as FileMessageContent)
-                        .content
-                    }
-                    onClick={() => {
-                      setShowImageModal(true);
-                      setImageUrl(
-                        (JSON.parse(msg.messageContent) as FileMessageContent)
-                          .content
-                      );
-                    }}
-                  />
-                </SenderMessage>
-              </MessageWrapper>
-            ) : (
-              <MessageWrapper height="138px" align="row">
-                <ReceivedMessage color="transparent">
-                  <ImageMessage
-                    src={
-                      (JSON.parse(msg.messageContent) as FileMessageContent)
-                        .content
-                    }
-                    onClick={() => {
-                      setShowImageModal(true);
-                      setImageUrl(
-                        (JSON.parse(msg.messageContent) as FileMessageContent)
-                          .content
-                      );
-                    }}
-                  />
-                </ReceivedMessage>
-              </MessageWrapper>
-            )}
+        ) : // : msg.messageType === 'Image' ? (
+        //   <>
+        //     {msg.fromCAIP10 === caip10 ? (
+        //       <MessageWrapper height="138px" align="row-reverse">
+        //         <SenderMessage color="transparent">
+        //           <ImageMessage
+        //             src={
+        //               (JSON.parse(msg.messageContent) as FileMessageContent)
+        //                 .content
+        //             }
+        //             onClick={() => {
+        //               setShowImageModal(true);
+        //               setImageUrl(
+        //                 (JSON.parse(msg.messageContent) as FileMessageContent)
+        //                   .content
+        //               );
+        //             }}
+        //           />
+        //         </SenderMessage>
+        //       </MessageWrapper>
+        //     ) : (
+        //       <MessageWrapper height="138px" align="row">
+        //         <ReceivedMessage color="transparent">
+        //           <ImageMessage
+        //             src={
+        //               (JSON.parse(msg.messageContent) as FileMessageContent)
+        //                 .content
+        //             }
+        //             onClick={() => {
+        //               setShowImageModal(true);
+        //               setImageUrl(
+        //                 (JSON.parse(msg.messageContent) as FileMessageContent)
+        //                   .content
+        //               );
+        //             }}
+        //           />
+        //         </ReceivedMessage>
+        //       </MessageWrapper>
+        //     )}
 
-            {/* {showImageModal && (
-            //   <Modal
-            //     showImageModal={showImageModal}
-            //     onClose={() => setShowImageModal(false)}
-            //     src={imageUrl}
-            //     time={msg.timestamp}
-            //   />
-            )} */}
-          </>
-        ) : msg.messageType === 'File' ? (
-          <>
-            {msg.fromCAIP10 === caip10 ? (
-              <MessageWrapper align="row-reverse">
-                <SenderMessage color="transparent">
-                  <FileMessage>
-                    {/* <Files msg={msg} /> */}
-                  </FileMessage>
-                </SenderMessage>
-              </MessageWrapper>
-            ) : (
-              <MessageWrapper align="row">
-                <ReceivedMessage color="transparent">
-                  <FileMessage>
-                    {/* <Files msg={msg} /> */}
-                  </FileMessage>
-                </ReceivedMessage>
-              </MessageWrapper>
-            )}
-          </>
-        ) : null}
+        //     {/* {showImageModal && (
+        //     //   <Modal
+        //     //     showImageModal={showImageModal}
+        //     //     onClose={() => setShowImageModal(false)}
+        //     //     src={imageUrl}
+        //     //     time={msg.timestamp}
+        //     //   />
+        //     )} */}
+        //   </>
+        //  )
+        // : msg.messageType === 'File' ? (
+        //   <>
+        //     {msg.fromCAIP10 === caip10 ? (
+        //       <MessageWrapper align="row-reverse">
+        //         <SenderMessage color="transparent">
+        //           <FileMessage>
+        //             {/* <Files msg={msg} /> */}
+        //           </FileMessage>
+        //         </SenderMessage>
+        //       </MessageWrapper>
+        //     ) : (
+        //       <MessageWrapper align="row">
+        //         <ReceivedMessage color="transparent">
+        //           <FileMessage>
+        //             {/* <Files msg={msg} /> */}
+        //           </FileMessage>
+        //         </ReceivedMessage>
+        //       </MessageWrapper>
+        //     )}
+        //   </>
+        // )
+        null}
       </>
     </Container>
   );
@@ -146,17 +148,17 @@ const ImageMessage = styled.img`
   max-height: 170px;
   max-width: 300px;
   object-fit: contain;
-  border-radius:  '0px';
+  border-radius: '0px';
   &:hover {
     cursor: pointer;
   }
 `;
 
 const TextMessage = styled.p`
-  max-width: 300px;
-  padding: 0px 44px 10px 0px;
+  max-width: 150px;
   font-size: 14px;
   word-wrap: break-word;
+  padding: 5px;
   text-align: left;
   font-weigth: 400;
   margin: 0px;
@@ -164,7 +166,9 @@ const TextMessage = styled.p`
 
 const TimeStamp = styled.span`
   min-width: 44px;
-  font-size: 11px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 130%;
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
@@ -178,7 +182,7 @@ const MessageWrapper = styled.div<MessageWrapperType>`
   width: 100%;
   min-height: ${(props: any): string => props.height || '48px'};
   padding: 0;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: ${(props: any): string => props.align || 'row'};
 `;
@@ -186,11 +190,11 @@ const MessageWrapper = styled.div<MessageWrapperType>`
 const ReceivedMessage = styled.div`
   box-sizing: border-box;
   position: relative;
-  left: 34px;
-  max-width: 419px;
-  padding: ${(props: any): string => props.padding || '11px 11px 5px 24px'};
+  max-width: 200px;
+  padding: ${(props: any): string => props.padding || '10px 15px'};
   background: ${(props: any): string => props.color || '#ffffff'};
   text-align: left;
+  border: 1px solid #e4e8ef;
   border-radius: 2px 16px 16px 16px;
   display: flex;
   justify-content: space-between;
@@ -201,12 +205,12 @@ const ReceivedMessage = styled.div`
 const SenderMessage = styled.div`
   box-sizing: border-box;
   position: relative;
-  right: 34px;
-  max-width: 419px;
+  max-width: 200px;
   text-align: left;
-  padding: ${(props: any): string => props.padding || '11px 11px 5px 24px'};
+  padding: ${(props: any): string => props.padding || '10px 15px'};
   background: ${(props: any): string => props.color || '#ca599b'};
-  border-radius: 16px 2px 16px 16px;
+  border: 1px solid #e4e8ef;
+  border-radius: 2px 16px 16px 16px;
   display: flex;
   justify-content: flex-strt;
   align-items: center;

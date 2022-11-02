@@ -32,7 +32,7 @@ export const Chat: React.FC<ChatProps> = ({
   env = Constants.ENV.PROD,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [connectedUser, setConnectedUser] = useState<any>({});
+  const [connectedUser, setConnectedUser] = useState<any>(null);
 
   const chatPropsData = {
     provider,

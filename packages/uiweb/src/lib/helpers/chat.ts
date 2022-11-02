@@ -14,13 +14,7 @@ export const handleOnChatIconClick = ({
   setIsModalOpen(!isModalOpen);
 };
 
-export const walletToPCAIP10 = ({
-  account,
-  chainId,
-}: {
-  account: string;
-  chainId: number;
-}): string => {
+export const walletToPCAIP10 = (account:string): string => {
   if (account.includes('eip155:')) {
     return account;
   }

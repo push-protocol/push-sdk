@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
+import Constants from './constants';
 import { pCAIP10ToWallet, resolveEns } from '../../helpers';
 
 export const AddressInfo: React.FC = () => {
@@ -15,17 +16,18 @@ export const AddressInfo: React.FC = () => {
       const user = await PushAPI.user.get({ account: walletAddress, env });
       setUser(user);
     };
-    const getEns = async () => {
-      const ens = await resolveEns(supportAddress, provider);
-      setEnsName(ensName);
-    };
+    // const getEns = async () => {
+    //   const ens = await resolveEns(supportAddress, provider);
+    //   setEnsName(ensName);
+    // };
     getUser();
     // getEns();
   }, [supportAddress]);
-console.log(user)
+  console.log(user);
+  //dummy profile picture needed
   return (
     <Container>
-      <Image src={user.profilePicture} alt="address profile" />
+      <Image src={user.profilePicture? user.profilePicture : Constants.DEFAULT_PROFILE_PICTURE } alt="address profile" />
       <Span>
         {ensName && `${ensName}`}
         {!ensName &&
