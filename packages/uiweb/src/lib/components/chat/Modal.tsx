@@ -15,12 +15,12 @@ export const Modal: React.FC = () => {
   useEffect(() => {
     const getChats = async () => {
       const threadhash = await PushAPI.chat.conversationHash({account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',conversationId:supportAddress});
-      const chats = await PushAPI.chat.history({
-        account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',
-        threadhash: threadhash.threadHash,
-        limit: 3,
-        env,
-      });
+      // const chats = await PushAPI.chat.history({
+      //   account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',
+      //   threadhash: threadhash.threadHash,
+      //   limit: 3,
+      //   env,
+      // });
       setChats(chats);
     };
     getChats();
