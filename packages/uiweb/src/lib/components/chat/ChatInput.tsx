@@ -53,6 +53,7 @@ export const ChatInput: React.FC = () => {
           apiKey,
           env,
         });
+        sendResponse.messageContent = message;
         setChats([...chats, sendResponse]);
       }
      
