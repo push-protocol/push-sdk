@@ -14,6 +14,7 @@ import ChannelsTest from './ChannelsTest';
 import EmbedTest from './EmbedTest';
 import PayloadsTest from './PayloadsTest';
 import SocketTest from './SocketTest';
+import { ChatSupportTest } from './ChatSupportTest';
 import ChatTest from './ChatTest/ChatTest';
 import GetUserTest from './ChatTest/GetUser';
 import CreateUserTest from './ChatTest/CreateUser';
@@ -219,6 +220,7 @@ export function App() {
                 <Route path="/history" element={<HistoryTest />} />
                 <Route path="/requests" element={<GetRequestsTest />} />
               </Routes>
+              <ChatSupportTest />
             </SocketContext.Provider>
           </Web3Context.Provider>
         ) : null}

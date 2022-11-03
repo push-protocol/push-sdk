@@ -1,0 +1,50 @@
+/**
+ * Custom CSS
+ */
+ @font-face {
+    font-family: 'Strawford';
+    src: url('../../fonts/Strawford-ExtraLight.woff2') format('woff2'),
+        url('../../fonts/Strawford-ExtraLight.otf') format('otf'),
+        url('../../fonts/Strawford-ExtraLight.ttf') format('ttf');
+    font-weight: 100 200;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Strawford';
+    src: url('../../fonts/Strawford-Light.woff2') format('woff2'),
+        url('../../fonts/Strawford-Light.otf') format('otf'),
+        url('../../fonts/Strawford-Light.ttf') format('ttf');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Strawford';
+    src: url('../../fonts/Strawford-Regular.woff2') format('woff2'),
+        url('../../fonts/Strawford-Regular.woff') format('woff'),
+        url('../../fonts/Strawford-Regular.eot') format('eot'),
+        url('../../fonts/Strawford-Regular.ttf') format('ttf');
+    font-weight: 400 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Strawford';
+    src: url('../../fonts/Strawford-Medium.woff2') format('woff2'),
+        url('../../fonts/Strawford-Medium.otf') format('otf'),
+        url('../../fonts/Strawford-Medium.ttf') format('ttf');
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Strawford';
+    src: url('../../fonts/Strawford-Black.woff2') format('woff2'),
+          url('../../fonts/Strawford-Black.woff') format('woff'),
+          url('../../fonts/Strawford-Black.eot'),
+          url('../../fonts/Strawford-Black.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
