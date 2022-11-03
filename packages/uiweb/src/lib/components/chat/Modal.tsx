@@ -4,6 +4,7 @@ import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
 import * as PushAPI from '@pushprotocol/restapi';
+import PoweredByPushLogo from '../../icons/chat/sponsorPush.svg';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import PushIcon from '../../icons/chat/pushIcon.svg';
 import { Chats } from './Chats';
@@ -33,10 +34,10 @@ export const Modal: React.FC = () => {
   console.log(chats);
   return (
     <Container>
-      <Section>
+      <HeaderSection>
         <ModalHeader />
         <AddressInfo />
-      </Section>
+      </HeaderSection>
       <ChatSection>
         {connectedUser &&
           chats.length &&
@@ -49,14 +50,15 @@ export const Modal: React.FC = () => {
           ))}
       </ChatSection>
       {!connectedUser && <Span>Connect your wallet to conitnue</Span>}
-      <Section>
+      <InputSection>
         <ChatInput />
-        <PoweredByDiv>
-          <PoweredBySpan>POWERED BY</PoweredBySpan>
-          <Image src={PushIcon} alt="push logo" />
-          <PoweredBySpan>Push Chat</PoweredBySpan>
-        </PoweredByDiv>
-      </Section>
+        <Image
+            src={PoweredByPushLogo}
+            alt="Powered by Push Protocol"
+            height="18px"
+            width="145px"
+          />
+      </InputSection>
     </Container>
   );
 };
@@ -83,10 +85,24 @@ const ChatSection = styled.div`
   overflow: auto;
 `;
 
-const Section = styled.div`
+const HeaderSection = styled.div`
 `;
+
+const InputSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Image = styled.img`
-  verstical-align: middle;
+  display: flex;
+  max-height: initial;
+  vertical-align: middle;
+  overflow: initial;
+  cursor: pointer;
+  height: ${(props: any): string => props.height || '24px'};
+  width: ${(props: any): string => props.width || '20px'};
+  justify-content: flex-end;
 `;
 
 const Span = styled.span`
