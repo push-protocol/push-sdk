@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/restapi",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -12,5 +12,8 @@
     "@metamask/eth-sig-util": "^5.0.0",
     "crypto-js": "^4.1.1",
     "openpgp": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1"
   }
 }
