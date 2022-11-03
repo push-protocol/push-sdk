@@ -11,12 +11,12 @@ import { getChats, walletToPCAIP10 } from '../../helpers';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 
 export const Modal: React.FC = () => {
-  const { supportAddress, env, account } =
-    useContext<any>(ChatPropsContext);
-  const { chats, setChats ,connectedUser} = useContext<any>(ChatMainStateContext);
+  const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
+  const { chats, setChats, connectedUser } =
+    useContext<any>(ChatMainStateContext);
   useEffect(() => {
     if (connectedUser) {
-      const getChatCall =  async() => {
+      const getChatCall = async () => {
         console.log('in use effect');
         const chats = await getChats({
           account,
@@ -37,15 +37,17 @@ export const Modal: React.FC = () => {
         <ModalHeader />
         <AddressInfo />
       </Section>
-      {connectedUser &&
-        chats.length &&
-        chats.map((chat: IMessageIPFS) => (
-          <Chats
-            msg={chat}
-            caip10={walletToPCAIP10(account)}
-            messageBeingSent={true}
-          />
-        ))}
+      <ChatSection>
+        {connectedUser &&
+          chats.length &&
+          chats.map((chat: IMessageIPFS) => (
+            <Chats
+              msg={chat}
+              caip10={walletToPCAIP10(account)}
+              messageBeingSent={true}
+            />
+          ))}
+      </ChatSection>
       {!connectedUser && <Span>Connect your wallet to conitnue</Span>}
       <Section>
         <ChatInput />
@@ -70,12 +72,19 @@ const Container = styled.div`
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.07);
   border-radius: 24px;
   height: 585px;
+  max-height: 585px;
   width: 350px;
+  max-width: 350px;
   padding: 0 15px 9px 15px;
 `;
 
-const Section = styled.div``;
+const ChatSection = styled.div`
+  height: 350px;
+  overflow: auto;
+`;
 
+const Section = styled.div`
+`;
 const Image = styled.img`
   verstical-align: middle;
 `;

@@ -155,12 +155,12 @@ const ImageMessage = styled.img`
 `;
 
 const TextMessage = styled.p`
-  max-width: 150px;
-  font-size: 14px;
   word-wrap: break-word;
-  padding: 5px;
+  padding: 0 30px 5px 0;
   text-align: left;
-  font-weigth: 400;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 130%;
   margin: 0px;
 `;
 
@@ -172,7 +172,6 @@ const TimeStamp = styled.span`
   display: flex;
   justify-content: flex-end;
   align-items: flex-end;
-  padding: 5px 0px 0px 5px;
   position: absolute;
   right: 10px;
   bottom: 5px;
@@ -190,8 +189,8 @@ const MessageWrapper = styled.div<MessageWrapperType>`
 const ReceivedMessage = styled.div`
   box-sizing: border-box;
   position: relative;
-  max-width: 200px;
-  padding: ${(props: any): string => props.padding || '10px 15px'};
+  max-width: 250px;
+  padding: ${(props: any): string => props.padding || '12px 15px 12px 20px'};
   background: ${(props: any): string => props.color || '#ffffff'};
   text-align: left;
   border: 1px solid #e4e8ef;
@@ -205,9 +204,9 @@ const ReceivedMessage = styled.div`
 const SenderMessage = styled.div`
   box-sizing: border-box;
   position: relative;
-  max-width: 200px;
+  max-width: 250px;
   text-align: left;
-  padding: ${(props: any): string => props.padding || '10px 15px'};
+  padding: ${(props: any): string => props.padding || '12px 15px 12px 20px'};
   background: ${(props: any): string => props.color || '#ca599b'};
   border: 1px solid #e4e8ef;
   border-radius: 16px 2px 16px 16px;

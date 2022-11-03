@@ -90,7 +90,7 @@ export const getChats = async (
     account: account,
     pgpPrivateKey: pgpPrivateKey,
     threadhash: threadhash.threadHash,
-    limit: 3,
+    limit: 6,
     env,
   });
   console.log(chats)
