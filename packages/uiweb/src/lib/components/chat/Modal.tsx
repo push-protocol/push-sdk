@@ -12,7 +12,7 @@ import { IMessageIPFS } from '@pushprotocol/restapi';
 
 export const Modal: React.FC = () => {
   const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
-  const { chats, setChats, connectedUser } =
+  const { chats, setChatsSorted, connectedUser } =
     useContext<any>(ChatMainStateContext);
   useEffect(() => {
     if (connectedUser) {
@@ -24,7 +24,7 @@ export const Modal: React.FC = () => {
           supportAddress,
           env,
         });
-        setChats(chats);
+        setChatsSorted(chats);
       };
       getChatCall();
     }

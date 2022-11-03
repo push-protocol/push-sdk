@@ -38,6 +38,12 @@ export const Chat: React.FC<ChatProps> = ({
   const [footerError, setFooterError] = useState<string>('');
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
 
+  const setChatsSorted = (chats: IMessageIPFS[]) => {
+    chats.sort((a, b) => {
+      return (a.timestamp! > b.timestamp!) ? 1 : -1;
+    });
+    setChats(chats);
+  }
 
   const chatPropsData = {
     account,
@@ -59,11 +65,10 @@ export const Chat: React.FC<ChatProps> = ({
     message,
     setMessage,
     chats,
-    setChats,
+    setChatsSorted,
     footerError,
     setFooterError
   }
-
 
   return (
     <Container>

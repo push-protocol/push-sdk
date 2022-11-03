@@ -22,7 +22,7 @@ export const ChatInput: React.FC = () => {
     setFooterError,
     connectedUser,
     chats,
-    setChats,
+    setChatsSorted,
     setConnectedUser,
   } = useContext<any>(ChatMainStateContext);
 
@@ -54,7 +54,7 @@ export const ChatInput: React.FC = () => {
           env,
         });
         sendResponse.messageContent = message;
-        setChats([...chats, sendResponse]);
+        setChatsSorted([...chats, sendResponse]);
       }
      
     }
