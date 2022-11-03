@@ -23,10 +23,7 @@ type FileMessageContent = {
 export const Chats: React.FC<ChatsPropType> = ({
   msg,
   caip10,
-  messageBeingSent,
 }) => {
-  const [showImageModal, setShowImageModal] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>('');
   const time: Date = new Date(msg.timestamp!);
   const time1 = time.toLocaleTimeString('en-US');
   const date = time1.slice(0, -6) + time1.slice(-2);
