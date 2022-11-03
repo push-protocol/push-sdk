@@ -4,7 +4,7 @@ import SmileyIcon from '../../icons/chat/smiley.svg';
 import AttachmentIcon from '../../icons/chat/attachment.svg';
 import styled from 'styled-components';
 import { ChatMainStateContext } from '../../context';
-import Picker from 'emoji-picker-react';
+// import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export const ChatInput: React.FC = () => {
             width="20px"
             onClick={(): void => setShowEmojis(!showEmojis)}
           />
-          {showEmojis && (
+          {/* {showEmojis && (
             <Picker
               onEmojiClick={addEmoji}
               pickerStyle={{
@@ -95,7 +95,7 @@ export const ChatInput: React.FC = () => {
                 left: '2.5rem',
               }}
             />
-          )}
+          )} */}
           {
             <TextInput
               placeholder="Type your message..."
