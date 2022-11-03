@@ -7,30 +7,47 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import PushIcon from '../../icons/chat/pushIcon.svg';
 import { Chats } from './Chats';
-import { getChats, walletToPCAIP10 } from '../../helpers';
+import {
+  createUserIfNecessary,
+  getChats,
+  walletToPCAIP10,
+} from '../../helpers';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 
 export const Modal: React.FC = () => {
   const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
-  const { chats, setChatsSorted, connectedUser } =
+  const { chats, setChatsSorted, connectedUser, setConnectedUser } =
     useContext<any>(ChatMainStateContext);
+
+  const getChatCall = async () => {
+    if (!connectedUser) return;
+    const chatsResponse = await getChats({
+      account,
+      pgpPrivateKey: connectedUser.privateKey,
+      supportAddress,
+      env,
+    });
+    console.log(chatsResponse);
+    setChatsSorted(chatsResponse);
+  };
+
+  const connectUser = async () => {
+    const user = await createUserIfNecessary({ account, env });
+    setConnectedUser(user);
+  };
+
   useEffect(() => {
-    if (connectedUser) {
-      const getChatCall = async () => {
-        console.log('in use effect');
-        const chats = await getChats({
-          account,
-          pgpPrivateKey: connectedUser.privateKey,
-          supportAddress,
-          env,
-        });
-        setChatsSorted(chats);
-      };
-      getChatCall();
-    }
+    getChatCall();
   }, [connectedUser]);
-  console.log(connectedUser);
-  console.log(chats);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getChatCall();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Container>
       <Section>
@@ -48,9 +65,15 @@ export const Modal: React.FC = () => {
             />
           ))}
       </ChatSection>
-      {!connectedUser && <Span>Connect your wallet to conitnue</Span>}
+
+      {!connectedUser && (
+        <ConnectSection>
+          <Button onClick={() => connectUser()}>Connect</Button>
+          <Span>Connect your wallet to conitnue</Span>
+        </ConnectSection>
+      )}
       <Section>
-        <ChatInput />
+        {connectedUser && <ChatInput />}
         <PoweredByDiv>
           <PoweredBySpan>POWERED BY</PoweredBySpan>
           <Image src={PushIcon} alt="push logo" />
@@ -82,9 +105,30 @@ const ChatSection = styled.div`
   height: 350px;
   overflow: auto;
 `;
-
-const Section = styled.div`
+const ConnectSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25%;
 `;
+
+const Button = styled.button`
+  background: #d53a94;
+  border-radius: 15px;
+  align-self: center;
+  padding: 11px 36px;
+  border: none;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 150%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.019em;
+  color: #ffffff;
+  margin-bottom: 10px;
+  cursor: pointer;
+`;
+const Section = styled.div``;
 const Image = styled.img`
   verstical-align: middle;
 `;

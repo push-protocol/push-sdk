@@ -18,7 +18,7 @@ export const ChatSupportTest = () => {
   return (
     <Chat
     account={account}
-      supportAddress="0x494597214D0300143F244fEfEFEa1fc76457fd36"
+      supportAddress="0x778D3206374f8AC265728E18E3fE2Ae6b93E4ce4"
       apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
       env='dev'
     />

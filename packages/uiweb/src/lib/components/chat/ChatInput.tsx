@@ -35,28 +35,23 @@ export const ChatInput: React.FC = () => {
     preventDefault: () => void;
   }): Promise<void> => {
     e.preventDefault();
-    if (message.trim() !== '') {
-      let user;
-      if (!connectedUser) {
-        user = await createUserIfNecessary({ account, env });
-        console.log(user);
-        setConnectedUser(user);
-      }
-      if  (connectedUser) {
-        console.log('in here connected');
-        const sendResponse = await PushAPI.chat.send({
-          messageContent: message,
-          messageType: 'Text',
-          receiverAddress: supportAddress,
-          account: account,
-          pgpPrivateKey: connectedUser?.privateKey,
-          apiKey,
-          env,
-        });
+    if (message.trim() !== '' && connectedUser) {
+      const sendResponse = await PushAPI.chat.send({
+        messageContent: message,
+        messageType: 'Text',
+        receiverAddress: supportAddress,
+        account: account,
+        pgpPrivateKey: connectedUser?.privateKey,
+        apiKey,
+        env,
+      });
+
+      if (typeof sendResponse !== 'string') {
         sendResponse.messageContent = message;
+        console.log(chats);
         setChatsSorted([...chats, sendResponse]);
+        setMessage('');
       }
-     
     }
   };
   console.log(connectedUser);
@@ -112,13 +107,13 @@ export const ChatInput: React.FC = () => {
         <ItemHV2>Loading...</ItemHV2>
       ) : (
         <>
-          <Image
+          {/* <Image
             src={SmileyIcon}
             alt="Send File"
             height="32px"
             width="32px"
             onClick={(): void => setShowEmojis(!showEmojis)}
-          />
+          /> */}
           {/* {showEmojis && (
             <Picker
               onEmojiClick={addEmoji}
@@ -142,13 +137,13 @@ export const ChatInput: React.FC = () => {
 
           <>
             <label>
-              <Image
+              {/* <Image
                 src={AttachmentIcon}
                 alt="Send File"
                 height="30px"
                 width="30px"
-              />
-              <FileInput type="file" ref={fileInputRef} onChange={uploadFile} />
+              /> */}
+              {/* <FileInput type="file" ref={fileInputRef} onChange={uploadFile} /> */}
             </label>
 
             {filesUploading ? (
@@ -256,4 +251,3 @@ const ItemHV2 = styled.div`
   justifycontent: flex-end;
   background: transparent;
 `;
-

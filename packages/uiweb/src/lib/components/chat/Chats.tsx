@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { ChatPropsContext } from '../../context';
 import { IMessageIPFS } from '../../types';
+
+const { primaryColor } =
+useContext<any>(ChatPropsContext);
 
 type ChatsPropType = {
   msg: IMessageIPFS;
@@ -37,7 +41,7 @@ export const Chats: React.FC<ChatsPropType> = ({
           <>
             {msg.fromCAIP10 === caip10 ? (
               <MessageWrapper align="row-reverse">
-                <SenderMessage>
+                <SenderMessage color={primaryColor}>
                   <TextMessage>{msg.messageContent}</TextMessage>
                   <TimeStamp>{date}</TimeStamp>
                 </SenderMessage>
@@ -156,7 +160,7 @@ const ImageMessage = styled.img`
 
 const TextMessage = styled.p`
   word-wrap: break-word;
-  padding: 0 30px 5px 0;
+  padding: 0 30px 7px 0;
   text-align: left;
   font-weight: 400;
   font-size: 15px;
