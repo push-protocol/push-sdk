@@ -11,7 +11,7 @@ import './index.css';
 export type ChatProps = {
   account: string;
   supportAddress: string;
-  greetingMsg?: string;
+  // greetingMsg?: string;
   modalTitle?: string;
   primaryColor?: string;
   apiKey?:string;
@@ -25,7 +25,7 @@ export type ButtonStyleProps = {
 export const Chat: React.FC<ChatProps> = ({
   account,
   supportAddress,
-  greetingMsg = Constants.DEFAULT_GREETING_MSG,
+  // greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
   primaryColor = Constants.COLOR.PRIMARY,
   apiKey = '',
@@ -48,7 +48,7 @@ export const Chat: React.FC<ChatProps> = ({
   const chatPropsData = {
     account,
     supportAddress,
-    greetingMsg,
+    // greetingMsg,
     modalTitle,
     primaryColor,
     apiKey,
