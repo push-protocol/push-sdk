@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
 import Constants from './constants';
-import * as PushAPI from '@pushprotocol/restapi';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { IMessageIPFS } from '@pushprotocol/restapi';
+import './index.css';
 
 export type ChatProps = {
   account: string;
@@ -89,8 +89,9 @@ export const Chat: React.FC<ChatProps> = ({
 };
 
 //styles
+
 const Container = styled.div`
-  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-family: 'Strawford';
   flex: 1;
   display: flex;
   position: fixed;

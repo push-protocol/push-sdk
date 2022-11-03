@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
-import * as PushAPI from '@pushprotocol/restapi';
+import PoweredByPushLogo from '../../icons/chat/sponsorPush.svg';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import PushIcon from '../../icons/chat/pushIcon.svg';
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
@@ -27,7 +26,6 @@ export const Modal: React.FC = () => {
       supportAddress,
       env,
     });
-    console.log(chatsResponse);
     setChatsSorted(chatsResponse);
   };
 
@@ -35,6 +33,7 @@ export const Modal: React.FC = () => {
     const user = await createUserIfNecessary({ account, env });
     setConnectedUser(user);
   };
+
 
   useEffect(() => {
     getChatCall();
@@ -50,36 +49,36 @@ export const Modal: React.FC = () => {
 
   return (
     <Container>
-      <Section>
+      <HeaderSection>
         <ModalHeader />
         <AddressInfo />
-      </Section>
+      </HeaderSection>
       <ChatSection>
-        {connectedUser &&
-          chats.length &&
-          chats.map((chat: IMessageIPFS) => (
-            <Chats
-              msg={chat}
-              caip10={walletToPCAIP10(account)}
-              messageBeingSent={true}
-            />
-          ))}
+        {connectedUser && chats.length
+          ? chats.map((chat: IMessageIPFS) => (
+              <Chats
+                msg={chat}
+                caip10={walletToPCAIP10(account)}
+                messageBeingSent={true}
+              />
+            ))
+          : <></>}
       </ChatSection>
-
       {!connectedUser && (
         <ConnectSection>
           <Button onClick={() => connectUser()}>Connect</Button>
           <Span>Connect your wallet to conitnue</Span>
         </ConnectSection>
       )}
-      <Section>
+      <InputSection>
         {connectedUser && <ChatInput />}
-        <PoweredByDiv>
-          <PoweredBySpan>POWERED BY</PoweredBySpan>
-          <Image src={PushIcon} alt="push logo" />
-          <PoweredBySpan>Push Chat</PoweredBySpan>
-        </PoweredByDiv>
-      </Section>
+        <Image
+          src={PoweredByPushLogo}
+          alt="Powered by Push Protocol"
+          height="18px"
+          width="145px"
+        />
+      </InputSection>
     </Container>
   );
 };
@@ -128,9 +127,23 @@ const Button = styled.button`
   margin-bottom: 10px;
   cursor: pointer;
 `;
-const Section = styled.div``;
+
+const HeaderSection = styled.div``;
+
+const InputSection = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const Image = styled.img`
-  verstical-align: middle;
+  display: flex;
+  max-height: initial;
+  vertical-align: middle;
+  overflow: initial;
+  cursor: pointer;
+  height: ${(props: any): string => props.height || '24px'};
+  width: ${(props: any): string => props.width || '20px'};
+  align-self: center;
 `;
 
 const Span = styled.span`

@@ -48,13 +48,11 @@ export const ChatInput: React.FC = () => {
 
       if (typeof sendResponse !== 'string') {
         sendResponse.messageContent = message;
-        console.log(chats);
         setChatsSorted([...chats, sendResponse]);
         setMessage('');
       }
     }
   };
-  console.log(connectedUser);
   const handleKeyPress = (e: any): void => {
     const x = e.keyCode;
     if (x === 13) {
@@ -215,6 +213,7 @@ const Icon = styled.i`
 `;
 
 const TextInput = styled.textarea`
+  font-family: 'Strawford';
   font-size: 16px;
   width: 100%;
   height: 25px;
@@ -229,7 +228,7 @@ const TextInput = styled.textarea`
     height: 0;
   }
   ::placeholder {
-    color: black;
+    color: #494D5F;
   }
 `;
 

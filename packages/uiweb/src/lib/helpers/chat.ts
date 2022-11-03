@@ -11,8 +11,8 @@ type HandleOnChatIconClickProps = {
 };
 
 type GetChatsType = {
-  pgpPrivateKey:string;
-supportAddress:string;
+  pgpPrivateKey: string;
+  supportAddress: string;
 } & AccountEnvOptionsType;
 export const handleOnChatIconClick = ({
   isModalOpen,
@@ -80,19 +80,28 @@ export const createUserIfNecessary = async (
 export const getChats = async (
   options: GetChatsType
 ): Promise<IMessageIPFS[]> => {
-  const { account, pgpPrivateKey, supportAddress,env = Constants.ENV.PROD } = options || {};
+  const {
+    account,
+    pgpPrivateKey,
+    supportAddress,
+    env = Constants.ENV.PROD,
+  } = options || {};
   const threadhash: any = await PushAPI.chat.conversationHash({
     account: account,
     conversationId: supportAddress,
     env,
   });
-  const chats = await PushAPI.chat.history({
-    account: account,
-    pgpPrivateKey: pgpPrivateKey,
-    threadhash: threadhash.threadHash,
-    limit: 30,
-    env,
-  });
-  console.log(chats)
-  return chats;
+  if (threadhash.threadHash) {
+    const chats = await PushAPI.chat.history({
+      account: account,
+      pgpPrivateKey: pgpPrivateKey,
+      threadhash: threadhash.threadHash,
+      limit: 30,
+      env,
+    });
+
+    console.log(chats);
+    return chats;
+  }
+  return [];
 };
