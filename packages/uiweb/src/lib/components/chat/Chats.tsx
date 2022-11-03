@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { IMessageIPFS } from '../types';
+import { IMessageIPFS } from '../../types';
 
 type ChatsPropType = {
   msg: IMessageIPFS;
@@ -167,7 +167,7 @@ const TextMessage = styled.p`
 const TimeStamp = styled.span`
   min-width: 44px;
   font-weight: 400;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 130%;
   display: flex;
   justify-content: flex-end;
@@ -210,7 +210,7 @@ const SenderMessage = styled.div`
   padding: ${(props: any): string => props.padding || '10px 15px'};
   background: ${(props: any): string => props.color || '#ca599b'};
   border: 1px solid #e4e8ef;
-  border-radius: 2px 16px 16px 16px;
+  border-radius: 16px 2px 16px 16px;
   display: flex;
   justify-content: flex-strt;
   align-items: center;

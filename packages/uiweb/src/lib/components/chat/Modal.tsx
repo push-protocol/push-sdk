@@ -1,47 +1,60 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
 import * as PushAPI from '@pushprotocol/restapi';
-import { ChatPropsContext } from '../../context';
+import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import PushIcon from '../../icons/chat/pushIcon.svg';
 import { Chats } from './Chats';
-import { walletToPCAIP10 } from '../../helpers';
+import { getChats, walletToPCAIP10 } from '../../helpers';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 
 export const Modal: React.FC = () => {
-  const { supportAddress, provider, env, connectedUser } =
+  const { supportAddress, env, account } =
     useContext<any>(ChatPropsContext);
-  const [chats, setChats] = useState<any>({});
+  const { chats, setChats ,connectedUser} = useContext<any>(ChatMainStateContext);
   useEffect(() => {
-    const getChats = async () => {
-      const threadhash = await PushAPI.chat.conversationHash({account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',conversationId:supportAddress});
-      // const chats = await PushAPI.chat.history({
-      //   account:'0x58689458347f54d1d36cB287C1Cb2017800ecBB4',
-      //   threadhash: threadhash.threadHash,
-      //   limit: 3,
-      //   env,
-      // });
-      setChats(chats);
-    };
-    getChats();
-  }, []);
+    if (connectedUser) {
+      const getChatCall =  async() => {
+        console.log('in use effect');
+        const chats = await getChats({
+          account,
+          pgpPrivateKey: connectedUser.privateKey,
+          supportAddress,
+          env,
+        });
+        setChats(chats);
+      };
+      getChatCall();
+    }
+  }, [connectedUser]);
+  console.log(connectedUser);
   console.log(chats);
   return (
     <Container>
-      <ModalHeader />
-      <AddressInfo />
-      {!connectedUser &&
+      <Section>
+        <ModalHeader />
+        <AddressInfo />
+      </Section>
+      {connectedUser &&
         chats.length &&
-        chats.map((chat: IMessageIPFS) => 
+        chats.map((chat: IMessageIPFS) => (
           <Chats
             msg={chat}
-            caip10={walletToPCAIP10(
-              '0x58689458347f54d1d36cB287C1Cb2017800ecBB4'
-            )}
+            caip10={walletToPCAIP10(account)}
             messageBeingSent={true}
           />
-        )}
-      {connectedUser && <Span>Connect your wallet to conitnue</Span>}
+        ))}
+      {!connectedUser && <Span>Connect your wallet to conitnue</Span>}
+      <Section>
+        <ChatInput />
+        <PoweredByDiv>
+          <PoweredBySpan>POWERED BY</PoweredBySpan>
+          <Image src={PushIcon} alt="push logo" />
+          <PoweredBySpan>Push Chat</PoweredBySpan>
+        </PoweredByDiv>
+      </Section>
     </Container>
   );
 };
@@ -50,6 +63,7 @@ export const Modal: React.FC = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e4e8ef;
@@ -57,12 +71,14 @@ const Container = styled.div`
   border-radius: 24px;
   height: 585px;
   width: 350px;
-  padding: 0 15px 11px 15px;
+  padding: 0 15px 9px 15px;
 `;
 
-const Button = styled.button``;
+const Section = styled.div``;
 
-const Image = styled.img``;
+const Image = styled.img`
+  verstical-align: middle;
+`;
 
 const Span = styled.span`
   font-weight: 400;
@@ -71,6 +87,19 @@ const Span = styled.span`
   display: flex;
   text-align: center;
   justify-content: center;
-  margin-top: 30%;
+  margin-bottom: 30%;
   color: #657795;
+`;
+
+const PoweredByDiv = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const PoweredBySpan = styled.span`
+  font-weight: 500;
+  font-size: 8px;
+  line-height: 150%;
+  letter-spacing: 0.2em;
+  color: #494d5f;
 `;

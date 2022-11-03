@@ -1,20 +1,28 @@
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
+import * as PushAPI from '@pushprotocol/restapi';
+import Constants from '../components/chat/constants';
+import { AccountEnvOptionsType } from '../types';
+import { IConnectedUser, IMessageIPFS } from '@pushprotocol/restapi';
 
-type handleOnChatIconClickProps = {
+type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
 
+type GetChatsType = {
+  pgpPrivateKey:string;
+supportAddress:string;
+} & AccountEnvOptionsType;
 export const handleOnChatIconClick = ({
   isModalOpen,
   setIsModalOpen,
-}: handleOnChatIconClickProps) => {
+}: HandleOnChatIconClickProps) => {
   console.log(isModalOpen);
   setIsModalOpen(!isModalOpen);
 };
 
-export const walletToPCAIP10 = (account:string): string => {
+export const walletToPCAIP10 = (account: string): string => {
   if (account.includes('eip155:')) {
     return account;
   }
@@ -26,7 +34,7 @@ export const pCAIP10ToWallet = (wallet: string): string => {
   return wallet;
 };
 
-export const resolveEns = (address: string,provider: Web3Provider) => {
+export const resolveEns = (address: string, provider: Web3Provider) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
   // let provider = ethers.getDefaultProvider('mainnet');
@@ -43,7 +51,7 @@ export const resolveEns = (address: string,provider: Web3Provider) => {
   //   );
   // }
 
-  console.log(provider)
+  console.log(provider);
 
   provider.lookupAddress(checksumWallet).then((ens) => {
     if (ens) {
@@ -52,4 +60,39 @@ export const resolveEns = (address: string,provider: Web3Provider) => {
       return null;
     }
   });
+};
+
+export const createUserIfNecessary = async (
+  options: AccountEnvOptionsType
+): Promise<IConnectedUser> => {
+  const { account, env = Constants.ENV.PROD } = options || {};
+  let connectedUser = await PushAPI.user.get({ account: account, env });
+  if (!connectedUser?.encryptedPrivateKey) {
+    connectedUser = await PushAPI.user.create({ account: account, env });
+  }
+  const decryptedPrivateKey = await PushAPI.chat.decryptWithWalletRPCMethod(
+    connectedUser.encryptedPrivateKey,
+    account
+  );
+  return { ...connectedUser, privateKey: decryptedPrivateKey };
+};
+
+export const getChats = async (
+  options: GetChatsType
+): Promise<IMessageIPFS[]> => {
+  const { account, pgpPrivateKey, supportAddress,env = Constants.ENV.PROD } = options || {};
+  const threadhash: any = await PushAPI.chat.conversationHash({
+    account: account,
+    conversationId: supportAddress,
+    env,
+  });
+  const chats = await PushAPI.chat.history({
+    account: account,
+    pgpPrivateKey: pgpPrivateKey,
+    threadhash: threadhash.threadHash,
+    limit: 3,
+    env,
+  });
+  console.log(chats)
+  return chats;
 };

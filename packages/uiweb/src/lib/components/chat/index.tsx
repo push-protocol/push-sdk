@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Web3Provider } from '@ethersproject/providers';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
 import Constants from './constants';
@@ -7,9 +6,10 @@ import * as PushAPI from '@pushprotocol/restapi';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { IMessageIPFS } from '@pushprotocol/restapi';
 
 export type ChatProps = {
-  provider: Web3Provider;
+  account: string;
   supportAddress: string;
   greetingMsg?: string;
   modalTitle?: string;
@@ -23,7 +23,7 @@ export type ButtonStyleProps = {
 };
 
 export const Chat: React.FC<ChatProps> = ({
-  provider,
+  account,
   supportAddress,
   greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
@@ -33,9 +33,14 @@ export const Chat: React.FC<ChatProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [connectedUser, setConnectedUser] = useState<any>(null);
+  const [messageBeingSent, setMessageBeingSent] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('');
+  const [footerError, setFooterError] = useState<string>('');
+  const [chats, setChats] = useState<IMessageIPFS[]>([]);
+
 
   const chatPropsData = {
-    provider,
+    account,
     supportAddress,
     greetingMsg,
     modalTitle,
@@ -49,6 +54,14 @@ export const Chat: React.FC<ChatProps> = ({
     setIsModalOpen,
     connectedUser,
     setConnectedUser,
+    messageBeingSent, 
+    setMessageBeingSent,
+    message,
+    setMessage,
+    chats,
+    setChats,
+    footerError,
+    setFooterError
   }
 
 
