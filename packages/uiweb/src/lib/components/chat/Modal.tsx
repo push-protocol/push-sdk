@@ -45,7 +45,7 @@ export const Modal: React.FC = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [connectedUser]);
 
   return (
     <Container>

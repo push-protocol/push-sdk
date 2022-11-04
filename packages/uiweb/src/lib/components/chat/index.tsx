@@ -56,8 +56,9 @@ export const Chat: React.FC<ChatProps> = ({
   };
 
   useEffect(() => {
-    setConnectedUser(null);
     setChats([]);
+    setConnectedUser(null);
+  
   }, [account, supportAddress]);
 
   const chatMainStateData = {
