@@ -13,12 +13,12 @@ type MessageWrapperType = {
   height?: string;
 };
 
-type FileMessageContent = {
-  content: string;
-  name: string;
-  type: string;
-  size: number;
-};
+// type FileMessageContent = {
+//   content: string;
+//   name: string;
+//   type: string;
+//   size: number;
+// };
 
 export const Chats: React.FC<ChatsPropType> = ({
   msg,
