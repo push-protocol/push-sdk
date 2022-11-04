@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.2.0...restapi-0.2.1) (2022-11-03)
+
+
+### Bug Fixes
+
+* removed lightweight package ([4c0883e](https://github.com/ethereum-push-notification-service/push-sdk/commit/4c0883eb5d7172ef9c6134bad9d26a0a8116f53d))
+
+
+
 # [0.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.1.1...restapi-0.2.0) (2022-11-02)
 
 

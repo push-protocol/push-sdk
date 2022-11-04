@@ -2,6 +2,24 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.2.0...uiweb-0.2.1) (2022-11-03)
+
+
+### Bug Fixes
+
+* added restapi as peer dependency ([46ca090](https://github.com/ethereum-push-notification-service/push-sdk/commit/46ca090854bfcefa72a0afd58cee623b6f4412d5))
+
+
+
+# [0.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.1.0...uiweb-0.2.0) (2022-11-03)
+
+
+### Features
+
+* added support chat sdk ([bdaa74f](https://github.com/ethereum-push-notification-service/push-sdk/commit/bdaa74f38fc3f454e98bdf0fede349876f75a13f))
+
+
+
 # [0.1.0](https://github.com/ethereum-push-notification-service/sdk/compare/uiweb-0.0.2...uiweb-0.1.0) (2022-10-07)
 
 

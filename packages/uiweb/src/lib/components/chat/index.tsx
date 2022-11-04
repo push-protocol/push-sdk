@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
 import Constants from './constants';
@@ -14,7 +14,7 @@ export type ChatProps = {
   // greetingMsg?: string;
   modalTitle?: string;
   primaryColor?: string;
-  apiKey?:string;
+  apiKey?: string;
   env?: string;
 };
 
@@ -40,10 +40,10 @@ export const Chat: React.FC<ChatProps> = ({
 
   const setChatsSorted = (chats: IMessageIPFS[]) => {
     chats.sort((a, b) => {
-      return (a.timestamp! > b.timestamp!) ? 1 : -1;
+      return a.timestamp! > b.timestamp! ? 1 : -1;
     });
     setChats(chats);
-  }
+  };
 
   const chatPropsData = {
     account,
@@ -52,36 +52,44 @@ export const Chat: React.FC<ChatProps> = ({
     modalTitle,
     primaryColor,
     apiKey,
-    env
-  }
+    env,
+  };
+
+  useEffect(() => {
+    setConnectedUser(null);
+    setChats([]);
+  }, [account, supportAddress]);
 
   const chatMainStateData = {
     isModalOpen,
     setIsModalOpen,
     connectedUser,
     setConnectedUser,
-    messageBeingSent, 
+    messageBeingSent,
     setMessageBeingSent,
     message,
     setMessage,
     chats,
     setChatsSorted,
     footerError,
-    setFooterError
-  }
+    setFooterError,
+  };
 
   return (
     <Container>
       <ChatPropsContext.Provider value={chatPropsData}>
         <ChatMainStateContext.Provider value={chatMainStateData}>
           {!isModalOpen && (
-            <Button bgColor={primaryColor} onClick={() => handleOnChatIconClick({isModalOpen, setIsModalOpen})}>
+            <Button
+              bgColor={primaryColor}
+              onClick={() =>
+                handleOnChatIconClick({ isModalOpen, setIsModalOpen })
+              }
+            >
               <Image src={ChatIcon} alt="chat" />
             </Button>
           )}
-          {isModalOpen && (
-            <Modal />
-          )}
+          {isModalOpen && <Modal />}
         </ChatMainStateContext.Provider>
       </ChatPropsContext.Provider>
     </Container>
