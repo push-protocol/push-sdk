@@ -11,11 +11,11 @@ export const ModalHeader: React.FC = () => {
   return (
     <Container>
       <Span>{modalTitle}</Span>
-      <Image
-        src={MinimizeIcon}
-        alt="minimize chat"
+      <Section
         onClick={() => handleOnChatIconClick({ isModalOpen, setIsModalOpen })}
-      />
+      >
+        <Image src={MinimizeIcon} alt="minimize chat" />
+      </Section>
     </Container>
   );
 };
@@ -29,7 +29,10 @@ const Container = styled.div`
   padding: 17px;
 `;
 
-const Button = styled.button``;
+const Section = styled.div`
+  padding: 10px 5px;
+  cursor: pointer;
+`;
 
 const Image = styled.img`
   display: flex;
