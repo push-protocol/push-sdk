@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiembed-0.1.2...uiembed-0.1.3) (2022-11-08)
+
+
+### Bug Fixes
+
+* added embed-dapp url ([56512f1](https://github.com/ethereum-push-notification-service/push-sdk/commit/56512f1b2999a829e136e9bf6bbb56b427d655fd))
+
+
+
 ## [0.1.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiembed-0.1.1...uiembed-0.1.2) (2022-11-08)
 
 
