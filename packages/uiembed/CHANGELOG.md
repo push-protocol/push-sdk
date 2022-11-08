@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiembed-0.1.1...uiembed-0.1.2) (2022-11-08)
+
+
+### Bug Fixes
+
+* enable embed-sdk for polygon chain ([7039462](https://github.com/ethereum-push-notification-service/push-sdk/commit/7039462c04ec5ba6a04c7ab66a3fee2d81994e36))
+
+
+
 ## [0.1.1](https://github.com/ethereum-push-notification-service/sdk/compare/uiembed-0.1.0...uiembed-0.1.1) (2022-10-07)
 
 
