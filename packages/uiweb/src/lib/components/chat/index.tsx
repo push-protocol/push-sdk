@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
-import Constants from './constants';
 import styled from 'styled-components';
-import { handleOnChatIconClick } from '../../helpers';
+import { handleOnChatIconClick, walletToPCAIP10 } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { IMessageIPFS } from '@pushprotocol/restapi';
+import { IMessageIPFS, ITheme } from '../../types';
+import HandWave from '../icons/chat/handWave.svg';
 import './index.css';
+import { Constants, lightTheme } from '../../config';
+
+export { lightTheme } from '../../config';
+export { ITheme } from '../../types';
 
 export type ChatProps = {
   account: string;
   supportAddress: string;
-  // greetingMsg?: string;
+  greetingMsg?: string;
   modalTitle?: string;
-  primaryColor?: string;
+  theme?: ITheme;
   apiKey?: string;
   env?: string;
 };
@@ -25,9 +29,9 @@ export type ButtonStyleProps = {
 export const Chat: React.FC<ChatProps> = ({
   account,
   supportAddress,
-  // greetingMsg = Constants.DEFAULT_GREETING_MSG,
+  greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
-  primaryColor = Constants.COLOR.PRIMARY,
+  theme = { ...lightTheme },
   apiKey = '',
   env = Constants.ENV.PROD,
 }) => {
@@ -48,9 +52,9 @@ export const Chat: React.FC<ChatProps> = ({
   const chatPropsData = {
     account,
     supportAddress,
-    // greetingMsg,
+    greetingMsg,
     modalTitle,
-    primaryColor,
+    theme: { ...lightTheme, ...theme },
     apiKey,
     env,
   };
@@ -81,7 +85,7 @@ export const Chat: React.FC<ChatProps> = ({
         <ChatMainStateContext.Provider value={chatMainStateData}>
           {!isModalOpen && (
             <Button
-              bgColor={primaryColor}
+              bgColor={theme.btnColorPrimary!}
               onClick={() =>
                 handleOnChatIconClick({ isModalOpen, setIsModalOpen })
               }

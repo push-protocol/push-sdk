@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import * as PushAPI from '@pushprotocol/restapi';
-import Constants from '../components/chat/constants';
-import { AccountEnvOptionsType } from '../types';
-import { IConnectedUser, IMessageIPFS } from '@pushprotocol/restapi';
+import {Constants} from '../config';
+import { AccountEnvOptionsType, IMessageIPFS } from '../types';
+import { IConnectedUser } from '@pushprotocol/restapi';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
