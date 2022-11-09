@@ -22,7 +22,6 @@ export const ChatInput: React.FC = () => {
     connectedUser,
     chats,
     setChatsSorted,
-    setConnectedUser,
   } = useContext<any>(ChatMainStateContext);
 
   const addEmoji = (e: any, emojiObject: any): void => {

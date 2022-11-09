@@ -13,12 +13,14 @@ import {
   walletToPCAIP10,
 } from '../../helpers';
 import { IMessageIPFS } from '../../types';
+import { useChatScroll } from '../../hooks';
 
 export const Modal: React.FC = () => {
   const { supportAddress, env, account, greetingMsg, theme } =
     useContext<any>(ChatPropsContext);
   const { chats, setChatsSorted, connectedUser, setConnectedUser } =
     useContext<any>(ChatMainStateContext);
+  const ref = useChatScroll(chats.length);
 
   const greetingMsgObject = {
     fromDID: walletToPCAIP10(supportAddress),
@@ -71,7 +73,7 @@ export const Modal: React.FC = () => {
         <ModalHeader />
         <AddressInfo />
       </HeaderSection>
-      <ChatSection>
+      <ChatSection ref={ref}>
         {!connectedUser && (
           <Chats
             msg={greetingMsgObject}
@@ -132,6 +134,24 @@ const Container = styled.div`
 const ChatSection = styled.div`
   height: 350px;
   overflow: auto;
+  padding: 0 5px;
+
+  /* width */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    border-radius: 20px;
+    margin: 0 0 0 4px;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #d53a94;
+    border-radius: 20px;
+  }
 `;
 const ConnectSection = styled.div`
   display: flex;
@@ -185,3 +205,4 @@ const Span = styled.span`
   margin-bottom: 30%;
   color: #657795;
 `;
+
