@@ -71,9 +71,10 @@ export const Modal: React.FC = () => {
       {chatsBeingFetched && <div>Loading...</div>}
       <ChatSection ref={listInnerRef} onScroll={onScroll}>
         {connectedUser && chats.length
-          ? chats.map((chat: IMessageIPFS) => (
+          ? chats.map((chat: IMessageIPFS, index: number) => (
             <Chats
               msg={chat}
+              key={index}
               caip10={walletToPCAIP10(account)}
               messageBeingSent={true}
             />
@@ -83,7 +84,7 @@ export const Modal: React.FC = () => {
       {!connectedUser && (
         <ConnectSection>
           <Button onClick={() => connectUser()}>Connect</Button>
-          <Span>Connect your wallet to conitnue</Span>
+          <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
       <InputSection>
