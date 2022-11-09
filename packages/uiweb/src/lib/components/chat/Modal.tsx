@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
@@ -13,20 +13,44 @@ import {
 } from '../../helpers';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 
+const chatsFetchedLimit = 10;
+
 export const Modal: React.FC = () => {
+  const listInnerRef = useRef<HTMLDivElement>(null);
+  const [chatsBeingFetched, setChatsBeingFetched] = useState<boolean>(false);
+  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<string|null>(null);
+  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
   const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
   const { chats, setChatsSorted, connectedUser, setConnectedUser } =
     useContext<any>(ChatMainStateContext);
 
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop } = listInnerRef.current;
+      if (scrollTop === 0) {
+        // This will be triggered after hitting the first element.
+        // pagination
+        getChatCall();
+      }
+    }
+  };
+
   const getChatCall = async () => {
     if (!connectedUser) return;
-    const chatsResponse = await getChats({
+    if(wasLastListPresent && !lastThreadHashFetched) return;
+    setChatsBeingFetched(true);
+    const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
       pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
+      threadHash: lastThreadHashFetched!,
+      limit: chatsFetchedLimit,
       env,
     });
-    setChatsSorted(chatsResponse);
+    setChatsSorted([...chats, ...chatsResponse]);
+    setLastThreadHashFetched(lastThreadHash);
+    setWasLastListPresent(lastListPresent);
+    setChatsBeingFetched(false);
   };
 
   const connectUser = async () => {
@@ -34,17 +58,8 @@ export const Modal: React.FC = () => {
     setConnectedUser(user);
   };
 
-
   useEffect(() => {
     getChatCall();
-  }, [connectedUser]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getChatCall();
-    }, 3000);
-
-    return () => clearInterval(interval);
   }, [connectedUser]);
 
   return (
@@ -53,21 +68,23 @@ export const Modal: React.FC = () => {
         <ModalHeader />
         <AddressInfo />
       </HeaderSection>
-      <ChatSection>
+      {chatsBeingFetched && <div>Loading...</div>}
+      <ChatSection ref={listInnerRef} onScroll={onScroll}>
         {connectedUser && chats.length
-          ? chats.map((chat: IMessageIPFS) => (
-              <Chats
-                msg={chat}
-                caip10={walletToPCAIP10(account)}
-                messageBeingSent={true}
-              />
-            ))
+          ? chats.map((chat: IMessageIPFS, index: number) => (
+            <Chats
+              msg={chat}
+              key={index}
+              caip10={walletToPCAIP10(account)}
+              messageBeingSent={true}
+            />
+          ))
           : <></>}
       </ChatSection>
       {!connectedUser && (
         <ConnectSection>
           <Button onClick={() => connectUser()}>Connect</Button>
-          <Span>Connect your wallet to conitnue</Span>
+          <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
       <InputSection>
