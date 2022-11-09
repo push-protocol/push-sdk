@@ -1,4 +1,4 @@
-const Constants = {
+export const Constants = {
   ENV: {
     PROD: 'prod',
     STAGING: 'staging',
@@ -10,4 +10,3 @@ const Constants = {
   
 };
 
-export default Constants;

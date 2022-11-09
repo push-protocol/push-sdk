@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import * as PushAPI from '@pushprotocol/restapi';
-import Constants from '../config/constants';
+import {Constants} from '../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { IConnectedUser } from '@pushprotocol/restapi';
 

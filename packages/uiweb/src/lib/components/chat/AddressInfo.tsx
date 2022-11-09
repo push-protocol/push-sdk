@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import Constants from '../../config/constants';
+import {Constants} from '../../config';
 import { pCAIP10ToWallet } from '../../helpers';
 
 export const AddressInfo: React.FC = () => {

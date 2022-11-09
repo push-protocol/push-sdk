@@ -1,8 +1,8 @@
 
-import { Theme } from "../types"
+import { ITheme } from "../types"
 
 
-export const lightTheme: Theme = {
+export const lightTheme: ITheme = {
   bgColorPrimary: "#fff",
   bgColorSecondary: "#D53A94",
   textColorPrimary: "#1e1e1e",

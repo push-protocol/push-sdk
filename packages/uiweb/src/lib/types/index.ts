@@ -22,7 +22,7 @@ export interface AccountEnvOptionsType {
   account: string;
 }
 
-export interface Theme {
+export interface ITheme {
   bgColorPrimary?: string,
   bgColorSecondary?: string,
   textColorPrimary?: string,

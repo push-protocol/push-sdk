@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
-import Constants from '../../config/constants';
 import styled from 'styled-components';
 import { handleOnChatIconClick, walletToPCAIP10 } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { IMessageIPFS, Theme } from '../../types';
+import { IMessageIPFS, ITheme } from '../../types';
 import HandWave from '../icons/chat/handWave.svg';
 import './index.css';
-import { lightTheme } from '../../config/themisation';
+import { Constants, lightTheme } from '../../config';
+
+export { lightTheme } from '../../config';
+export { ITheme } from '../../types';
 
 export type ChatProps = {
   account: string;
   supportAddress: string;
   greetingMsg?: string;
   modalTitle?: string;
-  theme?: Theme;
+  theme?: ITheme;
   apiKey?: string;
   env?: string;
 };
@@ -29,7 +31,7 @@ export const Chat: React.FC<ChatProps> = ({
   supportAddress,
   greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
-  theme = {...lightTheme},
+  theme = { ...lightTheme },
   apiKey = '',
   env = Constants.ENV.PROD,
 }) => {
@@ -43,7 +45,7 @@ export const Chat: React.FC<ChatProps> = ({
   const setChatsSorted = (chats: IMessageIPFS[]) => {
     chats.sort((a, b) => {
       return a.timestamp! > b.timestamp! ? 1 : -1;
-    })
+    });
     setChats(chats);
   };
 
@@ -52,7 +54,7 @@ export const Chat: React.FC<ChatProps> = ({
     supportAddress,
     greetingMsg,
     modalTitle,
-    theme,
+    theme: { ...lightTheme, ...theme },
     apiKey,
     env,
   };
