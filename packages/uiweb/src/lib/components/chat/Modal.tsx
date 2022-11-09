@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
 import PoweredByPushLogo from '../../icons/chat/sponsorPush.svg';
+import { ReactComponent as HandWave } from '../../icons/chat/handWave.svg';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Chats } from './Chats';
 import {
@@ -11,21 +12,39 @@ import {
   getChats,
   walletToPCAIP10,
 } from '../../helpers';
-import { IMessageIPFS } from '@pushprotocol/restapi';
+import { IMessageIPFS } from '../../types';
 
 export const Modal: React.FC = () => {
-  const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
+  const { supportAddress, env, account, greetingMsg, theme } =
+    useContext<any>(ChatPropsContext);
   const { chats, setChatsSorted, connectedUser, setConnectedUser } =
     useContext<any>(ChatMainStateContext);
 
+  const greetingMsgObject = {
+    fromDID: walletToPCAIP10(supportAddress),
+    toDID: walletToPCAIP10(account),
+    fromCAIP10: walletToPCAIP10(supportAddress),
+    toCAIP10: walletToPCAIP10(account),
+    messageContent: greetingMsg,
+    messageType: 'Text',
+    signature: '',
+    encType: '',
+    encryptedSecret: '',
+    sigType: '',
+    link: null,
+    timestamp: undefined,
+    icon: HandWave,
+  };
   const getChatCall = async () => {
     if (!connectedUser) return;
-    const chatsResponse = await getChats({
+    const chatsResponse: IMessageIPFS[] = await getChats({
       account,
       pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
+      greetingMsg,
       env,
     });
+    console.log(chatsResponse);
     setChatsSorted(chatsResponse);
   };
 
@@ -33,7 +52,6 @@ export const Modal: React.FC = () => {
     const user = await createUserIfNecessary({ account, env });
     setConnectedUser(user);
   };
-
 
   useEffect(() => {
     getChatCall();
@@ -48,25 +66,36 @@ export const Modal: React.FC = () => {
   }, [connectedUser]);
 
   return (
-    <Container>
+    <Container theme={theme}>
       <HeaderSection>
         <ModalHeader />
         <AddressInfo />
       </HeaderSection>
       <ChatSection>
-        {connectedUser && chats.length
-          ? chats.map((chat: IMessageIPFS) => (
-              <Chats
-                msg={chat}
-                caip10={walletToPCAIP10(account)}
-                messageBeingSent={true}
-              />
-            ))
-          : <></>}
+        {!connectedUser && (
+          <Chats
+            msg={greetingMsgObject}
+            caip10={walletToPCAIP10(account)}
+            messageBeingSent={true}
+          />
+        )}
+        {connectedUser && chats.length ? (
+          chats.map((chat: IMessageIPFS) => (
+            <Chats
+              msg={chat}
+              caip10={walletToPCAIP10(account)}
+              messageBeingSent={true}
+            />
+          ))
+        ) : (
+          <></>
+        )}
       </ChatSection>
       {!connectedUser && (
         <ConnectSection>
-          <Button onClick={() => connectUser()}>Connect</Button>
+          <Button onClick={() => connectUser()} theme={theme}>
+            Connect
+          </Button>
           <Span>Connect your wallet to conitnue</Span>
         </ConnectSection>
       )}
@@ -89,10 +118,10 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #e4e8ef;
+  background: ${(props) => props.theme.moduleColor};
+  border: ${(props) => props.theme.border};
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.07);
-  border-radius: 24px;
+  border-radius: ${(props) => props.theme.borderRadius};
   height: 585px;
   max-height: 585px;
   width: 350px;
@@ -107,11 +136,11 @@ const ChatSection = styled.div`
 const ConnectSection = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 25%;
+  margin-bottom: 30%;
 `;
 
 const Button = styled.button`
-  background: #d53a94;
+  background: ${(props) => props.theme.btnColorPrimary};
   border-radius: 15px;
   align-self: center;
   padding: 11px 36px;
@@ -123,7 +152,7 @@ const Button = styled.button`
   align-items: center;
   text-align: center;
   letter-spacing: -0.019em;
-  color: #ffffff;
+  color: ${(props) => props.theme.textColorSecondary};
   margin-bottom: 10px;
   cursor: pointer;
 `;
@@ -155,17 +184,4 @@ const Span = styled.span`
   justify-content: center;
   margin-bottom: 30%;
   color: #657795;
-`;
-
-const PoweredByDiv = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const PoweredBySpan = styled.span`
-  font-weight: 500;
-  font-size: 8px;
-  line-height: 150%;
-  letter-spacing: 0.2em;
-  color: #494d5f;
 `;

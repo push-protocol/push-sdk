@@ -1,18 +1,17 @@
 import React, { ChangeEvent, useContext, useRef, useState } from 'react';
-import SendIcon from '../../icons/chat/sendIcon.svg';
+import { ReactComponent as SendIcon } from '../../icons/chat/sendIcon.svg';
 import SmileyIcon from '../../icons/chat/smiley.svg';
 import AttachmentIcon from '../../icons/chat/attachment.svg';
-import styled from 'styled-components';
+import styled, { ThemeConsumer } from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { createUserIfNecessary } from '../../helpers';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filesUploading, setFileUploading] = useState<boolean>(false);
-  const { account, env, supportAddress, apiKey } =
+  const { account, env, supportAddress, apiKey,theme } =
     useContext<any>(ChatPropsContext);
 
   const {
@@ -147,15 +146,7 @@ export const ChatInput: React.FC = () => {
             {filesUploading ? (
               <div className="imageloader">Loading...</div>
             ) : (
-              <>
-                <Image
-                  src={SendIcon}
-                  alt="Send Message"
-                  height="27px"
-                  width="27px"
-                  onClick={handleSubmit}
-                />
-              </>
+                <SendIcon onClick={handleSubmit} fill={theme.btnColorPrimary}/>
             )}
           </>
         </>
@@ -197,7 +188,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
+  background: ${(props: any): string => props.height || '24px'};
   border: 1px solid #e4e8ef;
   margin: 10px 0;
   border-radius: 16px;

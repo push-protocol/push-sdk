@@ -18,8 +18,10 @@ export const ChatSupportTest = () => {
   return (
     <Chat
     account={account}
-      supportAddress="0xd9c1CCAcD4B8a745e191b62BA3fcaD87229CB26d"
+      supportAddress="0x272AC1593DcDfB9Def0BdD0Cdf75D78597129823"
       apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
+      greetingMsg='How can i help you?'
+      // primaryColor='lightgreen'
       env='dev'
     />
   );

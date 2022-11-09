@@ -5,12 +5,12 @@ import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { handleOnChatIconClick } from '../../helpers';
 
 export const ModalHeader: React.FC = () => {
-  const { modalTitle } = useContext<any>(ChatPropsContext);
+  const { modalTitle,theme } = useContext<any>(ChatPropsContext);
   const { isModalOpen, setIsModalOpen } = useContext<any>(ChatMainStateContext);
 
   return (
     <Container>
-      <Span>{modalTitle}</Span>
+      <Span theme={theme}>{modalTitle}</Span>
       <Section
         onClick={() => handleOnChatIconClick({ isModalOpen, setIsModalOpen })}
       >
@@ -50,7 +50,7 @@ const Span = styled.span`
   display: flex;
   align-items: center;
   text-align: center;
-  color: #1e1e1e;
+  color:${(props: any): string => props.theme.textColorPrimary || '#000'};
   margin-left: 27%;
   flex: none;
   order: 0;

@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import * as PushAPI from '@pushprotocol/restapi';
-import Constants from '../components/chat/constants';
-import { AccountEnvOptionsType } from '../types';
-import { IConnectedUser, IMessageIPFS } from '@pushprotocol/restapi';
+import Constants from '../config/constants';
+import { AccountEnvOptionsType, IMessageIPFS } from '../types';
+import { IConnectedUser } from '@pushprotocol/restapi';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -13,6 +13,7 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey: string;
   supportAddress: string;
+  greetingMsg: string;
 } & AccountEnvOptionsType;
 export const handleOnChatIconClick = ({
   isModalOpen,
@@ -84,6 +85,7 @@ export const getChats = async (
     account,
     pgpPrivateKey,
     supportAddress,
+    greetingMsg,
     env = Constants.ENV.PROD,
   } = options || {};
   const threadhash: any = await PushAPI.chat.conversationHash({
@@ -91,17 +93,15 @@ export const getChats = async (
     conversationId: supportAddress,
     env,
   });
+  let chats: IMessageIPFS[] = [];
   if (threadhash.threadHash) {
-    const chats = await PushAPI.chat.history({
+    chats = await PushAPI.chat.history({
       account: account,
       pgpPrivateKey: pgpPrivateKey,
       threadhash: threadhash.threadHash,
       limit: 30,
       env,
     });
-
-    console.log(chats);
-    return chats;
   }
-  return [];
+  return chats;
 };
