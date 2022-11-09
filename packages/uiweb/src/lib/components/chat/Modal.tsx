@@ -16,9 +16,9 @@ import { IMessageIPFS } from '@pushprotocol/restapi';
 const chatsFetchedLimit = 10;
 
 export const Modal: React.FC = () => {
-  const listInnerRef = useRef<any>(null);
+  const listInnerRef = useRef<HTMLDivElement>(null);
   const [chatsBeingFetched, setChatsBeingFetched] = useState<boolean>(false);
-  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<any>(undefined);
+  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<string|null>(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
   const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
   const { chats, setChatsSorted, connectedUser, setConnectedUser } =
@@ -43,7 +43,7 @@ export const Modal: React.FC = () => {
       account,
       pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
-      threadHash: lastThreadHashFetched,
+      threadHash: lastThreadHashFetched!,
       limit: chatsFetchedLimit,
       env,
     });
