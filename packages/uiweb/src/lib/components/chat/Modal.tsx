@@ -24,6 +24,7 @@ export const Modal: React.FC = () => {
       account,
       pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
+      limit: 30,
       env,
     });
     setChatsSorted(chatsResponse);
