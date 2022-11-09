@@ -188,7 +188,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   background: ${(props: any): string => props.theme.bgColorPrimary || '#fff'};
-  border: 1px solid #e4e8ef;
+  border:${(props) => props.theme.border};
   margin: 10px 0;
   border-radius: 16px;
 `;

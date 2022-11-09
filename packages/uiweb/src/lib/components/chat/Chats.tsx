@@ -185,7 +185,7 @@ const ReceivedMessage = styled.div`
   padding: ${(props: any): string => props.padding || '12px 15px 12px 11px'};
   background: ${(props: any): string => props.theme.bgColorPrimary || '#ffffff'};
   text-align: left;
-  border: 1px solid #e4e8ef;
+  border: ${(props) => props.theme.border};
   border-radius: 2px 16px 16px 16px;
   display: flex;
   justify-content: space-between;
@@ -200,7 +200,7 @@ const SenderMessage = styled.div`
   text-align: left;
   padding: ${(props: any): string => props.padding || '12px 15px 12px 11px'};
   background: ${(props: any): string => props.theme.bgColorSecondary || '#ca599b'};
-  border: 1px solid #e4e8ef;
+  border: ${(props) => props.theme.border};
   border-radius: 16px 2px 16px 16px;
   display: flex;
   justify-content: flex-strt;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
@@ -15,12 +15,17 @@ import {
 import { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
 
+const chatsFetchedLimit = 10;
+
 export const Modal: React.FC = () => {
-  const { supportAddress, env, account, greetingMsg, theme } =
-    useContext<any>(ChatPropsContext);
+  
+  const [chatsBeingFetched, setChatsBeingFetched] = useState<boolean>(false);
+  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<string|null>(null);
+  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
+  const { supportAddress, env, account,greetingMsg, theme } = useContext<any>(ChatPropsContext);
   const { chats, setChatsSorted, connectedUser, setConnectedUser } =
     useContext<any>(ChatMainStateContext);
-  const ref = useChatScroll(chats.length);
+  const listInnerRef = useChatScroll(chats.length);
 
   const greetingMsgObject = {
     fromDID: walletToPCAIP10(supportAddress),
@@ -37,17 +42,33 @@ export const Modal: React.FC = () => {
     timestamp: undefined,
     icon: HandWave,
   };
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop } = listInnerRef.current;
+      if (scrollTop === 0) {
+        // This will be triggered after hitting the first element.
+        // pagination
+        getChatCall();
+      }
+    }
+  };
+
   const getChatCall = async () => {
     if (!connectedUser) return;
-    const chatsResponse: IMessageIPFS[] = await getChats({
+    if(wasLastListPresent && !lastThreadHashFetched) return;
+    setChatsBeingFetched(true);
+    const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
       pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
-      greetingMsg,
+      threadHash: lastThreadHashFetched!,
+      limit: chatsFetchedLimit,
       env,
     });
-    console.log(chatsResponse);
-    setChatsSorted(chatsResponse);
+    setChatsSorted([...chats, ...chatsResponse]);
+    setLastThreadHashFetched(lastThreadHash);
+    setWasLastListPresent(lastListPresent);
+    setChatsBeingFetched(false);
   };
 
   const connectUser = async () => {
@@ -59,46 +80,36 @@ export const Modal: React.FC = () => {
     getChatCall();
   }, [connectedUser]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getChatCall();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [connectedUser]);
-
   return (
     <Container theme={theme}>
       <HeaderSection>
         <ModalHeader />
         <AddressInfo />
       </HeaderSection>
-      <ChatSection ref={ref}>
-        {!connectedUser && (
+      {chatsBeingFetched && <div>Loading...</div>}
+      {!connectedUser && (
           <Chats
             msg={greetingMsgObject}
             caip10={walletToPCAIP10(account)}
             messageBeingSent={true}
           />
         )}
-        {connectedUser && chats.length ? (
-          chats.map((chat: IMessageIPFS) => (
+      <ChatSection ref={listInnerRef} onScroll={onScroll} theme={theme}>
+        {connectedUser && chats.length
+          ? chats.map((chat: IMessageIPFS, index: number) => (
             <Chats
               msg={chat}
+              key={index}
               caip10={walletToPCAIP10(account)}
               messageBeingSent={true}
             />
           ))
-        ) : (
-          <></>
-        )}
+          : <></>}
       </ChatSection>
       {!connectedUser && (
         <ConnectSection>
-          <Button onClick={() => connectUser()} theme={theme}>
-            Connect
-          </Button>
-          <Span>Connect your wallet to conitnue</Span>
+          <Button onClick={() => connectUser()} theme={theme}>Connect</Button>
+          <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
       <InputSection>
@@ -149,7 +160,7 @@ const ChatSection = styled.div`
 
   /* Handle */
   &::-webkit-scrollbar-thumb {
-    background: #d53a94;
+    background: ${(props: any): string => props.theme.bgColorSecondary};
     border-radius: 20px;
   }
 `;

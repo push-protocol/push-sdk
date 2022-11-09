@@ -6,7 +6,7 @@ import {Constants} from '../../config';
 import { pCAIP10ToWallet } from '../../helpers';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env } = useContext<any>(ChatPropsContext);
+  const { supportAddress, env,theme } = useContext<any>(ChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const walletAddress = pCAIP10ToWallet(supportAddress);
@@ -20,9 +20,9 @@ export const AddressInfo: React.FC = () => {
   }, [supportAddress]);
 
   return (
-    <Container>
+    <Container theme={theme}>
       <Image src={user?.profilePicture? user?.profilePicture : Constants.DEFAULT_PROFILE_PICTURE } alt="address profile" />
-      <Span>
+      <Span theme={theme}>
         {ensName && `${ensName}`}
         {!ensName &&
           `${walletAddress.substring(0, 8)}...${walletAddress.substring(
@@ -38,8 +38,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #e4e8ef;
+  background:${(props) => props.theme.bgColorPrimary || '#fff'};
+  border: ${(props) => props.theme.border};
   padding: 5px;
   margin: 13px 0;
   border-radius: 29px;
@@ -66,5 +66,5 @@ const Span = styled.span`
   align-items: center;
   line-height: 25px;
   letter-spacing: -0.019em;
-  color: #1e1e1e;
+  color:${(props: any): string => props.theme.textColorPrimary || '#000'};
 `;

@@ -13,7 +13,8 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey: string;
   supportAddress: string;
-  greetingMsg: string;
+  limit: number;
+  threadHash?: string;
 } & AccountEnvOptionsType;
 export const handleOnChatIconClick = ({
   isModalOpen,
@@ -78,30 +79,45 @@ export const createUserIfNecessary = async (
   return { ...connectedUser, privateKey: decryptedPrivateKey };
 };
 
+type GetChatsResponseType = {
+  chatsResponse: IMessageIPFS[],
+  lastThreadHash: string | null,
+  lastListPresent: boolean
+}
+
 export const getChats = async (
   options: GetChatsType
-): Promise<IMessageIPFS[]> => {
+): Promise<GetChatsResponseType> => {
   const {
     account,
     pgpPrivateKey,
     supportAddress,
-    greetingMsg,
+    threadHash = null,
+    limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
-  const threadhash: any = await PushAPI.chat.conversationHash({
-    account: account,
-    conversationId: supportAddress,
-    env,
-  });
-  let chats: IMessageIPFS[] = [];
-  if (threadhash.threadHash) {
-    chats = await PushAPI.chat.history({
+  let threadhash: any = threadHash;
+  if (!threadhash) {
+    threadhash = await PushAPI.chat.conversationHash({
       account: account,
-      pgpPrivateKey: pgpPrivateKey,
-      threadhash: threadhash.threadHash,
-      limit: 30,
+      conversationId: supportAddress,
       env,
     });
+    threadhash = threadhash.threadHash;
   }
-  return chats;
+  if (threadhash) {
+    const chats = await PushAPI.chat.history({
+      account: account,
+      pgpPrivateKey: pgpPrivateKey,
+      threadhash: threadhash,
+      limit: limit,
+      env,
+    });
+
+    const lastThreadHash = chats[chats.length - 1]?.link;
+    const lastListPresent = chats.length > 0 ? true : false;
+    console.log({ chats, lastThreadHash });
+    return { chatsResponse: chats, lastThreadHash, lastListPresent };
+  }
+  return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
 };

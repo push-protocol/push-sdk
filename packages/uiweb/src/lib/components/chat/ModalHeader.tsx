@@ -9,7 +9,7 @@ export const ModalHeader: React.FC = () => {
   const { isModalOpen, setIsModalOpen } = useContext<any>(ChatMainStateContext);
 
   return (
-    <Container>
+    <Container theme={theme}>
       <Span theme={theme}>{modalTitle}</Span>
       <Section
         onClick={() => handleOnChatIconClick({ isModalOpen, setIsModalOpen })}
@@ -23,7 +23,7 @@ export const ModalHeader: React.FC = () => {
 //styles
 const Container = styled.div`
   display: flex;
-  border-bottom: 1px solid #e4e8ef;
+  border-bottom: ${(props) => props.theme.border};
   align-items: center;
   justify-content: space-between;
   padding: 17px;
