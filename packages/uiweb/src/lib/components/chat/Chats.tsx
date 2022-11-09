@@ -136,7 +136,6 @@ export const Chats: React.FC<ChatsPropType> = ({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  background: #ffffff;
 `;
 
 const Button = styled.button``;

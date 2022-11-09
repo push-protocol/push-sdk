@@ -98,7 +98,7 @@ export const ChatInput: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container theme={theme}>
       {messageBeingSent ? (
         <ItemHV2>Loading...</ItemHV2>
       ) : (
@@ -187,7 +187,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: ${(props: any): string => props.height || '24px'};
+  background: ${(props: any): string => props.theme.bgColorPrimary || '#fff'};
   border: 1px solid #e4e8ef;
   margin: 10px 0;
   border-radius: 16px;

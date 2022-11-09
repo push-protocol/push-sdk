@@ -17,6 +17,7 @@ export const ChatSupportTest = () => {
   const { account } = useContext<any>(Web3Context);
   const theme:ITheme = {
     btnColorPrimary:'green',
+    moduleColor:'pink'
   };
   return (
     <Chat
