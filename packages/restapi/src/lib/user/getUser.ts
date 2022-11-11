@@ -15,13 +15,14 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   }
   const caip10 = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
+  const requestUrl = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
   return axios
-    .get(apiEndpoint)
+    .get(requestUrl)
     .then((response) => {
       return response.data;
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${apiEndpoint}: `, err);
+      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
     });
 };

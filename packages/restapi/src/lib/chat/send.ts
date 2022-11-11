@@ -78,6 +78,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         });
     }
   } catch (err) {
-    console.error(`[EPNS-SDK] - API  - Error - send() -:  `, err);
+    console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
+    throw Error(`[EPNS-SDK] - API  - Error - API send() -: ${err}`);
   }
 };
