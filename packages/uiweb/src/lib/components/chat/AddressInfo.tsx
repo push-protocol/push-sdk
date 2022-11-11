@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { ChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import {Constants} from '../../config';
-import { pCAIP10ToWallet } from '../../helpers';
+import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
+import {ReactComponent as CopySvg} from "../../icons/chat/copy.svg";
 
 export const AddressInfo: React.FC = () => {
   const { supportAddress, env,theme } = useContext<any>(ChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const walletAddress = pCAIP10ToWallet(supportAddress);
-
+  
+ 
   useEffect(() => {
     const getUser = async () => {
       const user = await PushAPI.user.get({ account: walletAddress, env });
@@ -21,6 +23,7 @@ export const AddressInfo: React.FC = () => {
 
   return (
     <Container theme={theme}>
+      <Section>
       <Image src={user?.profilePicture? user?.profilePicture : Constants.DEFAULT_PROFILE_PICTURE } alt="address profile" />
       <Span theme={theme}>
         {ensName && `${ensName}`}
@@ -29,6 +32,8 @@ export const AddressInfo: React.FC = () => {
             walletAddress.length - 8
           )}`}
       </Span>
+      </Section>
+      <CopySvg onClick={()=>copyToClipboard(walletAddress)} stroke={theme.btnColorSecondary}/>
     </Container>
   );
 };
@@ -36,16 +41,20 @@ export const AddressInfo: React.FC = () => {
 //styles
 const Container = styled.div`
   display: flex;
+  align-items:center;
+  justify-content: space-between;
   flex-direction: row;
   box-sizing: border-box;
   background:${(props) => props.theme.bgColorPrimary || '#fff'};
   border: ${(props) => props.theme.border};
-  padding: 5px;
+  padding: 5px 20px 5px 5px;
   margin: 13px 0;
   border-radius: 29px;
 `;
 
-const Button = styled.button``;
+const Section = styled.div`
+  display: flex;
+`;
 
 const Image = styled.img`
   display: flex;

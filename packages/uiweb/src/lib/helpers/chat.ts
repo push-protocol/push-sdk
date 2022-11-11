@@ -121,3 +121,17 @@ export const getChats = async (
   }
   return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
 };
+
+
+export const copyToClipboard = (address:string):void => {
+  if (navigator && navigator.clipboard) {
+    navigator.clipboard.writeText(address);
+  } else {
+    const el = document.createElement("textarea");
+    el.value = address;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+  }
+};
