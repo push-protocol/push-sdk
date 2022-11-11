@@ -39,7 +39,8 @@ export const Chat: React.FC<ChatProps> = ({
   const [connectedUser, setConnectedUser] = useState<any>(null);
   const [messageBeingSent, setMessageBeingSent] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-  const [footerError, setFooterError] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState<string>('');
+  const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
 
   const setChatsSorted = (chats: IMessageIPFS[]) => {
@@ -71,12 +72,14 @@ export const Chat: React.FC<ChatProps> = ({
     setConnectedUser,
     messageBeingSent,
     setMessageBeingSent,
+    setToastMessage,
+    setToastType,
     message,
     setMessage,
     chats,
     setChatsSorted,
-    footerError,
-    setFooterError,
+    toastMessage,
+    toastType,
   };
 
   return (
