@@ -51,5 +51,6 @@ export const approve = async (
   return axios.put(requestUrl, body)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
     });
 }

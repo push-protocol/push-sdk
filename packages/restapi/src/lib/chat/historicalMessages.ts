@@ -47,5 +47,3 @@ export const history = async (
     throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);
   }
 }
-
-
