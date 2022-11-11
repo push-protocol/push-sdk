@@ -17,13 +17,13 @@ export const Toaster: React.FC<ToasterPropType> = ({ message, type }) => {
   const { theme } = useContext<any>(ChatPropsContext);
   const { setToastMessage } = useContext<any>(ChatMainStateContext);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //    onClose();
-  //   }, 5000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+     onClose();
+    }, 5000);
   
-  //   return () => clearInterval(interval); 
-  // }, [])
+    return () => clearInterval(interval); 
+  }, [])
   
   const onClose = () => {
     setToastMessage('');
