@@ -5,20 +5,23 @@ import AttachmentIcon from '../../icons/chat/attachment.svg';
 import styled, { ThemeConsumer } from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { Spinner } from './Spinner';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filesUploading, setFileUploading] = useState<boolean>(false);
-  const { account, env, supportAddress, apiKey,theme } =
+  const [loading, setLoading] = useState<boolean>(false);
+  const { account, env, supportAddress, apiKey, theme } =
     useContext<any>(ChatPropsContext);
 
   const {
     messageBeingSent,
     message,
     setMessage,
-    setFooterError,
+    setToastMessage,
+    setToastType,
     connectedUser,
     chats,
     setChatsSorted,
@@ -33,6 +36,7 @@ export const ChatInput: React.FC = () => {
     preventDefault: () => void;
   }): Promise<void> => {
     e.preventDefault();
+    setLoading(true);
     if (message.trim() !== '' && connectedUser) {
       const sendResponse = await PushAPI.chat.send({
         messageContent: message,
@@ -48,9 +52,14 @@ export const ChatInput: React.FC = () => {
         sendResponse.messageContent = message;
         setChatsSorted([...chats, sendResponse]);
         setMessage('');
+        setLoading(false);
+      } else {
+        setToastMessage(sendResponse);
+        setToastType('error');
       }
     }
   };
+
   const handleKeyPress = (e: any): void => {
     const x = e.keyCode;
     if (x === 13) {
@@ -72,7 +81,8 @@ export const ChatInput: React.FC = () => {
       try {
         const TWO_MB = 1024 * 1024 * 2;
         if (file.size > TWO_MB) {
-          setFooterError('Files larger than 2mb is now allowed');
+          setToastMessage('Cannot upload file over 2MB');
+          setToastType('error');
           return;
         }
         setFileUploading(true);
@@ -142,10 +152,10 @@ export const ChatInput: React.FC = () => {
               {/* <FileInput type="file" ref={fileInputRef} onChange={uploadFile} /> */}
             </label>
 
-            {filesUploading ? (
-              <div className="imageloader">Loading...</div>
+            {filesUploading || loading ? (
+              <Spinner size="35" />
             ) : (
-                <SendIcon onClick={handleSubmit} fill={theme.btnColorPrimary}/>
+              <SendIcon onClick={handleSubmit} fill={theme.btnColorPrimary} />
             )}
           </>
         </>
@@ -188,7 +198,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   background: ${(props: any): string => props.theme.bgColorPrimary || '#fff'};
-  border:${(props) => props.theme.border};
+  border: ${(props) => props.theme.border};
   margin: 10px 0;
   border-radius: 16px;
 `;
@@ -218,7 +228,7 @@ const TextInput = styled.textarea`
     height: 0;
   }
   ::placeholder {
-    color: #494D5F;
+    color: #494d5f;
   }
 `;
 

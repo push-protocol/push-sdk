@@ -14,17 +14,29 @@ import {
 } from '../../helpers';
 import { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
+import { Spinner } from './Spinner';
+import { Toaster } from './Toaster';
 
 const chatsFetchedLimit = 10;
 
 export const Modal: React.FC = () => {
-  
-  const [chatsBeingFetched, setChatsBeingFetched] = useState<boolean>(false);
-  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<string|null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<
+    string | null
+  >(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
-  const { supportAddress, env, account,greetingMsg, theme } = useContext<any>(ChatPropsContext);
-  const { chats, setChatsSorted, connectedUser, setConnectedUser } =
-    useContext<any>(ChatMainStateContext);
+  const { supportAddress, env, account, greetingMsg, theme } =
+    useContext<any>(ChatPropsContext);
+  const {
+    chats,
+    setChatsSorted,
+    connectedUser,
+    setConnectedUser,
+    toastMessage,
+    toastType,
+    setToastMessage,
+    setToastType,
+  } = useContext<any>(ChatMainStateContext);
   const listInnerRef = useChatScroll(chats.length);
 
   const greetingMsgObject = {
@@ -55,8 +67,8 @@ export const Modal: React.FC = () => {
 
   const getChatCall = async () => {
     if (!connectedUser) return;
-    if(wasLastListPresent && !lastThreadHashFetched) return;
-    setChatsBeingFetched(true);
+    if (wasLastListPresent && !lastThreadHashFetched) return;
+    setLoading(true);
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
       pgpPrivateKey: connectedUser.privateKey,
@@ -68,12 +80,20 @@ export const Modal: React.FC = () => {
     setChatsSorted([...chats, ...chatsResponse]);
     setLastThreadHashFetched(lastThreadHash);
     setWasLastListPresent(lastListPresent);
-    setChatsBeingFetched(false);
+    setLoading(false);
   };
 
   const connectUser = async () => {
-    const user = await createUserIfNecessary({ account, env });
-    setConnectedUser(user);
+    setLoading(true);
+    try {
+      const user = await createUserIfNecessary({ account, env });
+      setConnectedUser(user);
+      setLoading(false);
+    } catch (err) {
+      setToastMessage(err);
+      setToastType('error');
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -86,17 +106,17 @@ export const Modal: React.FC = () => {
         <ModalHeader />
         <AddressInfo />
       </HeaderSection>
-      {chatsBeingFetched && <div>Loading...</div>}
       {!connectedUser && (
-          <Chats
-            msg={greetingMsgObject}
-            caip10={walletToPCAIP10(account)}
-            messageBeingSent={true}
-          />
-        )}
+        <Chats
+          msg={greetingMsgObject}
+          caip10={walletToPCAIP10(account)}
+          messageBeingSent={true}
+        />
+      )}
+      {loading && <Spinner size="40" />}
       <ChatSection ref={listInnerRef} onScroll={onScroll} theme={theme}>
-        {connectedUser && chats.length
-          ? chats.map((chat: IMessageIPFS, index: number) => (
+        {connectedUser && chats.length ? (
+          chats.map((chat: IMessageIPFS, index: number) => (
             <Chats
               msg={chat}
               key={index}
@@ -104,14 +124,20 @@ export const Modal: React.FC = () => {
               messageBeingSent={true}
             />
           ))
-          : <></>}
+        ) : (
+          <></>
+        )}
       </ChatSection>
-      {!connectedUser && (
+      {!connectedUser && !loading && (
         <ConnectSection>
-          <Button onClick={() => connectUser()} theme={theme}>Connect</Button>
+          <Button onClick={() => connectUser()} theme={theme}>
+            Connect
+          </Button>
           <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
+      {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
+
       <InputSection>
         {connectedUser && <ChatInput />}
         <Image
@@ -216,4 +242,3 @@ const Span = styled.span`
   margin-bottom: 30%;
   color: #657795;
 `;
-
