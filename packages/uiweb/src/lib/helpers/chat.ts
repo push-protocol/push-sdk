@@ -96,6 +96,7 @@ export const getChats = async (
       account: account,
       pgpPrivateKey: pgpPrivateKey,
       threadhash: threadhash.threadHash,
+      toDecrypt:true,
       limit: 30,
       env,
     });
