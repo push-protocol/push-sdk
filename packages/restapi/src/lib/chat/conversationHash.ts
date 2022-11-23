@@ -19,7 +19,7 @@ export const conversationHash = async (
     return response;
   } catch (err) {
     console.error(
-      '[EPNS-SDK] - Error - conversationHash() - ',err);
-    return err;
+      '[EPNS-SDK] - Error - API conversationHash() - ',err);
+      throw Error(`[EPNS-SDK] - Error - API conversationHash(): ${err}`);
   }
 };

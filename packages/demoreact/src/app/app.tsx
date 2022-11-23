@@ -189,7 +189,7 @@ export function App() {
                         SOCKET
                       </Link>
                       <Link to="/embed" className="nav-button">
-                        EMBDED
+                        EMBED
                       </Link>
                       <Link to="/chat" className="nav-button">
                         CHAT

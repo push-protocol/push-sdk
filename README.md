@@ -35,6 +35,9 @@ cd sdk-quickstart
 
 # at sdk-quickstart, hit enter for all if no change from default intended
 yarn init 
+
+# or NPM
+npm init
 ```
 
 If you want to use ES6 Modules syntax then inside `package.json` set “type” to “module”.

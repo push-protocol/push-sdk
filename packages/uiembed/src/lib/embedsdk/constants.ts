@@ -2,9 +2,16 @@ export interface URLConfigType {
   [key: number]: string
 }
 
+const API_URL = {
+  PROD: "https://backend.epns.io/apis",
+  STAGING: "https://backend-staging.epns.io/apis"
+}
+
 const URLConfig : URLConfigType = {
-  1: 'https://backend.epns.io/apis',
-  5: 'https://backend-staging.epns.io/apis'
+  1: API_URL.PROD,
+  137: API_URL.PROD,
+  5: API_URL.STAGING,
+  80001: API_URL.STAGING
 };
 
 export default {
