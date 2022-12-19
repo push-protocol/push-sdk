@@ -11,19 +11,21 @@ export function createSocketConnection({
   socketOptions
 }: SocketInputOptions
 ) {
-  const {
-    autoConnect = true,
-    reconnectionAttempts = 5,
-  } = socketOptions || {};
-  const pushWSUrl = API_URLS[env];
+  const { autoConnect = true, reconnectionAttempts = 5, } = socketOptions || {};
+  // if (socketType === 'chat' && !apiKey) {
+  //   throw Error('apiKey is necessary for chat');
+  // }
+  // const pushWSUrl = API_URLS[env];
+  const pushWSUrl = 'http://localhost:4000'
   const transports = ['websocket'];
-
   let pushSocket: ReturnType<typeof io> | null = null;
+
   try {
     const userAddressInCAIP = getCAIPAddress(env, user, 'User');
     let query;
     if (socketType === 'notification') query = { address: userAddressInCAIP };
-    else query = { mode: 'chat', did: userAddressInCAIP, apiKey }
+    else query = { mode: 'chat', did: '0xabc' };
+    // else query = { mode: 'chat', did: userAddressInCAIP, apiKey };
 
     pushSocket = io(pushWSUrl, {
       transports,
@@ -32,7 +34,7 @@ export function createSocketConnection({
       reconnectionAttempts,
     });
   } catch (e) {
-    console.error('[EPNS-SDK] - Socket connection error: ');
+    console.error('[PUSH-SDK] - Socket connection error: ');
     console.error(e);
   } finally {
     // eslint-disable-next-line no-unsafe-finally

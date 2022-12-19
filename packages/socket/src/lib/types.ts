@@ -1,7 +1,7 @@
 export type SocketInputOptions = {
   user: string,
   env: string,
-  socketType: 'notification' | 'chat',
+  socketType?: 'notification' | 'chat',
   apiKey?: string,
   socketOptions?: SocketOptions
 };
