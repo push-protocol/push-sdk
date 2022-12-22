@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import ChatIcon from '../../icons/chat/chatIcon.svg';
 import { Modal } from './Modal';
-import Constants from './constants';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { IMessageIPFS } from '@pushprotocol/restapi';
-
+import { IMessageIPFS, ITheme } from '../../types';
 import './index.css';
+import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 
 export type ChatProps = {
   account: string;
   supportAddress: string;
-  // greetingMsg?: string;
+  greetingMsg?: string;
   modalTitle?: string;
-  primaryColor?: string;
+  theme?: ITheme;
   apiKey?: string;
   env?: string;
 };
@@ -27,9 +26,9 @@ export type ButtonStyleProps = {
 export const Chat: React.FC<ChatProps> = ({
   account,
   supportAddress,
-  // greetingMsg = Constants.DEFAULT_GREETING_MSG,
+  greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
-  primaryColor = Constants.COLOR.PRIMARY,
+  theme = { ...lightTheme },
   apiKey = '',
   env = Constants.ENV.PROD,
 }) => {
@@ -37,7 +36,8 @@ export const Chat: React.FC<ChatProps> = ({
   const [connectedUser, setConnectedUser] = useState<any>(null);
   const [messageBeingSent, setMessageBeingSent] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-  const [footerError, setFooterError] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState<string>('');
+  const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
 
   const setChatsSorted = (chats: IMessageIPFS[]) => {
@@ -50,9 +50,9 @@ export const Chat: React.FC<ChatProps> = ({
   const chatPropsData = {
     account,
     supportAddress,
-    // greetingMsg,
+    greetingMsg,
     modalTitle,
-    primaryColor,
+    theme: { ...lightTheme, ...theme },
     apiKey,
     env,
   };
@@ -71,12 +71,14 @@ export const Chat: React.FC<ChatProps> = ({
     setConnectedUser,
     messageBeingSent,
     setMessageBeingSent,
+    setToastMessage,
+    setToastType,
     message,
     setMessage,
     chats,
     setChatsSorted,
-    footerError,
-    setFooterError,
+    toastMessage,
+    toastType,
   };
     const socketData = useSDKSocket({
       account: account,
@@ -94,7 +96,7 @@ export const Chat: React.FC<ChatProps> = ({
         <ChatMainStateContext.Provider value={chatMainStateData}>
           {!isModalOpen && (
             <Button
-              bgColor={primaryColor}
+              bgColor={theme.btnColorPrimary!}
               onClick={() =>
                 handleOnChatIconClick({ isModalOpen, setIsModalOpen })
               }
