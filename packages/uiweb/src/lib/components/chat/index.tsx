@@ -10,6 +10,7 @@ import { IMessageIPFS } from '@pushprotocol/restapi';
 import './index.css';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 
+
 export type ChatProps = {
   account: string;
   supportAddress: string;
@@ -46,6 +47,11 @@ export const Chat: React.FC<ChatProps> = ({
     });
     setChats(chats);
   };
+  const socketData = useSDKSocket({
+    account: account,
+    env,
+    apiKey,
+  });
 
   const chatPropsData = {
     account,
@@ -66,6 +72,7 @@ export const Chat: React.FC<ChatProps> = ({
   
   const chatMainStateData = {
     isModalOpen,
+    socketData,
     setIsModalOpen,
     connectedUser,
     setConnectedUser,
@@ -78,13 +85,6 @@ export const Chat: React.FC<ChatProps> = ({
     footerError,
     setFooterError,
   };
-    const socketData = useSDKSocket({
-      account: account,
-      env,
-      apiKey,
-    });
-
-    console.log(socketData);
 
   
 

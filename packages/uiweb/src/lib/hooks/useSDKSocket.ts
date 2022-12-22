@@ -70,7 +70,7 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
           env,
           apiKey,
           socketType,
-          socketOptions: { autoConnect: false }
+          socketOptions: { autoConnect: true , reconnectionAttempts: 3}
         });
         console.log('sleeping');
         await sleep(7000);

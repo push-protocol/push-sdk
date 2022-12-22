@@ -12,10 +12,11 @@ import {
   walletToPCAIP10,
 } from '../../helpers';
 import { IMessageIPFS } from '@pushprotocol/restapi';
+import { useSDKSocket } from '../../hooks/useSDKSocket';
 
 export const Modal: React.FC = () => {
-  const { supportAddress, env, account } = useContext<any>(ChatPropsContext);
-  const { chats, setChatsSorted, connectedUser, setConnectedUser } =
+  const { supportAddress, env, account,apiKey } = useContext<any>(ChatPropsContext);
+  const { chats, setChatsSorted, connectedUser, setConnectedUser,socketData } =
     useContext<any>(ChatMainStateContext);
 
   const getChatCall = async () => {
@@ -30,10 +31,16 @@ export const Modal: React.FC = () => {
   };
 
   const connectUser = async () => {
+    if (!socketData.epnsSDKSocket?.connected) {
+      socketData.epnsSDKSocket?.connect();
+    } else {
+      socketData.epnsSDKSocket?.disconnect();
+    }
     const user = await createUserIfNecessary({ account, env });
     setConnectedUser(user);
   };
 
+  console.log(socketData);
 
   useEffect(() => {
     getChatCall();
