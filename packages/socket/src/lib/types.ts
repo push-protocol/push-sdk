@@ -8,7 +8,7 @@ export type SocketInputOptions = {
 
 export type SocketOptions = {
   autoConnect: boolean,
-  reconnectionAttempts: number
+  reconnectionAttempts?: number
 }
 
 /**

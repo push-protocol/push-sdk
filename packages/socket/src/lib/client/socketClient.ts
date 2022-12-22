@@ -16,6 +16,8 @@ export function createSocketConnection({
     throw Error('apiKey is necessary for chat');
   }
   const pushWSUrl = API_URLS[env];
+  console.log(env)
+  console.log(pushWSUrl)
   const transports = ['websocket'];
   let pushSocket: ReturnType<typeof io> | null = null;
 
@@ -24,7 +26,7 @@ export function createSocketConnection({
     let query;
     if (socketType === 'notification') query = { address: userAddressInCAIP };
     else query = { mode: 'chat', did: userAddressInCAIP, apiKey };
-
+    console.log(API_URLS)
     pushSocket = io(pushWSUrl, {
       transports,
       query,

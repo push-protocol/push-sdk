@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { IMessageIPFS } from '@pushprotocol/restapi';
+
 import './index.css';
+import { useSDKSocket } from '../../hooks/useSDKSocket';
 
 export type ChatProps = {
   account: string;
@@ -60,6 +62,8 @@ export const Chat: React.FC<ChatProps> = ({
     setConnectedUser(null);
   }, [account, supportAddress]);
 
+
+  
   const chatMainStateData = {
     isModalOpen,
     setIsModalOpen,
@@ -74,6 +78,15 @@ export const Chat: React.FC<ChatProps> = ({
     footerError,
     setFooterError,
   };
+    const socketData = useSDKSocket({
+      account: account,
+      env,
+      apiKey,
+    });
+
+    console.log(socketData);
+
+  
 
   return (
     <Container>
