@@ -22,6 +22,9 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
     console.warn('\n--> addSocketEvents');
     epnsSDKSocket?.on(EVENTS.CONNECT, () => {
       console.log('CONNECTED: ');
+      epnsSDKSocket?.emit("CREATE_INTENT", { hi: "abc" }, (message: any) => {
+        console.log(message)
+    })
       setIsSDKSocketConnected(true);
     });
 
