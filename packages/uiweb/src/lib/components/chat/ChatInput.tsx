@@ -2,10 +2,12 @@ import React, { ChangeEvent, useContext, useRef, useState } from 'react';
 import { ReactComponent as SendIcon } from '../../icons/chat/sendIcon.svg';
 import SmileyIcon from '../../icons/chat/smiley.svg';
 import AttachmentIcon from '../../icons/chat/attachment.svg';
-import styled, { ThemeConsumer } from 'styled-components';
+import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Spinner } from './Spinner';
+import { getEncryptedRequest } from 'packages/restapi/src/lib/chat'; //to be solved
+import { walletToPCAIP10 } from '../../helpers';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
@@ -21,6 +23,7 @@ export const ChatInput: React.FC = () => {
     message,
     setMessage,
     setToastMessage,
+    socketData,
     setToastType,
     connectedUser,
     chats,
@@ -32,31 +35,70 @@ export const ChatInput: React.FC = () => {
     setShowEmojis(false);
   };
 
+  //time to be solved
+
   const handleSubmit = async (e: {
     preventDefault: () => void;
   }): Promise<void> => {
     e.preventDefault();
     setLoading(true);
+    const messageContent = message;
     if (message.trim() !== '' && connectedUser) {
-      const sendResponse = await PushAPI.chat.send({
-        messageContent: message,
-        messageType: 'Text',
-        receiverAddress: supportAddress,
-        account: account,
-        pgpPrivateKey: connectedUser?.privateKey,
-        apiKey,
-        env,
-      });
+      const { message, encryptionType, aesEncryptedSecret, signature } =
+      (await getEncryptedRequest(
+        supportAddress,
+        connectedUser,
+        messageContent,
+        env
+      )) || {};
+    const payload = {
+      fromDID: walletToPCAIP10(account),
+      toDID: walletToPCAIP10(supportAddress),
+      fromCAIP10: walletToPCAIP10(account),
+      toCAIP10: walletToPCAIP10(supportAddress),
+      messageContent: message,
+      messageType: 'Text',
+      signature,
+      encType: encryptionType,
+      encryptedSecret: aesEncryptedSecret,
+      sigType: signature,
+    };
+    console.log(payload)
+    const conversationResponse: any = await PushAPI.chat.conversationHash({
+      conversationId: supportAddress,
+      account,
+      env,
+    });
+    if (!conversationResponse?.threadHash) {
+      socketData.epnsSDKSocket?.emit("CREATE_INTENT", payload, (sendResponse: any) => {
+        console.log(sendResponse)
+        if (sendResponse.success) {
+          sendResponse.data.messageContent = messageContent;
+          setChatsSorted([...chats, sendResponse.data]);
+          setMessage('');
+          setLoading(false);
+        } else {
+          setToastMessage(sendResponse.error);
+          setToastType('error');
+        }
+      })
+    } 
+    else{
+      socketData.epnsSDKSocket?.emit("CHAT_SEND", payload, (sendResponse: any) => {
+        console.log(sendResponse)
+        if (sendResponse.success) {
+          sendResponse.data.messageContent = messageContent;
+          setChatsSorted([...chats, sendResponse.data]);
+          setMessage('');
+          setLoading(false);
+        } else {
+          setToastMessage(sendResponse.error);
+          setToastType('error');
+        }
+      })
+    }
 
-      if (typeof sendResponse !== 'string') {
-        sendResponse.messageContent = message;
-        setChatsSorted([...chats, sendResponse]);
-        setMessage('');
-        setLoading(false);
-      } else {
-        setToastMessage(sendResponse);
-        setToastType('error');
-      }
+     
     }
   };
 

@@ -3,6 +3,7 @@ import {
   createSocketConnection,
   EVENTS
 } from '@pushprotocol/socket';
+import { getEncryptedRequest } from 'packages/restapi/src/lib/chat';
 
 
 export type SDKSocketHookOptions = {
@@ -16,15 +17,13 @@ export type SDKSocketHookOptions = {
 export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
+  const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>([]);
   const [isSDKSocketConnected, setIsSDKSocketConnected] = useState(epnsSDKSocket?.connected);
 
   const addSocketEvents = () => {
     console.warn('\n--> addSocketEvents');
     epnsSDKSocket?.on(EVENTS.CONNECT, () => {
       console.log('CONNECTED: ');
-      epnsSDKSocket?.emit("CREATE_INTENT", { hi: "abc" }, (message: any) => {
-        console.log(message)
-    })
       setIsSDKSocketConnected(true);
     });
 
@@ -32,7 +31,18 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
       console.log('DIS-CONNECTED: ');
       setIsSDKSocketConnected(false);
     });
+    console.log('\t-->will attach eachMessage event now');
+    epnsSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (chat: any) => {
+      /**
+       * We receive a 1 message.
+       */
+      console.log("\n\n\n\neachMessage event: ", chat);
 
+      // do stuff with data
+      setMessagesSinceLastConnection((chats: any) => {
+        return [...chats, chat]
+      });
+    });
   };
 
   const removeSocketEvents = () => {
