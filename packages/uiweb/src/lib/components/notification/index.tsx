@@ -226,7 +226,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             {
               isCtaURLValid
               ?
-                <img src={LinkSVG} alt="CTA link" style={{height: "18px", marginLeft: "7px"}} />
+                <img src={LinkSVG} alt="CTA link" style={{height: "20px", marginLeft: "7px"}} />
               :
                 ""
             }
@@ -319,14 +319,9 @@ NotificationItem.defaultProps = {
 const MD_BREAKPOINT = "50050px"; //set an arbitrarily large number because we no longer use this breakpoint
 const SM_BREAKPOINT = "900px";
 
-const GUTTER_SPACE = {
-  LARGE: '8px',
-  SMALL: '8px'
-};
-
 const ContentSection = styled.div<ContentSectionDataType>`
   display: flex;
-  padding: 12px;
+  padding: 15px 16px;
 
   cursor: ${(props) => (props.cta ? "pointer" : "default")};
 
@@ -353,8 +348,8 @@ const BlockchainContainer = styled.div`
 `;
 
 const ChainIconSVG = styled.div`
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 
   svg, svg image, img {
     width: 100%;
@@ -433,7 +428,7 @@ const Container = styled.div<ContainerDataType>`
       : "1px solid #4A4F67"};
   background: ${(props) => (props.theme === "light" ? "#fff" : "#2F3137")};
   border-radius: 10px;
-  margin: 15px 0px;
+  margin: 1.8rem 0px;
   justify-content: center;
   justify-content: space-between;
   @media (max-width: ${MD_BREAKPOINT}) {
@@ -447,16 +442,11 @@ const MobileHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: ${GUTTER_SPACE.LARGE};
-    font-size: 14px;
-    border-bottom: ${(props) => props.theme === "light" ? "1px solid #ededed" : "1px solid #444"};
+    padding: 12px 10px;
+    border-bottom: ${(props) => props.theme === "light" ? "1px solid #D9D9D9" : "1px solid #4A4F67"};
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     text-align: left;
-  }
-  @media (max-width: ${SM_BREAKPOINT}) {
-    padding: ${GUTTER_SPACE.SMALL};
-    font-size: 14px;
   }
 `;
 
@@ -471,7 +461,7 @@ const HeaderButton = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   color: ${(props) => (props.theme === "light" ? "#333333" : "#C5CAE9")};
 `;
@@ -497,7 +487,7 @@ const ChannelTitle = styled.div<ChannelTitleDataType>`
 `;
 
 const ChannelTitleText = styled.div`
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 400;
 `
 
@@ -505,7 +495,7 @@ const ChannelDesc = styled.div`
   line-height: 20px;
   flex: 1;
   display: flex;
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(0, 0, 0, 0.75);
   font-weight: 400;
   flex-direction: column;
