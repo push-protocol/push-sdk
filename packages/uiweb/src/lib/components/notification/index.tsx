@@ -39,17 +39,9 @@ type ContainerDataType = {
   timestamp?: string;
 };
 
-type ContentSectionDataType = {
+type CTADataType = {
   cta?: boolean;
 };
-
-type ChannelTitleDataType = {
-  cta?: boolean;
-};
-
-type ChannelDescLabelDataType = {
-  cta?: boolean;
-}
 
 type MetaDataType = {
   hidden?: boolean;
@@ -319,7 +311,7 @@ NotificationItem.defaultProps = {
 const MD_BREAKPOINT = "50050px"; //set an arbitrarily large number because we no longer use this breakpoint
 const SM_BREAKPOINT = "900px";
 
-const ContentSection = styled.div<ContentSectionDataType>`
+const ContentSection = styled.div<CTADataType>`
   display: flex;
   padding: 15px 16px;
 
@@ -466,7 +458,7 @@ const HeaderButton = styled.div`
   color: ${(props) => (props.theme === "light" ? "#333333" : "#C5CAE9")};
 `;
 
-const ChannelTitle = styled.div<ChannelTitleDataType>`
+const ChannelTitle = styled.div<CTADataType>`
   width: fit-content;
   display: flex;
   align-items: center;
@@ -501,7 +493,7 @@ const ChannelDesc = styled.div`
   flex-direction: column;
 `;
 
-const ChannelDescLabel = styled.label<ChannelDescLabelDataType>`
+const ChannelDescLabel = styled.label<CTADataType>`
   cursor: ${(props) => (props.cta ? "pointer" : "default")};
   color: ${(props) => (props.theme === "light" ? "#333333" : "#C5CAE9")};
   flex: 1;
