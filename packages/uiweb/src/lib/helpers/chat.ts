@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import * as PushAPI from '@pushprotocol/restapi';
-import {Constants} from '../config';
+import { Constants } from '../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { IConnectedUser } from '@pushprotocol/restapi';
 
@@ -16,6 +16,19 @@ type GetChatsType = {
   limit: number;
   threadHash?: string;
 } & AccountEnvOptionsType;
+
+type GetSendMessageEventDataType = {
+  connectedUser: IConnectedUser;
+  supportAddress: string;
+  message: string;
+  messageType: string;
+  env: string;
+};
+
+type GetSendMessageEventDataReturnType = {
+  eventName: string;
+  body: PushAPI.chat.ISendMessagePayload;
+};
 export const handleOnChatIconClick = ({
   isModalOpen,
   setIsModalOpen,
@@ -80,10 +93,10 @@ export const createUserIfNecessary = async (
 };
 
 type GetChatsResponseType = {
-  chatsResponse: IMessageIPFS[],
-  lastThreadHash: string | null,
-  lastListPresent: boolean
-}
+  chatsResponse: IMessageIPFS[];
+  lastThreadHash: string | null;
+  lastListPresent: boolean;
+};
 
 export const getChats = async (
   options: GetChatsType
@@ -122,16 +135,41 @@ export const getChats = async (
   return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
 };
 
-
-export const copyToClipboard = (address:string):void => {
+export const copyToClipboard = (address: string): void => {
   if (navigator && navigator.clipboard) {
     navigator.clipboard.writeText(address);
   } else {
-    const el = document.createElement("textarea");
+    const el = document.createElement('textarea');
     el.value = address;
     document.body.appendChild(el);
     el.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     document.body.removeChild(el);
+  }
+};
+
+export const getSendMessageEventData = async (
+  options: GetSendMessageEventDataType
+): Promise<GetSendMessageEventDataReturnType> => {
+  const { connectedUser, supportAddress, message, messageType, env } =
+    options || {};
+
+  const body: PushAPI.chat.ISendMessagePayload =
+    (await PushAPI.chat.sendMessagePayload(
+      supportAddress,
+      connectedUser,
+      message,
+      'Text',
+      env
+    )) || {};
+  const conversationResponse: any = await PushAPI.chat.conversationHash({
+    conversationId: supportAddress,
+    account: connectedUser.wallets.split(',')[0],
+    env,
+  });
+  if (!conversationResponse?.threadHash) {
+    return { eventName: 'CREATE_INTENT', body: body };
+  } else {
+    return { eventName: 'CHAT_SEND', body: body };
   }
 };

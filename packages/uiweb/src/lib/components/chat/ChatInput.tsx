@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Spinner } from './Spinner';
-import { getEncryptedRequest } from 'packages/restapi/src/lib/chat'; //to be solved
-import { walletToPCAIP10 } from '../../helpers';
+import { getSendMessageEventData, walletToPCAIP10 } from '../../helpers';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
@@ -42,38 +41,18 @@ export const ChatInput: React.FC = () => {
   }): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-    const messageContent = message;
     if (message.trim() !== '' && connectedUser) {
-      const { message, encryptionType, aesEncryptedSecret, signature } =
-      (await getEncryptedRequest(
-        supportAddress,
+      const payload = await getSendMessageEventData({
         connectedUser,
-        messageContent,
-        env
-      )) || {};
-    const payload = {
-      fromDID: walletToPCAIP10(account),
-      toDID: walletToPCAIP10(supportAddress),
-      fromCAIP10: walletToPCAIP10(account),
-      toCAIP10: walletToPCAIP10(supportAddress),
-      messageContent: message,
-      messageType: 'Text',
-      signature,
-      encType: encryptionType,
-      encryptedSecret: aesEncryptedSecret,
-      sigType: signature,
-    };
-    console.log(payload)
-    const conversationResponse: any = await PushAPI.chat.conversationHash({
-      conversationId: supportAddress,
-      account,
-      env,
-    });
-    if (!conversationResponse?.threadHash) {
-      socketData.epnsSDKSocket?.emit("CREATE_INTENT", payload, (sendResponse: any) => {
+        supportAddress,
+        message,
+        messageType: 'Text',
+        env,
+      });
+      socketData.epnsSDKSocket?.emit(payload.eventName, payload.body, (sendResponse: any) => {
         console.log(sendResponse)
         if (sendResponse.success) {
-          sendResponse.data.messageContent = messageContent;
+          sendResponse.data.messageContent = message;
           setChatsSorted([...chats, sendResponse.data]);
           setMessage('');
           setLoading(false);
@@ -82,23 +61,6 @@ export const ChatInput: React.FC = () => {
           setToastType('error');
         }
       })
-    } 
-    else{
-      socketData.epnsSDKSocket?.emit("CHAT_SEND", payload, (sendResponse: any) => {
-        console.log(sendResponse)
-        if (sendResponse.success) {
-          sendResponse.data.messageContent = messageContent;
-          setChatsSorted([...chats, sendResponse.data]);
-          setMessage('');
-          setLoading(false);
-        } else {
-          setToastMessage(sendResponse.error);
-          setToastType('error');
-        }
-      })
-    }
-
-     
     }
   };
 

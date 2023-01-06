@@ -3,7 +3,6 @@ import {
   createSocketConnection,
   EVENTS
 } from '@pushprotocol/socket';
-import { getEncryptedRequest } from 'packages/restapi/src/lib/chat';
 
 
 export type SDKSocketHookOptions = {
