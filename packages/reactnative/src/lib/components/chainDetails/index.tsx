@@ -7,5 +7,7 @@ export default {
     ETH_MAINNET: { label: "ETHEREUM MAINNET", Icon: EthereumSvg },
     POLYGON_TEST_MUMBAI: { label: "POLYGON MUMBAI", Icon: PolygonSvg },
     POLYGON_MAINNET: { label: "POLYGON MAINNET", Icon: PolygonSvg },
+    BSC_TESTNET: { label: "BSC TESTNET", Icon: PolygonSvg },
+    BSC_MAINNET: { label: "BSC MAINNET", Icon: PolygonSvg },
     THE_GRAPH: { label: "THE GRAPH", Icon: GraphSvg },
 };
