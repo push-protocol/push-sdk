@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { API_URLS } from '../config';
-import { getCAIPAddress } from '../helpers';
+import { getCAIPAddress,walletToPCAIP10 } from '../helpers';
 import { SocketInputOptions } from '../types';
 
 export function createSocketConnection({
@@ -22,7 +22,10 @@ export function createSocketConnection({
   let pushSocket: ReturnType<typeof io> | null = null;
 
   try {
-    const userAddressInCAIP = getCAIPAddress(env, user, 'User');
+    const userAddressInCAIP =
+      socketType === 'chat'
+        ? walletToPCAIP10(user)
+        : getCAIPAddress(env, user, 'User');
     let query;
     if (socketType === 'notification') query = { address: userAddressInCAIP };
     else query = { mode: 'chat', did: userAddressInCAIP, apiKey };
