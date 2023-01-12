@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Constants from '../../constants';
-import { generateHash, getAPIBaseUrls, getConfig, getDomainInformation, getQueryParams, getSigner, getTypeInformation, pCAIP10ToWallet, signMessage, walletToPCAIP10 } from '../../helpers';
+import { generateHash, getAPIBaseUrls, getConfig, getDomainInformation, getQueryParams, getSigner, getTypeInformation, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType } from '../../types';
 
 type CreateUserOptionsType = {
@@ -41,23 +41,28 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   console.log(signer);
   
   // get domain information
-  // const chainId = parseInt(channelCAIPDetails.networkId, 10);
+  // const chainId = parseInt(1, 10);
   // const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
-  // const domainInformation = getDomainInformation(
-  //   chainId,
-  //   verifyingContractAddress || EPNS_COMMUNICATOR_CONTRACT
-  // );
+  const domainInformation = getDomainInformation(
+    1,
+    "0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa"
+  );
 
   // get type information
   const typeInformation = getTypeInformation("Create_user");
-  const signedMessage = await signer._signTypedData(
-    // domainInformation,
-    typeInformation,
-    hash
-  );
-
-  const body = {...data, signature:signedMessage,sigType};
+  console.log(domainInformation)
+  console.log(typeInformation)
   
+  // sign a message using EIP712
+  const signedMessage = await signer._signTypedData(
+    domainInformation,
+    typeInformation,
+    { data: hash },
+  );
+console.log("till here")
+console.log(signedMessage);
+
+  const body = {...data, signature:'',sigType:'a'};
   return axios
     .post(requestUrl, body)
     .then((response) => {
