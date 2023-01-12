@@ -104,3 +104,16 @@ export const pCAIP10ToWallet = (wallet: string): string => {
   wallet = wallet.replace('eip155:', '')
   return wallet
 }
+
+const getProvider = () => {
+  const provider = new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/4ff53a5254144d988a8318210b56f47a");
+  return provider;
+}
+
+
+
+export const getSigner = (account:string):any => {
+  const provider = getProvider();
+  const signer = provider.getSigner(account); 
+  return signer;
+}

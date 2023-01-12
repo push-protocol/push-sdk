@@ -29,16 +29,14 @@ export const create = async (
     walletPublicKey
   );
   const caip10: string = walletToPCAIP10(account);
-
   const body = {
     user: caip10,
     publicKey: keyPairs.publicKeyArmored,
     encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
     encryptionType: 'x25519-xsalsa20-poly1305',
-    signature: 'xyz',
-    sigType: 'a',
+    signature: '',
+    sigType: 'eip712v2',
     env
   };
-
   return createUserService(body);
 }

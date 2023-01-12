@@ -1,4 +1,5 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
+import * as CryptoJS from "crypto-js"
 import { aesDecrypt, pgpDecrypt, verifySignature } from "../chat/helpers";
 import { isValidETHAddress } from "./address";
 
@@ -87,3 +88,14 @@ export const decryptAndVerifySignature = async ({
   await verifySignature({ messageContent: cipherText, signatureArmored, publicKeyArmored })
   return aesDecrypt({ cipherText, secretKey })
 }
+
+
+export const generateHash = (message:any):string=> {
+  const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
+    CryptoJS.enc.Hex
+  );
+  return hash;
+}
+
+
+

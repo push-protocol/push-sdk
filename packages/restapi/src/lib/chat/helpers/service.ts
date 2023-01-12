@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Constants from '../../constants';
-import { getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
+import { generateHash, getAPIBaseUrls, getConfig, getDomainInformation, getQueryParams, getSigner, getTypeInformation, pCAIP10ToWallet, signMessage, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType } from '../../types';
 
 type CreateUserOptionsType = {
@@ -28,16 +28,36 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
-  const body = {
+  var data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
-    encryptionType,
-    signature,
-    sigType,
+    encryptionType
   };
 
+  const hash = generateHash(data);
+  const signer = getSigner(pCAIP10ToWallet(user));
+  console.log(signer);
+  
+  // get domain information
+  // const chainId = parseInt(channelCAIPDetails.networkId, 10);
+  // const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+  // const domainInformation = getDomainInformation(
+  //   chainId,
+  //   verifyingContractAddress || EPNS_COMMUNICATOR_CONTRACT
+  // );
+
+  // get type information
+  const typeInformation = getTypeInformation("Create_user");
+  const signedMessage = await signer._signTypedData(
+    // domainInformation,
+    typeInformation,
+    hash
+  );
+
+  const body = {...data, signature:signedMessage,sigType};
+  
   return axios
     .post(requestUrl, body)
     .then((response) => {
