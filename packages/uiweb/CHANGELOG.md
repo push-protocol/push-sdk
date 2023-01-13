@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.2.3...uiweb-0.3.0) (2023-01-13)
+
+
+### Features
+
+* Bsc chain config changes added ([#113](https://github.com/ethereum-push-notification-service/push-sdk/issues/113)) ([e1af11b](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1af11b1fa444e30f8aa08ee6b54a30bb03d6070))
+
+
+
 ## [0.2.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.2.2...uiweb-0.2.3) (2022-11-04)
 
 
