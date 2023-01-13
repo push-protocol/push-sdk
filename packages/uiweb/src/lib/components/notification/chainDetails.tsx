@@ -2,6 +2,7 @@ import EthereumSVG from "../../icons/ethereum.svg";
 import PolygonSVG from "../../icons/polygon.svg";
 import GraphSVG from "../../icons/thegraph.svg";
 import Tooltip from "../tooltip";
+import BscSVG from "../../icons/bsc.svg";
 
 const createSVGIcon = (url: string, chainName: string) => {
   return (
@@ -16,5 +17,7 @@ export default {
     ETH_MAINNET: { label: "ETHEREUM MAINNET", icon: createSVGIcon(EthereumSVG, "Ethereum Mainnet") },
     POLYGON_TEST_MUMBAI: { label: "POLYGON MUMBAI", icon: createSVGIcon(PolygonSVG, "Polygon Mumbai") },
     POLYGON_MAINNET: { label: "POLYGON MAINNET", icon: createSVGIcon(PolygonSVG, "Polygon Mainnet") },
+    BSC_TESTNET: { label: "BSC TESTNET", icon: createSVGIcon(BscSVG, "Bsc Testnet") },
+    BSC_MAINNET: { label: "BSC MAINNET", icon: createSVGIcon(BscSVG, "Bsc Mainnet") },
     THE_GRAPH: { label: "THE GRAPH", icon: createSVGIcon(GraphSVG, "The Graph") },
 };

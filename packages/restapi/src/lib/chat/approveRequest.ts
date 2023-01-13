@@ -1,10 +1,10 @@
 import axios from 'axios';
 import {
-  getAPIBaseUrls, walletToPCAIP10,
+  getAPIBaseUrls,
 } from '../helpers';
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
-import { createUserIfNecessary } from './helpers';
+import { approveRequestPayload, createUserIfNecessary, IApproveRequestPayload } from './helpers';
 
 /**
  *  POST '/v1/chat/request/accept
@@ -31,22 +31,14 @@ export const approve = async (
 
   // get user with raw privateKey
   // const createdUser: IConnectedUser = await getConnectedUser(account, privateKey, env);
-
-  // TODO: make signature
-  const signature = '1';
   const connectedUser = await createUserIfNecessary({account,env});
+  // TODO: make signature
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
 
   const requestUrl = `${apiEndpoint}`;
 
-  const body = {
-    fromDID: walletToPCAIP10(senderAddress),
-    toDID: walletToPCAIP10(account),
-    signature,
-    status,
-    sigType:'sigType',
-  };
+  const body:IApproveRequestPayload = approveRequestPayload(senderAddress,account,status);
 
   return axios.put(requestUrl, body)
     .catch((err) => {
