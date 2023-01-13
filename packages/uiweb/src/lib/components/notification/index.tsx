@@ -12,7 +12,7 @@ import { useDecrypt, DecryptButton } from './decrypt';
 import chainDetails from './chainDetails';
 
 // ================= Define types
-export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "THE_GRAPH" | undefined;
+export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "BSC_MAINNET" | "BSC_TESTNET" | "THE_GRAPH" | undefined;
 
 
 export type NotificationItemProps = {

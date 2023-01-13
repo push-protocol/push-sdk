@@ -11,7 +11,9 @@ const URLConfig : URLConfigType = {
   1: API_URL.PROD,
   137: API_URL.PROD,
   5: API_URL.STAGING,
-  80001: API_URL.STAGING
+  80001: API_URL.STAGING,
+  56: API_URL.PROD,
+  97: API_URL.STAGING
 };
 
 export default {
