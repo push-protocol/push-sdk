@@ -116,5 +116,6 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
   return {
       epnsSDKSocket,
       isSDKSocketConnected,
+      messagesSinceLastConnection
   }
 };
