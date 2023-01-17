@@ -24,6 +24,7 @@ export const AddressInfo: React.FC = () => {
   return (
     <Container theme={theme}>
       <Section>
+        <ImgSpan>
         <Image
           src={
             user?.profilePicture
@@ -32,6 +33,7 @@ export const AddressInfo: React.FC = () => {
           }
           alt="address profile"
         />
+        </ImgSpan>
         <Span theme={theme}>
           {ensName && `${ensName}`}
           {!ensName &&
@@ -76,15 +78,19 @@ const Container = styled.div`
 const Section = styled.div`
   display: flex;
 `;
-
-const Image = styled.img`
+const ImgSpan = styled.span`
   display: flex;
   max-height: initial;
   vertical-align: middle;
-  overflow: initial;
+  overflow: hidden;
   height: 48px;
   width: 47.5px;
   border-radius: 99px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 const Span = styled.span`

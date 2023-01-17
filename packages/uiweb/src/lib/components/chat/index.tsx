@@ -42,10 +42,12 @@ export const Chat: React.FC<ChatProps> = ({
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
 
   const setChatsSorted = (chats: IMessageIPFS[]) => {
-    chats.sort((a, b) => {
+    const uniqueChats = [...new Map(chats.map((item) => [item["timestamp"], item])).values()];
+    
+    uniqueChats.sort((a, b) => {
       return a.timestamp! > b.timestamp! ? 1 : -1;
     });
-    setChats(chats);
+    setChats(uniqueChats);
   };
   const socketData = useSDKSocket({
     account: account,

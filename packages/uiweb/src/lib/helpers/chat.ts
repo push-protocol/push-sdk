@@ -1,4 +1,3 @@
-
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants } from '../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
@@ -32,10 +31,8 @@ export const handleOnChatIconClick = ({
   isModalOpen,
   setIsModalOpen,
 }: HandleOnChatIconClickProps) => {
-  console.log(isModalOpen);
   setIsModalOpen(!isModalOpen);
 };
-
 
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
@@ -89,10 +86,32 @@ export const getChats = async (
 
     const lastThreadHash = chats[chats.length - 1]?.link;
     const lastListPresent = chats.length > 0 ? true : false;
-    console.log({ chats, lastThreadHash });
     return { chatsResponse: chats, lastThreadHash, lastListPresent };
   }
   return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
+};
+
+type DecrypteChatType = {
+  message: IMessageIPFS,
+  connectedUser: IConnectedUser,
+  env: string
+}
+export const decryptChat = async (
+  options: DecrypteChatType
+):Promise<IMessageIPFS> => {
+  const {
+    message,
+    connectedUser,
+    env = Constants.ENV.PROD,
+  } = options || {};
+  const decryptedChat:IMessageIPFS[] = await PushAPI.chat.decryptConversation({
+    messages: [message],
+    connectedUser,
+    toDecrypt: true,
+    pgpPrivateKey: connectedUser.privateKey!,
+    env,
+  });
+  return decryptedChat[0];
 };
 
 export const copyToClipboard = (address: string): void => {

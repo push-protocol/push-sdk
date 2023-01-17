@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
@@ -9,6 +9,7 @@ import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
+  decryptChat,
   getChats,
   walletToPCAIP10,
 } from '../../helpers';
@@ -102,6 +103,18 @@ export const Modal: React.FC = () => {
     }
   };
 
+  const getUpdatedChats = async (message:IMessageIPFS) =>{
+    const chat = await decryptChat({message,connectedUser,env});
+    socketData.messagesSinceLastConnection.decrypted = true;
+    setChatsSorted([...chats, chat]);
+  }
+
+  useEffect(() => {
+    if(socketData.messagesSinceLastConnection && !socketData.messagesSinceLastConnection.decrypted){
+      getUpdatedChats(socketData.messagesSinceLastConnection);
+    }
+  }, [socketData.messagesSinceLastConnection]);
+
   useEffect(() => {
     getChatCall();
   }, [connectedUser]);
@@ -145,7 +158,7 @@ export const Modal: React.FC = () => {
       {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
 
       <InputSection>
-        {connectedUser && <ChatInput />}
+        {connectedUser && socketData.epnsSDKSocket?.connected && <ChatInput />}
         <Image
           src={PoweredByPushLogo}
           alt="Powered by Push Protocol"

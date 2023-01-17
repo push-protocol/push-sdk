@@ -34,7 +34,6 @@ export const ChatInput: React.FC = () => {
     setShowEmojis(false);
   };
 
-  //time to be solved
 
   const handleSubmit = async (e: {
     preventDefault: () => void;
@@ -42,26 +41,51 @@ export const ChatInput: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     if (message.trim() !== '' && connectedUser) {
-      const payload = await getSendMessageEventData({
-        connectedUser,
-        supportAddress,
-        message,
+      const sendResponse = await PushAPI.chat.send({
+        messageContent: message,
         messageType: 'Text',
+        receiverAddress: supportAddress,
+        account: account,
+        pgpPrivateKey: connectedUser?.privateKey,
+        apiKey,
         env,
       });
-      socketData.epnsSDKSocket?.emit(payload.eventName, payload.body, (sendResponse: any) => {
-        console.log(sendResponse)
-        if (sendResponse.success) {
-          sendResponse.data.messageContent = message;
-          setChatsSorted([...chats, sendResponse.data]);
-          setMessage('');
-          setLoading(false);
-        } else {
-          setToastMessage(sendResponse.error);
-          setToastType('error');
-        }
-      })
+
+      if (typeof sendResponse !== 'string') {
+        sendResponse.messageContent = message;
+        setChatsSorted([...chats, sendResponse]);
+        setMessage('');
+        setLoading(false);
+      } else {
+        setToastMessage(sendResponse);
+        setToastType('error');
+        setLoading(false);
+      }
     }
+    // socket send code
+   // if (message.trim() !== '' && connectedUser) {
+      // const payload = await getSendMessageEventData({
+      //   connectedUser,
+      //   supportAddress,
+      //   message,
+      //   messageType: 'Text',
+      //   env,
+      // });
+      // console.log(payload.body)
+      // socketData.epnsSDKSocket?.emit(payload.eventName, payload.body, (sendResponse: any) => {
+      //   console.log(sendResponse)
+      //   if (sendResponse.success) {
+      //     sendResponse.data.messageContent = message;
+      //     setChatsSorted([...chats, sendResponse.data]);
+      //     setMessage('');
+      //     setLoading(false);
+      //   } else {
+      //     setToastMessage(sendResponse.error);
+      //     setToastType('error');
+      //     setLoading(false);
+      //   }
+      // })
+   // }
   };
 
   const handleKeyPress = (e: any): void => {

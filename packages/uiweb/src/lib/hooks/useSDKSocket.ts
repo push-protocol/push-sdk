@@ -16,7 +16,7 @@ export type SDKSocketHookOptions = {
 export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
-  const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>([]);
+  const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>(null);
   const [isSDKSocketConnected, setIsSDKSocketConnected] = useState(epnsSDKSocket?.connected);
 
   const addSocketEvents = () => {
@@ -39,7 +39,7 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
 
       // do stuff with data
       setMessagesSinceLastConnection((chats: any) => {
-        return [...chats, chat]
+        return {...chat,decrypted:false};
       });
     });
   };
@@ -75,7 +75,6 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
         // console.log('=================>>> disconnection in the hook');
         epnsSDKSocket?.disconnect();
       }
-      console.log(env)
       const main = async () => {
         const connectionObject = createSocketConnection({
           user: account,
@@ -84,27 +83,15 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
           socketType,
           socketOptions: { autoConnect: true , reconnectionAttempts: 3}
         });
-        console.log('sleeping');
+
+        // console.log('sleeping');
         await sleep(7000);
-        console.log('awake');
+        // console.log('awake');
         console.warn('new connection object: ', connectionObject);
-        // set to context
+
         setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
-      // const connectionObject = createSocketConnection({
-      //   user: account,
-      //   env,
-      //   apiKey,
-      //   socketType,
-      //   socketOptions: { autoConnect: false }
-      // });
-      // console.log('sleeping');
-      // await sleep(4000);
-      // console.log('awake');
-      // console.warn('new connection object: ', connectionObject);
-      // // set to context
-      // setEpnsSDKSocket(connectionObject);
     }
     function sleep(ms: any) {
       return new Promise((resolve) => setTimeout(resolve, ms));

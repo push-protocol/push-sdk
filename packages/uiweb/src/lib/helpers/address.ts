@@ -30,7 +30,6 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   //   );
   // }
 
-  console.log(provider);
 
   provider.lookupAddress(checksumWallet).then((ens) => {
     if (ens) {
