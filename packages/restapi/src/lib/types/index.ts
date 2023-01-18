@@ -212,3 +212,5 @@ export interface Chat {
   intentTimestamp: Date;
   combinedDID: string;
 }
+
+

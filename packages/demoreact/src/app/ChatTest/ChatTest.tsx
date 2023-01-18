@@ -56,6 +56,12 @@ const ChatTest = () => {
           <Link to="/history" className="nav-button">
             CHAT.HISTORY
           </Link>
+          <Link to="/createGroup" className="nav-button">
+            CHAT.CREATEGROUP
+          </Link>
+          <Link to="/updateGroup" className="nav-button">
+            CHAT.UPDATEGROUP
+          </Link>
         </NavMenu>
       </Section>
     </div>

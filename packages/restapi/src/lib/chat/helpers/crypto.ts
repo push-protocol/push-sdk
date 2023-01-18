@@ -39,8 +39,8 @@ export const encryptAndSign = async ({
   const cipherText: string = AES.aesEncrypt({ plainText, secretKey });
   const encryptedSecret = await PGP.pgpEncrypt({
     plainText: secretKey,
-    fromPublicKeyArmored,
-    toPublicKeyArmored,
+    keys: [fromPublicKeyArmored,
+    toPublicKeyArmored],
   });
   const signature: string = await PGP.sign({
     message: cipherText,

@@ -22,6 +22,32 @@ export interface IApproveRequestPayload {
     status: 'Approved';
     sigType: string;
 }
+
+export interface ICreateGroupRequestPayload {
+    groupName: string,
+    members: Array < string > ,
+    groupImageCID: string,
+    admins: Array < string > ,
+    isPublic: boolean,
+    contractAddressNFT ? : string
+    numberOfNFTs ? : number,
+    contractAddressERC20 ? : string,
+    numberOfERC20 ? : number,
+    groupCreator: string,
+    signature: string,
+    sigType: string
+}
+
+export interface IUpdateGroupRequestPayload {
+    groupName: string,
+    numberOfERC20: number,
+    numberOfNFTs: number,
+    profilePicture: string,
+    addMembers: Array < string >,
+    removeMembers: Array < string >,
+    admin: string,
+    verificationProof: string
+}
   
 export const sendMessagePayload = async (
   receiverAddress: string,
@@ -64,6 +90,62 @@ export const approveRequestPayload =  (
     signature,
     status,
     sigType: 'sigType',
+  };
+  return body;
+};
+
+
+export const createGroupPayload =  (
+    groupName: string,
+    members: Array < string > ,
+    groupImageCID: string,
+    admins: Array < string > ,
+    isPublic: boolean,
+    groupCreator: string,
+    signature: string,
+    sigType: string,
+    contractAddressNFT ? : string,
+    numberOfNFTs ? : number,
+    contractAddressERC20 ? : string,
+    numberOfERC20 ? : number,
+):ICreateGroupRequestPayload => {
+  const body = {
+    groupName: groupName,
+    members: members ,
+    groupImageCID: groupImageCID,
+    admins: admins ,
+    isPublic: isPublic,
+    contractAddressNFT : contractAddressNFT,
+    numberOfNFTs : numberOfNFTs,
+    contractAddressERC20 : contractAddressERC20,
+    numberOfERC20 : numberOfERC20,
+    groupCreator: groupCreator,
+    signature: signature,
+    sigType: sigType    
+  };
+  return body;
+};
+
+
+export const updateGroupPayload =  (
+    groupName: string,
+    numberOfERC20: number,
+    numberOfNFTs: number,
+    profilePicture: string,
+    addMembers: Array < string >,
+    removeMembers: Array < string >,
+    admin: string,
+    verificationProof: string
+):IUpdateGroupRequestPayload => {
+  const body = {
+    groupName: groupName,
+    numberOfERC20: numberOfERC20 ,
+    numberOfNFTs: numberOfNFTs,
+    profilePicture: profilePicture,
+    addMembers: addMembers,
+    removeMembers : removeMembers,
+    admin : admin,
+    verificationProof : verificationProof  
   };
   return body;
 };

@@ -9,3 +9,5 @@ export * from './latestMessage';
 export {decryptWithWalletRPCMethod} from "../helpers/crypto";
 export { decryptConversation } from "./helpers";
 export * from './helpers/payloadHelper';
+export * from './createGroup';
+export * from './updateGroup';
