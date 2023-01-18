@@ -24,6 +24,7 @@ import GetChatsTest from './ChatTest/GetChats';
 import ConversationHashTest from './ChatTest/ConversationHash';
 import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
+import DelegationTest from './DelegationTest';
 
 interface Web3ReactState {
   chainId?: number;
@@ -182,6 +183,9 @@ export function App() {
                       <Link to="/channels" className="nav-button">
                         CHANNELS
                       </Link>
+                      <Link to="/delegations" className="nav-button">
+                        DELEGATIONS
+                      </Link>
                       <Link to="/payloads" className="nav-button">
                         PAYLOADS
                       </Link>
@@ -201,6 +205,8 @@ export function App() {
                 <Route path="/secret" element={<SecretNotificationsTest />} />
 
                 <Route path="/channels" element={<ChannelsTest />} />
+
+                <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
 
