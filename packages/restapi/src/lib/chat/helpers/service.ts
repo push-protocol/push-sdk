@@ -28,7 +28,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
-  var data = {
+  let data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
@@ -43,6 +43,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   // get domain information
   // const chainId = parseInt(1, 10);
   // const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+
   const domainInformation = getDomainInformation(
     1,
     "0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa"
@@ -53,12 +54,23 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   console.log(domainInformation)
   console.log(typeInformation)
   
+  const msgParams = JSON.stringify({
+    domain:{},
+    message:{ data: hash },
+    primaryType: 'Data',
+    types: typeInformation,
+  });
   // sign a message using EIP712
-  const signedMessage = await signer._signTypedData(
-    domainInformation,
-    typeInformation,
-    { data: hash },
-  );
+  const signedMessage = await (window as any).ethereum.request({
+    method: 'eth_signTypedData_v4',
+    params:[pCAIP10ToWallet(user), msgParams],
+    from:pCAIP10ToWallet(user)
+  });
+  // const signedMessage = await signer._signTypedData(
+  //   domainInformation,
+  //   typeInformation,
+  //   { data: hash },
+  // );
 console.log("till here")
 console.log(signedMessage);
 
