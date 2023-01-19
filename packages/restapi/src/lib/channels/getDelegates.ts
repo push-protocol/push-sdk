@@ -28,7 +28,7 @@ export const getDelegates = async (
   const requestUrl = `${apiEndpoint}/${_channel}/delegates`;
 
   return await axios.get(requestUrl)
-    .then((response) => response.data)
+    .then((response) => response.data?.delegates)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     });
