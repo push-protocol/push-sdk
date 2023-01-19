@@ -9,14 +9,14 @@ export type AddDelegateOptionsType = {
   env?: string;
 };
 
-export const subscribe = async (options: AddDelegateOptionsType) => {
+export const addDelegate = async (options: AddDelegateOptionsType) => {
   const { signer, delegateAddress, env = Constants.ENV.PROD } = options || {};
   const networkId: number = await signer.getChainId();
   const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, {
     blockchain: 'eip155',
     networkId: networkId.toString(),
   });
-
+console.log("in hereee")
   try {
     if (!isValidETHAddress(delegateAddress)) {
       throw new Error(`Invalid address!`);
@@ -26,6 +26,7 @@ export const subscribe = async (options: AddDelegateOptionsType) => {
       abis.epnsComm,
       signer
     );
+    console.log(communicatorSignerInstance)
     return communicatorSignerInstance['addDelegate'](delegateAddress);
   } catch (err) {
     console.error(`[EPNS-SDK] - Contract ${EPNS_COMMUNICATOR_CONTRACT}: `, err);

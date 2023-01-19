@@ -1,5 +1,5 @@
 import Constants from './constants';
-import  * as epnsCommAbi from "./abis/epnsCommunicator.json";
+import epnsCommAbi from "./abis/epnsCommunicator.json";
 
 const { ENV } = Constants;
 

@@ -11,6 +11,8 @@ const ChannelsTest = () => {
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [channelAddr, setChannelAddr] = useState<string>('');
   const [channelName, setChannelName] = useState<string>('');
+  const [delegateAddress, setDelegateAddress] = useState<string>('');
+  const [addRemoveDelegateResponse, setAddRemoveDelegateResponse] = useState();
   const [isLoading, setLoading] = useState(false);
   const [channelData, setChannelData] = useState();
   const [channelListData, setChannelListData] = useState();
@@ -26,6 +28,12 @@ const ChannelsTest = () => {
 
   const updateChannelName = (e: React.SyntheticEvent<HTMLElement>) => {
     setChannelName(
+      (e.target as HTMLInputElement).value
+    );
+  };
+
+  const updateDelegateAddress = (e: React.SyntheticEvent<HTMLElement>) => {
+    setDelegateAddress(
       (e.target as HTMLInputElement).value
     );
   };
@@ -65,6 +73,40 @@ const ChannelsTest = () => {
     }
   };
 
+  const testAddDelegatee = async () => {
+    try {
+      setLoading(true);
+      const signer = library.getSigner(account);
+      // Array for channels data
+      const response = await PushAPI.channels.addDelegate({
+        signer,
+        delegateAddress,
+        env
+      });
+      setAddRemoveDelegateResponse(response);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const testRemoveDelegatee = async () => {
+    try {
+      setLoading(true);
+      const signer = library.getSigner(account);
+      // Array for channels data
+      const response = await PushAPI.channels.removeDelegate({
+        signer,
+        delegateAddress,
+        env
+      });
+      setAddRemoveDelegateResponse(response);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
   const testGetSubscribers = async () => {
     try {
       setLoading(true);
@@ -218,6 +260,21 @@ const ChannelsTest = () => {
             {channelListData ? (
               <CodeFormatter>
                 {JSON.stringify(channelListData, null, 4)}
+              </CodeFormatter>
+            ) : null}
+        </div>
+
+        <div style={{ marginTop: 50, paddingTop: 30, borderTop: '1px solid' }}>
+            <SectionItem>
+              <label>Enter Delegate Address</label>
+              <input type="text" onChange={updateDelegateAddress} value={delegateAddress} style={{ width: 400, height: 30 }} />
+              <SectionButton onClick={testAddDelegatee}>Add Delegate</SectionButton>
+              <SectionButton onClick={testRemoveDelegatee}>Remove Delegate</SectionButton>
+            </SectionItem>
+
+            {addRemoveDelegateResponse ? (
+              <CodeFormatter>
+                {JSON.stringify(addRemoveDelegateResponse, null, 4)}
               </CodeFormatter>
             ) : null}
         </div>

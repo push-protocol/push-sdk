@@ -9,7 +9,7 @@ export type RemoveDelegateOptionsType = {
   env?: string;
 };
 
-export const subscribe = async (options: RemoveDelegateOptionsType) => {
+export const removeDelegate = async (options: RemoveDelegateOptionsType) => {
   const { signer, delegateAddress, env = Constants.ENV.PROD } = options || {};
   const networkId: number = await signer.getChainId();
   const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, {
