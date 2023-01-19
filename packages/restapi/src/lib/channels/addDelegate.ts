@@ -16,7 +16,6 @@ export const addDelegate = async (options: AddDelegateOptionsType) => {
     blockchain: 'eip155',
     networkId: networkId.toString(),
   });
-console.log("in hereee")
   try {
     if (!isValidETHAddress(delegateAddress)) {
       throw new Error(`Invalid address!`);
@@ -33,3 +32,4 @@ console.log("in hereee")
     throw Error(`[EPNS-SDK] - Contract ${EPNS_COMMUNICATOR_CONTRACT}: ${err}`);
   }
 };
+
