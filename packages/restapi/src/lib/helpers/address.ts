@@ -92,6 +92,14 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
   }
 }
 
+export const getCAIPWithChainId = (address:string, chainId:number, msg?: string) => {
+  if(isValidETHAddress(address)) {
+    return `eip155:${chainId}:${address}`;
+  } else {
+    throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
+  }
+}
+
 // P = Partial CAIP
 export const walletToPCAIP10 = (account:string): string => {
   if (account.includes('eip155:')) {

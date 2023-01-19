@@ -1,9 +1,11 @@
 import axios from 'axios';
 import {
   getCAIPAddress,
-  getAPIBaseUrls
+  getAPIBaseUrls,
+  getCAIPWithChainId
 } from '../helpers';
 import Constants from '../constants';
+import { ALIAS_CHAIN, ALIAS_CHAIN_ID } from '../config';
 
 /**
  *  GET /v1/alias/{aliasAddressinCAIP}/channel
@@ -11,6 +13,7 @@ import Constants from '../constants';
 
 export type GetAliasInfoOptionsType = {
   alias: string;
+  aliasChain: ALIAS_CHAIN;
   env?: string;
 }
 
@@ -20,10 +23,13 @@ export const getAliasInfo = async (
 ) => {
   const {
     alias,
+    aliasChain,
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const _alias = getCAIPAddress(env, alias, 'Alias');
+  const aliasChainId:number = ALIAS_CHAIN_ID[aliasChain][env];
+
+  const _alias = getCAIPWithChainId(alias, aliasChainId, 'Alias');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/alias`;
   const requestUrl = `${apiEndpoint}/${_alias}/channel`;
