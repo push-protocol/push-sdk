@@ -1,4 +1,5 @@
 import Constants from './constants';
+import  * as epnsCommAbi from "./abis/epnsCommunicator.json";
 
 const { ENV } = Constants;
 
@@ -22,7 +23,6 @@ export interface ConfigType {
   API_BASE_URL: string,
   EPNS_COMMUNICATOR_CONTRACT: string
 }
-
 const CONFIG = {
   [ENV.PROD]: {
     [BLOCKCHAIN_NETWORK.ETH_MAINNET]: {
@@ -66,6 +66,10 @@ const CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0x4132061E3349ff36cFfCadA460E10Bd4f31F7ea8'
     }
   }
+};
+
+export const abis = {
+  epnsComm: epnsCommAbi,
 };
 
 export default CONFIG;
