@@ -71,9 +71,7 @@ const CreateGroupTest = () => {
     setGroupCreator((e.target as HTMLInputElement).value);
   };
 
-  const updateSignature = (e: React.SyntheticEvent<HTMLElement>) => {
-    setSignature((e.target as HTMLInputElement).value);
-  };
+
 
   const updateSigType = (e: React.SyntheticEvent<HTMLElement>) => {
     setSigType((e.target as HTMLInputElement).value);
@@ -98,8 +96,6 @@ const CreateGroupTest = () => {
             admins: [admins],
             isPublic: (isPublic === "true"),
             groupCreator,
-            signature,
-            sigType,
             contractAddressNFT,
             numberOfNFTs: numberOfNFTs!=null ? Number(numberOfNFTs) : undefined,
             contractAddressERC20,
@@ -228,25 +224,9 @@ const CreateGroupTest = () => {
               />
             </SectionItem>
 
-           <SectionItem style={{ marginTop: 20 }}>
-              <label>signature</label>
-              <input
-                type="text"
-                onChange={updateSignature}
-                value={signature}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
+ 
 
-           <SectionItem style={{ marginTop: 20 }}>
-              <label>sigType</label>
-              <input
-                type="text"
-                onChange={updateSigType}
-                value={sigType}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
+ 
         
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testCreateGroup}>

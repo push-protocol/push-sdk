@@ -5,12 +5,18 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType
+    AccountEnvOptionsType, IUser
 } from '../types';
 import {
     ICreateGroupRequestPayload,
-    createGroupPayload
+    createGroupPayload,
+    createUserIfNecessary,
+    sign
 } from './helpers';
+
+import * as PushAPI from '@pushprotocol/restapi';
+
+
 /**
  *  POST /v1/chat/groups
  */
@@ -24,8 +30,6 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     admins: Array < string > ,
     isPublic: boolean,
     groupCreator: string,
-    signature: string,
-    sigType: string,
     contractAddressNFT ? : string
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
@@ -47,12 +51,14 @@ export const createGroup = async (
             contractAddressERC20,
             numberOfERC20,
             groupCreator,
-            signature,
-            sigType = 'pgp',
+            account,
             env = Constants.ENV.PROD,
     } = options || {};
 
     try {
+      
+
+
         if (groupName == null || groupName.length == 0) {
             throw new Error(`groupName cannot be null or empty`);
         }
@@ -102,9 +108,33 @@ export const createGroup = async (
             throw new Error(`numberOfERC20 cannot be negative number`);
         }
 
+        const bodyToBeHashed = {
+          groupName: groupName,
+          members: members,
+          profilePictureCID: groupImageCID,
+          admins: admins,
+          isPublic: isPublic,
+          contractAddressNFT: contractAddressNFT == undefined ? null : contractAddressNFT,
+          numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
+          contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
+          numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
+          groupCreator: groupCreator
+        }
+
+        const connectedUser : IUser = await createUserIfNecessary({account, env});
+
+        let pvtkey = null;
+        if (connectedUser?.encryptedPrivateKey) {
+            pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+            connectedUser.encryptedPrivateKey,
+            account
+            );
+        }
+        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
+        const sigType : string = 'pgp';
+
         const API_BASE_URL = getAPIBaseUrls(env);
-        //const apiEndpoint = `${API_BASE_URL}/v1/chat/group`;
-        const apiEndpoint = `https://2f5a-49-205-98-54.ngrok.io/apis/v1/chat/group`;
+        const apiEndpoint = `${API_BASE_URL}/v1/chat/group`;
         const body: ICreateGroupRequestPayload = createGroupPayload(groupName,
             members,
             groupImageCID,
@@ -117,9 +147,6 @@ export const createGroup = async (
             numberOfNFTs,
             contractAddressERC20,
             numberOfERC20);
-
-        
-        console.log("payload " + JSON.stringify(body))
 
         return axios
             .post(apiEndpoint, body)

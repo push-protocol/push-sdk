@@ -5,12 +5,17 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType
+    AccountEnvOptionsType, IUser
 } from '../types';
 import {
     IUpdateGroupRequestPayload,
-    updateGroupPayload
+    updateGroupPayload,
+    createUserIfNecessary,
+    sign
 } from './helpers';
+
+import * as PushAPI from '@pushprotocol/restapi';
+
 /**
  *  PUT /v1/chat/groups/:chatId
  */
@@ -24,8 +29,7 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         profilePicture: string,
         addMembers: Array < string >,
         removeMembers: Array < string >,
-        admin: string,
-        verificationProof: string
+        admin: string
 }
 
 
@@ -41,7 +45,7 @@ export const updateGroup = async (
         addMembers,
         removeMembers,
         admin,
-        verificationProof,
+        account,
         env = Constants.ENV.PROD,
     } = options || {};
 
@@ -86,6 +90,33 @@ export const updateGroup = async (
         if (numberOfERC20!=null && numberOfERC20 < 0) {
             throw new Error(`numberOfERC20 cannot be negative number`);
         }
+
+        const connectedUser : IUser = await createUserIfNecessary({account, env});
+
+        let pvtkey = null;
+        if (connectedUser?.encryptedPrivateKey) {
+            pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+            connectedUser.encryptedPrivateKey,
+            account
+            );
+        }
+
+        const bodyToBeHashed = {
+            groupName: groupName,
+            profilePicture: profilePicture,
+            numberOfERC20: numberOfERC20,
+            numberOfNFTs: numberOfNFTs,
+            addMembers: addMembers,
+            removeMembers: removeMembers,
+            chatId: chatId,
+            admin: admin
+        }
+
+        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
+        const sigType : string = "pgp";
+
+        const verificationProof : string = sigType + "+" + signature;
+
 
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/group/${chatId}`;

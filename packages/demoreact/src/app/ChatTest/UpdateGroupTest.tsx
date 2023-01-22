@@ -86,7 +86,6 @@ const UpdateGroupTest = () => {
         addMembers: [addMembers],
         removeMembers: [removeMembers],
         admin,
-        verificationProof,
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
       });
