@@ -14,10 +14,13 @@ import {
     sign
 } from './helpers';
 
-import * as PushAPI from '@pushprotocol/restapi';
+import {
+    decryptWithWalletRPCMethod,
+} from '../../../src/lib/helpers';
+
 
 /**
- *  PUT /v1/chat/groups/:chatId
+ *  PUT /v1/chat/group/:chatId
  */
 
 
@@ -95,7 +98,7 @@ export const updateGroup = async (
 
         let pvtkey = null;
         if (connectedUser?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+            pvtkey = await decryptWithWalletRPCMethod(
             connectedUser.encryptedPrivateKey,
             account
             );
@@ -113,7 +116,7 @@ export const updateGroup = async (
         }
 
         const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
-        const sigType : string = "pgp";
+        const sigType  = "pgp";
 
         const verificationProof : string = sigType + "+" + signature;
 

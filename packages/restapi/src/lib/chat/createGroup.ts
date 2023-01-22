@@ -11,14 +11,17 @@ import {
     ICreateGroupRequestPayload,
     createGroupPayload,
     createUserIfNecessary,
-    sign
+    sign,
 } from './helpers';
 
-import * as PushAPI from '@pushprotocol/restapi';
+import {
+    decryptWithWalletRPCMethod,
+} from '../../../src/lib/helpers';
+
 
 
 /**
- *  POST /v1/chat/groups
+ *  POST /v1/chat/group
  */
 
 
@@ -56,9 +59,6 @@ export const createGroup = async (
     } = options || {};
 
     try {
-      
-
-
         if (groupName == null || groupName.length == 0) {
             throw new Error(`groupName cannot be null or empty`);
         }
@@ -125,13 +125,13 @@ export const createGroup = async (
 
         let pvtkey = null;
         if (connectedUser?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+            pvtkey = await decryptWithWalletRPCMethod(
             connectedUser.encryptedPrivateKey,
             account
             );
         }
         const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
-        const sigType : string = 'pgp';
+        const sigType  = "pgp";
 
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/group`;
