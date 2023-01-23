@@ -11,8 +11,6 @@ const DelegationTest = () => {
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [delegationData, setDelegationData] = useState();
 
-  
-
 
   const testGetDelegations = async () => {
     try {
@@ -24,11 +22,8 @@ const DelegationTest = () => {
       setDelegationData(response);
     } catch(e) {
       console.error(e)
-    } finally {
-    }
+    } 
   };
-
- 
 
   return (
     <div>
