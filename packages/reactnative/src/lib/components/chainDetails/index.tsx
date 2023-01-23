@@ -2,6 +2,7 @@ import EthereumSvg from "./ethereumSVG";
 import PolygonSvg from "./polygonSVG";
 import GraphSvg from "./thegraphSVG";
 import BscSvg from "./bscSVG";
+import FvmSvg from "./fvmSVG";
 
 export default {
     ETH_TEST_GOERLI: { label: "ETHEREUM GOERLI", Icon: EthereumSvg },
@@ -10,5 +11,6 @@ export default {
     POLYGON_MAINNET: { label: "POLYGON MAINNET", Icon: PolygonSvg },
     BSC_TESTNET: { label: "BSC TESTNET", Icon: BscSvg },
     BSC_MAINNET: { label: "BSC MAINNET", Icon: BscSvg },
+    FVM_TESTNET: { label: "FVM HYPERSPACE", Icon: FvmSvg },
     THE_GRAPH: { label: "THE GRAPH", Icon: GraphSvg },
 };

@@ -12,7 +12,7 @@ const Constants = {
   },
   DEFAULT_CHAIN_ID: 5,
   DEV_CHAIN_ID: 99999,
-  NON_ETH_CHAINS: [137, 80001, 56, 97],
+  NON_ETH_CHAINS: [137, 80001, 56, 97, 3141],
   ETH_CHAINS: [1, 5]
 };
 

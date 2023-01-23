@@ -149,7 +149,7 @@ where
 | cta      | string | Call To Action Link (given during notification creation)  |
 | image      | string | Any media link (given during notification creation) |
 | url      | string | Channel Link (given during channel setup)   |
-| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "THE_GRAPH" |
+| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "THE_GRAPH" ,"FVM_TESTNET" |
 | theme      | string | 'light' or 'dark' (customization to be given by the dApp)  |
 | isSpam      | boolean | whether a spam notification or not   |
 | subscribeFn  | Promise | Function to subscribe to the channel  |

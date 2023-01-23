@@ -3,6 +3,7 @@ import PolygonSVG from "../../icons/polygon.svg";
 import GraphSVG from "../../icons/thegraph.svg";
 import Tooltip from "../tooltip";
 import BscSVG from "../../icons/bsc.svg";
+import FvmSVG from "../../icons/fvm.svg";
 
 const createSVGIcon = (url: string, chainName: string) => {
   return (
@@ -19,5 +20,6 @@ export default {
     POLYGON_MAINNET: { label: "POLYGON MAINNET", icon: createSVGIcon(PolygonSVG, "Polygon Mainnet") },
     BSC_TESTNET: { label: "BSC TESTNET", icon: createSVGIcon(BscSVG, "Bsc Testnet") },
     BSC_MAINNET: { label: "BSC MAINNET", icon: createSVGIcon(BscSVG, "Bsc Mainnet") },
+    FVM_TESTNET: { label: "FVM HYPERSPACE", icon: createSVGIcon(FvmSVG, "Fvm Hyperspace") },
     THE_GRAPH: { label: "THE GRAPH", icon: createSVGIcon(GraphSVG, "The Graph") },
 };
