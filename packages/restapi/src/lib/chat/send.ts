@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { ChatOptionsType } from '../types';
-import { getConnectedUser, getEncryptedRequest } from './helpers';
+import { getConnectedUser } from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
+import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
 /**
  *  POST /v1/chat/message
@@ -46,27 +47,15 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         env,
       });
     } else {
-      const { message, encryptionType, aesEncryptedSecret, signature } =
-        (await getEncryptedRequest(
-          receiverAddress,
-          connectedUser,
-          messageContent,
-          env
-        )) || {};
       const API_BASE_URL = getAPIBaseUrls(env);
       const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
-      const body = {
-        fromDID: walletToPCAIP10(account),
-        toDID: walletToPCAIP10(receiverAddress),
-        fromCAIP10: walletToPCAIP10(account),
-        toCAIP10: walletToPCAIP10(receiverAddress),
-        messageContent: message,
+      const body: ISendMessagePayload = await sendMessagePayload(
+        receiverAddress,
+        connectedUser,
+        messageContent,
         messageType,
-        signature,
-        encType: encryptionType,
-        encryptedSecret: aesEncryptedSecret,
-        sigType: signature,
-      };
+        env
+      );
 
       return axios
         .post(apiEndpoint, body)

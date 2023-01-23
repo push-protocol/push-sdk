@@ -1,29 +1,32 @@
 import React, { ChangeEvent, useContext, useRef, useState } from 'react';
-import SendIcon from '../../icons/chat/sendIcon.svg';
+import { ReactComponent as SendIcon } from '../../icons/chat/sendIcon.svg';
 import SmileyIcon from '../../icons/chat/smiley.svg';
 import AttachmentIcon from '../../icons/chat/attachment.svg';
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { createUserIfNecessary } from '../../helpers';
+import { Spinner } from './Spinner';
+import { getSendMessageEventData, walletToPCAIP10 } from '../../helpers';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filesUploading, setFileUploading] = useState<boolean>(false);
-  const { account, env, supportAddress, apiKey } =
+  const [loading, setLoading] = useState<boolean>(false);
+  const { account, env, supportAddress, apiKey, theme } =
     useContext<any>(ChatPropsContext);
 
   const {
     messageBeingSent,
     message,
     setMessage,
-    setFooterError,
+    setToastMessage,
+    socketData,
+    setToastType,
     connectedUser,
     chats,
     setChatsSorted,
-    setConnectedUser,
   } = useContext<any>(ChatMainStateContext);
 
   const addEmoji = (e: any, emojiObject: any): void => {
@@ -31,10 +34,12 @@ export const ChatInput: React.FC = () => {
     setShowEmojis(false);
   };
 
+
   const handleSubmit = async (e: {
     preventDefault: () => void;
   }): Promise<void> => {
     e.preventDefault();
+    setLoading(true);
     if (message.trim() !== '' && connectedUser) {
       const sendResponse = await PushAPI.chat.send({
         messageContent: message,
@@ -50,9 +55,39 @@ export const ChatInput: React.FC = () => {
         sendResponse.messageContent = message;
         setChatsSorted([...chats, sendResponse]);
         setMessage('');
+        setLoading(false);
+      } else {
+        setToastMessage(sendResponse);
+        setToastType('error');
+        setLoading(false);
       }
     }
+    // socket send code
+   // if (message.trim() !== '' && connectedUser) {
+      // const payload = await getSendMessageEventData({
+      //   connectedUser,
+      //   supportAddress,
+      //   message,
+      //   messageType: 'Text',
+      //   env,
+      // });
+      // console.log(payload.body)
+      // socketData.epnsSDKSocket?.emit(payload.eventName, payload.body, (sendResponse: any) => {
+      //   console.log(sendResponse)
+      //   if (sendResponse.success) {
+      //     sendResponse.data.messageContent = message;
+      //     setChatsSorted([...chats, sendResponse.data]);
+      //     setMessage('');
+      //     setLoading(false);
+      //   } else {
+      //     setToastMessage(sendResponse.error);
+      //     setToastType('error');
+      //     setLoading(false);
+      //   }
+      // })
+   // }
   };
+
   const handleKeyPress = (e: any): void => {
     const x = e.keyCode;
     if (x === 13) {
@@ -74,7 +109,8 @@ export const ChatInput: React.FC = () => {
       try {
         const TWO_MB = 1024 * 1024 * 2;
         if (file.size > TWO_MB) {
-          setFooterError('Files larger than 2mb is now allowed');
+          setToastMessage('Cannot upload file over 2MB');
+          setToastType('error');
           return;
         }
         setFileUploading(true);
@@ -100,7 +136,7 @@ export const ChatInput: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container theme={theme}>
       {messageBeingSent ? (
         <ItemHV2>Loading...</ItemHV2>
       ) : (
@@ -144,18 +180,10 @@ export const ChatInput: React.FC = () => {
               {/* <FileInput type="file" ref={fileInputRef} onChange={uploadFile} /> */}
             </label>
 
-            {filesUploading ? (
-              <div className="imageloader">Loading...</div>
+            {filesUploading || loading ? (
+              <Spinner size="35" />
             ) : (
-              <>
-                <Image
-                  src={SendIcon}
-                  alt="Send Message"
-                  height="27px"
-                  width="27px"
-                  onClick={handleSubmit}
-                />
-              </>
+              <SendIcon onClick={handleSubmit} fill={theme.btnColorPrimary} />
             )}
           </>
         </>
@@ -197,8 +225,8 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  border: 1px solid #e4e8ef;
+  background: ${(props: any): string => props.theme.bgColorPrimary || '#fff'};
+  border: ${(props) => props.theme.border};
   margin: 10px 0;
   border-radius: 16px;
 `;
@@ -228,7 +256,7 @@ const TextInput = styled.textarea`
     height: 0;
   }
   ::placeholder {
-    color: #494D5F;
+    color: #494d5f;
   }
 `;
 
