@@ -18,7 +18,7 @@ import {
     decryptWithWalletRPCMethod,
 } from '../../../src/lib/helpers';
 
-
+import * as CryptoJS from "crypto-js"
 
 /**
  *  POST /v1/chat/group
@@ -29,7 +29,7 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     /** Name of the group */ 
     groupName: string,
     members: Array < string > ,
-    groupImageCID: string,
+    groupImage: string,
     admins: Array < string > ,
     isPublic: boolean,
     groupCreator: string,
@@ -46,7 +46,7 @@ export const createGroup = async (
     const {
             groupName,
             members,
-            groupImageCID,
+            groupImage,
             admins,
             isPublic,
             contractAddressNFT,
@@ -111,7 +111,7 @@ export const createGroup = async (
         const bodyToBeHashed = {
           groupName: groupName,
           members: members,
-          profilePictureCID: groupImageCID,
+          groupImage: groupImage,
           admins: admins,
           isPublic: isPublic,
           contractAddressNFT: contractAddressNFT == undefined ? null : contractAddressNFT,
@@ -130,19 +130,21 @@ export const createGroup = async (
             account
             );
         }
-        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
+        const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+        const signature: string = await sign( {message: hash,  signingKey: pvtkey} );
         const sigType  = "pgp";
+
+        const verificationProof : string = sigType + ":" + signature;
 
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/group`;
         const body: ICreateGroupRequestPayload = createGroupPayload(groupName,
             members,
-            groupImageCID,
+            groupImage,
             admins,
             isPublic,
             groupCreator,
-            signature,
-            sigType,
+            verificationProof,
             contractAddressNFT,
             numberOfNFTs,
             contractAddressERC20,

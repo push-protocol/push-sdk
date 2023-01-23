@@ -26,7 +26,7 @@ export interface IApproveRequestPayload {
 export interface ICreateGroupRequestPayload {
     groupName: string,
     members: Array < string > ,
-    groupImageCID: string,
+    groupImage: string,
     admins: Array < string > ,
     isPublic: boolean,
     contractAddressNFT ? : string
@@ -34,8 +34,7 @@ export interface ICreateGroupRequestPayload {
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number,
     groupCreator: string,
-    signature: string,
-    sigType: string
+    verificationProof: string
 }
 
 export interface IUpdateGroupRequestPayload {
@@ -98,12 +97,11 @@ export const approveRequestPayload =  (
 export const createGroupPayload =  (
     groupName: string,
     members: Array < string > ,
-    groupImageCID: string,
+    groupImage: string,
     admins: Array < string > ,
     isPublic: boolean,
     groupCreator: string,
-    signature: string,
-    sigType: string,
+    verificationProof: string,
     contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
@@ -112,7 +110,7 @@ export const createGroupPayload =  (
   const body = {
     groupName: groupName,
     members: members ,
-    groupImageCID: groupImageCID,
+    groupImage: groupImage,
     admins: admins ,
     isPublic: isPublic,
     contractAddressNFT : contractAddressNFT,
@@ -120,8 +118,7 @@ export const createGroupPayload =  (
     contractAddressERC20 : contractAddressERC20,
     numberOfERC20 : numberOfERC20,
     groupCreator: groupCreator,
-    signature: signature,
-    sigType: sigType    
+    verificationProof: verificationProof,
   };
   return body;
 };

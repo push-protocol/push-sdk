@@ -17,7 +17,7 @@ const CreateGroupTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [groupName, setGroupName] = useState<string>('');
   const [members, setMembers] = useState<string>('');
-  const [groupImageCID, setGroupImageCID] = useState<string>('');
+  const [groupImage, setGroupImage] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
   const [isPublic, setIsPublic] = useState<string>('');
   const [contractAddressNFT, setContractAddressNFT] = useState<string>();
@@ -25,8 +25,6 @@ const CreateGroupTest = () => {
   const [contractAddressERC20, setContractAddressERC20] = useState<string>();
   const [numberOfERC20, setNumberOfERC20] = useState<string>();
   const [groupCreator, setGroupCreator] = useState<string>('');
-  const [signature, setSignature] = useState<string>('');
-  const [sigType, setSigType] = useState<string>('');
 
 
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -39,8 +37,8 @@ const CreateGroupTest = () => {
     setMembers((e.target as HTMLInputElement).value);
   };
 
-  const updateGroupImageCID = (e: React.SyntheticEvent<HTMLElement>) => {
-    setGroupImageCID((e.target as HTMLInputElement).value);
+  const updateGroupImage = (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupImage((e.target as HTMLInputElement).value);
   };
 
   const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
@@ -72,11 +70,6 @@ const CreateGroupTest = () => {
   };
 
 
-
-  const updateSigType = (e: React.SyntheticEvent<HTMLElement>) => {
-    setSigType((e.target as HTMLInputElement).value);
-  };
-
   const testCreateGroup = async () => {
     try {
       setLoading(true);
@@ -92,7 +85,7 @@ const CreateGroupTest = () => {
       const response = await PushAPI.chat.createGroup({
            groupName,
             members: [members],
-            groupImageCID,
+            groupImage,
             admins: [admins],
             isPublic: (isPublic === "true"),
             groupCreator,
@@ -144,11 +137,11 @@ const CreateGroupTest = () => {
 
 
             <SectionItem style={{ marginTop: 20 }}>
-              <label>groupImageCID</label>
+              <label>groupImage</label>
               <input
                 type="text"
-                onChange={updateGroupImageCID}
-                value={groupImageCID}
+                onChange={updateGroupImage}
+                value={groupImage}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

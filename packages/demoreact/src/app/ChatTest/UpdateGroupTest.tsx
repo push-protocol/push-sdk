@@ -23,7 +23,6 @@ const UpdateGroupTest = () => {
   const [admin, setAdmin] = useState<string>('');
   const [addMembers, setAddMembers] = useState<string>('');
   const [removeMembers, setRemoveMembers] = useState<string>('');
-  const [verificationProof, setVerificationProof] = useState<string>('');
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -58,11 +57,6 @@ const UpdateGroupTest = () => {
  
   const updateRemoveMembers= (e: React.SyntheticEvent<HTMLElement>) => {
     setRemoveMembers((e.target as HTMLInputElement).value);
-  };
-
-
-  const updateVerificationProof = (e: React.SyntheticEvent<HTMLElement>) => {
-    setVerificationProof((e.target as HTMLInputElement).value);
   };
 
   const testUpdateGroup = async () => {
@@ -111,7 +105,7 @@ const UpdateGroupTest = () => {
 
 
           <SectionItem>
-              <label>members</label>
+              <label>chatId</label>
               <input
                 type="text"
                 onChange={updateChatId}
@@ -194,17 +188,6 @@ const UpdateGroupTest = () => {
               />
             </SectionItem>
 
-           <SectionItem style={{ marginTop: 20 }}>
-              <label>VerificationProof</label>
-              <input
-                type="text"
-                onChange={updateVerificationProof}
-                value={verificationProof}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-
-  
         
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateGroup}>

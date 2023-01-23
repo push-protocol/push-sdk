@@ -118,7 +118,7 @@ export const updateGroup = async (
         const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
         const sigType  = "pgp";
 
-        const verificationProof : string = sigType + "+" + signature;
+        const verificationProof : string = sigType + ":" + signature;
 
 
         const API_BASE_URL = getAPIBaseUrls(env);
