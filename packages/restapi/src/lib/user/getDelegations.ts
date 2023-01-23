@@ -10,9 +10,14 @@ import Constants from '../constants';
  */
 
 export type UserDelegationsOptionsType = {
+  /** wallet address of user */
   user: string;
   env?: string;
 }
+
+/**
+ *  Returns the channels a user is delegated to
+ */
 
 export const getDelegations = async (
   options : UserDelegationsOptionsType
