@@ -1,9 +1,7 @@
-import { ethers } from 'ethers';
-import { Web3Provider } from '@ethersproject/providers';
 import * as PushAPI from '@pushprotocol/restapi';
-import Constants from '../components/chat/constants';
-import { AccountEnvOptionsType } from '../types';
-import { IConnectedUser, IMessageIPFS } from '@pushprotocol/restapi';
+import { Constants } from '../config';
+import { AccountEnvOptionsType, IMessageIPFS } from '../types';
+import { IConnectedUser } from '@pushprotocol/restapi';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -13,53 +11,27 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey: string;
   supportAddress: string;
+  limit: number;
+  threadHash?: string;
 } & AccountEnvOptionsType;
+
+type GetSendMessageEventDataType = {
+  connectedUser: IConnectedUser;
+  supportAddress: string;
+  message: string;
+  messageType: string;
+  env: string;
+};
+
+type GetSendMessageEventDataReturnType = {
+  eventName: string;
+  body: PushAPI.chat.ISendMessagePayload;
+};
 export const handleOnChatIconClick = ({
   isModalOpen,
   setIsModalOpen,
 }: HandleOnChatIconClickProps) => {
-  console.log(isModalOpen);
   setIsModalOpen(!isModalOpen);
-};
-
-export const walletToPCAIP10 = (account: string): string => {
-  if (account.includes('eip155:')) {
-    return account;
-  }
-  return 'eip155:' + account;
-};
-
-export const pCAIP10ToWallet = (wallet: string): string => {
-  wallet = wallet.replace('eip155:', '');
-  return wallet;
-};
-
-export const resolveEns = (address: string, provider: Web3Provider) => {
-  const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
-  const checksumWallet = ethers.utils.getAddress(walletLowercase);
-  // let provider = ethers.getDefaultProvider('mainnet');
-  // if (
-  //   window.location.hostname == 'app.push.org' ||
-  //   window.location.hostname == 'staging.push.org' ||
-  //   window.location.hostname == 'dev.push.org' ||
-  //   window.location.hostname == 'alpha.push.org' ||
-  //   window.location.hostname == 'w2w.push.org'
-  // ) {
-  //   provider = new ethers.providers.InfuraProvider(
-  //     'mainnet',
-  //     appConfig.infuraAPIKey
-  //   );
-  // }
-
-  console.log(provider);
-
-  provider.lookupAddress(checksumWallet).then((ens) => {
-    if (ens) {
-      return ens;
-    } else {
-      return null;
-    }
-  });
 };
 
 export const createUserIfNecessary = async (
@@ -77,31 +49,106 @@ export const createUserIfNecessary = async (
   return { ...connectedUser, privateKey: decryptedPrivateKey };
 };
 
+type GetChatsResponseType = {
+  chatsResponse: IMessageIPFS[];
+  lastThreadHash: string | null;
+  lastListPresent: boolean;
+};
+
 export const getChats = async (
   options: GetChatsType
-): Promise<IMessageIPFS[]> => {
+): Promise<GetChatsResponseType> => {
   const {
     account,
     pgpPrivateKey,
     supportAddress,
+    threadHash = null,
+    limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
-  const threadhash: any = await PushAPI.chat.conversationHash({
-    account: account,
-    conversationId: supportAddress,
-    env,
-  });
-  if (threadhash.threadHash) {
+  let threadhash: any = threadHash;
+  if (!threadhash) {
+    threadhash = await PushAPI.chat.conversationHash({
+      account: account,
+      conversationId: supportAddress,
+      env,
+    });
+    threadhash = threadhash.threadHash;
+  }
+  if (threadhash) {
     const chats = await PushAPI.chat.history({
       account: account,
       pgpPrivateKey: pgpPrivateKey,
-      threadhash: threadhash.threadHash,
-      limit: 30,
+      threadhash: threadhash,
+      limit: limit,
       env,
     });
 
-    console.log(chats);
-    return chats;
+    const lastThreadHash = chats[chats.length - 1]?.link;
+    const lastListPresent = chats.length > 0 ? true : false;
+    return { chatsResponse: chats, lastThreadHash, lastListPresent };
   }
-  return [];
+  return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
+};
+
+type DecrypteChatType = {
+  message: IMessageIPFS,
+  connectedUser: IConnectedUser,
+  env: string
+}
+export const decryptChat = async (
+  options: DecrypteChatType
+):Promise<IMessageIPFS> => {
+  const {
+    message,
+    connectedUser,
+    env = Constants.ENV.PROD,
+  } = options || {};
+  const decryptedChat:IMessageIPFS[] = await PushAPI.chat.decryptConversation({
+    messages: [message],
+    connectedUser,
+    toDecrypt: true,
+    pgpPrivateKey: connectedUser.privateKey!,
+    env,
+  });
+  return decryptedChat[0];
+};
+
+export const copyToClipboard = (address: string): void => {
+  if (navigator && navigator.clipboard) {
+    navigator.clipboard.writeText(address);
+  } else {
+    const el = document.createElement('textarea');
+    el.value = address;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+};
+
+export const getSendMessageEventData = async (
+  options: GetSendMessageEventDataType
+): Promise<GetSendMessageEventDataReturnType> => {
+  const { connectedUser, supportAddress, message, messageType, env } =
+    options || {};
+
+  const body: PushAPI.chat.ISendMessagePayload =
+    (await PushAPI.chat.sendMessagePayload(
+      supportAddress,
+      connectedUser,
+      message,
+      'Text',
+      env
+    )) || {};
+  const conversationResponse: any = await PushAPI.chat.conversationHash({
+    conversationId: supportAddress,
+    account: connectedUser.wallets.split(',')[0],
+    env,
+  });
+  if (!conversationResponse?.threadHash) {
+    return { eventName: 'CREATE_INTENT', body: body };
+  } else {
+    return { eventName: 'CHAT_SEND', body: body };
+  }
 };
