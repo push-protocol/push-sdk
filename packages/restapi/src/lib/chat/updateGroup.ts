@@ -20,7 +20,7 @@ import {
 
 
 /**
- *  PUT /v1/chat/group/:chatId
+ *  PUT /v1/chat/groups/:chatId
  */
 
 
@@ -122,7 +122,7 @@ export const updateGroup = async (
 
 
         const API_BASE_URL = getAPIBaseUrls(env);
-        const apiEndpoint = `${API_BASE_URL}/v1/chat/group/${chatId}`;
+        const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
         const body: IUpdateGroupRequestPayload = updateGroupPayload(
         groupName,
         numberOfERC20,
