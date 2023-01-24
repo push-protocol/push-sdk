@@ -62,11 +62,17 @@ export const sendMessagePayload = async (
       messageContent,
       env
     )) || {};
+
+  let isGroup = true;
+  if (receiverAddress.includes('eip155:')) {
+      isGroup = false;
+  }
+
   const body: ISendMessagePayload = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
-    toDID: walletToPCAIP10(receiverAddress),
+    toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
-    toCAIP10: walletToPCAIP10(receiverAddress),
+    toCAIP10: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     messageContent: message!,
     messageType,
     signature: signature!,

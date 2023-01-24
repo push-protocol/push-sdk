@@ -137,7 +137,7 @@ export const createGroup = async (
         const verificationProof : string = sigType + ":" + signature;
 
         const API_BASE_URL = getAPIBaseUrls(env);
-        const apiEndpoint = `${API_BASE_URL}/v1/chat/group`;
+        const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;
         const body: ICreateGroupRequestPayload = createGroupPayload(groupName,
             members,
             groupImage,

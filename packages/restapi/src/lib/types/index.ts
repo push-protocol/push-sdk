@@ -158,6 +158,18 @@ export interface IUser {
   linkedListHash?: string | null;
 }
 
+export interface IGroup {
+    members: Array < string > ,
+    admins: Array < string > ,
+    contractAddressNFT ? : string
+    numberOfNFTs ? : number,
+    contractAddressERC20 ? : string,
+    numberOfERC20 ? : number,
+    groupImageCID: string,
+    groupName: string,
+    publicKeys: Array < string > ,
+    groupCreator: string, 
+}
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
 }
