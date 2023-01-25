@@ -75,11 +75,13 @@ export const getChats = async (
     });
     threadhash = threadhash.threadHash;
   }
+
   if (threadhash) {
     const chats = await PushAPI.chat.history({
       account: account,
       pgpPrivateKey: pgpPrivateKey,
       threadhash: threadhash,
+      toDecrypt:true,
       limit: limit,
       env,
     });
