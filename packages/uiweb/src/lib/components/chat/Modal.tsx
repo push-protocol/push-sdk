@@ -90,8 +90,6 @@ export const Modal: React.FC = () => {
     try {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
-      } else {
-        socketData.epnsSDKSocket?.disconnect();
       }
       const user = await createUserIfNecessary({ account, env });
       setConnectedUser(user);

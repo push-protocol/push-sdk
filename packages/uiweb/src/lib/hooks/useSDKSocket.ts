@@ -25,8 +25,8 @@ export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: 
       setIsSDKSocketConnected(true);
     });
 
-    epnsSDKSocket?.on(EVENTS.DISCONNECT, () => {
-      console.log('DIS-CONNECTED: ');
+    epnsSDKSocket?.on(EVENTS.DISCONNECT, (err:any) => {
+      console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
     console.log('\t-->will attach eachMessage event now');
