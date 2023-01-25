@@ -158,7 +158,7 @@ export const Modal: React.FC = () => {
       {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
 
       <InputSection>
-        {connectedUser && socketData.epnsSDKSocket?.connected && <ChatInput />}
+        {connectedUser && <ChatInput />}
         <Image
           src={PoweredByPushLogo}
           alt="Powered by Push Protocol"
