@@ -25,8 +25,8 @@ export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: 
       setIsSDKSocketConnected(true);
     });
 
-    epnsSDKSocket?.on(EVENTS.DISCONNECT, () => {
-      console.log('DIS-CONNECTED: ');
+    epnsSDKSocket?.on(EVENTS.DISCONNECT, (err:any) => {
+      console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
     console.log('\t-->will attach eachMessage event now');
@@ -83,11 +83,17 @@ export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: 
           socketOptions: { autoConnect: true , reconnectionAttempts: 3}
         });
 
+        // console.log('sleeping');
+        // await sleep(7000);
+        // console.log('awake');
         console.warn('new connection object: ', connectionObject);
 
         setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
+    }
+    function sleep(ms: any) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, env]);
