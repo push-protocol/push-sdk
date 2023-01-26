@@ -141,7 +141,6 @@ export interface IFeeds {
   combinedDID: string;
   cid: string;
 }
-
 export interface IUser {
   did: string;
   wallets: string;
@@ -158,8 +157,12 @@ export interface IUser {
   linkedListHash?: string | null;
 }
 
+export interface Member {
+    wallet: string;
+    publicKey: string;
+}
 export interface IGroup {
-    members: Array < string > ,
+    members: Array < Member > ,
     admins: Array < string > ,
     contractAddressNFT ? : string
     numberOfNFTs ? : number,
@@ -167,7 +170,6 @@ export interface IGroup {
     numberOfERC20 ? : number,
     groupImageCID: string,
     groupName: string,
-    publicKeys: Array < string > ,
     groupCreator: string, 
 }
 export interface IConnectedUser extends IUser {

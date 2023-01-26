@@ -86,12 +86,17 @@ export const sendMessagePayload = async (
 export const approveRequestPayload =  (
   senderAddress: string,
   account: string,
-  status: 'Approved',
+  status: 'Approved'
 ):IApproveRequestPayload => {
   const signature = '1';
+
+  let isGroup = true;
+  if (senderAddress.includes('eip155:')) {
+      isGroup = false;
+  }
   const body = {
-    fromDID: walletToPCAIP10(senderAddress),
-    toDID: walletToPCAIP10(account),
+    fromDID: isGroup ? walletToPCAIP10(account): walletToPCAIP10(senderAddress),
+    toDID: isGroup ? senderAddress: walletToPCAIP10(account),
     signature,
     status,
     sigType: 'sigType',

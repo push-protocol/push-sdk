@@ -229,13 +229,16 @@ export const getEncryptedRequest = async (
       account: receiverAddress,
       env,
     }, receiverAddress);
+
+    const publicKeys: string[] = group.members.map(member => member.publicKey);
+
     const {
             cipherText,
             encryptedSecret,
             signature,
           } = await encryptAndSign({
             plainText: message,
-            keys: group.publicKeys,
+            keys: publicKeys,
             privateKeyArmored: senderCreatedUser.privateKey!,
           });
           return {
