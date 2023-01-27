@@ -90,8 +90,6 @@ export const Modal: React.FC = () => {
     try {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
-      } else {
-        socketData.epnsSDKSocket?.disconnect();
       }
       const user = await createUserIfNecessary({ account, env });
       setConnectedUser(user);
@@ -158,7 +156,7 @@ export const Modal: React.FC = () => {
       {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
 
       <InputSection>
-        {connectedUser && socketData.epnsSDKSocket?.connected && <ChatInput />}
+        {connectedUser && <ChatInput />}
         <Image
           src={PoweredByPushLogo}
           alt="Powered by Push Protocol"
