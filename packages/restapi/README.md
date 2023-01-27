@@ -73,7 +73,7 @@ Allowed Options (params with * are mandatory)
 | page     | number  | 1       | page index of the results                  |
 | limit    | number  | 10      | number of items in 1 page                  |
 | spam     | boolean  | false   | if "true" it will fetch spam feeds         |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| env  | 'prod' &#124; 'staging' &#124; 'dev'  | 'prod'      | API environment |
 | raw      | boolean  | false      | if "true" the method will return unformatted raw API response|
 
 #### **fetching user subscriptions**

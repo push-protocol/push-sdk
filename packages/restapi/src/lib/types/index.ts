@@ -90,7 +90,7 @@ export interface ISendNotificationInputOptions {
     counter: number;
   };
   ipfsHash?: string;
-  env?: string;
+  env?: 'prod' | 'staging' | 'dev';
 }
 
 export interface INotificationPayload {
@@ -212,3 +212,4 @@ export interface Chat {
   intentTimestamp: Date;
   combinedDID: string;
 }
+
