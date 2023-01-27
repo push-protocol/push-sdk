@@ -26,36 +26,36 @@ import * as CryptoJS from "crypto-js"
 
 
 export interface ChatCreateGroupType extends AccountEnvOptionsType {
-    /** Name of the group */ 
+    /** Name of the group */
     groupName: string,
-    members: Array < string > ,
+    members: Array<string>,
     groupImage: string,
-    admins: Array < string > ,
+    admins: Array<string>,
     isPublic: boolean,
     groupCreator: string,
-    contractAddressNFT ? : string
-    numberOfNFTs ? : number,
-    contractAddressERC20 ? : string,
-    numberOfERC20 ? : number,
+    contractAddressNFT?: string
+    numberOfNFTs?: number,
+    contractAddressERC20?: string,
+    numberOfERC20?: number,
 }
 
 
 export const createGroup = async (
-  options: ChatCreateGroupType
+    options: ChatCreateGroupType
 ) => {
     const {
-            groupName,
-            members,
-            groupImage,
-            admins,
-            isPublic,
-            contractAddressNFT,
-            numberOfNFTs,
-            contractAddressERC20,
-            numberOfERC20,
-            groupCreator,
-            account,
-            env = Constants.ENV.PROD,
+        groupName,
+        members,
+        groupImage,
+        admins,
+        isPublic,
+        contractAddressNFT,
+        numberOfNFTs,
+        contractAddressERC20,
+        numberOfERC20,
+        groupCreator,
+        account,
+        env = Constants.ENV.PROD,
     } = options || {};
 
     try {
@@ -67,21 +67,21 @@ export const createGroup = async (
             throw new Error(`groupName cannot be more than 256 characters`);
         }
 
-        if (members == null || members.length == 0) {
-            throw new Error(`members cannot be null or empty`);
+        if (members == null) {
+            throw new Error(`members cannot be null`);
         }
 
-        for(let i = 0; i < members.length; i++) {
-            if (!isValidETHAddress(members[i])) {
+        for (let i = 0; i < members.length; i++) {
+            if (members[i] && !isValidETHAddress(members[i])) {
                 throw new Error(`Invalid member address!`);
             }
         }
 
-        if (admins == null || admins.length == 0) {
-            throw new Error(`admins cannot be null or empty`);
+        if (admins == null) {
+            throw new Error(`admins cannot be null`);
         }
 
-        for(let i = 0; i < admins.length; i++) {
+        for (let i = 0; i < admins.length; i++) {
             if (!isValidETHAddress(admins[i])) {
                 throw new Error(`Invalid admin address!`);
             }
@@ -91,50 +91,50 @@ export const createGroup = async (
             throw new Error(`Invalid groupCreator address!`);
         }
 
-      
-        if (contractAddressNFT!=null && contractAddressNFT?.length > 0 && !isValidETHAddress(contractAddressNFT)) {
+
+        if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidETHAddress(contractAddressNFT)) {
             throw new Error(`Invalid contractAddressNFT address!`);
         }
 
-        if (numberOfNFTs!=null && numberOfNFTs < 0) {
+        if (numberOfNFTs != null && numberOfNFTs < 0) {
             throw new Error(`numberOfNFTs cannot be negative number`);
         }
 
-        if (contractAddressERC20!=null && contractAddressERC20?.length > 0 && !isValidETHAddress(contractAddressERC20)) {
+        if (contractAddressERC20 != null && contractAddressERC20?.length > 0 && !isValidETHAddress(contractAddressERC20)) {
             throw new Error(`Invalid contractAddressERC20 address!`);
         }
 
-        if (numberOfERC20!=null && numberOfERC20 < 0) {
+        if (numberOfERC20 != null && numberOfERC20 < 0) {
             throw new Error(`numberOfERC20 cannot be negative number`);
         }
 
         const bodyToBeHashed = {
-          groupName: groupName,
-          members: members,
-          groupImage: groupImage,
-          admins: admins,
-          isPublic: isPublic,
-          contractAddressNFT: contractAddressNFT == undefined ? null : contractAddressNFT,
-          numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
-          contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
-          numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-          groupCreator: groupCreator
+            groupName: groupName,
+            members: members,
+            groupImage: groupImage,
+            admins: admins,
+            isPublic: isPublic,
+            contractAddressNFT: contractAddressNFT == undefined ? null : contractAddressNFT,
+            numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
+            contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
+            numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
+            groupCreator: groupCreator
         }
 
-        const connectedUser : IUser = await createUserIfNecessary({account, env});
+        const connectedUser: IUser = await createUserIfNecessary({ account, env });
 
         let pvtkey = null;
         if (connectedUser?.encryptedPrivateKey) {
             pvtkey = await decryptWithWalletRPCMethod(
-            connectedUser.encryptedPrivateKey,
-            account
+                connectedUser.encryptedPrivateKey,
+                account
             );
         }
         const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
-        const signature: string = await sign( {message: hash,  signingKey: pvtkey} );
-        const sigType  = "pgp";
+        const signature: string = await sign({ message: hash, signingKey: pvtkey });
+        const sigType = "pgp";
 
-        const verificationProof : string = sigType + ":" + signature;
+        const verificationProof: string = sigType + ":" + signature;
 
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;

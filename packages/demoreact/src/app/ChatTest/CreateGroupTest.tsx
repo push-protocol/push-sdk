@@ -41,23 +41,23 @@ const CreateGroupTest = () => {
     setGroupImage((e.target as HTMLInputElement).value);
   };
 
-  const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateAdmins = (e: React.SyntheticEvent<HTMLElement>) => {
     setAdmins((e.target as HTMLInputElement).value);
   };
 
-  const updateIsPublic= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateIsPublic = (e: React.SyntheticEvent<HTMLElement>) => {
     setIsPublic((e.target as HTMLInputElement).value);
   };
 
-  const updateContractAddressNFT= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateContractAddressNFT = (e: React.SyntheticEvent<HTMLElement>) => {
     setContractAddressNFT((e.target as HTMLInputElement).value);
   };
 
-  const updateNumberOfNFTs= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateNumberOfNFTs = (e: React.SyntheticEvent<HTMLElement>) => {
     setNumberOfNFTs((e.target as HTMLInputElement).value);
   };
 
-  const updateContractAddressERC20= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateContractAddressERC20 = (e: React.SyntheticEvent<HTMLElement>) => {
     setContractAddressERC20((e.target as HTMLInputElement).value);
   };
 
@@ -82,19 +82,25 @@ const CreateGroupTest = () => {
         );
       }
 
+      // Remove empty string elements
+      let membersNotEmpty = [members]
+      membersNotEmpty = membersNotEmpty.filter(str => str !== '')
+      let adminNotEmpty = [admins]
+      adminNotEmpty = adminNotEmpty.filter(str => str !== '')
+
       const response = await PushAPI.chat.createGroup({
-           groupName,
-            members: [members],
-            groupImage,
-            admins: [admins],
-            isPublic: (isPublic === "true"),
-            groupCreator,
-            contractAddressNFT,
-            numberOfNFTs: numberOfNFTs!=null ? Number(numberOfNFTs) : undefined,
-            contractAddressERC20,
-            numberOfERC20: numberOfERC20!=null ? Number(numberOfERC20) : undefined,
-            account: isCAIP ? walletToPCAIP10(account) : account,
-            env,
+        groupName,
+        members: membersNotEmpty,
+        groupImage,
+        admins: adminNotEmpty,
+        isPublic: (isPublic === "true"),
+        groupCreator,
+        contractAddressNFT,
+        numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,
+        contractAddressERC20,
+        numberOfERC20: numberOfERC20 != null ? Number(numberOfERC20) : undefined,
+        account: isCAIP ? walletToPCAIP10(account) : account,
+        env,
       });
 
       setSendResponse(response);
@@ -145,7 +151,7 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-        
+
             <SectionItem style={{ marginTop: 20 }}>
               <label>admins</label>
               <input
@@ -197,7 +203,7 @@ const CreateGroupTest = () => {
               />
             </SectionItem>
 
-           <SectionItem style={{ marginTop: 20 }}>
+            <SectionItem style={{ marginTop: 20 }}>
               <label>numberOfERC20</label>
               <input
                 type="text"
@@ -207,7 +213,7 @@ const CreateGroupTest = () => {
               />
             </SectionItem>
 
-           <SectionItem style={{ marginTop: 20 }}>
+            <SectionItem style={{ marginTop: 20 }}>
               <label>groupCreator</label>
               <input
                 type="text"
@@ -217,10 +223,10 @@ const CreateGroupTest = () => {
               />
             </SectionItem>
 
- 
 
- 
-        
+
+
+
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testCreateGroup}>
                 send message
