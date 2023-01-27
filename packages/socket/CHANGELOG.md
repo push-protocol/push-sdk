@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.2.0...socket-0.3.0) (2023-01-27)
+
+
+### Features
+
+* inc version ([74c7e63](https://github.com/ethereum-push-notification-service/push-sdk/commit/74c7e63a3e5e5131fcd53d192a076c09c37989e9))
+
+
+
 # [0.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.1.0...socket-0.2.0) (2023-01-27)
 
 
