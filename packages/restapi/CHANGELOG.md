@@ -2,6 +2,24 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.0...restapi-0.3.1) (2023-01-27)
+
+
+
+# [0.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.2.1...restapi-0.3.0) (2023-01-13)
+
+
+### Bug Fixes
+
+* added throw Error in remaining sdk endpoints ([f78e3d6](https://github.com/ethereum-push-notification-service/push-sdk/commit/f78e3d66684f8941315b21ac9876a18f37fdf1d0))
+
+
+### Features
+
+* Bsc chain config changes added ([#113](https://github.com/ethereum-push-notification-service/push-sdk/issues/113)) ([e1af11b](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1af11b1fa444e30f8aa08ee6b54a30bb03d6070))
+
+
+
 ## [0.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.2.0...restapi-0.2.1) (2022-11-03)
 
 
