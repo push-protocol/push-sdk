@@ -16,45 +16,45 @@ export interface ISendMessagePayload {
 }
 
 export interface IApproveRequestPayload {
-    fromDID: string;
-    toDID: string;
-    signature: string;
-    status: 'Approved';
-    sigType: string;
+  fromDID: string;
+  toDID: string;
+  signature: string;
+  status: 'Approved';
+  sigType: string;
 }
 
 export interface ICreateGroupRequestPayload {
-    groupName: string,
-    members: Array < string > ,
-    groupImage: string,
-    admins: Array < string > ,
-    isPublic: boolean,
-    contractAddressNFT ? : string
-    numberOfNFTs ? : number,
-    contractAddressERC20 ? : string,
-    numberOfERC20 ? : number,
-    groupCreator: string,
-    verificationProof: string
+  groupName: string,
+  members: Array<string>,
+  groupImage: string,
+  admins: Array<string>,
+  isPublic: boolean,
+  contractAddressNFT?: string
+  numberOfNFTs?: number,
+  contractAddressERC20?: string,
+  numberOfERC20?: number,
+  groupCreator: string,
+  verificationProof: string,
 }
 
 export interface IUpdateGroupRequestPayload {
-    groupName: string,
-    numberOfERC20: number,
-    numberOfNFTs: number,
-    profilePicture: string,
-    addMembers: Array < string >,
-    removeMembers: Array < string >,
-    admin: string,
-    verificationProof: string
+  groupName: string,
+  numberOfERC20: number,
+  numberOfNFTs: number,
+  profilePicture: string,
+  addMembers: Array<string>,
+  removeMembers: Array<string>,
+  admin: string,
+  verificationProof: string
 }
-  
+
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   messageContent: string,
   messageType: string,
   env: string
-):Promise<ISendMessagePayload> => {
+): Promise<ISendMessagePayload> => {
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
@@ -65,7 +65,7 @@ export const sendMessagePayload = async (
 
   let isGroup = true;
   if (receiverAddress.includes('eip155:')) {
-      isGroup = false;
+    isGroup = false;
   }
 
   const body: ISendMessagePayload = {
@@ -83,20 +83,20 @@ export const sendMessagePayload = async (
   return body;
 };
 
-export const approveRequestPayload =  (
+export const approveRequestPayload = (
   senderAddress: string,
   account: string,
   status: 'Approved'
-):IApproveRequestPayload => {
+): IApproveRequestPayload => {
   const signature = '1';
 
   let isGroup = true;
   if (senderAddress.includes('eip155:')) {
-      isGroup = false;
+    isGroup = false;
   }
   const body = {
-    fromDID: isGroup ? walletToPCAIP10(account): walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress: walletToPCAIP10(account),
+    fromDID: isGroup ? walletToPCAIP10(account) : walletToPCAIP10(senderAddress),
+    toDID: isGroup ? senderAddress : walletToPCAIP10(account),
     signature,
     status,
     sigType: 'sigType',
@@ -105,29 +105,29 @@ export const approveRequestPayload =  (
 };
 
 
-export const createGroupPayload =  (
-    groupName: string,
-    members: Array < string > ,
-    groupImage: string,
-    admins: Array < string > ,
-    isPublic: boolean,
-    groupCreator: string,
-    verificationProof: string,
-    contractAddressNFT ? : string,
-    numberOfNFTs ? : number,
-    contractAddressERC20 ? : string,
-    numberOfERC20 ? : number,
-):ICreateGroupRequestPayload => {
+export const createGroupPayload = (
+  groupName: string,
+  members: Array<string>,
+  groupImage: string,
+  admins: Array<string>,
+  isPublic: boolean,
+  groupCreator: string,
+  verificationProof: string,
+  contractAddressNFT?: string,
+  numberOfNFTs?: number,
+  contractAddressERC20?: string,
+  numberOfERC20?: number
+): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
-    members: members ,
+    members: members,
     groupImage: groupImage,
-    admins: admins ,
+    admins: admins,
     isPublic: isPublic,
-    contractAddressNFT : contractAddressNFT,
-    numberOfNFTs : numberOfNFTs,
-    contractAddressERC20 : contractAddressERC20,
-    numberOfERC20 : numberOfERC20,
+    contractAddressNFT: contractAddressNFT,
+    numberOfNFTs: numberOfNFTs,
+    contractAddressERC20: contractAddressERC20,
+    numberOfERC20: numberOfERC20,
     groupCreator: groupCreator,
     verificationProof: verificationProof,
   };
@@ -135,25 +135,25 @@ export const createGroupPayload =  (
 };
 
 
-export const updateGroupPayload =  (
-    groupName: string,
-    numberOfERC20: number,
-    numberOfNFTs: number,
-    profilePicture: string,
-    addMembers: Array < string >,
-    removeMembers: Array < string >,
-    admin: string,
-    verificationProof: string
-):IUpdateGroupRequestPayload => {
+export const updateGroupPayload = (
+  groupName: string,
+  numberOfERC20: number,
+  numberOfNFTs: number,
+  profilePicture: string,
+  addMembers: Array<string>,
+  removeMembers: Array<string>,
+  admin: string,
+  verificationProof: string
+): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
-    numberOfERC20: numberOfERC20 ,
+    numberOfERC20: numberOfERC20,
     numberOfNFTs: numberOfNFTs,
     profilePicture: profilePicture,
     addMembers: addMembers,
-    removeMembers : removeMembers,
-    admin : admin,
-    verificationProof : verificationProof  
+    removeMembers: removeMembers,
+    admin: admin,
+    verificationProof: verificationProof
   };
   return body;
 };

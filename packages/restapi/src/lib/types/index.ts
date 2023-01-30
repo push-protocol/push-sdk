@@ -158,19 +158,19 @@ export interface IUser {
 }
 
 export interface Member {
-    wallet: string;
-    publicKey: string;
+  wallet: string;
+  publicKey: string;
 }
 export interface IGroup {
-    members: Array < Member > ,
-    admins: Array < string > ,
-    contractAddressNFT ? : string
-    numberOfNFTs ? : number,
-    contractAddressERC20 ? : string,
-    numberOfERC20 ? : number,
-    groupImageCID: string,
-    groupName: string,
-    groupCreator: string, 
+  members: Array<Member>,
+  admins: Array<string>,
+  contractAddressNFT?: string
+  numberOfNFTs?: number,
+  contractAddressERC20?: string,
+  numberOfERC20?: number,
+  groupImageCID: string,
+  groupName: string,
+  groupCreator: string,
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
@@ -189,6 +189,21 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
+
+  // Group
+  groupInformation?: {
+    groupName: string,
+    groupImageCID: string,
+    groupMembers: UserInfo[],
+    groupAdmins: UserInfo[],
+    isPublic: boolean,
+    contractAddressNFT: string,
+    numberOfNFTs: number,
+    contractAddressERC20: string,
+    numberOfERC20: number,
+    verificationProof: string,
+    groupCreator: string
+  }
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -213,6 +228,12 @@ export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
 
+export interface UserInfo {
+  wallets: string,
+  publicKey: string,
+  name: string
+}
+
 export interface Chat {
   did: string;
   wallets: string;
@@ -225,6 +246,21 @@ export interface Chat {
   intentSentBy: string | null;
   intentTimestamp: Date;
   combinedDID: string;
+
+  // Group
+  groupInformation?: {
+    groupName: string,
+    groupImageCID: string,
+    groupMembers: UserInfo[],
+    groupAdmins: UserInfo[],
+    isPublic: boolean,
+    contractAddressNFT: string,
+    numberOfNFTs: number,
+    contractAddressERC20: string,
+    numberOfERC20: number,
+    verificationProof: string,
+    groupCreator: string
+  }
 }
 
 

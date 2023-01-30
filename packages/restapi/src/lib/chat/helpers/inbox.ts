@@ -34,13 +34,32 @@ export const getInboxLists = async (
   for (const list of lists) {
     if (list.threadhash !== null) {
       const message = await getCID(list.threadhash, { env });
-      messages.push(message);
+      const messageWithGroupInfo: IMessageIPFS = { ...message, groupInformation: list.groupInformation }
+
+      messages.push(messageWithGroupInfo);
+    }
+    // This is for groups that are created without any message
+    else {
+      messages.push({
+        encType: 'PlainText',
+        encryptedSecret: '',
+        fromCAIP10: '',
+        fromDID: '',
+        link: '',
+        messageContent: '',
+        messageType: '',
+        sigType: '',
+        signature: '',
+        toCAIP10: '',
+        toDID: '',
+        groupInformation: list.groupInformation
+      })
     }
   }
-  return decryptConversation({messages,connectedUser,toDecrypt,pgpPrivateKey,env});
+  return decryptConversation({ messages, connectedUser, toDecrypt, pgpPrivateKey, env });
 };
 
-export const decryptConversation = async(options:DecryptConverationType) => {
+export const decryptConversation = async (options: DecryptConverationType) => {
   const {
     messages,
     connectedUser,

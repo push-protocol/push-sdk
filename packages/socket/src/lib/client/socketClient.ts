@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { API_URLS } from '../config';
-import { getCAIPAddress,walletToPCAIP10 } from '../helpers';
+import { getCAIPAddress, walletToPCAIP10 } from '../helpers';
 import { SocketInputOptions } from '../types';
 
 export function createSocketConnection({

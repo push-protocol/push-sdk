@@ -165,16 +165,16 @@ export const getEncryptedRequest = async (
 
   let isGroup = true;
   if (receiverAddress.includes('eip155:')) {
-      isGroup = false;
+    isGroup = false;
   }
 
-  if(!isGroup) {
+  if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
       account: receiverAddress,
       env,
     });
     if (!receiverCreatedUser?.publicKey) {
-      if (receiverAddress.includes('eip155:') && !ethers.utils.isAddress(receiverAddress)) {
+      if (receiverAddress.includes('eip155:') && !ethers.utils.isAddress(receiverAddress.split(':')[1])) {
         throw new Error(`Invalid receiver address!`);
       }
       await createUserService({
@@ -207,21 +207,21 @@ export const getEncryptedRequest = async (
           signature: '',
         };
       } else {
-          const {
-            cipherText,
-            encryptedSecret,
-            signature,
-          } = await encryptAndSign({
-            plainText: message,
-            keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
-            privateKeyArmored: senderCreatedUser.privateKey!,
-          });
-          return {
-            message: cipherText,
-            encryptionType: 'pgp',
-            aesEncryptedSecret: encryptedSecret,
-            signature: signature,
-          };
+        const {
+          cipherText,
+          encryptedSecret,
+          signature,
+        } = await encryptAndSign({
+          plainText: message,
+          keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+        return {
+          message: cipherText,
+          encryptionType: 'pgp',
+          aesEncryptedSecret: encryptedSecret,
+          signature: signature,
+        };
       }
     }
   } else {
@@ -233,19 +233,19 @@ export const getEncryptedRequest = async (
     const publicKeys: string[] = group.members.map(member => member.publicKey);
 
     const {
-            cipherText,
-            encryptedSecret,
-            signature,
-          } = await encryptAndSign({
-            plainText: message,
-            keys: publicKeys,
-            privateKeyArmored: senderCreatedUser.privateKey!,
-          });
-          return {
-            message: cipherText,
-            encryptionType: 'pgp',
-            aesEncryptedSecret: encryptedSecret,
-            signature: signature,
-          };
+      cipherText,
+      encryptedSecret,
+      signature,
+    } = await encryptAndSign({
+      plainText: message,
+      keys: publicKeys,
+      privateKeyArmored: senderCreatedUser.privateKey!,
+    });
+    return {
+      message: cipherText,
+      encryptionType: 'pgp',
+      aesEncryptedSecret: encryptedSecret,
+      signature: signature,
+    };
   }
 };
