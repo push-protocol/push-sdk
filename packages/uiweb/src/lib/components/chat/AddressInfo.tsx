@@ -4,7 +4,7 @@ import { ChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants } from '../../config';
 import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
-import { ReactComponent as CopySvg } from '../../icons/chat/copy.svg';
+import { CopySvg } from '../../icons/chat/CopySvg';
 
 export const AddressInfo: React.FC = () => {
   const { supportAddress, env, theme } = useContext<any>(ChatPropsContext);
@@ -25,14 +25,14 @@ export const AddressInfo: React.FC = () => {
     <Container theme={theme}>
       <Section>
         <ImgSpan>
-        <Image
-          src={
-            user?.profilePicture
-              ? user?.profilePicture
-              : Constants.DEFAULT_PROFILE_PICTURE
-          }
-          alt="address profile"
-        />
+          <Image
+            src={
+              user?.profilePicture
+                ? user?.profilePicture
+                : Constants.DEFAULT_PROFILE_PICTURE
+            }
+            alt="address profile"
+          />
         </ImgSpan>
         <Span theme={theme}>
           {ensName && `${ensName}`}
@@ -43,19 +43,22 @@ export const AddressInfo: React.FC = () => {
         </Span>
       </Section>
       {!isCopied && (
-        <CopySvg
+        <div
           onClick={() => {
-            copyToClipboard(walletAddress); setIsCopied(true);
+            copyToClipboard(walletAddress);
+            setIsCopied(true);
           }}
-          stroke={theme.btnColorSecondary}
-        />
+        >
+          <CopySvg stroke={theme.btnColorSecondary} />
+        </div>
       )}
       {isCopied && (
-        <CopySvg
-          stroke={theme.btnColorSecondary}
-          onMouseLeave={() => setIsCopied(false)}
-          fill={theme.btnColorSecondary}
-        />
+       <div onMouseLeave={() => setIsCopied(false)}>
+          <CopySvg
+            stroke={theme.btnColorSecondary}
+            fill={theme.btnColorSecondary}
+          />
+        </div>
       )}
     </Container>
   );

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { ReactComponent as ErrorSvg } from '../../icons/error.svg';
-import { ReactComponent as CloseSvg } from '../../icons/close.svg';
+import { ErrorSvg } from '../../icons/ErrorSvg';
+import { CloseSvg } from '../../icons/CloseSvg';
 
 type ToasterPropType = {
   message: string;
@@ -19,22 +19,23 @@ export const Toaster: React.FC<ToasterPropType> = ({ message, type }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-     onClose();
+      onClose();
     }, 5000);
-  
-    return () => clearInterval(interval); 
-  }, [])
-  
+
+    return () => clearInterval(interval);
+  }, []);
+
   const onClose = () => {
     setToastMessage('');
   };
 
-
   return (
     <Container theme={theme} type={type}>
-      {type === 'error' && <ErrorSvg width = '26px'/>}
+      {type === 'error' && <ErrorSvg/>}
       <Span>{message}</Span>
-      <CloseSvg width = '18.6px' onClick={() => onClose()} />
+      <div onClick={() => onClose()}>
+        <CloseSvg/>
+      </div>
     </Container>
   );
 };
@@ -59,7 +60,7 @@ const Container = styled.div<ContainerPropType>`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   padding: 13px;
-  margin-bottom:6px;
+  margin-bottom: 6px;
 `;
 
 const Span = styled.span`
@@ -71,6 +72,5 @@ const Span = styled.span`
   display: flex;
   align-items: center;
   color: #657795;
-  padding: 0 20px 0 0 ;
+  padding: 0 20px 0 0;
 `;
-
