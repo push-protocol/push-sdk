@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useContext, useRef, useState } from 'react';
-import { ReactComponent as SendIcon } from '../../icons/chat/sendIcon.svg';
+import { SendIconSvg } from '../../icons/chat/SendIconSvg';
 import SmileyIcon from '../../icons/chat/smiley.svg';
 import AttachmentIcon from '../../icons/chat/attachment.svg';
 import styled from 'styled-components';
@@ -34,7 +34,6 @@ export const ChatInput: React.FC = () => {
     setShowEmojis(false);
   };
 
-
   const handleSubmit = async (e: {
     preventDefault: () => void;
   }): Promise<void> => {
@@ -62,30 +61,6 @@ export const ChatInput: React.FC = () => {
         setLoading(false);
       }
     }
-    // socket send code
-   // if (message.trim() !== '' && connectedUser) {
-      // const payload = await getSendMessageEventData({
-      //   connectedUser,
-      //   supportAddress,
-      //   message,
-      //   messageType: 'Text',
-      //   env,
-      // });
-      // console.log(payload.body)
-      // socketData.epnsSDKSocket?.emit(payload.eventName, payload.body, (sendResponse: any) => {
-      //   console.log(sendResponse)
-      //   if (sendResponse.success) {
-      //     sendResponse.data.messageContent = message;
-      //     setChatsSorted([...chats, sendResponse.data]);
-      //     setMessage('');
-      //     setLoading(false);
-      //   } else {
-      //     setToastMessage(sendResponse.error);
-      //     setToastType('error');
-      //     setLoading(false);
-      //   }
-      // })
-   // }
   };
 
   const handleKeyPress = (e: any): void => {
@@ -183,7 +158,9 @@ export const ChatInput: React.FC = () => {
             {filesUploading || loading ? (
               <Spinner size="35" />
             ) : (
-              <SendIcon onClick={handleSubmit} fill={theme.btnColorPrimary} />
+              <div onClick={handleSubmit}>
+                <SendIconSvg fill={theme.btnColorPrimary} />
+              </div>
             )}
           </>
         </>

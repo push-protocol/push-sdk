@@ -41,13 +41,15 @@ export const history = async (options: HistoricalMessagesOptionsType) => {
 
     const messages = await getMessagesService({ threadhash, limit, env });
     const connectedUser = await get({ account: pCAIP10ToWallet(account), env });
-    return await decryptConversation({
-      messages,
-      connectedUser,
-      toDecrypt,
-      pgpPrivateKey,
-      env,
-    });
+    if (toDecrypt) {
+      return await decryptConversation({
+        messages,
+        connectedUser,
+        pgpPrivateKey,
+        env,
+      });
+    }
+    return messages;
   } catch (err) {
     console.error(`[EPNS-SDK] - API fetchMessages -: `, err);
     throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);

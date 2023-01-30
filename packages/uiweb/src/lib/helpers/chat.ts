@@ -109,7 +109,6 @@ export const decryptChat = async (
   const decryptedChat:IMessageIPFS[] = await PushAPI.chat.decryptConversation({
     messages: [message],
     connectedUser,
-    toDecrypt: true,
     pgpPrivateKey: connectedUser.privateKey!,
     env,
   });

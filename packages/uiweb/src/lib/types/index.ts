@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import React, { ReactElement } from "react";
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -13,7 +13,7 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-  icon?: React.FC<SVGProps<SVGSVGElement>>;
+  icon?: ReactElement<string|any>;
 }
 
 
