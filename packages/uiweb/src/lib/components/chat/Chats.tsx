@@ -48,7 +48,7 @@ export const Chats: React.FC<ChatsPropType> = ({
             ) : (
               <MessageWrapper align="row">
                 <ReceivedMessage theme={theme}>
-                  {msg?.icon && <msg.icon fill={theme.btnColorPrimary} />}
+                  {msg?.icon && msg.icon}
                   <TextMessage>{msg.messageContent}</TextMessage>
                   {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
                 </ReceivedMessage>
