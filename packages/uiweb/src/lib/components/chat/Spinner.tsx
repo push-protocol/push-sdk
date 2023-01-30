@@ -15,7 +15,7 @@ export const Spinner: React.FC<SpinnerPropType> = ({ size = 42 }) => {
   const { theme } = useContext<any>(ChatPropsContext);
   return (
     <SpinLoader width={`${size}px`}>
-      <SpinnerSvg fill={theme.btnColorPrimary} />
+      <SpinnerSvg color={theme.btnColorPrimary} />
     </SpinLoader>
   );
 };

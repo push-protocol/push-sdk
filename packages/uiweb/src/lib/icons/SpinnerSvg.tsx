@@ -1,8 +1,8 @@
 import React from 'react';
 
-export const SpinnerSvg = ({ fill }: { fill?: string }) => {
+export const SpinnerSvg = ({ color }: { color?: string }) => {
   return (
-    <svg viewBox="0 0 42 42" fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 42 42" color={color?? "none"} xmlns="http://www.w3.org/2000/svg">
       <path
         d="M20.7588 5.1897V10.3793"
         stroke="currentColor"
