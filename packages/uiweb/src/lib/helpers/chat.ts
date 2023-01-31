@@ -15,18 +15,8 @@ type GetChatsType = {
   threadHash?: string;
 } & AccountEnvOptionsType;
 
-type GetSendMessageEventDataType = {
-  connectedUser: IConnectedUser;
-  supportAddress: string;
-  message: string;
-  messageType: string;
-  env: string;
-};
 
-type GetSendMessageEventDataReturnType = {
-  eventName: string;
-  body: PushAPI.chat.ISendMessagePayload;
-};
+
 export const handleOnChatIconClick = ({
   isModalOpen,
   setIsModalOpen,
@@ -128,28 +118,3 @@ export const copyToClipboard = (address: string): void => {
   }
 };
 
-export const getSendMessageEventData = async (
-  options: GetSendMessageEventDataType
-): Promise<GetSendMessageEventDataReturnType> => {
-  const { connectedUser, supportAddress, message, messageType, env } =
-    options || {};
-
-  const body: PushAPI.chat.ISendMessagePayload =
-    (await PushAPI.chat.sendMessagePayload(
-      supportAddress,
-      connectedUser,
-      message,
-      'Text',
-      env
-    )) || {};
-  const conversationResponse: any = await PushAPI.chat.conversationHash({
-    conversationId: supportAddress,
-    account: connectedUser.wallets.split(',')[0],
-    env,
-  });
-  if (!conversationResponse?.threadHash) {
-    return { eventName: 'CREATE_INTENT', body: body };
-  } else {
-    return { eventName: 'CHAT_SEND', body: body };
-  }
-};

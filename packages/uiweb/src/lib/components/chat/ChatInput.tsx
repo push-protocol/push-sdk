@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Spinner } from './Spinner';
-import { getSendMessageEventData, walletToPCAIP10 } from '../../helpers';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
