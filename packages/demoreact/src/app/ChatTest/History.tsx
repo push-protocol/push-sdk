@@ -61,6 +61,34 @@ const HistoryTest = () => {
     }
   };
 
+  const testDecryptConversation = async () => {
+    try {
+      setLoading(true);
+
+      // object for response
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
+      const decryptedChat = await PushAPI.chat.decryptConversation({
+        messages:response,
+        connectedUser:user,
+        pgpPrivateKey:pvtkey,
+        env,
+      });
+
+      setResponse(decryptedChat);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <ChatTest />
@@ -93,7 +121,7 @@ const HistoryTest = () => {
           <label>Decrypt response</label>
           <SectionButton onClick={testHistory}>get history</SectionButton>
         </SectionItem>
-
+        <SectionButton onClick={testDecryptConversation}>decrypt chats</SectionButton>
         <SectionItem>
           <div>
             {response ? (

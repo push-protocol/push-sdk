@@ -14,7 +14,6 @@ type InboxListsType = {
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
-  toDecrypt: boolean;
   pgpPrivateKey?: string;
   env?: string;
 };
@@ -37,14 +36,15 @@ export const getInboxLists = async (
       messages.push(message);
     }
   }
-  return decryptConversation({messages,connectedUser,toDecrypt,pgpPrivateKey,env});
+  if(toDecrypt)
+    return decryptConversation({messages,connectedUser,pgpPrivateKey,env});
+  return messages;
 };
 
 export const decryptConversation = async(options:DecryptConverationType) => {
   const {
     messages,
     connectedUser,
-    toDecrypt,
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
@@ -65,7 +65,6 @@ export const decryptConversation = async(options:DecryptConverationType) => {
       } else {
         signatureValidationPubliKey = connectedUser.publicKey;
       }
-      if (toDecrypt) {
         message.messageContent = await decryptMessage({
           encryptedMessage: message.messageContent,
           encryptedSecret: message.encryptedSecret,
@@ -74,7 +73,6 @@ export const decryptConversation = async(options:DecryptConverationType) => {
           signatureValidationPubliKey: signatureValidationPubliKey,
           pgpPrivateKey,
         });
-      }
     }
   }
   return messages;

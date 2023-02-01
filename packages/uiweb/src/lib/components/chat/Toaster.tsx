@@ -72,5 +72,5 @@ const Span = styled.span`
   display: flex;
   align-items: center;
   color: #657795;
-  padding: 0 20px 0 0;
+  padding: 0 20px 0 5px;
 `;

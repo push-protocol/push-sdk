@@ -94,10 +94,10 @@ export const Modal: React.FC = () => {
       const user = await createUserIfNecessary({ account, env });
       setConnectedUser(user);
       setLoading(false);
-    } catch (err) {
-      setToastMessage(err);
-      setToastType('error');
+    } catch (err:any) {
       setLoading(false);
+      setToastMessage(err?.message);
+      setToastType('error');
     }
   };
 
