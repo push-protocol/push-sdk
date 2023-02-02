@@ -47,7 +47,7 @@ export const sendMessagePayload = async (
     signature: signature!,
     encType: encryptionType!,
     encryptedSecret: aesEncryptedSecret!,
-    sigType: signature!,
+    sigType: 'pgp',
   };
   return body;
 };
