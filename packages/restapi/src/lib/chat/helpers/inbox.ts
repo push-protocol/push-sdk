@@ -36,6 +36,7 @@ export const getInboxLists = async (
       messages.push(message);
     }
   }
+  console.log(messages)
   if(toDecrypt)
     return decryptConversation({messages,connectedUser,pgpPrivateKey,env});
   return messages;

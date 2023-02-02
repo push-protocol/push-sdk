@@ -84,7 +84,7 @@ export const getMessagesService = async (options: GetMessagesOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/conversationhash/${threadhash}`;
-
+console.log(apiEndpoint)
   const queryObj = {
     fetchLimit: limit,
   };
