@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.0...socket-0.3.1) (2023-02-03)
+
+
+### Bug Fixes
+
+* Metamask reject handled ([#136](https://github.com/ethereum-push-notification-service/push-sdk/issues/136)) ([46a20b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/46a20b751e655a526168c8ae7c400211f3b62b15))
+
+
+
 # [0.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.2.0...socket-0.3.0) (2023-01-27)
 
 
