@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.0...uiweb-0.4.1) (2023-02-03)
+
+
+### Bug Fixes
+
+* converted svg to react component ([#135](https://github.com/ethereum-push-notification-service/push-sdk/issues/135)) ([e68c783](https://github.com/ethereum-push-notification-service/push-sdk/commit/e68c78386adfebecad8bcba514a9272f008bdc4f))
+* Metamask reject handled ([#136](https://github.com/ethereum-push-notification-service/push-sdk/issues/136)) ([46a20b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/46a20b751e655a526168c8ae7c400211f3b62b15))
+
+
+
 # [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.3.0...uiweb-0.4.0) (2023-01-27)
 
 
