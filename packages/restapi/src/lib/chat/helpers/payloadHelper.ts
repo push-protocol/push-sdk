@@ -55,18 +55,18 @@ export const sendMessagePayload = async (
   messageType: string,
   env: string
 ): Promise<ISendMessagePayload> => {
+  let isGroup = true;
+  if (receiverAddress.includes('eip155:')) {
+    isGroup = false;
+  }
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
       senderCreatedUser,
       messageContent,
+      isGroup,
       env
     )) || {};
-
-  let isGroup = true;
-  if (receiverAddress.includes('eip155:')) {
-    isGroup = false;
-  }
 
   const body: ISendMessagePayload = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),

@@ -8,9 +8,11 @@ import {
   IUser,
   IGroup,
 } from '../../types';
-import { get, getGroup } from '../../user';
+import { get } from '../../user';
+
 import { walletToPCAIP10 } from '../../helpers';
 import { createUserService } from './service';
+import { getGroup } from '../getGroup';
 
 interface IEncryptedRequest {
   message: string;
@@ -160,13 +162,9 @@ export const getEncryptedRequest = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   message: string,
+  isGroup: boolean,
   env: string
 ): Promise<IEncryptedRequest | void> => {
-
-  let isGroup = true;
-  if (receiverAddress.includes('eip155:')) {
-    isGroup = false;
-  }
 
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
@@ -226,9 +224,10 @@ export const getEncryptedRequest = async (
     }
   } else {
     const group: IGroup = await getGroup({
-      account: receiverAddress,
-      env,
-    }, receiverAddress);
+      chatId: receiverAddress,
+      account: '',
+      env:  env
+    });
 
     const publicKeys: string[] = group.members.map(member => member.publicKey);
 

@@ -26,6 +26,8 @@ import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
+import GetGroupTest from './ChatTest/GetGroupTest';
+
 interface Web3ReactState {
   chainId?: number;
   account?: string | null | undefined;
@@ -222,6 +224,7 @@ export function App() {
                 <Route path="/requests" element={<GetRequestsTest />} />
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
+                <Route path="/getGroup" element={<GetGroupTest />} />
 
               </Routes>
               <ChatSupportTest />

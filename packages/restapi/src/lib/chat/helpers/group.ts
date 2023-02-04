@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { AccountEnvOptionsType, IGroup } from '../types';
-import { getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import { AccountEnvOptionsType, IGroup } from '../../types';
+import { getAPIBaseUrls } from '../../helpers';
+import Constants from '../../constants';
 
 /**
  *  GET /v1/chat/groups/<chatId>

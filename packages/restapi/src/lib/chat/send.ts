@@ -27,14 +27,11 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       throw new Error(`Invalid address!`);
     }
 
-    let isGroup = true;
-    if (receiverAddress.includes('eip155:')) {
-      isGroup = false;
-      if (!isValidETHAddress(receiverAddress)) {
-        throw new Error(`Invalid address!`);
-      }
+    let isGroup = false;
+    if (!isValidETHAddress(receiverAddress)) {
+        isGroup = true;
     }
-
+    
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
     let conversationResponse: any = null;
     if (!isGroup) {

@@ -114,7 +114,7 @@ const CreateGroupTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>Send Message Test page</h2>
+      <h2>Create Group Test page</h2>
 
       <Loader show={isLoading} />
 
@@ -229,7 +229,7 @@ const CreateGroupTest = () => {
 
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testCreateGroup}>
-                send message
+                create group
               </SectionButton>
             </SectionItem>
           </div>

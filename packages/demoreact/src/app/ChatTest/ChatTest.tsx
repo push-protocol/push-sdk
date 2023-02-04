@@ -62,6 +62,9 @@ const ChatTest = () => {
           <Link to="/updateGroup" className="nav-button">
             CHAT.UPDATEGROUP
           </Link>
+          <Link to="/getGroup" className="nav-button">
+            CHAT.GETGROUP
+          </Link>
         </NavMenu>
       </Section>
     </div>
