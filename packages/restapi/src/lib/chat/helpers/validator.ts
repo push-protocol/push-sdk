@@ -59,11 +59,9 @@ export const createGroupRequestValidator = (
     }
 };
 
-
 export const updateGroupRequestValidator = (
-    chatId: string, groupName: string, addMembers: Array < string > ,
-    removeMembers: Array < string > , admin: string, numberOfERC20 ? : number, numberOfNFTs ? : number
-
+    chatId: string, groupName: string, profilePicture: string, members: Array < string > ,
+    admins: Array < string > , address: string
 ): void => {
 
 
@@ -75,36 +73,31 @@ export const updateGroupRequestValidator = (
         throw new Error(`groupName cannot be null or empty`);
     }
 
+    if (profilePicture == null || profilePicture.length == 0) {
+        throw new Error(`profilePicture cannot be null or empty`);
+    }
+
     if (groupName != null && groupName.length >= 256) {
         throw new Error(`groupName cannot be more than 256 characters`);
     }
 
-    if (addMembers != null && addMembers.length > 0) {
-        for (let i = 0; i < addMembers.length; i++) {
-            if (!isValidETHAddress(addMembers[i])) {
-                throw new Error(`Invalid member address in addMembers list!`);
+    if (members != null && members.length > 0) {
+        for (let i = 0; i < members.length; i++) {
+            if (!isValidETHAddress(members[i])) {
+                throw new Error(`Invalid member address in members list!`);
             }
         }
     }
 
-    if (removeMembers != null && removeMembers.length > 0) {
-        for (let i = 0; i < removeMembers.length; i++) {
-            if (!isValidETHAddress(removeMembers[i])) {
-                throw new Error(`Invalid member address in removeMembers list!`);
+    if (admins != null && admins.length > 0) {
+        for (let i = 0; i < admins.length; i++) {
+            if (!isValidETHAddress(admins[i])) {
+                throw new Error(`Invalid member address in admins list!`);
             }
         }
     }
 
-    if (admin != null && !isValidETHAddress(admin)) {
-        throw new Error(`Invalid admin address!`);
+    if (address != null && !isValidETHAddress(address)) {
+        throw new Error(`Invalid address field!`);
     }
-
-    if (numberOfNFTs != null && numberOfNFTs < 0) {
-        throw new Error(`numberOfNFTs cannot be negative number`);
-    }
-
-    if (numberOfERC20 != null && numberOfERC20 < 0) {
-        throw new Error(`numberOfERC20 cannot be negative number`);
-    }
-
 };

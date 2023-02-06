@@ -26,13 +26,11 @@ import {
 
 export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         chatId: string,
-        groupName: string,
-        numberOfERC20: number,
-        numberOfNFTs: number,
+        groupName: string, 
         profilePicture: string,
-        addMembers: Array < string >,
-        removeMembers: Array < string >,
-        admin: string
+        members: Array < string >,
+        admins: Array < string >,
+        address: string
 }
 
 
@@ -42,19 +40,17 @@ export const updateGroup = async (
     const {
         chatId,
         groupName,
-        numberOfERC20,
-        numberOfNFTs,
         profilePicture,
-        addMembers,
-        removeMembers,
-        admin,
+        members,
+        admins,
+        address,
         account,
         env = Constants.ENV.PROD,
     } = options || {};
 
     try {
 
-        updateGroupRequestValidator(chatId, groupName, addMembers, removeMembers, admin, numberOfNFTs, numberOfERC20);
+        updateGroupRequestValidator(chatId, groupName, profilePicture, members, admins, address);
 
         const connectedUser : IUser = await createUserIfNecessary({account, env});
 
@@ -69,12 +65,9 @@ export const updateGroup = async (
         const bodyToBeHashed = {
             groupName: groupName,
             profilePicture: profilePicture,
-            numberOfERC20: numberOfERC20,
-            numberOfNFTs: numberOfNFTs,
-            addMembers: addMembers,
-            removeMembers: removeMembers,
+            members: members,
+            admins: admins,
             chatId: chatId,
-            admin: admin
         }
 
         const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
@@ -87,16 +80,14 @@ export const updateGroup = async (
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
         const body: IUpdateGroupRequestPayload = updateGroupPayload(
         groupName,
-        numberOfERC20,
-        numberOfNFTs,
         profilePicture,
-        addMembers,
-        removeMembers,
-        admin,
+        members,
+        admins,
+        address,
         verificationProof);
 
         return axios
-            .post(apiEndpoint, body)
+            .put(apiEndpoint, body)
             .then((response) => {
                 return response.data;
             })

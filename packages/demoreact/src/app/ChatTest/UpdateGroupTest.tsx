@@ -17,12 +17,11 @@ const UpdateGroupTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
-  const [numberOfNFTs, setNumberOfNFTs] = useState<string>();
-  const [numberOfERC20, setNumberOfERC20] = useState<string>();
   const [profilePicture, setProfilePicture] = useState<string>('');
   const [admin, setAdmin] = useState<string>('');
-  const [addMembers, setAddMembers] = useState<string>('');
-  const [removeMembers, setRemoveMembers] = useState<string>('');
+  const [members, setMembers] = useState<string>('');
+  const [admins, setAdmins] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -34,13 +33,6 @@ const UpdateGroupTest = () => {
     setGroupName((e.target as HTMLInputElement).value);
   };
 
-  const updateNumberOfNFTs= (e: React.SyntheticEvent<HTMLElement>) => {
-    setNumberOfNFTs((e.target as HTMLInputElement).value);
-  };
-
-  const updateNumberOfERC20 = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNumberOfERC20((e.target as HTMLInputElement).value);
-  };
 
   const updateProfilePicture= (e: React.SyntheticEvent<HTMLElement>) => {
     setProfilePicture((e.target as HTMLInputElement).value);
@@ -50,13 +42,17 @@ const UpdateGroupTest = () => {
     setAdmin((e.target as HTMLInputElement).value);
   };
 
-  const updateAddMembers= (e: React.SyntheticEvent<HTMLElement>) => {
-    setAddMembers((e.target as HTMLInputElement).value);
+  const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
+    setMembers((e.target as HTMLInputElement).value);
   };
 
  
-  const updateRemoveMembers= (e: React.SyntheticEvent<HTMLElement>) => {
-    setRemoveMembers((e.target as HTMLInputElement).value);
+  const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
+    setAdmins((e.target as HTMLInputElement).value);
+  };
+
+  const updateAddress= (e: React.SyntheticEvent<HTMLElement>) => {
+    setAddress((e.target as HTMLInputElement).value);
   };
 
   const testUpdateGroup = async () => {
@@ -74,12 +70,10 @@ const UpdateGroupTest = () => {
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
-        numberOfERC20: Number(numberOfERC20),
-        numberOfNFTs: Number(numberOfNFTs),
         profilePicture,
-        addMembers: [addMembers],
-        removeMembers: [removeMembers],
-        admin,
+        members: [members],
+        admins: [admins],
+        address,
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
       });
@@ -137,57 +131,35 @@ const UpdateGroupTest = () => {
             </SectionItem>
         
             <SectionItem style={{ marginTop: 20 }}>
-              <label>admin</label>
+              <label>members</label>
               <input
                 type="text"
-                onChange={updateAdmin}
-                value={admin}
+                onChange={updateMembers}
+                value={members}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
 
             <SectionItem style={{ marginTop: 20 }}>
-              <label>addMembers</label>
+              <label>admins</label>
               <input
                 type="text"
-                onChange={updateAddMembers}
-                value={addMembers}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>removeMembers</label>
-              <input
-                type="text"
-                onChange={updateRemoveMembers}
-                value={removeMembers}
+                onChange={updateAdmins}
+                value={admins}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
 
 
             <SectionItem style={{ marginTop: 20 }}>
-              <label>numberOfNFTs</label>
+              <label>address</label>
               <input
                 type="text"
-                onChange={updateNumberOfNFTs}
-                value={numberOfNFTs}
+                onChange={updateAddress}
+                value={address}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-
-    
-           <SectionItem style={{ marginTop: 20 }}>
-              <label>numberOfERC20</label>
-              <input
-                type="text"
-                onChange={updateNumberOfERC20}
-                value={numberOfERC20}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-
         
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateGroup}>

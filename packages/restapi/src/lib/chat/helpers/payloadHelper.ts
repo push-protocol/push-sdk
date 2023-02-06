@@ -25,6 +25,7 @@ export interface IApproveRequestPayload {
 
 export interface ICreateGroupRequestPayload {
   groupName: string,
+  groupDescription: string,
   members: Array<string>,
   groupImage: string,
   admins: Array<string>,
@@ -39,12 +40,10 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string,
-  numberOfERC20: number,
-  numberOfNFTs: number,
   profilePicture: string,
-  addMembers: Array<string>,
-  removeMembers: Array<string>,
-  admin: string,
+  members: Array<string>,
+  admins: Array<string>,
+  address: string,
   verificationProof: string
 }
 
@@ -107,6 +106,7 @@ export const approveRequestPayload = (
 
 export const createGroupPayload = (
   groupName: string,
+  groupDescription: string,
   members: Array<string>,
   groupImage: string,
   admins: Array<string>,
@@ -120,6 +120,7 @@ export const createGroupPayload = (
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
+    groupDescription: groupDescription,
     members: members,
     groupImage: groupImage,
     admins: admins,
@@ -137,22 +138,18 @@ export const createGroupPayload = (
 
 export const updateGroupPayload = (
   groupName: string,
-  numberOfERC20: number,
-  numberOfNFTs: number,
   profilePicture: string,
-  addMembers: Array<string>,
-  removeMembers: Array<string>,
-  admin: string,
+  members: Array<string>,
+  admins: Array<string>,
+  address: string,
   verificationProof: string
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
-    numberOfERC20: numberOfERC20,
-    numberOfNFTs: numberOfNFTs,
     profilePicture: profilePicture,
-    addMembers: addMembers,
-    removeMembers: removeMembers,
-    admin: admin,
+    members: members,
+    admins: admins,
+    address: address,
     verificationProof: verificationProof
   };
   return body;

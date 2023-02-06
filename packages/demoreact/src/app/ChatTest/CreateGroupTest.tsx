@@ -16,6 +16,7 @@ const CreateGroupTest = () => {
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [groupName, setGroupName] = useState<string>('');
+  const [groupDescription, setGroupDescription] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [groupImage, setGroupImage] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
@@ -31,6 +32,10 @@ const CreateGroupTest = () => {
 
   const updateGroupName = (e: React.SyntheticEvent<HTMLElement>) => {
     setGroupName((e.target as HTMLInputElement).value);
+  };
+
+  const updateGroupDescription = (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupDescription((e.target as HTMLInputElement).value);
   };
 
   const updateMembers = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -90,6 +95,7 @@ const CreateGroupTest = () => {
 
       const response = await PushAPI.chat.createGroup({
         groupName,
+        groupDescription,
         members: membersNotEmpty,
         groupImage,
         admins: adminNotEmpty,
@@ -130,6 +136,17 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
+
+            <SectionItem>
+              <label>Group Description</label>
+              <input
+                type="text"
+                onChange={updateGroupDescription}
+                value={groupDescription}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
 
             <SectionItem>
               <label>members</label>

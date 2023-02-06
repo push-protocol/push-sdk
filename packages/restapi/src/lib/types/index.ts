@@ -170,6 +170,7 @@ export interface IGroup {
   numberOfERC20?: number,
   groupImageCID: string,
   groupName: string,
+  groupDescription: string,
   groupCreator: string,
 }
 export interface IConnectedUser extends IUser {

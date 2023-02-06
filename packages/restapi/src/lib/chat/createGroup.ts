@@ -28,6 +28,7 @@ import * as CryptoJS from "crypto-js"
 export interface ChatCreateGroupType extends AccountEnvOptionsType {
     /** Name of the group */
     groupName: string,
+    groupDescription: string,
     members: Array<string>,
     groupImage: string,
     admins: Array<string>,
@@ -45,6 +46,7 @@ export const createGroup = async (
 ) => {
     const {
         groupName,
+        groupDescription,
         members,
         groupImage,
         admins,
@@ -64,6 +66,7 @@ export const createGroup = async (
 
         const bodyToBeHashed = {
             groupName: groupName,
+            groupDescription: groupDescription == undefined ? null : groupDescription,
             members: members,
             groupImage: groupImage,
             admins: admins,
@@ -93,6 +96,7 @@ export const createGroup = async (
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;
         const body: ICreateGroupRequestPayload = createGroupPayload(groupName,
+            groupDescription,
             members,
             groupImage,
             admins,
