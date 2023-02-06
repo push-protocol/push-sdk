@@ -76,6 +76,7 @@ const UpdateGroupTest = () => {
         address,
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
+        pgpPrivateKey: pvtkey,
       });
 
       setSendResponse(response);

@@ -107,6 +107,7 @@ const CreateGroupTest = () => {
         numberOfERC20: numberOfERC20 != null ? Number(numberOfERC20) : undefined,
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
+        pgpPrivateKey: pvtkey,
       });
 
       setSendResponse(response);

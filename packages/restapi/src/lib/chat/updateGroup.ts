@@ -4,12 +4,12 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType, IUser
+    AccountEnvOptionsType
 } from '../types';
 import {
     IUpdateGroupRequestPayload,
     updateGroupPayload,
-    createUserIfNecessary,
+    getConnectedUser,
     sign,
     updateGroupRequestValidator
 } from './helpers';
@@ -31,6 +31,7 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         members: Array < string >,
         admins: Array < string >,
         address: string
+        pgpPrivateKey?: string,
 }
 
 
@@ -46,13 +47,14 @@ export const updateGroup = async (
         address,
         account,
         env = Constants.ENV.PROD,
+        pgpPrivateKey = null,
     } = options || {};
 
     try {
 
         updateGroupRequestValidator(chatId, groupName, profilePicture, members, admins, address);
 
-        const connectedUser : IUser = await createUserIfNecessary({account, env});
+        const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
         let pvtkey = null;
         if (connectedUser?.encryptedPrivateKey) {

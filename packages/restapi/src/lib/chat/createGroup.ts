@@ -4,12 +4,12 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType, IUser
+    AccountEnvOptionsType,
 } from '../types';
 import {
     ICreateGroupRequestPayload,
     createGroupPayload,
-    createUserIfNecessary,
+    getConnectedUser,
     sign,
     createGroupRequestValidator,
 } from './helpers';
@@ -38,6 +38,7 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     numberOfNFTs?: number,
     contractAddressERC20?: string,
     numberOfERC20?: number,
+    pgpPrivateKey?: string,
 }
 
 
@@ -58,6 +59,7 @@ export const createGroup = async (
         groupCreator,
         account,
         env = Constants.ENV.PROD,
+        pgpPrivateKey = null,
     } = options || {};
 
     try {
@@ -78,7 +80,8 @@ export const createGroup = async (
             groupCreator: groupCreator
         }
 
-        const connectedUser: IUser = await createUserIfNecessary({ account, env });
+        //const connectedUser: IUser = await createUserIfNecessary({ account, env });
+        const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
         let pvtkey = null;
         if (connectedUser?.encryptedPrivateKey) {
