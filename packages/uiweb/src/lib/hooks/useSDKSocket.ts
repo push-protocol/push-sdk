@@ -10,10 +10,9 @@ export type SDKSocketHookOptions = {
   env?: string,
   socketType?: 'chat' | 'notification',
   apiKey: string,
-  isCAIP?: boolean
 };
 
-export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
+export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>(null);
@@ -26,8 +25,8 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
       setIsSDKSocketConnected(true);
     });
 
-    epnsSDKSocket?.on(EVENTS.DISCONNECT, () => {
-      console.log('DIS-CONNECTED: ');
+    epnsSDKSocket?.on(EVENTS.DISCONNECT, (err:any) => {
+      console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
     console.log('\t-->will attach eachMessage event now');
@@ -85,7 +84,7 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
         });
 
         // console.log('sleeping');
-        await sleep(7000);
+        // await sleep(7000);
         // console.log('awake');
         console.warn('new connection object: ', connectionObject);
 
@@ -97,7 +96,7 @@ export const useSDKSocket = ({ account, env = '', isCAIP, socketType = 'chat',ap
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env, isCAIP]);
+  }, [account, env]);
 
 
   return {

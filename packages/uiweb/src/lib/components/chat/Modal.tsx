@@ -4,7 +4,7 @@ import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
 import PoweredByPushLogo from '../../icons/chat/sponsorPush.svg';
-import { ReactComponent as HandWave } from '../../icons/chat/handWave.svg';
+import { HandWaveSvg } from '../../icons/chat/HandWaveSvg';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Chats } from './Chats';
 import {
@@ -54,7 +54,7 @@ export const Modal: React.FC = () => {
     sigType: '',
     link: null,
     timestamp: undefined,
-    icon: HandWave,
+    icon: <HandWaveSvg fill={theme.btnColorPrimary}/>,
   };
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -90,16 +90,14 @@ export const Modal: React.FC = () => {
     try {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
-      } else {
-        socketData.epnsSDKSocket?.disconnect();
       }
       const user = await createUserIfNecessary({ account, env });
       setConnectedUser(user);
       setLoading(false);
-    } catch (err) {
-      setToastMessage(err);
-      setToastType('error');
+    } catch (err:any) {
       setLoading(false);
+      setToastMessage(err?.message);
+      setToastType('error');
     }
   };
 
@@ -158,7 +156,7 @@ export const Modal: React.FC = () => {
       {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
 
       <InputSection>
-        {connectedUser && socketData.epnsSDKSocket?.connected && <ChatInput />}
+        {connectedUser && <ChatInput />}
         <Image
           src={PoweredByPushLogo}
           alt="Powered by Push Protocol"
