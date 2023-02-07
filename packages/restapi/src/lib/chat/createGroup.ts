@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
     getAPIBaseUrls,
+    walletToPCAIP10
 } from '../helpers';
 import Constants from '../constants';
 import {
@@ -66,18 +67,22 @@ export const createGroup = async (
 
         createGroupRequestValidator(groupName, members, admins, groupCreator,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
+        const convertedMembers = members.map(walletToPCAIP10);
+        const convertedAdmins = admins.map(walletToPCAIP10);
+
+
         const bodyToBeHashed = {
             groupName: groupName,
             groupDescription: groupDescription == undefined ? null : groupDescription,
-            members: members,
+            members: convertedMembers,
             groupImage: groupImage,
-            admins: admins,
+            admins: convertedAdmins,
             isPublic: isPublic,
             contractAddressNFT: contractAddressNFT == undefined ? null : contractAddressNFT,
             numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
             contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
             numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-            groupCreator: groupCreator
+            groupCreator: walletToPCAIP10(groupCreator)
         }
 
         //const connectedUser: IUser = await createUserIfNecessary({ account, env });
