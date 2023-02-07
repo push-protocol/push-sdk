@@ -15,9 +15,6 @@ import {
     createGroupRequestValidator,
 } from './helpers';
 
-import {
-    decryptWithWalletRPCMethod,
-} from '../../../src/lib/helpers';
 
 import * as CryptoJS from "crypto-js"
 
@@ -85,18 +82,10 @@ export const createGroup = async (
             groupCreator: walletToPCAIP10(groupCreator)
         }
 
-        //const connectedUser: IUser = await createUserIfNecessary({ account, env });
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
-        let pvtkey = null;
-        if (connectedUser?.encryptedPrivateKey) {
-            pvtkey = await decryptWithWalletRPCMethod(
-                connectedUser.encryptedPrivateKey,
-                account
-            );
-        }
         const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
-        const signature: string = await sign({ message: hash, signingKey: pvtkey });
+        const signature: string = await sign({ message: hash, signingKey: connectedUser.privateKey! });
         const sigType = "pgp";
 
         const verificationProof: string = sigType + ":" + signature;
@@ -105,11 +94,11 @@ export const createGroup = async (
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;
         const body: ICreateGroupRequestPayload = createGroupPayload(groupName,
             groupDescription,
-            members,
+            convertedMembers,
             groupImage,
-            admins,
+            convertedAdmins,
             isPublic,
-            groupCreator,
+            walletToPCAIP10(groupCreator),
             verificationProof,
             contractAddressNFT,
             numberOfNFTs,
