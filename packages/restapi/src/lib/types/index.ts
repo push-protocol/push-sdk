@@ -139,7 +139,7 @@ export interface IMessageIPFS {
   encryptedSecret: string;
 }
 export interface IFeeds {
-  msg: IInboxChat;
+  msg: IMessageIPFS;
   did: string;
   wallets: string;
   profilePicture: string | null;

@@ -34,20 +34,7 @@ export const getInboxLists = async (
   for (const list of lists) {
     if (list.threadhash !== null) {
       const message = await getCID(list.threadhash, { env });
-      const msg: IInboxChat = {
-        lastMessage: message.messageContent,
-        timestamp: message.timestamp!,
-        messageType: message.messageType,
-        signature: message.signature,
-        signatureType: message.sigType,
-        encType: message.encType,
-        fromDID: message.fromDID,
-        toDID: message.toDID,
-        encryptedSecret: message.encryptedSecret,
-        fromCAIP10: message.fromCAIP10,
-        toCAIP10: message.toCAIP10
-      }
-      feeds.push({...list,msg});
+      feeds.push({...list,msg:message});
     }
   }
   if(toDecrypt)

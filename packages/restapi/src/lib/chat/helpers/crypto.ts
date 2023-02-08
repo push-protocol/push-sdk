@@ -111,8 +111,8 @@ export const decryptFeeds = async ({
         } else {
           signatureValidationPubliKey = connectedUser.publicKey!;
         }
-        feed.msg.lastMessage = await decryptAndVerifySignature({
-          cipherText: feed.msg.lastMessage,
+        feed.msg.messageContent = await decryptAndVerifySignature({
+          cipherText: feed.msg.messageContent,
           encryptedSecretKey: feed.msg.encryptedSecret,
           publicKeyArmored: signatureValidationPubliKey,
           signatureArmored: feed.msg.signature,
