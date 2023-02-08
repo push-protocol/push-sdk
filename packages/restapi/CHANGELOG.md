@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.1...restapi-0.3.2) (2023-02-08)
+
+
+### Bug Fixes
+
+* fixed response of chat.chats restapi ([ab1f432](https://github.com/ethereum-push-notification-service/push-sdk/commit/ab1f432dbe5443c72375ab1baa7226b997396aa4))
+* fixed the message response object ([83d4f1e](https://github.com/ethereum-push-notification-service/push-sdk/commit/83d4f1e565b090d1c62859f7461f4e1c3bb9398a))
+* Metamask reject handled ([#136](https://github.com/ethereum-push-notification-service/push-sdk/issues/136)) ([46a20b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/46a20b751e655a526168c8ae7c400211f3b62b15))
+* **restapi:** fix parse api response of notifications to send subject/title as asub ([#140](https://github.com/ethereum-push-notification-service/push-sdk/issues/140)) ([6a11feb](https://github.com/ethereum-push-notification-service/push-sdk/commit/6a11feb7cc02bf9ca0541b34f399992ad33f12a4)), closes [#139](https://github.com/ethereum-push-notification-service/push-sdk/issues/139)
+
+
+
 ## [0.3.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.1...restapi-0.3.2) (2023-02-03)
 
 
