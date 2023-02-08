@@ -112,8 +112,6 @@ export interface INotificationPayload {
 }
 
 export interface IInboxChat {
-  name: string;
-  profilePicture: string;
   timestamp: number;
   fromDID: string;
   toDID: string;
@@ -126,20 +124,33 @@ export interface IInboxChat {
   signatureType: string;
   encryptedSecret: string;
 }
-
+export interface IMessageIPFS {
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  link: string | null;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+}
 export interface IFeeds {
   msg: IInboxChat;
   did: string;
   wallets: string;
   profilePicture: string | null;
-  publicKey: string;
+  publicKey: string | null;
   about: string | null;
   threadhash: string | null;
   intent: string | null;
   intentSentBy: string | null;
   intentTimestamp: Date;
   combinedDID: string;
-  cid: string;
+  cid?: string;
 }
 
 export interface IUser {
@@ -160,21 +171,6 @@ export interface IUser {
 
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
-}
-
-export interface IMessageIPFS {
-  fromCAIP10: string;
-  toCAIP10: string;
-  fromDID: string;
-  toDID: string;
-  messageType: string;
-  messageContent: string;
-  signature: string;
-  sigType: string;
-  link: string | null;
-  timestamp?: number;
-  encType: string;
-  encryptedSecret: string;
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
