@@ -196,6 +196,7 @@ export interface IGroup {
   groupName: string,
   groupDescription: string,
   groupCreator: string,
+  isPublic: boolean
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;

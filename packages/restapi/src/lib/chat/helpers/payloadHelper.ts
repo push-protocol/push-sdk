@@ -1,6 +1,7 @@
 import { walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser } from '../../types';
+import { IConnectedUser, IGroup } from '../../types';
 import { getEncryptedRequest } from './crypto';
+import { getGroup } from '../getGroup';
 
 export interface ISendMessagePayload {
   fromDID: string;
@@ -9,10 +10,10 @@ export interface ISendMessagePayload {
   toCAIP10: string;
   messageContent: string;
   messageType: string;
-  signature: string;
+  signature: string | null | undefined;
   encType: string;
-  encryptedSecret: string;
-  sigType: string;
+  encryptedSecret: string | null | undefined;
+  sigType: string | null | undefined;
 }
 
 export interface IApproveRequestPayload {
@@ -58,13 +59,29 @@ export const sendMessagePayload = async (
   if (receiverAddress.includes('eip155:')) {
     isGroup = false;
   }
+
+  let group: IGroup | null = null;
+
+  if(isGroup) {
+    group = await getGroup({
+      chatId: receiverAddress,
+      account: '',
+      env:  env
+    });
+  }
+
+  if(!group) {
+    throw new Error(`Group not found!`);
+  }
+
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
       senderCreatedUser,
       messageContent,
       isGroup,
-      env
+      env,
+      group
     )) || {};
 
   const body: ISendMessagePayload = {

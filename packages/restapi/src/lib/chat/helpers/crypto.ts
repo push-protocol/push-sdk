@@ -13,7 +13,6 @@ import { get } from '../../user';
 import { walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
-import { getGroup } from '../getGroup';
 import Constants from '../../constants';
 
 interface IEncryptedRequest {
@@ -174,7 +173,8 @@ export const getEncryptedRequest = async (
   senderCreatedUser: IConnectedUser,
   message: string,
   isGroup: boolean,
-  env: string
+  env: string,
+  group: IGroup | null,
 ): Promise<IEncryptedRequest | void> => {
 
   if (!isGroup) {
@@ -233,29 +233,32 @@ export const getEncryptedRequest = async (
         };
       }
     }
-  } else {
-    const group: IGroup = await getGroup({
-      chatId: receiverAddress,
-      account: '',
-      env:  env
-    });
-
-    const publicKeys: string[] = group.members.map(member => member.publicKey);
-
-    const {
-      cipherText,
-      encryptedSecret,
-      signature,
-    } = await encryptAndSign({
-      plainText: message,
-      keys: publicKeys,
-      privateKeyArmored: senderCreatedUser.privateKey!,
-    });
-    return {
-      message: cipherText,
-      encryptionType: 'pgp',
-      aesEncryptedSecret: encryptedSecret,
-      signature: signature,
-    };
+  } else if(group) {
+      if(group.isPublic) {
+          return {
+            message: message,
+            encryptionType: 'PlainText',
+            aesEncryptedSecret: '',
+            signature: '',
+          }
+      }
+      else {
+        const publicKeys: string[] = group.members.map(member => member.publicKey);
+        const {
+          cipherText,
+          encryptedSecret,
+          signature,
+        } = await encryptAndSign({
+          plainText: message,
+          keys: publicKeys,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+        return {
+          message: cipherText,
+          encryptionType: 'pgp',
+          aesEncryptedSecret: encryptedSecret,
+          signature: signature,
+        };
+      }
   }
 };
