@@ -112,8 +112,6 @@ export interface INotificationPayload {
 }
 
 export interface IInboxChat {
-  name: string;
-  profilePicture: string;
   timestamp: number;
   fromDID: string;
   toDID: string;
@@ -126,20 +124,46 @@ export interface IInboxChat {
   signatureType: string;
   encryptedSecret: string;
 }
-
+export interface IMessageIPFS {
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  link: string | null;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+}
 export interface IFeeds {
-  msg: IInboxChat;
+  msg: IMessageIPFS;
   did: string;
   wallets: string;
   profilePicture: string | null;
-  publicKey: string;
+  publicKey: string | null;
   about: string | null;
   threadhash: string | null;
   intent: string | null;
   intentSentBy: string | null;
   intentTimestamp: Date;
   combinedDID: string;
-  cid: string;
+  cid?: string;
+  groupInformation?: {
+    groupName: string,
+    groupImageCID: string,
+    groupMembers: UserInfo[],
+    groupAdmins: UserInfo[],
+    isPublic: boolean,
+    contractAddressNFT: string,
+    numberOfNFTs: number,
+    contractAddressERC20: string,
+    numberOfERC20: number,
+    verificationProof: string,
+    groupCreator: string
+  }
 }
 export interface IUser {
   did: string;
@@ -192,19 +216,7 @@ export interface IMessageIPFS {
   encryptedSecret: string;
 
   // Group
-  groupInformation?: {
-    groupName: string,
-    groupImageCID: string,
-    groupMembers: UserInfo[],
-    groupAdmins: UserInfo[],
-    isPublic: boolean,
-    contractAddressNFT: string,
-    numberOfNFTs: number,
-    contractAddressERC20: string,
-    numberOfERC20: number,
-    verificationProof: string,
-    groupCreator: string
-  }
+ 
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {

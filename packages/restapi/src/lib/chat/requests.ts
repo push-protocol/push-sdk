@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { Chat } from '../types';
+import { Chat, IFeeds } from '../types';
 import { Message } from './ipfs';
 import { getInboxLists } from './helpers';
 
@@ -18,7 +18,7 @@ export type RequestOptionsType = {
 
 export const requests = async (
   options: RequestOptionsType
-): Promise<Message[]> => {
+): Promise<IFeeds[]> => {
   const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
   const user = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
@@ -30,7 +30,7 @@ export const requests = async (
     }
     const response = await axios.get(requestUrl);
     const requests: Chat[] = response.data.requests;
-    const messages: Message[] = await getInboxLists({
+    const Feeds: IFeeds[] = await getInboxLists({
       lists: requests,
       user,
       toDecrypt,
@@ -38,7 +38,7 @@ export const requests = async (
       env,
     });
 
-    return messages;
+    return Feeds;
   } catch (err) {
     console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);

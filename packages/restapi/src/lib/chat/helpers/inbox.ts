@@ -1,8 +1,9 @@
 import Constants from '../../constants';
 import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
-import { Chat, IConnectedUser, IMessageIPFS, IUser } from '../../types';
+import { Chat, IConnectedUser, IFeeds, IInboxChat, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID, Message } from '../ipfs';
+import { decryptFeeds } from './crypto';
 
 type InboxListsType = {
   lists: Chat[];
@@ -20,7 +21,7 @@ type DecryptConverationType = {
 
 export const getInboxLists = async (
   options: InboxListsType
-): Promise<IMessageIPFS[]> => {
+): Promise<IFeeds[]> => {
   const {
     lists,
     user,
@@ -29,17 +30,15 @@ export const getInboxLists = async (
     env = Constants.ENV.PROD,
   } = options || {};
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
-  const messages: IMessageIPFS[] = [];
+  const feeds: IFeeds[] = [];
   for (const list of lists) {
+    let message;
     if (list.threadhash !== null) {
-      const message = await getCID(list.threadhash, { env });
-      const messageWithGroupInfo: IMessageIPFS = { ...message, groupInformation: list.groupInformation }
-
-      messages.push(messageWithGroupInfo);
+      message = await getCID(list.threadhash, { env });
     }
     // This is for groups that are created without any message
     else {
-      messages.push({
+      message = {
         encType: 'PlainText',
         encryptedSecret: '',
         fromCAIP10: '',
@@ -50,15 +49,15 @@ export const getInboxLists = async (
         sigType: '',
         signature: '',
         toCAIP10: '',
-        toDID: '',
-        groupInformation: list.groupInformation
-      })
+        toDID: ''
+      }
     }
+    feeds.push({...list,msg:message, groupInformation: list.groupInformation});
   }
 
   if(toDecrypt)
-    return decryptConversation({messages,connectedUser,pgpPrivateKey,env});
-  return messages;
+    return decryptFeeds({feeds,connectedUser,pgpPrivateKey,env});
+  return feeds;
 };
 
 export const decryptConversation = async (options: DecryptConverationType) => {
