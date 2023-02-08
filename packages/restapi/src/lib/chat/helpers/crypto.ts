@@ -9,7 +9,9 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import { walletToPCAIP10 } from '../../helpers';
+import { get as getUser } from '../../user';
 import { createUserService } from './service';
+import Constants from '../../constants';
 
 interface IEncryptedRequest {
   message: string;
@@ -84,31 +86,40 @@ export const decryptAndVerifySignature = async ({
 export const decryptFeeds = async ({
   feeds,
   connectedUser,
+  pgpPrivateKey,
+  env = Constants.ENV.PROD,
 }: {
   feeds: IFeeds[];
-  connectedUser: IConnectedUser;
+  connectedUser: IUser;
+  pgpPrivateKey?:string;
+  env: string;
 }): Promise<IFeeds[]> => {
-  if (connectedUser.privateKey) {
+    let otherPeer: IUser;
+    let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
+    let gotOtherPeer = false;
     for (const feed of feeds) {
-      if (feed.msg.encType !== 'PlainText' && feed.msg.encType !== null) {
-        // To do signature verification it depends on who has sent the message
-        let signatureValidationPubliKey: string;
-        if (feed.msg.fromCAIP10 === connectedUser.wallets.split(',')[0]) {
-          signatureValidationPubliKey = connectedUser.publicKey;
-        } else {
-          signatureValidationPubliKey = feed.publicKey;
+      if (feed.msg.encType !== 'PlainText') {
+        if (!pgpPrivateKey) {
+          throw Error('Decrypted private key is necessary');
         }
-
-        feed.msg.lastMessage = await decryptAndVerifySignature({
-          cipherText: feed.msg.lastMessage,
+        if (feed.msg.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
+          if (!gotOtherPeer) {
+            otherPeer = await getUser({ account: feed.msg.fromCAIP10, env });
+            gotOtherPeer = true;
+          }
+          signatureValidationPubliKey = otherPeer!.publicKey!;
+        } else {
+          signatureValidationPubliKey = connectedUser.publicKey!;
+        }
+        feed.msg.messageContent = await decryptAndVerifySignature({
+          cipherText: feed.msg.messageContent,
           encryptedSecretKey: feed.msg.encryptedSecret,
           publicKeyArmored: signatureValidationPubliKey,
           signatureArmored: feed.msg.signature,
-          privateKeyArmored: connectedUser.privateKey,
+          privateKeyArmored: pgpPrivateKey,
         });
       }
     }
-  }
   return feeds;
 };
 
@@ -140,7 +151,7 @@ export const decryptMessages = async ({
             (x) => x.wallets.split(',')[0] === currentChat.wallets.split(',')[0]
           );
           if (latestUserInfo) {
-            signatureValidationPubliKey = latestUserInfo.publicKey;
+            signatureValidationPubliKey = latestUserInfo.publicKey!;
           }
         } else {
           signatureValidationPubliKey = currentChat.publicKey;

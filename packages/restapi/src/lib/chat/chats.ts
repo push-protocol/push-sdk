@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { Chat } from '../types';
+import { Chat, IFeeds } from '../types';
 import { Message } from './ipfs';
 import { getInboxLists } from './helpers';
 
@@ -17,7 +17,7 @@ export type ChatsOptionsType = {
 };
 
 // Only get the chats not the intent
-export const chats = async (options: ChatsOptionsType): Promise<Message[]> => {
+export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
   const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
   const user = walletToPCAIP10(account);
 
@@ -30,14 +30,14 @@ export const chats = async (options: ChatsOptionsType): Promise<Message[]> => {
     }
     const response = await axios.get(requestUrl);
     const chats: Chat[] = response.data.chats;
-    const messages: Message[] = await getInboxLists({
+    const feeds:IFeeds[] = await getInboxLists({
       lists: chats,
       user,
       toDecrypt,
       pgpPrivateKey,
       env,
     });
-    return messages;
+    return feeds;
   } catch (err) {
     console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
