@@ -24,6 +24,9 @@ import GetChatsTest from './ChatTest/GetChats';
 import ConversationHashTest from './ChatTest/ConversationHash';
 import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
+import CreateGroupTest from './ChatTest/CreateGroupTest';
+import UpdateGroupTest from './ChatTest/UpdateGroupTest';
+import GetGroupTest from './ChatTest/GetGroupTest';
 
 interface Web3ReactState {
   chainId?: number;
@@ -219,6 +222,9 @@ export function App() {
                 <Route path="/hash" element={<ConversationHashTest />} />
                 <Route path="/history" element={<HistoryTest />} />
                 <Route path="/requests" element={<GetRequestsTest />} />
+                <Route path="/createGroup" element={<CreateGroupTest />} />
+                <Route path="/getGroup" element={<GetGroupTest />} />
+
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

@@ -32,17 +32,35 @@ export const getInboxLists = async (
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
   const feeds: IFeeds[] = [];
   for (const list of lists) {
+    let message;
     if (list.threadhash !== null) {
-      const message = await getCID(list.threadhash, { env });
-      feeds.push({...list,msg:message});
+      message = await getCID(list.threadhash, { env });
     }
+    // This is for groups that are created without any message
+    else {
+      message = {
+        encType: 'PlainText',
+        encryptedSecret: '',
+        fromCAIP10: '',
+        fromDID: '',
+        link: '',
+        messageContent: '',
+        messageType: '',
+        sigType: '',
+        signature: '',
+        toCAIP10: '',
+        toDID: ''
+      }
+    }
+    feeds.push({...list,msg:message, groupInformation: list.groupInformation});
   }
+
   if(toDecrypt)
     return decryptFeeds({feeds,connectedUser,pgpPrivateKey,env});
   return feeds;
 };
 
-export const decryptConversation = async(options:DecryptConverationType) => {
+export const decryptConversation = async (options: DecryptConverationType) => {
   const {
     messages,
     connectedUser,

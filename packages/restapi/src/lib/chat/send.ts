@@ -26,18 +26,22 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
     if (!isValidETHAddress(account)) {
       throw new Error(`Invalid address!`);
     }
+
+    let isGroup = false;
     if (!isValidETHAddress(receiverAddress)) {
-      throw new Error(`Invalid address!`);
+        isGroup = true;
     }
-
+    
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
-
-    const conversationResponse: any = await conversationHash({
-      conversationId: receiverAddress,
-      account,
-      env,
-    });
-    if (!conversationResponse?.threadHash) {
+    let conversationResponse: any = null;
+    if (!isGroup) {
+      conversationResponse = await conversationHash({
+        conversationId: receiverAddress,
+        account,
+        env,
+      });
+    }
+    if (conversationResponse && !conversationResponse?.threadHash) {
       return start({
         messageContent: messageContent,
         messageType: 'Text',

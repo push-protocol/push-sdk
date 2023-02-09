@@ -151,8 +151,20 @@ export interface IFeeds {
   intentTimestamp: Date;
   combinedDID: string;
   cid?: string;
+  groupInformation?: {
+    groupName: string,
+    groupImageCID: string,
+    groupMembers: UserInfo[],
+    groupAdmins: UserInfo[],
+    isPublic: boolean,
+    contractAddressNFT: string,
+    numberOfNFTs: number,
+    contractAddressERC20: string,
+    numberOfERC20: number,
+    verificationProof: string,
+    groupCreator: string
+  }
 }
-
 export interface IUser {
   did: string;
   wallets: string;
@@ -169,8 +181,43 @@ export interface IUser {
   linkedListHash?: string | null;
 }
 
+export interface Member {
+  wallet: string;
+  publicKey: string;
+}
+export interface IGroup {
+  members: Array<Member>,
+  admins: Array<string>,
+  contractAddressNFT?: string
+  numberOfNFTs?: number,
+  contractAddressERC20?: string,
+  numberOfERC20?: number,
+  groupImageCID: string,
+  groupName: string,
+  groupDescription: string,
+  groupCreator: string,
+  isPublic: boolean
+}
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
+}
+
+export interface IMessageIPFS {
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  link: string | null;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+
+  // Group
+ 
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -195,6 +242,12 @@ export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
 
+export interface UserInfo {
+  wallets: string,
+  publicKey: string,
+  name: string
+}
+
 export interface Chat {
   did: string;
   wallets: string;
@@ -207,4 +260,21 @@ export interface Chat {
   intentSentBy: string | null;
   intentTimestamp: Date;
   combinedDID: string;
+
+  // Group
+  groupInformation?: {
+    groupName: string,
+    groupImageCID: string,
+    groupMembers: UserInfo[],
+    groupAdmins: UserInfo[],
+    isPublic: boolean,
+    contractAddressNFT: string,
+    numberOfNFTs: number,
+    contractAddressERC20: string,
+    numberOfERC20: number,
+    verificationProof: string,
+    groupCreator: string
+  }
 }
+
+
