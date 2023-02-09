@@ -9,7 +9,6 @@ import {
   IGroup,
 } from '../../types';
 import { get } from '../../user';
-
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
