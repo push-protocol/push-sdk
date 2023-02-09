@@ -10,7 +10,7 @@ import {
 } from '../../types';
 import { get } from '../../user';
 
-import { walletToPCAIP10 } from '../../helpers';
+import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants from '../../constants';
@@ -183,7 +183,7 @@ export const getEncryptedRequest = async (
       env,
     });
     if (!receiverCreatedUser?.publicKey) {
-      if (receiverAddress.includes('eip155:') && !ethers.utils.isAddress(receiverAddress.split(':')[1])) {
+      if (!isValidETHAddress(receiverAddress)) {
         throw new Error(`Invalid receiver address!`);
       }
       await createUserService({
