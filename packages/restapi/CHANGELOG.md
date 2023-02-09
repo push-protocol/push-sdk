@@ -2,6 +2,23 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.1...restapi-0.4.0) (2023-02-09)
+
+
+### Bug Fixes
+
+* fixed response of chat.chats restapi and published restapi v0.3.3 ([#142](https://github.com/ethereum-push-notification-service/push-sdk/issues/142)) ([40abc16](https://github.com/ethereum-push-notification-service/push-sdk/commit/40abc1609d780aea6620d6f136d46c37e8e70744))
+* Metamask reject handled ([#136](https://github.com/ethereum-push-notification-service/push-sdk/issues/136)) ([46a20b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/46a20b751e655a526168c8ae7c400211f3b62b15))
+* **restapi:** fix parse api response of notifications to send subject/title as asub ([#140](https://github.com/ethereum-push-notification-service/push-sdk/issues/140)) ([6a11feb](https://github.com/ethereum-push-notification-service/push-sdk/commit/6a11feb7cc02bf9ca0541b34f399992ad33f12a4)), closes [#139](https://github.com/ethereum-push-notification-service/push-sdk/issues/139)
+* send request bug fixed ([#143](https://github.com/ethereum-push-notification-service/push-sdk/issues/143)) ([99b305d](https://github.com/ethereum-push-notification-service/push-sdk/commit/99b305d2a54f51fd8d82b15a79e58344e6ff66c8))
+
+
+### Features
+
+* **component:** Added Group Chat Functionality  ([#122](https://github.com/ethereum-push-notification-service/push-sdk/issues/122)) ([5bf341f](https://github.com/ethereum-push-notification-service/push-sdk/commit/5bf341f6f60a6786be47f668fa3ed1b15a66be88))
+
+
+
 ## [0.3.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.1...restapi-0.3.2) (2023-02-08)
 
 
