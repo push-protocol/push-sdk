@@ -67,7 +67,7 @@ const UpdateGroupTest = () => {
         );
       }
 
-      const response = await PushAPI.chat.updateGroup({
+      /*const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
         profilePicture,
@@ -79,7 +79,7 @@ const UpdateGroupTest = () => {
         pgpPrivateKey: pvtkey,
       });
 
-      setSendResponse(response);
+      setSendResponse(response);*/
     } catch (e) {
       console.error(e);
     } finally {

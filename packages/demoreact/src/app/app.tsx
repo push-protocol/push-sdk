@@ -223,7 +223,6 @@ export function App() {
                 <Route path="/history" element={<HistoryTest />} />
                 <Route path="/requests" element={<GetRequestsTest />} />
                 <Route path="/createGroup" element={<CreateGroupTest />} />
-                <Route path="/updateGroup" element={<UpdateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
 
               </Routes>
