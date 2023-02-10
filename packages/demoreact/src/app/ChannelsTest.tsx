@@ -70,8 +70,8 @@ const ChannelsTest = () => {
       setLoading(true);
       const response = await PushAPI.channels.getSubscribers({
         channel: isCAIP ? getCAIPAddress(env, channelAddr) : channelAddr,
-        page: 10,
-        limit: 1,
+        page: 1,
+        limit: 10,
         env,
       });
   
