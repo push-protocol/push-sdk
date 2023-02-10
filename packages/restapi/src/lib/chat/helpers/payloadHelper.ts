@@ -1,4 +1,4 @@
-import { walletToPCAIP10 } from '../../helpers';
+import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, IGroup } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
@@ -56,9 +56,9 @@ export const sendMessagePayload = async (
   env: string
 ): Promise<ISendMessagePayload> => {
   let isGroup = true;
-  if (receiverAddress.includes('eip155:')) {
+  if (isValidETHAddress(receiverAddress)) {
     isGroup = false;
-  }
+}
 
   let group: IGroup | null = null;
 
@@ -68,11 +68,12 @@ export const sendMessagePayload = async (
       account: '',
       env:  env
     });
-  }
 
   if(!group) {
     throw new Error(`Group not found!`);
   }
+  }
+
 
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
