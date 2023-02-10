@@ -198,6 +198,10 @@ export interface IGroup {
   groupCreator: string,
   isPublic: boolean
 }
+export interface Subscribers {
+  itemcount: number
+  subscribers: Array<string>
+}
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
 }
