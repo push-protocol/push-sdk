@@ -1,5 +1,5 @@
 import Constants from '../constants';
-import { isValidETHAddress } from '../helpers';
+import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
 import { getConversationHashService } from './helpers';
 
@@ -11,8 +11,11 @@ export const conversationHash = async (
     if (!isValidETHAddress(account)) {
         throw new Error(`Invalid address!`);
       }
+
+    const updatedConversationId = isValidETHAddress(conversationId) ? walletToPCAIP10(conversationId): conversationId
+
     const response = await getConversationHashService({
-      conversationId: conversationId,
+      conversationId: updatedConversationId,
       account,
       env,
     });

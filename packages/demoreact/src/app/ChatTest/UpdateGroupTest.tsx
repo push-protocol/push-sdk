@@ -18,10 +18,8 @@ const UpdateGroupTest = () => {
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
   const [profilePicture, setProfilePicture] = useState<string>('');
-  const [admin, setAdmin] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -38,10 +36,6 @@ const UpdateGroupTest = () => {
     setProfilePicture((e.target as HTMLInputElement).value);
   };
 
-  const updateAdmin= (e: React.SyntheticEvent<HTMLElement>) => {
-    setAdmin((e.target as HTMLInputElement).value);
-  };
-
   const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
     setMembers((e.target as HTMLInputElement).value);
   };
@@ -49,10 +43,6 @@ const UpdateGroupTest = () => {
  
   const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
     setAdmins((e.target as HTMLInputElement).value);
-  };
-
-  const updateAddress= (e: React.SyntheticEvent<HTMLElement>) => {
-    setAddress((e.target as HTMLInputElement).value);
   };
 
   const testUpdateGroup = async () => {
@@ -67,19 +57,18 @@ const UpdateGroupTest = () => {
         );
       }
 
-      /*const response = await PushAPI.chat.updateGroup({
+      const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
         profilePicture,
-        members: [members],
-        admins: [admins],
-        address,
+        members: members.split(','),
+        admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
         pgpPrivateKey: pvtkey,
       });
 
-      setSendResponse(response);*/
+      setSendResponse(response);
     } catch (e) {
       console.error(e);
     } finally {
@@ -151,16 +140,6 @@ const UpdateGroupTest = () => {
               />
             </SectionItem>
 
-
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>address</label>
-              <input
-                type="text"
-                onChange={updateAddress}
-                value={address}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
         
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateGroup}>

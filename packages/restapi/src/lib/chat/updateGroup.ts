@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-    getAPIBaseUrls,
+    getAPIBaseUrls, walletToPCAIP10,
 } from '../helpers';
 import Constants from '../constants';
 import {
@@ -30,7 +30,6 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         profilePicture: string,
         members: Array < string >,
         admins: Array < string >,
-        address: string
         pgpPrivateKey?: string,
 }
 
@@ -44,7 +43,6 @@ export const updateGroup = async (
         profilePicture,
         members,
         admins,
-        address,
         account,
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
@@ -52,30 +50,24 @@ export const updateGroup = async (
 
     try {
 
-        updateGroupRequestValidator(chatId, groupName, profilePicture, members, admins, address);
+        updateGroupRequestValidator(chatId, groupName, profilePicture, members, admins, account);
 
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
-        let pvtkey = null;
-        if (connectedUser?.encryptedPrivateKey) {
-            pvtkey = await decryptWithWalletRPCMethod(
-            connectedUser.encryptedPrivateKey,
-            account
-            );
-        }
-
+        const convertedMembers = members.map(walletToPCAIP10);
+        const convertedAdmins = admins.map(walletToPCAIP10);
         const bodyToBeHashed = {
             groupName: groupName,
             profilePicture: profilePicture,
-            members: members,
-            admins: admins,
+            members: convertedMembers,
+            admins: convertedAdmins,
             chatId: chatId,
         }
 
-        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
+        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: connectedUser.privateKey!} );
         const sigType  = "pgp";
 
-        const verificationProof : string = sigType + ":" + signature + ":" + address;
+        const verificationProof : string = sigType + ":" + signature + ":" + account;
 
 
         const API_BASE_URL = getAPIBaseUrls(env);
@@ -83,9 +75,9 @@ export const updateGroup = async (
         const body: IUpdateGroupRequestPayload = updateGroupPayload(
         groupName,
         profilePicture,
-        members,
-        admins,
-        address,
+        convertedMembers,
+        convertedAdmins,
+        walletToPCAIP10(account),
         verificationProof);
 
         return axios

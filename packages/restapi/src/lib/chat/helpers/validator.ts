@@ -3,7 +3,7 @@ import {
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
-    groupName: string, members: Array < string > , admins: Array < string > , groupCreator: string, contractAddressNFT ? : string,
+    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , groupCreator: string, contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number,
@@ -13,8 +13,12 @@ export const createGroupRequestValidator = (
         throw new Error(`groupName cannot be null or empty`);
     }
 
-    if (groupName.length >= 256) {
-        throw new Error(`groupName cannot be more than 256 characters`);
+    if (groupName.length >= 50) {
+        throw new Error(`groupName cannot be more than 50 characters`);
+    }
+
+    if (groupDescription && groupDescription.length >= 150) {
+        throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
     if (members == null) {

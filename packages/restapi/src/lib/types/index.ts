@@ -153,7 +153,8 @@ export interface IFeeds {
   cid?: string;
   groupInformation?: {
     groupName: string,
-    groupImageCID: string,
+    groupDescription: string,
+    groupImage: string,
     groupMembers: UserInfo[],
     groupAdmins: UserInfo[],
     isPublic: boolean,
@@ -192,7 +193,7 @@ export interface IGroup {
   numberOfNFTs?: number,
   contractAddressERC20?: string,
   numberOfERC20?: number,
-  groupImageCID: string,
+  groupImage: string,
   groupName: string,
   groupDescription: string,
   groupCreator: string,
@@ -249,7 +250,8 @@ export interface ConversationHashOptionsType extends AccountEnvOptionsType {
 export interface UserInfo {
   wallets: string,
   publicKey: string,
-  name: string
+  name: string,
+  image: string,
 }
 
 export interface Chat {
@@ -268,7 +270,8 @@ export interface Chat {
   // Group
   groupInformation?: {
     groupName: string,
-    groupImageCID: string,
+    groupDescription: string,
+    groupImage: string,
     groupMembers: UserInfo[],
     groupAdmins: UserInfo[],
     isPublic: boolean,

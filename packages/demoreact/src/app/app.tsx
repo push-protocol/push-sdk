@@ -224,6 +224,7 @@ export function App() {
                 <Route path="/requests" element={<GetRequestsTest />} />
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
+                <Route path="/updateGroup" element={<UpdateGroupTest />} />
 
               </Routes>
               <ChatSupportTest />

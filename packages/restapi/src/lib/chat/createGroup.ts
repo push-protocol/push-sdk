@@ -62,7 +62,7 @@ export const createGroup = async (
 
     try {
 
-        createGroupRequestValidator(groupName, members, admins, groupCreator,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
+        createGroupRequestValidator(groupName, groupDescription, members, admins, groupCreator,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
