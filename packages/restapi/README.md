@@ -749,6 +749,8 @@ Allowed Options (params with * are mandatory)
 ### UTILS FOR CHAT
 #### **decrypting encrypted pgp private key**
 ```typescript
+import { IUser } from '@pushprotocol/restapi';
+
 const decryptedPvtKey = await PushAPI.chat.decryptWithWalletRPCMethod(
           (connectedUser as IUser).encryptedPrivateKey, //encrypted private key 
           '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7' //user address
@@ -757,6 +759,8 @@ const decryptedPvtKey = await PushAPI.chat.decryptWithWalletRPCMethod(
 
 #### **decrypting messages**
 ```typescript
+import { IUser } from '@pushprotocol/restapi';
+
 const decryptedChat = await PushAPI.chat.decryptConversation({
     messages: chatHistory, //array of message object fetched from chat.history method
     connectedUser, // user meta data object fetched from chat.get method
