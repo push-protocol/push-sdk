@@ -72,8 +72,6 @@ export const updateGroup = async (
             chatId: chatId,
         }
 
-        console.log("ssss ---> " + JSON.stringify(bodyToBeHashed))
-
         const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: pvtkey} );
         const sigType  = "pgp";
 
