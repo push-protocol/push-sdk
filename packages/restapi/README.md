@@ -1,9 +1,55 @@
 # restapi
-This package gives access to Push backend APIs
+This package gives access to Push Nodes APIs. Visit [Developer Docs](https://docs.push.org/developers) to learn more.
 
-## How to use in your app?
+# Index
+- [How to use in your app?](#how-to-use-in-your-app)
+  - [Installation](#installation)
+  - [About blockchain agnostic address Format](#about-blockchain-agnostic-address-format)
+  - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
+- [SDK Features](#sdk-features)
+  - [Notifications](#for-notifications)
+    -  [Fetching user notifications](#fetching-user-notifications)
+    -  [Fetching user spam notifications](#fetching-user-spam-notifications)
+    -  [Fetching user subscriptions](#fetching-user-subscriptions)
+    -  [Fetching channel details](#fetching-channel-details)
+    -  [Searching for channel(s)](#searching-for-channels)
+    -  [Opt in to a channel](#opt-in-to-a-channel)
+    -  [Opt out to a channel](#opt-out-to-a-channel)
+    -  [Sending notification](#sending-notification)
+        -  [Direct payload for single recipient(target)](#direct-payload-for-single-recipienttarget)
+        -  [Direct payload for group of recipients(subset)](#direct-payload-for-group-of-recipientssubset)
+        -  [Direct payload for all recipients(broadcast)](#direct-payload-for-all-recipientsbroadcast)
+        -  [IPFS payload for single recipient(target)](#ipfs-payload-for-single-recipienttarget)
+        -  [IPFS payload for group of recipients(subset)](#ipfs-payload-for-group-of-recipientssubset)
+        -  [IPFS payload for all recipients(broadcast)](#ipfs-payload-for-all-recipientsbroadcast)
+        -  [Minimal payload for single recipient(target)](#minimal-payload-for-single-recipienttarget)
+        -  [Minimal payload for a group of recipient(subset)](#minimal-payload-for-a-group-of-recipientsubset)
+        -  [Minimal payload for all recipients(broadcast)](#minimal-payload-for-all-recipientsbroadcast)
+        -  [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
+        -  [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
+        -  [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
+    -  [Notification Helper Utils](#notification-helper-utils)
+        -  [Parsing notifications](#parsing-notifications)
+    -  [Advanced Notifications (WIP)](#advanced-notifications-wip)
+        -  [**Deprecated** Get a channel’s subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
+  - [Chat](#for-chat)
+    -  [Create user for chat](#create-user-for-chat)
+    -  [Get user data for chat](#get-user-data-for-chat)
+    -  [Fetching list of user chats](#fetching-list-of-user-chats)
+    -  [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
+    -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
+    -  [Fetching history between two users](#fetching-history-between-two-users)
+    -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
+    -  [To approve a chat request](#to-approve-a-chat-request)
+    -  [To send a message](#to-send-a-message)
+    -  [To create a group](#to-create-a-group)
+    -  [To update group details](#to-update-group-details)
+    -  [Chat Helper Utils](#chat-helper-utils)
+        -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key)
+        -  [Decrypting messages](#decrypting-messages)
 
-### Installation
+# How to use in your app?
+## Installation
 ```
   yarn add @pushprotocol/restapi ethers
 ```
@@ -16,10 +62,10 @@ Import in your file
 import * as PushAPI from "@pushprotocol/restapi";
 ```
 
-### **NOTE on Addresses:**
+## **About blockchain agnostic address format**
 
 In any of the below methods (unless explicitly stated otherwise) we accept either - 
-- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. 
+- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
 (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
  
  **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
@@ -29,16 +75,16 @@ In any of the below methods (unless explicitly stated otherwise) we accept eithe
 
 
 
-### **NOTE on generating the "signer" object for different platforms:**
+## **About generating the "signer" object for different platforms**
 
-#### When using in SERVER-SIDE code: 
+### When using in SERVER-SIDE code: 
 ```typescript
 const ethers = require('ethers');
 const PK = 'your_channel_address_secret_key';
 const Pkey = `0x${PK}`;
 const signer = new ethers.Wallet(Pkey);
 ```
-#### When using in FRONT-END code: 
+### When using in FRONT-END code: 
 ```typescript
 // any other web3 ui lib is also acceptable
 import { useWeb3React } from "@web3-react/core";
@@ -49,9 +95,10 @@ const { account, library, chainId } = useWeb3React();
 const signer = library.getSigner(account);
 ```
 
-# MAIN FEATURES
-## Notifications Specific (Push Notifications via Push Protocol)
-#### **fetching user notifications**
+# SDK Features
+## For Notifications
+
+### **Fetching user notifications**
 ```typescript
 const notifications = await PushAPI.user.getFeeds({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
@@ -59,7 +106,7 @@ const notifications = await PushAPI.user.getFeeds({
 });
 ```
 
-#### **fetching user spam notifications**
+### **Fetching user spam notifications**
 ```typescript
 const spams = await PushAPI.user.getFeeds({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
@@ -78,7 +125,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | raw      | boolean  | false      | if "true" the method will return unformatted raw API response|
 
-#### **fetching user subscriptions**
+### **Fetching user subscriptions**
 ```typescript
 const subscriptions = await PushAPI.user.getSubscriptions({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
@@ -97,7 +144,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-#### **fetching channel details**
+### **Fetching channel details**
 ```typescript
 const channelData = await PushAPI.channels.getChannel({
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
@@ -112,7 +159,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-#### **searching for channel(s)**
+### **Searching for channel(s)**
 ```typescript
 const channelsData = await PushAPI.channels.search({
   query: 'push', // a search query
@@ -131,7 +178,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-#### **opt in to a channel**
+### **Opt in to a channel**
 ```typescript
 await PushAPI.channels.subscribe({
   signer: _signer,
@@ -159,7 +206,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-#### **opt out to a channel**
+### **Opt out to a channel**
 ```typescript
 await PushAPI.channels.unsubscribe({
   signer: _signer,
@@ -193,10 +240,10 @@ ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ETH Goerli - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ```
 
-#### **sending notification**
+### **Sending notification**
 
 
-##### **direct payload for single recipient(target)**
+#### **Direct payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -219,7 +266,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **direct payload for group of recipients(subset)**
+#### **Direct payload for group of recipients(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -242,7 +289,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **direct payload for all recipients(broadcast)**
+#### **Direct payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -264,7 +311,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **IPFS payload for single recipient(target)**
+#### **IPFS payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -278,7 +325,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **IPFS payload for group of recipients(subset)**
+#### **IPFS payload for group of recipients(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -292,7 +339,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **IPFS payload for all recipients(broadcast)**
+#### **IPFS payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -305,7 +352,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **minimal payload for single recipient(target)**
+#### **Minimal payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -328,7 +375,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **minimal payload for a group of recipient(subset)**
+#### **Minimal payload for a group of recipient(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -351,7 +398,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **minimal payload for all recipients(broadcast)**
+#### **Minimal payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -373,7 +420,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **graph payload for single recipient(target)**
+#### **Graph payload for single recipient(target)**
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
@@ -391,7 +438,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **graph payload for group of recipients(subset)**
+#### **Graph payload for group of recipients(subset)**
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
@@ -409,7 +456,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 });
 ```
 
-##### **graph payload for all recipients(broadcast)**
+#### **Graph payload for all recipients(broadcast)**
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
@@ -450,8 +497,8 @@ Allowed Options (params with * are mandatory)
 
 
 
-### UTILS
-#### **parsing notifications**
+### Notification Helper Utils
+#### **Parsing notifications**
 Utils method to parse raw Push Feeds API response into a pre-defined shape as below.
 ```typescript
 // fetch some raw feeds data
@@ -483,12 +530,10 @@ const {
 ```
 *We get the above `keys` after the parsing of the API repsonse.*
 
-### ADVANCED (WIP)
-
+### Advanced Notifications (WIP)
 
 ### DEPRECATED
-
-#### **get a channel's subscriber list of addresses**
+#### **Get a channel's subscriber list of addresses**
 ```typescript
 const subscribers = await PushAPI.channels._getSubscribers({
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
@@ -503,10 +548,8 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-
-## Chat Specific (Push Chat via Push Protocol)
-
-#### **create user for chat**
+## For Chat
+### **Create user for chat**
 ```typescript
 const user = await PushAPI.user.create({
    account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
@@ -522,7 +565,7 @@ Allowed Options (params with * are mandatory)
 
 
 
-#### **get user data for chat**
+### **Get user data for chat**
 ```typescript
 const user = await PushAPI.user.get({
    account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
@@ -537,7 +580,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
-#### **fetching list of user chats**
+### **Fetching list of user chats**
 ```typescript
 const chats = await PushAPI.chat.chats({
     account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
@@ -556,7 +599,7 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
 
-#### **fetching list of user chat requests**
+### **Fetching list of user chat requests**
 ```typescript
 const chats = await PushAPI.chat.requests({
     account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
@@ -575,7 +618,7 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
 
-#### **fetching conversation hash between two users**
+### **Fetching conversation hash between two users**
 ```typescript
 const threadhash = await PushAPI.chat.conversationHash({
         account: '20x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
@@ -592,7 +635,7 @@ Allowed Options (params with * are mandatory)
 | conversationId*    | string  | -       | receiver's address or chatId of a group|
 
 
-#### **fetching history between two users**
+### **Fetching history between two users**
 ```typescript
 
       const chatHistory = await PushAPI.chat.history({
@@ -616,7 +659,7 @@ Allowed Options (params with * are mandatory)
 | limit    | number  | 10       | number of messages between two users |
 
 
-#### **fetching latest chat between two users**
+### **Fetching latest chat between two users**
 ```typescript
 
       const chatHistory = await PushAPI.chat.latest({
@@ -639,7 +682,7 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
 
-#### **to approve a chat request**
+### **To approve a chat request**
 ```typescript
 const response = await PushAPI.chat.approve({
         status: 'Approved',
@@ -659,7 +702,7 @@ Allowed Options (params with * are mandatory)
 
 
 
-#### **to send a message**
+### **To send a message**
 ```typescript
 const response = await PushAPI.chat.send({
         messageContent: 'Hi',
@@ -684,7 +727,7 @@ Allowed Options (params with * are mandatory)
 | apiKey    | string  | ''       | apiKey for using chat|
 
 
-#### **to create a group**
+### **To create a group**
 ```typescript
 const response = await PushAPI.chat.createGroup({
         groupName:'Push Protocol group',
@@ -715,7 +758,7 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
 
-#### **to update group details**
+### **To update group details**
 Note - updateGroup is an idompotent call
 ```typescript
 const response = await PushAPI.chat.updateGroup({
@@ -744,8 +787,8 @@ Allowed Options (params with * are mandatory)
 
 
 
-### UTILS FOR CHAT
-#### **decrypting encrypted pgp private key**
+### Chat Helper Utils
+#### **Decrypting encrypted pgp private key**
 ```typescript
 import { IUser } from '@pushprotocol/restapi';
 
@@ -755,7 +798,7 @@ const decryptedPvtKey = await PushAPI.chat.decryptWithWalletRPCMethod(
         );
 ```
 
-#### **decrypting messages**
+#### **Decrypting messages**
 ```typescript
 import { IUser } from '@pushprotocol/restapi';
 
