@@ -16,8 +16,8 @@ import { ResourceLimits } from 'worker_threads';
 
 export type GetChannelSubscribersOptionsType = {
   channel: string; // plain ETH Format only
-  page: number,
-  limit: number,
+  page?: number,
+  limit?: number,
   env?: string
 }
 
@@ -26,8 +26,8 @@ export const getSubscribers = async (
 ): Promise < Subscribers > => {
     const {
         channel,
-        page,
-        limit,
+        page = 1,
+        limit = 10,
         env = Constants.ENV.PROD,
     } = options || {};
 
@@ -35,6 +35,18 @@ export const getSubscribers = async (
         if (channel == null || channel.length == 0) {
             throw new Error(`channel cannot be null or empty`);
         }
+
+        if (page <= 0) {
+            throw new Error("page must be greater than 0");
+        }
+
+        if (limit <= 0) {
+            throw new Error("limit must be greater than 0");
+        }
+
+        if (limit > 30) {
+            throw new Error("limit must be lesser than or equal to 30");
+        }  
         const _channel = getCAIPAddress(env, channel, 'Channel');
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}`;
