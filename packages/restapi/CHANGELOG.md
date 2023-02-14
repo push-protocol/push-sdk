@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.4.0...restapi-0.5.0) (2023-02-14)
+
+
+### Features
+
+* **component:** group chat - update group, conversation hash ([#150](https://github.com/ethereum-push-notification-service/push-sdk/issues/150)) ([fc24618](https://github.com/ethereum-push-notification-service/push-sdk/commit/fc2461847bb86d7e0384ace5a484675480f00503))
+
+
+
 # [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.3.1...restapi-0.4.0) (2023-02-09)
 
 
