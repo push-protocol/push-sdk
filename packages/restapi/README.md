@@ -4,10 +4,10 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 # Index
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
-  - [About blockchain agnostic address Format](#about-blockchain-agnostic-address-format)
+  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
   - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
 - [SDK Features](#sdk-features)
-  - [Notifications](#for-notifications)
+  - [Notification](#for-notification)
     -  [Fetching user notifications](#fetching-user-notifications)
     -  [Fetching user spam notifications](#fetching-user-spam-notifications)
     -  [Fetching user subscriptions](#fetching-user-subscriptions)
@@ -28,9 +28,9 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
         -  [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
         -  [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
         -  [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
-    -  [Notification Helper Utils](#notification-helper-utils)
+    -  [Notification helper utils](#notification-helper-utils)
         -  [Parsing notifications](#parsing-notifications)
-    -  [Advanced Notifications (WIP)](#advanced-notifications-wip)
+    -  [Advanced Notification (WIP)](#advanced-notifications-wip)
         -  [**Deprecated** Get a channel’s subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
   - [Chat](#for-chat)
     -  [Create user for chat](#create-user-for-chat)
@@ -44,7 +44,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [To send a message](#to-send-a-message)
     -  [To create a group](#to-create-a-group)
     -  [To update group details](#to-update-group-details)
-    -  [Chat Helper Utils](#chat-helper-utils)
+    -  [Chat helper utils](#chat-helper-utils)
         -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key)
         -  [Decrypting messages](#decrypting-messages)
 
@@ -96,7 +96,7 @@ const signer = library.getSigner(account);
 ```
 
 # SDK Features
-## For Notifications
+## For Notification
 
 ### **Fetching user notifications**
 ```typescript
