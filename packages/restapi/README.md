@@ -1,5 +1,5 @@
 # restapi
-This package gives access to Push Nodes APIs. Visit [Developer Docs](https://docs.push.org/developers) to learn more.
+This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
 # Index
 - [How to use in your app?](#how-to-use-in-your-app)
