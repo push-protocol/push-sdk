@@ -1,11 +1,24 @@
 # socket
 
-This package helps to connect to Push backend using Websockets built on top of [Socket.IO](https://socket.io/docs/v4/client-api/)
+This package gives access to Push Protocol (Push Nodes) using Websockets built on top of [Socket.IO](https://socket.io/docs/v4/client-api/). Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
-## How to use in your app?
+# Index
+- [How to use in your app?](#how-to-use-in-your-app)
+  - [Installation](#installation)
+  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
+- [Socket SDK Features](#socket-sdk-features)
+  - [Creating a socket connection object](#creating-a-socket-connection-object)
+    - [For notification](#for-notification)
+    - [For chat](#for-chat)
+  - [Connect the socket connection object](#connect-the-socket-connection-object)
+  - [Disconnect the socket connection object](#disconnect-the-socket-connection-object)
+  - [Subscribing to Socket Events](#subscribing-to-socket-events)
+  - [Examples](#examples)
+    - [Basic example of using SDK sockets in a React App](#basic-example-of-using-sdk-sockets-in-a-react-app)
 
+# How to use in your app?
 
-### Installation
+## Installation
 ```
   yarn add @pushprotocol/socket ethers
 ```
@@ -21,8 +34,20 @@ import {
 } from '@pushprotocol/socket';
 ```
 
-#### **first create a socket connection object**
-##### **for notification**
+## **About blockchain agnostic address format**
+
+In any of the below methods (unless explicitly stated otherwise) we accept either - 
+- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
+(Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+ 
+ **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
+
+- ETH address format: only for backwards compatibility. 
+(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+# Socket SDK Features
+## **Creating a socket connection object**
+### **For notification**
 ```typescript
 const pushSDKSocket = createSocketConnection({
   user: 'eip155:5:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb', // CAIP, see below
@@ -30,7 +55,7 @@ const pushSDKSocket = createSocketConnection({
   socketOptions: { autoConnect: false }
 });
 ```
-##### **for chat**
+### **For chat**
 ```typescript
 const pushSDKSocket = createSocketConnection({
     user: 'eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb',
@@ -53,18 +78,18 @@ Allowed Options (params with * are mandatory)
 | apiKey   | string  | - | api key is needed for chat socket type only      |
 | socketOptions      | object  | -      | supports the same as [SocketIO Options](https://socket.io/docs/v4/client-options/) |
 
-#### **connect the socket connection object**
+## **Connect the socket connection object**
 ```typescript
 pushSDKSocket.connect();
 ```
 
 
-#### **disconnect the socket connection object**
+## **Disconnect the socket connection object**
 ```typescript
 pushSDKSocket.disconnect();
 ```
 
-#### **subscribing to Socket Events**
+## **Subscribing to Socket Events**
 ```typescript
 pushSDKSocket.on(EVENTS.CONNECT, () => {
 
@@ -92,20 +117,8 @@ Supported EVENTS
 | EVENTS.USER_SPAM_FEEDS | whenever a new spam notification is received by the user after the last socket connection   | 
 | EVENT.CHAT_RECEIVED_MESSAGE | whenever a new message is received |
 
-
-### **NOTE on Addresses:**
-
-In any of the below methods (unless explicitly stated otherwise) we accept either - 
-- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. 
-(Example : ETH MAINNET address will be like `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
-
- **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
-
-- ETH address format: only for backwards compatibility. 
-(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
-
-
-### A very basic example of using SDK sockets in a React App
+# Examples
+## Basic example of using SDK sockets in a React App
 
 ```
 import { useState, useEffect } from "react";
