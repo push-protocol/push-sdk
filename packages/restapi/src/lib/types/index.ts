@@ -153,6 +153,7 @@ export interface IFeeds {
   cid?: string;
   groupInformation?: {
     groupName: string,
+    groupDescription: string,
     groupImage: string,
     groupMembers: UserInfo[],
     groupAdmins: UserInfo[],
@@ -265,6 +266,7 @@ export interface Chat {
   // Group
   groupInformation?: {
     groupName: string,
+    groupDescription: string,
     groupImage: string,
     groupMembers: UserInfo[],
     groupAdmins: UserInfo[],
