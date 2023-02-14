@@ -18,7 +18,6 @@ const UpdateGroupTest = () => {
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
   const [profilePicture, setProfilePicture] = useState<string>('');
-  const [admin, setAdmin] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
   const [address, setAddress] = useState<string>('');
@@ -36,10 +35,6 @@ const UpdateGroupTest = () => {
 
   const updateProfilePicture= (e: React.SyntheticEvent<HTMLElement>) => {
     setProfilePicture((e.target as HTMLInputElement).value);
-  };
-
-  const updateAdmin= (e: React.SyntheticEvent<HTMLElement>) => {
-    setAdmin((e.target as HTMLInputElement).value);
   };
 
   const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
@@ -67,7 +62,7 @@ const UpdateGroupTest = () => {
         );
       }
 
-      /*const response = await PushAPI.chat.updateGroup({
+      const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
         profilePicture,
@@ -79,7 +74,7 @@ const UpdateGroupTest = () => {
         pgpPrivateKey: pvtkey,
       });
 
-      setSendResponse(response);*/
+      setSendResponse(response);
     } catch (e) {
       console.error(e);
     } finally {
