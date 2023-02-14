@@ -21,6 +21,8 @@ import * as PushAPI from "@pushprotocol/restapi";
 In any of the below methods (unless explicitly stated otherwise) we accept either - 
 - [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. 
 (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+ 
+ **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
 
 - ETH address format: only for backwards compatibility. 
 (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
@@ -504,3 +506,209 @@ Allowed Options (params with * are mandatory)
 
 
 
+### MAIN CHAT FEATURES
+
+#### **create user for chat**
+```typescript
+const user = await PushAPI.user.create({
+   account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+   env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+
+
+#### **get user data for chat**
+```typescript
+const user = await PushAPI.user.get({
+   account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+   env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+
+#### **fetching list of user chats**
+```typescript
+const chats = await PushAPI.chat.chats({
+    account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
+    pgpPrivateKey: decryptedPvtKey,
+    toDecrypt: true,
+    env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+
+#### **fetching list of user chat requests**
+```typescript
+const chats = await PushAPI.chat.requests({
+    account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
+    pgpPrivateKey: decryptedPvtKey,
+    toDecrypt: true,
+    env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+
+#### **fetching conversation hash between two users**
+```typescript
+const threadhash = await PushAPI.chat.conversationHash({
+        account: '20x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
+        conversationId: '0xFA3F8E79fb9B03e7a04295594785b91588Aa4DC8', // receiver's address or chatId of a group
+        env,
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| conversationId*    | string  | -       | receiver's address or chatId of a group|
+
+
+#### **fetching history between two users**
+```typescript
+
+      const chatHistory = await PushAPI.chat.history({
+        threadhash:threadhash.threadHash,
+        account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+        pgpPrivateKey: decryptedPvtKey,
+        limit:2,
+        toDecrypt:true,
+        env:'staging',
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| threadhash*    | string  | -       | conversation hash between two users |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| limit    | number  | 10       | number of messages between two users |
+
+
+#### **fetching latest chat between two users**
+```typescript
+
+      const chatHistory = await PushAPI.chat.latest({
+        threadhash:threadhash.threadHash,
+        account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+        pgpPrivateKey: decryptedPvtKey,
+        limit:2,
+        toDecrypt:true,
+        env:'staging',
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| threadhash*    | string  | -       | conversation hash between two users |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+
+#### **to approve a chat request**
+```typescript
+const response = await PushAPI.chat.approve({
+        status: 'Approved',
+        account: '0x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
+        senderAddress : '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // receiver's address or chatId of a group
+        env:'staging',
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| senderAddress*    | string  | -       | receiver's address or chatId of a group |
+| status    | 'Approved' | 'Approved'  | flag for approving and rejecting chat request, supports only approving for now|
+
+
+
+#### **to send a message**
+```typescript
+const response = await PushAPI.chat.send({
+        messageContent: 'Hi',
+        messageType: 'Text',
+        receiverAddress: '0x08E834a388Cee21d4d7571075146841C8eE621a4', // receiver's address or chatId of a group
+        account: '0x57eAd5826B1E0A7074E1aBf1A062714A2dE0f8B4',
+        pgpPrivateKey: decryptedPvtKey,
+        apiKey:"tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
+        env: 'staging',
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| senderAddress*    | string  | -       | receiver's address or chatId of a group |
+| messageContent    | string  | ''       | message to be sent |
+| messageType    | 'Text' | 'Image' | 'File'  | 'Text'| type of messageContent |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| apiKey    | string  | ''       | apiKey for using chat|
+
+
+### UTILS FOR CHAT
+#### **decrypting encrypted pgp private key**
+```typescript
+const decryptedPvtKey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          (connectedUser as IUser).encryptedPrivateKey, //encrypted private key 
+          '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7' //user address
+        );
+```
+
+#### **decrypting messages**
+```typescript
+const decryptedChat = await PushAPI.chat.decryptConversation({
+    messages: chatHistory, //array of message object fetched from chat.history method
+    connectedUser, // user meta data object fetched from chat.get method
+    pgpPrivateKey:decryptedPvtKey, //decrypted private key
+    env:'staging',
+  });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| messages*    | string  | -       | array of message object fetched from chat.history method |
+| connectedUser*    | IUser  | false | user meta data object|
+| pgpPrivateKey    | string  | null  | mandatory for users having pgp keys|
