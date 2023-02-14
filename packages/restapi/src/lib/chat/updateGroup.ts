@@ -27,7 +27,7 @@ import {
 export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         chatId: string,
         groupName: string, 
-        profilePicture: string,
+        groupImage: string,
         members: Array < string >,
         admins: Array < string >,
         pgpPrivateKey?: string,
@@ -40,7 +40,7 @@ export const updateGroup = async (
     const {
         chatId,
         groupName,
-        profilePicture,
+        groupImage,
         members,
         admins,
         account,
@@ -50,7 +50,7 @@ export const updateGroup = async (
 
     try {
 
-        updateGroupRequestValidator(chatId, groupName, profilePicture, members, admins, account);
+        updateGroupRequestValidator(chatId, groupName, groupImage, members, admins, account);
 
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
@@ -58,7 +58,7 @@ export const updateGroup = async (
         const convertedAdmins = admins.map(walletToPCAIP10);
         const bodyToBeHashed = {
             groupName: groupName,
-            profilePicture: profilePicture,
+            groupImage: groupImage,
             members: convertedMembers,
             admins: convertedAdmins,
             chatId: chatId,
@@ -74,7 +74,7 @@ export const updateGroup = async (
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
         const body: IUpdateGroupRequestPayload = updateGroupPayload(
         groupName,
-        profilePicture,
+        groupImage,
         convertedMembers,
         convertedAdmins,
         walletToPCAIP10(account),

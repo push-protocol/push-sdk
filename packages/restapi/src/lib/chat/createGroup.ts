@@ -31,7 +31,6 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     groupImage: string,
     admins: Array<string>,
     isPublic: boolean,
-    groupCreator: string,
     contractAddressNFT?: string
     numberOfNFTs?: number,
     contractAddressERC20?: string,
@@ -54,7 +53,6 @@ export const createGroup = async (
         numberOfNFTs,
         contractAddressERC20,
         numberOfERC20,
-        groupCreator,
         account,
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
@@ -62,7 +60,7 @@ export const createGroup = async (
 
     try {
 
-        createGroupRequestValidator(groupName, groupDescription, members, admins, groupCreator,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
+        createGroupRequestValidator(groupName, groupDescription, members, admins,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
@@ -79,7 +77,7 @@ export const createGroup = async (
             numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
             contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
             numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-            groupCreator: walletToPCAIP10(groupCreator)
+            groupCreator: walletToPCAIP10(account)
         }
 
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
@@ -98,7 +96,7 @@ export const createGroup = async (
             groupImage,
             convertedAdmins,
             isPublic,
-            walletToPCAIP10(groupCreator),
+            walletToPCAIP10(account),
             verificationProof,
             contractAddressNFT,
             numberOfNFTs,

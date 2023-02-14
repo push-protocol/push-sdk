@@ -3,7 +3,7 @@ import {
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
-    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , groupCreator: string, contractAddressNFT ? : string,
+    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number,
@@ -40,11 +40,6 @@ export const createGroupRequestValidator = (
             throw new Error(`Invalid admin address!`);
         }
     }
-
-    if (!isValidETHAddress(groupCreator)) {
-        throw new Error(`Invalid groupCreator address!`);
-    }
-
 
     if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidETHAddress(contractAddressNFT)) {
         throw new Error(`Invalid contractAddressNFT address!`);

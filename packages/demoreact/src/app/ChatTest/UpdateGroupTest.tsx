@@ -17,7 +17,7 @@ const UpdateGroupTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
-  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [groupImage, setGroupImage] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
 
@@ -32,8 +32,8 @@ const UpdateGroupTest = () => {
   };
 
 
-  const updateProfilePicture= (e: React.SyntheticEvent<HTMLElement>) => {
-    setProfilePicture((e.target as HTMLInputElement).value);
+  const updateGroupImage= (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupImage((e.target as HTMLInputElement).value);
   };
 
   const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
@@ -60,7 +60,7 @@ const UpdateGroupTest = () => {
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
-        profilePicture,
+        groupImage,
         members: members.split(','),
         admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
@@ -111,11 +111,11 @@ const UpdateGroupTest = () => {
      
 
             <SectionItem style={{ marginTop: 20 }}>
-              <label>profilePicture</label>
+              <label>groupImage</label>
               <input
                 type="text"
-                onChange={updateProfilePicture}
-                value={profilePicture}
+                onChange={updateGroupImage}
+                value={groupImage}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
