@@ -686,6 +686,65 @@ Allowed Options (params with * are mandatory)
 | apiKey    | string  | ''       | apiKey for using chat|
 
 
+#### **to create a group**
+```typescript
+const response = await PushAPI.chat.createGroup({
+        groupName:'Push Protocol group',
+        groupDescription:'This is the oficial group for Push Protocol,
+        members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+        groupImage: &lt;group image link&gt; ,
+        admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+        isPublic: true,
+        groupCreator: '0xD993eb61B8843439A23741C0A3b5138763aE11a4' ,
+        account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+        env: 'staging',
+        pgpPrivateKey: decryptedPvtKey, //decrypted private key
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| groupName*    | string  | -       | group name |
+| groupDescription*    | string  | -       | group description |
+| groupImage*    | string  | -       | group image link |
+| members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
+| admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
+| groupCreator*    | string | -  | wallet address groupCreator|
+| isPublic*    | boolean  | -       | true for public group, false for private group |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+
+#### **to update group details**
+```typescript
+const response = await PushAPI.chat.updateGroup({
+        groupName:'Push Chat group',
+        groupDescription:'This is the updated description for Push Chat,
+        members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+        groupImage: &lt;group image link&gt; ,
+        admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+        account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+        env: 'staging',
+        pgpPrivateKey: decryptedPvtKey, //decrypted private key
+      });
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address                  |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| groupName*    | string  | -       | group name |
+| groupDescription*    | string  | -       | group description |
+| groupImage*    | string  | -       | group image link |
+| members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
+| admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+
+
 ### UTILS FOR CHAT
 #### **decrypting encrypted pgp private key**
 ```typescript
