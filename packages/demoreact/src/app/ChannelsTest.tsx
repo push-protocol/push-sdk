@@ -14,7 +14,7 @@ const ChannelsTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [channelData, setChannelData] = useState();
   const [channelListData, setChannelListData] = useState();
-  const [subscriberData, setSubscriberData] = useState();
+  const [subscriberData, setSubscriberData] = useState<any>();
   const [subscriberStatus, setSubscriberStatus] = useState<boolean>();
   
 
@@ -68,9 +68,11 @@ const ChannelsTest = () => {
   const testGetSubscribers = async () => {
     try {
       setLoading(true);
-      const response = await PushAPI.channels._getSubscribers({
+      const response = await PushAPI.channels.getSubscribers({
         channel: isCAIP ? getCAIPAddress(env, channelAddr) : channelAddr,
-        env
+        page: 1,
+        limit: 10,
+        env,
       });
   
       setSubscriberData(response);
