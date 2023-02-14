@@ -718,6 +718,7 @@ Allowed Options (params with * are mandatory)
 
 
 #### **to update group details**
+Note - updateGroup is an idompotent call
 ```typescript
 const response = await PushAPI.chat.updateGroup({
         groupName:'Push Chat group',
