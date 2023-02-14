@@ -20,7 +20,6 @@ const UpdateGroupTest = () => {
   const [profilePicture, setProfilePicture] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -46,10 +45,6 @@ const UpdateGroupTest = () => {
     setAdmins((e.target as HTMLInputElement).value);
   };
 
-  const updateAddress= (e: React.SyntheticEvent<HTMLElement>) => {
-    setAddress((e.target as HTMLInputElement).value);
-  };
-
   const testUpdateGroup = async () => {
     try {
       setLoading(true);
@@ -66,9 +61,8 @@ const UpdateGroupTest = () => {
         chatId,
         groupName,
         profilePicture,
-        members: [members],
-        admins: [admins],
-        address,
+        members: members.split(','),
+        admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
         pgpPrivateKey: pvtkey,
@@ -146,16 +140,6 @@ const UpdateGroupTest = () => {
               />
             </SectionItem>
 
-
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>address</label>
-              <input
-                type="text"
-                onChange={updateAddress}
-                value={address}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
         
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateGroup}>
