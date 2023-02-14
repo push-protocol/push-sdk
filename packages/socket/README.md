@@ -49,7 +49,7 @@ Allowed Options (params with * are mandatory)
 |----------|---------|---------|--------------------------------------------|
 | user*    | string  | -       | user account address (CAIP)                |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| socketType  | 'notification' | 'chat'  |  'notification'      | socket type  |
+| socketType  | 'notification' &#124;  'chat'  |  'notification'      | socket type  |
 | apiKey   | string  | - | api key is needed for chat socket type only      |
 | socketOptions      | object  | -      | supports the same as [SocketIO Options](https://socket.io/docs/v4/client-options/) |
 
