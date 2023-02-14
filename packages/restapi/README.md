@@ -49,8 +49,8 @@ const { account, library, chainId } = useWeb3React();
 const signer = library.getSigner(account);
 ```
 
-### MAIN FEATURES
-
+# MAIN FEATURES
+## Notifications Specific (Push Notifications via Push Protocol)
 #### **fetching user notifications**
 ```typescript
 const notifications = await PushAPI.user.getFeeds({
@@ -483,8 +483,6 @@ const {
 ```
 *We get the above `keys` after the parsing of the API repsonse.*
 
-<br />
-
 ### ADVANCED (WIP)
 
 
@@ -506,7 +504,7 @@ Allowed Options (params with * are mandatory)
 
 
 
-### MAIN CHAT FEATURES
+## Chat Specific (Push Chat via Push Protocol)
 
 #### **create user for chat**
 ```typescript
