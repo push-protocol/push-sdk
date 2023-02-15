@@ -42,6 +42,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
     -  [To approve a chat request](#to-approve-a-chat-request)
     -  [To send a message](#to-send-a-message)
+    -  [To get group details by chat id](#to-get-group-details-by-chatid)
     -  [To create a group](#to-create-a-group)
     -  [To update group details](#to-update-group-details)
     -  [Chat helper utils](#chat-helper-utils)
@@ -727,6 +728,22 @@ Allowed Options (params with * are mandatory)
 | apiKey    | string  | ''       | apiKey for using chat|
 
 
+### **To get group details by chatId**
+
+```typescript
+const response = await PushAPI.chat.getGroup({
+  chatId: '190591e84108cdf12e62eecabf02ddb123ea92f1c06fb98ee9b5cf3871f46fa9',
+  env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| chatId*    | string  | -       | group chat id                 |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+
 ### **To create a group**
 ```typescript
 const response = await PushAPI.chat.createGroup({
@@ -757,21 +774,6 @@ Allowed Options (params with * are mandatory)
 | isPublic*    | boolean  | -       | true for public group, false for private group |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
-
-### **To get group details by chatId**
-
-```typescript
-const response = await PushAPI.chat.getGroup({
-  chatId: '190591e84108cdf12e62eecabf02ddb123ea92f1c06fb98ee9b5cf3871f46fa9',
-  env: 'staging',
-});
-```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| chatId*    | string  | -       | group chat id                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 ### **To update group details**
 Note - updateGroup is an idompotent call
