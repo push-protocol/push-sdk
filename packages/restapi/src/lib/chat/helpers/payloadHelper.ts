@@ -157,6 +157,7 @@ export const createGroupPayload = (
 export const updateGroupPayload = (
   groupName: string,
   groupImage: string,
+  groupDescription: string,
   members: Array<string>,
   admins: Array<string>,
   address: string,
@@ -165,6 +166,7 @@ export const updateGroupPayload = (
   const body = {
     groupName: groupName,
     groupImage: groupImage,
+    groupDescription: groupDescription,
     members: members,
     admins: admins,
     address: address,

@@ -59,7 +59,7 @@ export const createGroupRequestValidator = (
 };
 
 export const updateGroupRequestValidator = (
-    chatId: string, groupName: string, profilePicture: string, members: Array < string > ,
+    chatId: string, groupName: string, groupDescription: string, profilePicture: string, members: Array < string > ,
     admins: Array < string > , address: string
 ): void => {
 
@@ -76,8 +76,12 @@ export const updateGroupRequestValidator = (
         throw new Error(`profilePicture cannot be null or empty`);
     }
 
-    if (groupName != null && groupName.length >= 256) {
-        throw new Error(`groupName cannot be more than 256 characters`);
+    if (groupName != null && groupName.length >= 50) {
+        throw new Error(`groupName cannot be more than 50 characters`);
+    }
+
+    if (groupDescription != null && groupDescription.length >= 150) {
+        throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
     if (members != null && members.length > 0) {

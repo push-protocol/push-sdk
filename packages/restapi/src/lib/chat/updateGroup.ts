@@ -14,9 +14,6 @@ import {
     updateGroupRequestValidator
 } from './helpers';
 
-import {
-    decryptWithWalletRPCMethod,
-} from '../../../src/lib/helpers';
 
 
 /**
@@ -28,6 +25,7 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
         chatId: string,
         groupName: string, 
         groupImage: string,
+        groupDescription: string, 
         members: Array < string >,
         admins: Array < string >,
         pgpPrivateKey?: string,
@@ -41,6 +39,7 @@ export const updateGroup = async (
         chatId,
         groupName,
         groupImage,
+        groupDescription,
         members,
         admins,
         account,
@@ -50,7 +49,8 @@ export const updateGroup = async (
 
     try {
 
-        updateGroupRequestValidator(chatId, groupName, groupImage, members, admins, account);
+        updateGroupRequestValidator(chatId, groupName, groupDescription, groupImage, members, admins, account);
+
 
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
 
@@ -59,6 +59,7 @@ export const updateGroup = async (
         const bodyToBeHashed = {
             groupName: groupName,
             groupImage: groupImage,
+            groupDescription: groupDescription,
             members: convertedMembers,
             admins: convertedAdmins,
             chatId: chatId,
@@ -75,6 +76,7 @@ export const updateGroup = async (
         const body: IUpdateGroupRequestPayload = updateGroupPayload(
         groupName,
         groupImage,
+        groupDescription,
         convertedMembers,
         convertedAdmins,
         walletToPCAIP10(account),

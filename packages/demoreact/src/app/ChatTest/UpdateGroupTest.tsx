@@ -18,6 +18,7 @@ const UpdateGroupTest = () => {
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
   const [groupImage, setGroupImage] = useState<string>('');
+  const [groupDescription, setGroupDescription] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
 
@@ -30,7 +31,9 @@ const UpdateGroupTest = () => {
   const updateGroupName = (e: React.SyntheticEvent<HTMLElement>) => {
     setGroupName((e.target as HTMLInputElement).value);
   };
-
+  const updateGroupDescription = (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupDescription((e.target as HTMLInputElement).value);
+  };
 
   const updateGroupImage= (e: React.SyntheticEvent<HTMLElement>) => {
     setGroupImage((e.target as HTMLInputElement).value);
@@ -61,6 +64,7 @@ const UpdateGroupTest = () => {
         chatId,
         groupName,
         groupImage,
+        groupDescription,
         members: members.split(','),
         admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
@@ -108,7 +112,15 @@ const UpdateGroupTest = () => {
               />
             </SectionItem>
 
-     
+            <SectionItem>
+              <label>Group Description</label>
+              <input
+                type="text"
+                onChange={updateGroupDescription}
+                value={groupDescription}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
 
             <SectionItem style={{ marginTop: 20 }}>
               <label>groupImage</label>
