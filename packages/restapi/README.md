@@ -722,7 +722,7 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | senderAddress*    | string  | -       | receiver's address or chatId of a group |
 | messageContent    | string  | ''       | message to be sent |
-| messageType    | 'Text' &#124;  'Image' &#124;  'File'  | 'Text'| type of messageContent |
+| messageType    | 'Text' &#124;  'Image' &#124;  'File' &#124; 'GIF' | 'Text'| type of messageContent |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 | apiKey    | string  | ''       | apiKey for using chat|
 
