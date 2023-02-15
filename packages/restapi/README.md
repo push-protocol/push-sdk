@@ -733,7 +733,7 @@ const response = await PushAPI.chat.createGroup({
         groupName:'Push Protocol group',
         groupDescription:'This is the oficial group for Push Protocol,
         members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-        groupImage: &lt;group image link&gt; ,
+        groupImage: 'group image link'; ,
         admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         isPublic: true,
         groupCreator: '0xD993eb61B8843439A23741C0A3b5138763aE11a4' ,
