@@ -156,7 +156,6 @@ export interface IFeeds {
     groupDescription: string,
     groupImage: string,
     groupMembers: UserInfo[],
-    groupAdmins: UserInfo[],
     isPublic: boolean,
     contractAddressNFT: string,
     numberOfNFTs: number,
@@ -252,6 +251,7 @@ export interface UserInfo {
   publicKey: string,
   name: string,
   image: string,
+  isAdmin: boolean
 }
 
 export interface Chat {
@@ -273,7 +273,6 @@ export interface Chat {
     groupDescription: string,
     groupImage: string,
     groupMembers: UserInfo[],
-    groupAdmins: UserInfo[],
     isPublic: boolean,
     contractAddressNFT: string,
     numberOfNFTs: number,

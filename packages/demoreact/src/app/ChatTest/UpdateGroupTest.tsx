@@ -17,7 +17,8 @@ const UpdateGroupTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
   const [groupName, setGroupName] = useState<string>('');
-  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [groupImage, setGroupImage] = useState<string>('');
+  const [groupDescription, setGroupDescription] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
 
@@ -30,10 +31,12 @@ const UpdateGroupTest = () => {
   const updateGroupName = (e: React.SyntheticEvent<HTMLElement>) => {
     setGroupName((e.target as HTMLInputElement).value);
   };
+  const updateGroupDescription = (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupDescription((e.target as HTMLInputElement).value);
+  };
 
-
-  const updateProfilePicture= (e: React.SyntheticEvent<HTMLElement>) => {
-    setProfilePicture((e.target as HTMLInputElement).value);
+  const updateGroupImage= (e: React.SyntheticEvent<HTMLElement>) => {
+    setGroupImage((e.target as HTMLInputElement).value);
   };
 
   const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
@@ -60,7 +63,8 @@ const UpdateGroupTest = () => {
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
-        profilePicture,
+        groupImage,
+        groupDescription,
         members: members.split(','),
         admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
@@ -108,14 +112,22 @@ const UpdateGroupTest = () => {
               />
             </SectionItem>
 
-     
-
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>profilePicture</label>
+            <SectionItem>
+              <label>Group Description</label>
               <input
                 type="text"
-                onChange={updateProfilePicture}
-                value={profilePicture}
+                onChange={updateGroupDescription}
+                value={groupDescription}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>groupImage</label>
+              <input
+                type="text"
+                onChange={updateGroupImage}
+                value={groupImage}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

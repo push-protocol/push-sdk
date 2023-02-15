@@ -3,7 +3,7 @@ import {
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
-    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , groupCreator: string, contractAddressNFT ? : string,
+    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number,
@@ -41,11 +41,6 @@ export const createGroupRequestValidator = (
         }
     }
 
-    if (!isValidETHAddress(groupCreator)) {
-        throw new Error(`Invalid groupCreator address!`);
-    }
-
-
     if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidETHAddress(contractAddressNFT)) {
         throw new Error(`Invalid contractAddressNFT address!`);
     }
@@ -64,7 +59,7 @@ export const createGroupRequestValidator = (
 };
 
 export const updateGroupRequestValidator = (
-    chatId: string, groupName: string, profilePicture: string, members: Array < string > ,
+    chatId: string, groupName: string, groupDescription: string, profilePicture: string, members: Array < string > ,
     admins: Array < string > , address: string
 ): void => {
 
@@ -81,8 +76,12 @@ export const updateGroupRequestValidator = (
         throw new Error(`profilePicture cannot be null or empty`);
     }
 
-    if (groupName != null && groupName.length >= 256) {
-        throw new Error(`groupName cannot be more than 256 characters`);
+    if (groupName != null && groupName.length >= 50) {
+        throw new Error(`groupName cannot be more than 50 characters`);
+    }
+
+    if (groupDescription != null && groupDescription.length >= 150) {
+        throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
     if (members != null && members.length > 0) {

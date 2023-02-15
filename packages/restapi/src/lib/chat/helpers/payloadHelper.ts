@@ -41,7 +41,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string,
-  profilePicture: string,
+  groupImage: string,
   members: Array<string>,
   admins: Array<string>,
   address: string,
@@ -156,7 +156,8 @@ export const createGroupPayload = (
 
 export const updateGroupPayload = (
   groupName: string,
-  profilePicture: string,
+  groupImage: string,
+  groupDescription: string,
   members: Array<string>,
   admins: Array<string>,
   address: string,
@@ -164,7 +165,8 @@ export const updateGroupPayload = (
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
-    profilePicture: profilePicture,
+    groupImage: groupImage,
+    groupDescription: groupDescription,
     members: members,
     admins: admins,
     address: address,

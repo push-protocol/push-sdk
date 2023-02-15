@@ -25,7 +25,6 @@ const CreateGroupTest = () => {
   const [numberOfNFTs, setNumberOfNFTs] = useState<string>();
   const [contractAddressERC20, setContractAddressERC20] = useState<string>();
   const [numberOfERC20, setNumberOfERC20] = useState<string>();
-  const [groupCreator, setGroupCreator] = useState<string>('');
 
 
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -70,11 +69,6 @@ const CreateGroupTest = () => {
     setNumberOfERC20((e.target as HTMLInputElement).value);
   };
 
-  const updateGroupCreator = (e: React.SyntheticEvent<HTMLElement>) => {
-    setGroupCreator((e.target as HTMLInputElement).value);
-  };
-
-
   const testCreateGroup = async () => {
     try {
       setLoading(true);
@@ -100,7 +94,6 @@ const CreateGroupTest = () => {
         groupImage,
         admins: adminNotEmpty,
         isPublic: (isPublic === "true"),
-        groupCreator,
         contractAddressNFT,
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,
         contractAddressERC20,
@@ -230,20 +223,6 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-
-            <SectionItem style={{ marginTop: 20 }}>
-              <label>groupCreator</label>
-              <input
-                type="text"
-                onChange={updateGroupCreator}
-                value={groupCreator}
-                style={{ width: 400, height: 30 }}
-              />
-            </SectionItem>
-
-
-
-
 
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testCreateGroup}>
