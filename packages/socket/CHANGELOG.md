@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.1...socket-0.4.0) (2023-02-15)
+
+
+### Features
+
+* **component:** Added Group Chat Functionality  ([#122](https://github.com/ethereum-push-notification-service/push-sdk/issues/122)) ([5bf341f](https://github.com/ethereum-push-notification-service/push-sdk/commit/5bf341f6f60a6786be47f668fa3ed1b15a66be88))
+
+
+
 ## [0.3.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.0...socket-0.3.1) (2023-02-03)
 
 
