@@ -758,6 +758,22 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
 
+### **to get group details by chatId**
+
+```typescript
+const response = await PushAPI.chat.getGroup({
+  chatId: '190591e84108cdf12e62eecabf02ddb123ea92f1c06fb98ee9b5cf3871f46fa9',
+  env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| chatId*    | string  | -       | group chat id                 |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+
 ### **To update group details**
 Note - updateGroup is an idompotent call
 ```typescript
