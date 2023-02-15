@@ -236,7 +236,7 @@ export interface AccountEnvOptionsType {
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
