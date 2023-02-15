@@ -58,14 +58,16 @@ export const updateGroup = async (
         const convertedAdmins = admins.map(walletToPCAIP10);
         const bodyToBeHashed = {
             groupName: groupName,
-            groupImage: groupImage,
             groupDescription: groupDescription,
+            groupImage: groupImage,
             members: convertedMembers,
             admins: convertedAdmins,
             chatId: chatId,
         }
 
-        const signature: string = await sign( {message: JSON.stringify(bodyToBeHashed),  signingKey: connectedUser.privateKey!} );
+        const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+        const signature: string = await sign( {message: hash,  signingKey: connectedUser.privateKey!} );
+
         const sigType  = "pgp";
 
         const verificationProof : string = sigType + ":" + signature + ":" + account;
