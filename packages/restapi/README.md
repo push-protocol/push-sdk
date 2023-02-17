@@ -753,7 +753,6 @@ const response = await PushAPI.chat.createGroup({
         groupImage: &lt;group image link&gt; ,
         admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         isPublic: true,
-        groupCreator: '0xD993eb61B8843439A23741C0A3b5138763aE11a4' ,
         account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
         env: 'staging',
         pgpPrivateKey: decryptedPvtKey, //decrypted private key
@@ -770,7 +769,6 @@ Allowed Options (params with * are mandatory)
 | groupImage*    | string  | -       | group image link |
 | members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
 | admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
-| groupCreator*    | string | -  | wallet address groupCreator|
 | isPublic*    | boolean  | -       | true for public group, false for private group |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
