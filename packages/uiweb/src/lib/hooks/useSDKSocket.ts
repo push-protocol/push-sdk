@@ -15,7 +15,7 @@ export type SDKSocketHookOptions = {
 export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
-  const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>(null);
+  const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
   const [isSDKSocketConnected, setIsSDKSocketConnected] = useState(epnsSDKSocket?.connected);
 
   const addSocketEvents = () => {
@@ -82,22 +82,15 @@ export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: 
           socketType,
           socketOptions: { autoConnect: true , reconnectionAttempts: 3}
         });
-
-        // console.log('sleeping');
-        // await sleep(7000);
-        // console.log('awake');
         console.warn('new connection object: ', connectionObject);
 
         setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
     }
-    function sleep(ms: any) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, env]);
-
 
   return {
       epnsSDKSocket,

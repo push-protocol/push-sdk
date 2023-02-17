@@ -102,9 +102,11 @@ export const Modal: React.FC = () => {
   };
 
   const getUpdatedChats = async (message:IMessageIPFS) =>{
-    const chat = await decryptChat({message,connectedUser,env});
-    socketData.messagesSinceLastConnection.decrypted = true;
-    setChatsSorted([...chats, chat]);
+    if (message) {
+      const chat = await decryptChat({ message, connectedUser, env });
+      socketData.messagesSinceLastConnection.decrypted = true;
+      setChatsSorted([...chats, chat]);
+    }
   }
 
   useEffect(() => {
