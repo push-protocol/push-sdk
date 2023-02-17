@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.0...restapi-0.6.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* **component:** update group signature generation bug fix ([#164](https://github.com/ethereum-push-notification-service/push-sdk/issues/164)) ([acb82a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/acb82a9b44625b1ac37b5ea2d82e7877bcfc669e))
+
+
+
+
 # [0.6.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.5.0...restapi-0.6.0) (2023-02-15)
 
 
