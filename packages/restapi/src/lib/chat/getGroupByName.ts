@@ -9,7 +9,7 @@ import {
 
 
 /**
- *  GET /v1/chat/groups/:chatId
+ *  GET /v1/chat/groups?groupName=
  */
 
 export interface GetGroupType extends AccountEnvOptionsType {
