@@ -4,7 +4,7 @@ import {
 } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType, IGroup 
+    AccountEnvOptionsType, GroupDTO 
 } from '../types';
 
 
@@ -18,7 +18,7 @@ export interface GetGroupType extends AccountEnvOptionsType {
 
 export const getGroup = async (
     options: GetGroupType
-) : Promise<IGroup> => {
+) : Promise<GroupDTO> => {
     const {
         chatId,
         env = Constants.ENV.PROD,

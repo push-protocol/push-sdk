@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, IGroup } from '../../types';
+import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 
@@ -60,7 +60,7 @@ export const sendMessagePayload = async (
     isGroup = false;
 }
 
-  let group: IGroup | null = null;
+  let group: GroupDTO | null = null;
 
   if(isGroup) {
     group = await getGroup({
