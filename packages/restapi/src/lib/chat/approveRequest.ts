@@ -31,7 +31,7 @@ export const approve = async (
 
   // get user with raw privateKey
   // const createdUser: IConnectedUser = await getConnectedUser(account, privateKey, env);
-  const connectedUser = await createUserIfNecessary({account,env});
+  // const connectedUser = await createUserIfNecessary({account,env});
   // TODO: make signature
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
