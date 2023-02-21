@@ -111,19 +111,6 @@ export interface INotificationPayload {
   recipients: any;
 }
 
-export interface IInboxChat {
-  timestamp: number;
-  fromDID: string;
-  toDID: string;
-  fromCAIP10: string;
-  toCAIP10: string;
-  lastMessage: string;
-  messageType: string;
-  encType: string;
-  signature: string;
-  signatureType: string;
-  encryptedSecret: string;
-}
 export interface IMessageIPFS {
   fromCAIP10: string;
   toCAIP10: string;
@@ -151,19 +138,7 @@ export interface IFeeds {
   intentTimestamp: Date;
   combinedDID: string;
   cid?: string;
-  groupInformation?: {
-    groupName: string,
-    groupDescription: string,
-    groupImage: string,
-    groupMembers: UserInfo[],
-    isPublic: boolean,
-    contractAddressNFT: string,
-    numberOfNFTs: number,
-    contractAddressERC20: string,
-    numberOfERC20: number,
-    verificationProof: string,
-    groupCreator: string
-  }
+  groupInformation?: GroupDTO
 }
 export interface IUser {
   did: string;
@@ -185,19 +160,7 @@ export interface Member {
   wallet: string;
   publicKey: string;
 }
-export interface IGroup {
-  members: Array<Member>,
-  admins: Array<string>,
-  contractAddressNFT?: string
-  numberOfNFTs?: number,
-  contractAddressERC20?: string,
-  numberOfERC20?: number,
-  groupImage: string,
-  groupName: string,
-  groupDescription: string,
-  groupCreator: string,
-  isPublic: boolean
-}
+
 
 export interface GroupDTO {
     members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
@@ -271,33 +234,6 @@ export interface UserInfo {
   isAdmin: boolean
 }
 
-export interface Chat {
-  did: string;
-  wallets: string;
-  profilePicture: string | null;
-  publicKey: string | null;
-  about: string | null;
-  name: string | null;
-  threadhash: string | null;
-  intent: string | null;
-  intentSentBy: string | null;
-  intentTimestamp: Date;
-  combinedDID: string;
 
-  // Group
-  groupInformation?: {
-    groupName: string,
-    groupDescription: string,
-    groupImage: string,
-    groupMembers: UserInfo[],
-    isPublic: boolean,
-    contractAddressNFT: string,
-    numberOfNFTs: number,
-    contractAddressERC20: string,
-    numberOfERC20: number,
-    verificationProof: string,
-    groupCreator: string
-  }
-}
 
 
