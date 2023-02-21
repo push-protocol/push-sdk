@@ -16,6 +16,8 @@ const SendMessageTest = () => {
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [messageContent, setMessageContent] = useState<string>('');
+  const [messageType, setMessageType] = useState<string>('Text');
+
   const [receiverAddress, setReceiverAddress] = useState<string>('');
   const [apiKey, setApiKey] = useState<string>('');
 
@@ -23,6 +25,10 @@ const SendMessageTest = () => {
 
   const updateMessageContent = (e: React.SyntheticEvent<HTMLElement>) => {
     setMessageContent((e.target as HTMLInputElement).value);
+  };
+
+  const updateMessageType = (e: React.SyntheticEvent<HTMLElement>) => {
+    setMessageType((e.target as HTMLInputElement).value);
   };
 
   const updateReceiverAddress = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -46,7 +52,7 @@ const SendMessageTest = () => {
       }
       const response = await PushAPI.chat.send({
         messageContent,
-        messageType: 'Text',
+        messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
         receiverAddress,
         account: isCAIP ? walletToPCAIP10(account) : account,
         pgpPrivateKey: pvtkey,
@@ -80,6 +86,49 @@ const SendMessageTest = () => {
                 value={messageContent}
                 style={{ width: 400, height: 30 }}
               />
+            </SectionItem>
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Message Type</label>
+              <div>
+                <input
+                  type="radio"
+                  name="messageType"
+                  value="Text"
+                  checked={messageType === 'Text'}
+                  onChange={() => setMessageType('Text')}
+                />
+                <label>Text</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="messageType"
+                  value="Image"
+                  checked={messageType === 'Image'}
+                  onChange={() => setMessageType('Image')}
+                />
+                <label>Image</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="messageType"
+                  value="File"
+                  checked={messageType === 'File'}
+                  onChange={() => setMessageType('File')}
+                />
+                <label>File</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="messageType"
+                  value="GIF"
+                  checked={messageType === 'GIF'}
+                  onChange={() => setMessageType('GIF')}
+                />
+                <label>GIF</label>
+              </div>
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
               <label>Receiver's Address</label>

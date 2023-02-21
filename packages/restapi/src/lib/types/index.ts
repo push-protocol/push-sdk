@@ -198,6 +198,23 @@ export interface IGroup {
   groupCreator: string,
   isPublic: boolean
 }
+
+export interface GroupDTO {
+    members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+    pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+    contractAddressERC20: string | null,
+    numberOfERC20: number,
+    contractAddressNFT: string | null,
+    numberOfNFTTokens: number,
+    verificationProof: string,
+    groupImage: string | null,
+    groupName: string,
+    isPublic: boolean,
+    groupDescription: string | null,
+    groupCreator: string,
+    chatId: string
+}
+
 export interface Subscribers {
   itemcount: number
   subscribers: Array<string>

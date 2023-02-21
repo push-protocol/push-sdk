@@ -1,5 +1,6 @@
 import {
     isValidETHAddress,
+    isValidNFTCAIP10Address,
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
@@ -41,7 +42,7 @@ export const createGroupRequestValidator = (
         }
     }
 
-    if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidETHAddress(contractAddressNFT)) {
+    if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidNFTCAIP10Address(contractAddressNFT)) {
         throw new Error(`Invalid contractAddressNFT address!`);
     }
 
@@ -49,7 +50,7 @@ export const createGroupRequestValidator = (
         throw new Error(`numberOfNFTs cannot be negative number`);
     }
 
-    if (contractAddressERC20 != null && contractAddressERC20?.length > 0 && !isValidETHAddress(contractAddressERC20)) {
+    if (contractAddressERC20 != null && contractAddressERC20?.length > 0 && !isValidNFTCAIP10Address(contractAddressERC20)) {
         throw new Error(`Invalid contractAddressERC20 address!`);
     }
 
