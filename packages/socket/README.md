@@ -5,6 +5,7 @@ This package gives access to Push Protocol (Push Nodes) using Websockets built o
 # Index
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
+  - [Import SDK](#import-sdk)
   - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
 - [Socket SDK Features](#socket-sdk-features)
   - [Creating a socket connection object](#creating-a-socket-connection-object)
@@ -20,13 +21,13 @@ This package gives access to Push Protocol (Push Nodes) using Websockets built o
 
 ## Installation
 ```
-  yarn add @pushprotocol/socket ethers
+  yarn add @pushprotocol/socket@latest ethers@^5.6
 ```
   or
 ```
-  npm install @pushprotocol/socket ethers 
+  npm install @pushprotocol/socket@latest ethers@^5.6
 ```
-Import in your file
+## Import SDK
 ```typescript
 import {
   createSocketConnection,
