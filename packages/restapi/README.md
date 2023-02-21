@@ -4,8 +4,9 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 # Index
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
-  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
+  - [Import SDK](#import-sdk)
   - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
+  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
 - [SDK Features](#sdk-features)
   - [Notification](#for-notification)
     -  [Fetching user notifications](#fetching-user-notifications)
@@ -52,29 +53,16 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 # How to use in your app?
 ## Installation
 ```
-  yarn add @pushprotocol/restapi ethers
+  yarn add @pushprotocol/restapi@latest ethers@^5.6
 ```
   or
 ```
-  npm install @pushprotocol/restapi ethers 
+  npm install @pushprotocol/restapi@latest ethers@^5.6
 ```
-Import in your file
+## Import SDK
 ```typescript
 import * as PushAPI from "@pushprotocol/restapi";
 ```
-
-## **About blockchain agnostic address format**
-
-In any of the below methods (unless explicitly stated otherwise) we accept either - 
-- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
-(Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
- 
- **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
-
-- ETH address format: only for backwards compatibility. 
-(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
-
-
 
 ## **About generating the "signer" object for different platforms**
 
@@ -96,6 +84,17 @@ const { account, library, chainId } = useWeb3React();
 const signer = library.getSigner(account);
 ```
 
+## **About blockchain agnostic address format**
+
+In any of the below methods (unless explicitly stated otherwise) we accept either - 
+- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
+(Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+ 
+ **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
+
+- ETH address format: only for backwards compatibility. 
+(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
 # SDK Features
 ## For Notification
 
@@ -106,6 +105,174 @@ const notifications = await PushAPI.user.getFeeds({
   env: 'staging'
 });
 ```
+
+<details>
+  <summary><h3>Expected response (Fetching user notifications)</h3></summary>
+
+```
+// PushAPI.user.getFeeds | Response - 200 OK
+[
+  {
+    cta: 'https://idle.finance/#/governance/proposals',
+    title: 'New Proposal',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-32: Add Euler staking PYT wrappers for AA tranche to IdleDAI\n' +
+      '[timestamp:1676570405.922][timestamp: 1676570405]',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
+    url: 'https://idle.finance/',
+    sid: '3401597',
+    app: 'Idle Finance',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: 'New Proposal On Idle Finance',
+      title: 'Idle Finance - New Proposal'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'hi socket',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeicahk2k5jcprepvqxl7xvh5ia4wyruikvpvcrel2rt7tsuefc7ktu/bafkreihjprcvuf2er5etxh7hsvslxzbntum5fqournkrsrtvhvppwx7jqy',
+    url: 'https://www.google.com/',
+    sid: '2491520',
+    app: 'AKP Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'hi socket', title: 'AKP Test Channel - ' },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'hiii',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeicahk2k5jcprepvqxl7xvh5ia4wyruikvpvcrel2rt7tsuefc7ktu/bafkreihjprcvuf2er5etxh7hsvslxzbntum5fqournkrsrtvhvppwx7jqy',
+    url: 'https://www.google.com/',
+    sid: '2490919',
+    app: 'AKP Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'hiii', title: 'AKP Test Channel - ' },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'Hey -testing',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeifvbiegzbgyoikdxe2rqhxf2uuvrqtfmllzy2ueidzyxnqkvkuizu/bafkreia26pvmuo2ugyub7boo2zxxj6dqhwqt3gcllpotmau3t7gsvy6vfq',
+    url: 'https://gnosis.io',
+    sid: '2429211',
+    app: 'Gnosis',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'Hey -testing', title: 'Gnosis - ' },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'Hey',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeifvbiegzbgyoikdxe2rqhxf2uuvrqtfmllzy2ueidzyxnqkvkuizu/bafkreia26pvmuo2ugyub7boo2zxxj6dqhwqt3gcllpotmau3t7gsvy6vfq',
+    url: 'https://gnosis.io',
+    sid: '2429210',
+    app: 'Gnosis',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'Hey', title: 'Gnosis - ' },
+    secret: ''
+  },
+  {
+    cta: 'https://idle.finance/#/governance/proposals',
+    title: 'New Proposal',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-31: Add AA Euler staking PYT wrappers to IdleUSDT, IdleUSDC and IdleWETH. Gauges rate to 0. Extend LM. \n' +
+      '[timestamp:1674583206.258][timestamp: 1674583206]',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
+    url: 'https://idle.finance/',
+    sid: '1784234',
+    app: 'Idle Finance',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: 'New Proposal On Idle Finance',
+      title: 'Idle Finance - New Proposal'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'hi 2023',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeicahk2k5jcprepvqxl7xvh5ia4wyruikvpvcrel2rt7tsuefc7ktu/bafkreihjprcvuf2er5etxh7hsvslxzbntum5fqournkrsrtvhvppwx7jqy',
+    url: 'https://www.google.com/',
+    sid: '1132231',
+    app: 'AKP Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'hi 2023', title: 'AKP Test Channel - ' },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '',
+    message: 'hi',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeicahk2k5jcprepvqxl7xvh5ia4wyruikvpvcrel2rt7tsuefc7ktu/bafkreihjprcvuf2er5etxh7hsvslxzbntum5fqournkrsrtvhvppwx7jqy',
+    url: 'https://www.google.com/',
+    sid: '1132230',
+    app: 'AKP Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: { body: 'hi', title: 'AKP Test Channel - ' },
+    secret: ''
+  },
+  {
+    cta: 'https://idle.finance/#/governance/proposals',
+    title: 'New Proposal',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-30: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
+      ' \n' +
+      '[timestamp:1672769747.911][timestamp: 1672769747]',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
+    url: 'https://idle.finance/',
+    sid: '1080072',
+    app: 'Idle Finance',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: 'New Proposal On Idle Finance',
+      title: 'Idle Finance - New Proposal'
+    },
+    secret: ''
+  },
+  {
+    cta: 'https://idle.finance/#/governance/proposals',
+    title: 'New Proposal',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-29: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
+      ' \n' +
+      '[timestamp:1671624005.155][timestamp: 1671624005]',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
+    url: 'https://idle.finance/',
+    sid: '935285',
+    app: 'Idle Finance',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: 'New Proposal On Idle Finance',
+      title: 'Idle Finance - New Proposal'
+    },
+    secret: ''
+  }
+]
+```
+</details>
+
+-----
 
 ### **Fetching user spam notifications**
 ```typescript
@@ -125,6 +292,178 @@ Allowed Options (params with * are mandatory)
 | spam     | boolean  | false   | if "true" it will fetch spam feeds         |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | raw      | boolean  | false      | if "true" the method will return unformatted raw API response|
+
+<details>
+  <summary><h3>Expected response (Fetching user spam notifications)</h3></summary>
+
+```
+PushAPI.user.getFeeds [Spam] | Response - 200 OK
+[
+  {
+    cta: 'https://goerli.etherscan.io/tx/0xe1d230d2139b0d726d5a80713ac437bed3b55b808eb651d85d8b86a377b56aa3',
+    title: 'PUSH Tokens Received',
+    message: 'Received 500 PUSH from 0x69e666767ba3a661369e1e2f572ede7adc926029',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeih7t3hftdcfz6axqvcnszou6tfo6blrlmis3cns33jad7dqhdcjpi/Qmah3yyjjcQGtkHDRkyrs4VoXsrgyr9SqEsLekLPW2nhpb',
+    url: 'https://uniswap.org',
+    sid: '3436148',
+    app: 'Uniswap Test',
+    image: 'https://play-lh.googleusercontent.com/i911_wMmFilaAAOTLvlQJZMXoxBF34BMSzRmascHezvurtslYUgOHamxgEnMXTklsF-S',
+    blockchain: 'THE_GRAPH',
+    notification: {
+      body: 'Received 500 PUSH from 0x69e666767ba3a661369e1e2f572ede7adc926029',
+      title: 'Uniswap Test - PUSH Tokens Received'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title',
+    message: 'sample msg body',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeihvggzdcvfbjw4bqytpbldeauc7chru3mj62wz4af7lezqvuyxj6i/QmW8vCUVk43gtm8CzAqKBUR13HK4fiaFHk7EfEnJYSonZw',
+    url: 'https://stream-2-earn.vercel.app/',
+    sid: '3258266',
+    app: 'Stream2Earn',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY',
+      title: 'Stream2Earn - [SDK-TEST] notification TITLE:'
+    },
+    secret: ''
+  },
+  {
+    cta: 'https://goerli.etherscan.io/tx/0xc4a01fd9ac033b5e00b45ad52af51821add8db4f31cae93e19326aff01b4e9c7',
+    title: 'PUSH Tokens Received',
+    message: 'Received 50 PUSH from 0x7b9e036bd304fd1bea0523de718038bbe345521a',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeih7t3hftdcfz6axqvcnszou6tfo6blrlmis3cns33jad7dqhdcjpi/Qmah3yyjjcQGtkHDRkyrs4VoXsrgyr9SqEsLekLPW2nhpb',
+    url: 'https://uniswap.org',
+    sid: '2868333',
+    app: 'Uniswap Test',
+    image: 'https://play-lh.googleusercontent.com/i911_wMmFilaAAOTLvlQJZMXoxBF34BMSzRmascHezvurtslYUgOHamxgEnMXTklsF-S',
+    blockchain: 'THE_GRAPH',
+    notification: {
+      body: 'Received 50 PUSH from 0x7b9e036bd304fd1bea0523de718038bbe345521a',
+      title: 'Uniswap Test - PUSH Tokens Received'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1675241933583',
+    message: 'type:3 identity:2',
+    icon: 'na',
+    url: 'https://app.push.org',
+    sid: '2427470',
+    app: 'internal',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1675241933583',
+      title: 'internal - [SDK-TEST] notification TITLE: 16752419'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1673154212899',
+    message: 'type:3 identity:2',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeihffthqhvxdt73pe4voisz63mm2fydnrctypmh5byaglujjejjvzm/QmcHvKxoCDgN7mH2sMzFkoqDaRLUWdNMa2FbJbGRVkdF3d',
+    url: 'https://www.google.com',
+    sid: '1178703',
+    app: 'Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1673154212899',
+      title: 'Test Channel - [SDK-TEST] notification TITLE: 1673'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1673154141751',
+    message: 'type:3 identity:2',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeihffthqhvxdt73pe4voisz63mm2fydnrctypmh5byaglujjejjvzm/QmcHvKxoCDgN7mH2sMzFkoqDaRLUWdNMa2FbJbGRVkdF3d',
+    url: 'https://www.google.com',
+    sid: '1178702',
+    app: 'Test Channel',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1673154141751',
+      title: 'Test Channel - [SDK-TEST] notification TITLE: 1673'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1669794606748',
+    message: 'type:4 identity:2',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeih4qfevv2ms3tzognoscd5r5kenjcjjzvkzb6w6jctzcjzqoaxite/Qma13kPK6pcv8Z4Xjjw1MULfXgHxXPafp5Fqm1D9b5UXuv',
+    url: 'https://google.com',
+    sid: '839794',
+    app: 'asdf',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1669794606748',
+      title: 'asdf - [SDK-TEST] notification TITLE: 166979460674'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1669794334167',
+    message: 'type:4 identity:2',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeih4qfevv2ms3tzognoscd5r5kenjcjjzvkzb6w6jctzcjzqoaxite/Qma13kPK6pcv8Z4Xjjw1MULfXgHxXPafp5Fqm1D9b5UXuv',
+    url: 'https://google.com',
+    sid: '839772',
+    app: 'asdf',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1669794334167',
+      title: 'asdf - [SDK-TEST] notification TITLE: 166979433416'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[SDK-TEST] notification TITLE: 1669793429997',
+    message: '[sdk-test] notification BODY 1669793429997',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeih4qfevv2ms3tzognoscd5r5kenjcjjzvkzb6w6jctzcjzqoaxite/Qma13kPK6pcv8Z4Xjjw1MULfXgHxXPafp5Fqm1D9b5UXuv',
+    url: 'https://google.com',
+    sid: '839723',
+    app: 'asdf',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1669793429997',
+      title: 'asdf - [SDK-TEST] notification TITLE: 166979342999'
+    },
+    secret: ''
+  },
+  {
+    cta: '',
+    title: '[sdk-test] payload title 1668866110431',
+    message: 'type:3 identity:2',
+    icon: 'https://gateway.ipfs.io/ipfs/bafybeibmpivnqppyhg2avfnkk4v4idnfo4jvfmkdxthtkxwooaglg5kxau/QmbokNY79DDthAQ5QNc64HisnEvH7Q1Wdnay7Gg2yHqULo',
+    url: 'https://cryptobulb.io/',
+    sid: '802376',
+    app: 'CryptobulbNFT',
+    image: '',
+    blockchain: 'ETH_TEST_GOERLI',
+    notification: {
+      body: '[sdk-test] notification BODY 1668866110431',
+      title: 'CryptobulbNFT - [SDK-TEST] notification TITLE: 166'
+    },
+    secret: ''
+  }
+]
+```
+</details>
+
+-----
 
 ### **Fetching user subscriptions**
 ```typescript
