@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.4.0...restapi-0.5.0) (2023-02-21)
+
+
+### Bug Fixes
+
+* **component:** get-subscribers-api page, limit improvements ([#156](https://github.com/ethereum-push-notification-service/push-sdk/issues/156)) ([a396fa4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a396fa4343a79239b2ef0ffba3ace57f7b5f9dcc))
+* **component:** group chat SDK changes and improvements ([#154](https://github.com/ethereum-push-notification-service/push-sdk/issues/154)) ([e94fab9](https://github.com/ethereum-push-notification-service/push-sdk/commit/e94fab906eba9fa5672e3171871cf94259a95992))
+* **component:** update group signature generation bug fix ([#164](https://github.com/ethereum-push-notification-service/push-sdk/issues/164)) ([acb82a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/acb82a9b44625b1ac37b5ea2d82e7877bcfc669e))
+
+
+### Features
+
+* **component:** group chat - update group, conversation hash ([#150](https://github.com/ethereum-push-notification-service/push-sdk/issues/150)) ([fc24618](https://github.com/ethereum-push-notification-service/push-sdk/commit/fc2461847bb86d7e0384ace5a484675480f00503))
+
+
+
 # [0.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.0...restapi-0.6.1) (2023-02-17)
 
 
