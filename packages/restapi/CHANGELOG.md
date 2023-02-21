@@ -2,6 +2,14 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.6.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.1...restapi-0.6.2) (2023-02-21)
+
+
+### Bug Fixes
+
+* **component:** group chat - Added validation for NFT Address with ChainId ([#172](https://github.com/ethereum-push-notification-service/push-sdk/issues/172)) ([bca5191](https://github.com/ethereum-push-notification-service/push-sdk/commit/bca519108f244ffb21fcfcebb27a1e4bed197835))
+
+
 # [0.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.0...restapi-0.6.1) (2023-02-17)
 
 
