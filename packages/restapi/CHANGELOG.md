@@ -2,40 +2,42 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-# [0.6.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.1...restapi-0.6.2) (2023-02-21)
+## [0.6.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.1...restapi-0.6.2) (2023-02-21)
 
 
 ### Bug Fixes
 
-* **component:** group chat - Added validation for NFT Address with ChainId ([#172](https://github.com/ethereum-push-notification-service/push-sdk/issues/172)) ([bca5191](https://github.com/ethereum-push-notification-service/push-sdk/commit/bca519108f244ffb21fcfcebb27a1e4bed197835))
+* commenting out for jscutlery semver version fix ([0e52b01](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e52b01a488cb7a63f6b5162f02cdf412ee10139))
 
 
-# [0.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.0...restapi-0.6.1) (2023-02-17)
+
+## [0.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.0...restapi-0.6.1) (2023-02-21)
 
 
 ### Bug Fixes
 
-* **component:** update group signature generation bug fix ([#164](https://github.com/ethereum-push-notification-service/push-sdk/issues/164)) ([acb82a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/acb82a9b44625b1ac37b5ea2d82e7877bcfc669e))
+* commenting for jscutlery semver version tag fix ([d7def98](https://github.com/ethereum-push-notification-service/push-sdk/commit/d7def98bb0ad4a2ebe0b51dc658c5fb7439b5dda))
 
 
 
+# [0.6.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.5.0...restapi-0.6.0) (2023-02-21)
 
-# [0.6.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.5.0...restapi-0.6.0) (2023-02-15)
+
+### Features
+
+* commenting out for jscutlery/semver version tag bug fix ([3533ae7](https://github.com/ethereum-push-notification-service/push-sdk/commit/3533ae75e362e1801bd7d03e5c3a6e599b784acc))
+
+
+
+# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.4.0...restapi-0.5.0) (2023-02-21)
 
 
 ### Bug Fixes
 
 * **component:** get-subscribers-api page, limit improvements ([#156](https://github.com/ethereum-push-notification-service/push-sdk/issues/156)) ([a396fa4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a396fa4343a79239b2ef0ffba3ace57f7b5f9dcc))
+* **component:** group chat - Added validation for NFT Address with ChainId ([#172](https://github.com/ethereum-push-notification-service/push-sdk/issues/172)) ([bca5191](https://github.com/ethereum-push-notification-service/push-sdk/commit/bca519108f244ffb21fcfcebb27a1e4bed197835))
 * **component:** group chat SDK changes and improvements ([#154](https://github.com/ethereum-push-notification-service/push-sdk/issues/154)) ([e94fab9](https://github.com/ethereum-push-notification-service/push-sdk/commit/e94fab906eba9fa5672e3171871cf94259a95992))
-
-
-### Features
-
-* **component:** group chat - update group, conversation hash ([#150](https://github.com/ethereum-push-notification-service/push-sdk/issues/150)) ([fc24618](https://github.com/ethereum-push-notification-service/push-sdk/commit/fc2461847bb86d7e0384ace5a484675480f00503))
-
-
-
-# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.4.0...restapi-0.5.0) (2023-02-14)
+* **component:** update group signature generation bug fix ([#164](https://github.com/ethereum-push-notification-service/push-sdk/issues/164)) ([acb82a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/acb82a9b44625b1ac37b5ea2d82e7877bcfc669e))
 
 
 ### Features
