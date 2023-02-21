@@ -6,7 +6,6 @@ import {
   IFeeds,
   IMessageIPFSWithCID,
   IUser,
-  IGroup,
   GroupDTO,
 } from '../../types';
 import { get } from '../../user';

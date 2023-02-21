@@ -1,12 +1,12 @@
 import Constants from '../../constants';
 import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
-import { Chat, IConnectedUser, IFeeds, IInboxChat, IMessageIPFS, IUser } from '../../types';
+import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
-import { getCID, Message } from '../ipfs';
+import { getCID } from '../ipfs';
 import { decryptFeeds } from './crypto';
 
 type InboxListsType = {
-  lists: Chat[];
+  lists: IFeeds[];
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
