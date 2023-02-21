@@ -1144,7 +1144,7 @@ Allowed Options (params with * are mandatory)
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 3, // target
   identityType: 2, // direct payload
   notification: {
@@ -1167,7 +1167,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 4, // subset
   identityType: 2, // direct payload
   notification: {
@@ -1190,7 +1190,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 1, // broadcast
   identityType: 2, // direct payload
   notification: {
@@ -1212,7 +1212,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 3, // target
   identityType: 1, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
@@ -1226,7 +1226,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 4, // subset
   identityType: 1, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
@@ -1240,7 +1240,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 1, // broadcast
   identityType: 1, // direct payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
@@ -1253,7 +1253,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 3, // target
   identityType: 0, // Minimal payload
   notification: {
@@ -1276,7 +1276,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 4, // subset
   identityType: 0, // Minimal payload
   notification: {
@@ -1299,7 +1299,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 1, // broadcast
   identityType: 0, // Minimal payload
   notification: {
@@ -1322,7 +1322,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 3, // target
   identityType: 3, // Subgraph payload
   graph: {
@@ -1340,7 +1340,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 4, // subset
   identityType: 3, // graph payload
   graph: {
@@ -1358,7 +1358,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
-  signer,
+  signer: _signer,
   type: 1, // broadcast
   identityType: 3, // graph payload
   graph: {
