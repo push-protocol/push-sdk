@@ -7,6 +7,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
   - [Import SDK](#import-sdk)
   - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
   - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
+  - [About Push contract addresses](#about-push-contract-addresses)
 - [SDK Features](#sdk-features)
   - [Notification](#for-notification)
     -  [Fetching user notifications](#fetching-user-notifications)
@@ -94,6 +95,22 @@ In any of the below methods (unless explicitly stated otherwise) we accept eithe
 
 - ETH address format: only for backwards compatibility. 
 (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+## **About Push contract addresses**
+### Push core contract address
+```
+ETH Mainnet - 0x66329Fdd4042928BfCAB60b179e1538D56eeeeeE
+```
+
+### Push communicator contract address
+```
+ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+ETH Goerli - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Polygon Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Polygon Mumbai - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Binance Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Binance Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+```
 
 # SDK Features
 ## For Notification
@@ -1071,6 +1088,17 @@ Allowed Options (params with * are mandatory)
 | onError      | function | -   | on error callback |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+<details>
+  <summary><b>Expected response (Opt in to channel)</b></summary>
+
+```
+// PushAPI.channels.subscribe | Response - 200 OK
+{ status: 'success', message: 'successfully opted into channel' }
+
+```
+</details>
+
+-----
 
 ### **Opt out to a channel**
 ```typescript
@@ -1098,13 +1126,16 @@ Allowed Options (params with * are mandatory)
 | onError      | function | -   | on error callback |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+<details>
+  <summary><b>Expected response (Opt out of a channel)</b></summary>
 
+```
+// PushAPI.channels.unsubscribe | Response - 200 OK
+{ status: 'success', message: 'successfully opted out channel' }
+```
+</details>
 
-<sup>*</sup>Push communicator contract address
-```
-ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
-ETH Goerli - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
-```
+-----
 
 ### **Sending notification**
 
