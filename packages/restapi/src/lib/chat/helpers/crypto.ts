@@ -7,6 +7,7 @@ import {
   IMessageIPFSWithCID,
   IUser,
   IGroup,
+  GroupDTO,
 } from '../../types';
 import { get } from '../../user';
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
@@ -173,7 +174,7 @@ export const getEncryptedRequest = async (
   message: string,
   isGroup: boolean,
   env: string,
-  group: IGroup | null,
+  group: GroupDTO | null,
 ): Promise<IEncryptedRequest | void> => {
 
   if (!isGroup) {
