@@ -1162,7 +1162,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   env: 'staging'
 });
 ```
-
+  
 #### **Direct payload for group of recipients(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
@@ -1392,6 +1392,17 @@ Allowed Options (params with * are mandatory)
 | hidden      | boolean | false | (optional) true if we want to hide the notification |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+
+
+<details>
+  <summary><b>Expected response (Send Notification)</b></summary>
+
+```
+PushAPI.payloads.sendNotification | Response - 204 OK
+```
+</details>
+
+-----
 
 
 ### Notification Helper Utils
