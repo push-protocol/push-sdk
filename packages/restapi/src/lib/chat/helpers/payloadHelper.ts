@@ -65,7 +65,6 @@ export const sendMessagePayload = async (
   if(isGroup) {
     group = await getGroup({
       chatId: receiverAddress,
-      account: '',
       env:  env
     });
 
