@@ -32,6 +32,9 @@ const ChatTest = () => {
           <Link to="/get" className="nav-button">
             USER.GET
           </Link>
+          <Link to="/getUsersBatch" className="nav-button">
+            USER.GETBATCH
+          </Link>
           <Link to="/create" className="nav-button">
             USER.CREATE
           </Link>

@@ -27,6 +27,7 @@ import GetRequestsTest from './ChatTest/GetRequests';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
+import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 
 interface Web3ReactState {
   chainId?: number;
@@ -215,6 +216,7 @@ export function App() {
 
                 {/* chat method  routes */}
                 <Route path="/get" element={<GetUserTest />} />
+                <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
