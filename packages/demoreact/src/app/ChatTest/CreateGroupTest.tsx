@@ -25,6 +25,7 @@ const CreateGroupTest = () => {
   const [numberOfNFTs, setNumberOfNFTs] = useState<string>();
   const [contractAddressERC20, setContractAddressERC20] = useState<string>();
   const [numberOfERC20, setNumberOfERC20] = useState<string>();
+  const [meta, setMeta] = useState<string>();
 
 
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -69,6 +70,10 @@ const CreateGroupTest = () => {
     setNumberOfERC20((e.target as HTMLInputElement).value);
   };
 
+  const updateMeta = (e: React.SyntheticEvent<HTMLElement>) => {
+    setMeta((e.target as HTMLInputElement).value);
+  };
+
   const testCreateGroup = async () => {
     try {
       setLoading(true);
@@ -101,6 +106,7 @@ const CreateGroupTest = () => {
         account: isCAIP ? walletToPCAIP10(account) : account,
         env,
         pgpPrivateKey: pvtkey,
+        meta: meta
       });
 
       setSendResponse(response);
@@ -220,6 +226,16 @@ const CreateGroupTest = () => {
                 type="text"
                 onChange={updateNumberOfERC20}
                 value={numberOfERC20}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>meta</label>
+              <input
+                type="text"
+                onChange={updateMeta}
+                value={meta}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
