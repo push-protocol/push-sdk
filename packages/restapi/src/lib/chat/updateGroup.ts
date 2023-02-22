@@ -89,7 +89,9 @@ export const updateGroup = async (
                 return response.data;
             })
             .catch((err) => {
-                throw new Error(err);
+                if(err?.response?.data)
+                throw new Error(err?.response?.data);
+               throw new Error(err);
             });
 
     } catch (err) {
