@@ -40,7 +40,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
     if (conversationResponse && !conversationResponse?.threadHash) {
       return start({
         messageContent: messageContent,
-        messageType: 'Text',
+        messageType: messageType,
         receiverAddress,
         connectedUser,
         apiKey,
