@@ -47,7 +47,7 @@ export const history = async (options: HistoricalMessagesOptionsType) => {
     }
     return messages;
   } catch (err) {
-    console.error(`[EPNS-SDK] - API fetchMessages -: `, err);
-    throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);
+    console.error(`[Push SDK] - API fetchMessages -: `, err);
+    throw Error(`[Push SDK] - API fetchMessages -: ${err}`);
   }
 };

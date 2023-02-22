@@ -32,7 +32,7 @@ export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]
       return response.data;
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
+      throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };

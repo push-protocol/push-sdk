@@ -17,7 +17,7 @@ export type GetSubscribersOptionsType = {
  */
 
 const deprecationWarning = `
- [EPNS-SDK]: _getSubscribers() Deprecation Warning!
+ [Push SDK]: _getSubscribers() Deprecation Warning!
  This method has been deprecated, please use the below alternatives
  if you need to,
   * to check if user is subscribed or not: user.getSubscriptions()

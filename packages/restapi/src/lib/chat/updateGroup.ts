@@ -75,7 +75,7 @@ export const updateGroup = async (
             });
 
     } catch (err) {
-        console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
-        throw Error(`[EPNS-SDK] - API  - Error - API send() -: ${err}`);
+        console.error(`[Push SDK] - API  - Error - API send() -:  `, err);
+        throw Error(`[Push SDK] - API  - Error - API send() -: ${err}`);
     }
 };

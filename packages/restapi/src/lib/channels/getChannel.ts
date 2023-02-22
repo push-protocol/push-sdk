@@ -15,7 +15,7 @@ export type GetChannelOptionsType = {
 }
 
 export const getChannel = async (
-  options : GetChannelOptionsType
+  options: GetChannelOptionsType
 ) => {
   const {
     channel,
@@ -30,6 +30,6 @@ export const getChannel = async (
   return await axios.get(requestUrl)
     .then((response) => response.data)
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

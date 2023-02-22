@@ -9,10 +9,10 @@ export const conversationHash = async (
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
   try {
     if (!isValidETHAddress(account)) {
-        throw new Error(`Invalid address!`);
-      }
+      throw new Error(`Invalid address!`);
+    }
 
-    const updatedConversationId = isValidETHAddress(conversationId) ? walletToPCAIP10(conversationId): conversationId
+    const updatedConversationId = isValidETHAddress(conversationId) ? walletToPCAIP10(conversationId) : conversationId
 
     const response = await getConversationHashService({
       conversationId: updatedConversationId,
@@ -22,7 +22,7 @@ export const conversationHash = async (
     return response;
   } catch (err) {
     console.error(
-      '[EPNS-SDK] - Error - API conversationHash() - ',err);
-      throw Error(`[EPNS-SDK] - Error - API conversationHash(): ${err}`);
+      '[Push SDK] - Error - API conversationHash() - ', err);
+    throw Error(`[Push SDK] - Error - API conversationHash(): ${err}`);
   }
 };

@@ -36,7 +36,7 @@ export async function getCID(cid: string, options: IPFSOptionsType): Promise<Mes
         const message: Message = response.data;
         return message;
     } catch (err) {
-        console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-        throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+        console.error(`[Push SDK] - API ${requestUrl}: `, err);
+        throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     }
 }
