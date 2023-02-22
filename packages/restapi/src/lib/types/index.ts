@@ -163,19 +163,19 @@ export interface Member {
 
 
 export interface GroupDTO {
-    members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-    pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-    contractAddressERC20: string | null,
-    numberOfERC20: number,
-    contractAddressNFT: string | null,
-    numberOfNFTTokens: number,
-    verificationProof: string,
-    groupImage: string | null,
-    groupName: string,
-    isPublic: boolean,
-    groupDescription: string | null,
-    groupCreator: string,
-    chatId: string
+  members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  contractAddressERC20: string | null,
+  numberOfERC20: number,
+  contractAddressNFT: string | null,
+  numberOfNFTTokens: number,
+  verificationProof: string,
+  groupImage: string | null,
+  groupName: string,
+  isPublic: boolean,
+  groupDescription: string | null,
+  groupCreator: string,
+  chatId: string
 }
 
 export interface Subscribers {
@@ -199,9 +199,6 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-
-  // Group
- 
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -209,6 +206,9 @@ export interface IMessageIPFSWithCID extends IMessageIPFS {
 }
 
 export interface AccountEnvOptionsType {
+  /**
+   * Environment variable
+   */
   env?: string;
   account: string;
 }
@@ -219,6 +219,9 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
+  /**
+   * Api key is now optional
+   */
   apiKey?: string;
 };
 

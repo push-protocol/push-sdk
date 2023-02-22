@@ -7,6 +7,9 @@ import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
+/**
+ * Send a message to an address or a group
+ */
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',

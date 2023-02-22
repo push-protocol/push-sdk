@@ -13,10 +13,16 @@ enum FetchLimit {
 export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
   threadhash: string;
   pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
   toDecrypt?: boolean;
   limit?: number;
 }
 
+/**
+ * Get all the messages exchanged between users after the threadhash.
+ */
 export const history = async (options: HistoricalMessagesOptionsType) => {
   const {
     threadhash,

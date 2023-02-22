@@ -21,6 +21,9 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
     pgpPrivateKey?: string,
 }
 
+/**
+ * Update Group information
+ */
 export const updateGroup = async (
     options: ChatUpdateGroupType
 ) => {
