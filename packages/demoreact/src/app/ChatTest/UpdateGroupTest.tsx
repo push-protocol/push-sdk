@@ -73,8 +73,8 @@ const UpdateGroupTest = () => {
       });
 
       setSendResponse(response);
-    } catch (e) {
-      console.error(e);
+    } catch (e:any) {
+      console.error(e.message);
     } finally {
       setLoading(false);
     }

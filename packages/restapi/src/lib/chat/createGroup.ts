@@ -109,6 +109,8 @@ export const createGroup = async (
                 return response.data;
             })
             .catch((err) => {
+                if(err?.response?.data)
+                 throw new Error(err?.response?.data);
                 throw new Error(err);
             });
 
