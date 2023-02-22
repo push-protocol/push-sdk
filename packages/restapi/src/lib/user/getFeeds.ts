@@ -23,7 +23,7 @@ export type FeedsOptionsType = {
 }
 
 export const getFeeds = async (
-  options : FeedsOptionsType
+  options: FeedsOptionsType
 ) => {
   const {
     user,

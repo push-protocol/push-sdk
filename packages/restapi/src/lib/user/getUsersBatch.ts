@@ -23,9 +23,9 @@ export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]
   }
 
   for (let i = 0; i < userIds.length; i++) {
-        if (!isValidETHAddress(userIds[i])) {
-            throw new Error(`Invalid user address!`);
-        }
+    if (!isValidETHAddress(userIds[i])) {
+      throw new Error(`Invalid user address!`);
+    }
   }
 
   userIds = userIds.map(walletToPCAIP10);

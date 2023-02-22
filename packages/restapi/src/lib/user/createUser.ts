@@ -1,6 +1,6 @@
 import { createUserService, generateKeyPair } from "../chat/helpers";
 import Constants from "../constants";
-import { encryptWithRPCEncryptionPublicKeyReturnRawData,isValidETHAddress,walletToPCAIP10 } from "../helpers";
+import { encryptWithRPCEncryptionPublicKeyReturnRawData, isValidETHAddress, walletToPCAIP10 } from "../helpers";
 import { getPublicKey } from "../helpers";
 import { AccountEnvOptionsType } from "../types";
 
@@ -10,15 +10,14 @@ import { AccountEnvOptionsType } from "../types";
 */
 
 export const create = async (
-  options : AccountEnvOptionsType
+  options: AccountEnvOptionsType
 ) => {
   const {
     env = Constants.ENV.PROD,
     account
   } = options || {};
 
-  if(!isValidETHAddress(account))
-  {
+  if (!isValidETHAddress(account)) {
     throw new Error(`Invalid address!`);
   }
   const keyPairs = await generateKeyPair();
