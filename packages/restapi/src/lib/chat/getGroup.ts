@@ -38,8 +38,9 @@ export const getGroup = async (
                 return response.data;
             })
             .catch((err) => {
-                console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-                throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+                if(err?.response?.data)
+                throw new Error(err?.response?.data);
+               throw new Error(err);
             });
     } catch (err) {
         console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
