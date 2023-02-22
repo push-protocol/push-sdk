@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.7.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.4...restapi-0.7.0) (2023-02-22)
+
+
+### Features
+
+* add group by name function ([8601021](https://github.com/ethereum-push-notification-service/push-sdk/commit/860102153e2f8876423b218aa0d5dce98f012dba))
+* **component:** added sdk method get users in batch ([#182](https://github.com/ethereum-push-notification-service/push-sdk/issues/182)) ([ebb8e8b](https://github.com/ethereum-push-notification-service/push-sdk/commit/ebb8e8b39d7b50d4dda6787b06fe7bef803d87c3))
+* update npm package version for rest-api ([66d7d9c](https://github.com/ethereum-push-notification-service/push-sdk/commit/66d7d9c028bd936203a7e3640f552b833203ca47))
+
+
+
 ## [0.6.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.3...restapi-0.6.4) (2023-02-21)
 
 
