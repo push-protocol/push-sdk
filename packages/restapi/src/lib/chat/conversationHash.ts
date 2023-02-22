@@ -15,6 +15,7 @@ export const conversationHash = async (
     if (!isValidETHAddress(account)) {
       throw new Error(`Invalid address!`);
     }
+
     const updatedConversationId = isValidETHAddress(conversationId) ? walletToPCAIP10(conversationId) : conversationId
     const response = await getConversationHashService({
       conversationId: updatedConversationId,
@@ -23,8 +24,7 @@ export const conversationHash = async (
     });
     return response;
   } catch (err) {
-    console.error(
-      '[EPNS-SDK] - Error - API conversationHash() - ', err);
-    throw Error(`[EPNS-SDK] - Error - API conversationHash(): ${err}`);
+    console.error(`[Push SDK] - Error - API ${conversationHash.name} - `, err);
+    throw Error(`[Push SDK] - Error - API ${conversationHash.name} - `);
   }
 };

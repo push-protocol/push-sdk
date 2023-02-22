@@ -29,7 +29,7 @@ export const updateUser = async (
 
   return axios.put(apiEndpoint, body)
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${apiEndpoint}: `, err);
-      throw Error(`[EPNS-SDK] - API ${apiEndpoint}: ${err}`);
+      console.error(`[Push SDK] - API ${updateUser.name}: `, err);
+      throw Error(`[Push SDK] - API ${updateUser.name}: ${err}`);
     });
 }

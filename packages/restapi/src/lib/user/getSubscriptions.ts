@@ -23,6 +23,6 @@ export const getSubscriptions = async (
   return axios.get(requestUrl)
     .then((response) => response.data?.subscriptions || [])
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }
