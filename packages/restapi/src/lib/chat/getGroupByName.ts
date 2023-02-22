@@ -29,7 +29,7 @@ export const getGroupByName = async (
                 throw new Error(err);
             });
     } catch (err) {
-        console.error(`[Push SDK] - API  - Error - API getGroupByName() -:  `, err);
-        throw Error(`[Push SDK] - API  - Error - API getGroupByName() -: ${err}`);
+        console.error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -:  `, err);
+        throw Error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -: ${err}`);
     }
 };

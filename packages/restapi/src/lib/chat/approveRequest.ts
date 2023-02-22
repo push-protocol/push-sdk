@@ -29,14 +29,10 @@ export const approve = async (
   // TODO: make signature
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
-
-  const requestUrl = `${apiEndpoint}`;
-
   const body: IApproveRequestPayload = approveRequestPayload(senderAddress, account, status);
-
-  return axios.put(requestUrl, body)
+  return axios.put(apiEndpoint, body)
     .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
-      throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
+      console.error(`[Push SDK] - API ${approve.name}: `, err);
+      throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
     });
 }

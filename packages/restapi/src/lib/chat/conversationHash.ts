@@ -21,8 +21,7 @@ export const conversationHash = async (
     });
     return response;
   } catch (err) {
-    console.error(
-      '[Push SDK] - Error - API conversationHash() - ', err);
-    throw Error(`[Push SDK] - Error - API conversationHash(): ${err}`);
+    console.error(`[Push SDK] - Error - API ${conversationHash.name} - `, err);
+    throw Error(`[Push SDK] - Error - API ${conversationHash.name} - `);
   }
 };

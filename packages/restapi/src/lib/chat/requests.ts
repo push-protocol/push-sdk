@@ -18,12 +18,11 @@ export const requests = async (
   const user = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/requests`;
-  const requestUrl = `${apiEndpoint}`;
   try {
     if (!isValidETHAddress(user)) {
       throw new Error(`Invalid address!`);
     }
-    const response = await axios.get(requestUrl);
+    const response = await axios.get(apiEndpoint);
     const requests: IFeeds[] = response.data.requests;
     const Feeds: IFeeds[] = await getInboxLists({
       lists: requests,
@@ -35,7 +34,7 @@ export const requests = async (
 
     return Feeds;
   } catch (err) {
-    console.error(`[Push SDK] - API ${requestUrl}: `, err);
-    throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
+    console.error(`[Push SDK] - API ${requests.name}: `, err);
+    throw Error(`[Push SDK] - API ${requests.name}: ${err}`);
   }
 };

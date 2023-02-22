@@ -33,7 +33,7 @@ export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
     });
     return feeds;
   } catch (err) {
-    console.error(`[Push SDK] - API ${requestUrl}: `, err);
-    throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
+    console.error(`[Push SDK] - API ${chats.name}: `, err);
+    throw Error(`[Push SDK] - API ${chats.name}: ${err}`);
   }
 };
