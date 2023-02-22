@@ -7,10 +7,6 @@ import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
-/**
- *  POST /v1/chat/message
- */
-
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',

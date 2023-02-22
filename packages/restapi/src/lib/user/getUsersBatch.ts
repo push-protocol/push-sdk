@@ -4,10 +4,6 @@ import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
-/**
- *  POST /v1/users/batch
- */
-
 export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
   if (!isValidETHAddress(account)) {
@@ -15,7 +11,6 @@ export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]
   }
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/users/batch`;
-
 
   const MAX_USER_IDS_LENGTH = 100;
   if (userIds.length > MAX_USER_IDS_LENGTH) {

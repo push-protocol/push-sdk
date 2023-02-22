@@ -4,10 +4,6 @@ import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
 import { approveRequestPayload, IApproveRequestPayload } from './helpers';
 
-/**
- *  POST '/v1/chat/request/accept
- */
-
 interface ApproveRequestOptionsType extends AccountEnvOptionsType {
   senderAddress: string; // chat request sender address
   // privateKey?: string; // private key for signature

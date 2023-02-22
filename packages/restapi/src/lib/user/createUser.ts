@@ -4,11 +4,6 @@ import { encryptWithRPCEncryptionPublicKeyReturnRawData, isValidETHAddress, wall
 import { getPublicKey } from "../helpers";
 import { AccountEnvOptionsType } from "../types";
 
-
-/*
-  POST /v1/users/
-*/
-
 export const create = async (
   options: AccountEnvOptionsType
 ) => {

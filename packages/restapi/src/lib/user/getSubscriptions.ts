@@ -2,10 +2,6 @@ import axios from 'axios';
 import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
-/**
- *  GET /users/:userAddressInCAIP/subscriptions
- */
-
 export type UserSubscriptionsOptionsType = {
   user: string;
   env?: string;

@@ -27,9 +27,7 @@ export interface IPFSOptionsType {
  * @returns 
  */
 export async function getCID(cid: string, options: IPFSOptionsType): Promise<Message> {
-    const {
-        env = Constants.ENV.PROD,
-    } = options || {};
+    const { env = Constants.ENV.PROD } = options || {};
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/ipfs/${cid}`;
     const requestUrl = `${apiEndpoint}`;

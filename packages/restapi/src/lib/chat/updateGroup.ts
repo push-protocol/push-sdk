@@ -11,12 +11,6 @@ import {
 } from './helpers';
 import * as CryptoJS from "crypto-js"
 
-
-/**
- *  PUT /v1/chat/groups/:chatId
- */
-
-
 export interface ChatUpdateGroupType extends AccountEnvOptionsType {
     chatId: string,
     groupName: string,
@@ -26,7 +20,6 @@ export interface ChatUpdateGroupType extends AccountEnvOptionsType {
     admins: Array<string>,
     pgpPrivateKey?: string,
 }
-
 
 export const updateGroup = async (
     options: ChatUpdateGroupType
@@ -42,14 +35,9 @@ export const updateGroup = async (
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
     } = options || {};
-
     try {
-
         updateGroupRequestValidator(chatId, groupName, groupDescription, groupImage, members, admins, account);
-
-
         const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
-
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
         const bodyToBeHashed = {
@@ -60,14 +48,10 @@ export const updateGroup = async (
             admins: convertedAdmins,
             chatId: chatId,
         }
-
         const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
         const signature: string = await sign({ message: hash, signingKey: connectedUser.privateKey! });
         const sigType = "pgp";
-
         const verificationProof: string = sigType + ":" + signature + ":" + account;
-
-
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
         const body: IUpdateGroupRequestPayload = updateGroupPayload(

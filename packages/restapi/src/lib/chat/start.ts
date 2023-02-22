@@ -4,10 +4,6 @@ import Constants from '../constants';
 import { ChatOptionsType } from '../types';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
-/**
- *  POST /v1/chat/request
- */
-
 export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const {
     messageContent = '',

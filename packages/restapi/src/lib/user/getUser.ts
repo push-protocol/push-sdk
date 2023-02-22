@@ -4,10 +4,6 @@ import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
-/**
- *  GET /v1/users/
- */
-
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
   if (!isValidETHAddress(account)) {

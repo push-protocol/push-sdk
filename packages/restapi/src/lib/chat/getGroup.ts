@@ -6,10 +6,6 @@ import {
 } from '../types';
 
 
-/**
- *  GET /v1/chat/groups/:chatId
- */
-
 export interface GetGroupType extends AccountEnvOptionsType {
     chatId: string,
 }
@@ -17,13 +13,8 @@ export interface GetGroupType extends AccountEnvOptionsType {
 export const getGroup = async (
     options: GetGroupType
 ): Promise<GroupDTO> => {
-    const {
-        chatId,
-        env = Constants.ENV.PROD,
-    } = options || {};
-
+    const { chatId, env = Constants.ENV.PROD } = options || {};
     try {
-
         if (chatId == null || chatId.length == 0) {
             throw new Error(`chatId cannot be null or empty`);
         }

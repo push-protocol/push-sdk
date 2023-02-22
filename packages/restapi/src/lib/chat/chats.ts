@@ -1,12 +1,8 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import {  IFeeds } from '../types';
+import { IFeeds } from '../types';
 import { getInboxLists } from './helpers';
-
-/**
- *  GET '/v1/chat/users/:did/chats
- */
 
 export type ChatsOptionsType = {
   account: string;
@@ -19,7 +15,6 @@ export type ChatsOptionsType = {
 export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
   const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
   const user = walletToPCAIP10(account);
-
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chats`;
   const requestUrl = `${apiEndpoint}`;
@@ -29,7 +24,7 @@ export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
     }
     const response = await axios.get(requestUrl);
     const chats: IFeeds[] = response.data.chats;
-    const feeds:IFeeds[] = await getInboxLists({
+    const feeds: IFeeds[] = await getInboxLists({
       lists: chats,
       user,
       toDecrypt,
