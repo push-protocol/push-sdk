@@ -25,7 +25,6 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     pgpPrivateKey?: string,
 }
 
-
 export const createGroup = async (
     options: ChatCreateGroupType
 ) => {

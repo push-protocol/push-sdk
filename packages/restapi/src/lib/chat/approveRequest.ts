@@ -5,12 +5,22 @@ import { AccountEnvOptionsType } from '../types';
 import { approveRequestPayload, IApproveRequestPayload } from './helpers';
 
 interface ApproveRequestOptionsType extends AccountEnvOptionsType {
-  senderAddress: string; // chat request sender address
+  /**
+   * Chat request sender address
+   */
+  senderAddress: string;
   // privateKey?: string; // private key for signature
+
+  /**
+   * Request state. As of now, only `Approved` is allowed
+   */
   status?: 'Approved';
   // sigType?: string;
 }
 
+/**
+ * Approve Chat Request
+ */
 export const approve = async (
   options: ApproveRequestOptionsType
 ) => {

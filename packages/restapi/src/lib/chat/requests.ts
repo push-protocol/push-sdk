@@ -7,10 +7,20 @@ import { getInboxLists } from './helpers';
 export type RequestOptionsType = {
   account: string;
   pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
   toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
   env?: string;
 };
 
+/**
+ * The first time an address wants to send a message to another peer, the address sends an intent request. This first message shall not land in this peer Inbox but in its Request box.   
+ * This function will return all the chats that landed on the address' Request box. The user can then approve the request or ignore it for now.
+ */
 export const requests = async (
   options: RequestOptionsType
 ): Promise<IFeeds[]> => {
