@@ -1,10 +1,8 @@
 import axios from 'axios';
-import {
-    getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType, GroupDTO 
+    AccountEnvOptionsType, GroupDTO
 } from '../types';
 
 
@@ -18,7 +16,7 @@ export interface GetGroupType extends AccountEnvOptionsType {
 
 export const getGroup = async (
     options: GetGroupType
-) : Promise<GroupDTO> => {
+): Promise<GroupDTO> => {
     const {
         chatId,
         env = Constants.ENV.PROD,
@@ -38,9 +36,9 @@ export const getGroup = async (
                 return response.data;
             })
             .catch((err) => {
-                if(err?.response?.data)
-                throw new Error(err?.response?.data);
-               throw new Error(err);
+                if (err?.response?.data)
+                    throw new Error(err?.response?.data);
+                throw new Error(err);
             });
     } catch (err) {
         console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);

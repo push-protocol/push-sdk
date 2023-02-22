@@ -1,11 +1,7 @@
 import axios from 'axios';
-import {
-    getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import {
-    AccountEnvOptionsType, GroupDTO
-} from '../types';
+import { AccountEnvOptionsType, GroupDTO } from '../types';
 
 
 /**
@@ -36,9 +32,9 @@ export const getGroupByName = async (
                 return response.data;
             })
             .catch((err) => {
-                if(err?.response?.data)
-                throw new Error(err?.response?.data);
-               throw new Error(err);
+                if (err?.response?.data)
+                    throw new Error(err?.response?.data);
+                throw new Error(err);
             });
     } catch (err) {
         console.error(`[EPNS-SDK] - API  - Error - API getGroupByName() -:  `, err);

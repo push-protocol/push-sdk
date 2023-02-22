@@ -1,7 +1,5 @@
 import axios from 'axios';
-import {
-  getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
 /**

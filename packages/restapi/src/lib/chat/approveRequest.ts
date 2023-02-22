@@ -1,10 +1,8 @@
 import axios from 'axios';
-import {
-  getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
-import { approveRequestPayload, createUserIfNecessary, IApproveRequestPayload } from './helpers';
+import { approveRequestPayload, IApproveRequestPayload } from './helpers';
 
 /**
  *  POST '/v1/chat/request/accept
@@ -38,7 +36,7 @@ export const approve = async (
 
   const requestUrl = `${apiEndpoint}`;
 
-  const body:IApproveRequestPayload = approveRequestPayload(senderAddress,account,status);
+  const body: IApproveRequestPayload = approveRequestPayload(senderAddress, account, status);
 
   return axios.put(requestUrl, body)
     .catch((err) => {

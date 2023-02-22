@@ -29,9 +29,9 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
 
     let isGroup = false;
     if (!isValidETHAddress(receiverAddress)) {
-        isGroup = true;
+      isGroup = true;
     }
-    
+
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
     let conversationResponse: any = null;
     if (!isGroup) {

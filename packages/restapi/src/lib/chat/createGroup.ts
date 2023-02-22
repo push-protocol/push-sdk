@@ -4,9 +4,7 @@ import {
     walletToPCAIP10
 } from '../helpers';
 import Constants from '../constants';
-import {
-    AccountEnvOptionsType,
-} from '../types';
+import { AccountEnvOptionsType } from '../types';
 import {
     ICreateGroupRequestPayload,
     createGroupPayload,
@@ -60,7 +58,7 @@ export const createGroup = async (
 
     try {
 
-        createGroupRequestValidator(groupName, groupDescription, members, admins,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
+        createGroupRequestValidator(groupName, groupDescription, members, admins, contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
@@ -109,8 +107,8 @@ export const createGroup = async (
                 return response.data;
             })
             .catch((err) => {
-                if(err?.response?.data)
-                 throw new Error(err?.response?.data);
+                if (err?.response?.data)
+                    throw new Error(err?.response?.data);
                 throw new Error(err);
             });
 
