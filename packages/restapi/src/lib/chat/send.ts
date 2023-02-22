@@ -7,10 +7,6 @@ import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
-/**
- *  POST /v1/chat/message
- */
-
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',
@@ -29,9 +25,9 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
 
     let isGroup = false;
     if (!isValidETHAddress(receiverAddress)) {
-        isGroup = true;
+      isGroup = true;
     }
-    
+
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
     let conversationResponse: any = null;
     if (!isGroup) {

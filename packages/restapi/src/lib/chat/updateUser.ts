@@ -1,12 +1,6 @@
 import axios from 'axios';
-import {
-  getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-
-/**
- *  PUT '/v1/w2w/users/:did
- */
 
 export type ChatUpdateUserOptionsType = {
   user: string;
@@ -27,19 +21,15 @@ export const updateUser = async (
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/w2w/users/${user}`;
-
-
-  const requestUrl = `${apiEndpoint}`;
-
   const body = {
     caip10: user,
     profilePictureCID,
     name,
   };
 
-  return axios.put(requestUrl, body)
+  return axios.put(apiEndpoint, body)
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+      console.error(`[EPNS-SDK] - API ${apiEndpoint}: `, err);
+      throw Error(`[EPNS-SDK] - API ${apiEndpoint}: ${err}`);
     });
 }

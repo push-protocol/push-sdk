@@ -4,12 +4,8 @@ import Constants from '../constants';
 import { IFeeds } from '../types';
 import { getInboxLists } from './helpers';
 
-/**
- *  GET '/v1/chat/users/:did/requests
- */
-
 export type RequestOptionsType = {
-  account: string; // caip10
+  account: string;
   pgpPrivateKey?: string;
   toDecrypt?: boolean;
   env?: string;

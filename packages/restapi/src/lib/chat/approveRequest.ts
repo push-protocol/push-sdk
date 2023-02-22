@@ -1,14 +1,8 @@
 import axios from 'axios';
-import {
-  getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
-import { approveRequestPayload, createUserIfNecessary, IApproveRequestPayload } from './helpers';
-
-/**
- *  POST '/v1/chat/request/accept
- */
+import { approveRequestPayload, IApproveRequestPayload } from './helpers';
 
 interface ApproveRequestOptionsType extends AccountEnvOptionsType {
   senderAddress: string; // chat request sender address
@@ -38,7 +32,7 @@ export const approve = async (
 
   const requestUrl = `${apiEndpoint}`;
 
-  const body:IApproveRequestPayload = approveRequestPayload(senderAddress,account,status);
+  const body: IApproveRequestPayload = approveRequestPayload(senderAddress, account, status);
 
   return axios.put(requestUrl, body)
     .catch((err) => {

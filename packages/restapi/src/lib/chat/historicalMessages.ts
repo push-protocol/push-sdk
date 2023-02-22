@@ -4,10 +4,6 @@ import { AccountEnvOptionsType } from '../types';
 import { get } from '../user';
 import { decryptConversation, getMessagesService } from './helpers';
 
-/**
- *  GET /v1/chat/conversationhash/:threadhash
- */
-
 enum FetchLimit {
   MIN = 1,
   DEFAULT = 10,

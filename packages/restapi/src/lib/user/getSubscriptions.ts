@@ -1,13 +1,6 @@
 import axios from 'axios';
-import {
-  getCAIPAddress,
-  getAPIBaseUrls
-} from '../helpers';
+import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-
-/**
- *  GET /users/:userAddressInCAIP/subscriptions
- */
 
 export type UserSubscriptionsOptionsType = {
   user: string;
@@ -15,7 +8,7 @@ export type UserSubscriptionsOptionsType = {
 }
 
 export const getSubscriptions = async (
-  options : UserSubscriptionsOptionsType
+  options: UserSubscriptionsOptionsType
 ) => {
   const {
     user,

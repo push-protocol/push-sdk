@@ -1,12 +1,7 @@
 import axios from 'axios';
-import {
-    getAPIBaseUrls,
-    walletToPCAIP10
-} from '../helpers';
+import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import {
-    AccountEnvOptionsType,
-} from '../types';
+import { AccountEnvOptionsType } from '../types';
 import {
     ICreateGroupRequestPayload,
     createGroupPayload,
@@ -14,17 +9,9 @@ import {
     sign,
     createGroupRequestValidator,
 } from './helpers';
-
-
 import * as CryptoJS from "crypto-js"
 
-/**
- *  POST /v1/chat/group
- */
-
-
 export interface ChatCreateGroupType extends AccountEnvOptionsType {
-    /** Name of the group */
     groupName: string,
     groupDescription: string,
     members: Array<string>,
@@ -59,12 +46,10 @@ export const createGroup = async (
     } = options || {};
 
     try {
-
-        createGroupRequestValidator(groupName, groupDescription, members, admins,contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
+        createGroupRequestValidator(groupName, groupDescription, members, admins, contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
-
 
         const bodyToBeHashed = {
             groupName: groupName,
@@ -109,8 +94,8 @@ export const createGroup = async (
                 return response.data;
             })
             .catch((err) => {
-                if(err?.response?.data)
-                 throw new Error(err?.response?.data);
+                if (err?.response?.data)
+                    throw new Error(err?.response?.data);
                 throw new Error(err);
             });
 
