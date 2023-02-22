@@ -21,11 +21,6 @@ export interface IPFSOptionsType {
     env?: string
 }
 
-/**
- * This function internally
- * @param cid 
- * @returns 
- */
 export async function getCID(cid: string, options: IPFSOptionsType): Promise<Message> {
     const { env = Constants.ENV.PROD } = options || {};
     const API_BASE_URL = getAPIBaseUrls(env);

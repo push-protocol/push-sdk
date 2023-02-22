@@ -8,6 +8,9 @@ export interface LatestMessagesOptionsType extends AccountEnvOptionsType {
   pgpPrivateKey?: string;
 }
 
+/**
+ * Get the latest chat message
+ */
 export const latest = async (options: LatestMessagesOptionsType) => {
   const {
     threadhash,
