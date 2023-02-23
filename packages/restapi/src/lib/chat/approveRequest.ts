@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
-import { approveRequestPayload, IApproveRequestPayload } from './helpers';
+import { approveRequestPayload, createUserIfNecessary, IApproveRequestPayload } from './helpers';
 
 interface ApproveRequestOptionsType extends AccountEnvOptionsType {
   /**
