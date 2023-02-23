@@ -8,9 +8,8 @@ import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
 /**
- *  POST /v1/chat/message
+ * Send a message to an address or a group
  */
-
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',
@@ -29,9 +28,9 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
 
     let isGroup = false;
     if (!isValidETHAddress(receiverAddress)) {
-        isGroup = true;
+      isGroup = true;
     }
-    
+
     const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
     let conversationResponse: any = null;
     if (!isGroup) {
@@ -71,7 +70,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         });
     }
   } catch (err) {
-    console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
-    throw Error(`[EPNS-SDK] - API  - Error - API send() -: ${err}`);
+    console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);
   }
 };

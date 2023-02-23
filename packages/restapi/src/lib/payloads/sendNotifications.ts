@@ -18,7 +18,7 @@ import { IDENTITY_TYPE } from './constants';
  */
 function validateOptions(options: any) {
   if (!options?.channel) {
-    throw '[EPNS-SDK] - Error - sendNotification() - "channel" is mandatory!';
+    throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
   }
 
   /**
@@ -26,10 +26,10 @@ function validateOptions(options: any) {
    */
   if (options?.identityType === IDENTITY_TYPE.DIRECT_PAYLOAD || options?.identityType === IDENTITY_TYPE.MINIMAL) {
     if (!options.notification) {
-      throw '[EPNS-SDK] - Error - sendNotification() - "notification" mandatory for Identity Type: Direct Payload, Minimal!';
+      throw '[Push SDK] - Error - sendNotification() - "notification" mandatory for Identity Type: Direct Payload, Minimal!';
     }
     if (!options.payload) {
-      throw '[EPNS-SDK] - Error - sendNotification() - "payload" mandatory for Identity Type: Direct Payload, Minimal!';
+      throw '[Push SDK] - Error - sendNotification() - "payload" mandatory for Identity Type: Direct Payload, Minimal!';
     }
   }
 }
@@ -92,7 +92,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     });
 
     const source = getSource(chainId, identityType);
-   
+
     const apiPayload = {
       verificationProof,
       identity,
@@ -128,7 +128,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     );
 
   } catch (err) {
-    console.error('[EPNS-SDK] - Error - sendNotification() - ', JSON.stringify(err));
+    console.error('[Push SDK] - Error - sendNotification() - ', JSON.stringify(err));
     throw err;
   }
 }

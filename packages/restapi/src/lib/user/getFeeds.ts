@@ -8,11 +8,6 @@ import {
 import Constants from '../constants';
 import { parseApiResponse } from '../utils';
 
-/**
- *  GET '/v1/users/:userAddressInCAIP/feeds
- *  optional params: page=(1)&limit=(20{min=1|max=50})&spam=(false)'
- */
-
 export type FeedsOptionsType = {
   user: string;
   env?: string;
@@ -23,7 +18,7 @@ export type FeedsOptionsType = {
 }
 
 export const getFeeds = async (
-  options : FeedsOptionsType
+  options: FeedsOptionsType
 ) => {
   const {
     user,
@@ -45,7 +40,6 @@ export const getFeeds = async (
   };
 
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-
   return axios.get(requestUrl)
     .then((response) => {
       if (raw) {
@@ -54,6 +48,6 @@ export const getFeeds = async (
       return parseApiResponse(response?.data?.feeds) || [];
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

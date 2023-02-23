@@ -4,10 +4,6 @@ import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
-/**
- *  GET /v1/users/
- */
-
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
   if (!isValidETHAddress(account)) {
@@ -22,7 +18,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
       return response.data;
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
+      throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
