@@ -1,17 +1,21 @@
 import axios from 'axios';
 import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { AccountEnvOptionsType } from '../types';
+import { EnvOptionsType, SignerType } from '../types';
 import {
     IUpdateGroupRequestPayload,
     updateGroupPayload,
     getConnectedUser,
     sign,
-    updateGroupRequestValidator
+    updateGroupRequestValidator,
+    getWallet,
+    getAccountAddress
 } from './helpers';
 import * as CryptoJS from "crypto-js"
 
-export interface ChatUpdateGroupType extends AccountEnvOptionsType {
+export interface ChatUpdateGroupType extends EnvOptionsType {
+    account?: string,
+    signer?: SignerType,
     chatId: string,
     groupName: string,
     groupImage: string,
@@ -34,13 +38,20 @@ export const updateGroup = async (
         groupDescription,
         members,
         admins,
-        account,
+        account = null,
+        signer = null,
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
     } = options || {};
     try {
-        updateGroupRequestValidator(chatId, groupName, groupDescription, groupImage, members, admins, account);
-        const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
+        if(account == null && signer == null) {
+          throw new Error(`At least one from account or signer is necessary!`);
+        }
+      
+        const wallet = getWallet({ account, signer });
+        const address = await getAccountAddress(wallet);
+        updateGroupRequestValidator(chatId, groupName, groupDescription, groupImage, members, admins, address);
+        const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
         const convertedMembers = members.map(walletToPCAIP10);
         const convertedAdmins = admins.map(walletToPCAIP10);
         const bodyToBeHashed = {
@@ -63,7 +74,7 @@ export const updateGroup = async (
             groupDescription,
             convertedMembers,
             convertedAdmins,
-            walletToPCAIP10(account),
+            walletToPCAIP10(address),
             verificationProof);
 
         return axios

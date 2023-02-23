@@ -11,3 +11,12 @@ export const getWallet = (options: walletType) => {
     signer
   };
 }
+
+export const getAccountAddress = async (options: walletType): Promise<string> => {
+  const {
+    account,
+    signer
+  } = options || {};
+
+  return account || (await signer?.getAddress()) || ''
+}

@@ -1,17 +1,21 @@
 import axios from 'axios';
 import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { AccountEnvOptionsType } from '../types';
+import { EnvOptionsType, SignerType } from '../types';
 import {
     ICreateGroupRequestPayload,
     createGroupPayload,
     getConnectedUser,
     sign,
     createGroupRequestValidator,
+    getWallet,
+    getAccountAddress,
 } from './helpers';
 import * as CryptoJS from "crypto-js"
 
-export interface ChatCreateGroupType extends AccountEnvOptionsType {
+export interface ChatCreateGroupType extends EnvOptionsType {
+    account?: string,
+    signer?: SignerType,
     groupName: string,
     groupDescription: string,
     members: Array<string>,
@@ -29,6 +33,8 @@ export const createGroup = async (
     options: ChatCreateGroupType
 ) => {
     const {
+        account = null,
+        signer = null,
         groupName,
         groupDescription,
         members,
@@ -39,12 +45,17 @@ export const createGroup = async (
         numberOfNFTs,
         contractAddressERC20,
         numberOfERC20,
-        account,
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
     } = options || {};
 
     try {
+        if(account == null && signer == null) {
+          throw new Error(`At least one from account or signer is necessary!`);
+        }
+      
+        const wallet = getWallet({ account, signer });
+        const address = await getAccountAddress(wallet);
         createGroupRequestValidator(groupName, groupDescription, members, admins, contractAddressNFT, numberOfNFTs, contractAddressERC20, numberOfERC20);
 
         const convertedMembers = members.map(walletToPCAIP10);
@@ -61,10 +72,10 @@ export const createGroup = async (
             numberOfNFTs: numberOfNFTs == undefined ? 0 : numberOfNFTs,
             contractAddressERC20: contractAddressERC20 == undefined ? null : contractAddressERC20,
             numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-            groupCreator: walletToPCAIP10(account)
+            groupCreator: walletToPCAIP10(address)
         }
 
-        const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
+        const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
 
         const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
         const signature: string = await sign({ message: hash, signingKey: connectedUser.privateKey! });
@@ -80,7 +91,7 @@ export const createGroup = async (
             groupImage,
             convertedAdmins,
             isPublic,
-            walletToPCAIP10(account),
+            walletToPCAIP10(address),
             verificationProof,
             contractAddressNFT,
             numberOfNFTs,

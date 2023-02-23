@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
-import { ChatOptionsType } from '../types';
-import { getConnectedUser } from './helpers';
+import { ChatSendOptionsType } from '../types';
+import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
@@ -10,19 +10,27 @@ import { ISendMessagePayload, sendMessagePayload } from './helpers';
 /**
  * Send a message to an address or a group
  */
-export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
+export const send = async (options: ChatSendOptionsType) => {
   const {
     messageContent = '',
     messageType = 'Text',
     receiverAddress,
-    account,
+    account = null,
+    signer = null,
     pgpPrivateKey = null,
     apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
   try {
-    if (!isValidETHAddress(account)) {
+    if(account == null && signer == null) {
+      throw new Error(`At least one from account or signer is necessary!`);
+    }
+  
+    const wallet = getWallet({ account, signer });
+    const address = await getAccountAddress(wallet);
+
+    if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
     }
 
@@ -31,12 +39,12 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
     let conversationResponse: any = null;
     if (!isGroup) {
       conversationResponse = await conversationHash({
         conversationId: receiverAddress,
-        account,
+        account: address,
         env,
       });
     }

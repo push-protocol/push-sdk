@@ -225,6 +225,21 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
   apiKey?: string;
 };
 
+export interface ChatSendOptionsType {
+  messageContent?: string;
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  receiverAddress: string;
+  pgpPrivateKey?: string;
+  connectedUser: IConnectedUser;
+  /**
+   * Api key is now optional
+   */
+  apiKey?: string;
+  env?: string;
+  account?: string;
+  signer?: SignerType;
+};
+
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
@@ -250,7 +265,7 @@ export type SignerType = {
 }
 
 export type EnvOptionsType = {
-  env?: 'dev' | 'staging' | 'prod';
+  env?: string;
 }
 
 export type walletType = {

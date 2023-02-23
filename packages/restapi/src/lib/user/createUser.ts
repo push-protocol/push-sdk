@@ -1,5 +1,5 @@
 import { getEncryptionPublicKey } from "@metamask/eth-sig-util";
-import { createUserService, generateKeyPair, getWallet } from "../chat/helpers";
+import { createUserService, generateKeyPair, getAccountAddress, getWallet } from "../chat/helpers";
 import Constants from "../constants";
 import { encryptWithRPCEncryptionPublicKeyReturnRawData, isValidETHAddress, walletToPCAIP10 } from "../helpers";
 import { getPublicKey } from "../helpers";
@@ -25,7 +25,7 @@ export const create = async (
   }
 
   const wallet = getWallet({ account, signer });
-  const address: string = account || (await signer?.getAddress()) || '';
+  const address = await getAccountAddress(wallet);
 
   if (!isValidETHAddress(address)) {
     throw new Error(`Invalid address!`);
