@@ -13,10 +13,16 @@ enum FetchLimit {
 export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
   threadhash: string;
   pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
   toDecrypt?: boolean;
   limit?: number;
 }
 
+/**
+ * Get all the messages exchanged between users after the threadhash.
+ */
 export const history = async (options: HistoricalMessagesOptionsType) => {
   const {
     threadhash,
@@ -47,7 +53,7 @@ export const history = async (options: HistoricalMessagesOptionsType) => {
     }
     return messages;
   } catch (err) {
-    console.error(`[EPNS-SDK] - API fetchMessages -: `, err);
-    throw Error(`[EPNS-SDK] - API fetchMessages -: ${err}`);
+    console.error(`[Push SDK] - API ${history.name} -: `, err);
+    throw Error(`[Push SDK] - API ${history.name} -: ${err}`);
   }
 };

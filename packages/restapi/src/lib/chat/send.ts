@@ -7,6 +7,9 @@ import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
+/**
+ * Send a message to an address or a group
+ */
 export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
   const {
     messageContent = '',
@@ -67,7 +70,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         });
     }
   } catch (err) {
-    console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
-    throw Error(`[EPNS-SDK] - API  - Error - API send() -: ${err}`);
+    console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);
   }
 };

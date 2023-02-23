@@ -7,11 +7,19 @@ import { getInboxLists } from './helpers';
 export type ChatsOptionsType = {
   account: string;
   pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
   toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
   env?: string;
 };
 
-// Only get the chats not the intent
+/**
+ * Return the latest message from all wallet addresses you have talked to. This can be used when building the inbox page.
+ */
 export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
   const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
   const user = walletToPCAIP10(account);
@@ -33,7 +41,7 @@ export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
     });
     return feeds;
   } catch (err) {
-    console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-    throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+    console.error(`[Push SDK] - API ${chats.name}: `, err);
+    throw Error(`[Push SDK] - API ${chats.name}: ${err}`);
   }
 };

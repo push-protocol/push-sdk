@@ -48,6 +48,6 @@ export const getFeeds = async (
       return parseApiResponse(response?.data?.feeds) || [];
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

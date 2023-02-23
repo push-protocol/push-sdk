@@ -16,7 +16,7 @@ export type SearchChannelOptionsType = {
 }
 
 export const search = async (
-  options : SearchChannelOptionsType
+  options: SearchChannelOptionsType
 ) => {
   const {
     query,
@@ -26,22 +26,17 @@ export const search = async (
   } = options || {};
 
   if (!query) throw Error('"query" not provided!');
-
   const API_BASE_URL = getAPIBaseUrls(env);
- 
   const apiEndpoint = `${API_BASE_URL}/v1/channels/search/`;
-
   const queryObj = {
     page,
     limit: getLimit(limit),
     query: query
   };
-
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-
   return axios.get(requestUrl)
     .then((response) => response.data.channels)
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

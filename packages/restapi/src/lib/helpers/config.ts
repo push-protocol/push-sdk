@@ -9,18 +9,18 @@ export const getConfig = (
   {
     blockchain,
     networkId
-  } : {
+  }: {
     blockchain: string,
     networkId: string
   }
-) : ConfigType => {
+): ConfigType => {
 
   const blockchainSelector = `${blockchain}:${networkId}`;
   const configuration = CONFIG[env][blockchainSelector];
 
   if (!configuration) {
     throw Error(`
-      [EPNS-SDK] - cannot determine config for 
+      [Push SDK] - cannot determine config for 
         env: ${env},
         blockchain: ${blockchain},
         networkId: ${networkId}

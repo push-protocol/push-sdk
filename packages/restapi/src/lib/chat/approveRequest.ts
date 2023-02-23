@@ -11,9 +11,10 @@ interface ApproveRequestOptionsType extends AccountEnvOptionsType {
    */
   senderAddress: string;
   pgpPrivateKey?: string,
+
   /**
    * Request state. As of now, only `Approved` is allowed
-  */
+   */
   status?: 'Approved';
 }
 
