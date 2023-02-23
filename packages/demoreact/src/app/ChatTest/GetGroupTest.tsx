@@ -6,13 +6,12 @@ import {
   SectionButton,
 } from '../components/StyledComponents';
 import Loader from '../components/Loader';
-import { Web3Context, EnvContext } from '../context';
+import { EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import ChatTest from './ChatTest';
 
 const GetGroupTest = () => {
-  const { account } = useContext<any>(Web3Context);
-  const { env, isCAIP } = useContext<any>(EnvContext);
+  const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -29,7 +28,6 @@ const GetGroupTest = () => {
       const response = await PushAPI.chat.getGroup({
         chatId: chatId,
         env,
-        account: account
       });
       setSendResponse(response);
 

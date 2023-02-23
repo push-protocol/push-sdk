@@ -7,7 +7,7 @@ export const createGroupRequestValidator = (
     groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
-    numberOfERC20 ? : number,
+    numberOfERC20 ? : number
 ): void => {
 
     if (groupName == null || groupName.length == 0) {

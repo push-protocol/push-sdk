@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.7.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.0...restapi-0.7.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* added missing import in approveRequest ([b79045d](https://github.com/ethereum-push-notification-service/push-sdk/commit/b79045d0946facd57e1bf72e5664c54021f3e3d7))
+* **component:** added group meta ([#193](https://github.com/ethereum-push-notification-service/push-sdk/issues/193)) ([8e0ef1e](https://github.com/ethereum-push-notification-service/push-sdk/commit/8e0ef1e584a4e28be965e46a2f3bac7f81262c14))
+
+
+
 # [0.7.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.6.4...restapi-0.7.0) (2023-02-22)
 
 

@@ -39,6 +39,7 @@ export interface ICreateGroupRequestPayload {
   numberOfERC20?: number,
   groupCreator: string,
   verificationProof: string,
+  meta? : string
 }
 
 export interface IUpdateGroupRequestPayload {
@@ -67,7 +68,6 @@ export const sendMessagePayload = async (
   if(isGroup) {
     group = await getGroup({
       chatId: receiverAddress,
-      account: '',
       env:  env
     });
 
@@ -136,7 +136,8 @@ export const createGroupPayload = (
   contractAddressNFT?: string,
   numberOfNFTs?: number,
   contractAddressERC20?: string,
-  numberOfERC20?: number
+  numberOfERC20?: number,
+  meta?: string
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -151,6 +152,7 @@ export const createGroupPayload = (
     numberOfERC20: numberOfERC20,
     groupCreator: groupCreator,
     verificationProof: verificationProof,
+    meta: meta
   };
   return body;
 };
