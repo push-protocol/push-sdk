@@ -14,6 +14,7 @@ export interface ISendMessagePayload {
   encType: string;
   encryptedSecret: string | null | undefined;
   sigType: string | null | undefined;
+  verificationProof?: string | null | undefined;
 }
 
 export interface IApproveRequestPayload {
@@ -22,6 +23,7 @@ export interface IApproveRequestPayload {
   signature: string;
   status: 'Approved';
   sigType: string;
+  verificationProof?: string | null | undefined;
 }
 
 export interface ICreateGroupRequestPayload {

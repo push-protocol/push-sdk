@@ -25,12 +25,21 @@ const ApproveRequestTest = () => {
   const testApproveRequest = async () => {
     try {
       setLoading(true);
+      const user = await PushAPI.user.get({ account: account, env });
+      let pvtkey = null;
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+          user.encryptedPrivateKey,
+          account
+        );
+      }
 
       const response = await PushAPI.chat.approve({
         status: 'Approved',
         account: isCAIP ? walletToPCAIP10(account) : account,
         senderAddress,
         env,
+        pgpPrivateKey: pvtkey,
       });
 
       setApproveResponse(response);
