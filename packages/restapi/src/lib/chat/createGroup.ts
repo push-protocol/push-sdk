@@ -23,6 +23,7 @@ export interface ChatCreateGroupType extends AccountEnvOptionsType {
     contractAddressERC20?: string,
     numberOfERC20?: number,
     pgpPrivateKey?: string,
+    meta?:string
 }
 
 export const createGroup = async (
@@ -42,6 +43,7 @@ export const createGroup = async (
         account,
         env = Constants.ENV.PROD,
         pgpPrivateKey = null,
+        meta,
     } = options || {};
 
     try {
@@ -85,7 +87,8 @@ export const createGroup = async (
             contractAddressNFT,
             numberOfNFTs,
             contractAddressERC20,
-            numberOfERC20);
+            numberOfERC20,
+            meta);
 
         return axios
             .post(apiEndpoint, body)
