@@ -272,21 +272,21 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
     return { signature: "xyz", sigType: "a" };
   }
 
-  const domainInformation = getDomainInformation(
-    1,
-    pCAIP10ToWallet(user)
-  );
+  // const domainInformation = getDomainInformation(
+  //   1,
+  //   pCAIP10ToWallet(user)
+  // );
 
   // get type information
   const typeInformation = getTypeInformation("Create_user");
-  console.log(domainInformation)
+  // console.log(domainInformation)
   console.log(typeInformation)
 
   const _signer = wallet?.signer;
 
   // sign a message using EIP712
   const signedMessage = await _signer?._signTypedData(
-    domainInformation,
+    {},
     typeInformation,
     { data: hash },
   );
