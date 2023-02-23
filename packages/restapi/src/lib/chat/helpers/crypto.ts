@@ -15,6 +15,8 @@ import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants from '../../constants';
 
+const SIG_TYPE_V2 = "eip712v2";
+
 interface IEncryptedRequest {
   message: string;
   encryptionType: 'PlainText' | 'pgp';
@@ -266,7 +268,7 @@ export const getEncryptedRequest = async (
 export const getSignature = async (user: string, wallet: walletType, hash: string) => {
   if(!wallet?.signer) {
     console.warn("This method is deprecated. Send signer in the function");
-    return "";
+    return { signature: "", sigType: "a" };
   }
 
   const domainInformation = getDomainInformation(
@@ -288,6 +290,7 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
     { data: hash },
   );
 
-  console.log(signedMessage);
-  return signedMessage;
+  const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`
+
+  return { verificationProof };
 }

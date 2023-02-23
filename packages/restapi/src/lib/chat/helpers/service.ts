@@ -39,23 +39,11 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signature = await getSignature(user, wallet!, hash);
-
-  const signatureObj: {
-    signature?: string;
-    verificationProof?: string;
-  } = {};
-
-  if(signature == "") {
-    signatureObj.signature = "";
-  } else {
-    signatureObj.verificationProof = signature;
-  }
+  const signatureObj = await getSignature(user, wallet!, hash);
 
   const body = {
     ...data, 
     ...signatureObj,
-    sigType:'a'
   };
 
   return axios
