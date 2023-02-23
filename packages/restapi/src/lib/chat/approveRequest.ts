@@ -10,7 +10,7 @@ interface ApproveRequestOptionsType extends AccountEnvOptionsType {
    * Chat request sender address
    */
   senderAddress: string;
-  pgpPrivateKey?: string,
+  pgpPrivateKey?: string;
 
   /**
    * Request state. As of now, only `Approved` is allowed
