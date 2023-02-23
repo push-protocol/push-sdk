@@ -230,7 +230,6 @@ export interface ChatSendOptionsType {
   messageType?: 'Text' | 'Image' | 'File' | 'GIF';
   receiverAddress: string;
   pgpPrivateKey?: string;
-  connectedUser: IConnectedUser;
   /**
    * Api key is now optional
    */
