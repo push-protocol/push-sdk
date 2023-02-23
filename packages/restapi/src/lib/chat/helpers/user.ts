@@ -1,6 +1,6 @@
 import Constants from '../../constants';
 import { get, create } from '../../user';
-import { decryptWithWalletRPCMethod } from '../../helpers';
+import { decryptPGPKey, decryptWithWalletRPCMethod } from '../../helpers';
 import { AccountEnvOptionsType, IConnectedUser, IUser, SignerType, walletType } from '../../types';
 import { getAccountAddress } from './wallet';
 
@@ -46,10 +46,18 @@ export const getConnectedUser = async (
     }
     createUserProps.env = env;
     const newUser = await create(createUserProps);
-    const decryptedPrivateKey = await decryptWithWalletRPCMethod(
-      newUser.encryptedPrivateKey,
-      address
-    );
+    let decryptedPrivateKey;
+    if(wallet.signer) {
+      decryptedPrivateKey = await decryptPGPKey({
+        signer: wallet.signer,
+        encryptedMessage: newUser.encryptedPrivateKey
+      })
+    } else {
+      decryptedPrivateKey = await decryptWithWalletRPCMethod(
+        newUser.encryptedPrivateKey,
+        address
+      );
+    }
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
 };
