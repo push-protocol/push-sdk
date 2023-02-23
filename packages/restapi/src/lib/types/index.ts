@@ -237,6 +237,23 @@ export interface UserInfo {
   isAdmin: boolean
 }
 
+export type SignerType = {
+  _signTypedData: (
+    domain: any,
+    types: any,
+    value: any
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  provider?: any;
+  publicKey?: string;
+  privateKey?: string;
+}
 
+export type EnvOptionsType = {
+  env?: 'dev' | 'staging' | 'prod';
+}
 
-
+export type walletType = {
+  account: string | null;
+  signer: SignerType | null;
+}

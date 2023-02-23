@@ -7,9 +7,10 @@ import {
   IMessageIPFSWithCID,
   IUser,
   GroupDTO,
+  walletType,
 } from '../../types';
 import { get } from '../../user';
-import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
+import { getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants from '../../constants';
@@ -261,3 +262,32 @@ export const getEncryptedRequest = async (
       }
   }
 };
+
+export const getSignature = async (user: string, wallet: walletType, hash: string) => {
+  if(!wallet?.signer) {
+    console.warn("This method is deprecated. Send signer in the function");
+    return "";
+  }
+
+  const domainInformation = getDomainInformation(
+    1,
+    pCAIP10ToWallet(user)
+  );
+
+  // get type information
+  const typeInformation = getTypeInformation("Create_user");
+  console.log(domainInformation)
+  console.log(typeInformation)
+
+  const _signer = wallet?.signer;
+
+  // sign a message using EIP712
+  const signedMessage = await _signer?._signTypedData(
+    domainInformation,
+    typeInformation,
+    { data: hash },
+  );
+
+  console.log(signedMessage);
+  return signedMessage;
+}

@@ -7,3 +7,4 @@ export * from "./inbox";
 export * from "./payloadHelper";
 export * from "./validator";
 export * from "./group";
+export * from "./wallet";

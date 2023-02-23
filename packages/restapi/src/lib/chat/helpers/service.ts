@@ -1,10 +1,12 @@
 import axios from 'axios';
 import Constants from '../../constants';
-import { getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
-import { AccountEnvOptionsType, ConversationHashOptionsType } from '../../types';
+import { generateHash, getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
+import { AccountEnvOptionsType, ConversationHashOptionsType, walletType } from '../../types';
+import { getSignature } from './crypto';
 
 type CreateUserOptionsType = {
   user: string;
+  wallet?: walletType;
   publicKey?: string;
   encryptedPrivateKey?: string;
   encryptionType?: string;
@@ -16,11 +18,10 @@ type CreateUserOptionsType = {
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
+    wallet,
     publicKey = '',
     encryptedPrivateKey = '',
     encryptionType = '',
-    signature = '',
-    sigType = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -28,14 +29,33 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
-  const body = {
+  const data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
-    encryptionType,
-    signature,
-    sigType,
+    encryptionType
+  };
+
+  const hash = generateHash(data);
+
+  const signature = await getSignature(user, wallet!, hash);
+
+  const signatureObj: {
+    signature?: string;
+    verificationProof?: string;
+  } = {};
+
+  if(signature == "") {
+    signatureObj.signature = "";
+  } else {
+    signatureObj.verificationProof = signature;
+  }
+
+  const body = {
+    ...data, 
+    ...signatureObj,
+    sigType:'a'
   };
 
   return axios

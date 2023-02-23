@@ -1,12 +1,20 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
+import * as CryptoJS from "crypto-js"
+import { ethers } from "ethers";
 import { aesDecrypt, pgpDecrypt, verifySignature } from "../chat/helpers";
+import { walletType } from "../types";
 import { isValidETHAddress } from "./address";
 
-export const getPublicKey = async (account: string): Promise<string> => {
+export const getPublicKey = async (options: walletType): Promise<string> => {
+  const {account, signer} = options || {};
+  const address: string = account || (await signer?.getAddress()) || '';
   console.log('Fetching Public Key');
-  const keyB64 = await (window as any).ethereum.request({
-    method: 'eth_getEncryptionPublicKey',
-    params: [account], // you must have access to the specified account
+  const metamaskProvider = new ethers.providers.Web3Provider((window as any).ethereum);
+  const web3Provider = signer?.provider || metamaskProvider;
+
+  const keyB64 = await web3Provider.provider.request({
+    method: "eth_getEncryptionPublicKey",
+    params: [address]
   });
   console.log(`Public Key: ${keyB64}`);
   return keyB64;
@@ -86,4 +94,11 @@ export const decryptAndVerifySignature = async ({
   })
   await verifySignature({ messageContent: cipherText, signatureArmored, publicKeyArmored })
   return aesDecrypt({ cipherText, secretKey })
+}
+
+export const generateHash = (message:any):string=> {
+  const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
+    CryptoJS.enc.Hex
+  );
+  return hash;
 }
