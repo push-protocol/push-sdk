@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, IConnectedUser, SignerType } from '../types';
-import { approveRequestPayload, getAccountAddress, getConnectedUser, getWallet, IApproveRequestPayload } from './helpers';
+import { EnvOptionsType, SignerType } from '../types';
+import { approveRequestPayload, sign, getConnectedUser, IApproveRequestPayload, getAccountAddress, getWallet } from './helpers';
+import * as CryptoJS from "crypto-js"
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
    * Chat request sender address
    */
   senderAddress: string;
-  privateKey?: string; // private key for signature
+  pgpPrivateKey?: string;
 
   /**
    * Request state. As of now, only `Approved` is allowed
@@ -29,11 +30,11 @@ export const approve = async (
   const {
     status = "Approved",
     // sigType = 'sigType',
-    privateKey = null,
     account = null,
     signer = null,
     senderAddress,
     env = Constants.ENV.PROD,
+    pgpPrivateKey = null,
   } = options || {};
 
   if(account == null && signer == null) {
@@ -43,13 +44,26 @@ export const approve = async (
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
 
-  // get user with raw privateKey
-  const createdUser: IConnectedUser = await getConnectedUser(wallet, privateKey, env);
-  // const connectedUser = await createUserIfNecessary({account,env});
-  // TODO: make signature
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
   const body: IApproveRequestPayload = approveRequestPayload(senderAddress, address, status);
+
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.toDID,
+    status: body.status
+  }
+
+  const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+  const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+  const signature: string = await sign({
+    message: hash,
+    signingKey: connectedUser.privateKey!
+  });
+  const sigType = "pgp";
+  const verificationProof: string = sigType + ":" + signature;
+  body.verificationProof = verificationProof;
+
   return axios.put(apiEndpoint, body)
     .catch((err) => {
       console.error(`[Push SDK] - API ${approve.name}: `, err);

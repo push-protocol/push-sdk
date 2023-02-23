@@ -2,12 +2,17 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
-    AccountEnvOptionsType, GroupDTO
+   GroupDTO 
 } from '../types';
 
 
-export interface GetGroupType extends AccountEnvOptionsType {
+/**
+ *  GET /v1/chat/groups/:chatId
+ */
+
+export interface GetGroupType {
     chatId: string,
+    env?: string
 }
 
 export const getGroup = async (

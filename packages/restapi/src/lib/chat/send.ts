@@ -51,7 +51,7 @@ export const send = async (options: ChatSendOptionsType) => {
     if (conversationResponse && !conversationResponse?.threadHash) {
       return start({
         messageContent: messageContent,
-        messageType: 'Text',
+        messageType: messageType,
         receiverAddress,
         connectedUser,
         apiKey,
