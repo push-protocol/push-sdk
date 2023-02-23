@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.2...uiweb-0.4.3) (2023-02-23)
+
+
+### Bug Fixes
+
+* fixed image width in notifs ([#196](https://github.com/ethereum-push-notification-service/push-sdk/issues/196)) ([a4100d2](https://github.com/ethereum-push-notification-service/push-sdk/commit/a4100d26e0036f717d7a1846285901d8e3badb81))
+
+
+
 ## [0.4.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.1...uiweb-0.4.2) (2023-02-17)
 
 
