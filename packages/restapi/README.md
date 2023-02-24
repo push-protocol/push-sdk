@@ -41,8 +41,8 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [Fetching list of user chats](#fetching-list-of-user-chats)
     -  [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
     -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
-    -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
     -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
+    -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
     -  [To approve a chat request](#to-approve-a-chat-request)
     -  [To send a message](#to-send-a-message)
     -  [To get group details by chat id](#to-get-group-details-by-chatid)
@@ -1667,7 +1667,7 @@ Allowed Options (params with * are mandatory)
 ### **Decrypting encrypted pgp private key from user data**
 ```typescript
 // pre-requisite API calls that should be made before
-const user = await PushAPI.user.get(account, 'staging');
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // actual api
 const decryptedPvtKey = await PushAPI.chat.decryptPGPKey(
@@ -1720,10 +1720,10 @@ n4FxJNoL/lmuCqhQm4Zgduj3GdYUunMDID3k54J1FPGN+iCj
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(account, 'staging');
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(user.encryptedPrivateKey, _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
   
 // actual api
 const chats = await PushAPI.chat.chats({
@@ -1854,10 +1854,10 @@ Allowed Options (params with * are mandatory)
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(account, 'staging');
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(user.encryptedPrivateKey, _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
   
 // actual api
 const chats = await PushAPI.chat.requests({
@@ -1986,11 +1986,12 @@ Allowed Options (params with * are mandatory)
 
 ### **Fetching conversation hash between two users**
 ```typescript
-const threadhash = await PushAPI.chat.conversationHash({
-        account: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-        conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
-        env: 'staging',
-      });
+// conversation hash are also called link inside chat messages
+const conversationHash = await PushAPI.chat.conversationHash({
+  account: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
+  env: 'staging'
+});
 ```
 
 Allowed Options (params with * are mandatory)
@@ -2013,18 +2014,122 @@ Allowed Options (params with * are mandatory)
 </details>
 
 -----
+
+### **Fetching latest chat between two users**
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+
+const threadhash = await PushAPI.chat.conversationHash({
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
+  env: 'staging'
+});
+  
+// actual api
+const chatHistory = await PushAPI.chat.latest({
+  threadhash: threadhash.threadHash,
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  pgpPrivateKey: decryptedPvtKey,
+  limit: 10,
+  toDecrypt: true,
+  env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address (Partial CAIP)                 |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| threadhash*    | string  | -       | conversation hash between two users |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+
+<details>
+  <summary><b>Expected response (Get latest chat between two users)</b></summary>
+
+```typescript
+// PushAPI_chat_latest | Response - 200 OK
+[
+  {
+    link: 'bafyreibfikschwlfi275hr7lrfqgj73mf6absailazh4sm5fwihspy2ky4',
+    toDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    encType: 'pgp',
+    fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    sigType: 'pgp',
+    toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    signature: '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
+    timestamp: 1669831523684,
+    fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    messageType: 'Text',
+    messageContent: 'Hi',
+    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n'
+  }
+]
+
+```
+</details>
+
+-----
   
 ### **Fetching chat history between two users**
 ```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
 
-      const chatHistory = await PushAPI.chat.history({
-        threadhash: threadhash.threadHash,
-        account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-        pgpPrivateKey: decryptedPvtKey,
-        limit: 2,
-        toDecrypt: true,
-        env:'staging',
-      });
+// get threadhash, this will fetch the latest conversation hash
+// you can also use older conversation hash (called link) by iterating over to fetch more historical messages
+const conversationHash = await PushAPI.chat.conversationHash({
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
+  env: 'staging'
+});
+  
+// actual api
+const chatHistory = await PushAPI.chat.history({
+  threadhash: threadhash.threadHash,
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  pgpPrivateKey: pgpDecryptedPvtKey,
+  limit: 2,
+  toDecrypt: true,
+  env: 'staging',
+});
 ```
 
 Allowed Options (params with * are mandatory)
@@ -2104,30 +2209,8 @@ Allowed Options (params with * are mandatory)
 </details>
 
 -----
+
   
-### **Fetching latest chat between two users**
-```typescript
-
-      const chatHistory = await PushAPI.chat.latest({
-        threadhash:threadhash.threadHash,
-        account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-        pgpPrivateKey: decryptedPvtKey,
-        limit:2,
-        toDecrypt:true,
-        env:'staging',
-      });
-```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| threadhash*    | string  | -       | conversation hash between two users |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-
-
 ### **To approve a chat request**
 ```typescript
 const response = await PushAPI.chat.approve({
