@@ -2035,8 +2035,8 @@ const conversationHash = await PushAPI.chat.conversationHash({
 const chatHistory = await PushAPI.chat.latest({
   threadhash: conversationHash.threadHash,
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-  pgpPrivateKey: decryptedPvtKey,
   toDecrypt: true,
+  pgpPrivateKey: decryptedPvtKey,
   env: 'staging',
 });
 ```
@@ -2126,9 +2126,9 @@ const conversationHash = await PushAPI.chat.conversationHash({
 const chatHistory = await PushAPI.chat.history({
   threadhash: conversationHash.threadHash,
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-  pgpPrivateKey: pgpDecryptedPvtKey,
   limit: 2,
   toDecrypt: true,
+  pgpPrivateKey: pgpDecryptedPvtKey,
   env: 'staging',
 });
 ```
@@ -2137,11 +2137,11 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | threadhash*    | string  | -       | conversation hash between two users |
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 | limit    | number  | 10       | number of messages between two users |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chat history between two users)</b></summary>
