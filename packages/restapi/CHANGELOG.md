@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.7.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.1...restapi-0.7.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* **component:** implemented signature validation for create and update indent ([ffe026b](https://github.com/ethereum-push-notification-service/push-sdk/commit/ffe026bb76b97883a301d887395df055d579356b))
+* fix merge conflict ([90fb1d5](https://github.com/ethereum-push-notification-service/push-sdk/commit/90fb1d5c1a60695d7c559eaa43a6b72b3a5705af))
+* merge conflict fix ([af6ee32](https://github.com/ethereum-push-notification-service/push-sdk/commit/af6ee324937e31581b1ece56d817740e55a5ced6))
+* small change ([e346547](https://github.com/ethereum-push-notification-service/push-sdk/commit/e346547b848c69f1f41866e9625e52e285256a12))
+
+
+
 ## [0.7.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.0...restapi-0.7.1) (2023-02-23)
 
 
