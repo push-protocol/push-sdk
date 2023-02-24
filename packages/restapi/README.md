@@ -1665,7 +1665,7 @@ Allowed Options (params with * are mandatory)
 -----
   
 ### **Decrypting encrypted pgp private key from user data**
-```typescript;
+```typescript
 
 // pre-requisite API calls that should be made before
 const user = await PushAPI.user.get(account, 'staging');
