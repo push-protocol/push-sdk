@@ -1738,9 +1738,9 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address (Partial CAIP)             |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chats of a specific user)</b></summary>
@@ -1998,8 +1998,8 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address (partial CAIP)             |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | conversationId*    | string  | -       | receiver's address (partial CAIP) or chatId of a group|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
 <details>
@@ -2045,10 +2045,10 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address (Partial CAIP)                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | threadhash*    | string  | -       | conversation hash between two users |
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get latest chat between two users)</b></summary>
@@ -2224,10 +2224,10 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: us
 const response = await PushAPI.chat.send({
   messageContent: "Gm gm! It's me... Mario",
   messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF" 
-  receiverAddress: walletAddressAlt3,
+  receiverAddress: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
   signer: _signer,
   pgpPrivateKey: pgpDecrpyptedPvtKey,
-  env: _env,
+  env: 'staging',
 });
 ```
 
@@ -2315,7 +2315,6 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | groupName*    | string  | -       | group name |
 | groupDescription*    | string  | -       | group description |
 | groupImage*    | string  | -       | group image link |
@@ -2323,6 +2322,7 @@ Allowed Options (params with * are mandatory)
 | admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
 | isPublic*    | boolean  | -       | true for public group, false for private group |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
 ### **To update group details**
@@ -2344,13 +2344,13 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | groupName*    | string  | -       | group name |
 | groupDescription*    | string  | -       | group description |
 | groupImage*    | string  | -       | group image link |
 | members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
 | admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
   
 ### **Chat Helper Utils**
@@ -2369,7 +2369,7 @@ const decryptedChat = await PushAPI.chat.decryptConversation({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | messages*    | string  | -       | array of message object fetched from chat.history method |
 | connectedUser*    | IUser  | false | user meta data object|
 | pgpPrivateKey    | string  | null  | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
