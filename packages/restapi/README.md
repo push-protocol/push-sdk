@@ -2036,7 +2036,6 @@ const chatHistory = await PushAPI.chat.latest({
   threadhash: conversationHash.threadHash,
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   pgpPrivateKey: decryptedPvtKey,
-  limit: 10,
   toDecrypt: true,
   env: 'staging',
 });
@@ -2212,6 +2211,46 @@ Allowed Options (params with * are mandatory)
 
 -----
 
+### **To send a message**
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.chat.send({
+  messageContent: "Gm gm! It's me... Mario",
+  messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF" 
+  receiverAddress: walletAddressAlt3,
+  signer: _signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: _env,
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| messageContent    | string  | ''       | message to be sent |
+| messageType    | 'Text' &#124;  'Image' &#124;  'File' &#124; 'GIF' | 'Text'| type of messageContent |
+| receiverAddress*    | string  | -       | user address (Partial CAIP)             |
+| signer*    | -  | -       | signer object |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+<details>
+  <summary><b>Expected response (send chat message or chat request to a wallet)</b></summary>
+
+```typescript
+// PushAPI_chat_send | Response - 204 OK
+
+```
+</details>
+
+-----
   
 ### **To approve a chat request**
 ```typescript
@@ -2230,32 +2269,6 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | senderAddress*    | string  | -       | receiver's address or chatId of a group |
 | status    | 'Approved' | 'Approved'  | flag for approving and rejecting chat request, supports only approving for now|
-
-
-
-### **To send a message**
-```typescript
-const response = await PushAPI.chat.send({
-        messageContent: 'Hi',
-        messageType: 'Text',
-        receiverAddress: '0x08E834a388Cee21d4d7571075146841C8eE621a4', // receiver's address or chatId of a group
-        account: '0x57eAd5826B1E0A7074E1aBf1A062714A2dE0f8B4',
-        pgpPrivateKey: decryptedPvtKey,
-        apiKey:"tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
-        env: 'staging',
-      });
-```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| senderAddress*    | string  | -       | receiver's address or chatId of a group |
-| messageContent    | string  | ''       | message to be sent |
-| messageType    | 'Text' &#124;  'Image' &#124;  'File' &#124; 'GIF' | 'Text'| type of messageContent |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| apiKey    | string  | ''       | apiKey for using chat|
 
 
 ### **To get group details by chatId**
