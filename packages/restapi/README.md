@@ -37,6 +37,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
   - [Chat](#for-chat)
     -  [Create user for chat](#create-user-for-chat)
     -  [Get user data for chat](#get-user-data-for-chat)
+    -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key-from-user-data)
     -  [Fetching list of user chats](#fetching-list-of-user-chats)
     -  [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
     -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
@@ -48,7 +49,6 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [To create a group](#to-create-a-group)
     -  [To update group details](#to-update-group-details)
     -  [Chat helper utils](#chat-helper-utils)
-        -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key)
         -  [Decrypting messages](#decrypting-messages)
 
 # How to use in your app?
@@ -90,11 +90,13 @@ const _signer = library.getSigner(account);
 In any of the below methods (unless explicitly stated otherwise) we accept either - 
 - [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
 (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
- 
- **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
 
 - ETH address format: only for backwards compatibility. 
 (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+ 
+ ### Chat blockchain agnostic address format
+ **Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
+(Example : `eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
 
 ## **About Push contract addresses**
 ### Push core contract address
@@ -126,7 +128,7 @@ const notifications = await PushAPI.user.getFeeds({
 <details>
   <summary><b>Expected response (Fetching user notifications)</b></summary>
 
-```
+```typescript
 // PushAPI.user.getFeeds | Response - 200 OK
 [
   {
@@ -313,7 +315,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Fetching user spam notifications)</b></summary>
 
-```
+```typescript
 PushAPI.user.getFeeds [Spam] | Response - 200 OK
 [
   {
@@ -504,7 +506,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Fetching user opted in channels / subscriptions)</b></summary>
 
-```
+```typescript
 // PushAPI.user.getSubscriptions | Response - 200 OK
 [
   { channel: '0x0000000000000000000000000000000000000000' },
@@ -561,7 +563,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Fetching channel details)</b></summary>
 
-```
+```typescript
 // PushAPI.channels.getChannel | Response - 200 OK
 {
   id: 39,
@@ -611,7 +613,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Searching for channel)</b></summary>
 
-```
+```typescript
 // PushAPI.channels.search | Response - 200 OK
 [
   {
@@ -1091,7 +1093,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Opt in to channel)</b></summary>
 
-```
+```typescript
 // PushAPI.channels.subscribe | Response - 200 OK
 { status: 'success', message: 'successfully opted into channel' }
 
@@ -1129,7 +1131,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Opt out of a channel)</b></summary>
 
-```
+```typescript
 // PushAPI.channels.unsubscribe | Response - 200 OK
 { status: 'success', message: 'successfully opted out channel' }
 ```
@@ -1396,7 +1398,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Send Notification)</b></summary>
 
-```
+```typescript
 // PushAPI.payloads.sendNotification | Response - 204 OK
 ```
 </details>
@@ -1459,7 +1461,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>DEPRECATED - Expected response (Get channel's subscribers list)</b></summary>
 
-```
+```typescript
 // PushAPI.channels._getSubscribers | Response - 200 OK
 [
   '0x004f0c30bdad515cb9c554e698b52d71f1227134',
@@ -1587,7 +1589,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Create Chat User)</b></summary>
 
-```
+```typescript
 // PushAPI.user.create | Response - 200 OK
 // PushAPI.user.create | Response - 400 IF USER ALREADY CREATED
 ```
@@ -1598,7 +1600,7 @@ Allowed Options (params with * are mandatory)
 ### **Get user data for chat**
 ```typescript
 const user = await PushAPI.user.get({
-   account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
    env: 'staging',
 });
 ```
@@ -1606,13 +1608,13 @@ const user = await PushAPI.user.get({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
+| account*    | string  | -       | user address (Partial CAIP)             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
   <details>
   <summary><b>Expected response (Get Push Chat User)</b></summary>
 
-```
+```typescript
 // PushAPI_user_get | Response - 200 OK
 {
   about: null,
@@ -1661,20 +1663,72 @@ Allowed Options (params with * are mandatory)
 </details>
 
 -----
+  
+### **Decrypting encrypted pgp private key from user data**
+```typescript;
+
+// pre-requisite API calls that should be made before
+const user = await PushAPI.user.get(account, 'staging');
+  
+// actual api
+const decryptedPvtKey = await PushAPI.chat.decryptPGPKey(
+    encryptedMessage: user.encryptedPrivateKey,
+    signer: _signer
+);
+```
+
+<details>
+  <summary><b>Expected response (Decrypt PGP key of a specific user)</b></summary>
+
+```typescript
+// PushAPI_chat_decryptPGPKey | Response - 200 OK
+// Dummy PGP Key response below
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+xcASBGP5FCITBSuBBAAiAwMEjbf6BZTz5QEzR6eiZzTKnh4I0k96UTKlqYuoUIHn
+tseu+wX3Iir+3Qx8RUMroIfzW4vPfvRT9Asyiy6lgX7INRva5NmcGF5K/Ajb1FbU
+etXLQpI2t7jgCBnwZuPYIuyb/gkDCAc1hVXWhLZqYDdwksEN87qo2VmkTc8anibt
+Vr3LzZ9HIE0UzVFw5TJ8edc1PUhuNSvECi6bNC5ikq2U36J9laZIui/w8Ep8Qiap
+ThdHWn6irZSct2jM2PTxzXi1/3pyzQ1hc2QgPGFzZGFAYXM+wpwEExMKACQFAmP5
+FCICGy8DCwkHAxUKCAIeAQIXgAMWAgECGQEFCQHhM4AACgkQE3CXg+QOmOvYFwF/
+SFGt6+1HDB5wgJK0I7U+4KBqrbskKosFIiCu28z/+kH4XNsbfAokUeEHGlR7dbTJ
+AX9He9aDN/+HVXDluqbFjtiuOPt0o+rh2q+VqlWoZNSd5KYZf5eooLZ5QCeXTwGv
+QqXHpQRj+RQiEwgqhkjOPQMBBwIDBK3/1kmZzkyeFy5uGLnLlHrliqg8S0opzQdL
+JO7KJ0i4w7sj8ixIk8MCfTlhdOCn9/GJWpj4zbLmh4LRIi1tBpb+CQMIa3eosFni
+UqxguopAXYFt/NoA5UWsyBpt4+FyItaSXuuU1h8iFTRC4yuJ0NIlreuudAlwb36R
+cLm19yXJh9npgzxQqKKIAHZZpBRdp0alG8LAJwQYEwoADwUCY/kUIgUJAeEzgAIb
+LgBqCRATcJeD5A6Y618gBBkTCgAGBQJj+RQiAAoJEO0UKAv9yVcJ8uUBAOm/XYO2
+BaQbFNzhZdJBCm/aaLArNKT/+ub+SkI/Fx3+AP0c0oNutj/+5W8b/Ce+UI8at1L4
+CymTBlUIl3R2rnBDTQIgAX40L8DDXoEQyXYAzGjB8HcZe7WX2fjxpGm7aj6H8iMo
+kYHdfC/mwoUNY1eV8zfsEnIBfR/yFmf3/QT72X+SBaR4D9dw/D0xjSoAyPhYr93H
+F00iYdiGdhT/cniA8ZFpFgkfwMelBGP5FCITCCqGSM49AwEHAgME6yddDDmq0ejZ
+jbv/mJ395lGDdQVbkJE2Tv5oT0p3rj/9pEh5KJnh9wgmsSf2+22aY9Z19Rv8Wl/l
+m4a9PsaZ0P4JAwjRmhmCO7pFAmC1uwxXLWMyU2+eAHdxO1Ss2qaz/5652ExsUuPI
+88ZMOX+xo7utXHRNmNWipLdPaJqNbcWhLzYengHrM7On0y5feOO46AGswsAnBBgT
+CgAPBQJj+RQiBQkB4TOAAhsuAGoJEBNwl4PkDpjrXyAEGRMKAAYFAmP5FCIACgkQ
+ZbEnxLqhlXrZwwEA494obuihsfgTJGjeWansPkhjCvqPGLLfDwVpyM//fYIA/1oU
+yVJsET+iG0vMiNigPywJQR6UiGERCQ+Q3XdrczqSEPsBgPswjBYJtRiFi6adx8Yb
+LL+rV4kpBdz22i8fEeHkVQ0VpVFcyCjIso+PnyIDFt52QwGA1Zu1NfUps4ooHhfs
+n4FxJNoL/lmuCqhQm4Zgduj3GdYUunMDID3k54J1FPGN+iCj
+=OX08
+-----END PGP PRIVATE KEY BLOCK-----
+```
+</details>
+
+-----
 
 ### **Fetching list of user chats**
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(account, env);
-const encryptedPvtKey = user.encryptedPrivateKey;
+const user = await PushAPI.user.get(account, 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPvtKey, signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(user.encryptedPrivateKey, _signer);
   
 // actual api
 const chats = await PushAPI.chat.chats({
-    account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
+    account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
     pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
     env: 'staging',
@@ -1684,7 +1738,7 @@ const chats = await PushAPI.chat.chats({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
+| account*    | string  | -       | user address (Partial CAIP)             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
@@ -1692,7 +1746,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Get chats of a specific user)</b></summary>
 
-```
+```typescript
 // PushAPI_chat_chats | Response - 200 OK
 // Array of chats
 [
@@ -1801,15 +1855,14 @@ Allowed Options (params with * are mandatory)
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(...);
-const encryptedPvtKey = user.encryptedPrivateKey;
+const user = await PushAPI.user.get(account, 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(...);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(user.encryptedPrivateKey, _signer);
   
 // actual api
 const chats = await PushAPI.chat.requests({
-    account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
+    account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
     pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
     env: 'staging',
@@ -1819,7 +1872,7 @@ const chats = await PushAPI.chat.requests({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
+| account*    | string  | -       | user address (Partial CAIP)             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
@@ -1827,7 +1880,7 @@ Allowed Options (params with * are mandatory)
 <details>
   <summary><b>Expected response (Get chat requests of a specific user)</b></summary>
 
-```
+```typescript
 // PushAPI_chat_requests | Response - 200 OK
 // Array of chat requests
 [
@@ -2113,19 +2166,8 @@ Allowed Options (params with * are mandatory)
 | admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
-
-
-### Chat Helper Utils
-#### **Decrypting encrypted pgp private key**
-```typescript
-import { IUser } from '@pushprotocol/restapi';
-
-const decryptedPvtKey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          (connectedUser as IUser).encryptedPrivateKey, //encrypted private key 
-          '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7' //user address
-        );
-```
-
+  
+### **Chat Helper Utils**
 #### **Decrypting messages**
 ```typescript
 import { IUser } from '@pushprotocol/restapi';
