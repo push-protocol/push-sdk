@@ -2024,7 +2024,8 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
 
-const threadhash = await PushAPI.chat.conversationHash({
+// conversation hash are also called link inside chat messages
+const conversationHash = await PushAPI.chat.conversationHash({
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
   env: 'staging'
@@ -2032,7 +2033,7 @@ const threadhash = await PushAPI.chat.conversationHash({
   
 // actual api
 const chatHistory = await PushAPI.chat.latest({
-  threadhash: threadhash.threadHash,
+  threadhash: conversationHash.threadHash,
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   pgpPrivateKey: decryptedPvtKey,
   limit: 10,
@@ -2115,6 +2116,7 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: us
 
 // get threadhash, this will fetch the latest conversation hash
 // you can also use older conversation hash (called link) by iterating over to fetch more historical messages
+// conversation hash are also called link inside chat messages
 const conversationHash = await PushAPI.chat.conversationHash({
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
@@ -2123,7 +2125,7 @@ const conversationHash = await PushAPI.chat.conversationHash({
   
 // actual api
 const chatHistory = await PushAPI.chat.history({
-  threadhash: threadhash.threadHash,
+  threadhash: conversationHash.threadHash,
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   pgpPrivateKey: pgpDecryptedPvtKey,
   limit: 2,
