@@ -1728,8 +1728,8 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: us
 // actual api
 const chats = await PushAPI.chat.chats({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-    pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
+    pgpPrivateKey: pgpDecryptedPvtKey,
     env: 'staging',
 });
 ```
@@ -1862,8 +1862,8 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: us
 // actual api
 const chats = await PushAPI.chat.requests({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-    pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
+    pgpPrivateKey: pgpDecryptedPvtKey,
     env: 'staging',
 });
 ```
@@ -1872,9 +1872,9 @@ Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
 | account*    | string  | -       | user address (Partial CAIP)             |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chat requests of a specific user)</b></summary>
