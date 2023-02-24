@@ -267,7 +267,7 @@ export const getEncryptedRequest = async (
 
 export const getSignature = async (user: string, wallet: walletType, hash: string) => {
   if(!wallet?.signer) {
-    console.warn("This method is deprecated. Send signer in the function");
+    console.warn("This method is deprecated. Provide signer in the function");
     // sending random signature for making it backward compatible
     return { signature: "xyz", sigType: "a" };
   }

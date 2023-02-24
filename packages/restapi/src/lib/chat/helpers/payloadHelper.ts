@@ -110,7 +110,8 @@ export const approveRequestPayload = (
   const signature = '1';
 
   let isGroup = true;
-  if (senderAddress.includes('eip155:')) {
+  if(isValidETHAddress(senderAddress))
+  {
     isGroup = false;
   }
   const body = {

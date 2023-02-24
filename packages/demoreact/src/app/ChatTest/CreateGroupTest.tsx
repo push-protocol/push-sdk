@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const CreateGroupTest = () => {
-  const { account } = useContext<any>(Web3Context);
+  const { account ,library} = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [groupName, setGroupName] = useState<string>('');
@@ -77,6 +77,7 @@ const CreateGroupTest = () => {
   const testCreateGroup = async () => {
     try {
       setLoading(true);
+      const librarySigner = await library.getSigner();
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
       if (user?.encryptedPrivateKey) {
@@ -104,6 +105,7 @@ const CreateGroupTest = () => {
         contractAddressERC20,
         numberOfERC20: numberOfERC20 != null ? Number(numberOfERC20) : undefined,
         account: isCAIP ? walletToPCAIP10(account) : account,
+        signer: librarySigner,
         env,
         pgpPrivateKey: pvtkey,
         meta: meta

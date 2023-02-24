@@ -32,7 +32,7 @@ export const encryptWithRPCEncryptionPublicKeyReturnRawData = (text: string, enc
 };
 
 export const decryptWithWalletRPCMethod = async (encryptedMessage: string, account: string) => {
-  console.warn("This method is DEPRECATED. Use decryptPGPKey method with signer!")
+  console.warn("decryptWithWalletRPCMethod method is DEPRECATED. Use decryptPGPKey method with signer!")
   return await decryptPGPKey({
     encryptedMessage,
     account

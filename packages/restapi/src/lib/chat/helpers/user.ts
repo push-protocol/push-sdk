@@ -1,16 +1,29 @@
 import Constants from '../../constants';
 import { get, create } from '../../user';
 import { decryptPGPKey, decryptWithWalletRPCMethod } from '../../helpers';
-import { AccountEnvOptionsType, IConnectedUser, IUser, SignerType, walletType } from '../../types';
+import { IConnectedUser, IUser, SignerType, walletType } from '../../types';
 import { getAccountAddress } from './wallet';
 
 export const createUserIfNecessary = async (
-  options: AccountEnvOptionsType
+   wallet: walletType,
+   env: string,
 ): Promise<IUser> => {
-  const { account, env = Constants.ENV.PROD } = options || {};
-  const connectedUser = await get({ account: account, env });
+  const address = await getAccountAddress(wallet);
+  const connectedUser = await get({ account: address, env });
   if (!connectedUser?.encryptedPrivateKey) {
-    const createdUser: IUser = await create({ account: account, env });
+    const createUserProps: {
+      account?: string;
+      signer?: SignerType;
+      env?: string;
+    } = {};
+    if(wallet.account) {
+      createUserProps.account = wallet.account;
+    } 
+    if(wallet.signer) {
+      createUserProps.signer = wallet.signer;
+    }
+    createUserProps.env = env;
+    const createdUser: IUser = await create(createUserProps);
     return createdUser;
   } else {
     return connectedUser;
@@ -29,7 +42,7 @@ export const getConnectedUser = async (
       return { ...user, privateKey };
     }
     else {
-      throw new Error(`Decrypted private key required as input`);
+      throw new Error(`Decrypted pgp private key required as input`);
     }
   }
   else {
@@ -48,6 +61,7 @@ export const getConnectedUser = async (
     const newUser = await create(createUserProps);
     let decryptedPrivateKey;
     if(wallet.signer) {
+      console.log(wallet.signer)
       decryptedPrivateKey = await decryptPGPKey({
         signer: wallet.signer,
         encryptedMessage: newUser.encryptedPrivateKey
