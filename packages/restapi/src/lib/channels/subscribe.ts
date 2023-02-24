@@ -13,9 +13,9 @@ import Constants from '../constants';
 
 type SignerType = {
   _signTypedData: (
-    domain: unknown,
-    types: unknown,
-    value: unknown
+    domain: any,
+    types: any,
+    value: any
   ) => Promise<string>
 }
  

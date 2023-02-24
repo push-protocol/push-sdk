@@ -28,6 +28,9 @@ import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
+import {Buffer} from 'buffer';
+
+window.Buffer = window.Buffer || Buffer; 
 
 interface Web3ReactState {
   chainId?: number;

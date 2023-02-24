@@ -225,6 +225,20 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
   apiKey?: string;
 };
 
+export interface ChatSendOptionsType {
+  messageContent?: string;
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  receiverAddress: string;
+  pgpPrivateKey?: string;
+  /**
+   * Api key is now optional
+   */
+  apiKey?: string;
+  env?: string;
+  account?: string;
+  signer?: SignerType;
+};
+
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
@@ -237,6 +251,23 @@ export interface UserInfo {
   isAdmin: boolean
 }
 
+export type SignerType = {
+  _signTypedData: (
+    domain: any,
+    types: any,
+    value: any
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  provider?: any;
+  publicKey?: string;
+  privateKey?: string;
+}
 
+export type EnvOptionsType = {
+  env?: string;
+}
 
-
+export type walletType = {
+  account: string | null;
+  signer: SignerType | null;
+}

@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const UpdateGroupTest = () => {
-  const { account } = useContext<any>(Web3Context);
+  const { account,library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
@@ -59,7 +59,7 @@ const UpdateGroupTest = () => {
           account
         );
       }
-
+      const librarySigner = await library.getSigner();
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
@@ -68,6 +68,7 @@ const UpdateGroupTest = () => {
         members: members.split(','),
         admins: admins.split(','),
         account: isCAIP ? walletToPCAIP10(account) : account,
+        signer: librarySigner,
         env,
         pgpPrivateKey: pvtkey,
       });
