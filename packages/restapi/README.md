@@ -1988,20 +1988,33 @@ Allowed Options (params with * are mandatory)
 ### **Fetching conversation hash between two users**
 ```typescript
 const threadhash = await PushAPI.chat.conversationHash({
-        account: '20x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
-        conversationId: '0xFA3F8E79fb9B03e7a04295594785b91588Aa4DC8', // receiver's address or chatId of a group
-        env,
+        account: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+        conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
+        env: 'staging',
       });
 ```
 
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
+| account*    | string  | -       | user address (partial CAIP)             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| conversationId*    | string  | -       | receiver's address or chatId of a group|
+| conversationId*    | string  | -       | receiver's address (partial CAIP) or chatId of a group|
 
 
+<details>
+  <summary><b>Expected response (Get conversation hash between two users)</b></summary>
+
+```typescript
+// PushAPI_chat_conversationHash | Response - 200 OK
+{
+  threadHash: 'bafyreign2egu7so7lf3gdicehyqjvghzmwn5gokh4fmp4oy3vjwrjk2rjy'
+}
+```
+</details>
+
+-----
+  
 ### **Fetching history between two users**
 ```typescript
 
