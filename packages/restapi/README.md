@@ -43,8 +43,8 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
     -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
     -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
-    -  [To approve a chat request](#to-approve-a-chat-request)
     -  [To send a message](#to-send-a-message)
+    -  [To approve a chat request](#to-approve-a-chat-request)
     -  [To get group details by chat id](#to-get-group-details-by-chatid)
     -  [To create a group](#to-create-a-group)
     -  [To update group details](#to-update-group-details)
@@ -2236,17 +2236,16 @@ Allowed Options (params with * are mandatory)
 |----------|---------|---------|--------------------------------------------|
 | messageContent    | string  | ''       | message to be sent |
 | messageType    | 'Text' &#124;  'Image' &#124;  'File' &#124; 'GIF' | 'Text'| type of messageContent |
-| receiverAddress*    | string  | -       | user address (Partial CAIP)             |
+| receiverAddress*    | string  | -       | user address or group chat id (Partial CAIP)             |
 | signer*    | -  | -       | signer object |
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
-  <summary><b>Expected response (send chat message or chat request to a wallet)</b></summary>
+  <summary><b>Expected response (send chat message or chat request to a wallet / group chat id)</b></summary>
 
 ```typescript
 // PushAPI_chat_send | Response - 204 OK
-
 ```
 </details>
 
@@ -2255,22 +2254,32 @@ Allowed Options (params with * are mandatory)
 ### **To approve a chat request**
 ```typescript
 const response = await PushAPI.chat.approve({
-        status: 'Approved',
-        account: '0x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
-        senderAddress : '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // receiver's address or chatId of a group
-        env:'staging',
-      });
+  status: 'Approved',
+  account: '0x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
+  senderAddress : '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // receiver's address or chatId of a group
+  env:'staging',
+});
 ```
 
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| senderAddress*    | string  | -       | receiver's address or chatId of a group |
 | status    | 'Approved' | 'Approved'  | flag for approving and rejecting chat request, supports only approving for now|
+| senderAddress*    | string  | -       | chat request sender's address or chatId of a group |
+| signer*    | -  | -       | signer object |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+<details>
+  <summary><b>Expected response (approve chat request for a wallet / group chat id)</b></summary>
 
+```typescript
+// PushAPI_chat_approve | Response - 204 OK
+```
+</details>
+
+-----
+  
 ### **To get group details by chatId**
 
 ```typescript
