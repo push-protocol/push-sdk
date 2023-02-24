@@ -72,7 +72,7 @@ import * as PushAPI from "@pushprotocol/restapi";
 const ethers = require('ethers');
 const PK = 'your_channel_address_secret_key';
 const Pkey = `0x${PK}`;
-const signer = new ethers.Wallet(Pkey);
+const _signer = new ethers.Wallet(Pkey);
 ```
 ### When using in FRONT-END code: 
 ```typescript
@@ -82,7 +82,7 @@ import { useWeb3React } from "@web3-react/core";
 .
 .
 const { account, library, chainId } = useWeb3React();
-const signer = library.getSigner(account);
+const _signer = library.getSigner(account);
 ```
 
 ## **About blockchain agnostic address format**
@@ -1573,7 +1573,7 @@ Allowed Options (params with * are mandatory)
 ### **Create user for chat**
 ```typescript
 const user = await PushAPI.user.create({
-   account: '0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+   signer: _signer,
    env: 'staging',
 });
 ```
@@ -1581,10 +1581,19 @@ const user = await PushAPI.user.create({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| signer*  | -       | -       | Signer object                              |
+| env      | string  | 'prod'  | API env - 'prod', 'staging', 'dev'         |
 
+<details>
+  <summary><b>Expected response (Create Chat User)</b></summary>
 
+```
+// PushAPI.user.create | Response - 200 OK
+// PushAPI.user.create | Response - 400 IF USER ALREADY CREATED
+```
+</details>
+
+-----
 
 ### **Get user data for chat**
 ```typescript
@@ -1600,12 +1609,73 @@ Allowed Options (params with * are mandatory)
 | account*    | string  | -       | user address                  |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+  <details>
+  <summary><b>Expected response (Get Push Chat User)</b></summary>
+
+```
+// PushAPI_user_get | Response - 200 OK
+{
+  about: null,
+  name: 'turquoise-ethnic-chicken',
+  did: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+  encryptedPrivateKey: '{"version":"x25519-xsalsa20-poly1305","nonce":"q4o/j5qFNSIcgKhoCPZ0ujGz4/BW+IDs","ephemPublicKey":"/X3GJ8LCuv2/PRyvE2iCaM9FjRlAt52qj/pt2cVTnVc=","ciphertext":"4GNNYmarW5Vmo3pmWtq9hN9lPgodfaaj5bAvDTU87NbJsLeqLeZsvRW6MGqJQSsPsoS+FXsXFZbRIGvO73hvCl7ikGb9O/4jRyUNWhXuj3GS794UGNWGxVK8tS/kLu1OTaRG0tDhPJiIpjy4g6ejlswzG3nq0nw6f7EWSuhMKuBD6kDvC00NqvAmpvJqRMqjpZIVdx0nnA1J30RdCrBS2lG7Lkv2FYZEvJkt1ueW2eE5F9KEg63lNHd/bWY6rINdReDsPpgOdcPvEP/27c8pG/FNi0pPeYxZ4h+QqVYE791k3rJDPX6tx9vjQ1qQ9JySblrWee3Cv6UGq2DK6crteFrOaWpAVFisSzWe0ylAyp8ly1m41XnMca/TUjbltFqs5SmrjXnCqFRJp5pEYSYXFatb2/P/fFgVgJfGcz4t6FOf4aBPHBMiPkVu5scxkioSCLtMdlrNdUkFOQqLonKcNM29roADBPVEM5eHhqpDVrB7W1JqPzAxtipGBwrKQSMNBJuTH4d5EUfHLmZb6vsjuY2qZlI0ti27FsdiVm1gMUGe6txkxR8OuwV3YBGPpOfGde23r//RjBgbjQBudjksW8np2qtHmNejuqbA/2Pyb/3Pyohfil4Uly1ywbN90VH1Iz7C1XImNk54ty+wtuYZ4+gyj8L/miWUQpHpeZdoaffGII4ef3olqiP/7PkghAbkmTPV/thQDorOa6o5vX4U2A0bjqPN60U8ORrGRgz14rtJYfqMP4IIesIHuXz366bZ6yDRSZjqB4B7idNa7fyNSYTC83dpgzLMDo5VSrjRjSjx6+nolWNwkytqCj7NQw0N6p8QM2l3a8VeE7d2Qh+ycNJ6tnU5oXXwok/yVRaisDTyGhSes0M16FuY9m9sJPK2Gwhb24lrRpALZXasphp8t/8YOIY1Y6+yIeFT3/Qj+ec990Ituyx5y7F8JShMKninZPauunH2cEYT1dlbSOk2TKk7uNivTVbrW8M7n8h+i5AUpeq8LDe5QXKXfNruZO1Y/PCT3uoyFGUY69wLqi+PhBXO3DmWdWsevqjbf5FqaKVDLPzwVBaT7DWr7Pg58cR1jKYnn8zwEzGh8sS35WLdNhEgFTY1c6JTVeQS3AG/5dFSurcFK/agSPQ2eMvi4ZHH1xRYuYCO0j5Bb9PM+VhaLAkUA1xury8pV1Qvd4CDbPGnLZRzf3QCV/7hfkRoXY9UfU298oS0aDO25fiQJzfyC/r1U7ye6f1+IH/cIhSoTkUAOsE7a62kdRyngNggzvtykxgauWuWhfYtyhTEvUBvIhe7IhJNmnoCqX3jXevlqAc8vUwxi5GVq0izvOC8A6zsrbceToqXlEIFw2THdF+k7kvZ8YfeMeuejc0eC9i5WCRKk9Zvo4i7ZPOMLC6cZpGGmnEzmIPbQVtcZrkVgWMZkamc3zBnb++UBnEQhFIuXseC4sD4F9cDwjheQAXbkiHUafnTHJNLT+Hu0GA8d8GNW0ne45SmGfCTkGv1usa2TbbVJkPvvjFXviHB11CxSDjHauCzUQ1cbNvf3lddUhkmxmUOZEJDLeulEdwc4nmwBSNNVQfs4glfsoopEdfBS/az/vbC5aCUT0xUA4BPGtjeDJpt5zA+90rC9DOs2uXrkYDL5IIi6mgtWaF7PZYCNC9voKLtGTwyXpG+ZGTPoazOD3/joK7gR0hhmBS5h40v2N4a+qRjEAy4sNC4ulURSCnKOT4Y3HY3F/gOekhZXPgxJnTGSFb2YBPHl9zqKJl3QY+poei5FxS8LG1WK7QwgmmxZAV9jgEZC7w5pxc+rDMTEV1035QDpqQl38mNXhEJ2r9ZGcb1K73I1On5ogUmH6i3tM05rLNoGznd3yeOAhwoorD8NuCX9B83tWWPPxQh7nLHQBsmc1aYahqUrkiOhvJcU8NHIJZFkyC0iPmtIfdvgC4yEfd9Kh/z3SqYwx+Y9A+CoMLddLENTH3JB+Z1l9lAfJv40muBbf+oqtgAbI4aWTwx/udGhQ1uUNT74OqO/Zc1YL/FGtcBF/+xxbwjysWoGR3NvvLxC1XeXh3lVE7w1x761eB3xR/7lU0I+3MBhzZ0OGwOG3FFW+w28go4ZfQlMlcpZl9NhN9veYVb3iseI8Tg1yXijGEA4ji23mAdUJGnhwWeHlV9NSPPoiWYPHw91RVd1Ak86LhaRmMcU+0WEftMMinfOboEhr+7xx/txsluE1V2jcYsJKcdDA6MUThLxhg32dr3x/NVj8rFSRU8sl7FhMOb8I+FAoQrzi4kyFpKVWf1elp/gq9pSlWfDIi08NNXZrPSB6xh0grM9fp85UzPjUggwpVKNxCdlEVTn5iazGq+zuQekUomJ5+HOHqWWOf6t57Pv491+whFMp/kyWQIC9TSKzV68KH3XMvGpk0IhbBoRAzwU2A9fZLDD8cqxxfM/3JKVC3Glz2I1w0WNeIdwT9+SvcHV3Wsix9W86tePMziWQ7QLUU7Ox0mFf796zVQNtlEa4pHwag6EJp5zDrsv+KvYh2gatedmEypRewaeNfN+QdfBzF40elNTuCjUZ1fmKjleNwaTft38/jpxaqTKqwBhn0PoHeAh66Cs3G1TgKJSsxARICutjMEmcxoO1eAeWz2XJc0bOYFaEJliwoQu7sVhGHrsEx2Iw/k85IEKt3gc5R2lmnMY94dqnZiorRSIgRkGp59/cQ4raPgk+aYMM/mefAhYHKwVE4k/14iln1FKuJzKT5BwWRP50A73jIimRx/HxLypLIS9X2xOOVO61EAIGIRpDomLKh69F+PDQdrmslnqePI97C5Gd/JQCsFTN5jwOIyRIaah+6HGiQjNXUC8mewB7bVCOG9Wi0AKDdfHLkWejiGVQT4Vrw3nULViYk6rQ+e/divNGrwMEYFYDmLQ8p+8Emuz7UKExBiOWqI+sZTSFVZdSOqtbU7+1FEiiwHVChNNDVl6shx9KP3S6lOo21oZflQcO9J56ErOrZItyrs6DtmCTM8nbzt/XoWsJ/2HQuthnr+lOwfOfZPrJha75CZuEhJVNR73eG0QJ2YOLqXkWwp4juagvIlrQpknzudbcZno98z+xyvNXNLFQwuN7znjNZNPjHo/du4/pVc6tFiMuWOp3AIv5Q3zTG47WFoEph5awgKZBN84rGQMWO0eO/l2iPlHXq6Sng5snhvIVChQnocuC2piihs/4QpdOIM86MGKa4p4mqHVJhagRPU4U6gsNxtsruUY11R3j1dRX/RK3v1gE4+5/TcDlwi7KW41GFx4m7oDJOPiXYfDwh7C0EiKL8diJw7pHa4ldoc2iC1lnPFilEqzXxrgfhqd70+crFf8JT8UuTOalU681NZcFGDsi3ENXFlWAICkKobGe7qjJIYpSetBaWoIOqUku1T3Y6rhCrqOdu3i+8flhKavxHJFRvL/6dWwKRjYSHVOQeDNJCQuTzks7hdEizqPO7DRcdqcl5odsMt1AlM9l9TAHT3KUjPhNMz6xdpjLJzmZrDJ9EWeCYka7NfyErXZbE9/OVI2hAmkfDm47gsVsC745OkqQmXmPHV9F6la2rjfhg5AoOsJnyS5hkM3DyEGUfY+tL1OeW/uukJbJLjuZhn6LO0CgfDACMbDQb5LUziZWK3tv8Rluk6npjc6OHnaMn4mRATk/kBfNB8SsIb2j18gcZm3/bE2eTKn0737iw0JDIaBMbghkTpK0FJOxwU8xsBh4rK+ui8Mu4F1eKKwRzLOc6ROlYCcvltgeWvnmHzAn4q76SuZQkrFsHHHidUjP36mZYIAHnFGBe0pC83PMMkDepta9apfrMqmw9U5tBuSF6e939sbXMHsHAdN6uFLIPQg27LIPgyJQTklc/BfnbdTTq89mDELB4LROKjBK2KfAIInJPmwZKTMxiEh50OZUAnwdWO3yJtNehqsdhmyqnHt2CpboiV3yu8PZrz+quHzGpn+LYT5BPhzKde5Qx4LRw0s6VWTpumWe7N04X8ZYSlLrxpCgXGp60KSt0oy7wTzFuMFRZj/aQGiT43g5nNcxlgXApX2RbWOSaSe0Vios48Ntu6MH5aH28XKvYVvPwMbFzu6+JFfD2Rvv/rWmVMqxI/SD7OtgTqWXwTzbfd9EMoeOnBCk83i83O7uERQOgs6jOdqaqGFXmdVWllIYxq2UrAPA3X1pbQkfvorw9oMfFegfbWFZ1BBe4q8Jqic/YHMfK0mjW7TT31dTPtuBcVrBrQLBYMmxN4IqDj9/YcnpDmHA8N1R1vT5dLP9tm1iIBTT/xcFozNIFgqHJwFZpwV8UAFixAofr5ucdXK2PZ6u/XALE8dHTAGYNNusEoCr7RonZ58Rrb7FrZz5kXDbOYSdf8oPMLM+am2QOf4wxXZDzdPYhlIv9r4KHxXK593DGDtWfNTDgfhwyCbHe8sybZz8KTNlmSdOJ353GB9PIeuKSQuHjoowB6OMPI6hapPUrCc14NtBODHrntx1g/UukLzMLbzcXpAMWa44N8tFrWjbKYuB+dfiZesffD++I60o84MP66eiTgUA8yvy7wRGb8tVAJ0vr3N3fIPJS2nA9L4WgGfodeagGxP5KCp1xjEG6trNmWZxo5OD/Csf5Rxm+opv0q/DKB3pQja6R6iYzX/sEkB2cr1g=="}',
+  encryptionType: 'x25519-xsalsa20-poly1305',
+  encryptedPassword: null,
+  nftOwner: null,
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA3klEQVR4AcXBsa2DMBSG0S+/kDxFmuxBTeneI1jKAJFwBTMwAj0ltUdhCqq89uYVjqJIuedcHvfbEyOngrWsE9/IqWAt64QlnAlnwlnHGzkVrOEYadmvM58QzoQz4azjn+EYsWINWJFAy8KEtfUnViRgCWfCmXDW5VR4sU5YW39i7deZluEYsWINWDkVLOFMOBPOumWd+KVlnbCEM+FMOOt4I9bAi0RTrIFPCGfCmXDW5VRoGY4RK9O29SfWfp1pEc6EM+Hs8rjfnhhbf2LFGvjG1p9YsQYs4Uw4E87+ANR9MUzaGGBjAAAAAElFTkSuQmCC',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGNk+F4BCADfksMMpNxl47GAOKdW841OE6NaDEBIrsfiyq0DHAEApJwl\n' +
+    '3Rk3/7xoRoEEHsYLKccNLtuKBX/oEvkJNM9/XU0gFms0cGlOJxsLM/j81Ol7\n' +
+    'IqoXJWGbWfxaGSB1jacddZMdXJfDy3FN7VU885zPH66t5kA/K6Ra8vzXKvKy\n' +
+    'J4vTgWaYa/7OLF8oyTzEMSz1Mj/aB9z/mNdveKcnosC3jG6yDrVjrdkBJB98\n' +
+    '4VBPUHlWydzCnhpsZ1iT9jazSKwedhvkic21FdC94DpFdRg9Q39GkF7kOyhj\n' +
+    '91EJZJ2yhbZQSk0kSvsYW54ejFV26ccUTlHSoMOVPeYbLgha9u2Anz77ABEB\n' +
+    'AAHNAMLAigQQAQgAPgUCY2T4XgQLCQcICRCszcBmB607SgMVCAoEFgACAQIZ\n' +
+    'AQIbAwIeARYhBEWdLV876c+znjS0l6zNwGYHrTtKAAAKbgf/eCRgjXTWzkh9\n' +
+    'Wer//RpMxrMMyi75aqUCJ9VmciLkuCnw+OMGvPCDAOa7b+dH4tE4mhwNKord\n' +
+    'VkLbgaZLpcuiyRBZ4mU7gay3WivwDkl52B/VhFkzx2pd2dmPKVggDAZG8WQ1\n' +
+    'ETrDEObV+t+BofLEFxAgtw/v0MDEYju+TIkwcE6gUF0xAz035SL6eS1qlV6U\n' +
+    'EZ0qNheBtKw7MnBq1MWs3X/KeoRQiSPqlyTVfNI+emVTZ96EWOOB1Dbm88xa\n' +
+    'JNdxPWt4ud3cYG+prcqkBYfNNhIsKMnFH2uOoIMRzmMCn5bhkNtD2hyDTb5O\n' +
+    'p6qBF4HptRMRWA6z9EVx7V2sgedRw87ATQRjZPheAQgA8OqLN8MmwYkuuhAA\n' +
+    'Cmwu5xPBG1vH/OubI50IbWdoEGg9XkqlA1f0izqN61x6nA6taDJo9Txz3L7h\n' +
+    'Ez+/B8dy6swnAs63UZP4FFYKhnEb15gdPR1pxbfzbMbZCJ38aRMUcy99bTnC\n' +
+    'u41df+L2N5Z55Tk+LPEg5furmCvz7yTSphZe/OcU4y/KMBSDNqQhIN2GyevV\n' +
+    'ZqVwzEuCevAGPy0owXoF2EaDfS1Wz/yr6VI7Y6tK+SiGz2D9MQJRnFhAXDPO\n' +
+    'FH4oJD/bdPDJ4mJI2pCZJoxwu8m/Zr8txuXsgS1j4Ga8aXfriGVxws9vnypU\n' +
+    'RVakmkYm9+MsOMhBtFWwNw0ssQARAQABwsB2BBgBCAAqBQJjZPheCRCszcBm\n' +
+    'B607SgIbDBYhBEWdLV876c+znjS0l6zNwGYHrTtKAABcIgf+Jn1WYdm1/89y\n' +
+    '6wSKjH8H3etZc9zpSoXX49KH35t0QAKb+B9pa4mjTbmbHnAZYFvYzrc9VZNr\n' +
+    '0HrAypEgwEflOcfH8ocGSy7AuVFctT3gQ1pD898UUT9/QbHupLXla1u0Qnp+\n' +
+    'qMOfJG6MxQUdnZJbosZyaIoMv4QihHj4+KVLdQXCucXe/Zb4rshxlI0EZIZJ\n' +
+    'iJhB2pnBenB5CVuDryGzjl8JsANLtAQ2AlYH+0u3REXpTjIBnQksIUgwH25S\n' +
+    'XFpqUgmDPq/LfRw8Q8V5WQiKRwljhIw6wY05IwK24dPKRz1rjeWrb69CJAWb\n' +
+    'vvravSrzpzeXnWqVouv8WutINfAqdA==\n' +
+    '=2es+\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  wallets: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+  nfts: []
+}
+```
+</details>
+
+-----
 
 ### **Fetching list of user chats**
 ```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account, env);
+const encryptedPvtKey = user.encryptedPrivateKey;
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPvtKey, signer);
+  
+// actual api
 const chats = await PushAPI.chat.chats({
     account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
-    pgpPrivateKey: decryptedPvtKey,
+    pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
     env: 'staging',
 });
@@ -1619,12 +1689,128 @@ Allowed Options (params with * are mandatory)
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
+<details>
+  <summary><b>Expected response (Get chats of a specific user)</b></summary>
 
+```
+// PushAPI_chat_chats | Response - 200 OK
+// Array of chats
+[
+  {
+    about: null,
+    did: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+    intent: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+    intentSentBy: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+    intentTimestamp: '2023-02-19T22:31:34.000Z',
+    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+      '\n' +
+      'xsBNBGN/K/kBCADEv8v4k/rWXEhF47geWz1UBySLtgsCZxZK7RPhLWecku6N\n' +
+      'XTAPScS9YjXLDqy0tZ6nDvXh/vPbNNkd9phBGh5Mo6O3vNjI9pwd06KyT4sT\n' +
+      'ChjenRXU+aLHQzjTXOMO1xHkN3yiuLqC8mZ/OBPBkjHhC00taqhuWWudfcEv\n' +
+      '5DqZPqtHBwOipvtEqR9BDnVO4srL0xZPksJVPBmcekll61obQylKGx1K8vTg\n' +
+      '292Ivo+tPpDSkXdxWTx4EmcOPw/7E4IRoUudkAZUJzgZL48UPR7oDox8JIgH\n' +
+      'yF4PMTvKZR0Fps+8W/USMO9Mc5AUwNqkmvQyywo8wdTIWW8ki9OPhWvjABEB\n' +
+      'AAHNAMLAigQQAQgAPgUCY38r+QQLCQcICRA7/jxKMDdVgwMVCAoEFgACAQIZ\n' +
+      'AQIbAwIeARYhBJco5U6B/S5LNkspyzv+PEowN1WDAAB4bQf9FIzCf5fmwKuw\n' +
+      'g2B2IV9LIo5zZHU0Wkm52n0kesEJGfYJu/ub/GhPBtoAr8Pf+5CkGN75kxWg\n' +
+      'EhKDy8Sm/L+50I1QhIk1x73LMUz2cIxJeJdHdI13t+lZrp5Ni01KiPJzB7LJ\n' +
+      '2Nj5d5Kf53sM6A/Q7fwwUprbwTh1aQzngf8KSups6AjqLQe2Qyu6LzVTKcXe\n' +
+      'vQyIoYHxBdcy+2hH0ZIkkKvcWHHqIuym4NJXLqxxhqpK20KpIfl+YufqJiSW\n' +
+      '+f+imCrQSslXLL2E3fS+bPORTU/aL/uPkW1645BPoFuWKr7S+bVrEnp0sCS9\n' +
+      'xH/COFWmxhoeHHcu5tqKGJdsUZ9iiM7ATQRjfyv5AQgAm5KRDtuUtvLLLOrm\n' +
+      'cQ0IcFEa00guCEKbZfYmX/OFHBooBy185SWTKDRKilLTxGosnNFQbDovrbDA\n' +
+      'pP+DLDIHMBRJHnQCuCkXRqGV5vcI8VD3zOalUJpz6f+QKWnkhv2lt05OTeOc\n' +
+      'hhC7NCC3joe0rUtUgYpvv4i18BrrrADaY0Qkmy7RBor7CCXAttbeOhsxJc1E\n' +
+      '1b7bhJW1Ja8yezDCN7801S/GPjohpzEYkKkw+ziBDJnvXJC8T+hRINo0RtX9\n' +
+      '9xn2beUJSquDTw9Y2tvQ6RMMiYcjiSVQ6n9XqgRp6GDlY2JhGigmmd8+4cpZ\n' +
+      '2EH9kGrwGIGUH/D91owQejNiAwARAQABwsB2BBgBCAAqBQJjfyv5CRA7/jxK\n' +
+      'MDdVgwIbDBYhBJco5U6B/S5LNkspyzv+PEowN1WDAADewgf9EuYPp6eSjbK3\n' +
+      'tpDoUV6xTmGHi6R0+8szSF+1yJ3oGzxd60K9pz9eeSsjjUL9sasKWmVMaG2U\n' +
+      '99Pc0ZV1czl+nthzigsJIq1ZbTFWA2xcNLOWa5Qw7bnb8QcH7t+l6gW95whT\n' +
+      'lA9SL8mAzYHzKLyVlTfJD7bUZSWtk7DhNr8QCq9U5W6GoSM619zC5Ndcg0Av\n' +
+      'hwmPmsFjGxI6E/69f+ZpKmQ3xbMTLhzQZYT5wRyNDHh7KFYM6yfc8sg1+VSm\n' +
+      'FWgChvHKD9X+z4KyVTuxHwZVda17tYoHmUM+dF3JuzZJteTiAii9tu3oDRKW\n' +
+      '4QpEgIbbKge5JRntvBdRr714aPjztA==\n' +
+      '=aP07\n' +
+      '-----END PGP PUBLIC KEY BLOCK-----\n',
+    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA6ElEQVR4AcXBoXEDMRRF0btvtglhMdcQ5jHfLhwiqiJ2wkRShhowSREiHoWqBqMN/TYQ8WT+Ocv9cTkwRolYIXWsUSIzIXWsUSJWSB1LOBPOhLPl++P3wDhtOzMhdWZGicy0mrGEM+FMOFt50WrGOm0772g1MyOcCWfC2XJ/XA4mRom8I6TOjHAmnAlnKy9GiVitZqzTtjPTaubZjhVSxxLOhDPhbPn5+jwwQurMjBKZCakzM0rEEs6EM+FsbTXzbMcKqWO1mpkJ6Yo1SsRqNWMJZ8KZcLaeb1esUSL/6Xy7Yglnwplw9gcz1UAzKe4AEAAAAABJRU5ErkJggg==',
+    threadhash: 'bafyreia2bi62fh5ab5ozvi46y4onm2vf5ql4kcxtmta5uarznhazp53264',
+    wallets: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+    combinedDID: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681_eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+    name: 'salmon-xenial-cuckoo',
+    msg: {
+      link: null,
+      toDID: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+      encType: 'pgp',
+      fromDID: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+      sigType: '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJj8lXtCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAB9ZAgA2RsziFlghtZ9dTX964TV4vH7BG1KGqzjfJQ8BcBvtQdkj4Wt\n' +
+        'WIisiu0JQ1BoX4YSQBDwZipTDZrey86bgms3bCwj7NgicE2ukUsYifAWhN61\n' +
+        '7KtVLKLf+i/NBtGE0L5dVNI97JhwWMVyChY/9LfOJsKq+3Qgk7W/8Z93Fuhu\n' +
+        'ZnZ3KlJEczJHANYnmS4Fp5d+pTPIADsBzuo4vffQeAiNmmtYPREOgUmc8B84\n' +
+        'Y0MAeXo6VqpQeqWuWZurXoa4VY30piMofoUmL4NgaYwAhBJZxF49aZidZmFo\n' +
+        '6Brw2idv8GK0TiTWpketO5hGBljAdv5aqg41jwb+kgx0HxU1hPm1DQ==\n' +
+        '=Wr1+\n' +
+        '-----END PGP SIGNATURE-----\n',
+      toCAIP10: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+      signature: '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJj8lXtCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAB9ZAgA2RsziFlghtZ9dTX964TV4vH7BG1KGqzjfJQ8BcBvtQdkj4Wt\n' +
+        'WIisiu0JQ1BoX4YSQBDwZipTDZrey86bgms3bCwj7NgicE2ukUsYifAWhN61\n' +
+        '7KtVLKLf+i/NBtGE0L5dVNI97JhwWMVyChY/9LfOJsKq+3Qgk7W/8Z93Fuhu\n' +
+        'ZnZ3KlJEczJHANYnmS4Fp5d+pTPIADsBzuo4vffQeAiNmmtYPREOgUmc8B84\n' +
+        'Y0MAeXo6VqpQeqWuWZurXoa4VY30piMofoUmL4NgaYwAhBJZxF49aZidZmFo\n' +
+        '6Brw2idv8GK0TiTWpketO5hGBljAdv5aqg41jwb+kgx0HxU1hPm1DQ==\n' +
+        '=Wr1+\n' +
+        '-----END PGP SIGNATURE-----\n',
+      timestamp: 1676826094072,
+      fromCAIP10: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
+      messageType: 'Text',
+      messageContent: 'hey',
+      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA5Ga6Pu44C+oAQf/Y2brN3CdpIDp98VCUH65vwTkDbUPWKtEMj6zwr57\n' +
+        'QTTRhBnkr6T5TZ1Tdp71g0Vo1n++RacCg94k5TpUqSYoIwUAh3TUsZTjOtLK\n' +
+        'EU/Ud25zh5umSYWFxZgVPxU6bixdjtpGJkxzuRWaTLg45UQ1wsz/LMSXiVKW\n' +
+        'PkmP6eIXIi7PmduuCTajLdXlATMYVroBQ6QtChGi1S3loRAJpmuAFIKhzvdQ\n' +
+        'xvf/sHXh7tyNGIBbqFPwBoVQCN7nHf3q8ufo/n4NXFTWFqtrYkLe/l4WSGZ+\n' +
+        'WOSkkJkyoGBGBlq/ZU3/IhY2BFw22ZMah3CqUmhvGe8XIMtX+Gz++Wm7SrmL\n' +
+        '08HATAN7roGwZ8OLswEH/1sSD0DMoAgUuTYmID/xg/mPJCEtcjSmu3bU/tK6\n' +
+        'RxlDv3+6ZcHBBD20E9y8dtKj7JKuZx/im3H7a0giLpxBB4DEJQkmMbxFws0b\n' +
+        'exwdhqa7QLRorBuIt3D5M5QmWhkf2lH8BK9dSN4370S0xPBTzjlyWEphC2uZ\n' +
+        'dkF93p9qBMWfkWSif+qBceXzyMoFimeJ33FcTViRdTqo/BYER1zBzzY2Gjtq\n' +
+        'UIfGTYaIc1U1IUx8OOmKcYXYRBYACbSx0A7pCOu/KnCPwE/SSgZdYgSwBm8U\n' +
+        'fuG2v0VnfkGHkIDqMfmzwYQWSZHp36I8uYzs5xapvREnwXIkBpPiWkdG5G2Q\n' +
+        'Co7SQAFcwGdXcc23bny1kvBsHX3b6tVxSDt3KXsWNiKzClaFRsjEHxO7gZe9\n' +
+        'nlIBRSDGCy5iKJymIyef/D7kTG6NctE=\n' +
+        '=C8hO\n' +
+        '-----END PGP MESSAGE-----\n'
+    },
+    groupInformation: undefined
+  }
+]
+```
+</details>
+
+-----
+  
 ### **Fetching list of user chat requests**
 ```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(...);
+const encryptedPvtKey = user.encryptedPrivateKey;
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(...);
+  
+// actual api
 const chats = await PushAPI.chat.requests({
     account: 0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7,
-    pgpPrivateKey: decryptedPvtKey,
+    pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
     env: 'staging',
 });
@@ -1638,6 +1824,113 @@ Allowed Options (params with * are mandatory)
 | toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 
+<details>
+  <summary><b>Expected response (Get chat requests of a specific user)</b></summary>
+
+```
+// PushAPI_chat_requests | Response - 200 OK
+// Array of chat requests
+[
+  {
+    about: null,
+    did: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+    intent: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+    intentSentBy: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+    intentTimestamp: '2023-01-07T03:51:11.000Z',
+    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+      '\n' +
+      'xsBNBGOhhq8BCADP5Nzw0jOXhKO86ndGkY/JlD8AadVXmsLA+Yvoc22LrNTU\n' +
+      'QrfcDWaMAzpmtMWJlNEHSTieUPEgODm/qj422+rdskSedum3gq1HWn2bmqEI\n' +
+      'LrFc+zR3B70Pe7saEEmC/hXG53/8m7V0HsOuvkEjBa3pW3KElZIhimVvcgYR\n' +
+      '9AnLjUYKR/lci1eXXsAz+J+RjgPlFfiIE0/3KYXwkjt9meSJDPCIcEIZ1tqw\n' +
+      'IkGRINM5XINMvC+FxPNQ+jIHF9WIzmUg4YfYZQbMo96j4LAV0kYvAB0qI2Y8\n' +
+      'DHAjHXYQ+fafRGOJwePASjDHUjcB9QEr1EPIMG3i4iFaBV2ZmePjzE7XABEB\n' +
+      'AAHNAMLAigQQAQgAPgUCY6GGrwQLCQcICRCUVlBnqYwnwgMVCAoEFgACAQIZ\n' +
+      'AQIbAwIeARYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAABLZAgAtVdxz75k3qFY\n' +
+      'qtwMdsrIPX4A7rpT/zCd2Yjl2asFdlkyAusfNdFEiff1dHz5+qBM88z/Zh+O\n' +
+      '1FNDKS/WKL9qmZ+AceyidCjnRVTUeH6Mi/ZD/YZInJyLozCksb0Gciswl6Rp\n' +
+      'RHb6nXt0PebUFXTsOVxSeodaEGBgltd/V1bDHpfx8Wu03z3h/Jq2tI4s28XA\n' +
+      'S2lSZpG8+nC1zLOmpbYx8mdOe00ONBdnMvxAqckd437ns7Tu8sKW4SsRzjg1\n' +
+      'YHTmApRjai1L6bHn0P5Utz0BcynzrUn+bZ0cC+5Rq3kZvrjnaJOIutY+ALDF\n' +
+      '4yWoVIz8KzzAUx1caVyVvwdFtjVTS87ATQRjoYavAQgA3nCB6WLASwBwp5r/\n' +
+      'WU8SiUzf/2srENNObpjxavmv2FVKcKfO0ehSi6ti22KSKnUgm5prlOMWsVl/\n' +
+      'wEClvpGw0Btdar4OQI7XdwkY8XUVB5Jff7cNpi4qE+4lIYqCTQief9H5GLC/\n' +
+      'QvpE53yZWGFK581OSaeomtibN5xAaUyEE8qITnYyjqA+SgffRFVN5/WOnnBK\n' +
+      'zbIHrXl2lXOFkegXaOk+Qxxikw9cSpHNV5YHVoDStRCJZKVU8JhKa7pYKkmC\n' +
+      'pSIiXT3IdSAqDiglDRxwX4KlFFhGZ1OGbBmPefN3pZ7/xvaM28TqSDNB7f89\n' +
+      '/lc5UKLz5Em2aroEclT0YpKYGQARAQABwsB2BBgBCAAqBQJjoYavCRCUVlBn\n' +
+      'qYwnwgIbDBYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAAC6rwgAji6/qPQn/BN/\n' +
+      'BbwGBN+A8tWRuQLwrgOilg8oHWkyCIUK7DeBp+gpkSghjsnaEAqc94xaGD3U\n' +
+      'AfgcPGmC/Jx92W+bX8P40Iq8OvPgLgvG1u5Rf1a1SNYAuypQemuHYu3HOvUU\n' +
+      'vP+0omoiTWyNZVqsZA0FGIYQk9uRg8KGsLvXwzPPLqC5Yo3fyfQUmytBZfEf\n' +
+      'OwYwuvzx1RBHtvyZ32sfq//q4t2fXY0d49rg6l475zo3JsZsYtqZJCf9h6uK\n' +
+      'MrSFgvn8mJFlpwI1+g7X46VB+t8D1Ac35r9Bn9UIWieIyS2Aux2UwBsY2iET\n' +
+      'CdgkH8gWFBU7bdKsFh7BQX2ZhrxHXQ==\n' +
+      '=Lr7Q\n' +
+      '-----END PGP PUBLIC KEY BLOCK-----\n',
+    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBobGEMBSG0W//idlKiKARaohMAzEIzFoEhgaQ1EAV6xCkmn32PpMZZue9e87j9Xx/uKGkSMu6X9whnAlnwlkoKdKy7hdWnTJN+4hVUqRFOBPOhLPH6/n+YAznwl86+hFLOBPOhLNQUsRa+5GW4VxoOfqRlpIilnAmnAlnYd0v/tO6X1jCmXAmnIWSIladMtbRj3xjOBesbt6whDPhTDgLdcrc0c0bLQcXLXXKWMKZcCachW7esOqUsUqKWHXKtBQ2rMpv3bxhCWfCmXD2A590MfREqrg1AAAAAElFTkSuQmCC',
+    threadhash: 'bafyreigs26i7k3g5u4xmqg44tecmkfvelclp5lletnikfbsrj7dhg5oi4y',
+    wallets: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+    combinedDID: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029_eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+    name: 'copper-screeching-herring',
+    msg: {
+      link: 'bafyreibuez6o5hqqf6j45ekqxz7ixdtbxs6mhu3m6iv63etja6p2g43qom',
+      toDID: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+      encType: 'pgp',
+      fromDID: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      sigType: '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
+        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
+        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
+        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
+        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
+        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
+        '=n2B5\n' +
+        '-----END PGP SIGNATURE-----\n',
+      toCAIP10: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
+      signature: '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
+        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
+        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
+        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
+        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
+        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
+        '=n2B5\n' +
+        '-----END PGP SIGNATURE-----\n',
+      timestamp: 1673043671357,
+      fromCAIP10: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      messageType: 'Text',
+      messageContent: 'hey',
+      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMAzJsNgcerTKoAQgAvzX9pBj4j7ytnwU7DwMsCMl6PUDx6qAQybQxrlby\n' +
+        '+xkP1Cf1tOkLj1HP/oFHg3cX5HioM600jAaIYhCr8ib+M3ydvhKnti0mcpbn\n' +
+        'VnbWilrzyFUBE7T3eZY54JeFxIQ9mtjl/TmGryXpWD9FHjnSp22NRnbZIcZZ\n' +
+        'SHpatgDZYzRhHf9zqusBH2QUDKX1Ty7dIq9JD2AeS55l40IHNMPcP2btxfY1\n' +
+        'T7od8WvFYhlWQGtkbm8k42fwdK1mIJ3H/rOSeM8sTliYAECe+IhmpIevg4II\n' +
+        'Eel7eG81HjGciWt3Vs3FXkhuEUbQnMRAKfhaqalJNDriaWwzUMMt5a/rWdS1\n' +
+        'gMHATAN7roGwZ8OLswEH/2RmDHNAaDi11UT3uLAuQxNzlLeqxFaTPecSFaEW\n' +
+        'IFdJ+3ujcy3FHoyndK0S+ucFhP2V0hJRMHyyMiKNKSuUp6Q03NZ7Uqavqku3\n' +
+        'kVfAJ3tH6jlUWNetvV8t95OmYInqhC4MNk0nIhdI10bl89KmNRqsfQqKu5Hn\n' +
+        '5b9Jy7B+XgjKNdj7iWx0FuFabVIQ3NIDnVBDLy8/mDTeB1HuAv/7KljBr0fC\n' +
+        'TtzSZij1Pu5+aIPWaGG2hJvxga9g5Zqfvdm79Wn3gfoOCz3FdXcp/n3732rY\n' +
+        '+mrIE0DVUlWa0YbVotcSCzLlUpXlFts85Ok8W/N8ERtBMbbd2+e2tBKAP8Hs\n' +
+        'iYHSQAHz9V5LwQaFvujErtV5KZfD5DnB8RlUVJU4JKLDgYiXaP18O0fpsZyO\n' +
+        '4fym770psCEPU4sc+flSJ0SxBa8m+yM=\n' +
+        '=Cp3M\n' +
+        '-----END PGP MESSAGE-----\n'
+    },
+    groupInformation: undefined
+  }
+]
+```
+</details>
+
+-----
 
 ### **Fetching conversation hash between two users**
 ```typescript
