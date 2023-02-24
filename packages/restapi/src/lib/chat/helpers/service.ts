@@ -34,7 +34,10 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
-    encryptionType
+    encryptionType,
+    name: "",
+    encryptedPassword: null,
+    nftOwner: null
   };
 
   const hash = generateHash(data);
