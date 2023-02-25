@@ -40,11 +40,13 @@ import {
 In any of the below methods (unless explicitly stated otherwise) we accept either - 
 - [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
 (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
- 
- **Note** - For chat related restapis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;
 
 - ETH address format: only for backwards compatibility. 
 (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+ 
+ ### Chat blockchain agnostic address format
+ **Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
+(Example : `eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
 
 # Socket SDK Features
 ## **Creating a socket connection object**
