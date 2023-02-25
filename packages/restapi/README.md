@@ -1671,7 +1671,7 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
   
 // actual api
 const decryptedPvtKey = await PushAPI.chat.decryptPGPKey(
-    encryptedMessage: user.encryptedPrivateKey,
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: _signer
 );
 ```
@@ -1723,7 +1723,7 @@ n4FxJNoL/lmuCqhQm4Zgduj3GdYUunMDID3k54J1FPGN+iCj
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
   
 // actual api
 const chats = await PushAPI.chat.chats({
@@ -1857,7 +1857,7 @@ Allowed Options (params with * are mandatory)
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
   
 // actual api
 const chats = await PushAPI.chat.requests({
@@ -2022,7 +2022,7 @@ Allowed Options (params with * are mandatory)
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // conversation hash are also called link inside chat messages
 const conversationHash = await PushAPI.chat.conversationHash({
@@ -2111,7 +2111,7 @@ Allowed Options (params with * are mandatory)
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // get threadhash, this will fetch the latest conversation hash
 // you can also use older conversation hash (called link) by iterating over to fetch more historical messages
@@ -2218,7 +2218,7 @@ Allowed Options (params with * are mandatory)
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedMessage: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // actual api
 const response = await PushAPI.chat.send({
