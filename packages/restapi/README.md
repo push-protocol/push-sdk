@@ -2464,8 +2464,8 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 // actual api
 const response = await PushAPI.chat.updateGroup({
     chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
-    groupName:'Push Group Chat Official',
-    groupDescription: 'This is the updated description for Push Chat,
+    groupName: 'Push Group Chat 3',
+    groupDescription: 'This is the oficial group for Push Protocol',
     members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     groupImage: &lt;group image link&gt; ,
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
@@ -2478,6 +2478,7 @@ const response = await PushAPI.chat.updateGroup({
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
+| chatId*   | string | - | chatId of the group |
 | account*    | string  | -       | user address                  |
 | groupName*    | string  | -       | group name |
 | groupDescription*    | string  | -       | group description |
