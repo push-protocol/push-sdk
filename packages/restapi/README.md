@@ -2301,7 +2301,7 @@ Allowed Options (params with * are mandatory)
 ```typescript
 const response = await PushAPI.chat.createGroup({
         groupName:'Push Group Chat 3',
-        groupDescription:'This is the oficial group for Push Protocol,
+        groupDescription: 'This is the oficial group for Push Protocol',
         members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         groupImage: &lt;group image link&gt; ,
         admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
@@ -2430,7 +2430,7 @@ Allowed Options (params with * are mandatory)
     '=MFXs\n' +
     '-----END PGP SIGNATURE-----\n',
   groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
-  groupName: 'Push Group Chat',
+  groupName: 'Push Group Chat 3',
   groupDescription: 'This is the oficial group for Push Protocol',
   isPublic: true,
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
@@ -2448,7 +2448,7 @@ Note - updateGroup is an idompotent call
 ```typescript
 const response = await PushAPI.chat.updateGroup({
         groupName:'Push Group Chat Official',
-        groupDescription:'This is the updated description for Push Chat,
+        groupDescription: 'This is the updated description for Push Chat,
         members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         groupImage: &lt;group image link&gt; ,
         admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
