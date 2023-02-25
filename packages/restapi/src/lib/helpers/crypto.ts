@@ -31,22 +31,27 @@ export const encryptWithRPCEncryptionPublicKeyReturnRawData = (text: string, enc
   return encryptedSecret;
 };
 
-export const decryptWithWalletRPCMethod = async (encryptedPGPPrivateKey: string, account: string) => {
+export const decryptWithWalletRPCMethod = async (encryptedMessage: string, account: string) => {
   console.warn("decryptWithWalletRPCMethod method is DEPRECATED. Use decryptPGPKey method with signer!")
   return await decryptPGPKey({
-    encryptedPGPPrivateKey,
+    encryptedMessage,
     account
   });
 };
 
 type decryptPgpKeyProps = {
-  encryptedPGPPrivateKey: string;
+  /**
+   * Deprecated, please use `encryptedMessage` instead
+   */
+  encryptedMessage: string;
+  encryptedPGPPrivateKey?: string;
   account?: string;
   signer?: SignerType;
 }
 
 export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   const {
+    encryptedMessage,
     encryptedPGPPrivateKey,
     account = null,
     signer = null
@@ -54,6 +59,14 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   try {
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
+    }
+
+    let cipherText: string;
+    if (encryptedPGPPrivateKey) {
+      cipherText = encryptedPGPPrivateKey
+    } else {
+      console.warn('`encryptedMessage` will be deprecated, use `encryptedPGPPrivateKey` instead');
+      cipherText = encryptedMessage
     }
 
     const wallet = getWallet({ account, signer });
@@ -66,7 +79,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     let decryptedMsg;
     if (wallet?.signer?.privateKey) {
       decryptedMsg = decrypt({
-        encryptedData: JSON.parse(encryptedPGPPrivateKey),
+        encryptedData: JSON.parse(cipherText),
         privateKey: wallet?.signer?.privateKey.substring(2),
       });
     } else {
@@ -74,7 +87,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
       const web3Provider = signer?.provider || metamaskProvider;
       decryptedMsg = await web3Provider.provider.request({
         method: "eth_decrypt",
-        params: [encryptedPGPPrivateKey, address]
+        params: [cipherText, address]
       });
     }
     return decryptedMsg;
@@ -85,7 +98,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
 }
 
 export const decryptMessage = async ({
-  encryptedPGPPrivateKey,
+  encryptedMessage,
   encryptionType,
   encryptedSecret,
   pgpPrivateKey,
@@ -93,7 +106,7 @@ export const decryptMessage = async ({
   signatureValidationPubliKey
 }:
   {
-    encryptedPGPPrivateKey: string,
+    encryptedMessage: string,
     encryptionType: string,
     encryptedSecret: string,
     pgpPrivateKey: string,
@@ -104,14 +117,14 @@ export const decryptMessage = async ({
   let plainText: string
   if (encryptionType !== 'PlainText' && encryptionType !== null) {
     plainText = await decryptAndVerifySignature({
-      cipherText: encryptedPGPPrivateKey,
+      cipherText: encryptedMessage,
       encryptedSecretKey: encryptedSecret,
       privateKeyArmored: pgpPrivateKey,
       publicKeyArmored: signatureValidationPubliKey,
       signatureArmored: signature,
     });
   } else {
-    plainText = encryptedPGPPrivateKey
+    plainText = encryptedMessage
   }
 
   return plainText;

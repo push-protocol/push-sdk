@@ -64,7 +64,7 @@ export const getConnectedUser = async (
       console.log(wallet.signer)
       decryptedPrivateKey = await decryptPGPKey({
         signer: wallet.signer,
-        encryptedPGPPrivateKey: newUser.encryptedPrivateKey
+        encryptedMessage: newUser.encryptedPrivateKey
       })
     } else {
       decryptedPrivateKey = await decryptWithWalletRPCMethod(

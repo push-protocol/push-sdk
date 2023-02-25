@@ -70,7 +70,7 @@ const SendMessageTest = () => {
           const librarySigner = await library.getSigner();
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              encryptedMessage: user.encryptedPrivateKey,
               signer: librarySigner
             });
           }
@@ -89,7 +89,7 @@ const SendMessageTest = () => {
           const librarySigner = await library.getSigner();
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              encryptedMessage: user.encryptedPrivateKey,
               signer: librarySigner
             });
           }
@@ -111,7 +111,7 @@ const SendMessageTest = () => {
           const pvtKeySigner = new ethers.Wallet(Pkey);
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              encryptedMessage: user.encryptedPrivateKey,
               signer: pvtKeySigner
             });
           }

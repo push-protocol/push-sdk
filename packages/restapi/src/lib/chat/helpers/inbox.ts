@@ -85,7 +85,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signatureValidationPubliKey = connectedUser.publicKey;
       }
       message.messageContent = await decryptMessage({
-        encryptedPGPPrivateKey: message.messageContent,
+        encryptedMessage: message.messageContent,
         encryptedSecret: message.encryptedSecret,
         encryptionType: message.encType,
         signature: message.signature,
