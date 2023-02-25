@@ -277,11 +277,17 @@ export const getEncryptedRequest = async (
     }
   } else if(group) {
       if(group.isPublic) {
+         const {
+          signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
           return {
             message: message,
             encryptionType: 'PlainText',
             aesEncryptedSecret: '',
-            signature: '',
+            signature: signature,
           }
       }
       else {

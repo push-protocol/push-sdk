@@ -12,12 +12,9 @@ export function createSocketConnection({
 }: SocketInputOptions
 ) {
   const { autoConnect = true, reconnectionAttempts = 5, } = socketOptions || {};
-  if (socketType === 'chat' && !apiKey) {
-    throw Error('apiKey is necessary for chat');
-  }
+
   const pushWSUrl = API_URLS[env];
-  console.log(env)
-  console.log(pushWSUrl)
+
   const transports = ['websocket'];
   let pushSocket: ReturnType<typeof io> | null = null;
 
@@ -28,8 +25,7 @@ export function createSocketConnection({
         : getCAIPAddress(env, user, 'User');
     let query;
     if (socketType === 'notification') query = { address: userAddressInCAIP };
-    else query = { mode: 'chat', did: userAddressInCAIP, apiKey };
-    console.log(API_URLS)
+    else query = { mode: 'chat', did: userAddressInCAIP };
     pushSocket = io(pushWSUrl, {
       transports,
       query,
