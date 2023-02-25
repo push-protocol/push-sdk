@@ -2242,10 +2242,26 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
-  <summary><b>Expected response (send chat message or chat request to a wallet / group chat id)</b></summary>
+  <summary><b>Expected response (send chat message or chat request to a wallet)</b></summary>
 
 ```typescript
-// PushAPI_chat_send | Response - 204 OK
+// PushAPI_chat_send | Response - 200 OK
+{
+  fromCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  toCAIP10: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  fromDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  toDID: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  messageContent: "Gm gm! It's me... Mario",
+  messageType: 'Text',
+  signature: '',
+  timestamp: 1677290956187,
+  sigType: 'pgp',
+  encType: 'PlainText',
+  encryptedSecret: '',
+  link: 'bafyreigcgszt6nvrkh2qitl3ppstlnl5jf246gj6udhiomkhjnfijsmb7m',
+  cid: 'bafyreih6ji4iwntsv6d6bqxggkdzubtvmhcy5hz2f6hda2ac2yf35hh63q'
+}
+
 ```
 </details>
 
