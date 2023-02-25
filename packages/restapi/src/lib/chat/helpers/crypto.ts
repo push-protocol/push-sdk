@@ -58,6 +58,28 @@ export const encryptAndSign = async ({
   };
 };
 
+
+export const signMessageWithPGP = async ({
+  message,
+  privateKeyArmored,
+}: {
+  message: string;
+  privateKeyArmored: string;
+}): Promise<{
+  signature: string;
+  sigType: string;
+}> => {
+  const signature: string = await PGP.sign({
+    message: message,
+    signingKey: privateKeyArmored,
+  });
+
+  return {
+    signature,
+    sigType: 'pgp'
+  };
+};
+
 export const decryptAndVerifySignature = async ({
   cipherText,
   encryptedSecretKey,
@@ -198,24 +220,42 @@ export const getEncryptedRequest = async (
         env,
       });
       // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
+
+      const {
+      signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+
+
       return {
         message: message,
         encryptionType: 'PlainText',
         aesEncryptedSecret: '',
-        signature: '',
+        signature: signature,
       };
     } else {
       // It's possible for a user to be created but the PGP keys still not created
+
       if (
         !receiverCreatedUser.publicKey.includes(
           '-----BEGIN PGP PUBLIC KEY BLOCK-----'
         )
       ) {
+
+        const {
+          signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+
         return {
           message: message,
           encryptionType: 'PlainText',
           aesEncryptedSecret: '',
-          signature: '',
+          signature: signature,
         };
       } else {
         const {
