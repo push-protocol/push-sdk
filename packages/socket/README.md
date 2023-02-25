@@ -63,7 +63,6 @@ const pushSDKSocket = createSocketConnection({
 const pushSDKSocket = createSocketConnection({
     user: 'eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb',
     env: 'staging',
-    apiKey: 'jVPMCRom1B.iDRMswdehJG7NpHDiECIHwYMMv6k2KzkPJscFIDyW8TtSnk4blYnGa8DIkfuacU0',
     socketType: 'chat',
     socketOptions: { autoConnect: true, reconnectionAttempts: 3 }
 });
@@ -78,7 +77,6 @@ Allowed Options (params with * are mandatory)
 | user*    | string  | -       | user account address (CAIP)                |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 | socketType  | 'notification' &#124;  'chat'  |  'notification'      | socket type  |
-| apiKey   | string  | - | api key is needed for chat socket type only      |
 | socketOptions      | object  | -      | supports the same as [SocketIO Options](https://socket.io/docs/v4/client-options/) |
 
 ## **Connect the socket connection object**
