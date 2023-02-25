@@ -45,9 +45,10 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
     -  [To send a message](#to-send-a-message)
     -  [To approve a chat request](#to-approve-a-chat-request)
-    -  [To get group details by chat id](#to-get-group-details-by-chatid)
     -  [To create a group](#to-create-a-group)
     -  [To update group details](#to-update-group-details)
+    -  [To get group details by group name](#to-get-group-details-by-group-name)
+    -  [To get group details by chat id](#to-get-group-details-by-chatid)
     -  [Chat helper utils](#chat-helper-utils)
         -  [Decrypting messages](#decrypting-messages)
 
@@ -2296,26 +2297,10 @@ Allowed Options (params with * are mandatory)
 
 -----
   
-### **To get group details by chatId**
-
-```typescript
-const response = await PushAPI.chat.getGroup({
-  chatId: '190591e84108cdf12e62eecabf02ddb123ea92f1c06fb98ee9b5cf3871f46fa9',
-  env: 'staging',
-});
-```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| chatId*    | string  | -       | group chat id                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
-
 ### **To create a group**
 ```typescript
 const response = await PushAPI.chat.createGroup({
-        groupName:'Push Protocol group',
+        groupName:'Push Group Chat 3',
         groupDescription:'This is the oficial group for Push Protocol,
         members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         groupImage: &lt;group image link&gt; ,
@@ -2341,11 +2326,128 @@ Allowed Options (params with * are mandatory)
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 
+<details>
+  <summary><b>Expected response (create group)</b></summary>
+
+```typescript
+// PushAPI_chat_createGroup | Response - 200 OK
+{
+  members: [
+    {
+      wallet: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHmnwBCACaJgURQRJ4uP9St06i8nw9betHTTCvSvvWTkqJQvsnT1oh\n' +
+        'm1fV+wv5q7i3uQQqJV1Ip8hSC5YOANnjQM+5CxXi5g8k3se5joMawDCkC/MP\n' +
+        'fwidmsVPEZwKmLPf4ZDMJqmzAscfyLgHVnT7sG23LQD8pTVQkgsWRReA8cTJ\n' +
+        'pof6YgGF9YxQGvgTyBZGA9ocswXUdtgm5qHhaQL0+FxnniZCN7HIMJ5XKMBQ\n' +
+        'GlMik23wL4MqgLZXjn2D/lgDvYglJeDTI0EvnIuoPZTUruKW8xrmqvHojG/5\n' +
+        'Oi2XnorseUDUxytICqZRac0Pqh+b7GMTg8ttG8gowA4AyUOMG6KNliGhABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4eafAQLCQcICRCGEDC4tnEnkAMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAB/Vwf/fBz0RTjYzWwA\n' +
+        'J/yU9IhUqVJlc9/mP4fKPNgT9UTmlpquu7MWc3VqNCJmXAmeVjw5mlqf7Aic\n' +
+        'JTQ/cHKu2LQ4ZTRY+Mvq2DEzuPmqfyhYt8w6F3VY3Vz4w4yKv2sSliHr7PVD\n' +
+        'b0OAz9WiavJYIKigwPKA3wRITCLAeda7WGXyYxFPfZ7xt5Tv9t3bl8SCsZB5\n' +
+        'V4CwwmPryOJHtffhxApoFs8cCGxY/9B5tX481q1QAyBJ1fp3HAwW8V8iNs7A\n' +
+        'AgkHRVyanhLRGQ/pQJd6yvXAfSFkRNjO1be22xZIIzQ3VGjlCUABUVjHm8Xn\n' +
+        'CjvPD7t4IwWWV1GIrHhp9dZSqVwIks7ATQRjh5p8AQgAuGT25MVW+nkvXRaS\n' +
+        'rCiKPhCYoJEb8NUCoCP+Lmp/LPNn1NJ+6jtOepQ+ipesmGrbtNSCA6/9vFwo\n' +
+        't7MRK2yPXrwTAevcvnDxDSAdkkjvbjhEmA0NALLv6NtUbxQOkdfdItcVDOG5\n' +
+        'D0VgpkdeF1V5YbMJSzopQCFKxIiJ4nmY+/jyOQedqaHvLwKN7QfXrPpn2sr2\n' +
+        's/mKjWwHNuHyKTYlVkA4LsIzvPb5ApDXau93DdmENumD3FcjF4zUFnZjz0ci\n' +
+        'ZnQGp+ncnnX05m02qyDaUiEHXLYpMZdaFMQ+6pkSUoDGIS9o46Nlzh75w9c+\n' +
+        'Kpz5TGkLrWbmJgey0Z5gV9sl5QARAQABwsB2BBgBCAAqBQJjh5p8CRCGEDC4\n' +
+        'tnEnkAIbDBYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAClzAf/ZEuta8nVlB9n\n' +
+        'eWLw7uKFU0jbxZBZ+hfF67j5RIwrZHAQDFu3WFrzhDr+wgOWQTt8c7L1C4iv\n' +
+        '5GWBpoTLHUCdfEnQyfUWkKTWFwXqMpst5AmR4oSrRWYMUNH5Pw1u5xTOseyS\n' +
+        'fpJGEW09bJ+bSots8NOgSjon8q00i90H77pwMYa6xEct4Rf6MleabFWpYymG\n' +
+        'XjzHW7ImoybP6DJQ2ciD7O6EBjfrUmGRm76D6rvu6zqypaZLasYlwcFwvGfb\n' +
+        'Pkr3HA7hSvRCAZ96gkCXKSmnSq394aZswEgG9ztdkZAGbdbsgA3SSiSqizTA\n' +
+        'auQEzIjcvPdpGZaYmkp4Vm6H42ZKaA==\n' +
+        '=cVEH\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBIXICMRiG4Xe/WRNRA8eoqOMCHATTSGxsfSwymL1DT7FuBWeJpPanIjMM037PM719f90JDqcLUSuJV+TaidblTCTMhJkwm7fblSjzKNdO1EpiJNfOyHa7EgkzYSbMZn5pJRHl2oly7TyjlcSIMBNmwmzOtRO1kvhLuXYiYSbMhNncSuI/tZKIhJkwE2bTcb+784RWEiO5dp4hzISZMJvX5Ux0OF2IWklEH++fjGzlSpRrJ1qXM5EwE2bCbDrud3cGWkm8ItfOiDATZsLsB4vIMrfRE1WNAAAAAElFTkSuQmCC'
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHm1MBCAC4lZZapY6Xy3uK6HbnfDhPZOPAKr9nWhU0klj/ySH4+2Xb\n' +
+        'Ieqni5KH9+ez/5YVNmwAFX4CExbekZSpSd8EkgLX9gl2/R+y3u2sam88Msgv\n' +
+        'ODxfROCvIhkAxViyoCMq4Tm71QVzfgvnLOaglGKMxCoJguMBnwNxHo3iG7V5\n' +
+        'TeXB6iUorT4qp1kgrwhMNNY+n5ZYMgSvP7g8rNA3KTHYdUGPXQWzb3d/G3cv\n' +
+        'L5hErgXbXQpoutkgBapHOIKkEDYn3iB9ORwvOb8phIXG6ISkxTmS+2em9CNB\n' +
+        '/ackJJiBfqrLiPfBELyiV+QJARdpi75cOiGhtsNh8DnQ3bjw7YNzcIBJABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4ebUwQLCQcICRBaJmgmByp5FQMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBJC23yBJT2d/pTAID1omaCYHKnkVAACDpAf/XZk5LXsxtAqr\n' +
+        '18CSlzLQlAB970oydJuzQ4DGSD+dSMoZsSOlFxZvA06tbXcjM3hfkuFaKzdb\n' +
+        'Ida4YOIvnw1cJ8bTLYmxEtiLtIjfTjCGri3yZ5tiPGaEo4/IaUvs1VbeN8VQ\n' +
+        '4d2hCUoXLzQPavMllVqM1fJkLlCE3FHJvSRTIMwm5Y8Ok4RY9b84oesQeOkU\n' +
+        'P2BneUhE0/iIllKtqMnykEOm46LK0ITzlvSWAFC2cQ74uG0M27LN3kan+tSm\n' +
+        'bEsCYLskHQZwzriv8l/JETJP+ZoMJRmp8SFbRVn8tkVCuA8wI73n3X7DbAu0\n' +
+        'hfrYZknhotvoai0W61oq81Afatu/A87ATQRjh5tTAQgAk2Q+HkNdLZ0UDWCm\n' +
+        'DxrXV7iB7HBybf0i7oaB2aQnhkBqqIlC9jlwll7Y982hsWbdiNJR2jH2hWwo\n' +
+        'DPBV8IAlAT2FCb0E1LW0ts9lr5+SLulx/S7UGNpGzNOsvTT8R/CmlfiqJozC\n' +
+        'ySHDU6FrLz+s2MTdW0yHt6XDnL8DN3CIUfHOUSjuMNnq34ZsD4Yf6sLmuYN7\n' +
+        'UfJpg0j7+24c7+WmWHrO+SSlKc+8rTZT3s1vV+B/vTv0H+1StU001YlxeTnb\n' +
+        'sbkbdXii22dNxmvvwLhZ67Zu4Vg1RMyhLi4SajIJPUR/oKeXfcb3WLpkrJNg\n' +
+        'iirZ+RirDOHdSM0ak65l6IRNAwARAQABwsB2BBgBCAAqBQJjh5tTCRBaJmgm\n' +
+        'Byp5FQIbDBYhBJC23yBJT2d/pTAID1omaCYHKnkVAAB5VQgAt5JaM/LCNRY4\n' +
+        'ix8BMS2X/HgW0I2tJDQbvitbbVBRVAjh6wBqUVGC40JoI1bKz49JWiMqrg6u\n' +
+        'L6rDD6Ou2UchvqPtczAS+oWBQSRPwh/dOZJ15EFgu0m2ofNKp+i19Ik5X+QV\n' +
+        'tbk7hX9+HOIkK8lk1syJl7+G02egK5EVr6oMKWrMuCbkqNMphIQY0airPNi9\n' +
+        'keLYrbp7Pt4SlLxLzIP6jejQX9lJj+nA9nHxTfBRMLxq3sUgCsVr3AzkN5VB\n' +
+        '5gEeYBAdGVF0pl7DASVXLSrGAm7Q508OyJa1F2VFZT9ZIvEo2ES7YVZx2tkE\n' +
+        '0t5jFnfbm8KdXhWBwO1xZc7ctRadGg==\n' +
+        '=CgF7\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1klEQVR4AcXBsWkDQRCG0W9/FEygIsxFakThgbcMs/UsLmOdKVAjCl3GRFqng4OFQ6B5r2z7fRJ0r0TNBtHzUVjRZRJ1r0TNBpFIJpKJZGXb75MDuldWmg2OEMlEMpHsxD/dK1GzQdRscET3StRsEIlkIplIdupeeafulUgkE8lEslOzwUr3yiuaDVZEMpFMJCu363kSNBusdK+sNBusdK9EIplIJpKVbb9PFrpXXtFssCKSiWQiWbldz5Pg6/eHSJdJ1L2y0mwQPR+F6Pvjk0gkE8lEsj8InjfLsCXbSAAAAABJRU5ErkJggg=='
+    },
+    {
+      wallet: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      publicKey: '',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4AcXBsYnEMBRF0TsPJSpgsklVg2sxOLKbUAlqQhMMAtfiGlSCC3A4m342EBiW/ec80uvzxdhbxVqnE+t9PBlZpxPrfTyx5mXDEs6EM+Es7K3yn/ZWsYQz4Uw4C/OyYe2tYl0pY83c1CrWvGxYwplwJpyF2AvWyljshZErZax1OrFiL1jCmXAmnAVuulLmLwlnwplwFvjlShlrbxVrXjZG9lax5pSxYi9YwplwJpwFboq9MHQ8uUM4E86Es0d6fb4YsRdGrpQZib0wcqWMJZwJZ8LZDzUmMp+amfSXAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJj+WS9CZCGEDC4tnEnkBYhBOsVjR1d6YVXhTJwoYYQMLi2\n' +
+    'cSeQAAAlAwf9EWPoXHOaq6r+nURbhjGfIhr6QszaQDGS5p+hGHOrwqNT569J\n' +
+    'tHf7g0GZ2XEmQ7iH8DzCE29urrAh3LrtcUvKtk/mRSUBZ8OBm9EfYLyS6OIV\n' +
+    'tuq7pZiX961K7Z4UtnQ1RG/ksypWmfHGf3Ut5tZoWcmZ9KazIeepUKzy3InF\n' +
+    'hAi7vZzwUgLHe6UKViflR+umyAsvfgx6zYDvWoAUvKwLZYx4GJnYUjLETTuP\n' +
+    'kCmf7wNwAsyANk29IDiFxMvxRXnF9axuRGPfpAfxS2Hz8aDuh6P2IFmU1Ekb\n' +
+    'ZjXBpZN8LnidDCW3BtddDPUmE9+PlGLyy/VHm+J5isA1rwuSOuzC1A==\n' +
+    '=MFXs\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  groupName: 'Push Group Chat',
+  groupDescription: 'This is the oficial group for Push Protocol',
+  isPublic: true,
+  groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  chatId: '0364908cbaef95a5a3124c394ada868177c158a4d677cedd6fd1e42db1852386'
+}
+
+
+```
+</details>
+
+-----
+
 ### **To update group details**
 Note - updateGroup is an idompotent call
 ```typescript
 const response = await PushAPI.chat.updateGroup({
-        groupName:'Push Chat group',
+        groupName:'Push Group Chat Official',
         groupDescription:'This is the updated description for Push Chat,
         members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
         groupImage: &lt;group image link&gt; ,
@@ -2368,6 +2470,267 @@ Allowed Options (params with * are mandatory)
 | pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
+  
+### **To get group details by group name**
+
+```typescript
+const response = await PushAPI.chat.getGroupByName({
+  groupName: "Push Group Chat 3",
+  env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| groupName*    | string  | -       | name of the group                 |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+  
+<details>
+  <summary><b>Expected response (get group by name)</b></summary>
+
+```typescript
+// PushAPI_chat_getGroupByName | Response - 200 OK
+{
+  members: [
+    {
+      wallet: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHmnwBCACaJgURQRJ4uP9St06i8nw9betHTTCvSvvWTkqJQvsnT1oh\n' +
+        'm1fV+wv5q7i3uQQqJV1Ip8hSC5YOANnjQM+5CxXi5g8k3se5joMawDCkC/MP\n' +
+        'fwidmsVPEZwKmLPf4ZDMJqmzAscfyLgHVnT7sG23LQD8pTVQkgsWRReA8cTJ\n' +
+        'pof6YgGF9YxQGvgTyBZGA9ocswXUdtgm5qHhaQL0+FxnniZCN7HIMJ5XKMBQ\n' +
+        'GlMik23wL4MqgLZXjn2D/lgDvYglJeDTI0EvnIuoPZTUruKW8xrmqvHojG/5\n' +
+        'Oi2XnorseUDUxytICqZRac0Pqh+b7GMTg8ttG8gowA4AyUOMG6KNliGhABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4eafAQLCQcICRCGEDC4tnEnkAMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAB/Vwf/fBz0RTjYzWwA\n' +
+        'J/yU9IhUqVJlc9/mP4fKPNgT9UTmlpquu7MWc3VqNCJmXAmeVjw5mlqf7Aic\n' +
+        'JTQ/cHKu2LQ4ZTRY+Mvq2DEzuPmqfyhYt8w6F3VY3Vz4w4yKv2sSliHr7PVD\n' +
+        'b0OAz9WiavJYIKigwPKA3wRITCLAeda7WGXyYxFPfZ7xt5Tv9t3bl8SCsZB5\n' +
+        'V4CwwmPryOJHtffhxApoFs8cCGxY/9B5tX481q1QAyBJ1fp3HAwW8V8iNs7A\n' +
+        'AgkHRVyanhLRGQ/pQJd6yvXAfSFkRNjO1be22xZIIzQ3VGjlCUABUVjHm8Xn\n' +
+        'CjvPD7t4IwWWV1GIrHhp9dZSqVwIks7ATQRjh5p8AQgAuGT25MVW+nkvXRaS\n' +
+        'rCiKPhCYoJEb8NUCoCP+Lmp/LPNn1NJ+6jtOepQ+ipesmGrbtNSCA6/9vFwo\n' +
+        't7MRK2yPXrwTAevcvnDxDSAdkkjvbjhEmA0NALLv6NtUbxQOkdfdItcVDOG5\n' +
+        'D0VgpkdeF1V5YbMJSzopQCFKxIiJ4nmY+/jyOQedqaHvLwKN7QfXrPpn2sr2\n' +
+        's/mKjWwHNuHyKTYlVkA4LsIzvPb5ApDXau93DdmENumD3FcjF4zUFnZjz0ci\n' +
+        'ZnQGp+ncnnX05m02qyDaUiEHXLYpMZdaFMQ+6pkSUoDGIS9o46Nlzh75w9c+\n' +
+        'Kpz5TGkLrWbmJgey0Z5gV9sl5QARAQABwsB2BBgBCAAqBQJjh5p8CRCGEDC4\n' +
+        'tnEnkAIbDBYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAClzAf/ZEuta8nVlB9n\n' +
+        'eWLw7uKFU0jbxZBZ+hfF67j5RIwrZHAQDFu3WFrzhDr+wgOWQTt8c7L1C4iv\n' +
+        '5GWBpoTLHUCdfEnQyfUWkKTWFwXqMpst5AmR4oSrRWYMUNH5Pw1u5xTOseyS\n' +
+        'fpJGEW09bJ+bSots8NOgSjon8q00i90H77pwMYa6xEct4Rf6MleabFWpYymG\n' +
+        'XjzHW7ImoybP6DJQ2ciD7O6EBjfrUmGRm76D6rvu6zqypaZLasYlwcFwvGfb\n' +
+        'Pkr3HA7hSvRCAZ96gkCXKSmnSq394aZswEgG9ztdkZAGbdbsgA3SSiSqizTA\n' +
+        'auQEzIjcvPdpGZaYmkp4Vm6H42ZKaA==\n' +
+        '=cVEH\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBIXICMRiG4Xe/WRNRA8eoqOMCHATTSGxsfSwymL1DT7FuBWeJpPanIjMM037PM719f90JDqcLUSuJV+TaidblTCTMhJkwm7fblSjzKNdO1EpiJNfOyHa7EgkzYSbMZn5pJRHl2oly7TyjlcSIMBNmwmzOtRO1kvhLuXYiYSbMhNncSuI/tZKIhJkwE2bTcb+784RWEiO5dp4hzISZMJvX5Ux0OF2IWklEH++fjGzlSpRrJ1qXM5EwE2bCbDrud3cGWkm8ItfOiDATZsLsB4vIMrfRE1WNAAAAAElFTkSuQmCC'
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHm1MBCAC4lZZapY6Xy3uK6HbnfDhPZOPAKr9nWhU0klj/ySH4+2Xb\n' +
+        'Ieqni5KH9+ez/5YVNmwAFX4CExbekZSpSd8EkgLX9gl2/R+y3u2sam88Msgv\n' +
+        'ODxfROCvIhkAxViyoCMq4Tm71QVzfgvnLOaglGKMxCoJguMBnwNxHo3iG7V5\n' +
+        'TeXB6iUorT4qp1kgrwhMNNY+n5ZYMgSvP7g8rNA3KTHYdUGPXQWzb3d/G3cv\n' +
+        'L5hErgXbXQpoutkgBapHOIKkEDYn3iB9ORwvOb8phIXG6ISkxTmS+2em9CNB\n' +
+        '/ackJJiBfqrLiPfBELyiV+QJARdpi75cOiGhtsNh8DnQ3bjw7YNzcIBJABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4ebUwQLCQcICRBaJmgmByp5FQMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBJC23yBJT2d/pTAID1omaCYHKnkVAACDpAf/XZk5LXsxtAqr\n' +
+        '18CSlzLQlAB970oydJuzQ4DGSD+dSMoZsSOlFxZvA06tbXcjM3hfkuFaKzdb\n' +
+        'Ida4YOIvnw1cJ8bTLYmxEtiLtIjfTjCGri3yZ5tiPGaEo4/IaUvs1VbeN8VQ\n' +
+        '4d2hCUoXLzQPavMllVqM1fJkLlCE3FHJvSRTIMwm5Y8Ok4RY9b84oesQeOkU\n' +
+        'P2BneUhE0/iIllKtqMnykEOm46LK0ITzlvSWAFC2cQ74uG0M27LN3kan+tSm\n' +
+        'bEsCYLskHQZwzriv8l/JETJP+ZoMJRmp8SFbRVn8tkVCuA8wI73n3X7DbAu0\n' +
+        'hfrYZknhotvoai0W61oq81Afatu/A87ATQRjh5tTAQgAk2Q+HkNdLZ0UDWCm\n' +
+        'DxrXV7iB7HBybf0i7oaB2aQnhkBqqIlC9jlwll7Y982hsWbdiNJR2jH2hWwo\n' +
+        'DPBV8IAlAT2FCb0E1LW0ts9lr5+SLulx/S7UGNpGzNOsvTT8R/CmlfiqJozC\n' +
+        'ySHDU6FrLz+s2MTdW0yHt6XDnL8DN3CIUfHOUSjuMNnq34ZsD4Yf6sLmuYN7\n' +
+        'UfJpg0j7+24c7+WmWHrO+SSlKc+8rTZT3s1vV+B/vTv0H+1StU001YlxeTnb\n' +
+        'sbkbdXii22dNxmvvwLhZ67Zu4Vg1RMyhLi4SajIJPUR/oKeXfcb3WLpkrJNg\n' +
+        'iirZ+RirDOHdSM0ak65l6IRNAwARAQABwsB2BBgBCAAqBQJjh5tTCRBaJmgm\n' +
+        'Byp5FQIbDBYhBJC23yBJT2d/pTAID1omaCYHKnkVAAB5VQgAt5JaM/LCNRY4\n' +
+        'ix8BMS2X/HgW0I2tJDQbvitbbVBRVAjh6wBqUVGC40JoI1bKz49JWiMqrg6u\n' +
+        'L6rDD6Ou2UchvqPtczAS+oWBQSRPwh/dOZJ15EFgu0m2ofNKp+i19Ik5X+QV\n' +
+        'tbk7hX9+HOIkK8lk1syJl7+G02egK5EVr6oMKWrMuCbkqNMphIQY0airPNi9\n' +
+        'keLYrbp7Pt4SlLxLzIP6jejQX9lJj+nA9nHxTfBRMLxq3sUgCsVr3AzkN5VB\n' +
+        '5gEeYBAdGVF0pl7DASVXLSrGAm7Q508OyJa1F2VFZT9ZIvEo2ES7YVZx2tkE\n' +
+        '0t5jFnfbm8KdXhWBwO1xZc7ctRadGg==\n' +
+        '=CgF7\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1klEQVR4AcXBsWkDQRCG0W9/FEygIsxFakThgbcMs/UsLmOdKVAjCl3GRFqng4OFQ6B5r2z7fRJ0r0TNBtHzUVjRZRJ1r0TNBpFIJpKJZGXb75MDuldWmg2OEMlEMpHsxD/dK1GzQdRscET3StRsEIlkIplIdupeeafulUgkE8lEslOzwUr3yiuaDVZEMpFMJCu363kSNBusdK+sNBusdK9EIplIJpKVbb9PFrpXXtFssCKSiWQiWbldz5Pg6/eHSJdJ1L2y0mwQPR+F6Pvjk0gkE8lEsj8InjfLsCXbSAAAAABJRU5ErkJggg=='
+    },
+    {
+      wallet: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      publicKey: '',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4AcXBsYnEMBRF0TsPJSpgsklVg2sxOLKbUAlqQhMMAtfiGlSCC3A4m342EBiW/ec80uvzxdhbxVqnE+t9PBlZpxPrfTyx5mXDEs6EM+Es7K3yn/ZWsYQz4Uw4C/OyYe2tYl0pY83c1CrWvGxYwplwJpyF2AvWyljshZErZax1OrFiL1jCmXAmnAVuulLmLwlnwplwFvjlShlrbxVrXjZG9lax5pSxYi9YwplwJpwFboq9MHQ8uUM4E86Es0d6fb4YsRdGrpQZib0wcqWMJZwJZ8LZDzUmMp+amfSXAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJj+WlwCZCGEDC4tnEnkBYhBOsVjR1d6YVXhTJwoYYQMLi2\n' +
+    'cSeQAABUjgf+LdMzlxCCZcmXSNuW2XRQtaefXwCaRzWcD2U20AGlECMCMIkx\n' +
+    '3gvytlkqaLnApAQuUZoPubCV/N1tZyAPk6oY61xIBEeYfIm6sEec2it054Pp\n' +
+    'eue3KxOZNn0TB8Ww0MoGhvKFyZ0FRPuQCDFk7BLPilx/C2vl2i4nrlVVCD+1\n' +
+    'gA9/bNabvD9DqHkzaEL1W7OdYB98QmeSrjM2ewkRQv3W7FwNqlP6LhbR6hHV\n' +
+    'oT7/jTkRiTQ+4CwNTnhmFS70aOuCaKSmo28K3TVRdxqjX/TInA0hwuABiSFn\n' +
+    'IT3GrK/thmGpF9+Cyy4lhyJQS5XxaFyIIvpVndJd2xRydYcjCYgaoQ==\n' +
+    '=/7cW\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'https://uploads-ssl.webflow.com/61bf814c420d049df2225c5a/634fd263f7785f51dcb79f9d_b22fe859ab3d28c370d97c4ab3d4464b1a634c8b.png',
+  groupName: 'Push Group Chat 3',
+  groupDescription: 'This is the oficial group for Push Protocol',
+  isPublic: true,
+  groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c'
+}
+
+```
+</details>
+
+-----
+
+### **To get group details by chatId**
+
+```typescript
+const response = await PushAPI.chat.getGroup({
+  chatId: '190591e84108cdf12e62eecabf02ddb123ea92f1c06fb98ee9b5cf3871f46fa9',
+  env: 'staging',
+});
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| chatId*    | string  | -       | group chat id                 |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+<details>
+  <summary><b>Expected response (get group by chat id)</b></summary>
+
+```typescript
+// PushAPI_chat_getGroup | Response - 200 OK
+{
+  members: [
+    {
+      wallet: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHmnwBCACaJgURQRJ4uP9St06i8nw9betHTTCvSvvWTkqJQvsnT1oh\n' +
+        'm1fV+wv5q7i3uQQqJV1Ip8hSC5YOANnjQM+5CxXi5g8k3se5joMawDCkC/MP\n' +
+        'fwidmsVPEZwKmLPf4ZDMJqmzAscfyLgHVnT7sG23LQD8pTVQkgsWRReA8cTJ\n' +
+        'pof6YgGF9YxQGvgTyBZGA9ocswXUdtgm5qHhaQL0+FxnniZCN7HIMJ5XKMBQ\n' +
+        'GlMik23wL4MqgLZXjn2D/lgDvYglJeDTI0EvnIuoPZTUruKW8xrmqvHojG/5\n' +
+        'Oi2XnorseUDUxytICqZRac0Pqh+b7GMTg8ttG8gowA4AyUOMG6KNliGhABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4eafAQLCQcICRCGEDC4tnEnkAMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAB/Vwf/fBz0RTjYzWwA\n' +
+        'J/yU9IhUqVJlc9/mP4fKPNgT9UTmlpquu7MWc3VqNCJmXAmeVjw5mlqf7Aic\n' +
+        'JTQ/cHKu2LQ4ZTRY+Mvq2DEzuPmqfyhYt8w6F3VY3Vz4w4yKv2sSliHr7PVD\n' +
+        'b0OAz9WiavJYIKigwPKA3wRITCLAeda7WGXyYxFPfZ7xt5Tv9t3bl8SCsZB5\n' +
+        'V4CwwmPryOJHtffhxApoFs8cCGxY/9B5tX481q1QAyBJ1fp3HAwW8V8iNs7A\n' +
+        'AgkHRVyanhLRGQ/pQJd6yvXAfSFkRNjO1be22xZIIzQ3VGjlCUABUVjHm8Xn\n' +
+        'CjvPD7t4IwWWV1GIrHhp9dZSqVwIks7ATQRjh5p8AQgAuGT25MVW+nkvXRaS\n' +
+        'rCiKPhCYoJEb8NUCoCP+Lmp/LPNn1NJ+6jtOepQ+ipesmGrbtNSCA6/9vFwo\n' +
+        't7MRK2yPXrwTAevcvnDxDSAdkkjvbjhEmA0NALLv6NtUbxQOkdfdItcVDOG5\n' +
+        'D0VgpkdeF1V5YbMJSzopQCFKxIiJ4nmY+/jyOQedqaHvLwKN7QfXrPpn2sr2\n' +
+        's/mKjWwHNuHyKTYlVkA4LsIzvPb5ApDXau93DdmENumD3FcjF4zUFnZjz0ci\n' +
+        'ZnQGp+ncnnX05m02qyDaUiEHXLYpMZdaFMQ+6pkSUoDGIS9o46Nlzh75w9c+\n' +
+        'Kpz5TGkLrWbmJgey0Z5gV9sl5QARAQABwsB2BBgBCAAqBQJjh5p8CRCGEDC4\n' +
+        'tnEnkAIbDBYhBOsVjR1d6YVXhTJwoYYQMLi2cSeQAAClzAf/ZEuta8nVlB9n\n' +
+        'eWLw7uKFU0jbxZBZ+hfF67j5RIwrZHAQDFu3WFrzhDr+wgOWQTt8c7L1C4iv\n' +
+        '5GWBpoTLHUCdfEnQyfUWkKTWFwXqMpst5AmR4oSrRWYMUNH5Pw1u5xTOseyS\n' +
+        'fpJGEW09bJ+bSots8NOgSjon8q00i90H77pwMYa6xEct4Rf6MleabFWpYymG\n' +
+        'XjzHW7ImoybP6DJQ2ciD7O6EBjfrUmGRm76D6rvu6zqypaZLasYlwcFwvGfb\n' +
+        'Pkr3HA7hSvRCAZ96gkCXKSmnSq394aZswEgG9ztdkZAGbdbsgA3SSiSqizTA\n' +
+        'auQEzIjcvPdpGZaYmkp4Vm6H42ZKaA==\n' +
+        '=cVEH\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBIXICMRiG4Xe/WRNRA8eoqOMCHATTSGxsfSwymL1DT7FuBWeJpPanIjMM037PM719f90JDqcLUSuJV+TaidblTCTMhJkwm7fblSjzKNdO1EpiJNfOyHa7EgkzYSbMZn5pJRHl2oly7TyjlcSIMBNmwmzOtRO1kvhLuXYiYSbMhNncSuI/tZKIhJkwE2bTcb+784RWEiO5dp4hzISZMJvX5Ux0OF2IWklEH++fjGzlSpRrJ1qXM5EwE2bCbDrud3cGWkm8ItfOiDATZsLsB4vIMrfRE1WNAAAAAElFTkSuQmCC'
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGOHm1MBCAC4lZZapY6Xy3uK6HbnfDhPZOPAKr9nWhU0klj/ySH4+2Xb\n' +
+        'Ieqni5KH9+ez/5YVNmwAFX4CExbekZSpSd8EkgLX9gl2/R+y3u2sam88Msgv\n' +
+        'ODxfROCvIhkAxViyoCMq4Tm71QVzfgvnLOaglGKMxCoJguMBnwNxHo3iG7V5\n' +
+        'TeXB6iUorT4qp1kgrwhMNNY+n5ZYMgSvP7g8rNA3KTHYdUGPXQWzb3d/G3cv\n' +
+        'L5hErgXbXQpoutkgBapHOIKkEDYn3iB9ORwvOb8phIXG6ISkxTmS+2em9CNB\n' +
+        '/ackJJiBfqrLiPfBELyiV+QJARdpi75cOiGhtsNh8DnQ3bjw7YNzcIBJABEB\n' +
+        'AAHNAMLAigQQAQgAPgUCY4ebUwQLCQcICRBaJmgmByp5FQMVCAoEFgACAQIZ\n' +
+        'AQIbAwIeARYhBJC23yBJT2d/pTAID1omaCYHKnkVAACDpAf/XZk5LXsxtAqr\n' +
+        '18CSlzLQlAB970oydJuzQ4DGSD+dSMoZsSOlFxZvA06tbXcjM3hfkuFaKzdb\n' +
+        'Ida4YOIvnw1cJ8bTLYmxEtiLtIjfTjCGri3yZ5tiPGaEo4/IaUvs1VbeN8VQ\n' +
+        '4d2hCUoXLzQPavMllVqM1fJkLlCE3FHJvSRTIMwm5Y8Ok4RY9b84oesQeOkU\n' +
+        'P2BneUhE0/iIllKtqMnykEOm46LK0ITzlvSWAFC2cQ74uG0M27LN3kan+tSm\n' +
+        'bEsCYLskHQZwzriv8l/JETJP+ZoMJRmp8SFbRVn8tkVCuA8wI73n3X7DbAu0\n' +
+        'hfrYZknhotvoai0W61oq81Afatu/A87ATQRjh5tTAQgAk2Q+HkNdLZ0UDWCm\n' +
+        'DxrXV7iB7HBybf0i7oaB2aQnhkBqqIlC9jlwll7Y982hsWbdiNJR2jH2hWwo\n' +
+        'DPBV8IAlAT2FCb0E1LW0ts9lr5+SLulx/S7UGNpGzNOsvTT8R/CmlfiqJozC\n' +
+        'ySHDU6FrLz+s2MTdW0yHt6XDnL8DN3CIUfHOUSjuMNnq34ZsD4Yf6sLmuYN7\n' +
+        'UfJpg0j7+24c7+WmWHrO+SSlKc+8rTZT3s1vV+B/vTv0H+1StU001YlxeTnb\n' +
+        'sbkbdXii22dNxmvvwLhZ67Zu4Vg1RMyhLi4SajIJPUR/oKeXfcb3WLpkrJNg\n' +
+        'iirZ+RirDOHdSM0ak65l6IRNAwARAQABwsB2BBgBCAAqBQJjh5tTCRBaJmgm\n' +
+        'Byp5FQIbDBYhBJC23yBJT2d/pTAID1omaCYHKnkVAAB5VQgAt5JaM/LCNRY4\n' +
+        'ix8BMS2X/HgW0I2tJDQbvitbbVBRVAjh6wBqUVGC40JoI1bKz49JWiMqrg6u\n' +
+        'L6rDD6Ou2UchvqPtczAS+oWBQSRPwh/dOZJ15EFgu0m2ofNKp+i19Ik5X+QV\n' +
+        'tbk7hX9+HOIkK8lk1syJl7+G02egK5EVr6oMKWrMuCbkqNMphIQY0airPNi9\n' +
+        'keLYrbp7Pt4SlLxLzIP6jejQX9lJj+nA9nHxTfBRMLxq3sUgCsVr3AzkN5VB\n' +
+        '5gEeYBAdGVF0pl7DASVXLSrGAm7Q508OyJa1F2VFZT9ZIvEo2ES7YVZx2tkE\n' +
+        '0t5jFnfbm8KdXhWBwO1xZc7ctRadGg==\n' +
+        '=CgF7\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1klEQVR4AcXBsWkDQRCG0W9/FEygIsxFakThgbcMs/UsLmOdKVAjCl3GRFqng4OFQ6B5r2z7fRJ0r0TNBtHzUVjRZRJ1r0TNBpFIJpKJZGXb75MDuldWmg2OEMlEMpHsxD/dK1GzQdRscET3StRsEIlkIplIdupeeafulUgkE8lEslOzwUr3yiuaDVZEMpFMJCu363kSNBusdK+sNBusdK9EIplIJpKVbb9PFrpXXtFssCKSiWQiWbldz5Pg6/eHSJdJ1L2y0mwQPR+F6Pvjk0gkE8lEsj8InjfLsCXbSAAAAABJRU5ErkJggg=='
+    },
+    {
+      wallet: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+      publicKey: '',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4AcXBsYnEMBRF0TsPJSpgsklVg2sxOLKbUAlqQhMMAtfiGlSCC3A4m342EBiW/ec80uvzxdhbxVqnE+t9PBlZpxPrfTyx5mXDEs6EM+Es7K3yn/ZWsYQz4Uw4C/OyYe2tYl0pY83c1CrWvGxYwplwJpyF2AvWyljshZErZax1OrFiL1jCmXAmnAVuulLmLwlnwplwFvjlShlrbxVrXjZG9lax5pSxYi9YwplwJpwFboq9MHQ8uUM4E86Es0d6fb4YsRdGrpQZib0wcqWMJZwJZ8LZDzUmMp+amfSXAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJj+WlwCZCGEDC4tnEnkBYhBOsVjR1d6YVXhTJwoYYQMLi2\n' +
+    'cSeQAABUjgf+LdMzlxCCZcmXSNuW2XRQtaefXwCaRzWcD2U20AGlECMCMIkx\n' +
+    '3gvytlkqaLnApAQuUZoPubCV/N1tZyAPk6oY61xIBEeYfIm6sEec2it054Pp\n' +
+    'eue3KxOZNn0TB8Ww0MoGhvKFyZ0FRPuQCDFk7BLPilx/C2vl2i4nrlVVCD+1\n' +
+    'gA9/bNabvD9DqHkzaEL1W7OdYB98QmeSrjM2ewkRQv3W7FwNqlP6LhbR6hHV\n' +
+    'oT7/jTkRiTQ+4CwNTnhmFS70aOuCaKSmo28K3TVRdxqjX/TInA0hwuABiSFn\n' +
+    'IT3GrK/thmGpF9+Cyy4lhyJQS5XxaFyIIvpVndJd2xRydYcjCYgaoQ==\n' +
+    '=/7cW\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'https://uploads-ssl.webflow.com/61bf814c420d049df2225c5a/634fd263f7785f51dcb79f9d_b22fe859ab3d28c370d97c4ab3d4464b1a634c8b.png',
+  groupName: 'Push Group Chat 3',
+  groupDescription: 'This is the oficial group for Push Protocol',
+  isPublic: true,
+  groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c'
+}
+```
+</details>
+
+-----
   
 ### **Chat Helper Utils**
 #### **Decrypting messages**
