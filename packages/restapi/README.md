@@ -2299,17 +2299,25 @@ Allowed Options (params with * are mandatory)
   
 ### **To create a group**
 ```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
 const response = await PushAPI.chat.createGroup({
-        groupName:'Push Group Chat 3',
-        groupDescription: 'This is the oficial group for Push Protocol',
-        members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-        groupImage: &lt;group image link&gt; ,
-        admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-        isPublic: true,
-        account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
-        env: 'staging',
-        pgpPrivateKey: decryptedPvtKey, //decrypted private key
-      });
+  groupName:'Push Group Chat 3',
+  groupDescription: 'This is the oficial group for Push Protocol',
+  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  groupImage: &lt;group image link&gt; ,
+  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  isPublic: true,
+  account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+  env: 'staging',
+  pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
 ```
 
 Allowed Options (params with * are mandatory)
@@ -2446,16 +2454,25 @@ Allowed Options (params with * are mandatory)
 ### **To update group details**
 Note - updateGroup is an idompotent call
 ```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+  
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
 const response = await PushAPI.chat.updateGroup({
-        groupName:'Push Group Chat Official',
-        groupDescription: 'This is the updated description for Push Chat,
-        members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-        groupImage: &lt;group image link&gt; ,
-        admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-        account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
-        env: 'staging',
-        pgpPrivateKey: decryptedPvtKey, //decrypted private key
-      });
+    chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+    groupName:'Push Group Chat Official',
+    groupDescription: 'This is the updated description for Push Chat,
+    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    groupImage: &lt;group image link&gt; ,
+    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+    env: 'staging',
+    pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
 ```
 
 Allowed Options (params with * are mandatory)
