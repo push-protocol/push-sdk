@@ -45,10 +45,10 @@ const SendMessageTest = () => {
       setLoading(true);
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
-    
+
       let response;
       switch (index) {
-        case 0:{
+        case 0: {
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
               user.encryptedPrivateKey,
@@ -70,9 +70,9 @@ const SendMessageTest = () => {
           const librarySigner = await library.getSigner();
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedMessage:user.encryptedPrivateKey,
-              signer:librarySigner
-          });
+              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              signer: librarySigner
+            });
           }
           response = await PushAPI.chat.send({
             messageContent,
@@ -89,9 +89,9 @@ const SendMessageTest = () => {
           const librarySigner = await library.getSigner();
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedMessage:user.encryptedPrivateKey,
-              signer:librarySigner
-          });
+              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              signer: librarySigner
+            });
           }
           response = await PushAPI.chat.send({
             messageContent,
@@ -111,9 +111,9 @@ const SendMessageTest = () => {
           const pvtKeySigner = new ethers.Wallet(Pkey);
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedMessage:user.encryptedPrivateKey,
-              signer:pvtKeySigner
-          });
+              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              signer: pvtKeySigner
+            });
           }
           response = await PushAPI.chat.send({
             messageContent,

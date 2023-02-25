@@ -5,8 +5,8 @@ import { IConnectedUser, IUser, SignerType, walletType } from '../../types';
 import { getAccountAddress } from './wallet';
 
 export const createUserIfNecessary = async (
-   wallet: walletType,
-   env: string,
+  wallet: walletType,
+  env: string,
 ): Promise<IUser> => {
   const address = await getAccountAddress(wallet);
   const connectedUser = await get({ account: address, env });
@@ -16,10 +16,10 @@ export const createUserIfNecessary = async (
       signer?: SignerType;
       env?: string;
     } = {};
-    if(wallet.account) {
+    if (wallet.account) {
       createUserProps.account = wallet.account;
-    } 
-    if(wallet.signer) {
+    }
+    if (wallet.signer) {
       createUserProps.signer = wallet.signer;
     }
     createUserProps.env = env;
@@ -38,7 +38,7 @@ export const getConnectedUser = async (
   const address = await getAccountAddress(wallet);
   const user = await get({ account: address, env: env || Constants.ENV.PROD });
   if (user?.encryptedPrivateKey) {
-    if (privateKey) { 
+    if (privateKey) {
       return { ...user, privateKey };
     }
     else {
@@ -51,20 +51,20 @@ export const getConnectedUser = async (
       signer?: SignerType;
       env?: string;
     } = {};
-    if(wallet.account) {
+    if (wallet.account) {
       createUserProps.account = wallet.account;
-    } 
-    if(wallet.signer) {
+    }
+    if (wallet.signer) {
       createUserProps.signer = wallet.signer;
     }
     createUserProps.env = env;
     const newUser = await create(createUserProps);
     let decryptedPrivateKey;
-    if(wallet.signer) {
+    if (wallet.signer) {
       console.log(wallet.signer)
       decryptedPrivateKey = await decryptPGPKey({
         signer: wallet.signer,
-        encryptedMessage: newUser.encryptedPrivateKey
+        encryptedPGPPrivateKey: newUser.encryptedPrivateKey
       })
     } else {
       decryptedPrivateKey = await decryptWithWalletRPCMethod(

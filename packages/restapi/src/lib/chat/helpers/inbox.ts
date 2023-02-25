@@ -52,11 +52,11 @@ export const getInboxLists = async (
         toDID: ''
       }
     }
-    feeds.push({...list,msg:message, groupInformation: list.groupInformation});
+    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
   }
 
-  if(toDecrypt)
-    return decryptFeeds({feeds,connectedUser,pgpPrivateKey,env});
+  if (toDecrypt)
+    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
   return feeds;
 };
 
@@ -84,14 +84,14 @@ export const decryptConversation = async (options: DecryptConverationType) => {
       } else {
         signatureValidationPubliKey = connectedUser.publicKey;
       }
-        message.messageContent = await decryptMessage({
-          encryptedMessage: message.messageContent,
-          encryptedSecret: message.encryptedSecret,
-          encryptionType: message.encType,
-          signature: message.signature,
-          signatureValidationPubliKey: signatureValidationPubliKey,
-          pgpPrivateKey,
-        });
+      message.messageContent = await decryptMessage({
+        encryptedPGPPrivateKey: message.messageContent,
+        encryptedSecret: message.encryptedSecret,
+        encryptionType: message.encType,
+        signature: message.signature,
+        signatureValidationPubliKey: signatureValidationPubliKey,
+        pgpPrivateKey,
+      });
     }
   }
   return messages;
