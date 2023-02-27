@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls, getQueryParams, getLimit } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 /**
  *  GET /v1/channels/search/ 
@@ -10,7 +10,7 @@ import Constants from '../constants';
 
 export type SearchChannelOptionsType = {
   query: string;
-  env?: string;
+  env?: ENV;
   page?: number;
   limit?: number;
 }

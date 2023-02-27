@@ -1,9 +1,11 @@
+export enum ENV {
+  PROD = 'prod',
+  STAGING = 'staging',
+  DEV = 'dev'
+}
+
 const Constants = {
-  ENV: {
-    PROD: 'prod',
-    STAGING: 'staging',
-    DEV: 'dev'
-  },
+  ENV,
   PAGINATION: {
     INITIAL_PAGE: 1,
     LIMIT: 10,

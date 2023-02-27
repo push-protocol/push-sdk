@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import {  ENV } from '../config';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -18,7 +19,7 @@ export interface IMessageIPFS {
 
 
 export interface AccountEnvOptionsType {
-  env?: string;
+  env?:  ENV;
   account: string;
 }
 

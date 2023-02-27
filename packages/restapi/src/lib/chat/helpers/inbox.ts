@@ -1,4 +1,4 @@
-import Constants from '../../constants';
+import Constants, {ENV} from '../../constants';
 import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
@@ -10,13 +10,13 @@ type InboxListsType = {
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?: string;
+  env?:  ENV;
 };
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
-  env?: string;
+  env?:  ENV;
 };
 
 export const getInboxLists = async (

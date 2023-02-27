@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 import { IFeeds } from '../types';
 import { getInboxLists } from './helpers';
 
@@ -14,7 +14,7 @@ export type ChatsOptionsType = {
   /**
    * Environment variable
    */
-  env?: string;
+  env?: ENV ;
 };
 
 /**

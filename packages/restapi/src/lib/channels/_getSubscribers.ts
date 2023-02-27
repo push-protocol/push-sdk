@@ -4,11 +4,11 @@ import {
   getAPIBaseUrls,
   getCAIPDetails
 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 export type GetSubscribersOptionsType = {
   channel: string; // plain ETH Format only
-  env?: string
+  env?: ENV
 }
 
 /**
