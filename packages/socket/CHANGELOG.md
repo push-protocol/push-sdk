@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.4.0...socket-0.4.1) (2023-02-28)
+
+
+### Bug Fixes
+
+* remove mandatory api key for chat socket connection ([dd79bf7](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd79bf7fc3a4a7e0913e399fff3e1325b9143e13))
+
+
+
 # [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.1...socket-0.4.0) (2023-02-28)
 
 
