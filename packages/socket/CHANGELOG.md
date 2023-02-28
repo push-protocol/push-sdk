@@ -2,6 +2,29 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.4.0...socket-0.4.1) (2023-02-28)
+
+
+### Bug Fixes
+
+* remove mandatory api key for chat socket connection ([dd79bf7](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd79bf7fc3a4a7e0913e399fff3e1325b9143e13))
+
+
+
+# [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.1...socket-0.4.0) (2023-02-28)
+
+
+### Bug Fixes
+
+* send message signature fixes ([#203](https://github.com/ethereum-push-notification-service/push-sdk/issues/203)) ([9a3c448](https://github.com/ethereum-push-notification-service/push-sdk/commit/9a3c4484f2c1ac5f7abd2796801da626caa91629))
+
+
+### Features
+
+* **component:** Added Group Chat Functionality  ([#122](https://github.com/ethereum-push-notification-service/push-sdk/issues/122)) ([5bf341f](https://github.com/ethereum-push-notification-service/push-sdk/commit/5bf341f6f60a6786be47f668fa3ed1b15a66be88))
+
+
+
 # [0.4.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.3.1...socket-0.4.0) (2023-02-15)
 
 
