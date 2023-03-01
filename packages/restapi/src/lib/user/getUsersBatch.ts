@@ -5,10 +5,8 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
 export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]): Promise<IUser> => {
-  const { account, env = Constants.ENV.PROD } = options || {};
-  if (!isValidETHAddress(account)) {
-    throw new Error(`Invalid address!`);
-  }
+  const { env = Constants.ENV.PROD } = options || {};
+
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/users/batch`;
 
