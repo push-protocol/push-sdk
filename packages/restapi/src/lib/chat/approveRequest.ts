@@ -41,6 +41,9 @@ export const approve = async (
     throw new Error(`At least one from account or signer is necessary!`);
   }
 
+  if(!pgpPrivateKey) {
+    console.warn("Please note that if you don't pass the pgpPrivateKey parameter, a wallet popup will appear every time the approveRequest endpoint is called. We strongly recommend passing this parameter, and it will become mandatory in future versions of the API.")
+  }
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
 
