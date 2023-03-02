@@ -3,7 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { ChatOptionsType } from '../types';
 import { ISendMessagePayload, sendMessagePayload, sign } from './helpers';
-import * as CryptoJS from "crypto-js"
+import CryptoES from "crypto-es"
 
 export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const {
@@ -35,7 +35,7 @@ export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
         messageType: messageType,
     }
 
-    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+    const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
     const signature: string = await sign({
         message: hash,
         signingKey: connectedUser.privateKey!

@@ -3,7 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import { approveRequestPayload, sign, getConnectedUser, IApproveRequestPayload, getAccountAddress, getWallet, createUserIfNecessary } from './helpers';
-import * as CryptoJS from "crypto-js"
+import CryptoES from "crypto-es"
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -58,7 +58,7 @@ export const approve = async (
   // }
 
   const connectedUser = await createUserIfNecessary(wallet,env);
-  // const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+  // const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
   // const signature: string = await sign({
   //   message: hash,
   //   signingKey: connectedUser.privateKey!
