@@ -1,3 +1,5 @@
+import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
+
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
   payload_id: number;
@@ -67,8 +69,8 @@ export type ParsedResponseType = {
 
 export interface ISendNotificationInputOptions {
   signer: any;
-  type: number;
-  identityType: number;
+  type: NOTIFICATION_TYPE;
+  identityType: IDENTITY_TYPE;
   notification?: {
     title: string;
     body: string;

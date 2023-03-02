@@ -23,17 +23,17 @@ const ThemeSelector = styled.div`
   height: 32px;
 `;
 
-const NOTIFICATION_TYPE = {
-  BROADCAST: 1,
-  TARGETTED: 3,
-  SUBSET: 4
+enum NOTIFICATION_TYPE  {
+  BROADCAST = 1,
+  TARGETTED = 3,
+  SUBSET = 4
 };
 
-const IDENTITY_TYPE = {
-  MINIMAL: 0,
-  IPFS: 1,
-  DIRECT_PAYLOAD: 2,
-  SUBGRAPH: 3
+enum IDENTITY_TYPE  {
+  MINIMAL = 0,
+  IPFS = 1,
+  DIRECT_PAYLOAD = 2,
+  SUBGRAPH = 3
 };
 
 type optionsMatrixType = {

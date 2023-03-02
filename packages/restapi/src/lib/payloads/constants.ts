@@ -21,15 +21,16 @@ export const SOURCE_TYPES = {
   THE_GRAPH: 'THE_GRAPH'
 };
 
-export const IDENTITY_TYPE = {
-  MINIMAL: 0,
-  IPFS: 1,
-  DIRECT_PAYLOAD: 2,
-  SUBGRAPH: 3
+export enum IDENTITY_TYPE  {
+  MINIMAL = 0,
+  IPFS = 1,
+  DIRECT_PAYLOAD = 2,
+  SUBGRAPH = 3
 };
 
-export const NOTIFICATION_TYPE = {
-  BROADCAST: 1,
-  TARGETTED: 3,
-  SUBSET: 4
+export enum NOTIFICATION_TYPE  {
+  BROADCAST = 1,
+  TARGETTED = 3,
+  SUBSET = 4
 };
+
