@@ -4,8 +4,14 @@ import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 
-export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]): Promise<IUser> => {
-  const { env = Constants.ENV.PROD } = options || {};
+export interface GetBatchType {
+  userIds: string[],
+  env?: string
+}
+
+
+export const getBatch = async (options: GetBatchType): Promise<IUser> => {
+  const { env = Constants.ENV.PROD, userIds } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/users/batch`;
@@ -21,8 +27,8 @@ export const getBatch = async (options: AccountEnvOptionsType, userIds: string[]
     }
   }
 
-  userIds = userIds.map(walletToPCAIP10);
-  const requestBody = { userIds };
+  const pcaipUserIds = userIds.map(walletToPCAIP10);
+  const requestBody = { pcaipUserIds };
 
   return axios
     .post(requestUrl, requestBody)
