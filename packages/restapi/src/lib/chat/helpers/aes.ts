@@ -1,12 +1,12 @@
-import * as CryptoJS from "crypto-js"
+import CryptoES from "crypto-es"
 
 export const aesEncrypt = ({ plainText, secretKey }: { plainText: string; secretKey: string }): string => {
-  return CryptoJS.AES.encrypt(plainText, secretKey).toString()
+  return CryptoES.AES.encrypt(plainText, secretKey).toString()
 }
 
 export const aesDecrypt = ({ cipherText, secretKey }: { cipherText: string; secretKey: string }): string => {
-  const bytes = CryptoJS.AES.decrypt(cipherText, secretKey)
-  return bytes.toString(CryptoJS.enc.Utf8)
+  const bytes = CryptoES.AES.decrypt(cipherText, secretKey)
+  return bytes.toString(CryptoES.enc.Utf8)
 }
 
 export const generateRandomSecret = (length: number): string => {

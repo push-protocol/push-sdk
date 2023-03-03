@@ -11,7 +11,7 @@ import {
     getWallet,
     getAccountAddress
 } from './helpers';
-import * as CryptoJS from "crypto-js"
+import CryptoES from "crypto-es"
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
     account?: string,
@@ -62,7 +62,7 @@ export const updateGroup = async (
             admins: convertedAdmins,
             chatId: chatId,
         }
-        const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+        const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
         const signature: string = await sign({ message: hash, signingKey: connectedUser.privateKey! });
         const sigType = "pgp";
         const verificationProof: string = sigType + ":" + signature + ":" + account;
