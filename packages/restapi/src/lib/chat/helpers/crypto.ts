@@ -326,7 +326,6 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
   // get type information
   const typeInformation = getTypeInformation("Create_user");
   // console.log(domainInformation)
-  console.log(typeInformation)
 
   const _signer = wallet?.signer;
 

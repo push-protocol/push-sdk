@@ -61,7 +61,6 @@ export const getConnectedUser = async (
     const newUser = await create(createUserProps);
     let decryptedPrivateKey;
     if (wallet.signer) {
-      console.log(wallet.signer)
       decryptedPrivateKey = await decryptPGPKey({
         signer: wallet.signer,
         encryptedPGPPrivateKey: newUser.encryptedPrivateKey
