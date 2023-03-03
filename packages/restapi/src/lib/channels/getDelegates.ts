@@ -10,9 +10,14 @@ import Constants from '../constants';
  */
 
 export type GetDelegatesOptionsType = {
+  /** address of the channel */
   channel: string;
   env?: string;
 }
+
+/**
+ *  Returns the list of addresses that the channel has delegated to
+ */
 
 export const getDelegates = async (
   options : GetDelegatesOptionsType
