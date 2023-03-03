@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.7.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.5...restapi-0.7.6) (2023-03-03)
+
+
+### Bug Fixes
+
+* **component:** eNV type check across all the functions ([#210](https://github.com/ethereum-push-notification-service/push-sdk/issues/210)) ([d532b12](https://github.com/ethereum-push-notification-service/push-sdk/commit/d532b1217d836d7fcedb3f665173b96cbb588607))
+* resolved buffer polyfills issue in browser environments ([#218](https://github.com/ethereum-push-notification-service/push-sdk/issues/218)) ([ded2c50](https://github.com/ethereum-push-notification-service/push-sdk/commit/ded2c50e25916e0ceb907701c30a334faaacf403))
+
+
+
 ## [0.7.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.4...restapi-0.7.5) (2023-02-25)
 
 
