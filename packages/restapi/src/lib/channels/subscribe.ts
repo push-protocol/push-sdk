@@ -9,7 +9,7 @@ import {
   getDomainInformation,
   getSubscriptionMessage
 } from './signature.helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 type SignerType = {
   _signTypedData: (
@@ -24,7 +24,7 @@ export type SubscribeOptionsType = {
   channelAddress: string;
   userAddress: string;
   verifyingContractAddress?: string;
-  env?: string;
+  env?: ENV;
   onSuccess?: () => void
   onError?: (err: Error) => void,
 }

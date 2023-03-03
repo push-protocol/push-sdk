@@ -11,7 +11,7 @@ export type ChatProps = {
   modalTitle?: string;
   primaryColor?: string;
   apiKey?: string;
-  env?: string;
+  env?: "dev" | "staging" | "prod";
 };
 
 export const ChatSupportTest = () => {

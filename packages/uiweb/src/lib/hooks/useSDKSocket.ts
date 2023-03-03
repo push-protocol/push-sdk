@@ -3,16 +3,17 @@ import {
   createSocketConnection,
   EVENTS
 } from '@pushprotocol/socket';
+import {  ENV } from '../config';
 
 
 export type SDKSocketHookOptions = {
   account?: string | null,
-  env?: string,
+  env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
 };
 
-export const useSDKSocket = ({ account, env = '', socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
+export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');

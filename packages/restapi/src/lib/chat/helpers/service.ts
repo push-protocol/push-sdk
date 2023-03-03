@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Constants from '../../constants';
+import Constants, {ENV} from '../../constants';
 import { generateHash, getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType, walletType } from '../../types';
 import { getSignature } from './crypto';
@@ -12,7 +12,7 @@ type CreateUserOptionsType = {
   encryptionType?: string;
   signature?: string;
   sigType?: string;
-  env?: string;
+  env?:  ENV;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {

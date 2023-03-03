@@ -13,7 +13,7 @@ import { get } from '../../user';
 import { getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
-import Constants from '../../constants';
+import Constants, {ENV} from '../../constants';
 
 const SIG_TYPE_V2 = "eip712v2";
 
@@ -115,7 +115,7 @@ export const decryptFeeds = async ({
   feeds: IFeeds[];
   connectedUser: IUser;
   pgpPrivateKey?:string;
-  env: string;
+  env: ENV;
 }): Promise<IFeeds[]> => {
     let otherPeer: IUser;
     let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
@@ -197,7 +197,7 @@ export const getEncryptedRequest = async (
   senderCreatedUser: IConnectedUser,
   message: string,
   isGroup: boolean,
-  env: string,
+  env: ENV,
   group: GroupDTO | null,
 ): Promise<IEncryptedRequest | void> => {
 
@@ -326,7 +326,6 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
   // get type information
   const typeInformation = getTypeInformation("Create_user");
   // console.log(domainInformation)
-  console.log(typeInformation)
 
   const _signer = wallet?.signer;
 

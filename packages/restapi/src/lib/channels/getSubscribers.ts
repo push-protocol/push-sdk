@@ -3,7 +3,7 @@ import {
     getCAIPAddress,
     getAPIBaseUrls,
 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 import {
     Subscribers
 } from '../types';
@@ -18,7 +18,7 @@ export type GetChannelSubscribersOptionsType = {
     channel: string; // plain ETH Format only
     page?: number,
     limit?: number,
-    env?: string
+    env?: ENV
 }
 
 export const getSubscribers = async (

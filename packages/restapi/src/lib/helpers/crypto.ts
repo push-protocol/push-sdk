@@ -9,7 +9,6 @@ import { isValidETHAddress } from "./address";
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const address: string = account || (await signer?.getAddress()) || '';
-  console.log('Fetching Public Key');
   const metamaskProvider = new ethers.providers.Web3Provider((window as any).ethereum);
   const web3Provider = signer?.provider || metamaskProvider;
 
@@ -17,7 +16,6 @@ export const getPublicKey = async (options: walletType): Promise<string> => {
     method: "eth_getEncryptionPublicKey",
     params: [address]
   });
-  console.log(`Public Key: ${keyB64}`);
   return keyB64;
 };
 

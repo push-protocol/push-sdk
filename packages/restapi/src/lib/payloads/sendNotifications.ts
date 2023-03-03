@@ -11,6 +11,7 @@ import {
 } from './helpers';
 import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
 import { IDENTITY_TYPE } from './constants';
+import { ENV } from '../constants';
 
 
 /**
@@ -45,7 +46,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       channel,
       graph,
       ipfsHash,
-      env = 'prod'
+      env = ENV.PROD
     } = options || {};
 
     validateOptions(options);
