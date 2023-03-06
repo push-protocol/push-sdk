@@ -1,5 +1,5 @@
 import * as ethers from 'ethers';
-import Constants from '../constants';
+import Constants, { ENV } from '../constants';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address } : { address: string }) => boolean;
@@ -7,7 +7,13 @@ export interface AddressValidatorsType {
 
 export function isValidETHAddress(address: string) {
   if (address.includes('eip155:')) {
-    return ethers.utils.isAddress((address.split(':'))[1]);
+    const splittedAddress = address.split(':');
+    console.log(splittedAddress)
+    if(splittedAddress.length === 3){
+     return ethers.utils.isAddress(splittedAddress[2]);
+    }
+    if(splittedAddress.length === 2)
+     return ethers.utils.isAddress(splittedAddress[1]); 
   }
   return ethers.utils.isAddress(address);
 }
@@ -66,7 +72,7 @@ export function getCAIPDetails(addressInCAIP: string) : CAIPDetailsType | null {
   return null;
 }
 
-export function getFallbackETHCAIPAddress(env: string, address: string) {
+export function getFallbackETHCAIPAddress(env: ENV, address: string) {
   let chainId = 1; // by default PROD
 
   if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING) {
@@ -86,7 +92,7 @@ export function getFallbackETHCAIPAddress(env: string, address: string) {
  *    else 
  *      throw error!
  */
-export function getCAIPAddress(env: string, address: string, msg?: string) {
+export function getCAIPAddress(env: ENV, address: string, msg?: string) {
   if (validateCAIP(address)) {
     return address;
   } else {
@@ -100,7 +106,10 @@ export function getCAIPAddress(env: string, address: string, msg?: string) {
 
 export const getCAIPWithChainId = (address:string, chainId:number, msg?: string) => {
   if(isValidETHAddress(address)) {
-    return `eip155:${chainId}:${address}`;
+    if(!address.includes('eip155:'))
+     return `eip155:${chainId}:${address}`;
+    else
+     return address;
   } else {
     throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
   }
