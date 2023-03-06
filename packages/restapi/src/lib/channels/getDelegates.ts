@@ -3,7 +3,7 @@ import {
   getCAIPAddress,
   getAPIBaseUrls
 } from '../helpers';
-import Constants from '../constants';
+import Constants, { ENV } from '../constants';
 
 /**
  *  GET v1/channels/${channelAddressInCAIP}/delegates  
@@ -12,7 +12,7 @@ import Constants from '../constants';
 export type GetDelegatesOptionsType = {
   /** address of the channel */
   channel: string;
-  env?: string;
+  env?: ENV;
 }
 
 /**

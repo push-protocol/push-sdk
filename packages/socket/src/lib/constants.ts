@@ -5,8 +5,14 @@ export const ENV = {
 };
 
 export const EVENTS = {
+  // Websocket
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
+
+  // Notification
   USER_FEEDS: 'userFeeds',
-  USER_SPAM_FEEDS: 'userSpamFeeds'
+  USER_SPAM_FEEDS: 'userSpamFeeds',
+
+  // Chat
+  CHAT_RECEIVED_MESSAGE: 'CHATS'
 };

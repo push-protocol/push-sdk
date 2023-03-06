@@ -154,3 +154,78 @@ where
 | isSpam      | boolean | whether a spam notification or not   |
 | subscribeFn  | Promise | Function to subscribe to the channel  |
 | isSubscribedFn  | Promise | Function that returns the subscription status of a channel   |
+
+
+
+<br/>
+
+
+### Support Chat Item component
+
+Import the SDK package in the component file where you want to render the support chat component.
+```typescript
+import { Chat } from "@pushprotocol/uiweb";
+import { ITheme } from '@pushprotocol/uiweb';
+```
+
+Render the Chat Component as follows
+```typescript
+<Chat
+   account="0x6430C47973FA053fc8F055e7935EC6C2271D5174" //user address
+   supportAddress="0xd9c1CCAcD4B8a745e191b62BA3fcaD87229CB26d" //support address
+   apiKey="jVPMCRom1B.iDRMswdehJG7NpHDiECIHwYMMv6k2KzkPJscFIDyW8TtSnk4blYnGa8DIkfuacU0"
+   env="staging"
+ />
+```
+<br/>
+
+Allowed Options (props with * are mandatory)
+
+| Prop    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address(sender)                |
+| supportAddress*    | string  | -       | support user's address(receiver)                |
+| greetingMsg    | string  | 'Hi there!'       | first message in chat scree               |
+| theme    | ITheme  | &lt;lightTheme&gt;   | theme for chat modal (only lightTheme available now)  |
+| modalTitle    | string  | 'Chat with us!'       | Modal header title               |
+| apiKey    | string  | ''       | api key       |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+
+<br/>
+<br/>
+
+Example code for using custom theme
+```typescript
+import React from 'react';
+import { Chat, ITheme } from '@pushprotocol/uiweb';
+
+
+export const ChatSupportTest = () => {
+  const theme: ITheme = {
+    bgColorPrimary: 'gray',
+    bgColorSecondary: 'purple',
+    textColorPrimary: 'white',
+    textColorSecondary: 'green',
+    btnColorPrimary: 'red',
+    btnColorSecondary: 'purple',
+    border: '1px solid black',
+    borderRadius: '40px',
+    moduleColor: 'pink',
+  };
+
+  return (
+    <Chat
+      account='0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7'
+      supportAddress="0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7"
+      apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
+      env='staging'
+      theme={theme}
+    />
+  );
+};
+```
+
+#### List of all theme variables
+![image](https://user-images.githubusercontent.com/42746736/219010647-32013301-a260-4426-8034-16ecd88bad32.png)
+

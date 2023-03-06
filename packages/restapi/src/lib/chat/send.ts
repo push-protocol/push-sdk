@@ -1,46 +1,57 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
-import { ChatOptionsType } from '../types';
-import { getConnectedUser } from './helpers';
+import { ChatSendOptionsType } from '../types';
+import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
 /**
- *  POST /v1/chat/message
+ * Send a message to an address or a group
  */
-
-export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
+export const send = async (options: ChatSendOptionsType) => {
   const {
     messageContent = '',
     messageType = 'Text',
     receiverAddress,
-    account,
+    account = null,
+    signer = null,
     pgpPrivateKey = null,
     apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
   try {
-    if (!isValidETHAddress(account)) {
+    if(account == null && signer == null) {
+      throw new Error(`At least one from account or signer is necessary!`);
+    }
+  
+    const wallet = getWallet({ account, signer });
+    const address = await getAccountAddress(wallet);
+
+    if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
     }
+
+    let isGroup = false;
     if (!isValidETHAddress(receiverAddress)) {
-      throw new Error(`Invalid address!`);
+      isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(account, pgpPrivateKey, env);
-
-    const conversationResponse: any = await conversationHash({
-      conversationId: receiverAddress,
-      account,
-      env,
-    });
-    if (!conversationResponse?.threadHash) {
+    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    let conversationResponse: any = null;
+    if (!isGroup) {
+      conversationResponse = await conversationHash({
+        conversationId: receiverAddress,
+        account: address,
+        env,
+      });
+    }
+    if (conversationResponse && !conversationResponse?.threadHash) {
       return start({
         messageContent: messageContent,
-        messageType: 'Text',
+        messageType: messageType,
         receiverAddress,
         connectedUser,
         apiKey,
@@ -67,7 +78,7 @@ export const send = async (options: Omit<ChatOptionsType, 'connectedUser'>) => {
         });
     }
   } catch (err) {
-    console.error(`[EPNS-SDK] - API  - Error - API send() -:  `, err);
-    throw Error(`[EPNS-SDK] - API  - Error - API send() -: ${err}`);
+    console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);
   }
 };

@@ -5,12 +5,9 @@ import {
   Section,
 } from '../components/StyledComponents';
 import Loader from '../components/Loader';
-import { Web3Context, EnvContext } from '../context';
 
 
 const ChatTest = () => {
-  const { library, account, chainId } = useContext<any>(Web3Context);
-  const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
 
   const NavMenu = styled.div`
@@ -35,6 +32,9 @@ const ChatTest = () => {
           <Link to="/get" className="nav-button">
             USER.GET
           </Link>
+          <Link to="/getUsersBatch" className="nav-button">
+            USER.GETBATCH
+          </Link>
           <Link to="/create" className="nav-button">
             USER.CREATE
           </Link>
@@ -55,6 +55,15 @@ const ChatTest = () => {
           </Link>
           <Link to="/history" className="nav-button">
             CHAT.HISTORY
+          </Link>
+          <Link to="/createGroup" className="nav-button">
+            CHAT.CREATEGROUP
+          </Link>
+          <Link to="/updateGroup" className="nav-button">
+            CHAT.UPDATEGROUP
+          </Link>
+          <Link to="/getGroup" className="nav-button">
+            CHAT.GETGROUP
           </Link>
         </NavMenu>
       </Section>

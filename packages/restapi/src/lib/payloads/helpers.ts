@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ENV } from '../constants';
 import { getCAIPAddress } from '../helpers';
 
 import { ISendNotificationInputOptions, INotificationPayload } from '../types';
@@ -61,7 +62,7 @@ export async function getRecipients({
   recipients,
   secretType
 } : {
-  env: string,
+  env: ENV,
   notificationType: number,
   channel: string,
   recipients?: string | string[],
@@ -139,7 +140,7 @@ export function getRecipientFieldForAPIPayload({
   recipients,
   channel,
 } : {
-  env: string,
+  env: ENV,
   notificationType: number,
   recipients: string | string[],
   channel: string
