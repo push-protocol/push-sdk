@@ -14,19 +14,21 @@ export const generateKeyPair = async (): Promise<{ privateKeyArmored: string; pu
 
 export const pgpEncrypt = async ({
   plainText,
-  toPublicKeyArmored,
-  fromPublicKeyArmored
+  keys,
 }: {
   plainText: string
-  toPublicKeyArmored: string
-  fromPublicKeyArmored: string
+  keys: Array<string>
 }): Promise<string> => {
-  const toPublicKey: openpgp.Key = await openpgp.readKey({ armoredKey: toPublicKeyArmored })
-  const fromPublicKey: openpgp.Key = await openpgp.readKey({ armoredKey: fromPublicKeyArmored })
+
+  const pgpKeys: openpgp.Key[] = [];
+
+  for(let i = 0; i < keys.length; i++) {
+    pgpKeys.push(await openpgp.readKey({ armoredKey: keys[i] }))
+  }
   const message: openpgp.Message<string> = await openpgp.createMessage({ text: plainText })
   const encrypted: string = <string>await openpgp.encrypt({
     message: message,
-    encryptionKeys: [toPublicKey, fromPublicKey]
+    encryptionKeys: pgpKeys
   })
   return encrypted
 }

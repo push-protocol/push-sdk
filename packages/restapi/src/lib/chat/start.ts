@@ -1,14 +1,9 @@
 import axios from 'axios';
-import {
-  getAPIBaseUrls,
-} from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { ChatOptionsType } from '../types';
-import { ISendMessagePayload, sendMessagePayload } from './helpers';
-
-/**
- *  POST /v1/chat/request
- */
+import { ISendMessagePayload, sendMessagePayload, sign } from './helpers';
+import CryptoES from "crypto-es"
 
 export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
   const {
@@ -32,6 +27,23 @@ export const start = async (options: Omit<ChatOptionsType, 'account'>) => {
     messageType,
     env
   );
+
+    const bodyToBeHashed = {
+        fromDID: body.fromDID,
+        toDID: body.toDID,
+        messageContent: body.messageContent,
+        messageType: messageType,
+    }
+
+    const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+    const signature: string = await sign({
+        message: hash,
+        signingKey: connectedUser.privateKey!
+    });
+    const sigType = "pgp";
+
+    const verificationProof: string = sigType + ":" + signature;
+    body.verificationProof = verificationProof;
 
   return axios
     .post(apiEndpoint, body, { headers })

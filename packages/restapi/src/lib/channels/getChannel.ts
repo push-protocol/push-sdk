@@ -3,7 +3,7 @@ import {
   getCAIPAddress,
   getAPIBaseUrls
 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 /**
  *  GET /v1/channels/{addressinCAIP}   
@@ -11,11 +11,11 @@ import Constants from '../constants';
 
 export type GetChannelOptionsType = {
   channel: string;
-  env?: string;
+  env?: ENV;
 }
 
 export const getChannel = async (
-  options : GetChannelOptionsType
+  options: GetChannelOptionsType
 ) => {
   const {
     channel,
@@ -30,6 +30,6 @@ export const getChannel = async (
   return await axios.get(requestUrl)
     .then((response) => response.data)
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

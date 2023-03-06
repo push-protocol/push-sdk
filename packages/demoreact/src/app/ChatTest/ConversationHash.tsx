@@ -37,7 +37,7 @@ const ConversationHashTest = () => {
       // object for connected user data
       const response = await PushAPI.chat.conversationHash({
         account: walletToPCAIP10(userAddr1),
-        conversationId: walletToPCAIP10(userAddr2),
+        conversationId: userAddr2,
         env,
       });
 

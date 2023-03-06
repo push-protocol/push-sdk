@@ -1,15 +1,29 @@
-import Constants from '../../constants';
+import Constants, { ENV } from '../../constants';
 import { get, create } from '../../user';
-import { decryptWithWalletRPCMethod } from '../../helpers';
-import { AccountEnvOptionsType, IConnectedUser, IUser } from '../../types';
+import { decryptPGPKey, decryptWithWalletRPCMethod } from '../../helpers';
+import { IConnectedUser, IUser, SignerType, walletType } from '../../types';
+import { getAccountAddress } from './wallet';
 
 export const createUserIfNecessary = async (
-  options: AccountEnvOptionsType
+  wallet: walletType,
+  env:  ENV,
 ): Promise<IUser> => {
-  const { account, env = Constants.ENV.PROD } = options || {};
-  const connectedUser = await get({ account: account, env });
+  const address = await getAccountAddress(wallet);
+  const connectedUser = await get({ account: address, env });
   if (!connectedUser?.encryptedPrivateKey) {
-    const createdUser: IUser = await create({ account: account, env });
+    const createUserProps: {
+      account?: string;
+      signer?: SignerType;
+      env?:  ENV;
+    } = {};
+    if (wallet.account) {
+      createUserProps.account = wallet.account;
+    }
+    if (wallet.signer) {
+      createUserProps.signer = wallet.signer;
+    }
+    createUserProps.env = env;
+    const createdUser: IUser = await create(createUserProps);
     return createdUser;
   } else {
     return connectedUser;
@@ -17,25 +31,46 @@ export const createUserIfNecessary = async (
 };
 
 export const getConnectedUser = async (
-  account: string,
+  wallet: walletType,
   privateKey: string | null,
-  env: string
+  env:  ENV
 ): Promise<IConnectedUser> => {
-  const user = await get({ account: account, env: env || Constants.ENV.PROD });
+  const address = await getAccountAddress(wallet);
+  const user = await get({ account: address, env: env || Constants.ENV.PROD });
   if (user?.encryptedPrivateKey) {
-    if (privateKey) { 
+    if (privateKey) {
       return { ...user, privateKey };
     }
     else {
-      throw new Error(`Decrypted private key required as input`);
+      throw new Error(`Decrypted pgp private key required as input`);
     }
   }
   else {
-    const newUser = await create({ account, env });
-    const decryptedPrivateKey = await decryptWithWalletRPCMethod(
-      newUser.encryptedPrivateKey,
-      account
-    );
+    const createUserProps: {
+      account?: string;
+      signer?: SignerType;
+      env?:  ENV;
+    } = {};
+    if (wallet.account) {
+      createUserProps.account = wallet.account;
+    }
+    if (wallet.signer) {
+      createUserProps.signer = wallet.signer;
+    }
+    createUserProps.env = env;
+    const newUser = await create(createUserProps);
+    let decryptedPrivateKey;
+    if (wallet.signer) {
+      decryptedPrivateKey = await decryptPGPKey({
+        signer: wallet.signer,
+        encryptedPGPPrivateKey: newUser.encryptedPrivateKey
+      })
+    } else {
+      decryptedPrivateKey = await decryptWithWalletRPCMethod(
+        newUser.encryptedPrivateKey,
+        address
+      );
+    }
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
 };

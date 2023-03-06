@@ -12,6 +12,12 @@ export function isValidETHAddress(address: string) {
   return ethers.utils.isAddress(address);
 }
 
+export function  isValidNFTCAIP10Address (realCAIP10: string)  {
+        const walletComponent = realCAIP10.split(':');
+        if (isNaN(Number(walletComponent[1]))) return false
+        return (walletComponent.length === 3 && walletComponent[0] === 'eip155' && ethers.utils.isAddress(walletComponent[2]))
+}
+
 const AddressValidators: AddressValidatorsType = {
   // Ethereum
   'eip155': ({ address } : { address: string }) => {

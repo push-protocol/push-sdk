@@ -25,6 +25,13 @@ import GetChatsTest from './ChatTest/GetChats';
 import ConversationHashTest from './ChatTest/ConversationHash';
 import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
+import CreateGroupTest from './ChatTest/CreateGroupTest';
+import UpdateGroupTest from './ChatTest/UpdateGroupTest';
+import GetGroupTest from './ChatTest/GetGroupTest';
+import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
+import {Buffer} from 'buffer';
+
+window.Buffer = window.Buffer || Buffer; 
 
 interface Web3ReactState {
   chainId?: number;
@@ -218,6 +225,7 @@ export function App() {
 
                 {/* chat method  routes */}
                 <Route path="/get" element={<GetUserTest />} />
+                <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
@@ -225,6 +233,10 @@ export function App() {
                 <Route path="/hash" element={<ConversationHashTest />} />
                 <Route path="/history" element={<HistoryTest />} />
                 <Route path="/requests" element={<GetRequestsTest />} />
+                <Route path="/createGroup" element={<CreateGroupTest />} />
+                <Route path="/getGroup" element={<GetGroupTest />} />
+                <Route path="/updateGroup" element={<UpdateGroupTest />} />
+
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

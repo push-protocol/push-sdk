@@ -27,7 +27,7 @@ export function parseApiResponse(response: ApiNotificationType[]): ParsedRespons
 
     return {
       cta,
-      title: asub || notification.title || '',
+      title: asub || '',
       message: bigMessage || notification.body || '',
       icon,
       url,
