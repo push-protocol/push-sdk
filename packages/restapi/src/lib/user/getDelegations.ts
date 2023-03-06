@@ -3,7 +3,7 @@ import {
   getCAIPAddress,
   getAPIBaseUrls
 } from '../helpers';
-import Constants from '../constants';
+import Constants, { ENV } from '../constants';
 
 /**
  *  GET /users/:userAddressInCAIP/delegations
@@ -12,11 +12,11 @@ import Constants from '../constants';
 export type UserDelegationsOptionsType = {
   /** wallet address of user */
   user: string;
-  env?: string;
+  env?: ENV;
 }
 
 /**
- *  Returns the channels a user is delegated to
+ *  Returns the list of channels that the user has been delegated to
  */
 
 export const getDelegations = async (

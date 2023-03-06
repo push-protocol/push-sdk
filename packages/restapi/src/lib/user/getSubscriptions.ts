@@ -1,21 +1,14 @@
 import axios from 'axios';
-import {
-  getCAIPAddress,
-  getAPIBaseUrls
-} from '../helpers';
-import Constants from '../constants';
-
-/**
- *  GET /users/:userAddressInCAIP/subscriptions
- */
+import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
+import Constants, {ENV} from '../constants';
 
 export type UserSubscriptionsOptionsType = {
   user: string;
-  env?: string;
+  env?: ENV;
 }
 
 export const getSubscriptions = async (
-  options : UserSubscriptionsOptionsType
+  options: UserSubscriptionsOptionsType
 ) => {
   const {
     user,
@@ -30,6 +23,6 @@ export const getSubscriptions = async (
   return axios.get(requestUrl)
     .then((response) => response.data?.subscriptions || [])
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
 }

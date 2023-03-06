@@ -1,5 +1,5 @@
 import axios from "axios";
-import Constants from "../constants";
+import Constants, {ENV} from "../constants";
 import { getAPIBaseUrls } from "../helpers";
 
 export interface Message {
@@ -18,27 +18,19 @@ export interface Message {
 }
 
 export interface IPFSOptionsType {
-    env?: string
+    env?: ENV,
 }
 
-/**
- * This function internally
- * @param cid 
- * @returns 
- */
 export async function getCID(cid: string, options: IPFSOptionsType): Promise<Message> {
-    const {
-        env = Constants.ENV.PROD,
-    } = options || {};
+    const { env = Constants.ENV.PROD } = options || {};
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/ipfs/${cid}`;
-    const requestUrl = `${apiEndpoint}`;
     try {
-        const response = await axios.get(requestUrl)
+        const response = await axios.get(apiEndpoint)
         const message: Message = response.data;
         return message;
     } catch (err) {
-        console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-        throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+        console.error(`[Push SDK] - API ${getCID.name}: `, err);
+        throw Error(`[Push SDK] - API ${getCID.name}: ${err}`);
     }
 }
