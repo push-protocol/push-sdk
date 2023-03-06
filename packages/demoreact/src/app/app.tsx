@@ -25,6 +25,7 @@ import GetChatsTest from './ChatTest/GetChats';
 import ConversationHashTest from './ChatTest/ConversationHash';
 import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
+import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
@@ -192,6 +193,8 @@ export function App() {
                       </Link>
                       <Link to="/alias" className="nav-button">
                         ALIAS
+                      <Link to="/delegations" className="nav-button">
+                        DELEGATIONS
                       </Link>
                       <Link to="/payloads" className="nav-button">
                         PAYLOADS
@@ -214,6 +217,8 @@ export function App() {
                 <Route path="/channels" element={<ChannelsTest />} />
 
                 <Route path="/alias" element={<AliasTest />} />
+                
+                <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
 
