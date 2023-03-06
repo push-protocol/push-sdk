@@ -7,7 +7,13 @@ export interface AddressValidatorsType {
 
 export function isValidETHAddress(address: string) {
   if (address.includes('eip155:')) {
-    return ethers.utils.isAddress((address.split(':'))[1]);
+    const splittedAddress = address.split(':');
+    console.log(splittedAddress)
+    if(splittedAddress.length === 3){
+     return ethers.utils.isAddress(splittedAddress[2]);
+    }
+    if(splittedAddress.length === 2)
+     return ethers.utils.isAddress(splittedAddress[1]); 
   }
   return ethers.utils.isAddress(address);
 }
@@ -95,6 +101,17 @@ export function getCAIPAddress(env: ENV, address: string, msg?: string) {
     } else {
       throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
     }
+  }
+}
+
+export const getCAIPWithChainId = (address:string, chainId:number, msg?: string) => {
+  if(isValidETHAddress(address)) {
+    if(!address.includes('eip155:'))
+     return `eip155:${chainId}:${address}`;
+    else
+     return address;
+  } else {
+    throw Error(`Invalid Address! ${msg} \n Address: ${address}`);
   }
 }
 

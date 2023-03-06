@@ -11,6 +11,7 @@ import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
 import NotificationsTest from './NotificationsTest';
 import SecretNotificationsTest from './SecretNotificationsTest';
 import ChannelsTest from './ChannelsTest';
+import AliasTest from './AliasTest';
 import EmbedTest from './EmbedTest';
 import PayloadsTest from './PayloadsTest';
 import SocketTest from './SocketTest';
@@ -190,6 +191,8 @@ export function App() {
                       <Link to="/channels" className="nav-button">
                         CHANNELS
                       </Link>
+                      <Link to="/alias" className="nav-button">
+                        ALIAS
                       <Link to="/delegations" className="nav-button">
                         DELEGATIONS
                       </Link>
@@ -213,6 +216,8 @@ export function App() {
 
                 <Route path="/channels" element={<ChannelsTest />} />
 
+                <Route path="/alias" element={<AliasTest />} />
+                
                 <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />

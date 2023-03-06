@@ -18,6 +18,21 @@ const BLOCKCHAIN_NETWORK = {
   BSC_TESTNET: 'eip155:97'
 };
 
+export type ALIAS_CHAIN = 'POLYGON' | 'BSC';
+
+export const ALIAS_CHAIN_ID = {
+  POLYGON: {
+    [ENV.PROD]: 137,
+    [ENV.STAGING]: 80001,
+    [ENV.DEV]: 80001
+  },
+  BSC: {
+    [ENV.PROD]: 56,
+    [ENV.STAGING]: 97,
+    [ENV.DEV]: 97
+  }
+}
+
 export interface ConfigType {
   API_BASE_URL: string,
   EPNS_COMMUNICATOR_CONTRACT: string
