@@ -1,5 +1,5 @@
 import axios from "axios";
-import Constants from "../constants";
+import Constants, {ENV} from "../constants";
 import { getAPIBaseUrls } from "../helpers";
 
 export interface Message {
@@ -18,7 +18,7 @@ export interface Message {
 }
 
 export interface IPFSOptionsType {
-    env?: string
+    env?: ENV,
 }
 
 export async function getCID(cid: string, options: IPFSOptionsType): Promise<Message> {

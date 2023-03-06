@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 import {
  GroupDTO
 } from '../types';
@@ -12,7 +12,7 @@ import {
 
 export interface GetGroupByNameType {
     groupName: string,
-    env?: string,
+    env?: ENV,
 }
 
 export const getGroupByName = async (

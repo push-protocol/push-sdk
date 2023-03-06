@@ -2,6 +2,7 @@ import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
+import {ENV} from '../../constants';
 
 export interface ISendMessagePayload {
   fromDID: string;
@@ -56,7 +57,7 @@ export const sendMessagePayload = async (
   senderCreatedUser: IConnectedUser,
   messageContent: string,
   messageType: string,
-  env: string
+  env: ENV
 ): Promise<ISendMessagePayload> => {
   let isGroup = true;
   if (isValidETHAddress(receiverAddress)) {
