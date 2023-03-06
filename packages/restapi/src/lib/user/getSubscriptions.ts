@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 export type UserSubscriptionsOptionsType = {
   user: string;
-  env?: string;
+  env?: ENV;
 }
 
 export const getSubscriptions = async (

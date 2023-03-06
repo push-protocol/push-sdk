@@ -5,12 +5,12 @@ import {
   getQueryParams,
   getLimit,
 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 import { parseApiResponse } from '../utils';
 
 export type FeedsOptionsType = {
   user: string;
-  env?: string;
+  env?: ENV;
   page?: number;
   limit?: number;
   spam?: boolean;

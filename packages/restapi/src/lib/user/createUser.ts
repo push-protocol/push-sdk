@@ -1,12 +1,12 @@
 import { getEncryptionPublicKey } from "@metamask/eth-sig-util";
 import { createUserService, generateKeyPair, getAccountAddress, getWallet } from "../chat/helpers";
-import Constants from "../constants";
+import Constants, {ENV} from "../constants";
 import { encryptWithRPCEncryptionPublicKeyReturnRawData, isValidETHAddress, walletToPCAIP10 } from "../helpers";
 import { getPublicKey } from "../helpers";
 import { SignerType } from "../types";
 
 export type CreateUserProps = {
-  env?: string;
+  env?:  ENV;
   account?: string;
   signer?: SignerType;
 };
@@ -47,7 +47,6 @@ export const create = async (
     walletPublicKey
   );
   const caip10: string = walletToPCAIP10(address);
-  console.log(encryptedPrivateKey);
 
   const body = {
     user: caip10,

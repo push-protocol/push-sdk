@@ -44,7 +44,7 @@ type optionsMatrixType = {
 
 const getOptionsMatrix = (
   { signer, env = 'prod', isCAIP, channel, timestamp } :
-  { signer: any, env?: string, isCAIP?: boolean, channel: string, timestamp: string }
+  { signer: any, env?: "dev" | "staging" | "prod", isCAIP?: boolean, channel: string, timestamp: string }
 ) : optionsMatrixType => {
   if (!signer) throw Error(`No Signer provided`);
 

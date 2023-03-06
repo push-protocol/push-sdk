@@ -3,7 +3,7 @@ import {
   getCAIPAddress,
   getAPIBaseUrls
 } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 /**
  *  GET /v1/channels/{addressinCAIP}   
@@ -11,7 +11,7 @@ import Constants from '../constants';
 
 export type GetChannelOptionsType = {
   channel: string;
-  env?: string;
+  env?: ENV;
 }
 
 export const getChannel = async (

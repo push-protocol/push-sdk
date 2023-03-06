@@ -6,7 +6,7 @@ import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { IMessageIPFS, ITheme } from '../../types';
 import './index.css';
-import { Constants, lightTheme } from '../../config';
+import { Constants, ENV, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 
 
@@ -17,7 +17,7 @@ export type ChatProps = {
   modalTitle?: string;
   theme?: ITheme;
   apiKey?: string;
-  env?: string;
+  env?: ENV;
 };
 
 export type ButtonStyleProps = {

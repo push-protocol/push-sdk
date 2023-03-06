@@ -1,6 +1,6 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
 import { decrypt } from "@metamask/eth-sig-util";
-import * as CryptoJS from "crypto-js"
+import CryptoES from "crypto-es"
 import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature } from "../chat/helpers";
 import { SignerType, walletType } from "../types";
@@ -9,7 +9,6 @@ import { isValidETHAddress } from "./address";
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const address: string = account || (await signer?.getAddress()) || '';
-  console.log('Fetching Public Key');
   const metamaskProvider = new ethers.providers.Web3Provider((window as any).ethereum);
   const web3Provider = signer?.provider || metamaskProvider;
 
@@ -17,7 +16,6 @@ export const getPublicKey = async (options: walletType): Promise<string> => {
     method: "eth_getEncryptionPublicKey",
     params: [address]
   });
-  console.log(`Public Key: ${keyB64}`);
   return keyB64;
 };
 
@@ -140,8 +138,8 @@ export const decryptAndVerifySignature = async ({
 }
 
 export const generateHash = (message: any): string => {
-  const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
-    CryptoJS.enc.Hex
+  const hash = CryptoES.SHA256(JSON.stringify(message)).toString(
+    CryptoES.enc.Hex
   );
   return hash;
 }

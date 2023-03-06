@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 export type ChatUpdateUserOptionsType = {
   user: string;
   profilePictureCID?: string;
   name?: string;
-  env?: string;
+  env?: ENV;
 }
 
 export const updateUser = async (

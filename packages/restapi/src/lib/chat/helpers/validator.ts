@@ -14,11 +14,11 @@ export const createGroupRequestValidator = (
         throw new Error(`groupName cannot be null or empty`);
     }
 
-    if (groupName.length >= 50) {
+    if (groupName.length > 50) {
         throw new Error(`groupName cannot be more than 50 characters`);
     }
 
-    if (groupDescription && groupDescription.length >= 150) {
+    if (groupDescription && groupDescription.length > 150) {
         throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
@@ -77,11 +77,11 @@ export const updateGroupRequestValidator = (
         throw new Error(`profilePicture cannot be null or empty`);
     }
 
-    if (groupName != null && groupName.length >= 50) {
+    if (groupName != null && groupName.length > 50) {
         throw new Error(`groupName cannot be more than 50 characters`);
     }
 
-    if (groupDescription != null && groupDescription.length >= 150) {
+    if (groupDescription != null && groupDescription.length > 150) {
         throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 

@@ -11,7 +11,7 @@ import {
     getWallet,
     getAccountAddress,
 } from './helpers';
-import * as CryptoJS from "crypto-js"
+import CryptoES from 'crypto-es';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
     account?: string,
@@ -79,7 +79,7 @@ export const createGroup = async (
 
         const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
 
-        const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+        const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
         const signature: string = await sign({ message: hash, signingKey: connectedUser.privateKey! });
         const sigType = "pgp";
 

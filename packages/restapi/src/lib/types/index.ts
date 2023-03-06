@@ -1,4 +1,5 @@
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
+import {ENV} from '../constants';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -92,7 +93,7 @@ export interface ISendNotificationInputOptions {
     counter: number;
   };
   ipfsHash?: string;
-  env?: string;
+  env?:  ENV;
 }
 
 export interface INotificationPayload {
@@ -207,11 +208,10 @@ export interface IMessageIPFSWithCID extends IMessageIPFS {
   cid: string;
 }
 
-export interface AccountEnvOptionsType {
+export interface AccountEnvOptionsType extends EnvOptionsType {
   /**
    * Environment variable
    */
-  env?: string;
   account: string;
 }
 
@@ -236,7 +236,7 @@ export interface ChatSendOptionsType {
    * Api key is now optional
    */
   apiKey?: string;
-  env?: string;
+  env?: ENV;
   account?: string;
   signer?: SignerType;
 };
@@ -266,7 +266,7 @@ export type SignerType = {
 }
 
 export type EnvOptionsType = {
-  env?: string;
+  env?: ENV;
 }
 
 export type walletType = {

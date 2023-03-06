@@ -1,5 +1,5 @@
 import * as PushAPI from '@pushprotocol/restapi';
-import { Constants } from '../config';
+import { Constants, ENV } from '../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { IConnectedUser } from '@pushprotocol/restapi';
 
@@ -86,7 +86,7 @@ export const getChats = async (
 type DecrypteChatType = {
   message: IMessageIPFS,
   connectedUser: IConnectedUser,
-  env: string
+  env:  ENV
 }
 export const decryptChat = async (
   options: DecrypteChatType
