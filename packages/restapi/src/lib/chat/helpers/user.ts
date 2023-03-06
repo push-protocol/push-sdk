@@ -1,8 +1,8 @@
 import Constants, { ENV } from '../../constants';
 import { get, create } from '../../user';
-import { decryptPGPKey, decryptWithWalletRPCMethod } from '../../helpers';
 import { IConnectedUser, IUser, SignerType, walletType } from '../../types';
 import { getAccountAddress } from './wallet';
+import { getDecryptedPrivateKey } from '.';
 
 export const createUserIfNecessary = async (
   wallet: walletType,
@@ -64,31 +64,12 @@ export const getConnectedUser = async (
   }
 };
 
-async function getDecryptedPrivateKey(wallet: walletType, user: any, address: string): Promise<string> {
-  let decryptedPrivateKey;
-  if (wallet.signer) {
-    decryptedPrivateKey = await decryptPGPKey({
-      signer: wallet.signer,
-      encryptedPGPPrivateKey: user.encryptedPrivateKey
-    })
-  } else {
-    decryptedPrivateKey = await decryptWithWalletRPCMethod(
-      user.encryptedPrivateKey,
-      address
-    );
-  }
-  return decryptedPrivateKey;
-}
-
 
 export const getConnectedUserV2 = async (
   wallet: walletType,
   privateKey: string | null,
   env: ENV
 ): Promise<IConnectedUser> => {
-  if(!privateKey) {
-    console.warn("Please note that if you don't pass the pgpPrivateKey parameter, a wallet popup will appear every time the approveRequest endpoint is called. We strongly recommend passing this parameter, and it will become mandatory in future versions of the API.")
-  }
   const address = await getAccountAddress(wallet);
   const user = await get({ account: address, env: env || Constants.ENV.PROD });
   if (user?.encryptedPrivateKey) {
@@ -96,6 +77,7 @@ export const getConnectedUserV2 = async (
       return { ...user, privateKey };
     }
     else {
+    console.warn("Please note that if you don't pass the pgpPrivateKey parameter, a wallet popup will appear every time the approveRequest endpoint is called. We strongly recommend passing this parameter, and it will become mandatory in future versions of the API.");
     const decryptedPrivateKey = await getDecryptedPrivateKey(wallet, user, address);
     return { ...user, privateKey: decryptedPrivateKey };
     }
