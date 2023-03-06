@@ -59,22 +59,26 @@ export const getConnectedUser = async (
     }
     createUserProps.env = env;
     const newUser = await create(createUserProps);
-    let decryptedPrivateKey;
-    if (wallet.signer) {
-      console.log(wallet.signer)
-      decryptedPrivateKey = await decryptPGPKey({
-        signer: wallet.signer,
-        encryptedPGPPrivateKey: newUser.encryptedPrivateKey
-      })
-    } else {
-      decryptedPrivateKey = await decryptWithWalletRPCMethod(
-        newUser.encryptedPrivateKey,
-        address
-      );
-    }
+    const decryptedPrivateKey = await getDecryptedPrivateKey(wallet, newUser, address);
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
 };
+
+async function getDecryptedPrivateKey(wallet: walletType, user: any, address: string): Promise<string> {
+  let decryptedPrivateKey;
+  if (wallet.signer) {
+    decryptedPrivateKey = await decryptPGPKey({
+      signer: wallet.signer,
+      encryptedPGPPrivateKey: user.encryptedPrivateKey
+    })
+  } else {
+    decryptedPrivateKey = await decryptWithWalletRPCMethod(
+      user.encryptedPrivateKey,
+      address
+    );
+  }
+  return decryptedPrivateKey;
+}
 
 
 export const getConnectedUserV2 = async (
@@ -82,6 +86,9 @@ export const getConnectedUserV2 = async (
   privateKey: string | null,
   env: string
 ): Promise<IConnectedUser> => {
+  if(!privateKey) {
+    console.warn("Please note that if you don't pass the pgpPrivateKey parameter, a wallet popup will appear every time the approveRequest endpoint is called. We strongly recommend passing this parameter, and it will become mandatory in future versions of the API.")
+  }
   const address = await getAccountAddress(wallet);
   const user = await get({ account: address, env: env || Constants.ENV.PROD });
   if (user?.encryptedPrivateKey) {
@@ -89,18 +96,7 @@ export const getConnectedUserV2 = async (
       return { ...user, privateKey };
     }
     else {
-    let decryptedPrivateKey;
-    if (wallet.signer) {
-      decryptedPrivateKey = await decryptPGPKey({
-        signer: wallet.signer,
-        encryptedPGPPrivateKey: user.encryptedPrivateKey
-      })
-    } else {
-      decryptedPrivateKey = await decryptWithWalletRPCMethod(
-        user.encryptedPrivateKey,
-        address
-      );
-    }
+    const decryptedPrivateKey = await getDecryptedPrivateKey(wallet, user, address);
     return { ...user, privateKey: decryptedPrivateKey };
     }
   }
@@ -118,19 +114,7 @@ export const getConnectedUserV2 = async (
     }
     createUserProps.env = env;
     const newUser = await create(createUserProps);
-    let decryptedPrivateKey;
-    if (wallet.signer) {
-      console.log(wallet.signer)
-      decryptedPrivateKey = await decryptPGPKey({
-        signer: wallet.signer,
-        encryptedPGPPrivateKey: newUser.encryptedPrivateKey
-      })
-    } else {
-      decryptedPrivateKey = await decryptWithWalletRPCMethod(
-        newUser.encryptedPrivateKey,
-        address
-      );
-    }
+    const decryptedPrivateKey = await getDecryptedPrivateKey(wallet, newUser, address);
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
 };
