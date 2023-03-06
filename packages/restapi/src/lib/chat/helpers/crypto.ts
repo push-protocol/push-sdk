@@ -6,10 +6,16 @@ import {
   IFeeds,
   IMessageIPFSWithCID,
   IUser,
+  GroupDTO,
+  walletType,
 } from '../../types';
 import { get } from '../../user';
-import { walletToPCAIP10 } from '../../helpers';
+import { getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
+import { get as getUser } from '../../user';
 import { createUserService } from './service';
+import Constants, {ENV} from '../../constants';
+
+const SIG_TYPE_V2 = "eip712v2";
 
 interface IEncryptedRequest {
   message: string;
@@ -20,13 +26,11 @@ interface IEncryptedRequest {
 
 export const encryptAndSign = async ({
   plainText,
-  fromPublicKeyArmored,
-  toPublicKeyArmored,
+  keys,
   privateKeyArmored,
 }: {
   plainText: string;
-  fromPublicKeyArmored: string;
-  toPublicKeyArmored: string;
+  keys: Array<string>
   privateKeyArmored: string;
 }): Promise<{
   cipherText: string;
@@ -39,8 +43,7 @@ export const encryptAndSign = async ({
   const cipherText: string = AES.aesEncrypt({ plainText, secretKey });
   const encryptedSecret = await PGP.pgpEncrypt({
     plainText: secretKey,
-    fromPublicKeyArmored,
-    toPublicKeyArmored,
+    keys: keys,
   });
   const signature: string = await PGP.sign({
     message: cipherText,
@@ -52,6 +55,28 @@ export const encryptAndSign = async ({
     signature,
     sigType: 'pgp',
     encType: 'pgp',
+  };
+};
+
+
+export const signMessageWithPGP = async ({
+  message,
+  privateKeyArmored,
+}: {
+  message: string;
+  privateKeyArmored: string;
+}): Promise<{
+  signature: string;
+  sigType: string;
+}> => {
+  const signature: string = await PGP.sign({
+    message: message,
+    signingKey: privateKeyArmored,
+  });
+
+  return {
+    signature,
+    sigType: 'pgp'
   };
 };
 
@@ -84,31 +109,40 @@ export const decryptAndVerifySignature = async ({
 export const decryptFeeds = async ({
   feeds,
   connectedUser,
+  pgpPrivateKey,
+  env = Constants.ENV.PROD,
 }: {
   feeds: IFeeds[];
-  connectedUser: IConnectedUser;
+  connectedUser: IUser;
+  pgpPrivateKey?:string;
+  env: ENV;
 }): Promise<IFeeds[]> => {
-  if (connectedUser.privateKey) {
+    let otherPeer: IUser;
+    let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
+    let gotOtherPeer = false;
     for (const feed of feeds) {
-      if (feed.msg.encType !== 'PlainText' && feed.msg.encType !== null) {
-        // To do signature verification it depends on who has sent the message
-        let signatureValidationPubliKey: string;
-        if (feed.msg.fromCAIP10 === connectedUser.wallets.split(',')[0]) {
-          signatureValidationPubliKey = connectedUser.publicKey;
-        } else {
-          signatureValidationPubliKey = feed.publicKey;
+      if (feed.msg.encType !== 'PlainText') {
+        if (!pgpPrivateKey) {
+          throw Error('Decrypted private key is necessary');
         }
-
-        feed.msg.lastMessage = await decryptAndVerifySignature({
-          cipherText: feed.msg.lastMessage,
+        if (feed.msg.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
+          if (!gotOtherPeer) {
+            otherPeer = await getUser({ account: feed.msg.fromCAIP10, env });
+            gotOtherPeer = true;
+          }
+          signatureValidationPubliKey = otherPeer!.publicKey!;
+        } else {
+          signatureValidationPubliKey = connectedUser.publicKey!;
+        }
+        feed.msg.messageContent = await decryptAndVerifySignature({
+          cipherText: feed.msg.messageContent,
           encryptedSecretKey: feed.msg.encryptedSecret,
           publicKeyArmored: signatureValidationPubliKey,
           signatureArmored: feed.msg.signature,
-          privateKeyArmored: connectedUser.privateKey,
+          privateKeyArmored: pgpPrivateKey,
         });
       }
     }
-  }
   return feeds;
 };
 
@@ -140,7 +174,7 @@ export const decryptMessages = async ({
             (x) => x.wallets.split(',')[0] === currentChat.wallets.split(',')[0]
           );
           if (latestUserInfo) {
-            signatureValidationPubliKey = latestUserInfo.publicKey;
+            signatureValidationPubliKey = latestUserInfo.publicKey!;
           }
         } else {
           signatureValidationPubliKey = currentChat.publicKey;
@@ -162,62 +196,147 @@ export const getEncryptedRequest = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   message: string,
-  env: string
+  isGroup: boolean,
+  env: ENV,
+  group: GroupDTO | null,
 ): Promise<IEncryptedRequest | void> => {
-  const receiverCreatedUser: IUser = await get({
-    account: receiverAddress,
-    env,
-  });
-  if (!receiverCreatedUser?.publicKey) {
-    if (!ethers.utils.isAddress(receiverAddress)) {
-      throw new Error(`Invalid receiver address!`);
-    }
-    await createUserService({
-      user: receiverAddress,
-      publicKey: '',
-      encryptedPrivateKey: '',
-      encryptionType: '',
-      signature: 'pgp',
-      sigType: 'pgp',
+
+  if (!isGroup) {
+    const receiverCreatedUser: IUser = await get({
+      account: receiverAddress,
       env,
     });
-    // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
-    return {
-      message: message,
-      encryptionType: 'PlainText',
-      aesEncryptedSecret: '',
-      signature: '',
-    };
-  } else {
-    // It's possible for a user to be created but the PGP keys still not created
-    if (
-      !receiverCreatedUser.publicKey.includes(
-        '-----BEGIN PGP PUBLIC KEY BLOCK-----'
-      )
-    ) {
+    if (!receiverCreatedUser?.publicKey) {
+      if (!isValidETHAddress(receiverAddress)) {
+        throw new Error(`Invalid receiver address!`);
+      }
+      await createUserService({
+        user: receiverAddress,
+        publicKey: '',
+        encryptedPrivateKey: '',
+        encryptionType: '',
+        signature: 'pgp',
+        sigType: 'pgp',
+        env,
+      });
+      // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
+
+      const {
+      signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+
+
       return {
         message: message,
         encryptionType: 'PlainText',
         aesEncryptedSecret: '',
-        signature: '',
-      };
-    } else {
-      const {
-        cipherText,
-        encryptedSecret,
-        signature,
-      } = await encryptAndSign({
-        plainText: message,
-        toPublicKeyArmored: receiverCreatedUser.publicKey,
-        fromPublicKeyArmored: senderCreatedUser.publicKey,
-        privateKeyArmored: senderCreatedUser.privateKey!,
-      });
-      return {
-        message: cipherText,
-        encryptionType: 'pgp',
-        aesEncryptedSecret: encryptedSecret,
         signature: signature,
       };
+    } else {
+      // It's possible for a user to be created but the PGP keys still not created
+
+      if (
+        !receiverCreatedUser.publicKey.includes(
+          '-----BEGIN PGP PUBLIC KEY BLOCK-----'
+        )
+      ) {
+
+        const {
+          signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+
+        return {
+          message: message,
+          encryptionType: 'PlainText',
+          aesEncryptedSecret: '',
+          signature: signature,
+        };
+      } else {
+        const {
+          cipherText,
+          encryptedSecret,
+          signature,
+        } = await encryptAndSign({
+          plainText: message,
+          keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+        return {
+          message: cipherText,
+          encryptionType: 'pgp',
+          aesEncryptedSecret: encryptedSecret,
+          signature: signature,
+        };
+      }
     }
+  } else if(group) {
+      if(group.isPublic) {
+         const {
+          signature
+        } = await signMessageWithPGP({
+          message: message,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+          return {
+            message: message,
+            encryptionType: 'PlainText',
+            aesEncryptedSecret: '',
+            signature: signature,
+          }
+      }
+      else {
+        const publicKeys: string[] = group.members.map(member => member.publicKey);
+        const {
+          cipherText,
+          encryptedSecret,
+          signature,
+        } = await encryptAndSign({
+          plainText: message,
+          keys: publicKeys,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        });
+        return {
+          message: cipherText,
+          encryptionType: 'pgp',
+          aesEncryptedSecret: encryptedSecret,
+          signature: signature,
+        };
+      }
   }
 };
+
+export const getSignature = async (user: string, wallet: walletType, hash: string) => {
+  if(!wallet?.signer) {
+    console.warn("This method is deprecated. Provide signer in the function");
+    // sending random signature for making it backward compatible
+    return { signature: "xyz", sigType: "a" };
+  }
+
+  // const domainInformation = getDomainInformation(
+  //   1,
+  //   pCAIP10ToWallet(user)
+  // );
+
+  // get type information
+  const typeInformation = getTypeInformation("Create_user");
+  // console.log(domainInformation)
+
+  const _signer = wallet?.signer;
+
+  // sign a message using EIP712
+  const signedMessage = await _signer?._signTypedData(
+    {},
+    typeInformation,
+    { data: hash },
+  );
+
+  const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`
+
+  return { verificationProof };
+}

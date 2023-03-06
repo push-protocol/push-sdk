@@ -1,27 +1,27 @@
-import Constants from '../../constants';
+import Constants, {ENV} from '../../constants';
 import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
-import { Chat, IConnectedUser, IMessageIPFS, IUser } from '../../types';
+import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
-import { getCID, Message } from '../ipfs';
+import { getCID } from '../ipfs';
+import { decryptFeeds } from './crypto';
 
 type InboxListsType = {
-  lists: Chat[];
+  lists: IFeeds[];
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?: string;
+  env?:  ENV;
 };
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
-  toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?: string;
+  env?:  ENV;
 };
 
 export const getInboxLists = async (
   options: InboxListsType
-): Promise<IMessageIPFS[]> => {
+): Promise<IFeeds[]> => {
   const {
     lists,
     user,
@@ -30,21 +30,40 @@ export const getInboxLists = async (
     env = Constants.ENV.PROD,
   } = options || {};
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
-  const messages: IMessageIPFS[] = [];
+  const feeds: IFeeds[] = [];
   for (const list of lists) {
+    let message;
     if (list.threadhash !== null) {
-      const message = await getCID(list.threadhash, { env });
-      messages.push(message);
+      message = await getCID(list.threadhash, { env });
     }
+    // This is for groups that are created without any message
+    else {
+      message = {
+        encType: 'PlainText',
+        encryptedSecret: '',
+        fromCAIP10: '',
+        fromDID: '',
+        link: '',
+        messageContent: '',
+        messageType: '',
+        sigType: '',
+        signature: '',
+        toCAIP10: '',
+        toDID: ''
+      }
+    }
+    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
   }
-  return decryptConversation({messages,connectedUser,toDecrypt,pgpPrivateKey,env});
+
+  if (toDecrypt)
+    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
+  return feeds;
 };
 
-export const decryptConversation = async(options:DecryptConverationType) => {
+export const decryptConversation = async (options: DecryptConverationType) => {
   const {
     messages,
     connectedUser,
-    toDecrypt,
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
@@ -65,16 +84,14 @@ export const decryptConversation = async(options:DecryptConverationType) => {
       } else {
         signatureValidationPubliKey = connectedUser.publicKey;
       }
-      if (toDecrypt) {
-        message.messageContent = await decryptMessage({
-          encryptedMessage: message.messageContent,
-          encryptedSecret: message.encryptedSecret,
-          encryptionType: message.encType,
-          signature: message.signature,
-          signatureValidationPubliKey: signatureValidationPubliKey,
-          pgpPrivateKey,
-        });
-      }
+      message.messageContent = await decryptMessage({
+        encryptedPGPPrivateKey: message.messageContent,
+        encryptedSecret: message.encryptedSecret,
+        encryptionType: message.encType,
+        signature: message.signature,
+        signatureValidationPubliKey: signatureValidationPubliKey,
+        pgpPrivateKey,
+      });
     }
   }
   return messages;

@@ -1,3 +1,5 @@
+import {ENV} from '../constants';
+
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
   payload_id: number;
@@ -90,7 +92,7 @@ export interface ISendNotificationInputOptions {
     counter: number;
   };
   ipfsHash?: string;
-  env?: string;
+  env?:  ENV;
 }
 
 export interface INotificationPayload {
@@ -111,37 +113,35 @@ export interface INotificationPayload {
   recipients: any;
 }
 
-export interface IInboxChat {
-  name: string;
-  profilePicture: string;
-  timestamp: number;
-  fromDID: string;
-  toDID: string;
+export interface IMessageIPFS {
   fromCAIP10: string;
   toCAIP10: string;
-  lastMessage: string;
+  fromDID: string;
+  toDID: string;
   messageType: string;
-  encType: string;
+  messageContent: string;
   signature: string;
-  signatureType: string;
+  sigType: string;
+  link: string | null;
+  timestamp?: number;
+  encType: string;
   encryptedSecret: string;
 }
-
 export interface IFeeds {
-  msg: IInboxChat;
+  msg: IMessageIPFS;
   did: string;
   wallets: string;
   profilePicture: string | null;
-  publicKey: string;
+  publicKey: string | null;
   about: string | null;
   threadhash: string | null;
   intent: string | null;
   intentSentBy: string | null;
   intentTimestamp: Date;
   combinedDID: string;
-  cid: string;
+  cid?: string;
+  groupInformation?: GroupDTO
 }
-
 export interface IUser {
   did: string;
   wallets: string;
@@ -158,6 +158,32 @@ export interface IUser {
   linkedListHash?: string | null;
 }
 
+export interface Member {
+  wallet: string;
+  publicKey: string;
+}
+
+
+export interface GroupDTO {
+  members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  contractAddressERC20: string | null,
+  numberOfERC20: number,
+  contractAddressNFT: string | null,
+  numberOfNFTTokens: number,
+  verificationProof: string,
+  groupImage: string | null,
+  groupName: string,
+  isPublic: boolean,
+  groupDescription: string | null,
+  groupCreator: string,
+  chatId: string
+}
+
+export interface Subscribers {
+  itemcount: number
+  subscribers: Array<string>
+}
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
 }
@@ -181,34 +207,68 @@ export interface IMessageIPFSWithCID extends IMessageIPFS {
   cid: string;
 }
 
-export interface AccountEnvOptionsType {
-  env?: string;
+export interface AccountEnvOptionsType extends EnvOptionsType {
+  /**
+   * Environment variable
+   */
   account: string;
 }
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
+  /**
+   * Api key is now optional
+   */
   apiKey?: string;
+};
+
+export interface ChatSendOptionsType {
+  messageContent?: string;
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  receiverAddress: string;
+  pgpPrivateKey?: string;
+  /**
+   * Api key is now optional
+   */
+  apiKey?: string;
+  env?: ENV;
+  account?: string;
+  signer?: SignerType;
 };
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
 };
 
-export interface Chat {
-  did: string;
-  wallets: string;
-  profilePicture: string | null;
-  publicKey: string | null;
-  about: string | null;
-  name: string | null;
-  threadhash: string | null;
-  intent: string | null;
-  intentSentBy: string | null;
-  intentTimestamp: Date;
-  combinedDID: string;
+export interface UserInfo {
+  wallets: string,
+  publicKey: string,
+  name: string,
+  image: string,
+  isAdmin: boolean
+}
+
+export type SignerType = {
+  _signTypedData: (
+    domain: any,
+    types: any,
+    value: any
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  provider?: any;
+  publicKey?: string;
+  privateKey?: string;
+}
+
+export type EnvOptionsType = {
+  env?: ENV;
+}
+
+export type walletType = {
+  account: string | null;
+  signer: SignerType | null;
 }

@@ -1,26 +1,27 @@
 import axios from 'axios';
-import Constants from '../../constants';
-import { getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
-import { AccountEnvOptionsType, ConversationHashOptionsType } from '../../types';
+import Constants, {ENV} from '../../constants';
+import { generateHash, getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
+import { AccountEnvOptionsType, ConversationHashOptionsType, walletType } from '../../types';
+import { getSignature } from './crypto';
 
 type CreateUserOptionsType = {
   user: string;
+  wallet?: walletType;
   publicKey?: string;
   encryptedPrivateKey?: string;
   encryptionType?: string;
   signature?: string;
   sigType?: string;
-  env?: string;
+  env?:  ENV;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
+    wallet,
     publicKey = '',
     encryptedPrivateKey = '',
     encryptionType = '',
-    signature = '',
-    sigType = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -28,14 +29,24 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
-  const body = {
+  const data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
     encryptionType,
-    signature,
-    sigType,
+    name: "",
+    encryptedPassword: null,
+    nftOwner: null
+  };
+
+  const hash = generateHash(data);
+
+  const signatureObj = await getSignature(user, wallet!, hash);
+
+  const body = {
+    ...data, 
+    ...signatureObj,
   };
 
   return axios
@@ -44,12 +55,12 @@ export const createUserService = async (options: CreateUserOptionsType) => {
       return response.data;
     })
     .catch((err) => {
-      console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-      throw Error(`[EPNS-SDK] - API ${requestUrl}: ${err}`);
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
+      throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
 
-export const getConversationHashService = async (options: ConversationHashOptionsType):Promise<string> => {
+export const getConversationHashService = async (options: ConversationHashOptionsType): Promise<string> => {
   const {
     conversationId,
     account,
@@ -58,7 +69,7 @@ export const getConversationHashService = async (options: ConversationHashOption
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/chat/users/${walletToPCAIP10(account)}/conversations/${walletToPCAIP10(conversationId)}/hash`;
+  const requestUrl = `${API_BASE_URL}/v1/chat/users/${walletToPCAIP10(account)}/conversations/${conversationId}/hash`;
 
   return axios
     .get(requestUrl)
@@ -84,7 +95,6 @@ export const getMessagesService = async (options: GetMessagesOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/conversationhash/${threadhash}`;
-
   const queryObj = {
     fetchLimit: limit,
   };
