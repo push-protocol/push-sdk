@@ -1,11 +1,11 @@
 import * as ethers from 'ethers';
-
+export enum ENV {
+  PROD = 'prod',
+  STAGING = 'staging',
+  DEV = 'dev'
+}
 const Constants = {
-    ENV: {
-      PROD: 'prod',
-      STAGING: 'staging',
-      DEV: 'dev'
-    },
+    ENV,
     PAGINATION: {
       INITIAL_PAGE: 1,
       LIMIT: 10,
@@ -50,7 +50,7 @@ export function validateCAIP(addressInCAIP: string) {
   return validatorFn({ address });
 }
 
-export function getFallbackETHCAIPAddress(env: string, address: string) {
+export function getFallbackETHCAIPAddress(env: ENV, address: string) {
   let chainId = 1; // by default PROD
 
   if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING) {
@@ -70,7 +70,7 @@ export function getFallbackETHCAIPAddress(env: string, address: string) {
  *    else 
  *      throw error!
  */
-export function getCAIPAddress(env: string, address: string, msg?: string) {
+export function getCAIPAddress(env: ENV, address: string, msg?: string) {
   if (validateCAIP(address)) {
     return address;
   } else {

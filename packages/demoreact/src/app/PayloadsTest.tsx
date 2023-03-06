@@ -8,7 +8,7 @@ import { APIFeedback } from './components/Feedback';
 import { DarkIcon, LightIcon } from './components/Icons';
 import { Web3Context, EnvContext } from './context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { getCAIPAddress } from './helpers';
+import { getCAIPAddress, ENV } from './helpers';
 
 const Header = styled.div`
   display: flex;
@@ -43,8 +43,8 @@ type optionsMatrixType = {
 };
 
 const getOptionsMatrix = (
-  { signer, env = 'prod', isCAIP, channel, timestamp } :
-  { signer: any, env?: "dev" | "staging" | "prod", isCAIP?: boolean, channel: string, timestamp: string }
+  { signer, env = ENV.PROD, isCAIP, channel, timestamp } :
+  { signer: any, env?: ENV, isCAIP?: boolean, channel: string, timestamp: string }
 ) : optionsMatrixType => {
   if (!signer) throw Error(`No Signer provided`);
 

@@ -4,16 +4,16 @@ import {
   EVENTS
 } from '@pushprotocol/socket';
 
-import { getCAIPAddress } from '../helpers';
+import { getCAIPAddress, ENV } from '../helpers';
 
 export type SDKSocketHookOptions = {
   account?: string | null,
-  env?: string,
+  env?: ENV,
   chainId?: number,
   isCAIP?: boolean
 };
 
-export const useSDKSocket = ({ account, env = '', chainId, isCAIP }: SDKSocketHookOptions) => {
+export const useSDKSocket = ({ account, env = ENV.PROD, chainId, isCAIP }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [feedsSinceLastConnection, setFeedsSinceLastConnection] = useState<any>([]);
