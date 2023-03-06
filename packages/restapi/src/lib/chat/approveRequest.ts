@@ -2,8 +2,8 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
-import { approveRequestPayload, sign, getConnectedUserV2, IApproveRequestPayload, getAccountAddress, getWallet, createUserIfNecessary } from './helpers';
-import * as CryptoJS from "crypto-js"
+import { approveRequestPayload, sign, getConnectedUserV2, IApproveRequestPayload, getAccountAddress, getWallet } from './helpers';
+import CryptoES from "crypto-es"
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -61,7 +61,7 @@ export const approve = async (
 
   const connectedUser = await getConnectedUserV2(wallet,pgpPrivateKey, env);
 
-   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+   const hash = CryptoES.SHA256(JSON.stringify(bodyToBeHashed)).toString()
    const signature: string = await sign({
      message: hash,
      signingKey: connectedUser.privateKey!

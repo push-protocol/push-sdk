@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { AccountEnvOptionsType, IUser } from '../types';
+import {IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import Constants, {ENV} from '../constants';
 
 export interface GetBatchType {
   userIds: string[],
-  env?: string
+  env?: ENV
 }
 
 

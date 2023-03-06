@@ -84,7 +84,7 @@ async function getDecryptedPrivateKey(wallet: walletType, user: any, address: st
 export const getConnectedUserV2 = async (
   wallet: walletType,
   privateKey: string | null,
-  env: string
+  env: ENV
 ): Promise<IConnectedUser> => {
   if(!privateKey) {
     console.warn("Please note that if you don't pass the pgpPrivateKey parameter, a wallet popup will appear every time the approveRequest endpoint is called. We strongly recommend passing this parameter, and it will become mandatory in future versions of the API.")
@@ -104,7 +104,7 @@ export const getConnectedUserV2 = async (
     const createUserProps: {
       account?: string;
       signer?: SignerType;
-      env?: string;
+      env?: ENV;
     } = {};
     if (wallet.account) {
       createUserProps.account = wallet.account;
