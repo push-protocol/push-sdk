@@ -1148,8 +1148,8 @@ Allowed Options (params with * are mandatory)
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: 3, // target
-  identityType: 2, // direct payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
+  identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
     body: `[sdk-test] notification BODY`
@@ -1194,8 +1194,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.BROADCAST, // broadcast
-  identityType: IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
+  identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
     body: `[sdk-test] notification BODY`
@@ -1216,8 +1216,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.TARGETTED, // target
-  identityType: IDENTITY_TYPE.IPFS, // ipfs payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
+  identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
@@ -1230,8 +1230,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.SUBSET, // subset
-  identityType: IDENTITY_TYPE.IPFS, // ipfs payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
+  identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
@@ -1244,8 +1244,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.BROADCAST, // broadcast
-  identityType: IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
+  identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging'
@@ -1257,8 +1257,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.TARGETTED, // target
-  identityType: IDENTITY_TYPE.MINIMAL, // Minimal payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
+  identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
     body: `[sdk-test] notification BODY`
@@ -1280,8 +1280,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.SUBSET, // subset
-  identityType: IDENTITY_TYPE.MINIMAL, // Minimal payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
+  identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
     body: `[sdk-test] notification BODY`
@@ -1303,8 +1303,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.BROADCAST, // broadcast
-  identityType: IDENTITY_TYPE.MINIMAL, // Minimal payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
+  identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
     body: `[sdk-test] notification BODY`
@@ -1326,8 +1326,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.TARGETTED, // target
-  identityType: IDENTITY_TYPE.SUBGRAPH, // Subgraph payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
+  identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // Subgraph payload
   graph: {
     id: '_your_graph_id',
     counter: 3
@@ -1344,8 +1344,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.SUBSET, // subset
-  identityType: IDENTITY_TYPE.SUBGRAPH, // graph payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
+  identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
   graph: {
     id: '_your_graph_id',
     counter: 3
@@ -1362,8 +1362,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
   signer: _signer,
-  type: NOTIFICATION_TYPE.BROADCAST, // broadcast
-  identityType: IDENTITY_TYPE.SUBGRAPH, // graph payload
+  type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
+  identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
   graph: {
     id: '_your_graph_id',
     counter: 3
