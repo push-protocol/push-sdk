@@ -29,9 +29,9 @@ const GetUserBatchTest = () => {
 
       // object for connected user data
       const response = await PushAPI.user.getBatch({
-        account: isCAIP ? walletToPCAIP10(account) : account,
+        userIds: userIds.split(','),
         env,
-      }, userIds.split(','));
+      });
 
       setSendResponse(response);
     } catch (e) {

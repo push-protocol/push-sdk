@@ -1,5 +1,5 @@
 import * as ethers from 'ethers';
-import Constants, { ENV } from '../constants';
+import Constants, {ENV} from '../constants';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address } : { address: string }) => boolean;

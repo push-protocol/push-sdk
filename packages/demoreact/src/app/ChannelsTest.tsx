@@ -87,7 +87,7 @@ const ChannelsTest = () => {
       setLoading(true);
       const response = await PushAPI.channels.getDelegates({
         channel: isCAIP ? getCAIPAddress(env, channelAddr) : channelAddr,
-        env
+        env: env
       });
   
       setChannelDelegatesData(response);

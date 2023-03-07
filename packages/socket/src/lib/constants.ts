@@ -1,7 +1,7 @@
-export const ENV = {
-  PROD: 'prod',
-  STAGING: 'staging',
-  DEV: 'dev'
+export enum ENV {
+  PROD = 'prod',
+  STAGING ='staging',
+  DEV ='dev'
 };
 
 export const EVENTS = {

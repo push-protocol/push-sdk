@@ -8,7 +8,7 @@ import { APIFeedback } from './components/Feedback';
 import { DarkIcon, LightIcon } from './components/Icons';
 import { Web3Context, EnvContext } from './context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { getCAIPAddress } from './helpers';
+import { getCAIPAddress, ENV } from './helpers';
 
 const Header = styled.div`
   display: flex;
@@ -23,18 +23,7 @@ const ThemeSelector = styled.div`
   height: 32px;
 `;
 
-const NOTIFICATION_TYPE = {
-  BROADCAST: 1,
-  TARGETTED: 3,
-  SUBSET: 4
-};
 
-const IDENTITY_TYPE = {
-  MINIMAL: 0,
-  IPFS: 1,
-  DIRECT_PAYLOAD: 2,
-  SUBGRAPH: 3
-};
 
 type optionsMatrixType = {
   [key: string]: {
@@ -43,8 +32,8 @@ type optionsMatrixType = {
 };
 
 const getOptionsMatrix = (
-  { signer, env = 'prod', isCAIP, channel, timestamp } :
-  { signer: any, env?: "dev" | "staging" | "prod", isCAIP?: boolean, channel: string, timestamp: string }
+  { signer, env = ENV.PROD, isCAIP, channel, timestamp } :
+  { signer: any, env?: ENV, isCAIP?: boolean, channel: string, timestamp: string }
 ) : optionsMatrixType => {
   if (!signer) throw Error(`No Signer provided`);
 
@@ -54,57 +43,57 @@ const getOptionsMatrix = (
   // EDIT here to change recipients, title, body etc
 
   return {
-    [NOTIFICATION_TYPE.TARGETTED]: {
-      [IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
+    [PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED]: {
+      [PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
           signer,
           env,
-          type: NOTIFICATION_TYPE.TARGETTED,
-          identityType: IDENTITY_TYPE.DIRECT_PAYLOAD,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.TARGETTED} identity:${IDENTITY_TYPE.DIRECT_PAYLOAD}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED} identity:${PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD}`,
               cta: '',
               img: ''
           },
           recipients: isCAIP ? getCAIPAddress(env, '0xD8634C39BBFd4033c0d3289C4515275102423681') : '0xD8634C39BBFd4033c0d3289C4515275102423681',
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.IPFS]: {
+      [PushAPI.payloads.IDENTITY_TYPE.IPFS]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.TARGETTED,
-          identityType: IDENTITY_TYPE.IPFS,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS,
           ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // from BE devtools
           recipients: isCAIP ? getCAIPAddress(env, '0xD8634C39BBFd4033c0d3289C4515275102423681') : '0xD8634C39BBFd4033c0d3289C4515275102423681',
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.MINIMAL]: {
+      [PushAPI.payloads.IDENTITY_TYPE.MINIMAL]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.TARGETTED,
-          identityType: IDENTITY_TYPE.MINIMAL,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.TARGETTED} identity:${IDENTITY_TYPE.MINIMAL}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED} identity:${PushAPI.payloads.IDENTITY_TYPE.MINIMAL}`,
               cta: '',
               img: ''
           },
           recipients: isCAIP ? getCAIPAddress(env, '0xD8634C39BBFd4033c0d3289C4515275102423681') : '0xD8634C39BBFd4033c0d3289C4515275102423681',
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.SUBGRAPH]: {
+      [PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.TARGETTED,
-          identityType: IDENTITY_TYPE.SUBGRAPH,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH,
           graph: {
             id: 'aiswaryawalter/graph-poc-sample',
             counter: 3
@@ -113,19 +102,19 @@ const getOptionsMatrix = (
           channel: channelAddr,
       }
     },
-    [NOTIFICATION_TYPE.SUBSET]: {
-      [IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
+    [PushAPI.payloads.NOTIFICATION_TYPE.SUBSET]: {
+      [PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
           signer,
           env,
-          type: NOTIFICATION_TYPE.SUBSET,
-          identityType: IDENTITY_TYPE.DIRECT_PAYLOAD,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.SUBSET} identity:${IDENTITY_TYPE.DIRECT_PAYLOAD}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.SUBSET} identity:${PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD}`,
               cta: '',
               img: ''
           },
@@ -134,29 +123,29 @@ const getOptionsMatrix = (
             : ['0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', '0xD8634C39BBFd4033c0d3289C4515275102423681'],
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.IPFS]: {
+      [PushAPI.payloads.IDENTITY_TYPE.IPFS]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.SUBSET,
-          identityType: IDENTITY_TYPE.IPFS,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS,
           ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // from BE devtools
           recipients: isCAIP ? 
             ['0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', '0xD8634C39BBFd4033c0d3289C4515275102423681'].map(addr => getCAIPAddress(env, addr))
             : ['0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', '0xD8634C39BBFd4033c0d3289C4515275102423681'],
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.MINIMAL]: {
+      [PushAPI.payloads.IDENTITY_TYPE.MINIMAL]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.SUBSET,
-          identityType: IDENTITY_TYPE.MINIMAL,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.SUBSET} identity:${IDENTITY_TYPE.MINIMAL}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.SUBSET} identity:${PushAPI.payloads.IDENTITY_TYPE.MINIMAL}`,
               cta: '',
               img: ''
           },
@@ -165,11 +154,11 @@ const getOptionsMatrix = (
             : ['0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', '0xD8634C39BBFd4033c0d3289C4515275102423681'],
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.SUBGRAPH]: {
+      [PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.SUBSET,
-          identityType: IDENTITY_TYPE.SUBGRAPH,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH,
           graph: {
             id: 'aiswaryawalter/graph-poc-sample',
             counter: 3
@@ -180,54 +169,54 @@ const getOptionsMatrix = (
           channel: channelAddr,
       }
     },
-    [NOTIFICATION_TYPE.BROADCAST]: {
-      [IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
+    [PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST]: {
+      [PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD]:  {
           signer,
           env,
-          type: NOTIFICATION_TYPE.BROADCAST,
-          identityType: IDENTITY_TYPE.DIRECT_PAYLOAD,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.BROADCAST} identity:${IDENTITY_TYPE.DIRECT_PAYLOAD}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST} identity:${PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD}`,
               cta: '',
               img: ''
           },
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.IPFS]: {
+      [PushAPI.payloads.IDENTITY_TYPE.IPFS]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.BROADCAST,
-          identityType: IDENTITY_TYPE.IPFS,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS,
           ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // from BE devtools
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.MINIMAL]: {
+      [PushAPI.payloads.IDENTITY_TYPE.MINIMAL]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.BROADCAST,
-          identityType: IDENTITY_TYPE.MINIMAL,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL,
           notification: {
               title: `[SDK-TEST] notification TITLE: ${timestamp}`,
               body: `[sdk-test] notification BODY ${timestamp}`
           },
           payload: {
               title: `[sdk-test] payload title ${timestamp}`,
-              body: `type:${NOTIFICATION_TYPE.BROADCAST} identity:${IDENTITY_TYPE.MINIMAL}`,
+              body: `type:${PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST} identity:${PushAPI.payloads.IDENTITY_TYPE.MINIMAL}`,
               cta: '',
               img: ''
           },
           channel: channelAddr,
       },
-      [IDENTITY_TYPE.SUBGRAPH]: {
+      [PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH]: {
           signer,
           env,
-          type: NOTIFICATION_TYPE.BROADCAST,
-          identityType: IDENTITY_TYPE.SUBGRAPH,
+          type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST,
+          identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH,
           graph: {
             id: 'aiswaryawalter/graph-poc-sample',
             counter: 3

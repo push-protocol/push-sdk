@@ -14,11 +14,13 @@ const NETWORK_MAPPING : NwMappingType = {
   137: 'POLYGON_MAINNET',
   80001: 'POLYGON_MUMBAI',
   56: "BSC_MAINNET",
-  97: "BSC_TESTNET"
+  97: "BSC_TESTNET",
+  420: 'OPTIMISM_TESTNET',
+  10: 'OPTIMISM_MAINNET'
 };
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97],
+  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420],
 })
 
 const ConnectWrapper = styled.div`

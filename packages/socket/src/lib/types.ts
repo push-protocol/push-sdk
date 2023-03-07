@@ -1,6 +1,8 @@
+import { ENV } from './constants';
+
 export type SocketInputOptions = {
   user: string,
-  env: string,
+  env: ENV,
   socketType?: 'notification' | 'chat',
   apiKey?: string,
   socketOptions?: SocketOptions

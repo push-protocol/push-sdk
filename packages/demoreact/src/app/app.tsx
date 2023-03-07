@@ -31,6 +31,7 @@ import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import {Buffer} from 'buffer';
+import { ENV } from './helpers';
 
 window.Buffer = window.Buffer || Buffer; 
 
@@ -125,7 +126,7 @@ const checkForWeb3Data = ({
 export function App() {
   const web3Data: Web3ReactState = useWeb3React();
 
-  const [env, setEnv] = useState('prod');
+  const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const socketData = useSDKSocket({
@@ -193,6 +194,7 @@ export function App() {
                       </Link>
                       <Link to="/alias" className="nav-button">
                         ALIAS
+                      </Link>
                       <Link to="/delegations" className="nav-button">
                         DELEGATIONS
                       </Link>
