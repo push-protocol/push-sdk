@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.3...uiweb-0.5.0) (2023-03-07)
+
+
+### Bug Fixes
+
+* **component:** eNV type check across all the functions ([#210](https://github.com/ethereum-push-notification-service/push-sdk/issues/210)) ([d532b12](https://github.com/ethereum-push-notification-service/push-sdk/commit/d532b1217d836d7fcedb3f665173b96cbb588607))
+
+
+### Features
+
+* added Optimism Chain ([#221](https://github.com/ethereum-push-notification-service/push-sdk/issues/221)) ([a9f6e56](https://github.com/ethereum-push-notification-service/push-sdk/commit/a9f6e56f51ac6eb089ddeffd6c47f144b9b28dd8))
+
+
+
 ## [0.4.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.2...uiweb-0.4.3) (2023-02-23)
 
 
