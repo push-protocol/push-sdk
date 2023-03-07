@@ -62,7 +62,7 @@ export async function getRecipients({
   secretType
 } : {
   env: string,
-  notificationType: number,
+  notificationType: NOTIFICATION_TYPE ,
   channel: string,
   recipients?: string | string[],
   secretType?: string,
@@ -140,7 +140,7 @@ export function getRecipientFieldForAPIPayload({
   channel,
 } : {
   env: string,
-  notificationType: number,
+  notificationType: NOTIFICATION_TYPE,
   recipients: string | string[],
   channel: string
 }) {
@@ -165,8 +165,8 @@ export async function getVerificationProof({
 }: {
   signer: any,
   chainId: number,
-  notificationType: number,
-  identityType: number,
+  notificationType: NOTIFICATION_TYPE,
+  identityType: IDENTITY_TYPE,
   verifyingContract: string,
   payload: any,
   ipfsHash?: string,
@@ -225,9 +225,9 @@ export function getPayloadIdentity({
   ipfsHash,
   graph = {},
 } : {
-  identityType: number,
+  identityType: IDENTITY_TYPE,
   payload: any,
-  notificationType?: number,
+  notificationType?: NOTIFICATION_TYPE,
   ipfsHash?: string,
   graph?: any,
 }) {
@@ -245,7 +245,7 @@ export function getPayloadIdentity({
   return null;
 }
 
-export function getSource(chainId: number, identityType: number) {
+export function getSource(chainId: number, identityType: IDENTITY_TYPE) {
   if (identityType === IDENTITY_TYPE.SUBGRAPH) {
     return SOURCE_TYPES.THE_GRAPH;
   }
