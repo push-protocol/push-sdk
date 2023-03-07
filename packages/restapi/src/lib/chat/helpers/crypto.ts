@@ -10,7 +10,7 @@ import {
   walletType,
 } from '../../types';
 import { get } from '../../user';
-import { decryptPGPKey, decryptWithWalletRPCMethod, getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
+import { decryptPGPKey, decryptWithWalletRPCMethod, getTypeInformation, isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, {ENV} from '../../constants';

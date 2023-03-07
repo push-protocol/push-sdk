@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { ENV } from '../constants';
 import { getCAIPAddress } from '../helpers';
 
 import { ISendNotificationInputOptions, INotificationPayload } from '../types';
@@ -8,7 +9,6 @@ import {
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES
 } from './constants';
-import { ENV } from '../constants';
 
 export function getUUID() {
   return uuidv4();

@@ -15,6 +15,7 @@ const ChannelsTest = () => {
   const [channelData, setChannelData] = useState();
   const [channelListData, setChannelListData] = useState();
   const [subscriberData, setSubscriberData] = useState<any>();
+  const [channelDelegatesData, setChannelDelegatesData] = useState();
   const [subscriberStatus, setSubscriberStatus] = useState<boolean>();
   
 
@@ -74,6 +75,22 @@ const ChannelsTest = () => {
       });
   
       setSubscriberData(response);
+    } catch(e) {
+      console.error(e)
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const testGetChannelDelegates = async () => {
+    try {
+      setLoading(true);
+      const response = await PushAPI.channels.getDelegates({
+        channel: isCAIP ? getCAIPAddress(env, channelAddr) : channelAddr,
+        env: env
+      });
+  
+      setChannelDelegatesData(response);
     } catch(e) {
       console.error(e)
     } finally {
@@ -190,6 +207,16 @@ const ChannelsTest = () => {
             {subscriberData ? (
               <CodeFormatter>
                 {JSON.stringify(subscriberData, null, 4)}
+              </CodeFormatter>
+            ) : null}
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <SectionButton onClick={testGetChannelDelegates}>get channel delegates data</SectionButton>
+            </SectionItem>
+
+            {channelDelegatesData ? (
+              <CodeFormatter>
+                {JSON.stringify(channelDelegatesData, null, 4)}
               </CodeFormatter>
             ) : null}
 

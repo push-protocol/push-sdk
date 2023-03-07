@@ -11,6 +11,7 @@ import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
 import NotificationsTest from './NotificationsTest';
 import SecretNotificationsTest from './SecretNotificationsTest';
 import ChannelsTest from './ChannelsTest';
+import AliasTest from './AliasTest';
 import EmbedTest from './EmbedTest';
 import PayloadsTest from './PayloadsTest';
 import SocketTest from './SocketTest';
@@ -24,6 +25,7 @@ import GetChatsTest from './ChatTest/GetChats';
 import ConversationHashTest from './ChatTest/ConversationHash';
 import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
+import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
@@ -190,6 +192,12 @@ export function App() {
                       <Link to="/channels" className="nav-button">
                         CHANNELS
                       </Link>
+                      <Link to="/alias" className="nav-button">
+                        ALIAS
+                      </Link>
+                      <Link to="/delegations" className="nav-button">
+                        DELEGATIONS
+                      </Link>
                       <Link to="/payloads" className="nav-button">
                         PAYLOADS
                       </Link>
@@ -209,6 +217,10 @@ export function App() {
                 <Route path="/secret" element={<SecretNotificationsTest />} />
 
                 <Route path="/channels" element={<ChannelsTest />} />
+
+                <Route path="/alias" element={<AliasTest />} />
+                
+                <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
 
