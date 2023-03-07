@@ -113,6 +113,8 @@ Polygon Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Polygon Mumbai - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Binance Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Binance Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Optimism Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Optimism Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ```
 
 # SDK Features

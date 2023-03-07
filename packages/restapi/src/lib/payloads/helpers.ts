@@ -255,7 +255,7 @@ export function getSource(chainId: number, identityType: IDENTITY_TYPE) {
 
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
-  if ([1, 5, 42, 137, 80001, 56, 97].includes(chainId)) {
+  if ([1, 5, 42, 137, 80001, 56, 97, 10, 420].includes(chainId)) {
     return `eip155:${chainId}:${address}`;
   }
 

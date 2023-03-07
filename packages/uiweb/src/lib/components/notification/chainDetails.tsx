@@ -3,6 +3,7 @@ import PolygonSVG from "../../icons/polygon.svg";
 import GraphSVG from "../../icons/thegraph.svg";
 import Tooltip from "../tooltip";
 import BscSVG from "../../icons/bsc.svg";
+import OptimismSVG from "../../icons/optimism.svg";
 
 const createSVGIcon = (url: string, chainName: string) => {
   return (
@@ -19,5 +20,7 @@ export default {
     POLYGON_MAINNET: { label: "POLYGON MAINNET", icon: createSVGIcon(PolygonSVG, "Polygon Mainnet") },
     BSC_TESTNET: { label: "BSC TESTNET", icon: createSVGIcon(BscSVG, "Bsc Testnet") },
     BSC_MAINNET: { label: "BSC MAINNET", icon: createSVGIcon(BscSVG, "Bsc Mainnet") },
+    OPTIMISM_TESTNET: { label: "OPTIMISM TESTNET", icon: createSVGIcon(OptimismSVG, "Optimism Testnet") },
+    OPTIMISM_MAINNET: { label: "OPTIMISM MAINNET", icon: createSVGIcon(OptimismSVG, "Optimism Mainnet") },
     THE_GRAPH: { label: "THE GRAPH", icon: createSVGIcon(GraphSVG, "The Graph") },
 };
