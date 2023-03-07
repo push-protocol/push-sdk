@@ -13,7 +13,7 @@ import { ALIAS_CHAIN, ALIAS_CHAIN_ID } from '../config';
 export type GetAliasInfoOptionsType = {
   /** alias address of the ethereum channel */
   alias: string;
-  /** name of the alias chain, can be Polygon or BSC */
+  /** name of the alias chain, can be Polygon or BSC or Optimism */
   aliasChain: ALIAS_CHAIN;
   env?: ENV;
 }

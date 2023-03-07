@@ -8,7 +8,6 @@ export interface AddressValidatorsType {
 export function isValidETHAddress(address: string) {
   if (address.includes('eip155:')) {
     const splittedAddress = address.split(':');
-    console.log(splittedAddress)
     if(splittedAddress.length === 3){
      return ethers.utils.isAddress(splittedAddress[2]);
     }

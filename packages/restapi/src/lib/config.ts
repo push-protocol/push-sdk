@@ -20,7 +20,7 @@ const BLOCKCHAIN_NETWORK = {
   OPTIMISM_MAINNET: 'eip155:10'
 };
 
-export type ALIAS_CHAIN = 'POLYGON' | 'BSC';
+export type ALIAS_CHAIN = 'POLYGON' | 'BSC' | 'OPTIMISM';
 
 export const ALIAS_CHAIN_ID = {
   POLYGON: {
@@ -32,6 +32,11 @@ export const ALIAS_CHAIN_ID = {
     [ENV.PROD]: 56,
     [ENV.STAGING]: 97,
     [ENV.DEV]: 97
+  },
+  OPTIMISM: {
+    [ENV.PROD]: 10,
+    [ENV.STAGING]: 420,
+    [ENV.DEV]: 420
   }
 }
 
