@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.8.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.6...restapi-0.8.0) (2023-03-07)
+
+
+### Bug Fixes
+
+* **component:** added enum type to notification type and identity type ([#216](https://github.com/ethereum-push-notification-service/push-sdk/issues/216)) ([e76dc18](https://github.com/ethereum-push-notification-service/push-sdk/commit/e76dc1800739472133cf97e59891c62d223a80f7))
+* **component:** added signing fix for approve intent request ([#215](https://github.com/ethereum-push-notification-service/push-sdk/issues/215)) ([b117fe5](https://github.com/ethereum-push-notification-service/push-sdk/commit/b117fe544b96e5b80c8df1b91257afca2402cde3))
+* **component:** env type in demo react and uiweb ([#225](https://github.com/ethereum-push-notification-service/push-sdk/issues/225)) ([ff1113a](https://github.com/ethereum-push-notification-service/push-sdk/commit/ff1113adb226aee4c9f6ccdfa488e59b47ca9b9e))
+
+
+### Features
+
+* added Optimism Chain ([#221](https://github.com/ethereum-push-notification-service/push-sdk/issues/221)) ([a9f6e56](https://github.com/ethereum-push-notification-service/push-sdk/commit/a9f6e56f51ac6eb089ddeffd6c47f144b9b28dd8))
+
+
+
 ## [0.7.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.5...restapi-0.7.6) (2023-03-03)
 
 
