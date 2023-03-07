@@ -10,7 +10,7 @@ import {
   walletType,
 } from '../../types';
 import { get } from '../../user';
-import { getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
+import { decryptPGPKey, decryptWithWalletRPCMethod, getDomainInformation, getTypeInformation, isValidETHAddress, pCAIP10ToWallet, walletToPCAIP10 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, {ENV} from '../../constants';
@@ -339,4 +339,20 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
   const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`
 
   return { verificationProof };
+}
+
+export async function getDecryptedPrivateKey(wallet: walletType, user: any, address: string): Promise<string> {
+  let decryptedPrivateKey;
+  if (wallet.signer) {
+    decryptedPrivateKey = await decryptPGPKey({
+      signer: wallet.signer,
+      encryptedPGPPrivateKey: user.encryptedPrivateKey
+    })
+  } else {
+    decryptedPrivateKey = await decryptWithWalletRPCMethod(
+      user.encryptedPrivateKey,
+      address
+    );
+  }
+  return decryptedPrivateKey;
 }
