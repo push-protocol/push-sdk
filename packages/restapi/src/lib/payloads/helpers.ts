@@ -8,6 +8,7 @@ import {
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES
 } from './constants';
+import { ENV } from '../constants';
 
 export function getUUID() {
   return uuidv4();
@@ -61,7 +62,7 @@ export async function getRecipients({
   recipients,
   secretType
 } : {
-  env: string,
+  env: ENV,
   notificationType: NOTIFICATION_TYPE ,
   channel: string,
   recipients?: string | string[],
@@ -139,7 +140,7 @@ export function getRecipientFieldForAPIPayload({
   recipients,
   channel,
 } : {
-  env: string,
+  env: ENV,
   notificationType: NOTIFICATION_TYPE,
   recipients: string | string[],
   channel: string
