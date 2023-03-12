@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Constants, {ENV} from '../../constants';
-import { generateHash, getAPIBaseUrls, getQueryParams, walletToPCAIP10 } from '../../helpers';
+import { generateHash, getAPIBaseUrls, getQueryParams, verifyPGPPublicKey, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType, walletType } from '../../types';
 import { getSignature } from './crypto';
 
@@ -52,6 +52,12 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   return axios
     .post(requestUrl, body)
     .then((response) => {
+      if(response.data)
+      response.data.publicKey = verifyPGPPublicKey(
+        response.data.encryptionType,
+        response.data.publicKey,
+        response.data.did
+      );
       return response.data;
     })
     .catch((err) => {

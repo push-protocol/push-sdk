@@ -26,7 +26,7 @@ export const Modal: React.FC = () => {
     string | null
   >(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
-  const { supportAddress, env, account, greetingMsg, theme } =
+  const { supportAddress, env, account, signer, greetingMsg, theme } =
     useContext<any>(ChatPropsContext);
   const {
     chats,
@@ -91,7 +91,7 @@ export const Modal: React.FC = () => {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
       }
-      const user = await createUserIfNecessary({ account, env });
+      const user = await createUserIfNecessary({ account, signer, env });
       setConnectedUser(user);
       setLoading(false);
     } catch (err:any) {

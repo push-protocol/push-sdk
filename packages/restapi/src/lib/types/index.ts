@@ -1,5 +1,6 @@
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
 import {ENV} from '../constants';
+import {EthEncryptedData} from '@metamask/eth-sig-util';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -273,3 +274,15 @@ export type walletType = {
   account: string | null;
   signer: SignerType | null;
 }
+
+export type encryptedPrivateKeyTypeV1 = EthEncryptedData
+
+export type encryptedPrivateKeyTypeV2 = {
+  ciphertext: string;
+  version: string;
+  salt: string;
+  nonce: string;
+  preKey: string;
+}
+
+export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2

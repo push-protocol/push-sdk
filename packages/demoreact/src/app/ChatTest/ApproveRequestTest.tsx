@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const ApproveRequestTest = () => {
-  const { account } = useContext<any>(Web3Context);
+  const { account, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [senderAddress, setSenderAddress] = useState<string>('');
@@ -28,10 +28,12 @@ const ApproveRequestTest = () => {
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
       if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          user.encryptedPrivateKey,
-          account
-        );
+        const librarySigner = await library.getSigner();
+        pvtkey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner
+        });
       }
 
       const response = await PushAPI.chat.approve({

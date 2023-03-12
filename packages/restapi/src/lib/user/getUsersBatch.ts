@@ -33,6 +33,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   return axios
     .post(requestUrl, requestBody)
     .then((response) => {
+      //TODO verification
       return response.data;
     })
     .catch((err) => {

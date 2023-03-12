@@ -15,7 +15,8 @@ export type ChatProps = {
 };
 
 export const ChatSupportTest = () => {
-  const { account } = useContext<any>(Web3Context);
+  const { account, library } = useContext<any>(Web3Context);
+  const librarySigner = library.getSigner();
   const { env } = useContext<any>(EnvContext);
   const theme: ITheme = {
     bgColorPrimary: 'gray',
@@ -32,6 +33,7 @@ export const ChatSupportTest = () => {
   return (
     <Chat
       account={account}
+      signer={librarySigner}
       supportAddress="0xD2A371cAFBE09333F6668229E4BD33196583c325"
       apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
       env={env}

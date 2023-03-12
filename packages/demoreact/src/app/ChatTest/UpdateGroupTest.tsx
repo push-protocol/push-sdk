@@ -53,13 +53,14 @@ const UpdateGroupTest = () => {
       setLoading(true);
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          user.encryptedPrivateKey,
-          account
-        );
-      }
       const librarySigner = await library.getSigner();
+      if (user?.encryptedPrivateKey) {
+        pvtkey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner
+        });
+      }
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,

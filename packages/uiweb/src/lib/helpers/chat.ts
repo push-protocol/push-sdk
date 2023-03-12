@@ -13,7 +13,9 @@ type GetChatsType = {
   supportAddress: string;
   limit: number;
   threadHash?: string;
-} & AccountEnvOptionsType;
+  env?:  ENV;
+  account: string;
+}
 
 
 
@@ -27,15 +29,16 @@ export const handleOnChatIconClick = ({
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser> => {
-  const { account, env = Constants.ENV.PROD } = options || {};
+  const { account, signer, env = Constants.ENV.PROD } = options || {};
   let connectedUser = await PushAPI.user.get({ account: account, env });
   if (!connectedUser?.encryptedPrivateKey) {
     connectedUser = await PushAPI.user.create({ account: account, env });
   }
-  const decryptedPrivateKey = await PushAPI.chat.decryptWithWalletRPCMethod(
-    connectedUser.encryptedPrivateKey,
-    account
-  );
+  const decryptedPrivateKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: connectedUser.encryptedPrivateKey,
+    account,
+    signer
+  });
   return { ...connectedUser, privateKey: decryptedPrivateKey };
 };
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AccountEnvOptionsType, IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
-import { getAPIBaseUrls } from '../helpers';
+import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
 import Constants from '../constants';
 
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
@@ -15,6 +15,12 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   return axios
     .get(requestUrl)
     .then((response) => {
+      if(response.data)
+      response.data.publicKey = verifyPGPPublicKey(
+        response.data.encryptionType,
+        response.data.publicKey,
+        response.data.did
+      );
       return response.data;
     })
     .catch((err) => {
