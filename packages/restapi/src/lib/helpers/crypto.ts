@@ -5,7 +5,8 @@ import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
 import Constants from "../constants";
 import { SignerType, walletType, encryptedPrivateKeyType, encryptedPrivateKeyTypeV2 } from "../types";
-import { isValidETHAddress } from "./address";
+import { isValidETHAddress, pCAIP10ToWallet } from "./address";
+import { verifyEip712Signature } from "./signature";
 
 const KDFSaltSize = 32 // bytes
 const AESGCMNonceSize = 12 // property iv
@@ -178,7 +179,6 @@ export const decryptAndVerifySignature = async ({
     cipherText: encryptedSecretKey,
     toPrivateKeyArmored: privateKeyArmored
   })
-  console.log(cipherText, signatureArmored, publicKeyArmored);
   await verifySignature({ messageContent: cipherText, signatureArmored, publicKeyArmored })
   return aesDecrypt({ cipherText, secretKey })
 }
@@ -358,11 +358,13 @@ export const verifyPGPPublicKey = (
   address: string
 ): string => {
   if (encryptionType === Constants.ENC_TYPE_V2) {
-    const { key, signature } = JSON.parse(publicKey);
+    const { key, signature: verificationProof } = JSON.parse(publicKey);
     publicKey = key;
-    const createProfileMessage =
-      'Create Push Chat Profile \n' + generateHash(key);
-    // TODO verify signature and throw err on fail
+    const signedData ='Create Push Chat Profile \n' + generateHash(key);
+    const signature: string = verificationProof.split(":")[1];
+    if(verifyEip712Signature(signature, signedData, pCAIP10ToWallet(address)))
+    return publicKey;
+    else throw new Error('Cannot verify Encryption Keys for this user');
   }
   return publicKey;
 };

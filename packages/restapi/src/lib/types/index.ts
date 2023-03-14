@@ -155,6 +155,8 @@ export interface IUser {
   sigType: string;
   about: string | null;
   name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;

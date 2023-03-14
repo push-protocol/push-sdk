@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
-import { getAPIBaseUrls } from '../helpers';
+import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
 import Constants, {ENV} from '../constants';
 
 export interface GetBatchType {
@@ -28,12 +28,18 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   }
 
   const pcaipUserIds = userIds.map(walletToPCAIP10);
-  const requestBody = { pcaipUserIds };
+  const requestBody = { userIds: pcaipUserIds };
 
   return axios
     .post(requestUrl, requestBody)
     .then((response) => {
-      //TODO verification
+      response.data.users.forEach((user:any ,index: number) => {
+        response.data.users[index].publicKey = verifyPGPPublicKey(
+          user.encryptionType,
+          user.publicKey,
+          user.did
+        );
+      });
       return response.data;
     })
     .catch((err) => {

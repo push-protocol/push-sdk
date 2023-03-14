@@ -15,6 +15,13 @@ type CreateUserOptionsType = {
   env?:  ENV;
 };
 
+type upgradeUserOptionsType = CreateUserOptionsType & {
+  name: string;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  
+}
+
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
@@ -51,6 +58,59 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   return axios
     .post(requestUrl, body)
+    .then((response) => {
+      if(response.data)
+      response.data.publicKey = verifyPGPPublicKey(
+        response.data.encryptionType,
+        response.data.publicKey,
+        response.data.did
+      );
+      return response.data;
+    })
+    .catch((err) => {
+      console.error(`[Push SDK] - API ${requestUrl}: `, err);
+      throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
+    });
+};
+
+export const upgradeUserService = async (options: upgradeUserOptionsType) => {
+  const {
+    user,
+    wallet,
+    publicKey = '',
+    encryptedPrivateKey = '',
+    encryptionType = '',
+    name = '',
+    encryptedPassword = null,
+    nftOwner = null,
+    env = Constants.ENV.PROD,
+  } = options || {};
+
+  const API_BASE_URL = getAPIBaseUrls(env);
+
+  const requestUrl = `${API_BASE_URL}/v1/users/users/${walletToPCAIP10(user)}`;
+
+  const data = {
+    caip10: walletToPCAIP10(user),
+    publicKey,
+    encryptedPrivateKey,
+    encryptionType,
+    name: name,
+    encryptedPassword: encryptedPassword,
+    nftOwner: nftOwner
+  };
+
+  const hash = generateHash(data);
+
+  const signatureObj = await getSignature(user, wallet!, hash);
+
+  const body = {
+    ...data, 
+    ...signatureObj,
+  };
+
+  return axios
+    .put(requestUrl, body)
     .then((response) => {
       if(response.data)
       response.data.publicKey = verifyPGPPublicKey(
