@@ -6,7 +6,7 @@ const { ENV } = Constants;
 export const API_BASE_URL = {
   [ENV.PROD]: 'https://backend.epns.io/apis',
   [ENV.STAGING]: 'https://backend-staging.epns.io/apis',
-  [ENV.DEV]: 'http://localhost:4000/apis'
+  [ENV.DEV]: 'https://backend-dev.epns.io/apis'
 };
 
 const BLOCKCHAIN_NETWORK = {

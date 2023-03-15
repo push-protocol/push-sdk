@@ -232,7 +232,6 @@ const encryptV2 = async (
   secret: Uint8Array,
   additionalData?: Uint8Array
 ): Promise<encryptedPrivateKeyTypeV2> => {
-  const crypto = window.crypto;
   const salt = crypto.getRandomValues(new Uint8Array(KDFSaltSize));
   const nonce = crypto.getRandomValues(new Uint8Array(AESGCMNonceSize));
   const key = await hkdf(secret, salt);
