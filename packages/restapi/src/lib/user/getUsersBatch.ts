@@ -28,7 +28,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   }
 
   const pcaipUserIds = userIds.map(walletToPCAIP10);
-  const requestBody = { pcaipUserIds };
+  const requestBody = { userIds: pcaipUserIds };
 
   return axios
     .post(requestUrl, requestBody)
