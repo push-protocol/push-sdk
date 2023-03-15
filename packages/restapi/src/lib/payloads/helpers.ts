@@ -44,6 +44,7 @@ export function getPayloadForAPIInput(
         ...(inputOptions?.hidden && { hidden: inputOptions?.hidden }),
         ...(inputOptions?.payload?.sectype && { sectype: inputOptions?.payload?.sectype }),
         ...(inputOptions?.payload?.metadata && { metadata: inputOptions?.payload?.metadata }),
+        ...(inputOptions?.payload?.additionalMeta && { additionalMeta: inputOptions?.payload?.additionalMeta }),
       },
       recipients: recipients
     };
