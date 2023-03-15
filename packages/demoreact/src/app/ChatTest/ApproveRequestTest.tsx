@@ -27,8 +27,8 @@ const ApproveRequestTest = () => {
       setLoading(true);
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
+      const librarySigner = await library.getSigner();
       if (user?.encryptedPrivateKey) {
-        const librarySigner = await library.getSigner();
         pvtkey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
@@ -42,6 +42,7 @@ const ApproveRequestTest = () => {
         senderAddress,
         env,
         pgpPrivateKey: pvtkey,
+        signer: librarySigner
       });
 
       setApproveResponse(response);
