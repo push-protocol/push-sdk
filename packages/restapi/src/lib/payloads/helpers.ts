@@ -2,13 +2,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
 import { getCAIPAddress } from '../helpers';
 
-import { ISendNotificationInputOptions, INotificationPayload } from '../types';
+import { ISendNotificationInputOptions, INotificationPayload, walletType } from '../types';
 import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES
 } from './constants';
+import { getConnectedUser, sign } from '../chat/helpers';
+import CryptoES from 'crypto-es';
 
 export function getUUID() {
   return uuidv4();
@@ -163,7 +165,11 @@ export async function getVerificationProof({
   payload,
   ipfsHash,
   graph = {},
-  uuid
+  uuid,
+  chatId,
+  wallet, //
+  pgpPrivateKey, //
+  env, //
 }: {
   signer: any,
   chainId: number,
@@ -173,7 +179,12 @@ export async function getVerificationProof({
   payload: any,
   ipfsHash?: string,
   graph?: any,
-  uuid: string
+  uuid: string,
+  // for notifications which have additionalMeta in payload
+  chatId?:string,
+  wallet?: walletType,
+  pgpPrivateKey?:string,
+  env?: ENV,
 }) {
 
   // console.log('payload ---> \n\n', payload);
@@ -207,9 +218,24 @@ export async function getVerificationProof({
     message = {
       data: `2+${payloadJSON}`,
     };
+    
+    if(chatId!==undefined){
+      // chat notification
+      // generate the pgpv2 verification proof
+      const connectedUser = await getConnectedUser(wallet!, pgpPrivateKey!, env!);
+
+      const hash = CryptoES.SHA256(JSON.stringify(message)).toString()
+      signature = await sign({ message: hash, signingKey: connectedUser.privateKey! });
+      return `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
+    }
+    
+    // channel notification
+    // generate eip712 verification proof
     signature = await signer._signTypedData(domain, type, message);
     return `eip712v2:${signature}::uid::${uuid}`;
-  } else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
+  }
+
+  else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
     message = {
       data: `3+graph:${graph?.id}+${graph?.counter}`,
     };

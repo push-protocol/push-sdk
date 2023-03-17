@@ -95,6 +95,9 @@ export interface ISendNotificationInputOptions {
   };
   ipfsHash?: string;
   env?:  ENV;
+  chatId?:string;
+  account?:string;
+  pgpPrivateKey?: string,
 }
 
 export interface INotificationPayload {

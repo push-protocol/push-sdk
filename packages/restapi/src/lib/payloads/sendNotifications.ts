@@ -12,6 +12,7 @@ import {
 import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
 import { IDENTITY_TYPE } from './constants';
 import { ENV } from '../constants';
+import { getWallet } from '../chat/helpers';
 
 
 /**
@@ -46,11 +47,19 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       channel,
       graph,
       ipfsHash,
-      env = ENV.PROD
+      env = ENV.PROD,
+      chatId,
+      account=null,
+      pgpPrivateKey,
     } = options || {};
 
     validateOptions(options);
+    
+    if (signer === undefined && account === null) {
+      throw new Error(`At least one from account or signer is necessary!`);
+    }
 
+    const wallet = getWallet({ account, signer });
 
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
@@ -81,7 +90,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       payload: notificationPayload,
       graph,
       ipfsHash,
-      uuid
+      uuid,
+      // for the pgpv2 verfication proof
+      chatId,
+      wallet,
+      pgpPrivateKey,
+      env,
     });
 
     const identity = getPayloadIdentity({
