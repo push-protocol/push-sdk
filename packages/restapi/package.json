@@ -10,8 +10,19 @@
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
     "buffer": "^6.0.3",
+    "chai": "^4.3.7",
     "crypto-es": "^1.2.7",
-    "openpgp": "^5.5.0"
+    "mocha": "^10.2.0",
+    "mocha-typescript": "^1.1.17",
+    "openpgp": "^5.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  },
+  "scripts": {
+    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' mocha -r ts-node/register \"tests/**/*.test.ts\" --timeout 12000  --require tests/root.ts --serial",
+    "test-single": "TS_NODE_PROJECT='./tsconfig.mocha.json' mocha -r ts-node/register --timeout 12000 --require tests/root.ts"
   }
 }
