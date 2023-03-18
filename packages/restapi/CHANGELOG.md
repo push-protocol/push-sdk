@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.8.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.1...restapi-0.8.2) (2023-03-17)
+
+
+### Bug Fixes
+
+* fix user.getBatch fn of restapi ([24e6a82](https://github.com/ethereum-push-notification-service/push-sdk/commit/24e6a8251031f766ceb8b76f89a72651f133db78))
+* rollback to crypto-js ([ba06e91](https://github.com/ethereum-push-notification-service/push-sdk/commit/ba06e9122c6b2c230d6f45980fddc0ddff77a201))
+
+
+
+## [0.8.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.0...restapi-0.8.1) (2023-03-09)
+
+
+
 # [0.8.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.7.6...restapi-0.8.0) (2023-03-07)
 
 

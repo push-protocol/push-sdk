@@ -65,6 +65,7 @@
     "@testing-library/jest-native": "4.0.4",
     "@testing-library/react": "12.1.5",
     "@testing-library/react-native": "9.1.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/jest": "27.4.1",
     "@types/node": "16.11.7",
     "@types/react": "^17.0.0",
