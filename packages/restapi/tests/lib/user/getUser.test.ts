@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 import { expect } from 'chai';
-import { describe, it, beforeEach } from 'mocha';
+
 import { get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
