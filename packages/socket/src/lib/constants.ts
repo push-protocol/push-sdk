@@ -14,5 +14,7 @@ export const EVENTS = {
   USER_SPAM_FEEDS: 'userSpamFeeds',
 
   // Chat
-  CHAT_RECEIVED_MESSAGE: 'CHATS'
+  CHAT_RECEIVED_MESSAGE: 'CHATS',
+  CHAT_GROUPS: 'CHAT_GROUPS'
+
 };

@@ -1,6 +1,6 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
 import { decrypt as metamaskDecrypt } from "@metamask/eth-sig-util";
-import CryptoES from "crypto-es"
+import * as CryptoJS from "crypto-js"
 import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
 import Constants from "../constants";
@@ -184,8 +184,8 @@ export const decryptAndVerifySignature = async ({
 }
 
 export const generateHash = (message: any): string => {
-  const hash = CryptoES.SHA256(JSON.stringify(message)).toString(
-    CryptoES.enc.Hex
+  const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
+    CryptoJS.enc.Hex
   );
   return hash;
 };

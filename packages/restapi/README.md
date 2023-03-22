@@ -1449,8 +1449,10 @@ const {
 ### DEPRECATED
 #### **Get a channel's subscriber list of addresses**
 ```typescript
-const subscribers = await PushAPI.channels._getSubscribers({
+const subscribers = await PushAPI.channels.getSubscribers({
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
+  page: 1, // Optional, defaults to 1
+  limit : 10 // Optional, defaults to 10
   env: 'staging'
 });
 ```
