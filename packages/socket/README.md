@@ -107,6 +107,10 @@ pushSDKSocket.on(EVENTS.USER_FEEDS, (feedItem) => {
 pushSDKSocket.on(EVENT.CHAT_RECEIVED_MESSAGE, (message) => {
   // message is the message object data whenever a new message is received
 });
+
+pushSDKSocket.on(EVENT.CHAT_GROUPS, (message) => {
+  // message is the message object data whenever a group is created or updated
+});
 ```
 
 Supported EVENTS
@@ -117,6 +121,7 @@ Supported EVENTS
 | EVENTS.USER_FEEDS | whenever a new notification is received by the user after the last socket connection   | 
 | EVENTS.USER_SPAM_FEEDS | whenever a new spam notification is received by the user after the last socket connection   | 
 | EVENT.CHAT_RECEIVED_MESSAGE | whenever a new message is received |
+| EVENT.CHAT_GROUPS | whenever a group is created or updated |
 
 # Examples
 ## Basic example of using SDK sockets in a React App
