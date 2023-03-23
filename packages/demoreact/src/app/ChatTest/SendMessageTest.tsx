@@ -57,7 +57,7 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
+            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
             receiverAddress,
             account: isCAIP ? walletToPCAIP10(account) : account,
             pgpPrivateKey: pvtkey,
@@ -76,7 +76,7 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
+            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
             receiverAddress,
             signer: librarySigner,
             pgpPrivateKey: pvtkey,
@@ -95,7 +95,7 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
+            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
             receiverAddress,
             signer: librarySigner,
             account: isCAIP ? walletToPCAIP10(account) : account,
@@ -117,7 +117,7 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
+            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
             receiverAddress,
             signer: pvtKeySigner,
             pgpPrivateKey: pvtkey,
@@ -135,7 +135,7 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | undefined,
+            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
             receiverAddress,
             pgpPrivateKey: pvtkey,
             apiKey,
@@ -214,7 +214,17 @@ const SendMessageTest = () => {
                   checked={messageType === 'GIF'}
                   onChange={() => setMessageType('GIF')}
                 />
-                <label>GIF</label>
+                <label>GIF ( DEPRECATED )</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="messageType"
+                  value="MediaURL"
+                  checked={messageType === 'MediaURL'}
+                  onChange={() => setMessageType('MediaURL')}
+                />
+                <label>MediaURL</label>
               </div>
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
