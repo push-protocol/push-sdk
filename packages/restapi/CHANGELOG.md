@@ -2,6 +2,66 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.9.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.2...restapi-0.9.0) (2023-03-23)
+
+
+### Bug Fixes
+
+* **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
+* **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
+* **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
+* **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
+* **component:** removed duplicate decryptAndVerifySignature method ([e42b7ff](https://github.com/ethereum-push-notification-service/push-sdk/commit/e42b7ffb4659c4f603a2f15eec2f6bf84ddcf303))
+* **component:** removed duplicate decryptAndVerifySignature method ([a03cf7e](https://github.com/ethereum-push-notification-service/push-sdk/commit/a03cf7e2ff56e5af82e0d80943cfb3ee48b773f6))
+
+
+### Features
+
+* chat.chat function ([760dda4](https://github.com/ethereum-push-notification-service/push-sdk/commit/760dda4095e57ef1f79fba8543aa5ff6a8c48c6f))
+* mediaURL type message support ([72d8d41](https://github.com/ethereum-push-notification-service/push-sdk/commit/72d8d411155ffce55da14810d7aeb5845035dade))
+
+
+
+# [0.9.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.2...restapi-0.9.0) (2023-03-23)
+
+
+### Bug Fixes
+
+* **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
+* **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
+* **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
+* **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
+* **component:** removed duplicate decryptAndVerifySignature method ([e42b7ff](https://github.com/ethereum-push-notification-service/push-sdk/commit/e42b7ffb4659c4f603a2f15eec2f6bf84ddcf303))
+* **component:** removed duplicate decryptAndVerifySignature method ([a03cf7e](https://github.com/ethereum-push-notification-service/push-sdk/commit/a03cf7e2ff56e5af82e0d80943cfb3ee48b773f6))
+
+
+### Features
+
+* chat.chat function ([760dda4](https://github.com/ethereum-push-notification-service/push-sdk/commit/760dda4095e57ef1f79fba8543aa5ff6a8c48c6f))
+* mediaURL type message support ([72d8d41](https://github.com/ethereum-push-notification-service/push-sdk/commit/72d8d411155ffce55da14810d7aeb5845035dade))
+
+
+
+# [0.9.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.2...restapi-0.9.0) (2023-03-23)
+
+
+### Bug Fixes
+
+* **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
+* **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
+* **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
+* **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
+* **component:** removed duplicate decryptAndVerifySignature method ([e42b7ff](https://github.com/ethereum-push-notification-service/push-sdk/commit/e42b7ffb4659c4f603a2f15eec2f6bf84ddcf303))
+* **component:** removed duplicate decryptAndVerifySignature method ([a03cf7e](https://github.com/ethereum-push-notification-service/push-sdk/commit/a03cf7e2ff56e5af82e0d80943cfb3ee48b773f6))
+
+
+### Features
+
+* chat.chat function ([760dda4](https://github.com/ethereum-push-notification-service/push-sdk/commit/760dda4095e57ef1f79fba8543aa5ff6a8c48c6f))
+* mediaURL type message support ([72d8d41](https://github.com/ethereum-push-notification-service/push-sdk/commit/72d8d411155ffce55da14810d7aeb5845035dade))
+
+
+
 ## [0.8.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.2...restapi-0.8.3) (2023-03-22)
 
 
