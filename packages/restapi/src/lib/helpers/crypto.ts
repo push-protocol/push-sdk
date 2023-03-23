@@ -3,10 +3,11 @@ import { decrypt as metamaskDecrypt } from "@metamask/eth-sig-util";
 import * as CryptoJS from "crypto-js"
 import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
-import Constants from "../constants";
+import Constants, { ENV } from "../constants";
 import { SignerType, walletType, encryptedPrivateKeyType, encryptedPrivateKeyTypeV2 } from "../types";
 import { isValidETHAddress, pCAIP10ToWallet } from "./address";
 import { verifyEip712Signature } from "./signature";
+import { upgrade } from "../user/upgradeUser";
 
 const KDFSaltSize = 32 // bytes
 const AESGCMNonceSize = 12 // property iv
@@ -62,13 +63,17 @@ type decryptPgpKeyProps = {
   encryptedPGPPrivateKey: string;
   account?: string;
   signer?: SignerType;
+  env?:  ENV
+  toUpgrade?: boolean
 }
 
 export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   const {
     encryptedPGPPrivateKey,
     account = null,
-    signer = null
+    signer = null,
+    env = Constants.ENV.PROD,
+    toUpgrade = true
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -99,6 +104,14 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             method: "eth_decrypt",
             params: [encryptedPGPPrivateKey, address]
           });
+        }
+        if(signer && toUpgrade) {
+          try {
+            await upgrade({env, account: address, signer})
+          }
+          catch(err) {
+            console.error(`[Push SDK] - API  - Error - API decrypt Pgp Key() -: Unable To UpgradeUser`, err);
+          }
         }
         break;
       }

@@ -71,7 +71,8 @@ const SendMessageTest = () => {
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
               encryptedPGPPrivateKey: user.encryptedPrivateKey,
-              signer: librarySigner
+              signer: librarySigner,
+              env
             });
           }
           response = await PushAPI.chat.send({
@@ -90,7 +91,8 @@ const SendMessageTest = () => {
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
               encryptedPGPPrivateKey: user.encryptedPrivateKey,
-              signer: librarySigner
+              signer: librarySigner,
+              env
             });
           }
           response = await PushAPI.chat.send({
@@ -112,7 +114,8 @@ const SendMessageTest = () => {
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptPGPKey({
               encryptedPGPPrivateKey: user.encryptedPrivateKey,
-              signer: pvtKeySigner
+              signer: pvtKeySigner,
+              env
             });
           }
           response = await PushAPI.chat.send({

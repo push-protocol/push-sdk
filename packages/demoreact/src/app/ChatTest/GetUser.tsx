@@ -47,8 +47,9 @@ const GetUserTest = () => {
         const response = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: (connectedUser as IUser).encryptedPrivateKey,
           account: isCAIP ? walletToPCAIP10(account) : account,
-          signer: librarySigner}
-        );
+          signer: librarySigner,
+          env
+        });
 
         setDecryptedPrivateKey(response);
       } else return;

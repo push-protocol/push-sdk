@@ -32,7 +32,6 @@ import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import {Buffer} from 'buffer';
 import { ENV } from './helpers';
-import UpgradeUserTest from './ChatTest/UpgradeUser';
 
 window.Buffer = window.Buffer || Buffer; 
 
@@ -235,7 +234,6 @@ export function App() {
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
-                <Route path="/upgrade" element={<UpgradeUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
                 <Route path="/chats" element={<GetChatsTest />} />

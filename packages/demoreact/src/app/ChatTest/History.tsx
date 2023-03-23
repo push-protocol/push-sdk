@@ -43,7 +43,8 @@ const HistoryTest = () => {
         pvtkey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
-          signer: librarySigner
+          signer: librarySigner,
+          env
         });
       }
       const response = await PushAPI.chat.history({
@@ -75,7 +76,8 @@ const HistoryTest = () => {
         pvtkey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
-          signer: librarySigner
+          signer: librarySigner,
+          env
         });
       }
       const decryptedChat = await PushAPI.chat.decryptConversation({

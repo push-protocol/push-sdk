@@ -37,7 +37,8 @@ export const createUserIfNecessary = async (
   const decryptedPrivateKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: connectedUser.encryptedPrivateKey,
     account,
-    signer
+    signer,
+    env
   });
   return { ...connectedUser, privateKey: decryptedPrivateKey };
 };

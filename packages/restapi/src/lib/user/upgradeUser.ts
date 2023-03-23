@@ -31,14 +31,15 @@ export const upgrade = async (
   }
 
   const user:IUser = await get({account: address, env: env});
-  console.log(user);
   const caip10: string = walletToPCAIP10(address);
   const encryptionType: string = Constants.ENC_TYPE_V2;
   const publicKey: string = await preparePGPPublicKey(encryptionType, user.publicKey, address, wallet);
   const privateKey = await decryptPGPKey
   ({encryptedPGPPrivateKey: user.encryptedPrivateKey,
     account: address,
-    signer: signer
+    signer: signer,
+    env,
+    toUpgrade: false
    });
   const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(encryptionType, privateKey, address, wallet);
 

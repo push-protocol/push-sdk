@@ -32,7 +32,8 @@ const ApproveRequestTest = () => {
         pvtkey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
-          signer: librarySigner
+          signer: librarySigner,
+          env
         });
       }
 
