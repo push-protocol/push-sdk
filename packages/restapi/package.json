@@ -11,10 +11,20 @@
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
+    "chai": "^4.3.7",
     "crypto-js": "^4.1.1",
-    "openpgp": "^5.5.0"
+    "mocha-typescript": "^1.1.17",
+    "openpgp": "^5.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  },
+  "scripts": {
+    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 12000 --require tests/root.ts --serial"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1"
+    "@types/chai": "^4.3.4",
+    "@types/crypto-js": "^4.1.1",
+    "@types/mocha": "^10.0.1",
+    "mocha": "^10.2.0"
   }
 }

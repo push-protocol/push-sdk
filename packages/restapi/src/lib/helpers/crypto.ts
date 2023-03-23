@@ -4,7 +4,7 @@ import * as CryptoJS from "crypto-js"
 import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
 import Constants, { ENV } from "../constants";
-import { SignerType, walletType, encryptedPrivateKeyType, encryptedPrivateKeyTypeV2 } from "../types";
+import { SignerType, walletType, encryptedPrivateKeyType, encryptedPrivateKeyTypeV2, IMessageIPFS } from "../types";
 import { isValidETHAddress, pCAIP10ToWallet } from "./address";
 import { verifyEip712Signature } from "./signature";
 import { upgrade } from "../user/upgradeUser";
@@ -147,7 +147,8 @@ export const decryptMessage = async ({
   encryptedSecret,
   pgpPrivateKey,
   signature,
-  signatureValidationPubliKey
+  signatureValidationPubliKey,
+  message
 }:
   {
     encryptedPGPPrivateKey: string,
@@ -155,7 +156,8 @@ export const decryptMessage = async ({
     encryptedSecret: string,
     pgpPrivateKey: string,
     signature: string,
-    signatureValidationPubliKey: string
+    signatureValidationPubliKey: string,
+    message: IMessageIPFS
   }
 ): Promise<string> => {
   let plainText: string
@@ -166,6 +168,7 @@ export const decryptMessage = async ({
       privateKeyArmored: pgpPrivateKey,
       publicKeyArmored: signatureValidationPubliKey,
       signatureArmored: signature,
+      message: message
     });
   } else {
     plainText = encryptedPGPPrivateKey
@@ -179,20 +182,50 @@ export const decryptAndVerifySignature = async ({
   encryptedSecretKey,
   publicKeyArmored,
   signatureArmored,
-  privateKeyArmored
+  privateKeyArmored,
+  message
 }: {
   cipherText: string
   encryptedSecretKey: string
   publicKeyArmored: string
   signatureArmored: string,
-  privateKeyArmored: string
+  privateKeyArmored: string,
+  message: IMessageIPFS
+  
 }): Promise<string> => {
   // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
   const secretKey: string = await pgpDecrypt({
     cipherText: encryptedSecretKey,
     toPrivateKeyArmored: privateKeyArmored
   })
-  await verifySignature({ messageContent: cipherText, signatureArmored, publicKeyArmored })
+  if (message.link == null) {
+      const bodyToBeHashed = {
+          fromDID: message.fromDID,
+          toDID: message.toDID,
+          messageContent: message.messageContent,
+          messageType: message.messageType,
+      }
+      const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
+      try {
+          await verifySignature({
+              messageContent: hash,
+              signatureArmored,
+              publicKeyArmored
+          })
+      } catch (err) {
+          await verifySignature({
+              messageContent: cipherText,
+              signatureArmored,
+              publicKeyArmored
+          })
+      }
+  } else {
+      await verifySignature({
+          messageContent: cipherText,
+          signatureArmored,
+          publicKeyArmored
+      })
+  }
   return aesDecrypt({ cipherText, secretKey })
 }
 

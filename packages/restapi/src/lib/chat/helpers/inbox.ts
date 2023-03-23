@@ -91,6 +91,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signature: message.signature,
         signatureValidationPubliKey: signatureValidationPubliKey,
         pgpPrivateKey,
+        message: message,
       });
     }
   }

@@ -220,7 +220,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
@@ -232,7 +232,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
 
 export interface ChatSendOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
   receiverAddress: string;
   pgpPrivateKey?: string;
   /**
