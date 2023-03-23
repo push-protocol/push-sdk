@@ -23,10 +23,10 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nrwl/workspace:run-commands",
       "outputs": ["coverage/packages/restapi"],
       "options": {
-        "jestConfig": "packages/restapi/jest.config.ts",
+        "commands": ["npm run test:restapi"],
         "passWithNoTests": true
       }
     },
