@@ -29,36 +29,79 @@ export const getInboxLists = async (
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
+  try{
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
   const feeds: IFeeds[] = [];
-  for (const list of lists) {
-    let message;
-    if (list.threadhash !== null) {
-      message = await getCID(list.threadhash, { env });
-    }
-    // This is for groups that are created without any message
-    else {
-      message = {
-        encType: 'PlainText',
-        encryptedSecret: '',
-        fromCAIP10: '',
-        fromDID: '',
-        link: '',
-        messageContent: '',
-        messageType: '',
-        sigType: '',
-        signature: '',
-        toCAIP10: '',
-        toDID: ''
-      }
-    }
-    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
+  const promiseArrToGetCID:any = [];
+  lists.forEach((list) =>
+    promiseArrToGetCID.push(
+      (() => {
+        let message;
+        if (list.threadhash !== null) {
+            message = getCID(list.threadhash, { env });
+        }
+        // This is for groups that are created without any message
+        else {
+          message = {
+            encType: 'PlainText',
+            encryptedSecret: '',
+            fromCAIP10: '',
+            fromDID: '',
+            link: '',
+            messageContent: '',
+            messageType: '',
+            sigType: '',
+            signature: '',
+            toCAIP10: '',
+            toDID: '',
+          };
+        }
+        return message;
+      })()
+    )
+  );
+
+
+    const messages = await Promise.allSettled(promiseArrToGetCID) as PromiseFulfilledResult<IMessageIPFS>[];
+    if(messages.length) {
+    lists.forEach((list,i)=> feeds.push(
+      {
+      ...list,
+      msg: getMessage(messages[i]),
+    }))
   }
 
   if (toDecrypt)
     return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
   return feeds;
+  }catch(err:any){
+    throw new Error(err);
+  }
 };
+
+
+const getMessage = (message:PromiseFulfilledResult<IMessageIPFS>):IMessageIPFS => {
+if(message.status === 'fulfilled')
+{
+  return message.value;
+}
+else{
+  return {
+    encType: 'PlainText',
+    encryptedSecret: '',
+    fromCAIP10: '',
+    fromDID: '',
+    link: '',
+    messageContent: 'Message has expired',
+    messageType: 'Text',
+    sigType: '',
+    signature: '',
+    toCAIP10: '',
+    toDID: '',
+    timestamp:0,
+  };
+}
+}
 
 export const decryptConversation = async (options: DecryptConverationType) => {
   const {
