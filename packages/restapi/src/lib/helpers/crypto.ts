@@ -1,5 +1,5 @@
 import * as metamaskSigUtil from "@metamask/eth-sig-util";
-import { decrypt as metamaskDecrypt } from "@metamask/eth-sig-util";
+import { decrypt as metamaskDecrypt, getEncryptionPublicKey } from "@metamask/eth-sig-util";
 import * as CryptoJS from "crypto-js"
 import { ethers } from "ethers";
 import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
@@ -334,7 +334,14 @@ export const encryptPGPKey = async (
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
     case Constants.ENC_TYPE_V1: {
-      const walletPublicKey: string = await getPublicKey(wallet);
+      let walletPublicKey: string;
+      if(wallet?.signer?.privateKey) {
+        // get metamask specific encryption public key
+        walletPublicKey = getEncryptionPublicKey(wallet?.signer?.privateKey.substring(2));
+      } else {
+        // wallet popup will happen to get encryption public key
+        walletPublicKey = await getPublicKey(wallet);
+      }
       encryptedPrivateKey = encryptV1(
         privateKey,
         walletPublicKey,

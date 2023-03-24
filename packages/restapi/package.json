@@ -23,8 +23,10 @@
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
+    "@types/chai-as-promised": "^7.1.5",
     "@types/crypto-js": "^4.1.1",
     "@types/mocha": "^10.0.1",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^10.2.0"
   }
 }
