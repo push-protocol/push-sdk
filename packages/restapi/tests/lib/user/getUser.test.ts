@@ -24,7 +24,7 @@ describe('Get user', () => {
       account: account,
       env: _env,
     });
-    expect(user).to.be.null
+    expect(user).to.be.null;
   });
 
   it('get existing user', async () => {
@@ -38,15 +38,19 @@ describe('Get user', () => {
       env: _env,
     });
     expect(user).to.be.an('object');
-    expect(user).not.to.be.null
-    expect(user).not.to.be.undefined
-    expect(user.did).to.be.equal(account)
-    expect(user.wallets).to.be.equal(account)
-    expect(user.publicKey).to.contains('-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n')
+    expect(user).not.to.be.null;
+    expect(user).not.to.be.undefined;
+    expect(user.did).to.be.equal(account);
+    expect(user.wallets).to.be.equal(account);
+    expect(user.publicKey).to.contains(
+      '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n'
+    );
     expect(user.encryptedPrivateKey).to.satisfy((value: string) => {
-      return value.includes(`"version":"${Constants.ENC_TYPE_V1}"`) ||
-             value.includes(`"version":"${Constants.ENC_TYPE_V2}"`);
-    });  
-    expect(user.profilePicture).to.contains('data:image/png;base64,')
+      return (
+        value.includes(`"version":"${Constants.ENC_TYPE_V1}"`) ||
+        value.includes(`"version":"${Constants.ENC_TYPE_V2}"`)
+      );
+    });
+    expect(user.profilePicture).to.contains('data:image/png;base64,');
   });
 });

@@ -1,6 +1,6 @@
-import * as chai from 'chai'
+import * as chai from 'chai';
 import { expect } from 'chai';
-import * as chaiAsPromised from "chai-as-promised";
+import * as chaiAsPromised from 'chai-as-promised';
 import { create } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
@@ -21,9 +21,10 @@ describe('Create user', () => {
   });
 
   it('should throw error for invalid inputs', async () => {
-    await expect(create({env: _env})).to.be.rejected;
-    await expect(create({account: account,env: 'any'})).to.be.rejected;
-    await expect(create({account: account,env: _env, version: 'any'})).to.be.rejected;
+    await expect(create({ env: _env })).to.be.rejected;
+    await expect(create({ account: 'any', env: _env })).to.be.rejected;
+    await expect(create({ account: account, env: _env, version: 'any' })).to.be
+      .rejected;
   });
   it('create user with Enc V1', async () => {
     const user = await create({
