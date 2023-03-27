@@ -35,7 +35,7 @@ describe('Send Chat Message', () => {
     account2 = `eip155:${walletAddress2}`;
   });
 
-  it('v1 user -> v1 user', async () => {
+  it('ENC v1 user sending message to ENC v1 user', async () => {
         const user1 = await create({
             account: account1,
             env: _env,
@@ -55,7 +55,7 @@ describe('Send Chat Message', () => {
         const receivedMessage = (await requests({account: account2, pgpPrivateKey: user2PrivatePGPKey, toDecrypt: true, env: _env}))[0].msg;
         expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
     });
-    it('v1 user -> v2 user', async () => {
+    it('ENC v1 user sending message to ENC v2 user', async () => {
         const user1 = await create({
             account: account1,
             env: _env,
@@ -75,7 +75,7 @@ describe('Send Chat Message', () => {
         const receivedMessage = (await requests({account: account2, pgpPrivateKey: user2PrivatePGPKey, toDecrypt: true, env: _env}))[0].msg;
         expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
     });
-    it('v2 user -> v1 user', async () => {
+    it('ENC v2 user sending message to ENC v1 user', async () => {
         const user1 = await create({
             account: account1,
             env: _env,
@@ -95,7 +95,7 @@ describe('Send Chat Message', () => {
         const receivedMessage = (await requests({account: account2, pgpPrivateKey: user2PrivatePGPKey, toDecrypt: true, env: _env}))[0].msg;
         expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
     });
-    it('v2 user -> v2 user', async () => {
+    it('ENC v2 user sending message to ENC v2 user', async () => {
         const user1 = await create({
             account: account1,
             env: _env,
@@ -115,7 +115,7 @@ describe('Send Chat Message', () => {
         const receivedMessage = (await requests({account: account2, pgpPrivateKey: user2PrivatePGPKey, toDecrypt: true, env: _env}))[0].msg;
         expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
     });
-    it('v1 user -> v1 user(upgraded to v2 in between)', async () => {
+    it('ENC v1 user sending message to ENC v1 user(Receiver upgraded to v2 in between)', async () => {
         const user1 = await create({
             account: account1,
             env: _env,
@@ -148,7 +148,7 @@ describe('Send Chat Message', () => {
         const receivedMessagePostUpdate2 = (await requests({account: account2, pgpPrivateKey: user2PrivatePGPKey, toDecrypt: true, env: _env}))[0].msg;
         expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE2);
     });
-    it('v1 user(upgraded to v2 in between) -> v1 user', async () => {
+    it('ENC v1 user sending message to ENC v1 user(Sender upgraded to v2 in between)', async () => {
         const user1 = await create({
             account: account1,
             env: _env,

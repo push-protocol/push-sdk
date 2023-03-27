@@ -24,7 +24,7 @@ if (typeof window !== 'undefined' && window.crypto) {
   }
 }
 
-// DEPRECATED
+/** DEPRECATED */
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const address: string = account || (await signer?.getAddress()) || '';
@@ -38,7 +38,7 @@ export const getPublicKey = async (options: walletType): Promise<string> => {
   return keyB64;
 };
 
-// DEPRECATED
+/** DEPRECATED */
 // x25519-xsalsa20-poly1305 enryption
 export const encryptV1 = (text: string, encryptionPublicKey: string, version: string) => {
   const encryptedSecret = metamaskSigUtil.encrypt({
@@ -50,7 +50,7 @@ export const encryptV1 = (text: string, encryptionPublicKey: string, version: st
   return encryptedSecret;
 };
 
-// DEPRECATED
+/** DEPRECATED */
 export const decryptWithWalletRPCMethod = async (encryptedPGPPrivateKey: string, account: string) => {
   console.warn("decryptWithWalletRPCMethod method is DEPRECATED. Use decryptPGPKey method with signer!")
   return await decryptPGPKey({
