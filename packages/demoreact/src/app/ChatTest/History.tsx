@@ -13,7 +13,7 @@ import ChatTest from './ChatTest';
 
 const HistoryTest = () => {
   const { env } = useContext<any>(EnvContext);
-  const { account } = useContext<any>(Web3Context);
+  const { account, library } = useContext<any>(Web3Context);
   const [isLoading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>({});
   const [threadhash, setThreadhash] = useState<string>('');
@@ -39,10 +39,13 @@ const HistoryTest = () => {
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
       if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          user.encryptedPrivateKey,
-          account
-        );
+        const librarySigner = library.getSigner();
+        pvtkey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner,
+          env
+        });
       }
       const response = await PushAPI.chat.history({
         threadhash,
@@ -69,10 +72,13 @@ const HistoryTest = () => {
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
       if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          user.encryptedPrivateKey,
-          account
-        );
+        const librarySigner = library.getSigner();
+        pvtkey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner,
+          env
+        });
       }
       const decryptedChat = await PushAPI.chat.decryptConversation({
         messages:response,

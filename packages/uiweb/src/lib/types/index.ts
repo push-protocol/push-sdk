@@ -21,6 +21,7 @@ export interface IMessageIPFS {
 export interface AccountEnvOptionsType {
   env?:  ENV;
   account: string;
+  signer: SignerType
 }
 
 export interface ITheme {
@@ -33,4 +34,16 @@ export interface ITheme {
   border?:string,
   borderRadius?:string,
   moduleColor?:string,
+}
+
+export interface SignerType {
+  _signTypedData: (
+    domain: any,
+    types: any,
+    value: any
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  provider?: any;
+  publicKey?: string;
+  privateKey?: string;
 }

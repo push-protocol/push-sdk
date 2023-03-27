@@ -1,14 +1,13 @@
-import { getEncryptionPublicKey } from "@metamask/eth-sig-util";
 import { createUserService, generateKeyPair, getAccountAddress, getWallet } from "../chat/helpers";
 import Constants, {ENV} from "../constants";
-import { encryptWithRPCEncryptionPublicKeyReturnRawData, isValidETHAddress, walletToPCAIP10 } from "../helpers";
-import { getPublicKey } from "../helpers";
-import { SignerType } from "../types";
+import { isValidETHAddress, walletToPCAIP10, encryptPGPKey, preparePGPPublicKey } from "../helpers";
+import { SignerType, encryptedPrivateKeyType } from "../types";
 
 export type CreateUserProps = {
   env?:  ENV;
   account?: string;
   signer?: SignerType;
+  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V2;
 };
 
 export const create = async (
@@ -17,7 +16,8 @@ export const create = async (
   const {
     env = Constants.ENV.PROD,
     account = null,
-    signer = null
+    signer = null,
+    version = Constants.ENC_TYPE_V2
   } = options || {};
 
   if(account == null && signer == null) {
@@ -26,34 +26,23 @@ export const create = async (
 
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
-
+  
   if (!isValidETHAddress(address)) {
     throw new Error(`Invalid address!`);
   }
 
-  const keyPairs = await generateKeyPair();
-
-  let walletPublicKey;
-  if(wallet?.signer?.privateKey) {
-    // get metamask specific encryption public key
-    walletPublicKey = getEncryptionPublicKey(wallet?.signer?.privateKey.substring(2));
-  } else {
-    // wallet popup will happen to get encryption public key
-    walletPublicKey = await getPublicKey(wallet);
-  }
-
-  const encryptedPrivateKey = encryptWithRPCEncryptionPublicKeyReturnRawData(
-    keyPairs.privateKeyArmored,
-    walletPublicKey
-  );
   const caip10: string = walletToPCAIP10(address);
+  const encryptionType: string = (wallet?.signer && version === Constants.ENC_TYPE_V2) ? Constants.ENC_TYPE_V2 : Constants.ENC_TYPE_V1;
+  const keyPairs = await generateKeyPair();
+  const publicKey: string = await preparePGPPublicKey(encryptionType, keyPairs.publicKeyArmored, address, wallet);
+  const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(encryptionType, keyPairs.privateKeyArmored, address, wallet);
 
   const body = {
     user: caip10,
     wallet,
-    publicKey: keyPairs.publicKeyArmored,
+    publicKey: publicKey,
     encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
-    encryptionType: encryptedPrivateKey.version,
+    encryptionType: encryptionType,
     env
   };
 

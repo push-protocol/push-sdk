@@ -81,10 +81,12 @@ const CreateGroupTest = () => {
       const user = await PushAPI.user.get({ account: account, env });
       let pvtkey = null;
       if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-          user.encryptedPrivateKey,
-          account
-        );
+        pvtkey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner,
+          env
+        });
       }
 
       // Remove empty string elements
