@@ -103,14 +103,19 @@ export const decryptMessage = async ({
 ): Promise<string> => {
   let plainText: string
   if (encryptionType !== 'PlainText' && encryptionType !== null) {
-    plainText = await decryptAndVerifySignature({
-      cipherText: encryptedPGPPrivateKey,
-      encryptedSecretKey: encryptedSecret,
-      privateKeyArmored: pgpPrivateKey,
-      publicKeyArmored: signatureValidationPubliKey,
-      signatureArmored: signature,
-      message: message
-    });
+    try{
+      plainText = await decryptAndVerifySignature({
+        cipherText: encryptedPGPPrivateKey,
+        encryptedSecretKey: encryptedSecret,
+        privateKeyArmored: pgpPrivateKey,
+        publicKeyArmored: signatureValidationPubliKey,
+        signatureArmored: signature,
+        message: message
+      });
+    }
+    catch(err) {
+      plainText = 'Unable to decrypt message';
+    }
   } else {
     plainText = encryptedPGPPrivateKey
   }
