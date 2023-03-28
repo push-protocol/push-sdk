@@ -1677,7 +1677,8 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
 // actual api
 const decryptedPvtKey = await PushAPI.chat.decryptPGPKey(
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
-    signer: _signer
+    signer: _signer,
+    env: 'staging'
 );
 ```
 
