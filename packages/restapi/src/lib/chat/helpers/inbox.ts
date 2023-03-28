@@ -38,7 +38,14 @@ export const getInboxLists = async (
       (() => {
         let message;
         if (list.threadhash !== null) {
-            message = getCID(list.threadhash, { env });
+          try{
+            message =  getCID(list.threadhash, { env });
+          }
+          catch(err:any){
+            console.log(err)
+            throw new Error(err);
+          }
+
         }
         // This is for groups that are created without any message
         else {

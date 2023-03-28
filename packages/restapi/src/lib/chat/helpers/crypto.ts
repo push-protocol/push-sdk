@@ -120,7 +120,7 @@ export const decryptFeeds = async ({
     let otherPeer: IUser;
     let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
     let gotOtherPeer = false;
-    for (const feed of feeds) {
+    for (const feed of feeds.values()) {
       if (feed.msg.encType !== 'PlainText') {
         if (!pgpPrivateKey) {
           throw Error('Decrypted private key is necessary');
