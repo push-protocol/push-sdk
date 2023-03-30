@@ -12,6 +12,7 @@ import {
   decryptChat,
   getChats,
   walletToPCAIP10,
+  pCAIP10ToWallet
 } from '../../helpers';
 import { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
@@ -102,7 +103,7 @@ export const Modal: React.FC = () => {
   };
 
   const getUpdatedChats = async (message:IMessageIPFS) =>{
-    if (message) {
+    if (message && (supportAddress === pCAIP10ToWallet(message?.fromCAIP10))) {
       const chat = await decryptChat({ message, connectedUser, env });
       socketData.messagesSinceLastConnection.decrypted = true;
       setChatsSorted([...chats, chat]);
