@@ -7,13 +7,12 @@ import {
   getRecipientFieldForAPIPayload,
   getVerificationProof,
   getSource,
-  getUUID
+  getUUID,
 } from './helpers';
 import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
 import { IDENTITY_TYPE } from './constants';
 import { ENV } from '../constants';
 import { getWallet } from '../chat/helpers';
-
 
 /**
  * Validate options for some scenarios
@@ -26,7 +25,10 @@ function validateOptions(options: any) {
   /**
    * Apart from IPFS, GRAPH use cases "notification", "payload" is mandatory
    */
-  if (options?.identityType === IDENTITY_TYPE.DIRECT_PAYLOAD || options?.identityType === IDENTITY_TYPE.MINIMAL) {
+  if (
+    options?.identityType === IDENTITY_TYPE.DIRECT_PAYLOAD ||
+    options?.identityType === IDENTITY_TYPE.MINIMAL
+  ) {
     if (!options.notification) {
       throw '[Push SDK] - Error - sendNotification() - "notification" mandatory for Identity Type: Direct Payload, Minimal!';
     }
@@ -49,12 +51,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       env = ENV.PROD,
       chatId,
-      account=null,
+      account = null,
       pgpPrivateKey,
     } = options || {};
 
     validateOptions(options);
-    
+
     if (signer === undefined && account === null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
@@ -69,14 +71,17 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const uuid = getUUID();
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
+      env,
+      channelCAIPDetails
+    );
 
     const _recipients = await getRecipients({
       env,
       notificationType: type,
       channel: _channelAddress,
       recipients,
-      secretType: payload?.sectype
+      secretType: payload?.sectype,
     });
 
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
@@ -103,7 +108,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       payload: notificationPayload,
       notificationType: type,
       graph,
-      ipfsHash
+      ipfsHash,
     });
 
     const source = getSource(chainId, identityType);
@@ -118,8 +123,8 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         env,
         notificationType: type,
         recipients: recipients || '',
-        channel: _channelAddress
-      })
+        channel: _channelAddress,
+      }),
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
@@ -132,18 +137,16 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       '\n\n\n\n'
     );
 
-    return await axios.post(
-      requestURL,
-      apiPayload,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
+    return await axios.post(requestURL, apiPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (err) {
-    console.error('[Push SDK] - Error - sendNotification() - ', JSON.stringify(err));
+    console.error(
+      '[Push SDK] - Error - sendNotification() - ',
+      JSON.stringify(err)
+    );
     throw err;
   }
 }

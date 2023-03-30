@@ -2,12 +2,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
 import { getCAIPAddress } from '../helpers';
 
-import { ISendNotificationInputOptions, INotificationPayload, walletType } from '../types';
+import {
+  ISendNotificationInputOptions,
+  INotificationPayload,
+  walletType,
+} from '../types';
 import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
   CHAIN_ID_TO_SOURCE,
-  SOURCE_TYPES
+  SOURCE_TYPES,
 } from './constants';
 import { getConnectedUser, sign } from '../chat/helpers';
 import CryptoES from 'crypto-es';
@@ -16,11 +20,10 @@ export function getUUID() {
   return uuidv4();
 }
 
-
 /**
  * This function will map the Input options passed to the SDK to the "payload" structure
  * needed by the API input
- * 
+ *
  * We need notificationPayload only for identityType
  *  - DIRECT_PAYLOAD
  *  - MINIMAL
@@ -28,13 +31,12 @@ export function getUUID() {
 export function getPayloadForAPIInput(
   inputOptions: ISendNotificationInputOptions,
   recipients: any
-) : INotificationPayload | null {
-
+): INotificationPayload | null {
   if (inputOptions?.notification && inputOptions?.payload) {
     return {
       notification: {
         title: inputOptions?.notification?.title,
-        body: inputOptions?.notification?.body
+        body: inputOptions?.notification?.body,
       },
       data: {
         acta: inputOptions?.payload?.cta || '',
@@ -44,11 +46,17 @@ export function getPayloadForAPIInput(
         type: inputOptions?.type?.toString() || '',
         ...(inputOptions?.expiry && { etime: inputOptions?.expiry }),
         ...(inputOptions?.hidden && { hidden: inputOptions?.hidden }),
-        ...(inputOptions?.payload?.sectype && { sectype: inputOptions?.payload?.sectype }),
-        ...(inputOptions?.payload?.metadata && { metadata: inputOptions?.payload?.metadata }),
-        ...(inputOptions?.payload?.additionalMeta && { additionalMeta: inputOptions?.payload?.additionalMeta }),
+        ...(inputOptions?.payload?.sectype && {
+          sectype: inputOptions?.payload?.sectype,
+        }),
+        ...(inputOptions?.payload?.metadata && {
+          metadata: inputOptions?.payload?.metadata,
+        }),
+        ...(inputOptions?.payload?.additionalMeta && {
+          additionalMeta: inputOptions?.payload?.additionalMeta,
+        }),
       },
-      recipients: recipients
+      recipients: recipients,
     };
   }
 
@@ -63,13 +71,13 @@ export async function getRecipients({
   notificationType,
   channel,
   recipients,
-  secretType
-} : {
-  env: ENV,
-  notificationType: NOTIFICATION_TYPE ,
-  channel: string,
-  recipients?: string | string[],
-  secretType?: string,
+  secretType,
+}: {
+  env: ENV;
+  notificationType: NOTIFICATION_TYPE;
+  channel: string;
+  recipients?: string | string[];
+  secretType?: string;
 }) {
   let addressInCAIP = '';
 
@@ -81,36 +89,34 @@ export async function getRecipients({
      * But in secret flow we basically generate secret for the address
      * and send it in { 0xtarget: secret_generated_for_0xtarget } format for all
      */
-     if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
+    if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
       if (typeof recipients === 'string') {
         addressInCAIP = getCAIPAddress(env, recipients, 'Recipient');
         secret = ''; // do secret stuff // TODO
 
         return {
-          [addressInCAIP]: secret
+          [addressInCAIP]: secret,
         };
       }
     } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
       if (Array.isArray(recipients)) {
-        const recipientObject =  recipients.reduce((_recipients, _rAddress) => {
+        const recipientObject = recipients.reduce((_recipients, _rAddress) => {
           addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
           secret = ''; // do secret stuff // TODO
 
           return {
             ..._recipients,
-            [addressInCAIP]: secret
+            [addressInCAIP]: secret,
           };
         }, {});
 
         return recipientObject;
       }
     }
-
-
   } else {
-  /**
-   * NON-SECRET FLOW
-   */
+    /**
+     * NON-SECRET FLOW
+     */
 
     if (notificationType === NOTIFICATION_TYPE.BROADCAST) {
       if (!recipients) {
@@ -127,7 +133,7 @@ export async function getRecipients({
           addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
           return {
             ..._recipients,
-            [addressInCAIP]: null
+            [addressInCAIP]: null,
           };
         }, {});
         return recipientObject;
@@ -142,18 +148,20 @@ export function getRecipientFieldForAPIPayload({
   notificationType,
   recipients,
   channel,
-} : {
-  env: ENV,
-  notificationType: NOTIFICATION_TYPE,
-  recipients: string | string[],
-  channel: string
+}: {
+  env: ENV;
+  notificationType: NOTIFICATION_TYPE;
+  recipients: string | string[];
+  channel: string;
 }) {
-
-  if (notificationType === NOTIFICATION_TYPE.TARGETTED && typeof recipients === 'string') {
-    return getCAIPAddress(env, recipients, 'Recipient')
+  if (
+    notificationType === NOTIFICATION_TYPE.TARGETTED &&
+    typeof recipients === 'string'
+  ) {
+    return getCAIPAddress(env, recipients, 'Recipient');
   }
 
-  return getCAIPAddress(env, channel, 'Recipient')
+  return getCAIPAddress(env, channel, 'Recipient');
 }
 
 export async function getVerificationProof({
@@ -171,33 +179,32 @@ export async function getVerificationProof({
   pgpPrivateKey, //
   env, //
 }: {
-  signer: any,
-  chainId: number,
-  notificationType: NOTIFICATION_TYPE,
-  identityType: IDENTITY_TYPE,
-  verifyingContract: string,
-  payload: any,
-  ipfsHash?: string,
-  graph?: any,
-  uuid: string,
+  signer: any;
+  chainId: number;
+  notificationType: NOTIFICATION_TYPE;
+  identityType: IDENTITY_TYPE;
+  verifyingContract: string;
+  payload: any;
+  ipfsHash?: string;
+  graph?: any;
+  uuid: string;
   // for notifications which have additionalMeta in payload
-  chatId?:string,
-  wallet?: walletType,
-  pgpPrivateKey?:string,
-  env?: ENV,
+  chatId?: string;
+  wallet?: walletType;
+  pgpPrivateKey?: string;
+  env?: ENV;
 }) {
-
   // console.log('payload ---> \n\n', payload);
-  
+
   const type = {
-    Data: [{ name: 'data', type: 'string' }]
+    Data: [{ name: 'data', type: 'string' }],
   };
   const domain = {
     name: 'EPNS COMM V1',
     chainId: chainId,
     verifyingContract: verifyingContract,
   };
-  
+
   let message = null;
   let signature = null;
 
@@ -218,24 +225,29 @@ export async function getVerificationProof({
     message = {
       data: `2+${payloadJSON}`,
     };
-    
-    if(chatId!==undefined){
+
+    if (chatId !== undefined) {
       // chat notification
       // generate the pgpv2 verification proof
-      const connectedUser = await getConnectedUser(wallet!, pgpPrivateKey!, env!);
+      const connectedUser = await getConnectedUser(
+        wallet!,
+        pgpPrivateKey!,
+        env!
+      );
 
-      const hash = CryptoES.SHA256(JSON.stringify(message)).toString()
-      signature = await sign({ message: hash, signingKey: connectedUser.privateKey! });
+      const hash = CryptoES.SHA256(JSON.stringify(message)).toString();
+      signature = await sign({
+        message: hash,
+        signingKey: connectedUser.privateKey!,
+      });
       return `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
     }
-    
+
     // channel notification
     // generate eip712 verification proof
     signature = await signer._signTypedData(domain, type, message);
     return `eip712v2:${signature}::uid::${uuid}`;
-  }
-
-  else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
+  } else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
     message = {
       data: `3+graph:${graph?.id}+${graph?.counter}`,
     };
@@ -252,12 +264,12 @@ export function getPayloadIdentity({
   notificationType,
   ipfsHash,
   graph = {},
-} : {
-  identityType: IDENTITY_TYPE,
-  payload: any,
-  notificationType?: NOTIFICATION_TYPE,
-  ipfsHash?: string,
-  graph?: any,
+}: {
+  identityType: IDENTITY_TYPE;
+  payload: any;
+  notificationType?: NOTIFICATION_TYPE;
+  ipfsHash?: string;
+  graph?: any;
 }) {
   if (identityType === IDENTITY_TYPE.MINIMAL) {
     return `0+${notificationType}+${payload.notification.title}+${payload.notification.body}`;
