@@ -263,6 +263,7 @@ export type SignerType = {
     value: any
   ) => Promise<string>;
   getAddress: () => Promise<string>;
+  getChainId: () => Promise<number>;
   provider?: any;
   publicKey?: string;
   privateKey?: string;
