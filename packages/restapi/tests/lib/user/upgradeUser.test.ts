@@ -62,6 +62,7 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: upgradedUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedUserPrivatePGPKey);
   });
@@ -95,11 +96,13 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     const upgradedUserPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: upgradedUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedUserPrivatePGPKey);
   });
@@ -118,6 +121,7 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: createdUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     const user = await get({ account: account, env: _env });
     expect(user.encryptedPrivateKey).to.contains(
@@ -128,6 +132,7 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedPrivatePGPKey);
   });
