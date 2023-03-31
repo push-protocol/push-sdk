@@ -154,15 +154,31 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         }
         const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-        const { verificationProof: secret } = await getSignature(
-          address,
-          wallet,
-          enableProfileMessage
-        );
-        const encodedPrivateKey = await decryptV2(
-          JSON.parse(encryptedPGPPrivateKey),
-          hexToBytes(secret || '')
-        );
+        let encodedPrivateKey: Uint8Array;
+        try {
+          const { verificationProof: secret } = await getSignature(
+            address,
+            wallet,
+            enableProfileMessage,
+            false
+          );
+          encodedPrivateKey = await decryptV2(
+            JSON.parse(encryptedPGPPrivateKey),
+            hexToBytes(secret || '')
+          );
+        }
+        catch(err) {
+          const { verificationProof: secret } = await getSignature(
+            address,
+            wallet,
+            enableProfileMessage,
+            true
+          );
+          encodedPrivateKey = await decryptV2(
+            JSON.parse(encryptedPGPPrivateKey),
+            hexToBytes(secret || '')
+          );
+        }
         const dec = new TextDecoder();
         privateKey = dec.decode(encodedPrivateKey);
         break;
@@ -397,7 +413,8 @@ export const encryptPGPKey = async (
       const { verificationProof: secret } = await getSignature(
         address,
         wallet,
-        enableProfileMessage
+        enableProfileMessage,
+        false
       );
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
@@ -432,7 +449,8 @@ export const preparePGPPublicKey = async (
       const { verificationProof } = await getSignature(
         address,
         wallet,
-        createProfileMessage
+        createProfileMessage,
+        false
       );
       chatPublicKey = JSON.stringify({
         key: publicKey,

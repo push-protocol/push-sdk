@@ -103,26 +103,27 @@ export const verifyEip712Signature = (
   }
 
   try {
-    const typedDataV1 = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
-    const recoveredAddressV1 = recoverTypedSignature({
-      data: typedDataV1,
-      signature: signature,
-      version: SignTypedDataVersion.V4,
-    });
-
-    const typedDataV2 = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
-    const recoveredAddressV2 = recoverTypedSignature({
-      data: typedDataV2,
-      signature: signature,
-      version: SignTypedDataVersion.V4,
-    });
-
-    if (
-      recoveredAddressV1.toLowerCase() === address.toLowerCase() ||
-      recoveredAddressV2.toLowerCase() === address.toLowerCase()
-    )
-      return true;
-    return false;
+    try {
+      const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
+      const recoveredAddress = recoverTypedSignature({
+        data: typedData,
+        signature: signature,
+        version: SignTypedDataVersion.V4,
+      });
+      if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+        return true;
+      } else return false;
+    } catch (err) {
+      const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
+      const recoveredAddress = recoverTypedSignature({
+        data: typedData,
+        signature: signature,
+        version: SignTypedDataVersion.V4,
+      });
+      if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+        return true;
+      } else return false;
+    }
   } catch (error) {
     return false;
   }
