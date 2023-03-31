@@ -73,7 +73,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
-    toUpgrade = true
+    toUpgrade = false
   } = options || {};
   try {
     if (account == null && signer == null) {
