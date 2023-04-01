@@ -67,7 +67,7 @@ export const create = async (options: CreateUserProps) => {
       progressId: 2,
       progressTitle: 'Step 2/5: Creating Push Chat Profile',
       progressInfo:
-        'This step is is only done for first time users.Please sign the transaction to continue.',
+        'This step is is only done for first time users.Please sign the message to continue.',
       level: 'INFO',
     });
     const publicKey: string = await preparePGPPublicKey(
@@ -82,7 +82,7 @@ export const create = async (options: CreateUserProps) => {
       progressId: 3,
       progressTitle: 'Step 3/5: Enabling Push Chat Profile',
       progressInfo:
-        'Encrypting your keys. Please sign the transaction to continue.',
+        'Encrypting your keys. Please sign the message to continue.',
       level: 'INFO',
     });
     const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
@@ -107,7 +107,7 @@ export const create = async (options: CreateUserProps) => {
       progressTitle:
         'Step 4/5: Generating Verification Proofs and Syncing account info',
       progressInfo:
-        'Please sign the transaction to continue. Steady lads, chat is almost ready!',
+        'Please sign the message to continue. Steady lads, chat is almost ready!',
       level: 'INFO',
     });
     const createdUser = await createUserService(body);
@@ -127,5 +127,6 @@ export const create = async (options: CreateUserProps) => {
       progressInfo: JSON.stringify(err),
       level: 'ERROR',
     });
+    throw Error(`[Push SDK] - API  - Error - API create User() -: ${err}`);
   }
 };

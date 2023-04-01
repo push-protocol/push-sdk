@@ -1,16 +1,33 @@
-import * as metamaskSigUtil from "@metamask/eth-sig-util";
-import { decrypt as metamaskDecrypt, getEncryptionPublicKey } from "@metamask/eth-sig-util";
-import * as CryptoJS from "crypto-js"
-import { ethers } from "ethers";
-import { aesDecrypt, getAccountAddress, getWallet, pgpDecrypt, verifySignature, getSignature } from "../chat/helpers";
-import Constants, { ENV } from "../constants";
-import { SignerType, walletType, encryptedPrivateKeyType, encryptedPrivateKeyTypeV2, IMessageIPFS } from "../types";
-import { isValidETHAddress, pCAIP10ToWallet } from "./address";
-import { verifyEip712Signature } from "./signature";
-import { upgrade } from "../user/upgradeUser";
+import * as metamaskSigUtil from '@metamask/eth-sig-util';
+import {
+  decrypt as metamaskDecrypt,
+  getEncryptionPublicKey,
+} from '@metamask/eth-sig-util';
+import * as CryptoJS from 'crypto-js';
+import { ethers } from 'ethers';
+import {
+  aesDecrypt,
+  getAccountAddress,
+  getWallet,
+  pgpDecrypt,
+  verifySignature,
+  getSignature,
+} from '../chat/helpers';
+import Constants, { ENV } from '../constants';
+import {
+  SignerType,
+  walletType,
+  encryptedPrivateKeyType,
+  encryptedPrivateKeyTypeV2,
+  IMessageIPFS,
+  ProgressHookType,
+} from '../types';
+import { isValidETHAddress, pCAIP10ToWallet } from './address';
+import { verifyEip712Signature } from './signature';
+import { upgrade } from '../user/upgradeUser';
 
-const KDFSaltSize = 32 // bytes
-const AESGCMNonceSize = 12 // property iv
+const KDFSaltSize = 32; // bytes
+const AESGCMNonceSize = 12; // property iv
 
 let crypto: Crypto;
 if (typeof window !== 'undefined' && window.crypto) {
@@ -28,34 +45,45 @@ if (typeof window !== 'undefined' && window.crypto) {
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const address: string = account || (await signer?.getAddress()) || '';
-  const metamaskProvider = new ethers.providers.Web3Provider((window as any).ethereum);
+  const metamaskProvider = new ethers.providers.Web3Provider(
+    (window as any).ethereum
+  );
   const web3Provider = signer?.provider || metamaskProvider;
 
   const keyB64 = await web3Provider.provider.request({
-    method: "eth_getEncryptionPublicKey",
-    params: [address]
+    method: 'eth_getEncryptionPublicKey',
+    params: [address],
   });
   return keyB64;
 };
 
 /** DEPRECATED */
 // x25519-xsalsa20-poly1305 enryption
-export const encryptV1 = (text: string, encryptionPublicKey: string, version: string) => {
+export const encryptV1 = (
+  text: string,
+  encryptionPublicKey: string,
+  version: string
+) => {
   const encryptedSecret = metamaskSigUtil.encrypt({
     publicKey: encryptionPublicKey,
     data: text,
-    version: version
+    version: version,
   });
 
   return encryptedSecret;
 };
 
 /** DEPRECATED */
-export const decryptWithWalletRPCMethod = async (encryptedPGPPrivateKey: string, account: string) => {
-  console.warn("decryptWithWalletRPCMethod method is DEPRECATED. Use decryptPGPKey method with signer!")
+export const decryptWithWalletRPCMethod = async (
+  encryptedPGPPrivateKey: string,
+  account: string
+) => {
+  console.warn(
+    'decryptWithWalletRPCMethod method is DEPRECATED. Use decryptPGPKey method with signer!'
+  );
   return await decryptPGPKey({
     encryptedPGPPrivateKey,
-    account
+    account,
   });
 };
 
@@ -63,9 +91,10 @@ type decryptPgpKeyProps = {
   encryptedPGPPrivateKey: string;
   account?: string;
   signer?: SignerType;
-  env?:  ENV
-  toUpgrade?: boolean
-}
+  env?: ENV;
+  toUpgrade?: boolean;
+  progressHook?: (progress: ProgressHookType) => void;
+};
 
 export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   const {
@@ -73,7 +102,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
-    toUpgrade = true
+    toUpgrade = true,
+    progressHook,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -92,33 +122,46 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
 
     switch (encryptionType) {
       case Constants.ENC_TYPE_V1: {
+        // Report Progress
+        progressHook?.({
+          progressId: 1,
+          progressTitle: 'Decrypting Push Chat Keys',
+          progressInfo: 'Please decrypt your keys using metamask wallet',
+          level: 'INFO',
+        });
+
         if (wallet?.signer?.privateKey) {
           privateKey = metamaskDecrypt({
             encryptedData: JSON.parse(encryptedPGPPrivateKey),
             privateKey: wallet?.signer?.privateKey.substring(2),
           });
         } else {
-          const metamaskProvider = new ethers.providers.Web3Provider((window as any).ethereum);
+          const metamaskProvider = new ethers.providers.Web3Provider(
+            (window as any).ethereum
+          );
           const web3Provider = signer?.provider || metamaskProvider;
           privateKey = await web3Provider.provider.request({
-            method: "eth_decrypt",
-            params: [encryptedPGPPrivateKey, address]
+            method: 'eth_decrypt',
+            params: [encryptedPGPPrivateKey, address],
           });
-        }
-        if(signer && toUpgrade) {
-          try {
-            await upgrade({env, account: address, signer})
-          }
-          catch(err) {
-            console.error(`[Push SDK] - API  - Error - API decrypt Pgp Key() -: Unable To UpgradeUser`, err);
-          }
         }
         break;
       }
       case Constants.ENC_TYPE_V2: {
-        if(!wallet?.signer) {
-          throw new Error('Cannot Decrypt this encryption version without signer!')
+        if (!wallet?.signer) {
+          throw new Error(
+            'Cannot Decrypt this encryption version without signer!'
+          );
         }
+
+        // Report Progress
+        progressHook?.({
+          progressId: 1,
+          progressTitle: 'Decrypting Push Chat Keys',
+          progressInfo: 'Please sign the message to enable Push Chat',
+          level: 'INFO',
+        });
+
         const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
         const { verificationProof: secret } = await getSignature(
@@ -126,7 +169,10 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           wallet,
           enableProfileMessage
         );
-        const encodedPrivateKey = await decryptV2(JSON.parse(encryptedPGPPrivateKey), hexToBytes(secret || ''));
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          hexToBytes(secret || '')
+        );
         const dec = new TextDecoder();
         privateKey = dec.decode(encodedPrivateKey);
         break;
@@ -134,12 +180,37 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
       default:
         throw new Error('Invalid Encryption Type');
     }
+
+    // try key upgradation
+    if (signer && toUpgrade) {
+      try {
+        await upgrade({ env, account: address, signer, progressHook });
+      } catch (err) {
+        // Report Progress
+        progressHook?.({
+          progressId: 2,
+          progressTitle: 'Unable To Upgrade Push Chat Keys',
+          progressInfo: JSON.stringify(err),
+          level: 'WARN',
+        });
+      }
+    }
     return privateKey;
   } catch (err) {
-    console.error(`[Push SDK] - API  - Error - API decrypt Pgp Key() -:  `, err);
+    // Report Progress
+    progressHook?.({
+      progressId: 0,
+      progressTitle: 'error in decrypting Push Chat Keys',
+      progressInfo: JSON.stringify(err),
+      level: 'ERROR',
+    });
+    console.error(
+      `[Push SDK] - API  - Error - API decrypt Pgp Key() -:  `,
+      err
+    );
     throw Error(`[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`);
   }
-}
+};
 
 export const decryptMessage = async ({
   encryptedPGPPrivateKey,
@@ -148,39 +219,36 @@ export const decryptMessage = async ({
   pgpPrivateKey,
   signature,
   signatureValidationPubliKey,
-  message
-}:
-  {
-    encryptedPGPPrivateKey: string,
-    encryptionType: string,
-    encryptedSecret: string,
-    pgpPrivateKey: string,
-    signature: string,
-    signatureValidationPubliKey: string,
-    message: IMessageIPFS
-  }
-): Promise<string> => {
-  let plainText: string
+  message,
+}: {
+  encryptedPGPPrivateKey: string;
+  encryptionType: string;
+  encryptedSecret: string;
+  pgpPrivateKey: string;
+  signature: string;
+  signatureValidationPubliKey: string;
+  message: IMessageIPFS;
+}): Promise<string> => {
+  let plainText: string;
   if (encryptionType !== 'PlainText' && encryptionType !== null) {
-    try{
+    try {
       plainText = await decryptAndVerifySignature({
         cipherText: encryptedPGPPrivateKey,
         encryptedSecretKey: encryptedSecret,
         privateKeyArmored: pgpPrivateKey,
         publicKeyArmored: signatureValidationPubliKey,
         signatureArmored: signature,
-        message: message
+        message: message,
       });
-    }
-    catch(err) {
+    } catch (err) {
       plainText = 'Unable to decrypt message';
     }
   } else {
-    plainText = encryptedPGPPrivateKey
+    plainText = encryptedPGPPrivateKey;
   }
 
   return plainText;
-}
+};
 
 export const decryptAndVerifySignature = async ({
   cipherText,
@@ -188,51 +256,50 @@ export const decryptAndVerifySignature = async ({
   publicKeyArmored,
   signatureArmored,
   privateKeyArmored,
-  message
+  message,
 }: {
-  cipherText: string
-  encryptedSecretKey: string
-  publicKeyArmored: string
-  signatureArmored: string,
-  privateKeyArmored: string,
-  message: IMessageIPFS
-  
+  cipherText: string;
+  encryptedSecretKey: string;
+  publicKeyArmored: string;
+  signatureArmored: string;
+  privateKeyArmored: string;
+  message: IMessageIPFS;
 }): Promise<string> => {
   // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
   const secretKey: string = await pgpDecrypt({
     cipherText: encryptedSecretKey,
-    toPrivateKeyArmored: privateKeyArmored
-  })
+    toPrivateKeyArmored: privateKeyArmored,
+  });
   if (message.link == null) {
-      const bodyToBeHashed = {
-          fromDID: message.fromDID,
-          toDID: message.toDID,
-          messageContent: message.messageContent,
-          messageType: message.messageType,
-      }
-      const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
-      try {
-          await verifySignature({
-              messageContent: hash,
-              signatureArmored,
-              publicKeyArmored
-          })
-      } catch (err) {
-          await verifySignature({
-              messageContent: cipherText,
-              signatureArmored,
-              publicKeyArmored
-          })
-      }
-  } else {
+    const bodyToBeHashed = {
+      fromDID: message.fromDID,
+      toDID: message.toDID,
+      messageContent: message.messageContent,
+      messageType: message.messageType,
+    };
+    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+    try {
       await verifySignature({
-          messageContent: cipherText,
-          signatureArmored,
-          publicKeyArmored
-      })
+        messageContent: hash,
+        signatureArmored,
+        publicKeyArmored,
+      });
+    } catch (err) {
+      await verifySignature({
+        messageContent: cipherText,
+        signatureArmored,
+        publicKeyArmored,
+      });
+    }
+  } else {
+    await verifySignature({
+      messageContent: cipherText,
+      signatureArmored,
+      publicKeyArmored,
+    });
   }
-  return aesDecrypt({ cipherText, secretKey })
-}
+  return aesDecrypt({ cipherText, secretKey });
+};
 
 export const generateHash = (message: any): string => {
   const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
@@ -340,9 +407,11 @@ export const encryptPGPKey = async (
   switch (encryptionType) {
     case Constants.ENC_TYPE_V1: {
       let walletPublicKey: string;
-      if(wallet?.signer?.privateKey) {
+      if (wallet?.signer?.privateKey) {
         // get metamask specific encryption public key
-        walletPublicKey = getEncryptionPublicKey(wallet?.signer?.privateKey.substring(2));
+        walletPublicKey = getEncryptionPublicKey(
+          wallet?.signer?.privateKey.substring(2)
+        );
       } else {
         // wallet popup will happen to get encryption public key
         walletPublicKey = await getPublicKey(wallet);
@@ -417,14 +486,11 @@ export const verifyPGPPublicKey = (
   if (encryptionType === Constants.ENC_TYPE_V2) {
     const { key, signature: verificationProof } = JSON.parse(publicKey);
     publicKey = key;
-    const signedData ='Create Push Chat Profile \n' + generateHash(key);
-    const signature: string = verificationProof.split(":")[1];
-    if(verifyEip712Signature(signature, signedData, pCAIP10ToWallet(address)))
-    return publicKey;
+    const signedData = 'Create Push Chat Profile \n' + generateHash(key);
+    const signature: string = verificationProof.split(':')[1];
+    if (verifyEip712Signature(signature, signedData, pCAIP10ToWallet(address)))
+      return publicKey;
     else throw new Error('Cannot verify Encryption Keys for this user');
   }
   return publicKey;
 };
-
-
-
