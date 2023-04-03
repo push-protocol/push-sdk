@@ -49,7 +49,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signatureObj = await getSignature(user, wallet!, hash);
+  const signatureObj = await getSignature(user, wallet!, hash, false);
 
   const body = {
     ...data, 
@@ -102,7 +102,7 @@ export const upgradeUserService = async (options: upgradeUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signatureObj = await getSignature(user, wallet!, hash);
+  const signatureObj = await getSignature(user, wallet!, hash, false);
 
   const body = {
     ...data, 

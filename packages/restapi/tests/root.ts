@@ -6,3 +6,4 @@ export const mochaHooks = {
     process.exit(0);
   },
 };
+

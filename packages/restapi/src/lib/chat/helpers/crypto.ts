@@ -10,10 +10,11 @@ import {
   walletType,
 } from '../../types';
 import { get } from '../../user';
-import { decryptPGPKey, decryptWithWalletRPCMethod, getTypeInformation, isValidETHAddress, walletToPCAIP10, decryptAndVerifySignature } from '../../helpers';
+import { decryptPGPKey, decryptWithWalletRPCMethod, isValidETHAddress, walletToPCAIP10, decryptAndVerifySignature } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, {ENV} from '../../constants';
+import { getDomainInformation, getTypeInformation } from './signature';
 
 const SIG_TYPE_V2 = "eip712v2";
 
@@ -287,32 +288,32 @@ export const getEncryptedRequest = async (
   }
 };
 
-export const getSignature = async (user: string, wallet: walletType, hash: string) => {
+export const getSignature = async (user: string, wallet: walletType, hash: string, isDomainEmpty: boolean) => {
   if(!wallet?.signer) {
     console.warn("This method is deprecated. Provide signer in the function");
     // sending random signature for making it backward compatible
     return { signature: "xyz", sigType: "a" };
   }
 
-  // const domainInformation = getDomainInformation(
-  //   1,
-  //   pCAIP10ToWallet(user)
-  // );
-
-  // get type information
-  const typeInformation = getTypeInformation("Create_user");
-  // console.log(domainInformation)
-
+  const typeInformation = getTypeInformation();
   const _signer = wallet?.signer;
+  let chainId: number;
+  try {
+    chainId = await _signer.getChainId();
+  }
+  catch(err) {
+    chainId = 1;
+  }
+  const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
   const signedMessage = await _signer?._signTypedData(
-    {},
+    isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash },
   );
 
-  const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`
+  const verificationProof = isDomainEmpty ? `${SIG_TYPE_V2}:${signedMessage}` : `${SIG_TYPE_V2}:${chainId}:${signedMessage}`
 
   return { verificationProof };
 }
