@@ -34,7 +34,7 @@ export const create = async (
   const caip10: string = walletToPCAIP10(address);
   const encryptionType: string = (wallet?.signer && version === Constants.ENC_TYPE_V2) ? Constants.ENC_TYPE_V2 : Constants.ENC_TYPE_V1;
   const keyPairs = await generateKeyPair();
-  const publicKey: string = await preparePGPPublicKey(encryptionType, keyPairs.publicKeyArmored, address, wallet);
+  const publicKey: string = await preparePGPPublicKey(encryptionType, keyPairs.publicKeyArmored, wallet);
   const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(encryptionType, keyPairs.privateKeyArmored, address, wallet);
 
   const body = {

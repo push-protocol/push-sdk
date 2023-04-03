@@ -11,7 +11,8 @@ import {
   getWallet,
   pgpDecrypt,
   verifySignature,
-  getSignature,
+  getEip712Signature,
+  getEip191Signature,
 } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
@@ -22,7 +23,7 @@ import {
   IMessageIPFS,
 } from '../types';
 import { isValidETHAddress, pCAIP10ToWallet } from './address';
-import { verifyEip712Signature } from '../chat/helpers/signature';
+import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 
 const KDFSaltSize = 32; // bytes
@@ -100,7 +101,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
-    toUpgrade = false
+    toUpgrade = false,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -156,28 +157,36 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
         let encodedPrivateKey: Uint8Array;
         try {
-          const { verificationProof: secret } = await getSignature(
-            address,
+          const { verificationProof: secret } = await getEip191Signature(
             wallet,
-            enableProfileMessage,
-            false
+            enableProfileMessage
           );
           encodedPrivateKey = await decryptV2(
             JSON.parse(encryptedPGPPrivateKey),
             hexToBytes(secret || '')
           );
-        }
-        catch(err) {
-          const { verificationProof: secret } = await getSignature(
-            address,
-            wallet,
-            enableProfileMessage,
-            true
-          );
-          encodedPrivateKey = await decryptV2(
-            JSON.parse(encryptedPGPPrivateKey),
-            hexToBytes(secret || '')
-          );
+        } catch (err) {
+          try {
+            const { verificationProof: secret } = await getEip712Signature(
+              wallet,
+              enableProfileMessage,
+              true
+            );
+            encodedPrivateKey = await decryptV2(
+              JSON.parse(encryptedPGPPrivateKey),
+              hexToBytes(secret || '')
+            );
+          } catch (err) {
+            const { verificationProof: secret } = await getEip712Signature(
+              wallet,
+              enableProfileMessage,
+              false
+            );
+            encodedPrivateKey = await decryptV2(
+              JSON.parse(encryptedPGPPrivateKey),
+              hexToBytes(secret || '')
+            );
+          }
         }
         const dec = new TextDecoder();
         privateKey = dec.decode(encodedPrivateKey);
@@ -410,11 +419,9 @@ export const encryptPGPKey = async (
     case Constants.ENC_TYPE_V2: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
       const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-      const { verificationProof: secret } = await getSignature(
-        address,
+      const { verificationProof: secret } = await getEip191Signature(
         wallet,
-        enableProfileMessage,
-        false
+        enableProfileMessage
       );
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
@@ -434,7 +441,6 @@ export const encryptPGPKey = async (
 export const preparePGPPublicKey = async (
   encryptionType: string,
   publicKey: string,
-  address: string,
   wallet: walletType
 ): Promise<string> => {
   let chatPublicKey: string;
@@ -446,11 +452,9 @@ export const preparePGPPublicKey = async (
     case Constants.ENC_TYPE_V2: {
       const createProfileMessage =
         'Create Push Chat Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getSignature(
-        address,
+      const { verificationProof } = await getEip191Signature(
         wallet,
-        createProfileMessage,
-        false
+        createProfileMessage
       );
       chatPublicKey = JSON.stringify({
         key: publicKey,
@@ -474,7 +478,7 @@ export const verifyPGPPublicKey = (
     publicKey = key;
     const signedData = 'Create Push Chat Profile \n' + generateHash(key);
     if (
-      verifyEip712Signature(
+      verifyProfileSignature(
         verificationProof,
         signedData,
         pCAIP10ToWallet(address)

@@ -2,6 +2,8 @@ import {
   recoverTypedSignature,
   SignTypedDataVersion,
 } from '@metamask/eth-sig-util';
+import * as ethers from 'ethers';
+import { hashMessage } from 'ethers/lib/utils';
 
 /**
  *
@@ -80,17 +82,19 @@ export const getTypedData = (
  * @param chainId
  * @returns
  */
-export const verifyEip712Signature = (
+export const verifyProfileSignature = (
   verificationProof: string,
   signedData: string,
   address: string
 ): boolean => {
   const SIG_TYPE_V2 = 'eip712v2';
+  const SIG_TYPE_V3 = 'eip191';
   let chainId: number | null = null;
   let signature: string;
 
   if (
-    verificationProof.split(':')[0] !== SIG_TYPE_V2 ||
+    (verificationProof.split(':')[0] !== SIG_TYPE_V2 &&
+      verificationProof.split(':')[0] !== SIG_TYPE_V2) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
@@ -104,25 +108,38 @@ export const verifyEip712Signature = (
 
   try {
     try {
-      const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
-      const recoveredAddress = recoverTypedSignature({
-        data: typedData,
-        signature: signature,
-        version: SignTypedDataVersion.V4,
-      });
+      // EIP191 sig validation
+      const recoveredAddress = ethers.utils.recoverAddress(
+        hashMessage(signedData),
+        signature
+      );
       if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
         return true;
       } else return false;
     } catch (err) {
-      const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
-      const recoveredAddress = recoverTypedSignature({
-        data: typedData,
-        signature: signature,
-        version: SignTypedDataVersion.V4,
-      });
-      if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-        return true;
-      } else return false;
+      try {
+        // EIP712 sig validation with empty domain
+        const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
+        const recoveredAddress = recoverTypedSignature({
+          data: typedData,
+          signature: signature,
+          version: SignTypedDataVersion.V4,
+        });
+        if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+          return true;
+        } else return false;
+      } catch (err) {
+        // EIP712 sig validation with domain details
+        const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
+        const recoveredAddress = recoverTypedSignature({
+          data: typedData,
+          signature: signature,
+          version: SignTypedDataVersion.V4,
+        });
+        if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+          return true;
+        } else return false;
+      }
     }
   } catch (error) {
     return false;
