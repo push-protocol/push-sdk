@@ -220,7 +220,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL' | 'Meta';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
@@ -232,16 +232,16 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
 
 export interface ChatSendOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL' | 'Meta';
   receiverAddress: string;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
   /**
    * Api key is now optional
    */
   apiKey?: string;
   env?: ENV;
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
 };
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {

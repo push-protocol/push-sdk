@@ -4,6 +4,7 @@ import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import { approveRequestPayload, sign, getConnectedUserV2, IApproveRequestPayload, getAccountAddress, getWallet } from './helpers';
 import * as CryptoJS from "crypto-js"
+import { send } from './send';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -44,12 +45,8 @@ export const approve = async (
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
 
- 
-
-
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
-
 
   const body: IApproveRequestPayload = approveRequestPayload(senderAddress, address, status);
 
@@ -70,9 +67,21 @@ export const approve = async (
    const verificationProof: string = sigType + ":" + signature;
    body.verificationProof = verificationProof;
 
-  return axios.put(apiEndpoint, body)
-    .catch((err) => {
-      console.error(`[Push SDK] - API ${approve.name}: `, err);
-      throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
-    });
+   try{
+    const response = await axios.put(apiEndpoint, body);
+    await send({
+      messageContent: `${senderAddress} joined`, 
+      messageType: 'Meta',
+      receiverAddress: body.toDID,
+      pgpPrivateKey, 
+      env,
+      account,
+      signer
+    })
+    return response
+   }
+   catch(err){
+    console.error(`[Push SDK] - API ${approve.name}: `, err);
+    throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
+   }
 }

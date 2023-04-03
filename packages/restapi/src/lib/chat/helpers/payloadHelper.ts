@@ -56,7 +56,7 @@ export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   messageContent: string,
-  messageType: string,
+  messageType: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL' | 'Meta',
   env: ENV
 ): Promise<ISendMessagePayload> => {
   let isGroup = true;
@@ -83,6 +83,7 @@ export const sendMessagePayload = async (
       receiverAddress,
       senderCreatedUser,
       messageContent,
+      messageType,
       isGroup,
       env,
       group

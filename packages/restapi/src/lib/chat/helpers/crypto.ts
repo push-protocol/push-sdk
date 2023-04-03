@@ -173,6 +173,7 @@ export const getEncryptedRequest = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   message: string,
+  messageType: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL' | 'Meta',
   isGroup: boolean,
   env: ENV,
   group: GroupDTO | null,
@@ -253,7 +254,7 @@ export const getEncryptedRequest = async (
       }
     }
   } else if(group) {
-      if(group.isPublic) {
+      if(group.isPublic || messageType === 'Meta') {
          const {
           signature
         } = await signMessageWithPGP({

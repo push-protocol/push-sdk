@@ -12,6 +12,7 @@ import {
     getAccountAddress,
 } from './helpers';
 import * as CryptoJS from "crypto-js";
+import { send } from './send';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
     account?: string,
@@ -101,7 +102,7 @@ export const createGroup = async (
             numberOfERC20,
             meta);
 
-        return axios
+        const response = await axios
             .post(apiEndpoint, body)
             .then((response) => {
                 return response.data;
@@ -111,6 +112,17 @@ export const createGroup = async (
                     throw new Error(err?.response?.data);
                 throw new Error(err);
             });
+        
+        await send({
+            messageContent: `${address} created group "${groupName}"`, 
+            messageType: 'Meta',
+            receiverAddress: response.chatId, // TODO
+            pgpPrivateKey, 
+            env,
+            account,
+            signer
+            })
+        return response;
 
     } catch (err) {
         console.error(`[Push SDK] - API  - Error - API ${createGroup.name} -:  `, err);
