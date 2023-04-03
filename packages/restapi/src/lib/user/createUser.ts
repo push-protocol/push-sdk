@@ -124,7 +124,7 @@ export const create = async (options: CreateUserProps) => {
     progressHook?.({
       progressId: 0,
       progressTitle: 'Error In Creating Push Chat User',
-      progressInfo: JSON.stringify(err),
+      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
       level: 'ERROR',
     });
     throw Error(`[Push SDK] - API  - Error - API create User() -: ${err}`);

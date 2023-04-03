@@ -190,7 +190,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         progressHook?.({
           progressId: 2,
           progressTitle: 'Unable To Upgrade Push Chat Keys',
-          progressInfo: JSON.stringify(err),
+          progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
           level: 'WARN',
         });
       }
@@ -200,8 +200,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     // Report Progress
     progressHook?.({
       progressId: 0,
-      progressTitle: 'error in decrypting Push Chat Keys',
-      progressInfo: JSON.stringify(err),
+      progressTitle: 'Error in decrypting Push Chat Keys',
+      progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
       level: 'ERROR',
     });
     console.error(
