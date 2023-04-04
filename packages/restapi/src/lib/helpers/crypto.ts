@@ -219,6 +219,12 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         });
       }
     }
+    progressHook?.({
+      progressId: 'PUSH-DECRYPT-02',
+      progressTitle: 'Push Profile Unlocked',
+      progressInfo: 'Unlocking push profile',
+      level: 'SUCCESS',
+    });
     return privateKey;
   } catch (err) {
     // Report Progress
