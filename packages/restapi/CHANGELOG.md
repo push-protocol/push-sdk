@@ -78,6 +78,16 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ### Bug Fixes
 
+* **component:** dummy ([bef586f](https://github.com/ethereum-push-notification-service/push-sdk/commit/bef586f0754400334994d1f6079b1b1a77380edd))
+* **component:** dummy ([59b6cec](https://github.com/ethereum-push-notification-service/push-sdk/commit/59b6cec5562b571a36ee3eca27d880f237705bca))
+
+
+
+## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
+
+
+### Bug Fixes
+
 * **component:** dummy ([59b6cec](https://github.com/ethereum-push-notification-service/push-sdk/commit/59b6cec5562b571a36ee3eca27d880f237705bca))
 
 
