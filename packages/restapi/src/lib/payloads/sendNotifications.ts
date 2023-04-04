@@ -109,15 +109,6 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-
-    console.log(
-      '\n\nAPI call :-->> ',
-      requestURL,
-      '\n\n',
-      apiPayload,
-      '\n\n\n\n'
-    );
-
     return await axios.post(
       requestURL,
       apiPayload,
