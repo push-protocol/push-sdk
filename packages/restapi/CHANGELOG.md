@@ -59,30 +59,13 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ### Bug Fixes
 
-* **component:** dummy ([40f1c57](https://github.com/ethereum-push-notification-service/push-sdk/commit/40f1c57cb26e9efcace0f9ad2ceb577c70dac11e))
 
-
-
-<<<<<<< HEAD
 ## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
 
 
 ### Bug Fixes
 
-* **component:** dummy ([bef586f](https://github.com/ethereum-push-notification-service/push-sdk/commit/bef586f0754400334994d1f6079b1b1a77380edd))
-* **component:** dummy ([59b6cec](https://github.com/ethereum-push-notification-service/push-sdk/commit/59b6cec5562b571a36ee3eca27d880f237705bca))
 
-
-
-=======
->>>>>>> ca9c88a (ci(restapi): 🎉 cut release to restapi-v1.0.3)
-## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
-
-
-### Bug Fixes
-
-* **component:** dummy ([bef586f](https://github.com/ethereum-push-notification-service/push-sdk/commit/bef586f0754400334994d1f6079b1b1a77380edd))
-* **component:** dummy ([59b6cec](https://github.com/ethereum-push-notification-service/push-sdk/commit/59b6cec5562b571a36ee3eca27d880f237705bca))
 
 
 
@@ -91,8 +74,12 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ### Bug Fixes
 
-* **component:** dummy ([59b6cec](https://github.com/ethereum-push-notification-service/push-sdk/commit/59b6cec5562b571a36ee3eca27d880f237705bca))
 
+
+## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
+
+
+### Bug Fixes
 
 
 ## [1.0.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.0...restapi-1.0.1) (2023-04-04)
@@ -100,17 +87,11 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ### Bug Fixes
 
-* **component:** dummy ([3c7037b](https://github.com/ethereum-push-notification-service/push-sdk/commit/3c7037b8876b3ff58fc3c4602813a71b02325fb7))
-
-
 
 ## [1.0.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.0...restapi-1.0.1) (2023-04-04)
 
 
 ### Bug Fixes
-
-* **component:** dummy ([3c7037b](https://github.com/ethereum-push-notification-service/push-sdk/commit/3c7037b8876b3ff58fc3c4602813a71b02325fb7))
-
 
 
 # [1.0.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.8.2...restapi-1.0.0) (2023-04-04)
@@ -119,8 +100,6 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 ### Bug Fixes
 
 * **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
-* **component:** dummy ([12ba2f7](https://github.com/ethereum-push-notification-service/push-sdk/commit/12ba2f72c0a5c237bc4c564f2a9ca05cca01ac22))
-* **component:** dummy commit ([#282](https://github.com/ethereum-push-notification-service/push-sdk/issues/282)) ([af10b66](https://github.com/ethereum-push-notification-service/push-sdk/commit/af10b6681c8365b9b16fb3cde8bfa88a26408fa1))
 * **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
 * **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
 * **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
@@ -172,8 +151,6 @@ New encryption version for pgp keys
 ### Bug Fixes
 
 * **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
-* **component:** dummy ([12ba2f7](https://github.com/ethereum-push-notification-service/push-sdk/commit/12ba2f72c0a5c237bc4c564f2a9ca05cca01ac22))
-* **component:** dummy commit ([#282](https://github.com/ethereum-push-notification-service/push-sdk/issues/282)) ([af10b66](https://github.com/ethereum-push-notification-service/push-sdk/commit/af10b6681c8365b9b16fb3cde8bfa88a26408fa1))
 * **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
 * **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
 * **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
@@ -225,7 +202,6 @@ New encryption version for pgp keys
 ### Bug Fixes
 
 * **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
-* **component:** dummy commit ([#282](https://github.com/ethereum-push-notification-service/push-sdk/issues/282)) ([af10b66](https://github.com/ethereum-push-notification-service/push-sdk/commit/af10b6681c8365b9b16fb3cde8bfa88a26408fa1))
 * **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
 * **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
 * **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
@@ -276,16 +252,11 @@ New encryption version for pgp keys
 
 ### Bug Fixes
 
-* **component:** dummy commit ([14b8824](https://github.com/ethereum-push-notification-service/push-sdk/commit/14b882466e36fe165af696c91a2c99bcbb0b6ecc))
-
-
 
 ## [1.0.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.0...restapi-1.0.1) (2023-04-04)
 
 
 ### Bug Fixes
-
-* **component:** dummy commit ([88e6d5e](https://github.com/ethereum-push-notification-service/push-sdk/commit/88e6d5e83f16dd23649991abd04776df2c37911d))
 
 
 
@@ -295,8 +266,6 @@ New encryption version for pgp keys
 ### Bug Fixes
 
 * **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
-* **component:** dummy commit ([e5d19b8](https://github.com/ethereum-push-notification-service/push-sdk/commit/e5d19b8c6aa4cd72f872d6c27577295324e3b8e1))
-* **component:** dummy commit ([#282](https://github.com/ethereum-push-notification-service/push-sdk/issues/282)) ([af10b66](https://github.com/ethereum-push-notification-service/push-sdk/commit/af10b6681c8365b9b16fb3cde8bfa88a26408fa1))
 * **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
 * **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
 * **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
@@ -346,8 +315,6 @@ New encryption version for pgp keys
 ### Bug Fixes
 
 * **component:** decrypt issue fixed ([21538db](https://github.com/ethereum-push-notification-service/push-sdk/commit/21538dbb0569914b880d8f36aea341360041b4e7))
-* **component:** dummy commit ([e5d19b8](https://github.com/ethereum-push-notification-service/push-sdk/commit/e5d19b8c6aa4cd72f872d6c27577295324e3b8e1))
-* **component:** dummy commit ([#282](https://github.com/ethereum-push-notification-service/push-sdk/issues/282)) ([af10b66](https://github.com/ethereum-push-notification-service/push-sdk/commit/af10b6681c8365b9b16fb3cde8bfa88a26408fa1))
 * **component:** mocha setup ([6ecf79d](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ecf79dd3ee4840350965fb045cc163bdd98b5a9))
 * **component:** mocha setup ([5b7c504](https://github.com/ethereum-push-notification-service/push-sdk/commit/5b7c50444734c8df507175eb98ab780507ddcad4))
 * **component:** mocha setup with basic test case ([35fa1dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/35fa1dc259051572ca51f8e2e0607a3917589159))
