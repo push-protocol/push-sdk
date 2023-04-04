@@ -122,10 +122,10 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     let privateKey;
 
     progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
-      level: 'ERROR',
+      progressId: 'PUSH-DECRYPT-01',
+      progressTitle: 'Decrypting Profile',
+      progressInfo: 'Please sign the transaction to decrypt profile',
+      level: 'INFO',
     });
 
     switch (encryptionType) {
