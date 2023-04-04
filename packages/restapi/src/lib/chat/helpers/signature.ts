@@ -91,10 +91,10 @@ export const verifyProfileSignature = (
   const SIG_TYPE_V3 = 'eip191';
   let chainId: number | null = null;
   let signature: string;
+  const sigType = verificationProof.split(':')[0];
 
   if (
-    (verificationProof.split(':')[0] !== SIG_TYPE_V2 &&
-      verificationProof.split(':')[0] !== SIG_TYPE_V3) ||
+    (sigType !== SIG_TYPE_V2 && sigType !== SIG_TYPE_V3) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
@@ -106,42 +106,39 @@ export const verifyProfileSignature = (
     signature = verificationProof.split(':')[2];
   }
 
-  try {
+  if (sigType === SIG_TYPE_V2) {
     try {
-      // EIP191 sig validation
-      const recoveredAddress = ethers.utils.recoverAddress(
-        hashMessage(signedData),
-        signature
-      );
+      // EIP712 sig validation with empty domain
+      // V2 should be checked first rather than v1 otherwise validation will fail
+      const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
+      const recoveredAddress = recoverTypedSignature({
+        data: typedData,
+        signature: signature,
+        version: SignTypedDataVersion.V4,
+      });
       if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
         return true;
       } else return false;
     } catch (err) {
-      try {
-        // EIP712 sig validation with empty domain
-        const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
-        const recoveredAddress = recoverTypedSignature({
-          data: typedData,
-          signature: signature,
-          version: SignTypedDataVersion.V4,
-        });
-        if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-          return true;
-        } else return false;
-      } catch (err) {
-        // EIP712 sig validation with domain details
-        const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
-        const recoveredAddress = recoverTypedSignature({
-          data: typedData,
-          signature: signature,
-          version: SignTypedDataVersion.V4,
-        });
-        if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-          return true;
-        } else return false;
-      }
+      // EIP712 sig validation with domain details
+      const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
+      const recoveredAddress = recoverTypedSignature({
+        data: typedData,
+        signature: signature,
+        version: SignTypedDataVersion.V4,
+      });
+      if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+        return true;
+      } else return false;
     }
-  } catch (error) {
-    return false;
+  } else {
+    // EIP191 sig validation
+    const recoveredAddress = ethers.utils.recoverAddress(
+      hashMessage(signedData),
+      signature
+    );
+    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+      return true;
+    } else return false;
   }
 };

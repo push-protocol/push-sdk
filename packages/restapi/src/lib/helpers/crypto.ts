@@ -150,7 +150,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           const { verificationProof: secret } = await getEip712Signature(
             wallet,
             enableProfileMessage,
-            false
+            true
           );
           encodedPrivateKey = await decryptV2(
             JSON.parse(encryptedPGPPrivateKey),
@@ -160,7 +160,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           const { verificationProof: secret } = await getEip712Signature(
             wallet,
             enableProfileMessage,
-            true
+            false
           );
           encodedPrivateKey = await decryptV2(
             JSON.parse(encryptedPGPPrivateKey),
