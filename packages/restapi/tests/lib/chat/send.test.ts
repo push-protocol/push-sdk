@@ -338,15 +338,15 @@ describe('Send Chat Message', () => {
       signer: _signer1,
       env: _env,
     });
-    console.log(msgRequest2);
     expect(msgRequest2.encType).to.be.equal('pgp');
-    const receivedMessagePostUpdate2 = await requests({
-      account: account2,
-      pgpPrivateKey: user2PrivatePGPKey,
-      toDecrypt: true,
-      env: _env,
-    });
-    console.log(receivedMessagePostUpdate2);
-    // expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE3);
+    const receivedMessagePostUpdate2 = (
+      await requests({
+        account: account2,
+        pgpPrivateKey: user2PrivatePGPKey,
+        toDecrypt: true,
+        env: _env,
+      })
+    )[0].msg;
+    expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE3);
   });
 });
