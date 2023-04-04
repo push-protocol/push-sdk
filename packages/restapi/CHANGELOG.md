@@ -63,6 +63,7 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
+<<<<<<< HEAD
 ## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
 
 
@@ -73,6 +74,8 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
+=======
+>>>>>>> ca9c88a (ci(restapi): 🎉 cut release to restapi-v1.0.3)
 ## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.1...restapi-1.0.2) (2023-04-04)
 
 
