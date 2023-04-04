@@ -21,6 +21,7 @@ import {
   encryptedPrivateKeyType,
   encryptedPrivateKeyTypeV2,
   IMessageIPFS,
+  ProgressHookType,
 } from '../types';
 import { isValidETHAddress, pCAIP10ToWallet } from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
@@ -93,6 +94,7 @@ type decryptPgpKeyProps = {
   signer?: SignerType;
   env?: ENV;
   toUpgrade?: boolean;
+  progressHook?: (progress: ProgressHookType) => void;
 };
 
 export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
@@ -102,6 +104,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     signer = null,
     env = Constants.ENV.PROD,
     toUpgrade = false,
+    progressHook,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -120,6 +123,14 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
 
     switch (encryptionType) {
       case Constants.ENC_TYPE_V1: {
+        // Report Progress
+        progressHook?.({
+          progressId: 1,
+          progressTitle: 'Decrypting Push Chat Keys',
+          progressInfo: 'Please decrypt your keys using metamask wallet',
+          level: 'INFO',
+        });
+
         if (wallet?.signer?.privateKey) {
           privateKey = metamaskDecrypt({
             encryptedData: JSON.parse(encryptedPGPPrivateKey),
@@ -143,6 +154,15 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             'Cannot Decrypt this encryption version without signer!'
           );
         }
+
+        // Report Progress
+        progressHook?.({
+          progressId: 1,
+          progressTitle: 'Decrypting Push Chat Keys',
+          progressInfo: 'Please sign the message to enable Push Chat',
+          level: 'INFO',
+        });
+
         const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
         let encodedPrivateKey: Uint8Array;
@@ -198,13 +218,26 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     // try key upgradation
     if (signer && toUpgrade) {
       try {
-        await upgrade({ env, account: address, signer });
+        await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
-        console.log(err);
+        // Report Progress
+        progressHook?.({
+          progressId: 2,
+          progressTitle: 'Unable To Upgrade Push Chat Keys',
+          progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
+          level: 'WARN',
+        });
       }
     }
     return privateKey;
   } catch (err) {
+    // Report Progress
+    progressHook?.({
+      progressId: 0,
+      progressTitle: 'Error in decrypting Push Chat Keys',
+      progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
+      level: 'ERROR',
+    });
     console.error(
       `[Push SDK] - API  - Error - API decrypt Pgp Key() -:  `,
       err
