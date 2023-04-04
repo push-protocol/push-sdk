@@ -62,6 +62,7 @@ const GetUserTest = () => {
           account: isCAIP ? walletToPCAIP10(account) : account,
           signer: librarySigner,
           env,
+          toUpgrade: true,
           progressHook: handleProgress,
         });
 
