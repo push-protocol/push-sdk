@@ -2,6 +2,8 @@ import {
   recoverTypedSignature,
   SignTypedDataVersion,
 } from '@metamask/eth-sig-util';
+import * as ethers from 'ethers';
+import { hashMessage } from 'ethers/lib/utils';
 
 /**
  *
@@ -80,17 +82,19 @@ export const getTypedData = (
  * @param chainId
  * @returns
  */
-export const verifyEip712Signature = (
+export const verifyProfileSignature = (
   verificationProof: string,
   signedData: string,
   address: string
 ): boolean => {
   const SIG_TYPE_V2 = 'eip712v2';
+  const SIG_TYPE_V3 = 'eip191';
   let chainId: number | null = null;
   let signature: string;
+  const sigType = verificationProof.split(':')[0];
 
   if (
-    verificationProof.split(':')[0] !== SIG_TYPE_V2 ||
+    (sigType !== SIG_TYPE_V2 && sigType !== SIG_TYPE_V3) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
@@ -102,8 +106,10 @@ export const verifyEip712Signature = (
     signature = verificationProof.split(':')[2];
   }
 
-  try {
+  if (sigType === SIG_TYPE_V2) {
     try {
+      // EIP712 sig validation with empty domain
+      // V2 should be checked first rather than v1 otherwise validation will fail
       const typedData = getTypedData(signedData, chainId as number, 'V2'); // For backward compatibility
       const recoveredAddress = recoverTypedSignature({
         data: typedData,
@@ -114,6 +120,7 @@ export const verifyEip712Signature = (
         return true;
       } else return false;
     } catch (err) {
+      // EIP712 sig validation with domain details
       const typedData = getTypedData(signedData, chainId as number, 'V1'); // For backward compatibility
       const recoveredAddress = recoverTypedSignature({
         data: typedData,
@@ -124,7 +131,14 @@ export const verifyEip712Signature = (
         return true;
       } else return false;
     }
-  } catch (error) {
-    return false;
+  } else {
+    // EIP191 sig validation
+    const recoveredAddress = ethers.utils.recoverAddress(
+      hashMessage(signedData),
+      signature
+    );
+    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+      return true;
+    } else return false;
   }
 };

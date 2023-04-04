@@ -48,12 +48,12 @@ export const upgrade = async (options: UpgradeUserProps) => {
   const user: IUser = await get({ account: address, env: env });
 
   // User not created or already upgraded
-  if (!user || user.encryptionType === Constants.ENC_TYPE_V2) {
+  if (!user || user.encryptionType === Constants.ENC_TYPE_V3) {
     return user;
   }
 
   const caip10: string = walletToPCAIP10(address);
-  const encryptionType: string = Constants.ENC_TYPE_V2;
+  const encryptionType: string = Constants.ENC_TYPE_V3;
 
   // Report Progress
   progressHook?.({
@@ -67,7 +67,6 @@ export const upgrade = async (options: UpgradeUserProps) => {
   const publicKey: string = await preparePGPPublicKey(
     encryptionType,
     user.publicKey,
-    address,
     wallet
   );
 

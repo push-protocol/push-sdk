@@ -48,7 +48,8 @@ describe('Get user', () => {
     expect(user.encryptedPrivateKey).to.satisfy((value: string) => {
       return (
         value.includes(`"version":"${Constants.ENC_TYPE_V1}"`) ||
-        value.includes(`"version":"${Constants.ENC_TYPE_V2}"`)
+        value.includes(`"version":"${Constants.ENC_TYPE_V2}"`) ||
+        value.includes(`"version":"${Constants.ENC_TYPE_V3}"`)
       );
     });
     expect(user.profilePicture).to.contains('data:image/png;base64,');

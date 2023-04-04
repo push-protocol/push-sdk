@@ -21,7 +21,7 @@ export type CreateUserProps = {
   env?: ENV;
   account?: string;
   signer?: SignerType;
-  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V2;
+  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
   progressHook?: (progress: ProgressHookType) => void;
 };
 
@@ -30,7 +30,7 @@ export const create = async (options: CreateUserProps) => {
     env = Constants.ENV.PROD,
     account = null,
     signer = null,
-    version = Constants.ENC_TYPE_V2,
+    version = Constants.ENC_TYPE_V3,
     progressHook,
   } = options || {};
 
@@ -47,10 +47,10 @@ export const create = async (options: CreateUserProps) => {
     }
 
     const caip10: string = walletToPCAIP10(address);
-    const encryptionType: string =
-      wallet?.signer && version === Constants.ENC_TYPE_V2
-        ? Constants.ENC_TYPE_V2
-        : Constants.ENC_TYPE_V1;
+    let encryptionType = version;
+
+    // falback to v1
+    if (!signer) encryptionType = Constants.ENC_TYPE_V1;
 
     // Report Progress
     progressHook?.({
@@ -73,7 +73,6 @@ export const create = async (options: CreateUserProps) => {
     const publicKey: string = await preparePGPPublicKey(
       encryptionType,
       keyPairs.publicKeyArmored,
-      address,
       wallet
     );
 
