@@ -13,7 +13,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 type ProgressHookType = {
-  progressId: number;
+  progressId: string;
   progressTitle: string,
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'

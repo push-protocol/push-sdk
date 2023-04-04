@@ -292,7 +292,7 @@ export type encryptedPrivateKeyTypeV2 = {
 export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2
 
 export type ProgressHookType = {
-  progressId: number;
+  progressId: string;
   progressTitle: string,
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'

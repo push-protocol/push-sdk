@@ -121,16 +121,15 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     const { version: encryptionType } = JSON.parse(encryptedPGPPrivateKey);
     let privateKey;
 
+    progressHook?.({
+      progressId: 'PUSH-ERROR-00',
+      progressTitle: 'Non Specific Error',
+      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
+      level: 'ERROR',
+    });
+
     switch (encryptionType) {
       case Constants.ENC_TYPE_V1: {
-        // Report Progress
-        progressHook?.({
-          progressId: 1,
-          progressTitle: 'Decrypting Push Chat Keys',
-          progressInfo: 'Please decrypt your keys using metamask wallet',
-          level: 'INFO',
-        });
-
         if (wallet?.signer?.privateKey) {
           privateKey = metamaskDecrypt({
             encryptedData: JSON.parse(encryptedPGPPrivateKey),
@@ -154,15 +153,6 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             'Cannot Decrypt this encryption version without signer!'
           );
         }
-
-        // Report Progress
-        progressHook?.({
-          progressId: 1,
-          progressTitle: 'Decrypting Push Chat Keys',
-          progressInfo: 'Please sign the message to enable Push Chat',
-          level: 'INFO',
-        });
-
         const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
         let encodedPrivateKey: Uint8Array;
@@ -222,8 +212,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
       } catch (err) {
         // Report Progress
         progressHook?.({
-          progressId: 2,
-          progressTitle: 'Unable To Upgrade Push Chat Keys',
+          progressId: 'PUSH-ERROR-01',
+          progressTitle: 'Upgrade Profile Failed',
           progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
           level: 'WARN',
         });
@@ -233,9 +223,9 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   } catch (err) {
     // Report Progress
     progressHook?.({
-      progressId: 0,
-      progressTitle: 'Error in decrypting Push Chat Keys',
-      progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
+      progressId: 'PUSH-ERROR-00',
+      progressTitle: 'Non Specific Error',
+      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
       level: 'ERROR',
     });
     console.error(

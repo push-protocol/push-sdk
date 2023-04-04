@@ -57,8 +57,8 @@ export const upgrade = async (options: UpgradeUserProps) => {
 
   // Report Progress
   progressHook?.({
-    progressId: 2,
-    progressTitle: 'Step 1/5: Creating Push Chat Profile',
+    progressId: 'PUSH-UPGRADE-01',
+    progressTitle: 'Generating New Profile Signature',
     progressInfo:
       'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
     level: 'INFO',
@@ -72,8 +72,8 @@ export const upgrade = async (options: UpgradeUserProps) => {
 
   // Report Progress
   progressHook?.({
-    progressId: 3,
-    progressTitle: 'Step 2/5: Decrypting Old Push Chat Keys and verifying env',
+    progressId: 'PUSH-UPGRADE-02',
+    progressTitle: 'Decrypting Old Profile',
     progressInfo:
       'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
     level: 'INFO',
@@ -88,8 +88,8 @@ export const upgrade = async (options: UpgradeUserProps) => {
 
   // Report Progress
   progressHook?.({
-    progressId: 4,
-    progressTitle: 'Step 3/5: Enabling Push Chat Profile',
+    progressId: 'PUSH-UPGRADE-03',
+    progressTitle: 'Generating Encrypted New Profile',
     progressInfo:
       'Trying to Upgrade Push Chat Keys to latest version. Encrypting Push Chat Keys with latest version. Please sign the message to continue.',
     level: 'INFO',
@@ -115,9 +115,8 @@ export const upgrade = async (options: UpgradeUserProps) => {
 
   // Report Progress
   progressHook?.({
-    progressId: 5,
-    progressTitle:
-      'Step 4/5: Generating Verification Proofs and Syncing account info',
+    progressId: 'PUSH-UPGRADE-04',
+    progressTitle: 'Syncing New Profile',
     progressInfo:
       'Please sign the message to continue. Steady lads, chat is almost ready!',
     level: 'INFO',
@@ -125,8 +124,8 @@ export const upgrade = async (options: UpgradeUserProps) => {
   const upgradedUser = await upgradeUserService(body);
   // Report Progress
   progressHook?.({
-    progressId: 6,
-    progressTitle: 'Step 5/5 Done, Welcome to Push Chat!',
+    progressId: 'PUSH-UPGRADE-05',
+    progressTitle: 'Upgrade Completed, Welcome to Push Chat',
     progressInfo: '',
     level: 'SUCCESS',
   });

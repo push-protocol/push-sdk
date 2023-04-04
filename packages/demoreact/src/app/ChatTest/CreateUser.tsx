@@ -13,7 +13,7 @@ import ChatTest from './ChatTest';
 import { ethers } from 'ethers';
 
 type ProgressHookType = {
-  progressId: number;
+  progressId: string;
   progressTitle: string,
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
