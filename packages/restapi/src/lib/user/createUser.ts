@@ -54,8 +54,8 @@ export const create = async (options: CreateUserProps) => {
 
     // Report Progress
     progressHook?.({
-      progressId: 1,
-      progressTitle: 'Step 1/5: Generating secure keys for your account',
+      progressId: 'PUSH-CREATE-01',
+      progressTitle: 'Generating Secure Profile Signature',
       progressInfo:
         'This step is is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
       level: 'INFO',
@@ -64,10 +64,10 @@ export const create = async (options: CreateUserProps) => {
 
     // Report Progress
     progressHook?.({
-      progressId: 2,
-      progressTitle: 'Step 2/5: Creating Push Chat Profile',
+      progressId: 'PUSH-CREATE-02',
+      progressTitle: 'Signing Generated Profile',
       progressInfo:
-        'This step is is only done for first time users.Please sign the message to continue.',
+        'This step is is only done for first time users. Please sign the message to continue.',
       level: 'INFO',
     });
     const publicKey: string = await preparePGPPublicKey(
@@ -78,8 +78,8 @@ export const create = async (options: CreateUserProps) => {
 
     // Report Progress
     progressHook?.({
-      progressId: 3,
-      progressTitle: 'Step 3/5: Enabling Push Chat Profile',
+      progressId: 'PUSH-CREATE-03',
+      progressTitle: 'Encrypting Generated Profile',
       progressInfo:
         'Encrypting your keys. Please sign the message to continue.',
       level: 'INFO',
@@ -102,9 +102,8 @@ export const create = async (options: CreateUserProps) => {
 
     // Report Progress
     progressHook?.({
-      progressId: 4,
-      progressTitle:
-        'Step 4/5: Generating Verification Proofs and Syncing account info',
+      progressId: 'PUSH-CREATE-04',
+      progressTitle: 'Syncing Generated Profile',
       progressInfo:
         'Please sign the message to continue. Steady lads, chat is almost ready!',
       level: 'INFO',
@@ -113,16 +112,16 @@ export const create = async (options: CreateUserProps) => {
 
     // Report Progress
     progressHook?.({
-      progressId: 5,
-      progressTitle: 'Step 5/5 Done, Welcome to Push Chat!',
+      progressId: 'PUSH-CREATE-05',
+      progressTitle: 'Setup Complete',
       progressInfo: '',
       level: 'SUCCESS',
     });
     return createdUser;
   } catch (err) {
     progressHook?.({
-      progressId: 0,
-      progressTitle: 'Error In Creating Push Chat User',
+      progressId: 'PUSH-ERROR-00',
+      progressTitle: 'Non Specific Error',
       progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
       level: 'ERROR',
     });
