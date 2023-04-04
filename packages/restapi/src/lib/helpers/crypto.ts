@@ -135,16 +135,6 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             params: [encryptedPGPPrivateKey, address],
           });
         }
-        if (signer && toUpgrade) {
-          try {
-            await upgrade({ env, account: address, signer });
-          } catch (err) {
-            console.error(
-              `[Push SDK] - API  - Error - API decrypt Pgp Key() -: Unable To UpgradeUser`,
-              err
-            );
-          }
-        }
         break;
       }
       case Constants.ENC_TYPE_V2: {
@@ -157,43 +147,61 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
         let encodedPrivateKey: Uint8Array;
         try {
-          const { verificationProof: secret } = await getEip191Signature(
+          const { verificationProof: secret } = await getEip712Signature(
             wallet,
-            enableProfileMessage
+            enableProfileMessage,
+            false
           );
           encodedPrivateKey = await decryptV2(
             JSON.parse(encryptedPGPPrivateKey),
             hexToBytes(secret || '')
           );
         } catch (err) {
-          try {
-            const { verificationProof: secret } = await getEip712Signature(
-              wallet,
-              enableProfileMessage,
-              true
-            );
-            encodedPrivateKey = await decryptV2(
-              JSON.parse(encryptedPGPPrivateKey),
-              hexToBytes(secret || '')
-            );
-          } catch (err) {
-            const { verificationProof: secret } = await getEip712Signature(
-              wallet,
-              enableProfileMessage,
-              false
-            );
-            encodedPrivateKey = await decryptV2(
-              JSON.parse(encryptedPGPPrivateKey),
-              hexToBytes(secret || '')
-            );
-          }
+          const { verificationProof: secret } = await getEip712Signature(
+            wallet,
+            enableProfileMessage,
+            true
+          );
+          encodedPrivateKey = await decryptV2(
+            JSON.parse(encryptedPGPPrivateKey),
+            hexToBytes(secret || '')
+          );
         }
+        const dec = new TextDecoder();
+        privateKey = dec.decode(encodedPrivateKey);
+        break;
+      }
+      case Constants.ENC_TYPE_V3: {
+        if (!wallet?.signer) {
+          throw new Error(
+            'Cannot Decrypt this encryption version without signer!'
+          );
+        }
+        const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
+        const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+        const { verificationProof: secret } = await getEip191Signature(
+          wallet,
+          enableProfileMessage
+        );
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          hexToBytes(secret || '')
+        );
         const dec = new TextDecoder();
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
       default:
         throw new Error('Invalid Encryption Type');
+    }
+
+    // try key upgradation
+    if (signer && toUpgrade) {
+      try {
+        await upgrade({ env, account: address, signer });
+      } catch (err) {
+        console.log(err);
+      }
     }
     return privateKey;
   } catch (err) {
@@ -337,8 +345,8 @@ const hkdf = async (
   );
 };
 
-// aes256GcmHkdfSha256 encryption
-const encryptV2 = async (
+// ENC_TYPE_V3 encryption
+const encryptV3 = async (
   data: Uint8Array,
   secret: Uint8Array,
   additionalData?: Uint8Array
@@ -361,14 +369,14 @@ const encryptV2 = async (
   );
   return {
     ciphertext: bytesToHex(new Uint8Array(encrypted)),
-    version: 'aes256GcmHkdfSha256',
+    version: Constants.ENC_TYPE_V3,
     salt: bytesToHex(salt),
     nonce: bytesToHex(nonce),
     preKey: '',
   };
 };
 
-// aes256GcmHkdfSha256 decryption
+// ENC_TYPE_V3 | ENC_TYPE_V2 decryption
 const decryptV2 = async (
   encryptedData: encryptedPrivateKeyTypeV2,
   secret: Uint8Array,
@@ -416,7 +424,7 @@ export const encryptPGPKey = async (
       );
       break;
     }
-    case Constants.ENC_TYPE_V2: {
+    case Constants.ENC_TYPE_V3: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
       const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
       const { verificationProof: secret } = await getEip191Signature(
@@ -425,7 +433,7 @@ export const encryptPGPKey = async (
       );
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
-      encryptedPrivateKey = await encryptV2(
+      encryptedPrivateKey = await encryptV3(
         encodedPrivateKey,
         hexToBytes(secret || '')
       );
@@ -449,7 +457,7 @@ export const preparePGPPublicKey = async (
       chatPublicKey = publicKey;
       break;
     }
-    case Constants.ENC_TYPE_V2: {
+    case Constants.ENC_TYPE_V3: {
       const createProfileMessage =
         'Create Push Chat Profile \n' + generateHash(publicKey);
       const { verificationProof } = await getEip191Signature(
@@ -473,7 +481,10 @@ export const verifyPGPPublicKey = (
   publicKey: string,
   address: string
 ): string => {
-  if (encryptionType === Constants.ENC_TYPE_V2) {
+  if (
+    encryptionType === Constants.ENC_TYPE_V2 ||
+    encryptionType === Constants.ENC_TYPE_V3
+  ) {
     const { key, signature: verificationProof } = JSON.parse(publicKey);
     publicKey = key;
     const signedData = 'Create Push Chat Profile \n' + generateHash(key);

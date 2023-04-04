@@ -94,7 +94,7 @@ export const verifyProfileSignature = (
 
   if (
     (verificationProof.split(':')[0] !== SIG_TYPE_V2 &&
-      verificationProof.split(':')[0] !== SIG_TYPE_V2) ||
+      verificationProof.split(':')[0] !== SIG_TYPE_V3) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
