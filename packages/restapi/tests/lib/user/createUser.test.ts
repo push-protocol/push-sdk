@@ -53,7 +53,7 @@ describe('Create user', () => {
     expect(user.numMsg).to.be.equal(0);
     expect(user.linkedListHash).to.be.equal('');
   });
-  it('create user with Enc V2', async () => {
+  it('create user with Enc V3', async () => {
     const user = await create({
       account: account,
       env: _env,
@@ -68,9 +68,9 @@ describe('Create user', () => {
       '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n'
     );
     expect(user.encryptedPrivateKey).to.contains(
-      `"version":"${Constants.ENC_TYPE_V2}"`
+      `"version":"${Constants.ENC_TYPE_V3}"`
     );
-    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V2);
+    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V3);
     expect(user.encryptedPassword).to.be.null;
     expect(user.nftOwner).to.be.null;
     expect(user.profilePicture).to.contains('data:image/png;base64,');

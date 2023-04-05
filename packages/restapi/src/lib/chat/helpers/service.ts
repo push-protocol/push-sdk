@@ -2,7 +2,7 @@ import axios from 'axios';
 import Constants, {ENV} from '../../constants';
 import { generateHash, getAPIBaseUrls, getQueryParams, verifyPGPPublicKey, walletToPCAIP10 } from '../../helpers';
 import { AccountEnvOptionsType, ConversationHashOptionsType, walletType } from '../../types';
-import { getSignature } from './crypto';
+import { getEip191Signature } from './crypto';
 
 type CreateUserOptionsType = {
   user: string;
@@ -49,7 +49,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signatureObj = await getSignature(user, wallet!, hash);
+  const signatureObj = await getEip191Signature(wallet!, hash);
 
   const body = {
     ...data, 
@@ -102,7 +102,7 @@ export const upgradeUserService = async (options: upgradeUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signatureObj = await getSignature(user, wallet!, hash);
+  const signatureObj = await getEip191Signature(wallet!, hash);
 
   const body = {
     ...data, 

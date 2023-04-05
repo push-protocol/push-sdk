@@ -70,6 +70,7 @@ export type ParsedResponseType = {
 };
 
 export interface ISendNotificationInputOptions {
+  senderType: 0 | 1;
   signer: any;
   type: NOTIFICATION_TYPE;
   identityType: IDENTITY_TYPE;
@@ -84,6 +85,7 @@ export interface ISendNotificationInputOptions {
     cta: string;
     img: string;
     metadata?: any;
+    additionalMeta?: any;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -94,7 +96,9 @@ export interface ISendNotificationInputOptions {
     counter: number;
   };
   ipfsHash?: string;
-  env?:  ENV;
+  env?: ENV;
+  chatId?: string;
+  pgpPrivateKey?: string;
 }
 
 export interface INotificationPayload {
@@ -168,26 +172,35 @@ export interface Member {
   publicKey: string;
 }
 
-
 export interface GroupDTO {
-  members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-  pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-  contractAddressERC20: string | null,
-  numberOfERC20: number,
-  contractAddressNFT: string | null,
-  numberOfNFTTokens: number,
-  verificationProof: string,
-  groupImage: string | null,
-  groupName: string,
-  isPublic: boolean,
-  groupDescription: string | null,
-  groupCreator: string,
-  chatId: string
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  groupImage: string | null;
+  groupName: string;
+  isPublic: boolean;
+  groupDescription: string | null;
+  groupCreator: string;
+  chatId: string;
 }
 
 export interface Subscribers {
-  itemcount: number
-  subscribers: Array<string>
+  itemcount: number;
+  subscribers: Array<string>;
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
@@ -229,7 +242,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
    * Api key is now optional
    */
   apiKey?: string;
-};
+}
 
 export interface ChatSendOptionsType {
   messageContent?: string;
@@ -243,18 +256,18 @@ export interface ChatSendOptionsType {
   env?: ENV;
   account?: string;
   signer?: SignerType;
-};
+}
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
-};
+}
 
 export interface UserInfo {
-  wallets: string,
-  publicKey: string,
-  name: string,
-  image: string,
-  isAdmin: boolean
+  wallets: string;
+  publicKey: string;
+  name: string;
+  image: string;
+  isAdmin: boolean;
 }
 
 export type SignerType = {
@@ -263,15 +276,17 @@ export type SignerType = {
     types: any,
     value: any
   ) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
   getAddress: () => Promise<string>;
+  getChainId: () => Promise<number>;
   provider?: any;
   publicKey?: string;
   privateKey?: string;
-}
+};
 
 export type EnvOptionsType = {
   env?: ENV;
-}
+};
 
 export type walletType = {
   account: string | null;
@@ -289,3 +304,10 @@ export type encryptedPrivateKeyTypeV2 = {
 }
 
 export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2
+
+export type ProgressHookType = {
+  progressId: string;
+  progressTitle: string,
+  progressInfo: string;
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
+}

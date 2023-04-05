@@ -12,11 +12,23 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 import { ethers } from 'ethers';
 
+type ProgressHookType = {
+  progressId: string;
+  progressTitle: string,
+  progressInfo: string;
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
+}
+
 const CreateUserTest = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
+  const [progress, setProgress] = useState<ProgressHookType | null>(null);
+
+  const handleProgress = (progress: ProgressHookType) => {
+    setProgress(progress);
+  };
 
 
   const testCreateUser = async (index: number) => {
@@ -27,14 +39,16 @@ const CreateUserTest = () => {
         case 0:
           response = await PushAPI.user.create({
             account: isCAIP ? walletToPCAIP10(account) : account,
-            env
+            env,
+            progressHook: handleProgress,
           });
           break;
         case 1: {
           const librarySigner = await library.getSigner();
           response = await PushAPI.user.create({
             signer: librarySigner,
-            env
+            env,
+            progressHook: handleProgress,
           });
         }
           break;
@@ -54,13 +68,15 @@ const CreateUserTest = () => {
           response = await PushAPI.user.create({
             signer: pvtKeySigner,
             account: account,
-            env
+            env,
+            progressHook: handleProgress,
           });
         }
           break;
         case 4: 
           response = await PushAPI.user.create({
-            env
+            env,
+            progressHook: handleProgress,
           });
           break;
         default:
@@ -108,6 +124,14 @@ const CreateUserTest = () => {
             Create user with nothing (Error expecting)
           </SectionButton>
         </SectionItem>
+
+        {progress && (
+          <div>
+            <h3>{progress.progressTitle}</h3>
+            <p>{progress.progressInfo}</p>
+            <p>Level: {progress.level}</p>
+          </div>
+        )}
 
         <SectionItem>
           <div>

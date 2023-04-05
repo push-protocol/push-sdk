@@ -9,6 +9,7 @@ import { decryptPGPKey } from '../../../src/lib/helpers';
 chai.use(chaiAsPromised);
 
 describe('Upgrade user keys', () => {
+  const upgradationVersion = Constants.ENC_TYPE_V3;
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
@@ -44,9 +45,9 @@ describe('Upgrade user keys', () => {
     expect(user.wallets).to.be.equal(upgradedUser.wallets);
     expect(user.publicKey).to.be.equal(upgradedUser.publicKey);
     expect(upgradedUser.encryptedPrivateKey).to.contains(
-      `"version":"${Constants.ENC_TYPE_V2}"`
+      `"version":"${upgradationVersion}"`
     );
-    expect(upgradedUser.encryptionType).to.be.equal(Constants.ENC_TYPE_V2);
+    expect(upgradedUser.encryptionType).to.be.equal(upgradationVersion);
     expect(user.encryptedPassword).to.be.equal(upgradedUser.encryptedPassword);
     expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
     expect(user.profilePicture).to.be.equal(upgradedUser.profilePicture);
@@ -62,10 +63,11 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: upgradedUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedUserPrivatePGPKey);
   });
-  it('upgrade user with Enc V2', async () => {
+  it('upgrade user with Enc V3', async () => {
     const user = await create({
       account: account,
       env: _env,
@@ -83,9 +85,9 @@ describe('Upgrade user keys', () => {
     expect(user.wallets).to.be.equal(upgradedUser.wallets);
     expect(user.publicKey).to.be.equal(upgradedUser.publicKey);
     expect(upgradedUser.encryptedPrivateKey).to.contains(
-      `"version":"${Constants.ENC_TYPE_V2}"`
+      `"version":"${upgradationVersion}"`
     );
-    expect(upgradedUser.encryptionType).to.be.equal(Constants.ENC_TYPE_V2);
+    expect(upgradedUser.encryptionType).to.be.equal(upgradationVersion);
     expect(user.encryptedPassword).to.be.equal(upgradedUser.encryptedPassword);
     expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
     expect(user.profilePicture).to.be.equal(upgradedUser.profilePicture);
@@ -95,11 +97,13 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     const upgradedUserPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: upgradedUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedUserPrivatePGPKey);
   });
@@ -118,16 +122,18 @@ describe('Upgrade user keys', () => {
       encryptedPGPPrivateKey: createdUser.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     const user = await get({ account: account, env: _env });
     expect(user.encryptedPrivateKey).to.contains(
-      `"version":"${Constants.ENC_TYPE_V2}"`
+      `"version":"${upgradationVersion}"`
     );
-    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V2);
+    expect(user.encryptionType).to.be.equal(upgradationVersion);
     const upgradedPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
       env: _env,
+      toUpgrade: true,
     });
     expect(userPrivatePGPKey).to.be.equal(upgradedPrivatePGPKey);
   });

@@ -42,7 +42,9 @@ export interface SignerType {
     types: any,
     value: any
   ) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
   getAddress: () => Promise<string>;
+  getChainId: () => Promise<number>;
   provider?: any;
   publicKey?: string;
   privateKey?: string;
