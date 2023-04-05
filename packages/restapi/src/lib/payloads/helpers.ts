@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
-import { getCAIPAddress } from '../helpers';
+import { generateHash, getCAIPAddress } from '../helpers';
 
 import {
   ISendNotificationInputOptions,
@@ -14,7 +14,6 @@ import {
   SOURCE_TYPES,
 } from './constants';
 import { getConnectedUser, sign } from '../chat/helpers';
-import CryptoES from 'crypto-es';
 
 export function getUUID() {
   return uuidv4();
@@ -235,7 +234,7 @@ export async function getVerificationProof({
         env!
       );
 
-      const hash = CryptoES.SHA256(JSON.stringify(message)).toString();
+      const hash = generateHash(JSON.stringify(message)).toString();
       signature = await sign({
         message: hash,
         signingKey: connectedUser.privateKey!,

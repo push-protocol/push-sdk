@@ -128,20 +128,16 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-
-    console.log(
-      '\n\nAPI call :-->> ',
+    return await axios.post(
       requestURL,
-      '\n\n',
       apiPayload,
-      '\n\n\n\n'
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
 
-    return await axios.post(requestURL, apiPayload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
   } catch (err) {
     console.error(
       '[Push SDK] - Error - sendNotification() - ',

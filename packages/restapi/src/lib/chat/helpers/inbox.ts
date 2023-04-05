@@ -69,8 +69,8 @@ export const decryptConversation = async (options: DecryptConverationType) => {
   } = options || {};
   let otherPeer: IUser;
   let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
-  let gotOtherPeer = false;
   for (const message of messages) {
+    let gotOtherPeer = false;
     if (message.encType !== 'PlainText') {
       if (!pgpPrivateKey) {
         throw Error('Decrypted private key is necessary');
@@ -91,7 +91,8 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signature: message.signature,
         signatureValidationPubliKey: signatureValidationPubliKey,
         pgpPrivateKey,
-      });
+        message: message,
+      });  
     }
   }
   return messages;

@@ -1,5 +1,6 @@
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
-import { ENV } from '../constants';
+import {ENV} from '../constants';
+import {EthEncryptedData} from '@metamask/eth-sig-util';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -158,6 +159,8 @@ export interface IUser {
   sigType: string;
   about: string | null;
   name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
@@ -230,7 +233,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
@@ -242,7 +245,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
 
 export interface ChatSendOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
   receiverAddress: string;
   pgpPrivateKey?: string;
   /**
@@ -267,8 +270,14 @@ export interface UserInfo {
 }
 
 export type SignerType = {
-  _signTypedData: (domain: any, types: any, value: any) => Promise<string>;
+  _signTypedData: (
+    domain: any,
+    types: any,
+    value: any
+  ) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
   getAddress: () => Promise<string>;
+  getChainId: () => Promise<number>;
   provider?: any;
   publicKey?: string;
   privateKey?: string;
@@ -281,4 +290,23 @@ export type EnvOptionsType = {
 export type walletType = {
   account: string | null;
   signer: SignerType | null;
-};
+}
+
+export type encryptedPrivateKeyTypeV1 = EthEncryptedData
+
+export type encryptedPrivateKeyTypeV2 = {
+  ciphertext: string;
+  version: string;
+  salt: string;
+  nonce: string;
+  preKey: string;
+}
+
+export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2
+
+export type ProgressHookType = {
+  progressId: string;
+  progressTitle: string,
+  progressInfo: string;
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
+}

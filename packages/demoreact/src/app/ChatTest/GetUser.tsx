@@ -12,14 +12,27 @@ import { IUser } from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
+type ProgressHookType = {
+  progressId: string;
+  progressTitle: string,
+  progressInfo: string;
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
+}
+
 const GetUserTest = () => {
-  const { account } = useContext<any>(Web3Context);
+  const { account, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [decryptedPrivateKey, setDecryptedPrivateKey] = useState<string | null>(
     null
   );
+  const [progress, setProgress] = useState<ProgressHookType | null>(null);
+
+  const handleProgress = (progress: ProgressHookType) => {
+    setProgress(progress);
+  };
+
 
   const testGetUser = async () => {
     try {
@@ -43,10 +56,15 @@ const GetUserTest = () => {
     try {
       setLoading(true);
       if (Object.keys(connectedUser).length > 0) {
-        const response = await PushAPI.chat.decryptWithWalletRPCMethod(
-          (connectedUser as IUser).encryptedPrivateKey,
-          isCAIP ? walletToPCAIP10(account) : account
-        );
+        const librarySigner = await library.getSigner();
+        const response = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: (connectedUser as IUser).encryptedPrivateKey,
+          account: isCAIP ? walletToPCAIP10(account) : account,
+          signer: librarySigner,
+          env,
+          toUpgrade: true,
+          progressHook: handleProgress,
+        });
 
         setDecryptedPrivateKey(response);
       } else return;
@@ -78,6 +96,13 @@ const GetUserTest = () => {
             <SectionButton onClick={testPrivateKeyDecryption}>
               decrypt private key
             </SectionButton>
+            {progress && (
+              <div>
+                <h3>{progress.progressTitle}</h3>
+                <p>{progress.progressInfo}</p>
+                <p>Level: {progress.level}</p>
+              </div>
+            )}
             {decryptedPrivateKey ? (
               <CodeFormatter>
                 {JSON.stringify(decryptedPrivateKey, null, 4)}
