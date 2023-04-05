@@ -2,6 +2,21 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.1.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.4...restapi-1.1.0) (2023-04-05)
+
+
+### Bug Fixes
+
+* remove unnecessary log ([#289](https://github.com/ethereum-push-notification-service/push-sdk/issues/289)) ([7ac6be3](https://github.com/ethereum-push-notification-service/push-sdk/commit/7ac6be3b99ab1c36fa18e701b7656ff483834456))
+* success progressHook ([#291](https://github.com/ethereum-push-notification-service/push-sdk/issues/291)) ([9fd5b5a](https://github.com/ethereum-push-notification-service/push-sdk/commit/9fd5b5a0a64d922b299e8e33543c0ba500147fbc))
+
+
+### Features
+
+* **sendnotification:** add additionalMeta field to payload ([#235](https://github.com/ethereum-push-notification-service/push-sdk/issues/235)) ([6d9d60b](https://github.com/ethereum-push-notification-service/push-sdk/commit/6d9d60b2532bf408aaed708a8bbf753aeab13296)), closes [#234](https://github.com/ethereum-push-notification-service/push-sdk/issues/234)
+
+
+
 ## [1.0.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.3...restapi-1.0.4) (2023-04-04)
 
 
