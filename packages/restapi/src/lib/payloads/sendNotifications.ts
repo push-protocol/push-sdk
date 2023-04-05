@@ -41,6 +41,11 @@ function validateOptions(options: any) {
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
+      /* 
+        senderType = 0 for channel notification (default)
+        senderType = 1 for chat notification
+      */
+      senderType = 0,
       signer,
       type,
       identityType,
@@ -86,7 +91,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
 
     const verificationProof = await getVerificationProof({
-      senderType: 1, // for chat notification
+      senderType,
       signer,
       chainId,
       identityType,

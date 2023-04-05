@@ -164,11 +164,7 @@ export function getRecipientFieldForAPIPayload({
 }
 
 export async function getVerificationProof({
-  /* 
-    senderType = 0 for channel notification (default)
-    senderType = 1 for chat notification
-  */
-  senderType = 0,
+  senderType,
   signer,
   chainId,
   notificationType,

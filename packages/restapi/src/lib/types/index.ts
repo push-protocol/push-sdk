@@ -70,6 +70,7 @@ export type ParsedResponseType = {
 };
 
 export interface ISendNotificationInputOptions {
+  senderType: 0 | 1;
   signer: any;
   type: NOTIFICATION_TYPE;
   identityType: IDENTITY_TYPE;
