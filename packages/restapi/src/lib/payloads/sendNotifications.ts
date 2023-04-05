@@ -51,17 +51,16 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       env = ENV.PROD,
       chatId,
-      account = null,
       pgpPrivateKey,
     } = options || {};
 
     validateOptions(options);
 
-    if (signer === undefined && account === null) {
-      throw new Error(`At least one from account or signer is necessary!`);
+    if (signer === undefined) {
+      throw new Error(`Signer is necessary!`);
     }
 
-    const wallet = getWallet({ account, signer });
+    const wallet = getWallet({ account: null, signer });
 
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
@@ -87,6 +86,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const notificationPayload = getPayloadForAPIInput(options, _recipients);
 
     const verificationProof = await getVerificationProof({
+      senderType: 1, // for chat notification
       signer,
       chainId,
       identityType,
@@ -128,16 +128,11 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    return await axios.post(
-      requestURL,
-      apiPayload,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
+    return await axios.post(requestURL, apiPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (err) {
     console.error(
       '[Push SDK] - Error - sendNotification() - ',

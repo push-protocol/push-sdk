@@ -164,6 +164,11 @@ export function getRecipientFieldForAPIPayload({
 }
 
 export async function getVerificationProof({
+  /* 
+    senderType = 0 for channel notification (default)
+    senderType = 1 for chat notification
+  */
+  senderType = 0,
   signer,
   chainId,
   notificationType,
@@ -178,6 +183,7 @@ export async function getVerificationProof({
   pgpPrivateKey, //
   env, //
 }: {
+  senderType: 0 | 1;
   signer: any;
   chainId: number;
   notificationType: NOTIFICATION_TYPE;
@@ -225,7 +231,7 @@ export async function getVerificationProof({
       data: `2+${payloadJSON}`,
     };
 
-    if (chatId !== undefined) {
+    if (senderType === 1) {
       // chat notification
       // generate the pgpv2 verification proof
       const connectedUser = await getConnectedUser(
