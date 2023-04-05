@@ -146,7 +146,8 @@ export interface IFeeds {
   intentTimestamp: Date;
   combinedDID: string;
   cid?: string;
-  groupInformation?: GroupDTO;
+  chatId?: string;
+  groupInformation?: GroupDTO
 }
 export interface IUser {
   did: string;
