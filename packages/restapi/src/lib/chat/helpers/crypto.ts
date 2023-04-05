@@ -10,10 +10,11 @@ import {
   walletType,
 } from '../../types';
 import { get } from '../../user';
-import { decryptPGPKey, decryptWithWalletRPCMethod, getTypeInformation, isValidETHAddress, walletToPCAIP10 } from '../../helpers';
+import { decryptPGPKey, decryptWithWalletRPCMethod, isValidETHAddress, walletToPCAIP10, decryptAndVerifySignature } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, {ENV} from '../../constants';
+import { getDomainInformation, getTypeInformation } from './signature';
 
 const SIG_TYPE_V2 = "eip712v2";
 
@@ -80,32 +81,6 @@ export const signMessageWithPGP = async ({
   };
 };
 
-export const decryptAndVerifySignature = async ({
-  cipherText,
-  encryptedSecretKey,
-  publicKeyArmored,
-  signatureArmored,
-  privateKeyArmored,
-}: {
-  cipherText: string;
-  encryptedSecretKey: string;
-  publicKeyArmored: string;
-  signatureArmored: string;
-  privateKeyArmored: string;
-}): Promise<string> => {
-  // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
-  const secretKey: string = await PGP.pgpDecrypt({
-    cipherText: encryptedSecretKey,
-    toPrivateKeyArmored: privateKeyArmored,
-  });
-  await PGP.verifySignature({
-    messageContent: cipherText,
-    signatureArmored,
-    publicKeyArmored,
-  });
-  return AES.aesDecrypt({ cipherText, secretKey });
-};
-
 export const decryptFeeds = async ({
   feeds,
   connectedUser,
@@ -119,8 +94,8 @@ export const decryptFeeds = async ({
 }): Promise<IFeeds[]> => {
     let otherPeer: IUser;
     let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
-    let gotOtherPeer = false;
     for (const feed of feeds) {
+      let gotOtherPeer = false;
       if (feed.msg.encType !== 'PlainText') {
         if (!pgpPrivateKey) {
           throw Error('Decrypted private key is necessary');
@@ -140,6 +115,7 @@ export const decryptFeeds = async ({
           publicKeyArmored: signatureValidationPubliKey,
           signatureArmored: feed.msg.signature,
           privateKeyArmored: pgpPrivateKey,
+          message: feed.msg
         });
       }
     }
@@ -186,6 +162,7 @@ export const decryptMessages = async ({
         privateKeyArmored: connectedUser.privateKey,
         publicKeyArmored: signatureValidationPubliKey,
         signatureArmored: savedMsg.signature,
+        message: savedMsg
       });
     }
   }
@@ -311,33 +288,43 @@ export const getEncryptedRequest = async (
   }
 };
 
-export const getSignature = async (user: string, wallet: walletType, hash: string) => {
+export const getEip191Signature = async (wallet: walletType, message: string) => {
+  if(!wallet?.signer) {
+    console.warn("This method is deprecated. Provide signer in the function");
+    // sending random signature for making it backward compatible
+    return { signature: "xyz", sigType: "a" };
+  }
+  const _signer = wallet?.signer;
+  // sign a message using EIP191
+  const signedMessage = await _signer?.signMessage(message);
+  return {verificationProof: `eip191:${signedMessage}`};
+}
+
+export const getEip712Signature = async (wallet: walletType, hash: string, isDomainEmpty: boolean) => {
   if(!wallet?.signer) {
     console.warn("This method is deprecated. Provide signer in the function");
     // sending random signature for making it backward compatible
     return { signature: "xyz", sigType: "a" };
   }
 
-  // const domainInformation = getDomainInformation(
-  //   1,
-  //   pCAIP10ToWallet(user)
-  // );
-
-  // get type information
-  const typeInformation = getTypeInformation("Create_user");
-  // console.log(domainInformation)
-
+  const typeInformation = getTypeInformation();
   const _signer = wallet?.signer;
+  let chainId: number;
+  try {
+    chainId = await _signer.getChainId();
+  }
+  catch(err) {
+    chainId = 1;
+  }
+  const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
   const signedMessage = await _signer?._signTypedData(
-    {},
+    isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash },
   );
-
-  const verificationProof = `${SIG_TYPE_V2}:${signedMessage}`
-
+  const verificationProof = isDomainEmpty ? `${SIG_TYPE_V2}:${signedMessage}` : `${SIG_TYPE_V2}:${chainId}:${signedMessage}`
   return { verificationProof };
 }
 

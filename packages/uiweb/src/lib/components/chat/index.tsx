@@ -4,7 +4,7 @@ import { Modal } from './Modal';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { IMessageIPFS, ITheme } from '../../types';
+import { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import { Constants, ENV, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
@@ -12,6 +12,7 @@ import { useSDKSocket } from '../../hooks/useSDKSocket';
 
 export type ChatProps = {
   account: string;
+  signer: SignerType;
   supportAddress: string;
   greetingMsg?: string;
   modalTitle?: string;
@@ -26,6 +27,7 @@ export type ButtonStyleProps = {
 
 export const Chat: React.FC<ChatProps> = ({
   account,
+  signer = null,
   supportAddress,
   greetingMsg = Constants.DEFAULT_GREETING_MSG,
   modalTitle = Constants.DEFAULT_TITLE,
@@ -57,6 +59,7 @@ export const Chat: React.FC<ChatProps> = ({
 
   const chatPropsData = {
     account,
+    signer,
     supportAddress,
     greetingMsg,
     modalTitle,
