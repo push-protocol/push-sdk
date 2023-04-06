@@ -74,7 +74,7 @@ export function getCAIPDetails(addressInCAIP: string) : CAIPDetailsType | null {
 export function getFallbackETHCAIPAddress(env: ENV, address: string) {
   let chainId = 1; // by default PROD
 
-  if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING) {
+  if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING || env == Constants.ENV.LOCAL) {
     chainId = 5;
   }
 
