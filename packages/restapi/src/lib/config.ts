@@ -7,6 +7,10 @@ export const API_BASE_URL = {
   [ENV.PROD]: 'https://backend.epns.io/apis',
   [ENV.STAGING]: 'https://backend-staging.epns.io/apis',
   [ENV.DEV]: 'https://backend-dev.epns.io/apis',
+  /**
+   * **This is for local development only**
+   */
+  [ENV.LOCAL]: 'http://localhost:4000/apis',
 };
 
 const BLOCKCHAIN_NETWORK = {
