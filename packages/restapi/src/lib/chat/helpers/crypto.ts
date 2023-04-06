@@ -289,7 +289,19 @@ export const getEncryptedRequest = async (
   }
 };
 
-export const getSignature = async (user: string, wallet: walletType, hash: string, isDomainEmpty: boolean) => {
+export const getEip191Signature = async (wallet: walletType, message: string) => {
+  if(!wallet?.signer) {
+    console.warn("This method is deprecated. Provide signer in the function");
+    // sending random signature for making it backward compatible
+    return { signature: "xyz", sigType: "a" };
+  }
+  const _signer = wallet?.signer;
+  // sign a message using EIP191
+  const signedMessage = await _signer?.signMessage(message);
+  return {verificationProof: `eip191:${signedMessage}`};
+}
+
+export const getEip712Signature = async (wallet: walletType, hash: string, isDomainEmpty: boolean) => {
   if(!wallet?.signer) {
     console.warn("This method is deprecated. Provide signer in the function");
     // sending random signature for making it backward compatible
@@ -313,9 +325,7 @@ export const getSignature = async (user: string, wallet: walletType, hash: strin
     typeInformation,
     { data: hash },
   );
-
   const verificationProof = isDomainEmpty ? `${SIG_TYPE_V2}:${signedMessage}` : `${SIG_TYPE_V2}:${chainId}:${signedMessage}`
-
   return { verificationProof };
 }
 

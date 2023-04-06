@@ -12,6 +12,13 @@ import { IUser } from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
+type ProgressHookType = {
+  progressId: string;
+  progressTitle: string,
+  progressInfo: string;
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
+}
+
 const GetUserTest = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
@@ -20,6 +27,12 @@ const GetUserTest = () => {
   const [decryptedPrivateKey, setDecryptedPrivateKey] = useState<string | null>(
     null
   );
+  const [progress, setProgress] = useState<ProgressHookType | null>(null);
+
+  const handleProgress = (progress: ProgressHookType) => {
+    setProgress(progress);
+  };
+
 
   const testGetUser = async () => {
     try {
@@ -48,7 +61,9 @@ const GetUserTest = () => {
           encryptedPGPPrivateKey: (connectedUser as IUser).encryptedPrivateKey,
           account: isCAIP ? walletToPCAIP10(account) : account,
           signer: librarySigner,
-          env
+          env,
+          toUpgrade: true,
+          progressHook: handleProgress,
         });
 
         setDecryptedPrivateKey(response);
@@ -81,6 +96,13 @@ const GetUserTest = () => {
             <SectionButton onClick={testPrivateKeyDecryption}>
               decrypt private key
             </SectionButton>
+            {progress && (
+              <div>
+                <h3>{progress.progressTitle}</h3>
+                <p>{progress.progressInfo}</p>
+                <p>Level: {progress.level}</p>
+              </div>
+            )}
             {decryptedPrivateKey ? (
               <CodeFormatter>
                 {JSON.stringify(decryptedPrivateKey, null, 4)}
