@@ -2,8 +2,15 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
-import { approveRequestPayload, sign, getConnectedUserV2, IApproveRequestPayload, getAccountAddress, getWallet } from './helpers';
-import * as CryptoJS from "crypto-js"
+import {
+  approveRequestPayload,
+  sign,
+  getConnectedUserV2,
+  IApproveRequestPayload,
+  getAccountAddress,
+  getWallet,
+} from './helpers';
+import * as CryptoJS from 'crypto-js';
 import { send } from './send';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
@@ -25,11 +32,9 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
 /**
  * Approve Chat Request
  */
-export const approve = async (
-  options: ApproveRequestOptionsType
-) => {
+export const approve = async (options: ApproveRequestOptionsType) => {
   const {
-    status = "Approved",
+    status = 'Approved',
     // sigType = 'sigType',
     account = null,
     signer = null,
@@ -38,7 +43,7 @@ export const approve = async (
     pgpPrivateKey = null,
   } = options || {};
 
-  if(account == null && signer == null) {
+  if (account == null && signer == null) {
     throw new Error(`At least one from account or signer is necessary!`);
   }
 
@@ -48,40 +53,42 @@ export const approve = async (
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
 
-  const body: IApproveRequestPayload = approveRequestPayload(senderAddress, address, status);
+  const body: IApproveRequestPayload = approveRequestPayload(
+    senderAddress,
+    address,
+    status
+  );
 
-   const bodyToBeHashed = {
-     fromDID: body.fromDID,
-     toDID: body.toDID,
-     status: body.status
-   }
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.toDID,
+    status: body.status,
+  };
 
-  const connectedUser = await getConnectedUserV2(wallet,pgpPrivateKey, env);
+  const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
-   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString()
-   const signature: string = await sign({
-     message: hash,
-     signingKey: connectedUser.privateKey!
-   });
-   const sigType = "pgp";
-   const verificationProof: string = sigType + ":" + signature;
-   body.verificationProof = verificationProof;
-
-   try{
+  const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+  const signature: string = await sign({
+    message: hash,
+    signingKey: connectedUser.privateKey!,
+  });
+  const sigType = 'pgp';
+  const verificationProof: string = sigType + ':' + signature;
+  body.verificationProof = verificationProof;
+  try {
     const response = await axios.put(apiEndpoint, body);
     await send({
-      messageContent: `${senderAddress} joined`, 
+      messageContent: `${address} joined`,
       messageType: 'Meta',
-      receiverAddress: body.toDID,
-      pgpPrivateKey, 
+      receiverAddress: senderAddress,
+      pgpPrivateKey,
       env,
       account,
-      signer
-    })
-    return response
-   }
-   catch(err){
+      signer,
+    });
+    return response;
+  } catch (err) {
     console.error(`[Push SDK] - API ${approve.name}: `, err);
     throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
-   }
-}
+  }
+};
