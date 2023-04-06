@@ -18,7 +18,7 @@ import { ImageDownloadWithIndicator, VideoDownloadWithIndicator  } from '../load
 
 
 // ================= Define types
-export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "BSC_MAINNET" | "BSC_TESTNET" | "OPTIMISM_MAINNET" | "OPTIMISM_TESTNET" | "ZK_EVM_TESTNET" | "THE_GRAPH" | undefined;
+export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "BSC_MAINNET" | "BSC_TESTNET" | "OPTIMISM_MAINNET" | "OPTIMISM_TESTNET" | "POLYGON_ZK_EVM_TESTNET" | "POLYGON_ZK_EVM_MAINNET" | "THE_GRAPH" | undefined;
 
 const botImageLocalPath = '../../assets/epnsbot.png';
 
