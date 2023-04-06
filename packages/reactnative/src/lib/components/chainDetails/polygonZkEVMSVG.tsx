@@ -1,5 +1,5 @@
 import * as React from 'react';
-const PolygonZkEVMSvgComponent = (props: any) => (
+const PolygonZKEVMSvgComponent = (props: any) => (
   <svg
     width={24}
     height={24}
@@ -41,4 +41,4 @@ const PolygonZkEVMSvgComponent = (props: any) => (
     </defs>
   </svg>
 );
-export default PolygonZkEVMSvgComponent;
+export default PolygonZKEVMSvgComponent;
