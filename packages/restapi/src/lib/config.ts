@@ -40,7 +40,7 @@ export const ALIAS_CHAIN_ID = {
     [ENV.STAGING]: 420,
     [ENV.DEV]: 420
   },
-  ZKEVM: {
+  POLYGONZKEVM: {
     [ENV.PROD]: 1101,
     [ENV.STAGING]: 1442,
     [ENV.DEV]: 1442
