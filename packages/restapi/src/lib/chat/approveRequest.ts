@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAPIBaseUrls } from '../helpers';
+import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
@@ -54,16 +54,16 @@ export const approve = async (
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
 
-  const body: IApproveRequestPayload = approveRequestPayload(
-    senderAddress,
-    address,
-    status
-  );
-
+  let isGroup = true;
+  if (isValidETHAddress(senderAddress)) {
+    isGroup = false;
+  }
   const bodyToBeHashed = {
-    fromDID: body.fromDID,
-    toDID: body.toDID,
-    status: body.status,
+    fromDID: isGroup
+      ? walletToPCAIP10(address)
+      : walletToPCAIP10(senderAddress),
+    toDID: isGroup ? senderAddress : walletToPCAIP10(address),
+    status: status,
   };
 
   const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
@@ -73,9 +73,14 @@ export const approve = async (
     message: hash,
     signingKey: connectedUser.privateKey!,
   });
-  const sigType = 'pgp';
-  const verificationProof: string = sigType + ':' + signature;
-  body.verificationProof = verificationProof;
+
+  const body: IApproveRequestPayload = approveRequestPayload(
+    senderAddress,
+    address,
+    status,
+    'pgp',
+    signature
+  );
 
   return axios
     .put(apiEndpoint, body)

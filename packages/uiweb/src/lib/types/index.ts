@@ -1,5 +1,6 @@
-import React, { ReactElement } from "react";
-import {  ENV } from '../config';
+import React, { ReactElement } from 'react';
+import { ENV } from '../config';
+import { ethers } from 'ethers';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -14,38 +15,25 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-  icon?: ReactElement<string|any>;
+  icon?: ReactElement<string | any>;
 }
 
-
 export interface AccountEnvOptionsType {
-  env?:  ENV;
+  env?: ENV;
   account: string;
-  signer: SignerType
+  signer: SignerType;
 }
 
 export interface ITheme {
-  bgColorPrimary?: string,
-  bgColorSecondary?: string,
-  textColorPrimary?: string,
-  textColorSecondary?: string,
-  btnColorPrimary?: string,
-  btnColorSecondary?: string
-  border?:string,
-  borderRadius?:string,
-  moduleColor?:string,
+  bgColorPrimary?: string;
+  bgColorSecondary?: string;
+  textColorPrimary?: string;
+  textColorSecondary?: string;
+  btnColorPrimary?: string;
+  btnColorSecondary?: string;
+  border?: string;
+  borderRadius?: string;
+  moduleColor?: string;
 }
 
-export interface SignerType {
-  _signTypedData: (
-    domain: any,
-    types: any,
-    value: any
-  ) => Promise<string>;
-  signMessage: (message: string) => Promise<string>;
-  getAddress: () => Promise<string>;
-  getChainId: () => Promise<number>;
-  provider?: any;
-  publicKey?: string;
-  privateKey?: string;
-}
+export type SignerType = ethers.Wallet;

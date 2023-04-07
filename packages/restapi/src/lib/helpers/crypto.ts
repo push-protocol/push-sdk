@@ -49,7 +49,7 @@ export const getPublicKey = async (options: walletType): Promise<string> => {
   const metamaskProvider = new ethers.providers.Web3Provider(
     (window as any).ethereum
   );
-  const web3Provider = signer?.provider || metamaskProvider;
+  const web3Provider: any = signer?.provider || metamaskProvider;
 
   const keyB64 = await web3Provider.provider.request({
     method: 'eth_getEncryptionPublicKey',
@@ -139,7 +139,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           const metamaskProvider = new ethers.providers.Web3Provider(
             (window as any).ethereum
           );
-          const web3Provider = signer?.provider || metamaskProvider;
+          const web3Provider: any = signer?.provider || metamaskProvider;
           privateKey = await web3Provider.provider.request({
             method: 'eth_decrypt',
             params: [encryptedPGPPrivateKey, address],
