@@ -197,6 +197,9 @@ export interface GroupDTO {
   groupDescription: string | null;
   groupCreator: string;
   chatId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  groupType: string;
 }
 
 export interface Subscribers {
@@ -205,21 +208,6 @@ export interface Subscribers {
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
-}
-
-export interface IMessageIPFS {
-  fromCAIP10: string;
-  toCAIP10: string;
-  fromDID: string;
-  toDID: string;
-  messageType: string;
-  messageContent: string;
-  signature: string;
-  sigType: string;
-  link: string | null;
-  timestamp?: number;
-  encType: string;
-  encryptedSecret: string;
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -301,4 +289,22 @@ export type ProgressHookType = {
   progressTitle: string;
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
+
+export type MessageWithCID = {
+  cid: string;
+  chatId: string;
+  link: string;
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+  verificationProof?: string;
 };

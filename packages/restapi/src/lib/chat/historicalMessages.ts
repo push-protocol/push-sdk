@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { pCAIP10ToWallet } from '../helpers';
-import { AccountEnvOptionsType } from '../types';
+import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { get } from '../user';
 import { decryptConversation, getMessagesService } from './helpers';
 
@@ -23,7 +23,9 @@ export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
 /**
  * Get all the messages exchanged between users after the threadhash.
  */
-export const history = async (options: HistoricalMessagesOptionsType) => {
+export const history = async (
+  options: HistoricalMessagesOptionsType
+): Promise<IMessageIPFS[]> => {
   const {
     threadhash,
     limit = FetchLimit.DEFAULT,

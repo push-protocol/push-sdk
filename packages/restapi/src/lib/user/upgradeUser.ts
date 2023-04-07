@@ -26,7 +26,7 @@ export type UpgradeUserProps = {
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const upgrade = async (options: UpgradeUserProps) => {
+export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
   const {
     env = Constants.ENV.PROD,
     account = null,
