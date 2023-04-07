@@ -31,7 +31,9 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
 /**
  * Approve Chat Request
  */
-export const approve = async (options: ApproveRequestOptionsType) => {
+export const approve = async (
+  options: ApproveRequestOptionsType
+): Promise<string> => {
   const {
     status = 'Approved',
     // sigType = 'sigType',
@@ -80,8 +82,13 @@ export const approve = async (options: ApproveRequestOptionsType) => {
     signature
   );
 
-  return axios.put(apiEndpoint, body).catch((err) => {
-    console.error(`[Push SDK] - API ${approve.name}: `, err);
-    throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
-  });
+  return axios
+    .put(apiEndpoint, body)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      console.error(`[Push SDK] - API ${approve.name}: `, err);
+      throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
+    });
 };

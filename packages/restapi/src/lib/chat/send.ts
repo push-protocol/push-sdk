@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
-import { ChatSendOptionsType } from '../types';
+import { ChatSendOptionsType, MessageWithCID } from '../types';
 import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
@@ -10,7 +10,9 @@ import { ISendMessagePayload, sendMessagePayload } from './helpers';
 /**
  * Send a message to an address or a group
  */
-export const send = async (options: ChatSendOptionsType) => {
+export const send = async (
+  options: ChatSendOptionsType
+): Promise<MessageWithCID> => {
   const {
     messageContent = '',
     messageType = 'Text',
@@ -23,10 +25,10 @@ export const send = async (options: ChatSendOptionsType) => {
   } = options || {};
 
   try {
-    if(account == null && signer == null) {
+    if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
-  
+
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
