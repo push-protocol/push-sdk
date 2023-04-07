@@ -259,7 +259,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = ethers.Wallet | null;
+export type SignerType = ethers.Wallet;
 
 export type EnvOptionsType = {
   env?: ENV;
