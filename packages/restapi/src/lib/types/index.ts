@@ -1,6 +1,7 @@
+import { ethers } from 'ethers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
-import {ENV} from '../constants';
-import {EthEncryptedData} from '@metamask/eth-sig-util';
+import { ENV } from '../constants';
+import { EthEncryptedData } from '@metamask/eth-sig-util';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -147,7 +148,7 @@ export interface IFeeds {
   combinedDID: string;
   cid?: string;
   chatId?: string;
-  groupInformation?: GroupDTO
+  groupInformation?: GroupDTO;
 }
 export interface IUser {
   did: string;
@@ -270,19 +271,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = {
-  _signTypedData: (
-    domain: any,
-    types: any,
-    value: any
-  ) => Promise<string>;
-  signMessage: (message: string) => Promise<string>;
-  getAddress: () => Promise<string>;
-  getChainId: () => Promise<number>;
-  provider?: any;
-  publicKey?: string;
-  privateKey?: string;
-};
+export type SignerType = ethers.Wallet | null;
 
 export type EnvOptionsType = {
   env?: ENV;
@@ -291,9 +280,9 @@ export type EnvOptionsType = {
 export type walletType = {
   account: string | null;
   signer: SignerType | null;
-}
+};
 
-export type encryptedPrivateKeyTypeV1 = EthEncryptedData
+export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
 
 export type encryptedPrivateKeyTypeV2 = {
   ciphertext: string;
@@ -301,13 +290,15 @@ export type encryptedPrivateKeyTypeV2 = {
   salt: string;
   nonce: string;
   preKey: string;
-}
+};
 
-export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2
+export type encryptedPrivateKeyType =
+  | encryptedPrivateKeyTypeV1
+  | encryptedPrivateKeyTypeV2;
 
 export type ProgressHookType = {
   progressId: string;
-  progressTitle: string,
+  progressTitle: string;
   progressInfo: string;
-  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
-}
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
