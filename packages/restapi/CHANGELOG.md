@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.1...restapi-1.2.2) (2023-04-07)
+
+
+### Bug Fixes
+
+* local for local development ([#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)) ([639b4d2](https://github.com/ethereum-push-notification-service/push-sdk/commit/639b4d2de728ef289da5889b51fd45e003156699))
+* main merge ([0be9604](https://github.com/ethereum-push-notification-service/push-sdk/commit/0be9604eacf003db0cc4244f41d5e9c533f7613a))
+* remove hardcoded values ([#299](https://github.com/ethereum-push-notification-service/push-sdk/issues/299)) ([02a4e20](https://github.com/ethereum-push-notification-service/push-sdk/commit/02a4e2077a2ee4fb010d619d04acffc1881a2c0c))
+* signerType  ([#303](https://github.com/ethereum-push-notification-service/push-sdk/issues/303)) ([20eb15a](https://github.com/ethereum-push-notification-service/push-sdk/commit/20eb15af4bc3286e5836845e299326352af0ce34))
+* version update ([d5433a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/d5433a93de34e69953ca88e602d264b234708727))
+* version update ([#302](https://github.com/ethereum-push-notification-service/push-sdk/issues/302)) ([82bd4f7](https://github.com/ethereum-push-notification-service/push-sdk/commit/82bd4f7882f8782f8d19a1daf97e5366ce26c5de))
+
+
+
 ## [1.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.0...restapi-1.2.1) (2023-04-07)
 
 
