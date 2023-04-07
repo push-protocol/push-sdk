@@ -15,6 +15,7 @@ import {
   SignerType,
   encryptedPrivateKeyType,
   ProgressHookType,
+  IUser,
 } from '../types';
 
 export type CreateUserProps = {
@@ -25,7 +26,7 @@ export type CreateUserProps = {
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const create = async (options: CreateUserProps) => {
+export const create = async (options: CreateUserProps): Promise<IUser> => {
   const {
     env = Constants.ENV.PROD,
     account = null,
