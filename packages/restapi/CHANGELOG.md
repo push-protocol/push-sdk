@@ -8,10 +8,7 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 ### Bug Fixes
 
 * added types for chat fn ([#298](https://github.com/ethereum-push-notification-service/push-sdk/issues/298)) ([1c944b2](https://github.com/ethereum-push-notification-service/push-sdk/commit/1c944b237909e393f6ae72c76138411076c62b13))
-* **component:** dummy ([61cfc0c](https://github.com/ethereum-push-notification-service/push-sdk/commit/61cfc0cfa3fac4c3ee754b837bd6e562b9ee2faf))
-* **component:** dummy ([9b53717](https://github.com/ethereum-push-notification-service/push-sdk/commit/9b53717f8aa4f67d2a991033dc3ab04b9672b2d2))
-* **component:** dummy ([617a4cf](https://github.com/ethereum-push-notification-service/push-sdk/commit/617a4cf4402bde574aee59dfb212f32fe7ce8b8d))
-* **component:** dummy ([2af4079](https://github.com/ethereum-push-notification-service/push-sdk/commit/2af4079a91664832fa72d9eb7a3ae3f9536bdefc))
+
 
 
 
