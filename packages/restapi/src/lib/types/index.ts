@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -258,15 +259,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = {
-  _signTypedData: (domain: any, types: any, value: any) => Promise<string>;
-  signMessage: (message: string) => Promise<string>;
-  getAddress: () => Promise<string>;
-  getChainId: () => Promise<number>;
-  provider?: any;
-  publicKey?: string;
-  privateKey?: string;
-};
+export type SignerType = ethers.Wallet;
 
 export type EnvOptionsType = {
   env?: ENV;
