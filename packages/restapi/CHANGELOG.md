@@ -2,6 +2,34 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.1.0...restapi-1.2.0) (2023-04-06)
+
+
+### Bug Fixes
+
+* **component:** add chatid to requests and chats ([#278](https://github.com/ethereum-push-notification-service/push-sdk/issues/278)) ([e1d4af5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1d4af5aa9cfeef0a2ca422d87a158e546fe9d4a))
+
+
+### Features
+
+* local for local development ([#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)) ([2b09806](https://github.com/ethereum-push-notification-service/push-sdk/commit/2b09806d28f1c8d2f74e163691fc2bcc60f26116))
+
+
+
+# [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.1.0...restapi-1.2.0) (2023-04-06)
+
+
+### Bug Fixes
+
+* **component:** add chatid to requests and chats ([#278](https://github.com/ethereum-push-notification-service/push-sdk/issues/278)) ([e1d4af5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1d4af5aa9cfeef0a2ca422d87a158e546fe9d4a))
+
+
+### Features
+
+* local for local development ([#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)) ([2b09806](https://github.com/ethereum-push-notification-service/push-sdk/commit/2b09806d28f1c8d2f74e163691fc2bcc60f26116))
+
+
+
 # [1.1.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.0.4...restapi-1.1.0) (2023-04-05)
 
 
