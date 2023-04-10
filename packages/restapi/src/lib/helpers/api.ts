@@ -14,6 +14,6 @@ export function getLimit(passedLimit?: number) {
     // if (passedLimit > Constants.PAGINATION.LIMIT_MAX) {
     //   return Constants.PAGINATION.LIMIT_MAX;
     // }
-  
+    
     return passedLimit;
 }

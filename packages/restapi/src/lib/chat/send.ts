@@ -23,7 +23,7 @@ export const send = async (
     apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
-
+  
   try {
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);

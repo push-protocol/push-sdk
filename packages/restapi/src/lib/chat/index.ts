@@ -6,7 +6,7 @@ export * from './approveRequest';
 export * from './updateUser';
 export * from './historicalMessages';
 export * from './latestMessage';
-export { decryptWithWalletRPCMethod } from "../helpers/crypto";
+export { decryptWithWalletRPCMethod } from '../helpers/crypto';
 export { decryptPGPKey } from "../helpers/crypto";
 export { decryptConversation } from "./helpers";
 export * from './helpers/payloadHelper';

@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
-import Constants, {ENV} from '../constants';
-import {
- GroupDTO
-} from '../types';
+import Constants, { ENV } from '../constants';
+import { GroupDTO } from '../types';
 
 
 /**
@@ -11,8 +9,8 @@ import {
  */
 
 export interface GetGroupByNameType {
-    groupName: string,
-    env?: ENV,
+  groupName: string;
+  env?: ENV;
 }
 
 export const getGroupByName = async (
@@ -20,24 +18,28 @@ export const getGroupByName = async (
 ): Promise<GroupDTO> => {
     const { groupName, env = Constants.ENV.PROD } = options || {};
     try {
-        if (groupName == null || groupName.length == 0) {
-            throw new Error(`Group Name cannot be null or empty`);
-        }
+      if (groupName == null || groupName.length == 0) {
+        throw new Error(`Group Name cannot be null or empty`);
+      }
 
-        const API_BASE_URL = getAPIBaseUrls(env);
-        const requestUrl = `${API_BASE_URL}/v1/chat/groups?groupName=${groupName}`;
-        return axios
-            .get(requestUrl)
-            .then((response) => {
-                return response.data;
-            })
-            .catch((err) => {
-                if (err?.response?.data)
-                    throw new Error(err?.response?.data);
-                throw new Error(err);
-            });
+      const API_BASE_URL = getAPIBaseUrls(env);
+      const requestUrl = `${API_BASE_URL}/v1/chat/groups?groupName=${groupName}`;
+      return axios
+        .get(requestUrl)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          if (err?.response?.data) throw new Error(err?.response?.data);
+          throw new Error(err);
+        });
     } catch (err) {
-        console.error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -:  `, err);
-        throw Error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -: ${err}`);
+      console.error(
+        `[Push SDK] - API  - Error - API ${getGroupByName.name} -:  `,
+        err
+      );
+      throw Error(
+        `[Push SDK] - API  - Error - API ${getGroupByName.name} -: ${err}`
+      );
     }
 };

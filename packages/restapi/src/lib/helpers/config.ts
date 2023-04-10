@@ -15,7 +15,7 @@ export const getConfig = (
     networkId: string
   }
 ): ConfigType => {
-
+  
   const blockchainSelector = `${blockchain}:${networkId}`;
   const configuration = CONFIG[env][blockchainSelector];
 

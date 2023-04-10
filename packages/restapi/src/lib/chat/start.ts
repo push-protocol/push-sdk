@@ -16,7 +16,7 @@ export const start = async (
     apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
-
+  
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
   const headers = {

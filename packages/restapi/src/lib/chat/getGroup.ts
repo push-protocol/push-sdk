@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
-import Constants, {ENV} from '../constants';
-import {
-   GroupDTO 
-} from '../types';
+import Constants, { ENV } from '../constants';
+import { GroupDTO } from '../types';
 
 
 /**
@@ -11,8 +9,8 @@ import {
  */
 
 export interface GetGroupType {
-    chatId: string,
-    env?: ENV
+  chatId: string;
+  env?: ENV;
 }
 
 export const getGroup = async (
@@ -20,24 +18,26 @@ export const getGroup = async (
 ): Promise<GroupDTO> => {
     const { chatId, env = Constants.ENV.PROD } = options || {};
     try {
-        if (chatId == null || chatId.length == 0) {
-            throw new Error(`chatId cannot be null or empty`);
-        }
+      if (chatId == null || chatId.length == 0) {
+        throw new Error(`chatId cannot be null or empty`);
+      }
 
-        const API_BASE_URL = getAPIBaseUrls(env);
-        const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
-        return axios
-            .get(requestUrl)
-            .then((response) => {
-                return response.data;
-            })
-            .catch((err) => {
-                if (err?.response?.data)
-                    throw new Error(err?.response?.data);
-                throw new Error(err);
-            });
+      const API_BASE_URL = getAPIBaseUrls(env);
+      const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
+      return axios
+        .get(requestUrl)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          if (err?.response?.data) throw new Error(err?.response?.data);
+          throw new Error(err);
+        });
     } catch (err) {
-        console.error(`[Push SDK] - API  - Error - API ${getGroup.name} -:  `, err);
-        throw Error(`[Push SDK] - API  - Error - API ${getGroup.name} -: ${err}`);
+      console.error(
+        `[Push SDK] - API  - Error - API ${getGroup.name} -:  `,
+        err
+      );
+      throw Error(`[Push SDK] - API  - Error - API ${getGroup.name} -: ${err}`);
     }
 };
