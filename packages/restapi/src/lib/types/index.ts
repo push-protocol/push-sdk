@@ -173,6 +173,11 @@ export interface Member {
   publicKey: string;
 }
 
+export enum ChatStatus {
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+  ENDED = 'ENDED'
+}
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -200,6 +205,36 @@ export interface GroupDTO {
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
   groupType: string;
+  status: ChatStatus | null;
+}
+
+export interface SpaceDTO {
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  spaceImage: string | null;
+  spaceName: string;
+  isPublic: boolean;
+  spaceDescription: string | null;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status: ChatStatus | null;
 }
 
 export interface Subscribers {

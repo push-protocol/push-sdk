@@ -27,6 +27,11 @@ import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
 import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
+import CreateSpaceTest from './ChatTest/CreateSpaceTest';
+import UpdateSpaceTest from './ChatTest/UpdateSpaceTest';
+import GetSpaceTest from './ChatTest/GetSpaceTest';
+import GetSpaceInfoTest from './ChatTest/GetSpaceInfoTest';
+import ApproveSpaceRequestTest from './ChatTest/ApproveSpaceRequestTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
@@ -243,7 +248,11 @@ export function App() {
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
-
+                <Route path="/createSpace" element={<CreateSpaceTest />} />
+                <Route path="/updateSpace" element={<UpdateSpaceTest />} />
+                <Route path="/getSpace" element={<GetSpaceTest />} />
+                <Route path="/getSpaceInfo" element={<GetSpaceInfoTest />} />
+                <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

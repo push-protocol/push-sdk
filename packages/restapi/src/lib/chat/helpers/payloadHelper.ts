@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
@@ -139,7 +139,10 @@ export const createGroupPayload = (
   numberOfNFTs?: number,
   contractAddressERC20?: string,
   numberOfERC20?: number,
-  meta?: string
+  meta?: string,
+  groupType? : string | null,
+  scheduleAt?: Date | null,
+  scheduleEnd?: Date | null
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -155,8 +158,33 @@ export const createGroupPayload = (
     groupCreator: groupCreator,
     verificationProof: verificationProof,
     meta: meta,
+    groupType: groupType,
+    scheduleAt: scheduleAt,
+    scheduleEnd: scheduleEnd
   };
   return body;
+};
+
+export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
+  const spaceDto: SpaceDTO = {
+    members: groupDto.members,
+    pendingMembers: groupDto.pendingMembers,
+    contractAddressERC20: groupDto.contractAddressERC20,
+    numberOfERC20: groupDto.numberOfERC20,
+    contractAddressNFT: groupDto.contractAddressNFT,
+    numberOfNFTTokens: groupDto.numberOfNFTTokens,
+    verificationProof: groupDto.verificationProof,
+    spaceImage: groupDto.groupImage,
+    spaceName: groupDto.groupName,
+    isPublic: groupDto.isPublic,
+    spaceDescription: groupDto.groupDescription,
+    spaceCreator: groupDto.groupCreator,
+    spaceId: groupDto.chatId,
+    scheduleAt: groupDto.scheduleAt,
+    scheduleEnd: groupDto.scheduleEnd,
+    status: groupDto.status
+  };
+  return spaceDto;
 };
 
 export const updateGroupPayload = (
@@ -166,7 +194,10 @@ export const updateGroupPayload = (
   members: Array<string>,
   admins: Array<string>,
   address: string,
-  verificationProof: string
+  verificationProof: string,
+  scheduleAt?: Date | null,
+  scheduleEnd?: Date | null,
+  status?: ChatStatus | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -176,6 +207,9 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    scheduleAt: scheduleAt,
+    scheduleEnd: scheduleEnd,
+    status: status
   };
   return body;
 };
