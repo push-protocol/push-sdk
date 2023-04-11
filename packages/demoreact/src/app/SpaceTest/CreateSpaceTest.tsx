@@ -9,7 +9,7 @@ import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
-import ChatTest from '../ChatTest/ChatTest';
+import SpaceTest from '../SpaceTest/SpaceTest';
 
 const CreateSpaceTest = () => {
   const { account ,library} = useContext<any>(Web3Context);
@@ -135,7 +135,7 @@ const CreateSpaceTest = () => {
 
   return (
     <div>
-      <ChatTest />
+      <SpaceTest />
       <h2>Create Space Test page</h2>
 
       <Loader show={isLoading} />

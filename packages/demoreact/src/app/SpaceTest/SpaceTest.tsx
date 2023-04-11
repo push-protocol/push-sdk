@@ -22,7 +22,7 @@ const SpaceTest = () => {
 
   return (
     <div>
-      <h2>Chat Test page</h2>
+      <h2>Space Test page</h2>
 
       <Loader show={isLoading} />
 
@@ -42,6 +42,12 @@ const SpaceTest = () => {
           </Link>
           <Link to="/approveSpace" className="nav-button">
             SPACE.APPROVE
+          </Link>
+          <Link to="/startSpace" className="nav-button">
+            SPACE.START
+          </Link>
+          <Link to="/stopSpace" className="nav-button">
+            SPACE.STOP
           </Link>
         </NavMenu>
       </Section>

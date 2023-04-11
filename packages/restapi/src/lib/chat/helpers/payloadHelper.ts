@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Member } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
@@ -45,7 +45,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string;
+  groupImage: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -189,8 +189,8 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string,
-  groupDescription: string,
+  groupImage: string | null,
+  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,
@@ -212,4 +212,54 @@ export const updateGroupPayload = (
     status: status
   };
   return body;
+};
+
+// helper.ts
+
+export const getAdminsList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const adminsFromMembers = members
+    ? convertToWalletAddressList(members.filter((admin) => admin.isAdmin))
+    : [];
+
+  const adminsFromPendingMembers = pendingMembers
+    ? convertToWalletAddressList(pendingMembers.filter((admin) => admin.isAdmin))
+    : [];
+
+  const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
+  return adminList;
+};
+
+export const convertToWalletAddressList = (memberList: { wallet: string }[]): string[] => {
+  return memberList ? memberList.map((member) => member.wallet) : [];
+};
+
+export const getMembersList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const allMembers = [...(members || []), ...(pendingMembers || [])];
+  return convertToWalletAddressList(allMembers);
 };

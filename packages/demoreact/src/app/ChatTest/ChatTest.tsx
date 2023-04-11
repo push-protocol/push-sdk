@@ -64,21 +64,6 @@ const ChatTest = () => {
           <Link to="/getGroup" className="nav-button">
             CHAT.GETGROUP
           </Link>
-          <Link to="/createSpace" className="nav-button">
-            SPACE.CREATE
-          </Link>
-          <Link to="/updateSpace" className="nav-button">
-            SPACE.UPDATE
-          </Link>
-          <Link to="/getSpace" className="nav-button">
-            SPACE.GET
-          </Link>
-          <Link to="/getSpaceInfo" className="nav-button">
-            SPACE.INFO
-          </Link>
-          <Link to="/approveSpace" className="nav-button">
-            SPACE.APPROVE
-          </Link>
         </NavMenu>
       </Section>
     </div>

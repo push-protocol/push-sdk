@@ -37,6 +37,9 @@ import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import {Buffer} from 'buffer';
 import { ENV } from './helpers';
+import SpaceTest from './SpaceTest/SpaceTest';
+import StartSpaceTest from './SpaceTest/StartSpaceTest';
+import StopSpaceTest from './SpaceTest/StopSpaceTest';
 
 window.Buffer = window.Buffer || Buffer; 
 
@@ -237,6 +240,7 @@ export function App() {
                 <Route path="/embed" element={<EmbedTest />} />
 
                 <Route path="/chat" element={<ChatTest />} />
+                <Route path="/space" element={<SpaceTest />} />
 
                 {/* chat method  routes */}
                 <Route path="/get" element={<GetUserTest />} />
@@ -256,6 +260,8 @@ export function App() {
                 <Route path="/getSpace" element={<GetSpaceTest />} />
                 <Route path="/getSpaceInfo" element={<GetSpaceInfoTest />} />
                 <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
+                <Route path="/startSpace" element={<StartSpaceTest />} />
+                <Route path="/stopSpace" element={<StopSpaceTest />} />
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>
