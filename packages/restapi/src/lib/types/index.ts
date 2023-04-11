@@ -196,10 +196,10 @@ export interface GroupDTO {
   contractAddressNFT: string | null;
   numberOfNFTTokens: number;
   verificationProof: string;
-  groupImage: string | null;
+  groupImage: string;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string | null;
+  groupDescription: string;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
@@ -226,10 +226,10 @@ export interface SpaceDTO {
   contractAddressNFT: string | null;
   numberOfNFTTokens: number;
   verificationProof: string;
-  spaceImage: string | null;
+  spaceImage: string ;
   spaceName: string;
   isPublic: boolean;
-  spaceDescription: string | null;
+  spaceDescription: string;
   spaceCreator: string;
   spaceId: string;
   scheduleAt?: Date | null;

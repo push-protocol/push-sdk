@@ -45,7 +45,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string | null;
+  groupImage: string;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -189,8 +189,8 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string | null,
-  groupDescription: string | null,
+  groupImage: string,
+  groupDescription: string,
   members: Array<string>,
   admins: Array<string>,
   address: string,
