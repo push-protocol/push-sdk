@@ -27,11 +27,11 @@ import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
 import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
-import CreateSpaceTest from './ChatTest/CreateSpaceTest';
-import UpdateSpaceTest from './ChatTest/UpdateSpaceTest';
-import GetSpaceTest from './ChatTest/GetSpaceTest';
-import GetSpaceInfoTest from './ChatTest/GetSpaceInfoTest';
-import ApproveSpaceRequestTest from './ChatTest/ApproveSpaceRequestTest';
+import CreateSpaceTest from './SpaceTest/CreateSpaceTest';
+import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
+import GetSpaceTest from './SpaceTest/GetSpaceTest';
+import GetSpaceInfoTest from './SpaceTest/GetSpaceInfoTest';
+import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
@@ -214,6 +214,9 @@ export function App() {
                       </Link>
                       <Link to="/chat" className="nav-button">
                         CHAT
+                      </Link>
+                      <Link to="/space" className="nav-button">
+                        SPACE
                       </Link>
                     </NavMenu>
                   }

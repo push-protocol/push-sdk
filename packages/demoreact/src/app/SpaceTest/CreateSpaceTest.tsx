@@ -9,7 +9,7 @@ import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
-import ChatTest from './ChatTest';
+import ChatTest from '../ChatTest/ChatTest';
 
 const CreateSpaceTest = () => {
   const { account ,library} = useContext<any>(Web3Context);

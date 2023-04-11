@@ -8,9 +8,9 @@ import {
 import Loader from '../components/Loader';
 import { EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import ChatTest from './ChatTest';
+import SpaceTest from './SpaceTest';
 
-const GetSpaceTest = () => {
+const GetSpaceInfoTest = () => {
   const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceId, setSpaceId] = useState<string>('');
@@ -25,7 +25,7 @@ const GetSpaceTest = () => {
       setLoading(true);
 
       // object for connected user data
-      const response = await PushAPI.space.get({
+      const response = await PushAPI.space.info({
         spaceId: spaceId,
         env,
       });
@@ -42,8 +42,8 @@ const GetSpaceTest = () => {
 
   return (
     <div>
-      <ChatTest />
-      <h2>Get Space Test page</h2>
+      <SpaceTest />
+      <h2>Get Space Info Test page</h2>
 
       <Loader show={isLoading} />
 
@@ -61,7 +61,7 @@ const GetSpaceTest = () => {
               />
             </SectionItem>
 
-          <SectionItem>
+        <SectionItem>
           <div>
             {sendResponse ? (
               <CodeFormatter>
@@ -75,4 +75,4 @@ const GetSpaceTest = () => {
   );
 };
 
-export default GetSpaceTest;
+export default GetSpaceInfoTest;
