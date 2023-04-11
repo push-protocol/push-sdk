@@ -1,6 +1,8 @@
+import { getConnectedUser, getWallet } from '../../chat/helpers';
 import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
+import { SignerType } from '../../types';
 
 interface VideoCallInfoType {
   recipientAddress: string;
@@ -13,10 +15,8 @@ interface VideoCallInfoType {
 
 interface UserInfoType {
   account: string;
-  library: any;
+  signer: SignerType;
   chainId: number;
-  connectedUser: any;
-  createUserIfNecessary: any;
 }
 
 interface videoPayloadType {
@@ -28,13 +28,7 @@ interface videoPayloadType {
 }
 
 const sendVideoCallNotification = async (
-  {
-    account,
-    library,
-    chainId,
-    connectedUser,
-    createUserIfNecessary,
-  }: UserInfoType,
+  { account, signer, chainId }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
@@ -54,23 +48,18 @@ const sendVideoCallNotification = async (
     };
 
     const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
-    const _signer = await library.getSigner(account);
-
-    // TODO
-    let createdUser;
-    if (!connectedUser.publicKey) {
-      createdUser = await createUserIfNecessary();
-    }
-
     const recipientAddressInCaip = getCAIPWithChainId(
       recipientAddress,
       chainId
     );
 
+    const wallet = getWallet({ account, signer });
+    const connectedUser = await getConnectedUser(wallet, null, env);
+
     await sendNotification({
       senderType: 1, // for chat notification
-      signer: _signer,
-      pgpPrivateKey: connectedUser?.privateKey || createdUser?.privateKey,
+      signer,
+      pgpPrivateKey: connectedUser.privateKey!,
       chatId,
       type: 3,
       identityType: 2,

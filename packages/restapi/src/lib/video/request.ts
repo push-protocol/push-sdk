@@ -1,8 +1,12 @@
-import Peer from 'simple-peer';
+import * as Peer from 'simple-peer';
 import Constants, { ENV } from '../constants';
 import sendVideoCallNotification from './helpers/sendVideoCallNotification';
+import { SignerType } from '../types';
 
 export type RequestOptionsType = {
+  account: string;
+  library: any;
+  chainId: number;
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
@@ -18,17 +22,25 @@ export type RequestReturnType = {
   incomingStream: MediaStream | undefined;
 };
 
-export const request = (options: RequestOptionsType): RequestReturnType => {
+export const request = async (
+  options: RequestOptionsType
+): Promise<RequestReturnType> => {
   const {
+    library,
+    account,
+    chainId,
     senderAddress,
     recipientAddress,
     chatId,
-    connectedUser,
     peerInstanceRef,
     localStream,
     onRecieveMessage,
     env = Constants.ENV.PROD,
   } = options || {};
+
+  let incomingStream: MediaStream | undefined = undefined;
+
+  const signer: SignerType = await library.getSigner(account);
 
   const peer = new Peer({
     initiator: true,
@@ -38,7 +50,7 @@ export const request = (options: RequestOptionsType): RequestReturnType => {
 
   peer.on('signal', (data: any) => {
     sendVideoCallNotification(
-      { account, library, chainId, connectedUser, createUserIfNecessary },
+      { account, signer, chainId },
       {
         recipientAddress,
         senderAddress,
@@ -51,23 +63,25 @@ export const request = (options: RequestOptionsType): RequestReturnType => {
   });
 
   peer.on('connect', () => {
-    // wait for 'connect' event before using the data channel
     peer.send('dummy message from sender');
   });
 
-  peer.on('data', (data:any) => {
-    // got a data channel message
+  peer.on('data', (data: any) => {
     console.log('received message', data);
+    onRecieveMessage(data);
   });
 
   peer.on('stream', (currentStream: MediaStream) => {
-    console.log('GOT STREAM BACK IN CALLUSER');
-
-    userVideo.current.srcObject = currentStream;
-    userVideo.current.play();
+    incomingStream = currentStream;
   });
 
-  peerInstanceRef.current = peer;
+  const sendMessage = (message: string): void => {
+    peer.send(message);
+  };
 
-  return {};
+  peerInstanceRef.current = peer;
+  return {
+    incomingStream,
+    sendMessage,
+  };
 };
