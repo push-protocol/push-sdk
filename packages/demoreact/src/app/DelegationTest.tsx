@@ -9,7 +9,7 @@ import { getCAIPAddress } from './helpers';
 const DelegationTest = () => {
   const { account } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
-  const [delegationData, setDelegationData] = useState();
+  const [delegationData, setDelegationData] = useState<{channel : string}[]>();
 
 
   const testGetDelegations = async () => {

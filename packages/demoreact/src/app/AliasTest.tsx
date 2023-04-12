@@ -12,7 +12,7 @@ const AliasTest = () => {
   const [ aliasAddr, setAliasAddr ] = useState<string>('');
   const [ aliasChain, setAliasChain ] = useState<'POLYGON' | 'BSC'>('POLYGON');
   const [isLoading, setLoading] = useState(false);
-  const [aliasData, setAliasData] = useState();
+  const [aliasData, setAliasData] = useState<PushAPI.AliasInfoReturnType>();
   
 
   const updateAliasAddr = (e: React.SyntheticEvent<HTMLElement>) => {

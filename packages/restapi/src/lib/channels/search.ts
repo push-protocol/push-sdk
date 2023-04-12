@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { getAPIBaseUrls, getQueryParams, getLimit } from '../helpers';
-import Constants, {ENV} from '../constants';
+import Constants, { ENV } from '../constants';
+import { SearchReturnType } from '../types';
 
 /**
- *  GET /v1/channels/search/ 
+ *  GET /v1/channels/search/
  *  optional params: page=(1)&limit=(20{min:1}{max:30})&query=(searchquery)
- *  
+ *
  */
 
 export type SearchChannelOptionsType = {
@@ -13,11 +14,11 @@ export type SearchChannelOptionsType = {
   env?: ENV;
   page?: number;
   limit?: number;
-}
+};
 
 export const search = async (
   options: SearchChannelOptionsType
-) => {
+): Promise<SearchReturnType[]> => {
   const {
     query,
     env = Constants.ENV.PROD,
@@ -31,12 +32,13 @@ export const search = async (
   const queryObj = {
     page,
     limit: getLimit(limit),
-    query: query
+    query: query,
   };
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-  return axios.get(requestUrl)
+  return axios
+    .get(requestUrl)
     .then((response) => response.data.channels)
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
-}
+};

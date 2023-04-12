@@ -38,7 +38,9 @@ function validateOptions(options: any) {
   }
 }
 
-export async function sendNotification(options: ISendNotificationInputOptions) {
+export async function sendNotification(
+  options: ISendNotificationInputOptions
+): Promise<{ status: number; config: any }> {
   try {
     const {
       /* 

@@ -1,35 +1,31 @@
 import axios from 'axios';
-import {
-  getCAIPAddress,
-  getAPIBaseUrls
-} from '../helpers';
-import Constants, {ENV} from '../constants';
+import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
+import Constants, { ENV } from '../constants';
+import { ChannelReturnType } from '../types';
 
 /**
- *  GET /v1/channels/{addressinCAIP}   
+ *  GET /v1/channels/{addressinCAIP}
  */
 
 export type GetChannelOptionsType = {
   channel: string;
   env?: ENV;
-}
+};
 
 export const getChannel = async (
   options: GetChannelOptionsType
-) => {
-  const {
-    channel,
-    env = Constants.ENV.PROD,
-  } = options || {};
+): Promise<ChannelReturnType> => {
+  const { channel, env = Constants.ENV.PROD } = options || {};
 
   const _channel = getCAIPAddress(env, channel, 'Channel');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}/${_channel}`;
 
-  return await axios.get(requestUrl)
+  return await axios
+    .get(requestUrl)
     .then((response) => response.data)
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
-}
+};

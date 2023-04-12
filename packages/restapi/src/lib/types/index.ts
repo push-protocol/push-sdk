@@ -308,3 +308,41 @@ export type MessageWithCID = {
   encryptedSecret: string;
   verificationProof?: string;
 };
+
+export type AliasInfoReturnType =
+  | {
+      channel: string;
+      alias_addres: string;
+      is_alias_verified: number;
+      blocked: number;
+      activation_status: number;
+    }
+  | Record<string, never>;
+
+export type DelegationReturnType = { channel: string };
+
+export type SubscriptionsReturnType = DelegationReturnType;
+
+export type ChannelReturnType = {
+  id: number;
+  channel: string;
+  ipfshash: string;
+  name: string | null;
+  info: string | null;
+  url: string | null;
+  icon: string | null;
+  processed: number;
+  attempts: number;
+  alias_address: string | null;
+  alias_verification_event: any;
+  is_alias_verified: number;
+  alias_blockchain_id: string | null;
+  activation_status: number;
+  verified_status: number;
+  timestamp: string;
+  blocked: number;
+  counter: null | number;
+  subgraph_details: string | null;
+  subgraph_attempts: number;
+};
+export type SearchReturnType = ChannelReturnType & { subscriber_count: number };

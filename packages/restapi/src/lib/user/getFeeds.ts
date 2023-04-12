@@ -5,8 +5,9 @@ import {
   getQueryParams,
   getLimit,
 } from '../helpers';
-import Constants, {ENV} from '../constants';
+import Constants, { ENV } from '../constants';
 import { parseApiResponse } from '../utils';
+import { ParsedResponseType } from '../types';
 
 export type FeedsOptionsType = {
   user: string;
@@ -15,11 +16,11 @@ export type FeedsOptionsType = {
   limit?: number;
   spam?: boolean;
   raw?: boolean;
-}
+};
 
 export const getFeeds = async (
   options: FeedsOptionsType
-) => {
+): Promise<ParsedResponseType[]> => {
   const {
     user,
     env = Constants.ENV.PROD,
@@ -36,11 +37,12 @@ export const getFeeds = async (
   const queryObj = {
     page,
     limit: getLimit(limit),
-    spam
+    spam,
   };
 
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-  return axios.get(requestUrl)
+  return axios
+    .get(requestUrl)
     .then((response) => {
       if (raw) {
         return response?.data?.feeds || [];
@@ -50,4 +52,4 @@ export const getFeeds = async (
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
-}
+};

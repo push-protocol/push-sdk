@@ -12,10 +12,10 @@ const ChannelsTest = () => {
   const [channelAddr, setChannelAddr] = useState<string>('');
   const [channelName, setChannelName] = useState<string>('');
   const [isLoading, setLoading] = useState(false);
-  const [channelData, setChannelData] = useState();
-  const [channelListData, setChannelListData] = useState();
+  const [channelData, setChannelData] = useState<PushAPI.ChannelReturnType>();
+  const [channelListData, setChannelListData] = useState<PushAPI.SearchReturnType[]>();
   const [subscriberData, setSubscriberData] = useState<any>();
-  const [channelDelegatesData, setChannelDelegatesData] = useState();
+  const [channelDelegatesData, setChannelDelegatesData] = useState<string[]>();
   const [subscriberStatus, setSubscriberStatus] = useState<boolean>();
   
 
@@ -101,14 +101,14 @@ const ChannelsTest = () => {
   const testSubscriberStatus = async () => {
     try {
       setLoading(true);
-      let subscriptions = await PushAPI.user.getSubscriptions({
+      const subscriptions = await PushAPI.user.getSubscriptions({
         user: isCAIP ? getCAIPAddress(env, account) : account,
         env
       });
 
-      subscriptions = subscriptions.map((sub: any) => sub.channel.toLowerCase());
+      const subscriptionsAddress = subscriptions.map((sub: any) => sub.channel.toLowerCase());
       
-      const status = subscriptions.includes(channelAddr.toLowerCase());
+      const status = subscriptionsAddress.includes(channelAddr.toLowerCase());
 
       setSubscriberStatus(status);
     } catch(e) {

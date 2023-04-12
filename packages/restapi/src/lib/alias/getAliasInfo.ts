@@ -5,6 +5,7 @@ import {
 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ALIAS_CHAIN, ALIAS_CHAIN_ID } from '../config';
+import { AliasInfoReturnType } from '../types';
 
 /**
  *  GET /v1/alias/{aliasAddressinCAIP}/channel
@@ -24,7 +25,7 @@ export type GetAliasInfoOptionsType = {
 
 export const getAliasInfo = async (
   options : GetAliasInfoOptionsType
-) => {
+): Promise<AliasInfoReturnType> => {
   const {
     alias,
     aliasChain,
