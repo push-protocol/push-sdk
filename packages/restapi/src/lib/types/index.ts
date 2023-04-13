@@ -1,6 +1,7 @@
+import { ethers } from 'ethers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
-import {ENV} from '../constants';
-import {EthEncryptedData} from '@metamask/eth-sig-util';
+import { ENV } from '../constants';
+import { EthEncryptedData } from '@metamask/eth-sig-util';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -70,6 +71,7 @@ export type ParsedResponseType = {
 };
 
 export interface ISendNotificationInputOptions {
+  senderType: 0 | 1;
   signer: any;
   type: NOTIFICATION_TYPE;
   identityType: IDENTITY_TYPE;
@@ -84,6 +86,7 @@ export interface ISendNotificationInputOptions {
     cta: string;
     img: string;
     metadata?: any;
+    additionalMeta?: any;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -94,7 +97,9 @@ export interface ISendNotificationInputOptions {
     counter: number;
   };
   ipfsHash?: string;
-  env?:  ENV;
+  env?: ENV;
+  chatId?: string;
+  pgpPrivateKey?: string;
 }
 
 export interface INotificationPayload {
@@ -142,7 +147,8 @@ export interface IFeeds {
   intentTimestamp: Date;
   combinedDID: string;
   cid?: string;
-  groupInformation?: GroupDTO
+  chatId?: string;
+  groupInformation?: GroupDTO;
 }
 export interface IUser {
   did: string;
@@ -167,44 +173,41 @@ export interface Member {
   publicKey: string;
 }
 
-
 export interface GroupDTO {
-  members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-  pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
-  contractAddressERC20: string | null,
-  numberOfERC20: number,
-  contractAddressNFT: string | null,
-  numberOfNFTTokens: number,
-  verificationProof: string,
-  groupImage: string | null,
-  groupName: string,
-  isPublic: boolean,
-  groupDescription: string | null,
-  groupCreator: string,
-  chatId: string
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  groupImage: string | null;
+  groupName: string;
+  isPublic: boolean;
+  groupDescription: string | null;
+  groupCreator: string;
+  chatId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  groupType: string;
 }
 
 export interface Subscribers {
-  itemcount: number
-  subscribers: Array<string>
+  itemcount: number;
+  subscribers: Array<string>;
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
-}
-
-export interface IMessageIPFS {
-  fromCAIP10: string;
-  toCAIP10: string;
-  fromDID: string;
-  toDID: string;
-  messageType: string;
-  messageContent: string;
-  signature: string;
-  sigType: string;
-  link: string | null;
-  timestamp?: number;
-  encType: string;
-  encryptedSecret: string;
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -228,7 +231,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
    * Api key is now optional
    */
   apiKey?: string;
-};
+}
 
 export interface ChatSendOptionsType {
   messageContent?: string;
@@ -242,44 +245,32 @@ export interface ChatSendOptionsType {
   env?: ENV;
   account?: string;
   signer?: SignerType;
-};
+}
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
   conversationId: string;
-};
+}
 
 export interface UserInfo {
-  wallets: string,
-  publicKey: string,
-  name: string,
-  image: string,
-  isAdmin: boolean
+  wallets: string;
+  publicKey: string;
+  name: string;
+  image: string;
+  isAdmin: boolean;
 }
 
-export type SignerType = {
-  _signTypedData: (
-    domain: any,
-    types: any,
-    value: any
-  ) => Promise<string>;
-  signMessage: (message: string) => Promise<string>;
-  getAddress: () => Promise<string>;
-  getChainId: () => Promise<number>;
-  provider?: any;
-  publicKey?: string;
-  privateKey?: string;
-}
+export type SignerType = ethers.Wallet;
 
 export type EnvOptionsType = {
   env?: ENV;
-}
+};
 
 export type walletType = {
   account: string | null;
   signer: SignerType | null;
-}
+};
 
-export type encryptedPrivateKeyTypeV1 = EthEncryptedData
+export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
 
 export type encryptedPrivateKeyTypeV2 = {
   ciphertext: string;
@@ -287,13 +278,33 @@ export type encryptedPrivateKeyTypeV2 = {
   salt: string;
   nonce: string;
   preKey: string;
-}
+};
 
-export type encryptedPrivateKeyType = encryptedPrivateKeyTypeV1 | encryptedPrivateKeyTypeV2
+export type encryptedPrivateKeyType =
+  | encryptedPrivateKeyTypeV1
+  | encryptedPrivateKeyTypeV2;
 
 export type ProgressHookType = {
   progressId: string;
-  progressTitle: string,
+  progressTitle: string;
   progressInfo: string;
-  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
-}
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
+
+export type MessageWithCID = {
+  cid: string;
+  chatId: string;
+  link: string;
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+  verificationProof?: string;
+};
