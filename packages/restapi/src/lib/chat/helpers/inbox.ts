@@ -34,7 +34,7 @@ export const getInboxLists = async (
   for (const list of lists) {
     let message;
     if (list.threadhash !== null) {
-      message = await getCID(list.threadhash, { env });
+      message = getCID(list.threadhash, { env });
     }
     // This is for groups that are created without any message
     else {
@@ -52,7 +52,11 @@ export const getInboxLists = async (
         toDID: ''
       }
     }
-    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
+    Promise.all([message])
+    .then((message) => {
+      feeds.push({ ...list, ...message, groupInformation: list.groupInformation });
+    })
+    .catch((e) => console.log(e.message))
   }
 
   if (toDecrypt)
