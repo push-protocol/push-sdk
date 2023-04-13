@@ -319,7 +319,7 @@ export const getEip712Signature = async (wallet: walletType, hash: string, isDom
   const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  const signedMessage = await _signer?._signTypedData(
+  const signedMessage = await _signer?._signTypedData!(
     isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash },
