@@ -116,12 +116,15 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
     });
 
-    const source = getSource(chainId, identityType);
+    const source = getSource(chainId, identityType, senderType);
 
     const apiPayload = {
       verificationProof,
       identity,
-      sender: _channelAddress,
+      sender:
+        senderType === 1
+          ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
+          : _channelAddress,
       source,
       /** note this recipient key has a different expectation from the BE API, see the funciton for more */
       recipient: getRecipientFieldForAPIPayload({
