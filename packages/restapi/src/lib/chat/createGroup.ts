@@ -19,7 +19,7 @@ export interface ChatCreateGroupType extends EnvOptionsType {
   groupName: string;
   groupDescription: string;
   members: Array<string>;
-  groupImage: string;
+  groupImage: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;

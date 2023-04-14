@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Member } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Member, InternalGroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
@@ -29,9 +29,9 @@ export interface IApproveRequestPayload {
 
 export interface ICreateGroupRequestPayload {
   groupName: string;
-  groupDescription: string;
+  groupDescription: string | null;
   members: Array<string>;
-  groupImage: string;
+  groupImage: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -45,7 +45,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string;
+  groupImage: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -128,9 +128,9 @@ export const approveRequestPayload = (
 
 export const createGroupPayload = (
   groupName: string,
-  groupDescription: string,
+  groupDescription: string | null,
   members: Array<string>,
-  groupImage: string,
+  groupImage: string | null,
   admins: Array<string>,
   isPublic: boolean,
   groupCreator: string,
@@ -165,7 +165,7 @@ export const createGroupPayload = (
   return body;
 };
 
-export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
+export const groupDtoToSpaceDto = (groupDto: InternalGroupDTO): SpaceDTO => {
   const spaceDto: SpaceDTO = {
     members: groupDto.members,
     pendingMembers: groupDto.pendingMembers,
@@ -189,8 +189,8 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string,
-  groupDescription: string,
+  groupImage: string | null,
+  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,

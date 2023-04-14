@@ -20,8 +20,8 @@ export interface ChatUpdateSpaceType extends EnvOptionsType {
   signer?: SignerType;
   spaceId: string;
   spaceName: string;
-  spaceImage: string;
-  spaceDescription: string;
+  spaceImage: string | null;
+  spaceDescription: string | null;
   members: Array<string>;
   admins: Array<string>;
   pgpPrivateKey?: string;
@@ -62,7 +62,6 @@ export const update = async (
       spaceId,
       spaceName,
       spaceDescription,
-      spaceImage,
       members,
       admins,
       address

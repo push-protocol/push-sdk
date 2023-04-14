@@ -196,10 +196,36 @@ export interface GroupDTO {
   contractAddressNFT: string | null;
   numberOfNFTTokens: number;
   verificationProof: string;
-  groupImage: string;
+  groupImage: string | null;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string;
+  groupDescription: string | null;
+  groupCreator: string;
+  chatId: string;
+}
+
+export interface InternalGroupDTO {
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  groupImage: string | null;
+  groupName: string;
+  isPublic: boolean;
+  groupDescription: string | null;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
@@ -226,10 +252,10 @@ export interface SpaceDTO {
   contractAddressNFT: string | null;
   numberOfNFTTokens: number;
   verificationProof: string;
-  spaceImage: string ;
+  spaceImage: string | null;
   spaceName: string;
   isPublic: boolean;
-  spaceDescription: string;
+  spaceDescription: string | null;
   spaceCreator: string;
   spaceId: string;
   scheduleAt?: Date | null;

@@ -4,7 +4,7 @@ import {
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
-    groupName: string, groupDescription: string,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
+    groupName: string, groupDescription: string | null,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number
@@ -60,7 +60,7 @@ export const createGroupRequestValidator = (
 };
 
 export const createSpaceRequestValidator = (
-    spaceName: string, spaceDescription: string,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
+    spaceName: string, spaceDescription: string | null,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
     numberOfNFTs ? : number,
     contractAddressERC20 ? : string,
     numberOfERC20 ? : number
@@ -141,7 +141,7 @@ export const validateScheduleDates = (scheduleAt: Date,
 };
 
 export const updateGroupRequestValidator = (
-    chatId: string, groupName: string, groupDescription: string, profilePicture: string, members: Array < string > ,
+    chatId: string, groupName: string, groupDescription: string | null, members: Array < string > ,
     admins: Array < string > , address: string
 ): void => {
 
@@ -152,10 +152,6 @@ export const updateGroupRequestValidator = (
 
     if (groupName == null || groupName.length == 0) {
         throw new Error(`groupName cannot be null or empty`);
-    }
-
-    if (profilePicture == null || profilePicture.length == 0) {
-        throw new Error(`profilePicture cannot be null or empty`);
     }
 
     if (groupName != null && groupName.length > 50) {

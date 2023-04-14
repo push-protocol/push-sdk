@@ -27,6 +27,8 @@ import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
 import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
+import AddMembersToGroupTest from './ChatTest/AddMembersToGroupTest';
+import AddAdminsToGroupTest from './ChatTest/AddAdminsToGroupTest';
 import CreateSpaceTest from './SpaceTest/CreateSpaceTest';
 import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
 import GetSpaceTest from './SpaceTest/GetSpaceTest';
@@ -40,6 +42,8 @@ import { ENV } from './helpers';
 import SpaceTest from './SpaceTest/SpaceTest';
 import StartSpaceTest from './SpaceTest/StartSpaceTest';
 import StopSpaceTest from './SpaceTest/StopSpaceTest';
+import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
+import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
 
 window.Buffer = window.Buffer || Buffer; 
 
@@ -254,6 +258,10 @@ export function App() {
                 <Route path="/requests" element={<GetRequestsTest />} />
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
+                <Route path="/addMembersToGroup" element={<AddMembersToGroupTest />} />
+                 <Route path="/addAdminsToGroup" element={<AddAdminsToGroupTest />} />
+                <Route path="/removeMembersFromGroup" element={<RemoveMembersFromGroupTest />} />
+                 <Route path="/removeAdminsFromGroup" element={<RemoveAdminsFromGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
                 <Route path="/createSpace" element={<CreateSpaceTest />} />
                 <Route path="/updateSpace" element={<UpdateSpaceTest />} />

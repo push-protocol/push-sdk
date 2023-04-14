@@ -1,43 +1,38 @@
 import axios from 'axios';
-import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType } from '../types';
+import { EnvOptionsType, SignerType, GroupDTO } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
   getConnectedUser,
   sign,
-  updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
+  getMembersList,
+  getAdminsList
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-
-export interface ChatUpdateGroupType extends EnvOptionsType {
+import {
+  getGroup
+} from './getGroup';
+export interface AddMembersToGroupType extends EnvOptionsType {
+  chatId: string;
+  members: Array<string>;
   account?: string;
   signer?: SignerType;
-  chatId: string;
-  groupName: string;
-  groupImage: string | null;
-  groupDescription: string;
-  members: Array<string>;
-  admins: Array<string>;
   pgpPrivateKey?: string;
 }
 
 /**
  * Update Group information
  */
-export const updateGroup = async (
-  options: ChatUpdateGroupType
+export const addMembersToGroup = async (
+  options: AddMembersToGroupType
 ): Promise<GroupDTO> => {
   const {
     chatId,
-    groupName,
-    groupImage,
-    groupDescription,
     members,
-    admins,
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
@@ -47,24 +42,49 @@ export const updateGroup = async (
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
+  
+    if (!members || members.length === 0) {
+      throw new Error("Member address array cannot be empty!");
+    }
+  
+    members.forEach((member) => {
+      if (!isValidETHAddress(member)) {
+        throw new Error(`Invalid member address: ${member}`);
+      }
+    });
 
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
-    updateGroupRequestValidator(
-      chatId,
-      groupName,
-      groupDescription,
-      members,
-      admins,
-      address
-    );
+
+    const group = await getGroup({
+        chatId: chatId,
+        env,
+    })
+
     const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
-    const convertedMembers = members.map(walletToPCAIP10);
-    const convertedAdmins = admins.map(walletToPCAIP10);
+
+    const convertedMembers = getMembersList(
+        group.members, group.pendingMembers
+    );
+
+    const membersToBeAdded = members.map((member) => walletToPCAIP10(member));
+
+    membersToBeAdded.forEach((member) => {
+      if (convertedMembers.includes(member)) {
+        throw new Error(`Member ${member} already exists in the list`);
+      }
+    });
+
+    convertedMembers.push(...membersToBeAdded);
+
+    const convertedAdmins = getAdminsList(
+        group.members, group.pendingMembers
+    );
+
     const bodyToBeHashed = {
-      groupName: groupName,
-      groupDescription: groupDescription,
-      groupImage: groupImage,
+      groupName: group.groupName,
+      groupDescription: group.groupDescription,
+      groupImage: group.groupImage,
       members: convertedMembers,
       admins: convertedAdmins,
       chatId: chatId,
@@ -79,9 +99,9 @@ export const updateGroup = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
     const body: IUpdateGroupRequestPayload = updateGroupPayload(
-      groupName,
-      groupImage,
-      groupDescription,
+      group.groupName,
+      group.groupImage,
+      group.groupDescription,
       convertedMembers,
       convertedAdmins,
       walletToPCAIP10(address),
@@ -99,11 +119,11 @@ export const updateGroup = async (
       });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${addMembersToGroup.name} -:  `,
       err
     );
     throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -: ${err}`
+      `[Push SDK] - API  - Error - API ${addMembersToGroup.name} -: ${err}`
     );
   }
 };

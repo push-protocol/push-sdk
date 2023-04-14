@@ -19,9 +19,9 @@ export interface ChatCreateSpaceType extends EnvOptionsType {
   account?: string;
   signer?: SignerType;
   spaceName: string;
-  spaceDescription: string;
+  spaceDescription: string | null;
   members: Array<string>;
-  spaceImage: string;
+  spaceImage: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;

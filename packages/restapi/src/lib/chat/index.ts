@@ -14,3 +14,7 @@ export * from './createGroup';
 export * from './updateGroup';
 export * from './getGroup';
 export * from './getGroupByName';
+export * from './addMembersToGroup';
+export * from './addAdminsToGroup';
+export * from './removeMembersFromGroup';
+export * from './removeAdminsFromGroup';
