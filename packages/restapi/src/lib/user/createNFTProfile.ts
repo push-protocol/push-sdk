@@ -10,6 +10,8 @@ import {
   walletToPCAIP10,
   encryptPGPKey,
   preparePGPPublicKey,
+  encryptV3,
+  hexToBytes,
 } from '../helpers';
 import {
   SignerType,
@@ -18,26 +20,40 @@ import {
   IUser,
 } from '../types';
 
-export type CreateUserProps = {
+export type createNFTProfile = {
   env?: ENV;
   account?: string;
-  signer?: SignerType;
-  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
+  signer: SignerType;
+  password: string;
+  nftChainId: number;
+  nftTokenId: number;
+  nftContractAddress: string;
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const create = async (options: CreateUserProps): Promise<IUser> => {
+export const createNFTProfile = async (
+  options: createNFTProfile
+): Promise<IUser> => {
   const {
     env = Constants.ENV.PROD,
     account = null,
-    signer = null,
-    version = Constants.ENC_TYPE_V3,
+    signer,
+    password,
+    nftChainId,
+    nftTokenId,
+    nftContractAddress,
     progressHook,
   } = options || {};
 
   try {
-    if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
+    if (
+      signer === null ||
+      password === null ||
+      nftTokenId === null ||
+      nftChainId === null ||
+      nftContractAddress === null
+    ) {
+      throw new Error(`Invalid Params Passed!`);
     }
 
     const wallet = getWallet({ account, signer });
@@ -46,12 +62,6 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
     }
-
-    const caip10: string = walletToPCAIP10(address);
-    let encryptionType = version;
-
-    // falback to v1
-    if (!signer) encryptionType = Constants.ENC_TYPE_V1;
 
     // Report Progress
     progressHook?.({
@@ -71,6 +81,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
         'This step is is only done for first time users. Please sign the message to continue.',
       level: 'INFO',
     });
+    const encryptionType = Constants.ENC_TYPE_V3;
     const publicKey: string = await preparePGPPublicKey(
       encryptionType,
       keyPairs.publicKeyArmored,
@@ -85,22 +96,31 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
         'Encrypting your keys. Please sign the message to continue.',
       level: 'INFO',
     });
-    const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
+    // encrypt priv key with password
+    const enc = new TextEncoder();
+    const encodedPrivateKey = enc.encode(keyPairs.privateKeyArmored);
+    const encryptedPrivateKey = await encryptV3(
+      encodedPrivateKey,
+      hexToBytes(password)
+    );
+
+    // encrypt password instead of priv key
+    const encryptedPassword: encryptedPrivateKeyType = await encryptPGPKey(
       encryptionType,
-      keyPairs.privateKeyArmored,
+      password,
       address,
       wallet
     );
 
     const body = {
-      user: caip10,
+      user: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
       wallet,
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       encryptionType: encryptionType,
+      encryptedPassword: JSON.stringify(encryptedPassword),
+      nftOwner: walletToPCAIP10(address),
       env,
-      encryptedPassword: null,
-      nftOwner: null,
     };
 
     // Report Progress
@@ -125,9 +145,9 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     progressHook?.({
       progressId: 'PUSH-ERROR-00',
       progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
+      progressInfo: `[Push SDK] - API  - Error - API createNFTProfile() -: ${err}`,
       level: 'ERROR',
     });
-    throw Error(`[Push SDK] - API  - Error - API create User() -: ${err}`);
+    throw Error(`[Push SDK] - API  - Error - API createNFTProfile() -: ${err}`);
   }
 };

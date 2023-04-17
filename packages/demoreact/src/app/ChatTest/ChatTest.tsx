@@ -1,11 +1,8 @@
 import { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import {
-  Section,
-} from '../components/StyledComponents';
+import { Section } from '../components/StyledComponents';
 import Loader from '../components/Loader';
-
 
 const ChatTest = () => {
   const [isLoading, setLoading] = useState(false);
@@ -64,6 +61,15 @@ const ChatTest = () => {
           </Link>
           <Link to="/getGroup" className="nav-button">
             CHAT.GETGROUP
+          </Link>
+          <Link to="/createNFTProfile" className="nav-button">
+            CHAT.CREATENFTPROFILE
+          </Link>
+          <Link to="/getNFTProfile" className="nav-button">
+            CHAT.GETNFTPROFILE
+          </Link>
+          <Link to="/updateNFTProfile" className="nav-button">
+            CHAT.UPDATENFTPROFILE
           </Link>
         </NavMenu>
       </Section>

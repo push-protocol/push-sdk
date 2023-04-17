@@ -17,18 +17,15 @@ import { getEip191Signature } from './crypto';
 type CreateUserOptionsType = {
   user: string;
   wallet?: walletType;
+  name?: string;
+  nftOwner?: string | null;
+  encryptedPassword?: string | null;
   publicKey?: string;
   encryptedPrivateKey?: string;
   encryptionType?: string;
   signature?: string;
   sigType?: string;
   env?: ENV;
-};
-
-type upgradeUserOptionsType = CreateUserOptionsType & {
-  name: string;
-  encryptedPassword: string | null;
-  nftOwner: string | null;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {
@@ -39,6 +36,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     encryptedPrivateKey = '',
     encryptionType = '',
     env = Constants.ENV.PROD,
+    encryptedPassword = null,
+    nftOwner = null,
   } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
@@ -46,14 +45,14 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
   const data = {
-    caip10: walletToPCAIP10(user),
-    did: walletToPCAIP10(user),
+    caip10: user,
+    did: user,
     publicKey,
     encryptedPrivateKey,
     encryptionType,
     name: '',
-    encryptedPassword: null,
-    nftOwner: null,
+    encryptedPassword: encryptedPassword,
+    nftOwner: nftOwner,
   };
 
   const hash = generateHash(data);
@@ -72,7 +71,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
         response.data.publicKey = verifyPGPPublicKey(
           response.data.encryptionType,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.nftOwner
         );
       return response.data;
     })
@@ -82,7 +82,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     });
 };
 
-export const upgradeUserService = async (options: upgradeUserOptionsType) => {
+export const upgradeUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
     wallet,
@@ -125,7 +125,8 @@ export const upgradeUserService = async (options: upgradeUserOptionsType) => {
         response.data.publicKey = verifyPGPPublicKey(
           response.data.encryptionType,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.nftOwner
         );
       return response.data;
     })

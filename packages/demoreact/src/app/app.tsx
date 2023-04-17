@@ -30,10 +30,13 @@ import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
-import {Buffer} from 'buffer';
+import CreateNFTProfileTest from './ChatTest/CreateNFTProfile';
+import GetNFTProfileTest from './ChatTest/GetNFTProfile';
+import UpdateNFTProfileTest from './ChatTest/updateNFTProfile';
+import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 
-window.Buffer = window.Buffer || Buffer; 
+window.Buffer = window.Buffer || Buffer;
 
 interface Web3ReactState {
   chainId?: number;
@@ -219,7 +222,7 @@ export function App() {
                 <Route path="/channels" element={<ChannelsTest />} />
 
                 <Route path="/alias" element={<AliasTest />} />
-                
+
                 <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
@@ -243,7 +246,15 @@ export function App() {
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
-
+                <Route
+                  path="/createNFTProfile"
+                  element={<CreateNFTProfileTest />}
+                />
+                <Route path="/getNFTProfile" element={<GetNFTProfileTest />} />
+                <Route
+                  path="/updateNFTProfile"
+                  element={<UpdateNFTProfileTest />}
+                />
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

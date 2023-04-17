@@ -1,15 +1,24 @@
 import axios from 'axios';
-import { AccountEnvOptionsType, IUser } from '../types';
-import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
+import { IUser } from '../types';
 import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
-import Constants from '../constants';
+import Constants, { ENV } from '../constants';
 
-export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
-  const { account, env = Constants.ENV.PROD } = options || {};
-  if (!isValidETHAddress(account)) {
-    throw new Error(`Invalid address!`);
-  }
-  const caip10 = walletToPCAIP10(account);
+export type getNFTProfile = {
+  env?: ENV;
+  nftChainId: number;
+  nftTokenId: number;
+  nftContractAddress: string;
+};
+
+export const getNFTProfile = async (options: getNFTProfile): Promise<IUser> => {
+  const {
+    nftContractAddress,
+    nftTokenId,
+    nftChainId,
+    env = Constants.ENV.PROD,
+  } = options || {};
+
+  const caip10 = `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`;
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
   return axios
