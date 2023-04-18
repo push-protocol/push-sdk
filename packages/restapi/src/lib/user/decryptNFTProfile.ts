@@ -1,12 +1,12 @@
 import Constants, { ENV } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
-import { decryptPGPKey, decryptV2, hexToBytes } from '../helpers';
+import { decryptPGPKey, decryptV2, hexToBytes, stringToHex } from '../helpers';
 
 type decryptPgpKeyProps = {
   encryptedPGPPrivateKey: string;
-  signer: SignerType | null;
-  encryptedPassword?: string;
-  decryptedPassword?: string;
+  signer?: SignerType | null;
+  encryptedPassword?: string | null;
+  decryptedPassword?: string | null;
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
 };
@@ -34,7 +34,7 @@ export const decryptNFTProfile = async (options: decryptPgpKeyProps) => {
       try {
         const encodedPrivateKey = await decryptV2(
           JSON.parse(encryptedPGPPrivateKey),
-          hexToBytes(decryptedPassword)
+          hexToBytes(stringToHex(decryptedPassword))
         );
         const dec = new TextDecoder();
         privateKey = dec.decode(encodedPrivateKey);
@@ -52,7 +52,7 @@ export const decryptNFTProfile = async (options: decryptPgpKeyProps) => {
 
     if (!decryptionTry1) {
       if (signer === null || encryptedPassword === null) {
-        throw new Error('Signer and encryptedPassword are required');
+        throw new Error('Unable To decrypt Profile!');
       }
       const password = await decryptPGPKey({
         encryptedPGPPrivateKey: encryptedPassword as string,
@@ -61,7 +61,7 @@ export const decryptNFTProfile = async (options: decryptPgpKeyProps) => {
       });
       const encodedPrivateKey = await decryptV2(
         JSON.parse(encryptedPGPPrivateKey),
-        hexToBytes(password)
+        hexToBytes(stringToHex(password))
       );
       const dec = new TextDecoder();
       privateKey = dec.decode(encodedPrivateKey);

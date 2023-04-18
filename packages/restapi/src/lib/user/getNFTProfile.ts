@@ -5,20 +5,13 @@ import Constants, { ENV } from '../constants';
 
 export type getNFTProfile = {
   env?: ENV;
-  nftChainId: number;
-  nftTokenId: number;
-  nftContractAddress: string;
+  did: string;
 };
 
 export const getNFTProfile = async (options: getNFTProfile): Promise<IUser> => {
-  const {
-    nftContractAddress,
-    nftTokenId,
-    nftChainId,
-    env = Constants.ENV.PROD,
-  } = options || {};
+  const { did, env = Constants.ENV.PROD } = options || {};
 
-  const caip10 = `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`;
+  const caip10 = did;
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
   return axios

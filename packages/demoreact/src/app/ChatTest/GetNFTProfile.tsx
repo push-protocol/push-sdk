@@ -59,9 +59,7 @@ const GetNFTProfileTest = () => {
 
       // object for connected user data
       const response = await PushAPI.user.getNFTProfile({
-        nftChainId: nftChainId,
-        nftTokenId: nftTokenId,
-        nftContractAddress: nftContractAddress,
+        did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
         env,
       });
 
@@ -84,7 +82,7 @@ const GetNFTProfileTest = () => {
           env,
           encryptedPassword: (connectedUser as IUser)
             .encryptedPassword as string,
-          decryptedPassword: password,
+          decryptedPassword: password === '' ? null : password,
           progressHook: handleProgress,
         });
 

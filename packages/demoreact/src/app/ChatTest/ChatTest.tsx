@@ -68,8 +68,8 @@ const ChatTest = () => {
           <Link to="/getNFTProfile" className="nav-button">
             CHAT.GETNFTPROFILE
           </Link>
-          <Link to="/updateNFTProfile" className="nav-button">
-            CHAT.UPDATENFTPROFILE
+          <Link to="/upgradeNFTProfile" className="nav-button">
+            CHAT.UPGRADENFTPROFILE
           </Link>
         </NavMenu>
       </Section>

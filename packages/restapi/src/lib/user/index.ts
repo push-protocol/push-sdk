@@ -7,3 +7,4 @@ export * from './getUsersBatch';
 export * from './createNFTProfile';
 export * from './getNFTProfile';
 export * from './decryptNFTProfile';
+export * from './upgradeNFTProfile';

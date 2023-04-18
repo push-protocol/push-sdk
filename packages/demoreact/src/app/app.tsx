@@ -32,7 +32,7 @@ import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import CreateNFTProfileTest from './ChatTest/CreateNFTProfile';
 import GetNFTProfileTest from './ChatTest/GetNFTProfile';
-import UpdateNFTProfileTest from './ChatTest/updateNFTProfile';
+import UpgradeNFTProfileTest from './ChatTest/upgradeNFTProfile';
 import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 
@@ -252,8 +252,8 @@ export function App() {
                 />
                 <Route path="/getNFTProfile" element={<GetNFTProfileTest />} />
                 <Route
-                  path="/updateNFTProfile"
-                  element={<UpdateNFTProfileTest />}
+                  path="/upgradeNFTProfile"
+                  element={<UpgradeNFTProfileTest />}
                 />
               </Routes>
               <ChatSupportTest />

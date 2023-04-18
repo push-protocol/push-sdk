@@ -18,7 +18,7 @@ type ProgressHookType = {
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
 
-const CreateNFTProfileTest = () => {
+const UpgradeNFTProfileTest = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
@@ -26,7 +26,8 @@ const CreateNFTProfileTest = () => {
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
   const [nftTokenId, setNftTokenId] = useState<number>(1);
   const [nftChainId, setNftChainId] = useState<number>(5);
-  const [password, setPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [currentPassword, setCurrentPassword] = useState<string>('');
   const [nftContractAddress, setNftContractAddress] = useState<string>('');
 
   const updateNFTTokenId = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -37,8 +38,12 @@ const CreateNFTProfileTest = () => {
     setNftChainId(parseInt((e.target as HTMLInputElement).value));
   };
 
-  const updatePassword = (e: React.SyntheticEvent<HTMLElement>) => {
-    setPassword((e.target as HTMLInputElement).value);
+  const updateCurrentPassword = (e: React.SyntheticEvent<HTMLElement>) => {
+    setCurrentPassword((e.target as HTMLInputElement).value);
+  };
+
+  const updateNewPassword = (e: React.SyntheticEvent<HTMLElement>) => {
+    setNewPassword((e.target as HTMLInputElement).value);
   };
 
   const updateNftContractAddress = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -49,7 +54,7 @@ const CreateNFTProfileTest = () => {
     setProgress(progress);
   };
 
-  const testCreateNFTProfile = async (index: number) => {
+  const testUpgradeNFTProfile = async (index: number) => {
     try {
       setLoading(true);
       let response;
@@ -57,10 +62,11 @@ const CreateNFTProfileTest = () => {
         case 0:
           {
             const librarySigner = await library.getSigner();
-            response = await PushAPI.user.createNFTProfile({
+            response = await PushAPI.user.upgradeNFTProfile({
               signer: librarySigner,
               account: account,
-              password: password,
+              currentPassword: currentPassword,
+              newPassword: newPassword,
               did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
               progressHook: handleProgress,
               env,
@@ -72,10 +78,11 @@ const CreateNFTProfileTest = () => {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
             const pvtKeySigner = new ethers.Wallet(Pkey);
-            response = await PushAPI.user.createNFTProfile({
+            response = await PushAPI.user.upgradeNFTProfile({
               signer: pvtKeySigner,
               account: account,
-              password: password,
+              currentPassword: currentPassword,
+              newPassword: newPassword,
               did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
               progressHook: handleProgress,
               env,
@@ -97,7 +104,7 @@ const CreateNFTProfileTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>CreateNFTProfile Test page</h2>
+      <h2>Upgrade NFT Profile Test page</h2>
 
       <Loader show={isLoading} />
 
@@ -133,11 +140,21 @@ const CreateNFTProfileTest = () => {
         </SectionItem>
 
         <SectionItem style={{ marginTop: 20 }}>
-          <label>password</label>
+          <label>Current Password</label>
           <input
             type="text"
-            onChange={updatePassword}
-            value={password}
+            onChange={updateCurrentPassword}
+            value={currentPassword}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
+
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>New Password</label>
+          <input
+            type="text"
+            onChange={updateNewPassword}
+            value={newPassword}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
@@ -146,13 +163,13 @@ const CreateNFTProfileTest = () => {
           <label>Note: Connected Wallet should hold the entered nft !!!</label>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateNFTProfile(0)}>
-            CreateNFTProfile with library signer
+          <SectionButton onClick={() => testUpgradeNFTProfile(0)}>
+            UpgradeNFTProfile with library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateNFTProfile(1)}>
-            CreateNFTProfile with private key signer
+          <SectionButton onClick={() => testUpgradeNFTProfile(1)}>
+            UpgradeNFTProfile with private key signer
           </SectionButton>
         </SectionItem>
 
@@ -178,4 +195,4 @@ const CreateNFTProfileTest = () => {
   );
 };
 
-export default CreateNFTProfileTest;
+export default UpgradeNFTProfileTest;

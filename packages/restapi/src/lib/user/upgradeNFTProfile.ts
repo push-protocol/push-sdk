@@ -1,8 +1,7 @@
 import {
-  createUserService,
-  generateKeyPair,
   getAccountAddress,
   getWallet,
+  upgradeUserService,
 } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
@@ -12,7 +11,6 @@ import {
   preparePGPPublicKey,
   encryptV3,
   hexToBytes,
-  stringToHex,
 } from '../helpers';
 import {
   SignerType,
@@ -20,30 +18,34 @@ import {
   ProgressHookType,
   IUser,
 } from '../types';
+import { getNFTProfile } from './getNFTProfile';
+import { decryptNFTProfile } from './decryptNFTProfile';
 
-export type createNFTProfile = {
+export type upgradeNFTProfile = {
+  signer: SignerType;
+  did: string;
+  newPassword: string;
+  currentPassword?: string;
   env?: ENV;
   account?: string;
-  signer: SignerType;
-  password: string;
-  did: string; // eip155:nftChainId:nftContractAddress:nft:nftTokenId
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const createNFTProfile = async (
-  options: createNFTProfile
+export const upgradeNFTProfile = async (
+  options: upgradeNFTProfile
 ): Promise<IUser> => {
   const {
     env = Constants.ENV.PROD,
     account = null,
     signer,
-    password,
+    currentPassword = null,
+    newPassword,
     did,
     progressHook,
   } = options || {};
 
   try {
-    if (signer === null || password === null || did === null) {
+    if (signer === null || newPassword === null || did === null) {
       throw new Error(`Invalid Params Passed!`);
     }
 
@@ -54,51 +56,66 @@ export const createNFTProfile = async (
       throw new Error(`Invalid address!`);
     }
 
-    // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-01',
-      progressTitle: 'Generating Secure Profile Signature',
-      progressInfo:
-        'This step is is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
-      level: 'INFO',
+    const user: IUser = await getNFTProfile({
+      did,
+      env: env,
     });
-    const keyPairs = await generateKeyPair();
+
+    if (user === null) {
+      throw new Error('Profile not Found!');
+    }
+
+    const encryptionType = Constants.ENC_TYPE_V3;
+    const privateKey = await decryptNFTProfile({
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      decryptedPassword: currentPassword as string,
+      env,
+    });
 
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-CREATE-02',
-      progressTitle: 'Signing Generated Profile',
+      progressId: 'PUSH-UPGRADE-01',
+      progressTitle: 'Generating New Profile Signature',
       progressInfo:
-        'This step is is only done for first time users. Please sign the message to continue.',
+        'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
       level: 'INFO',
     });
-    const encryptionType = Constants.ENC_TYPE_V3;
+
     const publicKey: string = await preparePGPPublicKey(
       encryptionType,
-      keyPairs.publicKeyArmored,
+      user.publicKey,
       wallet
     );
 
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-CREATE-03',
-      progressTitle: 'Encrypting Generated Profile',
+      progressId: 'PUSH-UPGRADE-02',
+      progressTitle: 'Decrypting Old Profile',
       progressInfo:
-        'Encrypting your keys. Please sign the message to continue.',
+        'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
+      level: 'INFO',
+    });
+
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-03',
+      progressTitle: 'Generating Encrypted New Profile',
+      progressInfo:
+        'Trying to Upgrade Push Chat Keys to latest version. Encrypting Push Chat Keys with latest version. Please sign the message to continue.',
       level: 'INFO',
     });
     // encrypt priv key with password
     const enc = new TextEncoder();
-    const encodedPrivateKey = enc.encode(keyPairs.privateKeyArmored);
+    const encodedPrivateKey = enc.encode(privateKey);
     const encryptedPrivateKey = await encryptV3(
       encodedPrivateKey,
-      hexToBytes(stringToHex(password))
+      hexToBytes(newPassword)
     );
 
     // encrypt password instead of priv key
     const encryptedPassword: encryptedPrivateKeyType = await encryptPGPKey(
       encryptionType,
-      password,
+      newPassword,
       address,
       wallet
     );
@@ -116,29 +133,30 @@ export const createNFTProfile = async (
 
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-CREATE-04',
-      progressTitle: 'Syncing Generated Profile',
+      progressId: 'PUSH-UPGRADE-04',
+      progressTitle: 'Syncing New Profile',
       progressInfo:
         'Please sign the message to continue. Steady lads, chat is almost ready!',
       level: 'INFO',
     });
-    const createdUser = await createUserService(body);
-
+    const upgradedUser = await upgradeUserService(body);
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-CREATE-05',
-      progressTitle: 'Setup Complete',
+      progressId: 'PUSH-UPGRADE-05',
+      progressTitle: 'Upgrade Completed, Welcome to Push Chat',
       progressInfo: '',
       level: 'SUCCESS',
     });
-    return createdUser;
+    return upgradedUser;
   } catch (err) {
     progressHook?.({
       progressId: 'PUSH-ERROR-00',
       progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API createNFTProfile() -: ${err}`,
+      progressInfo: `[Push SDK] - API  - Error - API upgradeNFTProfile() -: ${err}`,
       level: 'ERROR',
     });
-    throw Error(`[Push SDK] - API  - Error - API createNFTProfile() -: ${err}`);
+    throw Error(
+      `[Push SDK] - API  - Error - API upgradeNFTProfile() -: ${err}`
+    );
   }
 };

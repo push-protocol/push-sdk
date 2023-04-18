@@ -357,6 +357,14 @@ export const hexToBytes = (hex: string): Uint8Array => {
   return bytes;
 };
 
+export const stringToHex = (str: string): string => {
+  let hex = '';
+  for (let i = 0; i < str.length; i++) {
+    hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+  }
+  return hex;
+};
+
 // Derive AES-256-GCM key from a shared secret and salt
 const hkdf = async (
   secret: Uint8Array,
