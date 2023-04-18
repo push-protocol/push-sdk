@@ -49,6 +49,18 @@ const SpaceTest = () => {
           <Link to="/stopSpace" className="nav-button">
             SPACE.STOP
           </Link>
+          <Link to="/addMembersToSpace" className="nav-button">
+            SPACE.ADDMEMBERSTOSPACE
+          </Link>
+          <Link to="/addAdminsToSpace" className="nav-button">
+            SPACE.ADDADMINSTOSPACE
+          </Link>
+          <Link to="/removeMembersFromSpace" className="nav-button">
+            SPACE.REMOVEMEMBERSFROMSPACE
+          </Link>
+          <Link to="/removeAdminsFromSpace" className="nav-button">
+            SPACE.REMOVEADMINSFROMSPACE
+          </Link>
         </NavMenu>
       </Section>
     </div>

@@ -22,6 +22,7 @@ export const send = async (
     pgpPrivateKey = null,
     apiKey = '',
     env = Constants.ENV.PROD,
+
   } = options || {};
 
   try {
@@ -42,6 +43,8 @@ export const send = async (
     }
 
     const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+
+    
     let conversationResponse: any = null;
     if (!isGroup) {
       conversationResponse = await conversationHash({
