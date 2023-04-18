@@ -1,6 +1,7 @@
 import {
   createUserService,
   generateKeyPair,
+  generateRandomSecret,
   getAccountAddress,
   getWallet,
 } from '../chat/helpers';
@@ -20,12 +21,22 @@ import {
   ProgressHookType,
   IUser,
 } from '../types';
-
+/**
+ * Creates an NFT profile for a user with the provided options.
+@param {Object} options - An object containing the following properties:
+@param {ENV} [options.env] - The environment in which the NFT profile will be created (e.g. 'testnet', 'mainnet', etc.).
+@param {string} [options.account] - The account to associate with the NFT profile.
+@param {SignerType} options.signer - The type of signer to use for the NFT profile creation.
+@param {string} [options.password] - The password to use for the NFT profile.
+@param {string} options.did - The DID (Decentralized Identifier) for the NFT profile in the format 'eip155:nftChainId:nftContractAddress:nft:nftTokenId'.
+@param {(progress: ProgressHookType) => void} [options.progressHook] - A function to track the progress of the NFT profile creation.
+@returns {Promise<IUser>} - A Promise that resolves to an IUser object representing the newly created NFT profile.
+ */
 export type createNFTProfile = {
   env?: ENV;
   account?: string;
   signer: SignerType;
-  password: string;
+  password?: string;
   did: string; // eip155:nftChainId:nftContractAddress:nft:nftTokenId
   progressHook?: (progress: ProgressHookType) => void;
 };
@@ -37,12 +48,16 @@ export const createNFTProfile = async (
     env = Constants.ENV.PROD,
     account = null,
     signer,
-    password,
     did,
     progressHook,
   } = options || {};
+  let { password = null } = options || {};
 
   try {
+    if (password === null) {
+      password = generateRandomSecret(10);
+    }
+
     if (signer === null || password === null || did === null) {
       throw new Error(`Invalid Params Passed!`);
     }
@@ -59,7 +74,7 @@ export const createNFTProfile = async (
       progressId: 'PUSH-CREATE-01',
       progressTitle: 'Generating Secure Profile Signature',
       progressInfo:
-        'This step is is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
+        'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
       level: 'INFO',
     });
     const keyPairs = await generateKeyPair();
@@ -69,7 +84,7 @@ export const createNFTProfile = async (
       progressId: 'PUSH-CREATE-02',
       progressTitle: 'Signing Generated Profile',
       progressInfo:
-        'This step is is only done for first time users. Please sign the message to continue.',
+        'This step is only done for first time users. Please sign the message to continue.',
       level: 'INFO',
     });
     const encryptionType = Constants.ENC_TYPE_V3;

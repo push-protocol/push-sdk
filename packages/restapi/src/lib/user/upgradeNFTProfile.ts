@@ -21,6 +21,18 @@ import {
 import { getNFTProfile } from './getNFTProfile';
 import { decryptNFTProfile } from './decryptNFTProfile';
 
+/**
+ * Upgrades an NFT profile for a user with the provided options.
+@param {Object} options - An object containing the following properties:
+@param {ENV} [options.env] - The environment in which the NFT profile will be created (e.g. 'testnet', 'mainnet', etc.).
+@param {string} [options.account] - The account to associate with the NFT profile.
+@param {SignerType} options.signer - The type of signer to use for the NFT profile creation.
+@param {string} [options.currentPassword] - The password to decrypt current NFT profile.
+@param {string} [options.newPassword] - The password to reencrypt NFT profile.
+@param {string} options.did - The DID (Decentralized Identifier) for the NFT profile in the format 'eip155:nftChainId:nftContractAddress:nft:nftTokenId'.
+@param {(progress: ProgressHookType) => void} [options.progressHook] - A function to track the progress of the NFT profile creation.
+@returns {Promise<IUser>} - A Promise that resolves to an IUser object representing the newly created NFT profile.
+ */
 export type upgradeNFTProfile = {
   signer: SignerType;
   did: string;

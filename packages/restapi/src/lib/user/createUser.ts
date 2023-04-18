@@ -58,7 +58,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       progressId: 'PUSH-CREATE-01',
       progressTitle: 'Generating Secure Profile Signature',
       progressInfo:
-        'This step is is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
+        'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
       level: 'INFO',
     });
     const keyPairs = await generateKeyPair();
@@ -68,7 +68,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       progressId: 'PUSH-CREATE-02',
       progressTitle: 'Signing Generated Profile',
       progressInfo:
-        'This step is is only done for first time users. Please sign the message to continue.',
+        'This step is only done for first time users. Please sign the message to continue.',
       level: 'INFO',
     });
     const publicKey: string = await preparePGPPublicKey(
