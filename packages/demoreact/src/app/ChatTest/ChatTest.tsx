@@ -1,9 +1,7 @@
 import { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import {
-  Section,
-} from '../components/StyledComponents';
+import { Section } from '../components/StyledComponents';
 import Loader from '../components/Loader';
 
 const ChatTest = () => {
@@ -75,6 +73,15 @@ const ChatTest = () => {
           </Link>
           <Link to="/removeAdminsFromGroup" className="nav-button">
             CHAT.REMOVEADMINSFROMGROUP
+           </Link>
+          <Link to="/createNFTProfile" className="nav-button">
+            CHAT.CREATENFTPROFILE
+          </Link>
+          <Link to="/getNFTProfile" className="nav-button">
+            CHAT.GETNFTPROFILE
+          </Link>
+          <Link to="/upgradeNFTProfile" className="nav-button">
+            CHAT.UPGRADENFTPROFILE
           </Link>
         </NavMenu>
       </Section>

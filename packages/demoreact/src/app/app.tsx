@@ -37,7 +37,10 @@ import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
-import {Buffer} from 'buffer';
+import CreateNFTProfileTest from './ChatTest/CreateNFTProfile';
+import GetNFTProfileTest from './ChatTest/GetNFTProfile';
+import UpgradeNFTProfileTest from './ChatTest/upgradeNFTProfile';
+import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 import SpaceTest from './SpaceTest/SpaceTest';
 import StartSpaceTest from './SpaceTest/StartSpaceTest';
@@ -45,7 +48,7 @@ import StopSpaceTest from './SpaceTest/StopSpaceTest';
 import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
 import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
 
-window.Buffer = window.Buffer || Buffer; 
+window.Buffer = window.Buffer || Buffer;
 
 interface Web3ReactState {
   chainId?: number;
@@ -234,7 +237,7 @@ export function App() {
                 <Route path="/channels" element={<ChannelsTest />} />
 
                 <Route path="/alias" element={<AliasTest />} />
-                
+
                 <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
@@ -270,6 +273,15 @@ export function App() {
                 <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
                 <Route path="/startSpace" element={<StartSpaceTest />} />
                 <Route path="/stopSpace" element={<StopSpaceTest />} />
+                <Route
+                  path="/createNFTProfile"
+                  element={<CreateNFTProfileTest />}
+                />
+                <Route path="/getNFTProfile" element={<GetNFTProfileTest />} />
+                <Route
+                  path="/upgradeNFTProfile"
+                  element={<UpgradeNFTProfileTest />}
+                />
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>
