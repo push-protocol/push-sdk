@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.3...restapi-1.2.4) (2023-04-19)
+
+
+### Bug Fixes
+
+* chamged signerType from ethers.wallet ([#315](https://github.com/ethereum-push-notification-service/push-sdk/issues/315)) ([385b3dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/385b3ddf2e2aa22b687a5094ba5cfec0e13da63b))
+* fix videoCall Notif ([#310](https://github.com/ethereum-push-notification-service/push-sdk/issues/310)) ([069783e](https://github.com/ethereum-push-notification-service/push-sdk/commit/069783e2cbe77723e335affb2f2668c785aeace6))
+
+
+
 ## [1.2.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.2...restapi-1.2.3) (2023-04-18)
 
 
