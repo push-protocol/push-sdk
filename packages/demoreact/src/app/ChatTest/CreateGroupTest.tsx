@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const CreateGroupTest = () => {
-  const { account ,library} = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [groupName, setGroupName] = useState<string>('');
@@ -26,7 +26,7 @@ const CreateGroupTest = () => {
   const [contractAddressERC20, setContractAddressERC20] = useState<string>();
   const [numberOfERC20, setNumberOfERC20] = useState<string>();
   const [meta, setMeta] = useState<string>();
-
+  const [account, setAccount] = useState<string>(acc);
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -74,47 +74,36 @@ const CreateGroupTest = () => {
     setMeta((e.target as HTMLInputElement).value);
   };
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
+
   const testCreateGroup = async () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
-
       // Remove empty string elements
-      let membersNotEmpty = [members]
-      membersNotEmpty = membersNotEmpty.filter(str => str !== '')
-      let adminNotEmpty = [admins]
-      adminNotEmpty = adminNotEmpty.filter(str => str !== '')
 
       const response = await PushAPI.chat.createGroup({
         groupName,
         groupDescription,
-        members: membersNotEmpty,
+        members: members.split(','),
         groupImage,
-        admins: adminNotEmpty,
-        isPublic: (isPublic === "true"),
+        admins: admins.split(','),
+        isPublic: isPublic === 'true',
         contractAddressNFT,
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,
         contractAddressERC20,
-        numberOfERC20: numberOfERC20 != null ? Number(numberOfERC20) : undefined,
+        numberOfERC20:
+          numberOfERC20 != null ? Number(numberOfERC20) : undefined,
         account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
-        pgpPrivateKey: pvtkey,
-        meta: meta
+        meta: meta,
       });
 
       setSendResponse(response);
-    } catch (e:any) {
+    } catch (e: any) {
       console.error(e.message);
     } finally {
       setLoading(false);
@@ -151,7 +140,6 @@ const CreateGroupTest = () => {
               />
             </SectionItem>
 
-
             <SectionItem>
               <label>members</label>
               <input
@@ -161,7 +149,6 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-
 
             <SectionItem style={{ marginTop: 20 }}>
               <label>groupImage</label>
@@ -192,6 +179,15 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Group Creator ( Waller Addr or NFT DID )</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
 
             <SectionItem style={{ marginTop: 20 }}>
               <label>contractAddressNFT</label>
@@ -202,7 +198,6 @@ const CreateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-
 
             <SectionItem style={{ marginTop: 20 }}>
               <label>numberOfNFTs</label>

@@ -8,8 +8,8 @@ import {
 import Loader from '../components/Loader';
 import { EnvContext, Web3Context } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { isValidCAIP10NFTAddress } from 'packages/restapi/src/lib/helpers';
 
 const HistoryTest = () => {

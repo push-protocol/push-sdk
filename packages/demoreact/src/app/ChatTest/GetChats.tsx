@@ -9,6 +9,7 @@ import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import ChatTest from './ChatTest';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { isValidCAIP10NFTAddress } from 'packages/restapi/src/lib/helpers';
 
 const GetChatsTest = () => {

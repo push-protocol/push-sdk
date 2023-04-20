@@ -5,11 +5,11 @@ import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  getConnectedUser,
   sign,
   updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
+  getConnectedProfile,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -59,7 +59,13 @@ export const updateGroup = async (
       admins,
       address
     );
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedProfile(
+      wallet.account as string,
+      wallet,
+      pgpPrivateKey,
+      env
+    );
+
     const convertedMembers = members.map(walletToPCAIP10);
     const convertedAdmins = admins.map(walletToPCAIP10);
     const bodyToBeHashed = {

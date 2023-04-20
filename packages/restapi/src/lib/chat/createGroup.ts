@@ -5,11 +5,11 @@ import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
-  getConnectedUser,
   sign,
   createGroupRequestValidator,
   getWallet,
   getAccountAddress,
+  getConnectedProfile,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -88,7 +88,12 @@ export const createGroup = async (
       groupCreator: walletToPCAIP10(address),
     };
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedProfile(
+      walletToPCAIP10(address),
+      wallet,
+      pgpPrivateKey,
+      env
+    );
 
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature: string = await sign({

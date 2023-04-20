@@ -10,7 +10,6 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import ChatTest from './ChatTest';
 import { ethers } from 'ethers';
-import { isValidCAIP10NFTAddress } from 'packages/restapi/src/lib/helpers';
 
 const SendMessageTest = () => {
   const { account, library } = useContext<any>(Web3Context);
