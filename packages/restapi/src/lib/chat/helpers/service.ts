@@ -45,8 +45,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
   const data = {
-    caip10: user,
-    did: user,
+    caip10: walletToPCAIP10(user),
+    did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
     encryptionType,

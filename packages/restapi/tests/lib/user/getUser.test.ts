@@ -27,7 +27,7 @@ describe('Get user', () => {
     expect(user).to.be.null;
   });
 
-  it('get existing user', async () => {
+  it('get existing Wallet Profile', async () => {
     await create({
       account: account,
       env: _env,
@@ -53,5 +53,29 @@ describe('Get user', () => {
       );
     });
     expect(user.profilePicture).to.contains('data:image/png;base64,');
+  });
+
+  it('get existing NFT Profile', async () => {
+    const user = await get({
+      account: process.env['NFT_DID_1'] as string,
+      env: _env,
+    });
+    expect(user).to.be.an('object');
+    expect(user).not.to.be.null;
+    expect(user).not.to.be.undefined;
+    expect(user.did).to.be.equal(process.env['NFT_DID_1'] as string);
+    expect(user.wallets).to.be.equal(process.env['NFT_DID_1'] as string);
+    expect(user.publicKey).to.contains(
+      '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n'
+    );
+    expect(user.encryptedPrivateKey).to.satisfy((value: string) => {
+      return (
+        value.includes(`"version":"${Constants.ENC_TYPE_V1}"`) ||
+        value.includes(`"version":"${Constants.ENC_TYPE_V2}"`) ||
+        value.includes(`"version":"${Constants.ENC_TYPE_V3}"`)
+      );
+    });
+    expect(user.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.nfts).to.be.an('array');
   });
 });

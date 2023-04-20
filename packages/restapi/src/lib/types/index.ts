@@ -166,6 +166,7 @@ export interface IUser {
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface Member {
@@ -231,6 +232,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
    * Api key is now optional
    */
   apiKey?: string;
+  fromDID?: string;
 }
 
 export interface ChatSendOptionsType {
@@ -245,6 +247,8 @@ export interface ChatSendOptionsType {
   env?: ENV;
   account?: string;
   signer?: SignerType;
+  fromDID?: string;
+  toDID?: string;
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {

@@ -5,7 +5,7 @@ import { EnvOptionsType, SignerType } from '../types';
 import {
   approveRequestPayload,
   sign,
-  getConnectedUserV2,
+  getConnectedProfile,
   IApproveRequestPayload,
   getAccountAddress,
   getWallet,
@@ -26,6 +26,8 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
   // sigType?: string;
   account?: string;
   signer?: SignerType;
+  fromDID?: string;
+  toDID?: string;
 }
 
 /**
@@ -43,6 +45,7 @@ export const approve = async (
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
   } = options || {};
+  let { fromDID, toDID } = options || {};
 
   if (account == null && signer == null) {
     throw new Error(`At least one from account or signer is necessary!`);
@@ -51,6 +54,9 @@ export const approve = async (
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
 
+  if (!fromDID) fromDID = senderAddress;
+  if (!toDID) toDID = address;
+
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
 
@@ -58,15 +64,26 @@ export const approve = async (
   if (isValidETHAddress(senderAddress)) {
     isGroup = false;
   }
+
+  if (isGroup) {
+    fromDID = walletToPCAIP10(address);
+    toDID = senderAddress;
+  } else {
+    fromDID = walletToPCAIP10(fromDID);
+    toDID = walletToPCAIP10(toDID);
+  }
   const bodyToBeHashed = {
-    fromDID: isGroup
-      ? walletToPCAIP10(address)
-      : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(address),
+    fromDID: fromDID,
+    toDID: toDID,
     status: status,
   };
 
-  const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+  const connectedUser = await getConnectedProfile(
+    toDID,
+    wallet,
+    pgpPrivateKey,
+    env
+  );
 
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
   const signature: string = await sign({
@@ -75,8 +92,8 @@ export const approve = async (
   });
 
   const body: IApproveRequestPayload = approveRequestPayload(
-    senderAddress,
-    address,
+    fromDID,
+    toDID,
     status,
     'pgp',
     signature

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { ChatSendOptionsType, MessageWithCID } from '../types';
-import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
+import { getAccountAddress, getConnectedProfile, getWallet } from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
@@ -24,6 +24,8 @@ export const send = async (
     env = Constants.ENV.PROD,
   } = options || {};
 
+  let { toDID, fromDID } = options || {};
+
   try {
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
@@ -32,21 +34,30 @@ export const send = async (
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
-    if (!isValidETHAddress(address)) {
+    if (!toDID) toDID = receiverAddress;
+    if (!fromDID) fromDID = address;
+
+    if (!isValidETHAddress(fromDID)) {
       throw new Error(`Invalid address!`);
     }
 
     let isGroup = false;
-    if (!isValidETHAddress(receiverAddress)) {
+    if (!isValidETHAddress(toDID)) {
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedProfile(
+      fromDID,
+      wallet,
+      pgpPrivateKey,
+      env
+    );
+
     let conversationResponse: any = null;
     if (!isGroup) {
       conversationResponse = await conversationHash({
-        conversationId: receiverAddress,
-        account: address,
+        conversationId: toDID,
+        account: fromDID,
         env,
       });
     }
@@ -54,16 +65,18 @@ export const send = async (
       return start({
         messageContent: messageContent,
         messageType: messageType,
-        receiverAddress,
+        receiverAddress: toDID,
         connectedUser,
         apiKey,
         env,
+        fromDID,
       });
     } else {
       const API_BASE_URL = getAPIBaseUrls(env);
       const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
       const body: ISendMessagePayload = await sendMessagePayload(
-        receiverAddress,
+        fromDID,
+        toDID,
         connectedUser,
         messageContent,
         messageType,

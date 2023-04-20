@@ -9,7 +9,7 @@ import { decryptPGPKey } from '../../../src/lib/helpers';
 import { send, requests } from '../../../src/lib/chat';
 chai.use(chaiAsPromised);
 
-describe('Send Chat Message', () => {
+describe('Send Chat Message ( Wallet To Wallet )', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer1: any;

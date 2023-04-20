@@ -18,26 +18,17 @@ const SendMessageTest = () => {
   const [isLoading, setLoading] = useState(false);
   const [messageContent, setMessageContent] = useState<string>('');
   const [messageType, setMessageType] = useState<string>('Text');
-
   const [receiverAddress, setReceiverAddress] = useState<string>('');
-  const [apiKey, setApiKey] = useState<string>('');
-
   const [sendResponse, setSendResponse] = useState<any>('');
-
+  const [fromDID, setFromDID] = useState<string>('');
   const updateMessageContent = (e: React.SyntheticEvent<HTMLElement>) => {
     setMessageContent((e.target as HTMLInputElement).value);
   };
-
-  const updateMessageType = (e: React.SyntheticEvent<HTMLElement>) => {
-    setMessageType((e.target as HTMLInputElement).value);
+  const updateFromDID = (e: React.SyntheticEvent<HTMLElement>) => {
+    setFromDID((e.target as HTMLInputElement).value);
   };
-
   const updateReceiverAddress = (e: React.SyntheticEvent<HTMLElement>) => {
     setReceiverAddress((e.target as HTMLInputElement).value);
-  };
-
-  const updateApiKey = (e: React.SyntheticEvent<HTMLElement>) => {
-    setApiKey((e.target as HTMLInputElement).value);
   };
 
   const testSendMessage = async (index: number) => {
@@ -48,7 +39,7 @@ const SendMessageTest = () => {
 
       let response;
       switch (index) {
-        case 0: {
+        case 0:
           if (user?.encryptedPrivateKey) {
             pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
               user.encryptedPrivateKey,
@@ -57,94 +48,123 @@ const SendMessageTest = () => {
           }
           response = await PushAPI.chat.send({
             messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
+            messageType: messageType as
+              | 'Text'
+              | 'Image'
+              | 'File'
+              | 'GIF'
+              | 'MediaURL'
+              | undefined,
             receiverAddress,
             account: isCAIP ? walletToPCAIP10(account) : account,
             pgpPrivateKey: pvtkey,
-            apiKey,
             env,
           });
-        }
           break;
-        case 1: {
-          const librarySigner = await library.getSigner();
-          if (user?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+        case 1:
+          {
+            const librarySigner = await library.getSigner();
+            if (user?.encryptedPrivateKey) {
+              pvtkey = await PushAPI.chat.decryptPGPKey({
+                encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                signer: librarySigner,
+                env,
+              });
+            }
+            response = await PushAPI.chat.send({
+              messageContent,
+              messageType: messageType as
+                | 'Text'
+                | 'Image'
+                | 'File'
+                | 'GIF'
+                | 'MediaURL'
+                | undefined,
+              receiverAddress,
               signer: librarySigner,
-              env
+              pgpPrivateKey: pvtkey,
+              env,
             });
           }
-          response = await PushAPI.chat.send({
-            messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
-            receiverAddress,
-            signer: librarySigner,
-            pgpPrivateKey: pvtkey,
-            apiKey,
-            env,
-          });
-        }
           break;
-        case 2: {
-          const librarySigner = await library.getSigner();
-          if (user?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+        case 2:
+          {
+            const librarySigner = await library.getSigner();
+            if (user?.encryptedPrivateKey) {
+              pvtkey = await PushAPI.chat.decryptPGPKey({
+                encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                signer: librarySigner,
+                env,
+              });
+            }
+            response = await PushAPI.chat.send({
+              messageContent,
+              messageType: messageType as
+                | 'Text'
+                | 'Image'
+                | 'File'
+                | 'GIF'
+                | 'MediaURL'
+                | undefined,
+              receiverAddress,
               signer: librarySigner,
-              env
+              account: isCAIP ? walletToPCAIP10(account) : account,
+              pgpPrivateKey: pvtkey,
+              env,
             });
           }
-          response = await PushAPI.chat.send({
-            messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
-            receiverAddress,
-            signer: librarySigner,
-            account: isCAIP ? walletToPCAIP10(account) : account,
-            pgpPrivateKey: pvtkey,
-            apiKey,
-            env,
-          });
-        }
           break;
-        case 3: {
-          const walletPvtKey = '4f380c43fe3fcb887ce5104cfae4fa049427233855c9003cbb87f720a1d911bc';
-          const Pkey = `0x${walletPvtKey}`;
-          const pvtKeySigner = new ethers.Wallet(Pkey);
-          if (user?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+        case 3:
+          {
+            const walletPvtKey =
+              '4f380c43fe3fcb887ce5104cfae4fa049427233855c9003cbb87f720a1d911bc';
+            const Pkey = `0x${walletPvtKey}`;
+            const pvtKeySigner = new ethers.Wallet(Pkey);
+            if (user?.encryptedPrivateKey) {
+              pvtkey = await PushAPI.chat.decryptPGPKey({
+                encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                signer: pvtKeySigner,
+                env,
+              });
+            }
+            response = await PushAPI.chat.send({
+              messageContent,
+              messageType: messageType as
+                | 'Text'
+                | 'Image'
+                | 'File'
+                | 'GIF'
+                | 'MediaURL'
+                | undefined,
+              receiverAddress,
               signer: pvtKeySigner,
-              env
+              pgpPrivateKey: pvtkey,
+              env,
             });
           }
-          response = await PushAPI.chat.send({
-            messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
-            receiverAddress,
-            signer: pvtKeySigner,
-            pgpPrivateKey: pvtkey,
-            apiKey,
-            env,
-          });
-        }
           break;
-        case 4: {
-          if (user?.encryptedPrivateKey) {
-            pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
-              user.encryptedPrivateKey,
-              account
-            );
+        case 4:
+          {
+            if (user?.encryptedPrivateKey) {
+              pvtkey = await PushAPI.chat.decryptWithWalletRPCMethod(
+                user.encryptedPrivateKey,
+                account
+              );
+            }
+            response = await PushAPI.chat.send({
+              messageContent,
+              messageType: messageType as
+                | 'Text'
+                | 'Image'
+                | 'File'
+                | 'GIF'
+                | 'MediaURL'
+                | undefined,
+              receiverAddress,
+              pgpPrivateKey: pvtkey,
+              env,
+            });
           }
-          response = await PushAPI.chat.send({
-            messageContent,
-            messageType: messageType as "Text" | "Image" | "File" | "GIF" | "MediaURL" | undefined,
-            receiverAddress,
-            pgpPrivateKey: pvtkey,
-            apiKey,
-            env,
-          });
-        }
           break;
         default:
           break;
@@ -231,7 +251,7 @@ const SendMessageTest = () => {
               </div>
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
-              <label>Receiver's Address</label>
+              <label>Receiver ( account or NFT DID )</label>
               <input
                 type="text"
                 onChange={updateReceiverAddress}
@@ -240,11 +260,11 @@ const SendMessageTest = () => {
               />
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
-              <label>Api Key</label>
+              <label>From DID ( account or NFT DID )</label>
               <input
                 type="text"
-                onChange={updateApiKey}
-                value={apiKey}
+                onChange={updateFromDID}
+                value={fromDID}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

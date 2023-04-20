@@ -15,6 +15,7 @@ export const start = async (
     connectedUser,
     apiKey = '',
     env = Constants.ENV.PROD,
+    fromDID = null,
   } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
@@ -23,6 +24,7 @@ export const start = async (
     authorization: `Bearer ${apiKey}`,
   };
   const body: ISendMessagePayload = await sendMessagePayload(
+    fromDID as string,
     receiverAddress,
     connectedUser,
     messageContent,

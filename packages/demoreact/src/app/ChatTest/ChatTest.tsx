@@ -26,14 +26,23 @@ const ChatTest = () => {
 
       <Section>
         <NavMenu>
+          <Link to="/create" className="nav-button">
+            USER.CREATE
+          </Link>
           <Link to="/get" className="nav-button">
             USER.GET
           </Link>
           <Link to="/getUsersBatch" className="nav-button">
             USER.GETBATCH
           </Link>
-          <Link to="/create" className="nav-button">
-            USER.CREATE
+          <Link to="/createNFTProfile" className="nav-button">
+            USER.CREATENFTPROFILE
+          </Link>
+          <Link to="/getNFTProfile" className="nav-button">
+            USER.GETNFTPROFILE
+          </Link>
+          <Link to="/upgradeNFTProfile" className="nav-button">
+            USER.UPGRADENFTPROFILE
           </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND
@@ -61,15 +70,6 @@ const ChatTest = () => {
           </Link>
           <Link to="/getGroup" className="nav-button">
             CHAT.GETGROUP
-          </Link>
-          <Link to="/createNFTProfile" className="nav-button">
-            CHAT.CREATENFTPROFILE
-          </Link>
-          <Link to="/getNFTProfile" className="nav-button">
-            CHAT.GETNFTPROFILE
-          </Link>
-          <Link to="/upgradeNFTProfile" className="nav-button">
-            CHAT.UPGRADENFTPROFILE
           </Link>
         </NavMenu>
       </Section>

@@ -53,6 +53,7 @@ export interface IUpdateGroupRequestPayload {
 }
 
 export const sendMessagePayload = async (
+  fromDID: string,
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   messageContent: string,
@@ -88,9 +89,9 @@ export const sendMessagePayload = async (
     )) || {};
 
   const body: ISendMessagePayload = {
-    fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    fromDID: walletToPCAIP10(fromDID),
     toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
-    fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    fromCAIP10: walletToPCAIP10(fromDID),
     toCAIP10: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     messageContent: message!,
     messageType,
@@ -103,21 +104,15 @@ export const sendMessagePayload = async (
 };
 
 export const approveRequestPayload = (
-  senderAddress: string,
-  account: string,
+  fromDID: string,
+  toDID: string,
   status: 'Approved',
   sigType: string,
   signature: string
 ): IApproveRequestPayload => {
-  let isGroup = true;
-  if (isValidETHAddress(senderAddress)) {
-    isGroup = false;
-  }
   const body = {
-    fromDID: isGroup
-      ? walletToPCAIP10(account)
-      : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(account),
+    fromDID: fromDID,
+    toDID: toDID,
     signature,
     status,
     sigType,
