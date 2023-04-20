@@ -26,6 +26,7 @@ import {
 import { isValidETHAddress, pCAIP10ToWallet } from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
+import { decryptNFTProfile } from '../user';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -94,6 +95,9 @@ type decryptPgpKeyProps = {
   signer?: SignerType | null;
   env?: ENV;
   toUpgrade?: boolean;
+  encryptedPassword?: string | null;
+  decryptedPassword?: string | null;
+  isNFTProfile?: boolean;
   progressHook?: (progress: ProgressHookType) => void;
 };
 
@@ -104,121 +108,135 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     signer = null,
     env = Constants.ENV.PROD,
     toUpgrade = false,
+    encryptedPassword = null,
+    decryptedPassword = null,
+    isNFTProfile = false,
     progressHook,
   } = options || {};
   try {
-    if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
-    }
-
-    const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
-
-    if (!isValidETHAddress(address)) {
-      throw new Error(`Invalid address!`);
-    }
-
-    const { version: encryptionType } = JSON.parse(encryptedPGPPrivateKey);
-    let privateKey;
-
     progressHook?.({
       progressId: 'PUSH-DECRYPT-01',
       progressTitle: 'Decrypting Profile',
       progressInfo: 'Please sign the transaction to decrypt profile',
       level: 'INFO',
     });
+    let privateKey;
 
-    switch (encryptionType) {
-      case Constants.ENC_TYPE_V1: {
-        if (wallet?.signer?.privateKey) {
-          privateKey = metamaskDecrypt({
-            encryptedData: JSON.parse(encryptedPGPPrivateKey),
-            privateKey: wallet?.signer?.privateKey.substring(2),
-          });
-        } else {
-          const metamaskProvider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-          const web3Provider: any = signer?.provider || metamaskProvider;
-          privateKey = await web3Provider.provider.request({
-            method: 'eth_decrypt',
-            params: [encryptedPGPPrivateKey, address],
-          });
-        }
-        break;
+    if (isNFTProfile) {
+      privateKey = await decryptNFTProfile({
+        encryptedPGPPrivateKey,
+        encryptedPassword,
+        decryptedPassword,
+        signer,
+        env,
+      });
+    } else {
+      if (account == null && signer == null) {
+        throw new Error(`At least one from account or signer is necessary!`);
       }
-      case Constants.ENC_TYPE_V2: {
-        if (!wallet?.signer) {
-          throw new Error(
-            'Cannot Decrypt this encryption version without signer!'
-          );
+
+      const wallet = getWallet({ account, signer });
+      const address = await getAccountAddress(wallet);
+
+      if (!isValidETHAddress(address)) {
+        throw new Error(`Invalid address!`);
+      }
+
+      const { version: encryptionType } = JSON.parse(encryptedPGPPrivateKey);
+
+      switch (encryptionType) {
+        case Constants.ENC_TYPE_V1: {
+          if (wallet?.signer?.privateKey) {
+            privateKey = metamaskDecrypt({
+              encryptedData: JSON.parse(encryptedPGPPrivateKey),
+              privateKey: wallet?.signer?.privateKey.substring(2),
+            });
+          } else {
+            const metamaskProvider = new ethers.providers.Web3Provider(
+              (window as any).ethereum
+            );
+            const web3Provider: any = signer?.provider || metamaskProvider;
+            privateKey = await web3Provider.provider.request({
+              method: 'eth_decrypt',
+              params: [encryptedPGPPrivateKey, address],
+            });
+          }
+          break;
         }
-        const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
-        const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-        let encodedPrivateKey: Uint8Array;
+        case Constants.ENC_TYPE_V2: {
+          if (!wallet?.signer) {
+            throw new Error(
+              'Cannot Decrypt this encryption version without signer!'
+            );
+          }
+          const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
+          const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+          let encodedPrivateKey: Uint8Array;
+          try {
+            const { verificationProof: secret } = await getEip712Signature(
+              wallet,
+              enableProfileMessage,
+              true
+            );
+            encodedPrivateKey = await decryptV2(
+              JSON.parse(encryptedPGPPrivateKey),
+              hexToBytes(secret || '')
+            );
+          } catch (err) {
+            const { verificationProof: secret } = await getEip712Signature(
+              wallet,
+              enableProfileMessage,
+              false
+            );
+            encodedPrivateKey = await decryptV2(
+              JSON.parse(encryptedPGPPrivateKey),
+              hexToBytes(secret || '')
+            );
+          }
+          const dec = new TextDecoder();
+          privateKey = dec.decode(encodedPrivateKey);
+          break;
+        }
+        case Constants.ENC_TYPE_V3: {
+          if (!wallet?.signer) {
+            throw new Error(
+              'Cannot Decrypt this encryption version without signer!'
+            );
+          }
+          const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
+          const enableProfileMessage = 'Enable Push Profile \n' + input;
+          const { verificationProof: secret } = await getEip191Signature(
+            wallet,
+            enableProfileMessage
+          );
+          const encodedPrivateKey = await decryptV2(
+            JSON.parse(encryptedPGPPrivateKey),
+            hexToBytes(secret || '')
+          );
+          const dec = new TextDecoder();
+          privateKey = dec.decode(encodedPrivateKey);
+          break;
+        }
+        default:
+          throw new Error('Invalid Encryption Type');
+      }
+
+      // try key upgradation
+      if (signer && toUpgrade) {
         try {
-          const { verificationProof: secret } = await getEip712Signature(
-            wallet,
-            enableProfileMessage,
-            true
-          );
-          encodedPrivateKey = await decryptV2(
-            JSON.parse(encryptedPGPPrivateKey),
-            hexToBytes(secret || '')
-          );
+          await upgrade({ env, account: address, signer, progressHook });
         } catch (err) {
-          const { verificationProof: secret } = await getEip712Signature(
-            wallet,
-            enableProfileMessage,
-            false
-          );
-          encodedPrivateKey = await decryptV2(
-            JSON.parse(encryptedPGPPrivateKey),
-            hexToBytes(secret || '')
-          );
+          // Report Progress
+          progressHook?.({
+            progressId: 'PUSH-ERROR-01',
+            progressTitle: 'Upgrade Profile Failed',
+            progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
+            level: 'WARN',
+          });
         }
-        const dec = new TextDecoder();
-        privateKey = dec.decode(encodedPrivateKey);
-        break;
       }
-      case Constants.ENC_TYPE_V3: {
-        if (!wallet?.signer) {
-          throw new Error(
-            'Cannot Decrypt this encryption version without signer!'
-          );
-        }
-        const { preKey: input } = JSON.parse(encryptedPGPPrivateKey);
-        const enableProfileMessage = 'Enable Push Profile \n' + input;
-        const { verificationProof: secret } = await getEip191Signature(
-          wallet,
-          enableProfileMessage
-        );
-        const encodedPrivateKey = await decryptV2(
-          JSON.parse(encryptedPGPPrivateKey),
-          hexToBytes(secret || '')
-        );
-        const dec = new TextDecoder();
-        privateKey = dec.decode(encodedPrivateKey);
-        break;
-      }
-      default:
-        throw new Error('Invalid Encryption Type');
     }
 
-    // try key upgradation
-    if (signer && toUpgrade) {
-      try {
-        await upgrade({ env, account: address, signer, progressHook });
-      } catch (err) {
-        // Report Progress
-        progressHook?.({
-          progressId: 'PUSH-ERROR-01',
-          progressTitle: 'Upgrade Profile Failed',
-          progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
-          level: 'WARN',
-        });
-      }
-    }
     progressHook?.({
       progressId: 'PUSH-DECRYPT-02',
       progressTitle: 'Push Profile Unlocked',

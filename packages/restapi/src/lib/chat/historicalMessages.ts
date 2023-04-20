@@ -44,7 +44,7 @@ export const history = async (
     }
 
     const messages = await getMessagesService({ threadhash, limit, env });
-    const connectedUser = await get({ account: pCAIP10ToWallet(account), env });
+    const connectedUser = await get({ account: account, env });
     if (toDecrypt) {
       return await decryptConversation({
         messages,

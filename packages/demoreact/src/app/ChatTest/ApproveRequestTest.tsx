@@ -12,11 +12,16 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const ApproveRequestTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [senderAddress, setSenderAddress] = useState<string>('');
   const [approveResponse, setApproveResponse] = useState<any>('');
+  const [account, setAccount] = useState<string>(acc);
+
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
   const updateSenderAddress = (e: React.SyntheticEvent<HTMLElement>) => {
     setSenderAddress((e.target as HTMLInputElement).value);
@@ -25,25 +30,13 @@ const ApproveRequestTest = () => {
   const testApproveRequest = async () => {
     try {
       setLoading(true);
-      const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
       const librarySigner = await library.getSigner();
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
-
       const response = await PushAPI.chat.approve({
         status: 'Approved',
-        account: isCAIP ? walletToPCAIP10(account) : account,
+        account: account,
         senderAddress,
         env,
-        pgpPrivateKey: pvtkey,
-        signer: librarySigner
+        signer: librarySigner,
       });
 
       setApproveResponse(response);
@@ -70,6 +63,15 @@ const ApproveRequestTest = () => {
                 type="text"
                 onChange={updateSenderAddress}
                 value={senderAddress}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Account</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

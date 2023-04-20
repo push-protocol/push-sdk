@@ -1,5 +1,5 @@
-import Constants, {ENV} from '../../constants';
-import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
+import Constants, { ENV } from '../../constants';
+import { decryptMessage } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
@@ -10,13 +10,13 @@ type InboxListsType = {
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 
 export const getInboxLists = async (
@@ -29,7 +29,7 @@ export const getInboxLists = async (
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
-  const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
+  const connectedUser = await getUser({ account: user, env });
   const feeds: IFeeds[] = [];
   for (const list of lists) {
     let message;
@@ -49,10 +49,14 @@ export const getInboxLists = async (
         sigType: '',
         signature: '',
         toCAIP10: '',
-        toDID: ''
-      }
+        toDID: '',
+      };
     }
-    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
+    feeds.push({
+      ...list,
+      msg: message,
+      groupInformation: list.groupInformation,
+    });
   }
 
   if (toDecrypt)
@@ -92,7 +96,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signatureValidationPubliKey: signatureValidationPubliKey,
         pgpPrivateKey,
         message: message,
-      });  
+      });
     }
   }
   return messages;

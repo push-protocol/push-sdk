@@ -63,8 +63,12 @@ describe('Get user', () => {
     expect(user).to.be.an('object');
     expect(user).not.to.be.null;
     expect(user).not.to.be.undefined;
-    expect(user.did).to.be.equal(process.env['NFT_DID_1'] as string);
-    expect(user.wallets).to.be.equal(process.env['NFT_DID_1'] as string);
+    expect(user.did.toLowerCase()).to.be.equal(
+      (process.env['NFT_DID_1'] as string).toLowerCase()
+    );
+    expect(user.wallets.toLowerCase()).to.be.equal(
+      (process.env['NFT_DID_1'] as string).toLowerCase()
+    );
     expect(user.publicKey).to.contains(
       '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n'
     );
