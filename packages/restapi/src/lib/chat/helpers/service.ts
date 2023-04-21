@@ -52,7 +52,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     encryptionType,
     name: '',
     encryptedPassword: encryptedPassword,
-    nftOwner: nftOwner,
+    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);
@@ -106,7 +106,7 @@ export const upgradeUserService = async (options: CreateUserOptionsType) => {
     encryptionType,
     name: name,
     encryptedPassword: encryptedPassword,
-    nftOwner: nftOwner,
+    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);

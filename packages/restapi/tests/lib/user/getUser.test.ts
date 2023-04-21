@@ -57,17 +57,17 @@ describe('Get user', () => {
 
   it('get existing NFT Profile', async () => {
     const user = await get({
-      account: process.env['NFT_DID_1'] as string,
+      account: process.env['NFT_DID_2'] as string,
       env: _env,
     });
     expect(user).to.be.an('object');
     expect(user).not.to.be.null;
     expect(user).not.to.be.undefined;
     expect(user.did.toLowerCase()).to.be.equal(
-      (process.env['NFT_DID_1'] as string).toLowerCase()
+      (process.env['NFT_DID_2'] as string).toLowerCase()
     );
     expect(user.wallets.toLowerCase()).to.be.equal(
-      (process.env['NFT_DID_1'] as string).toLowerCase()
+      (process.env['NFT_DID_2'] as string).toLowerCase()
     );
     expect(user.publicKey).to.contains(
       '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n'
