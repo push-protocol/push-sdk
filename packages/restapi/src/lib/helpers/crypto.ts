@@ -511,7 +511,7 @@ export const encryptPGPKey = async (
       const encodedPrivateKey = enc.encode(privateKey);
       encryptedPrivateKey = await encryptV2(
         encodedPrivateKey,
-        hexToBytes(addtionalMeta?.password)
+        hexToBytes(stringToHex(addtionalMeta?.password))
       );
       encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
       encryptedPrivateKey.preKey = '';

@@ -57,6 +57,9 @@ export const getConnectedUser = async (
     if (wallet.account) {
       createUserProps.account = wallet.account;
     }
+    if (user && user.did) {
+      createUserProps.account = user.did;
+    }
     if (wallet.signer) {
       createUserProps.signer = wallet.signer;
     }
@@ -101,6 +104,9 @@ export const getConnectedUserV2 = async (
     if (wallet.account) {
       createUserProps.account = wallet.account;
     }
+    if (user && user.did) {
+      createUserProps.account = user.did;
+    }
     if (wallet.signer) {
       createUserProps.signer = wallet.signer;
     }
@@ -123,6 +129,8 @@ export const getUserDID = async (
     if (address.split(':').length === 6) return address;
     const user = await get({ account: address, env: env });
     if (user && user.did) return user.did;
+    const epoch = Math.floor(Date.now() / 1000);
+    address = `${address}:${epoch}`;
   }
   if (isValidETHAddress(address)) return walletToPCAIP10(address);
   return address;

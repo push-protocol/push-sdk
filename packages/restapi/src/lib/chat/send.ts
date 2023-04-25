@@ -4,7 +4,7 @@ import Constants from '../constants';
 import { ChatSendOptionsType, MessageWithCID } from '../types';
 import {
   getAccountAddress,
-  getConnectedUser,
+  getConnectedUserV2,
   getUserDID,
   getWallet,
 } from './helpers';
@@ -46,7 +46,7 @@ export const send = async (
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const receiver = await getUserDID(receiverAddress, env);
     let conversationResponse: any = null;
     if (!isGroup) {

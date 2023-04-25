@@ -26,11 +26,16 @@ const CreateUserTest = () => {
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
   const [account, setAccount] = useState(acc);
+  const [password, setPassword] = useState('testpassword');
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
+  };
+
+  const updatePassword = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPassword((e.target as HTMLInputElement).value);
   };
 
   const testCreateUser = async (index: number) => {
@@ -62,6 +67,7 @@ const CreateUserTest = () => {
               signer: librarySigner,
               account: account,
               env,
+              additionalMeta: { password: password },
             });
           }
           break;
@@ -110,6 +116,15 @@ const CreateUserTest = () => {
             type="text"
             onChange={updateAccount}
             value={account}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>password</label>
+          <input
+            type="text"
+            onChange={updatePassword}
+            value={password}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>

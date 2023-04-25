@@ -48,7 +48,11 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
   const user: IUser = await get({ account: address, env: env });
 
   // User not created or already upgraded
-  if (!user || user.encryptionType === Constants.ENC_TYPE_V3) {
+  if (
+    !user ||
+    user.encryptionType === Constants.ENC_TYPE_V3 ||
+    user.encryptionType === Constants.ENC_TYPE_V4
+  ) {
     return user;
   }
 
