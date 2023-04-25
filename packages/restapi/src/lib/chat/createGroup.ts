@@ -9,7 +9,6 @@ import {
   sign,
   createGroupRequestValidator,
   getWallet,
-  getAccountAddress,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -57,7 +56,7 @@ export const createGroup = async (
     }
 
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
+
     createGroupRequestValidator(
       groupName,
       groupDescription,
@@ -72,6 +71,8 @@ export const createGroup = async (
     const convertedMembers = members.map(walletToPCAIP10);
     const convertedAdmins = admins.map(walletToPCAIP10);
 
+    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+
     const bodyToBeHashed = {
       groupName: groupName,
       groupDescription: groupDescription == undefined ? null : groupDescription,
@@ -85,10 +86,8 @@ export const createGroup = async (
       contractAddressERC20:
         contractAddressERC20 == undefined ? null : contractAddressERC20,
       numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-      groupCreator: walletToPCAIP10(address),
+      groupCreator: connectedUser.did,
     };
-
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
 
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature: string = await sign({
@@ -108,7 +107,7 @@ export const createGroup = async (
       groupImage,
       convertedAdmins,
       isPublic,
-      walletToPCAIP10(address),
+      connectedUser.did,
       verificationProof,
       contractAddressNFT,
       numberOfNFTs,

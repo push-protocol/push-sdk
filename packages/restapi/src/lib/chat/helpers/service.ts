@@ -4,6 +4,7 @@ import {
   generateHash,
   getAPIBaseUrls,
   getQueryParams,
+  isValidCAIP10NFTAddress,
   verifyPGPPublicKey,
   walletToPCAIP10,
 } from '../../helpers';
@@ -30,7 +31,6 @@ type CreateUserOptionsType = {
 
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
-    user,
     wallet,
     publicKey = '',
     encryptedPrivateKey = '',
@@ -39,11 +39,18 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     encryptedPassword = null,
     nftOwner = null,
   } = options || {};
+  let { user } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
+  if (isValidCAIP10NFTAddress(user)) {
+    const epoch = Math.floor(Date.now() / 1000);
+    if (user.split(':').length !== 6) {
+      user = `${user}:${epoch}`;
+    }
+  }
   const data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),

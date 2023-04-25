@@ -2,8 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists } from './helpers';
-import { get } from '../user';
+import { getInboxLists, getUserDID } from './helpers';
 
 export type ChatsOptionsType = {
   account: string;
@@ -31,17 +30,16 @@ export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
   if (!isValidETHAddress(account)) {
     throw new Error(`Invalid address!`);
   }
-  const user = await get({ account, env });
-  if (!user) return [];
+  const user = await getUserDID(account, env);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user.did}/chats`;
+  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chats`;
   const requestUrl = `${apiEndpoint}`;
   try {
     const response = await axios.get(requestUrl);
     const chats: IFeeds[] = response.data.chats;
     const feeds: IFeeds[] = await getInboxLists({
       lists: chats,
-      user: user.did,
+      user: user,
       toDecrypt,
       pgpPrivateKey,
       env,

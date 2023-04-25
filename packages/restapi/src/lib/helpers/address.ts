@@ -33,7 +33,7 @@ export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
   try {
     const walletComponent = wallet.split(':');
     return (
-      walletComponent.length === 5 &&
+      (walletComponent.length === 5 || walletComponent.length === 6)&&
       walletComponent[0].toLowerCase() === 'nft' &&
       !isNaN(Number(walletComponent[4])) &&
       Number(walletComponent[4]) > 0 &&

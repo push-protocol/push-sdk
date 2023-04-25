@@ -52,12 +52,10 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       throw new Error(`Invalid address!`);
     }
 
-    let caip10: string = walletToPCAIP10(address);
+    const caip10: string = walletToPCAIP10(address);
     let encryptionType = version;
 
     if (isValidCAIP10NFTAddress(caip10)) {
-      const epoch = Math.floor(Date.now() / 1000);
-      caip10 = `${caip10}:${epoch}`;
       // upgrade to v4 (nft encryption)
       encryptionType = Constants.ENC_TYPE_V4;
     } else {
@@ -98,20 +96,20 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       level: 'INFO',
     });
 
+    let password: string;
+    if (!additionalMeta?.password) {
+      password = generateRandomSecret(10);
+    } else {
+      password = additionalMeta.password;
+    }
     const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
       encryptionType,
       keyPairs.privateKeyArmored,
       wallet,
-      additionalMeta
+      { password: password }
     );
 
     if (encryptionType === Constants.ENC_TYPE_V4) {
-      let password: string;
-      if (!additionalMeta?.password) {
-        password = generateRandomSecret(10);
-      } else {
-        password = additionalMeta.password;
-      }
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         Constants.ENC_TYPE_V3,
         password,
@@ -130,7 +128,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       env,
       nftOwner:
         encryptionType === Constants.ENC_TYPE_V4
-          ? walletToPCAIP10(address)
+          ? walletToPCAIP10((await signer?.getAddress()) as string)
           : null, // check for nft
     };
 

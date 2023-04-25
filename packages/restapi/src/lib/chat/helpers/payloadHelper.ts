@@ -110,8 +110,8 @@ export const approveRequestPayload = (
   signature: string
 ): IApproveRequestPayload => {
   const body = {
-    fromDID: fromDID,
-    toDID: toDID,
+    fromDID,
+    toDID,
     signature,
     status,
     sigType,

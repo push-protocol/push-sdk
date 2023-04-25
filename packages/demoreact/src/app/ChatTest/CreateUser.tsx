@@ -14,22 +14,24 @@ import { ethers } from 'ethers';
 
 type ProgressHookType = {
   progressId: string;
-  progressTitle: string,
+  progressTitle: string;
   progressInfo: string;
-  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
-}
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
 
 const CreateUserTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
-
+  const [account, setAccount] = useState(acc);
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
-
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
   const testCreateUser = async (index: number) => {
     try {
@@ -43,37 +45,40 @@ const CreateUserTest = () => {
             progressHook: handleProgress,
           });
           break;
-        case 1: {
-          const librarySigner = await library.getSigner();
-          response = await PushAPI.user.create({
-            signer: librarySigner,
-            env,
-            progressHook: handleProgress,
-          });
-        }
+        case 1:
+          {
+            const librarySigner = await library.getSigner();
+            response = await PushAPI.user.create({
+              signer: librarySigner,
+              env,
+              progressHook: handleProgress,
+            });
+          }
           break;
-        case 2: {
-          const librarySigner = await library.getSigner();
-          response = await PushAPI.user.create({
-            signer: librarySigner,
-            account: account,
-            env
-          });
-        }
+        case 2:
+          {
+            const librarySigner = await library.getSigner();
+            response = await PushAPI.user.create({
+              signer: librarySigner,
+              account: account,
+              env,
+            });
+          }
           break;
-        case 3: {
-          const walletPvtKey = '';
-          const Pkey = `0x${walletPvtKey}`;
-          const pvtKeySigner = new ethers.Wallet(Pkey);
-          response = await PushAPI.user.create({
-            signer: pvtKeySigner,
-            account: account,
-            env,
-            progressHook: handleProgress,
-          });
-        }
+        case 3:
+          {
+            const walletPvtKey = '';
+            const Pkey = `0x${walletPvtKey}`;
+            const pvtKeySigner = new ethers.Wallet(Pkey);
+            response = await PushAPI.user.create({
+              signer: pvtKeySigner,
+              account: account,
+              env,
+              progressHook: handleProgress,
+            });
+          }
           break;
-        case 4: 
+        case 4:
           response = await PushAPI.user.create({
             env,
             progressHook: handleProgress,
@@ -82,7 +87,7 @@ const CreateUserTest = () => {
         default:
           break;
       }
-      
+
       setConnectedUser(response);
     } catch (e) {
       console.error(e);
@@ -99,6 +104,15 @@ const CreateUserTest = () => {
       <Loader show={isLoading} />
 
       <Section>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>account</label>
+          <input
+            type="text"
+            onChange={updateAccount}
+            value={account}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testCreateUser(0)}>
             Create user with address

@@ -215,7 +215,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           }
           const { encryptedPassword } = JSON.parse(encryptedPGPPrivateKey);
           password = await decryptPGPKey({
-            encryptedPGPPrivateKey: encryptedPassword as string,
+            encryptedPGPPrivateKey: JSON.stringify(encryptedPassword),
             signer,
             env,
           });
@@ -535,6 +535,19 @@ export const preparePGPPublicKey = async (
       break;
     }
     case Constants.ENC_TYPE_V3: {
+      const createProfileMessage =
+        'Create Push Profile \n' + generateHash(publicKey);
+      const { verificationProof } = await getEip191Signature(
+        wallet,
+        createProfileMessage
+      );
+      chatPublicKey = JSON.stringify({
+        key: publicKey,
+        signature: verificationProof,
+      });
+      break;
+    }
+    case Constants.ENC_TYPE_V4: {
       const createProfileMessage =
         'Create Push Profile \n' + generateHash(publicKey);
       const { verificationProof } = await getEip191Signature(

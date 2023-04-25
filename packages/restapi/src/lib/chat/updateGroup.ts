@@ -85,7 +85,7 @@ export const updateGroup = async (
       groupDescription,
       convertedMembers,
       convertedAdmins,
-      walletToPCAIP10(address),
+      connectedUser.did,
       verificationProof
     );
 
