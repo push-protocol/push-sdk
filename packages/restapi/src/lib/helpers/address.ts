@@ -6,6 +6,7 @@ export interface AddressValidatorsType {
 }
 
 export function isValidETHAddress(address: string) {
+  if(isValidCAIP10NFTAddress(address))return true;
   if (address.includes('eip155:')) {
     const splittedAddress = address.split(':');
     if(splittedAddress.length === 3){
@@ -22,6 +23,29 @@ export function  isValidNFTCAIP10Address (realCAIP10: string)  {
         if (isNaN(Number(walletComponent[1]))) return false
         return (walletComponent.length === 3 && walletComponent[0] === 'eip155' && ethers.utils.isAddress(walletComponent[2]))
 }
+
+/**
+ * 
+ * @param wallet nft:eip155:nftChainId:nftContractAddress:nftTokenId
+ * @returns 
+ */
+export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
+  try {
+    const walletComponent = wallet.split(':');
+    return (
+      walletComponent.length === 5 &&
+      walletComponent[0].toLowerCase() === 'nft' &&
+      !isNaN(Number(walletComponent[4])) &&
+      Number(walletComponent[4]) > 0 &&
+      !isNaN(Number(walletComponent[2])) &&
+      Number(walletComponent[2]) > 0 &&
+      ethers.utils.isAddress(walletComponent[3]) &&
+      walletComponent[1] === 'eip155'
+    );
+  } catch (err) {
+    return false;
+  }
+};
 
 const AddressValidators: AddressValidatorsType = {
   // Ethereum
@@ -116,13 +140,14 @@ export const getCAIPWithChainId = (address:string, chainId:number, msg?: string)
 
 // P = Partial CAIP
 export const walletToPCAIP10 = (account:string): string => {
-  if (account.includes('eip155:')) {
+  if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
     return account
   }
   return 'eip155:' + account
 }
 
 export const pCAIP10ToWallet = (wallet: string): string => {
+  if(isValidCAIP10NFTAddress(wallet))return wallet;
   wallet = wallet.replace('eip155:', '')
   return wallet
 }

@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
-import Constants, {ENV} from '../constants';
+import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { getInboxLists } from './helpers';
+import { get } from '../user';
 
 export type ChatsOptionsType = {
   account: string;
@@ -14,27 +15,33 @@ export type ChatsOptionsType = {
   /**
    * Environment variable
    */
-  env?: ENV ;
+  env?: ENV;
 };
 
 /**
  * Return the latest message from all wallet addresses you have talked to. This can be used when building the inbox page.
  */
 export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
-  const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
-  const user = walletToPCAIP10(account);
+  const {
+    account,
+    pgpPrivateKey,
+    env = Constants.ENV.PROD,
+    toDecrypt = false,
+  } = options || {};
+  if (!isValidETHAddress(account)) {
+    throw new Error(`Invalid address!`);
+  }
+  const user = await get({ account, env });
+  if (!user) return [];
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chats`;
+  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user.did}/chats`;
   const requestUrl = `${apiEndpoint}`;
   try {
-    if (!isValidETHAddress(user)) {
-      throw new Error(`Invalid address!`);
-    }
     const response = await axios.get(requestUrl);
     const chats: IFeeds[] = response.data.chats;
     const feeds: IFeeds[] = await getInboxLists({
       lists: chats,
-      user,
+      user: user.did,
       toDecrypt,
       pgpPrivateKey,
       env,

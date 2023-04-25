@@ -103,21 +103,15 @@ export const sendMessagePayload = async (
 };
 
 export const approveRequestPayload = (
-  senderAddress: string,
-  account: string,
+  fromDID: string,
+  toDID: string,
   status: 'Approved',
   sigType: string,
   signature: string
 ): IApproveRequestPayload => {
-  let isGroup = true;
-  if (isValidETHAddress(senderAddress)) {
-    isGroup = false;
-  }
   const body = {
-    fromDID: isGroup
-      ? walletToPCAIP10(account)
-      : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(account),
+    fromDID: fromDID,
+    toDID: toDID,
     signature,
     status,
     sigType,

@@ -97,7 +97,6 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
   const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
     encryptionType,
     privateKey,
-    address,
     wallet
   );
 

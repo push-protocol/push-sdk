@@ -11,6 +11,7 @@ import {
   getWallet,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { get } from '../user';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -58,15 +59,20 @@ export const approve = async (
   if (isValidETHAddress(senderAddress)) {
     isGroup = false;
   }
-  const bodyToBeHashed = {
-    fromDID: isGroup
-      ? walletToPCAIP10(address)
-      : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(address),
-    status: status,
-  };
 
   const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+  const intentSender = await get({ account: senderAddress, env: env });
+  if (!intentSender) {
+    throw new Error('Intent sender not Found!');
+  }
+
+  const bodyToBeHashed = {
+    fromDID: isGroup
+      ? walletToPCAIP10(connectedUser.did)
+      : walletToPCAIP10(intentSender.did),
+    toDID: isGroup ? senderAddress : walletToPCAIP10(intentSender.did),
+    status: status,
+  };
 
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
   const signature: string = await sign({
@@ -75,8 +81,8 @@ export const approve = async (
   });
 
   const body: IApproveRequestPayload = approveRequestPayload(
-    senderAddress,
-    address,
+    bodyToBeHashed.fromDID,
+    bodyToBeHashed.toDID,
     status,
     'pgp',
     signature

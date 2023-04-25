@@ -166,6 +166,7 @@ export interface IUser {
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface Member {
@@ -277,15 +278,22 @@ export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
 
 export type encryptedPrivateKeyTypeV2 = {
   ciphertext: string;
-  version: string;
-  salt: string;
+  version?: string;
+  salt?: string;
   nonce: string;
-  preKey: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
 };
 
-export type encryptedPrivateKeyType =
-  | encryptedPrivateKeyTypeV1
-  | encryptedPrivateKeyTypeV2;
+export type encryptedPrivateKeyType = {
+  version?: string;
+  nonce: string;
+  ephemPublicKey?: string;
+  ciphertext: string;
+  salt?: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
+};
 
 export type ProgressHookType = {
   progressId: string;
