@@ -89,7 +89,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     });
 };
 
-export const upgradeUserService = async (options: CreateUserOptionsType) => {
+export const authUpdateUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
     wallet,
@@ -104,15 +104,15 @@ export const upgradeUserService = async (options: CreateUserOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/users/${walletToPCAIP10(user)}`;
+  const requestUrl = `${API_BASE_URL}/v1/users/${walletToPCAIP10(user)}/auth`;
 
   const data = {
     caip10: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
     encryptionType,
-    name: name,
-    encryptedPassword: encryptedPassword,
+    name,
+    encryptedPassword,
     nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 

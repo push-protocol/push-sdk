@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
@@ -10,6 +10,7 @@ import {
   updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
+  getUserDID,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -60,8 +61,14 @@ export const updateGroup = async (
       address
     );
     const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
-    const convertedMembers = members.map(walletToPCAIP10);
-    const convertedAdmins = admins.map(walletToPCAIP10);
+    const convertedMembersPromise = members.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedAdminsPromise = admins.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedMembers = await Promise.all(convertedMembersPromise);
+    const convertedAdmins = await Promise.all(convertedAdminsPromise);
     const bodyToBeHashed = {
       groupName: groupName,
       groupDescription: groupDescription,

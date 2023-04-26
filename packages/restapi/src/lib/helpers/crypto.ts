@@ -572,10 +572,7 @@ export const verifyPGPPublicKey = (
   did: string,
   nftOwner: string
 ): string => {
-  if (
-    encryptionType === Constants.ENC_TYPE_V2 ||
-    encryptionType === Constants.ENC_TYPE_V3
-  ) {
+  if (encryptionType && encryptionType !== Constants.ENC_TYPE_V1) {
     const { key, signature: verificationProof } = JSON.parse(publicKey);
     publicKey = key;
     let signedData: string;
