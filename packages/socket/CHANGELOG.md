@@ -2,6 +2,21 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.4.1...socket-0.5.0) (2023-04-27)
+
+
+### Bug Fixes
+
+* **component:** env type in demo react and uiweb ([#225](https://github.com/ethereum-push-notification-service/push-sdk/issues/225)) ([ff1113a](https://github.com/ethereum-push-notification-service/push-sdk/commit/ff1113adb226aee4c9f6ccdfa488e59b47ca9b9e))
+* **component:** group chat socket event ([#251](https://github.com/ethereum-push-notification-service/push-sdk/issues/251)) ([17f0892](https://github.com/ethereum-push-notification-service/push-sdk/commit/17f0892570a6f2318d515a7d6e297a71463fe490))
+
+
+### Features
+
+* add local env to socket config file ([#334](https://github.com/ethereum-push-notification-service/push-sdk/issues/334)) ([db4171e](https://github.com/ethereum-push-notification-service/push-sdk/commit/db4171e57bcba2b86f798072fc37d9f082236ad0))
+
+
+
 ## [0.4.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.4.1...socket-0.4.2) (2023-03-22)
 
 
