@@ -2,6 +2,24 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.4...restapi-1.2.5) (2023-04-27)
+
+
+### Bug Fixes
+
+* nft compatibility ([#326](https://github.com/ethereum-push-notification-service/push-sdk/issues/326)) ([80650e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/80650e65f490e08df30c17c9e5dadc0b513b1f46))
+
+
+
+## [1.2.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.4...restapi-1.2.5) (2023-04-27)
+
+
+### Bug Fixes
+
+* nft compatibility ([#326](https://github.com/ethereum-push-notification-service/push-sdk/issues/326)) ([80650e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/80650e65f490e08df30c17c9e5dadc0b513b1f46))
+
+
+
 ## [1.2.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.3...restapi-1.2.4) (2023-04-19)
 
 
