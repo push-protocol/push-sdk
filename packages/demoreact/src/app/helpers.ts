@@ -2,7 +2,11 @@ import * as ethers from 'ethers';
 export enum ENV {
   PROD = 'prod',
   STAGING = 'staging',
-  DEV = 'dev'
+  DEV = 'dev',
+  /**
+   * **This is for local development only**
+   */
+  LOCAL = 'local',
 }
 const Constants = {
     ENV,
