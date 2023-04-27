@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists } from './helpers';
+import { getInboxLists, getUserDID } from './helpers';
 
 export const chat = async (options: {
   account: string;
@@ -18,8 +18,8 @@ export const chat = async (options: {
     toDecrypt = false,
     recipient,
   } = options || {};
-  const user = walletToPCAIP10(account);
-  const recipientWallet = walletToPCAIP10(recipient);
+  const user = await getUserDID(account, env);
+  const recipientWallet = await getUserDID(recipient, env);
   if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
   if (!isValidETHAddress(recipientWallet))
     throw new Error(`Invalid address ${recipientWallet}`);

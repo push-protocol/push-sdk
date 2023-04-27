@@ -8,6 +8,7 @@ import {
 import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
+import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 import { ethers } from 'ethers';
 
@@ -18,38 +19,26 @@ type ProgressHookType = {
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
 
-const CreateNFTProfileTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+const UpgradeUserTest = () => {
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
-  const [nftTokenId, setNftTokenId] = useState<number>(1);
-  const [nftChainId, setNftChainId] = useState<number>(5);
-  const [password, setPassword] = useState<string>('');
-  const [nftContractAddress, setNftContractAddress] = useState<string>('');
-
-  const updateNFTTokenId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftTokenId(parseInt((e.target as HTMLInputElement).value));
+  const [account, setAccount] = useState(acc);
+  const [password, setPassword] = useState('testpassword');
+  const handleProgress = (progress: ProgressHookType) => {
+    setProgress(progress);
   };
-
-  const updateNFTChainId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftChainId(parseInt((e.target as HTMLInputElement).value));
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
   };
 
   const updatePassword = (e: React.SyntheticEvent<HTMLElement>) => {
     setPassword((e.target as HTMLInputElement).value);
   };
 
-  const updateNftContractAddress = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftContractAddress((e.target as HTMLInputElement).value);
-  };
-
-  const handleProgress = (progress: ProgressHookType) => {
-    setProgress(progress);
-  };
-
-  const testCreateNFTProfile = async (index: number) => {
+  const testCreateUser = async (index: number) => {
     try {
       setLoading(true);
       let response;
@@ -57,13 +46,11 @@ const CreateNFTProfileTest = () => {
         case 0:
           {
             const librarySigner = await library.getSigner();
-            response = await PushAPI.user.createNFTProfile({
+            response = await PushAPI.user.upgrade({
               signer: librarySigner,
               account: account,
-              password: password,
-              did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
-              progressHook: handleProgress,
               env,
+              additionalMeta: { password: password },
             });
           }
           break;
@@ -72,13 +59,11 @@ const CreateNFTProfileTest = () => {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
             const pvtKeySigner = new ethers.Wallet(Pkey);
-            response = await PushAPI.user.createNFTProfile({
+            response = await PushAPI.user.create({
               signer: pvtKeySigner,
               account: account,
-              password: password,
-              did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
-              progressHook: handleProgress,
               env,
+              progressHook: handleProgress,
             });
           }
           break;
@@ -97,41 +82,20 @@ const CreateNFTProfileTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>CreateNFTProfile Test page</h2>
+      <h2>Upgrade User Test page ( For NFT transfers or upgradation to v3 )</h2>
 
       <Loader show={isLoading} />
 
       <Section>
         <SectionItem style={{ marginTop: 20 }}>
-          <label>nftTokenId</label>
+          <label>account</label>
           <input
             type="text"
-            onChange={updateNFTTokenId}
-            value={nftTokenId}
+            onChange={updateAccount}
+            value={account}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
-        <SectionItem style={{ marginTop: 20 }}>
-          <label>nftChainId</label>
-          <input
-            type="text"
-            onChange={updateNFTChainId}
-            value={nftChainId}
-            style={{ width: 400, height: 30 }}
-          />
-        </SectionItem>
-
-        <SectionItem style={{ marginTop: 20 }}>
-          <label>nftContractAddress</label>
-          <input
-            type="text"
-            onChange={updateNftContractAddress}
-            value={nftContractAddress}
-            style={{ width: 400, height: 30 }}
-          />
-        </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
           <label>password</label>
           <input
@@ -141,21 +105,16 @@ const CreateNFTProfileTest = () => {
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Note: Connected Wallet should hold the entered nft !!!</label>
-        </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateNFTProfile(0)}>
-            CreateNFTProfile with library signer
+          <SectionButton onClick={() => testCreateUser(0)}>
+            Create user with address & library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateNFTProfile(1)}>
-            CreateNFTProfile with private key signer
+          <SectionButton onClick={() => testCreateUser(1)}>
+            Create user with private key signer
           </SectionButton>
         </SectionItem>
-
         {progress && (
           <div>
             <h3>{progress.progressTitle}</h3>
@@ -178,4 +137,4 @@ const CreateNFTProfileTest = () => {
   );
 };
 
-export default CreateNFTProfileTest;
+export default UpgradeUserTest;

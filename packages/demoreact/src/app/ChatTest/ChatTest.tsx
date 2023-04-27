@@ -35,6 +35,9 @@ const ChatTest = () => {
           <Link to="/create" className="nav-button">
             USER.CREATE
           </Link>
+          <Link to="/upgrade" className="nav-button">
+            USER.UPGRADE
+          </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND
           </Link>
@@ -61,15 +64,6 @@ const ChatTest = () => {
           </Link>
           <Link to="/getGroup" className="nav-button">
             CHAT.GETGROUP
-          </Link>
-          <Link to="/createNFTProfile" className="nav-button">
-            CHAT.CREATENFTPROFILE
-          </Link>
-          <Link to="/getNFTProfile" className="nav-button">
-            CHAT.GETNFTPROFILE
-          </Link>
-          <Link to="/upgradeNFTProfile" className="nav-button">
-            CHAT.UPGRADENFTPROFILE
           </Link>
         </NavMenu>
       </Section>

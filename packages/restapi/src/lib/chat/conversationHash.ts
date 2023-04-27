@@ -1,10 +1,10 @@
 import Constants from '../constants';
-import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
+import { isValidETHAddress } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
-import { getConversationHashService } from './helpers';
+import { getConversationHashService, getUserDID } from './helpers';
 
 /**
- * All chat messages are stored on IPFS. This function will return the latest message's CID (Content Identifier on IPFS). 
+ * All chat messages are stored on IPFS. This function will return the latest message's CID (Content Identifier on IPFS).
  * Whenever a new message is sent or received, this CID will change.
  */
 export const conversationHash = async (
@@ -16,10 +16,11 @@ export const conversationHash = async (
       throw new Error(`Invalid address!`);
     }
 
-    const updatedConversationId = isValidETHAddress(conversationId) ? walletToPCAIP10(conversationId) : conversationId
+    const updatedConversationId = await getUserDID(conversationId, env);
+    const accountDID = await getUserDID(account, env);
     const response = await getConversationHashService({
       conversationId: updatedConversationId,
-      account,
+      account: accountDID,
       env,
     });
     return response;

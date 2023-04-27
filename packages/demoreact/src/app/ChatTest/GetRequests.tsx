@@ -12,14 +12,18 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const GetRequestsTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [getRequestsResponse, setGetRequestsResponse] = useState<any>('');
   const [toDecrypt, setToDecrypt] = useState<boolean>(false);
+  const [account, setAccount] = useState<string>(acc);
 
   const updateToDecrypt = (e: React.SyntheticEvent<HTMLElement>) => {
     setToDecrypt((e.target as HTMLInputElement).checked);
+  };
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
   };
   const testGetRequests = async () => {
     try {
@@ -32,7 +36,7 @@ const GetRequestsTest = () => {
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
           signer: librarySigner,
-          env
+          env,
         });
       }
       const response = await PushAPI.chat.requests({
@@ -67,6 +71,15 @@ const GetRequestsTest = () => {
               style={{ width: 20, height: 20 }}
             />
             <label>Decrypt response</label>
+          </SectionItem>
+          <SectionItem style={{ marginTop: 20 }}>
+            <label>account</label>
+            <input
+              type="text"
+              onChange={updateAccount}
+              value={account}
+              style={{ width: 400, height: 30 }}
+            />
           </SectionItem>
           <SectionItem style={{ marginTop: 20 }}>
             <SectionButton onClick={testGetRequests}>
