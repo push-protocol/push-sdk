@@ -107,3 +107,4 @@ const Span = styled.span`
   letter-spacing: -0.019em;
   color: ${(props: any): string => props.theme.textColorPrimary || '#000'};
 `;
+
