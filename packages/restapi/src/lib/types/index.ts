@@ -259,7 +259,10 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = ethers.Wallet;
+export type SignerType = ethers.Signer & {
+  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
+  privateKey?: string;
+};
 
 export type EnvOptionsType = {
   env?: ENV;

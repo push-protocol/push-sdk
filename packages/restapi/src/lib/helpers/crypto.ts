@@ -91,7 +91,7 @@ export const decryptWithWalletRPCMethod = async (
 type decryptPgpKeyProps = {
   encryptedPGPPrivateKey: string;
   account?: string;
-  signer?: SignerType;
+  signer?: SignerType | null;
   env?: ENV;
   toUpgrade?: boolean;
   progressHook?: (progress: ProgressHookType) => void;
@@ -349,12 +349,20 @@ const bytesToHex = (bytes: Uint8Array): string => {
   );
 };
 
-const hexToBytes = (hex: string): Uint8Array => {
+export const hexToBytes = (hex: string): Uint8Array => {
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
   }
   return bytes;
+};
+
+export const stringToHex = (str: string): string => {
+  let hex = '';
+  for (let i = 0; i < str.length; i++) {
+    hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+  }
+  return hex;
 };
 
 // Derive AES-256-GCM key from a shared secret and salt
@@ -375,7 +383,7 @@ const hkdf = async (
 };
 
 // ENC_TYPE_V3 encryption
-const encryptV3 = async (
+export const encryptV3 = async (
   data: Uint8Array,
   secret: Uint8Array,
   additionalData?: Uint8Array
@@ -406,7 +414,7 @@ const encryptV3 = async (
 };
 
 // ENC_TYPE_V3 | ENC_TYPE_V2 decryption
-const decryptV2 = async (
+export const decryptV2 = async (
   encryptedData: encryptedPrivateKeyTypeV2,
   secret: Uint8Array,
   additionalData?: Uint8Array
@@ -508,7 +516,8 @@ export const preparePGPPublicKey = async (
 export const verifyPGPPublicKey = (
   encryptionType: string,
   publicKey: string,
-  address: string
+  did: string,
+  nftOwner: string
 ): string => {
   if (
     encryptionType === Constants.ENC_TYPE_V2 ||
@@ -524,7 +533,8 @@ export const verifyPGPPublicKey = (
       verifyProfileSignature(
         verificationProof,
         signedData,
-        pCAIP10ToWallet(address)
+        pCAIP10ToWallet(did),
+        nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
       )
     )
       return publicKey;
