@@ -12,11 +12,16 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const ApproveRequestTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [senderAddress, setSenderAddress] = useState<string>('');
   const [approveResponse, setApproveResponse] = useState<any>('');
+  const [account, setAccount] = useState<string>(acc);
+
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
   const updateSenderAddress = (e: React.SyntheticEvent<HTMLElement>) => {
     setSenderAddress((e.target as HTMLInputElement).value);
@@ -70,6 +75,15 @@ const ApproveRequestTest = () => {
                 type="text"
                 onChange={updateSenderAddress}
                 value={senderAddress}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Account</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

@@ -9,9 +9,9 @@ import { decryptPGPKey } from '../../../src/lib/helpers';
 import { send, requests } from '../../../src/lib/chat';
 chai.use(chaiAsPromised);
 
-describe('Send Chat Message', () => {
+describe('PushAPI.chat.send', () => {
   const _env = Constants.ENV.DEV;
-  let provider = ethers.getDefaultProvider(5);
+  const provider = ethers.getDefaultProvider(5);
   let _signer1: any;
   let walletAddress1: string;
   let account1: string;
@@ -23,8 +23,20 @@ describe('Send Chat Message', () => {
   const MESSAGE2 = 'Hey There Upgraded User!!!';
   const MESSAGE3 = 'Hey There from Upgraded User!!!';
 
+  const _nftSigner1 = new ethers.Wallet(
+    `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`,
+    provider
+  );
+  const _nftWalletAddress1 = _nftSigner1.address;
+  const _nftAccount1 = `nft:eip155:${process.env['NFT_CHAIN_ID_1']}:${process.env['NFT_CONTRACT_ADDRESS_1']}:${process.env['NFT_TOKEN_ID_1']}`;
+  const _nftSigner2 = new ethers.Wallet(
+    `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_2']}`,
+    provider
+  );
+  const _nftWalletAddress2 = _nftSigner2.address;
+  const _nftAccount2 = `nft:eip155:${process.env['NFT_CHAIN_ID_2']}:${process.env['NFT_CONTRACT_ADDRESS_2']}:${process.env['NFT_TOKEN_ID_2']}`;
+
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
     const WALLET1 = ethers.Wallet.createRandom();
     _signer1 = new ethers.Wallet(WALLET1.privateKey, provider);
     walletAddress1 = _signer1.address;
@@ -35,7 +47,34 @@ describe('Send Chat Message', () => {
     account2 = `eip155:${walletAddress2}`;
   });
 
-  it('ENC v1 user sending message to ENC v1 user', async () => {
+  it('W2W Profile to NFT Profile', async () => {
+    await send({
+      messageContent: MESSAGE,
+      receiverAddress: _nftAccount1,
+      account: account1,
+      signer: _signer1,
+      env: _env,
+    });
+  });
+  it('NFT Profile to W2W Profile', async () => {
+    await send({
+      messageContent: MESSAGE,
+      receiverAddress: account1,
+      account: _nftAccount1,
+      signer: _nftSigner1,
+      env: _env,
+    });
+  });
+  it('NFT Profile to NFT Profile', async () => {
+    await send({
+      messageContent: MESSAGE,
+      receiverAddress: _nftAccount2,
+      account: _nftAccount1,
+      signer: _nftSigner1,
+      env: _env,
+    });
+  });
+  it('v1 W2W Profile to v1 W2W Profile', async () => {
     const user1 = await create({
       account: account1,
       env: _env,
@@ -78,7 +117,7 @@ describe('Send Chat Message', () => {
     )[0].msg;
     expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
   });
-  it('ENC v1 user sending message to ENC v3 user', async () => {
+  it('v1 W2W Profile to v3 W2W Profile', async () => {
     const user1 = await create({
       account: account1,
       env: _env,
@@ -121,7 +160,7 @@ describe('Send Chat Message', () => {
     )[0].msg;
     expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
   });
-  it('ENC v3 user sending message to ENC v1 user', async () => {
+  it('v3 W2W Profile to v1 W2W Profile', async () => {
     const user1 = await create({
       account: account1,
       env: _env,
@@ -164,7 +203,7 @@ describe('Send Chat Message', () => {
     )[0].msg;
     expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
   });
-  it('ENC v3 user sending message to ENC v3 user', async () => {
+  it('v3 W2W Profile to v3 W2W Profile', async () => {
     const user1 = await create({
       account: account1,
       env: _env,
@@ -207,7 +246,7 @@ describe('Send Chat Message', () => {
     )[0].msg;
     expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
   });
-  it('ENC v1 user sending message to ENC v1 user(Receiver upgraded to v3 in between)', async () => {
+  it('v1 W2W Profile to v1 W2W Profile(upgraded to v3 in between)', async () => {
     const user1 = await create({
       account: account1,
       env: _env,
@@ -283,7 +322,7 @@ describe('Send Chat Message', () => {
     )[0].msg;
     expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE2);
   });
-  it('ENC v1 user sending message to ENC v1 user(Sender upgraded to v3 in between)', async () => {
+  it('v1 W2W Profile(upgraded to v3 in between) to v1 W2W Profile', async () => {
     const user1 = await create({
       account: account1,
       env: _env,

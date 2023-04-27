@@ -14,13 +14,13 @@ import ChatTest from './ChatTest';
 
 type ProgressHookType = {
   progressId: string;
-  progressTitle: string,
+  progressTitle: string;
   progressInfo: string;
-  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR'
-}
+  level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
 
 const GetUserTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
@@ -28,11 +28,15 @@ const GetUserTest = () => {
     null
   );
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
+  const [account, setAccount] = useState(acc);
 
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
   const testGetUser = async () => {
     try {
@@ -83,6 +87,15 @@ const GetUserTest = () => {
       <Loader show={isLoading} />
 
       <Section>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>account</label>
+          <input
+            type="text"
+            onChange={updateAccount}
+            value={account}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
         <SectionItem>
           <SectionButton onClick={testGetUser}>get user data</SectionButton>
         </SectionItem>

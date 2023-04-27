@@ -30,9 +30,7 @@ import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
-import CreateNFTProfileTest from './ChatTest/CreateNFTProfile';
-import GetNFTProfileTest from './ChatTest/GetNFTProfile';
-import UpgradeNFTProfileTest from './ChatTest/upgradeNFTProfile';
+import UpgradeUserTest from './ChatTest/UpgradeUser';
 import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 
@@ -237,6 +235,7 @@ export function App() {
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/upgrade" element={<UpgradeUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
                 <Route path="/chats" element={<GetChatsTest />} />
@@ -246,15 +245,6 @@ export function App() {
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
-                <Route
-                  path="/createNFTProfile"
-                  element={<CreateNFTProfileTest />}
-                />
-                <Route path="/getNFTProfile" element={<GetNFTProfileTest />} />
-                <Route
-                  path="/upgradeNFTProfile"
-                  element={<UpgradeNFTProfileTest />}
-                />
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

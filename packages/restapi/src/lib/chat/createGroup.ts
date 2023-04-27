@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
-  getConnectedUser,
   sign,
   createGroupRequestValidator,
   getWallet,
-  getAccountAddress,
+  getUserDID,
+  getConnectedUserV2,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -57,7 +57,7 @@ export const createGroup = async (
     }
 
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
+
     createGroupRequestValidator(
       groupName,
       groupDescription,
@@ -69,8 +69,16 @@ export const createGroup = async (
       numberOfERC20
     );
 
-    const convertedMembers = members.map(walletToPCAIP10);
-    const convertedAdmins = admins.map(walletToPCAIP10);
+    const convertedMembersPromise = members.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedAdminsPromise = admins.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedMembers = await Promise.all(convertedMembersPromise);
+    const convertedAdmins = await Promise.all(convertedAdminsPromise);
+
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
     const bodyToBeHashed = {
       groupName: groupName,
@@ -85,10 +93,8 @@ export const createGroup = async (
       contractAddressERC20:
         contractAddressERC20 == undefined ? null : contractAddressERC20,
       numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-      groupCreator: walletToPCAIP10(address),
+      groupCreator: connectedUser.did,
     };
-
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
 
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature: string = await sign({
@@ -108,7 +114,7 @@ export const createGroup = async (
       groupImage,
       convertedAdmins,
       isPublic,
-      walletToPCAIP10(address),
+      connectedUser.did,
       verificationProof,
       contractAddressNFT,
       numberOfNFTs,
