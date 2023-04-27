@@ -5,12 +5,12 @@ import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  getConnectedUser,
   sign,
   updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
   getUserDID,
+  getConnectedUserV2,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -60,7 +60,7 @@ export const updateGroup = async (
       admins,
       address
     );
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const convertedMembersPromise = members.map(async (each) => {
       return getUserDID(each, env);
     });

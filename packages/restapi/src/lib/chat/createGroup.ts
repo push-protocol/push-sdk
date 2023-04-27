@@ -5,11 +5,11 @@ import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
-  getConnectedUser,
   sign,
   createGroupRequestValidator,
   getWallet,
   getUserDID,
+  getConnectedUserV2,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -78,7 +78,7 @@ export const createGroup = async (
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
     const bodyToBeHashed = {
       groupName: groupName,
