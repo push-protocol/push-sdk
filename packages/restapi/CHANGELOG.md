@@ -2,6 +2,86 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.6...restapi-1.2.7) (2023-04-27)
+
+
+### Bug Fixes
+
+* Merge branch 'deployment' ([0d184dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/0d184dc75d8680ac8a77f1124204af86befac82c))
+* senderType is optional param ([#329](https://github.com/ethereum-push-notification-service/push-sdk/issues/329)) ([ed3d6e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/ed3d6e611975da054d5e1b3809e614450a563cd5))
+
+
+
+## [1.2.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.5...restapi-1.2.6) (2023-04-27)
+
+
+### Bug Fixes
+
+* add chat.chat to exports ([#331](https://github.com/ethereum-push-notification-service/push-sdk/issues/331)) ([289c774](https://github.com/ethereum-push-notification-service/push-sdk/commit/289c774074cecd6998b0bda39bee4e779ee9daa3))
+
+
+
+## [1.2.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.4...restapi-1.2.5) (2023-04-27)
+
+
+### Bug Fixes
+
+* nft compatibility ([#326](https://github.com/ethereum-push-notification-service/push-sdk/issues/326)) ([80650e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/80650e65f490e08df30c17c9e5dadc0b513b1f46))
+
+
+
+## [1.2.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.4...restapi-1.2.5) (2023-04-27)
+
+
+### Bug Fixes
+
+* nft compatibility ([#326](https://github.com/ethereum-push-notification-service/push-sdk/issues/326)) ([80650e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/80650e65f490e08df30c17c9e5dadc0b513b1f46))
+
+
+
+## [1.2.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.3...restapi-1.2.4) (2023-04-19)
+
+
+### Bug Fixes
+
+* chamged signerType from ethers.wallet ([#315](https://github.com/ethereum-push-notification-service/push-sdk/issues/315)) ([385b3dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/385b3ddf2e2aa22b687a5094ba5cfec0e13da63b))
+* fix videoCall Notif ([#310](https://github.com/ethereum-push-notification-service/push-sdk/issues/310)) ([069783e](https://github.com/ethereum-push-notification-service/push-sdk/commit/069783e2cbe77723e335affb2f2668c785aeace6))
+
+
+
+## [1.2.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.2...restapi-1.2.3) (2023-04-18)
+
+
+### Bug Fixes
+
+* git merge ([87a31a1](https://github.com/ethereum-push-notification-service/push-sdk/commit/87a31a142b80e3305d5986e9f6b5734d9345b7d0))
+
+
+
+## [1.2.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.1...restapi-1.2.2) (2023-04-07)
+
+
+### Bug Fixes
+
+* local for local development ([#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)) ([639b4d2](https://github.com/ethereum-push-notification-service/push-sdk/commit/639b4d2de728ef289da5889b51fd45e003156699))
+* main merge ([0be9604](https://github.com/ethereum-push-notification-service/push-sdk/commit/0be9604eacf003db0cc4244f41d5e9c533f7613a))
+* remove hardcoded values ([#299](https://github.com/ethereum-push-notification-service/push-sdk/issues/299)) ([02a4e20](https://github.com/ethereum-push-notification-service/push-sdk/commit/02a4e2077a2ee4fb010d619d04acffc1881a2c0c))
+* signerType  ([#303](https://github.com/ethereum-push-notification-service/push-sdk/issues/303)) ([20eb15a](https://github.com/ethereum-push-notification-service/push-sdk/commit/20eb15af4bc3286e5836845e299326352af0ce34))
+* version update ([d5433a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/d5433a93de34e69953ca88e602d264b234708727))
+* version update ([#302](https://github.com/ethereum-push-notification-service/push-sdk/issues/302)) ([82bd4f7](https://github.com/ethereum-push-notification-service/push-sdk/commit/82bd4f7882f8782f8d19a1daf97e5366ce26c5de))
+
+
+
+## [1.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.0...restapi-1.2.1) (2023-04-07)
+
+
+### Bug Fixes
+
+* added types for chat fn ([#298](https://github.com/ethereum-push-notification-service/push-sdk/issues/298)) ([1c944b2](https://github.com/ethereum-push-notification-service/push-sdk/commit/1c944b237909e393f6ae72c76138411076c62b13))
+
+
+
+
 # [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.1.0...restapi-1.2.0) (2023-04-06)
 
 

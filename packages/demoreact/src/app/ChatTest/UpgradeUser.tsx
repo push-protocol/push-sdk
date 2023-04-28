@@ -19,7 +19,7 @@ type ProgressHookType = {
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
 
-const CreateUserTest = () => {
+const UpgradeUserTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
@@ -44,26 +44,9 @@ const CreateUserTest = () => {
       let response;
       switch (index) {
         case 0:
-          response = await PushAPI.user.create({
-            account: isCAIP ? walletToPCAIP10(account) : account,
-            env,
-            progressHook: handleProgress,
-          });
-          break;
-        case 1:
           {
             const librarySigner = await library.getSigner();
-            response = await PushAPI.user.create({
-              signer: librarySigner,
-              env,
-              progressHook: handleProgress,
-            });
-          }
-          break;
-        case 2:
-          {
-            const librarySigner = await library.getSigner();
-            response = await PushAPI.user.create({
+            response = await PushAPI.user.upgrade({
               signer: librarySigner,
               account: account,
               env,
@@ -71,7 +54,7 @@ const CreateUserTest = () => {
             });
           }
           break;
-        case 3:
+        case 1:
           {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
@@ -83,12 +66,6 @@ const CreateUserTest = () => {
               progressHook: handleProgress,
             });
           }
-          break;
-        case 4:
-          response = await PushAPI.user.create({
-            env,
-            progressHook: handleProgress,
-          });
           break;
         default:
           break;
@@ -105,7 +82,7 @@ const CreateUserTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>Create User Test page</h2>
+      <h2>Upgrade User Test page ( For NFT transfers or upgradation to v3 )</h2>
 
       <Loader show={isLoading} />
 
@@ -130,30 +107,14 @@ const CreateUserTest = () => {
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testCreateUser(0)}>
-            Create user with address
-          </SectionButton>
-        </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateUser(1)}>
-            Create user with library signer
-          </SectionButton>
-        </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateUser(2)}>
             Create user with address & library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateUser(3)}>
+          <SectionButton onClick={() => testCreateUser(1)}>
             Create user with private key signer
           </SectionButton>
         </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testCreateUser(4)}>
-            Create user with nothing (Error expecting)
-          </SectionButton>
-        </SectionItem>
-
         {progress && (
           <div>
             <h3>{progress.progressTitle}</h3>
@@ -176,4 +137,4 @@ const CreateUserTest = () => {
   );
 };
 
-export default CreateUserTest;
+export default UpgradeUserTest;

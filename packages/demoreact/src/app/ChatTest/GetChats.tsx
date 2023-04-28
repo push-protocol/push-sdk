@@ -8,15 +8,18 @@ import {
 import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const GetChatsTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [getChatsResponse, setGetChatsResponse] = useState<any>('');
   const [toDecrypt, setToDecrypt] = useState<boolean>(false);
+  const [account, setAccount] = useState<string>(acc);
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
   const updateToDecrypt = (e: React.SyntheticEvent<HTMLElement>) => {
     setToDecrypt((e.target as HTMLInputElement).checked);
@@ -32,11 +35,11 @@ const GetChatsTest = () => {
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
           signer: librarySigner,
-          env
+          env,
         });
       }
       const response = await PushAPI.chat.chats({
-        account: isCAIP ? walletToPCAIP10(account) : account,
+        account: account,
         pgpPrivateKey: pvtkey,
         toDecrypt,
         env,
@@ -59,6 +62,15 @@ const GetChatsTest = () => {
 
       <Section>
         <div>
+          <SectionItem style={{ marginTop: 20 }}>
+            <label>account</label>
+            <input
+              type="text"
+              onChange={updateAccount}
+              value={account}
+              style={{ width: 400, height: 30 }}
+            />
+          </SectionItem>
           <SectionItem>
             <input
               type="checkbox"

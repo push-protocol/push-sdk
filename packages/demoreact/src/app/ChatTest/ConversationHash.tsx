@@ -8,7 +8,6 @@ import {
 import Loader from '../components/Loader';
 import { EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const ConversationHashTest = () => {
@@ -19,15 +18,11 @@ const ConversationHashTest = () => {
   const [userAddr2, setUserAddr2] = useState<string>('');
 
   const updateUserAddress1 = (e: React.SyntheticEvent<HTMLElement>) => {
-    setUserAddr1(
-      (e.target as HTMLInputElement).value
-    );
+    setUserAddr1((e.target as HTMLInputElement).value);
   };
 
   const updateUserAddress2 = (e: React.SyntheticEvent<HTMLElement>) => {
-    setUserAddr2(
-      (e.target as HTMLInputElement).value
-    );
+    setUserAddr2((e.target as HTMLInputElement).value);
   };
 
   const testConversationHash = async () => {
@@ -36,7 +31,7 @@ const ConversationHashTest = () => {
 
       // object for connected user data
       const response = await PushAPI.chat.conversationHash({
-        account: walletToPCAIP10(userAddr1),
+        account: userAddr1,
         conversationId: userAddr2,
         env,
       });
@@ -57,20 +52,30 @@ const ConversationHashTest = () => {
       <Loader show={isLoading} />
 
       <Section>
-      <SectionItem>
+        <SectionItem>
           <label>Sender's Address</label>
-          <input type="text" onChange={updateUserAddress1} value={userAddr1} style={{ width: 400, height: 30 }} />
+          <input
+            type="text"
+            onChange={updateUserAddress1}
+            value={userAddr1}
+            style={{ width: 400, height: 30 }}
+          />
           <label>Conversation Id</label>
-          <input type="text" onChange={updateUserAddress2} value={userAddr2} style={{ width: 400, height: 30 }} />
-          <SectionButton onClick={testConversationHash}>get conversation hash</SectionButton>
+          <input
+            type="text"
+            onChange={updateUserAddress2}
+            value={userAddr2}
+            style={{ width: 400, height: 30 }}
+          />
+          <SectionButton onClick={testConversationHash}>
+            get conversation hash
+          </SectionButton>
         </SectionItem>
 
         <SectionItem>
           <div>
             {response ? (
-              <CodeFormatter>
-                {JSON.stringify(response, null, 4)}
-              </CodeFormatter>
+              <CodeFormatter>{JSON.stringify(response, null, 4)}</CodeFormatter>
             ) : null}
           </div>
         </SectionItem>

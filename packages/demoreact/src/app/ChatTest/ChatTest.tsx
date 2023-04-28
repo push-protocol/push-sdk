@@ -1,11 +1,8 @@
 import { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import {
-  Section,
-} from '../components/StyledComponents';
+import { Section } from '../components/StyledComponents';
 import Loader from '../components/Loader';
-
 
 const ChatTest = () => {
   const [isLoading, setLoading] = useState(false);
@@ -37,6 +34,9 @@ const ChatTest = () => {
           </Link>
           <Link to="/create" className="nav-button">
             USER.CREATE
+          </Link>
+          <Link to="/upgrade" className="nav-button">
+            USER.UPGRADE
           </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND

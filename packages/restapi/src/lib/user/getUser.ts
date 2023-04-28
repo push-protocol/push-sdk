@@ -15,12 +15,13 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   return axios
     .get(requestUrl)
     .then((response) => {
-      if(response.data)
-      response.data.publicKey = verifyPGPPublicKey(
-        response.data.encryptionType,
-        response.data.publicKey,
-        response.data.did
-      );
+      if (response.data)
+        response.data.publicKey = verifyPGPPublicKey(
+          response.data.encryptionType,
+          response.data.publicKey,
+          response.data.did,
+          response.data.nftOwner
+        );
       return response.data;
     })
     .catch((err) => {
