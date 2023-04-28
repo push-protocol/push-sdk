@@ -52,11 +52,12 @@ export const getInboxLists = async (
         toDID: ''
       }
     }
-    Promise.all([message])
-    .then((message) => {
-      feeds.push({ ...list, ...message, groupInformation: list.groupInformation });
-    })
-    .catch((e) => console.log(e.message))
+
+    const messageResponse = await Promise.all([message])
+      .catch((e) => console.log(e.message))
+
+    feeds.push({ ...list, ...messageResponse, groupInformation: list.groupInformation })
+
   }
 
   if (toDecrypt)
