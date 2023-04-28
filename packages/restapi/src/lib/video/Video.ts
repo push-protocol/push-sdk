@@ -1,73 +1,97 @@
-import * as React from "react";
+import * as React from 'react';
 
 import * as Peer from 'simple-peer';
 
 import Constants, { ENV } from '../constants';
 import sendVideoCallNotification from './helpers/sendVideoCallNotification';
-import { SignerType } from '../types';
+import {
+  restartAudioStream,
+  restartVideoStream,
+  stopAudioStream,
+  stopVideoStream,
+} from './helpers/mediaToggle';
+import isJSON from './helpers/isJSON';
 
-type RequestOptionsType = {
-  account: string;
-  library: any;
-  chainId: number;
-  senderAddress: string;
-  recipientAddress: string;
-  chatId: string;
-  connectedUser: any;
-  onRecieveMessage: (message: string) => void;
-  env?: ENV;
-};
-
-type RequestReturnType = {
-  sendMessage: (message: string) => void;
-};
-
-type AcceptRequestOptionsType = {
-  signalData: any;
-  account: string;
-  library: any;
-  chainId: number;
-  senderAddress: string;
-  recipientAddress: string;
-  chatId: string;
-  connectedUser: any;
-  onRecieveMessage: (message: string) => void;
-  env?: ENV;
-};
-
-type AcceptRequestReturnType = {
-  sendMessage: (message: string) => void;
-};
-
-export type EstablishOptionsType = {
-  signalData: any;
-};
+import {
+  SignerType,
+  VideoAcceptRequestInputOptions,
+  VideoAcceptRequestReturnOptions,
+  VideoCallInfoType,
+  VideoEstablishInputOptions,
+  VideoRequestInputOptions,
+  VideoRequestReturnOptions,
+} from '../types';
 
 class Video {
+  // user related info
+  private signer: SignerType | undefined = undefined;
+  private chainId: number | undefined =  undefined;
+  private env: ENV = Constants.ENV.PROD;
+
   // storing the peer instance
-  peerInstance: Peer.Instance | undefined = undefined;
+  private peerInstance: Peer.Instance | undefined = undefined;
 
   // variables for video call state handling
   localStream: MediaStream;
   setLocalStream: React.Dispatch<React.SetStateAction<MediaStream>>;
   incomingStream: MediaStream;
   setIncomingStream: React.Dispatch<React.SetStateAction<MediaStream>>;
+  videoCallInfo: VideoCallInfoType;
+  setVideoCallInfo: React.Dispatch<React.SetStateAction<VideoCallInfoType>>;
+  isVideoOn: boolean;
+  setIsVideoOn: React.Dispatch<React.SetStateAction<boolean>>;
+  isAudioOn: boolean;
+  setIsAudioOn: React.Dispatch<React.SetStateAction<boolean>>;
+  isIncomingVideoOn: boolean;
+  setIsIncomingVideoOn: React.Dispatch<React.SetStateAction<boolean>>;
+  isIncomingAudioOn: boolean;
+  setIsIncomingAudioOn: React.Dispatch<React.SetStateAction<boolean>>;
 
   constructor({
     localStream,
     setLocalStream,
     incomingStream,
     setIncomingStream,
+    videoCallInfo,
+    setVideoCallInfo,
+    isVideoOn,
+    setIsVideoOn,
+    isAudioOn,
+    setIsAudioOn,
+    isIncomingVideoOn,
+    setIsIncomingVideoOn,
+    isIncomingAudioOn,
+    setIsIncomingAudioOn,
   }: {
     localStream: MediaStream;
     setLocalStream: React.Dispatch<React.SetStateAction<MediaStream>>;
     incomingStream: MediaStream;
     setIncomingStream: React.Dispatch<React.SetStateAction<MediaStream>>;
+    videoCallInfo: VideoCallInfoType;
+    setVideoCallInfo: React.Dispatch<React.SetStateAction<VideoCallInfoType>>;
+    isVideoOn: boolean;
+    setIsVideoOn: React.Dispatch<React.SetStateAction<boolean>>;
+    isAudioOn: boolean;
+    setIsAudioOn: React.Dispatch<React.SetStateAction<boolean>>;
+    isIncomingVideoOn: boolean;
+    setIsIncomingVideoOn: React.Dispatch<React.SetStateAction<boolean>>;
+    isIncomingAudioOn: boolean;
+    setIsIncomingAudioOn: React.Dispatch<React.SetStateAction<boolean>>;
   }) {
     this.localStream = localStream;
     this.setLocalStream = setLocalStream;
     this.incomingStream = incomingStream;
     this.setIncomingStream = setIncomingStream;
+    this.videoCallInfo = videoCallInfo;
+    this.setVideoCallInfo = setVideoCallInfo;
+    this.isVideoOn = isVideoOn;
+    this.setIsVideoOn = setIsVideoOn;
+    this.isAudioOn = isAudioOn;
+    this.setIsAudioOn = setIsAudioOn;
+    this.isIncomingVideoOn = isIncomingVideoOn;
+    this.setIsIncomingVideoOn = setIsIncomingVideoOn;
+    this.isIncomingAudioOn = isIncomingAudioOn;
+    this.setIsIncomingAudioOn = setIsIncomingAudioOn;
   }
 
   create = async () => {
@@ -83,19 +107,20 @@ class Video {
     }
   };
 
-  request = async (options: RequestOptionsType): Promise<RequestReturnType> => {
+  request = async (
+    options: VideoRequestInputOptions
+  ): Promise<VideoRequestReturnOptions> => {
     const {
       library,
-      account,
       chainId,
-      senderAddress,
-      recipientAddress,
+      senderAddress, // notification sender
+      recipientAddress, // notification receiver
       chatId,
       onRecieveMessage,
       env = Constants.ENV.PROD,
     } = options || {};
 
-    const signer: SignerType = await library.getSigner(account);
+    const signer: SignerType = await library.getSigner(senderAddress);
 
     const peer = new Peer({
       initiator: true,
@@ -104,26 +129,57 @@ class Video {
     });
 
     peer.on('signal', (data: any) => {
+      // sending notification to the recipientAddress with video call signaling data
       sendVideoCallNotification(
-        { account, signer, chainId },
+        { signer, chainId },
         {
-          recipientAddress,
           senderAddress,
-          signalingData: data,
+          recipientAddress,
           status: 1,
           chatId,
+          signalingData: data,
           env,
         }
       );
     });
 
+    // set videoCallInfo state with status 1 (call initiated)
+    this.setVideoCallInfo({
+      senderAddress: senderAddress,
+      receiverAddress: recipientAddress,
+      callStatus: 1,
+      chatId,
+    });
+
     peer.on('connect', () => {
-      peer.send('dummy message from sender');
+      peer.send('initial message from caller');
+      peer.send(
+        JSON.stringify({ type: 'isVideoOn', isVideoOn: this.isVideoOn })
+      );
+      peer.send(
+        JSON.stringify({ type: 'isAudioOn', isAudioOn: this.isAudioOn })
+      );
     });
 
     peer.on('data', (data: any) => {
-      console.log('received message', data);
-      onRecieveMessage(data);
+      if (isJSON(data)) {
+        const parsedData = JSON.parse(data);
+        if (parsedData.type === 'isVideoOn') {
+          console.log('IS VIDEO ON', parsedData.isVideoOn);
+          this.setIsIncomingVideoOn(parsedData.isVideoOn);
+        }
+        if (parsedData.type === 'isAudioOn') {
+          console.log('IS AUDIO ON', parsedData.isAudioOn);
+          this.setIsIncomingAudioOn(parsedData.isAudioOn);
+        }
+        if (parsedData.type === 'endLocalStream') {
+          console.log('END LOCAL STREAM', parsedData.endLocalStream);
+          window.location.reload();
+        }
+      } else {
+        console.log('received a message', data);
+        onRecieveMessage(data);
+      }
     });
 
     peer.on('stream', (currentStream: MediaStream) => {
@@ -135,27 +191,29 @@ class Video {
     };
 
     this.peerInstance = peer;
+    this.signer = signer;
+    this.chainId = chainId;
+    this.env = env;
     return {
       sendMessage,
     };
   };
 
   acceptRequest = async (
-    options: AcceptRequestOptionsType
-  ): Promise<AcceptRequestReturnType> => {
+    options: VideoAcceptRequestInputOptions
+  ): Promise<VideoAcceptRequestReturnOptions> => {
     const {
       signalData,
       library,
-      account,
       chainId,
-      senderAddress,
-      recipientAddress,
+      senderAddress, // notification sender
+      recipientAddress, // notification receiver
       chatId,
       onRecieveMessage,
       env = Constants.ENV.PROD,
     } = options || {};
 
-    const signer: SignerType = await library.getSigner(account);
+    const signer: SignerType = await library.getSigner(senderAddress);
 
     const peer = new Peer({
       initiator: false,
@@ -167,25 +225,61 @@ class Video {
 
     peer.on('signal', (data: any) => {
       sendVideoCallNotification(
-        { account, signer, chainId },
+        { signer, chainId },
         {
-          recipientAddress,
           senderAddress,
-          signalingData: data,
+          recipientAddress,
           status: 2,
           chatId,
+          signalingData: data,
           env,
         }
       );
     });
 
+    // set videoCallInfo state with status 2 (call received)
+    this.setVideoCallInfo({
+      senderAddress: senderAddress,
+      receiverAddress: recipientAddress,
+      callStatus: 2,
+      chatId,
+    });
+
     peer.on('connect', () => {
-      peer.send('dummy message from reciever');
+      peer.send('initial message from receiver');
+      peer.send(
+        JSON.stringify({ type: 'isVideoOn', isVideoOn: this.isVideoOn })
+      );
+      peer.send(
+        JSON.stringify({ type: 'isAudioOn', isAudioOn: this.isAudioOn })
+      );
+
+      // set videoCallInfo state with status 3 (call established) for the receiver's end
+      this.setVideoCallInfo((oldVideoCallInfo) => ({
+        ...oldVideoCallInfo,
+        callStatus: 3,
+      }));
     });
 
     peer.on('data', (data: any) => {
-      console.log('received message', data);
-      onRecieveMessage(data);
+      if (isJSON(data)) {
+        const parsedData = JSON.parse(data);
+        if (parsedData.type === 'isVideoOn') {
+          console.log('IS VIDEO ON', parsedData.isVideoOn);
+          this.setIsIncomingVideoOn(parsedData.isVideoOn);
+        }
+        if (parsedData.type === 'isAudioOn') {
+          console.log('IS AUDIO ON', parsedData.isAudioOn);
+          this.setIsIncomingAudioOn(parsedData.isAudioOn);
+        }
+        if (parsedData.type === 'endLocalStream') {
+          console.log('END LOCAL STREAM', parsedData.endLocalStream);
+          window.location.reload();
+        }
+      } else {
+        console.log('received a message', data);
+        onRecieveMessage(data);
+      }
     });
 
     peer.on('stream', (currentStream: MediaStream) => {
@@ -197,25 +291,106 @@ class Video {
     };
 
     this.peerInstance = peer;
+    this.signer = signer;
+    this.chainId = chainId;
+    this.env = env;
     return {
       sendMessage,
     };
   };
 
-  establish = (options: EstablishOptionsType): void => {
+  establish = (options: VideoEstablishInputOptions): void => {
     const { signalData } = options || {};
     if (this.peerInstance) {
       this.peerInstance.signal(signalData);
+
+      // set videoCallInfo state with status 3 (call established) for the caller's end
+      this.setVideoCallInfo((oldVideoCallInfo) => ({
+        ...oldVideoCallInfo,
+        callStatus: 3,
+      }));
     } else {
       throw new Error('Peer instance is undefined');
     }
   };
 
   end = (): void => {
-    if (this.peerInstance) {
-      this.peerInstance.destroy();
-    } else {
-      throw new Error('Peer instance is undefined');
+    try {
+      if (this.videoCallInfo.callStatus === 3) {
+        this.peerInstance?.send(
+          JSON.stringify({ type: 'endLocalStream', endLocalStream: true })
+        );
+        this.peerInstance?.destroy();
+      }
+      if(this.videoCallInfo.callStatus === 2) {
+        if(!this.signer) throw new Error("signer not valid");
+        if(!this.chainId) throw new Error("chainId not valid");
+        if(!this.env) throw new Error("env is not valid");
+
+        // for disconnecting during status 1
+        // send a notif to the other computer signaling status:4
+        sendVideoCallNotification(
+          { signer: this.signer, chainId: this.chainId },
+          {
+            senderAddress: this.videoCallInfo.senderAddress,
+            recipientAddress: this.videoCallInfo.receiverAddress,
+            status: 4,
+            chatId: this.videoCallInfo.chatId,
+            signalingData: null,
+            env: this.env,
+          }
+        );
+        window.location.reload();
+      }
+
+      // ending the local stream
+      if (this.localStream) {
+        console.log('END LOCAL STREAM');
+        this.localStream.getTracks().forEach((track) => track.stop());
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log('error occured', error);
+    }
+  };
+
+  // functions for toggling local audio and video
+
+  toggleVideo = (): void => {
+    if (this.videoCallInfo.callStatus === 3) {
+      this.peerInstance?.send(
+        JSON.stringify({ type: 'isVideoOn', isVideoOn: !this.isVideoOn })
+      );
+    }
+
+    if (this.isVideoOn === false) {
+      console.log('INITIALIZE LOCAL STREAM');
+      restartVideoStream(this.localStream);
+      this.setIsVideoOn(true);
+    }
+    if (this.isVideoOn === true && this.localStream) {
+      console.log('STOP LOCAL STREAM');
+      stopVideoStream(this.localStream);
+      this.setIsVideoOn(false);
+    }
+  };
+
+  toggleAudio = (): void => {
+    if (this.videoCallInfo.callStatus === 3) {
+      this.peerInstance?.send(
+        JSON.stringify({ type: 'isAudioOn', isAudioOn: !this.isAudioOn })
+      );
+    }
+
+    if (this.isAudioOn === false) {
+      console.log('INITIALIZE LOCAL STREAM');
+      restartAudioStream(this.localStream);
+      this.setIsAudioOn(true);
+    }
+    if (this.isAudioOn === true && this.localStream) {
+      console.log('STOP LOCAL STREAM');
+      stopAudioStream(this.localStream);
+      this.setIsAudioOn(false);
     }
   };
 }

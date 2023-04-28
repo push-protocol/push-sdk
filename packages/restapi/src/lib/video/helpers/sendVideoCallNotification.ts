@@ -9,12 +9,19 @@ interface VideoCallInfoType {
   senderAddress: string;
   chatId: string;
   signalingData: any;
-  status: 1 | 2 | 3; // 1 is call initiated, 2 is call answered, 3 is call completed
+  /*
+    callStatus
+    0 - call not initiated
+    1 - call initiated by the caller address
+    2 - call recieved by the receiver address
+    3 - call is established
+    4 - call ended
+  */
+  status: 1 | 2 | 3 | 4;
   env?: ENV;
 }
 
 interface UserInfoType {
-  account: string;
   signer: SignerType;
   chainId: number;
 }
@@ -23,17 +30,17 @@ interface videoPayloadType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
-  signalingData: any;
+  signalingData?: any;
   status: number;
 }
 
 const sendVideoCallNotification = async (
-  { account, signer, chainId }: UserInfoType,
+  { signer, chainId }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
     chatId,
-    signalingData,
+    signalingData = null,
     status,
     env = Constants.ENV.PROD,
   }: VideoCallInfoType
@@ -53,7 +60,7 @@ const sendVideoCallNotification = async (
       chainId
     );
 
-    const wallet = getWallet({ account, signer });
+    const wallet = getWallet({ account: senderAddress, signer });
     const connectedUser = await getConnectedUser(wallet, null, env);
 
     await sendNotification({
