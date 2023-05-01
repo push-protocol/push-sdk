@@ -42,115 +42,125 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     progressHook,
   } = options || {};
 
-  if (signer == null) {
-    throw new Error(`Signer is necessary!`);
-  }
+  try {
+    if (signer == null) {
+      throw new Error(`Signer is necessary!`);
+    }
 
-  const wallet = getWallet({ account, signer });
-  const address = await getAccountAddress(wallet);
+    const wallet = getWallet({ account, signer });
+    const address = await getAccountAddress(wallet);
 
-  if (!isValidETHAddress(address)) {
-    throw new Error(`Invalid address!`);
-  }
+    if (!isValidETHAddress(address)) {
+      throw new Error(`Invalid address!`);
+    }
 
-  const user: IUser = await get({ account: address, env: env });
+    const user: IUser = await get({ account: address, env: env });
 
-  // user not found or already at latest encryption scheme
-  if (
-    !user ||
-    !user.encryptedPrivateKey ||
-    user.encryptionType === Constants.ENC_TYPE_V3
-  ) {
-    return user;
-  }
+    // user not found or already at latest encryption scheme
+    if (
+      !user ||
+      !user.encryptedPrivateKey ||
+      user.encryptionType === Constants.ENC_TYPE_V3
+    ) {
+      return user;
+    }
 
-  const caip10 = user.did;
-  let encryptionType: string;
+    const caip10 = user.did;
+    let encryptionType: string;
 
-  if (isValidCAIP10NFTAddress(user.did)) {
-    encryptionType = Constants.ENC_TYPE_V4;
-  } else {
-    encryptionType = Constants.ENC_TYPE_V3;
-  }
+    if (isValidCAIP10NFTAddress(user.did)) {
+      encryptionType = Constants.ENC_TYPE_V4;
+    } else {
+      encryptionType = Constants.ENC_TYPE_V3;
+    }
 
-  // Report Progress
-  progressHook?.({
-    progressId: 'PUSH-UPGRADE-01',
-    progressTitle: 'Generating New Profile Signature',
-    progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
-    level: 'INFO',
-  });
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-01',
+      progressTitle: 'Generating New Profile Signature',
+      progressInfo:
+        'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
+      level: 'INFO',
+    });
 
-  const publicKey: string = await preparePGPPublicKey(
-    encryptionType,
-    user.publicKey,
-    wallet
-  );
+    const publicKey: string = await preparePGPPublicKey(
+      encryptionType,
+      user.publicKey,
+      wallet
+    );
 
-  // Report Progress
-  progressHook?.({
-    progressId: 'PUSH-UPGRADE-02',
-    progressTitle: 'Decrypting Old Profile',
-    progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
-    level: 'INFO',
-  });
-  const privateKey = await decryptPGPKey({
-    encryptedPGPPrivateKey: user.encryptedPrivateKey,
-    signer: signer,
-    env,
-    toUpgrade: false,
-    additionalMeta,
-  });
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-02',
+      progressTitle: 'Decrypting Old Profile',
+      progressInfo:
+        'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
+      level: 'INFO',
+    });
+    const privateKey = await decryptPGPKey({
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      signer: signer,
+      env,
+      toUpgrade: false,
+      additionalMeta,
+    });
 
-  // Report Progress
-  progressHook?.({
-    progressId: 'PUSH-UPGRADE-03',
-    progressTitle: 'Generating Encrypted New Profile',
-    progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Encrypting Push Chat Keys with latest version. Please sign the message to continue.',
-    level: 'INFO',
-  });
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-03',
+      progressTitle: 'Generating Encrypted New Profile',
+      progressInfo:
+        'Trying to Upgrade Push Chat Keys to latest version. Encrypting Push Chat Keys with latest version. Please sign the message to continue.',
+      level: 'INFO',
+    });
 
-  const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
-    encryptionType,
-    privateKey,
-    wallet,
-    additionalMeta
-  );
-
-  if (encryptionType === Constants.ENC_TYPE_V4) {
-    const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
-      Constants.ENC_TYPE_V3,
-      additionalMeta?.password as string,
+    const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
+      encryptionType,
+      privateKey,
       wallet,
       additionalMeta
     );
-    encryptedPrivateKey.encryptedPassword = encryptedPassword;
-  }
 
-  // Report Progress
-  progressHook?.({
-    progressId: 'PUSH-UPGRADE-04',
-    progressTitle: 'Syncing New Profile',
-    progressInfo:
-      'Please sign the message to continue. Steady lads, chat is almost ready!',
-    level: 'INFO',
-  });
-  const upgradedUser = await update({
-    encryptedPgpPrivateKey: JSON.stringify(encryptedPrivateKey),
-    signer,
-    account: caip10,
-    pgpPublicKey: publicKey,
-    env,
-  });
-  // Report Progress
-  progressHook?.({
-    progressId: 'PUSH-UPGRADE-05',
-    progressTitle: 'Upgrade Completed, Welcome to Push Chat',
-    progressInfo: '',
-    level: 'SUCCESS',
-  });
-  return upgradedUser;
+    if (encryptionType === Constants.ENC_TYPE_V4) {
+      const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
+        Constants.ENC_TYPE_V3,
+        additionalMeta?.password as string,
+        wallet,
+        additionalMeta
+      );
+      encryptedPrivateKey.encryptedPassword = encryptedPassword;
+    }
+
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-04',
+      progressTitle: 'Syncing New Profile',
+      progressInfo:
+        'Please sign the message to continue. Steady lads, chat is almost ready!',
+      level: 'INFO',
+    });
+    const upgradedUser = await update({
+      encryptedPgpPrivateKey: JSON.stringify(encryptedPrivateKey),
+      signer,
+      account: caip10,
+      pgpPublicKey: publicKey,
+      env,
+    });
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-UPGRADE-05',
+      progressTitle: 'Upgrade Completed, Welcome to Push Chat',
+      progressInfo: '',
+      level: 'SUCCESS',
+    });
+    return upgradedUser;
+  } catch (err) {
+    progressHook?.({
+      progressId: 'PUSH-ERROR-00',
+      progressTitle: 'Non Specific Error',
+      progressInfo: `[Push SDK] - API  - Error - API upgrade User() -: ${err}`,
+      level: 'ERROR',
+    });
+    throw Error(`[Push SDK] - API  - Error - API upgrade User() -: ${err}`);
+  }
 };
