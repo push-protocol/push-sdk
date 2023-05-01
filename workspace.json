@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "demonative": "apps/demonative",
+    "demonode": "packages/demonode",
     "demoreact": "packages/demoreact",
     "ledgerlive": "packages/ledgerlive",
     "reactnative": "packages/reactnative",

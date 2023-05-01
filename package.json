@@ -22,6 +22,7 @@
     "chai": "^4.3.7",
     "core-js": "^3.6.5",
     "date-fns": "^2.28.0",
+    "dotenv": "^16.0.3",
     "ethers": "^5.7.1",
     "expo": "^45.0.0",
     "expo-file-system": "~14.0.0",
@@ -30,6 +31,7 @@
     "mocha": "^10.2.0",
     "mocha-typescript": "^1.1.17",
     "moment": "^2.29.4",
+    "openpgp": "^5.8.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-is": "17.0.2",
@@ -47,6 +49,7 @@
     "tiny-invariant": "^1.2.0",
     "ts-mocha": "^10.0.0",
     "tslib": "^2.3.0",
+    "unique-names-generator": "^4.7.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -58,6 +61,7 @@
     "@nrwl/jest": "14.1.7",
     "@nrwl/js": "14.1.7",
     "@nrwl/linter": "14.1.7",
+    "@nrwl/node": "14.1.7",
     "@nrwl/react": "14.1.7",
     "@nrwl/react-native": "14.1.7",
     "@nrwl/web": "14.1.7",
