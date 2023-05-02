@@ -435,7 +435,7 @@ async function runChatUseCases() {
   await PushAPI_chat_getGroupByName();
 
   console.log('PushAPI.chat.getGroup');
-  await PushAPI_chat_getGroup();
+  await PushAPI_chat_getGroup(chatId);
 
   console.log('PushAPI.chat.decryptConversation');
   await PushAPI_chat_decryptConversation();
@@ -813,9 +813,12 @@ async function PushAPI_chat_getGroupByName(silent = !showAPIResponse) {
 }
 
 // Push Chat - PushAPI.chat.getGroup
-async function PushAPI_chat_getGroup(silent = !showAPIResponse) {
+async function PushAPI_chat_getGroup(
+  chatId: string,
+  silent = !showAPIResponse
+) {
   const response = await PushAPI.chat.getGroup({
-    chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+    chatId: chatId,
     env: env as ENV,
   });
 
@@ -984,7 +987,7 @@ async function runNFTChatUseCases() {
   await PushAPI_nft_chat_getGroupByName();
 
   console.log('PushAPI.chat.getGroup');
-  await PushAPI_nft_chat_getGroup();
+  await PushAPI_nft_chat_getGroup(chatId);
 
   console.log('PushAPI.chat.decryptConversation');
   await PushAPI_nft_chat_decryptConversation();
@@ -1356,9 +1359,12 @@ async function PushAPI_nft_chat_getGroupByName(silent = !showAPIResponse) {
 }
 
 // Push Chat - PushAPI.chat.getGroup
-async function PushAPI_nft_chat_getGroup(silent = !showAPIResponse) {
+async function PushAPI_nft_chat_getGroup(
+  chatId: string,
+  silent = !showAPIResponse
+) {
   const response = await PushAPI.chat.getGroup({
-    chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+    chatId: chatId,
     env: env as ENV,
   });
 
