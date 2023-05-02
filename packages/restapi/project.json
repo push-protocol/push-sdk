@@ -38,6 +38,15 @@
         "postTargets": ["restapi:build", "restapi:ci-publish"]
       }
     },
+    "ci-version-beta": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular",
+        "commitMessageFormat": "ci(${projectName}): 🎉 cut beta release to ${projectName}-v${version}",
+        "postTargets": ["restapi:build", "restapi:ci-publish"],
+        "preid": "beta"
+      }
+    },
     "ci-publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

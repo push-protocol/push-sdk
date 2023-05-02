@@ -233,7 +233,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     }
 
     // try key upgradation
-    if (signer && toUpgrade) {
+    if (signer && toUpgrade && encryptionType !== Constants.ENC_TYPE_V4) {
       try {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
