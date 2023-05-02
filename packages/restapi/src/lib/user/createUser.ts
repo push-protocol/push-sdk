@@ -12,6 +12,7 @@ import {
   encryptPGPKey,
   preparePGPPublicKey,
   isValidCAIP10NFTAddress,
+  validatePssword,
 } from '../helpers';
 import {
   SignerType,
@@ -50,6 +51,9 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
 
     if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
+    }
+    if (additionalMeta && additionalMeta.password) {
+      validatePssword(additionalMeta.password);
     }
 
     const caip10: string = walletToPCAIP10(address);
