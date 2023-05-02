@@ -26,7 +26,7 @@ const UpgradeUserTest = () => {
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
   const [account, setAccount] = useState(acc);
-  const [password, setPassword] = useState('testpassword');
+  const [password, setPassword] = useState('#TestPassword1');
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
