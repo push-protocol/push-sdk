@@ -42,7 +42,7 @@
       "executor": "@jscutlery/semver:version",
       "options": {
         "preset": "angular",
-        "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
+        "commitMessageFormat": "ci(${projectName}): 🎉 cut beta release to ${projectName}-v${version}",
         "postTargets": ["restapi:build", "restapi:ci-publish"],
         "preid": "beta"
       }
