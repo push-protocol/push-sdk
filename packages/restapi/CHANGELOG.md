@@ -12,6 +12,16 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.0...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* add password validation ([#345](https://github.com/ethereum-push-notification-service/push-sdk/issues/345)) ([863f48f](https://github.com/ethereum-push-notification-service/push-sdk/commit/863f48f9cbb3022e01f8715005cc8cd0fa96d0a8))
+* Merge branch 'main' into deployment ([a3cf078](https://github.com/ethereum-push-notification-service/push-sdk/commit/a3cf078f37d31859ae83129d2b704639bbaab62b))
+
+
+
 ## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
 
 
