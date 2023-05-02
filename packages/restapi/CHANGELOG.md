@@ -2,6 +2,126 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [0.0.1-beta.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-0.0.1-beta.0) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
+## [1.2.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.9...restapi-1.2.10) (2023-05-02)
+
+
+### Bug Fixes
+
+* added ci-version-beta ([2f282ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/2f282ce60003733fc95ce239a6c1a2d6c24616cc))
+* added ci-version-beta ([496952a](https://github.com/ethereum-push-notification-service/push-sdk/commit/496952ac8faab02c82ee11be8e8925a1fb01cd01))
+* added release type ([28d7181](https://github.com/ethereum-push-notification-service/push-sdk/commit/28d71818c766b7057d4b1b8f629c8a4d01378db0))
+* added releaseType ([55429e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/55429e54fc9df054dab955796ae4e34da8dd25ec))
+
+
+
 ## [1.2.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.8...restapi-1.2.9) (2023-05-02)
 
 
