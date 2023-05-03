@@ -67,7 +67,11 @@ const CreateUserTest = () => {
               signer: librarySigner,
               account: account,
               env,
-              additionalMeta: { password: password },
+              additionalMeta: {
+                NFTPGP_V1: {
+                  password: password,
+                },
+              },
             });
           }
           break;

@@ -21,7 +21,11 @@ export type UpgradeUserProps = {
   env?: ENV;
   account?: string;
   signer: SignerType;
-  additionalMeta?: { password?: string };
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  };
   progressHook?: (progress: ProgressHookType) => void;
 };
 /**
@@ -124,7 +128,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     if (encryptionType === Constants.ENC_TYPE_V4) {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         Constants.ENC_TYPE_V3,
-        additionalMeta?.password as string,
+        additionalMeta?.NFTPGP_V1?.password as string,
         wallet,
         additionalMeta
       );

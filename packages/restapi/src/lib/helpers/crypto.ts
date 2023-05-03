@@ -94,7 +94,11 @@ type decryptPgpKeyProps = {
   signer?: SignerType | null;
   env?: ENV;
   toUpgrade?: boolean;
-  additionalMeta?: { password?: string };
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  };
   progressHook?: (progress: ProgressHookType) => void;
 };
 
@@ -205,8 +209,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
       }
       case Constants.ENC_TYPE_V4: {
         let password: string | null = null;
-        if (additionalMeta?.password) {
-          password = additionalMeta.password;
+        if (additionalMeta?.NFTPGP_V1) {
+          password = additionalMeta.NFTPGP_V1.password;
         } else {
           if (!wallet?.signer) {
             throw new Error(
@@ -464,7 +468,11 @@ export const encryptPGPKey = async (
   encryptionType: string,
   privateKey: string,
   wallet: walletType,
-  addtionalMeta?: { password?: string }
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  }
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
@@ -504,14 +512,14 @@ export const encryptPGPKey = async (
       break;
     }
     case Constants.ENC_TYPE_V4: {
-      if (!addtionalMeta?.password) {
+      if (!additionalMeta?.NFTPGP_V1?.password) {
         throw new Error('Password is required!');
       }
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
       encryptedPrivateKey = await encryptV2(
         encodedPrivateKey,
-        hexToBytes(stringToHex(addtionalMeta?.password))
+        hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
       );
       encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
       encryptedPrivateKey.preKey = '';
