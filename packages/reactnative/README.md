@@ -166,7 +166,7 @@ const [notifData, setNotifData] = React.useState([]);
 import * as PushAPI from '@pushprotocol/restapi';
 
 
-const notifications = await PushAPI.user.getFeeds({
+const notifications = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
   env: 'dev',
   limit: parseInt(pageSize, 10)

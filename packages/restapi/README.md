@@ -2,55 +2,63 @@
 This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
 # Index
+- [restapi](#restapi)
+- [Index](#index)
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
   - [Import SDK](#import-sdk)
-  - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
-  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
-  - [About Push contract addresses](#about-push-contract-addresses)
+  - [**About generating the "signer" object for different platforms**](#about-generating-the-signer-object-for-different-platforms)
+    - [When using in SERVER-SIDE code:](#when-using-in-server-side-code)
+    - [When using in FRONT-END code:](#when-using-in-front-end-code)
+  - [**About blockchain agnostic address format**](#about-blockchain-agnostic-address-format)
+    - [Chat blockchain agnostic address format](#chat-blockchain-agnostic-address-format)
+  - [**About Push contract addresses**](#about-push-contract-addresses)
+    - [Push core contract address](#push-core-contract-address)
+    - [Push communicator contract address](#push-communicator-contract-address)
 - [SDK Features](#sdk-features)
-  - [Notification](#for-notification)
-    -  [Fetching user notifications](#fetching-user-notifications)
-    -  [Fetching user spam notifications](#fetching-user-spam-notifications)
-    -  [Fetching user subscriptions](#fetching-user-subscriptions)
-    -  [Fetching channel details](#fetching-channel-details)
-    -  [Searching for channel(s)](#searching-for-channels)
-    -  [Opt in to a channel](#opt-in-to-a-channel)
-    -  [Opt out to a channel](#opt-out-to-a-channel)
-    -  [Sending notification](#sending-notification)
-        -  [Direct payload for single recipient(target)](#direct-payload-for-single-recipienttarget)
-        -  [Direct payload for group of recipients(subset)](#direct-payload-for-group-of-recipientssubset)
-        -  [Direct payload for all recipients(broadcast)](#direct-payload-for-all-recipientsbroadcast)
-        -  [IPFS payload for single recipient(target)](#ipfs-payload-for-single-recipienttarget)
-        -  [IPFS payload for group of recipients(subset)](#ipfs-payload-for-group-of-recipientssubset)
-        -  [IPFS payload for all recipients(broadcast)](#ipfs-payload-for-all-recipientsbroadcast)
-        -  [Minimal payload for single recipient(target)](#minimal-payload-for-single-recipienttarget)
-        -  [Minimal payload for a group of recipient(subset)](#minimal-payload-for-a-group-of-recipientsubset)
-        -  [Minimal payload for all recipients(broadcast)](#minimal-payload-for-all-recipientsbroadcast)
-        -  [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
-        -  [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
-        -  [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
-    -  [Notification helper utils](#notification-helper-utils)
-        -  [Parsing notifications](#parsing-notifications)
-    -  [Advanced Notification (WIP)](#advanced-notifications-wip)
-        -  [**Deprecated** Get a channel’s subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
-  - [Chat](#for-chat)
-    -  [Create user for chat](#create-user-for-chat)
-    -  [Get user data for chat](#get-user-data-for-chat)
-    -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key-from-user-data)
-    -  [Fetching list of user chats](#fetching-list-of-user-chats)
-    -  [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
-    -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
-    -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
-    -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
-    -  [To send a message](#to-send-a-message)
-    -  [To approve a chat request](#to-approve-a-chat-request)
-    -  [To create a group](#to-create-a-group)
-    -  [To update group details](#to-update-group-details)
-    -  [To get group details by group name](#to-get-group-details-by-group-name)
-    -  [To get group details by chat id](#to-get-group-details-by-chatid)
-    -  [Chat helper utils](#chat-helper-utils)
-        -  [Decrypting messages](#decrypting-messages)
+  - [For Notification](#for-notification)
+    - [**Fetching user notifications**](#fetching-user-notifications)
+    - [**Fetching user spam notifications**](#fetching-user-spam-notifications)
+    - [**Fetching user subscriptions**](#fetching-user-subscriptions)
+    - [**Fetching channel details**](#fetching-channel-details)
+    - [**Searching for channel(s)**](#searching-for-channels)
+    - [**Opt in to a channel**](#opt-in-to-a-channel)
+    - [**Opt out to a channel**](#opt-out-to-a-channel)
+    - [**Sending notification**](#sending-notification)
+      - [**Direct payload for single recipient(target)**](#direct-payload-for-single-recipienttarget)
+      - [**Direct payload for group of recipients(subset)**](#direct-payload-for-group-of-recipientssubset)
+      - [**Direct payload for all recipients(broadcast)**](#direct-payload-for-all-recipientsbroadcast)
+      - [**IPFS payload for single recipient(target)**](#ipfs-payload-for-single-recipienttarget)
+      - [**IPFS payload for group of recipients(subset)**](#ipfs-payload-for-group-of-recipientssubset)
+      - [**IPFS payload for all recipients(broadcast)**](#ipfs-payload-for-all-recipientsbroadcast)
+      - [**Minimal payload for single recipient(target)**](#minimal-payload-for-single-recipienttarget)
+      - [**Minimal payload for a group of recipient(subset)**](#minimal-payload-for-a-group-of-recipientsubset)
+      - [**Minimal payload for all recipients(broadcast)**](#minimal-payload-for-all-recipientsbroadcast)
+      - [**Graph payload for single recipient(target)**](#graph-payload-for-single-recipienttarget)
+      - [**Graph payload for group of recipients(subset)**](#graph-payload-for-group-of-recipientssubset)
+      - [**Graph payload for all recipients(broadcast)**](#graph-payload-for-all-recipientsbroadcast)
+    - [Notification Helper Utils](#notification-helper-utils)
+      - [**Parsing notifications**](#parsing-notifications)
+    - [Advanced Notifications (WIP)](#advanced-notifications-wip)
+    - [DEPRECATED](#deprecated)
+      - [**Get a channel's subscriber list of addresses**](#get-a-channels-subscriber-list-of-addresses)
+  - [For Chat](#for-chat)
+    - [**Create user for chat**](#create-user-for-chat)
+    - [**Get user data for chat**](#get-user-data-for-chat)
+    - [**Decrypting encrypted pgp private key from user data**](#decrypting-encrypted-pgp-private-key-from-user-data)
+    - [**Fetching list of user chats**](#fetching-list-of-user-chats)
+    - [**Fetching list of user chat requests**](#fetching-list-of-user-chat-requests)
+    - [**Fetching conversation hash between two users**](#fetching-conversation-hash-between-two-users)
+    - [**Fetching latest chat between two users**](#fetching-latest-chat-between-two-users)
+    - [**Fetching chat history between two users**](#fetching-chat-history-between-two-users)
+    - [**To send a message**](#to-send-a-message)
+    - [**To approve a chat request**](#to-approve-a-chat-request)
+    - [**To create a group**](#to-create-a-group)
+    - [**To update group details**](#to-update-group-details)
+    - [**To get group details by group name**](#to-get-group-details-by-group-name)
+    - [**To get group details by chatId**](#to-get-group-details-by-chatid)
+    - [**Chat Helper Utils**](#chat-helper-utils)
+      - [**Decrypting messages**](#decrypting-messages)
 
 # How to use in your app?
 ## Installation
@@ -122,7 +130,7 @@ Optimism Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 
 ### **Fetching user notifications**
 ```typescript
-const notifications = await PushAPI.user.getFeeds({
+const notifications = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   env: 'staging'
 });
@@ -132,7 +140,7 @@ const notifications = await PushAPI.user.getFeeds({
   <summary><b>Expected response (Fetching user notifications)</b></summary>
 
 ```typescript
-// PushAPI.user.getFeeds | Response - 200 OK
+// PushAPI.getNotifications | Response - 200 OK
 [
   {
     cta: 'https://idle.finance/#/governance/proposals',
@@ -298,7 +306,7 @@ const notifications = await PushAPI.user.getFeeds({
 
 ### **Fetching user spam notifications**
 ```typescript
-const spams = await PushAPI.user.getFeeds({
+const spams = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   spam: true,
   env: 'staging'
@@ -319,7 +327,7 @@ Allowed Options (params with * are mandatory)
   <summary><b>Expected response (Fetching user spam notifications)</b></summary>
 
 ```typescript
-PushAPI.user.getFeeds [Spam] | Response - 200 OK
+PushAPI.getNotifications [Spam] | Response - 200 OK
 [
   {
     cta: 'https://goerli.etherscan.io/tx/0xe1d230d2139b0d726d5a80713ac437bed3b55b808eb651d85d8b86a377b56aa3',
@@ -1148,7 +1156,7 @@ Allowed Options (params with * are mandatory)
 #### **Direct payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
@@ -1171,7 +1179,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **Direct payload for group of recipients(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: 4, // subset
   identityType: 2, // direct payload
@@ -1194,7 +1202,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **Direct payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
@@ -1216,7 +1224,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **IPFS payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
   identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
@@ -1230,7 +1238,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **IPFS payload for group of recipients(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
   identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
@@ -1244,7 +1252,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **IPFS payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
@@ -1257,7 +1265,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **Minimal payload for single recipient(target)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
@@ -1280,7 +1288,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **Minimal payload for a group of recipient(subset)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
@@ -1303,7 +1311,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 #### **Minimal payload for all recipients(broadcast)**
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
@@ -1326,7 +1334,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // Subgraph payload
@@ -1344,7 +1352,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
@@ -1362,7 +1370,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ***Make sure the channel has the graph id you are providing!!***
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
-const apiResponse = await PushAPI.payloads.sendNotification({
+const apiResponse = await PushAPI.sendNotification({
   signer: _signer,
   type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
@@ -1402,7 +1410,7 @@ Allowed Options (params with * are mandatory)
   <summary><b>Expected response (Send Notification)</b></summary>
 
 ```typescript
-// PushAPI.payloads.sendNotification | Response - 204 OK
+// PushAPI.sendNotification | Response - 204 OK
 ```
 </details>
 

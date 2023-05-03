@@ -35,7 +35,7 @@ import { NotificationItem, chainNameType } from "@pushprotocol/uiweb";
 After you get the Notification data from the [API](../restapi/README.md#fetching-user-notifications) or otherwise
 
 ```typescript
-const notifications = await PushAPI.user.getFeeds({
+const notifications = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   env: 'staging'
 });
@@ -78,7 +78,7 @@ render the Notification UI as follows
 For Spam data [API](../restapi/README.md#fetching-user-spam-notifications)
 
 ```typescript
-const spams = await PushAPI.user.getFeeds({
+const spams = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   spam: true,
   env: 'staging'
