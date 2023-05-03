@@ -72,7 +72,7 @@ import * as PushAPI from "@pushprotocol/restapi";
 // use a feature from restapi package,
 // here "getFeeds" gets all the notifications for the user address provided
 const main = async() => {
-  const notifications = await PushAPI.user.getFeeds({
+  const notifications = await PushAPI.getNotifications({
     user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
     env: 'staging'
   });

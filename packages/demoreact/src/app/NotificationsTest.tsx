@@ -57,7 +57,7 @@ const NotificationsTest = () => {
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const feeds = await PushAPI.user.getFeeds({
+      const feeds = await PushAPI.getNotifications({
         user: isCAIP ? getCAIPAddress(env, account) : account,
         // user: isCAIP ? getCAIPAddress(env, devWorkingAddress) : devWorkingAddress,
         limit: 30,
@@ -78,7 +78,7 @@ const NotificationsTest = () => {
   const loadSpam = useCallback(async () => {
     try {
       setLoading(true);
-      const spams = await PushAPI.user.getFeeds({
+      const spams = await PushAPI.getNotifications({
         user: isCAIP ? getCAIPAddress(env, account) : account,
         spam: true,
         env: env

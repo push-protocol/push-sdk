@@ -1422,7 +1422,7 @@ Allowed Options (params with * are mandatory)
 Utils method to parse raw Push Feeds API response into a pre-defined shape as below.
 ```typescript
 // fetch some raw feeds data
-const apiResponse = await PushAPI.user.getFeeds({
+const apiResponse = await PushAPI.getNotifications({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address
   raw: true,
   env: 'staging'
