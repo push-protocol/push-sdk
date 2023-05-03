@@ -23,7 +23,7 @@ export default function App() {
 
   const getData = async () => {
     try {
-      const notifications = await PushAPI.user.getFeeds({
+      const notifications = await PushAPI.getNotifications({
         user: `eip155:5:${user}`,
         env: 'dev',
         limit: parseInt(pageSize, 10)

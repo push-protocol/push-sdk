@@ -299,7 +299,7 @@ const PayloadsTest = () => {
 
       console.log('sdkInput: ', sdkInput);
 
-      const apiResponse = await PushAPI.payloads.sendNotification(sdkInput);
+      const apiResponse = await PushAPI.sendNotification(sdkInput);
       console.log('apiResponse: ', apiResponse);
       setApiStatus({
         status: apiResponse?.status,
