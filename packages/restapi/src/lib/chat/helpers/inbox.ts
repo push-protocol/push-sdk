@@ -1,4 +1,4 @@
-import Constants, {ENV} from '../../constants';
+import Constants, { ENV } from '../../constants';
 import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
@@ -10,13 +10,13 @@ type InboxListsType = {
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 
 export const getInboxLists = async (
@@ -49,10 +49,14 @@ export const getInboxLists = async (
         sigType: '',
         signature: '',
         toCAIP10: '',
-        toDID: ''
-      }
+        toDID: '',
+      };
     }
-    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
+    feeds.push({
+      ...list,
+      msg: message,
+      groupInformation: list.groupInformation,
+    });
   }
 
   if (toDecrypt)
@@ -92,8 +96,28 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signatureValidationPubliKey: signatureValidationPubliKey,
         pgpPrivateKey,
         message: message,
-      });  
+      });
     }
   }
   return messages;
+};
+
+export const addDeprecatedInfo = (chats: IFeeds[]): IFeeds[] => {
+  return Object.values(
+    chats.reduce((acc: any, curr: IFeeds) => {
+      const didWithoutTimestamp = curr.did.split(':').slice(0, 5).join(':');
+      acc[didWithoutTimestamp] = acc[didWithoutTimestamp] || [];
+      acc[didWithoutTimestamp].push(curr);
+      return acc;
+    }, {})
+  ).flatMap((group: any) => {
+    const highestTimestampObj = group.reduce((acc: any, curr: IFeeds) =>
+      curr.did.split(':')[5] > acc.did.split(':')[5] ? curr : acc
+    );
+    return group.map((obj: IFeeds) =>
+      obj.did === highestTimestampObj.did || obj.did.startsWith('eip155:')
+        ? obj
+        : { ...obj, deprecated: true, deprecatedCode: 'NFT Owner Changed' }
+    );
+  });
 };
