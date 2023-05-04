@@ -10,7 +10,7 @@
         "outputPath": "dist/packages/demonode",
         "main": "packages/demonode/src/main.ts",
         "tsConfig": "packages/demonode/tsconfig.app.json",
-        "assets": ["packages/demonode/src/assets"]
+        "assets": ["packages/demonode/src/.env"]
       },
       "configurations": {
         "production": {
