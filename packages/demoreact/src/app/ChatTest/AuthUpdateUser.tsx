@@ -80,11 +80,18 @@ const AuthUpdateUserTest = () => {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
             const pvtKeySigner = new ethers.Wallet(Pkey);
-            response = await PushAPI.user.create({
+            response = await PushAPI.user.auth.update({
               signer: pvtKeySigner,
+              pgpPrivateKey: pgpPrivKey,
+              pgpPublicKey: pgpPubKey,
+              pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
               env,
-              progressHook: handleProgress,
+              additionalMeta: {
+                NFTPGP_V1: {
+                  password: password,
+                },
+              },
             });
           }
           break;
