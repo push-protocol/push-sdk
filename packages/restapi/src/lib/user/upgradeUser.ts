@@ -56,7 +56,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
 
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-UPGRADE-01',
+      progressId: 'PUSH-UPGRADE-02',
       progressTitle: 'Decrypting Old Profile',
       progressInfo:
         'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
@@ -82,7 +82,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     });
     // Report Progress
     progressHook?.({
-      progressId: 'PUSH-UPGRADE-02',
+      progressId: 'PUSH-UPGRADE-05',
       progressTitle: 'Upgrade Completed, Welcome to Push Chat',
       progressInfo: '',
       level: 'SUCCESS',
