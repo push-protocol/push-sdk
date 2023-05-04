@@ -8,7 +8,6 @@ import {
 import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 import { ethers } from 'ethers';
 
@@ -19,19 +18,34 @@ type ProgressHookType = {
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
 
-const UpgradeUserTest = () => {
+const AuthUpdateUserTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
   const [account, setAccount] = useState(acc);
+  const [pgpPrivKey, setPgpPrivKey] = useState('');
+  const [pgpPubKey, setPgpPubKey] = useState('');
+  const [pgpEncVersion, setPgpEncVersion] = useState('');
   const [password, setPassword] = useState('#TestPassword1');
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
+  };
+
+  const updatePgpPrivKey = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpPrivKey((e.target as HTMLInputElement).value);
+  };
+
+  const updatePgpPubKey = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpPubKey((e.target as HTMLInputElement).value);
+  };
+
+  const updatePgpEncVersion = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpEncVersion((e.target as HTMLInputElement).value);
   };
 
   const updatePassword = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -46,8 +60,11 @@ const UpgradeUserTest = () => {
         case 0:
           {
             const librarySigner = await library.getSigner();
-            response = await PushAPI.user.upgrade({
+            response = await PushAPI.user.auth.update({
               signer: librarySigner,
+              pgpPrivateKey: pgpPrivKey,
+              pgpPublicKey: pgpPubKey,
+              pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
               env,
               additionalMeta: {
@@ -63,11 +80,18 @@ const UpgradeUserTest = () => {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
             const pvtKeySigner = new ethers.Wallet(Pkey);
-            response = await PushAPI.user.create({
+            response = await PushAPI.user.auth.update({
               signer: pvtKeySigner,
+              pgpPrivateKey: pgpPrivKey,
+              pgpPublicKey: pgpPubKey,
+              pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
               env,
-              progressHook: handleProgress,
+              additionalMeta: {
+                NFTPGP_V1: {
+                  password: password,
+                },
+              },
             });
           }
           break;
@@ -86,11 +110,38 @@ const UpgradeUserTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>Upgrade User Test page ( For NFT transfers or upgradation to v3 )</h2>
+      <h2>Auth Update User Test page</h2>
 
       <Loader show={isLoading} />
 
       <Section>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>pgp Private Key</label>
+          <input
+            type="text"
+            onChange={updatePgpPrivKey}
+            value={pgpPrivKey}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>pgp Public Key</label>
+          <input
+            type="text"
+            onChange={updatePgpPubKey}
+            value={pgpPubKey}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>pgp Encryption Version</label>
+          <input
+            type="text"
+            onChange={updatePgpEncVersion}
+            value={pgpEncVersion}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <label>account</label>
           <input
@@ -111,12 +162,12 @@ const UpgradeUserTest = () => {
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testCreateUser(0)}>
-            Create user with address & library signer
+            Auth Update user with address & library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testCreateUser(1)}>
-            Create user with private key signer
+            Auth Update user with private key signer
           </SectionButton>
         </SectionItem>
         {progress && (
@@ -141,4 +192,4 @@ const UpgradeUserTest = () => {
   );
 };
 
-export default UpgradeUserTest;
+export default AuthUpdateUserTest;
