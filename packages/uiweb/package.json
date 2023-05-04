@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/uiweb",
-  "version": "0.5.0",
+  "version": "1.0.1",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -16,4 +16,3 @@
     "@pushprotocol/socket": "^0.4.2"
   }
 }
-
