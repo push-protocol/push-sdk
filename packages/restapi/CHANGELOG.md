@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.2...restapi-0.0.1-alpha.0) (2023-05-04)
+
+
+### Bug Fixes
+
+* added pagination and deprecation tag ([#346](https://github.com/ethereum-push-notification-service/push-sdk/issues/346)) ([69763b8](https://github.com/ethereum-push-notification-service/push-sdk/commit/69763b8da2cf3e92bb85908e4f46a72b650c9dba))
+* change preid to alpha ([#358](https://github.com/ethereum-push-notification-service/push-sdk/issues/358)) ([6ac2c23](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ac2c23c5e4a9f54f8bd6ae99aeb77c96417aae3))
+* changed Definitions for auth.update and upgrade ([#351](https://github.com/ethereum-push-notification-service/push-sdk/issues/351)) ([31daee3](https://github.com/ethereum-push-notification-service/push-sdk/commit/31daee3a5aa913705d1dec8210c0412cd89c94c9))
+* eip191v2 signatures for create and auth.update ([#353](https://github.com/ethereum-push-notification-service/push-sdk/issues/353)) ([008e6d0](https://github.com/ethereum-push-notification-service/push-sdk/commit/008e6d08d75fdacf19f1674cc2b8bd82091fa31f))
+* Merge branch 'main' into alpha ([477bae4](https://github.com/ethereum-push-notification-service/push-sdk/commit/477bae4fdc4e86374615f0f67c41c570a567b9fe))
+
+
+
 ## [0.0.1-beta.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.1...restapi-0.0.1-beta.2) (2023-05-04)
 
 
