@@ -319,3 +319,55 @@ export type MessageWithCID = {
   encryptedSecret: string;
   verificationProof?: string;
 };
+
+export type IMediaStream = MediaStream | undefined;
+
+export type VideoCallInfoType ={
+  senderAddress: string; // address which initiated the call
+  receiverAddress: string; // address which will receive the call
+  /*
+    callStatus
+    0 - call not initiated
+    1 - call initiated by the caller address
+    2 - call recieved by the receiver address
+    3 - call is established
+    4 - call ended
+  */
+  callStatus: number; 
+  chatId:string;
+};
+
+export type VideoRequestInputOptions = {
+  library: any;
+  chainId: number;
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onRecieveMessage: (message: string) => void;
+  env?: ENV;
+  pgpPrivateKey:string | null;
+};
+
+export type VideoRequestReturnOptions = {
+  sendMessage: (message: string) => void;
+};
+
+export type VideoAcceptRequestInputOptions = {
+  signalData: any;
+  library: any;
+  chainId: number;
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onRecieveMessage: (message: string) => void;
+  env?: ENV;
+  pgpPrivateKey:string | null;
+};
+
+export type VideoAcceptRequestReturnOptions = {
+  sendMessage: (message: string) => void;
+};
+
+export type VideoEstablishInputOptions = {
+  signalData: any;
+};
