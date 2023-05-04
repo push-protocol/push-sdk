@@ -1,5 +1,6 @@
 import * as React from 'react';
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as Peer from 'simple-peer';
 
 import Constants, { ENV } from '../constants';
@@ -13,6 +14,7 @@ import {
 import isJSON from './helpers/isJSON';
 
 import {
+  IMediaStream,
   SignerType,
   VideoAcceptRequestInputOptions,
   VideoAcceptRequestReturnOptions,
@@ -22,20 +24,22 @@ import {
   VideoRequestReturnOptions,
 } from '../types';
 
-class Video {
+export class Video {
   // user related info
   private signer: SignerType | undefined = undefined;
-  private chainId: number | undefined =  undefined;
+  private chainId: number | undefined = undefined;
   private env: ENV = Constants.ENV.PROD;
 
   // storing the peer instance
   private peerInstance: Peer.Instance | undefined = undefined;
 
   // variables for video call state handling
-  localStream: MediaStream;
-  setLocalStream: React.Dispatch<React.SetStateAction<MediaStream>>;
-  incomingStream: MediaStream;
-  setIncomingStream: React.Dispatch<React.SetStateAction<MediaStream>>;
+  localStream: IMediaStream;
+  setLocalStream: React.Dispatch<React.SetStateAction<IMediaStream>>;
+  incomingStream: IMediaStream;
+  setIncomingStream: React.Dispatch<
+    React.SetStateAction<IMediaStream>
+  >;
   videoCallInfo: VideoCallInfoType;
   setVideoCallInfo: React.Dispatch<React.SetStateAction<VideoCallInfoType>>;
   isVideoOn: boolean;
@@ -63,10 +67,14 @@ class Video {
     isIncomingAudioOn,
     setIsIncomingAudioOn,
   }: {
-    localStream: MediaStream;
-    setLocalStream: React.Dispatch<React.SetStateAction<MediaStream>>;
-    incomingStream: MediaStream;
-    setIncomingStream: React.Dispatch<React.SetStateAction<MediaStream>>;
+    localStream: IMediaStream;
+    setLocalStream: React.Dispatch<
+      React.SetStateAction<IMediaStream>
+    >;
+    incomingStream: IMediaStream;
+    setIncomingStream: React.Dispatch<
+      React.SetStateAction<IMediaStream>
+    >;
     videoCallInfo: VideoCallInfoType;
     setVideoCallInfo: React.Dispatch<React.SetStateAction<VideoCallInfoType>>;
     isVideoOn: boolean;
@@ -102,6 +110,8 @@ class Video {
       });
 
       this.setLocalStream(localStream);
+      this.setIsAudioOn(true);
+      this.setIsVideoOn(true);
     } catch (err) {
       console.log('Error in creating local stream', err);
     }
@@ -118,10 +128,11 @@ class Video {
       chatId,
       onRecieveMessage,
       env = Constants.ENV.PROD,
+      pgpPrivateKey=null,
     } = options || {};
 
     const signer: SignerType = await library.getSigner(senderAddress);
-
+    
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -131,7 +142,7 @@ class Video {
     peer.on('signal', (data: any) => {
       // sending notification to the recipientAddress with video call signaling data
       sendVideoCallNotification(
-        { signer, chainId },
+        { signer, chainId, pgpPrivateKey },
         {
           senderAddress,
           recipientAddress,
@@ -139,6 +150,7 @@ class Video {
           chatId,
           signalingData: data,
           env,
+          
         }
       );
     });
@@ -211,6 +223,7 @@ class Video {
       chatId,
       onRecieveMessage,
       env = Constants.ENV.PROD,
+      pgpPrivateKey=null,
     } = options || {};
 
     const signer: SignerType = await library.getSigner(senderAddress);
@@ -225,7 +238,7 @@ class Video {
 
     peer.on('signal', (data: any) => {
       sendVideoCallNotification(
-        { signer, chainId },
+        { signer, chainId, pgpPrivateKey },
         {
           senderAddress,
           recipientAddress,
@@ -321,32 +334,31 @@ class Video {
           JSON.stringify({ type: 'endLocalStream', endLocalStream: true })
         );
         this.peerInstance?.destroy();
+
+        // ending the local stream
+        if (this.localStream) {
+          console.log('END LOCAL STREAM');
+          this.localStream.getTracks().forEach((track) => track.stop());
+        }
       }
-      if(this.videoCallInfo.callStatus === 2) {
-        if(!this.signer) throw new Error("signer not valid");
-        if(!this.chainId) throw new Error("chainId not valid");
-        if(!this.env) throw new Error("env is not valid");
+      if (this.videoCallInfo.callStatus === 2 || this.videoCallInfo.callStatus === 1) {
+        if (!this.signer) throw new Error('signer not valid');
+        if (!this.chainId) throw new Error('chainId not valid');
+        if (!this.env) throw new Error('env is not valid');
 
         // for disconnecting during status 1
         // send a notif to the other computer signaling status:4
-        sendVideoCallNotification(
-          { signer: this.signer, chainId: this.chainId },
-          {
-            senderAddress: this.videoCallInfo.senderAddress,
-            recipientAddress: this.videoCallInfo.receiverAddress,
-            status: 4,
-            chatId: this.videoCallInfo.chatId,
-            signalingData: null,
-            env: this.env,
-          }
-        );
-        window.location.reload();
-      }
-
-      // ending the local stream
-      if (this.localStream) {
-        console.log('END LOCAL STREAM');
-        this.localStream.getTracks().forEach((track) => track.stop());
+        // sendVideoCallNotification(
+        //   { signer: this.signer, chainId: this.chainId },
+        //   {
+        //     senderAddress: this.videoCallInfo.senderAddress,
+        //     recipientAddress: this.videoCallInfo.receiverAddress,
+        //     status: 4,
+        //     chatId: this.videoCallInfo.chatId,
+        //     signalingData: null,
+        //     env: this.env,
+        //   }
+        // );
         window.location.reload();
       }
     } catch (error) {
@@ -363,7 +375,7 @@ class Video {
       );
     }
 
-    if (this.isVideoOn === false) {
+    if (this.isVideoOn === false && this.localStream) {
       console.log('INITIALIZE LOCAL STREAM');
       restartVideoStream(this.localStream);
       this.setIsVideoOn(true);
@@ -382,7 +394,7 @@ class Video {
       );
     }
 
-    if (this.isAudioOn === false) {
+    if (this.isAudioOn === false && this.localStream) {
       console.log('INITIALIZE LOCAL STREAM');
       restartAudioStream(this.localStream);
       this.setIsAudioOn(true);
@@ -394,5 +406,3 @@ class Video {
     }
   };
 }
-
-export default Video;

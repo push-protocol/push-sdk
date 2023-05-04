@@ -24,6 +24,7 @@ interface VideoCallInfoType {
 interface UserInfoType {
   signer: SignerType;
   chainId: number;
+  pgpPrivateKey: string | null;
 }
 
 interface videoPayloadType {
@@ -35,7 +36,7 @@ interface videoPayloadType {
 }
 
 const sendVideoCallNotification = async (
-  { signer, chainId }: UserInfoType,
+  { signer, chainId, pgpPrivateKey=null, }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
@@ -61,7 +62,7 @@ const sendVideoCallNotification = async (
     );
 
     const wallet = getWallet({ account: senderAddress, signer });
-    const connectedUser = await getConnectedUser(wallet, null, env);
+    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env); 
 
     await sendNotification({
       senderType: 1, // for chat notification

@@ -312,6 +312,8 @@ export type MessageWithCID = {
   verificationProof?: string;
 };
 
+export type IMediaStream = MediaStream | undefined;
+
 export type VideoCallInfoType ={
   senderAddress: string; // address which initiated the call
   receiverAddress: string; // address which will receive the call
@@ -325,7 +327,7 @@ export type VideoCallInfoType ={
   */
   callStatus: number; 
   chatId:string;
-}
+};
 
 export type VideoRequestInputOptions = {
   library: any;
@@ -333,9 +335,9 @@ export type VideoRequestInputOptions = {
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
-  connectedUser: any;
   onRecieveMessage: (message: string) => void;
   env?: ENV;
+  pgpPrivateKey:string | null;
 };
 
 export type VideoRequestReturnOptions = {
@@ -349,9 +351,9 @@ export type VideoAcceptRequestInputOptions = {
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
-  connectedUser: any;
   onRecieveMessage: (message: string) => void;
   env?: ENV;
+  pgpPrivateKey:string | null;
 };
 
 export type VideoAcceptRequestReturnOptions = {
