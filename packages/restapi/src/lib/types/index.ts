@@ -151,22 +151,35 @@ export interface IFeeds {
   groupInformation?: GroupDTO;
 }
 export interface IUser {
+  msgSent: number;
+  maxMsgPersisted: number;
+
   did: string;
   wallets: string;
-  profilePicture: string | null;
-  publicKey: string;
+
+  profile: {
+    name: string | null;
+    desc: string | null;
+    profilePicture: string | null;
+  };
+
   encryptedPrivateKey: string;
-  encryptionType: string;
-  signature: string;
-  sigType: string;
-  about: string | null;
-  name: string | null;
-  encryptedPassword: string | null;
+  publicKey: string;
   nftOwner: string | null;
-  numMsg: number;
-  allowedNumMsg: number;
-  linkedListHash?: string | null;
-  nfts?: [] | null;
+  verificationProof: string;
+
+  /**
+   * DEPRECATED
+   */
+  name?: string | null;
+  about?: string | null;
+  profilePicture?: string | null;
+  numMsg?: number;
+  allowedNumMsg?: number;
+  encryptionType?: string;
+  signature?: string;
+  sigType?: string;
+  encryptedPassword?: string | null;
 }
 
 export interface Member {

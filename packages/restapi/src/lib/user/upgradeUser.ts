@@ -61,13 +61,11 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     const user: IUser = await get({ account: address, env: env });
 
     // user not found or already at latest encryption scheme
-    if (
-      !user ||
-      !user.encryptedPrivateKey ||
-      user.encryptionType === Constants.ENC_TYPE_V3
-    ) {
+    if (!user || !user.encryptedPrivateKey) {
       return user;
     }
+    const { version } = JSON.parse(user.encryptedPrivateKey);
+    if (version === Constants.ENC_TYPE_V3) return user;
 
     const caip10 = user.did;
     let encryptionType: string;

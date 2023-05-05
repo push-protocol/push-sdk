@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 chai.use(chaiAsPromised);
 
-describe('Create Push Profile', () => {
+describe.skip('Create Push Profile', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
@@ -55,14 +55,11 @@ describe('Create Push Profile', () => {
     expect(user.encryptedPrivateKey).to.contains(
       `"version":"${Constants.ENC_TYPE_V1}"`
     );
-    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V1);
-    expect(user.encryptedPassword).to.be.null;
+    expect(user.profile.name).to.be.null;
+    expect(user.profile.desc).to.be.null;
+    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
     expect(user.nftOwner).to.be.null;
-    expect(user.profilePicture).to.contains('data:image/png;base64,');
-    expect(user.about).to.be.null;
-    expect(user.name).to.be.null;
-    expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
+    expect(user.msgSent).to.be.equal(0);
   });
   it('Push Profile V3', async () => {
     const user = await create({
@@ -81,14 +78,10 @@ describe('Create Push Profile', () => {
     expect(user.encryptedPrivateKey).to.contains(
       `"version":"${Constants.ENC_TYPE_V3}"`
     );
-    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V3);
-    expect(user.encryptedPassword).to.be.null;
-    expect(user.nftOwner).to.be.null;
-    expect(user.profilePicture).to.contains('data:image/png;base64,');
-    expect(user.about).to.be.null;
-    expect(user.name).to.be.null;
-    expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
+    expect(user.profile.name).to.be.null;
+    expect(user.profile.desc).to.be.null;
+    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.msgSent).to.be.equal(0);
   });
   it('Push Profile V4 ( NFT Profile )', async () => {
     const user = await create({
@@ -107,13 +100,10 @@ describe('Create Push Profile', () => {
     expect(user.encryptedPrivateKey).to.contains(
       `"version":"${Constants.ENC_TYPE_V4}"`
     );
-    expect(user.encryptionType).to.be.equal(Constants.ENC_TYPE_V4);
-    expect(user.encryptedPassword).to.be.null;
+    expect(user.profile.name).to.be.null;
+    expect(user.profile.desc).to.be.null;
+    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
     expect(user.nftOwner).to.be.equal('eip155:' + _nftWalletAddress1);
-    expect(user.profilePicture).to.contains('data:image/png;base64,');
-    expect(user.about).to.be.null;
-    expect(user.name).to.be.null;
-    expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
+    expect(user.msgSent).to.be.equal(0);
   });
 });

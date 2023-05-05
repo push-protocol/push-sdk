@@ -76,7 +76,6 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
-          response.data.encryptionType,
           response.data.publicKey,
           response.data.did,
           response.data.nftOwner
@@ -130,7 +129,6 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
-          response.data.encryptionType,
           response.data.publicKey,
           response.data.did,
           response.data.nftOwner

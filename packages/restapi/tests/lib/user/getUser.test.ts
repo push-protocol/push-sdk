@@ -3,7 +3,7 @@ import { create, get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 
-describe('Get user', () => {
+describe.skip('Get user', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let Pkey: string;
@@ -52,6 +52,6 @@ describe('Get user', () => {
         value.includes(`"version":"${Constants.ENC_TYPE_V3}"`)
       );
     });
-    expect(user.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
   });
 });

@@ -27,8 +27,8 @@ export const AddressInfo: React.FC = () => {
         <ImgSpan>
           <Image
             src={
-              user?.profilePicture
-                ? user?.profilePicture
+              user?.profile.profilePicture
+                ? user?.profile.profilePicture
                 : Constants.DEFAULT_PROFILE_PICTURE
             }
             alt="address profile"
@@ -53,7 +53,7 @@ export const AddressInfo: React.FC = () => {
         </div>
       )}
       {isCopied && (
-       <div onMouseLeave={() => setIsCopied(false)}>
+        <div onMouseLeave={() => setIsCopied(false)}>
           <CopySvg
             stroke={theme.btnColorSecondary}
             fill={theme.btnColorSecondary}
@@ -107,4 +107,3 @@ const Span = styled.span`
   letter-spacing: -0.019em;
   color: ${(props: any): string => props.theme.textColorPrimary || '#000'};
 `;
-
