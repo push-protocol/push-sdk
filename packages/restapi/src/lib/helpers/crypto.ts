@@ -618,3 +618,65 @@ export const validatePssword = (password: string) => {
     throw new Error('Password must contain at least one special character!');
   }
 };
+
+type decryptAuthProps = {
+  /**
+   * Encrypted Password in stringified format
+   */
+  encryptedPassword: string;
+  signer: SignerType;
+  account?: string;
+  env?: ENV;
+  /**
+   * To get Progress Related to fn
+   */
+  progressHook?: (progress: ProgressHookType) => void;
+};
+
+/**
+ *
+ * @returns Decrypted Push Profile Password
+ */
+export const decryptAuth = async (
+  options: decryptAuthProps
+): Promise<string> => {
+  const {
+    encryptedPassword,
+    account,
+    signer,
+    env = Constants.ENV.PROD,
+    progressHook,
+  } = options || {};
+  try {
+    progressHook?.({
+      progressId: 'PUSH-DECRYPT-AUTH-01',
+      progressTitle: 'Decrypting Profile Password',
+      progressInfo: 'Please sign the transaction to decrypt profile password',
+      level: 'INFO',
+    });
+
+    const password = await decryptPGPKey({
+      encryptedPGPPrivateKey: encryptedPassword,
+      signer,
+      account,
+      env,
+    });
+
+    progressHook?.({
+      progressId: 'PUSH-DECRYPT-AUTH-02',
+      progressTitle: 'Push Profile Password Unlocked',
+      progressInfo: 'Unlocking push profile password',
+      level: 'SUCCESS',
+    });
+    return password;
+  } catch (err) {
+    // Report Progress
+    progressHook?.({
+      progressId: 'PUSH-ERROR-00',
+      progressTitle: 'Non Specific Error',
+      progressInfo: `[Push SDK] - API  - Error - API decryptAuth() -: ${err}`,
+      level: 'ERROR',
+    });
+    throw Error(`[Push SDK] - API  - Error - API decryptAuth() -: ${err}`);
+  }
+};
