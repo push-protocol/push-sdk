@@ -2312,8 +2312,34 @@ const chatHistory = await PushAPI.chat.latest({
 </details>
 
 -----
-  
+ 
 ### **Fetching chat history between two users**
+
+```typescript
+const chatHistory = await PushAPI.chat.history({
+  account: string;
+  env: ENV;
+  threadhash: string;
+  pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
+  toDecrypt?: boolean;
+  limit?: number;
+});
+```
+
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account    | string  | -       | user address                  |
+| threadhash    | string  | -       | conversation hash between two users |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| limit    | number  | 10       | number of messages between two users |
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | ENV  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+**Example:**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
@@ -2341,16 +2367,6 @@ const chatHistory = await PushAPI.chat.history({
   env: 'staging',
 });
 ```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| threadhash*    | string  | -       | conversation hash between two users |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| limit    | number  | 10       | number of messages between two users |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chat history between two users)</b></summary>
@@ -2414,8 +2430,23 @@ Allowed Options (params with * are mandatory)
     encryptedSecret: ''
   }
 ]
-
 ```
+
+| Param    | Type    | Remarks                                    |
+|----------|---------|--------------------------------------------|
+| `fromCAIP10`    | string  | sender address |
+| `toCAIP10`    | string  | receiver address |
+| `fromDID`   | string  | sender did |
+| `toDID`   | string  | receiver did |
+| `messageType`   | string  | message type |
+| `messageContent`   | string  | message content |
+| `signature` | string  | signature of the message |
+| `sigType` | string  | signature type |
+| `link` | string  | content identifier of the previous messages |
+| `timestamp` | number  | timestamp of the message |
+| `encType` | string  | encryption type |
+| `encryptedSecret` | string  | encrypted secret |
+
 </details>
 
 -----
