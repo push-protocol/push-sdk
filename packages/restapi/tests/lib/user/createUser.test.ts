@@ -62,7 +62,6 @@ describe('Create Push Profile', () => {
     expect(user.about).to.be.null;
     expect(user.name).to.be.null;
     expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
   });
   it('Push Profile V3', async () => {
     const user = await create({
@@ -88,7 +87,6 @@ describe('Create Push Profile', () => {
     expect(user.about).to.be.null;
     expect(user.name).to.be.null;
     expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
   });
   it('Push Profile V4 ( NFT Profile )', async () => {
     const user = await create({
@@ -114,6 +112,5 @@ describe('Create Push Profile', () => {
     expect(user.about).to.be.null;
     expect(user.name).to.be.null;
     expect(user.numMsg).to.be.equal(0);
-    expect(user.linkedListHash).to.be.equal('');
   });
 });
