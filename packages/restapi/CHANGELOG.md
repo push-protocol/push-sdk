@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.0...restapi-0.0.1-alpha.1) (2023-05-08)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([1223c60](https://github.com/ethereum-push-notification-service/push-sdk/commit/1223c60b0f179b26537992a776155aefffd7b5ef))
+* sendVideoNotification and end video call logic ([#367](https://github.com/ethereum-push-notification-service/push-sdk/issues/367)) ([d39c703](https://github.com/ethereum-push-notification-service/push-sdk/commit/d39c703bcda6d332717a5e9b1af6ab574be9d991))
+
+
+
 ## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.2...restapi-0.0.1-alpha.0) (2023-05-04)
 
 
