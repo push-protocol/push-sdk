@@ -56,11 +56,13 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-  yarn add @pushprotocol/restapi@latest ethers@^5.6
+yarn add @pushprotocol/restapi@latest ethers@^5.6
 ```
-  or
+
+or
+
 ```bash
-  npm install @pushprotocol/restapi@latest ethers@^5.6
+npm install @pushprotocol/restapi@latest ethers@^5.6
 ```
 ## Import SDK
 ```typescript
@@ -1678,15 +1680,15 @@ const user = await PushAPI.user.create({
 ### **Get user data for chat**
 ```typescript
 const user = await PushAPI.user.get({
-   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
-   env: 'staging',
+  env?: ENV;
+  account?: string;
 });
 ```
 
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address (Partial CAIP)             |
+| account*    | string  | -       | Account address             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
   <details>
@@ -1766,16 +1768,42 @@ Allowed Options (params with * are mandatory)
 -----
   
 ### **Decrypting encrypted pgp private key from user data**
+
 ```typescript
-// pre-requisite API calls that should be made before
-const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
-// actual api
-const decryptedPvtKey = await PushAPI.chat.decryptPGPKey(
+const response = await PushAPI.chat.decryptPGPKey({
+  encryptedPGPPrivateKey: string;
+  account?: string;
+  signer?: SignerType;
+  additionalMeta?: { password?: string }; 
+  env?: ENV;
+  toUpgrade?: boolean;
+  progressHook?: (progress: ProgressHookType) => void;
+})
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `encryptedPGPPrivateKey` | `string` | encrypted pgp private key |
+| `account` | `string` | user account |
+| `signer` | `SignerType` | ethers.js signer |
+| `additionalMeta` | `{ password?: string }` | additional meta data |
+| `env` | `ENV` | environment |
+| `toUpgrade` | `boolean` | if true, the user will be upgraded to the latest version |
+| `progressHook` | `(progress: ProgressHookType) => void` | progress hook |
+
+**Example:**
+
+```typescript
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: ENV.STAGING,
+  })
+
+  // decrypt the PGP Key
+  const pgpKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
-    signer: _signer,
-    env: 'staging'
-);
+    signer: signer,
+  })
 ```
 
 <details>
@@ -1819,30 +1847,51 @@ n4FxJNoL/lmuCqhQm4Zgduj3GdYUunMDID3k54J1FPGN+iCj
 -----
 
 ### **Fetching list of user chats**
+
+```typescript
+const chats = await PushAPI.chat.chats({
+  account: string;
+  pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
+  toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
+  env?: ENV;
+});
+```
+
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account    | string  | -       | user address (Partial CAIP)             |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+**Example:**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+const user = await PushAPI.user.get({
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  env: ENV.STAGING,
+})
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
-const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: signer);
   
 // actual api
 const chats = await PushAPI.chat.chats({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
     toDecrypt: true,
     pgpPrivateKey: pgpDecryptedPvtKey,
-    env: 'staging',
+    env: ENV.STAGING,
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address (Partial CAIP)             |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chats of a specific user)</b></summary>
@@ -1852,111 +1901,115 @@ Allowed Options (params with * are mandatory)
 // Array of chats
 [
   {
+    chatId: 'dafdc288ccd416c22caa8adfc2c62ee23e83b2e351f60df91531e82fa7ca243e',
     about: null,
-    did: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
-    intent: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-    intentSentBy: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-    intentTimestamp: '2023-02-19T22:31:34.000Z',
-    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
-      '\n' +
-      'xsBNBGN/K/kBCADEv8v4k/rWXEhF47geWz1UBySLtgsCZxZK7RPhLWecku6N\n' +
-      'XTAPScS9YjXLDqy0tZ6nDvXh/vPbNNkd9phBGh5Mo6O3vNjI9pwd06KyT4sT\n' +
-      'ChjenRXU+aLHQzjTXOMO1xHkN3yiuLqC8mZ/OBPBkjHhC00taqhuWWudfcEv\n' +
-      '5DqZPqtHBwOipvtEqR9BDnVO4srL0xZPksJVPBmcekll61obQylKGx1K8vTg\n' +
-      '292Ivo+tPpDSkXdxWTx4EmcOPw/7E4IRoUudkAZUJzgZL48UPR7oDox8JIgH\n' +
-      'yF4PMTvKZR0Fps+8W/USMO9Mc5AUwNqkmvQyywo8wdTIWW8ki9OPhWvjABEB\n' +
-      'AAHNAMLAigQQAQgAPgUCY38r+QQLCQcICRA7/jxKMDdVgwMVCAoEFgACAQIZ\n' +
-      'AQIbAwIeARYhBJco5U6B/S5LNkspyzv+PEowN1WDAAB4bQf9FIzCf5fmwKuw\n' +
-      'g2B2IV9LIo5zZHU0Wkm52n0kesEJGfYJu/ub/GhPBtoAr8Pf+5CkGN75kxWg\n' +
-      'EhKDy8Sm/L+50I1QhIk1x73LMUz2cIxJeJdHdI13t+lZrp5Ni01KiPJzB7LJ\n' +
-      '2Nj5d5Kf53sM6A/Q7fwwUprbwTh1aQzngf8KSups6AjqLQe2Qyu6LzVTKcXe\n' +
-      'vQyIoYHxBdcy+2hH0ZIkkKvcWHHqIuym4NJXLqxxhqpK20KpIfl+YufqJiSW\n' +
-      '+f+imCrQSslXLL2E3fS+bPORTU/aL/uPkW1645BPoFuWKr7S+bVrEnp0sCS9\n' +
-      'xH/COFWmxhoeHHcu5tqKGJdsUZ9iiM7ATQRjfyv5AQgAm5KRDtuUtvLLLOrm\n' +
-      'cQ0IcFEa00guCEKbZfYmX/OFHBooBy185SWTKDRKilLTxGosnNFQbDovrbDA\n' +
-      'pP+DLDIHMBRJHnQCuCkXRqGV5vcI8VD3zOalUJpz6f+QKWnkhv2lt05OTeOc\n' +
-      'hhC7NCC3joe0rUtUgYpvv4i18BrrrADaY0Qkmy7RBor7CCXAttbeOhsxJc1E\n' +
-      '1b7bhJW1Ja8yezDCN7801S/GPjohpzEYkKkw+ziBDJnvXJC8T+hRINo0RtX9\n' +
-      '9xn2beUJSquDTw9Y2tvQ6RMMiYcjiSVQ6n9XqgRp6GDlY2JhGigmmd8+4cpZ\n' +
-      '2EH9kGrwGIGUH/D91owQejNiAwARAQABwsB2BBgBCAAqBQJjfyv5CRA7/jxK\n' +
-      'MDdVgwIbDBYhBJco5U6B/S5LNkspyzv+PEowN1WDAADewgf9EuYPp6eSjbK3\n' +
-      'tpDoUV6xTmGHi6R0+8szSF+1yJ3oGzxd60K9pz9eeSsjjUL9sasKWmVMaG2U\n' +
-      '99Pc0ZV1czl+nthzigsJIq1ZbTFWA2xcNLOWa5Qw7bnb8QcH7t+l6gW95whT\n' +
-      'lA9SL8mAzYHzKLyVlTfJD7bUZSWtk7DhNr8QCq9U5W6GoSM619zC5Ndcg0Av\n' +
-      'hwmPmsFjGxI6E/69f+ZpKmQ3xbMTLhzQZYT5wRyNDHh7KFYM6yfc8sg1+VSm\n' +
-      'FWgChvHKD9X+z4KyVTuxHwZVda17tYoHmUM+dF3JuzZJteTiAii9tu3oDRKW\n' +
-      '4QpEgIbbKge5JRntvBdRr714aPjztA==\n' +
-      '=aP07\n' +
-      '-----END PGP PUBLIC KEY BLOCK-----\n',
-    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA6ElEQVR4AcXBoXEDMRRF0btvtglhMdcQ5jHfLhwiqiJ2wkRShhowSREiHoWqBqMN/TYQ8WT+Ocv9cTkwRolYIXWsUSIzIXWsUSJWSB1LOBPOhLPl++P3wDhtOzMhdWZGicy0mrGEM+FMOFt50WrGOm0772g1MyOcCWfC2XJ/XA4mRom8I6TOjHAmnAlnKy9GiVitZqzTtjPTaubZjhVSxxLOhDPhbPn5+jwwQurMjBKZCakzM0rEEs6EM+FsbTXzbMcKqWO1mpkJ6Yo1SsRqNWMJZ8KZcLaeb1esUSL/6Xy7Yglnwplw9gcz1UAzKe4AEAAAAABJRU5ErkJggg==',
-    threadhash: 'bafyreia2bi62fh5ab5ozvi46y4onm2vf5ql4kcxtmta5uarznhazp53264',
-    wallets: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
-    combinedDID: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681_eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
-    name: 'salmon-xenial-cuckoo',
+    did: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    intent: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7+eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    intentSentBy: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+    intentTimestamp: '2023-05-08T12:56:16.000Z',
+    publicKey: '{"key":"-----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\nxsBNBGRYo/8BCADhbpiwQf8PEXdi1V2BKfoHs8Vo7dM0FvukAlTGlk/778kV\\neriOXsBmFT3PciLWXRbh5CqsxXmshY030Ugb6h9x2FcgglzsLhJxc8cbCbpk\\nlK3wkZSAJbPX42rX6y2yvLZffdziAddliJFnE0gfV5WD/rxugYP/FIHyGt9y\\njKXuDwNAihp5qQeXaPs+vEqaVhExGUlwWhbBj/EepD8LMc4+inZMTBNxN213\\nnZTSWudaV6mnnrKNjkHTtK3tT6TTHAb5f5Xoz+zTNbMQecktRtF4r27ctRgQ\\nBUEnFkREdQR9vAmJuMmDeh0SKFAE44bNm8moSTHtwSyyjfoL2y7rLmkLABEB\\nAAHNAMLAigQQAQgAPgWCZFij/wQLCQcICZC/GLX8yhr5DwMVCAoEFgACAQIZ\\nAQKbAwIeARYhBIXvLPhJE+agImuJ578YtfzKGvkPAAA8eggAx6GWFsiVU0Jd\\nj3FxkYPwitvF2PdkzPKKLczhj82zNAt4njioYijjpItjw8Wq0cyWtTKfwb0v\\nZ5ty1X0MsOZATsF46PBz0nsBp7BxDutFjgKHQxGwlss+WD6yYqujPUdzmhMO\\n5KYh/McDrGhP939UZhSRhvAH78Id+2EG8Q74KHgAhfcrJvpHf/aBrF1+Gn07\\nSGuZ4GpzqVO7NaQlme1BAAFSZI+EZeCoCODZXJ6gdh1HC1/splLYtcT+FL0/\\nj0VQxVoaVpD5B5AgIQJp1QeFOIcLcFecRLY+RiXkfNJHHbkcCBXGTHuPY5CT\\noIohJfb45Y8wSjcZ3Ec+YOf+00UmP87ATQRkWKP/AQgA2MUK+aUDZE3PFaXG\\n/0H02iqUzu18FmSnPW0TmisHezdzI/LcZwqKapJawxHLsPiGK42xWa2ZBwgh\\n8xyMhspY9jv9u3uDaR/vR6y83+KaUlsSyvpUu0HAapWVIlE79p1/lLld5+Ui\\ny4Ap8VPMSd7sU0TZXGw/s8sBol1Lv1O1wJj0gc17IB1dahMppxnZlnoCtqBA\\nNeFZ8Ssx7+ZAhfvglCqvBo154+4UphqZLoGmGCZWIY3B3NU1EGRjQNnVNaSC\\nuRet3Qi85ni++52k6wR3tJLDqOxFKnYrv93nPENABSuYS8Uc04VvE0hfbjNF\\n6qeo5gah5O68F/xtI6MATZRIAQARAQABwsB2BBgBCAAqBYJkWKP/CZC/GLX8\\nyhr5DwKbDBYhBIXvLPhJE+agImuJ578YtfzKGvkPAAC3zgf+LZ2aNe1nY3au\\n9T57MqhfTMYIEWn/PJ0LAJFg3jgPTmzL4K+ZLSTdWEV7p8aMKrTloYSWENW+\\nuuj+MhMnOC1EonhmqYGHrsFTPdZR902a/mNPnxl8A8r7ixq1OAgq81qYVsQ1\\nQaC8uuJaqCxLediM5lVP95xz1qdKgNhKtG7cPlX8ljAL4KE3U2/Jjj/KiqED\\n0XaMqrt1y2qjjNF+ct+NbmqmwRaOKq8mWpFlPygA9dq6Sp1nCcwvYmxBQrbg\\nmTDldPF6tg7SqF83DN7DnUQt1cNQEUUv8SUiGnS/Dd01nhManNBLNtNpgCCf\\n4etbnA/WK08gsOhSeM3bBOSOjavwmA==\\n=qZBP\\n-----END PGP PUBLIC KEY BLOCK-----\\n","signature":"eip191:0xc56d79a25a832134b0438981f534c1c811bb8d1d1ea6f19b639e4dbc1fb64a4c65be377120dc4402d29b371dc378f00289640b037f6ad9e475fab5781ce067b81c"}',
+    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAyklEQVR4AcXBoa3DMABF0ZunTFBSVNQBAr1IFdA1AoMNvYiVRQy9QSUPklKX+Cv64J0zfdrz5IKwBEZKLVwhzISZMJv5Q4uJX5mRFhO9x74xIsyEmTCbW0z0HvvGyLGu/EeLiZ4wE2bCbLrf3idGwkyYCbO51EIvLIGRUgsjYQmMlFroCTNhJszmFhO/Mr1SC1eUWuiFJdBrMdETZsJMmE332/ukc6wrI6+cGTnWlZFXzvSEmTATZtOnPU8uaDEx8tg3rhBmwkyYfQE/njNZjYo1IgAAAABJRU5ErkJggg==',
+    threadhash: 'bafyreidfnsaz7pz3hsedtlgzj7beqnwj44h3bunpaouwmk4r4i5y5psyti',
+    wallets: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    combinedDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7_eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    name: null,
     msg: {
-      link: null,
-      toDID: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
-      encType: 'pgp',
-      fromDID: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-      sigType: '-----BEGIN PGP SIGNATURE-----\n' +
-        '\n' +
-        'wsBzBAEBCAAnBQJj8lXtCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
-        'rTtKAAB9ZAgA2RsziFlghtZ9dTX964TV4vH7BG1KGqzjfJQ8BcBvtQdkj4Wt\n' +
-        'WIisiu0JQ1BoX4YSQBDwZipTDZrey86bgms3bCwj7NgicE2ukUsYifAWhN61\n' +
-        '7KtVLKLf+i/NBtGE0L5dVNI97JhwWMVyChY/9LfOJsKq+3Qgk7W/8Z93Fuhu\n' +
-        'ZnZ3KlJEczJHANYnmS4Fp5d+pTPIADsBzuo4vffQeAiNmmtYPREOgUmc8B84\n' +
-        'Y0MAeXo6VqpQeqWuWZurXoa4VY30piMofoUmL4NgaYwAhBJZxF49aZidZmFo\n' +
-        '6Brw2idv8GK0TiTWpketO5hGBljAdv5aqg41jwb+kgx0HxU1hPm1DQ==\n' +
-        '=Wr1+\n' +
-        '-----END PGP SIGNATURE-----\n',
-      toCAIP10: 'eip155:0xfFA1aF9E558B68bBC09ad74058331c100C135280',
+      fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toCAIP10: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      fromDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      messageContent: "Gm gm! It's me... Mario",
+      messageType: 'Text',
       signature: '-----BEGIN PGP SIGNATURE-----\n' +
         '\n' +
-        'wsBzBAEBCAAnBQJj8lXtCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
-        'rTtKAAB9ZAgA2RsziFlghtZ9dTX964TV4vH7BG1KGqzjfJQ8BcBvtQdkj4Wt\n' +
-        'WIisiu0JQ1BoX4YSQBDwZipTDZrey86bgms3bCwj7NgicE2ukUsYifAWhN61\n' +
-        '7KtVLKLf+i/NBtGE0L5dVNI97JhwWMVyChY/9LfOJsKq+3Qgk7W/8Z93Fuhu\n' +
-        'ZnZ3KlJEczJHANYnmS4Fp5d+pTPIADsBzuo4vffQeAiNmmtYPREOgUmc8B84\n' +
-        'Y0MAeXo6VqpQeqWuWZurXoa4VY30piMofoUmL4NgaYwAhBJZxF49aZidZmFo\n' +
-        '6Brw2idv8GK0TiTWpketO5hGBljAdv5aqg41jwb+kgx0HxU1hPm1DQ==\n' +
-        '=Wr1+\n' +
+        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
+        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
+        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
+        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
+        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
+        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
+        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
+        '=dcRD\n' +
         '-----END PGP SIGNATURE-----\n',
-      timestamp: 1676826094072,
-      fromCAIP10: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-      messageType: 'Text',
-      messageContent: 'hey',
+      timestamp: 1683530775648,
+      sigType: 'pgp',
+      encType: 'pgp',
       encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
         '\n' +
-        'wcBMA5Ga6Pu44C+oAQf/Y2brN3CdpIDp98VCUH65vwTkDbUPWKtEMj6zwr57\n' +
-        'QTTRhBnkr6T5TZ1Tdp71g0Vo1n++RacCg94k5TpUqSYoIwUAh3TUsZTjOtLK\n' +
-        'EU/Ud25zh5umSYWFxZgVPxU6bixdjtpGJkxzuRWaTLg45UQ1wsz/LMSXiVKW\n' +
-        'PkmP6eIXIi7PmduuCTajLdXlATMYVroBQ6QtChGi1S3loRAJpmuAFIKhzvdQ\n' +
-        'xvf/sHXh7tyNGIBbqFPwBoVQCN7nHf3q8ufo/n4NXFTWFqtrYkLe/l4WSGZ+\n' +
-        'WOSkkJkyoGBGBlq/ZU3/IhY2BFw22ZMah3CqUmhvGe8XIMtX+Gz++Wm7SrmL\n' +
-        '08HATAN7roGwZ8OLswEH/1sSD0DMoAgUuTYmID/xg/mPJCEtcjSmu3bU/tK6\n' +
-        'RxlDv3+6ZcHBBD20E9y8dtKj7JKuZx/im3H7a0giLpxBB4DEJQkmMbxFws0b\n' +
-        'exwdhqa7QLRorBuIt3D5M5QmWhkf2lH8BK9dSN4370S0xPBTzjlyWEphC2uZ\n' +
-        'dkF93p9qBMWfkWSif+qBceXzyMoFimeJ33FcTViRdTqo/BYER1zBzzY2Gjtq\n' +
-        'UIfGTYaIc1U1IUx8OOmKcYXYRBYACbSx0A7pCOu/KnCPwE/SSgZdYgSwBm8U\n' +
-        'fuG2v0VnfkGHkIDqMfmzwYQWSZHp36I8uYzs5xapvREnwXIkBpPiWkdG5G2Q\n' +
-        'Co7SQAFcwGdXcc23bny1kvBsHX3b6tVxSDt3KXsWNiKzClaFRsjEHxO7gZe9\n' +
-        'nlIBRSDGCy5iKJymIyef/D7kTG6NctE=\n' +
-        '=C8hO\n' +
-        '-----END PGP MESSAGE-----\n'
+        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
+        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
+        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
+        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
+        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
+        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
+        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
+        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
+        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
+        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
+        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
+        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
+        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
+        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
+        '=kzUH\n' +
+        '-----END PGP MESSAGE-----\n',
+      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm'
     },
     groupInformation: undefined
   }
 ]
 ```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| msg | `IMessageIPFS` | message object |
+| did | `string` | user DID |
+| wallets | `string` | user wallets |
+| profilePicture | `string` | user profile picture |
+| publicKey | `string` | user public key |
+| about | `string` | user description |
+| threadhash | `string` | cid from the latest message sent on this conversation |
+| intent | `string` | addresses concatenated from the users who have approved the intent |
+| intentSentBy | `string` | address of the user who sent the intent |
+| intentTimestamp | `number` | timestamp of the intent |
+| combinedDID | `string` | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
+| cid | `string` | content identifier on IPFS |
+| chatId | `string` | chat identifier |
+| groupInformation | `GroupDTO` | if group chat, all group information |
+
 </details>
 
 -----
   
 ### **Fetching list of user chat requests**
+
+```typescript
+const chats = await PushAPI.chat.requests({
+  account: string;
+  pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
+  toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
+  env?: ENV;
+});
+```
+
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account    | string  | -       | user address (Partial CAIP)             |
+| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
+| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+**Example:**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
-const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: ENV.STAGING);
   
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
@@ -1966,17 +2019,9 @@ const chats = await PushAPI.chat.requests({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
     toDecrypt: true,
     pgpPrivateKey: pgpDecryptedPvtKey,
-    env: 'staging',
+    env: ENV.STAGING,
 });
 ```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address (Partial CAIP)             |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get chat requests of a specific user)</b></summary>
@@ -2082,27 +2127,57 @@ Allowed Options (params with * are mandatory)
   }
 ]
 ```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| msg | `IMessageIPFS` | message object |
+| did | `string` | user DID |
+| wallets | `string` | user wallets |
+| profilePicture | `string` | user profile picture |
+| publicKey | `string` | user public key |
+| about | `string` | user description |
+| threadhash | `string` | cid from the latest message sent on this conversation |
+| intent | `string` | addresses concatenated from the users who have approved the intent |
+| intentSentBy | `string` | address of the user who sent the intent |
+| intentTimestamp | `number` | timestamp of the intent |
+| combinedDID | `string` | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
+| cid | `string` | content identifier on IPFS |
+| chatId | `string` | chat identifier |
+| groupInformation | `GroupDTO` | if group chat, all group information |
+
 </details>
 
 -----
 
 ### **Fetching conversation hash between two users**
+
+```typescript
+const conversationHash = await PushAPI.chat.conversationHash({
+  conversationId: string;
+  /**
+   * Environment variable
+  */
+  account: string;
+  env?: ENV;
+});
+```
+
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account    | string  | -       | user address           |
+| conversationId    | string  | -       | receiver's address (partial CAIP) or chatId of a group|
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+
+**Example:**
+
 ```typescript
 // conversation hash are also called link inside chat messages
 const conversationHash = await PushAPI.chat.conversationHash({
   account: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
-  env: 'staging'
+  env: ENV.STAGING
 });
 ```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address (partial CAIP)             |
-| conversationId*    | string  | -       | receiver's address (partial CAIP) or chatId of a group|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
 
 <details>
   <summary><b>Expected response (Get conversation hash between two users)</b></summary>
@@ -2113,11 +2188,36 @@ Allowed Options (params with * are mandatory)
   threadHash: 'bafyreign2egu7so7lf3gdicehyqjvghzmwn5gokh4fmp4oy3vjwrjk2rjy'
 }
 ```
+
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| threadHash    | string  | -       | message content identifier |
 </details>
 
 -----
 
 ### **Fetching latest chat between two users**
+
+```typescript
+const chatHistory = await PushAPI.chat.latest({
+  threadhash: string;
+  toDecrypt?: boolean;
+  pgpPrivateKey?: string;
+  account: string;
+  env?: ENV;
+});
+```
+
+| Param    | Type    | Remarks                                    |
+|----------|---------|--------------------------------------------|
+| threadHash    | string  | message content identifier |
+| toDecrypt    | boolean  | true if you want messages to be decrypted |
+| pgpPrivateKey    | string  | PGP Private Key |
+| account   | string  | user account |
+| env   | ENV  | environment variable |
+
+**Example:**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
@@ -2142,15 +2242,6 @@ const chatHistory = await PushAPI.chat.latest({
   env: 'staging',
 });
 ```
-
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address (Partial CAIP)                 |
-| threadhash*    | string  | -       | conversation hash between two users |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Get latest chat between two users)</b></summary>
@@ -2202,6 +2293,22 @@ Allowed Options (params with * are mandatory)
 ]
 
 ```
+
+| Param    | Type    | Remarks                                    |
+|----------|---------|--------------------------------------------|
+| `fromCAIP10`    | string  | sender address |
+| `toCAIP10`    | string  | receiver address |
+| `fromDID`   | string  | sender did |
+| `toDID`   | string  | receiver did |
+| `messageType`   | string  | message type |
+| `messageContent`   | string  | message content |
+| `signature` | string  | signature of the message |
+| `sigType` | string  | signature type |
+| `link` | string  | content identifier of the previous messages |
+| `timestamp` | number  | timestamp of the message |
+| `encType` | string  | encryption type |
+| `encryptedSecret` | string  | encrypted secret |
+
 </details>
 
 -----
