@@ -12,6 +12,16 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
+## [1.2.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.11...restapi-1.2.12) (2023-05-08)
+
+
+### Bug Fixes
+
+* change preid to alpha ([#358](https://github.com/ethereum-push-notification-service/push-sdk/issues/358)) ([6ac2c23](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ac2c23c5e4a9f54f8bd6ae99aeb77c96417aae3))
+* changed AdditionalMeta structure ([#349](https://github.com/ethereum-push-notification-service/push-sdk/issues/349)) ([ee8ca02](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee8ca022b2d948d08fa8503616898ff6c773062e))
+
+
+
 ## [1.2.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.1...restapi-1.2.11) (2023-05-08)
 
 
