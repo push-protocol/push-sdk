@@ -5,11 +5,19 @@ export enum ENV {
   /**
    * **This is for local development only**
    */
-  LOCAL = 'local'
+  LOCAL = 'local',
+}
+
+export enum ENCRYPTION_TYPE {
+  PGP_V1 = 'x25519-xsalsa20-poly1305',
+  PGP_V2 = 'aes256GcmHkdfSha256',
+  PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256',
+  NFTPGP_V1 = 'pgpv1:nft',
 }
 
 const Constants = {
   ENV,
+  ENCRYPTION_TYPE,
   PAGINATION: {
     INITIAL_PAGE: 1,
     LIMIT: 10,
@@ -23,6 +31,7 @@ const Constants = {
   ENC_TYPE_V1: 'x25519-xsalsa20-poly1305',
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',
   ENC_TYPE_V3: 'eip191-aes256-gcm-hkdf-sha256',
+  ENC_TYPE_V4: 'pgpv1:nft',
 };
 
 export default Constants;

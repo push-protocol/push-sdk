@@ -4,7 +4,8 @@ export * from './getSubscriptions';
 export * from './getUser';
 export * from './getDelegations';
 export * from './getUsersBatch';
-export * from './createNFTProfile';
-export * from './getNFTProfile';
-export * from './decryptNFTProfile';
-export * from './upgradeNFTProfile';
+export * from './upgradeUser';
+import { update } from './auth.updateUser';
+export const auth = {
+  update,
+};

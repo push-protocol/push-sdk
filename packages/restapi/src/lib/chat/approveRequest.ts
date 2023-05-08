@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
@@ -9,8 +9,10 @@ import {
   IApproveRequestPayload,
   getAccountAddress,
   getWallet,
+  getUserDID,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { get } from '../user';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -58,15 +60,21 @@ export const approve = async (
   if (isValidETHAddress(senderAddress)) {
     isGroup = false;
   }
-  const bodyToBeHashed = {
-    fromDID: isGroup
-      ? walletToPCAIP10(address)
-      : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(address),
-    status: status,
-  };
 
   const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+
+  let fromDID = await getUserDID(senderAddress, env);
+  let toDID = await getUserDID(address, env);
+  if (isGroup) {
+    fromDID = await getUserDID(address, env);
+    toDID = await getUserDID(senderAddress, env);
+  }
+
+  const bodyToBeHashed = {
+    fromDID,
+    toDID,
+    status,
+  };
 
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
   const signature: string = await sign({
@@ -75,8 +83,8 @@ export const approve = async (
   });
 
   const body: IApproveRequestPayload = approveRequestPayload(
-    senderAddress,
-    address,
+    fromDID,
+    toDID,
     status,
     'pgp',
     signature
