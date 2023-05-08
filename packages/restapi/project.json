@@ -38,7 +38,7 @@
         "postTargets": ["restapi:build", "restapi:ci-publish"]
       }
     },
-    "ci-version-alpha": {
+    "ci-version-beta": {
       "executor": "@jscutlery/semver:version",
       "options": {
         "preset": "angular",
