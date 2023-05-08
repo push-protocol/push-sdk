@@ -44,8 +44,8 @@
         "preset": "angular",
         "commitMessageFormat": "ci(${projectName}): 🎉 cut beta release to ${projectName}-v${version}",
         "postTargets": ["restapi:build", "restapi:ci-publish"],
-        "releaseType": "prerelease",
-        "preid": "beta"
+        "version": "prerelease",
+        "preid": "alpha"
       }
     },
     "ci-publish": {
