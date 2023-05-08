@@ -54,11 +54,12 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 
 # How to use in your app?
 ## Installation
-```
+
+```bash
   yarn add @pushprotocol/restapi@latest ethers@^5.6
 ```
   or
-```
+```bash
   npm install @pushprotocol/restapi@latest ethers@^5.6
 ```
 ## Import SDK
@@ -1575,29 +1576,101 @@ Allowed Options (params with * are mandatory)
 </details>
 
 -----
-  
+
 ## For Chat
 ### **Create user for chat**
 ```typescript
 const user = await PushAPI.user.create({
-   signer: _signer,
-   env: 'staging',
-});
+	env?: ENV;
+  account?: string;
+  signer?: SignerType;
+  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
+  additionalMeta?: { password?: string };
+  progressHook?: (progress: ProgressHookType) => void;
+})
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| signer*  | -       | -       | Signer object                              |
-| env      | string  | 'prod'  | API env - 'prod', 'staging', 'dev'         |
+| Param          | Type     | Default                         | Remarks                                                       |
+|----------------|----------|---------------------------------|---------------------------------------------------------------|
+| env            | string   | 'prod'                          | API env - 'prod', 'staging', 'dev'                            |
+| account        | string   | -                               | Account address                                               |
+| signer         | -        | -                               | ethers.js signer                                              |
+| version        | string   | 'eip191-aes256-gcm-hkdf-sha256' | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
+| additionalMeta | object   | -                               | Additional meta data for user                                 |
+| progressHook   | function | -                               | Progress hook                                                 |
 
 <details>
   <summary><b>Expected response (Create Chat User)</b></summary>
 
 ```typescript
-// PushAPI.user.create | Response - 200 OK
-// PushAPI.user.create | Response - 400 IF USER ALREADY CREATED
+// PushAPI_user_get | Response - 200 OK
+{
+  did: 'eip155:0x85e6350861136e65BE141d8DB1eEa25cA346743f',
+  wallets: 'eip155:0x85e6350861136e65BE141d8DB1eEa25cA346743f',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGRUAu8BCACV4muD50mKJeGPU33ZkTXi7x6eMpjXlmMQbVERQ7MVKvOc\n' +
+    'cN+9iz2A18bi73vPYq9FwF/Ibok+A/SuwTbiEe/5E0FXJSnC87DWVF6Aq6At\n' +
+    'lzCT4WHYlkHU2h5+JNaD8CXOxe6bsGfzbZ9dSZ9zfs5IoCh6Qf035cjV7wH6\n' +
+    'lcGykxvZUIfKiJuwXotkglGzk0317oo37ZXl6f2hCJBg7NdewXGxVKFYu1JS\n' +
+    'n5ztzAkoRyiHUnuFDje+HmkU4PjhtrHiFrEeooRyvR/6YCvyIue7f2lIXKV9\n' +
+    'rOCyczJyDWTf3wwpklDZVEB0Guv4PHcWsTuN1pqyxgz2bT+umctEvla3ABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZFQC7wQLCQcICZAzo8jUDaqidgMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBNgrG501gFGxwttFzDOjyNQNqqJ2AACgaQf/Rt33rLH7Ayxb\n' +
+    'UED4L7a5f6aw//jk9Y+yqpB3QbwJTSoD02yUqUJ5J9sW46m8k3eQc6ds4OkP\n' +
+    'ylaQtoUkumELSuS5hON3Y2IQ78fMvv+My8pQoxD4HzzLj7uVOHaHaElygfoC\n' +
+    'pfWSDU2UrJB5TK6noOTspcdB5QlCKh5fU0fDtRQ9OKVTM4NTAmYxsDa3OZO6\n' +
+    'DvqfMAK75tlHJr+Xro7GUbKebaJft/guA2ZHpGTHhs2Q+grjQcvljx6BoN3o\n' +
+    'NydGwkCorcVZZO7XKr73hPE0VH/LlRqZJ2lcBn/kUJzG1Z1LFYcny+FCrM3U\n' +
+    'cCg5eI+Is436jSWBl3bhtdYptNwdNM7ATQRkVALvAQgAt7ghdqho1nII81Vk\n' +
+    'BAs2LN3Vb56GyUCTgZjBP+nbIVat6Kjd2H9dmXVhYEbZMFZyjqAdUwFzoJ8p\n' +
+    '3Y6qAJxmCktSZ77mzBeojZXi3VesOVfrCzi6MDU+SnN4mguL72YWr6gEbQK5\n' +
+    'Ypto4uuEh836Dcf7WCj20fTSRvRSKakmBGwnzP/0Gj7fo8S8OQLwFMMEo7bf\n' +
+    '5ExVuB5Is2SEUxWdeXligBMSiajLJo6thlzs0rTsY/ugbz/czulAMDh1MnST\n' +
+    'Yol6nHEQUgZFgWx56ARwOn+Y8hJPQqnpWmQie+BakUEabHQjY9sEJ5UDozZ5\n' +
+    'GwGVrfgETiNblc0crVnUI7CQKQARAQABwsB2BBgBCAAqBYJkVALvCZAzo8jU\n' +
+    'DaqidgKbDBYhBNgrG501gFGxwttFzDOjyNQNqqJ2AACmjwf/eZuqTjk9MIgq\n' +
+    'fdlWMM6kLD7W6hScgHIvms9V21Zwy7WQtMrxmQRhCqCHai/eXe/hFABmWxUK\n' +
+    'nHbosXKL3DQUapvn2cm40BWseW8Il93oRbSQb7xvFQ3g+mNEiSgn0oWBCTSf\n' +
+    'W9HM/3Kowfc34ilvqfquan+ilCID8OzXHHZXx/nxHeVbpARZiHe2ebk1lr6r\n' +
+    'KJzq/2S0C65xgn8ShTU1Aewio3+5kr3oHzlTlSnF8Ov5c9VzfEKb+UP7tBMO\n' +
+    'b8quBez/BgDetebCxaqy881+/LY535i9xVUNDkMK50jY+JvqW10HeuVXOVxZ\n' +
+    'NrSotIw2xObkCFV2WN46DVNt2S541Q==\n' +
+    '=Zf86\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  encryptedPrivateKey: '{"ciphertext":"7496a39864b0882212956f02270d8b34ad8fbdcbbcf97d359eb8c95eeba70d8daf810d9874ff8cfff5e7840bef8ee12b82a2c7783c28685035ad81dee5233d37570bc4e57cc2d56ac252a14db2cec9777a73094f3efaead3843f59f0a64efcd4f9ded45edb54c3e933811790eee9c5bc9877f9faadf50fe6436510111cf62f1b3419816bdd80f292326b5f58dd8fb595bafe56970479530de30cfd4b3a9c6ca82554016ce902e0bee2db1f636f8e0bd7b2c6f98157220885b07bc9c213a67de847c97c21fabd40440fdaa911219118b9a0efe2ff34fe78fbe2365963f8e2f0d6e22c12d067614d921eb021cea67d8fc36866efe82401ef124de229f27686b93183cfffa75332821939bfd9b5c2ebddb8b388fcee489d06f9bebbc407b68d2a57dd247b3edf51d14010da4cb8325e392475c68383a4dec063e8d8f84e6d553da2c4f84fe9143b2e212e5a17a436d14431e421a7eac40c9e460f37819831f692e9d14617969ecb2cebe4a934f0d36fb85e9694857cb87ebc7186c420362a2582d641bb1112c1bb32822e161ac1c130841ed69d9cdd7c5683352c51315d87abad1c844c1b46017346642482ede19e6be01f8bed93f29fd1d899bc02e99a4463d37b30f3e682877d1cf266c5a30862f27aa9a044ab90cd4e9d069512d0b22f57240480d71671b7d8d9bf3261eab7cb6c0279f159bd53bec28dd48a9f6433f225cc45c5dbaa7d58f0dc6b0e0e52ae0f197d6e9ba458e47ed8dac43351bf1099ce8e367bb67cd706c1a25f5388af9f6370781ecf2296b148eae9e9f554fc3a9dcaffd53cb9650937f1f5d50a566b314542cf5e0994c99fce26053a794f1b38c480ca6a6f344ba023092ca039f37c74b6fee0d0dde4d5553b192cbcdfa50d733d874483a269069e260394a6cb515e2a7a5e6daf6221fe9f7540845457514d38119d858abdcee09595b9266ae06110726391b652881f07f41988abc9080a6dc1fce8929bac13761ca12c66178a487e1d42b07a128e42c6582999fa0e8d2f47ae079ee46c3b13ac058f58e3f27dcfb22e4a2620785ae317258397bc42d64ce0e02c769c426fcfb5b6d9c7862872f19bf1bfae517e60bf853ecbe269143f67c6b2245cba29335a264b3d94a2f5444223aff7f1dab63ee4846cdda557a9b8041a3edc8d5b1ba23f6e4080129e3c25b3336a3ebaf23de2140f1020d332a472795c6f7ab1a767997c6c9a679a1bbdc34415ca83ea46d818af26ae92a0c05c7e8de2a0d960a92975a2709d25c33d2f980a7e5e5b279c6b8c733241b1447448a4b673f28e45d72409a3929b51d86ff3f2fa1aa07e0b355993d2d14035283a366c4d55fb2172bacebd7a7c3745f4e9aebb6096a2a7bb094e29be60aa206c26cdf5aeda9ba7cd40ea291ab7980020fd3b8a69bd1889cf8a347f327b79b21ce370cb2ca75920fd258704da8d23c8df55ecefa528a37adcc06f37113fccffaa958d13b3435fe81823107bf01274c0ab6912cb1960c0d4c7a4f40e3b23b3c50a65785b12ff8663a31fb1718cc6a4dd2a57c3456ad1743c81743c4366d31d987d016f800502c189a12c55e562cb3fb1c198837aa9a9735d3b7d18ea4ce2936df1e579330d773f3da0f7b733a527d11b68accd1fad3166e61b30594b76d8a1594e4ebd692ed4e54d955778d752a707513a5278502dd0ef64c6474c46df0cbba3c763e6366d005a0580f91f9f3674e06421d6ac3828fa2f79cea6d81686926df8092389e04d3e290ce3fc8d9b885b0df75beb5b6307e4fa6f2c4efe7005ac4f3779a48e290d8afdb98ec82046b2621d9ed09cc59f11cedccdeca85962e6b50f4ec9e512da6f547537e75f254aaefb76cb6981f3ccabb7e3230610aa3a50adfe23e04feb1e0b0dc67e1e9e1570808ae3f029583c25fa5f10f983c285d7b2fe0cd13cdd2a91294adcceb3b57bd6687d2b880d963872ba56b5696d63b8110ce4ef7e3af8c7c091fd65b2ceee3bf206d0c54c1127b051d74779545b344389f843eabe5c9459e421176f912ddb2a31f75dd12c964f01ec0f53d164b92c95f175a900e8a707401d2898141ec52d9c3ea619b71e46fc492b6ae9e524c6da32373d19dfbfe9ee3e2a3898fac7f57cff2b1eabd72ab3f48d6021b996a3fd1015ace78742b969a4754ae5a47d510e98f7c02b6833de4c89e1be31d5448a433e3032eaa0e5ecd8b3a40a89f493415dd8c0ca7d467b3ea2e01e902579206354d7dd7936b1593cbd481eca61dd19c62eaf25737c2a70db08f6cddb7776fc849b5cc1ada596d6b07b24f0cae171a281a70f2c8eeed67c74d4b79fc74facbf40d6f89f4f0a91510463454117f1d99d08aef055605452761daea5f8dd47d7f5b7015bc51ccabce1f64c6cbf564eda011fc3bdb3cf809594fa620b98202fd86c0ca5b083f9e77457cace4cc854c37541c1cd2e2faf41bf003eda90165d7b5646ba1884bd9e75c4941ddca0dc1dbeace314021362237795e9993cb438ab45749516b5d7a91ef2b1aa645cf3a054e04893c5bb9fbb1dc4006b4ee7cb4705521d05500a565598097469d0ac7401cb75a08e185dc316901c666f1ecda5e426f45c87a9692045974c1762b25440bdde119d82ec76d33508d26c7c3058a73995182fe82d56e725643cfb722db7bc7a1b7fe36ac1c2dcea391cb7db048e7bb127950f44347e7aa3010e2b72977774ad5b568acc2fd3381e9a7631d196b4a64fd9a1a65b5831b0bb66d78af49a711b7a1e212fd1869847c71a1db467b24858f16b794ff769452bc8be1f3aff7ad38d317de0c235a51b0d28de7b8d0525e7a2278aeed8e6c7cc0419f5967c86919fff31d02b205226d0c1cc05fe81e9bc3c8196aa813deef424ae01d8d140af04b9295658d1c4f8f4958b321dbe38564476d1c43096eeaea7c2d92c81a8a774a277092db570b1ecfb3f36a63006fef8692029ed409d265718ef988ab86bf5f3bd8cdd9de1ecd25c4ba27d5538416a6b86af4d3a2bd6aa3b43dbcbb8862ec2892a3bb7b173daae9ec9d72666f6a9150dda0ebe5edb6f64cc6cda224506e0712975c30c021e1cf83cfc62ed2801252a1d8d5f82f02772d9bc166cf10757c03384f3842d339b27d270f79079e79404e6d933b17530cc9ff004bce21e2cd271e7d9353aef118f99a93ba226d2e78f07e16b40212b2f48d19c2567d5873af7e49bdfe12a9da702409d1c4d7ced214d1e55259442222d827b590484b8b9706b805c25c7162c0c6c9c5d58efa91a9cb9dc6e87349bc95afa5a04c41d1ce41ad594adcfd93fb7357c32b46f1351291ecee68696843fa849da57ed1e50cec9d46d6b99d0a30e70dae05935960e6254e94dba3c6134fd7eac1ff3bf60567fa2a046772a866104823f2904351c6046fe11df8156791057171f0127ceb23cadd2440b0df7d87e5e3eab477b868e69f3da9e78e1fc02626310be982dc2b78367916932b4e16cf9ab4e8eab25480de37714f6f91141e7858a0c5486b274c017310bea58bc4b9af6552a10e255c50130691430d5dc732196b320475c0ebfd35814e1e18c6d0007cd0d1de40565f539a46a7a0bcc40ca8f633a922f278ee4f23677182d001a24676592d375dea7b7187659099b3955465264d97000445dee10669b286b5651e3d4c908ecfaa98a87362ed4674636fc6c6c61de8dd55c024658170751033f6294361c1add6f759317a3390ffdb0da4343a02f5ae3b63d7b7be60b0a949be10e887aa67cf1def7c408db6b89f3258780b998c8a70ad19e2fff3316933a7658191dbb78e25f73a22d1c9a1010421fb4abf243b7170bc8bd83550902af9388d671d402bd74e10f4b0fa82011f9bf34c4d9ca8728b6e7af7b6a1f7dcb2b28c34d6ac8dd6a23baddf7f22851b65ca2fb7e8f69b5cdc4a13bb36ce197f5ca1adc6c1404472afa8fe0f92cbf139a9745cdff3b325cc0b58f1d4410366ec1d3614e8c93f7dbdde78122d7371b81c66b34a4884058f0c0101bbf9e5081392d6a84b7f01e4636d8998f78df9d3a8519906d3aea09e3d67c919351c431ea3a882efe19c35853f15d1689235d6bc453311d8f8f2be841083b048478e5e04e57adfc0e20d0454e25636b995107e4b4ff587584413a5b75f4b500a4244d2b65fcb4a36aced81773339edb8317d4a6c9c3c71a02312b4d41e19f45f4749d91127a5aa993e98ba3fa99e749419455521dccc90e15603e45640383bd455e90d5724073eef83e6093fa9521bc77f5eb563bf398099433dfd7161c1b3a22a8696263c1ebb1cf1b0bbcbc4272c2632e12607164e3688f1ea88bc63622f57d5531a369921c71ada66f62a2ac7a0d7c7d65d9e052ae1484c7112c6426c2f346c002d05df90af2d40137c2ebc2a5b391e7077b8cba458b3a67d4080b10ad1bf7b73b889815e9f94149b44ed0234fddc9c74ceebb1dec82afc6a197257bc84924d2a831c2affbac3262c77da4a9bf1752ea9c3ca041ec6c49f603c052ec568332fb0fbd3ad7374c9cdb0b5b71889eced082feb6f1dabe91bb9819e663a5625dc24671ec0fb00c3c001bc7dee9a886e08be7f52fad9a13bbd2ef913a02a4f144785991ccfa33bb9bb00d42b5660886416ffd756b8c7d027b7ad8a45b0966770bdefcde889d2b155de4ec2721a1b11e7f582426ea12538f1bab2bfba3e0586f2f2302e38d7c398bf8d0b39c36f1e35dfa5e877d29c7e8bd66bb23d09aa6d5cc3091da7988a4acc5b5feacb2d2adc247668b9d7d9f45e51cb3f315d00ec3e5cf7a6ee68001e054f59933c0befcb22c807c7c5c2ab1f679bd2a9401ba10ef6aeb4dd240ecbb23910b07f3edd7dc45830cf29a36ba0325359c2b4871628b3f6163d132023223981bdf2acc5418f3b25db22b0c2575d5865d877386eea6e2d5b80c759057608ace72fc0c803ac46e7eb2678471458f","salt":"7920d0b688208bd58eab85208237ab1ea06e6ca05a692d291581d7c1aea9aa60","nonce":"c2b1e7da7fd7b1659e52e692","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"3ab0388b3b6772457a82cfb7cc125a2d36cd1e568594d0bbfdaee29d3e07c8ef"}',
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  encryptedPassword: null,
+  nftOwner: null,
+  signature: '0xaa451b258c31cdff4e4aaffff5df6b48d8de9ddcb7fa31183c745c0295905705637af5ab3bee1484f11a150bb35db4bbb49243f6439d9e357dc0830685fdd72b1b',
+  sigType: 'eip191',
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
+  about: null,
+  name: null,
+  numMsg: 0,
+  allowedNumMsg: 1000,
+  linkedListHash: ''
+}
 ```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `did` | `string` | user decentralized identity |
+| `wallets` | `string` | all wallets associated to the did |
+| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | `string` | PGP public key |
+| `encryptedPrivateKey` | `string` | encrypted private PGP key |
+| `encryptionType` | `string` | encryption type used to encrypt the private key |
+| `signature` | `string` | user payload signature used when creating a user |
+| `sigType` | `string` | signature type used when creating a user |
+| `about` | `string` | short user description |
+| `name` | `string` | user name |
+| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | `string` | NFT owner address |
+| `numMsg` | `number` | number of messages sent by the user |
+| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
+| `linkedListHash` | `string` | cid from all messages this user has sent |
+| `nfts` | `string[]` | array of NFTs owned by the user |
 </details>
 
 -----
@@ -1622,49 +1695,72 @@ Allowed Options (params with * are mandatory)
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
-  about: null,
-  name: 'turquoise-ethnic-chicken',
-  did: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-  encryptedPrivateKey: '{"version":"x25519-xsalsa20-poly1305","nonce":"q4o/j5qFNSIcgKhoCPZ0ujGz4/BW+IDs","ephemPublicKey":"/X3GJ8LCuv2/PRyvE2iCaM9FjRlAt52qj/pt2cVTnVc=","ciphertext":"4GNNYmarW5Vmo3pmWtq9hN9lPgodfaaj5bAvDTU87NbJsLeqLeZsvRW6MGqJQSsPsoS+FXsXFZbRIGvO73hvCl7ikGb9O/4jRyUNWhXuj3GS794UGNWGxVK8tS/kLu1OTaRG0tDhPJiIpjy4g6ejlswzG3nq0nw6f7EWSuhMKuBD6kDvC00NqvAmpvJqRMqjpZIVdx0nnA1J30RdCrBS2lG7Lkv2FYZEvJkt1ueW2eE5F9KEg63lNHd/bWY6rINdReDsPpgOdcPvEP/27c8pG/FNi0pPeYxZ4h+QqVYE791k3rJDPX6tx9vjQ1qQ9JySblrWee3Cv6UGq2DK6crteFrOaWpAVFisSzWe0ylAyp8ly1m41XnMca/TUjbltFqs5SmrjXnCqFRJp5pEYSYXFatb2/P/fFgVgJfGcz4t6FOf4aBPHBMiPkVu5scxkioSCLtMdlrNdUkFOQqLonKcNM29roADBPVEM5eHhqpDVrB7W1JqPzAxtipGBwrKQSMNBJuTH4d5EUfHLmZb6vsjuY2qZlI0ti27FsdiVm1gMUGe6txkxR8OuwV3YBGPpOfGde23r//RjBgbjQBudjksW8np2qtHmNejuqbA/2Pyb/3Pyohfil4Uly1ywbN90VH1Iz7C1XImNk54ty+wtuYZ4+gyj8L/miWUQpHpeZdoaffGII4ef3olqiP/7PkghAbkmTPV/thQDorOa6o5vX4U2A0bjqPN60U8ORrGRgz14rtJYfqMP4IIesIHuXz366bZ6yDRSZjqB4B7idNa7fyNSYTC83dpgzLMDo5VSrjRjSjx6+nolWNwkytqCj7NQw0N6p8QM2l3a8VeE7d2Qh+ycNJ6tnU5oXXwok/yVRaisDTyGhSes0M16FuY9m9sJPK2Gwhb24lrRpALZXasphp8t/8YOIY1Y6+yIeFT3/Qj+ec990Ituyx5y7F8JShMKninZPauunH2cEYT1dlbSOk2TKk7uNivTVbrW8M7n8h+i5AUpeq8LDe5QXKXfNruZO1Y/PCT3uoyFGUY69wLqi+PhBXO3DmWdWsevqjbf5FqaKVDLPzwVBaT7DWr7Pg58cR1jKYnn8zwEzGh8sS35WLdNhEgFTY1c6JTVeQS3AG/5dFSurcFK/agSPQ2eMvi4ZHH1xRYuYCO0j5Bb9PM+VhaLAkUA1xury8pV1Qvd4CDbPGnLZRzf3QCV/7hfkRoXY9UfU298oS0aDO25fiQJzfyC/r1U7ye6f1+IH/cIhSoTkUAOsE7a62kdRyngNggzvtykxgauWuWhfYtyhTEvUBvIhe7IhJNmnoCqX3jXevlqAc8vUwxi5GVq0izvOC8A6zsrbceToqXlEIFw2THdF+k7kvZ8YfeMeuejc0eC9i5WCRKk9Zvo4i7ZPOMLC6cZpGGmnEzmIPbQVtcZrkVgWMZkamc3zBnb++UBnEQhFIuXseC4sD4F9cDwjheQAXbkiHUafnTHJNLT+Hu0GA8d8GNW0ne45SmGfCTkGv1usa2TbbVJkPvvjFXviHB11CxSDjHauCzUQ1cbNvf3lddUhkmxmUOZEJDLeulEdwc4nmwBSNNVQfs4glfsoopEdfBS/az/vbC5aCUT0xUA4BPGtjeDJpt5zA+90rC9DOs2uXrkYDL5IIi6mgtWaF7PZYCNC9voKLtGTwyXpG+ZGTPoazOD3/joK7gR0hhmBS5h40v2N4a+qRjEAy4sNC4ulURSCnKOT4Y3HY3F/gOekhZXPgxJnTGSFb2YBPHl9zqKJl3QY+poei5FxS8LG1WK7QwgmmxZAV9jgEZC7w5pxc+rDMTEV1035QDpqQl38mNXhEJ2r9ZGcb1K73I1On5ogUmH6i3tM05rLNoGznd3yeOAhwoorD8NuCX9B83tWWPPxQh7nLHQBsmc1aYahqUrkiOhvJcU8NHIJZFkyC0iPmtIfdvgC4yEfd9Kh/z3SqYwx+Y9A+CoMLddLENTH3JB+Z1l9lAfJv40muBbf+oqtgAbI4aWTwx/udGhQ1uUNT74OqO/Zc1YL/FGtcBF/+xxbwjysWoGR3NvvLxC1XeXh3lVE7w1x761eB3xR/7lU0I+3MBhzZ0OGwOG3FFW+w28go4ZfQlMlcpZl9NhN9veYVb3iseI8Tg1yXijGEA4ji23mAdUJGnhwWeHlV9NSPPoiWYPHw91RVd1Ak86LhaRmMcU+0WEftMMinfOboEhr+7xx/txsluE1V2jcYsJKcdDA6MUThLxhg32dr3x/NVj8rFSRU8sl7FhMOb8I+FAoQrzi4kyFpKVWf1elp/gq9pSlWfDIi08NNXZrPSB6xh0grM9fp85UzPjUggwpVKNxCdlEVTn5iazGq+zuQekUomJ5+HOHqWWOf6t57Pv491+whFMp/kyWQIC9TSKzV68KH3XMvGpk0IhbBoRAzwU2A9fZLDD8cqxxfM/3JKVC3Glz2I1w0WNeIdwT9+SvcHV3Wsix9W86tePMziWQ7QLUU7Ox0mFf796zVQNtlEa4pHwag6EJp5zDrsv+KvYh2gatedmEypRewaeNfN+QdfBzF40elNTuCjUZ1fmKjleNwaTft38/jpxaqTKqwBhn0PoHeAh66Cs3G1TgKJSsxARICutjMEmcxoO1eAeWz2XJc0bOYFaEJliwoQu7sVhGHrsEx2Iw/k85IEKt3gc5R2lmnMY94dqnZiorRSIgRkGp59/cQ4raPgk+aYMM/mefAhYHKwVE4k/14iln1FKuJzKT5BwWRP50A73jIimRx/HxLypLIS9X2xOOVO61EAIGIRpDomLKh69F+PDQdrmslnqePI97C5Gd/JQCsFTN5jwOIyRIaah+6HGiQjNXUC8mewB7bVCOG9Wi0AKDdfHLkWejiGVQT4Vrw3nULViYk6rQ+e/divNGrwMEYFYDmLQ8p+8Emuz7UKExBiOWqI+sZTSFVZdSOqtbU7+1FEiiwHVChNNDVl6shx9KP3S6lOo21oZflQcO9J56ErOrZItyrs6DtmCTM8nbzt/XoWsJ/2HQuthnr+lOwfOfZPrJha75CZuEhJVNR73eG0QJ2YOLqXkWwp4juagvIlrQpknzudbcZno98z+xyvNXNLFQwuN7znjNZNPjHo/du4/pVc6tFiMuWOp3AIv5Q3zTG47WFoEph5awgKZBN84rGQMWO0eO/l2iPlHXq6Sng5snhvIVChQnocuC2piihs/4QpdOIM86MGKa4p4mqHVJhagRPU4U6gsNxtsruUY11R3j1dRX/RK3v1gE4+5/TcDlwi7KW41GFx4m7oDJOPiXYfDwh7C0EiKL8diJw7pHa4ldoc2iC1lnPFilEqzXxrgfhqd70+crFf8JT8UuTOalU681NZcFGDsi3ENXFlWAICkKobGe7qjJIYpSetBaWoIOqUku1T3Y6rhCrqOdu3i+8flhKavxHJFRvL/6dWwKRjYSHVOQeDNJCQuTzks7hdEizqPO7DRcdqcl5odsMt1AlM9l9TAHT3KUjPhNMz6xdpjLJzmZrDJ9EWeCYka7NfyErXZbE9/OVI2hAmkfDm47gsVsC745OkqQmXmPHV9F6la2rjfhg5AoOsJnyS5hkM3DyEGUfY+tL1OeW/uukJbJLjuZhn6LO0CgfDACMbDQb5LUziZWK3tv8Rluk6npjc6OHnaMn4mRATk/kBfNB8SsIb2j18gcZm3/bE2eTKn0737iw0JDIaBMbghkTpK0FJOxwU8xsBh4rK+ui8Mu4F1eKKwRzLOc6ROlYCcvltgeWvnmHzAn4q76SuZQkrFsHHHidUjP36mZYIAHnFGBe0pC83PMMkDepta9apfrMqmw9U5tBuSF6e939sbXMHsHAdN6uFLIPQg27LIPgyJQTklc/BfnbdTTq89mDELB4LROKjBK2KfAIInJPmwZKTMxiEh50OZUAnwdWO3yJtNehqsdhmyqnHt2CpboiV3yu8PZrz+quHzGpn+LYT5BPhzKde5Qx4LRw0s6VWTpumWe7N04X8ZYSlLrxpCgXGp60KSt0oy7wTzFuMFRZj/aQGiT43g5nNcxlgXApX2RbWOSaSe0Vios48Ntu6MH5aH28XKvYVvPwMbFzu6+JFfD2Rvv/rWmVMqxI/SD7OtgTqWXwTzbfd9EMoeOnBCk83i83O7uERQOgs6jOdqaqGFXmdVWllIYxq2UrAPA3X1pbQkfvorw9oMfFegfbWFZ1BBe4q8Jqic/YHMfK0mjW7TT31dTPtuBcVrBrQLBYMmxN4IqDj9/YcnpDmHA8N1R1vT5dLP9tm1iIBTT/xcFozNIFgqHJwFZpwV8UAFixAofr5ucdXK2PZ6u/XALE8dHTAGYNNusEoCr7RonZ58Rrb7FrZz5kXDbOYSdf8oPMLM+am2QOf4wxXZDzdPYhlIv9r4KHxXK593DGDtWfNTDgfhwyCbHe8sybZz8KTNlmSdOJ353GB9PIeuKSQuHjoowB6OMPI6hapPUrCc14NtBODHrntx1g/UukLzMLbzcXpAMWa44N8tFrWjbKYuB+dfiZesffD++I60o84MP66eiTgUA8yvy7wRGb8tVAJ0vr3N3fIPJS2nA9L4WgGfodeagGxP5KCp1xjEG6trNmWZxo5OD/Csf5Rxm+opv0q/DKB3pQja6R6iYzX/sEkB2cr1g=="}',
-  encryptionType: 'x25519-xsalsa20-poly1305',
-  encryptedPassword: null,
-  nftOwner: null,
-  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA3klEQVR4AcXBsa2DMBSG0S+/kDxFmuxBTeneI1jKAJFwBTMwAj0ltUdhCqq89uYVjqJIuedcHvfbEyOngrWsE9/IqWAt64QlnAlnwlnHGzkVrOEYadmvM58QzoQz4azjn+EYsWINWJFAy8KEtfUnViRgCWfCmXDW5VR4sU5YW39i7deZluEYsWINWDkVLOFMOBPOumWd+KVlnbCEM+FMOOt4I9bAi0RTrIFPCGfCmXDW5VRoGY4RK9O29SfWfp1pEc6EM+Hs8rjfnhhbf2LFGvjG1p9YsQYs4Uw4E87+ANR9MUzaGGBjAAAAAElFTkSuQmCC',
+  did: 'eip155:0x85e6350861136e65BE141d8DB1eEa25cA346743f',
+  wallets: 'eip155:0x85e6350861136e65BE141d8DB1eEa25cA346743f',
   publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
     '\n' +
-    'xsBNBGNk+F4BCADfksMMpNxl47GAOKdW841OE6NaDEBIrsfiyq0DHAEApJwl\n' +
-    '3Rk3/7xoRoEEHsYLKccNLtuKBX/oEvkJNM9/XU0gFms0cGlOJxsLM/j81Ol7\n' +
-    'IqoXJWGbWfxaGSB1jacddZMdXJfDy3FN7VU885zPH66t5kA/K6Ra8vzXKvKy\n' +
-    'J4vTgWaYa/7OLF8oyTzEMSz1Mj/aB9z/mNdveKcnosC3jG6yDrVjrdkBJB98\n' +
-    '4VBPUHlWydzCnhpsZ1iT9jazSKwedhvkic21FdC94DpFdRg9Q39GkF7kOyhj\n' +
-    '91EJZJ2yhbZQSk0kSvsYW54ejFV26ccUTlHSoMOVPeYbLgha9u2Anz77ABEB\n' +
-    'AAHNAMLAigQQAQgAPgUCY2T4XgQLCQcICRCszcBmB607SgMVCAoEFgACAQIZ\n' +
-    'AQIbAwIeARYhBEWdLV876c+znjS0l6zNwGYHrTtKAAAKbgf/eCRgjXTWzkh9\n' +
-    'Wer//RpMxrMMyi75aqUCJ9VmciLkuCnw+OMGvPCDAOa7b+dH4tE4mhwNKord\n' +
-    'VkLbgaZLpcuiyRBZ4mU7gay3WivwDkl52B/VhFkzx2pd2dmPKVggDAZG8WQ1\n' +
-    'ETrDEObV+t+BofLEFxAgtw/v0MDEYju+TIkwcE6gUF0xAz035SL6eS1qlV6U\n' +
-    'EZ0qNheBtKw7MnBq1MWs3X/KeoRQiSPqlyTVfNI+emVTZ96EWOOB1Dbm88xa\n' +
-    'JNdxPWt4ud3cYG+prcqkBYfNNhIsKMnFH2uOoIMRzmMCn5bhkNtD2hyDTb5O\n' +
-    'p6qBF4HptRMRWA6z9EVx7V2sgedRw87ATQRjZPheAQgA8OqLN8MmwYkuuhAA\n' +
-    'Cmwu5xPBG1vH/OubI50IbWdoEGg9XkqlA1f0izqN61x6nA6taDJo9Txz3L7h\n' +
-    'Ez+/B8dy6swnAs63UZP4FFYKhnEb15gdPR1pxbfzbMbZCJ38aRMUcy99bTnC\n' +
-    'u41df+L2N5Z55Tk+LPEg5furmCvz7yTSphZe/OcU4y/KMBSDNqQhIN2GyevV\n' +
-    'ZqVwzEuCevAGPy0owXoF2EaDfS1Wz/yr6VI7Y6tK+SiGz2D9MQJRnFhAXDPO\n' +
-    'FH4oJD/bdPDJ4mJI2pCZJoxwu8m/Zr8txuXsgS1j4Ga8aXfriGVxws9vnypU\n' +
-    'RVakmkYm9+MsOMhBtFWwNw0ssQARAQABwsB2BBgBCAAqBQJjZPheCRCszcBm\n' +
-    'B607SgIbDBYhBEWdLV876c+znjS0l6zNwGYHrTtKAABcIgf+Jn1WYdm1/89y\n' +
-    '6wSKjH8H3etZc9zpSoXX49KH35t0QAKb+B9pa4mjTbmbHnAZYFvYzrc9VZNr\n' +
-    '0HrAypEgwEflOcfH8ocGSy7AuVFctT3gQ1pD898UUT9/QbHupLXla1u0Qnp+\n' +
-    'qMOfJG6MxQUdnZJbosZyaIoMv4QihHj4+KVLdQXCucXe/Zb4rshxlI0EZIZJ\n' +
-    'iJhB2pnBenB5CVuDryGzjl8JsANLtAQ2AlYH+0u3REXpTjIBnQksIUgwH25S\n' +
-    'XFpqUgmDPq/LfRw8Q8V5WQiKRwljhIw6wY05IwK24dPKRz1rjeWrb69CJAWb\n' +
-    'vvravSrzpzeXnWqVouv8WutINfAqdA==\n' +
-    '=2es+\n' +
+    'xsBNBGRUAu8BCACV4muD50mKJeGPU33ZkTXi7x6eMpjXlmMQbVERQ7MVKvOc\n' +
+    'cN+9iz2A18bi73vPYq9FwF/Ibok+A/SuwTbiEe/5E0FXJSnC87DWVF6Aq6At\n' +
+    'lzCT4WHYlkHU2h5+JNaD8CXOxe6bsGfzbZ9dSZ9zfs5IoCh6Qf035cjV7wH6\n' +
+    'lcGykxvZUIfKiJuwXotkglGzk0317oo37ZXl6f2hCJBg7NdewXGxVKFYu1JS\n' +
+    'n5ztzAkoRyiHUnuFDje+HmkU4PjhtrHiFrEeooRyvR/6YCvyIue7f2lIXKV9\n' +
+    'rOCyczJyDWTf3wwpklDZVEB0Guv4PHcWsTuN1pqyxgz2bT+umctEvla3ABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZFQC7wQLCQcICZAzo8jUDaqidgMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBNgrG501gFGxwttFzDOjyNQNqqJ2AACgaQf/Rt33rLH7Ayxb\n' +
+    'UED4L7a5f6aw//jk9Y+yqpB3QbwJTSoD02yUqUJ5J9sW46m8k3eQc6ds4OkP\n' +
+    'ylaQtoUkumELSuS5hON3Y2IQ78fMvv+My8pQoxD4HzzLj7uVOHaHaElygfoC\n' +
+    'pfWSDU2UrJB5TK6noOTspcdB5QlCKh5fU0fDtRQ9OKVTM4NTAmYxsDa3OZO6\n' +
+    'DvqfMAK75tlHJr+Xro7GUbKebaJft/guA2ZHpGTHhs2Q+grjQcvljx6BoN3o\n' +
+    'NydGwkCorcVZZO7XKr73hPE0VH/LlRqZJ2lcBn/kUJzG1Z1LFYcny+FCrM3U\n' +
+    'cCg5eI+Is436jSWBl3bhtdYptNwdNM7ATQRkVALvAQgAt7ghdqho1nII81Vk\n' +
+    'BAs2LN3Vb56GyUCTgZjBP+nbIVat6Kjd2H9dmXVhYEbZMFZyjqAdUwFzoJ8p\n' +
+    '3Y6qAJxmCktSZ77mzBeojZXi3VesOVfrCzi6MDU+SnN4mguL72YWr6gEbQK5\n' +
+    'Ypto4uuEh836Dcf7WCj20fTSRvRSKakmBGwnzP/0Gj7fo8S8OQLwFMMEo7bf\n' +
+    '5ExVuB5Is2SEUxWdeXligBMSiajLJo6thlzs0rTsY/ugbz/czulAMDh1MnST\n' +
+    'Yol6nHEQUgZFgWx56ARwOn+Y8hJPQqnpWmQie+BakUEabHQjY9sEJ5UDozZ5\n' +
+    'GwGVrfgETiNblc0crVnUI7CQKQARAQABwsB2BBgBCAAqBYJkVALvCZAzo8jU\n' +
+    'DaqidgKbDBYhBNgrG501gFGxwttFzDOjyNQNqqJ2AACmjwf/eZuqTjk9MIgq\n' +
+    'fdlWMM6kLD7W6hScgHIvms9V21Zwy7WQtMrxmQRhCqCHai/eXe/hFABmWxUK\n' +
+    'nHbosXKL3DQUapvn2cm40BWseW8Il93oRbSQb7xvFQ3g+mNEiSgn0oWBCTSf\n' +
+    'W9HM/3Kowfc34ilvqfquan+ilCID8OzXHHZXx/nxHeVbpARZiHe2ebk1lr6r\n' +
+    'KJzq/2S0C65xgn8ShTU1Aewio3+5kr3oHzlTlSnF8Ov5c9VzfEKb+UP7tBMO\n' +
+    'b8quBez/BgDetebCxaqy881+/LY535i9xVUNDkMK50jY+JvqW10HeuVXOVxZ\n' +
+    'NrSotIw2xObkCFV2WN46DVNt2S541Q==\n' +
+    '=Zf86\n' +
     '-----END PGP PUBLIC KEY BLOCK-----\n',
-  wallets: 'eip155:0xd8634c39bbfd4033c0d3289c4515275102423681',
-  nfts: []
+  encryptedPrivateKey: '{"ciphertext":"7496a39864b0882212956f02270d8b34ad8fbdcbbcf97d359eb8c95eeba70d8daf810d9874ff8cfff5e7840bef8ee12b82a2c7783c28685035ad81dee5233d37570bc4e57cc2d56ac252a14db2cec9777a73094f3efaead3843f59f0a64efcd4f9ded45edb54c3e933811790eee9c5bc9877f9faadf50fe6436510111cf62f1b3419816bdd80f292326b5f58dd8fb595bafe56970479530de30cfd4b3a9c6ca82554016ce902e0bee2db1f636f8e0bd7b2c6f98157220885b07bc9c213a67de847c97c21fabd40440fdaa911219118b9a0efe2ff34fe78fbe2365963f8e2f0d6e22c12d067614d921eb021cea67d8fc36866efe82401ef124de229f27686b93183cfffa75332821939bfd9b5c2ebddb8b388fcee489d06f9bebbc407b68d2a57dd247b3edf51d14010da4cb8325e392475c68383a4dec063e8d8f84e6d553da2c4f84fe9143b2e212e5a17a436d14431e421a7eac40c9e460f37819831f692e9d14617969ecb2cebe4a934f0d36fb85e9694857cb87ebc7186c420362a2582d641bb1112c1bb32822e161ac1c130841ed69d9cdd7c5683352c51315d87abad1c844c1b46017346642482ede19e6be01f8bed93f29fd1d899bc02e99a4463d37b30f3e682877d1cf266c5a30862f27aa9a044ab90cd4e9d069512d0b22f57240480d71671b7d8d9bf3261eab7cb6c0279f159bd53bec28dd48a9f6433f225cc45c5dbaa7d58f0dc6b0e0e52ae0f197d6e9ba458e47ed8dac43351bf1099ce8e367bb67cd706c1a25f5388af9f6370781ecf2296b148eae9e9f554fc3a9dcaffd53cb9650937f1f5d50a566b314542cf5e0994c99fce26053a794f1b38c480ca6a6f344ba023092ca039f37c74b6fee0d0dde4d5553b192cbcdfa50d733d874483a269069e260394a6cb515e2a7a5e6daf6221fe9f7540845457514d38119d858abdcee09595b9266ae06110726391b652881f07f41988abc9080a6dc1fce8929bac13761ca12c66178a487e1d42b07a128e42c6582999fa0e8d2f47ae079ee46c3b13ac058f58e3f27dcfb22e4a2620785ae317258397bc42d64ce0e02c769c426fcfb5b6d9c7862872f19bf1bfae517e60bf853ecbe269143f67c6b2245cba29335a264b3d94a2f5444223aff7f1dab63ee4846cdda557a9b8041a3edc8d5b1ba23f6e4080129e3c25b3336a3ebaf23de2140f1020d332a472795c6f7ab1a767997c6c9a679a1bbdc34415ca83ea46d818af26ae92a0c05c7e8de2a0d960a92975a2709d25c33d2f980a7e5e5b279c6b8c733241b1447448a4b673f28e45d72409a3929b51d86ff3f2fa1aa07e0b355993d2d14035283a366c4d55fb2172bacebd7a7c3745f4e9aebb6096a2a7bb094e29be60aa206c26cdf5aeda9ba7cd40ea291ab7980020fd3b8a69bd1889cf8a347f327b79b21ce370cb2ca75920fd258704da8d23c8df55ecefa528a37adcc06f37113fccffaa958d13b3435fe81823107bf01274c0ab6912cb1960c0d4c7a4f40e3b23b3c50a65785b12ff8663a31fb1718cc6a4dd2a57c3456ad1743c81743c4366d31d987d016f800502c189a12c55e562cb3fb1c198837aa9a9735d3b7d18ea4ce2936df1e579330d773f3da0f7b733a527d11b68accd1fad3166e61b30594b76d8a1594e4ebd692ed4e54d955778d752a707513a5278502dd0ef64c6474c46df0cbba3c763e6366d005a0580f91f9f3674e06421d6ac3828fa2f79cea6d81686926df8092389e04d3e290ce3fc8d9b885b0df75beb5b6307e4fa6f2c4efe7005ac4f3779a48e290d8afdb98ec82046b2621d9ed09cc59f11cedccdeca85962e6b50f4ec9e512da6f547537e75f254aaefb76cb6981f3ccabb7e3230610aa3a50adfe23e04feb1e0b0dc67e1e9e1570808ae3f029583c25fa5f10f983c285d7b2fe0cd13cdd2a91294adcceb3b57bd6687d2b880d963872ba56b5696d63b8110ce4ef7e3af8c7c091fd65b2ceee3bf206d0c54c1127b051d74779545b344389f843eabe5c9459e421176f912ddb2a31f75dd12c964f01ec0f53d164b92c95f175a900e8a707401d2898141ec52d9c3ea619b71e46fc492b6ae9e524c6da32373d19dfbfe9ee3e2a3898fac7f57cff2b1eabd72ab3f48d6021b996a3fd1015ace78742b969a4754ae5a47d510e98f7c02b6833de4c89e1be31d5448a433e3032eaa0e5ecd8b3a40a89f493415dd8c0ca7d467b3ea2e01e902579206354d7dd7936b1593cbd481eca61dd19c62eaf25737c2a70db08f6cddb7776fc849b5cc1ada596d6b07b24f0cae171a281a70f2c8eeed67c74d4b79fc74facbf40d6f89f4f0a91510463454117f1d99d08aef055605452761daea5f8dd47d7f5b7015bc51ccabce1f64c6cbf564eda011fc3bdb3cf809594fa620b98202fd86c0ca5b083f9e77457cace4cc854c37541c1cd2e2faf41bf003eda90165d7b5646ba1884bd9e75c4941ddca0dc1dbeace314021362237795e9993cb438ab45749516b5d7a91ef2b1aa645cf3a054e04893c5bb9fbb1dc4006b4ee7cb4705521d05500a565598097469d0ac7401cb75a08e185dc316901c666f1ecda5e426f45c87a9692045974c1762b25440bdde119d82ec76d33508d26c7c3058a73995182fe82d56e725643cfb722db7bc7a1b7fe36ac1c2dcea391cb7db048e7bb127950f44347e7aa3010e2b72977774ad5b568acc2fd3381e9a7631d196b4a64fd9a1a65b5831b0bb66d78af49a711b7a1e212fd1869847c71a1db467b24858f16b794ff769452bc8be1f3aff7ad38d317de0c235a51b0d28de7b8d0525e7a2278aeed8e6c7cc0419f5967c86919fff31d02b205226d0c1cc05fe81e9bc3c8196aa813deef424ae01d8d140af04b9295658d1c4f8f4958b321dbe38564476d1c43096eeaea7c2d92c81a8a774a277092db570b1ecfb3f36a63006fef8692029ed409d265718ef988ab86bf5f3bd8cdd9de1ecd25c4ba27d5538416a6b86af4d3a2bd6aa3b43dbcbb8862ec2892a3bb7b173daae9ec9d72666f6a9150dda0ebe5edb6f64cc6cda224506e0712975c30c021e1cf83cfc62ed2801252a1d8d5f82f02772d9bc166cf10757c03384f3842d339b27d270f79079e79404e6d933b17530cc9ff004bce21e2cd271e7d9353aef118f99a93ba226d2e78f07e16b40212b2f48d19c2567d5873af7e49bdfe12a9da702409d1c4d7ced214d1e55259442222d827b590484b8b9706b805c25c7162c0c6c9c5d58efa91a9cb9dc6e87349bc95afa5a04c41d1ce41ad594adcfd93fb7357c32b46f1351291ecee68696843fa849da57ed1e50cec9d46d6b99d0a30e70dae05935960e6254e94dba3c6134fd7eac1ff3bf60567fa2a046772a866104823f2904351c6046fe11df8156791057171f0127ceb23cadd2440b0df7d87e5e3eab477b868e69f3da9e78e1fc02626310be982dc2b78367916932b4e16cf9ab4e8eab25480de37714f6f91141e7858a0c5486b274c017310bea58bc4b9af6552a10e255c50130691430d5dc732196b320475c0ebfd35814e1e18c6d0007cd0d1de40565f539a46a7a0bcc40ca8f633a922f278ee4f23677182d001a24676592d375dea7b7187659099b3955465264d97000445dee10669b286b5651e3d4c908ecfaa98a87362ed4674636fc6c6c61de8dd55c024658170751033f6294361c1add6f759317a3390ffdb0da4343a02f5ae3b63d7b7be60b0a949be10e887aa67cf1def7c408db6b89f3258780b998c8a70ad19e2fff3316933a7658191dbb78e25f73a22d1c9a1010421fb4abf243b7170bc8bd83550902af9388d671d402bd74e10f4b0fa82011f9bf34c4d9ca8728b6e7af7b6a1f7dcb2b28c34d6ac8dd6a23baddf7f22851b65ca2fb7e8f69b5cdc4a13bb36ce197f5ca1adc6c1404472afa8fe0f92cbf139a9745cdff3b325cc0b58f1d4410366ec1d3614e8c93f7dbdde78122d7371b81c66b34a4884058f0c0101bbf9e5081392d6a84b7f01e4636d8998f78df9d3a8519906d3aea09e3d67c919351c431ea3a882efe19c35853f15d1689235d6bc453311d8f8f2be841083b048478e5e04e57adfc0e20d0454e25636b995107e4b4ff587584413a5b75f4b500a4244d2b65fcb4a36aced81773339edb8317d4a6c9c3c71a02312b4d41e19f45f4749d91127a5aa993e98ba3fa99e749419455521dccc90e15603e45640383bd455e90d5724073eef83e6093fa9521bc77f5eb563bf398099433dfd7161c1b3a22a8696263c1ebb1cf1b0bbcbc4272c2632e12607164e3688f1ea88bc63622f57d5531a369921c71ada66f62a2ac7a0d7c7d65d9e052ae1484c7112c6426c2f346c002d05df90af2d40137c2ebc2a5b391e7077b8cba458b3a67d4080b10ad1bf7b73b889815e9f94149b44ed0234fddc9c74ceebb1dec82afc6a197257bc84924d2a831c2affbac3262c77da4a9bf1752ea9c3ca041ec6c49f603c052ec568332fb0fbd3ad7374c9cdb0b5b71889eced082feb6f1dabe91bb9819e663a5625dc24671ec0fb00c3c001bc7dee9a886e08be7f52fad9a13bbd2ef913a02a4f144785991ccfa33bb9bb00d42b5660886416ffd756b8c7d027b7ad8a45b0966770bdefcde889d2b155de4ec2721a1b11e7f582426ea12538f1bab2bfba3e0586f2f2302e38d7c398bf8d0b39c36f1e35dfa5e877d29c7e8bd66bb23d09aa6d5cc3091da7988a4acc5b5feacb2d2adc247668b9d7d9f45e51cb3f315d00ec3e5cf7a6ee68001e054f59933c0befcb22c807c7c5c2ab1f679bd2a9401ba10ef6aeb4dd240ecbb23910b07f3edd7dc45830cf29a36ba0325359c2b4871628b3f6163d132023223981bdf2acc5418f3b25db22b0c2575d5865d877386eea6e2d5b80c759057608ace72fc0c803ac46e7eb2678471458f","salt":"7920d0b688208bd58eab85208237ab1ea06e6ca05a692d291581d7c1aea9aa60","nonce":"c2b1e7da7fd7b1659e52e692","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"3ab0388b3b6772457a82cfb7cc125a2d36cd1e568594d0bbfdaee29d3e07c8ef"}',
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  encryptedPassword: null,
+  nftOwner: null,
+  signature: '0xaa451b258c31cdff4e4aaffff5df6b48d8de9ddcb7fa31183c745c0295905705637af5ab3bee1484f11a150bb35db4bbb49243f6439d9e357dc0830685fdd72b1b',
+  sigType: 'eip191',
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
+  about: null,
+  name: null,
+  numMsg: 0,
+  allowedNumMsg: 1000,
+  linkedListHash: ''
 }
 ```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `did` | `string` | user decentralized identity |
+| `wallets` | `string` | all wallets associated to the did |
+| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | `string` | PGP public key |
+| `encryptedPrivateKey` | `string` | encrypted private PGP key |
+| `encryptionType` | `string` | encryption type used to encrypt the private key |
+| `signature` | `string` | user payload signature used when creating a user |
+| `sigType` | `string` | signature type used when creating a user |
+| `about` | `string` | short user description |
+| `name` | `string` | user name |
+| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | `string` | NFT owner address |
+| `numMsg` | `number` | number of messages sent by the user |
+| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
+| `linkedListHash` | `string` | cid from all messages this user has sent |
+| `nfts` | `string[]` | array of NFTs owned by the user |
 </details>
 
 -----
