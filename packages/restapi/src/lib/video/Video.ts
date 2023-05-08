@@ -28,6 +28,7 @@ export class Video {
   // user related info
   private signer: SignerType | undefined = undefined;
   private chainId: number | undefined = undefined;
+  private pgpPrivateKey: string | null = null;
   private env: ENV = Constants.ENV.PROD;
 
   // storing the peer instance
@@ -150,7 +151,6 @@ export class Video {
           chatId,
           signalingData: data,
           env,
-          
         }
       );
     });
@@ -205,6 +205,7 @@ export class Video {
     this.peerInstance = peer;
     this.signer = signer;
     this.chainId = chainId;
+    this.pgpPrivateKey = pgpPrivateKey;
     this.env = env;
     return {
       sendMessage,
@@ -306,6 +307,7 @@ export class Video {
     this.peerInstance = peer;
     this.signer = signer;
     this.chainId = chainId;
+    this.pgpPrivateKey = pgpPrivateKey;
     this.env = env;
     return {
       sendMessage,
@@ -341,24 +343,20 @@ export class Video {
           this.localStream.getTracks().forEach((track) => track.stop());
         }
       }
-      if (this.videoCallInfo.callStatus === 2 || this.videoCallInfo.callStatus === 1) {
-        if (!this.signer) throw new Error('signer not valid');
-        if (!this.chainId) throw new Error('chainId not valid');
-        if (!this.env) throw new Error('env is not valid');
-
-        // for disconnecting during status 1
-        // send a notif to the other computer signaling status:4
-        // sendVideoCallNotification(
-        //   { signer: this.signer, chainId: this.chainId },
-        //   {
-        //     senderAddress: this.videoCallInfo.senderAddress,
-        //     recipientAddress: this.videoCallInfo.receiverAddress,
-        //     status: 4,
-        //     chatId: this.videoCallInfo.chatId,
-        //     signalingData: null,
-        //     env: this.env,
-        //   }
-        // );
+      if (this.videoCallInfo.callStatus === 1 || this.videoCallInfo.callStatus === 2) {
+        // for disconnecting during status 1, 2
+        // send a notif to the other user signaling status=4
+        sendVideoCallNotification(
+          { signer: this.signer!, chainId: this.chainId!, pgpPrivateKey: this.pgpPrivateKey },
+          {
+            senderAddress: this.videoCallInfo.senderAddress,
+            recipientAddress: this.videoCallInfo.receiverAddress,
+            status: 4,
+            chatId: this.videoCallInfo.chatId,
+            signalingData: null,
+            env: this.env,
+          }
+        );
         window.location.reload();
       }
     } catch (error) {
