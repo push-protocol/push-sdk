@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, {ENV} from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists } from './helpers';
+import { getInboxLists, getUserDID } from './helpers';
 
 export type RequestOptionsType = {
   account: string;
@@ -25,7 +25,7 @@ export const requests = async (
   options: RequestOptionsType
 ): Promise<IFeeds[]> => {
   const { account, pgpPrivateKey, env = Constants.ENV.PROD, toDecrypt = false } = options || {};
-  const user = walletToPCAIP10(account);
+  const user = await getUserDID(account, env);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/requests`;
   try {

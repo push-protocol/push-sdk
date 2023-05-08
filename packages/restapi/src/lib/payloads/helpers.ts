@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
-import { generateHash, getCAIPAddress } from '../helpers';
+import { getCAIPAddress } from '../helpers';
+import * as CryptoJS from 'crypto-js';
 
 import {
   ISendNotificationInputOptions,
@@ -195,68 +196,73 @@ export async function getVerificationProof({
   pgpPrivateKey?: string;
   env?: ENV;
 }) {
-  // console.log('payload ---> \n\n', payload);
-
-  const type = {
-    Data: [{ name: 'data', type: 'string' }],
-  };
-  const domain = {
-    name: 'EPNS COMM V1',
-    chainId: chainId,
-    verifyingContract: verifyingContract,
-  };
-
   let message = null;
-  let signature = null;
+  let verificationProof = null;
 
-  if (identityType === IDENTITY_TYPE.MINIMAL) {
-    message = {
-      data: `${identityType}+${notificationType}+${payload.notification.title}+${payload.notification.body}`,
-    };
-    signature = await signer._signTypedData(domain, type, message);
-    return `eip712v2:${signature}::uid::${uuid}`;
-  } else if (identityType === IDENTITY_TYPE.IPFS) {
-    message = {
-      data: `1+${ipfsHash}`,
-    };
-    signature = await signer._signTypedData(domain, type, message);
-    return `eip712v2:${signature}::uid::${uuid}`;
-  } else if (identityType === IDENTITY_TYPE.DIRECT_PAYLOAD) {
-    const payloadJSON = JSON.stringify(payload);
-    message = {
-      data: `2+${payloadJSON}`,
-    };
+  switch (identityType) {
+    case IDENTITY_TYPE.MINIMAL: {
+      message = {
+        data: `${identityType}+${notificationType}+${payload.notification.title}+${payload.notification.body}`,
+      };
+      break;
+    }
+    case IDENTITY_TYPE.IPFS: {
+      message = {
+        data: `1+${ipfsHash}`,
+      };
+      break;
+    }
+    case IDENTITY_TYPE.DIRECT_PAYLOAD: {
+      const payloadJSON = JSON.stringify(payload);
+      message = {
+        data: `2+${payloadJSON}`,
+      };
+      break;
+    }
+    case IDENTITY_TYPE.SUBGRAPH: {
+      message = {
+        data: `3+graph:${graph?.id}+${graph?.counter}`,
+      };
+      break;
+    }
+    default: {
+      throw new Error('Invalid IdentityType');
+    }
+  }
 
-    if (senderType === 1) {
-      // chat notification
-      // generate the pgpv2 verification proof
+  switch (senderType) {
+    case 0: {
+      const type = {
+        Data: [{ name: 'data', type: 'string' }],
+      };
+      const domain = {
+        name: 'EPNS COMM V1',
+        chainId: chainId,
+        verifyingContract: verifyingContract,
+      };
+      const signature = await signer._signTypedData(domain, type, message);
+      verificationProof = `eip712v2:${signature}::uid::${uuid}`;
+      break;
+    }
+    case 1: {
       const connectedUser = await getConnectedUser(
         wallet!,
         pgpPrivateKey!,
         env!
       );
-
-      const hash = generateHash(JSON.stringify(message)).toString();
-      signature = await sign({
+      const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
+      const signature = await sign({
         message: hash,
         signingKey: connectedUser.privateKey!,
       });
-      return `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
+      verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
+      break;
     }
-
-    // channel notification
-    // generate eip712 verification proof
-    signature = await signer._signTypedData(domain, type, message);
-    return `eip712v2:${signature}::uid::${uuid}`;
-  } else if (identityType === IDENTITY_TYPE.SUBGRAPH) {
-    message = {
-      data: `3+graph:${graph?.id}+${graph?.counter}`,
-    };
-    signature = await signer._signTypedData(domain, type, message);
-    return `eip712v2:${signature}::uid::${uuid}`;
+    default: {
+      throw new Error('Invalid SenderType');
+    }
   }
-
-  return signature;
+  return verificationProof;
 }
 
 export function getPayloadIdentity({
@@ -286,7 +292,14 @@ export function getPayloadIdentity({
   return null;
 }
 
-export function getSource(chainId: number, identityType: IDENTITY_TYPE) {
+export function getSource(
+  chainId: number,
+  identityType: IDENTITY_TYPE,
+  senderType: 0 | 1
+) {
+  if (senderType === 1) {
+    return SOURCE_TYPES.PUSH_VIDEO;
+  }
   if (identityType === IDENTITY_TYPE.SUBGRAPH) {
     return SOURCE_TYPES.THE_GRAPH;
   }

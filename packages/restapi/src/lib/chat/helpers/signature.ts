@@ -85,7 +85,8 @@ export const getTypedData = (
 export const verifyProfileSignature = (
   verificationProof: string,
   signedData: string,
-  address: string
+  address: string,
+  nftOwner: string
 ): boolean => {
   const SIG_TYPE_V2 = 'eip712v2';
   const SIG_TYPE_V3 = 'eip191';
@@ -137,7 +138,10 @@ export const verifyProfileSignature = (
       hashMessage(signedData),
       signature
     );
-    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+    if (
+      recoveredAddress.toLowerCase() === address.toLowerCase() ||
+      recoveredAddress.toLowerCase() === nftOwner.toLowerCase()
+    ) {
       return true;
     } else return false;
   }

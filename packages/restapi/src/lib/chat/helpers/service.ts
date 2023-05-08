@@ -4,6 +4,7 @@ import {
   generateHash,
   getAPIBaseUrls,
   getQueryParams,
+  isValidCAIP10NFTAddress,
   verifyPGPPublicKey,
   walletToPCAIP10,
 } from '../../helpers';
@@ -17,6 +18,9 @@ import { getEip191Signature } from './crypto';
 type CreateUserOptionsType = {
   user: string;
   wallet?: walletType;
+  name?: string;
+  nftOwner?: string | null;
+  encryptedPassword?: string | null;
   publicKey?: string;
   encryptedPrivateKey?: string;
   encryptionType?: string;
@@ -25,26 +29,28 @@ type CreateUserOptionsType = {
   env?: ENV;
 };
 
-type upgradeUserOptionsType = CreateUserOptionsType & {
-  name: string;
-  encryptedPassword: string | null;
-  nftOwner: string | null;
-};
-
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
-    user,
     wallet,
     publicKey = '',
     encryptedPrivateKey = '',
     encryptionType = '',
     env = Constants.ENV.PROD,
+    encryptedPassword = null,
+    nftOwner = null,
   } = options || {};
+  let { user } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
   const requestUrl = `${API_BASE_URL}/v1/users/`;
 
+  if (isValidCAIP10NFTAddress(user)) {
+    const epoch = Math.floor(Date.now() / 1000);
+    if (user.split(':').length !== 6) {
+      user = `${user}:${epoch}`;
+    }
+  }
   const data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
@@ -52,8 +58,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     encryptedPrivateKey,
     encryptionType,
     name: '',
-    encryptedPassword: null,
-    nftOwner: null,
+    encryptedPassword: encryptedPassword,
+    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);
@@ -72,7 +78,8 @@ export const createUserService = async (options: CreateUserOptionsType) => {
         response.data.publicKey = verifyPGPPublicKey(
           response.data.encryptionType,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.nftOwner
         );
       return response.data;
     })
@@ -82,7 +89,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     });
 };
 
-export const upgradeUserService = async (options: upgradeUserOptionsType) => {
+export const authUpdateUserService = async (options: CreateUserOptionsType) => {
   const {
     user,
     wallet,
@@ -97,16 +104,16 @@ export const upgradeUserService = async (options: upgradeUserOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/users/${walletToPCAIP10(user)}`;
+  const requestUrl = `${API_BASE_URL}/v1/users/${walletToPCAIP10(user)}/auth`;
 
   const data = {
     caip10: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
     encryptionType,
-    name: name,
-    encryptedPassword: encryptedPassword,
-    nftOwner: nftOwner,
+    name,
+    encryptedPassword,
+    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);
@@ -125,7 +132,8 @@ export const upgradeUserService = async (options: upgradeUserOptionsType) => {
         response.data.publicKey = verifyPGPPublicKey(
           response.data.encryptionType,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.nftOwner
         );
       return response.data;
     })

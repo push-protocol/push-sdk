@@ -91,9 +91,14 @@ export const decryptWithWalletRPCMethod = async (
 type decryptPgpKeyProps = {
   encryptedPGPPrivateKey: string;
   account?: string;
-  signer?: SignerType;
+  signer?: SignerType | null;
   env?: ENV;
   toUpgrade?: boolean;
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  };
   progressHook?: (progress: ProgressHookType) => void;
 };
 
@@ -104,6 +109,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     signer = null,
     env = Constants.ENV.PROD,
     toUpgrade = false,
+    additionalMeta = null,
     progressHook,
   } = options || {};
   try {
@@ -201,12 +207,37 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
+      case Constants.ENC_TYPE_V4: {
+        let password: string | null = null;
+        if (additionalMeta?.NFTPGP_V1) {
+          password = additionalMeta.NFTPGP_V1.password;
+        } else {
+          if (!wallet?.signer) {
+            throw new Error(
+              'Cannot Decrypt this encryption version without signer!'
+            );
+          }
+          const { encryptedPassword } = JSON.parse(encryptedPGPPrivateKey);
+          password = await decryptPGPKey({
+            encryptedPGPPrivateKey: JSON.stringify(encryptedPassword),
+            signer,
+            env,
+          });
+        }
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          hexToBytes(stringToHex(password as string))
+        );
+        const dec = new TextDecoder();
+        privateKey = dec.decode(encodedPrivateKey);
+        break;
+      }
       default:
         throw new Error('Invalid Encryption Type');
     }
 
     // try key upgradation
-    if (signer && toUpgrade) {
+    if (signer && toUpgrade && encryptionType !== Constants.ENC_TYPE_V4) {
       try {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
@@ -349,12 +380,20 @@ const bytesToHex = (bytes: Uint8Array): string => {
   );
 };
 
-const hexToBytes = (hex: string): Uint8Array => {
+export const hexToBytes = (hex: string): Uint8Array => {
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
   }
   return bytes;
+};
+
+export const stringToHex = (str: string): string => {
+  let hex = '';
+  for (let i = 0; i < str.length; i++) {
+    hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+  }
+  return hex;
 };
 
 // Derive AES-256-GCM key from a shared secret and salt
@@ -374,8 +413,8 @@ const hkdf = async (
   );
 };
 
-// ENC_TYPE_V3 encryption
-const encryptV3 = async (
+/** AES-GCM Encryption */
+export const encryptV2 = async (
   data: Uint8Array,
   secret: Uint8Array,
   additionalData?: Uint8Array
@@ -398,20 +437,18 @@ const encryptV3 = async (
   );
   return {
     ciphertext: bytesToHex(new Uint8Array(encrypted)),
-    version: Constants.ENC_TYPE_V3,
     salt: bytesToHex(salt),
     nonce: bytesToHex(nonce),
-    preKey: '',
   };
 };
 
-// ENC_TYPE_V3 | ENC_TYPE_V2 decryption
-const decryptV2 = async (
+/** AES-GCM Decryption */
+export const decryptV2 = async (
   encryptedData: encryptedPrivateKeyTypeV2,
   secret: Uint8Array,
   additionalData?: Uint8Array
 ): Promise<Uint8Array> => {
-  const key = await hkdf(secret, hexToBytes(encryptedData.salt));
+  const key = await hkdf(secret, hexToBytes(encryptedData.salt as string));
   const aesGcmParams: AesGcmParams = {
     name: 'AES-GCM',
     iv: hexToBytes(encryptedData.nonce),
@@ -430,8 +467,12 @@ const decryptV2 = async (
 export const encryptPGPKey = async (
   encryptionType: string,
   privateKey: string,
-  address: string,
-  wallet: walletType
+  wallet: walletType,
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  }
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
@@ -462,11 +503,26 @@ export const encryptPGPKey = async (
       );
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
-      encryptedPrivateKey = await encryptV3(
+      encryptedPrivateKey = await encryptV2(
         encodedPrivateKey,
         hexToBytes(secret || '')
       );
+      encryptedPrivateKey.version = Constants.ENC_TYPE_V3;
       encryptedPrivateKey.preKey = input;
+      break;
+    }
+    case Constants.ENC_TYPE_V4: {
+      if (!additionalMeta?.NFTPGP_V1?.password) {
+        throw new Error('Password is required!');
+      }
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
+      );
+      encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
+      encryptedPrivateKey.preKey = '';
       break;
     }
     default:
@@ -499,6 +555,19 @@ export const preparePGPPublicKey = async (
       });
       break;
     }
+    case Constants.ENC_TYPE_V4: {
+      const createProfileMessage =
+        'Create Push Profile \n' + generateHash(publicKey);
+      const { verificationProof } = await getEip191Signature(
+        wallet,
+        createProfileMessage
+      );
+      chatPublicKey = JSON.stringify({
+        key: publicKey,
+        signature: verificationProof,
+      });
+      break;
+    }
     default:
       throw new Error('Invalid Encryption Type');
   }
@@ -508,12 +577,10 @@ export const preparePGPPublicKey = async (
 export const verifyPGPPublicKey = (
   encryptionType: string,
   publicKey: string,
-  address: string
+  did: string,
+  nftOwner: string
 ): string => {
-  if (
-    encryptionType === Constants.ENC_TYPE_V2 ||
-    encryptionType === Constants.ENC_TYPE_V3
-  ) {
+  if (encryptionType && encryptionType !== Constants.ENC_TYPE_V1) {
     const { key, signature: verificationProof } = JSON.parse(publicKey);
     publicKey = key;
     let signedData: string;
@@ -524,11 +591,30 @@ export const verifyPGPPublicKey = (
       verifyProfileSignature(
         verificationProof,
         signedData,
-        pCAIP10ToWallet(address)
+        pCAIP10ToWallet(did),
+        nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
       )
     )
       return publicKey;
     else throw new Error('Cannot verify Encryption Keys for this user');
   }
   return publicKey;
+};
+
+export const validatePssword = (password: string) => {
+  if (password.length < 8) {
+    throw new Error('Password must be at least 8 characters long!');
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new Error('Password must contain at least one uppercase letter!');
+  }
+  if (!/[a-z]/.test(password)) {
+    throw new Error('Password must contain at least one lowercase letter!');
+  }
+  if (!/\d/.test(password)) {
+    throw new Error('Password must contain at least one digit!');
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+    throw new Error('Password must contain at least one special character!');
+  }
 };

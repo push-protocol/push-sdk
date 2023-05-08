@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const UpdateGroupTest = () => {
-  const { account,library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
@@ -21,7 +21,7 @@ const UpdateGroupTest = () => {
   const [groupDescription, setGroupDescription] = useState<string>('');
   const [members, setMembers] = useState<string>('');
   const [admins, setAdmins] = useState<string>('');
-
+  const [account, setAccount] = useState<string>(acc);
   const [sendResponse, setSendResponse] = useState<any>('');
 
   const updateChatId = (e: React.SyntheticEvent<HTMLElement>) => {
@@ -35,33 +35,25 @@ const UpdateGroupTest = () => {
     setGroupDescription((e.target as HTMLInputElement).value);
   };
 
-  const updateGroupImage= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateGroupImage = (e: React.SyntheticEvent<HTMLElement>) => {
     setGroupImage((e.target as HTMLInputElement).value);
   };
 
-  const updateMembers= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateMembers = (e: React.SyntheticEvent<HTMLElement>) => {
     setMembers((e.target as HTMLInputElement).value);
   };
 
- 
-  const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateAdmins = (e: React.SyntheticEvent<HTMLElement>) => {
     setAdmins((e.target as HTMLInputElement).value);
   };
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
   const testUpdateGroup = async () => {
     try {
       setLoading(true);
-      const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
       const librarySigner = await library.getSigner();
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
       const response = await PushAPI.chat.updateGroup({
         chatId,
         groupName,
@@ -72,11 +64,10 @@ const UpdateGroupTest = () => {
         account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
-        pgpPrivateKey: pvtkey,
       });
 
       setSendResponse(response);
-    } catch (e:any) {
+    } catch (e: any) {
       console.error(e.message);
     } finally {
       setLoading(false);
@@ -93,9 +84,7 @@ const UpdateGroupTest = () => {
       <Section>
         <SectionItem>
           <div>
-
-
-          <SectionItem>
+            <SectionItem>
               <label>chatId</label>
               <input
                 type="text"
@@ -134,7 +123,7 @@ const UpdateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-        
+
             <SectionItem style={{ marginTop: 20 }}>
               <label>members</label>
               <input
@@ -154,8 +143,16 @@ const UpdateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Group Creator ( Waller Addr or NFT DID )</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
 
-        
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateGroup}>
                 update group

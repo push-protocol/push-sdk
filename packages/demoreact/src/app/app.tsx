@@ -30,10 +30,11 @@ import CreateGroupTest from './ChatTest/CreateGroupTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
-import {Buffer} from 'buffer';
+import UpgradeUserTest from './ChatTest/UpgradeUser';
+import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 
-window.Buffer = window.Buffer || Buffer; 
+window.Buffer = window.Buffer || Buffer;
 
 interface Web3ReactState {
   chainId?: number;
@@ -219,7 +220,7 @@ export function App() {
                 <Route path="/channels" element={<ChannelsTest />} />
 
                 <Route path="/alias" element={<AliasTest />} />
-                
+
                 <Route path="/delegations" element={<DelegationTest />} />
 
                 <Route path="/payloads" element={<PayloadsTest />} />
@@ -234,6 +235,7 @@ export function App() {
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/upgrade" element={<UpgradeUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
                 <Route path="/chats" element={<GetChatsTest />} />
@@ -243,7 +245,6 @@ export function App() {
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
-
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>
