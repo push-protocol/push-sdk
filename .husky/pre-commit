@@ -5,6 +5,6 @@ echo "\nRunning GIT hooks..."
 yarn cleanbuild
 yarn nx affected --target=lint
 yarn nx affected --target=test
-yarn nx build demonode
-cd dist/packages/demonode
-node main.js
+#yarn nx build demonode
+#cd dist/packages/demonode
+#node main.js

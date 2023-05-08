@@ -3,8 +3,8 @@
   "version": 2,
   "projects": {
     "demonative": "apps/demonative",
-    "demonode": "packages/demonode",
-    "demoreact": "packages/demoreact",
+    "examples-sdk-backend-node": "packages/examples/sdk-backend-node",
+    "examples-sdk-frontend-react": "packages/examples/sdk-frontend-react",
     "ledgerlive": "packages/ledgerlive",
     "reactnative": "packages/reactnative",
     "restapi": "packages/restapi",
