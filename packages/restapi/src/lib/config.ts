@@ -51,7 +51,7 @@ export const ALIAS_CHAIN_ID = {
     [ENV.PROD]: 1101,
     [ENV.STAGING]: 1442,
     [ENV.DEV]: 1442,
-    [ENV.DEV]: 420,
+    [ENV.LOCAL]: 420,
   }
 }
 
