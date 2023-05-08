@@ -27,17 +27,26 @@ export type CreateUserProps = {
   account?: string;
   signer?: SignerType;
   version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
-  additionalMeta?: { password?: string };
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      password: string;
+    };
+  };
   progressHook?: (progress: ProgressHookType) => void;
 };
 
 export const create = async (options: CreateUserProps): Promise<IUser> => {
+  const passPrefix = '$0Pc'; //password prefix to ensure password validation
   const {
     env = Constants.ENV.PROD,
     account = null,
     signer = null,
     version = Constants.ENC_TYPE_V3,
-    additionalMeta,
+    additionalMeta = {
+      NFTPGP_V1: {
+        password: passPrefix + generateRandomSecret(10),
+      },
+    },
     progressHook,
   } = options || {};
 
@@ -52,8 +61,8 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
     }
-    if (additionalMeta && additionalMeta.password) {
-      validatePssword(additionalMeta.password);
+    if (additionalMeta?.NFTPGP_V1?.password) {
+      validatePssword(additionalMeta.NFTPGP_V1.password);
     }
 
     const caip10: string = walletToPCAIP10(address);
@@ -100,23 +109,17 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       level: 'INFO',
     });
 
-    let password: string;
-    if (!additionalMeta?.password) {
-      password = generateRandomSecret(10);
-    } else {
-      password = additionalMeta.password;
-    }
     const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
       encryptionType,
       keyPairs.privateKeyArmored,
       wallet,
-      { password: password }
+      additionalMeta
     );
 
     if (encryptionType === Constants.ENC_TYPE_V4) {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         Constants.ENC_TYPE_V3,
-        password,
+        additionalMeta.NFTPGP_V1?.password as string,
         wallet,
         additionalMeta
       );
