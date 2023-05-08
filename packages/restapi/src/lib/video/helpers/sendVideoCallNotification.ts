@@ -71,7 +71,6 @@ const sendVideoCallNotification = async (
       chatId,
       type: 3,
       identityType: 2,
-      hidden: true,
       notification: {
         title: 'VideoCall',
         body: 'VideoCall',
