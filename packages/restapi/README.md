@@ -1592,14 +1592,14 @@ const user = await PushAPI.user.create({
 })
 ```
 
-| Param          | Type     | Default                         | Remarks                                                       |
-|----------------|----------|---------------------------------|---------------------------------------------------------------|
-| env            | string   | 'prod'                          | API env - 'prod', 'staging', 'dev'                            |
-| account        | string   | -                               | Account address                                               |
-| signer         | -        | -                               | ethers.js signer                                              |
-| version        | string   | 'eip191-aes256-gcm-hkdf-sha256' | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
-| additionalMeta | object   | -                               | Additional meta data for user                                 |
-| progressHook   | function | -                               | Progress hook                                                 |
+| Param          | Remarks                                                       |
+|----------------|---------------------------------------------------------------|
+| env            | API env - 'prod', 'staging', 'dev'                            |
+| account        | Account address                                               |
+| signer         | ethers.js signer                                              |
+| version        | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
+| additionalMeta | Additional meta data for user                                 |
+| progressHook   | Progress hook                                                 |
 
 <details>
   <summary><b>Expected response (Create Chat User)</b></summary>
@@ -1723,7 +1723,7 @@ export interface IUser {
 ```
 
 | Parameter | Description |
-| --- | | --- |
+| --- | --- |
 | `msgSent` | number of messages sent by the user |
 | `maxMsgPersisted` | number of messages allowed to be sent by the user |
 | `did` | user decentralized identity |
@@ -1748,10 +1748,10 @@ const user = await PushAPI.user.get({
 });
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account    | string  | -       | Account address             |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| Param    | Remarks |
+|----------|---------|
+| account    | Account address             |
+| env  | API env - 'prod', 'staging', 'dev'|
 
 <details>
 <summary><b>Expected response (Get Push Chat User)</b></summary>
@@ -1779,24 +1779,24 @@ export interface IUser {
 }
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `did` | `string` | user decentralized identity |
-| `wallets` | `string` | all wallets associated to the did |
-| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | `string` | PGP public key |
-| `encryptedPrivateKey` | `string` | encrypted private PGP key |
-| `encryptionType` | `string` | encryption type used to encrypt the private key |
-| `signature` | `string` | user payload signature used when creating a user |
-| `sigType` | `string` | signature type used when creating a user |
-| `about` | `string` | short user description |
-| `name` | `string` | user name |
-| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
-| `nftOwner` | `string` | NFT owner address |
-| `numMsg` | `number` | number of messages sent by the user |
-| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
-| `linkedListHash` | `string` | cid from all messages this user has sent |
-| `nfts` | `string[]` | array of NFTs owned by the user |
+| Parameter | Description |
+| --- | --- |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | PGP public key |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `encryptionType` | encryption type used to encrypt the private key |
+| `signature` | user payload signature used when creating a user |
+| `sigType` | signature type used when creating a user |
+| `about` | short user description |
+| `name` | user name |
+| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | NFT owner address |
+| `numMsg` | number of messages sent by the user |
+| `allowedNumMsg` | number of messages allowed to be sent by the user |
+| `linkedListHash` | cid from all messages this user has sent |
+| `nfts` | array of NFTs owned by the user |
 
 Example response:
 ```typescript
@@ -1874,19 +1874,19 @@ export interface IUser {
 }
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `msgSent` | `number` | number of messages sent by the user |
-| `maxMsgPersisted` | `number` | number of messages allowed to be sent by the user |
-| `did` | `string` | user decentralized identity |
-| `wallets` | `string` | all wallets associated to the did |
-| `name` | `string` | user name |
-| `desc` | `string` | short user description |
-| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
-| `encryptedPrivateKey` | `string` | encrypted private PGP key |
-| `publicKey` | `string` | PGP public key |
-| `nftOwner` | `string` | NFT owner address |
-| `verificationProof` | `string` | verification proof|
+| Parameter | Description |
+| --- | --- |
+| `msgSent` | number of messages sent by the user |
+| `maxMsgPersisted` | number of messages allowed to be sent by the user |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `name` | user name |
+| `desc` | short user description |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `publicKey` | PGP public key |
+| `nftOwner` | NFT owner address |
+| `verificationProof` | verification proof |
 
 </details>
 
