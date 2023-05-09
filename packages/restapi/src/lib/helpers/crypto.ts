@@ -620,13 +620,14 @@ export const validatePssword = (password: string) => {
 };
 
 type decryptAuthProps = {
-  /**
-   * Encrypted Password in stringified format
-   */
-  encryptedPassword: string;
   signer: SignerType;
   account?: string;
   env?: ENV;
+  additionalMeta?: {
+    NFTPGP_V1?: {
+      encryptedPassword: string;
+    };
+  };
   /**
    * To get Progress Related to fn
    */
@@ -641,22 +642,23 @@ export const decryptAuth = async (
   options: decryptAuthProps
 ): Promise<string> => {
   const {
-    encryptedPassword,
     account,
     signer,
     env = Constants.ENV.PROD,
+    additionalMeta,
     progressHook,
   } = options || {};
   try {
     progressHook?.({
       progressId: 'PUSH-DECRYPT-AUTH-01',
-      progressTitle: 'Decrypting Profile Password',
-      progressInfo: 'Please sign the transaction to decrypt profile password',
+      progressTitle: 'Decrypting Profile Creds',
+      progressInfo: 'Please sign the transaction to decrypt profile creds',
       level: 'INFO',
     });
 
     const password = await decryptPGPKey({
-      encryptedPGPPrivateKey: encryptedPassword,
+      encryptedPGPPrivateKey: additionalMeta?.NFTPGP_V1
+        ?.encryptedPassword as string,
       signer,
       account,
       env,
@@ -664,8 +666,8 @@ export const decryptAuth = async (
 
     progressHook?.({
       progressId: 'PUSH-DECRYPT-AUTH-02',
-      progressTitle: 'Push Profile Password Unlocked',
-      progressInfo: 'Unlocking push profile password',
+      progressTitle: 'Push Profile Creds Unlocked',
+      progressInfo: 'Unlocking push profile creds',
       level: 'SUCCESS',
     });
     return password;
@@ -674,9 +676,11 @@ export const decryptAuth = async (
     progressHook?.({
       progressId: 'PUSH-ERROR-00',
       progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API decryptAuth() -: ${err}`,
+      progressInfo: `[Push SDK] - API  - Error - API ${decryptAuth.name} -: ${err}`,
       level: 'ERROR',
     });
-    throw Error(`[Push SDK] - API  - Error - API decryptAuth() -: ${err}`);
+    throw Error(
+      `[Push SDK] - API  - Error - API ${decryptAuth.name} -: ${err}`
+    );
   }
 };
