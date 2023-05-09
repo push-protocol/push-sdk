@@ -1604,6 +1604,49 @@ const user = await PushAPI.user.create({
 <details>
   <summary><b>Expected response (Create Chat User)</b></summary>
 
+**Version 1.2.x**
+
+```typescript
+export interface IUser {
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string;
+  encryptedPrivateKey: string;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  about: string | null;
+  name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
+}
+```
+
+| Parameter | Description |
+| --- | --- |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | PGP public key |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `encryptionType` | encryption type used to encrypt the private key |
+| `signature` | user payload signature used when creating a user |
+| `sigType` | signature type used when creating a user |
+| `about` | short user description |
+| `name` | user name |
+| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | NFT owner address |
+| `numMsg` | number of messages sent by the user |
+| `allowedNumMsg` | number of messages allowed to be sent by the user |
+| `linkedListHash` | cid from all messages this user has sent |
+| `nfts` | array of NFTs owned by the user |
+
+Example response:
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
@@ -1655,24 +1698,44 @@ const user = await PushAPI.user.create({
 }
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `did` | `string` | user decentralized identity |
-| `wallets` | `string` | all wallets associated to the did |
-| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | `string` | PGP public key |
-| `encryptedPrivateKey` | `string` | encrypted private PGP key |
-| `encryptionType` | `string` | encryption type used to encrypt the private key |
-| `signature` | `string` | user payload signature used when creating a user |
-| `sigType` | `string` | signature type used when creating a user |
-| `about` | `string` | short user description |
-| `name` | `string` | user name |
-| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
-| `nftOwner` | `string` | NFT owner address |
-| `numMsg` | `number` | number of messages sent by the user |
-| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
-| `linkedListHash` | `string` | cid from all messages this user has sent |
-| `nfts` | `string[]` | array of NFTs owned by the user |
+**Version 1.3.x**
+
+```typescript
+export interface IUser {
+	msgSent: number;
+	maxMsgPersisted : number;
+	
+  did: string;
+  wallets: string;
+
+	profile: {
+	  name: string | null;
+	  desc: string | null;
+	  profilePicture: string | null;
+	}
+
+  encryptedPrivateKey: string;
+  publicKey: string;
+  nftOwner: string;
+
+  verificationProof: string;
+}
+```
+
+| Parameter | Description |
+| --- | | --- |
+| `msgSent` | number of messages sent by the user |
+| `maxMsgPersisted` | number of messages allowed to be sent by the user |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `name` | user name |
+| `desc` | short user description |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `publicKey` | PGP public key |
+| `nftOwner` | NFT owner address |
+| `verificationProof` | verification proof |
+
 </details>
 
 -----
@@ -1685,15 +1748,57 @@ const user = await PushAPI.user.get({
 });
 ```
 
-Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | Account address             |
+| account    | string  | -       | Account address             |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 
-  <details>
-  <summary><b>Expected response (Get Push Chat User)</b></summary>
+<details>
+<summary><b>Expected response (Get Push Chat User)</b></summary>
 
+**Version 1.2.x**
+
+```typescript
+export interface IUser {
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string;
+  encryptedPrivateKey: string;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  about: string | null;
+  name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
+}
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `did` | `string` | user decentralized identity |
+| `wallets` | `string` | all wallets associated to the did |
+| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | `string` | PGP public key |
+| `encryptedPrivateKey` | `string` | encrypted private PGP key |
+| `encryptionType` | `string` | encryption type used to encrypt the private key |
+| `signature` | `string` | user payload signature used when creating a user |
+| `sigType` | `string` | signature type used when creating a user |
+| `about` | `string` | short user description |
+| `name` | `string` | user name |
+| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | `string` | NFT owner address |
+| `numMsg` | `number` | number of messages sent by the user |
+| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
+| `linkedListHash` | `string` | cid from all messages this user has sent |
+| `nfts` | `string[]` | array of NFTs owned by the user |
+
+Example response:
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
@@ -1745,24 +1850,44 @@ Allowed Options (params with * are mandatory)
 }
 ```
 
+**Version 1.3.x**
+
+```typescript
+export interface IUser {
+	msgSent: number;
+	maxMsgPersisted : number;
+	
+  did: string;
+  wallets: string;
+
+	profile: {
+	  name: string | null;
+	  desc: string | null;
+	  profilePicture: string | null;
+	}
+
+  encryptedPrivateKey: string;
+  publicKey: string;
+  nftOwner: string;
+
+  verificationProof: string;
+}
+```
+
 | Parameter | Type | Description |
 | --- | --- | --- |
+| `msgSent` | `number` | number of messages sent by the user |
+| `maxMsgPersisted` | `number` | number of messages allowed to be sent by the user |
 | `did` | `string` | user decentralized identity |
 | `wallets` | `string` | all wallets associated to the did |
-| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | `string` | PGP public key |
-| `encryptedPrivateKey` | `string` | encrypted private PGP key |
-| `encryptionType` | `string` | encryption type used to encrypt the private key |
-| `signature` | `string` | user payload signature used when creating a user |
-| `sigType` | `string` | signature type used when creating a user |
-| `about` | `string` | short user description |
 | `name` | `string` | user name |
-| `encryptedPassword` | `string` | encrypted password used to encrypt the private key for NFT chat |
+| `desc` | `string` | short user description |
+| `profilePicture` | `string` | user chat profile picture. As of now i cannot be changed |
+| `encryptedPrivateKey` | `string` | encrypted private PGP key |
+| `publicKey` | `string` | PGP public key |
 | `nftOwner` | `string` | NFT owner address |
-| `numMsg` | `number` | number of messages sent by the user |
-| `allowedNumMsg` | `number` | number of messages allowed to be sent by the user |
-| `linkedListHash` | `string` | cid from all messages this user has sent |
-| `nfts` | `string[]` | array of NFTs owned by the user |
+| `verificationProof` | `string` | verification proof|
+
 </details>
 
 -----
