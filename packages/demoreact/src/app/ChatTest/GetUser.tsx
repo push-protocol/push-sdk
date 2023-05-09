@@ -166,9 +166,6 @@ const GetUserTest = () => {
                   <p>Level: {progress.level}</p>
                 </div>
               )}
-              {decryptedPrivateKey ? (
-                <CodeFormatter>{password}</CodeFormatter>
-              ) : null}
             </div>
           </SectionItem>
         )}
