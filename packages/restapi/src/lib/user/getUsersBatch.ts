@@ -1,14 +1,13 @@
 import axios from 'axios';
-import {IUser } from '../types';
+import { IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
-import Constants, {ENV} from '../constants';
+import Constants, { ENV } from '../constants';
 
 export interface GetBatchType {
-  userIds: string[],
-  env?: ENV
+  userIds: string[];
+  env?: ENV;
 }
-
 
 export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   const { env = Constants.ENV.PROD, userIds } = options || {};
@@ -18,7 +17,9 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
 
   const MAX_USER_IDS_LENGTH = 100;
   if (userIds.length > MAX_USER_IDS_LENGTH) {
-    throw new Error(`Too many user IDs. Maximum allowed: ${MAX_USER_IDS_LENGTH}`);
+    throw new Error(
+      `Too many user IDs. Maximum allowed: ${MAX_USER_IDS_LENGTH}`
+    );
   }
 
   for (let i = 0; i < userIds.length; i++) {
@@ -33,11 +34,12 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   return axios
     .post(requestUrl, requestBody)
     .then((response) => {
-      response.data.users.forEach((user:any ,index: number) => {
+      response.data.users.forEach((user: any, index: number) => {
         response.data.users[index].publicKey = verifyPGPPublicKey(
           user.encryptionType,
           user.publicKey,
-          user.did
+          user.did,
+          user.nftOwner
         );
       });
       return response.data;

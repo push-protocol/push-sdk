@@ -2,7 +2,7 @@ import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
-import {ENV} from '../../constants';
+import { ENV } from '../../constants';
 
 export interface ISendMessagePayload {
   fromDID: string;
@@ -28,28 +28,28 @@ export interface IApproveRequestPayload {
 }
 
 export interface ICreateGroupRequestPayload {
-  groupName: string,
-  groupDescription: string,
-  members: Array<string>,
-  groupImage: string,
-  admins: Array<string>,
-  isPublic: boolean,
-  contractAddressNFT?: string
-  numberOfNFTs?: number,
-  contractAddressERC20?: string,
-  numberOfERC20?: number,
-  groupCreator: string,
-  verificationProof: string,
-  meta? : string
+  groupName: string;
+  groupDescription: string;
+  members: Array<string>;
+  groupImage: string;
+  admins: Array<string>;
+  isPublic: boolean;
+  contractAddressNFT?: string;
+  numberOfNFTs?: number;
+  contractAddressERC20?: string;
+  numberOfERC20?: number;
+  groupCreator: string;
+  verificationProof: string;
+  meta?: string;
 }
 
 export interface IUpdateGroupRequestPayload {
-  groupName: string,
-  groupImage: string,
-  members: Array<string>,
-  admins: Array<string>,
-  address: string,
-  verificationProof: string
+  groupName: string;
+  groupImage: string;
+  members: Array<string>;
+  admins: Array<string>;
+  address: string;
+  verificationProof: string;
 }
 
 export const sendMessagePayload = async (
@@ -62,21 +62,20 @@ export const sendMessagePayload = async (
   let isGroup = true;
   if (isValidETHAddress(receiverAddress)) {
     isGroup = false;
-}
+  }
 
   let group: GroupDTO | null = null;
 
-  if(isGroup) {
+  if (isGroup) {
     group = await getGroup({
       chatId: receiverAddress,
-      env:  env
+      env: env,
     });
 
-  if(!group) {
-    throw new Error(`Group not found!`);
+    if (!group) {
+      throw new Error(`Group not found!`);
+    }
   }
-  }
-
 
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
@@ -105,27 +104,22 @@ export const sendMessagePayload = async (
 };
 
 export const approveRequestPayload = (
-  senderAddress: string,
-  account: string,
-  status: 'Approved'
+  fromDID: string,
+  toDID: string,
+  status: 'Approved',
+  sigType: string,
+  signature: string
 ): IApproveRequestPayload => {
-  const signature = '1';
-
-  let isGroup = true;
-  if(isValidETHAddress(senderAddress))
-  {
-    isGroup = false;
-  }
   const body = {
-    fromDID: isGroup ? walletToPCAIP10(account) : walletToPCAIP10(senderAddress),
-    toDID: isGroup ? senderAddress : walletToPCAIP10(account),
+    fromDID,
+    toDID,
     signature,
     status,
-    sigType: 'sigType',
+    sigType,
+    verificationProof: sigType + ':' + signature,
   };
   return body;
 };
-
 
 export const createGroupPayload = (
   groupName: string,
@@ -155,11 +149,10 @@ export const createGroupPayload = (
     numberOfERC20: numberOfERC20,
     groupCreator: groupCreator,
     verificationProof: verificationProof,
-    meta: meta
+    meta: meta,
   };
   return body;
 };
-
 
 export const updateGroupPayload = (
   groupName: string,
@@ -177,7 +170,7 @@ export const updateGroupPayload = (
     members: members,
     admins: admins,
     address: address,
-    verificationProof: verificationProof
+    verificationProof: verificationProof,
   };
   return body;
 };

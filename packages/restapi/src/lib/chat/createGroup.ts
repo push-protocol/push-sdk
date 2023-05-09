@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { getAPIBaseUrls, walletToPCAIP10 } from '../helpers';
+import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, SignerType } from '../types';
+import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
-  getConnectedUser,
   sign,
   createGroupRequestValidator,
   getWallet,
-  getAccountAddress,
+  getUserDID,
+  getConnectedUserV2,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { send } from './send';
@@ -31,7 +31,9 @@ export interface ChatCreateGroupType extends EnvOptionsType {
   meta?: string;
 }
 
-export const createGroup = async (options: ChatCreateGroupType) => {
+export const createGroup = async (
+  options: ChatCreateGroupType
+): Promise<GroupDTO> => {
   const {
     account = null,
     signer = null,
@@ -56,7 +58,6 @@ export const createGroup = async (options: ChatCreateGroupType) => {
     }
 
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
     createGroupRequestValidator(
       groupName,
       groupDescription,
@@ -68,8 +69,16 @@ export const createGroup = async (options: ChatCreateGroupType) => {
       numberOfERC20
     );
 
-    const convertedMembers = members.map(walletToPCAIP10);
-    const convertedAdmins = admins.map(walletToPCAIP10);
+    const convertedMembersPromise = members.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedAdminsPromise = admins.map(async (each) => {
+      return getUserDID(each, env);
+    });
+    const convertedMembers = await Promise.all(convertedMembersPromise);
+    const convertedAdmins = await Promise.all(convertedAdminsPromise);
+
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
     const bodyToBeHashed = {
       groupName: groupName,
@@ -84,10 +93,8 @@ export const createGroup = async (options: ChatCreateGroupType) => {
       contractAddressERC20:
         contractAddressERC20 == undefined ? null : contractAddressERC20,
       numberOfERC20: numberOfERC20 == undefined ? 0 : numberOfERC20,
-      groupCreator: walletToPCAIP10(address),
+      groupCreator: connectedUser.did,
     };
-
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
 
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature: string = await sign({
@@ -107,7 +114,7 @@ export const createGroup = async (options: ChatCreateGroupType) => {
       groupImage,
       convertedAdmins,
       isPublic,
-      walletToPCAIP10(address),
+      connectedUser.did,
       verificationProof,
       contractAddressNFT,
       numberOfNFTs,
@@ -127,7 +134,7 @@ export const createGroup = async (options: ChatCreateGroupType) => {
       });
 
     await send({
-      messageContent: `${address} created group "${groupName}"`,
+      messageContent: `${connectedUser.did} created group "${groupName}"`,
       messageType: 'Meta',
       receiverAddress: response.chatId,
       pgpPrivateKey,

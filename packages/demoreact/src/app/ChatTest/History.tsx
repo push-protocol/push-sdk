@@ -8,18 +8,21 @@ import {
 import Loader from '../components/Loader';
 import { EnvContext, Web3Context } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
 
 const HistoryTest = () => {
   const { env } = useContext<any>(EnvContext);
-  const { account, library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const [isLoading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>({});
   const [threadhash, setThreadhash] = useState<string>('');
   const [limit, setLimit] = useState<number>(10);
   const [toDecrypt, setToDecrypt] = useState<boolean>(false);
+  const [account, setAccount] = useState<string>(acc);
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
   const updateToDecrypt = (e: React.SyntheticEvent<HTMLElement>) => {
     setToDecrypt((e.target as HTMLInputElement).checked);
   };
@@ -44,7 +47,7 @@ const HistoryTest = () => {
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
           signer: librarySigner,
-          env
+          env,
         });
       }
       const response = await PushAPI.chat.history({
@@ -77,13 +80,13 @@ const HistoryTest = () => {
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account,
           signer: librarySigner,
-          env
+          env,
         });
       }
       const decryptedChat = await PushAPI.chat.decryptConversation({
-        messages:response,
-        connectedUser:user,
-        pgpPrivateKey:pvtkey,
+        messages: response,
+        connectedUser: user,
+        pgpPrivateKey: pvtkey,
         env,
       });
 
@@ -103,6 +106,15 @@ const HistoryTest = () => {
       <Loader show={isLoading} />
 
       <Section>
+        <SectionItem>
+          <label>Account</label>
+          <input
+            type="text"
+            onChange={updateAccount}
+            value={account}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
         <SectionItem>
           <label>Threadhash</label>
           <input
@@ -127,7 +139,9 @@ const HistoryTest = () => {
           <label>Decrypt response</label>
           <SectionButton onClick={testHistory}>get history</SectionButton>
         </SectionItem>
-        <SectionButton onClick={testDecryptConversation}>decrypt chats</SectionButton>
+        <SectionButton onClick={testDecryptConversation}>
+          decrypt chats
+        </SectionButton>
         <SectionItem>
           <div>
             {response ? (

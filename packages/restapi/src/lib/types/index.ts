@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -70,7 +71,7 @@ export type ParsedResponseType = {
 };
 
 export interface ISendNotificationInputOptions {
-  senderType: 0 | 1;
+  senderType?: 0 | 1;
   signer: any;
   type: NOTIFICATION_TYPE;
   identityType: IDENTITY_TYPE;
@@ -165,6 +166,7 @@ export interface IUser {
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface Member {
@@ -196,6 +198,9 @@ export interface GroupDTO {
   groupDescription: string | null;
   groupCreator: string;
   chatId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  groupType: string;
 }
 
 export interface Subscribers {
@@ -204,21 +209,6 @@ export interface Subscribers {
 }
 export interface IConnectedUser extends IUser {
   privateKey: string | null;
-}
-
-export interface IMessageIPFS {
-  fromCAIP10: string;
-  toCAIP10: string;
-  fromDID: string;
-  toDID: string;
-  messageType: string;
-  messageContent: string;
-  signature: string;
-  sigType: string;
-  link: string | null;
-  timestamp?: number;
-  encType: string;
-  encryptedSecret: string;
 }
 
 export interface IMessageIPFSWithCID extends IMessageIPFS {
@@ -270,13 +260,8 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = {
-  _signTypedData: (domain: any, types: any, value: any) => Promise<string>;
-  signMessage: (message: string) => Promise<string>;
-  getAddress: () => Promise<string>;
-  getChainId: () => Promise<number>;
-  provider?: any;
-  publicKey?: string;
+export type SignerType = ethers.Signer & {
+  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
   privateKey?: string;
 };
 
@@ -293,19 +278,44 @@ export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
 
 export type encryptedPrivateKeyTypeV2 = {
   ciphertext: string;
-  version: string;
-  salt: string;
+  version?: string;
+  salt?: string;
   nonce: string;
-  preKey: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
 };
 
-export type encryptedPrivateKeyType =
-  | encryptedPrivateKeyTypeV1
-  | encryptedPrivateKeyTypeV2;
+export type encryptedPrivateKeyType = {
+  version?: string;
+  nonce: string;
+  ephemPublicKey?: string;
+  ciphertext: string;
+  salt?: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
+};
 
 export type ProgressHookType = {
   progressId: string;
   progressTitle: string;
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
+};
+
+export type MessageWithCID = {
+  cid: string;
+  chatId: string;
+  link: string;
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
+  verificationProof?: string;
 };

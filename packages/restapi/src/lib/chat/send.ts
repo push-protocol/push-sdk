@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
-import { ChatSendOptionsType } from '../types';
-import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
+import { ChatSendOptionsType, MessageWithCID } from '../types';
+import {
+  getAccountAddress,
+  getConnectedUserV2,
+  getUserDID,
+  getWallet,
+} from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
@@ -10,7 +15,9 @@ import { ISendMessagePayload, sendMessagePayload } from './helpers';
 /**
  * Send a message to an address or a group
  */
-export const send = async (options: ChatSendOptionsType) => {
+export const send = async (
+  options: ChatSendOptionsType
+): Promise<MessageWithCID> => {
   const {
     messageContent = '',
     messageType = 'Text',
@@ -23,10 +30,10 @@ export const send = async (options: ChatSendOptionsType) => {
   } = options || {};
 
   try {
-    if(account == null && signer == null) {
+    if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
-  
+
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
@@ -39,12 +46,13 @@ export const send = async (options: ChatSendOptionsType) => {
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const receiver = await getUserDID(receiverAddress, env);
     let conversationResponse: any = null;
     if (!isGroup) {
       conversationResponse = await conversationHash({
-        conversationId: receiverAddress,
-        account: address,
+        conversationId: receiver,
+        account: connectedUser.did,
         env,
       });
     }
@@ -52,7 +60,7 @@ export const send = async (options: ChatSendOptionsType) => {
       return start({
         messageContent: messageContent,
         messageType: messageType,
-        receiverAddress,
+        receiverAddress: receiver,
         connectedUser,
         apiKey,
         env,
@@ -61,7 +69,7 @@ export const send = async (options: ChatSendOptionsType) => {
       const API_BASE_URL = getAPIBaseUrls(env);
       const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
       const body: ISendMessagePayload = await sendMessagePayload(
-        receiverAddress,
+        receiver,
         connectedUser,
         messageContent,
         messageType,
