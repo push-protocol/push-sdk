@@ -67,6 +67,7 @@ const AuthUpdateUserTest = () => {
               pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
               env,
+              progressHook: handleProgress,
               additionalMeta: {
                 NFTPGP_V1: {
                   password: password,
@@ -177,7 +178,6 @@ const AuthUpdateUserTest = () => {
             <p>Level: {progress.level}</p>
           </div>
         )}
-
         <SectionItem>
           <div>
             {connectedUser ? (
