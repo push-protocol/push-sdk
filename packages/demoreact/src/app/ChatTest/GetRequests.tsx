@@ -18,12 +18,23 @@ const GetRequestsTest = () => {
   const [getRequestsResponse, setGetRequestsResponse] = useState<any>('');
   const [toDecrypt, setToDecrypt] = useState<boolean>(false);
   const [account, setAccount] = useState<string>(acc);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
+
+  const updatePage = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPage(parseInt((e.target as HTMLInputElement).value));
+  };
+
+  const updateLimit = (e: React.SyntheticEvent<HTMLElement>) => {
+    setLimit(parseInt((e.target as HTMLInputElement).value));
+  };
 
   const updateToDecrypt = (e: React.SyntheticEvent<HTMLElement>) => {
     setToDecrypt((e.target as HTMLInputElement).checked);
-  };
-  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
-    setAccount((e.target as HTMLInputElement).value);
   };
   const testGetRequests = async () => {
     try {
@@ -44,6 +55,8 @@ const GetRequestsTest = () => {
         pgpPrivateKey: pvtkey,
         toDecrypt,
         env,
+        page,
+        limit,
       });
 
       setGetRequestsResponse(response);
@@ -78,6 +91,24 @@ const GetRequestsTest = () => {
               type="text"
               onChange={updateAccount}
               value={account}
+              style={{ width: 400, height: 30 }}
+            />
+          </SectionItem>
+          <SectionItem style={{ marginTop: 20 }}>
+            <label>page</label>
+            <input
+              type="text"
+              onChange={updatePage}
+              value={page}
+              style={{ width: 400, height: 30 }}
+            />
+          </SectionItem>
+          <SectionItem style={{ marginTop: 20 }}>
+            <label>limit</label>
+            <input
+              type="text"
+              onChange={updateLimit}
+              value={limit}
               style={{ width: 400, height: 30 }}
             />
           </SectionItem>
