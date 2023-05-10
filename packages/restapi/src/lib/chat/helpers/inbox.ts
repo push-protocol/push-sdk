@@ -1,5 +1,9 @@
 import Constants, { ENV } from '../../constants';
-import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
+import {
+  decryptMessage,
+  isValidCAIP10NFTAddress,
+  pCAIP10ToWallet,
+} from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
@@ -102,22 +106,32 @@ export const decryptConversation = async (options: DecryptConverationType) => {
   return messages;
 };
 
-export const addDeprecatedInfo = (chats: IFeeds[]): IFeeds[] => {
-  return Object.values(
-    chats.reduce((acc: any, curr: IFeeds) => {
-      const didWithoutTimestamp = curr.did.split(':').slice(0, 5).join(':');
-      acc[didWithoutTimestamp] = acc[didWithoutTimestamp] || [];
-      acc[didWithoutTimestamp].push(curr);
-      return acc;
-    }, {})
-  ).flatMap((group: any) => {
-    const highestTimestampObj = group.reduce((acc: any, curr: IFeeds) =>
-      curr.did.split(':')[5] > acc.did.split(':')[5] ? curr : acc
-    );
-    return group.map((obj: IFeeds) =>
-      obj.did === highestTimestampObj.did || obj.did.startsWith('eip155:')
-        ? obj
-        : { ...obj, deprecated: true, deprecatedCode: 'NFT Owner Changed' }
-    );
-  });
-};
+//immediately invoked function expression to maintain latestDIDs
+export const addDeprecatedInfo = (() => {
+  // mapping for LAtest NFT DIDs
+  const latestDIDs: { [key: string]: string } = {};
+  return (chats: IFeeds[]): IFeeds[] => {
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.did)) {
+        const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
+        const timestamp = chat.did.split(':')[5];
+        if (
+          !latestDIDs[didWithoutTimestamp] ||
+          timestamp > latestDIDs[didWithoutTimestamp].split(':')[5]
+        ) {
+          latestDIDs[didWithoutTimestamp] = chat.did;
+        }
+      }
+    });
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.did)) {
+        const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
+        if (latestDIDs[didWithoutTimestamp] !== chat.did) {
+          chat['deprecated'] = true;
+          chat['deprecatedCode'] = 'NFT Owner Changed';
+        }
+      }
+    });
+    return chats;
+  };
+})();
