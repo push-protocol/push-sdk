@@ -312,21 +312,50 @@ export type MessageWithCID = {
   verificationProof?: string;
 };
 
-export type IMediaStream = MediaStream | undefined;
+export type IMediaStream = MediaStream | null;
 
-export type VideoCallInfoType ={
-  senderAddress: string; // address which initiated the call
-  receiverAddress: string; // address which will receive the call
-  /*
-    callStatus
-    0 - call not initiated
-    1 - call initiated by the caller address
-    2 - call recieved by the receiver address
-    3 - call is established
-    4 - call ended
-  */
-  callStatus: number; 
-  chatId:string;
+export enum VideoCallStatus {
+  UNINITIALIZED,
+  INITIALIZED,
+  RECEIVED,
+  CONNECTED,
+  DISCONNECTED,
+}
+
+export type PeerData = {
+  stream: IMediaStream;
+  audio: boolean | null;
+  video: boolean | null;
+  address: string;
+  status: VideoCallStatus;
+};
+
+export type VideoCallData = {
+  meta: {
+    chatId: string;
+    initiator: {
+      address: string;
+      signal: any;
+    };
+    broadcast?: {
+      livepeerInfo: any;
+      hostAddress: string;
+      coHostAddress: string;
+    };
+  };
+  local: {
+    stream: IMediaStream;
+    audio: boolean | null;
+    video: boolean | null;
+    address: string;
+  };
+  // incoming: PeerData | [PeerData];
+  incoming: PeerData;
+};
+
+export type VideoCreateInputOptions = {
+  video: boolean;
+  audio: boolean;
 };
 
 export type VideoRequestInputOptions = {
@@ -337,11 +366,7 @@ export type VideoRequestInputOptions = {
   chatId: string;
   onRecieveMessage: (message: string) => void;
   env?: ENV;
-  pgpPrivateKey:string | null;
-};
-
-export type VideoRequestReturnOptions = {
-  sendMessage: (message: string) => void;
+  pgpPrivateKey: string | null;
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -353,13 +378,9 @@ export type VideoAcceptRequestInputOptions = {
   chatId: string;
   onRecieveMessage: (message: string) => void;
   env?: ENV;
-  pgpPrivateKey:string | null;
+  pgpPrivateKey: string | null;
 };
 
-export type VideoAcceptRequestReturnOptions = {
-  sendMessage: (message: string) => void;
-};
-
-export type VideoEstablishInputOptions = {
+export type VideoConnectInputOptions = {
   signalData: any;
 };
