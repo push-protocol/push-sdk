@@ -1,6 +1,5 @@
 import * as PGP from './pgp';
 import * as AES from './aes';
-import { ethers } from 'ethers';
 import {
   IConnectedUser,
   IFeeds,
@@ -281,7 +280,8 @@ export const getEncryptedRequest = async (
 
 export const getEip191Signature = async (
   wallet: walletType,
-  message: string
+  message: string,
+  version: 'v1' | 'v2' = 'v1'
 ) => {
   if (!wallet?.signer) {
     console.warn('This method is deprecated. Provide signer in the function');
@@ -289,9 +289,10 @@ export const getEip191Signature = async (
     return { signature: 'xyz', sigType: 'a' };
   }
   const _signer = wallet?.signer;
-  // sign a message using EIP191
-  const signedMessage = await _signer?.signMessage(message);
-  return { verificationProof: `eip191:${signedMessage}` };
+  // EIP191 signature
+  const signature = await _signer?.signMessage(message);
+  const sigType = version === 'v1' ? 'eip191' : 'eip191v2';
+  return { verificationProof: `${sigType}:${signature}` };
 };
 
 export const getEip712Signature = async (

@@ -1,5 +1,9 @@
-import Constants, {ENV} from '../../constants';
-import { decryptMessage, pCAIP10ToWallet } from '../../helpers';
+import Constants, { ENV } from '../../constants';
+import {
+  decryptMessage,
+  isValidCAIP10NFTAddress,
+  pCAIP10ToWallet,
+} from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
@@ -10,13 +14,13 @@ type InboxListsType = {
   user: string; //caip10
   toDecrypt: boolean;
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
-  env?:  ENV;
+  env?: ENV;
 };
 
 export const getInboxLists = async (
@@ -49,10 +53,14 @@ export const getInboxLists = async (
         sigType: '',
         signature: '',
         toCAIP10: '',
-        toDID: ''
-      }
+        toDID: '',
+      };
     }
-    feeds.push({ ...list, msg: message, groupInformation: list.groupInformation });
+    feeds.push({
+      ...list,
+      msg: message,
+      groupInformation: list.groupInformation,
+    });
   }
 
   if (toDecrypt)
@@ -92,8 +100,38 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         signatureValidationPubliKey: signatureValidationPubliKey,
         pgpPrivateKey,
         message: message,
-      });  
+      });
     }
   }
   return messages;
 };
+
+//immediately invoked function expression to maintain latestDIDs
+export const addDeprecatedInfo = (() => {
+  // mapping for LAtest NFT DIDs
+  const latestDIDs: { [key: string]: string } = {};
+  return (chats: IFeeds[]): IFeeds[] => {
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.did)) {
+        const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
+        const timestamp = chat.did.split(':')[5];
+        if (
+          !latestDIDs[didWithoutTimestamp] ||
+          timestamp > latestDIDs[didWithoutTimestamp].split(':')[5]
+        ) {
+          latestDIDs[didWithoutTimestamp] = chat.did;
+        }
+      }
+    });
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.did)) {
+        const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
+        if (latestDIDs[didWithoutTimestamp] !== chat.did) {
+          chat['deprecated'] = true;
+          chat['deprecatedCode'] = 'NFT Owner Changed';
+        }
+      }
+    });
+    return chats;
+  };
+})();
