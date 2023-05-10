@@ -56,18 +56,33 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
+
+    // DEPRECATED in eip191v2
+
+    // encryptionType,
+    // name: '',
+    // encryptedPassword: encryptedPassword,
+    // nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
+  };
+
+  const hash = generateHash(data);
+
+  const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
+
+  // NOTE - To be removed after backend route changes
+  const updatedData = {
+    caip10: walletToPCAIP10(user),
+    did: walletToPCAIP10(user),
+    publicKey,
+    encryptedPrivateKey,
     encryptionType,
     name: '',
     encryptedPassword: encryptedPassword,
     nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
-  const hash = generateHash(data);
-
-  const signatureObj = await getEip191Signature(wallet!, hash);
-
   const body = {
-    ...data,
+    ...updatedData,
     ...signatureObj,
   };
 
@@ -109,18 +124,32 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     caip10: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
+
+    // DEPRECATED in eip191v2
+
+    // encryptionType,
+    // name,
+    // encryptedPassword,
+    // nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
+  };
+
+  const hash = generateHash(data);
+
+  const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
+
+  // NOTE - To be removed after backend route changes
+  const updatedData = {
+    caip10: walletToPCAIP10(user),
+    publicKey,
+    encryptedPrivateKey,
     encryptionType,
     name,
     encryptedPassword,
     nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
-  const hash = generateHash(data);
-
-  const signatureObj = await getEip191Signature(wallet!, hash);
-
   const body = {
-    ...data,
+    ...updatedData,
     ...signatureObj,
   };
 
