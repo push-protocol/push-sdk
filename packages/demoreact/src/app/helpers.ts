@@ -2,7 +2,11 @@ import * as ethers from 'ethers';
 export enum ENV {
   PROD = 'prod',
   STAGING = 'staging',
-  DEV = 'dev'
+  DEV = 'dev',
+  /**
+   * **This is for local development only**
+   */
+  LOCAL = 'local',
 }
 const Constants = {
     ENV,
@@ -14,7 +18,7 @@ const Constants = {
     },
     DEFAULT_CHAIN_ID: 5,
     DEV_CHAIN_ID: 99999,
-    NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420],
+    NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101],
     ETH_CHAINS: [1, 5]
 };
 

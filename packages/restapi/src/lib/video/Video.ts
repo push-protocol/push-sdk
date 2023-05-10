@@ -72,7 +72,7 @@ export class Video {
 
   create = async (options: VideoCreateInputOptions): Promise<void> => {
     const { audio, video } = options || {};
-
+    
     try {
       const localStream = await navigator.mediaDevices.getUserMedia({
         video: true,

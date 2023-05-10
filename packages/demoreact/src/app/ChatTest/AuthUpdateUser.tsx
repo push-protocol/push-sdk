@@ -18,43 +18,41 @@ type ProgressHookType = {
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
 
-const UpgradeNFTProfileTest = () => {
-  const { account, library } = useContext<any>(Web3Context);
+const AuthUpdateUserTest = () => {
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [connectedUser, setConnectedUser] = useState<any>({});
   const [progress, setProgress] = useState<ProgressHookType | null>(null);
-  const [nftTokenId, setNftTokenId] = useState<number>(1);
-  const [nftChainId, setNftChainId] = useState<number>(5);
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [currentPassword, setCurrentPassword] = useState<string>('');
-  const [nftContractAddress, setNftContractAddress] = useState<string>('');
-
-  const updateNFTTokenId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftTokenId(parseInt((e.target as HTMLInputElement).value));
-  };
-
-  const updateNFTChainId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftChainId(parseInt((e.target as HTMLInputElement).value));
-  };
-
-  const updateCurrentPassword = (e: React.SyntheticEvent<HTMLElement>) => {
-    setCurrentPassword((e.target as HTMLInputElement).value);
-  };
-
-  const updateNewPassword = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNewPassword((e.target as HTMLInputElement).value);
-  };
-
-  const updateNftContractAddress = (e: React.SyntheticEvent<HTMLElement>) => {
-    setNftContractAddress((e.target as HTMLInputElement).value);
-  };
-
+  const [account, setAccount] = useState(acc);
+  const [pgpPrivKey, setPgpPrivKey] = useState('');
+  const [pgpPubKey, setPgpPubKey] = useState('');
+  const [pgpEncVersion, setPgpEncVersion] = useState('');
+  const [password, setPassword] = useState('#TestPassword1');
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
   };
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
 
-  const testUpgradeNFTProfile = async (index: number) => {
+  const updatePgpPrivKey = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpPrivKey((e.target as HTMLInputElement).value);
+  };
+
+  const updatePgpPubKey = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpPubKey((e.target as HTMLInputElement).value);
+  };
+
+  const updatePgpEncVersion = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPgpEncVersion((e.target as HTMLInputElement).value);
+  };
+
+  const updatePassword = (e: React.SyntheticEvent<HTMLElement>) => {
+    setPassword((e.target as HTMLInputElement).value);
+  };
+
+  const testCreateUser = async (index: number) => {
     try {
       setLoading(true);
       let response;
@@ -62,14 +60,18 @@ const UpgradeNFTProfileTest = () => {
         case 0:
           {
             const librarySigner = await library.getSigner();
-            response = await PushAPI.user.upgradeNFTProfile({
+            response = await PushAPI.user.auth.update({
               signer: librarySigner,
+              pgpPrivateKey: pgpPrivKey,
+              pgpPublicKey: pgpPubKey,
+              pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
-              currentPassword: currentPassword,
-              newPassword: newPassword,
-              did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
-              progressHook: handleProgress,
               env,
+              additionalMeta: {
+                NFTPGP_V1: {
+                  password: password,
+                },
+              },
             });
           }
           break;
@@ -78,14 +80,18 @@ const UpgradeNFTProfileTest = () => {
             const walletPvtKey = '';
             const Pkey = `0x${walletPvtKey}`;
             const pvtKeySigner = new ethers.Wallet(Pkey);
-            response = await PushAPI.user.upgradeNFTProfile({
+            response = await PushAPI.user.auth.update({
               signer: pvtKeySigner,
+              pgpPrivateKey: pgpPrivKey,
+              pgpPublicKey: pgpPubKey,
+              pgpEncryptionVersion: pgpEncVersion as any,
               account: account,
-              currentPassword: currentPassword,
-              newPassword: newPassword,
-              did: `eip155:${nftChainId}:${nftContractAddress}:nft:${nftTokenId}`,
-              progressHook: handleProgress,
               env,
+              additionalMeta: {
+                NFTPGP_V1: {
+                  password: password,
+                },
+              },
             });
           }
           break;
@@ -104,75 +110,66 @@ const UpgradeNFTProfileTest = () => {
   return (
     <div>
       <ChatTest />
-      <h2>Upgrade NFT Profile Test page</h2>
+      <h2>Auth Update User Test page</h2>
 
       <Loader show={isLoading} />
 
       <Section>
         <SectionItem style={{ marginTop: 20 }}>
-          <label>nftTokenId</label>
+          <label>pgp Private Key</label>
           <input
             type="text"
-            onChange={updateNFTTokenId}
-            value={nftTokenId}
+            onChange={updatePgpPrivKey}
+            value={pgpPrivKey}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>nftChainId</label>
+          <label>pgp Public Key</label>
           <input
             type="text"
-            onChange={updateNFTChainId}
-            value={nftChainId}
+            onChange={updatePgpPubKey}
+            value={pgpPubKey}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>nftContractAddress</label>
+          <label>pgp Encryption Version</label>
           <input
             type="text"
-            onChange={updateNftContractAddress}
-            value={nftContractAddress}
+            onChange={updatePgpEncVersion}
+            value={pgpEncVersion}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Current Password</label>
+          <label>account</label>
           <input
             type="text"
-            onChange={updateCurrentPassword}
-            value={currentPassword}
+            onChange={updateAccount}
+            value={account}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>New Password</label>
+          <label>password</label>
           <input
             type="text"
-            onChange={updateNewPassword}
-            value={newPassword}
+            onChange={updatePassword}
+            value={password}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Note: Connected Wallet should hold the entered nft !!!</label>
-        </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testUpgradeNFTProfile(0)}>
-            UpgradeNFTProfile with library signer
+          <SectionButton onClick={() => testCreateUser(0)}>
+            Auth Update user with address & library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testUpgradeNFTProfile(1)}>
-            UpgradeNFTProfile with private key signer
+          <SectionButton onClick={() => testCreateUser(1)}>
+            Auth Update user with private key signer
           </SectionButton>
         </SectionItem>
-
         {progress && (
           <div>
             <h3>{progress.progressTitle}</h3>
@@ -195,4 +192,4 @@ const UpgradeNFTProfileTest = () => {
   );
 };
 
-export default UpgradeNFTProfileTest;
+export default AuthUpdateUserTest;
