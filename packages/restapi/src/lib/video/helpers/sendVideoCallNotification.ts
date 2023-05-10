@@ -2,22 +2,14 @@ import { getConnectedUser, getWallet } from '../../chat/helpers';
 import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
-import { SignerType } from '../../types';
+import { SignerType, VideoCallStatus } from '../../types';
 
 interface VideoCallInfoType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
   signalingData: any;
-  /*
-    callStatus
-    0 - call not initiated
-    1 - call initiated by the caller address
-    2 - call recieved by the receiver address
-    3 - call is established
-    4 - call ended
-  */
-  status: 1 | 2 | 3 | 4;
+  status: VideoCallStatus;
   env?: ENV;
 }
 
@@ -27,16 +19,16 @@ interface UserInfoType {
   pgpPrivateKey: string | null;
 }
 
-interface videoPayloadType {
+interface VideoPayloadType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
   signalingData?: any;
-  status: number;
+  status: VideoCallStatus;
 }
 
 const sendVideoCallNotification = async (
-  { signer, chainId, pgpPrivateKey=null, }: UserInfoType,
+  { signer, chainId, pgpPrivateKey = null }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
@@ -47,13 +39,15 @@ const sendVideoCallNotification = async (
   }: VideoCallInfoType
 ) => {
   try {
-    const videoPayload: videoPayloadType = {
+    const videoPayload: VideoPayloadType = {
       recipientAddress,
       senderAddress,
       chatId,
       signalingData,
       status,
     };
+
+    console.log('sendVideoCallNotification', 'videoPayload', videoPayload);
 
     const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
     const recipientAddressInCaip = getCAIPWithChainId(
@@ -62,7 +56,9 @@ const sendVideoCallNotification = async (
     );
 
     const wallet = getWallet({ account: senderAddress, signer });
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env); 
+    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+
+    const notificationText = `Video Call from ${senderAddress}`;
 
     await sendNotification({
       senderType: 1, // for chat notification
@@ -72,8 +68,8 @@ const sendVideoCallNotification = async (
       type: 3,
       identityType: 2,
       notification: {
-        title: 'VideoCall',
-        body: 'VideoCall',
+        title: notificationText,
+        body: notificationText,
       },
       payload: {
         title: 'VideoCall',

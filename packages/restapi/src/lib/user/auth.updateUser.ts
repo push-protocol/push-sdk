@@ -61,6 +61,11 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
+    const updatingCreds =
+      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.NFTPGP_V1
+        ? true
+        : false;
+
     if (!isValidETHAddress(address)) {
       throw new Error(`Invalid address!`);
     }
@@ -73,12 +78,19 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
     }
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-AUTH-UPDATE-01',
-      progressTitle: 'Generating New Profile Signature',
-      progressInfo: `Trying to Update Push Chat Keys to ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Please sign the message to continue.`,
-      level: 'INFO',
-    });
+    updatingCreds
+      ? progressHook?.({
+          progressId: 'PUSH-AUTH-UPDATE-05',
+          progressTitle: 'Generating New Profile Signature',
+          progressInfo: `Trying to Update Push Profile creds. Please sign the message to continue.`,
+          level: 'INFO',
+        })
+      : progressHook?.({
+          progressId: 'PUSH-AUTH-UPDATE-01',
+          progressTitle: 'Generating New Profile Signature',
+          progressInfo: `Trying to Update Push Chat Keys to ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Please sign the message to continue.`,
+          level: 'INFO',
+        });
 
     const signedPublicKey = await preparePGPPublicKey(
       pgpEncryptionVersion,
@@ -87,12 +99,19 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
     );
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-AUTH-UPDATE-02',
-      progressTitle: 'Generating New Encrypted Profile',
-      progressInfo: `Trying to Update Push Chat Keys to ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Encrypting Push Chat Keys with specified version. Please sign the message to continue.`,
-      level: 'INFO',
-    });
+    updatingCreds
+      ? progressHook?.({
+          progressId: 'PUSH-AUTH-UPDATE-06',
+          progressTitle: 'Generating New Profile Signature',
+          progressInfo: `Encrypting Push Chat Keys with new creds. Please sign the message to continue.`,
+          level: 'INFO',
+        })
+      : progressHook?.({
+          progressId: 'PUSH-AUTH-UPDATE-02',
+          progressTitle: 'Generating New Encrypted Profile',
+          progressInfo: `Encrypting Push Chat Keys with ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Please sign the message to continue.`,
+          level: 'INFO',
+        });
 
     const encryptedPgpPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
       pgpEncryptionVersion,
