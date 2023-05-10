@@ -12,6 +12,7 @@
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
+    "immer": "^10.0.2",
     "openpgp": "^5.5.0",
     "simple-peer": "^9.11.1"
   },
