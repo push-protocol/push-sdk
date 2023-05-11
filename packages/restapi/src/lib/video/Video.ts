@@ -70,7 +70,7 @@ export class Video {
     this.setData = setData;
   }
 
-  create = async (options: VideoCreateInputOptions): Promise<void> => {
+  async create(options: VideoCreateInputOptions): Promise<void> {
     const { audio, video } = options || {};
     
     try {
@@ -96,9 +96,9 @@ export class Video {
     } catch (err) {
       console.log('error in create', err);
     }
-  };
+  }
 
-  request = async (options: VideoRequestInputOptions): Promise<void> => {
+  async request(options: VideoRequestInputOptions): Promise<void> {
     const {
       library,
       chainId,
@@ -222,11 +222,9 @@ export class Video {
     } catch (err) {
       console.log('error in request', err);
     }
-  };
+  }
 
-  acceptRequest = async (
-    options: VideoAcceptRequestInputOptions
-  ): Promise<void> => {
+  async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {
     const {
       signalData,
       library,
@@ -359,9 +357,9 @@ export class Video {
     } catch (err) {
       console.log('error in accept request', err);
     }
-  };
+  }
 
-  connect = (options: VideoConnectInputOptions): void => {
+  connect(options: VideoConnectInputOptions): void {
     const { signalData } = options || {};
 
     try {
@@ -378,9 +376,9 @@ export class Video {
     } catch (err) {
       console.log('error in connect', err);
     }
-  };
+  }
 
-  disconnect = (): void => {
+  disconnect(): void {
     try {
       console.log('disconnect');
       if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
@@ -419,11 +417,11 @@ export class Video {
     } catch (err) {
       console.log('error in disconnect', err);
     }
-  };
+  }
 
   // functions for toggling local audio and video
 
-  toggleVideo = (): void => {
+  toggleVideo(): void {
     console.log('toggleVideo', 'current video', this.data.local.video);
     if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
       this.peerInstance?.send(
@@ -443,9 +441,9 @@ export class Video {
         });
       });
     }
-  };
+  }
 
-  toggleAudio = (): void => {
+  toggleAudio(): void {
     console.log('toggleAudio', 'current audio', this.data.local.audio);
     if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
       this.peerInstance?.send(
@@ -465,5 +463,5 @@ export class Video {
         });
       });
     }
-  };
+  }
 }
