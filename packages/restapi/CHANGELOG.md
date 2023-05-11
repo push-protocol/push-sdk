@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.2...restapi-0.0.1-alpha.3) (2023-05-11)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([e19b9b0](https://github.com/ethereum-push-notification-service/push-sdk/commit/e19b9b05b60174e68dc7bfe0e2349e20d8af2604))
+* Replace arrow functions with normal functions in the Video class ([#380](https://github.com/ethereum-push-notification-service/push-sdk/issues/380)) ([b90435a](https://github.com/ethereum-push-notification-service/push-sdk/commit/b90435a953b908899c92eb5b4d4c3677e47b1552))
+
+
+
 ## [0.0.1-alpha.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.1...restapi-0.0.1-alpha.2) (2023-05-10)
 
 
