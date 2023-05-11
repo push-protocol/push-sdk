@@ -11,7 +11,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   }
   const caip10 = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const requestUrl = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
+  const requestUrl = `${API_BASE_URL}/v2/users/?caip10=${caip10}`;
   return axios
     .get(requestUrl)
     .then((response) => {

@@ -3,7 +3,7 @@ import { create, get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 
-describe.skip('Get user', () => {
+describe('Get user', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let Pkey: string;
