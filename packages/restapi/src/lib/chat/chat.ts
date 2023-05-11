@@ -21,8 +21,6 @@ export const chat = async (options: {
   const user = await getUserDID(account, env);
   const recipientWallet = await getUserDID(recipient, env);
   if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
-  if (!isValidETHAddress(recipientWallet))
-    throw new Error(`Invalid address ${recipientWallet}`);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chat/${recipientWallet}`;
   try {
