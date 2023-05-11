@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.13...restapi-1.2.14) (2023-05-11)
+
+
+### Bug Fixes
+
+* fix chat.chat for grps ([#382](https://github.com/ethereum-push-notification-service/push-sdk/issues/382)) ([052a75c](https://github.com/ethereum-push-notification-service/push-sdk/commit/052a75ca0f0fea7664d8c607fc85cdf37cc5d398))
+* Merge branch 'main' into deployment ([dd21949](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd21949792a6028efdae17232ba16bb98605b017))
+
+
+
 ## [1.2.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.12...restapi-1.2.13) (2023-05-10)
 
 
