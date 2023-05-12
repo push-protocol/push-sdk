@@ -1711,7 +1711,7 @@ export interface IUser {
 	profile: {
 	  name: string | null;
 	  desc: string | null;
-	  profilePicture: string | null;
+	  picture: string | null;
 	}
 
   encryptedPrivateKey: string;
@@ -1863,7 +1863,7 @@ export interface IUser {
 	profile: {
 	  name: string | null;
 	  desc: string | null;
-	  profilePicture: string | null;
+	  picture: string | null;
 	}
 
   encryptedPrivateKey: string;
@@ -1882,7 +1882,7 @@ export interface IUser {
 | `wallets` | all wallets associated to the did |
 | `name` | user name |
 | `desc` | short user description |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `picture` | user chat profile picture. As of now i cannot be changed |
 | `encryptedPrivateKey` | encrypted private PGP key |
 | `publicKey` | PGP public key |
 | `nftOwner` | NFT owner address |
