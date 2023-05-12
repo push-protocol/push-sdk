@@ -12,7 +12,6 @@ import {
 import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
 import { IDENTITY_TYPE } from './constants';
 import { ENV } from '../constants';
-import { getWallet } from '../chat/helpers';
 
 /**
  * Validate options for some scenarios
@@ -65,8 +64,6 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       throw new Error(`Signer is necessary!`);
     }
 
-    const wallet = getWallet({ account: null, signer });
-
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
@@ -103,9 +100,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       uuid,
       // for the pgpv2 verfication proof
       chatId,
-      wallet,
       pgpPrivateKey,
-      env,
     });
 
     const identity = getPayloadIdentity({

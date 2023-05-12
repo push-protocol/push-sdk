@@ -1,4 +1,3 @@
-import { getConnectedUser, getWallet } from '../../chat/helpers';
 import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
@@ -16,7 +15,7 @@ interface VideoCallInfoType {
 interface UserInfoType {
   signer: SignerType;
   chainId: number;
-  pgpPrivateKey: string | null;
+  pgpPrivateKey: string;
 }
 
 interface VideoPayloadType {
@@ -28,7 +27,7 @@ interface VideoPayloadType {
 }
 
 const sendVideoCallNotification = async (
-  { signer, chainId, pgpPrivateKey = null }: UserInfoType,
+  { signer, chainId, pgpPrivateKey }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
@@ -55,15 +54,12 @@ const sendVideoCallNotification = async (
       chainId
     );
 
-    const wallet = getWallet({ account: senderAddress, signer });
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
-
     const notificationText = `Video Call from ${senderAddress}`;
 
     await sendNotification({
       senderType: 1, // for chat notification
       signer,
-      pgpPrivateKey: connectedUser.privateKey!,
+      pgpPrivateKey,
       chatId,
       type: 3,
       identityType: 2,

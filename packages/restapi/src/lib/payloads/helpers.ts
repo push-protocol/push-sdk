@@ -176,9 +176,7 @@ export async function getVerificationProof({
   graph = {},
   uuid,
   chatId,
-  wallet, //
-  pgpPrivateKey, //
-  env, //
+  pgpPrivateKey,
 }: {
   senderType: 0 | 1;
   signer: any;
@@ -192,9 +190,7 @@ export async function getVerificationProof({
   uuid: string;
   // for notifications which have additionalMeta in payload
   chatId?: string;
-  wallet?: walletType;
   pgpPrivateKey?: string;
-  env?: ENV;
 }) {
   let message = null;
   let verificationProof = null;
@@ -245,15 +241,10 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const connectedUser = await getConnectedUser(
-        wallet!,
-        pgpPrivateKey!,
-        env!
-      );
       const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
       const signature = await sign({
         message: hash,
-        signingKey: connectedUser.privateKey!,
+        signingKey: pgpPrivateKey!,
       });
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       break;
