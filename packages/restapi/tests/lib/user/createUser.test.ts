@@ -57,7 +57,7 @@ describe.skip('Create Push Profile', () => {
     );
     expect(user.profile.name).to.be.null;
     expect(user.profile.desc).to.be.null;
-    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.profile.picture).to.contains('data:image/png;base64,');
     expect(user.nftOwner).to.be.null;
     expect(user.msgSent).to.be.equal(0);
   });
@@ -80,7 +80,7 @@ describe.skip('Create Push Profile', () => {
     );
     expect(user.profile.name).to.be.null;
     expect(user.profile.desc).to.be.null;
-    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.profile.picture).to.contains('data:image/png;base64,');
     expect(user.msgSent).to.be.equal(0);
   });
   it('Push Profile V4 ( NFT Profile )', async () => {
@@ -102,7 +102,7 @@ describe.skip('Create Push Profile', () => {
     );
     expect(user.profile.name).to.be.null;
     expect(user.profile.desc).to.be.null;
-    expect(user.profile.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.profile.picture).to.contains('data:image/png;base64,');
     expect(user.nftOwner).to.be.equal('eip155:' + _nftWalletAddress1);
     expect(user.msgSent).to.be.equal(0);
   });
