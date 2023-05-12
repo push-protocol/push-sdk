@@ -122,6 +122,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
   const data = {
     caip10: walletToPCAIP10(user),
+    did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
 
