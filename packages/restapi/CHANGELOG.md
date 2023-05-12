@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.3...restapi-0.0.1-alpha.4) (2023-05-12)
+
+
+### Bug Fixes
+
+* fix chat.chat for grps ([#382](https://github.com/ethereum-push-notification-service/push-sdk/issues/382)) ([052a75c](https://github.com/ethereum-push-notification-service/push-sdk/commit/052a75ca0f0fea7664d8c607fc85cdf37cc5d398))
+* fix eip712v2 ([#385](https://github.com/ethereum-push-notification-service/push-sdk/issues/385)) ([42c10ba](https://github.com/ethereum-push-notification-service/push-sdk/commit/42c10ba6f5331c9caf5db7136ba94d1a6ed05e10))
+* Merge branch 'alpha' into alpha-deployment ([a1a8666](https://github.com/ethereum-push-notification-service/push-sdk/commit/a1a86661b1823c84328ec90ac9aafc6c57f574f3))
+* Merge branch 'main' into alpha ([5fc51db](https://github.com/ethereum-push-notification-service/push-sdk/commit/5fc51db1a336203048b4b42a5384cb37cf79c509))
+* **video:** separate react state from video class instance variable data ([#389](https://github.com/ethereum-push-notification-service/push-sdk/issues/389)) ([83bf445](https://github.com/ethereum-push-notification-service/push-sdk/commit/83bf4457332b127bf9e41a2f4c93fb851367724d))
+
+
+
 ## [0.0.1-alpha.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.2...restapi-0.0.1-alpha.3) (2023-05-11)
 
 
