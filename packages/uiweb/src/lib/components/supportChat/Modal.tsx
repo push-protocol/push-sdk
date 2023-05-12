@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
-import PoweredByPushLogo from '../../icons/chat/sponsorPush.svg';
-import { HandWaveSvg } from '../../icons/chat/HandWaveSvg';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import PoweredByPushLogo from '../../icons/supportChat/sponsorPush.svg';
+import { HandWaveSvg } from '../../icons/supportChat/HandWaveSvg';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
@@ -16,8 +16,8 @@ import {
 } from '../../helpers';
 import { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
-import { Spinner } from './Spinner';
-import { Toaster } from './Toaster';
+import { Spinner } from './spinner/Spinner';
+import { Toaster } from './toaster/Toaster';
 
 const chatsFetchedLimit = 10;
 
@@ -28,7 +28,7 @@ export const Modal: React.FC = () => {
   >(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
   const { supportAddress, env, account, signer, greetingMsg, theme } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(SupportChatPropsContext);
   const {
     chats,
     setChatsSorted,
@@ -39,7 +39,7 @@ export const Modal: React.FC = () => {
     setToastMessage,
     setToastType,
     socketData
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<any>(SupportChatMainStateContext);
   const listInnerRef = useChatScroll(chats.length);
 
   const greetingMsgObject = {

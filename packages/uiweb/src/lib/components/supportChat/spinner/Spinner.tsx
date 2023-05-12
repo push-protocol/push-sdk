@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { ChatPropsContext } from '../../context';
-import { SpinnerSvg } from '../../icons/SpinnerSvg';
+import { SupportChatPropsContext } from '../../../context';
+import { SpinnerSvg } from '../../../icons/SpinnerSvg';
 
 type SpinnerPropType = {
   size?: string;
@@ -12,7 +12,7 @@ type SpinLoaderPropType = {
 };
 
 export const Spinner: React.FC<SpinnerPropType> = ({ size = 42 }) => {
-  const { theme } = useContext<any>(ChatPropsContext);
+  const { theme } = useContext<any>(SupportChatPropsContext);
   return (
     <SpinLoader width={`${size}px`}>
       <SpinnerSvg color={theme.btnColorPrimary} />

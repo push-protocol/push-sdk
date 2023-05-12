@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import ChatIcon from '../../icons/chat/chatIcon.svg';
+import ChatIcon from '../../icons/supportChat/chatIcon.svg';
 import { Modal } from './Modal';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import { Constants, ENV, lightTheme } from '../../config';
@@ -97,8 +97,8 @@ export const Chat: React.FC<ChatProps> = ({
 
   return (
     <Container>
-      <ChatPropsContext.Provider value={chatPropsData}>
-        <ChatMainStateContext.Provider value={chatMainStateData}>
+      <SupportChatPropsContext.Provider value={chatPropsData}>
+        <SupportChatMainStateContext.Provider value={chatMainStateData}>
           {!isModalOpen && (
             <Button
               bgColor={theme.btnColorPrimary!}
@@ -110,8 +110,8 @@ export const Chat: React.FC<ChatProps> = ({
             </Button>
           )}
           {isModalOpen && <Modal />}
-        </ChatMainStateContext.Provider>
-      </ChatPropsContext.Provider>
+        </SupportChatMainStateContext.Provider>
+      </SupportChatPropsContext.Provider>
     </Container>
   );
 };

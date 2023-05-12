@@ -1,7 +1,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
-import { Constants, ENV } from '../config';
-import { AccountEnvOptionsType, IMessageIPFS } from '../types';
-import { IConnectedUser } from '@pushprotocol/restapi';
+import { Constants, ENV } from '../../config';
+import { AccountEnvOptionsType, IMessageIPFS } from '../../types';
+import { Env, IConnectedUser } from '@pushprotocol/restapi';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -13,7 +13,7 @@ type GetChatsType = {
   supportAddress: string;
   limit: number;
   threadHash?: string;
-  env?:  ENV;
+  env?:  Env;
   account: string;
 }
 

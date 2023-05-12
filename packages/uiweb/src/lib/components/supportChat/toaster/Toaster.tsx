@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { ErrorSvg } from '../../icons/ErrorSvg';
-import { CloseSvg } from '../../icons/CloseSvg';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../../context';
+import { ErrorSvg } from '../../../icons/ErrorSvg';
+import { CloseSvg } from '../../../icons/CloseSvg';
 
 type ToasterPropType = {
   message: string;
@@ -14,8 +14,8 @@ type ContainerPropType = {
 };
 
 export const Toaster: React.FC<ToasterPropType> = ({ message, type }) => {
-  const { theme } = useContext<any>(ChatPropsContext);
-  const { setToastMessage } = useContext<any>(ChatMainStateContext);
+  const { theme } = useContext<any>(SupportChatPropsContext);
+  const { setToastMessage } = useContext<any>(SupportChatMainStateContext);
 
   useEffect(() => {
     const interval = setInterval(() => {

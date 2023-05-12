@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { ENV } from '../config';
 import { ethers } from 'ethers';
+import { IFeeds } from '@pushprotocol/restapi';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -40,3 +41,15 @@ export type SignerType = ethers.Signer & {
   _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
   privateKey?: string;
 };
+
+
+export type ChatFeedsType = { [key: string]: IFeeds };
+export interface Web3NameListType {
+  [key: string]: string;
+}
+export const PUSH_TABS = {
+  CHATS: 'CHATS',
+  REQUESTS: 'REQUESTS'
+} as const;
+
+export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];

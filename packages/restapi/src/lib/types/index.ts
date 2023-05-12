@@ -3,6 +3,8 @@ import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 
+export type Env = (typeof ENV)[keyof typeof ENV];
+
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
   payload_id: number;

@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ChatPropsContext } from '../../context';
+import { SupportChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants } from '../../config';
 import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
-import { CopySvg } from '../../icons/chat/CopySvg';
+import { CopySvg } from '../../icons/supportChat/CopySvg';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env, theme } = useContext<any>(ChatPropsContext);
+  const { supportAddress, env, theme } = useContext<any>(SupportChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);

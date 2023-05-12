@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
-import MinimizeIcon from '../../icons/chat/minimize.svg';
+import MinimizeIcon from '../../icons/supportChat/minimize.svg';
 import styled from 'styled-components';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { handleOnChatIconClick } from '../../helpers';
 
 export const ModalHeader: React.FC = () => {
-  const { modalTitle,theme } = useContext<any>(ChatPropsContext);
-  const { isModalOpen, setIsModalOpen } = useContext<any>(ChatMainStateContext);
+  const { modalTitle,theme } = useContext<any>(SupportChatPropsContext);
+  const { isModalOpen, setIsModalOpen } = useContext<any>(SupportChatMainStateContext);
 
   return (
     <Container theme={theme}>

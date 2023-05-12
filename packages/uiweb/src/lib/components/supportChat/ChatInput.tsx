@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useContext, useRef, useState } from 'react';
-import { SendIconSvg } from '../../icons/chat/SendIconSvg';
-import SmileyIcon from '../../icons/chat/smiley.svg';
-import AttachmentIcon from '../../icons/chat/attachment.svg';
+import { SendIconSvg } from '../../icons/supportChat/SendIconSvg';
+import SmileyIcon from '../../icons/supportChat/smiley.svg';
+import AttachmentIcon from '../../icons/supportChat/attachment.svg';
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { Spinner } from './Spinner';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
+import { Spinner } from './spinner/Spinner';
 // import Picker from 'emoji-picker-react';
 
 export const ChatInput: React.FC = () => {
@@ -14,7 +14,7 @@ export const ChatInput: React.FC = () => {
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { account, env, supportAddress, apiKey, theme } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(SupportChatPropsContext);
 
   const {
     messageBeingSent,
@@ -26,7 +26,7 @@ export const ChatInput: React.FC = () => {
     connectedUser,
     chats,
     setChatsSorted,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<any>(SupportChatMainStateContext);
 
   const addEmoji = (e: any, emojiObject: any): void => {
     setMessage(message + emojiObject.emoji);

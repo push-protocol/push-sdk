@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { IMessageIPFS } from '../../types';
 
 type ChatsPropType = {
@@ -26,8 +26,8 @@ export const Chats: React.FC<ChatsPropType> = ({
   caip10,
   messageBeingSent,
 }) => {
-  const { theme } = useContext<any>(ChatPropsContext);
-  const { connectedUser } = useContext<any>(ChatMainStateContext);
+  const { theme } = useContext<any>(SupportChatPropsContext);
+  const { connectedUser } = useContext<any>(SupportChatMainStateContext);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
   const time: Date = new Date(msg.timestamp!);

@@ -15,3 +15,57 @@ export const Constants = {
   
 };
 
+export const NETWORK_DETAILS = {
+  5: {
+    network: "goerli",
+  }, 
+  80001: {
+    network: "polygon-mumbai",
+  },
+  1: {
+    network: "mainnet",
+  }, 
+  137: {
+    network: "polygon-mainnet",
+  },
+  97: {
+  },
+  420: {
+  }
+}
+
+export const CoreContractChainId = {
+  'prod' : 1,
+  'dev' : 5,
+  'staging' :  5,
+  'local' :5
+}
+
+export const allowedNetworks = {
+  'prod': [
+    1, //for ethereum mainnet
+    137, //for polygon mainnet
+    56, // for bnb mainnet
+    // 10 // for optimism mainnet
+  ],
+  'dev' : [
+    5, // for eth goerli
+    80001, //for mumbai polygon
+    97, // bnb testnet
+    420 // optimism goerli testnet
+  ],
+  'staging' :  [
+    // 42, //for kovan
+    5, // for goerli
+    80001, //for mumbai polygon
+    97 // bnb testnet
+  ],
+  'local' :[
+    5, // for eth goerli
+    80001, //for mumbai polygon
+    97, // bnb testnet
+    420 // optimism goerli testnet
+  ]
+}
+
+export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
