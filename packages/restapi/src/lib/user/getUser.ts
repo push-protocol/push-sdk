@@ -18,8 +18,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
       if (response.data) {
         response.data.publicKey = verifyPGPPublicKey(
           response.data.publicKey,
-          response.data.did,
-          response.data.nftOwner
+          response.data.did
         );
       }
       return response.data;

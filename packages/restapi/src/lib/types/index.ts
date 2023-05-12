@@ -165,7 +165,6 @@ export interface IUser {
   };
   encryptedPrivateKey: string;
   publicKey: string;
-  nftOwner: string | null;
   verificationProof: string;
   /**
    * DEPRECATED
@@ -179,6 +178,7 @@ export interface IUser {
   signature: string;
   sigType: string;
   encryptedPassword: string | null;
+  nftOwner: string | null;
   linkedListHash?: string | null;
   nfts?: [] | null;
 }

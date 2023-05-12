@@ -47,7 +47,7 @@ describe.skip('Upgrade user keys', () => {
     expect(upgradedUser.encryptedPrivateKey).to.contains(
       `"version":"${upgradationVersion}"`
     );
-    expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
+
     expect(user.profile.picture).to.be.equal(upgradedUser.profile.picture);
     expect(user.profile.desc).to.be.equal(upgradedUser.profile.desc);
     expect(user.profile.name).to.be.equal(upgradedUser.profile.name);
@@ -85,7 +85,7 @@ describe.skip('Upgrade user keys', () => {
     expect(upgradedUser.encryptedPrivateKey).to.contains(
       `"version":"${upgradationVersion}"`
     );
-    expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
+
     expect(user.profile.picture).to.be.equal(upgradedUser.profile.picture);
     expect(user.profile.desc).to.be.equal(upgradedUser.profile.desc);
     expect(user.profile.name).to.be.equal(upgradedUser.profile.name);

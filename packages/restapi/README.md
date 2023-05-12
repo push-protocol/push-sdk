@@ -1712,11 +1712,11 @@ export interface IUser {
 	  name: string | null;
 	  desc: string | null;
 	  picture: string | null;
+    profileVerificationProof: string | null;
 	}
 
   encryptedPrivateKey: string;
   publicKey: string;
-  nftOwner: string;
 
   verificationProof: string;
 }
@@ -1733,7 +1733,6 @@ export interface IUser {
 | `profilePicture` | user chat profile picture. As of now i cannot be changed |
 | `encryptedPrivateKey` | encrypted private PGP key |
 | `publicKey` | PGP public key |
-| `nftOwner` | NFT owner address |
 | `verificationProof` | verification proof |
 
 </details>
@@ -1864,11 +1863,11 @@ export interface IUser {
 	  name: string | null;
 	  desc: string | null;
 	  picture: string | null;
+    profileVerificationProof: string | null;
 	}
 
   encryptedPrivateKey: string;
   publicKey: string;
-  nftOwner: string;
 
   verificationProof: string;
 }
@@ -1885,7 +1884,6 @@ export interface IUser {
 | `picture` | user chat profile picture. As of now i cannot be changed |
 | `encryptedPrivateKey` | encrypted private PGP key |
 | `publicKey` | PGP public key |
-| `nftOwner` | NFT owner address |
 | `verificationProof` | verification proof |
 
 </details>

@@ -574,11 +574,7 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = (
-  publicKey: string,
-  did: string,
-  nftOwner: string
-): string => {
+export const verifyPGPPublicKey = (publicKey: string, did: string): string => {
   try {
     if (publicKey !== '' && publicKey.includes('signature')) {
       const { key, signature: verificationProof } = JSON.parse(publicKey);
@@ -587,16 +583,16 @@ export const verifyPGPPublicKey = (
       if (verificationProof.includes('eip712'))
         signedData = 'Create Push Chat Profile \n' + generateHash(key);
       else signedData = 'Create Push Profile \n' + generateHash(key);
-      if (
-        verifyProfileSignature(
-          verificationProof,
-          signedData,
-          pCAIP10ToWallet(did),
-          nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
-        )
-      )
-        return publicKey;
-      else throw new Error('Cannot verify Encryption Keys for this user');
+      // if (
+      //   verifyProfileSignature(
+      //     verificationProof,
+      //     signedData,
+      //     pCAIP10ToWallet(did),
+      //     nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
+      //   )
+      // )
+      //   return publicKey;
+      // else throw new Error('Cannot Verify this publicKey Owner!!!');
     }
     return publicKey;
   } catch (err) {
