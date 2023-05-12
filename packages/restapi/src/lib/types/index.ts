@@ -359,8 +359,7 @@ export type VideoCallData = {
     video: boolean | null;
     address: string;
   };
-  // incoming: PeerData | [PeerData];
-  incoming: PeerData;
+  incoming: [PeerData];
 };
 
 export type VideoCreateInputOptions = {
@@ -369,26 +368,18 @@ export type VideoCreateInputOptions = {
 };
 
 export type VideoRequestInputOptions = {
-  library: any;
-  chainId: number;
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
-  onRecieveMessage: (message: string) => void;
-  env?: ENV;
-  pgpPrivateKey: string | null;
+  onReceiveMessage?: (message: string) => void;
 };
 
 export type VideoAcceptRequestInputOptions = {
   signalData: any;
-  library: any;
-  chainId: number;
   senderAddress: string;
   recipientAddress: string;
   chatId: string;
-  onRecieveMessage: (message: string) => void;
-  env?: ENV;
-  pgpPrivateKey: string | null;
+  onReceiveMessage?: (message: string) => void;
 };
 
 export type VideoConnectInputOptions = {

@@ -1,0 +1,21 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  ai_code_review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: AI Code Review
+      uses: AleksandrFurmenkovOfficial/ai-code-review@v0.1.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+        owner: ${{ github.repository_owner }}
+        repo: ${{ github.event.repository.name }}
+        pr_number: ${{ github.event.number }}
+        #file_extensions: ".py,.js,.html" # for example
+        #exclude_paths: "test/,docs/"     # for example
