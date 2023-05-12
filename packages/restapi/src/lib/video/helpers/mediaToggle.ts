@@ -21,3 +21,8 @@ export const stopAudioStream = (stream: MediaStream): void => {
   const audTracks = stream.getAudioTracks();
   audTracks.forEach((track) => (track.enabled = false));
 };
+
+export const endStream = (stream: MediaStream) => {
+  console.log("END STREAM");
+  stream.getTracks().forEach((track) => track.stop());
+}

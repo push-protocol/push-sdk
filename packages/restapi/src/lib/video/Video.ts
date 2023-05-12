@@ -6,6 +6,7 @@ import { produce } from 'immer';
 import Constants, { ENV } from '../constants';
 import sendVideoCallNotification from './helpers/sendVideoCallNotification';
 import {
+  endStream,
   restartAudioStream,
   restartVideoStream,
   stopAudioStream,
@@ -37,42 +38,67 @@ export const initVideoCallData: VideoCallData = {
     video: null,
     address: '',
   },
-  incoming: {
-    stream: null,
-    audio: null,
-    video: null,
-    address: '',
-    status: VideoCallStatus.UNINITIALIZED,
-  },
+  incoming: [
+    {
+      stream: null,
+      audio: null,
+      video: null,
+      address: '',
+      status: VideoCallStatus.UNINITIALIZED,
+    },
+  ],
 };
 
 export class Video {
   // user, call related info
-  private signer: SignerType | null = null;
-  private chainId: number | null = null;
-  private pgpPrivateKey: string | null = null;
-  private env: ENV = Constants.ENV.PROD;
+  private signer: SignerType;
+  private chainId: number;
+  private pgpPrivateKey: string;
+  private env: ENV;
 
   // storing the peer instance
   private peerInstance: any = null;
 
-  data: VideoCallData;
+  private data: VideoCallData;
   setData: (fn: (data: VideoCallData) => VideoCallData) => void;
 
   constructor({
-    data,
+    signer,
+    chainId,
+    pgpPrivateKey,
+    env,
     setData,
   }: {
-    data: VideoCallData;
+    signer: SignerType;
+    chainId: number;
+    pgpPrivateKey: string;
+    env?: ENV;
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
   }) {
-    this.data = data;
-    this.setData = setData;
+    this.signer = signer;
+    this.chainId = chainId;
+    this.pgpPrivateKey = pgpPrivateKey;
+    this.env = env ? env : Constants.ENV.PROD;
+
+    // init the react state
+    setData(() => initVideoCallData);
+
+    // init the class variable
+    this.data = initVideoCallData;
+
+    // set the state updating function
+    this.setData = function (fn) {
+      // update the react state
+      setData(fn);
+
+      // update the class variable
+      this.data = fn(this.data);
+    };
   }
 
   async create(options: VideoCreateInputOptions): Promise<void> {
     const { audio, video } = options || {};
-    
+
     try {
       const localStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -100,19 +126,13 @@ export class Video {
 
   async request(options: VideoRequestInputOptions): Promise<void> {
     const {
-      library,
-      chainId,
       senderAddress, // notification sender
       recipientAddress, // notification receiver
       chatId,
-      onRecieveMessage,
-      env = Constants.ENV.PROD,
-      pgpPrivateKey = null,
+      onReceiveMessage,
     } = options || {};
 
     try {
-      const signer: SignerType = await library.getSigner(senderAddress);
-
       console.log(
         'request',
         'options',
@@ -136,14 +156,18 @@ export class Video {
 
         // sending notification to the recipientAddress with video call signaling data
         sendVideoCallNotification(
-          { signer, chainId, pgpPrivateKey },
+          {
+            signer: this.signer,
+            chainId: this.chainId,
+            pgpPrivateKey: this.pgpPrivateKey,
+          },
           {
             senderAddress,
             recipientAddress,
             status: VideoCallStatus.INITIALIZED,
             chatId,
             signalingData: data,
-            env,
+            env: this.env,
           }
         );
       });
@@ -171,7 +195,7 @@ export class Video {
             console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
-                draft.incoming.video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.isVideoOn;
               });
             });
           }
@@ -180,18 +204,24 @@ export class Video {
             console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
-                draft.incoming.audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.isAudioOn;
               });
             });
           }
 
-          if (parsedData.type === 'endLocalStream') {
-            console.log('END LOCAL STREAM', parsedData.endLocalStream);
+          if (parsedData.type === 'endCall') {
+            console.log('END CALL', parsedData.endCall);
+            // destroy the local stream
+            if (this.data.local.stream) {
+              endStream(this.data.local.stream);
+            }
+
+            // reset the state
             this.setData(() => initVideoCallData);
           }
         } else {
           console.log('received a message', data);
-          onRecieveMessage(data);
+          onReceiveMessage ? onReceiveMessage(data) : '';
         }
       });
 
@@ -199,24 +229,19 @@ export class Video {
         console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
-            draft.incoming.stream = currentStream;
+            draft.incoming[0].stream = currentStream;
           });
         });
       });
-
-      this.signer = signer;
-      this.chainId = chainId;
-      this.pgpPrivateKey = pgpPrivateKey;
-      this.env = env;
 
       // set videoCallInfo state with status 1 (call initiated)
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.incoming.address = recipientAddress;
+          draft.incoming[0].address = recipientAddress;
           draft.meta.chatId = chatId;
           draft.meta.initiator.address = senderAddress;
-          draft.incoming.status = VideoCallStatus.INITIALIZED;
+          draft.incoming[0].status = VideoCallStatus.INITIALIZED;
         });
       });
     } catch (err) {
@@ -227,19 +252,13 @@ export class Video {
   async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {
     const {
       signalData,
-      library,
-      chainId,
       senderAddress, // notification sender
       recipientAddress, // notification receiver
       chatId,
-      onRecieveMessage,
-      env = Constants.ENV.PROD,
-      pgpPrivateKey = null,
+      onReceiveMessage,
     } = options || {};
 
     try {
-      const signer: SignerType = await library.getSigner(senderAddress);
-
       console.log(
         'accept request',
         'options',
@@ -264,14 +283,18 @@ export class Video {
         });
 
         sendVideoCallNotification(
-          { signer, chainId, pgpPrivateKey },
+          {
+            signer: this.signer,
+            chainId: this.chainId,
+            pgpPrivateKey: this.pgpPrivateKey,
+          },
           {
             senderAddress,
             recipientAddress,
             status: VideoCallStatus.RECEIVED,
             chatId,
             signalingData: data,
-            env,
+            env: this.env,
           }
         );
       });
@@ -294,7 +317,7 @@ export class Video {
         // set videoCallInfo state with status connected for the receiver's end
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
-            draft.incoming.status = VideoCallStatus.CONNECTED;
+            draft.incoming[0].status = VideoCallStatus.CONNECTED;
           });
         });
       });
@@ -306,7 +329,7 @@ export class Video {
             console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
-                draft.incoming.video = parsedData.isVideoOn;
+                draft.incoming[0].video = parsedData.isVideoOn;
               });
             });
           }
@@ -315,18 +338,24 @@ export class Video {
             console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
-                draft.incoming.audio = parsedData.isAudioOn;
+                draft.incoming[0].audio = parsedData.isAudioOn;
               });
             });
           }
 
-          if (parsedData.type === 'endLocalStream') {
-            console.log('END LOCAL STREAM', parsedData.endLocalStream);
+          if (parsedData.type === 'endCall') {
+            console.log('END CALL', parsedData.endCall);
+            // destroy the local stream
+            if (this.data.local.stream) {
+              endStream(this.data.local.stream);
+            }
+
+            // reset the state
             this.setData(() => initVideoCallData);
           }
         } else {
           console.log('received a message', data);
-          onRecieveMessage(data);
+          onReceiveMessage ? onReceiveMessage(data) : '';
         }
       });
 
@@ -334,24 +363,19 @@ export class Video {
         console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
-            draft.incoming.stream = currentStream;
+            draft.incoming[0].stream = currentStream;
           });
         });
       });
-
-      this.signer = signer;
-      this.chainId = chainId;
-      this.pgpPrivateKey = pgpPrivateKey;
-      this.env = env;
 
       // set videoCallInfo state with status 2 (call received)
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.incoming.address = recipientAddress;
+          draft.incoming[0].address = recipientAddress;
           draft.meta.chatId = chatId;
           draft.meta.initiator.address = senderAddress;
-          draft.incoming.status = VideoCallStatus.RECEIVED;
+          draft.incoming[0].status = VideoCallStatus.RECEIVED;
         });
       });
     } catch (err) {
@@ -370,7 +394,7 @@ export class Video {
       // set videoCallInfo state with status connected for the caller's end
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
-          draft.incoming.status = VideoCallStatus.CONNECTED;
+          draft.incoming[0].status = VideoCallStatus.CONNECTED;
         });
       });
     } catch (err) {
@@ -380,31 +404,28 @@ export class Video {
 
   disconnect(): void {
     try {
-      console.log('disconnect');
-      if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
+      console.log('disconnect', 'status', this.data.incoming[0].status);
+      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
         this.peerInstance?.send(
-          JSON.stringify({ type: 'endLocalStream', endLocalStream: true })
+          JSON.stringify({ type: 'endCall', endCall: true })
         );
         this.peerInstance?.destroy();
-
-        // ending the local stream
-        this.data.local.stream?.getTracks().forEach((track) => track.stop());
       }
       if (
-        this.data.incoming.status === VideoCallStatus.INITIALIZED ||
-        this.data.incoming.status === VideoCallStatus.RECEIVED
+        this.data.incoming[0].status === VideoCallStatus.INITIALIZED ||
+        this.data.incoming[0].status === VideoCallStatus.RECEIVED
       ) {
         // for disconnecting during status 1, 2
-        // send a notif to the other user signaling status=4
+        // send a notif to the other user signaling status = DISCONNECTED
         sendVideoCallNotification(
           {
-            signer: this.signer!,
-            chainId: this.chainId!,
+            signer: this.signer,
+            chainId: this.chainId,
             pgpPrivateKey: this.pgpPrivateKey,
           },
           {
             senderAddress: this.data.local.address,
-            recipientAddress: this.data.incoming.address,
+            recipientAddress: this.data.incoming[0].address,
             status: VideoCallStatus.DISCONNECTED,
             chatId: this.data.meta.chatId,
             signalingData: null,
@@ -413,6 +434,12 @@ export class Video {
         );
       }
 
+      // destroy the local stream
+      if (this.data.local.stream) {
+        endStream(this.data.local.stream);
+      }
+
+      // reset the state
       this.setData(() => initVideoCallData);
     } catch (err) {
       console.log('error in disconnect', err);
@@ -423,7 +450,7 @@ export class Video {
 
   toggleVideo(): void {
     console.log('toggleVideo', 'current video', this.data.local.video);
-    if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
+    if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
       this.peerInstance?.send(
         JSON.stringify({ type: 'isVideoOn', isVideoOn: !this.data.local.video })
       );
@@ -445,7 +472,7 @@ export class Video {
 
   toggleAudio(): void {
     console.log('toggleAudio', 'current audio', this.data.local.audio);
-    if (this.data.incoming.status === VideoCallStatus.CONNECTED) {
+    if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
       this.peerInstance?.send(
         JSON.stringify({ type: 'isAudioOn', isAudioOn: !this.data.local.audio })
       );
