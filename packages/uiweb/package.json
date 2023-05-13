@@ -12,7 +12,7 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "styled-components": "^5.3.5",
-    "@pushprotocol/restapi": "^1.2.8",
+    "@pushprotocol/restapi": "^1.2.15",
     "@pushprotocol/socket": "^0.4.2"
   }
 }
