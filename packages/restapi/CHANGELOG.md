@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.5...restapi-0.0.1-alpha.6) (2023-05-14)
+
+
+### Bug Fixes
+
+* add video call retry logic upon error & doc: add video call in restapi/readme  ([#391](https://github.com/ethereum-push-notification-service/push-sdk/issues/391)) ([9c8c86b](https://github.com/ethereum-push-notification-service/push-sdk/commit/9c8c86b35d1cb0300d0170e87931dd31a15f9342))
+
+
+
 ## [0.0.1-alpha.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.4...restapi-0.0.1-alpha.5) (2023-05-14)
 
 
