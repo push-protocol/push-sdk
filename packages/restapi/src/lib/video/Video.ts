@@ -45,6 +45,7 @@ export const initVideoCallData: VideoCallData = {
       video: null,
       address: '',
       status: VideoCallStatus.UNINITIALIZED,
+      retryCount: 0,
     },
   ],
 };
@@ -97,12 +98,12 @@ export class Video {
   }
 
   async create(options: VideoCreateInputOptions): Promise<void> {
-    const { audio, video } = options || {};
+    const { audio = true, video = true } = options || {};
 
     try {
       const localStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
+        video,
+        audio,
       });
 
       if (video === false) {
@@ -129,7 +130,10 @@ export class Video {
       senderAddress, // notification sender
       recipientAddress, // notification receiver
       chatId,
-      onReceiveMessage,
+      onReceiveMessage = (message: string) => {
+        console.log('received a meesage', message);
+      },
+      retry = false,
     } = options || {};
 
     try {
@@ -164,7 +168,9 @@ export class Video {
           {
             senderAddress,
             recipientAddress,
-            status: VideoCallStatus.INITIALIZED,
+            status: retry
+              ? VideoCallStatus.RETRY_INITIALIZED
+              : VideoCallStatus.INITIALIZED,
             chatId,
             signalingData: data,
             env: this.env,
@@ -186,6 +192,15 @@ export class Video {
             isAudioOn: this.data.local.audio,
           })
         );
+
+        // set videoCallInfo state with status received for the sender's end
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.incoming[0].status = retry
+              ? VideoCallStatus.RETRY_RECEIVED
+              : VideoCallStatus.RECEIVED;
+          });
+        });
       });
 
       this.peerInstance.on('data', (data: any) => {
@@ -220,8 +235,7 @@ export class Video {
             this.setData(() => initVideoCallData);
           }
         } else {
-          console.log('received a message', data);
-          onReceiveMessage ? onReceiveMessage(data) : '';
+          onReceiveMessage(data);
         }
       });
 
@@ -241,7 +255,10 @@ export class Video {
           draft.incoming[0].address = recipientAddress;
           draft.meta.chatId = chatId;
           draft.meta.initiator.address = senderAddress;
-          draft.incoming[0].status = VideoCallStatus.INITIALIZED;
+          draft.incoming[0].status = retry
+            ? VideoCallStatus.RETRY_INITIALIZED
+            : VideoCallStatus.INITIALIZED;
+          draft.incoming[0].retryCount += retry ? 1 : 0;
         });
       });
     } catch (err) {
@@ -255,7 +272,9 @@ export class Video {
       senderAddress, // notification sender
       recipientAddress, // notification receiver
       chatId,
-      onReceiveMessage,
+      onReceiveMessage = (message: string) => {
+        console.log('received a meesage', message);},
+      retry = false,
     } = options || {};
 
     try {
@@ -291,7 +310,9 @@ export class Video {
           {
             senderAddress,
             recipientAddress,
-            status: VideoCallStatus.RECEIVED,
+            status: retry
+              ? VideoCallStatus.RETRY_RECEIVED
+              : VideoCallStatus.RECEIVED,
             chatId,
             signalingData: data,
             env: this.env,
@@ -354,8 +375,7 @@ export class Video {
             this.setData(() => initVideoCallData);
           }
         } else {
-          console.log('received a message', data);
-          onReceiveMessage ? onReceiveMessage(data) : '';
+          onReceiveMessage(data);
         }
       });
 
@@ -375,11 +395,36 @@ export class Video {
           draft.incoming[0].address = recipientAddress;
           draft.meta.chatId = chatId;
           draft.meta.initiator.address = senderAddress;
-          draft.incoming[0].status = VideoCallStatus.RECEIVED;
+          draft.incoming[0].status = retry
+            ? VideoCallStatus.RETRY_RECEIVED
+            : VideoCallStatus.RECEIVED;
+          draft.incoming[0].retryCount += retry ? 1 : 0;
         });
       });
     } catch (err) {
       console.log('error in accept request', err);
+
+      if (this.data.incoming[0].retryCount >= 5) {
+        console.log('Max retries exceeded, please try again.');
+        this.disconnect();
+      }
+
+      // retrying in case of connection error
+      sendVideoCallNotification(
+        {
+          signer: this.signer,
+          chainId: this.chainId,
+          pgpPrivateKey: this.pgpPrivateKey,
+        },
+        {
+          senderAddress,
+          recipientAddress,
+          status: VideoCallStatus.RETRY_INITIALIZED,
+          chatId,
+          signalingData: null,
+          env: this.env,
+        }
+      );
     }
   }
 
@@ -399,6 +444,19 @@ export class Video {
       });
     } catch (err) {
       console.log('error in connect', err);
+
+      if (this.data.incoming[0].retryCount >= 5) {
+        console.log('Max retries exceeded, please try again.');
+        this.disconnect();
+      }
+
+      // retrying in case of connection error
+      this.request({
+        senderAddress: this.data.local.address,
+        recipientAddress: this.data.incoming[0].address,
+        chatId: this.data.meta.chatId,
+        retry: true,
+      });
     }
   }
 
@@ -410,12 +468,8 @@ export class Video {
           JSON.stringify({ type: 'endCall', endCall: true })
         );
         this.peerInstance?.destroy();
-      }
-      if (
-        this.data.incoming[0].status === VideoCallStatus.INITIALIZED ||
-        this.data.incoming[0].status === VideoCallStatus.RECEIVED
-      ) {
-        // for disconnecting during status 1, 2
+      } else {
+        // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
         sendVideoCallNotification(
           {
@@ -490,5 +544,17 @@ export class Video {
         });
       });
     }
+  }
+
+  // helper functions
+
+  isInitiator(): boolean {
+    if (
+      this.data.meta.initiator.address === '' ||
+      this.data.local.address === ''
+    )
+      return false;
+
+    return this.data.meta.initiator.address === this.data.local.address;
   }
 }

@@ -330,6 +330,8 @@ export enum VideoCallStatus {
   RECEIVED,
   CONNECTED,
   DISCONNECTED,
+  RETRY_INITIALIZED,
+  RETRY_RECEIVED,
 }
 
 export type PeerData = {
@@ -338,6 +340,7 @@ export type PeerData = {
   video: boolean | null;
   address: string;
   status: VideoCallStatus;
+  retryCount: number;
 };
 
 export type VideoCallData = {
@@ -363,8 +366,8 @@ export type VideoCallData = {
 };
 
 export type VideoCreateInputOptions = {
-  video: boolean;
-  audio: boolean;
+  video?: boolean;
+  audio?: boolean;
 };
 
 export type VideoRequestInputOptions = {
@@ -372,6 +375,7 @@ export type VideoRequestInputOptions = {
   recipientAddress: string;
   chatId: string;
   onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -380,6 +384,7 @@ export type VideoAcceptRequestInputOptions = {
   recipientAddress: string;
   chatId: string;
   onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
 };
 
 export type VideoConnectInputOptions = {
