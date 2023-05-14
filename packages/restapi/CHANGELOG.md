@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.4...restapi-0.0.1-alpha.5) (2023-05-14)
+
+
+
 ## [0.0.1-alpha.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.3...restapi-0.0.1-alpha.4) (2023-05-12)
 
 
