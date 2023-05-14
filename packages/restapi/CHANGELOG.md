@@ -2,6 +2,46 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.15](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.14...restapi-1.2.15) (2023-05-12)
+
+
+### Bug Fixes
+
+* fix eip712v2 ([#385](https://github.com/ethereum-push-notification-service/push-sdk/issues/385)) ([42c10ba](https://github.com/ethereum-push-notification-service/push-sdk/commit/42c10ba6f5331c9caf5db7136ba94d1a6ed05e10))
+* Merge branch 'main' into deployment ([3250a7c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3250a7cfc3bb8fefd630179cd204deef023a5e6c))
+
+
+
+## [1.2.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.13...restapi-1.2.14) (2023-05-11)
+
+
+### Bug Fixes
+
+* fix chat.chat for grps ([#382](https://github.com/ethereum-push-notification-service/push-sdk/issues/382)) ([052a75c](https://github.com/ethereum-push-notification-service/push-sdk/commit/052a75ca0f0fea7664d8c607fc85cdf37cc5d398))
+* Merge branch 'main' into deployment ([dd21949](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd21949792a6028efdae17232ba16bb98605b017))
+
+
+
+## [1.2.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.12...restapi-1.2.13) (2023-05-10)
+
+
+### Bug Fixes
+
+* eip191v2 signatures for create and auth.update ([#359](https://github.com/ethereum-push-notification-service/push-sdk/issues/359)) ([48abaf6](https://github.com/ethereum-push-notification-service/push-sdk/commit/48abaf667dce2a1140c3622451c1c5b49d153c00))
+* Merge branch 'main' into deployment ([52cab60](https://github.com/ethereum-push-notification-service/push-sdk/commit/52cab60eedbc71d74697adbcd69133d1b93d0f5a))
+
+
+
+## [1.2.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.11...restapi-1.2.12) (2023-05-08)
+
+
+### Bug Fixes
+
+* change preid to alpha ([#358](https://github.com/ethereum-push-notification-service/push-sdk/issues/358)) ([6ac2c23](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ac2c23c5e4a9f54f8bd6ae99aeb77c96417aae3))
+* changed AdditionalMeta structure ([#349](https://github.com/ethereum-push-notification-service/push-sdk/issues/349)) ([ee8ca02](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee8ca022b2d948d08fa8503616898ff6c773062e))
+
+
+
 ## [1.2.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.11...restapi-1.2.12) (2023-05-08)
 
 
