@@ -192,15 +192,6 @@ export class Video {
             isAudioOn: this.data.local.audio,
           })
         );
-
-        // set videoCallInfo state with status received for the sender's end
-        this.setData((oldData) => {
-          return produce(oldData, (draft) => {
-            draft.incoming[0].status = retry
-              ? VideoCallStatus.RETRY_RECEIVED
-              : VideoCallStatus.RECEIVED;
-          });
-        });
       });
 
       this.peerInstance.on('data', (data: any) => {
@@ -273,7 +264,8 @@ export class Video {
       recipientAddress, // notification receiver
       chatId,
       onReceiveMessage = (message: string) => {
-        console.log('received a meesage', message);},
+        console.log('received a meesage', message);
+      },
       retry = false,
     } = options || {};
 
