@@ -292,18 +292,14 @@ export const decryptMessage = async ({
 }): Promise<string> => {
   let plainText: string;
   if (encryptionType !== 'PlainText' && encryptionType !== null) {
-    try {
-      plainText = await decryptAndVerifySignature({
-        cipherText: encryptedPGPPrivateKey,
-        encryptedSecretKey: encryptedSecret,
-        privateKeyArmored: pgpPrivateKey,
-        publicKeyArmored: signatureValidationPubliKey,
-        signatureArmored: signature,
-        message: message,
-      });
-    } catch (err) {
-      plainText = 'Unable to decrypt message';
-    }
+    plainText = await decryptAndVerifySignature({
+      cipherText: encryptedPGPPrivateKey,
+      encryptedSecretKey: encryptedSecret,
+      privateKeyArmored: pgpPrivateKey,
+      publicKeyArmored: signatureValidationPubliKey,
+      signatureArmored: signature,
+      message: message,
+    });
   } else {
     plainText = encryptedPGPPrivateKey;
   }
@@ -326,40 +322,44 @@ export const decryptAndVerifySignature = async ({
   privateKeyArmored: string;
   message: IMessageIPFS;
 }): Promise<string> => {
-  // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
-  const secretKey: string = await pgpDecrypt({
-    cipherText: encryptedSecretKey,
-    toPrivateKeyArmored: privateKeyArmored,
-  });
-  if (message.link == null) {
-    const bodyToBeHashed = {
-      fromDID: message.fromDID,
-      toDID: message.toDID,
-      messageContent: message.messageContent,
-      messageType: message.messageType,
-    };
-    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-    try {
-      await verifySignature({
-        messageContent: hash,
-        signatureArmored,
-        publicKeyArmored,
-      });
-    } catch (err) {
+  try {
+    // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
+    const secretKey: string = await pgpDecrypt({
+      cipherText: encryptedSecretKey,
+      toPrivateKeyArmored: privateKeyArmored,
+    });
+    if (message.link == null) {
+      const bodyToBeHashed = {
+        fromDID: message.fromDID,
+        toDID: message.toDID,
+        messageContent: message.messageContent,
+        messageType: message.messageType,
+      };
+      const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+      try {
+        await verifySignature({
+          messageContent: hash,
+          signatureArmored,
+          publicKeyArmored,
+        });
+      } catch (err) {
+        await verifySignature({
+          messageContent: cipherText,
+          signatureArmored,
+          publicKeyArmored,
+        });
+      }
+    } else {
       await verifySignature({
         messageContent: cipherText,
         signatureArmored,
         publicKeyArmored,
       });
     }
-  } else {
-    await verifySignature({
-      messageContent: cipherText,
-      signatureArmored,
-      publicKeyArmored,
-    });
+    return aesDecrypt({ cipherText, secretKey });
+  } catch (err) {
+    return 'Unable to decrypt message';
   }
-  return aesDecrypt({ cipherText, secretKey });
 };
 
 export const generateHash = (message: any): string => {
