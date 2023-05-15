@@ -36,7 +36,7 @@ export const getInboxLists = async (
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
   const feeds: IFeeds[] = [];
   for (const list of lists) {
-    let message;
+    let message:IMessageIPFS;
     if (list.threadhash !== null) {
       message = await getCID(list.threadhash, { env });
     }
@@ -49,7 +49,7 @@ export const getInboxLists = async (
         fromDID: '',
         link: '',
         messageContent: '',
-        messageType: '',
+        messageType: 'Text',
         sigType: '',
         signature: '',
         toCAIP10: '',

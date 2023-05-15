@@ -1,13 +1,14 @@
 import axios from "axios";
 import Constants, {ENV} from "../constants";
 import { getAPIBaseUrls } from "../helpers";
+import { MessageType } from "../types";
 
 export interface Message {
     fromCAIP10: string;
     toCAIP10: string;
     fromDID: string;
     toDID: string;
-    messageType: string;
+    messageType: MessageType;
     messageContent: string;
     signature: string;
     sigType: string;

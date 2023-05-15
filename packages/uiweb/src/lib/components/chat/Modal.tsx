@@ -42,7 +42,7 @@ export const Modal: React.FC = () => {
   } = useContext<any>(ChatMainStateContext);
   const listInnerRef = useChatScroll(chats.length);
 
-  const greetingMsgObject = {
+  const greetingMsgObject:IMessageIPFS = {
     fromDID: walletToPCAIP10(supportAddress),
     toDID: walletToPCAIP10(account),
     fromCAIP10: walletToPCAIP10(supportAddress),

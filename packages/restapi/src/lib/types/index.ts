@@ -125,7 +125,7 @@ export interface IMessageIPFS {
   toCAIP10: string;
   fromDID: string;
   toDID: string;
-  messageType: string;
+  messageType: MessageType;
   messageContent: string;
   signature: string;
   sigType: string;
@@ -226,7 +226,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: MessageType;
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
@@ -238,7 +238,7 @@ export interface ChatOptionsType extends AccountEnvOptionsType {
 
 export interface ChatSendOptionsType {
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: MessageType;
   receiverAddress: string;
   pgpPrivateKey?: string;
   /**
@@ -312,7 +312,7 @@ export type MessageWithCID = {
   toCAIP10: string;
   fromDID: string;
   toDID: string;
-  messageType: string;
+  messageType: MessageType;
   messageContent: string;
   signature: string;
   sigType: string;
@@ -321,3 +321,5 @@ export type MessageWithCID = {
   encryptedSecret: string;
   verificationProof?: string;
 };
+
+export type MessageType = 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL' | 'MediaEmbed';

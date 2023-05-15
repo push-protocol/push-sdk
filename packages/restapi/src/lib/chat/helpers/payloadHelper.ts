@@ -3,6 +3,7 @@ import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
+import { MessageType } from '../../types';
 
 export interface ISendMessagePayload {
   fromDID: string;
@@ -10,7 +11,7 @@ export interface ISendMessagePayload {
   fromCAIP10: string;
   toCAIP10: string;
   messageContent: string;
-  messageType: string;
+  messageType: MessageType;
   signature: string | null | undefined;
   encType: string;
   encryptedSecret: string | null | undefined;
@@ -56,7 +57,7 @@ export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
   messageContent: string,
-  messageType: string,
+  messageType: MessageType,
   env: ENV
 ): Promise<ISendMessagePayload> => {
   let isGroup = true;

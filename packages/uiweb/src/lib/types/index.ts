@@ -1,13 +1,14 @@
 import React, { ReactElement } from 'react';
 import { ENV } from '../config';
 import { ethers } from 'ethers';
+import { MessageType } from '@pushprotocol/restapi';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
   toCAIP10: string;
   fromDID: string;
   toDID: string;
-  messageType: string;
+  messageType: MessageType;
   messageContent: string;
   signature: string;
   sigType: string;
