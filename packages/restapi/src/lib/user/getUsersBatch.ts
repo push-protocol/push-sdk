@@ -3,6 +3,7 @@ import { IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
 import Constants, { ENV } from '../constants';
+import { populateDeprecatedUser } from '../utils/populateIUser';
 
 export interface GetBatchType {
   userIds: string[];
@@ -13,7 +14,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   const { env = Constants.ENV.PROD, userIds } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
-  const requestUrl = `${API_BASE_URL}/v1/users/batch`;
+  const requestUrl = `${API_BASE_URL}/v2/users/batch`;
 
   const MAX_USER_IDS_LENGTH = 100;
   if (userIds.length > MAX_USER_IDS_LENGTH) {
@@ -38,6 +39,10 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
         response.data.users[index].publicKey = verifyPGPPublicKey(
           user.publicKey,
           user.did
+        );
+
+        response.data.users[index] = populateDeprecatedUser(
+          response.data.users[index]
         );
       });
       return response.data;

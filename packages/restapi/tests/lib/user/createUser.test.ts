@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 chai.use(chaiAsPromised);
 
-describe.skip('Create Push Profile', () => {
+describe('Create Push Profile', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;

@@ -3,6 +3,7 @@ import { AccountEnvOptionsType, IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
 import Constants from '../constants';
+import { populateDeprecatedUser } from '../utils/populateIUser';
 
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
@@ -21,7 +22,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
           response.data.did
         );
       }
-      return response.data;
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

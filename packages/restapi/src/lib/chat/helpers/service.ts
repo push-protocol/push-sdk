@@ -14,6 +14,7 @@ import {
   walletType,
 } from '../../types';
 import { getEip191Signature } from './crypto';
+import { populateDeprecatedUser } from '../../utils/populateIUser';
 
 type CreateUserOptionsType = {
   user: string;
@@ -34,7 +35,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/`;
+  const requestUrl = `${API_BASE_URL}/v2/users/`;
 
   if (isValidCAIP10NFTAddress(user)) {
     const epoch = Math.floor(Date.now() / 1000);
@@ -66,7 +67,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
           response.data.publicKey,
           response.data.did
         );
-      return response.data;
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
@@ -85,7 +86,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/${walletToPCAIP10(user)}/auth`;
+  const requestUrl = `${API_BASE_URL}/v2/users/${walletToPCAIP10(user)}/auth`;
 
   const data = {
     caip10: walletToPCAIP10(user),
@@ -98,10 +99,8 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
   const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
 
-  const body = {
-    ...data,
-    ...signatureObj,
-  };
+  // Exclude the "did" property from the "body" object
+  const { did, ...body } = { ...data, ...signatureObj };
 
   return axios
     .put(requestUrl, body)
@@ -111,7 +110,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
           response.data.publicKey,
           response.data.did
         );
-      return response.data;
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

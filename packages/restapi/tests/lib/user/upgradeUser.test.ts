@@ -8,7 +8,7 @@ import { upgrade } from '../../../src/lib/user/upgradeUser';
 import { decryptPGPKey } from '../../../src/lib/helpers';
 chai.use(chaiAsPromised);
 
-describe.skip('Upgrade user keys', () => {
+describe('Upgrade user keys', () => {
   const upgradationVersion = Constants.ENC_TYPE_V3;
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
