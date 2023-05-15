@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists, getUserDID } from './helpers';
+import { addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 
 export const chat = async (options: {
   account: string;
@@ -28,8 +28,9 @@ export const chat = async (options: {
     // If no chat between users, then returns {}
     const chat: IFeeds = response.data;
     if (Object.keys(chat).length !== 0) {
+      const updatedChat = addDeprecatedInfo([chat]);
       const [feed]: IFeeds[] = await getInboxLists({
-        lists: [chat],
+        lists: updatedChat,
         user,
         toDecrypt,
         pgpPrivateKey,
