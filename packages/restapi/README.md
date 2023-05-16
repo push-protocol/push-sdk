@@ -1702,23 +1702,34 @@ Example response:
 
 ```typescript
 export interface IUser {
-	msgSent: number;
-	maxMsgPersisted : number;
-	
+  msgSent: number;
+  maxMsgPersisted: number;
   did: string;
   wallets: string;
-
-	profile: {
-	  name: string | null;
-	  desc: string | null;
-	  picture: string | null;
+  profile: {
+    name: string | null;
+    desc: string | null;
+    picture: string | null;
     profileVerificationProof: string | null;
-	}
-
+  };
   encryptedPrivateKey: string;
   publicKey: string;
-
   verificationProof: string;
+  /**
+   * DEPRECATED
+   */
+  name: string | null;
+  about: string | null;
+  profilePicture: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 ```
 
@@ -1853,23 +1864,34 @@ Example response:
 
 ```typescript
 export interface IUser {
-	msgSent: number;
-	maxMsgPersisted : number;
-	
+  msgSent: number;
+  maxMsgPersisted: number;
   did: string;
   wallets: string;
-
-	profile: {
-	  name: string | null;
-	  desc: string | null;
-	  picture: string | null;
+  profile: {
+    name: string | null;
+    desc: string | null;
+    picture: string | null;
     profileVerificationProof: string | null;
-	}
-
+  };
   encryptedPrivateKey: string;
   publicKey: string;
-
   verificationProof: string;
+  /**
+   * DEPRECATED
+   */
+  name: string | null;
+  about: string | null;
+  profilePicture: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 ```
 
