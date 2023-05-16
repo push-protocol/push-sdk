@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.7...restapi-0.0.1-alpha.8) (2023-05-16)
+
+
+### Bug Fixes
+
+* add deprecated info to chat.chat ([#392](https://github.com/ethereum-push-notification-service/push-sdk/issues/392)) ([d84ae64](https://github.com/ethereum-push-notification-service/push-sdk/commit/d84ae64c116adb7eea9e8faf7929b6eb3b74c657))
+* Merge branch 'alpha' into alpha-deployment ([549fd83](https://github.com/ethereum-push-notification-service/push-sdk/commit/549fd839867d84a98a10206a7f9945aeb1720e49))
+* Merge branch 'main' into alpha ([72464fd](https://github.com/ethereum-push-notification-service/push-sdk/commit/72464fd97260b612649035e3b241f946de8f9e92))
+* show hardcoded msg rather than throwing error ([#388](https://github.com/ethereum-push-notification-service/push-sdk/issues/388)) ([8962e10](https://github.com/ethereum-push-notification-service/push-sdk/commit/8962e10036916d0bc161324f5684f74bb7b74dc3))
+* **video:** set trickle to true while creating peer instance ([#397](https://github.com/ethereum-push-notification-service/push-sdk/issues/397)) ([0b609be](https://github.com/ethereum-push-notification-service/push-sdk/commit/0b609bec87a6187d1e7cbf8052a2b9a36b9fcd7a))
+
+
+
 ## [0.0.1-alpha.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.6...restapi-0.0.1-alpha.7) (2023-05-15)
 
 
