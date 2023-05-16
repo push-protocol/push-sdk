@@ -98,13 +98,17 @@ export class Video {
   }
 
   async create(options: VideoCreateInputOptions): Promise<void> {
-    const { audio = true, video = true } = options || {};
+    const { audio = true, video = true, stream = null } = options || {};
 
     try {
-      const localStream = await navigator.mediaDevices.getUserMedia({
-        video,
-        audio,
-      });
+      const localStream =
+        stream !== null
+          ? stream // for backend
+          : await navigator.mediaDevices.getUserMedia({
+              // for frontend
+              video,
+              audio,
+            });
 
       if (video === false) {
         stopVideoStream(localStream);
@@ -147,7 +151,7 @@ export class Video {
 
       this.peerInstance = new Peer({
         initiator: true,
-        trickle: false,
+        trickle: true,
         stream: this.data.local.stream,
       });
 
@@ -280,7 +284,7 @@ export class Video {
 
       this.peerInstance = new Peer({
         initiator: false,
-        trickle: false,
+        trickle: true,
         stream: this.data.local.stream,
       });
 
