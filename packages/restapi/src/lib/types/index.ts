@@ -166,20 +166,54 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+
   /**
-   * DEPRECATED
+   * @deprecated Use `profile.name` instead.
    */
   name: string | null;
+  /**
+   * @deprecated Use `profile.desc` instead.
+   */
   about: string | null;
+  /**
+   * @deprecated Use `profile.picture` instead.
+   */
   profilePicture: string | null;
+  /**
+   * @deprecated Use `msgSent` instead.
+   */
   numMsg: number;
+  /**
+   * @deprecated Use `maxMsgPersisted` instead.
+   */
   allowedNumMsg: number;
+  /**
+   * @deprecated Use `encryptedPrivateKey.version` instead.
+   */
   encryptionType: string;
+  /**
+   * @deprecated Use `verificationProof` instead.
+   */
   signature: string;
+  /**
+   * @deprecated Use `verificationProof` instead.
+   */
   sigType: string;
+  /**
+   * @deprecated Use `encryptedPrivateKey.encryptedPassword` instead.
+   */
   encryptedPassword: string | null;
+  /**
+   * @deprecated
+   */
   nftOwner: string | null;
+  /**
+   * @deprecated Not recommended to be used anywhere
+   */
   linkedListHash?: string | null;
+  /**
+   * @deprecated Not recommended to be used anywhere
+   */
   nfts?: [] | null;
 }
 

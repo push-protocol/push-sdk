@@ -23,7 +23,11 @@ import {
   IMessageIPFS,
   ProgressHookType,
 } from '../types';
-import { isValidETHAddress, pCAIP10ToWallet } from './address';
+import {
+  isValidCAIP10NFTAddress,
+  isValidETHAddress,
+  pCAIP10ToWallet,
+} from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 
@@ -574,7 +578,11 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = (publicKey: string, did: string): string => {
+export const verifyPGPPublicKey = (
+  encryptedPrivateKey: string,
+  publicKey: string,
+  did: string
+): string => {
   try {
     if (publicKey !== '' && publicKey.includes('signature')) {
       const { key, signature: verificationProof } = JSON.parse(publicKey);
@@ -583,16 +591,17 @@ export const verifyPGPPublicKey = (publicKey: string, did: string): string => {
       if (verificationProof.includes('eip712'))
         signedData = 'Create Push Chat Profile \n' + generateHash(key);
       else signedData = 'Create Push Profile \n' + generateHash(key);
-      // if (
-      //   verifyProfileSignature(
-      //     verificationProof,
-      //     signedData,
-      //     pCAIP10ToWallet(did),
-      //     nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
-      //   )
-      // )
-      //   return publicKey;
-      // else throw new Error('Cannot Verify this publicKey Owner!!!');
+      if (
+        verifyProfileSignature(
+          verificationProof,
+          signedData,
+          isValidCAIP10NFTAddress(did)
+            ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
+            : pCAIP10ToWallet(did)
+        )
+      )
+        return publicKey;
+      else throw new Error('Cannot Verify this publicKey Owner!!!');
     }
     return publicKey;
   } catch (err) {

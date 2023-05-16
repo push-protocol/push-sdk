@@ -18,6 +18,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
     .then((response) => {
       if (response.data) {
         response.data.publicKey = verifyPGPPublicKey(
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
           response.data.did
         );

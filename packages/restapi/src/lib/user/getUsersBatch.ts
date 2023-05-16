@@ -37,6 +37,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
     .then((response) => {
       response.data.users.forEach((user: any, index: number) => {
         response.data.users[index].publicKey = verifyPGPPublicKey(
+          user.encryptedPrivateKey,
           user.publicKey,
           user.did
         );

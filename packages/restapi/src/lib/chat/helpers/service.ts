@@ -64,6 +64,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
           response.data.did
         );
@@ -107,6 +108,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
           response.data.did
         );
