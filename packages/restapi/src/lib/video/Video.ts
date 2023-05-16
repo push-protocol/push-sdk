@@ -98,13 +98,17 @@ export class Video {
   }
 
   async create(options: VideoCreateInputOptions): Promise<void> {
-    const { audio = true, video = true } = options || {};
+    const { audio = true, video = true, stream = null } = options || {};
 
     try {
-      const localStream = await navigator.mediaDevices.getUserMedia({
-        video,
-        audio,
-      });
+      const localStream =
+        stream !== null
+          ? stream // for backend
+          : await navigator.mediaDevices.getUserMedia({
+              // for frontend
+              video,
+              audio,
+            });
 
       if (video === false) {
         stopVideoStream(localStream);

@@ -1660,7 +1660,16 @@ function start() {
   runNotificaitonsUseCases().then(() => {
     runChatUseCases().then(() => {
       runNFTChatUseCases().then(() => {
-        runVideoUseCases();
+        if(videoLocalStream !== null){
+          /*
+            - One instance of videoObject corresponds to one user/peer of the call
+            - For a wallet-to-wallet video call we need 2 such users/peers
+              - One of these peer would be the initiator and the other would be the receiver 
+            - Stream object has to be fetched from the frontend of your app to the backend and supplied to videoLocalStream corresponding to each of the peer
+            - Might be of help: https://stackoverflow.com/questions/25523289/sending-a-mediastream-to-host-server-with-webrtc-after-it-is-captured-by-getuser
+          */
+          runVideoUseCases();
+        }
       });
     });
   });

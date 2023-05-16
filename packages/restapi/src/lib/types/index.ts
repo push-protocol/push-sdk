@@ -368,6 +368,7 @@ export type VideoCallData = {
 export type VideoCreateInputOptions = {
   video?: boolean;
   audio?: boolean;
+  stream?: MediaStream; // for backend use
 };
 
 export type VideoRequestInputOptions = {
