@@ -151,7 +151,7 @@ export class Video {
 
       this.peerInstance = new Peer({
         initiator: true,
-        trickle: false,
+        trickle: true,
         stream: this.data.local.stream,
       });
 
@@ -284,7 +284,7 @@ export class Video {
 
       this.peerInstance = new Peer({
         initiator: false,
-        trickle: false,
+        trickle: true,
         stream: this.data.local.stream,
       });
 
