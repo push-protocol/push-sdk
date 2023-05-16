@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.8...restapi-0.0.1-alpha.9) (2023-05-16)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([469398d](https://github.com/ethereum-push-notification-service/push-sdk/commit/469398dc94df805257d6a6bb8e0707cebc5f7d8a))
+* **video:** turn off trickle while creating peer instance ([#398](https://github.com/ethereum-push-notification-service/push-sdk/issues/398)) ([ae5b38e](https://github.com/ethereum-push-notification-service/push-sdk/commit/ae5b38e702539eaf92a516b4e557c5a88de0f4c7))
+
+
+
 ## [0.0.1-alpha.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.7...restapi-0.0.1-alpha.8) (2023-05-16)
 
 
