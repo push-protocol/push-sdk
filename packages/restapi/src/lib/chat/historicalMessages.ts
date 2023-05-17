@@ -2,7 +2,11 @@ import Constants from '../constants';
 import { pCAIP10ToWallet } from '../helpers';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { get } from '../user';
-import { decryptConversation, getMessagesService } from './helpers';
+import {
+  addDeprecatedInfoToMessages,
+  decryptConversation,
+  getMessagesService,
+} from './helpers';
 
 enum FetchLimit {
   MIN = 1,
@@ -44,10 +48,11 @@ export const history = async (
     }
 
     const messages = await getMessagesService({ threadhash, limit, env });
+    const updatedMessages = addDeprecatedInfoToMessages(messages);
     const connectedUser = await get({ account: pCAIP10ToWallet(account), env });
     if (toDecrypt) {
       return await decryptConversation({
-        messages,
+        messages: updatedMessages,
         connectedUser,
         pgpPrivateKey,
         env,
