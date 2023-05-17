@@ -133,6 +133,8 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
+  deprecated?: boolean; // scope only at sdk level
+  deprecatedCode?: string; // scope only at sdk level
 }
 export interface IFeeds {
   msg: IMessageIPFS;
