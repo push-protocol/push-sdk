@@ -1,29 +1,48 @@
 import { IFeeds } from '@pushprotocol/restapi';
-import { ChatFeedsType } from '../../../../types';
+import { ChatFeedsType, PUSH_TABS } from '../../../../types';
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { ChatSnap } from './ChatSnap';
 import { Section } from '../../../reusables/sharedStyling';
+import { ChatMainStateContext } from '../../../../context';
 
 type ChatListPropType = {
-    chatsFeed: ChatFeedsType;
-  };
+  chatsFeed: ChatFeedsType;
+};
 
-//Resolve ud name and  pfp
-export const ChatList: React.FC<ChatListPropType> = ({chatsFeed}) => {
+
+export const ChatList: React.FC<ChatListPropType> = ({ chatsFeed }) => {
+  const { activeTab } =
+  useContext<any>(ChatMainStateContext);
+  const [page, setPage] = useState<number>(1);
+ 
+  
+  console.log(page)
   return (
-    <Section flexDirection="column" maxHeight='460px' margin='25px 0 15px 0' overflow='hidden auto'>
+    <ChatListCard
+      flexDirection="column"
+      height="100%"
+      margin="15px 0 25px 0"
+      justifyContent="start"
+      overflow="hidden auto"
+    >
       {!!Object.keys(chatsFeed || {}).length &&
         Object.keys(chatsFeed).map((id: string) => (
           <ChatSnap chat={chatsFeed[id]} id={id} />
         ))}
-    </Section>
+    </ChatListCard>
   );
 };
 
 //styles
 
-const Image = styled.img``;
+const ChatListCard = styled(Section)`
+  &::-webkit-scrollbar-thumb {
+    background: rgb(181 181 186);
+    border-radius: 10px;
+  }
 
-//scrollbar design left
-
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+`;

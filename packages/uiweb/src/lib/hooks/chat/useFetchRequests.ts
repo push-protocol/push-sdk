@@ -1,21 +1,22 @@
 
 import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
-import { useCallback, useState } from 'react';
-import { ChatFeedsType } from '../..';
+import { useCallback, useContext, useState } from 'react';
+import { ChatFeedsType, Constants } from '../..';
+import { ChatMainStateContext, ChatPropsContext } from '../../context';
 
 
-interface FetchRequestsParams {
-    account: string;
-    decryptedPgpPvtKey: string;
-    env: Env;
-  }
+
 
 const useFetchRequests = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-
-  const fetchRequests = useCallback(async ({account,env,decryptedPgpPvtKey}:FetchRequestsParams) => {
+  const { setRequestsFeed} =
+  useContext<any>(ChatMainStateContext);
+  const { account, env,decryptedPgpPvtKey } =
+  useContext<any>(ChatPropsContext);
+  
+  const fetchRequests = useCallback(async () => {
 
     setLoading(true);
     try {
@@ -32,17 +33,15 @@ const useFetchRequests = () => {
       for (const request of requests) {
         modifiedRequestsObj[request.did ?? request.chatId] = request;
       }
-
-      return modifiedRequestsObj;
+      setRequestsFeed(modifiedRequestsObj);
     } catch (error: Error | any) {
       setLoading(false);
       setError(error.message);
       console.log(error);
-      return;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [decryptedPgpPvtKey]);
 
   return { fetchRequests, error, loading };
 };

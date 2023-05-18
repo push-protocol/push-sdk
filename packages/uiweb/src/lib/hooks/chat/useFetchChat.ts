@@ -4,27 +4,33 @@ import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatPropsContext } from '../../context';
 
-interface conversationHashParams {
-    conversationId: string;
+
+interface fetchChat {
+  recipientAddress: string;
+  account: string;
+  decryptedPgpPvtKey: string;
+  env?: Env;
 }
 
-const useGetConversationHash = () => {
+const useFetchChat = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env } =
+  const { account, env,decryptedPgpPvtKey } =
   useContext<any>(ChatPropsContext);
 
-  const getConversationHash = useCallback(
-    async ({ conversationId }: conversationHashParams) => {
+
+  const fetchChat = useCallback(
+    async ({ recipientAddress}: fetchChat) => {
       setLoading(true);
       try {
-        const response = await PushAPI.chat.conversationHash({
-          conversationId,
+        const chat = await PushAPI.chat.chat({
           account: account,
+          toDecrypt: decryptedPgpPvtKey ? true : false,
+          pgpPrivateKey: String(decryptedPgpPvtKey),
+          recipient: recipientAddress,
           env: env
         });
-        setLoading(false);
-        return response;
+        return chat;
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
@@ -32,9 +38,10 @@ const useGetConversationHash = () => {
         return;
       }
     },
-    []
+    [decryptedPgpPvtKey]
   );
-  return { getConversationHash, error, loading };
+
+  return { fetchChat, error, loading };
 };
 
-export default useGetConversationHash;
+export default useFetchChat;

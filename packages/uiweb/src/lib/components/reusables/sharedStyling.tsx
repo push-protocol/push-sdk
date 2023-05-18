@@ -5,6 +5,7 @@ type SpanStyleProps = {
     alignSelf?:string;
     background?:string;
     borderRadius?:string;
+    border?:string;
     bottom?:string;
     flex?:string;
     fontSize?:string;
@@ -21,6 +22,7 @@ type SpanStyleProps = {
     zIndex?:string;
     top?:string;
     maxWidth?:string;
+    width?:string;
     cursor?:string;
   };
 
@@ -28,6 +30,7 @@ export const Span = styled.span<SpanStyleProps>`
   align-self: ${(props) => props.alignSelf || "auto"};
   background: ${(props) => props.background || "transparent"};
   border-radius: ${(props) => props.borderRadius || "initial"};
+  border: ${(props) => props.border || "initial"};
   bottom: ${(props) => props.bottom || "auto"};
   color: ${(props) => props.color || "inherit"};
   flex: ${(props) => props.flex || "initial"};
@@ -44,6 +47,7 @@ export const Span = styled.span<SpanStyleProps>`
   text-align: ${(props) => props.textAlign || "center"};
   text-transform: ${(props) => props.textTransform || "inherit"};
   top: ${(props) => props.top || "auto"};
+  width: ${(props) => props.width || 'auto'};
   z-index: ${(props) => props.zIndex || "auto"};
   max-width: ${(props) => props.maxWidth || "initial"};
 `
@@ -51,9 +55,11 @@ export const Span = styled.span<SpanStyleProps>`
 type SectionStyleProps = {
     flexDirection?: string;
     gap?: string;
+    cursor?:string;
     alignItems?: string;
     alignSelf?:string;
     minHeight?:string;
+    minWidth?:string;
     margin?:string;
     gradient?:string;
     position?:string;
@@ -63,15 +69,23 @@ type SectionStyleProps = {
     justifyContent?:string;
     maxHeight?:string;
     height?:string;
+    maxWidth?:string;
     width?:string;
     right?:string;
     bottom?:string;
     top?:string;
     left?:string;
+    borderColor?:string;
+    borderStyle?:string;
+    borderWidth?:string;
+    borderRadius?:string;
+    flex?:string;
   };
   
 export const Section = styled.div<SectionStyleProps>`
   display: flex;
+  cursor: ${(props) => props.cursor || "default"};
+  flex: ${(props) => props.flex || "default"};
   flex-direction: ${(props) => props.flexDirection || 'row'};
   gap: ${(props) => props.gap || '0px'};
   align-items: ${(props) => props.alignItems || 'center'};
@@ -80,14 +94,53 @@ export const Section = styled.div<SectionStyleProps>`
   margin: ${(props) => props.margin || '0px'};
   min-height: ${(props) => props.minHeight || 'auto'};
   max-height: ${(props) => props.maxHeight || 'auto'};
+  max-width: ${(props) => props.maxWidth || 'auto'};
+  min-width: ${(props) => props.minWidth || 'auto'};
   height: ${(props) => props.height || 'auto'};
   width: ${(props) => props.width || 'auto'};
   overflow: ${(props) => props.overflow || 'initial'};
   padding: ${(props) => props.padding || '0px'};
-  position: ${(props) => props.position || 'relative'};
+  position: ${(props) => props.position || 'static'};
   background: ${(props) => props.gradient ? props.gradient : props.background ? props.background : 'transparent' || 'transparent'};
   right: ${(props) => props.right || 'auto'};
   top: ${(props) => props.top || 'auto'};
   bottom: ${(props) => props.bottom || 'auto'};
   left: ${(props) => props.left || 'auto'};
+  border-radius: ${(props) => props.borderRadius || '0px'};
+  border-width:${(props) => props.borderWidth || 'initial'};
+  border-color:${(props) => props.borderColor || 'initial'};
+  border-style:${(props) => props.borderStyle || 'initial'};
+
+`;
+
+
+type ImageStyleProps = {
+display?:string;
+height?:string;
+maxHeight?:string;
+padding?:string;
+widthmargin?:string;
+verticalAlign?:string;
+borderRadius?:string;
+overflow?:string;
+cursor?:string;
+filter?:string;
+alt?:string;
+objectFit?:string;
+margin?:string;
+};
+export const Image = styled.img<ImageStyleProps>`
+  display: ${(props) => props.display || 'flex'};
+  height: ${(props) => props.height || "auto"};
+  max-height: ${(props) => props.maxHeight || "initial"};
+  padding: ${(props) => props.padding || "0px"};
+  width: ${(props) => props.width || "100%"};
+  margin: ${(props) => props.margin || "0px"};
+  vertical-align: ${(props) => props.verticalAlign || "auto"};
+  border-radius: ${(props) => props.borderRadius || "initial"};
+  overflow: ${(props) => props.overflow || 'hidden'};
+  cursor: ${(props) => props.cursor || 'default'};
+  filter: ${(props) => props.filter || 'none'};
+  alt: ${(props) => props.alt || 'Image'};
+  object-fit:${(props)=>props.objectFit || 'fill'};
 `;

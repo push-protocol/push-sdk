@@ -16,7 +16,6 @@ import { Web3NameListType } from '../types';
 const getEnsName = async (provider: ethers.providers.BaseProvider | any, checksumWallet: string,setWeb3Name:(id:string,web3Name:string) => void) => {
   let ensName: string | null= null;
   provider.lookupAddress(checksumWallet).then(async (ens:string) => {
-    console.log(ens)
     if (ens) {
       ensName = ens;
       setWeb3Name(checksumWallet,ensName)
@@ -32,9 +31,7 @@ const getUnstoppableName = async (checksumWallet: string,setWeb3Name:(id:string,
   const udResolver = getUdResolver(env);
 
   // attempt reverse resolution on provided address
-  console.log(udResolver)
   let udName = await udResolver.reverse(checksumWallet);
-  console.log(udName)
   if (udName) {
     setWeb3Name(checksumWallet,udName)
   } else {
@@ -50,9 +47,7 @@ export function useResolveWeb3Name(address: string,env:Env) {
 
   useEffect(() => {
     (async () => {
-      console.log(CoreContractChainId[env])
       const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
-      console.log(provider)
       if (address) {
         const walletLowercase = pCAIP10ToWallet(address)?.toLowerCase();
         const checksumWallet = ethers.utils.getAddress(walletLowercase);

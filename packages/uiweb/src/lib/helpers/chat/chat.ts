@@ -1,7 +1,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants, ENV } from '../../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../../types';
-import { Env, IConnectedUser } from '@pushprotocol/restapi';
+import { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -122,3 +122,35 @@ export const copyToClipboard = (address: string): void => {
   }
 };
 
+
+export const getDefaultFeedObject = ({user}:{user:IUser}):IFeeds => {
+  const feed = {
+    msg: {
+      messageContent: '',
+      timestamp: 0,
+      messageType: '',
+      signature: '',
+      sigType: '',
+      link: null,
+      encType: '',
+      encryptedSecret: '',
+      fromDID: '',
+      fromCAIP10: '',
+      toDID: '',
+      toCAIP10: '',
+    },
+    wallets:  user.wallets,
+    did: user.did,
+    threadhash: null,
+    profilePicture: user.profilePicture,
+    about: user.about,
+    intent: null,
+    intentSentBy: null,
+    intentTimestamp: new Date(),
+    publicKey:  user.publicKey,
+    combinedDID: '',
+    cid: '',
+    groupInformation: undefined,
+  };
+  return feed;
+}
