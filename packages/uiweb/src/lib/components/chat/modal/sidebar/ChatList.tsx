@@ -4,7 +4,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { ChatSnap } from './ChatSnap';
 import { Section } from '../../../reusables/sharedStyling';
-import { ChatMainStateContext } from 'packages/uiweb/src/lib/context';
+import { ChatMainStateContext } from '../../../../context';
 
 type ChatListPropType = {
   chatsFeed: ChatFeedsType;

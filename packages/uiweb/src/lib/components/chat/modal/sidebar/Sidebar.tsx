@@ -8,7 +8,7 @@ import useFetchChats from '../../../../hooks/chat/useFetchChats';
 import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span } from '../../../reusables/sharedStyling';
 import { UnreadChats } from '../../MinimisedModalHeader';
-import useFetchRequests from 'packages/uiweb/src/lib/hooks/chat/useFetchRequests';
+import useFetchRequests from '../../../../hooks/chat/useFetchRequests';
 import { RequestsFeedList } from './RequestsFeedList';
 import { ChatsFeedList } from './ChatsFeedList';
 
@@ -108,9 +108,7 @@ export const Sidebar = () => {
         activeTab === PUSH_TABS.REQUESTS && <RequestsFeedList />}
 
       {searchedChats && !!Object.keys(searchedChats).length && (
-        <>
-          <ChatList chatsFeed={searchedChats} />
-        </>
+        <ChatList chatsFeed={searchedChats} />
       )}
       {searchedChats && !Object.keys(searchedChats).length && (
         <Span width="100%" margin="10px 0 0 10px" textAlign="left">

@@ -68,10 +68,8 @@ console.log(address)
   }
   if(address){
     chatProfile = await fetchChatProfile({ profileId: address });
-    if (chatProfile) {
-    } else {
+    if (!chatProfile) 
       chatProfile = displayDefaultUser({ caip10: walletToPCAIP10(address) });
-    }
     return chatProfile;
   }
   return;

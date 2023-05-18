@@ -41,7 +41,7 @@ const usePushSendMessage = () => {
 
         const modifiedResponse = { ...response, messageContent: message };
         if (chatsFeed[selectedChatId]) {
-          let newOne: IFeeds = chatsFeed[selectedChatId];
+          const newOne: IFeeds = chatsFeed[selectedChatId];
           setChat(selectedChatId, {
             messages: Array.isArray(chats.get(selectedChatId)?.messages)
               ? [...chats.get(selectedChatId)!.messages, modifiedResponse]
@@ -53,7 +53,7 @@ const usePushSendMessage = () => {
           newOne['msg'] = modifiedResponse;
           setChatFeed(selectedChatId, newOne);
         } else {
-          let fetchChatsMessages: IFeeds = (await fetchChat({
+          const fetchChatsMessages: IFeeds = (await fetchChat({
             recipientAddress: receiver,
             account,
             env,

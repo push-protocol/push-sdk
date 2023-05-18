@@ -1,7 +1,7 @@
 import {
   ChatMainStateContext,
   ChatPropsContext,
-} from 'packages/uiweb/src/lib/context';
+} from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -12,8 +12,8 @@ import moment from 'moment';
 import { dateToFromNowDaily } from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
 import CheckCircleIcon from '../../../../icons/chat/checkCircle.svg';
-import useApproveChatRequest from 'packages/uiweb/src/lib/hooks/chat/useApproveChatRequest';
-import { PUSH_TABS } from 'packages/uiweb/src/lib/types';
+import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
+import { PUSH_TABS } from '../../../../types';
 import { Typebar } from './typebar/Typebar';
 
 const CHATS_FETCH_LIMIT = 15;
@@ -138,7 +138,7 @@ const MessageCard = ({
 const Messages = ({ chat }: { chat: IMessageIPFS }) => {
   const { account } = useContext<any>(ChatPropsContext);
   console.log(chat.fromDID);
-  let position =
+  const position =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account.toLowerCase()
       ? 0
       : 1;
@@ -208,13 +208,13 @@ export const MessageBox = () => {
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
-        let content = listInnerRef.current;
-        let curScrollPos = content.scrollTop;
-        let oldScroll = content.scrollHeight - content.clientHeight;
+        const content = listInnerRef.current;
+        const curScrollPos = content.scrollTop;
+        const oldScroll = content.scrollHeight - content.clientHeight;
 
         await getChatCall();
 
-        let newScroll = content.scrollHeight - content.clientHeight;
+        const newScroll = content.scrollHeight - content.clientHeight;
         content.scrollTop = curScrollPos + (newScroll - oldScroll);
       }
     }
