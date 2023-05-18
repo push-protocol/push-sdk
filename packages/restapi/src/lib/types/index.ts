@@ -151,6 +151,8 @@ export interface IFeeds {
   cid?: string;
   chatId?: string;
   groupInformation?: GroupDTO;
+  deprecated?: boolean; // scope only at sdk level
+  deprecatedCode?: string; // scope only at sdk level
 }
 export interface IUser {
   did: string;
