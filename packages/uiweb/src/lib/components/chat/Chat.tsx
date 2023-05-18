@@ -18,15 +18,8 @@ export const Chat = () => {
     useContext<any>(ChatPropsContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const { fetchChats } = useFetchChats();
-  const { fetchRequests } = useFetchRequests();
 
-  useEffect(() => {
-    if (decryptedPgpPvtKey) {
-      fetchChatList();
-      fetchRequestList();
-    }
-  }, [account, decryptedPgpPvtKey, env]);
+
 
   useEffect(() => {
     setChatsFeed({});
@@ -35,22 +28,7 @@ export const Chat = () => {
     setSelectedChatId(null);
   }, [account, decryptedPgpPvtKey, env]);
 
-  const fetchChatList = async () => {
-    const chatList = await fetchChats({ account, decryptedPgpPvtKey, env });
-    console.log('in here');
-    console.log(chatList);
-    setChatsFeed(chatList);
-  };
-  const fetchRequestList = async () => {
-    const requestList = await fetchRequests({
-      account,
-      decryptedPgpPvtKey,
-      env,
-    });
-    console.log('in here');
-    console.log(requestList);
-    setRequestsFeed(requestList);
-  };
+ 
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
   };
@@ -62,7 +40,7 @@ export const Chat = () => {
       maxHeight="600px"
       position="fixed"
       background="#fff"
-      padding='24px 20px 24px 24px'
+      padding='24px'
       right= '12px'
       bottom= '18px'
     >

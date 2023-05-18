@@ -1,23 +1,21 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
+import { Constants } from '../../config';
+import { ChatPropsContext } from '../../context';
 
 interface conversationHashParams {
-    account: string;
-    env: Env;
     conversationId: string;
-}
-
-interface conversationHashResponseType {
-  threadHash: string;
 }
 
 const useGetConversationHash = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
+  const { account, env } =
+  useContext<any>(ChatPropsContext);
 
   const getConversationHash = useCallback(
-    async ({ conversationId,account,env }: conversationHashParams) => {
+    async ({ conversationId }: conversationHashParams) => {
       setLoading(true);
       try {
         const response = await PushAPI.chat.conversationHash({

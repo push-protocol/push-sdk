@@ -9,7 +9,7 @@ import { Env } from '@pushprotocol/restapi';
 
 export type ChatProps = {
   account: string;
-  decryptedPgpPvtKey?: string;
+  decryptedPgpPvtKey: string; //have to make it optional for new users
   env?: Env;
 };
 

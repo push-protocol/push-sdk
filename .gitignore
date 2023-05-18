@@ -287,5 +287,4 @@ buck-out/
 /
 packages/restapi/yarn.lock
 yarn.lock
-packages/restapi/tests/.env
-packages/restapi/.env
+*.env
