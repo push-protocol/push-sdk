@@ -110,13 +110,6 @@ export class Video {
               audio,
             });
 
-      if (video === false) {
-        stopVideoStream(localStream);
-      }
-      if (audio === false) {
-        stopAudioStream(localStream);
-      }
-
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.stream = localStream;
