@@ -92,7 +92,11 @@ export interface ISendNotificationInputOptions {
     img: string;
     metadata?: any;
     additionalMeta?: {
-      type: `${ADDITIONAL_META_TYPE}+${ADDITIONAL_META_VERSION}`;
+      /**
+       * type = ADDITIONAL_META_TYPE+VERSION
+       * VERSION > 0
+       */
+      type: `${ADDITIONAL_META_TYPE}+${number}`;
       data: string;
       domain?: string;
     };

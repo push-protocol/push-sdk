@@ -48,8 +48,4 @@ export enum ADDITIONAL_META_TYPE {
   PUSH_VIDEO = 1,
 }
 
-export enum ADDITIONAL_META_VERSION {
-  V1 = 1,
-}
-
 export const DEFAULT_DOMAIN = 'push.org';
