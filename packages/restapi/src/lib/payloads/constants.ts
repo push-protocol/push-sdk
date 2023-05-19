@@ -1,5 +1,5 @@
 export interface ChainIdToSourceType {
-  [key: number]: string
+  [key: number]: string;
 }
 
 export const CHAIN_ID_TO_SOURCE: ChainIdToSourceType = {
@@ -10,7 +10,9 @@ export const CHAIN_ID_TO_SOURCE: ChainIdToSourceType = {
     56: "BSC_MAINNET",
     97: "BSC_TESTNET",
     10: "OPTIMISM_MAINNET",
-    420: "OPTIMISM_TESTNET"
+    420: "OPTIMISM_TESTNET",
+    1442: "POLYGON_ZK_EVM_TESTNET",
+    1101: "POLYGON_ZK_EVM_MAINNET"
 };
 
 export const SOURCE_TYPES = {
@@ -22,19 +24,21 @@ export const SOURCE_TYPES = {
   BSC_TESTNET: 'BSC_TESTNET',
   OPTIMISM_MAINNET: 'OPTIMISM_MAINNET',
   OPTIMISM_TESTNET: 'OPTIMISM_TESTNET',
-  THE_GRAPH: 'THE_GRAPH'
+  POLYGON_ZK_EVM_TESTNET: 'POLYGON_ZK_EVM_TESTNET',
+  POLYGON_ZK_EVM_MAINNET:'POLYGON_ZK_EVM_MAINNET',
+  THE_GRAPH: 'THE_GRAPH',
+  PUSH_VIDEO: 'PUSH_VIDEO',
 };
 
-export enum IDENTITY_TYPE  {
+export enum IDENTITY_TYPE {
   MINIMAL = 0,
   IPFS = 1,
   DIRECT_PAYLOAD = 2,
-  SUBGRAPH = 3
-};
+  SUBGRAPH = 3,
+}
 
-export enum NOTIFICATION_TYPE  {
+export enum NOTIFICATION_TYPE {
   BROADCAST = 1,
   TARGETTED = 3,
-  SUBSET = 4
-};
-
+  SUBSET = 4,
+}

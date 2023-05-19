@@ -2,7 +2,12 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { ChatSendOptionsType, MessageWithCID } from '../types';
-import { getAccountAddress, getConnectedUser, getWallet } from './helpers';
+import {
+  getAccountAddress,
+  getConnectedUserV2,
+  getUserDID,
+  getWallet,
+} from './helpers';
 import { conversationHash } from './conversationHash';
 import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
@@ -42,14 +47,13 @@ export const send = async (
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
-
-    
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const receiver = await getUserDID(receiverAddress, env);
     let conversationResponse: any = null;
     if (!isGroup) {
       conversationResponse = await conversationHash({
-        conversationId: receiverAddress,
-        account: address,
+        conversationId: receiver,
+        account: connectedUser.did,
         env,
       });
     }
@@ -57,7 +61,7 @@ export const send = async (
       return start({
         messageContent: messageContent,
         messageType: messageType,
-        receiverAddress,
+        receiverAddress: receiver,
         connectedUser,
         apiKey,
         env,
@@ -66,7 +70,7 @@ export const send = async (
       const API_BASE_URL = getAPIBaseUrls(env);
       const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
       const body: ISendMessagePayload = await sendMessagePayload(
-        receiverAddress,
+        receiver,
         connectedUser,
         messageContent,
         messageType,

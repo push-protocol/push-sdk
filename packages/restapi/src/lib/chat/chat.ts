@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists } from './helpers';
+import { addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 
 export const chat = async (options: {
   account: string;
@@ -18,11 +18,9 @@ export const chat = async (options: {
     toDecrypt = false,
     recipient,
   } = options || {};
-  const user = walletToPCAIP10(account);
-  const recipientWallet = walletToPCAIP10(recipient);
+  const user = await getUserDID(account, env);
+  const recipientWallet = await getUserDID(recipient, env);
   if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
-  if (!isValidETHAddress(recipientWallet))
-    throw new Error(`Invalid address ${recipientWallet}`);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chat/${recipientWallet}`;
   try {
@@ -30,8 +28,9 @@ export const chat = async (options: {
     // If no chat between users, then returns {}
     const chat: IFeeds = response.data;
     if (Object.keys(chat).length !== 0) {
+      const updatedChat = addDeprecatedInfo([chat]);
       const [feed]: IFeeds[] = await getInboxLists({
-        lists: [chat],
+        lists: updatedChat,
         user,
         toDecrypt,
         pgpPrivateKey,

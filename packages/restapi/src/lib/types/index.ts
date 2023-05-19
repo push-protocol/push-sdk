@@ -71,7 +71,7 @@ export type ParsedResponseType = {
 };
 
 export interface ISendNotificationInputOptions {
-  senderType: 0 | 1;
+  senderType?: 0 | 1;
   signer: any;
   type: NOTIFICATION_TYPE;
   identityType: IDENTITY_TYPE;
@@ -149,6 +149,8 @@ export interface IFeeds {
   cid?: string;
   chatId?: string;
   groupInformation?: GroupDTO;
+  deprecated?: boolean; // scope only at sdk level
+  deprecatedCode?: string; // scope only at sdk level
 }
 export interface IUser {
   did: string;
@@ -166,6 +168,7 @@ export interface IUser {
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
+  nfts?: [] | null;
 }
 
 export interface Member {
@@ -320,7 +323,10 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = ethers.Wallet;
+export type SignerType = ethers.Signer & {
+  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
+  privateKey?: string;
+};
 
 export type EnvOptionsType = {
   env?: ENV;
@@ -335,15 +341,22 @@ export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
 
 export type encryptedPrivateKeyTypeV2 = {
   ciphertext: string;
-  version: string;
-  salt: string;
+  version?: string;
+  salt?: string;
   nonce: string;
-  preKey: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
 };
 
-export type encryptedPrivateKeyType =
-  | encryptedPrivateKeyTypeV1
-  | encryptedPrivateKeyTypeV2;
+export type encryptedPrivateKeyType = {
+  version?: string;
+  nonce: string;
+  ephemPublicKey?: string;
+  ciphertext: string;
+  salt?: string;
+  preKey?: string;
+  encryptedPassword?: encryptedPrivateKeyTypeV2;
+};
 
 export type ProgressHookType = {
   progressId: string;

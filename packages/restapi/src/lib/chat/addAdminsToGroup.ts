@@ -5,12 +5,12 @@ import { EnvOptionsType, SignerType, GroupDTO } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  getConnectedUser,
   sign,
   getWallet,
   getAccountAddress,
   getMembersList,
-  getAdminsList
+  getAdminsList,
+  getConnectedUserV2
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import {
@@ -61,12 +61,15 @@ export const addAdminsToGroup = async (
         env,
     })
 
-    const connectedUser = await getConnectedUser(wallet, pgpPrivateKey, env);
+    // TODO: change to getConnectedUserV2
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
+    // TODO: look at user did in updateGroup
     const convertedMembers = getMembersList(
         group.members, group.pendingMembers
     );
 
+        // TODO: look at user did in updateGroup
     const adminsToBeAdded = admins.map((admin) => walletToPCAIP10(admin));
 
     adminsToBeAdded.forEach((admin) => {
@@ -110,7 +113,7 @@ export const addAdminsToGroup = async (
       group.groupDescription,
       convertedMembers,
       convertedAdmins,
-      walletToPCAIP10(address),
+      walletToPCAIP10(address), // Dont call, this use did. look at group update
       verificationProof
     );
 

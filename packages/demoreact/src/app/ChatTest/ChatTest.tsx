@@ -35,6 +35,9 @@ const ChatTest = () => {
           <Link to="/create" className="nav-button">
             USER.CREATE
           </Link>
+          <Link to="/authUpdate" className="nav-button">
+            USER.AUTH.UPDATE
+          </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND
           </Link>

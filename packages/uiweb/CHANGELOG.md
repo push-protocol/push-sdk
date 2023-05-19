@@ -2,6 +2,117 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-1.0.2) (2023-05-13)
+
+
+### Bug Fixes
+
+* socket lib update ([1301f99](https://github.com/ethereum-push-notification-service/push-sdk/commit/1301f999fe37b8e801a3d3e24aa45cf012db158a))
+* update package json ([6c321c7](https://github.com/ethereum-push-notification-service/push-sdk/commit/6c321c760055fa9aaebf1ee5f693bbbad16fb9c8))
+* updated socket version ([5052b6a](https://github.com/ethereum-push-notification-service/push-sdk/commit/5052b6ab721a942dcb7560bfe875296fa2d6a992))
+
+
+
+## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-1.0.2) (2023-05-13)
+
+
+### Bug Fixes
+
+* update package json ([6c321c7](https://github.com/ethereum-push-notification-service/push-sdk/commit/6c321c760055fa9aaebf1ee5f693bbbad16fb9c8))
+* updated socket version ([5052b6a](https://github.com/ethereum-push-notification-service/push-sdk/commit/5052b6ab721a942dcb7560bfe875296fa2d6a992))
+
+
+
+## [1.0.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.0...uiweb-1.0.1) (2023-05-01)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([ec73af8](https://github.com/ethereum-push-notification-service/push-sdk/commit/ec73af85df847159c440a834905015d7937ffd9e))
+* upgrade rest API ([#339](https://github.com/ethereum-push-notification-service/push-sdk/issues/339)) ([0c85519](https://github.com/ethereum-push-notification-service/push-sdk/commit/0c85519b0a9d2a17bd85fb5bccba5c20953d3612))
+
+
+
+# [1.0.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.5.0...uiweb-1.0.0) (2023-05-01)
+
+
+### Bug Fixes
+
+* chamged signerType from ethers.wallet ([#315](https://github.com/ethereum-push-notification-service/push-sdk/issues/315)) ([385b3dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/385b3ddf2e2aa22b687a5094ba5cfec0e13da63b))
+* **component:** add chatid to requests and chats ([#278](https://github.com/ethereum-push-notification-service/push-sdk/issues/278)) ([e1d4af5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1d4af5aa9cfeef0a2ca422d87a158e546fe9d4a))
+* sig changes to include domain ([#279](https://github.com/ethereum-push-notification-service/push-sdk/issues/279)) ([3dd8a9c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3dd8a9ce301521e3913437f3192cefa8d699a914))
+* signerType  ([#303](https://github.com/ethereum-push-notification-service/push-sdk/issues/303)) ([20eb15a](https://github.com/ethereum-push-notification-service/push-sdk/commit/20eb15af4bc3286e5836845e299326352af0ce34))
+* upgraded rest api package in webui ([#338](https://github.com/ethereum-push-notification-service/push-sdk/issues/338)) ([b4cc0b0](https://github.com/ethereum-push-notification-service/push-sdk/commit/b4cc0b0104d6a16279680118364c085eab7d74b2))
+
+
+* Chat keys Encryption V2 (#231) ([f35730b](https://github.com/ethereum-push-notification-service/push-sdk/commit/f35730bd6398694176941875abb3e8678b255568)), closes [#231](https://github.com/ethereum-push-notification-service/push-sdk/issues/231)
+
+
+### BREAKING CHANGES
+
+* New chat key ecnryption
+
+* feat: chat key encryption v2
+
+New encryption version for pgp keys
+* Signer is required in ui-web
+
+* refactor: add signer in ApproveRequest
+
+* fix: revert dev from localhost
+
+* feat: auto uprade keys
+
+* test: tests for upgrade User
+
+* test: test for send chat message
+
+* test: rename tests
+
+* test: text formating fix
+
+
+
+# [1.0.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.5.0...uiweb-1.0.0) (2023-05-01)
+
+
+### Bug Fixes
+
+* chamged signerType from ethers.wallet ([#315](https://github.com/ethereum-push-notification-service/push-sdk/issues/315)) ([385b3dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/385b3ddf2e2aa22b687a5094ba5cfec0e13da63b))
+* **component:** add chatid to requests and chats ([#278](https://github.com/ethereum-push-notification-service/push-sdk/issues/278)) ([e1d4af5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e1d4af5aa9cfeef0a2ca422d87a158e546fe9d4a))
+* sig changes to include domain ([#279](https://github.com/ethereum-push-notification-service/push-sdk/issues/279)) ([3dd8a9c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3dd8a9ce301521e3913437f3192cefa8d699a914))
+* signerType  ([#303](https://github.com/ethereum-push-notification-service/push-sdk/issues/303)) ([20eb15a](https://github.com/ethereum-push-notification-service/push-sdk/commit/20eb15af4bc3286e5836845e299326352af0ce34))
+* upgraded rest api package in webui ([#338](https://github.com/ethereum-push-notification-service/push-sdk/issues/338)) ([b4cc0b0](https://github.com/ethereum-push-notification-service/push-sdk/commit/b4cc0b0104d6a16279680118364c085eab7d74b2))
+
+
+* Chat keys Encryption V2 (#231) ([f35730b](https://github.com/ethereum-push-notification-service/push-sdk/commit/f35730bd6398694176941875abb3e8678b255568)), closes [#231](https://github.com/ethereum-push-notification-service/push-sdk/issues/231)
+
+
+### BREAKING CHANGES
+
+* New chat key ecnryption
+
+* feat: chat key encryption v2
+
+New encryption version for pgp keys
+* Signer is required in ui-web
+
+* refactor: add signer in ApproveRequest
+
+* fix: revert dev from localhost
+
+* feat: auto uprade keys
+
+* test: tests for upgrade User
+
+* test: test for send chat message
+
+* test: rename tests
+
+* test: text formating fix
+
+
+
 # [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.4.3...uiweb-0.5.0) (2023-03-07)
 
 

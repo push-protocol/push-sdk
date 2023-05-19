@@ -3,6 +3,7 @@ import PolygonSvg from "./polygonSVG";
 import GraphSvg from "./thegraphSVG";
 import BscSvg from "./bscSVG";
 import OptimismSvg from "./optimismSVG"
+import PolygonZKEVMSvg from "./polygonZKEVMSVG";
 
 export default {
     ETH_TEST_GOERLI: { label: "ETHEREUM GOERLI", Icon: EthereumSvg },
@@ -13,5 +14,7 @@ export default {
     BSC_MAINNET: { label: "BSC MAINNET", Icon: BscSvg },
     OPTIMISM_TESTNET: { label: "OPTIMISM TESTNET", Icon: OptimismSvg },
     OPTIMISM_MAINNET: { label: "OPTIMISM MAINNET", Icon: OptimismSvg },
+    POLYGON_ZK_EVM_TESTNET: {label:"POLYGON_ZK_EVM_TESTNET",Icon: PolygonZKEVMSvg},
+    POLYGON_ZK_EVM_MAINNET: {label:"POLYGON_ZK_EVM_MAINNET",Icon: PolygonZKEVMSvg},
     THE_GRAPH: { label: "THE GRAPH", Icon: GraphSvg },
 };

@@ -1,9 +1,12 @@
 export enum ENV {
   PROD = 'prod',
   STAGING = 'staging',
-  DEV = 'dev'
+  DEV = 'dev',
+  /**
+   * **This is for local development only**
+   */
+  LOCAL = 'local',
 }
-
 export const Constants = {
   ENV,
   DEFAULT_TITLE: 'Chat with us!',
