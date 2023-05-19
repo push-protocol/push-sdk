@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.15...restapi-1.2.16) (2023-05-19)
+
+
+### Bug Fixes
+
+* add deprecated info to chat.chat ([#392](https://github.com/ethereum-push-notification-service/push-sdk/issues/392)) ([d84ae64](https://github.com/ethereum-push-notification-service/push-sdk/commit/d84ae64c116adb7eea9e8faf7929b6eb3b74c657))
+* show hardcoded msg rather than throwing error ([#388](https://github.com/ethereum-push-notification-service/push-sdk/issues/388)) ([8962e10](https://github.com/ethereum-push-notification-service/push-sdk/commit/8962e10036916d0bc161324f5684f74bb7b74dc3))
+
+
+
 ## [1.2.15](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.14...restapi-1.2.15) (2023-05-12)
 
 
