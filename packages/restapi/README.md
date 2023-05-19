@@ -75,8 +75,8 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
       - [**acceptRequest**](#acceptrequest)
       - [**connect**](#connect)
       - [**disconnect**](#disconnect)
-      - [**toggleVideo**](#togglevideo)
-      - [**toggleAudio**](#toggleaudio)
+      - [**enableVideo**](#enablevideo)
+      - [**enableAudio**](#enableaudio)
       - [**isInitiator**](#isinitiator)
 
 # How to use in your app?
@@ -3824,33 +3824,41 @@ Allowed Options (params with * are mandatory)
 
 -----
 
-#### **toggleVideo**
-- This method is used to toggle the video (from ```data.local.stream```) on or off for a push video call.
+#### **enableVideo**
+- This method is used to enable/disable the video (from ```data.local.stream```) for a push video call.
 - Can be triggered on the initiator as well as receivers end.
 - **Note -** If video was not enabled during ```create()``` then it will always remain off. 
 ```typescript
-toggleVideo(): void
+  export type EnableVideoInputOptions = {
+  state: boolean;
+}
+  
+enableVideo(options: EnableVideoInputOptions): void
 ```
 
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| - | - | - | - |
+| state | boolean | - | true for enable and false for disable |
 
 -----
 
-#### **toggleAudio**
-- This method is used to toggle the audio (from ```data.local.stream```) on or off for a push video call.
+#### **enableAudio**
+- This method is used to enable/disable the audio (from ```data.local.stream```) for a push video call.
 - Can be triggered on the initiator as well as receivers end.
 - **Note -** If audio was not enabled during ```create()``` then it will always remain off. 
 ```typescript
-toggleAudio(): void
+export type EnableAudioInputOptions = {
+  state: boolean;
+} 
+  
+enableAudio(options: EnableAudioInputOptions): void
 ```
 
 Allowed Options (params with * are mandatory)
 | Param    | Type    | Default | Remarks                                    |
 |----------|---------|---------|--------------------------------------------|
-| - | - | - | - |
+| state | boolean | - | true for enable and false for disable |
 
 -----
 
