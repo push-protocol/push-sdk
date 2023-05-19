@@ -63,7 +63,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     if (signer === undefined) {
       throw new Error(`Signer is necessary!`);
     }
-    if (payload && payload.additionalMeta && !payload.additionalMeta.domain) {
+    if (
+      payload &&
+      payload.additionalMeta &&
+      typeof payload.additionalMeta === 'object' &&
+      !payload.additionalMeta.domain
+    ) {
       payload.additionalMeta.domain = DEFAULT_DOMAIN;
     }
 

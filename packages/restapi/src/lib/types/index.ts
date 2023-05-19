@@ -90,15 +90,17 @@ export interface ISendNotificationInputOptions {
     cta: string;
     img: string;
     metadata?: any;
-    additionalMeta?: {
-      /**
-       * type = ADDITIONAL_META_TYPE+VERSION
-       * VERSION > 0
-       */
-      type: `${ADDITIONAL_META_TYPE}+${number}`;
-      data: string;
-      domain?: string;
-    };
+    additionalMeta?:
+      | {
+          /**
+           * type = ADDITIONAL_META_TYPE+VERSION
+           * VERSION > 0
+           */
+          type: `${ADDITIONAL_META_TYPE}+${number}`;
+          data: string;
+          domain?: string;
+        }
+      | string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -408,8 +410,8 @@ export type VideoConnectInputOptions = {
 
 export type EnableVideoInputOptions = {
   state: boolean;
-}
+};
 
 export type EnableAudioInputOptions = {
   state: boolean;
-}
+};
