@@ -541,7 +541,7 @@ export class Video {
       state
     );
 
-    if (this.data.local.video !== state) {
+    if (this.data.local.audio !== state) {
       // need to change the audio state
 
       if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
