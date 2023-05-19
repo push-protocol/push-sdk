@@ -89,11 +89,11 @@ let videoSignalData_1 = null;
 // Push Notification - Run Notifications Use cases
 async function runNotificaitonsUseCases() {
   console.log(`
-  ███    ██  ██████  ████████ ██ ███████ ██  ██████  █████  ████████ ██  ██████  ███    ██ ███████ 
-  ████   ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ████   ██ ██      
-  ██ ██  ██ ██    ██    ██    ██ █████   ██ ██      ███████    ██    ██ ██    ██ ██ ██  ██ ███████ 
-  ██  ██ ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ██  ██ ██      ██ 
-  ██   ████  ██████     ██    ██ ██      ██  ██████ ██   ██    ██    ██  ██████  ██   ████ ███████ 
+  ███    ██  ██████  ████████ ██ ███████ ██  ██████  █████  ████████ ██  ██████  ███    ██ ███████
+  ████   ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ████   ██ ██
+  ██ ██  ██ ██    ██    ██    ██ █████   ██ ██      ███████    ██    ██ ██    ██ ██ ██  ██ ███████
+  ██  ██ ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ██  ██ ██      ██
+  ██   ████  ██████     ██    ██ ██      ██  ██████ ██   ██    ██    ██  ██████  ██   ████ ███████
 `);
   console.log('PushAPI.user.getFeeds');
   await PushAPI_user_getFeeds();
@@ -402,11 +402,11 @@ async function PushSDKSocket(silent = !showAPIResponse) {
 // Push Chat - Run Chat Use cases
 async function runChatUseCases() {
   console.log(`
-  ██████  ██   ██  █████  ████████ 
-  ██      ██   ██ ██   ██    ██    
-  ██      ███████ ███████    ██    
-  ██      ██   ██ ██   ██    ██    
-  ██████  ██   ██ ██   ██    ██    
+  ██████  ██   ██  █████  ████████
+  ██      ██   ██ ██   ██    ██
+  ██      ███████ ███████    ██
+  ██      ██   ██ ██   ██    ██
+  ██████  ██   ██ ██   ██    ██
 `);
   console.log('PushAPI.user.create');
   await PushAPI_user_create();
@@ -954,11 +954,11 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
 // Push Chat - Run Chat Use cases
 async function runNFTChatUseCases() {
   console.log(`
-  ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████ 
-  ████   ██ ██         ██      ██      ██   ██ ██   ██    ██    
-  ██ ██  ██ █████      ██      ██      ███████ ███████    ██    
-  ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██    
-  ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██   
+  ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████
+  ████   ██ ██         ██      ██      ██   ██ ██   ██    ██
+  ██ ██  ██ █████      ██      ██      ███████ ███████    ██
+  ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██
+  ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██
   `);
   console.log('PushAPI.user.create');
   await PushAPI_nft_user_create();
@@ -1500,12 +1500,12 @@ async function PushNFTChatSDKSocket(silent = !showAPIResponse) {
 // Push Video - Run Video Use cases
 async function runVideoUseCases(){
   console.log(`
-██╗   ██╗██╗██████╗ ███████╗ ██████╗ 
+██╗   ██╗██╗██████╗ ███████╗ ██████╗
 ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
 ██║   ██║██║██║  ██║█████╗  ██║   ██║
 ╚██╗ ██╔╝██║██║  ██║██╔══╝  ██║   ██║
  ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝
-  ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ 
+  ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝
   `);
   console.log('new PushAPI.video.Video({...})');
   videoObject = await PushAPI_video_object_init();
@@ -1611,13 +1611,13 @@ async function PushVideoSDKSocket() {
       const additionalMeta = JSON.parse(payload['data']['additionalMeta']);
 
       if (additionalMeta.status === PushAPI.VideoCallStatus.INITIALIZED) {
-        videoSignalData_1 = additionalMeta.signalingData;
+        videoSignalData_1 = additionalMeta.signalData;
       } else if (
         additionalMeta.status === PushAPI.VideoCallStatus.RECEIVED ||
         additionalMeta.status === PushAPI.VideoCallStatus.RETRY_RECEIVED
       ) {
         videoObject.connect({
-          signalData: additionalMeta.signalingData,
+          signalData: additionalMeta.signalData,
         });
       } else if (
         additionalMeta.status === PushAPI.VideoCallStatus.DISCONNECTED
@@ -1638,7 +1638,7 @@ async function PushVideoSDKSocket() {
         !videoObject.isInitiator()
       ) {
         videoObject.acceptRequest({
-          signalData: additionalMeta.signalingData,
+          signalData: additionalMeta.signalData,
           senderAddress: videoRecipientAddress,
           recipientAddress: videoSenderAddress,
           chatId: videoChatId,
@@ -1664,7 +1664,7 @@ function start() {
           /*
             - One instance of videoObject corresponds to one user/peer of the call
             - For a wallet-to-wallet video call we need 2 such users/peers
-              - One of these peer would be the initiator and the other would be the receiver 
+              - One of these peer would be the initiator and the other would be the receiver
             - Stream object has to be fetched from the frontend of your app to the backend and supplied to videoLocalStream corresponding to each of the peer
             - Might be of help: https://stackoverflow.com/questions/25523289/sending-a-mediastream-to-host-server-with-webrtc-after-it-is-captured-by-getuser
           */
@@ -1684,22 +1684,22 @@ start();
 // -----------
 function returnHeadingLog() {
   const headingLog = `
-    ███████ ██████  ██   ██     ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██  █████  ██      ██ ████████ ██    ██ 
-    ██      ██   ██ ██  ██      ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██   ██ ██      ██    ██     ██  ██  
-    ███████ ██   ██ █████       █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████ ██      ██    ██      ████   
-         ██ ██   ██ ██  ██      ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██ ██   ██ ██      ██    ██       ██    
-    ███████ ██████  ██   ██     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ██   ██ ███████ ██    ██       ██    
+    ███████ ██████  ██   ██     ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██  █████  ██      ██ ████████ ██    ██
+    ██      ██   ██ ██  ██      ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██   ██ ██      ██    ██     ██  ██
+    ███████ ██   ██ █████       █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████ ██      ██    ██      ████
+         ██ ██   ██ ██  ██      ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██ ██   ██ ██      ██    ██       ██
+    ███████ ██████  ██   ██     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ██   ██ ███████ ██    ██       ██
   `;
   return headingLog;
 }
 
 function returnENVLog() {
   let environmentLog = `
-    ███████ ████████  █████   ██████  ██ ███    ██  ██████  
-    ██         ██    ██   ██ ██       ██ ████   ██ ██       
-    ███████    ██    ███████ ██   ███ ██ ██ ██  ██ ██   ███ 
-         ██    ██    ██   ██ ██    ██ ██ ██  ██ ██ ██    ██ 
-    ███████    ██    ██   ██  ██████  ██ ██   ████  ██████  
+    ███████ ████████  █████   ██████  ██ ███    ██  ██████
+    ██         ██    ██   ██ ██       ██ ████   ██ ██
+    ███████    ██    ███████ ██   ███ ██ ██ ██  ██ ██   ███
+         ██    ██    ██   ██ ██    ██ ██ ██  ██ ██ ██    ██
+    ███████    ██    ██   ██  ██████  ██ ██   ████  ██████
   `;
 
   if (env === ENV.PROD) {

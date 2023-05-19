@@ -22,6 +22,8 @@ import {
   VideoAcceptRequestInputOptions,
   VideoConnectInputOptions,
   VideoCallStatus,
+  EnableAudioInputOptions,
+  EnableVideoInputOptions,
 } from '../types';
 
 export const initVideoCallData: VideoCallData = {
@@ -169,7 +171,7 @@ export class Video {
               ? VideoCallStatus.RETRY_INITIALIZED
               : VideoCallStatus.INITIALIZED,
             chatId,
-            signalingData: data,
+            signalData: data,
             env: this.env,
           }
         );
@@ -303,7 +305,7 @@ export class Video {
               ? VideoCallStatus.RETRY_RECEIVED
               : VideoCallStatus.RECEIVED,
             chatId,
-            signalingData: data,
+            signalData: data,
             env: this.env,
           }
         );
@@ -410,7 +412,7 @@ export class Video {
           recipientAddress,
           status: VideoCallStatus.RETRY_INITIALIZED,
           chatId,
-          signalingData: null,
+          signalData: null,
           env: this.env,
         }
       );
@@ -471,7 +473,7 @@ export class Video {
             recipientAddress: this.data.incoming[0].address,
             status: VideoCallStatus.DISCONNECTED,
             chatId: this.data.meta.chatId,
-            signalingData: null,
+            signalData: null,
             env: this.env,
           }
         );
@@ -489,49 +491,77 @@ export class Video {
     }
   }
 
-  // functions for toggling local audio and video
+  // functions for enabling/disabling local audio and video
 
-  toggleVideo(): void {
-    console.log('toggleVideo', 'current video', this.data.local.video);
-    if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-      this.peerInstance?.send(
-        JSON.stringify({ type: 'isVideoOn', isVideoOn: !this.data.local.video })
-      );
-    }
-    if (this.data.local.stream) {
-      if (this.data.local.video === false) {
-        restartVideoStream(this.data.local.stream);
+  enableVideo(options: EnableVideoInputOptions): void {
+    const { state } = options || {};
+
+    console.log(
+      'enableVideo',
+      'current video',
+      this.data.local.video,
+      'requested state',
+      state
+    );
+    if (this.data.local.video !== state) {
+      // need to change the video state
+
+      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
+        this.peerInstance?.send(
+          JSON.stringify({
+            type: 'isVideoOn',
+            isVideoOn: state,
+          })
+        );
       }
-      if (this.data.local.video === true) {
-        stopVideoStream(this.data.local.stream);
-      }
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          draft.local.video = !oldData.local.video;
+      if (this.data.local.stream) {
+        if (state) {
+          restartVideoStream(this.data.local.stream);
+        }
+        else {
+          stopVideoStream(this.data.local.stream);
+        }
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.local.video = state;
+          });
         });
-      });
+      }
     }
   }
 
-  toggleAudio(): void {
-    console.log('toggleAudio', 'current audio', this.data.local.audio);
-    if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
-      this.peerInstance?.send(
-        JSON.stringify({ type: 'isAudioOn', isAudioOn: !this.data.local.audio })
-      );
-    }
-    if (this.data.local.stream) {
-      if (this.data.local.audio === false) {
-        restartAudioStream(this.data.local.stream);
+  enableAudio(options: EnableAudioInputOptions): void {
+    const { state } = options || {};
+
+    console.log(
+      'enableAudio',
+      'current audio',
+      this.data.local.audio,
+      'requested state',
+      state
+    );
+
+    if (this.data.local.video !== state) {
+      // need to change the audio state
+
+      if (this.data.incoming[0].status === VideoCallStatus.CONNECTED) {
+        this.peerInstance?.send(
+          JSON.stringify({ type: 'isAudioOn', isAudioOn: state })
+        );
       }
-      if (this.data.local.audio === true) {
-        stopAudioStream(this.data.local.stream);
-      }
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          draft.local.audio = !oldData.local.audio;
+      if (this.data.local.stream) {
+        if (state) {
+          restartAudioStream(this.data.local.stream);
+        }
+        else {
+          stopAudioStream(this.data.local.stream);
+        }
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.local.audio = state;
+          });
         });
-      });
+      }
     }
   }
 
