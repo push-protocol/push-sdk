@@ -2,7 +2,23 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-## [0.0.1-alpha.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.4...restapi-0.0.1-alpha.5) (2023-05-14)
+## [1.2.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.15...restapi-1.2.16) (2023-05-19)
+
+
+### Bug Fixes
+
+* add deprecated info to chat.chat ([#392](https://github.com/ethereum-push-notification-service/push-sdk/issues/392)) ([d84ae64](https://github.com/ethereum-push-notification-service/push-sdk/commit/d84ae64c116adb7eea9e8faf7929b6eb3b74c657))
+* show hardcoded msg rather than throwing error ([#388](https://github.com/ethereum-push-notification-service/push-sdk/issues/388)) ([8962e10](https://github.com/ethereum-push-notification-service/push-sdk/commit/8962e10036916d0bc161324f5684f74bb7b74dc3))
+
+
+
+## [1.2.15](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.14...restapi-1.2.15) (2023-05-12)
+
+
+### Bug Fixes
+
+* fix eip712v2 ([#385](https://github.com/ethereum-push-notification-service/push-sdk/issues/385)) ([42c10ba](https://github.com/ethereum-push-notification-service/push-sdk/commit/42c10ba6f5331c9caf5db7136ba94d1a6ed05e10))
+* Merge branch 'main' into deployment ([3250a7c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3250a7cfc3bb8fefd630179cd204deef023a5e6c))
 
 
 
