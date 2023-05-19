@@ -1,13 +1,14 @@
 import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
+import { ADDITIONAL_META_TYPE } from '../../payloads/constants';
 import { SignerType, VideoCallStatus } from '../../types';
 
 interface VideoCallInfoType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
-  signalingData: any;
+  signalData: any;
   status: VideoCallStatus;
   env?: ENV;
 }
@@ -18,11 +19,11 @@ interface UserInfoType {
   pgpPrivateKey: string;
 }
 
-interface VideoPayloadType {
+interface VideoDataType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;
-  signalingData?: any;
+  signalData?: any;
   status: VideoCallStatus;
 }
 
@@ -32,21 +33,21 @@ const sendVideoCallNotification = async (
     recipientAddress,
     senderAddress,
     chatId,
-    signalingData = null,
+    signalData = null,
     status,
     env = Constants.ENV.PROD,
   }: VideoCallInfoType
 ) => {
   try {
-    const videoPayload: VideoPayloadType = {
+    const videoData: VideoDataType = {
       recipientAddress,
       senderAddress,
       chatId,
-      signalingData,
+      signalData,
       status,
     };
 
-    console.log('sendVideoCallNotification', 'videoPayload', videoPayload);
+    console.log('sendVideoCallNotification', 'videoData', videoData);
 
     const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
     const recipientAddressInCaip = getCAIPWithChainId(
@@ -72,7 +73,10 @@ const sendVideoCallNotification = async (
         body: 'VideoCall',
         cta: '',
         img: '',
-        additionalMeta: videoPayload,
+        additionalMeta: {
+          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
+          data: JSON.stringify(videoData),
+        }
       },
       recipients: recipientAddressInCaip,
       channel: senderAddressInCaip,
