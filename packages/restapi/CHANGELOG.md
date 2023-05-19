@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.11...restapi-0.0.1-alpha.12) (2023-05-19)
+
+
+### Bug Fixes
+
+* added enums ([f1880d8](https://github.com/ethereum-push-notification-service/push-sdk/commit/f1880d8f037fc640851af4311bd5e514de5cf3db))
+* fix versions ([05c8fa9](https://github.com/ethereum-push-notification-service/push-sdk/commit/05c8fa9f9286e78d706c6be53e7b8ae963105766))
+* Merge branch 'alpha' into alpha-deployment ([3700515](https://github.com/ethereum-push-notification-service/push-sdk/commit/3700515be010fdcab6062db0a039f7df612a7a6b))
+* **sendvideonotifications:** modify additional meta acc to new std ([#407](https://github.com/ethereum-push-notification-service/push-sdk/issues/407)) ([9d2124a](https://github.com/ethereum-push-notification-service/push-sdk/commit/9d2124aa61f798a0b137636aac62397e1e52150e))
+
+
+
 ## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.10...restapi-0.0.1-alpha.11) (2023-05-19)
 
 
