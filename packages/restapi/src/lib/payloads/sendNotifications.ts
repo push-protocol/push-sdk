@@ -10,7 +10,7 @@ import {
   getUUID,
 } from './helpers';
 import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
-import { IDENTITY_TYPE } from './constants';
+import { IDENTITY_TYPE, DEFAULT_DOMAIN } from './constants';
 import { ENV } from '../constants';
 
 /**
@@ -62,6 +62,9 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
 
     if (signer === undefined) {
       throw new Error(`Signer is necessary!`);
+    }
+    if (payload && payload.additionalMeta && !payload.additionalMeta.domain) {
+      payload.additionalMeta.domain = DEFAULT_DOMAIN;
     }
 
     const _channelAddress = getCAIPAddress(env, channel, 'Channel');
