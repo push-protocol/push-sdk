@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.12...restapi-0.0.1-alpha.13) (2023-05-19)
+
+
+### Bug Fixes
+
+* backward compatiblity fix ([fbf2463](https://github.com/ethereum-push-notification-service/push-sdk/commit/fbf246396a44513626fc1dda6e90c12d2f073ead))
+* Merge branch 'alpha' into alpha-deployment ([3b5a0f1](https://github.com/ethereum-push-notification-service/push-sdk/commit/3b5a0f160b72e775cf17031067fa7488171e1bbd))
+
+
+
 ## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.11...restapi-0.0.1-alpha.12) (2023-05-19)
 
 
