@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.10...restapi-0.0.1-alpha.11) (2023-05-19)
+
+
+### Bug Fixes
+
+* changed additionalMeta structure ([#406](https://github.com/ethereum-push-notification-service/push-sdk/issues/406)) ([0cf573e](https://github.com/ethereum-push-notification-service/push-sdk/commit/0cf573e56165bf3164a42cbc4b41a3085801e90a))
+* Merge branch 'alpha' into alpha-deployment ([925b437](https://github.com/ethereum-push-notification-service/push-sdk/commit/925b4379aa7b7d2d061b23d5ccbc42d06829f100))
+* **video:** remove stop audio/video logic from create function ([#404](https://github.com/ethereum-push-notification-service/push-sdk/issues/404)) ([983c896](https://github.com/ethereum-push-notification-service/push-sdk/commit/983c896a2c89463f117f5a4d8153ef95501f2124))
+
+
+### Reverts
+
+* **getverificationproof:** add wallet and env params to getVerificationProof ([#403](https://github.com/ethereum-push-notification-service/push-sdk/issues/403)) ([26f6fcb](https://github.com/ethereum-push-notification-service/push-sdk/commit/26f6fcb9b2992850cd33ea613cea13830bd48bc3))
+
+
+
 ## [0.0.1-alpha.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.9...restapi-0.0.1-alpha.10) (2023-05-17)
 
 
