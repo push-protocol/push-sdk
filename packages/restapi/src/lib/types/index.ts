@@ -406,3 +406,11 @@ export type VideoAcceptRequestInputOptions = {
 export type VideoConnectInputOptions = {
   signalData: any;
 };
+
+export type EnableVideoInputOptions = {
+  state: boolean;
+}
+
+export type EnableAudioInputOptions = {
+  state: boolean;
+}
