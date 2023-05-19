@@ -2,6 +2,28 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.10...restapi-0.0.1-alpha.11) (2023-05-19)
+
+
+### Bug Fixes
+
+* added enums ([f1880d8](https://github.com/ethereum-push-notification-service/push-sdk/commit/f1880d8f037fc640851af4311bd5e514de5cf3db))
+* changed additionalMeta structure ([#406](https://github.com/ethereum-push-notification-service/push-sdk/issues/406)) ([0cf573e](https://github.com/ethereum-push-notification-service/push-sdk/commit/0cf573e56165bf3164a42cbc4b41a3085801e90a))
+* fix versions ([05c8fa9](https://github.com/ethereum-push-notification-service/push-sdk/commit/05c8fa9f9286e78d706c6be53e7b8ae963105766))
+* Merge branch 'alpha' into alpha-deployment ([68f11eb](https://github.com/ethereum-push-notification-service/push-sdk/commit/68f11eb71d44423081000c00c36cb0a936558f2f))
+* Merge branch 'alpha' into alpha-deployment ([3700515](https://github.com/ethereum-push-notification-service/push-sdk/commit/3700515be010fdcab6062db0a039f7df612a7a6b))
+* Merge branch 'alpha' into alpha-deployment ([925b437](https://github.com/ethereum-push-notification-service/push-sdk/commit/925b4379aa7b7d2d061b23d5ccbc42d06829f100))
+* **sendvideonotifications:** modify additional meta acc to new std ([#407](https://github.com/ethereum-push-notification-service/push-sdk/issues/407)) ([9d2124a](https://github.com/ethereum-push-notification-service/push-sdk/commit/9d2124aa61f798a0b137636aac62397e1e52150e))
+* **types:** remove bad import ([5517200](https://github.com/ethereum-push-notification-service/push-sdk/commit/55172002a2cecb33407a3828c2debeca24e0c972))
+* **video:** remove stop audio/video logic from create function ([#404](https://github.com/ethereum-push-notification-service/push-sdk/issues/404)) ([983c896](https://github.com/ethereum-push-notification-service/push-sdk/commit/983c896a2c89463f117f5a4d8153ef95501f2124))
+
+
+### Reverts
+
+* **getverificationproof:** add wallet and env params to getVerificationProof ([#403](https://github.com/ethereum-push-notification-service/push-sdk/issues/403)) ([26f6fcb](https://github.com/ethereum-push-notification-service/push-sdk/commit/26f6fcb9b2992850cd33ea613cea13830bd48bc3))
+
+
+
 ## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.11...restapi-0.0.1-alpha.12) (2023-05-19)
 
 
