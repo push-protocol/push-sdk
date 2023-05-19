@@ -1,5 +1,10 @@
 import { ethers } from 'ethers';
-import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
+import {
+  ADDITIONAL_META_TYPE,
+  ADDITIONAL_META_VERSION,
+  IDENTITY_TYPE,
+  NOTIFICATION_TYPE,
+} from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 
@@ -87,7 +92,7 @@ export interface ISendNotificationInputOptions {
     img: string;
     metadata?: any;
     additionalMeta?: {
-      type: string;
+      type: `${ADDITIONAL_META_TYPE}+${ADDITIONAL_META_VERSION}`;
       data: string;
       domain?: string;
     };

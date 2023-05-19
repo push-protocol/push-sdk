@@ -43,4 +43,13 @@ export enum NOTIFICATION_TYPE {
   SUBSET = 4,
 }
 
+export enum ADDITIONAL_META_TYPE {
+  CUSTOM = 0,
+  PUSH_VIDEO = 1,
+}
+
+export enum ADDITIONAL_META_VERSION {
+  V1 = 1,
+}
+
 export const DEFAULT_DOMAIN = 'push.org';
