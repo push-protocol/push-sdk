@@ -1,7 +1,6 @@
 import { ethers } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
-  ADDITIONAL_META_VERSION,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
 } from '../../lib/payloads/constants';
