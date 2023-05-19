@@ -135,3 +135,39 @@ export const addDeprecatedInfo = (() => {
     return chats;
   };
 })();
+
+//immediately invoked function expression to maintain latestDIDs
+export const addDeprecatedInfoToMessages = (() => {
+  // mapping for LAtest NFT DIDs
+  const latestDIDs: { [key: string]: string } = {};
+  return (chats: IMessageIPFS[]): IMessageIPFS[] => {
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.fromDID)) {
+        const didWithoutTimestamp = chat.fromDID
+          .split(':')
+          .slice(0, 5)
+          .join(':');
+        const timestamp = chat.fromDID.split(':')[5];
+        if (
+          !latestDIDs[didWithoutTimestamp] ||
+          timestamp > latestDIDs[didWithoutTimestamp].split(':')[5]
+        ) {
+          latestDIDs[didWithoutTimestamp] = chat.fromDID;
+        }
+      }
+    });
+    chats.forEach((chat) => {
+      if (isValidCAIP10NFTAddress(chat.fromDID)) {
+        const didWithoutTimestamp = chat.fromDID
+          .split(':')
+          .slice(0, 5)
+          .join(':');
+        if (latestDIDs[didWithoutTimestamp] !== chat.fromDID) {
+          chat['deprecated'] = true;
+          chat['deprecatedCode'] = 'NFT Owner Changed';
+        }
+      }
+    });
+    return chats;
+  };
+})();
