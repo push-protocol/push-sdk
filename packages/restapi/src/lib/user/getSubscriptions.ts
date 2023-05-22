@@ -15,7 +15,7 @@ export const getSubscriptions = async (
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const _user = getCAIPAddress(env, user, 'User');
+  const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/subscriptions`;
   const requestUrl = `${apiEndpoint}`;

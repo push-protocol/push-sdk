@@ -76,9 +76,11 @@ const updatedNftGroupName = uniqueNamesGenerator({
 // Video Data
 const videoChainId = +process.env.VIDEO_CHAIN_ID;
 let videoData = PushAPI.video.initVideoCallData;
-const videoSetData: (fn:(data:PushAPI.VideoCallData) => PushAPI.VideoCallData) => void = (fn) => {
+const videoSetData: (
+  fn: (data: PushAPI.VideoCallData) => PushAPI.VideoCallData
+) => void = (fn) => {
   videoData = fn(videoData);
-}
+};
 let videoObject = null;
 const videoLocalStream = null; // get the local stream
 const videoSenderAddress = process.env.VIDEO_SENDER_ADDRESS;
@@ -424,10 +426,13 @@ async function runChatUseCases() {
   await PushAPI_chat_requests();
 
   console.log('PushAPI.chat.send');
-  await PushAPI_chat_send();
+  const TargetChatId = await PushAPI_chat_send();
 
   console.log('PushAPI.chat.approve');
   await PushAPI_chat_approve();
+
+  console.log('PushAPI chat Video call Notification');
+  await PushAPI_chat_video_call_notification(TargetChatId);
 
   console.log('PushAPI.chat.createGroup');
   const chatId = await PushAPI_chat_createGroup();
@@ -694,6 +699,7 @@ async function PushAPI_chat_send(silent = !showAPIResponse) {
   if (!silent) {
     console.log(response);
   }
+  return response.chatId;
 }
 
 // Push Chat - Approve
@@ -951,6 +957,55 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
   await delay(4000);
 }
 
+async function PushAPI_chat_video_call_notification(
+  chatId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: signer.address,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: signer,
+  });
+  // get PGP KEy
+  const apiResponse = await PushAPI.payloads.sendNotification({
+    senderType: 1,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    chatId: chatId,
+    type: 3, // target
+    identityType: 2, // direct payload
+    notification: {
+      title: `VC TITLE:`,
+      body: `VC BODY`,
+    },
+    payload: {
+      title: `payload title`,
+      body: `sample msg body`,
+      cta: '',
+      img: '',
+      additionalMeta: {
+        type: '1+1',
+        data: 'Random DATA',
+        domain: 'push.org',
+      },
+    },
+    recipients: signerSecondAccount.address, // recipient address
+    channel: signer.address, // your channel address
+    env: env as ENV,
+  });
+
+  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  if (!silent) {
+    console.log(apiResponse);
+  }
+}
+
 // Push Chat - Run Chat Use cases
 async function runNFTChatUseCases() {
   console.log(`
@@ -976,10 +1031,13 @@ async function runNFTChatUseCases() {
   await PushAPI_nft_chat_requests();
 
   console.log('PushAPI.chat.send');
-  await PushAPI_nft_chat_send();
+  const TargetchatId = await PushAPI_nft_chat_send();
 
   console.log('PushAPI.chat.approve');
   await PushAPI_nft_chat_approve();
+
+  console.log('NFT Video Call Notification');
+  await PushAPI_nft_chat_video_call_notification(TargetchatId);
 
   console.log('PushAPI.chat.createGroup');
   const chatId = await PushAPI_nft_chat_createGroup();
@@ -1245,6 +1303,7 @@ async function PushAPI_nft_chat_send(silent = !showAPIResponse) {
   if (!silent) {
     console.log(response);
   }
+  return response.chatId;
 }
 
 // Push Chat - Approve
@@ -1275,6 +1334,55 @@ async function PushAPI_nft_chat_approve(silent = !showAPIResponse) {
   console.log('PushAPI_nft_chat_approve | Response - 200 OK');
   if (!silent) {
     console.log(approve);
+  }
+}
+
+async function PushAPI_nft_chat_video_call_notification(
+  chatId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: nftAccount1,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: nftSigner1,
+  });
+
+  const apiResponse = await PushAPI.payloads.sendNotification({
+    senderType: 1,
+    signer: nftSigner1,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    chatId: chatId,
+    type: 1, // target
+    identityType: 2, // direct payload
+    notification: {
+      title: `VC TITLE:`,
+      body: `VC BODY`,
+    },
+    payload: {
+      title: `payload title`,
+      body: `sample msg body`,
+      cta: '',
+      img: '',
+      additionalMeta: {
+        type: '1+1',
+        data: 'Random DATA',
+        domain: 'push.org',
+      },
+    },
+    recipients: nftAccount1, // recipient address
+    channel: nftAccount1, // your channel address
+    env: env as ENV,
+  });
+
+  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  if (!silent) {
+    console.log(apiResponse);
   }
 }
 
@@ -1498,7 +1606,7 @@ async function PushNFTChatSDKSocket(silent = !showAPIResponse) {
 }
 
 // Push Video - Run Video Use cases
-async function runVideoUseCases(){
+async function runVideoUseCases() {
   console.log(`
 ██╗   ██╗██╗██████╗ ███████╗ ██████╗
 ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
@@ -1530,7 +1638,7 @@ async function runVideoUseCases(){
   await PushVideoSDKSocket();
 }
 
-async function PushAPI_video_object_init(){
+async function PushAPI_video_object_init() {
   // Fetch user
   const user = await PushAPI.user.get({
     account: `eip155:${signer.address}`,
@@ -1556,10 +1664,10 @@ async function PushAPI_video_object_init(){
   return videoObject;
 }
 
-async function PushAPI_video_create(){
+async function PushAPI_video_create() {
   await videoObject.create({
-    stream: videoLocalStream
-});
+    stream: videoLocalStream,
+  });
 }
 
 async function PushAPI_video_request() {
@@ -1570,7 +1678,7 @@ async function PushAPI_video_request() {
   });
 }
 
-async function PushAPI_video_accept_request(){
+async function PushAPI_video_accept_request() {
   videoObject.acceptRequest({
     signalData: videoSignalData_1,
     senderAddress: videoRecipientAddress,
@@ -1579,13 +1687,13 @@ async function PushAPI_video_accept_request(){
   });
 }
 
-async function PushAPI_video_connect(){
+async function PushAPI_video_connect() {
   videoObject.connect({
-    signalData: {} // signalData from sockets
-  })
+    signalData: {}, // signalData from sockets
+  });
 }
 
-async function PushAPI_video_disconnect(){
+async function PushAPI_video_disconnect() {
   videoObject.disconnect();
 }
 
@@ -1660,7 +1768,7 @@ function start() {
   runNotificaitonsUseCases().then(() => {
     runChatUseCases().then(() => {
       runNFTChatUseCases().then(() => {
-        if(videoLocalStream !== null){
+        if (videoLocalStream !== null) {
           /*
             - One instance of videoObject corresponds to one user/peer of the call
             - For a wallet-to-wallet video call we need 2 such users/peers

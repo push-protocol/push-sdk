@@ -35,7 +35,7 @@ export const _getSubscribers = async (
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const _channelAddress = getCAIPAddress(env, channel, 'Channel');
+  const _channelAddress = await getCAIPAddress(env, channel, 'Channel');
 
   const channelCAIPDetails = getCAIPDetails(_channelAddress);
   if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
