@@ -6,7 +6,11 @@ export * from './getDelegations';
 export * from './getUsersBatch';
 export * from './upgradeUser';
 export * from './decryptAuth';
-import { update } from './auth.updateUser';
+import { authUpdate } from './auth.updateUser';
+import { profileUpdate } from './profile.updateUser';
 export const auth = {
-  update,
+  update: authUpdate,
+};
+export const profile = {
+  update: profileUpdate,
 };
