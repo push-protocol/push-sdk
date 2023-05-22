@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.13...restapi-0.0.1-alpha.14) (2023-05-22)
+
+
+### Bug Fixes
+
+* fix nft videocall ([#411](https://github.com/ethereum-push-notification-service/push-sdk/issues/411)) ([8cdb999](https://github.com/ethereum-push-notification-service/push-sdk/commit/8cdb999bc548caf67ec6fbe625253b5795a4e465))
+* Merge branch 'alpha' into alpha-deployment ([f247665](https://github.com/ethereum-push-notification-service/push-sdk/commit/f2476650b650ade59721c30f6e8483e86c013cd4))
+
+
+
 ## [0.0.1-alpha.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.12...restapi-0.0.1-alpha.13) (2023-05-19)
 
 
