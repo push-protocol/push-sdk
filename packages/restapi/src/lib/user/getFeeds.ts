@@ -29,7 +29,7 @@ export const getFeeds = async (
     raw = false,
   } = options || {};
 
-  const _user = getCAIPAddress(env, user, 'User');
+  const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/feeds`;
 
