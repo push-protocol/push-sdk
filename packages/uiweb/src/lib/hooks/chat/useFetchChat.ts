@@ -7,9 +7,6 @@ import { ChatPropsContext } from '../../context';
 
 interface fetchChat {
   recipientAddress: string;
-  account: string;
-  decryptedPgpPvtKey: string;
-  env?: Env;
 }
 
 const useFetchChat = () => {

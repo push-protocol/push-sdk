@@ -2,7 +2,7 @@ import { Env, IUser } from '@pushprotocol/restapi';
 import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import { CoreContractChainId, InfuraAPIKey, ProfilePicture } from '../../config';
-import { GetProfileParams } from '../../hooks/chat/useGetchatProfile';
+import { GetProfileParams } from '../../hooks';
 import { ChatFeedsType, Web3NameListType } from '../../types';
 import { walletToPCAIP10 } from '../address';
 import { getUdResolver } from '../udResolver';

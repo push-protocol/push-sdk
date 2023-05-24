@@ -13,7 +13,7 @@ import { dateToFromNowDaily } from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
 import CheckCircleIcon from '../../../../icons/chat/checkCircle.svg';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
-import { PUSH_TABS } from '../../../../types';
+import { PUSH_SUB_TABS, PUSH_TABS } from '../../../../types';
 import { Typebar } from './typebar/Typebar';
 
 const CHATS_FETCH_LIMIT = 15;
@@ -295,20 +295,23 @@ export const MessageBox = () => {
       justifyContent="start"
       alignItems="start"
       width="100%"
-      margin="20px  0"
+    
+      overflow='hidden'
       height="100%"
     >
-      <Container
+       {loading ? <Spinner /> : ''}
+      <Section
         width="100%"
-        height="85%"
+        height="80%"
+        overflow='hidden'
         justifyContent="start"
         flexDirection="column"
         alignItems="start"
-        borderWidth="1px 0 1px 0"
-        borderStyle='dashed none solid none'
-        borderColor='#ededee transparent #dddddf transparent'
+        borderWidth="0 0 1px 0"
+        borderStyle='none none solid none'
+        borderColor='transparent transparent #dddddf transparent'
       >
-        {!loading ? <Spinner size="sm" /> : ''}
+       
         <MessageListCard
           flexDirection="column"
           justifyContent="start"
@@ -364,18 +367,14 @@ export const MessageBox = () => {
           )}
           <div ref={bottomRef} />
         </MessageListCard>
-      </Container>
+      </Section>
 
-     { !(activeTab === PUSH_TABS.REQUESTS) && <Typebar scrollToBottom={scrollToBottom} />}
+     { !(activeTab === PUSH_SUB_TABS.REQUESTS) && <Typebar scrollToBottom={scrollToBottom} />}
     </Section>
   );
 };
 
 //styles
-const Container = styled(Section)`
-  // border-top: 1px dashed #ededee;
-  // border-bottom: 1px solid #dddddf;
-`;
 
 const MessageListCard = styled(Section)`
   &::-webkit-scrollbar-thumb {

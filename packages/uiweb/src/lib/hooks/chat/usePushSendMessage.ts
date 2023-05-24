@@ -55,9 +55,6 @@ const usePushSendMessage = () => {
         } else {
           const fetchChatsMessages: IFeeds = (await fetchChat({
             recipientAddress: receiver,
-            account,
-            env,
-            decryptedPgpPvtKey,
           })) as IFeeds;
           setChatFeed(selectedChatId, fetchChatsMessages);
           setChat(selectedChatId, {

@@ -8,7 +8,7 @@ import SearchIcon from '../../../../icons/chat/search.svg';
 import CloseIcon from '../../../../icons/chat/close.svg';
 import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span } from '../../../reusables/sharedStyling';
-import useGetChatProfile from '../../../../hooks/chat/useGetchatProfile';
+import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 
 type SearchPropType = {
   chatsFeed: ChatFeedsType;

@@ -10,39 +10,18 @@ type ChatListPropType = {
   chatsFeed: ChatFeedsType;
 };
 
-
 export const ChatList: React.FC<ChatListPropType> = ({ chatsFeed }) => {
-  const { activeTab } =
-  useContext<any>(ChatMainStateContext);
-  const [page, setPage] = useState<number>(1);
- 
-  
-  console.log(page)
+  const { activeTab } = useContext<any>(ChatMainStateContext);
+
   return (
-    <ChatListCard
-      flexDirection="column"
-      height="100%"
-      margin="15px 0 25px 0"
-      justifyContent="start"
-      overflow="hidden auto"
-    >
+    <>
       {!!Object.keys(chatsFeed || {}).length &&
         Object.keys(chatsFeed).map((id: string) => (
           <ChatSnap chat={chatsFeed[id]} id={id} />
         ))}
-    </ChatListCard>
+    </>
   );
 };
 
 //styles
 
-const ChatListCard = styled(Section)`
-  &::-webkit-scrollbar-thumb {
-    background: rgb(181 181 186);
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-`;

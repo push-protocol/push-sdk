@@ -15,12 +15,10 @@ interface fetchChats {
 const useFetchChats = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { setChatsFeed} =
-  useContext<any>(ChatMainStateContext);
   const { account, env,decryptedPgpPvtKey } =
   useContext<any>(ChatPropsContext);
 
-  const fetchChats = useCallback(async () => {
+  const fetchChats = useCallback(async ({ page, chatLimit }: fetchChats) => {
 
     setLoading(true);
     try {
@@ -28,8 +26,8 @@ const useFetchChats = () => {
         account: account,
         toDecrypt: decryptedPgpPvtKey?true:false,
         pgpPrivateKey: String(decryptedPgpPvtKey),
-        // page,
-        // limit:chatLimit,
+        page,
+        limit:chatLimit,
         env: env
       });
 
@@ -37,13 +35,16 @@ const useFetchChats = () => {
       const modifiedChatsObj: ChatFeedsType= {};
 
       for (const chat of chats) {
+        if(!chat?.groupInformation)
         modifiedChatsObj[chat.did ?? chat.chatId] = chat;
       }
-      setChatsFeed(modifiedChatsObj);
+      console.log(modifiedChatsObj)
+      return modifiedChatsObj;
     } catch (error: Error | any) {
       setLoading(false);
       setError(error.message);
       console.log(error);
+      return ;
     } finally {
       setLoading(false);
     }

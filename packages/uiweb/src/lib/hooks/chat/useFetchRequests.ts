@@ -6,7 +6,10 @@ import { ChatFeedsType, Constants } from '../..';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 
 
-
+interface fetchRequests {
+    page: number;
+    requestLimit: number;
+  }
 
 const useFetchRequests = () => {
   const [error, setError] = useState<string>();
@@ -16,7 +19,7 @@ const useFetchRequests = () => {
   const { account, env,decryptedPgpPvtKey } =
   useContext<any>(ChatPropsContext);
   
-  const fetchRequests = useCallback(async () => {
+  const fetchRequests = useCallback(async ({ page, requestLimit }: fetchRequests)  => {
 
     setLoading(true);
     try {
@@ -24,6 +27,8 @@ const useFetchRequests = () => {
         account: account,
         toDecrypt: decryptedPgpPvtKey?true:false,
         pgpPrivateKey: String(decryptedPgpPvtKey),
+        page,
+        limit:requestLimit,
         env: env
       });
 
@@ -31,13 +36,15 @@ const useFetchRequests = () => {
       const modifiedRequestsObj: ChatFeedsType= {};
 
       for (const request of requests) {
+        if(!request?.groupInformation)
         modifiedRequestsObj[request.did ?? request.chatId] = request;
       }
-      setRequestsFeed(modifiedRequestsObj);
+      return modifiedRequestsObj;
     } catch (error: Error | any) {
       setLoading(false);
       setError(error.message);
       console.log(error);
+      return;
     } finally {
       setLoading(false);
     }

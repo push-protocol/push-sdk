@@ -12,7 +12,8 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 type TypebarPropType = {
   scrollToBottom: () => void;
 };
-
+const requestLimit = 30;
+const page = 1;
 export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -34,7 +35,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       scrollToBottom();
       setSearchedChats(null);
       if (newChat) setNewChat(false);
-      if (!chatsFeed[selectedChatId]) fetchRequests();
+      if (!chatsFeed[selectedChatId]) fetchRequests({page,requestLimit});
     } catch (error) {
       console.log(error);
       //handle error
@@ -58,7 +59,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       borderWidth="1px"
       borderRadius="8px"
       padding=" 17px"
-      margin="12px 0 0 0"
+      margin="12px 0 12px 0"
       background="#fff"
       alignItems="center"
       justifyContent="space-between"

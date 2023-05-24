@@ -1,3 +1,5 @@
+import { PushSubTabs } from "../types";
+
 export enum ENV {
   PROD = 'prod',
   STAGING = 'staging',
@@ -71,3 +73,14 @@ export const allowedNetworks = {
 export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 
 export const ProfilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
+
+
+export const PushSubTabTitle = {
+  REQUESTS: {
+    title: 'Chat request',
+  }
+};
+
+
+export const chatLimit = 10;
+export const requestLimit = 10;

@@ -49,7 +49,13 @@ export interface Web3NameListType {
 }
 export const PUSH_TABS = {
   CHATS: 'CHATS',
-  REQUESTS: 'REQUESTS'
+  APP_NOTIFICATIONS: 'APP_NOTIFICATIONS'
+} as const;
+
+export const PUSH_SUB_TABS = {
+  REQUESTS: 'REQUESTS',
 } as const;
 
 export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
+export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
+
