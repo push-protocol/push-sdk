@@ -1,4 +1,7 @@
+// @ts-nocheck 
+// TODO: remove it after IUserV2 implementation
 import axios from 'axios';
+import * as CryptoJS from 'crypto-js';
 import { sign } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
@@ -39,7 +42,6 @@ export const profileUpdate = async (
     env = Constants.ENV.PROD,
     progressHook,
   } = options || {};
-
   try {
     if (!isValidETHAddress(account)) {
       throw new Error(`Invalid account!`);
@@ -49,22 +51,20 @@ export const profileUpdate = async (
     if (!user || !user.did) {
       throw new Error('User not Found!');
     }
-
     const updatedProfile = {
-      name: profile.name ? profile.name : user.profile.name,
-      desc: profile.desc ? profile.desc : user.profile.desc,
-      picture: profile.picture ? profile.picture : user.profile.picture,
+      name: profile.name ? profile.name : Object.keys(user).includes("name") ? user.name : user.profile.name,
+      desc: profile.desc ? profile.desc : Object.keys(user).includes("about")? user.about : user.profile.desc,
+      picture: profile.picture ? profile.picture : Object.keys(user).includes("profilePicture")? user.profilePicture : user.profile.picture,
     };
-
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
     const signature = await sign({
       message: hash,
       signingKey: pgpPrivateKey,
     });
     const sigType = 'pgp';
-    const verificatonProof = `${sigType}:${signature}`;
+    const verificationProof = `${sigType}:${signature}`;
 
-    const body = { ...updatedProfile, verificatonProof };
+    const body = { ...updatedProfile, verificationProof };
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/users/${user.did}/profile`;
