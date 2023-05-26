@@ -7,7 +7,7 @@ import { ChatList } from './ChatList';
 import { Section, Span } from '../../../reusables/sharedStyling';
 import { Spinner } from '../../../reusables/Spinner';
 import { chatLimit } from '../../../../config';
-import { ChatFeedsType } from '../../../../types';
+import { ChatFeedsType, LOCAL_STORAGE_KEYS } from '../../../../types';
 import { useIsInViewport } from '../../../../hooks';
 
 export const ChatsFeedList = () => {

@@ -4,7 +4,8 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { ChatFeedsType } from '../../types';
+import { setData } from '../../helpers/chat/localStorage';
+import { ChatFeedsType, LOCAL_STORAGE_KEYS } from '../../types';
 
 
 interface fetchChats {
@@ -35,8 +36,10 @@ const useFetchChats = () => {
       const modifiedChatsObj: ChatFeedsType= {};
 
       for (const chat of chats) {
-        if(!chat?.groupInformation)
-        modifiedChatsObj[chat.did ?? chat.chatId] = chat;
+        if(!chat?.groupInformation) {
+          modifiedChatsObj[chat.did ?? chat.chatId] = chat;
+          setData({chatId:chat.did ?? chat.chatId,value:{unread:0,totalMsg:0}});
+        }
       }
       console.log(modifiedChatsObj)
       return modifiedChatsObj;

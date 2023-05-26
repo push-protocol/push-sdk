@@ -1,5 +1,6 @@
 import { IFeeds, IMessageIPFS, IUser } from '@pushprotocol/restapi';
 import React, { createContext, useState } from 'react';
+import { getData } from '../../helpers/chat/localStorage';
 import { ChatFeedsType, PushSubTabs, PushTabs, PUSH_SUB_TABS, PUSH_TABS, Web3NameListType } from '../../types';
 
 type ChatMessagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
@@ -51,6 +52,8 @@ const [pushChatSocket,setPushChatSocket] = useState<any>(null);
 
 
  const setChatFeed = (id: string,newChatFeed:IFeeds) => {
+  //  getData
+  // setData({key:LOCAL_STORAGE_KEYS.CHATS,value:n});
     setChatsFeed(prevChatsFeed => ({
       [id]: newChatFeed ,
         ...prevChatsFeed,
