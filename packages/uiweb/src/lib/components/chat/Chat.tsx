@@ -7,6 +7,8 @@ import { PUSH_TABS } from '../../types';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
+import usePushChatSocket from '../../hooks/chat/usePushChatSocket';
+import { device } from '../../config';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -28,20 +30,22 @@ export const Chat = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { fetchChatProfile } = useGetChatProfile();
 
-  useEffect(() => {
-    let user ;
-    if (account)
-    {
-      user = fetchChatProfile({ profileId: account });
-      if(user)
-      setConnectedProfile(user);
+  usePushChatSocket();
 
-    }
-  }, [connectedProfile]);
+  useEffect(() => {
+    (async () => {
+      let user;
+      console.log(connectedProfile);
+      if (account) {
+        user = await fetchChatProfile({ profileId: account });
+
+        if (user) setConnectedProfile(user);
+      }
+    })();
+  }, [account]);
 
   useEffect(() => {
     setChatsFeed({});
-    setConnectedProfile(undefined);
     setRequestsFeed({});
     setActiveTab(PUSH_TABS.CHATS);
     setSelectedChatId(null);
@@ -84,4 +88,11 @@ const Container = styled(Section)`
   backdrop-filter: blur(5px);
   /* Note: backdrop-filter has minimal browser support */
   border-radius: 8px;
+  @media ${device.mobileL} {
+    width: 350px;
+  }
+  @media ${device.mobileS} {
+    width:330px;
+    padding:24px 17px 0 17px;
+  }
 `;

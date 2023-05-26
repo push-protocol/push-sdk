@@ -35,7 +35,7 @@ export const ChatsFeedList = () => {
     if (decryptedPgpPvtKey) {
       fetchChatList();
     }
-  }, [fetchChats, decryptedPgpPvtKey, env, page]);
+  }, [fetchChats, decryptedPgpPvtKey, env, page,account]);
 
   useEffect(() => {
     console.log(isInViewport1);

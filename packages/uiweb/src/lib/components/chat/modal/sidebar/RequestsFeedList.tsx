@@ -35,7 +35,6 @@ export const RequestsFeedList = () => {
   }, [fetchRequests, decryptedPgpPvtKey, env, page]);
 
   useEffect(() => {
-    console.log(isInViewport1);
     if (
       !isInViewport1 ||
       loading ||

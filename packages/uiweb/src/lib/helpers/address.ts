@@ -39,3 +39,8 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
     }
   });
 };
+
+export const isPCAIP = (id: string) => {
+  const prefix = `eip155:`;
+  return id?.startsWith(prefix);
+};

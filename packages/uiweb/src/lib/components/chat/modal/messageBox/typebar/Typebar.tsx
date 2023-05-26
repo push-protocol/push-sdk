@@ -8,6 +8,7 @@ import { ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import { device } from '../../../../../config';
 
 type TypebarPropType = {
   scrollToBottom: () => void;
@@ -139,5 +140,8 @@ const MultiLineInput = styled.textarea`
   ::placeholder {
     color: #000;
     padding-top: 5px;
+  }
+  @media ${device.mobileL} {
+    width:230px;
   }
 `;

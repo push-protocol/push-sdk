@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ChatList } from './ChatList';
 import { Search } from './Search';
 import {
+    ChatFeedsType,
   PushSubTabs,
   PushTabs,
   PUSH_SUB_TABS,
@@ -17,6 +18,7 @@ import useFetchRequests from '../../../../hooks/chat/useFetchRequests';
 import { ChatsFeedList } from './ChatsFeedList';
 import { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
 import AngleArrowIcon from '../../../../icons/chat/angleArrow.svg';
+import { device, requestLimit } from '../../../../config';
 
 export type TabPropType = {
   tabName: string;
@@ -46,14 +48,14 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
       borderWidth={activeTab === tabValue ? '0 0 2px 0' : '0 0 1px 0'}
       padding="0 0 15px 0"
     >
-      <Span
+      <TabTitleSpan
         color={activeTab === tabValue ? '#0D67FE' : '#62626A'}
         fontSize="16px"
         fontWeight="600"
         cursor="pointer"
       >
         {tabName}
-      </Span>
+      </TabTitleSpan>
       <UnreadChats
         numberOfUnreadMessages="2"
         background="rgb(13 103 254 / 28%)"
@@ -76,7 +78,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   subTab,
   tabValue,
 }) => {
-  const { setActiveSubTab } = useContext<any>(ChatMainStateContext);
+  const { setActiveSubTab, } = useContext<any>(ChatMainStateContext);
 
   return (
     <SubContainer
@@ -113,10 +115,11 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
-  const { chatsFeed, activeTab, searchedChats, activeSubTab, newChat } =
+  const { chatsFeed, requestsFeed,activeTab,setRequestsFeed, searchedChats, activeSubTab, newChat } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { decryptedPgpPvtKey, account, env } =
     useContext<any>(ChatPropsContext);
+    const { fetchRequests, loading } = useFetchRequests();
 
   type PushSubTabDetailsType = {
     [key in PushSubTabs]: {
@@ -128,10 +131,25 @@ export const Sidebar = () => {
   const PushSubTabDetails: PushSubTabDetailsType = {
     REQUESTS: {
       title: 'Chat request',
-      subTitle: 'you have 2 requests from people you may know',
+      subTitle: `you have ${Object.keys(requestsFeed || {}).length} requests from people you may know`,
       icon: AngleArrowIcon,
     },
   };
+
+  const fetchRequestList = async () => {
+    const feeds = await fetchRequests({ page:1, requestLimit });
+    const firstFeeds: ChatFeedsType = { ...feeds };
+    setRequestsFeed(firstFeeds);
+  };
+
+  useEffect(() => {
+    if (Object.keys(requestsFeed).length) {
+      return;
+    }
+    if (decryptedPgpPvtKey) {
+      fetchRequestList();
+    }
+  }, [fetchRequests, decryptedPgpPvtKey, env]);
 
   return (
     <Section
@@ -198,5 +216,11 @@ const ChatListCard = styled(Section)`
 
   &::-webkit-scrollbar {
     width: 5px;
+  }
+`;
+
+const TabTitleSpan = styled(Span)`
+  @media ${device.mobileS} {
+    font-size: 15px;
   }
 `;

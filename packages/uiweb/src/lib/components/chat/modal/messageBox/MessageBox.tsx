@@ -137,7 +137,6 @@ const MessageCard = ({
 //make provision for different msg type
 const Messages = ({ chat }: { chat: IMessageIPFS }) => {
   const { account } = useContext<any>(ChatPropsContext);
-  console.log(chat.fromDID);
   const position =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account.toLowerCase()
       ? 0
@@ -196,7 +195,6 @@ export const MessageBox = () => {
     );
   };
 
-  console.log(loading);
 
   const scrollToBottom = (behavior?: string | null) => {
     bottomRef?.current?.scrollIntoView(
@@ -276,7 +274,6 @@ export const MessageBox = () => {
          
 
           // const chatTemp = { ...chatsFeed };
-          console.log(selectedChatId)
           // chatTemp[selectedChatId] = selectedRequest;
           setChatFeed(selectedChatId, selectedRequest);
           setActiveTab(PUSH_TABS.CHATS);

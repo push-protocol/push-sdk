@@ -54,14 +54,12 @@ export const MessageBoxHeader = () => {
     activeTab,
   } = useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatPropsContext);
-  console.log(requestsFeed);
 
   const selectedChat =
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
     searchedChats[selectedChatId];
   useResolveWeb3Name(selectedChat?.did, env);
-  console.log(selectedChat);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
     ? ethers.utils.getAddress(walletLowercase)

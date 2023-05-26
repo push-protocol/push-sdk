@@ -2,6 +2,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { Constants, ENV } from '../../config';
 import { AccountEnvOptionsType, IMessageIPFS } from '../../types';
 import { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
+import { walletToPCAIP10 } from '../address';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -154,3 +155,19 @@ export const getDefaultFeedObject = ({user}:{user:IUser}):IFeeds => {
   };
   return feed;
 }
+
+type CheckIfIntentType = {
+ chat:IFeeds,
+ account:string,
+}
+export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
+
+  if(chat && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
+  {
+    if( chat.intent && (chat.intent.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
+    return false;
+    else
+    return true;
+  }
+  return false;
+} 
