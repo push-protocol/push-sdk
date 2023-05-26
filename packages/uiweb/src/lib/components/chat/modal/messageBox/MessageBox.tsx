@@ -101,7 +101,7 @@ const MessageCard = ({
       alignSelf={position ? 'end' : 'start'}
       justifyContent="start"
       maxWidth="80%"
-      minWidth="15%"
+      minWidth="71px"
       position="relative"
     >
       {' '}
