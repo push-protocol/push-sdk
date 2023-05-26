@@ -169,7 +169,7 @@ const usePushChatSocket = (): PushChatSocket => {
 
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({
-        user: account.toLowerCase(),
+        user: account, // change to normal account after backend is corrected for lowercase
         socketType: CHAT_SOCKET_TYPE,
         env: env,
       });
