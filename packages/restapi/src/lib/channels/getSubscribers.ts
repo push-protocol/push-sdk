@@ -47,7 +47,7 @@ export const getSubscribers = async (
         if (limit > 30) {
             throw new Error("limit must be lesser than or equal to 30");
         }
-        const _channel = getCAIPAddress(env, channel, 'Channel');
+        const _channel = await getCAIPAddress(env, channel, 'Channel');
         const API_BASE_URL = getAPIBaseUrls(env);
         const apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}`;
         return await axios.get(apiEndpoint)

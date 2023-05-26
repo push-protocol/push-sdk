@@ -2,55 +2,82 @@
 This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
 # Index
+- [restapi](#restapi)
+- [Index](#index)
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
   - [Import SDK](#import-sdk)
-  - [About generating the signer object for different platforms](#about-generating-the-signer-object-for-different-platforms)
+  - [About generating the "signer" object for different platforms](#about-generating-the-signer-object-for-different-platforms)
+    - [When using in SERVER-SIDE code:](#when-using-in-server-side-code)
+    - [When using in FRONT-END code:](#when-using-in-front-end-code)
   - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
+    - [Chat blockchain agnostic address format](#chat-blockchain-agnostic-address-format)
   - [About Push contract addresses](#about-push-contract-addresses)
+    - [Push core contract address](#push-core-contract-address)
+    - [Push communicator contract address](#push-communicator-contract-address)
 - [SDK Features](#sdk-features)
-  - [Notification](#for-notification)
-    -  [Fetching user notifications](#fetching-user-notifications)
-    -  [Fetching user spam notifications](#fetching-user-spam-notifications)
-    -  [Fetching user subscriptions](#fetching-user-subscriptions)
-    -  [Fetching channel details](#fetching-channel-details)
-    -  [Searching for channel(s)](#searching-for-channels)
-    -  [Opt in to a channel](#opt-in-to-a-channel)
-    -  [Opt out to a channel](#opt-out-to-a-channel)
-    -  [Sending notification](#sending-notification)
-        -  [Direct payload for single recipient(target)](#direct-payload-for-single-recipienttarget)
-        -  [Direct payload for group of recipients(subset)](#direct-payload-for-group-of-recipientssubset)
-        -  [Direct payload for all recipients(broadcast)](#direct-payload-for-all-recipientsbroadcast)
-        -  [IPFS payload for single recipient(target)](#ipfs-payload-for-single-recipienttarget)
-        -  [IPFS payload for group of recipients(subset)](#ipfs-payload-for-group-of-recipientssubset)
-        -  [IPFS payload for all recipients(broadcast)](#ipfs-payload-for-all-recipientsbroadcast)
-        -  [Minimal payload for single recipient(target)](#minimal-payload-for-single-recipienttarget)
-        -  [Minimal payload for a group of recipient(subset)](#minimal-payload-for-a-group-of-recipientsubset)
-        -  [Minimal payload for all recipients(broadcast)](#minimal-payload-for-all-recipientsbroadcast)
-        -  [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
-        -  [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
-        -  [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
-    -  [Notification helper utils](#notification-helper-utils)
-        -  [Parsing notifications](#parsing-notifications)
-    -  [Advanced Notification (WIP)](#advanced-notifications-wip)
-        -  [**Deprecated** Get a channel’s subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
-  - [Chat](#for-chat)
-    -  [Create user for chat](#create-user-for-chat)
-    -  [Get user data for chat](#get-user-data-for-chat)
-    -  [Decrypting encrypted pgp private key](#decrypting-encrypted-pgp-private-key-from-user-data)
-    -  [Fetching list of user chats](#fetching-list-of-user-chats)
-    -  [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
-    -  [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
-    -  [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
-    -  [Fetching chat history between two users](#fetching-chat-history-between-two-users)
-    -  [To send a message](#to-send-a-message)
-    -  [To approve a chat request](#to-approve-a-chat-request)
-    -  [To create a group](#to-create-a-group)
-    -  [To update group details](#to-update-group-details)
-    -  [To get group details by group name](#to-get-group-details-by-group-name)
-    -  [To get group details by chat id](#to-get-group-details-by-chatid)
-    -  [Chat helper utils](#chat-helper-utils)
-        -  [Decrypting messages](#decrypting-messages)
+  - [For Notification](#for-notification)
+    - [Fetching user notifications](#fetching-user-notifications)
+    - [Fetching user spam notifications](#fetching-user-spam-notifications)
+    - [Fetching user subscriptions](#fetching-user-subscriptions)
+    - [Fetching channel details](#fetching-channel-details)
+    - [Searching for channel(s)](#searching-for-channels)
+    - [Opt in to a channel](#opt-in-to-a-channel)
+    - [Opt out to a channel](#opt-out-to-a-channel)
+    - [Sending notification](#sending-notification)
+      - [Direct payload for single recipient(target)](#direct-payload-for-single-recipienttarget)
+      - [Direct payload for group of recipients(subset)](#direct-payload-for-group-of-recipientssubset)
+      - [Direct payload for all recipients(broadcast)](#direct-payload-for-all-recipientsbroadcast)
+      - [IPFS payload for single recipient(target)](#ipfs-payload-for-single-recipienttarget)
+      - [IPFS payload for group of recipients(subset)](#ipfs-payload-for-group-of-recipientssubset)
+      - [IPFS payload for all recipients(broadcast)](#ipfs-payload-for-all-recipientsbroadcast)
+      - [Minimal payload for single recipient(target)](#minimal-payload-for-single-recipienttarget)
+      - [Minimal payload for a group of recipient(subset)](#minimal-payload-for-a-group-of-recipientsubset)
+      - [Minimal payload for all recipients(broadcast)](#minimal-payload-for-all-recipientsbroadcast)
+      - [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
+      - [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
+      - [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
+    - [Notification Helper Utils](#notification-helper-utils)
+      - [Parsing notifications](#parsing-notifications)
+    - [Advanced Notifications (WIP)](#advanced-notifications-wip)
+    - [DEPRECATED](#deprecated)
+      - [Get a channel's subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
+  - [For Chat](#for-chat)
+    - [Create user for chat](#create-user-for-chat)
+    - [Get user data for chat](#get-user-data-for-chat)
+    - [Decrypting encrypted pgp private key from user data](#decrypting-encrypted-pgp-private-key-from-user-data)
+    - [Fetching list of user chats](#fetching-list-of-user-chats)
+    - [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
+    - [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
+    - [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
+    - [Fetching chat history between two users](#fetching-chat-history-between-two-users)
+    - [To send a message](#to-send-a-message)
+    - [To approve a chat request](#to-approve-a-chat-request)
+    - [To create a group](#to-create-a-group)
+    - [To update group details](#to-update-group-details)
+    - [To get group details by group name](#to-get-group-details-by-group-name)
+    - [To get group details by chatId](#to-get-group-details-by-chatid)
+    - [Chat Helper Utils](#chat-helper-utils)
+      - [Decrypting messages](#decrypting-messages)
+  - [For Video](#for-video)
+    - [Instance Variables](#instance-variables)
+      - [peerInstance](#peerinstance)
+      - [signer](#signer)
+      - [chainId](#chainid)
+      - [pgpPrivateKey](#pgpprivatekey)
+      - [env](#env)
+    - [data](#data)
+      - [setData](#setdata)
+    - [Methods](#methods)
+      - [constructor](#constructor)
+      - [create](#create)
+      - [request](#request)
+      - [acceptRequest](#acceptrequest)
+      - [connect](#connect)
+      - [disconnect](#disconnect)
+      - [enableVideo](#enablevideo)
+      - [enableAudio](#enableaudio)
+      - [isInitiator](#isinitiator)
 
 # How to use in your app?
 ## Installation
@@ -3586,3 +3613,304 @@ Allowed Options (params with * are mandatory)
 </details>
 
 -----
+
+## For Video
+
+### **Instance Variables**
+#### **peerInstance**
+- Used to store the simple peer instance used for the webRTC connection.
+```typescript
+private peerInstance: any = null;
+```
+
+-----
+
+#### **signer**
+- Used to store the signer of a user.
+- Used in the request, acceptRequest and disconnect methods to send notifications.
+```typescript
+  private signer: SignerType;
+```
+
+-----
+
+#### **chainId**
+The chain id of the chain on which the call is being conducted.
+```typescript
+  private chainId: number;
+```
+
+-----
+
+#### **pgpPrivateKey**
+- Used to store the PGP private key of a user.
+- Used in the request, acceptRequest and disconnect methods to send notifications.
+```typescript
+  private pgpPrivateKey: string;
+```
+
+-----
+
+#### **env**
+- The environment on which the call is being conducted.
+```typescript
+private env: ENV;
+```
+
+-----
+
+### **data**
+- Stores data related to the video call.
+```typescript
+export type IMediaStream = MediaStream | null;
+
+export enum VideoCallStatus {
+  UNINITIALIZED,
+  INITIALIZED,
+  RECEIVED,
+  CONNECTED,
+  DISCONNECTED,
+  RETRY_INITIALIZED,
+  RETRY_RECEIVED,
+}
+
+export type PeerData = {
+  stream: IMediaStream; // incoming media stream
+  audio: boolean | null; // incoming audio status
+  video: boolean | null; // incoming video status
+  address: string; // incoming address
+  status: VideoCallStatus; // status for the connection with incoming peer
+  retryCount: number; // number of retires done
+};
+
+export type VideoCallData = {
+  meta: {
+    chatId: string; // unique chatId for the corresponding push w2w chat
+    initiator: {
+      address: string; // initiator's address
+      signal: any; // initiator's signaling data for webRTC connection
+    };
+    broadcast?: {
+      livepeerInfo: any;
+      hostAddress: string;
+      coHostAddress: string;
+    };
+  };
+  local: {
+    stream: IMediaStream; // local media stream
+    audio: boolean | null; // local audio status
+    video: boolean | null; // local video status
+    address: string; // local address
+  };
+  incoming: [PeerData];
+};
+
+private data: VideoCallData;
+```
+
+-----
+
+#### **setData**
+- This function can be used to update the video call ```data```
+```typescript
+setData: (fn: (data: VideoCallData) => VideoCallData) => void;
+
+// usage
+
+import { produce } from 'immer';
+
+setData((oldData) => {
+	return produce(oldData, (draft) => {
+		// update the draft object, example
+		draft.incoming.status = VideoCallStatus.INITIALIZED;
+ });
+});
+```
+
+-----
+
+### **Methods**
+#### **constructor**
+```typescript
+constructor({
+    signer,
+    chainId,
+    pgpPrivateKey,
+    env,
+    setData,
+  }: {
+    signer: SignerType;
+    chainId: number;
+    pgpPrivateKey: string;
+    env?: ENV;
+    setData: (fn: (data: VideoCallData) => VideoCallData) => void;
+  }) {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| signer*    | SignerType  | -       | signer object for a user               |
+| chainId*     | number  | -       | chainId for the video call - Eth Mainnet: 1, Polygon Mainnet: 137                   |
+| pgpPrivatekey*    | string  | -      | PGP private key of the user, used while sending video call notifications             |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| setData*      | ```(fn: (data: VideoCallData) => VideoCallData) => void```  | -      | Function to update video call data |
+
+-----
+
+#### **create**
+- This method is used to create a local stream
+- Assigns the local stream obtained from the ```navigator.mediaDevices.getUserMedia``` to `data.local.stream` state.
+```typescript
+export type VideoCreateInputOptions = {
+  video?: boolean;
+  audio?: boolean;
+};
+
+async create(options: VideoCreateInputOptions): Promise<void> {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| video    | boolean  | true       | video status for the local stream               |
+| audio     | boolean  | true       | audio status for the local stream |
+
+Note - If audio, video aren't enabled in create() then they wont be available during the call respectively.
+
+-----
+
+#### **request**
+- This method is used to request a push video call.
+- Will be triggered on the initiator's end.
+```typescript
+export type VideoRequestInputOptions = {
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+};
+
+async request(options: VideoRequestInputOptions): Promise<void> {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| senderAddress*    | string  | - | Local peer address |
+| recipientAddress*     | string  | - | Incoming/remote peer address |
+| chatId*     | string  | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage     | ```(message: string) => void```  | ```(message: string) => {console.log('received a meesage', message);}``` | Function which will be called when the sender receives a message via webRTC data channel |
+| retry | boolean | false | If we are retrying the call, only for internal use |
+
+
+-----
+
+#### **acceptRequest**
+- This method is used to accept a push video call.
+- Will be triggered on the receiver's end.
+```typescript
+export type VideoAcceptRequestInputOptions = {
+  signalData: any;
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+};
+
+async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| signalData*    | any  | - | Signal data received from the initiator peer via psuh notification upon call request |
+| senderAddress*    | string  | - | Local peer address |
+| recipientAddress*     | string  | - | Incoming/remote peer address |
+| chatId*     | string  | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage     | ```(message: string) => void```  | ```(message: string) => {console.log('received a meesage', message);}``` | Function which will be called when the sender receives a message via webRTC data channel |
+| retry | boolean | false | If we are retrying the call, only for internal use |
+
+-----
+
+#### **connect**
+- This is the final method which is used to connect a push video call.
+- Will be triggered on the initiator's end.
+```typescript
+export type VideoConnectInputOptions = {
+  signalData: any;
+};
+
+connect(options: VideoConnectInputOptions): void {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| signalData*    | any  | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
+
+-----
+
+#### **disconnect**
+- This method is used to end a push video call.
+- Can be triggered on the initiator as well as receivers end.
+```typescript
+disconnect(): void {}
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| - | - | - | - |
+
+-----
+
+#### **enableVideo**
+- This method is used to enable/disable the video (from ```data.local.stream```) for a push video call.
+- Can be triggered on the initiator as well as receivers end.
+- **Note -** If video was not enabled during ```create()``` then it will always remain off. 
+
+```typescript
+  export type EnableVideoInputOptions = {
+  state: boolean;
+}
+  
+enableVideo(options: EnableVideoInputOptions): void
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| state | boolean | - | true for enable and false for disable |
+
+-----
+
+#### **enableAudio**
+- This method is used to enable/disable the audio (from ```data.local.stream```) for a push video call.
+- Can be triggered on the initiator as well as receivers end.
+- **Note -** If audio was not enabled during ```create()``` then it will always remain off. 
+
+```typescript
+export type EnableAudioInputOptions = {
+  state: boolean;
+} 
+  
+enableAudio(options: EnableAudioInputOptions): void
+```
+
+Allowed Options (params with * are mandatory)
+| Param    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| state | boolean | - | true for enable and false for disable |
+
+-----
+
+#### **isInitiator**
+- This method is used to tell if the current peer is the initator of the push video call or not.
+- Can be triggered on the initiator as well as receivers end.
+
+```typescript
+isInitiator(): boolean
+```

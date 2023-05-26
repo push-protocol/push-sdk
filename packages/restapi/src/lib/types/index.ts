@@ -1,5 +1,9 @@
 import { ethers } from 'ethers';
-import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../../lib/payloads/constants';
+import {
+  ADDITIONAL_META_TYPE,
+  IDENTITY_TYPE,
+  NOTIFICATION_TYPE,
+} from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 
@@ -88,7 +92,17 @@ export interface ISendNotificationInputOptions {
     cta: string;
     img: string;
     metadata?: any;
-    additionalMeta?: any;
+    additionalMeta?:
+      | {
+          /**
+           * type = ADDITIONAL_META_TYPE+VERSION
+           * VERSION > 0
+           */
+          type: `${ADDITIONAL_META_TYPE}+${number}`;
+          data: string;
+          domain?: string;
+        }
+      | string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -135,6 +149,8 @@ export interface IMessageIPFS {
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
+  deprecated?: boolean; // scope only at sdk level
+  deprecatedCode?: string; // scope only at sdk level
 }
 export interface IFeeds {
   msg: IMessageIPFS;
@@ -322,4 +338,82 @@ export type MessageWithCID = {
   encType: string;
   encryptedSecret: string;
   verificationProof?: string;
+};
+
+export type IMediaStream = MediaStream | null;
+
+export enum VideoCallStatus {
+  UNINITIALIZED,
+  INITIALIZED,
+  RECEIVED,
+  CONNECTED,
+  DISCONNECTED,
+  RETRY_INITIALIZED,
+  RETRY_RECEIVED,
+}
+
+export type PeerData = {
+  stream: IMediaStream;
+  audio: boolean | null;
+  video: boolean | null;
+  address: string;
+  status: VideoCallStatus;
+  retryCount: number;
+};
+
+export type VideoCallData = {
+  meta: {
+    chatId: string;
+    initiator: {
+      address: string;
+      signal: any;
+    };
+    broadcast?: {
+      livepeerInfo: any;
+      hostAddress: string;
+      coHostAddress: string;
+    };
+  };
+  local: {
+    stream: IMediaStream;
+    audio: boolean | null;
+    video: boolean | null;
+    address: string;
+  };
+  incoming: [PeerData];
+};
+
+export type VideoCreateInputOptions = {
+  video?: boolean;
+  audio?: boolean;
+  stream?: MediaStream; // for backend use
+};
+
+export type VideoRequestInputOptions = {
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+};
+
+export type VideoAcceptRequestInputOptions = {
+  signalData: any;
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+};
+
+export type VideoConnectInputOptions = {
+  signalData: any;
+};
+
+export type EnableVideoInputOptions = {
+  state: boolean;
+};
+
+export type EnableAudioInputOptions = {
+  state: boolean;
 };

@@ -1,5 +1,6 @@
 import * as ethers from 'ethers';
 import Constants, {ENV} from '../constants';
+import { getUserDID } from '../chat/helpers';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address } : { address: string }) => boolean;
@@ -66,6 +67,8 @@ export function validateCAIP(addressInCAIP: string) {
   if (!networkId) return false;
   if (!address) return false;
 
+  if(isValidCAIP10NFTAddress(addressInCAIP))return true;
+
   const validatorFn = AddressValidators[blockchain];
 
   return validatorFn({ address });
@@ -115,7 +118,10 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
  *    else 
  *      throw error!
  */
-export function getCAIPAddress(env: ENV, address: string, msg?: string) {
+export async function getCAIPAddress(env: ENV, address: string, msg?: string) {
+  if(isValidCAIP10NFTAddress(address)){
+    return await getUserDID(address, env);
+  }
   if (validateCAIP(address)) {
     return address;
   } else {

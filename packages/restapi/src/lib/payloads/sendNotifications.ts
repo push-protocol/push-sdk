@@ -9,10 +9,16 @@ import {
   getSource,
   getUUID,
 } from './helpers';
-import { getCAIPAddress, getCAIPDetails, getConfig } from '../helpers';
-import { IDENTITY_TYPE } from './constants';
+import {
+  getAPIBaseUrls,
+  getCAIPAddress,
+  getCAIPDetails,
+  getConfig,
+  isValidCAIP10NFTAddress,
+  isValidETHAddress,
+} from '../helpers';
+import { IDENTITY_TYPE, DEFAULT_DOMAIN } from './constants';
 import { ENV } from '../constants';
-import { getWallet } from '../chat/helpers';
 
 /**
  * Validate options for some scenarios
@@ -20,6 +26,15 @@ import { getWallet } from '../chat/helpers';
 function validateOptions(options: any) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
+  }
+  if (!isValidETHAddress(options.channel)) {
+    throw '[Push SDK] - Error - sendNotification() - "channel" is invalid!';
+  }
+  if (options.senderType === 0 && options.signer === undefined) {
+    throw '[Push SDK] - Error - sendNotification() - "signer" is mandatory!';
+  }
+  if (options.senderType === 1 && options.pgpPrivateKey === undefined) {
+    throw '[Push SDK] - Error - sendNotification() - "pgpPrivateKey" is mandatory!';
   }
 
   /**
@@ -61,13 +76,15 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
 
     validateOptions(options);
 
-    if (signer === undefined) {
-      throw new Error(`Signer is necessary!`);
+    if (
+      payload &&
+      payload.additionalMeta &&
+      typeof payload.additionalMeta === 'object' &&
+      !payload.additionalMeta.domain
+    ) {
+      payload.additionalMeta.domain = DEFAULT_DOMAIN;
     }
-
-    const wallet = getWallet({ account: null, signer });
-
-    const _channelAddress = getCAIPAddress(env, channel, 'Channel');
+    const _channelAddress = await getCAIPAddress(env, channel, 'Channel');
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
 
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
@@ -75,10 +92,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const uuid = getUUID();
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
-      env,
-      channelCAIPDetails
-    );
+    const API_BASE_URL = getAPIBaseUrls(env);
+    let COMMUNICATOR_CONTRACT = '';
+    if (senderType === 0) {
+      const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+      COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
+    }
 
     const _recipients = await getRecipients({
       env,
@@ -96,16 +115,14 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       chainId,
       identityType,
       notificationType: type,
-      verifyingContract: EPNS_COMMUNICATOR_CONTRACT,
+      verifyingContract: COMMUNICATOR_CONTRACT,
       payload: notificationPayload,
       graph,
       ipfsHash,
       uuid,
       // for the pgpv2 verfication proof
       chatId,
-      wallet,
       pgpPrivateKey,
-      env,
     });
 
     const identity = getPayloadIdentity({
@@ -122,12 +139,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       verificationProof,
       identity,
       sender:
-        senderType === 1
+        senderType === 1 && !isValidCAIP10NFTAddress(_channelAddress)
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
           : _channelAddress,
       source,
       /** note this recipient key has a different expectation from the BE API, see the funciton for more */
-      recipient: getRecipientFieldForAPIPayload({
+      recipient: await getRecipientFieldForAPIPayload({
         env,
         notificationType: type,
         recipients: recipients || '',

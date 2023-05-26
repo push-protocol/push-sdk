@@ -73,14 +73,29 @@ const updatedNftGroupName = uniqueNamesGenerator({
   dictionaries: [adjectives, colors, animals],
 });
 
+// Video Data
+const videoChainId = +process.env.VIDEO_CHAIN_ID;
+let videoData = PushAPI.video.initVideoCallData;
+const videoSetData: (
+  fn: (data: PushAPI.VideoCallData) => PushAPI.VideoCallData
+) => void = (fn) => {
+  videoData = fn(videoData);
+};
+let videoObject = null;
+const videoLocalStream = null; // get the local stream
+const videoSenderAddress = process.env.VIDEO_SENDER_ADDRESS;
+const videoRecipientAddress = process.env.VIDEO_RECIPEINT_ADDRESS;
+const videoChatId = process.env.VIDEO_CHAT_ID;
+let videoSignalData_1 = null;
+
 // Push Notification - Run Notifications Use cases
 async function runNotificaitonsUseCases() {
   console.log(`
-  ███    ██  ██████  ████████ ██ ███████ ██  ██████  █████  ████████ ██  ██████  ███    ██ ███████ 
-  ████   ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ████   ██ ██      
-  ██ ██  ██ ██    ██    ██    ██ █████   ██ ██      ███████    ██    ██ ██    ██ ██ ██  ██ ███████ 
-  ██  ██ ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ██  ██ ██      ██ 
-  ██   ████  ██████     ██    ██ ██      ██  ██████ ██   ██    ██    ██  ██████  ██   ████ ███████ 
+  ███    ██  ██████  ████████ ██ ███████ ██  ██████  █████  ████████ ██  ██████  ███    ██ ███████
+  ████   ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ████   ██ ██
+  ██ ██  ██ ██    ██    ██    ██ █████   ██ ██      ███████    ██    ██ ██    ██ ██ ██  ██ ███████
+  ██  ██ ██ ██    ██    ██    ██ ██      ██ ██      ██   ██    ██    ██ ██    ██ ██  ██ ██      ██
+  ██   ████  ██████     ██    ██ ██      ██  ██████ ██   ██    ██    ██  ██████  ██   ████ ███████
 `);
   console.log('PushAPI.user.getFeeds');
   await PushAPI_user_getFeeds();
@@ -389,11 +404,11 @@ async function PushSDKSocket(silent = !showAPIResponse) {
 // Push Chat - Run Chat Use cases
 async function runChatUseCases() {
   console.log(`
-  ██████  ██   ██  █████  ████████ 
-  ██      ██   ██ ██   ██    ██    
-  ██      ███████ ███████    ██    
-  ██      ██   ██ ██   ██    ██    
-  ██████  ██   ██ ██   ██    ██    
+  ██████  ██   ██  █████  ████████
+  ██      ██   ██ ██   ██    ██
+  ██      ███████ ███████    ██
+  ██      ██   ██ ██   ██    ██
+  ██████  ██   ██ ██   ██    ██
 `);
   console.log('PushAPI.user.create');
   await PushAPI_user_create();
@@ -411,10 +426,13 @@ async function runChatUseCases() {
   await PushAPI_chat_requests();
 
   console.log('PushAPI.chat.send');
-  await PushAPI_chat_send();
+  const TargetChatId = await PushAPI_chat_send();
 
   console.log('PushAPI.chat.approve');
   await PushAPI_chat_approve();
+
+  console.log('PushAPI chat Video call Notification');
+  await PushAPI_chat_video_call_notification(TargetChatId);
 
   console.log('PushAPI.chat.createGroup');
   const chatId = await PushAPI_chat_createGroup();
@@ -681,6 +699,7 @@ async function PushAPI_chat_send(silent = !showAPIResponse) {
   if (!silent) {
     console.log(response);
   }
+  return response.chatId;
 }
 
 // Push Chat - Approve
@@ -938,14 +957,63 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
   await delay(4000);
 }
 
+async function PushAPI_chat_video_call_notification(
+  chatId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: signer.address,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: signer,
+  });
+  // get PGP KEy
+  const apiResponse = await PushAPI.payloads.sendNotification({
+    senderType: 1,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    chatId: chatId,
+    type: 3, // target
+    identityType: 2, // direct payload
+    notification: {
+      title: `VC TITLE:`,
+      body: `VC BODY`,
+    },
+    payload: {
+      title: `payload title`,
+      body: `sample msg body`,
+      cta: '',
+      img: '',
+      additionalMeta: {
+        type: '1+1',
+        data: 'Random DATA',
+        domain: 'push.org',
+      },
+    },
+    recipients: signerSecondAccount.address, // recipient address
+    channel: signer.address, // your channel address
+    env: env as ENV,
+  });
+
+  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  if (!silent) {
+    console.log(apiResponse);
+  }
+}
+
 // Push Chat - Run Chat Use cases
 async function runNFTChatUseCases() {
   console.log(`
-  ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████ 
-  ████   ██ ██         ██      ██      ██   ██ ██   ██    ██    
-  ██ ██  ██ █████      ██      ██      ███████ ███████    ██    
-  ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██    
-  ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██   
+  ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████
+  ████   ██ ██         ██      ██      ██   ██ ██   ██    ██
+  ██ ██  ██ █████      ██      ██      ███████ ███████    ██
+  ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██
+  ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██
   `);
   console.log('PushAPI.user.create');
   await PushAPI_nft_user_create();
@@ -963,10 +1031,13 @@ async function runNFTChatUseCases() {
   await PushAPI_nft_chat_requests();
 
   console.log('PushAPI.chat.send');
-  await PushAPI_nft_chat_send();
+  const TargetchatId = await PushAPI_nft_chat_send();
 
   console.log('PushAPI.chat.approve');
   await PushAPI_nft_chat_approve();
+
+  console.log('NFT Video Call Notification');
+  await PushAPI_nft_chat_video_call_notification(TargetchatId);
 
   console.log('PushAPI.chat.createGroup');
   const chatId = await PushAPI_nft_chat_createGroup();
@@ -1232,6 +1303,7 @@ async function PushAPI_nft_chat_send(silent = !showAPIResponse) {
   if (!silent) {
     console.log(response);
   }
+  return response.chatId;
 }
 
 // Push Chat - Approve
@@ -1262,6 +1334,55 @@ async function PushAPI_nft_chat_approve(silent = !showAPIResponse) {
   console.log('PushAPI_nft_chat_approve | Response - 200 OK');
   if (!silent) {
     console.log(approve);
+  }
+}
+
+async function PushAPI_nft_chat_video_call_notification(
+  chatId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: nftAccount1,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: nftSigner1,
+  });
+
+  const apiResponse = await PushAPI.payloads.sendNotification({
+    senderType: 1,
+    signer: nftSigner1,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    chatId: chatId,
+    type: 1, // target
+    identityType: 2, // direct payload
+    notification: {
+      title: `VC TITLE:`,
+      body: `VC BODY`,
+    },
+    payload: {
+      title: `payload title`,
+      body: `sample msg body`,
+      cta: '',
+      img: '',
+      additionalMeta: {
+        type: '1+1',
+        data: 'Random DATA',
+        domain: 'push.org',
+      },
+    },
+    recipients: nftAccount1, // recipient address
+    channel: nftAccount1, // your channel address
+    env: env as ENV,
+  });
+
+  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  if (!silent) {
+    console.log(apiResponse);
   }
 }
 
@@ -1484,13 +1605,180 @@ async function PushNFTChatSDKSocket(silent = !showAPIResponse) {
   await delay(4000);
 }
 
+// Push Video - Run Video Use cases
+async function runVideoUseCases() {
+  console.log(`
+██╗   ██╗██╗██████╗ ███████╗ ██████╗
+██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
+██║   ██║██║██║  ██║█████╗  ██║   ██║
+╚██╗ ██╔╝██║██║  ██║██╔══╝  ██║   ██║
+ ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝
+  ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝
+  `);
+  console.log('new PushAPI.video.Video({...})');
+  videoObject = await PushAPI_video_object_init();
+
+  console.log('await videoObject.create({...})');
+  videoObject = await PushAPI_video_create();
+
+  console.log('await videoObject.request({...})');
+  videoObject = await PushAPI_video_request(); // for initiator
+
+  console.log('await videoObject.acceptRequest({...})');
+  videoObject = await PushAPI_video_accept_request(); // for receiver
+
+  console.log('videoObject.connect()');
+  // should be only called inside of the USER_FEEDS event handler as shown later in PushVideoSDKSocket
+  videoObject = await PushAPI_video_connect(); // for initiator
+
+  console.log('videoObject.disconnect()');
+  videoObject = await PushAPI_video_disconnect();
+
+  console.log('Push Video - PushSDKSocket()');
+  await PushVideoSDKSocket();
+}
+
+async function PushAPI_video_object_init() {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  // Init the Video object
+  const videoObject = new PushAPI.video.Video({
+    signer,
+    chainId: videoChainId,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+    setData: videoSetData,
+  });
+
+  return videoObject;
+}
+
+async function PushAPI_video_create() {
+  await videoObject.create({
+    stream: videoLocalStream,
+  });
+}
+
+async function PushAPI_video_request() {
+  videoObject.request({
+    senderAddress: videoSenderAddress,
+    recipientAddress: videoRecipientAddress,
+    chatId: videoChatId,
+  });
+}
+
+async function PushAPI_video_accept_request() {
+  videoObject.acceptRequest({
+    signalData: videoSignalData_1,
+    senderAddress: videoRecipientAddress,
+    recipientAddress: videoSenderAddress,
+    chatId: videoChatId,
+  });
+}
+
+async function PushAPI_video_connect() {
+  videoObject.connect({
+    signalData: {}, // signalData from sockets
+  });
+}
+
+async function PushAPI_video_disconnect() {
+  videoObject.disconnect();
+}
+
+async function PushVideoSDKSocket() {
+  const pushSDKSocket = createSocketConnection({
+    user: videoSenderAddress,
+    socketType: 'chat',
+    socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
+    env: env as ENV,
+  });
+
+  if (!pushSDKSocket) {
+    throw new Error('Socket not connected');
+  }
+
+  pushSDKSocket.on(EVENTS.USER_FEEDS, (feedItem) => {
+    const { payload } = feedItem || {};
+
+    if (
+      Object.prototype.hasOwnProperty.call(payload, 'data') &&
+      Object.prototype.hasOwnProperty.call(payload['data'], 'additionalMeta')
+    ) {
+      const additionalMeta = JSON.parse(payload['data']['additionalMeta']);
+
+      if (additionalMeta.status === PushAPI.VideoCallStatus.INITIALIZED) {
+        videoSignalData_1 = additionalMeta.signalData;
+      } else if (
+        additionalMeta.status === PushAPI.VideoCallStatus.RECEIVED ||
+        additionalMeta.status === PushAPI.VideoCallStatus.RETRY_RECEIVED
+      ) {
+        videoObject.connect({
+          signalData: additionalMeta.signalData,
+        });
+      } else if (
+        additionalMeta.status === PushAPI.VideoCallStatus.DISCONNECTED
+      ) {
+        // can clear out the states here
+      } else if (
+        additionalMeta.status === PushAPI.VideoCallStatus.RETRY_INITIALIZED &&
+        videoObject.isInitiator()
+      ) {
+        videoObject.request({
+          senderAddress: videoSenderAddress,
+          recipientAddress: videoRecipientAddress,
+          chatId: videoChatId,
+          retry: true,
+        });
+      } else if (
+        additionalMeta.status === PushAPI.VideoCallStatus.RETRY_INITIALIZED &&
+        !videoObject.isInitiator()
+      ) {
+        videoObject.acceptRequest({
+          signalData: additionalMeta.signalData,
+          senderAddress: videoRecipientAddress,
+          recipientAddress: videoSenderAddress,
+          chatId: videoChatId,
+          retry: true,
+        });
+      }
+    }
+  });
+
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+  await delay(4000);
+}
+
 // Use Cases
 function start() {
   console.log(`${returnHeadingLog()}`);
   console.log(`${returnENVLog()}`);
   runNotificaitonsUseCases().then(() => {
     runChatUseCases().then(() => {
-      runNFTChatUseCases();
+      runNFTChatUseCases().then(() => {
+        if (videoLocalStream !== null) {
+          /*
+            - One instance of videoObject corresponds to one user/peer of the call
+            - For a wallet-to-wallet video call we need 2 such users/peers
+              - One of these peer would be the initiator and the other would be the receiver
+            - Stream object has to be fetched from the frontend of your app to the backend and supplied to videoLocalStream corresponding to each of the peer
+            - Might be of help: https://stackoverflow.com/questions/25523289/sending-a-mediastream-to-host-server-with-webrtc-after-it-is-captured-by-getuser
+          */
+          runVideoUseCases();
+        }
+      });
     });
   });
 }
@@ -1504,22 +1792,22 @@ start();
 // -----------
 function returnHeadingLog() {
   const headingLog = `
-    ███████ ██████  ██   ██     ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██  █████  ██      ██ ████████ ██    ██ 
-    ██      ██   ██ ██  ██      ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██   ██ ██      ██    ██     ██  ██  
-    ███████ ██   ██ █████       █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████ ██      ██    ██      ████   
-         ██ ██   ██ ██  ██      ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██ ██   ██ ██      ██    ██       ██    
-    ███████ ██████  ██   ██     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ██   ██ ███████ ██    ██       ██    
+    ███████ ██████  ██   ██     ███████ ██    ██ ███    ██  ██████ ████████ ██  ██████  ███    ██  █████  ██      ██ ████████ ██    ██
+    ██      ██   ██ ██  ██      ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██   ██ ██      ██    ██     ██  ██
+    ███████ ██   ██ █████       █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████ ██      ██    ██      ████
+         ██ ██   ██ ██  ██      ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██ ██   ██ ██      ██    ██       ██
+    ███████ ██████  ██   ██     ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ██   ██ ███████ ██    ██       ██
   `;
   return headingLog;
 }
 
 function returnENVLog() {
   let environmentLog = `
-    ███████ ████████  █████   ██████  ██ ███    ██  ██████  
-    ██         ██    ██   ██ ██       ██ ████   ██ ██       
-    ███████    ██    ███████ ██   ███ ██ ██ ██  ██ ██   ███ 
-         ██    ██    ██   ██ ██    ██ ██ ██  ██ ██ ██    ██ 
-    ███████    ██    ██   ██  ██████  ██ ██   ████  ██████  
+    ███████ ████████  █████   ██████  ██ ███    ██  ██████
+    ██         ██    ██   ██ ██       ██ ████   ██ ██
+    ███████    ██    ███████ ██   ███ ██ ██ ██  ██ ██   ███
+         ██    ██    ██   ██ ██    ██ ██ ██  ██ ██ ██    ██
+    ███████    ██    ██   ██  ██████  ██ ██   ████  ██████
   `;
 
   if (env === ENV.PROD) {
