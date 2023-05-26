@@ -1,5 +1,3 @@
-// @ts-nocheck 
-// TODO: remove it after IUserV2 implementation
 import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
 import { sign } from '../chat/helpers';
