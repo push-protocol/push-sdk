@@ -6,6 +6,7 @@ import {ChatMainStateContextProvider} from '../../context';
 
 import { Chat } from './Chat';
 import { Env } from '@pushprotocol/restapi';
+import { pCAIP10ToWallet } from '../../helpers';
 
 export type ChatProps = {
   account: string;
@@ -23,7 +24,7 @@ export const ChatWidget: React.FC<ChatProps> = ({
 
 
   const chatPropsData = {
-    account,
+    account:pCAIP10ToWallet(account),
     decryptedPgpPvtKey,
     env,
   };
