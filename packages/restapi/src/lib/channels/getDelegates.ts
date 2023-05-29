@@ -27,7 +27,7 @@ export const getDelegates = async (
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const _channel = getCAIPAddress(env, channel, 'Channel');
+  const _channel = await getCAIPAddress(env, channel, 'Channel');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}/${_channel}/delegates`;

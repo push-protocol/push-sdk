@@ -43,14 +43,14 @@ export const unsubscribe = async (
   } = options || {};
 
   try {
-    const _channelAddress = getCAIPAddress(env, channelAddress, 'Channel');
+    const _channelAddress = await getCAIPAddress(env, channelAddress, 'Channel');
 
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
 
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const _userAddress = getCAIPAddress(env, userAddress, 'User');
+    const _userAddress = await getCAIPAddress(env, userAddress, 'User');
   
     const userCAIPDetails = getCAIPDetails(_userAddress);
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
