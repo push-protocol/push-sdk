@@ -131,12 +131,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       wallet,
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
-      encryptionType: encryptionType,
       env,
-      nftOwner:
-        encryptionType === Constants.ENC_TYPE_V4
-          ? walletToPCAIP10((await signer?.getAddress()) as string)
-          : null, // check for nft
     };
 
     // Report Progress

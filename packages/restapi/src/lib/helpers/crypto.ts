@@ -23,7 +23,11 @@ import {
   IMessageIPFS,
   ProgressHookType,
 } from '../types';
-import { isValidETHAddress, pCAIP10ToWallet } from './address';
+import {
+  isValidCAIP10NFTAddress,
+  isValidETHAddress,
+  pCAIP10ToWallet,
+} from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 
@@ -575,30 +579,35 @@ export const preparePGPPublicKey = async (
 };
 
 export const verifyPGPPublicKey = (
-  encryptionType: string,
+  encryptedPrivateKey: string,
   publicKey: string,
-  did: string,
-  nftOwner: string
+  did: string
 ): string => {
-  if (encryptionType && encryptionType !== Constants.ENC_TYPE_V1) {
-    const { key, signature: verificationProof } = JSON.parse(publicKey);
-    publicKey = key;
-    let signedData: string;
-    if (encryptionType === Constants.ENC_TYPE_V2)
-      signedData = 'Create Push Chat Profile \n' + generateHash(key);
-    else signedData = 'Create Push Profile \n' + generateHash(key);
-    if (
-      verifyProfileSignature(
-        verificationProof,
-        signedData,
-        pCAIP10ToWallet(did),
-        nftOwner ? pCAIP10ToWallet(nftOwner) : nftOwner
+  try {
+    if (publicKey !== '' && publicKey.includes('signature')) {
+      const { key, signature: verificationProof } = JSON.parse(publicKey);
+      publicKey = key;
+      let signedData: string;
+      if (verificationProof.includes('eip712'))
+        signedData = 'Create Push Chat Profile \n' + generateHash(key);
+      else signedData = 'Create Push Profile \n' + generateHash(key);
+      if (
+        verifyProfileSignature(
+          verificationProof,
+          signedData,
+          isValidCAIP10NFTAddress(did)
+            ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
+            : pCAIP10ToWallet(did)
+        )
       )
-    )
-      return publicKey;
-    else throw new Error('Cannot verify Encryption Keys for this user');
+        return publicKey;
+      else throw new Error('Cannot Verify this publicKey Owner!!!');
+    }
+    return publicKey;
+  } catch (err) {
+    console.warn('Cannot Verify this publicKey Owner!!!');
+    return publicKey;
   }
-  return publicKey;
 };
 
 export const validatePssword = (password: string) => {

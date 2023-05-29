@@ -152,7 +152,7 @@ const GetUserTest = () => {
             ) : null}
           </div>
         </SectionItem>
-        {connectedUser && (connectedUser as IUser).nftOwner !== null && (
+        {connectedUser && (connectedUser as IUser).did.split(':')[0] === 'nft' && (
           <SectionItem style={{ marginTop: 20 }}>
             <div>
               {connectedUser ? <CodeFormatter>{password}</CodeFormatter> : null}

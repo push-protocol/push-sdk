@@ -52,6 +52,6 @@ describe('Get user', () => {
         value.includes(`"version":"${Constants.ENC_TYPE_V3}"`)
       );
     });
-    expect(user.profilePicture).to.contains('data:image/png;base64,');
+    expect(user.profile.picture).to.contains('data:image/png;base64,');
   });
 });
