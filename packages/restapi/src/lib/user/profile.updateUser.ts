@@ -2,7 +2,11 @@ import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
 import { sign } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import {
+  getAPIBaseUrls,
+  isValidETHAddress,
+  verifyPGPPublicKey,
+} from '../helpers';
 import { IUser, ProgressHookType } from '../types';
 import { get } from './getUser';
 
@@ -50,9 +54,21 @@ export const profileUpdate = async (
       throw new Error('User not Found!');
     }
     const updatedProfile = {
-      name: profile.name ? profile.name : Object.keys(user).includes("name") ? user.name : user.profile.name,
-      desc: profile.desc ? profile.desc : Object.keys(user).includes("about")? user.about : user.profile.desc,
-      picture: profile.picture ? profile.picture : Object.keys(user).includes("profilePicture")? user.profilePicture : user.profile.picture,
+      name: profile.name
+        ? profile.name
+        : Object.keys(user).includes('name')
+        ? user.name
+        : user.profile.name,
+      desc: profile.desc
+        ? profile.desc
+        : Object.keys(user).includes('about')
+        ? user.about
+        : user.profile.desc,
+      picture: profile.picture
+        ? profile.picture
+        : Object.keys(user).includes('profilePicture')
+        ? user.profilePicture
+        : user.profile.picture,
     };
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
     const signature = await sign({
@@ -74,7 +90,14 @@ export const profileUpdate = async (
       progressInfo: 'Steady lads, chat is almost ready!',
       level: 'INFO',
     });
-    const response: IUser = await axios.put(apiEndpoint, body);
+    const response = await axios.put(apiEndpoint, body);
+    if (response.data)
+      response.data.publicKey = verifyPGPPublicKey(
+        response.data.encryptionType,
+        response.data.publicKey,
+        response.data.did,
+        response.data.nftOwner
+      );
 
     //Report Progress
     progressHook?.({
@@ -83,7 +106,7 @@ export const profileUpdate = async (
       progressInfo: '',
       level: 'SUCCESS',
     });
-    return response;
+    return response.data;
   } catch (err) {
     progressHook?.({
       progressId: 'PUSH-ERROR-00',
