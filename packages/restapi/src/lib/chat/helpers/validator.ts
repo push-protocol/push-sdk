@@ -115,7 +115,7 @@ export const createSpaceRequestValidator = (
     }
 };
 
-export const validateScheduleDates = (scheduleAt: Date,
+export const validateScheduleDates = (scheduleAt?: Date | null,
     scheduleEnd ? : Date | null): void => {
 
     if (scheduleAt) {

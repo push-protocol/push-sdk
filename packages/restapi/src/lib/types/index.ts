@@ -218,39 +218,13 @@ export interface GroupDTO {
   groupImage: string | null;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string | null;
-  groupCreator: string;
-  chatId: string;
-}
-
-export interface InternalGroupDTO {
-  members: {
-    wallet: string;
-    publicKey: string;
-    isAdmin: boolean;
-    image: string;
-  }[];
-  pendingMembers: {
-    wallet: string;
-    publicKey: string;
-    isAdmin: boolean;
-    image: string;
-  }[];
-  contractAddressERC20: string | null;
-  numberOfERC20: number;
-  contractAddressNFT: string | null;
-  numberOfNFTTokens: number;
-  verificationProof: string;
-  groupImage: string | null;
-  groupName: string;
-  isPublic: boolean;
-  groupDescription: string | null;
+  groupDescription: string;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
   groupType: string;
-  status: ChatStatus | null;
+  status?: ChatStatus | null;
 }
 
 export interface SpaceDTO {
@@ -274,7 +248,7 @@ export interface SpaceDTO {
   spaceImage: string | null;
   spaceName: string;
   isPublic: boolean;
-  spaceDescription: string | null;
+  spaceDescription: string;
   spaceCreator: string;
   spaceId: string;
   scheduleAt?: Date | null;

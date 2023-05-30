@@ -12,22 +12,21 @@ import {
   getUserDID,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import { get } from '../user';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
    * Chat request sender address
    */
   senderAddress: string;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
 
   /**
    * Request state. As of now, only `Approved` is allowed
    */
   status?: 'Approved';
   // sigType?: string;
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
 }
 
 /**

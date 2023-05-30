@@ -1,32 +1,24 @@
-import axios from 'axios';
-import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
+import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, GroupDTO } from '../types';
 import {
-  IUpdateGroupRequestPayload,
-  updateGroupPayload,
-  sign,
-  getWallet,
-  getAccountAddress,
   getMembersList,
   getAdminsList,
-  getConnectedUserV2
 } from './helpers';
-import * as CryptoJS from 'crypto-js';
 import {
   getGroup
 } from './getGroup';
+import {
+  updateGroup
+} from './updateGroup';
 export interface AddAdminsToGroupType extends EnvOptionsType {
   chatId: string;
   admins: Array<string>;
-  account?: string;
-  signer?: SignerType;
-  pgpPrivateKey?: string;
+  account?: string | null;
+  signer?: SignerType | null;
+  pgpPrivateKey?: string | null; 
 }
 
-/**
- * Update Group information
- */
 export const addAdminsToGroup = async (
   options: AddAdminsToGroupType
 ): Promise<GroupDTO> => {
@@ -53,23 +45,17 @@ export const addAdminsToGroup = async (
       }
     });
 
-    const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
-
     const group = await getGroup({
         chatId: chatId,
         env,
     })
-
-    // TODO: change to getConnectedUserV2
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
     // TODO: look at user did in updateGroup
     const convertedMembers = getMembersList(
         group.members, group.pendingMembers
     );
 
-        // TODO: look at user did in updateGroup
+    // TODO: look at user did in updateGroup
     const adminsToBeAdded = admins.map((admin) => walletToPCAIP10(admin));
 
     adminsToBeAdded.forEach((admin) => {
@@ -90,42 +76,18 @@ export const addAdminsToGroup = async (
 
     convertedAdmins.push(...adminsToBeAdded);
 
-    const bodyToBeHashed = {
-      groupName: group.groupName,
-      groupDescription: group.groupDescription,
-      groupImage: group.groupImage,
-      members: convertedMembers,
-      admins: convertedAdmins,
-      chatId: chatId,
-    };
-    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-    const signature: string = await sign({
-      message: hash,
-      signingKey: connectedUser.privateKey!,
+    return await updateGroup({
+        chatId: chatId,
+        groupName: group.groupName,
+        groupImage: group.groupImage,
+        groupDescription: group.groupDescription,
+        members: convertedMembers,
+        admins: convertedAdmins,
+        account: account,
+        signer: signer,
+        env: env,
+        pgpPrivateKey: pgpPrivateKey
     });
-    const sigType = 'pgp';
-    const verificationProof: string = sigType + ':' + signature + ':' + account;
-    const API_BASE_URL = getAPIBaseUrls(env);
-    const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
-    const body: IUpdateGroupRequestPayload = updateGroupPayload(
-      group.groupName,
-      group.groupImage,
-      group.groupDescription,
-      convertedMembers,
-      convertedAdmins,
-      walletToPCAIP10(address), // Dont call, this use did. look at group update
-      verificationProof
-    );
-
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${addAdminsToGroup.name} -:  `,
