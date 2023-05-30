@@ -194,9 +194,6 @@ export const getEncryptedRequest = async (
         user: receiverAddress,
         publicKey: '',
         encryptedPrivateKey: '',
-        encryptionType: '',
-        signature: 'pgp',
-        sigType: 'pgp',
         env,
       });
       // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext

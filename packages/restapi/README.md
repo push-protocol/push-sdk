@@ -1,7 +1,9 @@
 # restapi
+
 This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
 # Index
+
 - [restapi](#restapi)
 - [Index](#index)
 - [How to use in your app?](#how-to-use-in-your-app)
@@ -80,6 +82,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
       - [isInitiator](#isinitiator)
 
 # How to use in your app?
+
 ## Installation
 
 ```bash
@@ -91,21 +94,26 @@ or
 ```bash
 npm install @pushprotocol/restapi@latest ethers@^5.6
 ```
+
 ## Import SDK
+
 ```typescript
-import * as PushAPI from "@pushprotocol/restapi";
+import * as PushAPI from '@pushprotocol/restapi';
 ```
 
 ## **About generating the "signer" object for different platforms**
 
-### When using in SERVER-SIDE code: 
+### When using in SERVER-SIDE code:
+
 ```typescript
 const ethers = require('ethers');
 const PK = 'your_channel_address_secret_key';
 const Pkey = `0x${PK}`;
 const _signer = new ethers.Wallet(Pkey);
 ```
-### When using in FRONT-END code: 
+
+### When using in FRONT-END code:
+
 ```typescript
 // any other web3 ui lib is also acceptable
 import { useWeb3React } from "@web3-react/core";
@@ -118,24 +126,29 @@ const _signer = library.getSigner(account);
 
 ## **About blockchain agnostic address format**
 
-In any of the below methods (unless explicitly stated otherwise) we accept either - 
-- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
-(Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+In any of the below methods (unless explicitly stated otherwise) we accept either -
 
-- ETH address format: only for backwards compatibility. 
-(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
- 
- ### Chat blockchain agnostic address format
- **Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
+- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses **_We strongly recommend using this address format_**. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
+  (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+- ETH address format: only for backwards compatibility.
+  (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+### Chat blockchain agnostic address format
+
+**Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
 (Example : `eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
 
 ## **About Push contract addresses**
+
 ### Push core contract address
+
 ```
 ETH Mainnet - 0x66329Fdd4042928BfCAB60b179e1538D56eeeeeE
 ```
 
 ### Push communicator contract address
+
 ```
 ETH Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ETH Goerli - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
@@ -148,13 +161,15 @@ Optimism Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ```
 
 # SDK Features
+
 ## For Notification
 
 ### **Fetching user notifications**
+
 ```typescript
 const notifications = await PushAPI.user.getFeeds({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
@@ -167,10 +182,7 @@ const notifications = await PushAPI.user.getFeeds({
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
-      '\n' +
-      '[d:Proposal] : IIP-32: Add Euler staking PYT wrappers for AA tranche to IdleDAI\n' +
-      '[timestamp:1676570405.922][timestamp: 1676570405]',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-32: Add Euler staking PYT wrappers for AA tranche to IdleDAI\n' + '[timestamp:1676570405.922][timestamp: 1676570405]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '3401597',
@@ -179,9 +191,9 @@ const notifications = await PushAPI.user.getFeeds({
     blockchain: 'ETH_TEST_GOERLI',
     notification: {
       body: 'New Proposal On Idle Finance',
-      title: 'Idle Finance - New Proposal'
+      title: 'Idle Finance - New Proposal',
     },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -194,7 +206,7 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'hi socket', title: 'AKP Test Channel - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -207,7 +219,7 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'hiii', title: 'AKP Test Channel - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -220,7 +232,7 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'Hey -testing', title: 'Gnosis - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -233,15 +245,12 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'Hey', title: 'Gnosis - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
-      '\n' +
-      '[d:Proposal] : IIP-31: Add AA Euler staking PYT wrappers to IdleUSDT, IdleUSDC and IdleWETH. Gauges rate to 0. Extend LM. \n' +
-      '[timestamp:1674583206.258][timestamp: 1674583206]',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-31: Add AA Euler staking PYT wrappers to IdleUSDT, IdleUSDC and IdleWETH. Gauges rate to 0. Extend LM. \n' + '[timestamp:1674583206.258][timestamp: 1674583206]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '1784234',
@@ -250,9 +259,9 @@ const notifications = await PushAPI.user.getFeeds({
     blockchain: 'ETH_TEST_GOERLI',
     notification: {
       body: 'New Proposal On Idle Finance',
-      title: 'Idle Finance - New Proposal'
+      title: 'Idle Finance - New Proposal',
     },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -265,7 +274,7 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'hi 2023', title: 'AKP Test Channel - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: '',
@@ -278,16 +287,12 @@ const notifications = await PushAPI.user.getFeeds({
     image: '',
     blockchain: 'ETH_TEST_GOERLI',
     notification: { body: 'hi', title: 'AKP Test Channel - ' },
-    secret: ''
+    secret: '',
   },
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
-      '\n' +
-      '[d:Proposal] : IIP-30: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
-      ' \n' +
-      '[timestamp:1672769747.911][timestamp: 1672769747]',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-30: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' + ' \n' + '[timestamp:1672769747.911][timestamp: 1672769747]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '1080072',
@@ -296,18 +301,14 @@ const notifications = await PushAPI.user.getFeeds({
     blockchain: 'ETH_TEST_GOERLI',
     notification: {
       body: 'New Proposal On Idle Finance',
-      title: 'Idle Finance - New Proposal'
+      title: 'Idle Finance - New Proposal',
     },
-    secret: ''
+    secret: '',
   },
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
-      '\n' +
-      '[d:Proposal] : IIP-29: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
-      ' \n' +
-      '[timestamp:1671624005.155][timestamp: 1671624005]',
+    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-29: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' + ' \n' + '[timestamp:1671624005.155][timestamp: 1671624005]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '935285',
@@ -316,34 +317,36 @@ const notifications = await PushAPI.user.getFeeds({
     blockchain: 'ETH_TEST_GOERLI',
     notification: {
       body: 'New Proposal On Idle Finance',
-      title: 'Idle Finance - New Proposal'
+      title: 'Idle Finance - New Proposal',
     },
-    secret: ''
-  }
-]
+    secret: '',
+  },
+];
 ```
+
 </details>
 
------
+---
 
 ### **Fetching user spam notifications**
+
 ```typescript
 const spams = await PushAPI.user.getFeeds({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   spam: true,
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| user*    | string  | -       | user account address (CAIP)                |
-| page     | number  | 1       | page index of the results                  |
-| limit    | number  | 10      | number of items in 1 page                  |
-| spam     | boolean  | false   | if "true" it will fetch spam feeds         |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| raw      | boolean  | false      | if "true" the method will return unformatted raw API response|
+| user_ | string | - | user account address (CAIP) |
+| page | number | 1 | page index of the results |
+| limit | number | 10 | number of items in 1 page |
+| spam | boolean | false | if "true" it will fetch spam feeds |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+| raw | boolean | false | if "true" the method will return unformatted raw API response|
 
 <details>
   <summary><b>Expected response (Fetching user spam notifications)</b></summary>
@@ -513,85 +516,56 @@ PushAPI.user.getFeeds [Spam] | Response - 200 OK
   }
 ]
 ```
+
 </details>
 
------
+---
 
 ### **Fetching user subscriptions**
+
 ```typescript
 const subscriptions = await PushAPI.user.getSubscriptions({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 where `subscriptions` is a list of channels `[{ channel: '0xaddress', ... }]` subscribed by the user.
 
-*Note: We can find out if a user is subscribed to a channel by checking if the channel address is present in the subscriptions list*
+_Note: We can find out if a user is subscribed to a channel by checking if the channel address is present in the subscriptions list_
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| user*    | string  | -       | user address (CAIP)                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
+| user_ | string | - | user address (CAIP) |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Fetching user opted in channels / subscriptions)</b></summary>
 
 ```typescript
 // PushAPI.user.getSubscriptions | Response - 200 OK
-[
-  { channel: '0x0000000000000000000000000000000000000000' },
-  { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00' },
-  { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1' },
-  { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029' },
-  { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD' },
-  { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34' },
-  { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7' },
-  { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93' },
-  { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23' },
-  { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78' },
-  { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330' },
-  { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D' },
-  { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7' },
-  { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A' },
-  { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7' },
-  { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349' },
-  { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D' },
-  { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224' },
-  { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54' },
-  { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb' },
-  { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7' },
-  { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe' },
-  { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7' },
-  { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924' },
-  { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a' },
-  { channel: '0x025846389950A13292E63e4794C7D148FF57F995' },
-  { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77' },
-  { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681' },
-  { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52' },
-  { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7' }
-]
+[{ channel: '0x0000000000000000000000000000000000000000' }, { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00' }, { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1' }, { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029' }, { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD' }, { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34' }, { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7' }, { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93' }, { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23' }, { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78' }, { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330' }, { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D' }, { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7' }, { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A' }, { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7' }, { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349' }, { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D' }, { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224' }, { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54' }, { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb' }, { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7' }, { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe' }, { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7' }, { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924' }, { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a' }, { channel: '0x025846389950A13292E63e4794C7D148FF57F995' }, { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77' }, { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681' }, { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52' }, { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7' }];
 ```
+
 </details>
 
------
+---
 
 ### **Fetching channel details**
+
 ```typescript
 const channelData = await PushAPI.channels.getChannel({
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| channel*    | string  | -       | channel address  (CAIP)                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
+| channel_ | string | - | channel address (CAIP) |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Fetching channel details)</b></summary>
@@ -620,28 +594,29 @@ Allowed Options (params with * are mandatory)
   subgraph_details: null
 }
 ```
+
 </details>
 
------
+---
 
 ### **Searching for channel(s)**
+
 ```typescript
 const channelsData = await PushAPI.channels.search({
   query: 'push', // a search query
   page: 1, // page index
   limit: 20, // no of items per page
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| query*    | string  | -       | search query                              |
-| page     | number  | 1       | page index of the results                  |
-| limit    | number  | 10      | number of items in 1 page                  |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
+| query_ | string | - | search query |
+| page | number | 1 | page index of the results |
+| limit | number | 10 | number of items in 1 page |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Searching for channel)</b></summary>
@@ -669,7 +644,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 756
+    subscriber_count: 756,
   },
   {
     id: 817,
@@ -691,7 +666,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 57
+    subscriber_count: 57,
   },
   {
     id: 243,
@@ -713,7 +688,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 9
+    subscriber_count: 9,
   },
   {
     id: 923,
@@ -735,7 +710,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 9
+    subscriber_count: 9,
   },
   {
     id: 274,
@@ -757,7 +732,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 5
+    subscriber_count: 5,
   },
   {
     id: 1242,
@@ -779,7 +754,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 5
+    subscriber_count: 5,
   },
   {
     id: 210,
@@ -801,7 +776,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 809,
@@ -823,7 +798,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: 18,
     subgraph_details: '60+aiswaryawalter/push-graph-test',
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 956,
@@ -845,7 +820,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 967,
@@ -867,7 +842,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: 18,
     subgraph_details: '60+aiswaryawalter/push-graph-test',
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 1425,
@@ -889,7 +864,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 1659,
@@ -911,7 +886,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 4
+    subscriber_count: 4,
   },
   {
     id: 287,
@@ -933,7 +908,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 369,
@@ -955,7 +930,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 445,
@@ -977,7 +952,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 735,
@@ -999,7 +974,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 737,
@@ -1021,7 +996,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 929,
@@ -1043,7 +1018,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 1039,
@@ -1065,7 +1040,7 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
+    subscriber_count: 3,
   },
   {
     id: 1241,
@@ -1087,41 +1062,42 @@ Allowed Options (params with * are mandatory)
     blocked: 0,
     counter: null,
     subgraph_details: null,
-    subscriber_count: 3
-  }
-]
+    subscriber_count: 3,
+  },
+];
 ```
+
 </details>
 
------
-
+---
 
 ### **Opt in to a channel**
+
 ```typescript
 await PushAPI.channels.subscribe({
   signer: _signer,
   channelAddress: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   userAddress: 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
-   console.log('opt in success');
+    console.log('opt in success');
   },
   onError: () => {
     console.error('opt in error');
   },
-  env: 'staging'
-})
+  env: 'staging',
+});
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signer*    | -  | -       | Signer object                       |
-| channelAddress*    | string  | -       | channel address (CAIP)                 |
-| userAddress*    | string  | -       | user address   (CAIP)            |                    |
-| verifyingContractAddress      | string | - | Push communicator contract address|
-| onSuccess      | function | -   | on success callback |
-| onError      | function | -   | on error callback |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| signer_ | - | - | Signer object |
+| channelAddress* | string | - | channel address (CAIP) |
+| userAddress* | string | - | user address (CAIP) | |
+| verifyingContractAddress | string | - | Push communicator contract address|
+| onSuccess | function | - | on success callback |
+| onError | function | - | on error callback |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Opt in to channel)</b></summary>
@@ -1131,35 +1107,38 @@ Allowed Options (params with * are mandatory)
 { status: 'success', message: 'successfully opted into channel' }
 
 ```
+
 </details>
 
------
+---
 
 ### **Opt out to a channel**
+
 ```typescript
 await PushAPI.channels.unsubscribe({
   signer: _signer,
   channelAddress: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   userAddress: 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
-   console.log('opt out success');
+    console.log('opt out success');
   },
   onError: () => {
     console.error('opt out error');
   },
-  env: 'staging'
-})
+  env: 'staging',
+});
 ```
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signer*    | -  | -       | Signer object                       |
-| channelAddress*    | string  | -       | channel address (CAIP)         |
-| userAddress*    | string  | -       | user address  (CAIP)                       |                   |
-| verifyingContractAddress      | string | - | Push communicator contract address|
-| onSuccess      | function | -   | on success callback |
-| onError      | function | -   | on error callback |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| signer_ | - | - | Signer object |
+| channelAddress* | string | - | channel address (CAIP) |
+| userAddress* | string | - | user address (CAIP) | |
+| verifyingContractAddress | string | - | Push communicator contract address|
+| onSuccess | function | - | on success callback |
+| onError | function | - | on error callback |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (Opt out of a channel)</b></summary>
@@ -1168,9 +1147,10 @@ Allowed Options (params with * are mandatory)
 // PushAPI.channels.unsubscribe | Response - 200 OK
 { status: 'success', message: 'successfully opted out channel' }
 ```
+
 </details>
 
------
+---
 
 ### **Sending notification**
 
@@ -1205,34 +1185,35 @@ async function sendNotification(options: {
   env?: ENV;
   chatId?: string;
   pgpPrivateKey?: string;
-})
+});
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| senderType*    | number  | 0       | 0 for channel notification. 1 for chat notification |
-| signer*    | -  | -       | Signer object                       |
-| channel*    | string  | -       | channel address (CAIP)                  |
-| type*    | number  | -       | Notification Type <br/>Target = 3 (send to 1 address), <br/>Subset = 4 (send to 1 or more addresses),<br/> Broadcast = 1 (send to all addresses)                     |
-| identityType*    | number  | -       | Identity Type <br/> Minimal = 0, <br/>IPFS = 1, <br/>Direct Payload = 2, <br/>Subgraph = 3 }                      |
-| recipients*    | string or string[]  | -       | for Notification Type = Target it is 1 address, <br /> for Notification Type = Subset, Broadcast it is an array of addresses (CAIP) |
-| notification.title*      | string | - | Push Notification Title (not required for identityType IPFS, Subgraph)|
-| notification.body*      | string | - | Push Notification Body (not required for identityType IPFS, Subgraph)|
-| payload.title      | string | - | Notification Title (not required for identityType IPFS, Subgraph)|
-| payload.body      | string | - | Notification Body (not required for identityType IPFS, Subgraph)|
-| payload.cta      | string | - | Notification Call To Action url (not required for identityType IPFS, Subgraph)|
-| payload.img      | string | - | Notification Media url (not required for identityType IPFS, Subgraph)|
-| payload.sectype      | string | - | If Secret Notification then pass (not required for identityType IPFS, Subgraph)|
-| graph.id      | string | - | graph id, required only if the identityType is 3 |
-| graph.counter      | string | - | graph counter, required only if the identityType is 3 |
-| ipfsHash      | string | - | ipfsHash, required only if the identityType is 1 |
-| expiry      | number | - | (optional) epoch value if the notification has an expiry |
-| hidden      | boolean | false | (optional) true if we want to hide the notification |
-| pgpPrivateKey      | string | - | (optional) pgp private key for new notification verification proof |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| senderType_ | number | 0 | 0 for channel notification. 1 for chat notification |
+| signer* | - | - | Signer object |
+| channel* | string | - | channel address (CAIP) |
+| type* | number | - | Notification Type <br/>Target = 3 (send to 1 address), <br/>Subset = 4 (send to 1 or more addresses),<br/> Broadcast = 1 (send to all addresses) |
+| identityType* | number | - | Identity Type <br/> Minimal = 0, <br/>IPFS = 1, <br/>Direct Payload = 2, <br/>Subgraph = 3 } |
+| recipients* | string or string[] | - | for Notification Type = Target it is 1 address, <br /> for Notification Type = Subset, Broadcast it is an array of addresses (CAIP) |
+| notification.title* | string | - | Push Notification Title (not required for identityType IPFS, Subgraph)|
+| notification.body\* | string | - | Push Notification Body (not required for identityType IPFS, Subgraph)|
+| payload.title | string | - | Notification Title (not required for identityType IPFS, Subgraph)|
+| payload.body | string | - | Notification Body (not required for identityType IPFS, Subgraph)|
+| payload.cta | string | - | Notification Call To Action url (not required for identityType IPFS, Subgraph)|
+| payload.img | string | - | Notification Media url (not required for identityType IPFS, Subgraph)|
+| payload.sectype | string | - | If Secret Notification then pass (not required for identityType IPFS, Subgraph)|
+| graph.id | string | - | graph id, required only if the identityType is 3 |
+| graph.counter | string | - | graph counter, required only if the identityType is 3 |
+| ipfsHash | string | - | ipfsHash, required only if the identityType is 1 |
+| expiry | number | - | (optional) epoch value if the notification has an expiry |
+| hidden | boolean | false | (optional) true if we want to hide the notification |
+| pgpPrivateKey | string | - | (optional) pgp private key for new notification verification proof |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 #### **Direct payload for single recipient(target)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1241,21 +1222,22 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   recipients: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // recipient address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
-  
+
 #### **Direct payload for group of recipients(subset)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1264,21 +1246,22 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: 2, // direct payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   recipients: ['eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1'], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Direct payload for all recipients(broadcast)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1287,20 +1270,21 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **IPFS payload for single recipient(target)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1310,11 +1294,12 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **IPFS payload for group of recipients(subset)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1324,11 +1309,12 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **IPFS payload for all recipients(broadcast)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1337,11 +1323,12 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Minimal payload for single recipient(target)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1350,21 +1337,22 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Minimal payload for a group of recipient(subset)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1373,21 +1361,22 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Minimal payload for all recipients(broadcast)**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1396,21 +1385,23 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.MINIMAL, // Minimal payload
   notification: {
     title: `[SDK-TEST] notification TITLE:`,
-    body: `[sdk-test] notification BODY`
+    body: `[sdk-test] notification BODY`,
   },
   payload: {
     title: `[sdk-test] payload title`,
     body: `sample msg body`,
     cta: '',
-    img: ''
+    img: '',
   },
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Graph payload for single recipient(target)**
-***Make sure the channel has the graph id you are providing!!***
+
+**_Make sure the channel has the graph id you are providing!!_**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1419,16 +1410,18 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // Subgraph payload
   graph: {
     id: '_your_graph_id',
-    counter: 3
+    counter: 3,
   },
   recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Graph payload for group of recipients(subset)**
-***Make sure the channel has the graph id you are providing!!***
+
+**_Make sure the channel has the graph id you are providing!!_**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1437,16 +1430,18 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
   graph: {
     id: '_your_graph_id',
-    counter: 3
+    counter: 3,
   },
   recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
 
 #### **Graph payload for all recipients(broadcast)**
-***Make sure the channel has the graph id you are providing!!***
+
+**_Make sure the channel has the graph id you are providing!!_**
+
 ```typescript
 // apiResponse?.status === 204, if sent successfully!
 const apiResponse = await PushAPI.payloads.sendNotification({
@@ -1455,13 +1450,12 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.SUBGRAPH, // graph payload
   graph: {
     id: '_your_graph_id',
-    counter: 3
+    counter: 3,
   },
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
-  env: 'staging'
+  env: 'staging',
 });
 ```
-
 
 <details>
   <summary><b>Expected response (Send Notification)</b></summary>
@@ -1469,20 +1463,23 @@ const apiResponse = await PushAPI.payloads.sendNotification({
 ```typescript
 // PushAPI.payloads.sendNotification | Response - 204 OK
 ```
+
 </details>
 
------
-
+---
 
 ### Notification Helper Utils
+
 #### **Parsing notifications**
+
 Utils method to parse raw Push Feeds API response into a pre-defined shape as below.
+
 ```typescript
 // fetch some raw feeds data
 const apiResponse = await PushAPI.user.getFeeds({
   user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address
   raw: true,
-  env: 'staging'
+  env: 'staging',
 });
 // parse it to get a specific shape of object.
 const parsedResults = PushAPI.utils.parseApiResponse(apiResponse);
@@ -1491,28 +1488,19 @@ const [oneNotification] = parsedResults;
 
 // Now this object can be directly used by for e.g. "@pushprotocol/uiweb"  NotificationItem component as props.
 
-const {
-  cta,
-  title,
-  message,
-  app,
-  icon,
-  image,
-  url,
-  blockchain,
-  secret,
-  notification
-} = oneNotification;
-
+const { cta, title, message, app, icon, image, url, blockchain, secret, notification } = oneNotification;
 ```
-*We get the above `keys` after the parsing of the API repsonse.*
 
------
+_We get the above `keys` after the parsing of the API repsonse._
+
+---
 
 ### Advanced Notifications (WIP)
 
 ### DEPRECATED
+
 #### **Get a channel's subscriber list of addresses**
+
 ```typescript
 const subscribers = await PushAPI.channels.getSubscribers({
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
@@ -1522,11 +1510,11 @@ const subscribers = await PushAPI.channels.getSubscribers({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| channel*    | string  | -       | channel address    (CAIP)                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| channel_ | string | - | channel address (CAIP) |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>DEPRECATED - Expected response (Get channel's subscribers list)</b></summary>
@@ -1637,11 +1625,13 @@ Allowed Options (params with * are mandatory)
   ... 656 more items
 ]
 ```
+
 </details>
 
------
+---
 
 ## For Chat
+
 ### **Create user for chat**
 
 ```typescript
@@ -1660,7 +1650,7 @@ const user = await PushAPI.user.create({
 ```
 
 | Param          | Remarks                                                       |
-|----------------|---------------------------------------------------------------|
+| -------------- | ------------------------------------------------------------- |
 | env            | API env - 'prod', 'staging', 'dev'                            |
 | account        | Account address                                               |
 | signer         | ethers.js signer                                              |
@@ -1680,12 +1670,12 @@ const user = await PushAPI.user.create({
 Example creating NFT user for chat:
 
 ```typescript
-  const user = await PushAPI.user.create({
-    account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
-    signer: nftSigner, // ethers.js signer
-    env: env as ENV,
-    additionalMeta: { NFTPGP_V1: { password: '@Test0i1223de' } },
-  });
+const user = await PushAPI.user.create({
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  signer: nftSigner, // ethers.js signer
+  env: env as ENV,
+  additionalMeta: { NFTPGP_V1: { password: '@Test0i1223de' } },
+});
 ```
 
 <details>
@@ -1714,26 +1704,27 @@ export interface IUser {
 }
 ```
 
-| Parameter | Description |
-| --- | --- |
-| `did` | user decentralized identity |
-| `wallets` | all wallets associated to the did |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | PGP public key |
-| `encryptedPrivateKey` | encrypted private PGP key |
-| `encryptionType` | encryption type used to encrypt the private key |
-| `signature` | user payload signature used when creating a user |
-| `sigType` | signature type used when creating a user |
-| `about` | short user description |
-| `name` | user name |
-| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
-| `nftOwner` | NFT owner address |
-| `numMsg` | number of messages sent by the user |
-| `allowedNumMsg` | number of messages allowed to be sent by the user |
-| `linkedListHash` | cid from all messages this user has sent |
-| `nfts` | array of NFTs owned by the user |
+| Parameter             | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `did`                 | user decentralized identity                                     |
+| `wallets`             | all wallets associated to the did                               |
+| `profilePicture`      | user chat profile picture. As of now i cannot be changed        |
+| `publicKey`           | PGP public key                                                  |
+| `encryptedPrivateKey` | encrypted private PGP key                                       |
+| `encryptionType`      | encryption type used to encrypt the private key                 |
+| `signature`           | user payload signature used when creating a user                |
+| `sigType`             | signature type used when creating a user                        |
+| `about`               | short user description                                          |
+| `name`                | user name                                                       |
+| `encryptedPassword`   | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner`            | NFT owner address                                               |
+| `numMsg`              | number of messages sent by the user                             |
+| `allowedNumMsg`       | number of messages allowed to be sent by the user               |
+| `linkedListHash`      | cid from all messages this user has sent                        |
+| `nfts`                | array of NFTs owned by the user                                 |
 
 Example response normal user:
+
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
@@ -1907,25 +1898,25 @@ export interface IUser {
 }
 ```
 
-| Parameter | Description |
-| --- | --- |
-| `msgSent` | number of messages sent by the user |
-| `maxMsgPersisted` | number of messages allowed to be sent by the user |
-| `did` | user decentralized identity |
-| `wallets` | all wallets associated to the did |
-| `name` | user name |
-| `desc` | short user description |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
-| `encryptedPrivateKey` | encrypted private PGP key |
-| `publicKey` | PGP public key |
-| `nftOwner` | NFT owner address |
-| `verificationProof` | verification proof |
+| Parameter             | Description                                              |
+| --------------------- | -------------------------------------------------------- |
+| `msgSent`             | number of messages sent by the user                      |
+| `maxMsgPersisted`     | number of messages allowed to be sent by the user        |
+| `did`                 | user decentralized identity                              |
+| `wallets`             | all wallets associated to the did                        |
+| `name`                | user name                                                |
+| `desc`                | short user description                                   |
+| `profilePicture`      | user chat profile picture. As of now i cannot be changed |
+| `encryptedPrivateKey` | encrypted private PGP key                                |
+| `publicKey`           | PGP public key                                           |
+| `verificationProof`   | verification proof                                       |
 
 </details>
 
------
+---
 
 ### **Get user data for chat**
+
 ```typescript
 const user = await PushAPI.user.get({
   env?: ENV;
@@ -1933,10 +1924,10 @@ const user = await PushAPI.user.get({
 });
 ```
 
-| Param    | Remarks |
-|----------|---------|
-| account    | Account address             |
-| env  | API env - 'prod', 'staging', 'dev'|
+| Param   | Remarks                            |
+| ------- | ---------------------------------- |
+| account | Account address                    |
+| env     | API env - 'prod', 'staging', 'dev' |
 
 Example request get normal user data:
 
@@ -1982,24 +1973,24 @@ export interface IUser {
 }
 ```
 
-| Parameter | Description |
-| --- | --- |
-| `did` | user decentralized identity |
-| `wallets` | all wallets associated to the did |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | PGP public key |
-| `encryptedPrivateKey` | encrypted private PGP key |
-| `encryptionType` | encryption type used to encrypt the private key |
-| `signature` | user payload signature used when creating a user |
-| `sigType` | signature type used when creating a user |
-| `about` | short user description |
-| `name` | user name |
-| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
-| `nftOwner` | NFT owner address |
-| `numMsg` | number of messages sent by the user |
-| `allowedNumMsg` | number of messages allowed to be sent by the user |
-| `linkedListHash` | cid from all messages this user has sent |
-| `nfts` | array of NFTs owned by the user |
+| Parameter             | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `did`                 | user decentralized identity                                     |
+| `wallets`             | all wallets associated to the did                               |
+| `profilePicture`      | user chat profile picture. As of now i cannot be changed        |
+| `publicKey`           | PGP public key                                                  |
+| `encryptedPrivateKey` | encrypted private PGP key                                       |
+| `encryptionType`      | encryption type used to encrypt the private key                 |
+| `signature`           | user payload signature used when creating a user                |
+| `sigType`             | signature type used when creating a user                        |
+| `about`               | short user description                                          |
+| `name`                | user name                                                       |
+| `encryptedPassword`   | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner`            | NFT owner address                                               |
+| `numMsg`              | number of messages sent by the user                             |
+| `allowedNumMsg`       | number of messages allowed to be sent by the user               |
+| `linkedListHash`      | cid from all messages this user has sent                        |
+| `nfts`                | array of NFTs owned by the user                                 |
 
 Example response normal user:
 
@@ -2176,24 +2167,23 @@ export interface IUser {
 }
 ```
 
-| Parameter | Description |
-| --- | --- |
-| `msgSent` | number of messages sent by the user |
-| `maxMsgPersisted` | number of messages allowed to be sent by the user |
-| `did` | user decentralized identity |
-| `wallets` | all wallets associated to the did |
-| `name` | user name |
-| `desc` | short user description |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
-| `encryptedPrivateKey` | encrypted private PGP key |
-| `publicKey` | PGP public key |
-| `nftOwner` | NFT owner address |
-| `verificationProof` | verification proof |
+| Parameter             | Description                                              |
+| --------------------- | -------------------------------------------------------- |
+| `msgSent`             | number of messages sent by the user                      |
+| `maxMsgPersisted`     | number of messages allowed to be sent by the user        |
+| `did`                 | user decentralized identity                              |
+| `wallets`             | all wallets associated to the did                        |
+| `name`                | user name                                                |
+| `desc`                | short user description                                   |
+| `picture`             | user chat profile picture. As of now i cannot be changed |
+| `encryptedPrivateKey` | encrypted private PGP key                                |
+| `publicKey`           | PGP public key                                           |
+| `verificationProof`   | verification proof                                       |
 
 </details>
 
------
-  
+---
+
 ### **Decrypting encrypted pgp private key from user data**
 
 ```typescript
@@ -2201,22 +2191,22 @@ const response = await PushAPI.chat.decryptPGPKey({
   encryptedPGPPrivateKey: string;
   account?: string;
   signer?: SignerType;
-  additionalMeta?: { password?: string }; 
+  additionalMeta?: { password?: string };
   env?: ENV;
   toUpgrade?: boolean;
   progressHook?: (progress: ProgressHookType) => void;
 })
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `encryptedPGPPrivateKey` | `string` | encrypted pgp private key |
-| `account` | `string` | user account |
-| `signer` | `SignerType` | ethers.js signer |
-| `additionalMeta` | `{ password?: string }` | additional meta data |
-| `env` | `ENV` | environment |
-| `toUpgrade` | `boolean` | if true, the user will be upgraded to the latest version |
-| `progressHook` | `(progress: ProgressHookType) => void` | progress hook |
+| Parameter                | Type                                   | Description                                              |
+| ------------------------ | -------------------------------------- | -------------------------------------------------------- |
+| `encryptedPGPPrivateKey` | `string`                               | encrypted pgp private key                                |
+| `account`                | `string`                               | user account                                             |
+| `signer`                 | `SignerType`                           | ethers.js signer                                         |
+| `additionalMeta`         | `{ password?: string }`                | additional meta data                                     |
+| `env`                    | `ENV`                                  | environment                                              |
+| `toUpgrade`              | `boolean`                              | if true, the user will be upgraded to the latest version |
+| `progressHook`           | `(progress: ProgressHookType) => void` | progress hook                                            |
 
 **Example request for normal user:**
 
@@ -2224,13 +2214,13 @@ const response = await PushAPI.chat.decryptPGPKey({
 const user = await PushAPI.user.get({
   account: `eip155:${signer.address}`,
   env: ENV.STAGING,
-})
+});
 
 // decrypt the PGP Key
 const pgpKey = await PushAPI.chat.decryptPGPKey({
   encryptedPGPPrivateKey: user.encryptedPrivateKey,
   signer: signer,
-})
+});
 ```
 
 **Example request for NFT user:**
@@ -2238,14 +2228,14 @@ const pgpKey = await PushAPI.chat.decryptPGPKey({
 ```typescript
 // get user and derive encrypted PGP key
 const user = await PushAPI.user.get({
-  account:  `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
   env: env as ENV,
 });
 
 // decrypt the PGP Key
 const pgpKey = await PushAPI.chat.decryptPGPKey({
   encryptedPGPPrivateKey: user.encryptedPrivateKey,
-  account:  `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
   signer: nftSigner,
 });
 ```
@@ -2286,9 +2276,10 @@ n4FxJNoL/lmuCqhQm4Zgduj3GdYUunMDID3k54J1FPGN+iCj
 =OX08
 -----END PGP PRIVATE KEY BLOCK-----
 ```
+
 </details>
 
------
+---
 
 ### **Fetching list of user chats**
 
@@ -2307,12 +2298,12 @@ const chats = await PushAPI.chat.chats({
 });
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account    | string  | -       | user address (Partial CAIP)             |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| account       | string  | -       | user address (Partial CAIP)                                            |
+| toDecrypt     | boolean | false   | if "true" the method will return decrypted message content in response |
+| pgpPrivateKey | string  | null    | mandatory for users having pgp keys                                    |
+| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
 
 **Example normal user:**
 
@@ -2323,10 +2314,10 @@ const user = await PushAPI.user.get({
   account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
   env: ENV.STAGING,
 })
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: signer);
-  
+
 // actual api
 const chats = await PushAPI.chat.chats({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
@@ -2360,7 +2351,6 @@ const response = await PushAPI.chat.chats({
 });
 ```
 
-
 <details>
   <summary><b>Expected response (Get chats of a specific user)</b></summary>
 
@@ -2388,66 +2378,39 @@ const response = await PushAPI.chat.chats({
       toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
       messageContent: "Gm gm! It's me... Mario",
       messageType: 'Text',
-      signature: '-----BEGIN PGP SIGNATURE-----\n' +
-        '\n' +
-        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
-        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
-        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
-        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
-        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
-        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
-        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
-        '=dcRD\n' +
-        '-----END PGP SIGNATURE-----\n',
+      signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' + 'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' + 'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' + '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' + 'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' + 'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' + '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' + '=dcRD\n' + '-----END PGP SIGNATURE-----\n',
       timestamp: 1683530775648,
       sigType: 'pgp',
       encType: 'pgp',
-      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
-        '\n' +
-        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
-        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
-        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
-        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
-        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
-        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
-        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
-        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
-        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
-        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
-        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
-        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
-        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
-        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
-        '=kzUH\n' +
-        '-----END PGP MESSAGE-----\n',
-      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm'
+      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' + 'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' + 'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' + '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' + 'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' + 'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' + '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' + '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' + 'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' + 'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' + 'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' + 'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' + 'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' + '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' + '=kzUH\n' + '-----END PGP MESSAGE-----\n',
+      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
     },
-    groupInformation: undefined
-  }
-]
+    groupInformation: undefined,
+  },
+];
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| msg | `IMessageIPFS` | message object |
-| did | `string` | user DID |
-| wallets | `string` | user wallets |
-| profilePicture | `string` | user profile picture |
-| publicKey | `string` | user public key |
-| about | `string` | user description |
-| threadhash | `string` | cid from the latest message sent on this conversation |
-| intent | `string` | addresses concatenated from the users who have approved the intent |
-| intentSentBy | `string` | address of the user who sent the intent |
-| intentTimestamp | `number` | timestamp of the intent |
-| combinedDID | `string` | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
-| cid | `string` | content identifier on IPFS |
-| chatId | `string` | chat identifier |
-| groupInformation | `GroupDTO` | if group chat, all group information |
+| Parameter        | Type           | Description                                                                                                                     |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| chatId           | `string`       | chat identifier                                                                                                                 |
+| groupInformation | `GroupDTO`     | if group chat, all group information                                                                                            |
 
 </details>
 
------
-  
+---
+
 ### **Fetching list of user chat requests**
 
 ```typescript
@@ -2465,12 +2428,12 @@ const chats = await PushAPI.chat.requests({
 });
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account    | string  | -       | user address (Partial CAIP)             |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| account       | string  | -       | user address (Partial CAIP)                                            |
+| toDecrypt     | boolean | false   | if "true" the method will return decrypted message content in response |
+| pgpPrivateKey | string  | null    | mandatory for users having pgp keys                                    |
+| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
 
 **Example:**
 
@@ -2478,10 +2441,10 @@ const chats = await PushAPI.chat.requests({
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: ENV.STAGING);
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
-  
+
 // actual api
 const chats = await PushAPI.chat.requests({
     account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
@@ -2504,37 +2467,7 @@ const chats = await PushAPI.chat.requests({
     intent: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
     intentSentBy: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
     intentTimestamp: '2023-01-07T03:51:11.000Z',
-    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
-      '\n' +
-      'xsBNBGOhhq8BCADP5Nzw0jOXhKO86ndGkY/JlD8AadVXmsLA+Yvoc22LrNTU\n' +
-      'QrfcDWaMAzpmtMWJlNEHSTieUPEgODm/qj422+rdskSedum3gq1HWn2bmqEI\n' +
-      'LrFc+zR3B70Pe7saEEmC/hXG53/8m7V0HsOuvkEjBa3pW3KElZIhimVvcgYR\n' +
-      '9AnLjUYKR/lci1eXXsAz+J+RjgPlFfiIE0/3KYXwkjt9meSJDPCIcEIZ1tqw\n' +
-      'IkGRINM5XINMvC+FxPNQ+jIHF9WIzmUg4YfYZQbMo96j4LAV0kYvAB0qI2Y8\n' +
-      'DHAjHXYQ+fafRGOJwePASjDHUjcB9QEr1EPIMG3i4iFaBV2ZmePjzE7XABEB\n' +
-      'AAHNAMLAigQQAQgAPgUCY6GGrwQLCQcICRCUVlBnqYwnwgMVCAoEFgACAQIZ\n' +
-      'AQIbAwIeARYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAABLZAgAtVdxz75k3qFY\n' +
-      'qtwMdsrIPX4A7rpT/zCd2Yjl2asFdlkyAusfNdFEiff1dHz5+qBM88z/Zh+O\n' +
-      '1FNDKS/WKL9qmZ+AceyidCjnRVTUeH6Mi/ZD/YZInJyLozCksb0Gciswl6Rp\n' +
-      'RHb6nXt0PebUFXTsOVxSeodaEGBgltd/V1bDHpfx8Wu03z3h/Jq2tI4s28XA\n' +
-      'S2lSZpG8+nC1zLOmpbYx8mdOe00ONBdnMvxAqckd437ns7Tu8sKW4SsRzjg1\n' +
-      'YHTmApRjai1L6bHn0P5Utz0BcynzrUn+bZ0cC+5Rq3kZvrjnaJOIutY+ALDF\n' +
-      '4yWoVIz8KzzAUx1caVyVvwdFtjVTS87ATQRjoYavAQgA3nCB6WLASwBwp5r/\n' +
-      'WU8SiUzf/2srENNObpjxavmv2FVKcKfO0ehSi6ti22KSKnUgm5prlOMWsVl/\n' +
-      'wEClvpGw0Btdar4OQI7XdwkY8XUVB5Jff7cNpi4qE+4lIYqCTQief9H5GLC/\n' +
-      'QvpE53yZWGFK581OSaeomtibN5xAaUyEE8qITnYyjqA+SgffRFVN5/WOnnBK\n' +
-      'zbIHrXl2lXOFkegXaOk+Qxxikw9cSpHNV5YHVoDStRCJZKVU8JhKa7pYKkmC\n' +
-      'pSIiXT3IdSAqDiglDRxwX4KlFFhGZ1OGbBmPefN3pZ7/xvaM28TqSDNB7f89\n' +
-      '/lc5UKLz5Em2aroEclT0YpKYGQARAQABwsB2BBgBCAAqBQJjoYavCRCUVlBn\n' +
-      'qYwnwgIbDBYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAAC6rwgAji6/qPQn/BN/\n' +
-      'BbwGBN+A8tWRuQLwrgOilg8oHWkyCIUK7DeBp+gpkSghjsnaEAqc94xaGD3U\n' +
-      'AfgcPGmC/Jx92W+bX8P40Iq8OvPgLgvG1u5Rf1a1SNYAuypQemuHYu3HOvUU\n' +
-      'vP+0omoiTWyNZVqsZA0FGIYQk9uRg8KGsLvXwzPPLqC5Yo3fyfQUmytBZfEf\n' +
-      'OwYwuvzx1RBHtvyZ32sfq//q4t2fXY0d49rg6l475zo3JsZsYtqZJCf9h6uK\n' +
-      'MrSFgvn8mJFlpwI1+g7X46VB+t8D1Ac35r9Bn9UIWieIyS2Aux2UwBsY2iET\n' +
-      'CdgkH8gWFBU7bdKsFh7BQX2ZhrxHXQ==\n' +
-      '=Lr7Q\n' +
-      '-----END PGP PUBLIC KEY BLOCK-----\n',
+    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' + '\n' + 'xsBNBGOhhq8BCADP5Nzw0jOXhKO86ndGkY/JlD8AadVXmsLA+Yvoc22LrNTU\n' + 'QrfcDWaMAzpmtMWJlNEHSTieUPEgODm/qj422+rdskSedum3gq1HWn2bmqEI\n' + 'LrFc+zR3B70Pe7saEEmC/hXG53/8m7V0HsOuvkEjBa3pW3KElZIhimVvcgYR\n' + '9AnLjUYKR/lci1eXXsAz+J+RjgPlFfiIE0/3KYXwkjt9meSJDPCIcEIZ1tqw\n' + 'IkGRINM5XINMvC+FxPNQ+jIHF9WIzmUg4YfYZQbMo96j4LAV0kYvAB0qI2Y8\n' + 'DHAjHXYQ+fafRGOJwePASjDHUjcB9QEr1EPIMG3i4iFaBV2ZmePjzE7XABEB\n' + 'AAHNAMLAigQQAQgAPgUCY6GGrwQLCQcICRCUVlBnqYwnwgMVCAoEFgACAQIZ\n' + 'AQIbAwIeARYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAABLZAgAtVdxz75k3qFY\n' + 'qtwMdsrIPX4A7rpT/zCd2Yjl2asFdlkyAusfNdFEiff1dHz5+qBM88z/Zh+O\n' + '1FNDKS/WKL9qmZ+AceyidCjnRVTUeH6Mi/ZD/YZInJyLozCksb0Gciswl6Rp\n' + 'RHb6nXt0PebUFXTsOVxSeodaEGBgltd/V1bDHpfx8Wu03z3h/Jq2tI4s28XA\n' + 'S2lSZpG8+nC1zLOmpbYx8mdOe00ONBdnMvxAqckd437ns7Tu8sKW4SsRzjg1\n' + 'YHTmApRjai1L6bHn0P5Utz0BcynzrUn+bZ0cC+5Rq3kZvrjnaJOIutY+ALDF\n' + '4yWoVIz8KzzAUx1caVyVvwdFtjVTS87ATQRjoYavAQgA3nCB6WLASwBwp5r/\n' + 'WU8SiUzf/2srENNObpjxavmv2FVKcKfO0ehSi6ti22KSKnUgm5prlOMWsVl/\n' + 'wEClvpGw0Btdar4OQI7XdwkY8XUVB5Jff7cNpi4qE+4lIYqCTQief9H5GLC/\n' + 'QvpE53yZWGFK581OSaeomtibN5xAaUyEE8qITnYyjqA+SgffRFVN5/WOnnBK\n' + 'zbIHrXl2lXOFkegXaOk+Qxxikw9cSpHNV5YHVoDStRCJZKVU8JhKa7pYKkmC\n' + 'pSIiXT3IdSAqDiglDRxwX4KlFFhGZ1OGbBmPefN3pZ7/xvaM28TqSDNB7f89\n' + '/lc5UKLz5Em2aroEclT0YpKYGQARAQABwsB2BBgBCAAqBQJjoYavCRCUVlBn\n' + 'qYwnwgIbDBYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAAC6rwgAji6/qPQn/BN/\n' + 'BbwGBN+A8tWRuQLwrgOilg8oHWkyCIUK7DeBp+gpkSghjsnaEAqc94xaGD3U\n' + 'AfgcPGmC/Jx92W+bX8P40Iq8OvPgLgvG1u5Rf1a1SNYAuypQemuHYu3HOvUU\n' + 'vP+0omoiTWyNZVqsZA0FGIYQk9uRg8KGsLvXwzPPLqC5Yo3fyfQUmytBZfEf\n' + 'OwYwuvzx1RBHtvyZ32sfq//q4t2fXY0d49rg6l475zo3JsZsYtqZJCf9h6uK\n' + 'MrSFgvn8mJFlpwI1+g7X46VB+t8D1Ac35r9Bn9UIWieIyS2Aux2UwBsY2iET\n' + 'CdgkH8gWFBU7bdKsFh7BQX2ZhrxHXQ==\n' + '=Lr7Q\n' + '-----END PGP PUBLIC KEY BLOCK-----\n',
     profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBobGEMBSG0W//idlKiKARaohMAzEIzFoEhgaQ1EAV6xCkmn32PpMZZue9e87j9Xx/uKGkSMu6X9whnAlnwlkoKdKy7hdWnTJN+4hVUqRFOBPOhLPH6/n+YAznwl86+hFLOBPOhLNQUsRa+5GW4VxoOfqRlpIilnAmnAlnYd0v/tO6X1jCmXAmnIWSIladMtbRj3xjOBesbt6whDPhTDgLdcrc0c0bLQcXLXXKWMKZcCachW7esOqUsUqKWHXKtBQ2rMpv3bxhCWfCmXD2A590MfREqrg1AAAAAElFTkSuQmCC',
     threadhash: 'bafyreigs26i7k3g5u4xmqg44tecmkfvelclp5lletnikfbsrj7dhg5oi4y',
     wallets: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
@@ -2545,77 +2478,40 @@ const chats = await PushAPI.chat.requests({
       toDID: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
       encType: 'pgp',
       fromDID: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
-      sigType: '-----BEGIN PGP SIGNATURE-----\n' +
-        '\n' +
-        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
-        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
-        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
-        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
-        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
-        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
-        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
-        '=n2B5\n' +
-        '-----END PGP SIGNATURE-----\n',
+      sigType: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' + 'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' + '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' + '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' + 'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' + 'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' + 'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' + '=n2B5\n' + '-----END PGP SIGNATURE-----\n',
       toCAIP10: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
-      signature: '-----BEGIN PGP SIGNATURE-----\n' +
-        '\n' +
-        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
-        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
-        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
-        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
-        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
-        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
-        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
-        '=n2B5\n' +
-        '-----END PGP SIGNATURE-----\n',
+      signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' + 'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' + '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' + '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' + 'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' + 'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' + 'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' + '=n2B5\n' + '-----END PGP SIGNATURE-----\n',
       timestamp: 1673043671357,
       fromCAIP10: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
       messageType: 'Text',
       messageContent: 'hey',
-      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
-        '\n' +
-        'wcBMAzJsNgcerTKoAQgAvzX9pBj4j7ytnwU7DwMsCMl6PUDx6qAQybQxrlby\n' +
-        '+xkP1Cf1tOkLj1HP/oFHg3cX5HioM600jAaIYhCr8ib+M3ydvhKnti0mcpbn\n' +
-        'VnbWilrzyFUBE7T3eZY54JeFxIQ9mtjl/TmGryXpWD9FHjnSp22NRnbZIcZZ\n' +
-        'SHpatgDZYzRhHf9zqusBH2QUDKX1Ty7dIq9JD2AeS55l40IHNMPcP2btxfY1\n' +
-        'T7od8WvFYhlWQGtkbm8k42fwdK1mIJ3H/rOSeM8sTliYAECe+IhmpIevg4II\n' +
-        'Eel7eG81HjGciWt3Vs3FXkhuEUbQnMRAKfhaqalJNDriaWwzUMMt5a/rWdS1\n' +
-        'gMHATAN7roGwZ8OLswEH/2RmDHNAaDi11UT3uLAuQxNzlLeqxFaTPecSFaEW\n' +
-        'IFdJ+3ujcy3FHoyndK0S+ucFhP2V0hJRMHyyMiKNKSuUp6Q03NZ7Uqavqku3\n' +
-        'kVfAJ3tH6jlUWNetvV8t95OmYInqhC4MNk0nIhdI10bl89KmNRqsfQqKu5Hn\n' +
-        '5b9Jy7B+XgjKNdj7iWx0FuFabVIQ3NIDnVBDLy8/mDTeB1HuAv/7KljBr0fC\n' +
-        'TtzSZij1Pu5+aIPWaGG2hJvxga9g5Zqfvdm79Wn3gfoOCz3FdXcp/n3732rY\n' +
-        '+mrIE0DVUlWa0YbVotcSCzLlUpXlFts85Ok8W/N8ERtBMbbd2+e2tBKAP8Hs\n' +
-        'iYHSQAHz9V5LwQaFvujErtV5KZfD5DnB8RlUVJU4JKLDgYiXaP18O0fpsZyO\n' +
-        '4fym770psCEPU4sc+flSJ0SxBa8m+yM=\n' +
-        '=Cp3M\n' +
-        '-----END PGP MESSAGE-----\n'
+      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMAzJsNgcerTKoAQgAvzX9pBj4j7ytnwU7DwMsCMl6PUDx6qAQybQxrlby\n' + '+xkP1Cf1tOkLj1HP/oFHg3cX5HioM600jAaIYhCr8ib+M3ydvhKnti0mcpbn\n' + 'VnbWilrzyFUBE7T3eZY54JeFxIQ9mtjl/TmGryXpWD9FHjnSp22NRnbZIcZZ\n' + 'SHpatgDZYzRhHf9zqusBH2QUDKX1Ty7dIq9JD2AeS55l40IHNMPcP2btxfY1\n' + 'T7od8WvFYhlWQGtkbm8k42fwdK1mIJ3H/rOSeM8sTliYAECe+IhmpIevg4II\n' + 'Eel7eG81HjGciWt3Vs3FXkhuEUbQnMRAKfhaqalJNDriaWwzUMMt5a/rWdS1\n' + 'gMHATAN7roGwZ8OLswEH/2RmDHNAaDi11UT3uLAuQxNzlLeqxFaTPecSFaEW\n' + 'IFdJ+3ujcy3FHoyndK0S+ucFhP2V0hJRMHyyMiKNKSuUp6Q03NZ7Uqavqku3\n' + 'kVfAJ3tH6jlUWNetvV8t95OmYInqhC4MNk0nIhdI10bl89KmNRqsfQqKu5Hn\n' + '5b9Jy7B+XgjKNdj7iWx0FuFabVIQ3NIDnVBDLy8/mDTeB1HuAv/7KljBr0fC\n' + 'TtzSZij1Pu5+aIPWaGG2hJvxga9g5Zqfvdm79Wn3gfoOCz3FdXcp/n3732rY\n' + '+mrIE0DVUlWa0YbVotcSCzLlUpXlFts85Ok8W/N8ERtBMbbd2+e2tBKAP8Hs\n' + 'iYHSQAHz9V5LwQaFvujErtV5KZfD5DnB8RlUVJU4JKLDgYiXaP18O0fpsZyO\n' + '4fym770psCEPU4sc+flSJ0SxBa8m+yM=\n' + '=Cp3M\n' + '-----END PGP MESSAGE-----\n',
     },
-    groupInformation: undefined
-  }
-]
+    groupInformation: undefined,
+  },
+];
 ```
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| msg | `IMessageIPFS` | message object |
-| did | `string` | user DID |
-| wallets | `string` | user wallets |
-| profilePicture | `string` | user profile picture |
-| publicKey | `string` | user public key |
-| about | `string` | user description |
-| threadhash | `string` | cid from the latest message sent on this conversation |
-| intent | `string` | addresses concatenated from the users who have approved the intent |
-| intentSentBy | `string` | address of the user who sent the intent |
-| intentTimestamp | `number` | timestamp of the intent |
-| combinedDID | `string` | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
-| cid | `string` | content identifier on IPFS |
-| chatId | `string` | chat identifier |
-| groupInformation | `GroupDTO` | if group chat, all group information |
+| Parameter        | Type           | Description                                                                                                                     |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| chatId           | `string`       | chat identifier                                                                                                                 |
+| groupInformation | `GroupDTO`     | if group chat, all group information                                                                                            |
 
 </details>
 
------
+---
 
 ### **Fetching conversation hash between two users**
 
@@ -2630,11 +2526,11 @@ const conversationHash = await PushAPI.chat.conversationHash({
 });
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account    | string  | -       | user address           |
-| conversationId    | string  | -       | receiver's address (partial CAIP) or chatId of a group|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| Param          | Type   | Default | Remarks                                                |
+| -------------- | ------ | ------- | ------------------------------------------------------ |
+| account        | string | -       | user address                                           |
+| conversationId | string | -       | receiver's address (partial CAIP) or chatId of a group |
+| env            | string | 'prod'  | API env - 'prod', 'staging', 'dev'                     |
 
 **Example:**
 
@@ -2643,7 +2539,7 @@ const conversationHash = await PushAPI.chat.conversationHash({
 const conversationHash = await PushAPI.chat.conversationHash({
   account: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
-  env: ENV.STAGING
+  env: ENV.STAGING,
 });
 ```
 
@@ -2653,16 +2549,17 @@ const conversationHash = await PushAPI.chat.conversationHash({
 ```typescript
 // PushAPI_chat_conversationHash | Response - 200 OK
 {
-  threadHash: 'bafyreign2egu7so7lf3gdicehyqjvghzmwn5gokh4fmp4oy3vjwrjk2rjy'
+  threadHash: 'bafyreign2egu7so7lf3gdicehyqjvghzmwn5gokh4fmp4oy3vjwrjk2rjy';
 }
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| threadHash    | string  | -       | message content identifier |
+| Param      | Type   | Default | Remarks                    |
+| ---------- | ------ | ------- | -------------------------- |
+| threadHash | string | -       | message content identifier |
+
 </details>
 
------
+---
 
 ### **Fetching latest chat between two users**
 
@@ -2676,13 +2573,13 @@ const chatHistory = await PushAPI.chat.latest({
 });
 ```
 
-| Param    | Type    | Remarks                                    |
-|----------|---------|--------------------------------------------|
-| threadHash    | string  | message content identifier |
-| toDecrypt    | boolean  | true if you want messages to be decrypted |
-| pgpPrivateKey    | string  | PGP Private Key |
-| account   | string  | user account |
-| env   | ENV  | environment variable |
+| Param         | Type    | Remarks                                   |
+| ------------- | ------- | ----------------------------------------- |
+| threadHash    | string  | message content identifier                |
+| toDecrypt     | boolean | true if you want messages to be decrypted |
+| pgpPrivateKey | string  | PGP Private Key                           |
+| account       | string  | user account                              |
+| env           | ENV     | environment variable                      |
 
 **Example:**
 
@@ -2690,7 +2587,7 @@ const chatHistory = await PushAPI.chat.latest({
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
@@ -2700,7 +2597,7 @@ const conversationHash = await PushAPI.chat.conversationHash({
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
   env: 'staging'
 });
-  
+
 // actual api
 const chatHistory = await PushAPI.chat.latest({
   threadhash: conversationHash.threadHash,
@@ -2724,63 +2621,35 @@ const chatHistory = await PushAPI.chat.latest({
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' +
-      '\n' +
-      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
-      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
-      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
-      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
-      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
-      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
-      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
-      '=qLiJ\n' +
-      '-----END PGP SIGNATURE-----\n',
+    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
-      '\n' +
-      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
-      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
-      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
-      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
-      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
-      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
-      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
-      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
-      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
-      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
-      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
-      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
-      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
-      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
-      '=43Ta\n' +
-      '-----END PGP MESSAGE-----\n'
-  }
-]
-
+    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
+  },
+];
 ```
 
-| Param    | Type    | Remarks                                    |
-|----------|---------|--------------------------------------------|
-| `fromCAIP10`    | string  | sender address |
-| `toCAIP10`    | string  | receiver address |
-| `fromDID`   | string  | sender did |
-| `toDID`   | string  | receiver did |
-| `messageType`   | string  | message type |
-| `messageContent`   | string  | message content |
-| `signature` | string  | signature of the message |
-| `sigType` | string  | signature type |
-| `link` | string  | content identifier of the previous messages |
-| `timestamp` | number  | timestamp of the message |
-| `encType` | string  | encryption type |
-| `encryptedSecret` | string  | encrypted secret |
+| Param             | Type   | Remarks                                     |
+| ----------------- | ------ | ------------------------------------------- |
+| `fromCAIP10`      | string | sender address                              |
+| `toCAIP10`        | string | receiver address                            |
+| `fromDID`         | string | sender did                                  |
+| `toDID`           | string | receiver did                                |
+| `messageType`     | string | message type                                |
+| `messageContent`  | string | message content                             |
+| `signature`       | string | signature of the message                    |
+| `sigType`         | string | signature type                              |
+| `link`            | string | content identifier of the previous messages |
+| `timestamp`       | number | timestamp of the message                    |
+| `encType`         | string | encryption type                             |
+| `encryptedSecret` | string | encrypted secret                            |
 
 </details>
 
------
- 
+---
+
 ### **Fetching chat history between two users**
 
 ```typescript
@@ -2797,14 +2666,14 @@ const chatHistory = await PushAPI.chat.history({
 });
 ```
 
-| Param    | Type    | Default | Remarks                                    |
-|----------|---------|---------|--------------------------------------------|
-| account    | string  | -       | user address                  |
-| threadhash    | string  | -       | conversation hash between two users |
-| toDecrypt    | boolean  | false       | if "true" the method will return decrypted message content in response|
-| limit    | number  | 10       | number of messages between two users |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | ENV  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| account       | string  | -       | user address                                                           |
+| threadhash    | string  | -       | conversation hash between two users                                    |
+| toDecrypt     | boolean | false   | if "true" the method will return decrypted message content in response |
+| limit         | number  | 10      | number of messages between two users                                   |
+| pgpPrivateKey | string  | null    | mandatory for users having pgp keys                                    |
+| env           | ENV     | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
 
 **Example:**
 
@@ -2812,7 +2681,7 @@ const chatHistory = await PushAPI.chat.history({
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
@@ -2824,7 +2693,7 @@ const conversationHash = await PushAPI.chat.conversationHash({
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
   env: 'staging'
 });
-  
+
 // actual api
 const chatHistory = await PushAPI.chat.history({
   threadhash: conversationHash.threadHash,
@@ -2849,39 +2718,12 @@ const chatHistory = await PushAPI.chat.history({
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' +
-      '\n' +
-      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
-      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
-      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
-      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
-      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
-      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
-      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
-      '=qLiJ\n' +
-      '-----END PGP SIGNATURE-----\n',
+    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
-      '\n' +
-      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
-      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
-      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
-      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
-      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
-      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
-      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
-      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
-      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
-      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
-      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
-      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
-      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
-      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
-      '=43Ta\n' +
-      '-----END PGP MESSAGE-----\n'
+    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
   },
   {
     link: null,
@@ -2895,43 +2737,44 @@ const chatHistory = await PushAPI.chat.history({
     fromCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
     messageType: 'Text',
     messageContent: 'Hey Fabio!',
-    encryptedSecret: ''
-  }
-]
+    encryptedSecret: '',
+  },
+];
 ```
 
-| Param    | Type    | Remarks                                    |
-|----------|---------|--------------------------------------------|
-| `fromCAIP10`    | string  | sender address |
-| `toCAIP10`    | string  | receiver address |
-| `fromDID`   | string  | sender did |
-| `toDID`   | string  | receiver did |
-| `messageType`   | string  | message type |
-| `messageContent`   | string  | message content |
-| `signature` | string  | signature of the message |
-| `sigType` | string  | signature type |
-| `link` | string  | content identifier of the previous messages |
-| `timestamp` | number  | timestamp of the message |
-| `encType` | string  | encryption type |
-| `encryptedSecret` | string  | encrypted secret |
+| Param             | Type   | Remarks                                     |
+| ----------------- | ------ | ------------------------------------------- |
+| `fromCAIP10`      | string | sender address                              |
+| `toCAIP10`        | string | receiver address                            |
+| `fromDID`         | string | sender did                                  |
+| `toDID`           | string | receiver did                                |
+| `messageType`     | string | message type                                |
+| `messageContent`  | string | message content                             |
+| `signature`       | string | signature of the message                    |
+| `sigType`         | string | signature type                              |
+| `link`            | string | content identifier of the previous messages |
+| `timestamp`       | number | timestamp of the message                    |
+| `encType`         | string | encryption type                             |
+| `encryptedSecret` | string | encrypted secret                            |
 
 </details>
 
------
+---
 
 ### **To send a message**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // actual api
 const response = await PushAPI.chat.send({
   messageContent: "Gm gm! It's me... Mario",
-  messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF" 
+  messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF"
   receiverAddress: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
   signer: _signer,
   pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -2939,15 +2782,15 @@ const response = await PushAPI.chat.send({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| messageContent    | string  | ''       | message to be sent |
-| messageType    | 'Text' &#124;  'Image' &#124;  'File' &#124; 'GIF' | 'Text'| type of messageContent |
-| receiverAddress*    | string  | -       | user address or group chat id (Partial CAIP)             |
-| signer*    | -  | -       | signer object |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| messageContent | string | '' | message to be sent |
+| messageType | 'Text' &#124; 'Image' &#124; 'File' &#124; 'GIF' | 'Text'| type of messageContent |
+| receiverAddress_ | string | - | user address or group chat id (Partial CAIP) |
+| signer\* | - | - | signer object |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (send chat message or chat request to a wallet)</b></summary>
@@ -2971,28 +2814,30 @@ Allowed Options (params with * are mandatory)
 }
 
 ```
+
 </details>
 
------
-  
+---
+
 ### **To approve a chat request**
+
 ```typescript
 const response = await PushAPI.chat.approve({
   status: 'Approved',
   account: '0x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
-  senderAddress : '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // receiver's address or chatId of a group
-  env:'staging',
+  senderAddress: '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // receiver's address or chatId of a group
+  env: 'staging',
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| status    | 'Approved' | 'Approved'  | flag for approving and rejecting chat request, supports only approving for now|
-| senderAddress*    | string  | -       | chat request sender's address or chatId of a group |
-| signer*    | -  | -       | signer object |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| status | 'Approved' | 'Approved' | flag for approving and rejecting chat request, supports only approving for now|
+| senderAddress_ | string | - | chat request sender's address or chatId of a group |
+| signer\* | - | - | signer object |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (approve chat request for a wallet / group chat id)</b></summary>
@@ -3000,16 +2845,18 @@ Allowed Options (params with * are mandatory)
 ```typescript
 // PushAPI_chat_approve | Response - 204 OK
 ```
+
 </details>
 
------
-  
+---
+
 ### **To create a group**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
@@ -3027,19 +2874,18 @@ const response = await PushAPI.chat.createGroup({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| account*    | string  | -       | user address                  |
-| groupName*    | string  | -       | group name |
-| groupDescription*    | string  | -       | group description |
-| groupImage*    | string  | -       | group image link |
-| members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
-| admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
-| isPublic*    | boolean  | -       | true for public group, false for private group |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-
+| account_ | string | - | user address |
+| groupName* | string | - | group name |
+| groupDescription* | string | - | group description |
+| groupImage* | string | - | group image link |
+| members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
+| admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
+| isPublic* | boolean | - | true for public group, false for private group |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
@@ -3154,17 +3000,20 @@ Allowed Options (params with * are mandatory)
 
 
 ```
+
 </details>
 
------
+---
 
 ### **To update group details**
+
 Note - updateGroup is an idompotent call
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
@@ -3182,35 +3031,34 @@ const response = await PushAPI.chat.updateGroup({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| chatId*   | string | - | chatId of the group |
-| account*    | string  | -       | user address                  |
-| groupName*    | string  | -       | group name |
-| groupDescription*    | string  | -       | group description |
-| groupImage*    | string  | -       | group image link |
-| members*    | Array<string>  | -  | wallet addresses of all members except admins and groupCreator |
-| admins*    | Array<string>  | -  | wallet addresses of all admins except members and groupCreator |
-| pgpPrivateKey    | string  | null       | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| chatId_ | string | - | chatId of the group |
+| account* | string | - | user address |
+| groupName* | string | - | group name |
+| groupDescription* | string | - | group description |
+| groupImage* | string | - | group image link |
+| members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
+| admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
-  
 ### **To get group details by group name**
 
 ```typescript
 const response = await PushAPI.chat.getGroupByName({
-  groupName: "Push Group Chat 3",
+  groupName: 'Push Group Chat 3',
   env: 'staging',
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| groupName*    | string  | -       | name of the group                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-  
+| groupName_ | string | - | name of the group |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
 <details>
   <summary><b>Expected response (get group by name)</b></summary>
 
@@ -3323,9 +3171,10 @@ Allowed Options (params with * are mandatory)
 }
 
 ```
+
 </details>
 
------
+---
 
 ### **To get group details by chatId**
 
@@ -3336,11 +3185,11 @@ const response = await PushAPI.chat.getGroup({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| chatId*    | string  | -       | group chat id                 |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+| chatId_ | string | - | group chat id |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 <details>
   <summary><b>Expected response (get group by chat id)</b></summary>
@@ -3453,17 +3302,20 @@ Allowed Options (params with * are mandatory)
   chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c'
 }
 ```
+
 </details>
 
------
-  
+---
+
 ### **Chat Helper Utils**
+
 #### **Decrypting messages**
+
 ```typescript
 // pre-requisite API calls that should be made before
 // need to get user and through that encryptedPvtKey of the user
 const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
-  
+
 // need to decrypt the encryptedPvtKey to pass in the api using helper function
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
@@ -3475,7 +3327,7 @@ const conversationHash = await PushAPI.chat.conversationHash({
   conversationId: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d', // receiver's address or chatId of a group
   env: 'staging'
 });
-  
+
 // chat history but with decrypt helper so everything is encrypted
 const encryptedChats = await PushAPI.chat.history({
   threadhash: conversationHash.threadHash,
@@ -3485,7 +3337,7 @@ const encryptedChats = await PushAPI.chat.history({
   pgpPrivateKey: pgpDecryptedPvtKey,
   env: 'staging',
 });
-  
+
 // actual api
 const decryptedChat = await PushAPI.chat.decryptConversation({
   messages: encryptedChats, // array of message object fetched from chat.history method
@@ -3495,14 +3347,14 @@ const decryptedChat = await PushAPI.chat.decryptConversation({
 });
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| messages*    | string  | -       | array of message object fetched from chat.history method |
-| connectedUser*    | IUser  | false | user meta data object|
-| pgpPrivateKey    | string  | null  | mandatory for users having pgp keys|
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-  
+| messages_ | string | - | array of message object fetched from chat.history method |
+| connectedUser\* | IUser | false | user meta data object|
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
 <details>
   <summary><b>Expected response (decrypt conversation)</b></summary>
 
@@ -3517,39 +3369,12 @@ Allowed Options (params with * are mandatory)
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' +
-      '\n' +
-      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
-      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
-      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
-      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
-      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
-      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
-      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
-      '=qLiJ\n' +
-      '-----END PGP SIGNATURE-----\n',
+    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
-      '\n' +
-      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
-      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
-      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
-      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
-      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
-      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
-      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
-      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
-      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
-      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
-      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
-      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
-      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
-      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
-      '=43Ta\n' +
-      '-----END PGP MESSAGE-----\n'
+    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
   },
   {
     link: null,
@@ -3563,61 +3388,75 @@ Allowed Options (params with * are mandatory)
     fromCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
     messageType: 'Text',
     messageContent: 'Hey Fabio!',
-    encryptedSecret: ''
-  }
-]
+    encryptedSecret: '',
+  },
+];
 ```
+
 </details>
 
------
+---
 
 ## For Video
 
 ### **Instance Variables**
+
 #### **peerInstance**
+
 - Used to store the simple peer instance used for the webRTC connection.
+
 ```typescript
 private peerInstance: any = null;
 ```
 
------
+---
 
 #### **signer**
+
 - Used to store the signer of a user.
 - Used in the request, acceptRequest and disconnect methods to send notifications.
+
 ```typescript
   private signer: SignerType;
 ```
 
------
+---
 
 #### **chainId**
+
 The chain id of the chain on which the call is being conducted.
+
 ```typescript
   private chainId: number;
 ```
 
------
+---
 
 #### **pgpPrivateKey**
+
 - Used to store the PGP private key of a user.
 - Used in the request, acceptRequest and disconnect methods to send notifications.
+
 ```typescript
   private pgpPrivateKey: string;
 ```
 
------
+---
 
 #### **env**
+
 - The environment on which the call is being conducted.
+
 ```typescript
 private env: ENV;
 ```
 
------
+---
 
 ### **data**
+
 - Stores data related to the video call.
+
 ```typescript
 export type IMediaStream = MediaStream | null;
 
@@ -3665,10 +3504,12 @@ export type VideoCallData = {
 private data: VideoCallData;
 ```
 
------
+---
 
 #### **setData**
-- This function can be used to update the video call ```data```
+
+- This function can be used to update the video call `data`
+
 ```typescript
 setData: (fn: (data: VideoCallData) => VideoCallData) => void;
 
@@ -3684,10 +3525,12 @@ setData((oldData) => {
 });
 ```
 
------
+---
 
 ### **Methods**
+
 #### **constructor**
+
 ```typescript
 constructor({
     signer,
@@ -3704,20 +3547,22 @@ constructor({
   }) {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signer*    | SignerType  | -       | signer object for a user               |
-| chainId*     | number  | -       | chainId for the video call - Eth Mainnet: 1, Polygon Mainnet: 137                   |
-| pgpPrivatekey*    | string  | -      | PGP private key of the user, used while sending video call notifications             |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| setData*      | ```(fn: (data: VideoCallData) => VideoCallData) => void```  | -      | Function to update video call data |
+| signer_ | SignerType | - | signer object for a user |
+| chainId* | number | - | chainId for the video call - Eth Mainnet: 1, Polygon Mainnet: 137 |
+| pgpPrivatekey* | string | - | PGP private key of the user, used while sending video call notifications |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+| setData\* | `(fn: (data: VideoCallData) => VideoCallData) => void` | - | Function to update video call data |
 
------
+---
 
 #### **create**
+
 - This method is used to create a local stream
-- Assigns the local stream obtained from the ```navigator.mediaDevices.getUserMedia``` to `data.local.stream` state.
+- Assigns the local stream obtained from the `navigator.mediaDevices.getUserMedia` to `data.local.stream` state.
+
 ```typescript
 export type VideoCreateInputOptions = {
   video?: boolean;
@@ -3727,19 +3572,21 @@ export type VideoCreateInputOptions = {
 async create(options: VideoCreateInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with \* are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| video    | boolean  | true       | video status for the local stream               |
-| audio     | boolean  | true       | audio status for the local stream |
+| video | boolean | true | video status for the local stream |
+| audio | boolean | true | audio status for the local stream |
 
 Note - If audio, video aren't enabled in create() then they wont be available during the call respectively.
 
------
+---
 
 #### **request**
+
 - This method is used to request a push video call.
 - Will be triggered on the initiator's end.
+
 ```typescript
 export type VideoRequestInputOptions = {
   senderAddress: string;
@@ -3752,21 +3599,22 @@ export type VideoRequestInputOptions = {
 async request(options: VideoRequestInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| senderAddress*    | string  | - | Local peer address |
-| recipientAddress*     | string  | - | Incoming/remote peer address |
-| chatId*     | string  | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage     | ```(message: string) => void```  | ```(message: string) => {console.log('received a meesage', message);}``` | Function which will be called when the sender receives a message via webRTC data channel |
+| senderAddress_ | string | - | Local peer address |
+| recipientAddress* | string | - | Incoming/remote peer address |
+| chatId* | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
 | retry | boolean | false | If we are retrying the call, only for internal use |
 
-
------
+---
 
 #### **acceptRequest**
+
 - This method is used to accept a push video call.
 - Will be triggered on the receiver's end.
+
 ```typescript
 export type VideoAcceptRequestInputOptions = {
   signalData: any;
@@ -3780,21 +3628,23 @@ export type VideoAcceptRequestInputOptions = {
 async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signalData*    | any  | - | Signal data received from the initiator peer via psuh notification upon call request |
-| senderAddress*    | string  | - | Local peer address |
-| recipientAddress*     | string  | - | Incoming/remote peer address |
-| chatId*     | string  | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage     | ```(message: string) => void```  | ```(message: string) => {console.log('received a meesage', message);}``` | Function which will be called when the sender receives a message via webRTC data channel |
+| signalData_ | any | - | Signal data received from the initiator peer via psuh notification upon call request |
+| senderAddress* | string | - | Local peer address |
+| recipientAddress* | string | - | Incoming/remote peer address |
+| chatId\* | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
 | retry | boolean | false | If we are retrying the call, only for internal use |
 
------
+---
 
 #### **connect**
+
 - This is the final method which is used to connect a push video call.
 - Will be triggered on the initiator's end.
+
 ```typescript
 export type VideoConnectInputOptions = {
   signalData: any;
@@ -3803,68 +3653,79 @@ export type VideoConnectInputOptions = {
 connect(options: VideoConnectInputOptions): void {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signalData*    | any  | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
+| signalData_ | any | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
 
------
+---
 
 #### **disconnect**
+
 - This method is used to end a push video call.
 - Can be triggered on the initiator as well as receivers end.
+
 ```typescript
 disconnect(): void {}
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with \* are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | - | - | - | - |
 
------
+---
 
 #### **enableVideo**
-- This method is used to enable/disable the video (from ```data.local.stream```) for a push video call.
+
+- This method is used to enable/disable the video (from `data.local.stream`) for a push video call.
 - Can be triggered on the initiator as well as receivers end.
-- **Note -** If video was not enabled during ```create()``` then it will always remain off. 
+  <<<<<<< HEAD
+- # **Note -** If video was not enabled during `create()` then it will always remain off.
+- **Note -** If video was not enabled during `create()` then it will always remain off.
+  > > > > > > > main
 
 ```typescript
   export type EnableVideoInputOptions = {
   state: boolean;
 }
-  
+
 enableVideo(options: EnableVideoInputOptions): void
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with \* are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | state | boolean | - | true for enable and false for disable |
 
------
+---
 
 #### **enableAudio**
-- This method is used to enable/disable the audio (from ```data.local.stream```) for a push video call.
+
+- This method is used to enable/disable the audio (from `data.local.stream`) for a push video call.
 - Can be triggered on the initiator as well as receivers end.
-- **Note -** If audio was not enabled during ```create()``` then it will always remain off. 
+  <<<<<<< HEAD
+- # **Note -** If audio was not enabled during `create()` then it will always remain off.
+- **Note -** If audio was not enabled during `create()` then it will always remain off.
+  > > > > > > > main
 
 ```typescript
 export type EnableAudioInputOptions = {
   state: boolean;
-} 
-  
+}
+
 enableAudio(options: EnableAudioInputOptions): void
 ```
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with \* are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | state | boolean | - | true for enable and false for disable |
 
------
+---
 
 #### **isInitiator**
+
 - This method is used to tell if the current peer is the initator of the push video call or not.
 - Can be triggered on the initiator as well as receivers end.
 
