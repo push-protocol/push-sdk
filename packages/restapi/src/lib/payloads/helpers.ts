@@ -91,7 +91,7 @@ export async function getRecipients({
      */
     if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
       if (typeof recipients === 'string') {
-        addressInCAIP = getCAIPAddress(env, recipients, 'Recipient');
+        addressInCAIP = await getCAIPAddress(env, recipients, 'Recipient');
         secret = ''; // do secret stuff // TODO
 
         return {
@@ -100,15 +100,18 @@ export async function getRecipients({
       }
     } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
       if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce((_recipients, _rAddress) => {
-          addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
-          secret = ''; // do secret stuff // TODO
+        const recipientObject = recipients.reduce(
+          async (_recipients, _rAddress) => {
+            addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
+            secret = ''; // do secret stuff // TODO
 
-          return {
-            ..._recipients,
-            [addressInCAIP]: secret,
-          };
-        }, {});
+            return {
+              ..._recipients,
+              [addressInCAIP]: secret,
+            };
+          },
+          {}
+        );
 
         return recipientObject;
       }
@@ -119,23 +122,23 @@ export async function getRecipients({
      */
 
     if (notificationType === NOTIFICATION_TYPE.BROADCAST) {
-      if (!recipients) {
-        // return getCAIPFormat(chainId, channel || '');
-        return getCAIPAddress(env, channel, 'Recipient');
-      }
+      return await getCAIPAddress(env, channel, 'Recipient');
     } else if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
       if (typeof recipients === 'string') {
-        return getCAIPAddress(env, recipients, 'Recipient');
+        return await getCAIPAddress(env, recipients, 'Recipient');
       }
     } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
       if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce((_recipients, _rAddress) => {
-          addressInCAIP = getCAIPAddress(env, _rAddress, 'Recipient');
-          return {
-            ..._recipients,
-            [addressInCAIP]: null,
-          };
-        }, {});
+        const recipientObject = recipients.reduce(
+          async (_recipients, _rAddress) => {
+            addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
+            return {
+              ..._recipients,
+              [addressInCAIP]: null,
+            };
+          },
+          {}
+        );
         return recipientObject;
       }
     }
@@ -143,7 +146,7 @@ export async function getRecipients({
   return recipients;
 }
 
-export function getRecipientFieldForAPIPayload({
+export async function getRecipientFieldForAPIPayload({
   env,
   notificationType,
   recipients,
@@ -158,10 +161,10 @@ export function getRecipientFieldForAPIPayload({
     notificationType === NOTIFICATION_TYPE.TARGETTED &&
     typeof recipients === 'string'
   ) {
-    return getCAIPAddress(env, recipients, 'Recipient');
+    return await getCAIPAddress(env, recipients, 'Recipient');
   }
 
-  return getCAIPAddress(env, channel, 'Recipient');
+  return await getCAIPAddress(env, channel, 'Recipient');
 }
 
 export async function getVerificationProof({
@@ -176,9 +179,9 @@ export async function getVerificationProof({
   graph = {},
   uuid,
   chatId,
-  wallet, //
-  pgpPrivateKey, //
-  env, //
+  wallet,
+  pgpPrivateKey,
+  env,
 }: {
   senderType: 0 | 1;
   signer: any;
@@ -245,15 +248,10 @@ export async function getVerificationProof({
       break;
     }
     case 1: {
-      const connectedUser = await getConnectedUser(
-        wallet!,
-        pgpPrivateKey!,
-        env!
-      );
       const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
       const signature = await sign({
         message: hash,
-        signingKey: connectedUser.privateKey!,
+        signingKey: pgpPrivateKey!,
       });
       verificationProof = `pgpv2:${signature}:meta:${chatId}::uid::${uuid}`;
       break;

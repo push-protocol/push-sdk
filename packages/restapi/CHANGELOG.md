@@ -2,47 +2,133 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-## [1.2.15](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.14...restapi-1.2.15) (2023-05-12)
+## [1.3.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.1...restapi-1.3.2) (2023-05-23)
 
 
 ### Bug Fixes
 
-* fix eip712v2 ([#385](https://github.com/ethereum-push-notification-service/push-sdk/issues/385)) ([42c10ba](https://github.com/ethereum-push-notification-service/push-sdk/commit/42c10ba6f5331c9caf5db7136ba94d1a6ed05e10))
-* Merge branch 'main' into deployment ([3250a7c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3250a7cfc3bb8fefd630179cd204deef023a5e6c))
+* merge main ([5d0bc64](https://github.com/ethereum-push-notification-service/push-sdk/commit/5d0bc649b16c674d20e96eedc590a0efe6a5b77f))
 
 
 
-## [1.2.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.13...restapi-1.2.14) (2023-05-11)
+## [1.3.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.0...restapi-1.3.1) (2023-05-22)
+
+
+### Bug Fixes
+
+* merge main ([dc2ba17](https://github.com/ethereum-push-notification-service/push-sdk/commit/dc2ba179cef2f834ac4fe13a6673095b97a6e019))
+
+
+
+# [1.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.16...restapi-1.3.0) (2023-05-19)
+
+
+### Bug Fixes
+
+* merge main ([b58d9d5](https://github.com/ethereum-push-notification-service/push-sdk/commit/b58d9d53bd91fa33200a854170fe7e3facff4371))
+
+
+### Features
+
+* add video sdk methods ([#395](https://github.com/ethereum-push-notification-service/push-sdk/issues/395)) ([4b9dd69](https://github.com/ethereum-push-notification-service/push-sdk/commit/4b9dd691ac1fde6a91be0478b20780f6755fbb4f)), closes [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295) [#309](https://github.com/ethereum-push-notification-service/push-sdk/issues/309) [#357](https://github.com/ethereum-push-notification-service/push-sdk/issues/357) [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)
+
+
+
+## [1.2.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.15...restapi-1.2.16) (2023-05-19)
+
+
+### Bug Fixes
+
+* add deprecated info to chat.chat ([#392](https://github.com/ethereum-push-notification-service/push-sdk/issues/392)) ([d84ae64](https://github.com/ethereum-push-notification-service/push-sdk/commit/d84ae64c116adb7eea9e8faf7929b6eb3b74c657))
+* Merge branch 'alpha' into alpha-deployment ([549fd83](https://github.com/ethereum-push-notification-service/push-sdk/commit/549fd839867d84a98a10206a7f9945aeb1720e49))
+* Merge branch 'main' into alpha ([72464fd](https://github.com/ethereum-push-notification-service/push-sdk/commit/72464fd97260b612649035e3b241f946de8f9e92))
+* show hardcoded msg rather than throwing error ([#388](https://github.com/ethereum-push-notification-service/push-sdk/issues/388)) ([8962e10](https://github.com/ethereum-push-notification-service/push-sdk/commit/8962e10036916d0bc161324f5684f74bb7b74dc3))
+* **video:** set trickle to true while creating peer instance ([#397](https://github.com/ethereum-push-notification-service/push-sdk/issues/397)) ([0b609be](https://github.com/ethereum-push-notification-service/push-sdk/commit/0b609bec87a6187d1e7cbf8052a2b9a36b9fcd7a))
+
+
+
+## [0.0.1-alpha.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.6...restapi-0.0.1-alpha.7) (2023-05-15)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([37c1c8d](https://github.com/ethereum-push-notification-service/push-sdk/commit/37c1c8db579876f5835c2e5bb5e6baf073dc9208))
+* **video:** remove status change upon connect in request ([#394](https://github.com/ethereum-push-notification-service/push-sdk/issues/394)) ([7441ef0](https://github.com/ethereum-push-notification-service/push-sdk/commit/7441ef0fb2c9ed39e12a4f1819ade0ee7e0d6b10))
+
+
+
+## [0.0.1-alpha.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.5...restapi-0.0.1-alpha.6) (2023-05-14)
+
+
+### Bug Fixes
+
+* add video call retry logic upon error & doc: add video call in restapi/readme  ([#391](https://github.com/ethereum-push-notification-service/push-sdk/issues/391)) ([9c8c86b](https://github.com/ethereum-push-notification-service/push-sdk/commit/9c8c86b35d1cb0300d0170e87931dd31a15f9342))
+
+
+
+## [0.0.1-alpha.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.4...restapi-0.0.1-alpha.5) (2023-05-14)
+
+
+
+## [0.0.1-alpha.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.3...restapi-0.0.1-alpha.4) (2023-05-12)
 
 
 ### Bug Fixes
 
 * fix chat.chat for grps ([#382](https://github.com/ethereum-push-notification-service/push-sdk/issues/382)) ([052a75c](https://github.com/ethereum-push-notification-service/push-sdk/commit/052a75ca0f0fea7664d8c607fc85cdf37cc5d398))
-* Merge branch 'main' into deployment ([dd21949](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd21949792a6028efdae17232ba16bb98605b017))
+* fix eip712v2 ([#385](https://github.com/ethereum-push-notification-service/push-sdk/issues/385)) ([42c10ba](https://github.com/ethereum-push-notification-service/push-sdk/commit/42c10ba6f5331c9caf5db7136ba94d1a6ed05e10))
+* Merge branch 'alpha' into alpha-deployment ([a1a8666](https://github.com/ethereum-push-notification-service/push-sdk/commit/a1a86661b1823c84328ec90ac9aafc6c57f574f3))
+* Merge branch 'main' into alpha ([5fc51db](https://github.com/ethereum-push-notification-service/push-sdk/commit/5fc51db1a336203048b4b42a5384cb37cf79c509))
+* **video:** separate react state from video class instance variable data ([#389](https://github.com/ethereum-push-notification-service/push-sdk/issues/389)) ([83bf445](https://github.com/ethereum-push-notification-service/push-sdk/commit/83bf4457332b127bf9e41a2f4c93fb851367724d))
 
 
 
-## [1.2.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.12...restapi-1.2.13) (2023-05-10)
+## [0.0.1-alpha.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.2...restapi-0.0.1-alpha.3) (2023-05-11)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([e19b9b0](https://github.com/ethereum-push-notification-service/push-sdk/commit/e19b9b05b60174e68dc7bfe0e2349e20d8af2604))
+* Replace arrow functions with normal functions in the Video class ([#380](https://github.com/ethereum-push-notification-service/push-sdk/issues/380)) ([b90435a](https://github.com/ethereum-push-notification-service/push-sdk/commit/b90435a953b908899c92eb5b4d4c3677e47b1552))
+
+
+
+## [0.0.1-alpha.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.1...restapi-0.0.1-alpha.2) (2023-05-10)
 
 
 ### Bug Fixes
 
 * eip191v2 signatures for create and auth.update ([#359](https://github.com/ethereum-push-notification-service/push-sdk/issues/359)) ([48abaf6](https://github.com/ethereum-push-notification-service/push-sdk/commit/48abaf667dce2a1140c3622451c1c5b49d153c00))
-* Merge branch 'main' into deployment ([52cab60](https://github.com/ethereum-push-notification-service/push-sdk/commit/52cab60eedbc71d74697adbcd69133d1b93d0f5a))
+* merge alpha ([7f0642c](https://github.com/ethereum-push-notification-service/push-sdk/commit/7f0642c4c417390a5bb52d36d9493bd5b767b634))
+* merge main ([a5fdfe1](https://github.com/ethereum-push-notification-service/push-sdk/commit/a5fdfe10f18c857c32aa5fe5c5dd95db0f268cd1))
+* merge main to alpha ([4866a37](https://github.com/ethereum-push-notification-service/push-sdk/commit/4866a37ed0502c0d16ac91f088d3bb5e597b652a))
 
 
 
-## [1.2.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.11...restapi-1.2.12) (2023-05-08)
+## [0.0.1-alpha.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.0...restapi-0.0.1-alpha.1) (2023-05-08)
 
 
 ### Bug Fixes
 
+* Merge branch 'alpha' into alpha-deployment ([1223c60](https://github.com/ethereum-push-notification-service/push-sdk/commit/1223c60b0f179b26537992a776155aefffd7b5ef))
+* sendVideoNotification and end video call logic ([#367](https://github.com/ethereum-push-notification-service/push-sdk/issues/367)) ([d39c703](https://github.com/ethereum-push-notification-service/push-sdk/commit/d39c703bcda6d332717a5e9b1af6ab574be9d991))
+
+
+
+## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.2...restapi-0.0.1-alpha.0) (2023-05-04)
+
+
+### Bug Fixes
+
+* added pagination and deprecation tag ([#346](https://github.com/ethereum-push-notification-service/push-sdk/issues/346)) ([69763b8](https://github.com/ethereum-push-notification-service/push-sdk/commit/69763b8da2cf3e92bb85908e4f46a72b650c9dba))
 * change preid to alpha ([#358](https://github.com/ethereum-push-notification-service/push-sdk/issues/358)) ([6ac2c23](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ac2c23c5e4a9f54f8bd6ae99aeb77c96417aae3))
-* changed AdditionalMeta structure ([#349](https://github.com/ethereum-push-notification-service/push-sdk/issues/349)) ([ee8ca02](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee8ca022b2d948d08fa8503616898ff6c773062e))
+* changed Definitions for auth.update and upgrade ([#351](https://github.com/ethereum-push-notification-service/push-sdk/issues/351)) ([31daee3](https://github.com/ethereum-push-notification-service/push-sdk/commit/31daee3a5aa913705d1dec8210c0412cd89c94c9))
+* eip191v2 signatures for create and auth.update ([#353](https://github.com/ethereum-push-notification-service/push-sdk/issues/353)) ([008e6d0](https://github.com/ethereum-push-notification-service/push-sdk/commit/008e6d08d75fdacf19f1674cc2b8bd82091fa31f))
+* Merge branch 'main' into alpha ([477bae4](https://github.com/ethereum-push-notification-service/push-sdk/commit/477bae4fdc4e86374615f0f67c41c570a567b9fe))
 
 
 
-## [1.2.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.2.11...restapi-1.2.12) (2023-05-08)
+## [0.0.1-beta.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-beta.1...restapi-0.0.1-beta.2) (2023-05-04)
 
 
 ### Bug Fixes
