@@ -47,12 +47,10 @@ describe('Upgrade user keys', () => {
     expect(upgradedUser.encryptedPrivateKey).to.contains(
       `"version":"${upgradationVersion}"`
     );
-    expect(upgradedUser.encryptionType).to.be.equal(upgradationVersion);
-    expect(user.encryptedPassword).to.be.equal(upgradedUser.encryptedPassword);
-    expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
-    expect(user.profilePicture).to.be.equal(upgradedUser.profilePicture);
-    expect(user.about).to.be.equal(upgradedUser.about);
-    expect(user.name).to.be.equal(upgradedUser.name);
+
+    expect(user.profile.picture).to.be.equal(upgradedUser.profile.picture);
+    expect(user.profile.desc).to.be.equal(upgradedUser.profile.desc);
+    expect(user.profile.name).to.be.equal(upgradedUser.profile.name);
     const userPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
@@ -87,12 +85,10 @@ describe('Upgrade user keys', () => {
     expect(upgradedUser.encryptedPrivateKey).to.contains(
       `"version":"${upgradationVersion}"`
     );
-    expect(upgradedUser.encryptionType).to.be.equal(upgradationVersion);
-    expect(user.encryptedPassword).to.be.equal(upgradedUser.encryptedPassword);
-    expect(user.nftOwner).to.be.equal(upgradedUser.nftOwner);
-    expect(user.profilePicture).to.be.equal(upgradedUser.profilePicture);
-    expect(user.about).to.be.equal(upgradedUser.about);
-    expect(user.name).to.be.equal(upgradedUser.name);
+
+    expect(user.profile.picture).to.be.equal(upgradedUser.profile.picture);
+    expect(user.profile.desc).to.be.equal(upgradedUser.profile.desc);
+    expect(user.profile.name).to.be.equal(upgradedUser.profile.name);
     const userPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,
@@ -117,7 +113,6 @@ describe('Upgrade user keys', () => {
     expect(createdUser.encryptedPrivateKey).to.contains(
       `"version":"${Constants.ENC_TYPE_V1}"`
     );
-    expect(createdUser.encryptionType).to.be.equal(Constants.ENC_TYPE_V1);
     const userPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: createdUser.encryptedPrivateKey,
       signer: _signer,
@@ -128,7 +123,6 @@ describe('Upgrade user keys', () => {
     expect(user.encryptedPrivateKey).to.contains(
       `"version":"${upgradationVersion}"`
     );
-    expect(user.encryptionType).to.be.equal(upgradationVersion);
     const upgradedPrivatePGPKey = await decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: _signer,

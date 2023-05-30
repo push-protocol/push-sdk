@@ -169,21 +169,67 @@ export interface IFeeds {
   deprecatedCode?: string; // scope only at sdk level
 }
 export interface IUser {
+  msgSent: number;
+  maxMsgPersisted: number;
   did: string;
   wallets: string;
-  profilePicture: string | null;
-  publicKey: string;
+  profile: {
+    name: string | null;
+    desc: string | null;
+    picture: string | null;
+    profileVerificationProof: string | null;
+  };
   encryptedPrivateKey: string;
-  encryptionType: string;
-  signature: string;
-  sigType: string;
-  about: string | null;
+  publicKey: string;
+  verificationProof: string;
+
+  /**
+   * @deprecated Use `profile.name` instead.
+   */
   name: string | null;
-  encryptedPassword: string | null;
-  nftOwner: string | null;
+  /**
+   * @deprecated Use `profile.desc` instead.
+   */
+  about: string | null;
+  /**
+   * @deprecated Use `profile.picture` instead.
+   */
+  profilePicture: string | null;
+  /**
+   * @deprecated Use `msgSent` instead.
+   */
   numMsg: number;
+  /**
+   * @deprecated Use `maxMsgPersisted` instead.
+   */
   allowedNumMsg: number;
+  /**
+   * @deprecated Use `encryptedPrivateKey.version` instead.
+   */
+  encryptionType: string;
+  /**
+   * @deprecated Use `verificationProof` instead.
+   */
+  signature: string;
+  /**
+   * @deprecated Use `verificationProof` instead.
+   */
+  sigType: string;
+  /**
+   * @deprecated Use `encryptedPrivateKey.encryptedPassword` instead.
+   */
+  encryptedPassword: string | null;
+  /**
+   * @deprecated
+   */
+  nftOwner: string | null;
+  /**
+   * @deprecated Not recommended to be used anywhere
+   */
   linkedListHash?: string | null;
+  /**
+   * @deprecated Not recommended to be used anywhere
+   */
   nfts?: [] | null;
 }
 

@@ -3,6 +3,7 @@ import { AccountEnvOptionsType, IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
 import Constants from '../constants';
+import { populateDeprecatedUser } from '../utils/populateIUser';
 
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
@@ -11,18 +12,18 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   }
   const caip10 = walletToPCAIP10(account);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const requestUrl = `${API_BASE_URL}/v1/users/?caip10=${caip10}`;
+  const requestUrl = `${API_BASE_URL}/v2/users/?caip10=${caip10}`;
   return axios
     .get(requestUrl)
     .then((response) => {
-      if (response.data)
+      if (response.data) {
         response.data.publicKey = verifyPGPPublicKey(
-          response.data.encryptionType,
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did,
-          response.data.nftOwner
+          response.data.did
         );
-      return response.data;
+      }
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
