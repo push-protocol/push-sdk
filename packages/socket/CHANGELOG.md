@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.5.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.5.0...socket-0.5.1) (2023-05-22)
+
+
+### Bug Fixes
+
+* fixed nft socket ([#413](https://github.com/ethereum-push-notification-service/push-sdk/issues/413)) ([0d8c3ab](https://github.com/ethereum-push-notification-service/push-sdk/commit/0d8c3ab628ec29903bcc051254e5c54e94a2325e))
+
+
+
 # [0.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.4.1...socket-0.5.0) (2023-04-27)
 
 

@@ -3,9 +3,8 @@ import { ethers } from 'ethers';
 import * as Constants from './constants';
 import { ENV } from './constants';
 
-
 export interface AddressValidatorsType {
-  [key: string]: ({ address } : { address: string }) => boolean;
+  [key: string]: ({ address }: { address: string }) => boolean;
 }
 
 export function isValidETHAddress(address: string) {
@@ -14,22 +13,38 @@ export function isValidETHAddress(address: string) {
 
 const AddressValidators: AddressValidatorsType = {
   // Ethereum
-  'eip155': ({ address } : { address: string }) => {
+  eip155: ({ address }: { address: string }) => {
     return isValidETHAddress(address);
-  }
+  },
   // Add other chains here
 };
 
+export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
+  try {
+    const walletComponent = wallet.split(':');
+    return (
+      (walletComponent.length === 5 || walletComponent.length === 6) &&
+      walletComponent[0].toLowerCase() === 'nft' &&
+      !isNaN(Number(walletComponent[4])) &&
+      Number(walletComponent[4]) > 0 &&
+      !isNaN(Number(walletComponent[2])) &&
+      Number(walletComponent[2]) > 0 &&
+      ethers.utils.isAddress(walletComponent[3]) &&
+      walletComponent[1] === 'eip155'
+    );
+  } catch (err) {
+    return false;
+  }
+};
+
 export function validateCAIP(addressInCAIP: string) {
-  const [
-    blockchain,
-    networkId,
-    address
-  ] = addressInCAIP.split(':');
+  const [blockchain, networkId, address] = addressInCAIP.split(':');
 
   if (!blockchain) return false;
   if (!networkId) return false;
   if (!address) return false;
+
+  if (isValidCAIP10NFTAddress(addressInCAIP)) return true;
 
   const validatorFn = AddressValidators[blockchain];
 
@@ -47,13 +62,13 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
 }
 
 /**
- * This helper 
+ * This helper
  *  checks if a VALID CAIP
  *    return the CAIP
  *  else
  *    check if valid ETH
  *      return a CAIP representation of that address (EIP155 + env)
- *    else 
+ *    else
  *      throw error!
  */
 export function getCAIPAddress(env: ENV, address: string, msg?: string) {
@@ -68,9 +83,9 @@ export function getCAIPAddress(env: ENV, address: string, msg?: string) {
   }
 }
 
-export const walletToPCAIP10 = (account:string): string => {
+export const walletToPCAIP10 = (account: string): string => {
   if (account.includes('eip155:')) {
-    return account
+    return account;
   }
-  return 'eip155:' + account
-}
+  return 'eip155:' + account;
+};
