@@ -29,20 +29,30 @@ export const approve = async (
           pgpPrivateKey = null,
   } = options || {};
 
-  if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
-  }
+  try {
 
-  if (!isValidETHAddress(senderAddress) && !senderAddress.startsWith("spaces:")) {
-    throw new Error("Not a valid spaceId or ETH address");
-  }
+      if (account == null && signer == null) {
+          throw new Error(`At least one from account or signer is necessary!`);
+      }
 
-  return await approveRequest({
-      status: status,
-      account: account,
-      signer: signer,
-      senderAddress: senderAddress,
-      env: env,
-      pgpPrivateKey: pgpPrivateKey
-  })
+      if (!isValidETHAddress(senderAddress) && !senderAddress.startsWith("spaces:")) {
+          throw new Error("Not a valid spaceId or ETH address");
+      }
+      return await approveRequest({
+          status: status,
+          account: account,
+          signer: signer,
+          senderAddress: senderAddress,
+          env: env,
+          pgpPrivateKey: pgpPrivateKey
+      })
+  } catch (err) {
+      console.error(
+          `[Push SDK] - API  - Error - API ${approve.name} -:  `,
+          err
+      );
+      throw Error(
+          `[Push SDK] - API  - Error - API ${approve.name} -: ${err}`
+      );
+  }
 };

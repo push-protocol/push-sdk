@@ -23,9 +23,6 @@ export interface StopSpaceType extends EnvOptionsType {
     pgpPrivateKey ? : string;
 }
 
-/**
- * Update Group information
- */
 export const stop = async (
     options: StopSpaceType
 ): Promise < SpaceDTO > => {
