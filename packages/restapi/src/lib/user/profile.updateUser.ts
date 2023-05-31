@@ -9,6 +9,7 @@ import {
 } from '../helpers';
 import { IUser, ProgressHookType } from '../types';
 import { get } from './getUser';
+import { populateDeprecatedUser } from '../utils/populateIUser';
 
 type ProfileUpdateProps = {
   /**
@@ -54,21 +55,9 @@ export const profileUpdate = async (
       throw new Error('User not Found!');
     }
     const updatedProfile = {
-      name: profile.name
-        ? profile.name
-        : Object.keys(user).includes('name')
-        ? user.name
-        : user.profile.name,
-      desc: profile.desc
-        ? profile.desc
-        : Object.keys(user).includes('about')
-        ? user.about
-        : user.profile.desc,
-      picture: profile.picture
-        ? profile.picture
-        : Object.keys(user).includes('profilePicture')
-        ? user.profilePicture
-        : user.profile.picture,
+      name: profile.name ? profile.name : user.profile.name,
+      desc: profile.desc ? profile.desc : user.profile.desc,
+      picture: profile.picture ? profile.picture : user.profile.picture,
     };
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
     const signature = await sign({
@@ -81,7 +70,7 @@ export const profileUpdate = async (
     const body = { ...updatedProfile, verificationProof };
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const apiEndpoint = `${API_BASE_URL}/v1/users/${user.did}/profile`;
+    const apiEndpoint = `${API_BASE_URL}/v2/users/${user.did}/profile`;
 
     //Report Progress
     progressHook?.({
@@ -93,12 +82,10 @@ export const profileUpdate = async (
     const response = await axios.put(apiEndpoint, body);
     if (response.data)
       response.data.publicKey = verifyPGPPublicKey(
-        response.data.encryptionType,
+        response.data.encryptedPrivateKey,
         response.data.publicKey,
-        response.data.did,
-        response.data.nftOwner
+        response.data.did
       );
-
     //Report Progress
     progressHook?.({
       progressId: 'PUSH-PROFILE-UPDATE-02',
@@ -106,7 +93,7 @@ export const profileUpdate = async (
       progressInfo: '',
       level: 'SUCCESS',
     });
-    return response.data;
+    return populateDeprecatedUser(response.data);
   } catch (err) {
     progressHook?.({
       progressId: 'PUSH-ERROR-00',

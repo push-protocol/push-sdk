@@ -59,37 +59,33 @@ const UpdateUserProfile = () => {
     try {
       setLoading(true);
       let response;
+      await testPrivateKeyDecryption();
       switch (index) {
         case 0:
-          {
-            const librarySigner = await library.getSigner();
-            response = await PushAPI.user.profile.update({
-              pgpPrivateKey: decryptedPrivateKey as string,
-              account: acc,
-              profile: {
-                name: name,
-                desc: desc,
-                picture: pic,
-              },
-              env,
-              progressHook: handleProgress,
-            });
-          }
+          response = await PushAPI.user.profile.update({
+            pgpPrivateKey: decryptedPrivateKey as string,
+            account: acc,
+            profile: {
+              name: name,
+              desc: desc,
+              picture: pic,
+            },
+            env,
+            progressHook: handleProgress,
+          });
           break;
         case 1:
-          {
-            response = await PushAPI.user.profile.update({
-              pgpPrivateKey: decryptedPrivateKey as string,
-              account: acc,
-              profile: {
-                name: name,
-                desc: desc,
-                picture: pic,
-              },
-              env,
-              progressHook: handleProgress,
-            });
-          }
+          response = await PushAPI.user.profile.update({
+            pgpPrivateKey: decryptedPrivateKey as string,
+            account: acc,
+            profile: {
+              name: name,
+              desc: desc,
+              picture: pic,
+            },
+            env,
+            progressHook: handleProgress,
+          });
           break;
         default:
           break;
@@ -105,21 +101,21 @@ const UpdateUserProfile = () => {
   const testPrivateKeyDecryption = async () => {
     try {
       setLoading(true);
-        const response1 = await PushAPI.user.get({
-          account: isCAIP ? walletToPCAIP10(account) : account,
-          env,
-        });
-        const librarySigner = await library.getSigner();
-        const response2 = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: response1.encryptedPrivateKey,
-          account: isCAIP ? walletToPCAIP10(account) : account,
-          signer: librarySigner,
-          env,
-          toUpgrade: true,
-          progressHook: handleProgress,
-        });
+      const response1 = await PushAPI.user.get({
+        account: isCAIP ? walletToPCAIP10(account) : account,
+        env,
+      });
+      const librarySigner = await library.getSigner();
+      const response2 = await PushAPI.chat.decryptPGPKey({
+        encryptedPGPPrivateKey: response1.encryptedPrivateKey,
+        account: isCAIP ? walletToPCAIP10(account) : account,
+        signer: librarySigner,
+        env,
+        toUpgrade: true,
+        progressHook: handleProgress,
+      });
 
-        setDecryptedPrivateKey(response2);
+      await setDecryptedPrivateKey(response2);
     } catch (e) {
       console.error(e);
     } finally {
@@ -135,7 +131,7 @@ const UpdateUserProfile = () => {
 
       <Section>
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Picture</label>
+          <label>picture</label>
           <input
             type="text"
             onChange={updatePic}
@@ -144,7 +140,7 @@ const UpdateUserProfile = () => {
           />
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Name</label>
+          <label>name</label>
           <input
             type="text"
             onChange={updateName}
@@ -153,7 +149,7 @@ const UpdateUserProfile = () => {
           />
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <label>Description</label>
+          <label>desc</label>
           <input
             type="text"
             onChange={updateDesc}
@@ -171,18 +167,13 @@ const UpdateUserProfile = () => {
           />
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
-          <SectionButton onClick={() => testPrivateKeyDecryption()}>
-            fetch and decrypt encrypted pvt key
-          </SectionButton>
-        </SectionItem>
-        <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testUpdateUserProfile(0)}>
-            Auth Update user with address & library signer
+            Profile Update user with address & library signer
           </SectionButton>
         </SectionItem>
         <SectionItem style={{ marginTop: 20 }}>
           <SectionButton onClick={() => testUpdateUserProfile(1)}>
-            Auth Update user with private key signer
+            Profile Update user with private key signer
           </SectionButton>
         </SectionItem>
         {progress && (
