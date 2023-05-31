@@ -133,15 +133,8 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
     const body = {
       user: user.did,
       wallet,
-      name: user.name ? user.name : '',
-      encryptedPassword: null,
-      nftOwner:
-        pgpEncryptionVersion === ENCRYPTION_TYPE.NFTPGP_V1
-          ? walletToPCAIP10((await signer?.getAddress()) as string)
-          : null, // check for nft,
       publicKey: signedPublicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPgpPrivateKey),
-      encryptionType: pgpEncryptionVersion,
       env,
     };
 
