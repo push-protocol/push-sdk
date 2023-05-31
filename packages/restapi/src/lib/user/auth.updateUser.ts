@@ -45,7 +45,7 @@ export type AuthUpdateProps = {
 /**
  * Updation of encryption keys of a Push Profile to a specific version
  */
-export const update = async (options: AuthUpdateProps): Promise<IUser> => {
+export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
   const {
     pgpPrivateKey,
     pgpEncryptionVersion,

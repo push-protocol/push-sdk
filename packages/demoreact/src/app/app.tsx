@@ -31,6 +31,7 @@ import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
+import UpdateUserProfile from './ChatTest/UpdateUserProfile';
 import { Buffer } from 'buffer';
 import { ENV } from './helpers';
 
@@ -235,6 +236,7 @@ export function App() {
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/updateUserprofile" element={<UpdateUserProfile />} />
                 <Route path="/authUpdate" element={<AuthUpdateUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
