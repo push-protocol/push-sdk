@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.2...restapi-1.3.3) (2023-05-31)
+
+
+### Bug Fixes
+
+* add profile.update feature ([#410](https://github.com/ethereum-push-notification-service/push-sdk/issues/410)) ([361b930](https://github.com/ethereum-push-notification-service/push-sdk/commit/361b9303c5340238bcb7fa457370707ae864756b))
+* Merge branch 'main' into deployment ([59715aa](https://github.com/ethereum-push-notification-service/push-sdk/commit/59715aa307c0931e86476c18f78d495bc0de891f))
+* Merge branch 'main' into deployment ([1d52d6b](https://github.com/ethereum-push-notification-service/push-sdk/commit/1d52d6ba5aaadd70d7ccfd3904100586ad74d0f0))
+* removed undocumented fn ([#419](https://github.com/ethereum-push-notification-service/push-sdk/issues/419)) ([3fff974](https://github.com/ethereum-push-notification-service/push-sdk/commit/3fff974b1e2cfa3499439a246be190aaad2907e3))
+
+
+
 ## [1.3.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.1...restapi-1.3.2) (2023-05-23)
 
 ### Bug Fixes
