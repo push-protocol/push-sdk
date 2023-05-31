@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Member, InternalGroupDTO } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
@@ -159,7 +159,7 @@ export const createGroupPayload = (
   return body;
 };
 
-export const groupDtoToSpaceDto = (groupDto: InternalGroupDTO): SpaceDTO => {
+export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
   const spaceDto: SpaceDTO = {
     members: groupDto.members,
     pendingMembers: groupDto.pendingMembers,

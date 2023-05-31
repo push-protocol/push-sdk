@@ -12,7 +12,7 @@ import { walletToPCAIP10 } from '../helpers';
 import SpaceTest from '../SpaceTest/SpaceTest';
 
 const CreateSpaceTest = () => {
-  const { account ,library} = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceName, setSpaceName] = useState<string>('');
@@ -28,6 +28,7 @@ const CreateSpaceTest = () => {
   const [meta, setMeta] = useState<string>();
   const [scheduleAt, setScheduleAt] = useState<string>('');
   const [scheduleEnd, setScheduleEnd] = useState<string>();
+  const [account, setAccount] = useState<string>(acc);
 
 
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -84,33 +85,21 @@ const CreateSpaceTest = () => {
     setScheduleEnd((e.target as HTMLInputElement).value);
   };
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
+
   const testCreateSpace = async () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
-
-      // Remove empty string elements
-      let membersNotEmpty = [members]
-      membersNotEmpty = membersNotEmpty.filter(str => str !== '')
-      let adminNotEmpty = [admins]
-      adminNotEmpty = adminNotEmpty.filter(str => str !== '')
 
       const response = await PushAPI.space.create({
         spaceName,
         spaceDescription,
-        members: membersNotEmpty,
+        members: members.split(','),
         spaceImage,
-        admins: adminNotEmpty,
+        admins: admins.split(','),
         isPublic: (isPublic === "true"),
         contractAddressNFT,
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,
@@ -119,7 +108,6 @@ const CreateSpaceTest = () => {
         account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
-        pgpPrivateKey: pvtkey,
         meta: meta,
         scheduleAt:  new Date(scheduleAt) ,
         scheduleEnd: scheduleEnd ? new Date(scheduleEnd) : null
@@ -242,6 +230,16 @@ const CreateSpaceTest = () => {
                 type="text"
                 onChange={updateNumberOfERC20}
                 value={numberOfERC20}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Account</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

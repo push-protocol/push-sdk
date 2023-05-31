@@ -13,7 +13,7 @@ import SpaceTest from './SpaceTest';
 import { stringToChatStatus } from './../ChatTest/helper';
 
 const UpdateSpaceTest = () => {
-  const { account,library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env, isCAIP } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceId, setSpaceId] = useState<string>('');
@@ -25,6 +25,7 @@ const UpdateSpaceTest = () => {
   const [scheduleAt, setScheduleAt] = useState<string>('');
   const [scheduleEnd, setScheduleEnd] = useState<string>();
   const [status, setStatus] = useState<string>();
+  const [account, setAccount] = useState<string>(acc);
 
   const [sendResponse, setSendResponse] = useState<any>('');
 
@@ -64,20 +65,15 @@ const UpdateSpaceTest = () => {
     setStatus((e.target as HTMLInputElement).value);
   };
 
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
+
   const testUpdateSpace = async () => {
     try {
       setLoading(true);
-      const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
       const librarySigner = await library.getSigner();
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
+
       const response = await PushAPI.space.update({
         spaceId,
         spaceName,
@@ -88,7 +84,6 @@ const UpdateSpaceTest = () => {
         account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
-        pgpPrivateKey: pvtkey,
         scheduleAt:  new Date(scheduleAt) ,
         scheduleEnd: scheduleEnd ? new Date(scheduleEnd) : null,
         status: stringToChatStatus(status)
@@ -203,7 +198,15 @@ const UpdateSpaceTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-        
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>Group Creator ( Waller Addr or NFT DID )</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
               <SectionButton onClick={testUpdateSpace}>
                 update space

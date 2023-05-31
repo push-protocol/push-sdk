@@ -27,7 +27,7 @@ export const info = async (
         })
         return groupDtoToSpaceDto(group);
     } catch (err) {
-        console.error(`[Push SDK] - API  - Error - API ${get.name} -:  `, err);
-        throw Error(`[Push SDK] - API  - Error - API ${get.name} -: ${err}`);
+        console.error(`[Push SDK] - API  - Error - API ${info.name} -:  `, err);
+        throw Error(`[Push SDK] - API  - Error - API ${info.name} -: ${err}`);
     }
 };

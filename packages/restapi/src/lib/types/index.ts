@@ -269,7 +269,7 @@ export interface GroupDTO {
   chatId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  groupType: string;
+  groupType?: string;
   status?: ChatStatus | null;
 }
 
@@ -299,7 +299,7 @@ export interface SpaceDTO {
   spaceId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  status: ChatStatus | null;
+  status?: ChatStatus | null;
 }
 
 export interface Subscribers {
