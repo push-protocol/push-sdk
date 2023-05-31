@@ -9,3 +9,7 @@ export * from './addAdminsToSpace';
 export * from './addMembersToSpace';
 export * from './removeAdminsFromSpace';
 export * from './removeMembersFromSpace';
+export * from './requests';
+export * from './spaces';
+export * from './trending';
+

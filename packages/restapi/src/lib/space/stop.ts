@@ -67,7 +67,7 @@ export const stop = async (
             pgpPrivateKey: pgpPrivateKey,
             scheduleAt: space.scheduleAt,
             scheduleEnd: space.scheduleEnd,
-            status: ChatStatus.ACTIVE
+            status: ChatStatus.ENDED
         });
 
         return groupDtoToSpaceDto(group);

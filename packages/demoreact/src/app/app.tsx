@@ -45,6 +45,13 @@ import StartSpaceTest from './SpaceTest/StartSpaceTest';
 import StopSpaceTest from './SpaceTest/StopSpaceTest';
 import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
 import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
+import AddAdminsToSpaceTest from './SpaceTest/AddAdminsToSpaceTest';
+import AddMembersToSpaceTest from './SpaceTest/AddMembersToSpaceTest';
+import RemoveMembersFromSpaceTest from './SpaceTest/RemoveMembersFromSpaceTest';
+import RemoveAdminsFromSpaceTest from './SpaceTest/RemoveAdminsFromSpaceTest';
+import GetSpacesTest from './SpaceTest/GetSpacesTest';
+import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
+import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -261,10 +268,13 @@ export function App() {
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/addMembersToGroup" element={<AddMembersToGroupTest />} />
-                 <Route path="/addAdminsToGroup" element={<AddAdminsToGroupTest />} />
+                <Route path="/addAdminsToGroup" element={<AddAdminsToGroupTest />} />
                 <Route path="/removeMembersFromGroup" element={<RemoveMembersFromGroupTest />} />
-                 <Route path="/removeAdminsFromGroup" element={<RemoveAdminsFromGroupTest />} />
+                <Route path="/removeAdminsFromGroup" element={<RemoveAdminsFromGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
+
+                {/* spaces method  routes */}
+
                 <Route path="/createSpace" element={<CreateSpaceTest />} />
                 <Route path="/updateSpace" element={<UpdateSpaceTest />} />
                 <Route path="/getSpace" element={<GetSpaceTest />} />
@@ -272,6 +282,14 @@ export function App() {
                 <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
                 <Route path="/startSpace" element={<StartSpaceTest />} />
                 <Route path="/stopSpace" element={<StopSpaceTest />} />
+                <Route path="/addAdminsToSpaceTest" element={<AddAdminsToSpaceTest />} />
+                <Route path="/addMembersToSpaceTest" element={<AddMembersToSpaceTest />} />
+                <Route path="/removeMembersFromSpaceTest" element={<RemoveMembersFromSpaceTest />} />
+                <Route path="/removeAdminsFromSpaceTest" element={<RemoveAdminsFromSpaceTest />} />
+                <Route path="/getSpacesTest" element={<GetSpacesTest />} />
+                <Route path="/getSpacesRequestsTest" element={<GetSpacesRequestsTest />} />
+                <Route path="/getSpacesTrendingTest" element={<GetSpacesTrendingTest />} />
+
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

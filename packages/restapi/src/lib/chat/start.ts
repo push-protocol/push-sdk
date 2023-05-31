@@ -19,9 +19,7 @@ export const start = async (
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
-  const headers = {
-    authorization: `Bearer ${apiKey}`,
-  };
+
   const body: ISendMessagePayload = await sendMessagePayload(
     receiverAddress,
     connectedUser,
@@ -48,7 +46,7 @@ export const start = async (
   body.verificationProof = verificationProof;
 
   return axios
-    .post(apiEndpoint, body, { headers })
+    .post(apiEndpoint, body)
     .then((response) => {
       return response.data;
     })
