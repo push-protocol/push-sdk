@@ -76,7 +76,7 @@ export const profileUpdate = async (
     progressHook?.({
       progressId: 'PUSH-PROFILE-UPDATE-01',
       progressTitle: 'Syncing Updated Profile',
-      progressInfo: 'Steady lads, chat is almost ready!',
+      progressInfo: 'Steady lads, your profile is getting a new look!',
       level: 'INFO',
     });
     const response = await axios.put(apiEndpoint, body);
