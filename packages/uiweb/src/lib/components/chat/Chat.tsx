@@ -3,12 +3,20 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import { PUSH_TABS } from '../../types';
+import { ChatFeedsType } from '../../types';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
 import usePushChatSocket from '../../hooks/chat/usePushChatSocket';
-import { device } from '../../config';
+import { chatLimit, device, requestLimit } from '../../config';
+import useFetchRequests from '../../hooks/chat/useFetchRequests';
+import useFetchChats from '../../hooks/chat/useFetchChats';
+import {
+  getAddress,
+  getDefaultFeedObject,
+  getNewChatUser,
+  walletToPCAIP10,
+} from '../../helpers';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -24,18 +32,53 @@ export const Chat = () => {
     setChats,
     connectedProfile,
     setConnectedProfile,
+    selectedChatId,
+    requestsFeed,
+    chatsFeed,
+    searchedChats,
   } = useContext<any>(ChatMainStateContext);
-  const { decryptedPgpPvtKey, account, env } =
+  const { decryptedPgpPvtKey, account, env, activeChosenTab, activeChat } =
     useContext<any>(ChatPropsContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { fetchChatProfile } = useGetChatProfile();
-
+  const { fetchRequests } = useFetchRequests();
+  const { fetchChats } = useFetchChats();
   usePushChatSocket();
+
+  //make a helper for the function
+  const fetchRequestList = async () => {
+    const feeds = await fetchRequests({ page: 1, requestLimit });
+    const firstFeeds: ChatFeedsType = { ...feeds };
+    setRequestsFeed(firstFeeds);
+  };
+
+  useEffect(() => {
+    if (Object.keys(requestsFeed).length) {
+      return;
+    }
+    if (decryptedPgpPvtKey) {
+      fetchRequestList();
+    }
+  }, [fetchRequests, decryptedPgpPvtKey, env]);
+
+  const fetchChatList = async () => {
+    const feeds = await fetchChats({ page: 1, chatLimit });
+    const firstFeeds: ChatFeedsType = { ...feeds };
+    setChatsFeed(firstFeeds);
+  };
+
+  useEffect(() => {
+    if (Object.keys(chatsFeed).length) {
+      return;
+    }
+    if (decryptedPgpPvtKey) {
+      fetchChatList();
+    }
+  }, [fetchChats, decryptedPgpPvtKey, env, account]);
 
   useEffect(() => {
     (async () => {
       let user;
-      console.log(connectedProfile);
       if (account) {
         user = await fetchChatProfile({ profileId: account });
 
@@ -47,13 +90,41 @@ export const Chat = () => {
   useEffect(() => {
     setChatsFeed({});
     setRequestsFeed({});
-    setActiveTab(PUSH_TABS.CHATS);
-    setSelectedChatId(null);
+    setActiveTab(activeChosenTab);
+
     setActiveSubTab(null);
-    setSearchedChats(null);
+
     setNewChat(false);
     setChats(new Map());
-  }, [account, decryptedPgpPvtKey, env]);
+  }, [account, decryptedPgpPvtKey, env,activeChosenTab]);
+
+  useEffect(() => {
+    (async () => {
+      if (activeChat) {
+        const address = await getAddress(activeChat, env);
+        if (address) {
+          setSelectedChatId(walletToPCAIP10(address));
+          const selectedChat = chatsFeed[address] || requestsFeed[address];
+          if (!selectedChat) {
+            const result = await getNewChatUser({
+              searchText: address,
+              fetchChatProfile,
+              env,
+            });
+
+            if (result) {
+              const defaultFeed = getDefaultFeedObject({ user: result });
+              setSearchedChats({ [defaultFeed.did]: defaultFeed });
+            }
+          } else {
+            setSearchedChats(null);
+          }
+        }
+      } else {
+        setSearchedChats(null);
+      }
+    })();
+  }, [activeChat]);
 
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
@@ -92,7 +163,7 @@ const Container = styled(Section)`
     width: 350px;
   }
   @media ${device.mobileS} {
-    width:330px;
-    padding:24px 17px 0 17px;
+    width: 330px;
+    padding: 24px 17px 0 17px;
   }
 `;

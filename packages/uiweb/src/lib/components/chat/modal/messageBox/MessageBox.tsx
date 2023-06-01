@@ -1,7 +1,4 @@
-import {
-  ChatMainStateContext,
-  ChatPropsContext,
-} from '../../../../context';
+import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -9,34 +6,64 @@ import useFetchHistoryMessages from '../../../../hooks/chat/useFetchHistoryMessa
 import { IMessageIPFS } from '@pushprotocol/restapi';
 import { Spinner } from '../../../reusables/Spinner';
 import moment from 'moment';
-import { dateToFromNowDaily } from '../../../../helpers';
+import {
+  dateToFromNowDaily,
+  formatFileSize,
+  shortenText,
+} from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
-import CheckCircleIcon from '../../../../icons/chat/checkCircle.svg';
+import CheckCircleIcon from '../../../../icons/checkCircle.svg';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
-import { PUSH_SUB_TABS, PUSH_TABS } from '../../../../types';
+import { FileMessageContent, PUSH_TABS } from '../../../../types';
 import { Typebar } from './typebar/Typebar';
+import { FILE_ICON } from '../../../../config';
 
 const CHATS_FETCH_LIMIT = 15;
 
-// const FileCard = ({
-//   chat,
-//   position,
-// }: {
-//   chat: IMessageIPFS;
-//   position: number;
-// }) => {
-//   return (
-//     <Section alignSelf={position ? 'end' : 'start'}  maxWidth="80%" margin="5px 0"
-//     >
-//       <Image
-//        src={(JSON.parse(chat.messageContent)).content}
-//         alt=""
-//         width='100%'
-//         borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
-//       />
-//     </Section>
-//   );
-// };
+const FileCard = ({
+  chat,
+  position,
+}: {
+  chat: IMessageIPFS;
+  position: number;
+}) => {
+  const fileContent: FileMessageContent = JSON.parse(chat.messageContent);
+  const name = fileContent.name;
+
+  const content = fileContent.content as string;
+  const size = fileContent.size;
+
+  return (
+    <Section
+      alignSelf={position ? 'end' : 'start'}
+      maxWidth="80%"
+      margin="5px 0"
+      background="#343536"
+      borderRadius="8px"
+      justifyContent="space-around"
+      padding="10px 13px"
+      gap="15px"
+    >
+      <Image
+        src={FILE_ICON(name.split('.').slice(-1)[0])}
+        alt="extension icon"
+        width="20px"
+        height="20px"
+      />
+      <Section flexDirection="column" gap="5px">
+        <Span color="#fff" fontSize="15px">
+          {shortenText(name, 11)}
+        </Span>
+        <Span color="#fff" fontSize="12px">
+          {formatFileSize(size)}
+        </Span>
+      </Section>
+      <FileDownloadIconAnchor href={content} target="_blank" rel="noopener noreferrer" download>
+        <FileDownloadIcon className="fa fa-download" aria-hidden="true" />
+      </FileDownloadIconAnchor>
+    </Section>
+  );
+};
 
 const ImageCard = ({
   chat,
@@ -48,7 +75,7 @@ const ImageCard = ({
   return (
     <Section
       alignSelf={position ? 'end' : 'start'}
-      maxWidth="80%"
+      maxWidth="65%"
       margin="5px 0"
     >
       <Image
@@ -71,7 +98,7 @@ const GIFCard = ({
   return (
     <Section
       alignSelf={position ? 'end' : 'start'}
-      maxWidth="80%"
+      maxWidth="65%"
       margin="5px 0"
     >
       <Image
@@ -105,7 +132,7 @@ const MessageCard = ({
       position="relative"
     >
       {' '}
-      <Section flexDirection="column"     padding="5px 0 15px 0">
+      <Section flexDirection="column" padding="5px 0 15px 0">
         {chat.messageContent.split('\n').map((str) => (
           <Span
             key={Math.random().toString()}
@@ -114,7 +141,6 @@ const MessageCard = ({
             fontSize="16px"
             fontWeight="400"
             color={position ? '#fff' : '#000'}
-        
           >
             {str}
           </Span>
@@ -134,7 +160,6 @@ const MessageCard = ({
   );
 };
 
-//make provision for different msg type
 const Messages = ({ chat }: { chat: IMessageIPFS }) => {
   const { account } = useContext<any>(ChatPropsContext);
   const position =
@@ -146,6 +171,9 @@ const Messages = ({ chat }: { chat: IMessageIPFS }) => {
   }
   if (chat.messageType === 'Image') {
     return <ImageCard chat={chat} position={position} />;
+  }
+  if (chat.messageType === 'File') {
+    return <FileCard chat={chat} position={position} />;
   }
   return <MessageCard chat={chat} position={position} />;
 };
@@ -159,12 +187,15 @@ export const MessageBox = () => {
     setRequestsFeed,
     setActiveTab,
     setChatFeed,
-    activeTab
+    setSearchedChats,
+    setSelectedChatId,
+    activeTab,
   } = useContext<any>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatPropsContext);
   const selectedChat =
     chatsFeed[selectedChatId] || requestsFeed[selectedChatId];
+
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId);
   const dates = new Set();
@@ -194,7 +225,6 @@ export const MessageBox = () => {
       </Span>
     );
   };
-
 
   const scrollToBottom = (behavior?: string | null) => {
     bottomRef?.current?.scrollIntoView(
@@ -271,12 +301,10 @@ export const MessageBox = () => {
           const updatedRequestsfeed = { ...requestsFeed };
           const selectedRequest = updatedRequestsfeed[selectedChatId];
           delete updatedRequestsfeed[selectedChatId];
-         
-
-          // const chatTemp = { ...chatsFeed };
-          // chatTemp[selectedChatId] = selectedRequest;
           setChatFeed(selectedChatId, selectedRequest);
           setActiveTab(PUSH_TABS.CHATS);
+          setSelectedChatId(null);
+          setSearchedChats(null);
           setRequestsFeed(updatedRequestsfeed);
         }
       } catch (error_: Error | any) {
@@ -292,23 +320,21 @@ export const MessageBox = () => {
       justifyContent="start"
       alignItems="start"
       width="100%"
-    
-      overflow='hidden'
+      overflow="hidden"
       height="100%"
     >
-       {loading ? <Spinner /> : ''}
+      {loading ? <Spinner /> : ''}
       <Section
         width="100%"
-        height="80%"
-        overflow='hidden'
+        height="85%"
+        overflow="hidden"
         justifyContent="start"
         flexDirection="column"
         alignItems="start"
         borderWidth="0 0 1px 0"
-        borderStyle='none none solid none'
-        borderColor='transparent transparent #dddddf transparent'
+        borderStyle="none none solid none"
+        borderColor="transparent transparent #dddddf transparent"
       >
-       
         <MessageListCard
           flexDirection="column"
           justifyContent="start"
@@ -366,7 +392,9 @@ export const MessageBox = () => {
         </MessageListCard>
       </Section>
 
-     { !(activeTab === PUSH_SUB_TABS.REQUESTS) && <Typebar scrollToBottom={scrollToBottom} />}
+      {!requestFeedids.includes(selectedChatId) && (
+        <Typebar scrollToBottom={scrollToBottom} />
+      )}
     </Section>
   );
 };
@@ -382,4 +410,13 @@ const MessageListCard = styled(Section)`
   &::-webkit-scrollbar {
     width: 5px;
   }
+`;
+
+const FileDownloadIcon = styled.i`
+  color: #575757;
+  
+`;
+
+const FileDownloadIconAnchor = styled.a`
+font-size: 20px;
 `;

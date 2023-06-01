@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import MinimizeIcon from '../../icons/supportChat/minimize.svg';
+import MinimizeIcon from '../../icons/minimize.svg';
 import styled from 'styled-components';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { handleOnChatIconClick } from '../../helpers';

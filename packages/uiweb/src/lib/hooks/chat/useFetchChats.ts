@@ -1,57 +1,57 @@
-
 import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { setData } from '../../helpers/chat/localStorage';
+import { getData, setData } from '../../helpers/chat/localStorage';
 import { ChatFeedsType, LOCAL_STORAGE_KEYS } from '../../types';
 
-
 interface fetchChats {
-    page: number;
-    chatLimit: number;
-  }
-  
+  page: number;
+  chatLimit: number;
+}
+
 const useFetchChats = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatPropsContext);
+  const { account, env, decryptedPgpPvtKey } =
+    useContext<any>(ChatPropsContext);
 
-  const fetchChats = useCallback(async ({ page, chatLimit }: fetchChats) => {
+  const fetchChats = useCallback(
+    async ({ page, chatLimit }: fetchChats) => {
+      setLoading(true);
+      try {
+        const chats: IFeeds[] = await PushAPI.chat.chats({
+          account: account,
+          toDecrypt: decryptedPgpPvtKey ? true : false,
+          pgpPrivateKey: String(decryptedPgpPvtKey),
+          page,
+          limit: chatLimit,
+          env: env,
+        });
 
-    setLoading(true);
-    try {
-      const chats:IFeeds[] = await PushAPI.chat.chats({
-        account: account,
-        toDecrypt: decryptedPgpPvtKey?true:false,
-        pgpPrivateKey: String(decryptedPgpPvtKey),
-        page,
-        limit:chatLimit,
-        env: env
-      });
+        //conversation to map from array
+        const modifiedChatsObj: ChatFeedsType = {};
 
-      //conversation to map from array
-      const modifiedChatsObj: ChatFeedsType= {};
-
-      for (const chat of chats) {
-        if(!chat?.groupInformation) {
-          modifiedChatsObj[chat.did ?? chat.chatId] = chat;
-          setData({chatId:chat.did ?? chat.chatId,value:{unread:0,totalMsg:0}});
+        for (const chat of chats) {
+          if (!chat?.groupInformation) {
+            modifiedChatsObj[chat.did ?? chat.chatId] = chat;
+            if (!getData(chat.did ?? chat.chatId))
+              setData({ chatId: chat.did ?? chat.chatId, value: chat });
+          }
         }
+        return modifiedChatsObj;
+      } catch (error: Error | any) {
+        setLoading(false);
+        setError(error.message);
+        console.log(error);
+        return;
+      } finally {
+        setLoading(false);
       }
-      console.log(modifiedChatsObj)
-      return modifiedChatsObj;
-    } catch (error: Error | any) {
-      setLoading(false);
-      setError(error.message);
-      console.log(error);
-      return ;
-    } finally {
-      setLoading(false);
-    }
-  }, [decryptedPgpPvtKey]);
+    },
+    [decryptedPgpPvtKey]
+  );
 
   return { fetchChats, error, loading };
 };

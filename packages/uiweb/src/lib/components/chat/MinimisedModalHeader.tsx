@@ -1,15 +1,18 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import EnvelopeIcon from '../../icons/chat/envelope.svg';
-import MaximizeIcon from '../../icons/chat/maximize.svg';
-import NewChatIcon from '../../icons/chat/newChat.svg';
-import BackIcon from '../../icons/chat/back.svg';
-import MinimizeIcon from '../../icons/chat/minimize.svg';
+import EnvelopeIcon from '../../icons/envelope.svg';
+import MaximizeIcon from '../../icons/maximize.svg';
+import NewChatIcon from '../../icons/newChat.svg';
+import BackIcon from '../../icons/back.svg';
+import MinimizeIcon from '../../icons/minimize.svg';
 import { Section, Span, Image } from '../reusables/sharedStyling';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { PushSubTabs, PushTabs, PUSH_SUB_TABS, PUSH_TABS } from '../../types';
 import { useResolveWeb3Name } from '../../hooks';
-import { pCAIP10ToWallet, shortenUsername } from '../../helpers';
+import {
+  pCAIP10ToWallet,
+  shortenText,
+} from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 
@@ -19,11 +22,11 @@ type MinimisedModalHeaderPropType = {
 };
 
 export const UnreadChats = ({
-  numberOfUnreadMessages,
+  // numberOfUnreadMessages,
   background,
   color,
 }: {
-  numberOfUnreadMessages: string;
+  // numberOfUnreadMessages: string;
   background?: string;
   color?: string;
 }) => {
@@ -33,10 +36,10 @@ export const UnreadChats = ({
       fontSize="12px"
       color={color ?? '#fff'}
       background={background ?? '#0D67FE'}
-      padding="4px 8px"
+      padding="8px"
       borderRadius="100%"
     >
-      {numberOfUnreadMessages}
+      {/* {numberOfUnreadMessages} */}
     </Span>
   );
 };
@@ -52,6 +55,8 @@ export const MessageBoxHeader = () => {
     setActiveSubTab,
     activeSubTab,
     activeTab,
+    setSearchedChats,
+    setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatPropsContext);
 
@@ -59,6 +64,7 @@ export const MessageBoxHeader = () => {
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
     searchedChats[selectedChatId];
+
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -69,8 +75,12 @@ export const MessageBoxHeader = () => {
   const handleBack = () => {
     if (activeSubTab) {
       setActiveSubTab(PUSH_SUB_TABS[activeSubTab as PushSubTabs]);
+      setSelectedChatId(null);
+      setSearchedChats(null);
     } else {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
+      setSearchedChats(null);
+      setSelectedChatId(null);
     }
   };
   return (
@@ -92,7 +102,7 @@ export const MessageBoxHeader = () => {
 
         <Span fontWeight="700" fontSize="16px">
           {' '}
-          {web3Name ?? shortenUsername(selectedChat?.did?.split(':')[1])}
+          {web3Name ?? shortenText(selectedChat?.did?.split(':')[1],20)}
         </Span>
       </Section>
     </Section>
@@ -100,7 +110,8 @@ export const MessageBoxHeader = () => {
 };
 
 export const SubTabHeader = () => {
-  const { setActiveTab, activeSubTab } = useContext<any>(ChatMainStateContext);
+  const { setActiveTab, activeSubTab, setSearchedChats, setSelectedChatId } =
+    useContext<any>(ChatMainStateContext);
 
   return (
     <Section gap="12px">
@@ -110,7 +121,11 @@ export const SubTabHeader = () => {
         cursor="pointer"
         width="16px"
         height="16px"
-        onClick={() => setActiveTab(PUSH_TABS.CHATS)}
+        onClick={() => {
+          setActiveTab(PUSH_TABS.CHATS);
+          setSearchedChats(null);
+          setSelectedChatId(null);
+        }}
       />
 
       <Span fontWeight="700" fontSize="16px">
@@ -124,8 +139,16 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   onMaximizeMinimizeToggle,
   modalOpen,
 }) => {
-  const { setActiveTab, activeSubTab, selectedChatId, setNewChat } =
-    useContext<any>(ChatMainStateContext);
+  const {
+    setActiveTab,
+    activeSubTab,
+    selectedChatId,
+    setNewChat,
+    chatFeeds,
+    requestsFeed,
+    setSearchedChats,
+    setSelectedChatId,
+  } = useContext<any>(ChatMainStateContext);
 
   const condition =
     (selectedChatId && modalOpen) ||
@@ -134,26 +157,37 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     <Container
       justifyContent="space-between"
       alignItems="center"
-      padding={`0 0 ${condition ? '20px' : '23px'} 0 `}
+      padding={`0 0 ${condition ? '19px' : '23px'} 0 `}
       borderWidth={`0 0 ${condition ? '1px' : '0'} 0 `}
       borderStyle={`none none ${condition ? 'dashed' : 'none'} none `}
       borderColor={`transparent transparent ${
         condition ? '#ededee' : 'transparent'
       }  transparent`}
     >
-      {selectedChatId && modalOpen && <MessageBoxHeader />}
+      {selectedChatId &&
+        !!(
+          Object.keys(chatFeeds || {}).length ||
+          Object.keys(requestsFeed || {}).length
+        ) &&
+        modalOpen && <MessageBoxHeader />}
       {!selectedChatId && modalOpen && activeSubTab && <SubTabHeader />}
       {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
         <Section gap="4px">
           <Span
             fontWeight="700"
             fontSize="18px"
-            cursor="pointer"
-            onClick={() => setActiveTab(PUSH_TABS.CHATS)}
+            cursor={!modalOpen ? 'default' : 'pointer'}
+            onClick={() => {
+              setActiveTab(PUSH_TABS.CHATS);
+              setSearchedChats(null);
+              setSelectedChatId(null);
+            }}
           >
             Messages
           </Span>
-          <UnreadChats numberOfUnreadMessages="3" />
+          {/* <UnreadChats 
+          // numberOfUnreadMessages="3"
+           /> */}
         </Section>
       )}
       <Section gap="20px">

@@ -7,7 +7,7 @@ import { ChatList } from './ChatList';
 import { Section, Span } from '../../../reusables/sharedStyling';
 import { Spinner } from '../../../reusables/Spinner';
 import { chatLimit } from '../../../../config';
-import { ChatFeedsType, LOCAL_STORAGE_KEYS } from '../../../../types';
+import { ChatFeedsType } from '../../../../types';
 import { useIsInViewport } from '../../../../hooks';
 
 export const ChatsFeedList = () => {
@@ -15,14 +15,12 @@ export const ChatsFeedList = () => {
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);
-  //   const [allFeeds, setAllFeeds] = useState<Array<any>>();
   const isInViewport1 = useIsInViewport(pageRef, '1px');
   const { decryptedPgpPvtKey, account, env } =
     useContext<any>(ChatPropsContext);
   const { fetchChats, loading } = useFetchChats();
 
   const fetchChatList = async () => {
-    console.log('in here chats');
     const feeds = await fetchChats({ page, chatLimit });
     const firstFeeds: ChatFeedsType = { ...feeds };
     setChatsFeed(firstFeeds);
@@ -38,7 +36,6 @@ export const ChatsFeedList = () => {
   }, [fetchChats, decryptedPgpPvtKey, env, page,account]);
 
   useEffect(() => {
-    console.log(isInViewport1);
     if (
       !isInViewport1 ||
       loading ||
@@ -59,7 +56,6 @@ export const ChatsFeedList = () => {
     }
     try {
       setPaginateLoading(true);
-      console.log('in here pagination');
       const feeds = await fetchChats({ page, chatLimit });
       const newFeed: ChatFeedsType = { ...chatsFeed, ...feeds };
       setChatsFeed(newFeed);
@@ -76,14 +72,13 @@ export const ChatsFeedList = () => {
     <ChatListCard
       overflow="hidden auto"
       justifyContent="start"
-      gap="2.5px"
       flexDirection="column"
     >
       {(!loading || paginateLoading) && Object.keys(chatsFeed || {}).length ? (
         <ChatList chatsFeed={chatsFeed} />
       ) : (
         !paginateLoading && loading && (
-          <Section margin="10px 0 0 0">
+          <Section margin="10px 0">
             <Spinner />
           </Section>
         )
@@ -95,7 +90,7 @@ export const ChatsFeedList = () => {
       <div ref={pageRef} />
 
       {paginateLoading && (
-        <Section>
+        <Section margin="10px 0 0 0">
           <Spinner />
         </Section>
       )}

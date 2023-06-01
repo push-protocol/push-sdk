@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useContext, useRef, useState } from 'react';
-import { SendIconSvg } from '../../icons/supportChat/SendIconSvg';
-import SmileyIcon from '../../icons/supportChat/smiley.svg';
-import AttachmentIcon from '../../icons/supportChat/attachment.svg';
+import { SendIconSvg } from '../../icons/SendIconSvg';
+import SmileyIcon from '../../icons/smiley.svg';
+import AttachmentIcon from '../../icons/attachment.svg';
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';

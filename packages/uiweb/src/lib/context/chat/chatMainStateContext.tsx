@@ -1,7 +1,8 @@
 import { IFeeds, IMessageIPFS, IUser } from '@pushprotocol/restapi';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { getData } from '../../helpers/chat/localStorage';
 import { ChatFeedsType, PushSubTabs, PushTabs, PUSH_SUB_TABS, PUSH_TABS, Web3NameListType } from '../../types';
+import ChatPropsContext from './chatPropsContext';
 
 type ChatMessagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
@@ -75,16 +76,12 @@ const [pushChatSocket,setPushChatSocket] = useState<any>(null);
 }
 
  const setActiveTab = (tabName: PushTabs) => {
-  setSelectedChatId(null);
-  setSearchedChats(null);
   setNewChat(false)
   setSubTab(null);
   setTab(tabName);
 
 }
 const setActiveSubTab = (tabName: PushSubTabs) => {
-  setSelectedChatId(null);
-  setSearchedChats(null);
   setNewChat(false)
   setSubTab(tabName);
 

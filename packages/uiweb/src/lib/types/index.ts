@@ -63,4 +63,9 @@ export const LOCAL_STORAGE_KEYS = {
 export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
 export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
 export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
-
+export interface FileMessageContent {
+  content: string
+  name: string
+  type: string
+  size: number
+}

@@ -1,9 +1,6 @@
-import { IFeeds } from '@pushprotocol/restapi';
-import { ChatFeedsType, PUSH_TABS } from '../../../../types';
-import React, { useEffect, useState, useContext } from 'react';
-import styled from 'styled-components';
+import { ChatFeedsType } from '../../../../types';
+import React, { useContext } from 'react';
 import { ChatSnap } from './ChatSnap';
-import { Section } from '../../../reusables/sharedStyling';
 import { ChatMainStateContext } from '../../../../context';
 
 type ChatListPropType = {

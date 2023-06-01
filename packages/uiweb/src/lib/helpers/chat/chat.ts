@@ -1,8 +1,9 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants, ENV } from '../../config';
-import { AccountEnvOptionsType, IMessageIPFS } from '../../types';
+import { AccountEnvOptionsType, ChatFeedsType, IMessageIPFS } from '../../types';
 import { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../address';
+import { getData } from './localStorage';
 
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
@@ -171,3 +172,11 @@ export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
   }
   return false;
 } 
+
+export const checkIfUnread = (chatId:string,chat:IFeeds):boolean => {
+  const tempChat = getData(chatId);
+  if(tempChat && tempChat?.msg && (tempChat.msg.timestamp!) < (chat.msg.timestamp!))
+   return true;
+  return false;
+}
+

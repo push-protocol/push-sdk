@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { ChatList } from './ChatList';
 import { Search } from './Search';
 import {
-    ChatFeedsType,
   PushSubTabs,
   PushTabs,
   PUSH_SUB_TABS,
@@ -13,12 +12,11 @@ import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
 import useFetchChats from '../../../../hooks/chat/useFetchChats';
 import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span, Image } from '../../../reusables/sharedStyling';
-import { UnreadChats } from '../../MinimisedModalHeader';
-import useFetchRequests from '../../../../hooks/chat/useFetchRequests';
 import { ChatsFeedList } from './ChatsFeedList';
 import { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
-import AngleArrowIcon from '../../../../icons/chat/angleArrow.svg';
-import { device, requestLimit } from '../../../../config';
+import AngleArrowIcon from '../../../../icons/angleArrow.svg';
+import { device } from '../../../../config';
+import { shortenNumber } from '../../../../helpers';
 
 export type TabPropType = {
   tabName: string;
@@ -35,7 +33,8 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const { setActiveTab, activeTab } = useContext<any>(ChatMainStateContext);
+  const { setActiveTab, activeTab, setSearchedChats, setSelectedChatId } =
+    useContext<any>(ChatMainStateContext);
 
   return (
     <Section
@@ -43,7 +42,11 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
       flex="1"
       borderStyle="solid"
       cursor="pointer"
-      onClick={() => setActiveTab(tabValue)}
+      onClick={() => {
+        setActiveTab(tabValue);
+        setSearchedChats(null);
+        setSelectedChatId(null);
+      }}
       borderColor={activeTab === tabValue ? '#0D67FE' : '#DDDDDF'}
       borderWidth={activeTab === tabValue ? '0 0 2px 0' : '0 0 1px 0'}
       padding="0 0 15px 0"
@@ -56,11 +59,11 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
       >
         {tabName}
       </TabTitleSpan>
-      <UnreadChats
-        numberOfUnreadMessages="2"
+      {/* <UnreadChats
+        // numberOfUnreadMessages="2"
         background="rgb(13 103 254 / 28%)"
         color="#0D67FE"
-      />
+      /> */}
     </Section>
   );
 };
@@ -78,7 +81,8 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   subTab,
   tabValue,
 }) => {
-  const { setActiveSubTab, } = useContext<any>(ChatMainStateContext);
+  const { setActiveSubTab, setSearchedChats, setSelectedChatId } =
+    useContext<any>(ChatMainStateContext);
 
   return (
     <SubContainer
@@ -86,7 +90,11 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
       gap="15px"
       padding="15px 8px"
       cursor="pointer"
-      onClick={() => setActiveSubTab(tabValue)}
+      onClick={() => {
+        setActiveSubTab(tabValue);
+        setSelectedChatId(null);
+        setSearchedChats(null);
+      }}
     >
       <Span
         padding="16.5px"
@@ -115,11 +123,17 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
-  const { chatsFeed, requestsFeed,activeTab,setRequestsFeed, searchedChats, activeSubTab, newChat } =
-    useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const {
+    chatsFeed,
+    requestsFeed,
+    activeTab,
+    setRequestsFeed,
+    searchedChats,
+    activeSubTab,
+    newChat,
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { decryptedPgpPvtKey, account, env } =
     useContext<any>(ChatPropsContext);
-    const { fetchRequests, loading } = useFetchRequests();
 
   type PushSubTabDetailsType = {
     [key in PushSubTabs]: {
@@ -131,25 +145,12 @@ export const Sidebar = () => {
   const PushSubTabDetails: PushSubTabDetailsType = {
     REQUESTS: {
       title: 'Chat request',
-      subTitle: `you have ${Object.keys(requestsFeed || {}).length} requests from people you may know`,
+      subTitle: `you have ${shortenNumber(
+        Object.keys(requestsFeed || {}).length
+      )} requests from people you may know`,
       icon: AngleArrowIcon,
     },
   };
-
-  const fetchRequestList = async () => {
-    const feeds = await fetchRequests({ page:1, requestLimit });
-    const firstFeeds: ChatFeedsType = { ...feeds };
-    setRequestsFeed(firstFeeds);
-  };
-
-  useEffect(() => {
-    if (Object.keys(requestsFeed).length) {
-      return;
-    }
-    if (decryptedPgpPvtKey) {
-      fetchRequestList();
-    }
-  }, [fetchRequests, decryptedPgpPvtKey, env]);
 
   return (
     <Section

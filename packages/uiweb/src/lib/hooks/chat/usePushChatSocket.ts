@@ -4,7 +4,7 @@ import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { ChatMainStateContextType } from '../../context/chat/chatMainStateContext';
-import { checkIfIntent, isPCAIP, pCAIP10ToWallet } from '../../helpers';
+import { checkIfIntent, getData, isPCAIP, pCAIP10ToWallet, setData } from '../../helpers';
 
 import useFetchChat from './useFetchChat';
 
@@ -36,6 +36,7 @@ const usePushChatSocket = (): PushChatSocket => {
     setChatFeed,
     setRequestFeed,
     requestsFeed,
+    selectedChatId,
     pushChatSocket,
     setPushChatSocket,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
@@ -53,7 +54,6 @@ const usePushChatSocket = (): PushChatSocket => {
     pushChatSocket?.on(
       EVENTS.CHAT_RECEIVED_MESSAGE,
       async (chat: IMessageIPFS) => {
-        console.log(chat);
         if (!connectedProfile || !decryptedPgpPvtKey) {
           return;
         }
@@ -70,13 +70,13 @@ const usePushChatSocket = (): PushChatSocket => {
         });
       
         if (response && response.length) {
-          console.log('in here chat');
           const msg = response[0];
           const chatId = !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
-
+          let newOne:IFeeds =  {} as IFeeds;
           if (chatsFeed[chatId]) {
-            const newOne: IFeeds = chatsFeed[chatId];
-            console.log('in chtsfeed');
+             newOne = chatsFeed[chatId];
+            console.log(selectedChatId === chatId)
+       
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]
@@ -84,10 +84,10 @@ const usePushChatSocket = (): PushChatSocket => {
               lastThreadHash: chats.get(chatId)?.lastThreadHash ?? msg.link,
             });
             newOne['msg'] = msg;
+         
             setChatFeed(chatId, newOne);
           } else if (requestsFeed[chatId]) {
-            console.log('in here  existing request');
-            const newOne: IFeeds = requestsFeed[chatId];
+             newOne = requestsFeed[chatId];
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]
@@ -96,14 +96,11 @@ const usePushChatSocket = (): PushChatSocket => {
             });
 
             newOne['msg'] = msg;
-            console.log(newOne);
             setRequestFeed(chatId, newOne);
           } else {
-            console.log('in here request');
             const fetchedChat: IFeeds = (await fetchChat({
               recipientAddress: chatId,
             })) as IFeeds;
-            console.log(fetchedChat);
             if (checkIfIntent({ chat: fetchedChat, account }))
               setRequestFeed(chatId, fetchedChat);
             else setChatFeed(chatId, fetchedChat);
@@ -114,13 +111,15 @@ const usePushChatSocket = (): PushChatSocket => {
               lastThreadHash: chats.get(chatId)?.lastThreadHash ?? msg.link,
             });
           }
+          if(selectedChatId === chatId && (Object.keys(newOne || {}).length)){
+            setData({chatId:chatId,value:newOne})
+          }
         }
         setMessagesSinceLastConnection(chat);
       }
     );
 
     pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
-      console.log(groupInfo);
       setGroupInformationSinceLastConnection(groupInfo);
     });
   }, [
@@ -165,7 +164,6 @@ const usePushChatSocket = (): PushChatSocket => {
         pushChatSocket?.disconnect();
       }
 
-      console.log('in socket connection');
 
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({
@@ -173,7 +171,6 @@ const usePushChatSocket = (): PushChatSocket => {
         socketType: CHAT_SOCKET_TYPE,
         env: env,
       });
-      console.log(connectionObject);
       setPushChatSocket(connectionObject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

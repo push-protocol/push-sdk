@@ -4,7 +4,7 @@ import { SupportChatPropsContext } from '../../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { Constants } from '../../config';
 import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
-import { CopySvg } from '../../icons/supportChat/CopySvg';
+import { CopySvg } from '../../icons/CopySvg';
 
 export const AddressInfo: React.FC = () => {
   const { supportAddress, env, theme } = useContext<any>(SupportChatPropsContext);

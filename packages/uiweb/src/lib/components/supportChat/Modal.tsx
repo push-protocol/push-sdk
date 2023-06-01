@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
-import PoweredByPushLogo from '../../icons/supportChat/sponsorPush.svg';
-import { HandWaveSvg } from '../../icons/supportChat/HandWaveSvg';
+import PoweredByPushLogo from '../../icons/sponsorPush.svg';
+import { HandWaveSvg } from '../../icons/HandWaveSvg';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { Chats } from './Chats';
 import {

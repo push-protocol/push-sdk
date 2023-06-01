@@ -71,7 +71,6 @@ export const RequestsFeedList = () => {
     <ChatListCard
     overflow="hidden auto"
     justifyContent="start"
-    gap="2.5px"
     width='100%'
     flexDirection="column"
   >
@@ -91,7 +90,7 @@ export const RequestsFeedList = () => {
     <div ref={pageRef} />
 
     {paginateLoading && (
-      <Section>
+      <Section margin="10px 0">
         <Spinner />
       </Section>
     )}

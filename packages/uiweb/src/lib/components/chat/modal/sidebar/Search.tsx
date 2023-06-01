@@ -4,8 +4,8 @@ import { getDefaultFeedObject, getNewChatUser, getObjectsWithMatchingKeys } from
 import { ChatFeedsType } from '../../../../types';
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import SearchIcon from '../../../../icons/chat/search.svg';
-import CloseIcon from '../../../../icons/chat/close.svg';
+import SearchIcon from '../../../../icons/search.svg';
+import CloseIcon from '../../../../icons/close.svg';
 import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span } from '../../../reusables/sharedStyling';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';

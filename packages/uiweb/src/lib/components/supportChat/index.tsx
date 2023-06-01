@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ChatIcon from '../../icons/supportChat/chatIcon.svg';
+import ChatIcon from '../../icons/chatIcon.svg';
 import { Modal } from './Modal';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
