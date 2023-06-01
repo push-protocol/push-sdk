@@ -11,43 +11,36 @@ import * as PushAPI from '@pushprotocol/restapi';
 import SpaceTest from './SpaceTest';
 
 const RemoveMembersFromSpaceTest = () => {
-  const { account,library } = useContext<any>(Web3Context);
+  const { account: acc, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceId, setSpaceId] = useState<string>('');
   const [memberAddress, setMemberAddress] = useState<string>('');
   const [sendResponse, setSendResponse] = useState<any>('');
+  const [account, setAccount] = useState<string>(acc);
 
   const updateSpaceId = (e: React.SyntheticEvent<HTMLElement>) => {
     setSpaceId((e.target as HTMLInputElement).value);
   };
 
-const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
+  const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
+    setAccount((e.target as HTMLInputElement).value);
+  };
+
+  const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
     setMemberAddress((e.target as HTMLInputElement).value);
   };
 
-  const testGetGroup = async () => {
+  const removeMembersFromSpaceTest = async () => {
     try {
       setLoading(true);
-     const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
       const librarySigner = await library.getSigner();
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
-      // object for connected user data
       const response = await PushAPI.space.removeMembersFromSpace({
         spaceId: spaceId,
         members: memberAddress ? memberAddress.split(',') : [],
         env,
         account: account,
         signer: librarySigner,
-        pgpPrivateKey: pvtkey,
       });
       setSendResponse(response);
 
@@ -69,7 +62,7 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
 
       <Section>
         <SectionItem>
-          <SectionButton onClick={testGetGroup}>Remove Member from Space</SectionButton>
+          <SectionButton onClick={removeMembersFromSpaceTest}>Remove Member from Space</SectionButton>
         </SectionItem>
          <SectionItem>
               <label>spaceId</label>
@@ -81,7 +74,7 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
               />
         </SectionItem>
          <SectionItem>
-              <label>memberId</label>
+              <label>members (comma separated)</label>
               <input
                 type="text"
                 onChange={updateMemberId}
@@ -89,6 +82,15 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
                 style={{ width: 400, height: 30 }}
               />
         </SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
+              <label>Account</label>
+              <input
+                type="text"
+                onChange={updateAccount}
+                value={account}
+                style={{ width: 400, height: 30 }}
+              />
+          </SectionItem>
          <SectionItem>
           <div>
             {sendResponse ? (

@@ -176,7 +176,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     spaceId: groupDto.chatId,
     scheduleAt: groupDto.scheduleAt,
     scheduleEnd: groupDto.scheduleEnd,
-    status: groupDto.status
+    status: groupDto.status ?? null
   };
   return spaceDto;
 };

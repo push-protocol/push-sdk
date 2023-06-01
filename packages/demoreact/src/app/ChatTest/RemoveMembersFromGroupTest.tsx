@@ -26,28 +26,16 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
     setMemberAddress((e.target as HTMLInputElement).value);
   };
 
-  const testGetGroup = async () => {
+  const removeMembersFromGroupTest = async () => {
     try {
       setLoading(true);
-     const user = await PushAPI.user.get({ account: account, env });
-      let pvtkey = null;
       const librarySigner = await library.getSigner();
-      if (user?.encryptedPrivateKey) {
-        pvtkey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account,
-          signer: librarySigner,
-          env
-        });
-      }
-      // object for connected user data
       const response = await PushAPI.chat.removeMembersFromGroup({
         chatId: chatId,
         members: memberAddress ? memberAddress.split(',') : [],
         env,
         account: account,
         signer: librarySigner,
-        pgpPrivateKey: pvtkey,
       });
       setSendResponse(response);
 
@@ -58,8 +46,6 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
     }
   };
 
-
-
   return (
     <div>
       <ChatTest />
@@ -69,7 +55,7 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
 
       <Section>
         <SectionItem>
-          <SectionButton onClick={testGetGroup}>Remove Member from Group</SectionButton>
+          <SectionButton onClick={removeMembersFromGroupTest}>Remove Member from Group</SectionButton>
         </SectionItem>
          <SectionItem>
               <label>chatId</label>
@@ -81,7 +67,7 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
               />
         </SectionItem>
          <SectionItem>
-              <label>memberId</label>
+              <label>members (comma separated)</label>
               <input
                 type="text"
                 onChange={updateMemberId}

@@ -282,13 +282,13 @@ export function App() {
                 <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
                 <Route path="/startSpace" element={<StartSpaceTest />} />
                 <Route path="/stopSpace" element={<StopSpaceTest />} />
-                <Route path="/addAdminsToSpaceTest" element={<AddAdminsToSpaceTest />} />
-                <Route path="/addMembersToSpaceTest" element={<AddMembersToSpaceTest />} />
-                <Route path="/removeMembersFromSpaceTest" element={<RemoveMembersFromSpaceTest />} />
-                <Route path="/removeAdminsFromSpaceTest" element={<RemoveAdminsFromSpaceTest />} />
-                <Route path="/getSpacesTest" element={<GetSpacesTest />} />
-                <Route path="/getSpacesRequestsTest" element={<GetSpacesRequestsTest />} />
-                <Route path="/getSpacesTrendingTest" element={<GetSpacesTrendingTest />} />
+                <Route path="/addAdminsToSpace" element={<AddAdminsToSpaceTest />} />
+                <Route path="/addMembersToSpace" element={<AddMembersToSpaceTest />} />
+                <Route path="/removeMembersFromSpace" element={<RemoveMembersFromSpaceTest />} />
+                <Route path="/removeAdminsFromSpace" element={<RemoveAdminsFromSpaceTest />} />
+                <Route path="/getSpaces" element={<GetSpacesTest />} />
+                <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
+                <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
 
               </Routes>
               <ChatSupportTest />

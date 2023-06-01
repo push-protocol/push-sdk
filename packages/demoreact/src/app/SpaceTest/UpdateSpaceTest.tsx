@@ -69,7 +69,7 @@ const UpdateSpaceTest = () => {
     setAccount((e.target as HTMLInputElement).value);
   };
 
-  const testUpdateSpace = async () => {
+  const updateSpaceTest = async () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
@@ -208,7 +208,7 @@ const UpdateSpaceTest = () => {
               />
             </SectionItem>
             <SectionItem style={{ marginTop: 20 }}>
-              <SectionButton onClick={testUpdateSpace}>
+              <SectionButton onClick={updateSpaceTest}>
                 update space
               </SectionButton>
             </SectionItem>
