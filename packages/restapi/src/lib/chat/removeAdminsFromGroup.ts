@@ -49,8 +49,6 @@ export const removeAdminsFromGroup = async (
       }
     });
 
-    const wallet = getWallet({ account, signer });
-
     const group = await getGroup({
         chatId: chatId,
         env,
@@ -93,6 +91,9 @@ export const removeAdminsFromGroup = async (
       groupDescription: group.groupDescription,
       members: convertedMembers,
       admins: convertedAdmins,
+      scheduleAt: group.scheduleAt,
+      scheduleEnd: group.scheduleEnd,
+      status: group.status,
       account: account,
       signer: signer,
       env: env,

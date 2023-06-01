@@ -59,7 +59,7 @@ const RemoveAdminsFromSpaceTest = () => {
 
       <Section>
         <SectionItem>
-          <SectionButton onClick={removeAdminsFromSpaceTest}>Remove Admins from Group</SectionButton>
+          <SectionButton onClick={removeAdminsFromSpaceTest}>Remove Admins from Space</SectionButton>
         </SectionItem>
          <SectionItem>
               <label>spaceId</label>
