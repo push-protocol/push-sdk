@@ -42,6 +42,7 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 ## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.11...restapi-0.0.1-alpha.12) (2023-05-19)
+## [1.3.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.2...restapi-1.3.3) (2023-05-31)
 
 
 ### Bug Fixes
@@ -50,11 +51,22 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 * fix versions ([05c8fa9](https://github.com/ethereum-push-notification-service/push-sdk/commit/05c8fa9f9286e78d706c6be53e7b8ae963105766))
 * Merge branch 'alpha' into alpha-deployment ([3700515](https://github.com/ethereum-push-notification-service/push-sdk/commit/3700515be010fdcab6062db0a039f7df612a7a6b))
 * **sendvideonotifications:** modify additional meta acc to new std ([#407](https://github.com/ethereum-push-notification-service/push-sdk/issues/407)) ([9d2124a](https://github.com/ethereum-push-notification-service/push-sdk/commit/9d2124aa61f798a0b137636aac62397e1e52150e))
+* add profile.update feature ([#410](https://github.com/ethereum-push-notification-service/push-sdk/issues/410)) ([361b930](https://github.com/ethereum-push-notification-service/push-sdk/commit/361b9303c5340238bcb7fa457370707ae864756b))
+* Merge branch 'main' into deployment ([59715aa](https://github.com/ethereum-push-notification-service/push-sdk/commit/59715aa307c0931e86476c18f78d495bc0de891f))
+* Merge branch 'main' into deployment ([1d52d6b](https://github.com/ethereum-push-notification-service/push-sdk/commit/1d52d6ba5aaadd70d7ccfd3904100586ad74d0f0))
+* removed undocumented fn ([#419](https://github.com/ethereum-push-notification-service/push-sdk/issues/419)) ([3fff974](https://github.com/ethereum-push-notification-service/push-sdk/commit/3fff974b1e2cfa3499439a246be190aaad2907e3))
+
+
+
+## [1.3.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.1...restapi-1.3.2) (2023-05-23)
+
+### Bug Fixes
+
+* merge main ([5d0bc64](https://github.com/ethereum-push-notification-service/push-sdk/commit/5d0bc649b16c674d20e96eedc590a0efe6a5b77f))
 
 
 
 ## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.10...restapi-0.0.1-alpha.11) (2023-05-19)
-
 
 ### Bug Fixes
 
@@ -71,7 +83,6 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ## [0.0.1-alpha.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.9...restapi-0.0.1-alpha.10) (2023-05-17)
 
-
 ### Bug Fixes
 
 * added deprecated info to history ([#399](https://github.com/ethereum-push-notification-service/push-sdk/issues/399)) ([eda1a34](https://github.com/ethereum-push-notification-service/push-sdk/commit/eda1a345975141c5656891dbf919aacd2924d66b))
@@ -81,13 +92,17 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ## [0.0.1-alpha.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.8...restapi-0.0.1-alpha.9) (2023-05-16)
 
-
 ### Bug Fixes
 
 * Merge branch 'alpha' into alpha-deployment ([469398d](https://github.com/ethereum-push-notification-service/push-sdk/commit/469398dc94df805257d6a6bb8e0707cebc5f7d8a))
 * **video:** turn off trickle while creating peer instance ([#398](https://github.com/ethereum-push-notification-service/push-sdk/issues/398)) ([ae5b38e](https://github.com/ethereum-push-notification-service/push-sdk/commit/ae5b38e702539eaf92a516b4e557c5a88de0f4c7))
 
 
+- add deprecated info to chat.chat ([#392](https://github.com/ethereum-push-notification-service/push-sdk/issues/392)) ([d84ae64](https://github.com/ethereum-push-notification-service/push-sdk/commit/d84ae64c116adb7eea9e8faf7929b6eb3b74c657))
+- Merge branch 'alpha' into alpha-deployment ([549fd83](https://github.com/ethereum-push-notification-service/push-sdk/commit/549fd839867d84a98a10206a7f9945aeb1720e49))
+- Merge branch 'main' into alpha ([72464fd](https://github.com/ethereum-push-notification-service/push-sdk/commit/72464fd97260b612649035e3b241f946de8f9e92))
+- show hardcoded msg rather than throwing error ([#388](https://github.com/ethereum-push-notification-service/push-sdk/issues/388)) ([8962e10](https://github.com/ethereum-push-notification-service/push-sdk/commit/8962e10036916d0bc161324f5684f74bb7b74dc3))
+- **video:** set trickle to true while creating peer instance ([#397](https://github.com/ethereum-push-notification-service/push-sdk/issues/397)) ([0b609be](https://github.com/ethereum-push-notification-service/push-sdk/commit/0b609bec87a6187d1e7cbf8052a2b9a36b9fcd7a))
 
 ## [0.0.1-alpha.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.7...restapi-0.0.1-alpha.8) (2023-05-16)
 
