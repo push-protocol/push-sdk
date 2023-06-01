@@ -25,7 +25,7 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
    */
   status?: 'Approved';
   // sigType?: string;
-  account?: string | null;
+  account?: string;
   signer?: SignerType | null;
 }
 

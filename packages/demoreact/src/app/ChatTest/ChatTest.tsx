@@ -80,15 +80,6 @@ const ChatTest = () => {
           <Link to="/removeAdminsFromGroup" className="nav-button">
             CHAT.REMOVEADMINSFROMGROUP
            </Link>
-          <Link to="/createNFTProfile" className="nav-button">
-            CHAT.CREATENFTPROFILE
-          </Link>
-          <Link to="/getNFTProfile" className="nav-button">
-            CHAT.GETNFTPROFILE
-          </Link>
-          <Link to="/upgradeNFTProfile" className="nav-button">
-            CHAT.UPGRADENFTPROFILE
-          </Link>
         </NavMenu>
       </Section>
     </div>
