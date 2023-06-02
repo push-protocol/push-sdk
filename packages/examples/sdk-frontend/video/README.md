@@ -2,10 +2,15 @@ This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Ne
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+```bash
+yarn
+```
+
+Then run the development server:
 
 ```bash
-npm run dev
+yarn run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
