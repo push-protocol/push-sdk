@@ -255,7 +255,7 @@ const CreateSpaceTest = () => {
             </SectionItem>
 
             <SectionItem style={{ marginTop: 20 }}>
-              <label>scheduleAt</label>
+              <label>scheduleAt (2023-06-30T00:00:00.000Z)</label>
               <input
                 type="text"
                 onChange={updateScheduleAt}
