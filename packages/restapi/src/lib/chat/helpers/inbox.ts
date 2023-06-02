@@ -4,7 +4,7 @@ import {
   isValidCAIP10NFTAddress,
   pCAIP10ToWallet,
 } from '../../helpers';
-import { IFeeds, IMessageIPFS, IUser } from '../../types';
+import { IFeeds, IMessageIPFS, IUser, SpaceIFeeds } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
 import { decryptFeeds } from './crypto';
@@ -16,6 +16,20 @@ type InboxListsType = {
   pgpPrivateKey?: string;
   env?: ENV;
 };
+
+type SpaceInboxListsType = {
+  lists: SpaceIFeeds[];
+  user: string; //caip10
+  toDecrypt: boolean;
+  pgpPrivateKey?: string;
+  env?: ENV;
+};
+
+type TrendingSpaceInboxListsType = {
+  lists: SpaceIFeeds[];
+  env?: ENV;
+};
+
 type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
@@ -65,6 +79,89 @@ export const getInboxLists = async (
 
   if (toDecrypt)
     return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
+  return feeds;
+};
+
+export const getSpaceInboxLists = async (
+  options: SpaceInboxListsType
+): Promise<SpaceIFeeds[]> => {
+  const {
+    lists,
+    user,
+    toDecrypt,
+    pgpPrivateKey,
+    env = Constants.ENV.PROD,
+  } = options || {};
+  const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
+  const feeds: SpaceIFeeds[] = [];
+  for (const list of lists) {
+    let message;
+    if (list.threadhash !== null) {
+      message = await getCID(list.threadhash, { env });
+    }
+    // This is for groups that are created without any message
+    else {
+      message = {
+        encType: 'PlainText',
+        encryptedSecret: '',
+        fromCAIP10: '',
+        fromDID: '',
+        link: '',
+        messageContent: '',
+        messageType: '',
+        sigType: '',
+        signature: '',
+        toCAIP10: '',
+        toDID: '',
+      };
+    }
+    feeds.push({
+      ...list,
+      msg: message,
+      spaceInformation: list.spaceInformation,
+    });
+  }
+
+  if (toDecrypt)
+    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
+  return feeds;
+};
+
+export const getTrendingSpaceInboxLists = async (
+  options: TrendingSpaceInboxListsType
+): Promise<SpaceIFeeds[]> => {
+  const {
+    lists,
+    env = Constants.ENV.PROD,
+  } = options || {};
+  const feeds: SpaceIFeeds[] = [];
+  for (const list of lists) {
+    let message;
+    if (list.threadhash !== null) {
+      message = await getCID(list.threadhash, { env });
+    }
+    // This is for groups that are created without any message
+    else {
+      message = {
+        encType: 'PlainText',
+        encryptedSecret: '',
+        fromCAIP10: '',
+        fromDID: '',
+        link: '',
+        messageContent: '',
+        messageType: '',
+        sigType: '',
+        signature: '',
+        toCAIP10: '',
+        toDID: '',
+      };
+    }
+    feeds.push({
+      ...list,
+      msg: message,
+      spaceInformation: list.spaceInformation,
+    });
+  }
   return feeds;
 };
 

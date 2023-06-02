@@ -27,6 +27,7 @@ export const send = async (
     pgpPrivateKey = null,
     apiKey = '',
     env = Constants.ENV.PROD,
+
   } = options || {};
 
   try {

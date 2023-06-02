@@ -168,6 +168,24 @@ export interface IFeeds {
   deprecated?: boolean; // scope only at sdk level
   deprecatedCode?: string; // scope only at sdk level
 }
+
+export interface SpaceIFeeds {
+  msg: IMessageIPFS;
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string | null;
+  about: string | null;
+  threadhash: string | null;
+  intent: string | null;
+  intentSentBy: string | null;
+  intentTimestamp: Date;
+  combinedDID: string;
+  cid?: string;
+  spaceId?: string;
+  spaceInformation?: SpaceDTO;
+}
+
 export interface IUser {
   msgSent: number;
   maxMsgPersisted: number;
@@ -238,6 +256,11 @@ export interface Member {
   publicKey: string;
 }
 
+export enum ChatStatus {
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+  ENDED = 'ENDED'
+}
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -259,12 +282,42 @@ export interface GroupDTO {
   groupImage: string | null;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string | null;
+  groupDescription: string;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  groupType: string;
+  groupType?: string;
+  status?: ChatStatus | null;
+}
+
+export interface SpaceDTO {
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  spaceImage: string | null;
+  spaceName: string;
+  isPublic: boolean;
+  spaceDescription: string;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status: ChatStatus | null
 }
 
 export interface Subscribers {
