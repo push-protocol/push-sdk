@@ -38,6 +38,9 @@ const ChatTest = () => {
           <Link to="/authUpdate" className="nav-button">
             USER.AUTH.UPDATE
           </Link>
+          <Link to="/updateUserprofile" className="nav-button">
+            USER.PROFILE.UPDATE
+          </Link>
           <Link to="/send" className="nav-button">
             CHAT.SEND
           </Link>
@@ -65,6 +68,18 @@ const ChatTest = () => {
           <Link to="/getGroup" className="nav-button">
             CHAT.GETGROUP
           </Link>
+          <Link to="/addMembersToGroup" className="nav-button">
+            CHAT.ADDMEMBERSTOGROUP
+          </Link>
+          <Link to="/addAdminsToGroup" className="nav-button">
+            CHAT.ADDADMINSTOGROUP
+          </Link>
+          <Link to="/removeMembersFromGroup" className="nav-button">
+            CHAT.REMOVEMEMBERSFROMGROUP
+          </Link>
+          <Link to="/removeAdminsFromGroup" className="nav-button">
+            CHAT.REMOVEADMINSFROMGROUP
+           </Link>
         </NavMenu>
       </Section>
     </div>

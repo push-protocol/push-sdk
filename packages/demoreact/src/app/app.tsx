@@ -27,12 +27,32 @@ import HistoryTest from './ChatTest/History';
 import GetRequestsTest from './ChatTest/GetRequests';
 import DelegationTest from './DelegationTest';
 import CreateGroupTest from './ChatTest/CreateGroupTest';
+import AddMembersToGroupTest from './ChatTest/AddMembersToGroupTest';
+import AddAdminsToGroupTest from './ChatTest/AddAdminsToGroupTest';
+import CreateSpaceTest from './SpaceTest/CreateSpaceTest';
+import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
+import GetSpaceTest from './SpaceTest/GetSpaceTest';
+import GetSpaceInfoTest from './SpaceTest/GetSpaceInfoTest';
+import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
+import UpdateUserProfile from './ChatTest/UpdateUserProfile';
 import { Buffer } from 'buffer';
 import { ENV } from './helpers';
+import SpaceTest from './SpaceTest/SpaceTest';
+import StartSpaceTest from './SpaceTest/StartSpaceTest';
+import StopSpaceTest from './SpaceTest/StopSpaceTest';
+import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
+import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
+import AddAdminsToSpaceTest from './SpaceTest/AddAdminsToSpaceTest';
+import AddMembersToSpaceTest from './SpaceTest/AddMembersToSpaceTest';
+import RemoveMembersFromSpaceTest from './SpaceTest/RemoveMembersFromSpaceTest';
+import RemoveAdminsFromSpaceTest from './SpaceTest/RemoveAdminsFromSpaceTest';
+import GetSpacesTest from './SpaceTest/GetSpacesTest';
+import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
+import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -211,6 +231,9 @@ export function App() {
                       <Link to="/chat" className="nav-button">
                         CHAT
                       </Link>
+                      <Link to="/space" className="nav-button">
+                        SPACE
+                      </Link>
                     </NavMenu>
                   }
                 />
@@ -230,11 +253,13 @@ export function App() {
                 <Route path="/embed" element={<EmbedTest />} />
 
                 <Route path="/chat" element={<ChatTest />} />
+                <Route path="/space" element={<SpaceTest />} />
 
                 {/* chat method  routes */}
                 <Route path="/get" element={<GetUserTest />} />
                 <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
                 <Route path="/create" element={<CreateUserTest />} />
+                <Route path="/updateUserprofile" element={<UpdateUserProfile />} />
                 <Route path="/authUpdate" element={<AuthUpdateUserTest />} />
                 <Route path="/send" element={<SendMessageTest />} />
                 <Route path="/approve" element={<ApproveRequestTest />} />
@@ -244,7 +269,29 @@ export function App() {
                 <Route path="/requests" element={<GetRequestsTest />} />
                 <Route path="/createGroup" element={<CreateGroupTest />} />
                 <Route path="/getGroup" element={<GetGroupTest />} />
+                <Route path="/addMembersToGroup" element={<AddMembersToGroupTest />} />
+                <Route path="/addAdminsToGroup" element={<AddAdminsToGroupTest />} />
+                <Route path="/removeMembersFromGroup" element={<RemoveMembersFromGroupTest />} />
+                <Route path="/removeAdminsFromGroup" element={<RemoveAdminsFromGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
+
+                {/* spaces method  routes */}
+
+                <Route path="/createSpace" element={<CreateSpaceTest />} />
+                <Route path="/updateSpace" element={<UpdateSpaceTest />} />
+                <Route path="/getSpace" element={<GetSpaceTest />} />
+                <Route path="/getSpaceInfo" element={<GetSpaceInfoTest />} />
+                <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
+                <Route path="/startSpace" element={<StartSpaceTest />} />
+                <Route path="/stopSpace" element={<StopSpaceTest />} />
+                <Route path="/addAdminsToSpace" element={<AddAdminsToSpaceTest />} />
+                <Route path="/addMembersToSpace" element={<AddMembersToSpaceTest />} />
+                <Route path="/removeMembersFromSpace" element={<RemoveMembersFromSpaceTest />} />
+                <Route path="/removeAdminsFromSpace" element={<RemoveAdminsFromSpaceTest />} />
+                <Route path="/getSpaces" element={<GetSpacesTest />} />
+                <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
+                <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
+
               </Routes>
               <ChatSupportTest />
             </SocketContext.Provider>

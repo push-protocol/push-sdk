@@ -2,7 +2,7 @@ import { getAccountAddress, getWallet } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import { isValidETHAddress, decryptPGPKey } from '../helpers';
 import { SignerType, IUser, ProgressHookType } from '../types';
-import { update } from './auth.updateUser';
+import { authUpdate } from './auth.updateUser';
 import { get } from './getUser';
 
 export type UpgradeUserProps = {
@@ -71,7 +71,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
       additionalMeta,
     });
 
-    const upgradedUser = await update({
+    const upgradedUser = await authUpdate({
       pgpPrivateKey, // decrypted pgp priv key
       pgpEncryptionVersion: recommendedPgpEncryptionVersion,
       signer,
