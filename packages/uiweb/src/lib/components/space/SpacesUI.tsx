@@ -1,8 +1,10 @@
 import React from 'react';
+
 import SpaceBanner, { SpaceBannerProps } from './SpaceBanner';
 import SpaceFeed, { SpaceFeedProps } from './SpaceFeed';
 import SpaceWidget, { SpaceWidgetProps } from './SpaceWidget';
 import SpaceTrendingList, { SpaceTrendingListProps } from './SpaceTrendingList';
+
 import { useSpaceData } from '../../context';
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
