@@ -129,16 +129,11 @@ export async function getRecipients({
       }
     } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
       if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce(
-          async (_recipients, _rAddress) => {
-            addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
-            return {
-              ..._recipients,
-              [addressInCAIP]: null,
-            };
-          },
-          {}
-        );
+        const recipientObject: any = {};
+        recipients.map(async (_rAddress: string) => {
+          addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
+          recipientObject[addressInCAIP] = null;
+        });
         return recipientObject;
       }
     }
