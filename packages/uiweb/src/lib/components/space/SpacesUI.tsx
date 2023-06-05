@@ -9,7 +9,7 @@ import { useSpaceData } from '../../context';
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
 
-interface SpacesUIProps {
+interface ISpacesUIProps {
   account: string;
   signer: SignerType;
   pgpPrivateKey: string;
