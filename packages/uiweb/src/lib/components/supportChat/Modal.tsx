@@ -4,6 +4,7 @@ import { ChatInput } from './ChatInput';
 import { ModalHeader } from './ModalHeader';
 import { AddressInfo } from './AddressInfo';
 import PoweredByPushLogo from '../../icons/sponsorPush.svg';
+import { SponserPushIcon } from '../../icons/SponserPush';
 import { HandWaveSvg } from '../../icons/HandWaveSvg';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { Chats } from './Chats';
@@ -18,6 +19,7 @@ import { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
 import { Spinner } from './spinner/Spinner';
 import { Toaster } from './toaster/Toaster';
+import { Div } from '../reusables/sharedStyling';
 
 const chatsFetchedLimit = 10;
 
@@ -160,12 +162,13 @@ export const Modal: React.FC = () => {
 
       <InputSection>
         {connectedUser && <ChatInput />}
-        <Image
-          src={PoweredByPushLogo}
-          alt="Powered by Push Protocol"
-          height="18px"
-          width="145px"
-        />
+        <Div
+         height="18px"
+         width="145px"
+      >
+        <SponserPushIcon />
+      </Div>
+        
       </InputSection>
     </Container>
   );

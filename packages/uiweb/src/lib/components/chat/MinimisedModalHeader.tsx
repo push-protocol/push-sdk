@@ -1,18 +1,14 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import EnvelopeIcon from '../../icons/envelope.svg';
-import MaximizeIcon from '../../icons/maximize.svg';
-import NewChatIcon from '../../icons/newChat.svg';
-import BackIcon from '../../icons/back.svg';
-import MinimizeIcon from '../../icons/minimize.svg';
-import { Section, Span, Image } from '../reusables/sharedStyling';
+import { MaximizeIcon } from '../../icons/Maximize';
+import { NewChatIcon } from '../../icons/NewChat';
+import { BackIcon } from '../../icons/Back';
+import { MinimizeIcon } from '../../icons/Minimize';
+import { Section, Span, Image, Div } from '../reusables/sharedStyling';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { PushSubTabs, PushTabs, PUSH_SUB_TABS, PUSH_TABS } from '../../types';
 import { useResolveWeb3Name } from '../../hooks';
-import {
-  pCAIP10ToWallet,
-  shortenText,
-} from '../../helpers';
+import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 
@@ -85,12 +81,15 @@ export const MessageBoxHeader = () => {
   };
   return (
     <Section gap="12px">
-      <Image
-        src={BackIcon}
-        alt="back icon"
+      <Div
+        width="16px"
+        height="16px"
         cursor="pointer"
         onClick={() => handleBack()}
-      />
+      >
+        <BackIcon />
+      </Div>
+
       <Section gap="8px">
         <Image
           src={selectedChat.profilePicture!}
@@ -102,7 +101,7 @@ export const MessageBoxHeader = () => {
 
         <Span fontWeight="700" fontSize="16px">
           {' '}
-          {web3Name ?? shortenText(selectedChat?.did?.split(':')[1],20)}
+          {web3Name ?? shortenText(selectedChat?.did?.split(':')[1], 20)}
         </Span>
       </Section>
     </Section>
@@ -115,18 +114,18 @@ export const SubTabHeader = () => {
 
   return (
     <Section gap="12px">
-      <Image
-        src={BackIcon}
-        alt="back icon"
-        cursor="pointer"
-        width="16px"
-        height="16px"
+      <Div
+         width="16px"
+         height="16px"
+         cursor="pointer"
         onClick={() => {
           setActiveTab(PUSH_TABS.CHATS);
           setSearchedChats(null);
           setSelectedChatId(null);
         }}
-      />
+      >
+        <BackIcon />
+      </Div>
 
       <Span fontWeight="700" fontSize="16px">
         {PushSubTabTitle[activeSubTab as PushSubTabs].title}
@@ -192,23 +191,24 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
       )}
       <Section gap="20px">
         {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
-          <Image
-            src={NewChatIcon}
-            alt="new chat"
-            cursor="pointer"
+          <Div
             width="20px"
             height="20px"
+            cursor="pointer"
             onClick={() => setNewChat(true)}
-          />
+          >
+            <NewChatIcon />
+          </Div>
         )}
-        <Image
-          src={modalOpen ? MinimizeIcon : MaximizeIcon}
-          alt="maximize"
-          cursor="pointer"
+        <Div
           width="12px"
           height="13.4px"
+          cursor="pointer"
+          alignSelf='baseline'
           onClick={onMaximizeMinimizeToggle}
-        />
+        >
+          {modalOpen ? <MinimizeIcon /> : <MaximizeIcon />}
+        </Div>
       </Section>
     </Container>
   );

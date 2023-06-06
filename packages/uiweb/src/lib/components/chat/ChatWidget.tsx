@@ -35,7 +35,6 @@ export const ChatWidget: React.FC<ChatProps> = ({
     env,
   };
 
-
   return (
  
       <ChatPropsContext.Provider value={chatPropsData}>

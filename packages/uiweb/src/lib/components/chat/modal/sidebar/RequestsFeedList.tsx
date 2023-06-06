@@ -78,7 +78,7 @@ export const RequestsFeedList = () => {
       <ChatList chatsFeed={requestsFeed} />
     ) : (
       !paginateLoading && loading && (
-        <Section margin="10px 0 0 0">
+        <Section margin="10px  0">
           <Spinner />
         </Section>
       )

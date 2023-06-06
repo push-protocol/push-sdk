@@ -1,10 +1,10 @@
 import React, { useState, useContext, useRef, ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Image, Section } from '../../../../reusables/sharedStyling';
-import EmojiIcon from '../../../../../icons/emoji.svg';
-import GifIcon from '../../../../../icons/gif.svg';
-import AttachmentIcon from '../../../../../icons/attachment.svg';
-import SendIcon from '../../../../../icons/send.svg';
+import { Div, Image, Section } from '../../../../reusables/sharedStyling';
+import { EmojiIcon } from '../../../../../icons/Emoji';
+import { SendIcon } from '../../../../../icons/Send';
+import { GifIcon } from '../../../../../icons/Gif';
+import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
 import { ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
@@ -120,12 +120,10 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             };
 
             sendPushMessage(JSON.stringify(fileMessageContent), messageType);
-
           };
         } catch (err) {
           console.log(err);
-        }
-        finally{
+        } finally {
           setFileUploading(false);
         }
       }
@@ -146,14 +144,15 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       justifyContent="space-between"
     >
       <Section gap="20px">
-        <Image
-          src={EmojiIcon}
-          alt="emoji picker icon"
+        <Div
           width="20px"
           cursor="pointer"
           height="20px"
           onClick={() => setShowEmojis(!showEmojis)}
-        />
+        >
+          <EmojiIcon />
+        </Div>
+
         {showEmojis && (
           <Section
             ref={modalRef}
@@ -176,15 +175,17 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           rows={1}
         />
       </Section>
-      <Section gap="10px">
-        <Image
-          src={GifIcon}
-          alt="gif picker icon"
-          width="32px"
+      <Section gap="11.5px">
+        <Section
+          width="34px"
+          height="30px"
           cursor="pointer"
-          height="32px"
+          alignSelf='center'
           onClick={() => setGifOpen(!gifOpen)}
-        />
+        >
+          <GifIcon />
+        </Section>
+
         {gifOpen && (
           <Section
             position="absolute"
@@ -201,15 +202,18 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           </Section>
         )}
         <Section onClick={handleUploadFile}>
-          {!(loading || filesUploading)  && (
+          {!(loading || filesUploading) && (
             <>
-              <Image
-                src={AttachmentIcon}
-                alt="attachment picker icon"
-                width="20px"
+              <Section
+                width="17px"
+                height="17px"
                 cursor="pointer"
-                height="20px"
-              />
+                alignSelf='center'
+                onClick={() => setNewChat(true)}
+              >
+                <AttachmentIcon />
+              </Section>
+
               <FileInput
                 type="file"
                 ref={fileUploadInputRef}
@@ -219,14 +223,13 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           )}
         </Section>
         {!(loading || filesUploading) && (
-          <Image
+          <Section
             cursor="pointer"
-            src={SendIcon}
-            alt="send message"
-            width="19px"
-            height="16px"
+            alignSelf='center'
             onClick={() => sendTextMsg()}
-          />
+          >
+            <SendIcon />
+          </Section>
         )}
 
         {(loading || filesUploading) && <Spinner size="22" />}

@@ -90,7 +90,7 @@ export const ChatsFeedList = () => {
       <div ref={pageRef} />
 
       {paginateLoading && (
-        <Section margin="10px 0 0 0">
+        <Section margin="10px  0">
           <Spinner />
         </Section>
       )}

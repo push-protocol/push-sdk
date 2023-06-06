@@ -12,7 +12,7 @@ import {
   shortenText,
 } from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
-import CheckCircleIcon from '../../../../icons/checkCircle.svg';
+import { CheckCircleIcon } from '../../../../icons/CheckCircle';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
 import { FileMessageContent, PUSH_TABS } from '../../../../types';
 import { Typebar } from './typebar/Typebar';
@@ -58,7 +58,12 @@ const FileCard = ({
           {formatFileSize(size)}
         </Span>
       </Section>
-      <FileDownloadIconAnchor href={content} target="_blank" rel="noopener noreferrer" download>
+      <FileDownloadIconAnchor
+        href={content}
+        target="_blank"
+        rel="noopener noreferrer"
+        download
+      >
         <FileDownloadIcon className="fa fa-download" aria-hidden="true" />
       </FileDownloadIconAnchor>
     </Section>
@@ -378,14 +383,16 @@ export const MessageBox = () => {
               >
                 This is your first conversation with the sender.
               </Span>
-              <Image
-                src={CheckCircleIcon}
-                alt="approve icon"
+              <Section
                 width="36px"
                 height="36px"
                 cursor="pointer"
+                alignItems='center'
                 onClick={() => handleApproveChatRequest()}
-              />
+              >
+                <CheckCircleIcon />
+              </Section>
+       
             </Section>
           )}
           <div ref={bottomRef} />
@@ -414,9 +421,8 @@ const MessageListCard = styled(Section)`
 
 const FileDownloadIcon = styled.i`
   color: #575757;
-  
 `;
 
 const FileDownloadIconAnchor = styled.a`
-font-size: 20px;
+  font-size: 20px;
 `;

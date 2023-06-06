@@ -1,12 +1,17 @@
 import React, { useContext } from 'react';
-import MinimizeIcon from '../../icons/minimize.svg';
+import { MinimizeIcon } from '../../icons/Minimize';
 import styled from 'styled-components';
-import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
+import {
+  SupportChatMainStateContext,
+  SupportChatPropsContext,
+} from '../../context';
 import { handleOnChatIconClick } from '../../helpers';
 
 export const ModalHeader: React.FC = () => {
-  const { modalTitle,theme } = useContext<any>(SupportChatPropsContext);
-  const { isModalOpen, setIsModalOpen } = useContext<any>(SupportChatMainStateContext);
+  const { modalTitle, theme } = useContext<any>(SupportChatPropsContext);
+  const { isModalOpen, setIsModalOpen } = useContext<any>(
+    SupportChatMainStateContext
+  );
 
   return (
     <Container theme={theme}>
@@ -14,7 +19,9 @@ export const ModalHeader: React.FC = () => {
       <Section
         onClick={() => handleOnChatIconClick({ isModalOpen, setIsModalOpen })}
       >
-        <Image src={MinimizeIcon} alt="minimize chat" />
+        <Div>
+        <MinimizeIcon />
+        </Div>
       </Section>
     </Container>
   );
@@ -34,7 +41,7 @@ const Section = styled.div`
   cursor: pointer;
 `;
 
-const Image = styled.img`
+const Div = styled.div`
   display: flex;
   max-height: initial;
   vertical-align: middle;
@@ -50,7 +57,7 @@ const Span = styled.span`
   display: flex;
   align-items: center;
   text-align: center;
-  color:${(props: any): string => props.theme.textColorPrimary || '#000'};
+  color: ${(props: any): string => props.theme.textColorPrimary || '#000'};
   margin-left: 27%;
   flex: none;
   order: 0;

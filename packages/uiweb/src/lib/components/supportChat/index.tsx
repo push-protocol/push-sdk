@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import ChatIcon from '../../icons/chatIcon.svg';
+import { ChatIcon } from '../../icons/ChatIcon';
 import { Modal } from './Modal';
 import styled from 'styled-components';
 import { handleOnChatIconClick } from '../../helpers';
-import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
+import {
+  SupportChatMainStateContext,
+  SupportChatPropsContext,
+} from '../../context';
 import { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import { Constants, ENV, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
-
+import { Div } from '../reusables/sharedStyling';
 
 export type ChatProps = {
   account: string;
@@ -44,8 +47,10 @@ export const Chat: React.FC<ChatProps> = ({
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
 
   const setChatsSorted = (chats: IMessageIPFS[]) => {
-    const uniqueChats = [...new Map(chats.map((item) => [item["timestamp"], item])).values()];
-    
+    const uniqueChats = [
+      ...new Map(chats.map((item) => [item['timestamp'], item])).values(),
+    ];
+
     uniqueChats.sort((a, b) => {
       return a.timestamp! > b.timestamp! ? 1 : -1;
     });
@@ -73,8 +78,6 @@ export const Chat: React.FC<ChatProps> = ({
     setConnectedUser(null);
   }, [account, supportAddress]);
 
-
-  
   const chatMainStateData = {
     isModalOpen,
     socketData,
@@ -93,8 +96,6 @@ export const Chat: React.FC<ChatProps> = ({
     toastType,
   };
 
-  
-
   return (
     <Container>
       <SupportChatPropsContext.Provider value={chatPropsData}>
@@ -106,7 +107,9 @@ export const Chat: React.FC<ChatProps> = ({
                 handleOnChatIconClick({ isModalOpen, setIsModalOpen })
               }
             >
-              <Image src={ChatIcon} alt="chat" />
+              <Div cursor='pointer'>
+                <ChatIcon />
+              </Div>
             </Button>
           )}
           {isModalOpen && <Modal />}

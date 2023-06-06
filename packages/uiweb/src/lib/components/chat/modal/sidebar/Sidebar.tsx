@@ -14,7 +14,7 @@ import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span, Image } from '../../../reusables/sharedStyling';
 import { ChatsFeedList } from './ChatsFeedList';
 import { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
-import AngleArrowIcon from '../../../../icons/angleArrow.svg';
+import { AngleArrowIcon } from '../../../../icons/AngleArrow';
 import { device } from '../../../../config';
 import { shortenNumber } from '../../../../helpers';
 
@@ -97,12 +97,12 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
       }}
     >
       <Span
-        padding="16.5px"
+        padding="15px 16px 14px 17px"
         borderRadius="100%"
         border="1px solid #DDDDDF"
         cursor="pointer"
       >
-        <Image src={subTab.icon} alt="Request tab icon" />
+        {subTab.icon}
       </Span>
       <Section
         flexDirection="column"
@@ -148,7 +148,7 @@ export const Sidebar = () => {
       subTitle: `you have ${shortenNumber(
         Object.keys(requestsFeed || {}).length
       )} requests from people you may know`,
-      icon: AngleArrowIcon,
+      icon: <AngleArrowIcon/>,
     },
   };
 
