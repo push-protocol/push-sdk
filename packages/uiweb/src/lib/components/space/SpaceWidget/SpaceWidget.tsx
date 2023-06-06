@@ -1,13 +1,11 @@
 import React from 'react';
 
-export interface SpaceWidgetProps {
+export interface ISpaceWidgetProps {
   // Add props specific to the SpaceWidget component
   temporary?: string; // just to remove eslint error of empty prop
 }
 
-const SpaceWidget: React.FC<SpaceWidgetProps> = (props) => {
+export const SpaceWidget: React.FC<ISpaceWidgetProps> = (props) => {
   // Implement the SpaceWidget component
   return <div>SpaceWidget Component</div>;
 }
-
-export default SpaceWidget;

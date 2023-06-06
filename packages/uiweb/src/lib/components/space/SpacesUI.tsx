@@ -1,35 +1,35 @@
 import React from 'react';
 
-import SpaceBanner, { SpaceBannerProps } from './SpaceBanner';
-import SpaceFeed, { SpaceFeedProps } from './SpaceFeed';
-import SpaceWidget, { SpaceWidgetProps } from './SpaceWidget';
-import SpaceTrendingList, { SpaceTrendingListProps } from './SpaceTrendingList';
+import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
+import { ISpaceWidgetProps, SpaceWidget } from './SpaceWidget';
+import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
+import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
 
-import { useSpaceData } from '../../context';
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
+import { useSpaceData } from '../../hooks';
 
-interface ISpacesUIProps {
+export interface ISpacesUIProps {
   account: string;
   signer: SignerType;
   pgpPrivateKey: string;
   env: ENV;
 }
 
-class SpacesUI {
+export class SpacesUI {
   private account: string;
   private signer: SignerType;
   private pgpPrivateKey: string;
   private env: ENV;
 
-  constructor(props: SpacesUIProps) {
+  constructor(props: ISpacesUIProps) {
     this.account = props.account;
     this.signer = props.signer;
     this.pgpPrivateKey = props.pgpPrivateKey;
     this.env = props.env;
   }
 
-  SpaceBanner: React.FC<SpaceBannerProps> = () => {
+  SpaceBanner: React.FC<ISpaceBannerProps> = () => {
     const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
     // Use spaceBannerData and setSpaceBannerData in your component
@@ -37,15 +37,15 @@ class SpacesUI {
     return <SpaceBanner />;
   }
 
-  SpaceWidget: React.FC<SpaceWidgetProps> = () => {
+  SpaceWidget: React.FC<ISpaceWidgetProps> = () => {
     return <SpaceWidget />;
   }
 
-  SpaceFeed: React.FC<SpaceFeedProps> = () => {
+  SpaceFeed: React.FC<ISpaceFeedProps> = () => {
     return <SpaceFeed />;
   }
 
-  SpaceTrendingList: React.FC<SpaceTrendingListProps> = () => {
+  SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
     const { trendingListData, setTrendingListData } = useSpaceData();
 
     // Use trendingListData and setTrendingListData in your component
@@ -68,5 +68,3 @@ class SpacesUI {
     this.connectToSockets();
   }
 }
-
-export default SpacesUI;
