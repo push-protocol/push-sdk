@@ -9,8 +9,10 @@ import { RequestsFeedList } from './sidebar/RequestsFeedList';
 import { Sidebar } from './sidebar/Sidebar';
 
 export const Modal = () => {
-  const { selectedChatId, activeSubTab, chatFeeds, requestsFeed } =
+  const { selectedChatId, activeSubTab, chatsFeed, requestsFeed } =
     useContext<any>(ChatMainStateContext);
+
+
   return (
     <Section height="550px" width="100%" maxHeight="550px" overflow="hidden">
       {!selectedChatId && !activeSubTab && <Sidebar />}
@@ -18,11 +20,12 @@ export const Modal = () => {
         <RequestsFeedList />
       )}
 
+
       {selectedChatId &&
-      (Object.keys(chatFeeds || {}).length ||
-        Object.keys(requestsFeed || {}).length ? (
+      ((Object.keys(chatsFeed || {}).length ||
+        Object.keys(requestsFeed || {}).length )? 
         <MessageBox />
-      ) : (
+       : (
         <Spinner />
       ))}
     </Section>

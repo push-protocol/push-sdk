@@ -4,7 +4,13 @@ import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { ChatMainStateContextType } from '../../context/chat/chatMainStateContext';
-import { checkIfIntent, getData, isPCAIP, pCAIP10ToWallet, setData } from '../../helpers';
+import {
+  checkIfIntent,
+  getData,
+  isPCAIP,
+  pCAIP10ToWallet,
+  setData,
+} from '../../helpers';
 
 import useFetchChat from './useFetchChat';
 
@@ -15,6 +21,19 @@ interface PushChatSocket {
   messagesSinceLastConnection: any; // replace any with the actual type of messages
   groupInformationSinceLastConnection: any; // replace any with the actual type of group information
 }
+
+const getChatId = ({
+  msg,
+  account,
+}: {
+  msg: IMessageIPFS;
+  account: string;
+}) => {
+  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
+    return msg.toDID;
+  }
+  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+};
 
 const usePushChatSocket = (): PushChatSocket => {
   const [isSDKSocketConnected, setIsSDKSocketConnected] =
@@ -57,26 +76,21 @@ const usePushChatSocket = (): PushChatSocket => {
         if (!connectedProfile || !decryptedPgpPvtKey) {
           return;
         }
-        if (
-          pCAIP10ToWallet(chat.fromDID).toLowerCase() === account.toLowerCase()
-        ) {
-          return;
-        }
+
         const response = await PushAPI.chat.decryptConversation({
           messages: [chat],
           connectedUser: connectedProfile,
           pgpPrivateKey: decryptedPgpPvtKey,
           env: env,
         });
-      
+
         if (response && response.length) {
           const msg = response[0];
-          const chatId = !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
-          let newOne:IFeeds =  {} as IFeeds;
+          const chatId = getChatId({msg,account});
+          let newOne: IFeeds = {} as IFeeds;
           if (chatsFeed[chatId]) {
-             newOne = chatsFeed[chatId];
-            console.log(selectedChatId === chatId)
-       
+            newOne = chatsFeed[chatId];
+
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]
@@ -84,10 +98,10 @@ const usePushChatSocket = (): PushChatSocket => {
               lastThreadHash: chats.get(chatId)?.lastThreadHash ?? msg.link,
             });
             newOne['msg'] = msg;
-         
+
             setChatFeed(chatId, newOne);
           } else if (requestsFeed[chatId]) {
-             newOne = requestsFeed[chatId];
+            newOne = requestsFeed[chatId];
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]
@@ -111,8 +125,8 @@ const usePushChatSocket = (): PushChatSocket => {
               lastThreadHash: chats.get(chatId)?.lastThreadHash ?? msg.link,
             });
           }
-          if(selectedChatId === chatId && (Object.keys(newOne || {}).length)){
-            setData({chatId:chatId,value:newOne})
+          if (selectedChatId === chatId && Object.keys(newOne || {}).length) {
+            setData({ chatId: chatId, value: newOne });
           }
         }
         setMessagesSinceLastConnection(chat);
@@ -163,7 +177,6 @@ const usePushChatSocket = (): PushChatSocket => {
       if (pushChatSocket) {
         pushChatSocket?.disconnect();
       }
-
 
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({

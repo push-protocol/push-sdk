@@ -198,9 +198,9 @@ export const MessageBox = () => {
   } = useContext<any>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatPropsContext);
+ 
   const selectedChat =
     chatsFeed[selectedChatId] || requestsFeed[selectedChatId];
-
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId);
   const dates = new Set();
@@ -269,6 +269,7 @@ export const MessageBox = () => {
 
   //optimise it
   const getChatCall = async () => {
+
     let threadHash = null;
     if (!selectedMessages && selectedChat?.threadhash) {
       threadHash = selectedChat?.threadhash;
@@ -282,6 +283,7 @@ export const MessageBox = () => {
       });
     }
   };
+  
   useEffect(() => {
     // // only for user who has requests but hasn't created user in push chat yet
     // if (selectedMessages?.messages.length) {
@@ -319,6 +321,7 @@ export const MessageBox = () => {
       return;
     }
   };
+  
   return (
     <Section
       flexDirection="column"

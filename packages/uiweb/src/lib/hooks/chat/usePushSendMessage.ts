@@ -39,32 +39,32 @@ const usePushSendMessage = () => {
           return false;
         }
 
-        const modifiedResponse = { ...response, messageContent: message };
-        if (chatsFeed[selectedChatId]) {
-          const newOne: IFeeds = chatsFeed[selectedChatId];
-          setChat(selectedChatId, {
-            messages: Array.isArray(chats.get(selectedChatId)?.messages)
-              ? [...chats.get(selectedChatId)!.messages, modifiedResponse]
-              : [modifiedResponse],
-            lastThreadHash:
-              chats.get(selectedChatId)?.lastThreadHash ?? response.link,
-          });
+        // const modifiedResponse = { ...response, messageContent: message };
+        // if (chatsFeed[selectedChatId]) {
+        //   const newOne: IFeeds = chatsFeed[selectedChatId];
+        //   setChat(selectedChatId, {
+        //     messages: Array.isArray(chats.get(selectedChatId)?.messages)
+        //       ? [...chats.get(selectedChatId)!.messages, modifiedResponse]
+        //       : [modifiedResponse],
+        //     lastThreadHash:
+        //       chats.get(selectedChatId)?.lastThreadHash ?? response.link,
+        //   });
 
-          newOne['msg'] = modifiedResponse;
-          setChatFeed(selectedChatId, newOne);
-        } else {
-          const fetchChatsMessages: IFeeds = (await fetchChat({
-            recipientAddress: receiver,
-          })) as IFeeds;
-          setChatFeed(selectedChatId, fetchChatsMessages);
-          setChat(selectedChatId, {
-            messages: Array.isArray(chats.get(selectedChatId)?.messages)
-              ? [...chats.get(selectedChatId)!.messages, modifiedResponse]
-              : [modifiedResponse],
-            lastThreadHash:
-              chats.get(selectedChatId)?.lastThreadHash ?? response.link,
-          });
-        }
+        //   newOne['msg'] = modifiedResponse;
+        //   setChatFeed(selectedChatId, newOne);
+        // } else {
+        //   const fetchChatsMessages: IFeeds = (await fetchChat({
+        //     recipientAddress: receiver,
+        //   })) as IFeeds;
+        //   setChatFeed(selectedChatId, fetchChatsMessages);
+        //   setChat(selectedChatId, {
+        //     messages: Array.isArray(chats.get(selectedChatId)?.messages)
+        //       ? [...chats.get(selectedChatId)!.messages, modifiedResponse]
+        //       : [modifiedResponse],
+        //     lastThreadHash:
+        //       chats.get(selectedChatId)?.lastThreadHash ?? response.link,
+        //   });
+        // }
         return;
       } catch (error: Error | any) {
         setLoading(false);

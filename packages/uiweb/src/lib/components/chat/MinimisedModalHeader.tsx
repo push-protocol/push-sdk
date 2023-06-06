@@ -55,7 +55,6 @@ export const MessageBoxHeader = () => {
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatPropsContext);
-
   const selectedChat =
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
@@ -143,7 +142,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     activeSubTab,
     selectedChatId,
     setNewChat,
-    chatFeeds,
+    chatsFeed,
     requestsFeed,
     setSearchedChats,
     setSelectedChatId,
@@ -165,7 +164,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     >
       {selectedChatId &&
         !!(
-          Object.keys(chatFeeds || {}).length ||
+          Object.keys(chatsFeed || {}).length ||
           Object.keys(requestsFeed || {}).length
         ) &&
         modalOpen && <MessageBoxHeader />}
