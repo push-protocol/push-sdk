@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.3...restapi-1.3.4) (2023-06-05)
+
+
+### Bug Fixes
+
+* fix subset for take whole array ([#429](https://github.com/ethereum-push-notification-service/push-sdk/issues/429)) ([88b5a4d](https://github.com/ethereum-push-notification-service/push-sdk/commit/88b5a4d8df6363087895c9f8c635b91253237a44))
+
+
+
 ## [1.3.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.2...restapi-1.3.3) (2023-05-31)
 
 

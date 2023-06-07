@@ -1,4 +1,4 @@
-import { ProgressHookType } from './types';
+import { ProgressHookType } from '../../../src/lib/types';
 type ProgressHookTypeFunction = (...args: any[]) => ProgressHookType;
 
 const PROGRESSHOOK: Record<

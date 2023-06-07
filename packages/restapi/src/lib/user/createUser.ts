@@ -20,7 +20,9 @@ import {
   ProgressHookType,
   IUser,
   encryptedPrivateKeyTypeV2,
+  ProgressHookTypeFunction,
 } from '../types';
+import PROGRESSHOOK from '../progressHook';
 
 export type CreateUserProps = {
   env?: ENV;
@@ -77,23 +79,11 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     }
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-01',
-      progressTitle: 'Generating Secure Profile Signature',
-      progressInfo:
-        'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
-      level: 'INFO',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
     const keyPairs = await generateKeyPair();
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-02',
-      progressTitle: 'Signing Generated Profile',
-      progressInfo:
-        'This step is only done for first time users. Please sign the message to continue.',
-      level: 'INFO',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
     const publicKey: string = await preparePGPPublicKey(
       encryptionType,
       keyPairs.publicKeyArmored,
@@ -101,21 +91,13 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     );
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-03',
-      progressTitle: 'Encrypting Generated Profile',
-      progressInfo:
-        'Encrypting your keys. Please sign the message to continue.',
-      level: 'INFO',
-    });
-
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-03'] as ProgressHookType);
     const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
       encryptionType,
       keyPairs.privateKeyArmored,
       wallet,
       additionalMeta
     );
-
     if (encryptionType === Constants.ENC_TYPE_V4) {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         Constants.ENC_TYPE_V3,
@@ -126,6 +108,8 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       encryptedPrivateKey.encryptedPassword = encryptedPassword;
     }
 
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
     const body = {
       user: caip10,
       wallet,
@@ -133,32 +117,17 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       env,
     };
-
-    // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-04',
-      progressTitle: 'Syncing Generated Profile',
-      progressInfo:
-        'Please sign the message to continue. Steady lads, chat is almost ready!',
-      level: 'INFO',
-    });
     const createdUser = await createUserService(body);
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-CREATE-05',
-      progressTitle: 'Setup Complete',
-      progressInfo: '',
-      level: 'SUCCESS',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-05'] as ProgressHookType);
     return createdUser;
   } catch (err) {
-    progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
-      level: 'ERROR',
-    });
-    throw Error(`[Push SDK] - API  - Error - API create User() -: ${err}`);
+    // Report Progress
+    const errorProgressHook = PROGRESSHOOK[
+      'PUSH-ERROR-00'
+    ] as ProgressHookTypeFunction;
+    progressHook?.(errorProgressHook(create.name, err));
+    throw Error(`[Push SDK] - API - Error - API ${create.name} -: ${err}`);
   }
 };
