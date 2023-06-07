@@ -477,7 +477,7 @@ export type VideoCallData = {
     video: boolean | null;
     address: string;
   };
-  incoming: [PeerData];
+  incoming: PeerData[];
 };
 
 export type VideoCreateInputOptions = {
@@ -505,12 +505,19 @@ export type VideoAcceptRequestInputOptions = {
 
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress: string;
+};
+
+export type VideoDisconnectOptions = {
+  peerAddress: string;
 };
 
 export type EnableVideoInputOptions = {
   state: boolean;
+  peerAddress: string;
 };
 
 export type EnableAudioInputOptions = {
   state: boolean;
+  peerAddress: string;
 };
