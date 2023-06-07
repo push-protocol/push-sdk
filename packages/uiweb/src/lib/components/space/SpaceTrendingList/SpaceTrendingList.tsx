@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { pollAPI } from '../../../helpers';
-import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceTrendingListProps {
   // Add props specific to the SpaceTrendingList component
@@ -10,7 +9,6 @@ export interface ISpaceTrendingListProps {
 const TRENDING_LIST_POLLING_INTERVAL = 2 * 60 * 1000; // 2 minutes
 
 export const SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
-  const { trendingListData, setTrendingListData } = useSpaceData();
   const timeoutIdRef = useRef<NodeJS.Timeout | undefined>();
 
   // Simulating an API call to fetch trending list data
@@ -49,10 +47,6 @@ export const SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
     <div>
       {/* Render the trending list data */}
       <ul>
-        {trendingListData &&
-          trendingListData.map((item: any) => (
-            <li key={item.id}>{item.title}</li>
-          ))}
       </ul>
     </div>
   );

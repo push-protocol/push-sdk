@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceBannerProps {
   // Add props specific to the SpaceBanner component
@@ -7,7 +6,6 @@ export interface ISpaceBannerProps {
 }
 
 export const SpaceBanner: React.FC<ISpaceBannerProps> = () => {
-  const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
   // Use spaceBannerData and setSpaceBannerData in your component
 
