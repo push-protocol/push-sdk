@@ -4,16 +4,17 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { create, get } from '../../../src/lib/user';
+import { create, decryptAuth, get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
-import Constants from '../../../src/lib/constants';
+import Constants, { ENCRYPTION_TYPE } from '../../../src/lib/constants';
 import { ProgressHookType, ProgressHookTypeFunction } from '../../../src';
 chai.use(chaiAsPromised);
 import PROGRESSHOOK from './progressHookData';
 import { decryptPGPKey } from '../../../src/lib/helpers';
 import { profileUpdate } from '../../../src/lib/user/profile.updateUser';
+import { authUpdate } from '../../../src/lib/user/auth.updateUser';
 
-describe.only('ProgressHook Tests', () => {
+describe('ProgressHook Tests', () => {
   const _env = Constants.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
@@ -154,7 +155,7 @@ describe.only('ProgressHook Tests', () => {
       expect(progressInfo[0]).to.deep.equal(expectedErrorHook);
     }
   });
-  it.only('Profile Update Success ProgressHooks', async () => {
+  it('Profile Update Success ProgressHooks', async () => {
     const progressInfo: ProgressHookType[] = [];
     const updateProgressInfo = (info: ProgressHookType) => {
       progressInfo.push(info);
@@ -163,7 +164,6 @@ describe.only('ProgressHook Tests', () => {
       account: account,
       env: _env,
       signer: _signer,
-      version: Constants.ENC_TYPE_V1,
     });
     const pk = await decryptPGPKey({
       account: user.did,
@@ -220,13 +220,176 @@ describe.only('ProgressHook Tests', () => {
       // throw error if reached here
       expect(true).to.equal(false);
     } catch (err) {
-      console.log(progressInfo);
       expect(progressInfo).to.have.lengthOf(1);
-      const expectedErrorHook = {};
+      const expectedErrorHook = {
+        progressId: 'PUSH-ERROR-00',
+        progressTitle: 'Non Specific Error',
+        progressInfo:
+          '[Push SDK] - API  - Error - API profileUpdate() -: Error: Misformed armored text',
+        level: 'ERROR',
+      };
       expect(progressInfo[0]).to.deep.equal(expectedErrorHook);
     }
   });
-  it.skip('Upgrade Push Profile Success ProgressHooks', async () => {
+  it('NFT Profile Decrypt Auth Success ProgressHooks', async () => {
+    const progressInfo: ProgressHookType[] = [];
+    const updateProgressInfo = (info: ProgressHookType) => {
+      progressInfo.push(info);
+    };
+    const user = await create({
+      account: _nftAccount1,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    await decryptAuth({
+      account: _nftAccount1,
+      env: _env,
+      signer: _nftSigner1,
+      progressHook: updateProgressInfo,
+      additionalMeta: {
+        NFTPGP_V1: {
+          encryptedPassword: JSON.stringify(
+            JSON.parse(user.encryptedPrivateKey).encryptedPassword
+          ),
+        },
+      },
+    });
+    const expectedHooks = [
+      PROGRESSHOOK['PUSH-DECRYPT-AUTH-01'],
+      PROGRESSHOOK['PUSH-DECRYPT-AUTH-02'],
+    ];
+    expect(progressInfo).to.have.lengthOf(2);
+    for (let i = 0; i < progressInfo.length; i++) {
+      expect(progressInfo[i]).to.deep.equal(expectedHooks[i]);
+    }
+  });
+  it('NFT Profile Decrypt Auth Error ProgressHooks', async () => {
+    const progressInfo: ProgressHookType[] = [];
+    const updateProgressInfo = (info: ProgressHookType) => {
+      progressInfo.push(info);
+    };
+    const user = await create({
+      account: _nftAccount1,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    try {
+      await decryptAuth({
+        account: user.did,
+        env: _env,
+        signer: _signer,
+        progressHook: updateProgressInfo,
+        additionalMeta: {
+          NFTPGP_V1: {
+            encryptedPassword: 'random',
+          },
+        },
+      });
+      //throw error if reached here
+      expect(true).to.equal(false);
+    } catch (err) {
+      const expectedHooks = [PROGRESSHOOK['PUSH-DECRYPT-AUTH-01']];
+      expect(progressInfo).to.have.lengthOf(2);
+      for (let i = 0; i < progressInfo.length - 1; i++) {
+        expect(progressInfo[i]).to.deep.equal(expectedHooks[i]);
+      }
+      const expectedErrorHook = {
+        progressId: 'PUSH-ERROR-00',
+        progressTitle: 'Non Specific Error',
+        progressInfo:
+          '[Push SDK] - API  - Error - API decryptAuth() -: Error: [Push SDK] - API - Error - API decryptPGPKey -: SyntaxError: Unexpected token r in JSON at position 0',
+        level: 'ERROR',
+      };
+      expect(progressInfo[1]).to.deep.equal(expectedErrorHook);
+    }
+  });
+  it('NFT Profile Auth Update Success ProgressHooks', async () => {
+    const progressInfo: ProgressHookType[] = [];
+    const updateProgressInfo = (info: ProgressHookType) => {
+      progressInfo.push(info);
+    };
+    const user = await create({
+      account: _nftAccount1,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    const pk = await decryptPGPKey({
+      account: user.did,
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    await authUpdate({
+      pgpPrivateKey: pk, // decrypted pgp priv key
+      pgpEncryptionVersion: ENCRYPTION_TYPE.NFTPGP_V1,
+      signer: _nftSigner1,
+      pgpPublicKey: user.publicKey,
+      account: _nftAccount1,
+      env: _env,
+      additionalMeta: {
+        NFTPGP_V1: {
+          password: '0x@1jdw89Amcedk', //new nft profile password
+        },
+      },
+      progressHook: updateProgressInfo,
+    });
+    const expectedHooks = [
+      PROGRESSHOOK['PUSH-AUTH-UPDATE-05'],
+      PROGRESSHOOK['PUSH-AUTH-UPDATE-06'],
+      PROGRESSHOOK['PUSH-AUTH-UPDATE-03'],
+      PROGRESSHOOK['PUSH-AUTH-UPDATE-04'],
+    ];
+    expect(progressInfo).to.have.lengthOf(4);
+    for (let i = 0; i < progressInfo.length; i++) {
+      expect(progressInfo[i]).to.deep.equal(expectedHooks[i]);
+    }
+  });
+  it('NFT Profile Auth Update Error ProgressHooks', async () => {
+    const progressInfo: ProgressHookType[] = [];
+    const updateProgressInfo = (info: ProgressHookType) => {
+      progressInfo.push(info);
+    };
+    const user = await create({
+      account: _nftAccount1,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    const pk = await decryptPGPKey({
+      account: user.did,
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      env: _env,
+      signer: _nftSigner1,
+    });
+    try {
+      await authUpdate({
+        pgpPrivateKey: pk, // decrypted pgp priv key
+        pgpEncryptionVersion: ENCRYPTION_TYPE.NFTPGP_V1,
+        signer: _nftSigner1,
+        pgpPublicKey: user.publicKey,
+        account: _signer,
+        env: _env,
+        additionalMeta: {
+          NFTPGP_V1: {
+            password: '123', //new nft profile password
+          },
+        },
+        progressHook: updateProgressInfo,
+      });
+      //thow error if got here
+      expect(true).to.be.equal(false);
+    } catch (err) {
+      expect(progressInfo).to.have.lengthOf(1);
+      const expectedErrorHook = {
+        progressId: 'PUSH-ERROR-00',
+        progressTitle: 'Non Specific Error',
+        progressInfo:
+          '[Push SDK] - API  - Error - API authUpdate() -: TypeError: wallet.replace is not a function',
+        level: 'ERROR',
+      };
+      expect(progressInfo[0]).to.deep.equal(expectedErrorHook);
+    }
+  });
+  it('Upgrade Push Profile Success ProgressHooks', async () => {
     const progressInfo: ProgressHookType[] = [];
     const updateProgressInfo = (info: ProgressHookType) => {
       progressInfo.push(info);
