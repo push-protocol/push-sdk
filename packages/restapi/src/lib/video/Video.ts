@@ -277,6 +277,12 @@ export class Video {
         this.data.local.stream
       );
 
+      // if peerInstance is not null -> acceptRequest/request was called before
+      if (this.peerInstance !== null) {
+        // to prevent connection error we stop the exec of acceptRequest
+        return;
+      }
+
       this.peerInstance = new Peer({
         initiator: false,
         trickle: false,
@@ -517,8 +523,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartVideoStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopVideoStream(this.data.local.stream);
         }
         this.setData((oldData) => {
@@ -552,8 +557,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartAudioStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopAudioStream(this.data.local.stream);
         }
         this.setData((oldData) => {
