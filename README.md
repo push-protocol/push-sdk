@@ -197,3 +197,7 @@ Not sure where to start? Join our discord and we will help you get started!
 
 
 <a href="discord.gg/pushprotocol" title="Join Our Community"><img src="https://www.freepnglogos.com/uploads/discord-logo-png/playerunknown-battlegrounds-bgparty-15.png" width="200" alt="Discord" /></a>
+
+## License
+
+
