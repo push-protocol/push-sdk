@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.16...restapi-0.0.1-alpha.17) (2023-06-08)
+
+
+### Bug Fixes
+
+* fix subset for take whole array ([#429](https://github.com/ethereum-push-notification-service/push-sdk/issues/429)) ([88b5a4d](https://github.com/ethereum-push-notification-service/push-sdk/commit/88b5a4d8df6363087895c9f8c635b91253237a44))
+* Merge branch 'alpha' into alpha-deployment ([a9d8ff1](https://github.com/ethereum-push-notification-service/push-sdk/commit/a9d8ff18bcad950e40b966e5b4020e29b493aa28))
+* merge main ([78c020a](https://github.com/ethereum-push-notification-service/push-sdk/commit/78c020ac61decc2d3b78d3749c8ec5df7478842f))
+* **video:** fix error on repeated acceptRequest calls ([#439](https://github.com/ethereum-push-notification-service/push-sdk/issues/439)) ([4936d1f](https://github.com/ethereum-push-notification-service/push-sdk/commit/4936d1f9d747401d341a7dc502e9044c00290c8a))
+* **video:** fix error on repeated acceptRequest calls ([#442](https://github.com/ethereum-push-notification-service/push-sdk/issues/442)) ([f34bfa0](https://github.com/ethereum-push-notification-service/push-sdk/commit/f34bfa09cf88e812e07c0dcf7fabf792726c577f))
+
+
+
 ## [0.0.1-alpha.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.15...restapi-0.0.1-alpha.16) (2023-06-02)
 
 
