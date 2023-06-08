@@ -9,7 +9,6 @@ import Loader from '../components/Loader';
 import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import ChatTest from './ChatTest';
-import { ethers } from 'ethers';
 import { walletToPCAIP10 } from '../helpers';
 
 type ProgressHookType = {
@@ -29,15 +28,13 @@ const UpdateUserProfile = () => {
   const [pic, setPic] = useState('');
   const [desc, setDesc] = useState('');
   const [name, setName] = useState('');
-  const [pgpPrivKey, setPgpPrivKey] = useState('');
+  const [blockedUsersList, setblockedUsersList] = useState('');
+
   const [decryptedPrivateKey, setDecryptedPrivateKey] = useState<string | null>(
     null
   );
   const handleProgress = (progress: ProgressHookType) => {
     setProgress(progress);
-  };
-  const updatePgpPrivKey = (e: React.SyntheticEvent<HTMLElement>) => {
-    setPgpPrivKey((e.target as HTMLInputElement).value);
   };
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
@@ -55,6 +52,10 @@ const UpdateUserProfile = () => {
     setName((e.target as HTMLInputElement).value);
   };
 
+  const updateBlockedUsersList = (e: React.SyntheticEvent<HTMLElement>) => {
+    setblockedUsersList((e.target as HTMLInputElement).value);
+  };
+
   const testUpdateUserProfile = async (index: number) => {
     try {
       setLoading(true);
@@ -69,6 +70,7 @@ const UpdateUserProfile = () => {
               name: name,
               desc: desc,
               picture: pic,
+              blockedUsersList: blockedUsersList ? blockedUsersList.split(",") : null,
             },
             env,
             progressHook: handleProgress,
@@ -82,6 +84,7 @@ const UpdateUserProfile = () => {
               name: name,
               desc: desc,
               picture: pic,
+              blockedUsersList: blockedUsersList ? blockedUsersList.split(",") : null,
             },
             env,
             progressHook: handleProgress,
@@ -145,6 +148,15 @@ const UpdateUserProfile = () => {
             type="text"
             onChange={updateName}
             value={name}
+            style={{ width: 400, height: 30 }}
+          />
+        </SectionItem>
+        <SectionItem style={{ marginTop: 20 }}>
+          <label>Blocked Users (Comma seperated)</label>
+          <input
+            type="text"
+            onChange={updateBlockedUsersList}
+            value={blockedUsersList}
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>

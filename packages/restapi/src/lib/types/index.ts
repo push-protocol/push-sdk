@@ -178,6 +178,7 @@ export interface IUser {
     desc: string | null;
     picture: string | null;
     profileVerificationProof: string | null;
+    blockedUsersList: Array<string> | null;
   };
   encryptedPrivateKey: string;
   publicKey: string;
