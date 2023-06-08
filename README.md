@@ -24,10 +24,29 @@
   </a>
 </h4>
 
-# PUSH-SDK
+## Introduction
+#### What is Push Protocol?
+
+Push Protocol, previously known as EPNS, is a Web3 communication protocol that enables any dApps, smart contracts, backends, or protocols to communicate both on-chain and off-chain via user wallet addresses in an open, gasless, multichain, and platform-agnostic fashion.
+
+#### What We Do
+
+Being an open communication middleware, Push is building a suite of products to enable notifications, chats, streaming, and more. We currently have two major products, Push Notifications and Push Chat.
+
+<br>
+<br>
+
+## PUSH-SDK
+
+#### Push SDK provides an abstraction layer to integrate Push protocol features with your Frontend as well as Backend
 
 PUSH SDK is a Javascript based Monorepo of packages that helps developers to 
 - build PUSH features into their DApps
+  - Notifications
+  - Chat
+  - Group Chat
+  - Push NFT Chat
+  - Video Calls
 - get access to PUSH Push Nodes APIs
 - render PUSH Notifications UI
 
