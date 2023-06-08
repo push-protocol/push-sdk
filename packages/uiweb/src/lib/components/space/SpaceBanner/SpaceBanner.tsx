@@ -4,11 +4,11 @@ import styled from 'styled-components';
 
 export interface ISpaceBannerProps {
   // Add props specific to the SpaceBanner component
-  title?: string;
-  peopleInSpace?: string[];
-  participants?: number;
-  time?: Date;
-  status?: 'live' | 'scheduled' | 'ended';
+  title: string;
+  peopleInSpace: string[];
+  participants: number;
+  time: Date;
+  status: 'live' | 'scheduled' | 'ended';
   host?: object;
   theme?: object;
   orientation?: 'maximized' | 'minimized';
