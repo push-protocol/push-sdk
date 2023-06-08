@@ -365,6 +365,7 @@ export type ProgressHookType = {
   progressInfo: string;
   level: 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR';
 };
+export type ProgressHookTypeFunction = (...args: any[]) => ProgressHookType;
 
 export type MessageWithCID = {
   cid: string;
