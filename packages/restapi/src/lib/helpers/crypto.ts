@@ -22,6 +22,7 @@ import {
   encryptedPrivateKeyTypeV2,
   IMessageIPFS,
   ProgressHookType,
+  ProgressHookTypeFunction,
 } from '../types';
 import {
   isValidCAIP10NFTAddress,
@@ -30,6 +31,7 @@ import {
 } from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
+import PROGRESSHOOK from '../progressHook';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -131,12 +133,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     const { version: encryptionType } = JSON.parse(encryptedPGPPrivateKey);
     let privateKey;
 
-    progressHook?.({
-      progressId: 'PUSH-DECRYPT-01',
-      progressTitle: 'Decrypting Profile',
-      progressInfo: 'Please sign the transaction to decrypt profile',
-      level: 'INFO',
-    });
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-DECRYPT-01'] as ProgressHookType);
 
     switch (encryptionType) {
       case Constants.ENC_TYPE_V1: {
@@ -246,34 +244,25 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
         // Report Progress
-        progressHook?.({
-          progressId: 'PUSH-ERROR-01',
-          progressTitle: 'Upgrade Profile Failed',
-          progressInfo: `[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`,
-          level: 'WARN',
-        });
+        const errorProgressHook = PROGRESSHOOK[
+          'PUSH-ERROR-01'
+        ] as ProgressHookTypeFunction;
+        progressHook?.(errorProgressHook(err));
       }
     }
-    progressHook?.({
-      progressId: 'PUSH-DECRYPT-02',
-      progressTitle: 'Push Profile Unlocked',
-      progressInfo: 'Unlocking push profile',
-      level: 'SUCCESS',
-    });
+
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-DECRYPT-02'] as ProgressHookType);
     return privateKey;
   } catch (err) {
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API create User() -: ${err}`,
-      level: 'ERROR',
-    });
-    console.error(
-      `[Push SDK] - API  - Error - API decrypt Pgp Key() -:  `,
-      err
+    const errorProgressHook = PROGRESSHOOK[
+      'PUSH-ERROR-00'
+    ] as ProgressHookTypeFunction;
+    progressHook?.(errorProgressHook(decryptPGPKey.name, err));
+    throw Error(
+      `[Push SDK] - API - Error - API ${decryptPGPKey.name} -: ${err}`
     );
-    throw Error(`[Push SDK] - API  - Error - API decrypt Pgp Key() -: ${err}`);
   }
 };
 

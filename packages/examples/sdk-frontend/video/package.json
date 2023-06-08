@@ -1,0 +1,31 @@
+{
+  "name": "push-video-sdk-demo",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@pushprotocol/restapi": "^1.3.3",
+    "@pushprotocol/socket": "^0.5.1",
+    "@rainbow-me/rainbowkit": "0.12.14",
+    "ethers": "^5",
+    "immer": "^10.0.2",
+    "next": "^13.4.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.11",
+    "wagmi": "0.12.13"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.12",
+    "@types/react": "^18.2.6",
+    "@types/styled-components": "^5.1.26",
+    "eslint": "^8.15.0",
+    "eslint-config-next": "^13.4.3",
+    "typescript": "^5.0.4"
+  }
+}
