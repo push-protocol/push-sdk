@@ -274,8 +274,16 @@ export class Video {
         'options',
         options,
         'localStream',
-        this.data.local.stream
+        this.data.local.stream,
+        "peerInstance",
+        this.peerInstance
       );
+
+      // if peerInstance is not null -> acceptRequest/request was called before
+      if (this.peerInstance) {
+        // to prevent connection error we stop the exec of acceptRequest
+        return Promise.resolve();
+      }
 
       this.peerInstance = new Peer({
         initiator: false,
