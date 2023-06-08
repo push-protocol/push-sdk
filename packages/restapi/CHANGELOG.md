@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.4...restapi-1.3.5) (2023-06-08)
+
+
+### Bug Fixes
+
+* **video:** fix error on repeated acceptRequest calls ([#439](https://github.com/ethereum-push-notification-service/push-sdk/issues/439)) ([4936d1f](https://github.com/ethereum-push-notification-service/push-sdk/commit/4936d1f9d747401d341a7dc502e9044c00290c8a))
+
+
+
 ## [1.3.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.3...restapi-1.3.4) (2023-06-05)
 
 
