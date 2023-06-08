@@ -7,9 +7,10 @@ import {
   isValidETHAddress,
   verifyPGPPublicKey,
 } from '../helpers';
-import { IUser, ProgressHookType } from '../types';
+import { IUser, ProgressHookType, ProgressHookTypeFunction } from '../types';
 import { get } from './getUser';
 import { populateDeprecatedUser } from '../utils/populateIUser';
+import PROGRESSHOOK from '../progressHook';
 
 type ProfileUpdateProps = {
   /**
@@ -72,13 +73,8 @@ export const profileUpdate = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v2/users/${user.did}/profile`;
 
-    //Report Progress
-    progressHook?.({
-      progressId: 'PUSH-PROFILE-UPDATE-01',
-      progressTitle: 'Syncing Updated Profile',
-      progressInfo: 'Steady lads, your profile is getting a new look!',
-      level: 'INFO',
-    });
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-01'] as ProgressHookType);
     const response = await axios.put(apiEndpoint, body);
     if (response.data)
       response.data.publicKey = verifyPGPPublicKey(
@@ -86,21 +82,18 @@ export const profileUpdate = async (
         response.data.publicKey,
         response.data.did
       );
-    //Report Progress
-    progressHook?.({
-      progressId: 'PUSH-PROFILE-UPDATE-02',
-      progressTitle: 'Profile Update Completed, Welcome to Push Chat',
-      progressInfo: '',
-      level: 'SUCCESS',
-    });
+
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-02'] as ProgressHookType);
     return populateDeprecatedUser(response.data);
   } catch (err) {
-    progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API profile.update() -: ${err}`,
-      level: 'ERROR',
-    });
-    throw Error(`[Push SDK] - API  - Error - API profile.update() -: ${err}`);
+    // Report Progress
+    const errorProgressHook = PROGRESSHOOK[
+      'PUSH-ERROR-00'
+    ] as ProgressHookTypeFunction;
+    progressHook?.(errorProgressHook(profileUpdate.name, err));
+    throw Error(
+      `[Push SDK] - API - Error - API ${profileUpdate.name} -: ${err}`
+    );
   }
 };

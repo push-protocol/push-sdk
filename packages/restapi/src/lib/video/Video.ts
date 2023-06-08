@@ -525,8 +525,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartVideoStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopVideoStream(this.data.local.stream);
         }
         this.setData((oldData) => {
@@ -560,8 +559,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartAudioStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopAudioStream(this.data.local.stream);
         }
         this.setData((oldData) => {
