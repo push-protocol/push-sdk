@@ -24,6 +24,11 @@
   </a>
 </h4>
 
+<p align="center">
+    <img src="https://res.cloudinary.com/drdjegqln/image/upload/v1686230764/1500x500_bhmpkc.jpg" alt="dashboard"/>
+</p>
+
+
 ## Introduction
 #### What is Push Protocol?
 
@@ -32,6 +37,33 @@ Push Protocol, previously known as EPNS, is a Web3 communication protocol that e
 #### What We Do
 
 Being an open communication middleware, Push is building a suite of products to enable notifications, chats, streaming, and more. We currently have two major products, Push Notifications and Push Chat.
+
+<details open>
+<summary>
+ Features
+</summary>
+  <br>
+  
+  <p align="center">
+    <img width="49%" src="https://res.cloudinary.com/drdjegqln/image/upload/v1686231190/push-notifications_tkjhss.png" alt="apis"/>
+&nbsp;
+    <img width="49%" src="https://res.cloudinary.com/drdjegqln/image/upload/v1686231185/W2W_20Chat_eurjgu.png" alt="data-models"/>
+</p>
+
+
+    
+<p align="center">
+    <img width="49%" src="https://res.cloudinary.com/drdjegqln/image/upload/v1686231164/Untitled-2_fedru3.png" alt="own-your-code"/>
+&nbsp;
+    <img width="49%" src="https://res.cloudinary.com/drdjegqln/image/upload/v1686231177/Untitled_vhvrfc.png" alt="customize-code"/>
+</p>
+   
+  <p align="center">
+    <img width="49%" src="https://res.cloudinary.com/drdjegqln/image/upload/v1686231162/1_LbhU9-qGnE8QPxWBQgNqQQ_xzkmpp.webp" alt="own-your-code"/>
+&nbsp;
+ 
+</p>
+</details>
 
 <br>
 <br>
@@ -56,8 +88,8 @@ The SDK provides a suite of solutions for different problems. It is written in T
 
 *It is also built on top of standard Web3 packages like `ethers`, `@web3-react`*
 
-
-## Packages available
+## Development
+### Packages available
 
 Click on the packages to view more details.
 
@@ -68,7 +100,11 @@ Click on the packages to view more details.
 - [@pushprotocol/reactnative](./packages/reactnative/README.md)
 
 
-## Sample Usage
+<details >
+<summary>
+Sample Usage
+</summary>
+
 *How to use a package from the SDK?*
 
 Let's take `@pushprotocol/restapi` as an example.
@@ -134,5 +170,15 @@ Then to run this code open terminal and type
 ```bash
 node main
 ```
+</details>
+<br>
 
-## [Contributing](./contributing.md)
+## Resources
+- **[Website](https://push.org)** To checkout our Product.
+- **[Docs](https://docs.push.org/developers/)** For comprehensive documentation.
+- **[Blog](https://medium.com/push-protocol)** To learn more about our partners, new launches, etc.
+- **[Discord](discord.gg/pushprotocol)** for support and discussions with the community and the team.
+- **[GitHub](https://github.com/ethereum-push-notification-service)** for source code, project board, issues, and pull requests.
+- **[Twitter](https://twitter.com/pushprotocol)** for the latest updates on the product and published blogs.
+
+
