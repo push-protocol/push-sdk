@@ -182,3 +182,18 @@ node main
 - **[Twitter](https://twitter.com/pushprotocol)** for the latest updates on the product and published blogs.
 
 
+## Contributing
+
+Push Protocol is an open source Project. We firmly believe in a completely transparent development process and value any contributions. We would love to have you as a member of the community, whether you are assisting us in bug fixes, suggesting new features, enhancing our documentation, or simply spreading the word. 
+
+- Bug Report: Please create a bug report if you encounter any errors or problems while utilising the Push Protocol.
+- Feature Request: Please submit a feature request if you have an idea or discover a capability that would make development simpler and more reliable.
+- Documentation Request: If you're reading the Push documentation and believe that we're missing something, please create a docs request.
+
+
+Read how you can contribute <a href="https://github.com/ethereum-push-notification-service/push-sdk/blob/main/contributing.md">HERE</a>
+
+Not sure where to start? Join our discord and we will help you get started!
+
+
+<a href="discord.gg/pushprotocol" title="Join Our Community"><img src="https://www.freepnglogos.com/uploads/discord-logo-png/playerunknown-battlegrounds-bgparty-15.png" width="200" alt="Discord" /></a>
