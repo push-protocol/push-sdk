@@ -1,6 +1,11 @@
 import React from 'react';
-import { useSpaceData } from '../../../hooks';
 import styled from 'styled-components';
+
+import live from './assets/live.svg';
+import scheduled from './assets/CalendarBlank.svg';
+
+// import { useSpaceData } from '../../../hooks';
+import { getDateAndTime } from './utils';
 
 export interface ISpaceBannerProps {
   // Add props specific to the SpaceBanner component
@@ -24,23 +29,25 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   theme,
   orientation,
 }) => {
-  const { spaceBannerData, setSpaceBannerData } = useSpaceData();
+  // const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
   // Use spaceBannerData and setSpaceBannerData in your component
 
   return (
     <div>
-      <Container orientation={orientation}>
+      <Container status={status} orientation={orientation}>
         <ProfileContainer orientation={orientation}>
           <PfpContainer>
-            <Pfp src="" alt="pfp" />
+            <Pfp src={host?.image} alt="pfp" />
           </PfpContainer>
           <HostContainer>
             <HostName>
-              
-              <Host>Host</Host>
+              {host?.wallet}
+              <Host status={status}>Host</Host>
             </HostName>
-            <HostHandle></HostHandle>
+            <HostHandle status={status}>
+              {/*Fetch the handle from Lenster */}
+            </HostHandle>
           </HostContainer>
         </ProfileContainer>
         {orientation === 'maximized' ? null : <Icon src="" />}
@@ -49,16 +56,52 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         </Title>
         <Status>
           <Time orientation={orientation}>
-            <Icon />
-            <TimeText></TimeText>
+            <Icon
+              src={
+                status === 'live'
+                  ? live
+                  : status === 'scheduled'
+                  ? scheduled
+                  : ''
+              }
+            />
+            <TimeText status={status}>
+              {status === 'live'
+                ? 'Live'
+                : status === 'scheduled'
+                ? `${getDateAndTime(time)}`
+                : 'Ended'}
+            </TimeText>
           </Time>
           <Participants>
             <ParticipantsIconContainer orientation={orientation}>
-              <ParticipantsIcon1 src="" alt="pfp"/>
-              <ParticipantsIcon2 src="" alt="pfp"/>
-              <ParticipantsIcon3 src="" alt="pfp" orientation={orientation} />
+              {orientation === 'maximized'
+                ? peopleInSpace?.map(
+                    (person, index) =>
+                      index < 3 && (
+                        <ParticipantsIcon
+                          src={person?.image}
+                          alt="avatar"
+                          className={`index${index}`}
+                        />
+                      )
+                  )
+                : peopleInSpace?.map(
+                    (person, index) =>
+                      index < 2 && (
+                        <ParticipantsIcon
+                          src={person?.image}
+                          alt="avatar"
+                          className={`index${index}`}
+                        />
+                      )
+                  )}
             </ParticipantsIconContainer>
-            <ParticipantsText></ParticipantsText>
+            <ParticipantsText>
+              {orientation === 'maximized'
+                ? `+${(participants as number) - 3}`
+                : `+${(participants as number) - 2}`}
+            </ParticipantsText>
           </Participants>
         </Status>
       </Container>
@@ -67,7 +110,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 };
 
 // Styling
-const Container = styled.div<{ orientation?: string }>`
+const Container = styled.div<{ status?: string; orientation?: string }>`
   display: flex;
   flex-direction: ${(props) =>
     props.orientation === 'maximized' ? 'column' : 'row'};
@@ -81,16 +124,18 @@ const Container = styled.div<{ orientation?: string }>`
   width: ${(props) =>
     props.orientation === 'maximized' ? '709px' : '252.67px'};
   height: ${(props) => (props.orientation === 'maximized' ? '200px' : '63px')};
-  background: linear-gradient(
+  background: ${(props) =>
+    props.status === 'live'
+      ? `linear-gradient(
     87.17deg,
     #ea4ee4 0%,
     #d23cdf 0.01%,
     #8b5cf6 100%
-  );
+  )`
+      : '#EDE9FE'};
   border-radius: ${(props) =>
     props.orientation === 'maximized' ? '17px' : '24px'};
-  color: #f5f5f5;
-
+  color: ${(props) => (props.status === 'live' ? '#f5f5f5' : '#1E1E1E')};
 }`;
 
 const ProfileContainer = styled.div<{ orientation?: string }>`
@@ -98,63 +143,53 @@ const ProfileContainer = styled.div<{ orientation?: string }>`
   flex-direction: row;
   justify-content: space-between;
   width: fit-content;
-
 }`;
 
 const PfpContainer = styled.div`
   margin: 5px;
-
 }`;
 
 const Pfp = styled.img`
   height: 48px;
   width: 48px;
-
 }`;
 
 const HostContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-
+  align-items: center;
+  font-family: 'Strawford';
 }`;
 
 const HostName = styled.div`
   display: flex;
   flex-direction: row;
-  font-family: 'Strawford';
-  font-style: normal;
   font-weight: 500;
   font-size: 15px;
-
 }`;
 
-const Host = styled.div`
+const Host = styled.div<{ status?: string }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 2px 8px;
   margin-left: 8px;
   line-height: 18px;
-
-  width: auto;
+  width: max-content;
   height: 19px;
-
-  background: rgba(255, 255, 255, 0.2);
+  background: ${(props) =>
+    props.status === 'live'
+      ? 'rgba(255, 255, 255, 0.2);'
+      : 'rgba(139, 92, 246, 0.2)'};
+  color: ${(props) => (props.status === 'live' ? 'inherit' : '#8B5CF6')};
   border-radius: 6px;
-
-  font-family: "Strawford";
-  font-style: normal;
   font-weight: 500;
   font-size: 10px;
-
 }`;
 
-const HostHandle = styled.div`
-  font-family: 'Strawford';
-  font-style: normal;
-
+const HostHandle = styled.div<{ status?: string }>`
+  color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
 }`;
 
 const Title = styled.div<{ orientation?: string }>`
@@ -169,9 +204,8 @@ const Title = styled.div<{ orientation?: string }>`
   font-size: ${(props) =>
     props.orientation === 'maximized' ? '20px' : '12px'};
   line-height: 130%;
-  width: 598px;
+  width: auto;
   line-clamp: ${(props) => (props.orientation === 'maximized' ? '3' : '2')};
-
 }`;
 
 const Status = styled.div`
@@ -180,9 +214,6 @@ const Status = styled.div`
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Strawford';
-  font-style: normal;
-
 }`;
 
 const Time = styled.div<{ orientation?: string }>`
@@ -190,7 +221,6 @@ const Time = styled.div<{ orientation?: string }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-
 }`;
 
 const Icon = styled.img`
@@ -198,16 +228,13 @@ const Icon = styled.img`
   width: 24px;
   padding: 0 11px 0 0;
   align-self: center;
-
 }`;
 
-const TimeText = styled.div`
-  font-family: 'Strawford';
-  font-style: normal;
+const TimeText = styled.div<{ status?: string }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-
+  color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
 }`;
 
 const Participants = styled.div`
@@ -215,7 +242,6 @@ const Participants = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-
 }`;
 
 const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
@@ -223,42 +249,35 @@ const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
   grid-template-columns: repeat(5, 1fr);
   width: ${(props) => (props.orientation === 'maximized' ? '62px' : '46.5px')};
   padding: 0 4px;
-
 }`;
 
-const ParticipantsIcon1 = styled.img` 
-  grid-column: 1 / 3;
-  grid-row: 1 / 2;
+const ParticipantsIcon = styled.img` 
   width: 31px;
   height: 31px;
-  z-index: 3;
 
-}`;
-
-const ParticipantsIcon2 = styled.img`
-  grid-row: 1 / 2;
-  grid-column: 2 / -1;
-  width: 31px;
-  height: 31px;
-  z-index: 2;
-
-}`;
-
-const ParticipantsIcon3 = styled.img<{ orientation?: string }>`
-  display: ${(props) => (props.orientation === 'maximized' ? 'block' : 'none')};
-  grid-row: 1 / 2;
-  grid-column: 3 / -1;
-  width: 31px;
-  height: 31px;
-  z-index: 1;
-
+  &.index0 {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 3;
+  }
+  &.index1 {
+    position: relative;
+    top: 0;
+    left: -50%;
+    z-index: 2;
+  }
+  &.index2 {
+    position: relative;
+    top: 0;
+    left: -100%;
+    z-index: 1;
+  }
 }`;
 
 const ParticipantsText = styled.div`
-  font-family: 'Strawford';
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 38px;
-
+  width: auto;
 }`;

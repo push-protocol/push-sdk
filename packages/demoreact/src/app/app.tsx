@@ -53,6 +53,8 @@ import RemoveAdminsFromSpaceTest from './SpaceTest/RemoveAdminsFromSpaceTest';
 import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
+import { SpaceBanner } from 'packages/uiweb/src/lib/components/space/SpaceBanner';
+
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -291,6 +293,7 @@ export function App() {
                 <Route path="/getSpaces" element={<GetSpacesTest />} />
                 <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
                 <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
+                <Route element={<SpaceBanner participants={10000}/>} path="/spaceBanner" />
 
               </Routes>
               <ChatSupportTest />
