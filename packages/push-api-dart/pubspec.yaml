@@ -19,3 +19,4 @@ dependencies:
   hex: ^0.2.0
   http: ^0.13.6
   pointycastle: ^3.7.3
+  riverpod: ^2.3.6

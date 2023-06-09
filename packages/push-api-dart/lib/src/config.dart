@@ -1,21 +1,8 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
-import 'constants.dart';
+import '../push_api_dart.dart';
 
 // for methods not needing the entire config
-const Map<ENV, String> API_BASE_URL = {
-  ENV.PROD: 'https://backend.epns.io/apis',
-  ENV.STAGING: 'https://backend-staging.epns.io/apis',
-  ENV.DEV: 'https://backend-dev.epns.io/apis',
-  /**
-   * **This is for local development only**
-   */
-  ENV.LOCAL: 'http://localhost:4200/apis',
-};
-
-String getAPIBaseUrls(ENV env) {
-  return API_BASE_URL[env] ?? 'http://localhost:4000/apis';
-}
 
 const BLOCKCHAIN_NETWORK = {
   'ETH_MAINNET': 'eip155:1',
@@ -34,28 +21,28 @@ const BLOCKCHAIN_NETWORK = {
 
 const ALIAS_CHAIN_ID = {
   'POLYGON': {
-    ENV.PROD: 137,
-    ENV.STAGING: 80001,
-    ENV.DEV: 80001,
-    ENV.LOCAL: 80001,
+    ENV.prod: 137,
+    ENV.staging: 80001,
+    ENV.dev: 80001,
+    ENV.local: 80001,
   },
   'BSC': {
-    ENV.PROD: 56,
-    ENV.STAGING: 97,
-    ENV.DEV: 97,
-    ENV.LOCAL: 97,
+    ENV.prod: 56,
+    ENV.staging: 97,
+    ENV.dev: 97,
+    ENV.local: 97,
   },
   'OPTIMISM': {
-    ENV.PROD: 10,
-    ENV.STAGING: 420,
-    ENV.DEV: 420,
-    ENV.LOCAL: 420,
+    ENV.prod: 10,
+    ENV.staging: 420,
+    ENV.dev: 420,
+    ENV.local: 420,
   },
   'POLYGONZKEVM': {
-    ENV.PROD: 1101,
-    ENV.STAGING: 1442,
-    ENV.DEV: 1442,
-    ENV.LOCAL: 420,
+    ENV.prod: 1101,
+    ENV.staging: 1442,
+    ENV.dev: 1442,
+    ENV.local: 420,
   }
 };
 
@@ -70,91 +57,92 @@ class ConfigType {
 }
 
 final CONFIG = {
-  ENV.PROD: {
+  ENV.prod: {
     BLOCKCHAIN_NETWORK['ETH_MAINNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
+      // API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_MAINNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['BSC_MAINNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['OPTIMISM_MAINNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_ZK_EVM_MAINNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.prod),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
   },
-  ENV.STAGING: {
+  ENV.staging: {
     BLOCKCHAIN_NETWORK['ETH_GOERLI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.staging),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_MUMBAI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.staging),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['BSC_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.staging),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['OPTIMISM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.staging),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_ZK_EVM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.staging),
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     ),
   },
-  ENV.DEV: {
+  ENV.dev: {
     BLOCKCHAIN_NETWORK['ETH_GOERLI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.dev),
       EPNS_COMMUNICATOR_CONTRACT: '0xc064F30bac07e84500c97A04D21a9d1bfFC72Ec0',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_MUMBAI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.dev),
       EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
     ),
     BLOCKCHAIN_NETWORK['BSC_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.dev),
       EPNS_COMMUNICATOR_CONTRACT: '0x4132061E3349ff36cFfCadA460E10Bd4f31F7ea8',
     ),
     BLOCKCHAIN_NETWORK['OPTIMISM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.dev),
       EPNS_COMMUNICATOR_CONTRACT: '0x4305D572F2bf38Fc2AE8D0172055b1EFd18F57a6',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_ZK_EVM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.dev),
       EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
     ),
   },
-  ENV.LOCAL: {
+  ENV.local: {
     BLOCKCHAIN_NETWORK['ETH_GOERLI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.local),
       EPNS_COMMUNICATOR_CONTRACT: '0xc064F30bac07e84500c97A04D21a9d1bfFC72Ec0',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_MUMBAI']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.local),
       EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
     ),
     BLOCKCHAIN_NETWORK['BSC_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.local),
       EPNS_COMMUNICATOR_CONTRACT: '0x4132061E3349ff36cFfCadA460E10Bd4f31F7ea8',
     ),
     BLOCKCHAIN_NETWORK['OPTIMISM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.local),
       EPNS_COMMUNICATOR_CONTRACT: '0x4305D572F2bf38Fc2AE8D0172055b1EFd18F57a6',
     ),
     BLOCKCHAIN_NETWORK['POLYGON_ZK_EVM_TESTNET']: ConfigType(
-      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      API_BASE_URL: Api.getAPIBaseUrls(ENV.local),
       EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
     ),
   },

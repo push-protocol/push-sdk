@@ -1,11 +1,6 @@
 // ignore_for_file: constant_identifier_names, camel_case_types
 
-enum ENV {
-  PROD,
-  STAGING,
-  DEV,
-  LOCAL,
-}
+
 
 enum ENCRYPTION_TYPE {
   PGP_V1,

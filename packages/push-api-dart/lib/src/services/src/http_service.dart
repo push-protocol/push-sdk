@@ -3,9 +3,17 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http_package;
 
+import '../../../push_api_dart.dart';
+
 HttpService http = HttpService();
-log(String data) {
-  print(data);
+
+
+
+log(Object? data) {
+  final env = providerContainer.read(envProvider);
+  if (env == ENV.dev || env == ENV.local) {
+    print(data);
+  }
 }
 
 class HttpService {
@@ -20,12 +28,13 @@ class HttpService {
   }
 
   Future<Map<String, dynamic>?> post({
-    required String baseUrl,
+    String? baseUrl,
     required String path,
     required data,
   }) async {
     http_package.Response? response;
     try {
+      baseUrl ??= Api.getAPIBaseUrls();
       final url = Uri.parse(baseUrl + path);
       log('POST---$url');
       log('POST---DATA---$data');
@@ -42,17 +51,18 @@ class HttpService {
       }
       return json.decode(response.body);
     } catch (exception) {
-      log(exception.toString());
-      rethrow;
+      log(exception);
+      return null;
     }
   }
 
   Future<Map<String, dynamic>?> get({
-    required String baseUrl,
+    String? baseUrl,
     required String path,
   }) async {
     http_package.Response? response;
     try {
+      baseUrl ??= Api.getAPIBaseUrls();
       final url = Uri.parse((baseUrl + path));
       log('GET---$url');
 
@@ -68,17 +78,18 @@ class HttpService {
       }
       return json.decode(response.body);
     } catch (exception) {
-      log(exception.toString());
+      log(exception);
       return null;
     }
   }
 
   Future getBytes({
-    required String baseUrl,
+    String? baseUrl,
     required String path,
   }) async {
     http_package.Response? response;
     try {
+      baseUrl ??= Api.getAPIBaseUrls();
       final url = Uri.parse(baseUrl + path);
       log('GET---$url');
 
@@ -93,19 +104,20 @@ class HttpService {
       }
       return json.decode(response.body);
     } catch (exception) {
-      log(exception.toString());
+      log(exception);
 
-      rethrow;
+      return null;
     }
   }
 
   Future<Map<String, dynamic>?> put({
-    required String baseUrl,
+    String? baseUrl,
     required String path,
     var data,
   }) async {
     http_package.Response? response;
     try {
+      baseUrl ??= Api.getAPIBaseUrls();
       final url = Uri.parse((baseUrl) + path);
       log('PUT---$url');
       log('PUT---DATA---$data');
@@ -123,18 +135,19 @@ class HttpService {
       return json.decode(response.body);
     } catch (exception) {
       log(exception.toString());
-      return data;
+      return null;
     }
   }
 
   Future<Map<String, dynamic>?> delete({
-    required String baseUrl,
+    String? baseUrl,
     required String path,
     String? id,
     bool check401 = true,
   }) async {
     http_package.Response? response;
     try {
+      baseUrl ??= Api.getAPIBaseUrls();
       final url = Uri.parse((baseUrl) + path + (id != null ? '/$id' : ''));
       log('DELETE---$url');
 
