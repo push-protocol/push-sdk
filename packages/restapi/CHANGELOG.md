@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.5...restapi-1.3.6) (2023-06-09)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([af582f7](https://github.com/ethereum-push-notification-service/push-sdk/commit/af582f7efba83b69f5d29a97f772a00de16a0c25))
+* **video:** clear the peer instance in disconnect ([#445](https://github.com/ethereum-push-notification-service/push-sdk/issues/445)) ([db32d2c](https://github.com/ethereum-push-notification-service/push-sdk/commit/db32d2c901d8a208d409b6c09a716dee653b06f9))
+
+
+
 ## [1.3.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.4...restapi-1.3.5) (2023-06-08)
 
 
