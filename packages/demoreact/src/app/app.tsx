@@ -293,7 +293,6 @@ export function App() {
                 <Route path="/getSpaces" element={<GetSpacesTest />} />
                 <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
                 <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
-                <Route element={<SpaceBanner participants={10000}/>} path="/spaceBanner" />
 
               </Routes>
               <ChatSupportTest />
