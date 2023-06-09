@@ -53,8 +53,6 @@ import RemoveAdminsFromSpaceTest from './SpaceTest/RemoveAdminsFromSpaceTest';
 import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
-import { SpaceBanner } from 'packages/uiweb/src/lib/components/space/SpaceBanner';
-
 
 window.Buffer = window.Buffer || Buffer;
 
