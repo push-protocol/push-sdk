@@ -25,10 +25,10 @@ type ProfileUpdateProps = {
    *  Profile properties that can be changed
    */
   profile: {
-    name?: string | null;
-    desc?: string | null;
-    picture?: string | null;
-    blockedUsersList?: Array<string> | null;
+    name?: string;
+    desc?: string;
+    picture?: string;
+    blockedUsersList?: Array<string>;
   };
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
