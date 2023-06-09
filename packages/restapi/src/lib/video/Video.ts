@@ -280,7 +280,7 @@ export class Video {
       // if peerInstance is not null -> acceptRequest/request was called before
       if (this.peerInstance !== null) {
         // to prevent connection error we stop the exec of acceptRequest
-        return;
+        return Promise.resolve();
       }
 
       this.peerInstance = new Peer({
@@ -484,6 +484,9 @@ export class Video {
           }
         );
       }
+
+      // destroy the peerInstance
+      this.peerInstance = null;
 
       // destroy the local stream
       if (this.data.local.stream) {
