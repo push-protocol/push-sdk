@@ -7,4 +7,11 @@ export interface ISpaceDataContextValues {
   setSpaceBannerData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export const SpaceDataContext = createContext<ISpaceDataContextValues | undefined>(undefined);
+export const initialSpaceDataContextValues: ISpaceDataContextValues = {
+  trendingListData: null,
+  setTrendingListData: () => { /**/ },
+  spaceBannerData: null,
+  setSpaceBannerData: () => { /**/ },
+};
+
+export const SpaceDataContext = createContext<ISpaceDataContextValues>(initialSpaceDataContextValues);
