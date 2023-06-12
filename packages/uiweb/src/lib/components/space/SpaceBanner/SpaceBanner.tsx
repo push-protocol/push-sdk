@@ -1,96 +1,113 @@
 import React from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 
 import live from './assets/live.svg';
 import scheduled from './assets/CalendarBlank.svg';
 
 // import { useSpaceData } from '../../../hooks';
-import { getDateAndTime } from './utils';
+import { getDateAndTime, getStatus } from './utils';
 
 export interface ISpaceBannerProps {
   // Add props specific to the SpaceBanner component
-  title: string;
-  peopleInSpace: string[];
-  participants: number;
-  time: Date;
-  status: 'live' | 'scheduled' | 'ended';
-  host?: object;
-  theme?: object;
+  spaceId: string;
   orientation?: 'maximized' | 'minimized';
 }
 
 export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
-  title,
-  peopleInSpace,
-  participants,
-  time,
-  status,
-  host,
-  theme,
+  spaceId,
   orientation,
 }) => {
   // const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
   // Use spaceBannerData and setSpaceBannerData in your component
 
+  const [spaceBannerData, setSpaceBannerData] = React.useState<any>();
+
+  React.useEffect(() => {
+    (async () => {
+      await axios
+        .get(`https://backend.epns.io/apis/v1/chat/groups/${spaceId}/`)
+        .then((response) => {
+          setSpaceBannerData(response.data);
+        });
+    })();
+  }, [spaceId]);
   return (
     <div>
-      <Container status={status} orientation={orientation}>
+      <Container orientation={orientation}>
         <ProfileContainer orientation={orientation}>
           <PfpContainer>
-            <Pfp src={host?.image} alt="pfp" />
+            <Pfp src={spaceBannerData?.members[0].image} alt="pfp" />
           </PfpContainer>
           <HostContainer>
             <HostName>
-              {host?.wallet}
-              <Host status={status}>Host</Host>
+              {spaceBannerData?.members[0].wallet}
+              <Host>Host</Host>
             </HostName>
-            <HostHandle status={status}>
-              {/*Fetch the handle from Lenster */}
+            <HostHandle>
+              {/* Fetch the handle from Lenster */}@
+              {spaceBannerData?.members[0].wallet}
             </HostHandle>
           </HostContainer>
         </ProfileContainer>
-        {orientation === 'maximized' ? null : <Icon src="" />}
+        {orientation === 'maximized' ? null : (
+          <Icon
+            src={
+              getStatus(spaceBannerData?.scheduleAt) === 'Live'
+                ? live
+                : getStatus(spaceBannerData?.scheduleAt) === 'Scheduled'
+                ? scheduled
+                : '' // Ended
+            }
+            alt="status"
+          />
+        )}
         <Title orientation={orientation}>
-          {orientation === 'minimized' ? `${title?.slice(0, 30)}...` : title}
+          {orientation === 'minimized'
+            ? `${spaceBannerData?.groupName}`
+            : spaceBannerData?.groupName}
         </Title>
         <Status>
           <Time orientation={orientation}>
             <Icon
               src={
-                status === 'live'
+                getStatus(spaceBannerData?.scheduleAt) === 'Live'
                   ? live
-                  : status === 'scheduled'
+                  : getStatus(spaceBannerData?.scheduleAt) === 'Scheduled'
                   ? scheduled
-                  : ''
+                  : '' // Ended
               }
+              alt="status"
             />
-            <TimeText status={status}>
-              {status === 'live'
+            <TimeText>
+              {getStatus(spaceBannerData?.scheduleAt) === 'Live'
                 ? 'Live'
-                : status === 'scheduled'
-                ? `${getDateAndTime(time)}`
+                :getStatus(spaceBannerData?.scheduleAt) === 'Scheduled'
+                ? `${getDateAndTime(spaceBannerData?.scheduleAt)}`
                 : 'Ended'}
             </TimeText>
           </Time>
           <Participants>
             <ParticipantsIconContainer orientation={orientation}>
               {orientation === 'maximized'
-                ? peopleInSpace?.map(
+                ? spaceBannerData &&
+                  (spaceBannerData.pendingMembers as []).map(
                     (person, index) =>
                       index < 3 && (
                         <ParticipantsIcon
-                          src={person?.image}
+                          src={(person as any)?.image}
                           alt="avatar"
                           className={`index${index}`}
                         />
                       )
                   )
-                : peopleInSpace?.map(
+                : spaceBannerData &&
+                  (spaceBannerData?.pendingMembers as []).map(
                     (person, index) =>
                       index < 2 && (
                         <ParticipantsIcon
-                          src={person?.image}
+                          src={(person as any)?.image}
                           alt="avatar"
                           className={`index${index}`}
                         />
@@ -99,8 +116,16 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
             </ParticipantsIconContainer>
             <ParticipantsText>
               {orientation === 'maximized'
-                ? `+${(participants as number) - 3}`
-                : `+${(participants as number) - 2}`}
+                ? spaceBannerData &&
+                  `+${
+                    ((spaceBannerData?.pendingMembers as []).length as number) -
+                    3
+                  }`
+                : spaceBannerData &&
+                  `+${
+                    ((spaceBannerData?.pendingMembers as []).length as number) -
+                    2
+                  }`}
             </ParticipantsText>
           </Participants>
         </Status>
@@ -122,7 +147,7 @@ const Container = styled.div<{ status?: string; orientation?: string }>`
     props.orientation === 'maximized' ? '16px' : '0 11px'};
   gap: ${(props) => (props.orientation === 'maximized' ? '12px' : '8px')};
   width: ${(props) =>
-    props.orientation === 'maximized' ? '709px' : '252.67px'};
+    props.orientation === 'maximized' ? '709px' : '252.67px.'};
   height: ${(props) => (props.orientation === 'maximized' ? '200px' : '63px')};
   background: ${(props) =>
     props.status === 'live'
@@ -152,6 +177,7 @@ const PfpContainer = styled.div`
 const Pfp = styled.img`
   height: 48px;
   width: 48px;
+  border-radius: 50%;
 }`;
 
 const HostContainer = styled.div`
@@ -254,6 +280,7 @@ const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
 const ParticipantsIcon = styled.img` 
   width: 31px;
   height: 31px;
+  border-radius: 50%;
 
   &.index0 {
     position: relative;

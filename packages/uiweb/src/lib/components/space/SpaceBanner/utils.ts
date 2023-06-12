@@ -1,6 +1,7 @@
 /**
- * Get Date and Time in Day, DD Month at HH:MM AM format.
- * @param {string | Date} datestring - The employees who are responsible for the project.
+ * Get Date and Time in Day.
+ * @param {string | Date} datestring - The JavaScript Date String or Date Object.
+ * @returns {string} - The Date and Time in Day, DD Month at HH:MM AM format.
  */
 
 export function getDateAndTime(datestring: string | Date) {
@@ -43,5 +44,26 @@ export function getDateAndTime(datestring: string | Date) {
   const hour = amOrPm === 'PM' ? date.getHours() % 12 : date.getHours();
   const minute = date.getMinutes();
 
-  return `${weekday}, ${day} ${month} at ${hour}:${minute} ${amOrPm}`
+  return `${weekday}, ${day} ${month} at ${hour}:${minute} ${amOrPm}`;
+}
+
+/**
+ * Get Status of the Space.
+ * @param {string | Date} datestring - The JavaScript Date String or Date Object.
+ * @returns {string} - The Status of the Space.
+ */
+
+export function getStatus(datestring: string | Date) {
+  const date = new Date(datestring);
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  const diffDays = diff / (1000 * 3600 * 24);
+
+  if (diffDays < 0) {
+    return 'Ended';
+  } else if (diffDays > 0) {
+    return 'Scheduled';
+  } else {
+    return 'Live';
+  }
 }
