@@ -5,13 +5,18 @@ import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 import { Theme, lightTheme, darkTheme } from './index';
 
-interface ThemeProviderProps {
-    theme: 'light' | 'dark';
+/**
+ * @param theme optional: light or dark theme. defaults to light
+ * @param customTheme optional: custom colors/theme
+ * @param children children to be wrapped with ThemeProvider
+ */
+export interface ThemeProviderProps {
+    theme?: 'light' | 'dark';
     customTheme?: Partial<Theme>; // Optional custom theme
     children: any;
 }
 
-const getTheme = (theme: string): Theme => {
+const getTheme = (theme: string | undefined): Theme => {
 if (theme === 'light') {
     return lightTheme;
 } else if (theme === 'dark') {
@@ -21,7 +26,7 @@ if (theme === 'light') {
 }
 };
 
-const ThemeProvider = ({ theme, customTheme, children }: ThemeProviderProps) => {
+export const ThemeProvider = ({ theme, customTheme, children }: ThemeProviderProps) => {
     const selectedTheme = getTheme(theme);
 
     /**
@@ -30,7 +35,13 @@ const ThemeProvider = ({ theme, customTheme, children }: ThemeProviderProps) => 
      * according to their app's design system,
      * while keeping the existing light/dark theme colors
      */
-    const mergedTheme = Object.assign({}, selectedTheme, { customTheme });
+    let mergedTheme;
+
+    if(customTheme) {
+        mergedTheme = Object.assign({}, selectedTheme, { customTheme });
+    } else {
+        mergedTheme = theme;
+    }
 
     return (
         <StyledThemeProvider theme={mergedTheme}>
@@ -38,5 +49,3 @@ const ThemeProvider = ({ theme, customTheme, children }: ThemeProviderProps) => 
         </StyledThemeProvider>
     );
 };
-
-export default ThemeProvider;

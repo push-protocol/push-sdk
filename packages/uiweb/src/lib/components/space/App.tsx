@@ -1,25 +1,24 @@
 /**
- * @file App.tsx is an example component to explain
- * the usage of the ThemeProvider
+ * @file Demo React App implementation to show usage of SDK
+ * @todo remove before merging
  */
 
-import ThemeProvider from './theme/ThemeProvider';
-import { SpaceBanner } from './SpaceBanner/index';
+/**
+ * 
+    import SpaceUI from 'SDK';
+    import { SpacesUIProvider } from 'SDK';
 
-const customTheme = {
-    colors: {
-        primary: '#FF00FF', // Custom primary color
-        secondary: '#00FFFF', // Custom secondary color
-        bannerBg: '#ff0000', // custom banner background provided by SDK user
-    },
-};
+    // Create an instance of SpaceUI
+    const spaceUIClient = new SpaceUI({
+        account: 'example-account',
+        signer: 'example-signer',
+        pgpPrivateKey: 'example-pgpPrivateKey',
+        env: 'example-env',
+    });
 
-const App = () => (
-    <ThemeProvider theme="light" customTheme={customTheme}>
-        <div>
-            <SpaceBanner>Welcome to Push Spaces</SpaceBanner>
-        </div>
-    </ThemeProvider>
-);
-
-export default App;
+    ReactDOM.render(
+        <SpacesUIProvider spaceClient={spaceUIClient}>
+        </SpacesUIProvider>,
+        document.getElementById('root')
+    );
+ */
