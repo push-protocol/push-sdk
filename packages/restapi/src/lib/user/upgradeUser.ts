@@ -1,9 +1,15 @@
 import { getAccountAddress, getWallet } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import { isValidETHAddress, decryptPGPKey } from '../helpers';
-import { SignerType, IUser, ProgressHookType } from '../types';
-import { update } from './auth.updateUser';
+import {
+  SignerType,
+  IUser,
+  ProgressHookType,
+  ProgressHookTypeFunction,
+} from '../types';
+import { authUpdate } from './auth.updateUser';
 import { get } from './getUser';
+import PROGRESSHOOK from '../progressHook';
 
 export type UpgradeUserProps = {
   env?: ENV;
@@ -46,22 +52,17 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     }
 
     const recommendedPgpEncryptionVersion = Constants.ENCRYPTION_TYPE.PGP_V3;
+    const { version } = JSON.parse(user.encryptedPrivateKey);
 
     if (
-      user.encryptionType === recommendedPgpEncryptionVersion ||
-      user.encryptionType === Constants.ENCRYPTION_TYPE.NFTPGP_V1
+      version === recommendedPgpEncryptionVersion ||
+      version === Constants.ENCRYPTION_TYPE.NFTPGP_V1
     ) {
       return user;
     }
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-UPGRADE-02',
-      progressTitle: 'Decrypting Old Profile',
-      progressInfo:
-        'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
-      level: 'INFO',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-UPGRADE-02'] as ProgressHookType);
     const pgpPrivateKey = await decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
       signer: signer,
@@ -70,7 +71,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
       additionalMeta,
     });
 
-    const upgradedUser = await update({
+    const upgradedUser = await authUpdate({
       pgpPrivateKey, // decrypted pgp priv key
       pgpEncryptionVersion: recommendedPgpEncryptionVersion,
       signer,
@@ -80,21 +81,16 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
       additionalMeta: additionalMeta,
       progressHook: progressHook,
     });
+
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-UPGRADE-05',
-      progressTitle: 'Upgrade Completed, Welcome to Push Chat',
-      progressInfo: '',
-      level: 'SUCCESS',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-UPGRADE-05'] as ProgressHookType);
     return upgradedUser;
   } catch (err) {
-    progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API upgrade User() -: ${err}`,
-      level: 'ERROR',
-    });
-    throw Error(`[Push SDK] - API  - Error - API upgrade User() -: ${err}`);
+    // Report Progress
+    const errorProgressHook = PROGRESSHOOK[
+      'PUSH-ERROR-00'
+    ] as ProgressHookTypeFunction;
+    progressHook?.(errorProgressHook(upgrade.name, err));
+    throw Error(`[Push SDK] - API - Error - API ${upgrade.name} -: ${err}`);
   }
 };

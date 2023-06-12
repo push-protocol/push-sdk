@@ -10,12 +10,14 @@ import {
   preparePGPPublicKey,
   walletToPCAIP10,
 } from '../helpers';
+import PROGRESSHOOK from '../progressHook';
 import {
   SignerType,
   IUser,
   ProgressHookType,
   encryptedPrivateKeyType,
   encryptedPrivateKeyTypeV2,
+  ProgressHookTypeFunction,
 } from '../types';
 import { get } from './getUser';
 
@@ -45,7 +47,7 @@ export type AuthUpdateProps = {
 /**
  * Updation of encryption keys of a Push Profile to a specific version
  */
-export const update = async (options: AuthUpdateProps): Promise<IUser> => {
+export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
   const {
     pgpPrivateKey,
     pgpEncryptionVersion,
@@ -79,19 +81,12 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
 
     // Report Progress
     updatingCreds
-      ? progressHook?.({
-          progressId: 'PUSH-AUTH-UPDATE-05',
-          progressTitle: 'Generating New Profile Signature',
-          progressInfo: `Trying to Update Push Profile creds. Please sign the message to continue.`,
-          level: 'INFO',
-        })
-      : progressHook?.({
-          progressId: 'PUSH-AUTH-UPDATE-01',
-          progressTitle: 'Generating New Profile Signature',
-          progressInfo: `Trying to Update Push Chat Keys to ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Please sign the message to continue.`,
-          level: 'INFO',
-        });
-
+      ? progressHook?.(PROGRESSHOOK['PUSH-AUTH-UPDATE-05'] as ProgressHookType)
+      : progressHook?.(
+          (PROGRESSHOOK['PUSH-AUTH-UPDATE-01'] as ProgressHookTypeFunction)(
+            ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]
+          )
+        );
     const signedPublicKey = await preparePGPPublicKey(
       pgpEncryptionVersion,
       pgpPublicKey,
@@ -100,26 +95,18 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
 
     // Report Progress
     updatingCreds
-      ? progressHook?.({
-          progressId: 'PUSH-AUTH-UPDATE-06',
-          progressTitle: 'Generating New Profile Signature',
-          progressInfo: `Encrypting Push Chat Keys with new creds. Please sign the message to continue.`,
-          level: 'INFO',
-        })
-      : progressHook?.({
-          progressId: 'PUSH-AUTH-UPDATE-02',
-          progressTitle: 'Generating New Encrypted Profile',
-          progressInfo: `Encrypting Push Chat Keys with ${ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]} version. Please sign the message to continue.`,
-          level: 'INFO',
-        });
-
+      ? progressHook?.(PROGRESSHOOK['PUSH-AUTH-UPDATE-06'] as ProgressHookType)
+      : progressHook?.(
+          (PROGRESSHOOK['PUSH-AUTH-UPDATE-02'] as ProgressHookTypeFunction)(
+            ENCRYPTION_TYPE_VERSION[pgpEncryptionVersion]
+          )
+        );
     const encryptedPgpPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
       pgpEncryptionVersion,
       pgpPrivateKey,
       wallet,
       additionalMeta
     );
-
     if (pgpEncryptionVersion === ENCRYPTION_TYPE.NFTPGP_V1) {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         ENCRYPTION_TYPE.PGP_V3,
@@ -130,47 +117,26 @@ export const update = async (options: AuthUpdateProps): Promise<IUser> => {
       encryptedPgpPrivateKey.encryptedPassword = encryptedPassword;
     }
 
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-AUTH-UPDATE-03'] as ProgressHookType);
     const body = {
       user: user.did,
       wallet,
-      name: user.name ? user.name : '',
-      encryptedPassword: null,
-      nftOwner:
-        pgpEncryptionVersion === ENCRYPTION_TYPE.NFTPGP_V1
-          ? walletToPCAIP10((await signer?.getAddress()) as string)
-          : null, // check for nft,
       publicKey: signedPublicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPgpPrivateKey),
-      encryptionType: pgpEncryptionVersion,
       env,
     };
-
-    // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-AUTH-UPDATE-03',
-      progressTitle: 'Syncing Updated Profile',
-      progressInfo:
-        'Please sign the message to continue. Steady lads, chat is almost ready!',
-      level: 'INFO',
-    });
-
     const updatedUser = await authUpdateUserService(body);
 
     // Report Progress
-    progressHook?.({
-      progressId: 'PUSH-AUTH-UPDATE-04',
-      progressTitle: 'Update Completed, Welcome to Push Chat',
-      progressInfo: '',
-      level: 'SUCCESS',
-    });
+    progressHook?.(PROGRESSHOOK['PUSH-AUTH-UPDATE-04'] as ProgressHookType);
     return updatedUser;
   } catch (err) {
-    progressHook?.({
-      progressId: 'PUSH-ERROR-00',
-      progressTitle: 'Non Specific Error',
-      progressInfo: `[Push SDK] - API  - Error - API auth.update User() -: ${err}`,
-      level: 'ERROR',
-    });
-    throw Error(`[Push SDK] - API  - Error - API auth.update User() -: ${err}`);
+    // Report Progress
+    const errorProgressHook = PROGRESSHOOK[
+      'PUSH-ERROR-00'
+    ] as ProgressHookTypeFunction;
+    progressHook?.(errorProgressHook(authUpdate.name, err));
+    throw Error(`[Push SDK] - API - Error - API ${authUpdate.name} -: ${err}`);
   }
 };

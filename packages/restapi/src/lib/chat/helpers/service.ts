@@ -14,18 +14,13 @@ import {
   walletType,
 } from '../../types';
 import { getEip191Signature } from './crypto';
+import { populateDeprecatedUser } from '../../utils/populateIUser';
 
 type CreateUserOptionsType = {
   user: string;
   wallet?: walletType;
-  name?: string;
-  nftOwner?: string | null;
-  encryptedPassword?: string | null;
   publicKey?: string;
   encryptedPrivateKey?: string;
-  encryptionType?: string;
-  signature?: string;
-  sigType?: string;
   env?: ENV;
 };
 
@@ -34,16 +29,13 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     wallet,
     publicKey = '',
     encryptedPrivateKey = '',
-    encryptionType = '',
     env = Constants.ENV.PROD,
-    encryptedPassword = null,
-    nftOwner = null,
   } = options || {};
   let { user } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/`;
+  const requestUrl = `${API_BASE_URL}/v2/users/`;
 
   if (isValidCAIP10NFTAddress(user)) {
     const epoch = Math.floor(Date.now() / 1000);
@@ -56,33 +48,14 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
-
-    // DEPRECATED in eip191v2
-
-    // encryptionType,
-    // name: '',
-    // encryptedPassword: encryptedPassword,
-    // nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);
 
   const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
 
-  // NOTE - To be removed after backend route changes
-  const updatedData = {
-    caip10: walletToPCAIP10(user),
-    did: walletToPCAIP10(user),
-    publicKey,
-    encryptedPrivateKey,
-    encryptionType,
-    name: '',
-    encryptedPassword: encryptedPassword,
-    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
-  };
-
   const body = {
-    ...updatedData,
+    ...data,
     ...signatureObj,
   };
 
@@ -91,15 +64,13 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
-          response.data.encryptionType,
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did,
-          response.data.nftOwner
+          response.data.did
         );
-      return response.data;
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
       throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
@@ -110,65 +81,39 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     wallet,
     publicKey = '',
     encryptedPrivateKey = '',
-    encryptionType = '',
-    name = '',
-    encryptedPassword = null,
-    nftOwner = null,
     env = Constants.ENV.PROD,
   } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
 
-  const requestUrl = `${API_BASE_URL}/v1/users/${walletToPCAIP10(user)}/auth`;
+  const requestUrl = `${API_BASE_URL}/v2/users/${walletToPCAIP10(user)}/auth`;
 
   const data = {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
-
-    // DEPRECATED in eip191v2
-
-    // encryptionType,
-    // name,
-    // encryptedPassword,
-    // nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
   };
 
   const hash = generateHash(data);
 
   const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
 
-  // NOTE - To be removed after backend route changes
-  const updatedData = {
-    caip10: walletToPCAIP10(user),
-    publicKey,
-    encryptedPrivateKey,
-    encryptionType,
-    name,
-    encryptedPassword,
-    nftOwner: nftOwner ? nftOwner.toLowerCase() : nftOwner,
-  };
-
-  const body = {
-    ...updatedData,
-    ...signatureObj,
-  };
+  // Exclude the "did" property from the "body" object
+  const { did, ...body } = { ...data, ...signatureObj };
 
   return axios
     .put(requestUrl, body)
     .then((response) => {
       if (response.data)
         response.data.publicKey = verifyPGPPublicKey(
-          response.data.encryptionType,
+          response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did,
-          response.data.nftOwner
+          response.data.did
         );
-      return response.data;
+      return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
       throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
