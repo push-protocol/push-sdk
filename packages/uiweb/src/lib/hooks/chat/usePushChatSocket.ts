@@ -125,7 +125,7 @@ const usePushChatSocket = (): PushChatSocket => {
               lastThreadHash: chats.get(chatId)?.lastThreadHash ?? msg.link,
             });
           }
-          if (selectedChatId === chatId && Object.keys(newOne || {}).length) {
+          if (selectedChatId === chatId) {
             setData({ chatId: chatId, value: newOne });
           }
         }

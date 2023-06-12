@@ -57,11 +57,13 @@ export const MessageBoxHeader = () => {
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatPropsContext);
+  console.log(searchedChats)
   const selectedChat =
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
-    searchedChats[selectedChatId];
-
+    (searchedChats?searchedChats[selectedChatId]:null);
+console.log(chatsFeed)
+console.log(requestsFeed)
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -73,9 +75,13 @@ export const MessageBoxHeader = () => {
     if (activeSubTab) {
       setActiveSubTab(PUSH_SUB_TABS[activeSubTab as PushSubTabs]);
       setSelectedChatId(null);
+      
+
       setSearchedChats(null);
     } else {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
+      
+
       setSearchedChats(null);
       setSelectedChatId(null);
     }
@@ -123,6 +129,8 @@ export const SubTabHeader = () => {
          cursor="pointer"
         onClick={() => {
           setActiveTab(PUSH_TABS.CHATS);
+          
+
           setSearchedChats(null);
           setSelectedChatId(null);
         }}
@@ -181,6 +189,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
             cursor={!modalOpen ? 'default' : 'pointer'}
             onClick={() => {
               setActiveTab(PUSH_TABS.CHATS);
+              
+
               setSearchedChats(null);
               setSelectedChatId(null);
             }}

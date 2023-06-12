@@ -45,6 +45,8 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
       cursor="pointer"
       onClick={() => {
         setActiveTab(tabValue);
+        
+
         setSearchedChats(null);
         setSelectedChatId(null);
       }}
@@ -94,6 +96,8 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
       onClick={() => {
         setActiveSubTab(tabValue);
         setSelectedChatId(null);
+        
+
         setSearchedChats(null);
       }}
     >

@@ -312,6 +312,8 @@ export const MessageBox = () => {
           setChatFeed(selectedChatId, selectedRequest);
           setActiveTab(PUSH_TABS.CHATS);
           setSelectedChatId(null);
+          
+
           setSearchedChats(null);
           setRequestsFeed(updatedRequestsfeed);
         }

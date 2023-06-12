@@ -34,7 +34,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { selectedChatId, chatsFeed, setSearchedChats, newChat, setNewChat } =
+  const { selectedChatId, chatsFeed, setSearchedChats, newChat,requestsFeed, setNewChat } =
     useContext<any>(ChatMainStateContext);
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
@@ -55,6 +55,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         messageType: type as any,
       });
       scrollToBottom();
+      
+      if(chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
       setSearchedChats(null);
       if (newChat) setNewChat(false);
       if (!chatsFeed[selectedChatId]) fetchRequests({ page, requestLimit });

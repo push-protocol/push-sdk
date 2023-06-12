@@ -63,10 +63,10 @@ const TooltipContent = styled.div`
   border-radius: 4px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px;
+  padding: 7px;
   color: #fff;
   background: #000;
-  font-size: 14px;
+  font-size: 13px;
   font-family: sans-serif;
   line-height: 1;
   z-index: 100;

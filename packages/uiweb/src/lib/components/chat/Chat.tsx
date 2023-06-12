@@ -123,10 +123,13 @@ export const Chat = () => {
               setSearchedChats({ [defaultFeed.did]: defaultFeed });
             }
           } else {
+            
             setSearchedChats(null);
           }
         }
       } else {
+        
+
         setSearchedChats(null);
       }
     })();

@@ -70,6 +70,8 @@ export const Search: React.FC<SearchPropType> = ({ chatsFeed }) => {
 
   const onSearchReset = () => {
     setSearchedText('');
+    
+
     setSearchedChats(null);
   };
 
