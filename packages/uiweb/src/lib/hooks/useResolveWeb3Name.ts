@@ -1,5 +1,5 @@
 // React + Web3 Essentials
-import { Env } from '@pushprotocol/restapi';
+import type { Env } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { CoreContractChainId, ENV, InfuraAPIKey } from '../config';

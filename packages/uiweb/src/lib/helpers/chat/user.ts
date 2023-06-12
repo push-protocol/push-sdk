@@ -1,4 +1,4 @@
-import { IUser } from "@pushprotocol/restapi";
+import type { IUser } from "@pushprotocol/restapi";
 import { ProfilePicture } from "../../config";
 
 export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {

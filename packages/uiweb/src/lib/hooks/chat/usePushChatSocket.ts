@@ -3,7 +3,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { ChatMainStateContextType } from '../../context/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../context/chat/chatMainStateContext';
 import {
   checkIfIntent,
   getData,

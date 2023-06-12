@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Web3Provider } from '@ethersproject/providers';
+import type { Web3Provider } from '@ethersproject/providers';
 
 export const walletToPCAIP10 = (account: string): string => {
   if (account.includes('eip155:')) {

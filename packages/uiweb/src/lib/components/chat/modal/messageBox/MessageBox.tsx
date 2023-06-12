@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
 import useFetchHistoryMessages from '../../../../hooks/chat/useFetchHistoryMessages';
-import { IMessageIPFS } from '@pushprotocol/restapi';
+import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { Spinner } from '../../../reusables/Spinner';
 import moment from 'moment';
 import {
@@ -14,7 +14,8 @@ import {
 import { pCAIP10ToWallet } from '../../../../helpers';
 import { CheckCircleIcon } from '../../../../icons/CheckCircle';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
-import { FileMessageContent, PUSH_TABS } from '../../../../types';
+import type { FileMessageContent} from '../../../../types';
+import { PUSH_TABS } from '../../../../types';
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
 
@@ -260,8 +261,8 @@ export const MessageBox = () => {
     if (
       selectedChatId &&
       selectedMessages &&
-      selectedMessages?.messages.length &&
-      selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
+      selectedMessages?.messages.length 
+      // selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
     ) {
       scrollToBottom(null);
     }

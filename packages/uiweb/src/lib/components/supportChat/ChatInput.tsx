@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useContext, useRef, useState } from 'react';
+import type { ChangeEvent} from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { SendIconSvg } from '../../icons/SendIconSvg';
 import SmileyIcon from '../../icons/smiley.svg';
 import AttachmentIcon from '../../icons/attachment.svg';

@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { ChatList } from './ChatList';
 import { Search } from './Search';
-import {
+import type {
   PushSubTabs,
-  PushTabs,
+  PushTabs} from '../../../../types';
+import {
   PUSH_SUB_TABS,
   PUSH_TABS,
 } from '../../../../types';
@@ -13,7 +14,7 @@ import useFetchChats from '../../../../hooks/chat/useFetchChats';
 import { Spinner } from '../../../reusables/Spinner';
 import { Section, Span, Image } from '../../../reusables/sharedStyling';
 import { ChatsFeedList } from './ChatsFeedList';
-import { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
 import { AngleArrowIcon } from '../../../../icons/AngleArrow';
 import { device } from '../../../../config';
 import { shortenNumber } from '../../../../helpers';

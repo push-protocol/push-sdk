@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
-import { IMessageIPFS } from '../../types';
+import type { IMessageIPFS } from '../../types';
 
 type ChatsPropType = {
   msg: IMessageIPFS;

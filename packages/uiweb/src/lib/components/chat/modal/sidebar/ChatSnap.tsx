@@ -1,6 +1,11 @@
-import { IFeeds } from '@pushprotocol/restapi';
+import type { IFeeds } from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
-import { checkIfUnread, dateToFromNowDaily, setData, shortenText } from '../../../../helpers';
+import {
+  checkIfUnread,
+  dateToFromNowDaily,
+  setData,
+  shortenText,
+} from '../../../../helpers';
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Section, Span, Image } from '../../../reusables/sharedStyling';
@@ -58,10 +63,11 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
     : null;
   const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
 
-  const handleOnClick = () =>{
-    setSelectedChatId(id)
-    setData({chatId:id,value:chat})
-  }
+  const handleOnClick = () => {
+    setSelectedChatId(id);
+    setData({ chatId: id, value: chat });
+  };
+
   return (
     <Container
       justifyContent="space-between"
@@ -78,7 +84,9 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
         />
         <Section flexDirection="column" gap="8px" alignItems="start">
           <NameSpan fontWeight="700" fontSize="16px" color="#000">
-            {web3Name ?? shortenText(chat?.did?.split(':')[1],20)}
+          {(chat?.name)?shortenText(chat?.name, 30) :
+         ( web3Name ?? shortenText(chat?.did?.split(':')[1], 20))}
+
           </NameSpan>
           <Message
             messageContent={chat?.msg?.messageContent}
@@ -86,15 +94,22 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
           />
         </Section>
       </Section>
-      <Section flexDirection="column" alignItems="end" gap="12px" justifyContent='flex-start'>
+      <Section
+        flexDirection="column"
+        alignItems="end"
+        gap="12px"
+        justifyContent="flex-start"
+      >
         <Span fontWeight="400" fontSize="12px" color="#62626A">
           {chat?.msg?.timestamp
             ? dateToFromNowDaily(chat?.msg?.timestamp as number)
             : ''}
         </Span>
-      {checkIfUnread(id,chat) &&  <UnreadChats
-        //  numberOfUnreadMessages="3" 
-         />}
+        {checkIfUnread(id, chat) && (
+          <UnreadChats
+          //  numberOfUnreadMessages="3"
+          />
+        )}
       </Section>
     </Container>
   );

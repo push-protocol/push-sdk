@@ -1,11 +1,11 @@
 import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
-import { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
 import {
   getDefaultFeedObject,
   getNewChatUser,
   getObjectsWithMatchingKeys,
 } from '../../../../helpers';
-import { ChatFeedsType } from '../../../../types';
+import type { ChatFeedsType } from '../../../../types';
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import { SearchIcon } from '../../../../icons/Search';
@@ -59,6 +59,9 @@ export const Search: React.FC<SearchPropType> = ({ chatsFeed }) => {
     const getData = setTimeout(() => {
       if (searchedText) {
         handleSearch();
+      }
+      else{
+        onSearchReset();
       }
       setLoading(false);
     }, 2000);

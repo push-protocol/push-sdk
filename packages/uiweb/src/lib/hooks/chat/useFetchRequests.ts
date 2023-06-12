@@ -2,7 +2,8 @@
 import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatFeedsType, Constants } from '../..';
+import type { ChatFeedsType} from '../..';
+import { Constants } from '../..';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 
 

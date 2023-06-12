@@ -1,7 +1,9 @@
 import * as PushAPI from '@pushprotocol/restapi';
-import { Constants, ENV } from '../../config';
-import { AccountEnvOptionsType, ChatFeedsType, IMessageIPFS } from '../../types';
-import { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
+import type { ENV } from '../../config';
+import { Constants } from '../../config';
+import type { AccountEnvOptionsType, IMessageIPFS } from '../../types';
+import { ChatFeedsType } from '../../types';
+import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../address';
 import { getData } from './localStorage';
 
@@ -145,6 +147,7 @@ export const getDefaultFeedObject = ({user}:{user:IUser}):IFeeds => {
     did: user.did,
     threadhash: null,
     profilePicture: user.profilePicture,
+    name: null,
     about: user.about,
     intent: null,
     intentSentBy: null,
@@ -162,7 +165,6 @@ type CheckIfIntentType = {
  account:string,
 }
 export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
-
   if(chat && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
   {
     if( chat.intent && (chat.intent.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))

@@ -5,9 +5,10 @@ import { Constants } from '../../config';
 import {ChatMainStateContextProvider} from '../../context';
 
 import { Chat } from './Chat';
-import { Env } from '@pushprotocol/restapi';
+import type { Env } from '@pushprotocol/restapi';
 import { pCAIP10ToWallet,  } from '../../helpers';
-import { PushTabs, PUSH_TABS } from '../../types';
+import type { PushTabs} from '../../types';
+import { PUSH_TABS } from '../../types';
 
 export type ChatProps = {
   account: string;

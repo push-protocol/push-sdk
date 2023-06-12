@@ -1,4 +1,5 @@
-import { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
+import type { IFeeds} from '@pushprotocol/restapi';
+import { IMessageIPFS } from '@pushprotocol/restapi';
 import { ChatFeedsType, LocalStorageKeys } from '../../types';
 
 

@@ -7,9 +7,10 @@ import {
   SupportChatMainStateContext,
   SupportChatPropsContext,
 } from '../../context';
-import { IMessageIPFS, ITheme, SignerType } from '../../types';
+import type { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
-import { Constants, ENV, lightTheme } from '../../config';
+import type { ENV} from '../../config';
+import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
 

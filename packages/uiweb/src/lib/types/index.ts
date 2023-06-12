@@ -1,7 +1,8 @@
-import React, { ReactElement } from 'react';
-import { ENV } from '../config';
-import { ethers } from 'ethers';
-import { IFeeds } from '@pushprotocol/restapi';
+import type { ReactElement } from 'react';
+import React from 'react';
+import type { ENV } from '../config';
+import type { ethers } from 'ethers';
+import type { IFeeds } from '@pushprotocol/restapi';
 
 export interface IMessageIPFS {
   fromCAIP10: string;

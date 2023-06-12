@@ -4,7 +4,8 @@ import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { getData, setData } from '../../helpers/chat/localStorage';
-import { ChatFeedsType, LOCAL_STORAGE_KEYS } from '../../types';
+import type { ChatFeedsType} from '../../types';
+import { LOCAL_STORAGE_KEYS } from '../../types';
 
 interface fetchChats {
   page: number;

@@ -1,6 +1,7 @@
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { Env, IMessageIPFS } from '@pushprotocol/restapi';
+import type { IMessageIPFS } from '@pushprotocol/restapi';
+import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';

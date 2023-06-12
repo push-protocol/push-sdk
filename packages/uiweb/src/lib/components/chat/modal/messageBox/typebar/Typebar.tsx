@@ -1,4 +1,5 @@
-import React, { useState, useContext, useRef, ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 import { Div, Image, Section } from '../../../../reusables/sharedStyling';
 import { EmojiIcon } from '../../../../../icons/Emoji';
@@ -9,11 +10,12 @@ import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
 import { ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import type { EmojiClickData } from 'emoji-picker-react';
+import EmojiPicker from 'emoji-picker-react';
 import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
-import { FileMessageContent } from '../../../../../types';
+import type { FileMessageContent } from '../../../../../types';
 
 type GIFType = {
   url: string;

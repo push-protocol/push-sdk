@@ -15,7 +15,7 @@ import {
   walletToPCAIP10,
   pCAIP10ToWallet
 } from '../../helpers';
-import { IMessageIPFS } from '../../types';
+import type { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
 import { Spinner } from './spinner/Spinner';
 import { Toaster } from './toaster/Toaster';

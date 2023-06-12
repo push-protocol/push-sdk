@@ -157,6 +157,7 @@ export interface IFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
+  name: string | null;
   publicKey: string | null;
   about: string | null;
   threadhash: string | null;

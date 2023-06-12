@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import { ChatFeedsType } from '../../types';
+import type { ChatFeedsType } from '../../types';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';

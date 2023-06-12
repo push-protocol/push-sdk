@@ -1,4 +1,4 @@
-import { Env, IUser } from '@pushprotocol/restapi';
+import type { Env, IUser } from '@pushprotocol/restapi';
 import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import {
@@ -6,8 +6,8 @@ import {
   InfuraAPIKey,
   ProfilePicture,
 } from '../../config';
-import { GetProfileParams } from '../../hooks';
-import { ChatFeedsType, Web3NameListType } from '../../types';
+import type { GetProfileParams } from '../../hooks';
+import type { ChatFeedsType, Web3NameListType } from '../../types';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getUdResolver } from '../udResolver';
 import { displayDefaultUser } from './user';
@@ -18,11 +18,17 @@ export const getObjectsWithMatchingKeys = (
   web3NameList: Web3NameListType
 ): ChatFeedsType => {
   const matchedObjects: Record<string, any> = {};
+  
   if (substring) {
     Object.keys(obj).forEach((key) => {
       if (key.includes(substring)) {
         matchedObjects[key] = obj[key];
-      } else {
+      } else if(obj[key].name){
+        if ((obj[key].name as string).includes(substring)) {
+          matchedObjects[key] = obj[key];
+        }
+      } 
+      else {
         Object.keys(web3NameList).forEach((key) => {
           if (web3NameList[key].includes(substring)) {
             matchedObjects[key] = obj[walletToPCAIP10(key)];

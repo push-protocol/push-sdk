@@ -1,7 +1,7 @@
 import Resolution from '@unstoppabledomains/resolution';
 import { ethers } from 'ethers';
 import { allowedNetworks, InfuraAPIKey, NETWORK_DETAILS } from '../config';
-import { Env } from '@pushprotocol/restapi';
+import type { Env } from '@pushprotocol/restapi';
 
 export const getUdResolver = (env:Env): Resolution => {
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;

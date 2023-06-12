@@ -6,11 +6,13 @@ import { BackIcon } from '../../icons/Back';
 import { MinimizeIcon } from '../../icons/Minimize';
 import { Section, Span, Image, Div } from '../reusables/sharedStyling';
 import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import { PushSubTabs, PushTabs, PUSH_SUB_TABS, PUSH_TABS } from '../../types';
+import type { PushSubTabs, PushTabs} from '../../types';
+import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
 import { useResolveWeb3Name } from '../../hooks';
 import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
+import {Tooltip} from '../reusables';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -97,11 +99,13 @@ export const MessageBoxHeader = () => {
           height="24px"
           borderRadius="100%"
         />
-
-        <Span fontWeight="700" fontSize="16px">
+      <Tooltip content={pCAIP10ToWallet(selectedChat?.did)} direction="bottom-right">
+        <Span fontWeight="700" fontSize="16px" cursor='pointer'>
           {' '}
-          {web3Name ?? shortenText(selectedChat?.did?.split(':')[1], 20)}
+          {selectedChat?.name?shortenText(selectedChat?.name, 30) :
+          web3Name ?? shortenText(selectedChat?.did?.split(':')[1], 20)}
         </Span>
+        </Tooltip>
       </Section>
     </Section>
   );
