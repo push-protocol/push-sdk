@@ -146,7 +146,7 @@ export const getDefaultFeedObject = ({user}:{user:IUser}):IFeeds => {
     wallets:  user.wallets,
     did: user.did,
     threadhash: null,
-    profilePicture: user.profilePicture,
+    profilePicture: user?.profile?.picture,
     name: null,
     about: user.about,
     intent: null,
