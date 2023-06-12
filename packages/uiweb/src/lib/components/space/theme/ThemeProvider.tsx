@@ -10,7 +10,7 @@ import { Theme, lightTheme, darkTheme } from './index';
  * @param customTheme optional: custom colors/theme
  * @param children children to be wrapped with ThemeProvider
  */
-export interface ThemeProviderProps {
+export interface IThemeProviderProps {
     theme?: 'light' | 'dark';
     customTheme?: Partial<Theme>; // Optional custom theme
     children: any;
@@ -26,7 +26,7 @@ if (theme === 'light') {
 }
 };
 
-export const ThemeProvider = ({ theme, customTheme, children }: ThemeProviderProps) => {
+export const ThemeProvider = ({ theme, customTheme, children }: IThemeProviderProps) => {
     const selectedTheme = getTheme(theme);
 
     /**

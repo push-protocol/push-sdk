@@ -7,11 +7,11 @@ import { Theme } from "../components/space/theme";
 
 export interface ISpacesUIProviderProps  {
   spaceUI: SpacesUI;
-  customTheme: Theme;
+  theme: Theme;
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({ spaceUI, customTheme, children }: ISpacesUIProviderProps) => {
+export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceBannerData, setSpaceBannerData] = useState(null);
 
@@ -25,7 +25,7 @@ export const SpacesUIProvider = ({ spaceUI, customTheme, children }: ISpacesUIPr
   spaceUI.init();
 
   return (
-    <ThemeProvider customTheme={customTheme}>
+    <ThemeProvider customTheme={theme}>
       <SpaceDataContext.Provider value={value}>
         {children}
       </SpaceDataContext.Provider>
