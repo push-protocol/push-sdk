@@ -7,6 +7,8 @@ import {
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 
+export type Env = (typeof ENV)[keyof typeof ENV];
+
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
   payload_id: number;
@@ -155,6 +157,7 @@ export interface IFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
+  name: string | null;
   publicKey: string | null;
   about: string | null;
   threadhash: string | null;
