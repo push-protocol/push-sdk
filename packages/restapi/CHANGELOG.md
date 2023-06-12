@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.7...restapi-1.3.8) (2023-06-12)
+
+
+### Bug Fixes
+
+* added types for Env and name in Ifeeds ([#452](https://github.com/ethereum-push-notification-service/push-sdk/issues/452)) ([301808e](https://github.com/ethereum-push-notification-service/push-sdk/commit/301808e81fc66df10a0f64b65eb7d13375702e00))
+
+
+
 ## [1.3.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.6...restapi-1.3.7) (2023-06-12)
 
 
