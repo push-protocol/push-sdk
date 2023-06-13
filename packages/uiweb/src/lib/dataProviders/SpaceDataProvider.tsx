@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { SpacesUI } from "../components";
 import { SpaceDataContext } from "../context";
 import { ISpaceDataContextValues } from "../context/spacesContext";
 
-export interface ISpacesUIProviderProps {
-  spaceUI: SpacesUI;
+export interface ISpaceDataProviderProps {
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({ spaceUI, children }: ISpacesUIProviderProps) => {
+export const SpaceDataProvider = ({ children }: ISpaceDataProviderProps) => {
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceBannerData, setSpaceBannerData] = useState(null);
 
@@ -18,8 +16,6 @@ export const SpacesUIProvider = ({ spaceUI, children }: ISpacesUIProviderProps) 
     spaceBannerData,
     setSpaceBannerData,
   };
-
-  spaceUI.init();
 
   return (
     <SpaceDataContext.Provider value={value}>{children}</SpaceDataContext.Provider>
