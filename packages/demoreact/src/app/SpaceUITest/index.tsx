@@ -3,6 +3,7 @@ import { useSpaceComponents } from "./useSpaceComponents";
 
 export * from "./SpaceUITest";
 export * from "./SpaceWidget";
+export * from "./SpaceBanner";
 
 export interface ISpacesComponentProps {
   children: React.ReactNode;

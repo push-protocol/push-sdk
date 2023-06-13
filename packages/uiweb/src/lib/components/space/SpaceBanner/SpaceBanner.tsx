@@ -1,41 +1,54 @@
 import React from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 
 import live from './assets/live.svg';
 import scheduled from './assets/CalendarBlank.svg';
 
-// import { useSpaceData } from '../../../hooks';
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { getDateAndTime, getStatus } from './utils';
 
+import * as PushAPI from '@pushprotocol/restapi';
+
 export interface ISpaceBannerProps {
-  // Add props specific to the SpaceBanner component
   spaceId: string;
   orientation?: 'maximized' | 'minimized';
+}
+
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
+  theme?: ISpacesTheme;
+  orientation?: string;
+  status?: string;
 }
 
 export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   spaceId,
   orientation,
 }) => {
-  // const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
-  // Use spaceBannerData and setSpaceBannerData in your component
-
+  const theme = React.useContext(ThemeContext);
   const [spaceBannerData, setSpaceBannerData] = React.useState<any>();
 
   React.useEffect(() => {
     (async () => {
-      await axios
-        .get(`https://backend.epns.io/apis/v1/chat/groups/${spaceId}/`)
+      await PushAPI.space.get({
+        spaceId: spaceId,
+      })
         .then((response) => {
-          setSpaceBannerData(response.data);
+          setSpaceBannerData(response);
+        })
+        .catch((error) => {
+          console.log(error);
         });
     })();
   }, [spaceId]);
+
   return (
-    <div>
-      <Container orientation={orientation}>
+      <Container orientation={orientation} status={getStatus(spaceBannerData?.scheduleAt)} theme={theme}>
         <ProfileContainer orientation={orientation}>
           <PfpContainer>
             <Pfp src={spaceBannerData?.members[0].image} alt="pfp" />
@@ -65,8 +78,8 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         )}
         <Title orientation={orientation}>
           {orientation === 'minimized'
-            ? `${spaceBannerData?.groupName.slice(0, 20)}...`
-            : spaceBannerData?.groupName}
+            ? `${spaceBannerData?.spaceName.slice(0, 20)}...`
+            : spaceBannerData?.spaceName}
         </Title>
         <Status>
           <Time orientation={orientation}>
@@ -117,25 +130,18 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
             <ParticipantsText>
               {orientation === 'maximized'
                 ? spaceBannerData &&
-                  `+${
-                    ((spaceBannerData?.pendingMembers as []).length as number) -
-                    3
-                  }`
+                  `+${((spaceBannerData?.pendingMembers as []).length as number) -3}`
                 : spaceBannerData &&
-                  `+${
-                    ((spaceBannerData?.pendingMembers as []).length as number) -
-                    2
-                  }`}
+                  `+${((spaceBannerData?.pendingMembers as []).length as number) - 2}`}
             </ParticipantsText>
           </Participants>
         </Status>
       </Container>
-    </div>
   );
 };
 
 // Styling
-const Container = styled.div<{ status?: string; orientation?: string }>`
+const Container = styled.div<IThemeProps>`
   display: flex;
   flex-direction: ${(props) =>
     props.orientation === 'maximized' ? 'column' : 'row'};
@@ -150,17 +156,12 @@ const Container = styled.div<{ status?: string; orientation?: string }>`
     props.orientation === 'maximized' ? '37vw' : 'fit-content'};
   height: ${(props) => (props.orientation === 'maximized' ? 'auto' : '63px')};
   background: ${(props) =>
-    props.status === 'live'
-      ? `linear-gradient(
-    87.17deg,
-    #ea4ee4 0%,
-    #d23cdf 0.01%,
-    #8b5cf6 100%
-  )`
-      : '#EDE9FE'};
+    props.status === 'Live'
+      ? props.theme.bannerBackground1
+      : props.theme.bannerBackground2};
   border-radius: ${(props) =>
     props.orientation === 'maximized' ? '17px' : '24px'};
-  color: ${(props) => (props.status === 'live' ? '#f5f5f5' : '#1E1E1E')};
+  color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};
 
   @media(max-width: 425px) {
     min-width: ${(props) => (props.orientation === 'maximized' ? '100%' : '0')};
@@ -229,8 +230,7 @@ const Title = styled.div<{ orientation?: string }>`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  font-family: ${(props) =>
-    props.orientation === 'maximized' ? 'Strawford' : 'Strawford'};
+  font-family: Strawford;
   font-weight: ${(props) =>
     props.orientation === 'maximized' ? '700' : '500'};
   font-size: ${(props) =>

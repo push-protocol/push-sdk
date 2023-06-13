@@ -29,12 +29,12 @@ export class SpacesUI {
     this.env = props.env;
   }
 
-  SpaceBanner: React.FC<ISpaceBannerProps> = () => {
+  SpaceBanner: React.FC<ISpaceBannerProps> = (options : ISpaceBannerProps) => {
     const { spaceBannerData, setSpaceBannerData } = useSpaceData();
 
     // Use spaceBannerData and setSpaceBannerData in your component
 
-    return <SpaceBanner />;
+    return <SpaceBanner {...options} />;
   }
 
   SpaceWidget: React.FC<ISpaceWidgetProps> = () => {
