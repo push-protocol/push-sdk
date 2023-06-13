@@ -11,8 +11,12 @@ export interface ISpacesComponentProps {
 export const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
   const { spaceUI } = useSpaceComponents();
 
+  const customtheme = {
+    primary: '#00ffff',
+  }
+
   return (
-    <SpacesUIProvider spaceUI={spaceUI}>
+    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
       {children}
     </SpacesUIProvider>
   )
