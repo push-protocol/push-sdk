@@ -42,12 +42,12 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           </PfpContainer>
           <HostContainer>
             <HostName>
-              {spaceBannerData?.members[0].wallet}
+              {spaceBannerData?.members[0].wallet.slice(7)}
               <Host>Host</Host>
             </HostName>
             <HostHandle>
               {/* Fetch the handle from Lenster */}@
-              {spaceBannerData?.members[0].wallet}
+              {spaceBannerData?.members[0].wallet.slice(7)}
             </HostHandle>
           </HostContainer>
         </ProfileContainer>
@@ -65,7 +65,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         )}
         <Title orientation={orientation}>
           {orientation === 'minimized'
-            ? `${spaceBannerData?.groupName}`
+            ? `${spaceBannerData?.groupName.slice(0, 20)}...`
             : spaceBannerData?.groupName}
         </Title>
         <Status>
@@ -83,7 +83,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
             <TimeText>
               {getStatus(spaceBannerData?.scheduleAt) === 'Live'
                 ? 'Live'
-                :getStatus(spaceBannerData?.scheduleAt) === 'Scheduled'
+                : getStatus(spaceBannerData?.scheduleAt) === 'Scheduled'
                 ? `${getDateAndTime(spaceBannerData?.scheduleAt)}`
                 : 'Ended'}
             </TimeText>
@@ -140,15 +140,15 @@ const Container = styled.div<{ status?: string; orientation?: string }>`
   flex-direction: ${(props) =>
     props.orientation === 'maximized' ? 'column' : 'row'};
   justify-content: ${(props) =>
-    props.orientation === 'maximized' ? 'space-between' : 'flex-start'};
+    props.orientation === 'maximized' ? 'space-between' : 'space-between'};
   align-items: ${(props) =>
     props.orientation === 'maximized' ? 'flex-start' : 'center'};
   padding: ${(props) =>
     props.orientation === 'maximized' ? '16px' : '0 11px'};
-  gap: ${(props) => (props.orientation === 'maximized' ? '12px' : '8px')};
+  gap: ${(props) => (props.orientation === 'maximized' ? '16px' : '8px')};
   width: ${(props) =>
-    props.orientation === 'maximized' ? '709px' : '252.67px.'};
-  height: ${(props) => (props.orientation === 'maximized' ? '200px' : '63px')};
+    props.orientation === 'maximized' ? '37vw' : 'fit-content'};
+  height: ${(props) => (props.orientation === 'maximized' ? 'auto' : '63px')};
   background: ${(props) =>
     props.status === 'live'
       ? `linear-gradient(
@@ -161,6 +161,10 @@ const Container = styled.div<{ status?: string; orientation?: string }>`
   border-radius: ${(props) =>
     props.orientation === 'maximized' ? '17px' : '24px'};
   color: ${(props) => (props.status === 'live' ? '#f5f5f5' : '#1E1E1E')};
+
+  @media(max-width: 425px) {
+    min-width: ${(props) => (props.orientation === 'maximized' ? '100%' : '0')};
+  }
 }`;
 
 const ProfileContainer = styled.div<{ orientation?: string }>`
@@ -171,7 +175,7 @@ const ProfileContainer = styled.div<{ orientation?: string }>`
 }`;
 
 const PfpContainer = styled.div`
-  margin: 5px;
+  margin: 5px 0;
 }`;
 
 const Pfp = styled.img`
@@ -184,8 +188,9 @@ const HostContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   font-family: 'Strawford';
+  padding-left: 8px;
 }`;
 
 const HostName = styled.div`
@@ -216,12 +221,13 @@ const Host = styled.div<{ status?: string }>`
 
 const HostHandle = styled.div<{ status?: string }>`
   color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
+  padding: 0;
 }`;
 
 const Title = styled.div<{ orientation?: string }>`
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   font-family: ${(props) =>
     props.orientation === 'maximized' ? 'Strawford' : 'Strawford'};
@@ -230,8 +236,12 @@ const Title = styled.div<{ orientation?: string }>`
   font-size: ${(props) =>
     props.orientation === 'maximized' ? '20px' : '12px'};
   line-height: 130%;
-  width: auto;
+  width: 90%;
   line-clamp: ${(props) => (props.orientation === 'maximized' ? '3' : '2')};
+
+  @media (max-width: 425px) {
+    width: 95%;
+  }
 }`;
 
 const Status = styled.div`
