@@ -13,7 +13,6 @@ import { ISpacesTheme, lightTheme } from './index';
 export interface IThemeProviderProps {
     theme?: 'light' | 'dark';
     customTheme?: Partial<ISpacesTheme>;
-    fontFamily?: string;
     children: any;
 }
 

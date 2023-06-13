@@ -6,6 +6,14 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface ISpaceWidgetProps {
   // Add props specific to the SpaceWidget component
+  temporary?: string; // just to remove eslint error of empty prop
+}
+
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
   theme?: ISpacesTheme;
 }
 
@@ -22,7 +30,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (props) => {
   )
 }
 
-const Header = styled.div<ISpaceWidgetProps>`
+const Header = styled.div<IThemeProps>`
   background-image: ${(props) => props.theme.bannerBackground1};
   color: ${(props) => props.theme.primary};
 `;

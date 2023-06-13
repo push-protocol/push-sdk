@@ -8,6 +8,7 @@ export interface ISpacesTheme {
     tertiary?: string;
     bannerBackground1?: string;
     bannerBackground2?: string;
+    fontFamily?: string;
 }
 
 export const lightTheme: ISpacesTheme = {
