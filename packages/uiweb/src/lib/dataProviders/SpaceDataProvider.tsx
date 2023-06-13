@@ -2,12 +2,12 @@ import { useState } from "react";
 
 import { SpacesUI } from "../components";
 import { ISpaceDataContextValues, SpaceDataContext } from "../context/spacesContext";
-import { ThemeProvider } from "../components/space/theme/ThemeProvider";
-import { Theme } from "../components/space/theme";
+import { ThemeContext } from "../components/space/theme/ThemeProvider";
+import { ISpacesTheme, lightTheme } from "../components/space/theme";
 
 export interface ISpacesUIProviderProps  {
   spaceUI: SpacesUI;
-  theme: Theme;
+  theme: ISpacesTheme;
   children: React.ReactNode;
 }
 
@@ -22,13 +22,17 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
     setSpaceBannerData,
   };
 
+  const mergedTheme = Object.assign({}, lightTheme, theme);
+
+  console.log(mergedTheme)
+
   spaceUI.init();
 
   return (
-    <ThemeProvider customTheme={theme}>
+    <ThemeContext.Provider value={mergedTheme}>
       <SpaceDataContext.Provider value={value}>
         {children}
       </SpaceDataContext.Provider>
-    </ThemeProvider>
+    </ThemeContext.Provider>
   );
 }
