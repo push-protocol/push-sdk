@@ -37,8 +37,8 @@ export class SpacesUI {
     return <SpaceBanner />;
   }
 
-  SpaceWidget: React.FC<ISpaceWidgetProps> = () => {
-    return <SpaceWidget />;
+  SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
+    return <SpaceWidget {...options} />;
   }
 
   SpaceFeed: React.FC<ISpaceFeedProps> = () => {
