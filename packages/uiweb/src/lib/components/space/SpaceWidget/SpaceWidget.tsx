@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-
-import { ThemeContext } from '../theme/ThemeProvider';
-import { ISpacesTheme } from '../theme';
 import styled from 'styled-components';
+
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface ISpaceWidgetProps {
   // Add props specific to the SpaceWidget component
