@@ -1,9 +1,19 @@
 import React, { createContext } from 'react';
 
+export interface ISpaceBannerData {
+  spaceId: string;
+  apiData: {
+    spaceName: string;
+    members : any;
+    pendingMembers : [];
+    scheduleAt: string;
+  };
+}
+
 export interface ISpaceDataContextValues {
   trendingListData: any;
   setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
-  spaceBannerData: any;
+  spaceBannerData: ISpaceBannerData | null;
   setSpaceBannerData: React.Dispatch<React.SetStateAction<any>>;
 }
 
