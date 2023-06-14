@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { Item } from '../../../config';
 
 export interface ISpaceWidgetProps {
   // Add props specific to the SpaceWidget component
@@ -25,6 +26,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (props) => {
     <div>
       <Header theme={theme}>
         SpaceWidget Component
+        <Item fontSize={'69px'}>vkfvk</Item>
       </Header>
     </div>
   )
