@@ -25,9 +25,20 @@ class ConnectMetaMaskScreen extends ConsumerWidget {
               child: MaterialButton(
                 color: Colors.purple,
                 textColor: Colors.white,
-                child: const Text('Connect Metamask'),
+                child: const Text('Create Account with mnemonics'),
                 onPressed: () {
-                  ref.read(uidProvider.notifier).logIn();
+                  ref.read(uidProvider.notifier).logInWithMnemonics();
+                },
+              ),
+            ),
+            const SizedBox(height: 64),
+            Center(
+              child: MaterialButton(
+                color: Colors.purple,
+                textColor: Colors.white,
+                child: const Text('Log in with  Metamask'),
+                onPressed: () {
+                  ref.read(uidProvider.notifier).logInWithEarthOne();
                 },
               ),
             ),

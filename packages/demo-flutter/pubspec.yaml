@@ -15,7 +15,8 @@ dependencies:
   jwt_decoder: ^2.0.1
 
   push_api_dart:
-    path: /Users/gbogboade/Documents/Projects/push/push-sdk/packages/push-api-dart
+    path: ../push-api-dart
+  ethers: ^0.0.1+3
   
 
 dev_dependencies:

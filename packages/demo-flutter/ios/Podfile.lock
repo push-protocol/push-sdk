@@ -7,11 +7,14 @@ PODS:
     - SimpleKeychain (~> 0.12)
   - Flutter (1.0.0)
   - JWTDecode (2.6.3)
+  - openpgp (0.6.0):
+    - Flutter
   - SimpleKeychain (0.12.5)
 
 DEPENDENCIES:
   - eartho_one (from `.symlinks/plugins/eartho_one/ios`)
   - Flutter (from `Flutter`)
+  - openpgp (from `.symlinks/plugins/openpgp/ios`)
 
 SPEC REPOS:
   trunk:
@@ -24,12 +27,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/eartho_one/ios"
   Flutter:
     :path: Flutter
+  openpgp:
+    :path: ".symlinks/plugins/openpgp/ios"
 
 SPEC CHECKSUMS:
   eartho_one: 4e7d06ffc2a376f40fccc3d63ce5027b3d3d5d4f
   EarthoOne: c32f3ac4a37cc6fbb37bf4cfb8f81368476ca383
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
+  openpgp: 61362dc8cd83df49b18c7609a7e0a24ccfcf9f25
   SimpleKeychain: 8193a9e40967eccac933c1fde82de46c07a5ae26
 
 PODFILE CHECKSUM: 775997f741c536251164e3eacf6e34abf2eb7a17
