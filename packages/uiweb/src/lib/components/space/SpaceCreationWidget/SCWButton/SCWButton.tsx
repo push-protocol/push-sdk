@@ -1,34 +1,112 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import styled from 'styled-components';
 
-export interface ISCWButtonProps {
+import { SCWCreateModal } from '../SCWCreateModal/SCWCreateModal'
+import { SCWScheduleModal } from '../SCWScheduleModal/SCWScheduleModal';
+import { SCWInviteModal } from '../SCWInviteModal/SCWInviteModal';
+
+import { ISpacesTheme } from '../../theme';
+import { ThemeContext } from '../../theme/ThemeProvider';
+
+export interface ISCWButtonProps { // Space Creation Widget Button Interface
     btnText?: string;
     customStyle?: any;
+    theme?: ISpacesTheme;
 }
 
 const defaultProps: ISCWButtonProps = {
     btnText: 'Create your Space',
+    customStyle: {
+        padding: '20px',
+        borderRadius: '12px',
+        border: '0px solid transparent',
+        fontSize: '1rem',
+    },
 }
 
 export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
-    const { btnText } = props;
+    const { btnText, customStyle } = props;
 
-    const customStyle = {
-        padding: '20px',
-        borderRadius: '12px',
-    };
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
+    const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
+
+    const theme = useContext(ThemeContext);
+
+    const showCreateSpace = () => {
+        setIsCreateModalVisible(!isCreateModalVisible);
+        setIsScheduleModalVisible(false);
+    }
+
+    const showScheduleSpace = () => {
+        setIsScheduleModalVisible(!isScheduleModalVisible);
+        setIsCreateModalVisible(false);
+        setIsInviteModalVisible(false);
+    }
+
+    const showInviteSpace = () => {
+        setIsInviteModalVisible(!isInviteModalVisible);
+        setIsScheduleModalVisible(false);
+    }
+
+    const closeCreateModal = () => {
+        setIsCreateModalVisible(false);
+    }
+
+    const closeScheduleModal = () => {
+        setIsScheduleModalVisible(false);
+    }
+
+    const closeInviteModal = () => {
+        setIsInviteModalVisible(false);
+    }
 
     return (
-        <CreateButton customStyle={customStyle}>
-            {btnText}
-        </CreateButton>
+        <div>
+            <CreateButton
+                customStyle={customStyle}
+                theme={theme}
+                onClick={showCreateSpace}
+            >
+                {btnText}
+            </CreateButton>
+
+            {isCreateModalVisible &&
+                <SCWCreateModal
+                    isScheduleVisible={showScheduleSpace}
+                    closeCreateModal={closeCreateModal}
+                />
+            }
+
+            {isScheduleModalVisible &&
+                <SCWScheduleModal
+                    closeScheduleModal={closeScheduleModal}
+                    makeCreateVisible={showCreateSpace}
+                    makeInviteVisible={showInviteSpace}
+                />
+            }
+
+            {isInviteModalVisible &&
+                <SCWInviteModal
+                    closeInviteModal={closeInviteModal}
+                    makeScheduleVisible={showScheduleSpace}
+                />
+            }
+        </div>
     )
 }
 
 /* styling */
 const CreateButton = styled.button<ISCWButtonProps>`
-    padding: ${props => props.customStyle.padding || '1rem'};
-    border-radius: ${props => props.customStyle.borderRadius || '1rem'};
+    padding: ${props => props.customStyle.padding};
+    border-radius: ${props => props.customStyle.borderRadius};
+    border: ${props => props.customStyle.border};
+    font-size: ${props => props.customStyle.fontSize};
+
+    background-image: ${(props) => props.theme.bannerBackground1};
+    color: ${(props) => props.theme.secondary};
+
+    cursor: pointer;
 `;
 
 SCWButton.defaultProps = defaultProps;

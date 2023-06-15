@@ -1,29 +1,29 @@
 import React, { MouseEventHandler } from 'react'
 import styled from 'styled-components'
 
-export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
-    isScheduleVisible?: MouseEventHandler;
-    closeCreateModal?: MouseEventHandler;
+export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
+    closeInviteModal?: MouseEventHandler;
+    makeScheduleVisible?: MouseEventHandler;
 }
-
-export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
-    const { isScheduleVisible, closeCreateModal } = props;
+export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
+    const { closeInviteModal, makeScheduleVisible } = props;
     return (
         <div>
             <ModalOverlay>
                 <ModalParent>
-                    Create Modal
-                    <button
-                        onClick={isScheduleVisible}
-                    >
-                        Schedule Space
-                    </button>
+                    Invite Modal
 
                     <CloseBtn
-                        onClick={closeCreateModal}
+                        onClick={closeInviteModal}
                     >
-                        close create modal
+                        close invite modal
                     </CloseBtn>
+
+                    <BackBtn
+                        onClick={makeScheduleVisible}
+                    >
+                        back button
+                    </BackBtn>
                 </ModalParent>
             </ModalOverlay>
         </div>
@@ -31,16 +31,13 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
 }
 
 /* styling */
-const ModalParent = styled.div<ISCWCModalProps>`
+const ModalParent = styled.div<ISCWIModalProps>`
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 5rem;
-    background-color: red;
-
-    display: flex;
-    flex-direction: column;
+    padding: 6rem;
+    background-color: green;
 `;
 
 const ModalOverlay = styled.div`
@@ -59,5 +56,12 @@ const CloseBtn = styled.button`
     position: absolute;
     top: 0;
     right: 0;
+    margin: 1rem;
+`;
+
+const BackBtn = styled.button`
+    position: absolute;
+    top: 0;
+    left: 0;
     margin: 1rem;
 `;
