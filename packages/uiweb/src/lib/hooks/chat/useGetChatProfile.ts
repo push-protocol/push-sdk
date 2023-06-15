@@ -1,13 +1,13 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext } from 'react';
-import { ChatPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext } from '../../context';
 
 export interface GetProfileParams {
   profileId: string;
 }
 
 const useGetChatProfile = () => {
-  const { env } = useContext<any>(ChatPropsContext);
+  const { env } = useContext<any>(ChatAndNotificationPropsContext);
   const fetchChatProfile = useCallback(
     async ({
       profileId
@@ -23,7 +23,7 @@ const useGetChatProfile = () => {
         return;
       }
     },
-    []
+    [env]
   );
 
   return { fetchChatProfile };

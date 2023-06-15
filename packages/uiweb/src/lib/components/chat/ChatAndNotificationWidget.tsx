@@ -1,16 +1,16 @@
 import React from 'react';
-import { ChatPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext, NotificationMainStateContextProvider } from '../../context';
 import 'font-awesome/css/font-awesome.min.css';
 import { Constants } from '../../config';
 import {ChatMainStateContextProvider} from '../../context';
 
-import { Chat } from './Chat';
+import { ChatAndNotification } from './ChatAndNotification';
 import type { Env } from '@pushprotocol/restapi';
 import { pCAIP10ToWallet,  } from '../../helpers';
 import type { PushTabs} from '../../types';
 import { PUSH_TABS } from '../../types';
 
-export type ChatProps = {
+export type ChatAndNotificationProps = {
   account: string;
   decryptedPgpPvtKey: string; //have to make it optional for new users
   activeTab?:PushTabs,
@@ -19,8 +19,7 @@ export type ChatProps = {
 };
 
 //make changes for users who dont have decryptedPgpPvtKey
-
-export const ChatWidget: React.FC<ChatProps> = ({
+export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   account,
   decryptedPgpPvtKey = null,
   activeTab = PUSH_TABS.CHATS,
@@ -28,7 +27,7 @@ export const ChatWidget: React.FC<ChatProps> = ({
   env = Constants.ENV.PROD,
 }) => {
 
-  const chatPropsData = {
+  const chatAndNotificationPropsData = {
     account:pCAIP10ToWallet(account),
     decryptedPgpPvtKey,
     activeChosenTab:activeTab,
@@ -38,12 +37,13 @@ export const ChatWidget: React.FC<ChatProps> = ({
 
   return (
  
-      <ChatPropsContext.Provider value={chatPropsData}>
+      <ChatAndNotificationPropsContext.Provider value={chatAndNotificationPropsData}>
         <ChatMainStateContextProvider>
-        
-        <Chat/>
+        <NotificationMainStateContextProvider>
+        <ChatAndNotification/>
+        </NotificationMainStateContextProvider>
         </ChatMainStateContextProvider>
-      </ChatPropsContext.Provider>
+      </ChatAndNotificationPropsContext.Provider>
   );
 };
 

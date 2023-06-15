@@ -3,12 +3,21 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import type { ChatFeedsType } from '../../types';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import type { ChatFeedsType, NotificationFeedsType } from '../../types';
+import {
+  ChatMainStateContext,
+  ChatAndNotificationPropsContext,
+  NotificationMainStateContext,
+} from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
 import usePushChatSocket from '../../hooks/chat/usePushChatSocket';
-import { chatLimit, device, requestLimit } from '../../config';
+import {
+  chatLimit,
+  device,
+  notificationLimit,
+  requestLimit,
+} from '../../config';
 import useFetchRequests from '../../hooks/chat/useFetchRequests';
 import useFetchChats from '../../hooks/chat/useFetchChats';
 import {
@@ -17,10 +26,11 @@ import {
   getNewChatUser,
   walletToPCAIP10,
 } from '../../helpers';
+import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
-export const Chat = () => {
+export const ChatAndNotification = () => {
   const {
     setChatsFeed,
     setRequestsFeed,
@@ -30,20 +40,65 @@ export const Chat = () => {
     setNewChat,
     setSearchedChats,
     setChats,
-    connectedProfile,
     setConnectedProfile,
-    selectedChatId,
     requestsFeed,
     chatsFeed,
-    searchedChats,
   } = useContext<any>(ChatMainStateContext);
+  const {
+    inboxNotifsFeed,
+    setInboxNotifsFeed,
+    setSpamNotifsFeed,
+    spamNotifsFeed,
+  } = useContext<any>(NotificationMainStateContext);
   const { decryptedPgpPvtKey, account, env, activeChosenTab, activeChat } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(ChatAndNotificationPropsContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { fetchChatProfile } = useGetChatProfile();
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
+  const { fetchNotification } = useFetchNotification();
   usePushChatSocket();
+
+  //make these helper fucntion
+  //notification
+  const fetchInboxNotificationList = async () => {
+    const feeds: NotificationFeedsType | undefined = await fetchNotification({
+      page: 1,
+      limit: notificationLimit,
+      spam: true,
+    });
+    //change type of notification
+    if (feeds) {
+      const firstFeeds: NotificationFeedsType = { ...feeds };
+      setSpamNotifsFeed(firstFeeds);
+    }
+  };
+
+  const fetchSpamNotificationList = async () => {
+    const feeds: NotificationFeedsType | undefined = await fetchNotification({
+      page: 1,
+      limit: notificationLimit,
+    });
+    //change type of notification
+    if (feeds) {
+      const firstFeeds: NotificationFeedsType = { ...feeds };
+      setInboxNotifsFeed(firstFeeds);
+    }
+  };
+
+  useEffect(() => {
+    if (Object.keys(inboxNotifsFeed).length) {
+      return;
+    }
+    fetchInboxNotificationList();
+  }, [env, account]);
+
+  useEffect(() => {
+    if (Object.keys(spamNotifsFeed).length) {
+      return;
+    }
+    fetchSpamNotificationList();
+  }, [env, account]);
 
   //make a helper for the function
   const fetchRequestList = async () => {
@@ -123,13 +178,10 @@ export const Chat = () => {
               setSearchedChats({ [defaultFeed.did]: defaultFeed });
             }
           } else {
-            
             setSearchedChats(null);
           }
         }
       } else {
-        
-
         setSearchedChats(null);
       }
     })();

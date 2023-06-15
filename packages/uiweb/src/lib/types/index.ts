@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import React from 'react';
 import type { ENV } from '../config';
 import type { ethers } from 'ethers';
-import type { IFeeds } from '@pushprotocol/restapi';
+import type { ParsedResponseType, IFeeds, } from '@pushprotocol/restapi';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -43,7 +43,7 @@ export type SignerType = ethers.Signer & {
   privateKey?: string;
 };
 
-
+export type NotificationFeedsType = { [key: string]:ParsedResponseType};
 export type ChatFeedsType = { [key: string]:IFeeds};
 export interface Web3NameListType {
   [key: string]: string;
@@ -55,6 +55,7 @@ export const PUSH_TABS = {
 
 export const PUSH_SUB_TABS = {
   REQUESTS: 'REQUESTS',
+  SPAM:'SPAM'
 } as const;
 
 export const LOCAL_STORAGE_KEYS = {

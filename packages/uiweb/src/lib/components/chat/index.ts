@@ -1,2 +1,2 @@
-export { ChatWidget } from "./ChatWidget";
+export { ChatAndNotificationWidget } from "./ChatAndNotificationWidget";
 

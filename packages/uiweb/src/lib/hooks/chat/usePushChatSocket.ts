@@ -2,8 +2,8 @@ import type { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import type { ChatMainStateContextType } from '../../context/chat/chatMainStateContext';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import {
   checkIfIntent,
   getData,
@@ -46,7 +46,7 @@ const usePushChatSocket = (): PushChatSocket => {
   ] = useState<any>('');
   const { fetchChat } = useFetchChat();
   const { account, env, decryptedPgpPvtKey } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(ChatAndNotificationPropsContext);
   const {
     chats,
     setChat,
@@ -187,7 +187,7 @@ const usePushChatSocket = (): PushChatSocket => {
       setPushChatSocket(connectionObject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [decryptedPgpPvtKey]);
+  }, [decryptedPgpPvtKey,env]);
 
   return {
     isSDKSocketConnected,

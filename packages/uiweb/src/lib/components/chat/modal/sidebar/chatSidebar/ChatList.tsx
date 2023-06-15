@@ -1,7 +1,7 @@
-import type { ChatFeedsType } from '../../../../types';
+import type { ChatFeedsType } from '../../../../../types';
 import React, { useContext } from 'react';
 import { ChatSnap } from './ChatSnap';
-import { ChatMainStateContext } from '../../../../context';
+import { ChatMainStateContext } from '../../../../../context';
 
 type ChatListPropType = {
   chatsFeed: ChatFeedsType;

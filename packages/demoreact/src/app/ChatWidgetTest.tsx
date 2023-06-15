@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ChatWidget, PUSH_TABS } from '@pushprotocol/uiweb';
+import { ChatAndNotificationWidget, PUSH_TABS } from '@pushprotocol/uiweb';
 import { EnvContext, Web3Context } from './context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { IUser } from '@pushprotocol/restapi';
@@ -34,12 +34,12 @@ export const ChatWidgetTest = () => {
    
   },[account])
   return (
-    <ChatWidget
+    <ChatAndNotificationWidget
       account={account}
       env={env}
       decryptedPgpPvtKey={pvtKey}
       // activeTab={PUSH_TABS.APP_NOTIFICATIONS}
-      activeChat='eip155:0xcc45BaEb518CcbC7f8B01f8D7665fbe3A0D59f07'
+      // activeChat='eip155:0xcc45BaEb518CcbC7f8B01f8D7665fbe3A0D59f07'
     />
   );
 };

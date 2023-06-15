@@ -1,12 +1,6 @@
-import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
-import type { ChatMainStateContextType } from '../../../../context/chat/chatMainStateContext';
-import {
-  getDefaultFeedObject,
-  getNewChatUser,
-  getObjectsWithMatchingKeys,
-} from '../../../../helpers';
-import type { ChatFeedsType } from '../../../../types';
-import React, { useState, useContext } from 'react';
+
+import type { ChatFeedsType, NotificationFeedsType } from '../../../../types';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SearchIcon } from '../../../../icons/Search';
 import { CloseIcon } from '../../../../icons/Close';
@@ -15,52 +9,33 @@ import { Div, Section, Span } from '../../../reusables/sharedStyling';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 
 type SearchPropType = {
-  chatsFeed: ChatFeedsType;
+  feed: ChatFeedsType | NotificationFeedsType;
+  handleSearch: any;
+  onSearchReset: () => void;
+  placeholder:string;
 };
 
-export const Search: React.FC<SearchPropType> = ({ chatsFeed }) => {
+export const Search: React.FC<SearchPropType> = ({
+  feed,
+  handleSearch,
+  onSearchReset,
+  placeholder
+}) => {
   const [searchedText, setSearchedText] = useState<string>('');
-  const { setSearchedChats, web3NameList, newChat } =
-    useContext<ChatMainStateContextType>(ChatMainStateContext);
-  const { env } = useContext<any>(ChatPropsContext);
   const [loading, setLoading] = useState<boolean>(false);
   const onChangeSearchText = (val: string) => {
     setSearchedText(val);
   };
 
-  const { fetchChatProfile } = useGetChatProfile();
 
-  const handleSearch = async () => {
-    const result = getObjectsWithMatchingKeys(
-      chatsFeed,
-      searchedText,
-      web3NameList
-    );
-
-    if (Object.keys(result || {}).length) setSearchedChats(result);
-    else {
-      if (!newChat) setSearchedChats({});
-      else {
-        const result = await getNewChatUser({
-          searchText: searchedText,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          const defaultFeed = getDefaultFeedObject({ user: result });
-          setSearchedChats({ [defaultFeed.did]: defaultFeed });
-        } else setSearchedChats({});
-      }
-    }
-  };
+ 
 
   React.useEffect(() => {
     setLoading(true);
     const getData = setTimeout(() => {
       if (searchedText) {
-        handleSearch();
-      }
-      else{
+        handleSearch({ searchedText, feed });
+      } else {
         onSearchReset();
       }
       setLoading(false);
@@ -68,12 +43,7 @@ export const Search: React.FC<SearchPropType> = ({ chatsFeed }) => {
     return () => clearTimeout(getData);
   }, [searchedText]);
 
-  const onSearchReset = () => {
-    setSearchedText('');
-    
-
-    setSearchedChats(null);
-  };
+ 
 
   return (
     <Container
@@ -87,21 +57,34 @@ export const Search: React.FC<SearchPropType> = ({ chatsFeed }) => {
         type="text"
         value={searchedText}
         onChange={(e) => onChangeSearchText(e.target.value)}
-        placeholder="Search User"
+        placeholder={placeholder}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
-            handleSearch();
+            handleSearch({ searchedText, feed });
           }
         }}
       />
       <Span>
         {!loading && !searchedText && (
-          <Div cursor="pointer" width='17.49px' height='17.49px' onClick={() => handleSearch()}>
+          <Div
+            cursor="pointer"
+            width="17.49px"
+            height="17.49px"
+            onClick={() => handleSearch({ searchedText, feed })}
+          >
             <SearchIcon />
           </Div>
         )}
         {!loading && searchedText && (
-          <Div cursor="pointer" onClick={() => onSearchReset()} width='17.49px' height='17.49px'>
+          <Div
+            cursor="pointer"
+            onClick={() => {
+              setSearchedText('');
+              onSearchReset();
+            }}
+            width="17.49px"
+            height="17.49px"
+          >
             <CloseIcon />
           </Div>
         )}

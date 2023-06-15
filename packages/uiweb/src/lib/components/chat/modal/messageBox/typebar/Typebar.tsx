@@ -72,7 +72,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   };
 
   const sendTextMsg = async () => {
-    if (typedMessage) {
+    if (typedMessage.trim() !== '') {
+    
       await sendPushMessage(typedMessage as string, 'Text');
       setTypedMessage('');
     }

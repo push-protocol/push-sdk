@@ -2,7 +2,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
-import { ChatPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext } from '../../context';
 
 interface conversationHashParams {
     conversationId: string;
@@ -12,7 +12,7 @@ const useGetConversationHash = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { account, env } =
-  useContext<any>(ChatPropsContext);
+  useContext<any>(ChatAndNotificationPropsContext);
 
   const getConversationHash = useCallback(
     async ({ conversationId }: conversationHashParams) => {

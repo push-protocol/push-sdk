@@ -1,4 +1,4 @@
-import type { Env, IUser } from '@pushprotocol/restapi';
+import type { Env, IFeeds, IUser, ParsedResponseType } from '@pushprotocol/restapi';
 import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import {
@@ -7,7 +7,7 @@ import {
   ProfilePicture,
 } from '../../config';
 import type { GetProfileParams } from '../../hooks';
-import type { ChatFeedsType, Web3NameListType } from '../../types';
+import type { ChatFeedsType, NotificationFeedsType, Web3NameListType } from '../../types';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getUdResolver } from '../udResolver';
 import { displayDefaultUser } from './user';
@@ -17,18 +17,17 @@ export const getObjectsWithMatchingKeys = (
   substring: string,
   web3NameList: Web3NameListType
 ): ChatFeedsType => {
-  const matchedObjects: Record<string, any> = {};
-  
+  const matchedObjects: Record<string, IFeeds> = {};
+
   if (substring) {
     Object.keys(obj).forEach((key) => {
       if (key.includes(substring)) {
         matchedObjects[key] = obj[key];
-      } else if(obj[key].name){
+      } else if (obj[key].name) {
         if ((obj[key].name as string).includes(substring)) {
           matchedObjects[key] = obj[key];
         }
-      } 
-      else {
+      } else {
         Object.keys(web3NameList).forEach((key) => {
           if (web3NameList[key].includes(substring)) {
             matchedObjects[key] = obj[walletToPCAIP10(key)];
@@ -72,10 +71,9 @@ export const getAddress = async (searchText: string, env: Env) => {
     CoreContractChainId[env],
     InfuraAPIKey
   );
- 
+
   let address: string | null = null;
   if (searchText.includes('.')) {
-   
     try {
       address =
         (await provider.resolveName(searchText)) ||
@@ -89,8 +87,30 @@ export const getAddress = async (searchText: string, env: Env) => {
     }
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
     return searchText;
-  }
-  else{
+  } else {
     return null;
   }
+};
+
+export const getSearchedNotificationsList = (
+  substring: string,
+  obj: NotificationFeedsType
+) => {
+
+  const matchedObjects: Record<string, ParsedResponseType> = {};
+
+  if (substring) {
+    Object.keys(obj).forEach((key) => {
+      if ((obj[key].app).includes(substring)) {
+        matchedObjects[key] = obj[key];
+      } 
+     else{
+      if ((obj[key].title).includes(substring)) {
+        matchedObjects[key] = obj[key];
+      } 
+     }
+    });
+  }
+  return matchedObjects;
+
 };

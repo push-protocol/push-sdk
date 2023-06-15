@@ -1,6 +1,6 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext } from '../../context';
 
 interface ApproveChatParams {
   senderAddress: string;
@@ -10,7 +10,7 @@ const useApproveChatRequest = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatPropsContext);
+  useContext<any>(ChatAndNotificationPropsContext);
   const approveChatRequest = useCallback(async (options:ApproveChatParams) => {
     const {
 

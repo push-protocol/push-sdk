@@ -1,4 +1,4 @@
-import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -15,7 +15,7 @@ import { pCAIP10ToWallet } from '../../../../helpers';
 import { CheckCircleIcon } from '../../../../icons/CheckCircle';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
 import type { FileMessageContent} from '../../../../types';
-import { PUSH_TABS } from '../../../../types';
+
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
 
@@ -167,7 +167,7 @@ const MessageCard = ({
 };
 
 const Messages = ({ chat }: { chat: IMessageIPFS }) => {
-  const { account } = useContext<any>(ChatPropsContext);
+  const { account } = useContext<any>(ChatAndNotificationPropsContext);
   const position =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account.toLowerCase()
       ? 0
@@ -198,7 +198,7 @@ export const MessageBox = () => {
     activeTab,
   } = useContext<any>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(ChatAndNotificationPropsContext);
  
   const selectedChat =
     chatsFeed[selectedChatId] || requestsFeed[selectedChatId];
@@ -209,7 +209,7 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest } = useApproveChatRequest();
+  const { approveChatRequest,loading:approveLoader } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -310,10 +310,8 @@ export const MessageBox = () => {
           const selectedRequest = updatedRequestsfeed[selectedChatId];
           delete updatedRequestsfeed[selectedChatId];
           setChatFeed(selectedChatId, selectedRequest);
-          setActiveTab(PUSH_TABS.CHATS);
-          setSelectedChatId(null);
-          
-
+          // setActiveTab(PUSH_TABS.CHATS);
+          // setSelectedChatId(null);
           setSearchedChats(null);
           setRequestsFeed(updatedRequestsfeed);
         }
@@ -346,7 +344,7 @@ export const MessageBox = () => {
         borderStyle="none none solid none"
         borderColor="transparent transparent #dddddf transparent"
       >
-        <MessageListCard
+       {selectedMessages? <MessageListCard
           flexDirection="column"
           justifyContent="start"
           width="100%"
@@ -355,6 +353,7 @@ export const MessageBox = () => {
           ref={listInnerRef}
           onScroll={onScroll}
         >
+      
           {selectedMessages?.messages.map(
             (chat: IMessageIPFS, index: number) => {
               const dateNum = moment(chat.timestamp).format('ddMMyyyy');
@@ -387,7 +386,7 @@ export const MessageBox = () => {
                 fontWeight="400"
                 color="#000"
               >
-                This is your first conversation with the sender.
+                Please accept to enable push chat from this wallet
               </Span>
               <Section
                 width="36px"
@@ -396,13 +395,16 @@ export const MessageBox = () => {
                 alignItems='center'
                 onClick={() => handleApproveChatRequest()}
               >
-                <CheckCircleIcon />
+                {approveLoader ? <Spinner /> :  <CheckCircleIcon />}
+               
               </Section>
        
             </Section>
           )}
           <div ref={bottomRef} />
         </MessageListCard>
+        :<Span margin='20px' fontSize='13px' color='rgb(101, 119, 149)'>This is your first conversation with recipient.
+        Start the conversation by sending a message.</Span>}
       </Section>
 
       {!requestFeedids.includes(selectedChatId) && (

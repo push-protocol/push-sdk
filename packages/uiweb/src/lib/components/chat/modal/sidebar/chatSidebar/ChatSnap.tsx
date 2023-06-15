@@ -1,19 +1,19 @@
 import type { IFeeds } from '@pushprotocol/restapi';
-import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
 import {
   checkIfUnread,
   dateToFromNowDaily,
   setData,
   shortenText,
-} from '../../../../helpers';
+} from '../../../../../helpers';
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
-import { Section, Span, Image } from '../../../reusables/sharedStyling';
-import { UnreadChats } from '../../MinimisedModalHeader';
-import { pCAIP10ToWallet } from '../../../../helpers';
+import { Section, Span, Image } from '../../../../reusables/sharedStyling';
+import { UnreadChats } from '../../../MinimisedModalHeader';
+import { pCAIP10ToWallet } from '../../../../../helpers';
 import { ethers } from 'ethers';
-import { useResolveWeb3Name } from '../../../../hooks';
-import { device } from '../../../../config';
+import { useResolveWeb3Name } from '../../../../../hooks';
+import { device } from '../../../../../config';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -49,11 +49,11 @@ const Message = ({
   ) : null;
 };
 
-//Resolve ud name and  pfp
+
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
   const { setSelectedChatId, web3NameList, activeTab } =
     useContext<any>(ChatMainStateContext);
-  const { env } = useContext<any>(ChatPropsContext);
+  const { env } = useContext<any>(ChatAndNotificationPropsContext);
 
   useResolveWeb3Name(chat?.did, env);
   //shift to helper

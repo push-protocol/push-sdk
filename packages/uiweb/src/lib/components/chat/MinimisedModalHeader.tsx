@@ -5,14 +5,18 @@ import { NewChatIcon } from '../../icons/NewChat';
 import { BackIcon } from '../../icons/Back';
 import { MinimizeIcon } from '../../icons/Minimize';
 import { Section, Span, Image, Div } from '../reusables/sharedStyling';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
-import type { PushSubTabs, PushTabs} from '../../types';
+import {
+  ChatMainStateContext,
+  ChatAndNotificationPropsContext,
+  NotificationMainStateContext,
+} from '../../context';
+import type { PushSubTabs, PushTabs } from '../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
 import { useResolveWeb3Name } from '../../hooks';
 import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
-import {Tooltip} from '../reusables';
+import { Tooltip } from '../reusables';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -56,14 +60,12 @@ export const MessageBoxHeader = () => {
     setSearchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
-  const { env } = useContext<any>(ChatPropsContext);
-  console.log(searchedChats)
+  const { env } = useContext<any>(ChatAndNotificationPropsContext);
   const selectedChat =
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
-    (searchedChats?searchedChats[selectedChatId]:null);
-console.log(chatsFeed)
-console.log(requestsFeed)
+    (searchedChats ? searchedChats[selectedChatId] : null);
+
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -74,16 +76,13 @@ console.log(requestsFeed)
   const handleBack = () => {
     if (activeSubTab) {
       setActiveSubTab(PUSH_SUB_TABS[activeSubTab as PushSubTabs]);
-      setSelectedChatId(null);
-      
-
-      setSearchedChats(null);
     } else {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
-      
+    }
+    if (activeSubTab === PUSH_SUB_TABS.REQUESTS || !activeSubTab) {
+      setSelectedChatId(null);
 
       setSearchedChats(null);
-      setSelectedChatId(null);
     }
   };
   return (
@@ -105,12 +104,16 @@ console.log(requestsFeed)
           height="24px"
           borderRadius="100%"
         />
-      <Tooltip content={pCAIP10ToWallet(selectedChat?.did)} direction="bottom-right">
-        <Span fontWeight="700" fontSize="16px" cursor='pointer'>
-          {' '}
-          {selectedChat?.name?shortenText(selectedChat?.name, 30) :
-          web3Name ?? shortenText(selectedChat?.did?.split(':')[1], 20)}
-        </Span>
+        <Tooltip
+          content={pCAIP10ToWallet(selectedChat?.did)}
+          direction="bottom-right"
+        >
+          <Span fontWeight="700" fontSize="16px" cursor="pointer">
+            {' '}
+            {selectedChat?.name
+              ? shortenText(selectedChat?.name, 30)
+              : web3Name ?? shortenText(selectedChat?.did?.split(':')[1], 20)}
+          </Span>
         </Tooltip>
       </Section>
     </Section>
@@ -118,21 +121,31 @@ console.log(requestsFeed)
 };
 
 export const SubTabHeader = () => {
-  const { setActiveTab, activeSubTab, setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
-
+  const {
+    setActiveTab,
+    activeSubTab,
+    activeTab,
+    setSearchedChats,
+    setSelectedChatId,
+  } = useContext<any>(ChatMainStateContext);
+  const { setSearchedNotifications } = useContext<any>(
+    NotificationMainStateContext
+  );
   return (
     <Section gap="12px">
       <Div
-         width="16px"
-         height="16px"
-         cursor="pointer"
+        width="16px"
+        height="16px"
+        cursor="pointer"
         onClick={() => {
-          setActiveTab(PUSH_TABS.CHATS);
-          
-
-          setSearchedChats(null);
-          setSelectedChatId(null);
+          setActiveTab(activeTab);
+          if (activeSubTab === PUSH_SUB_TABS.REQUESTS) {
+            setSearchedChats(null);
+            setSelectedChatId(null);
+          }
+          if (activeSubTab === PUSH_SUB_TABS.SPAM) {
+            setSearchedNotifications(null);
+          }
         }}
       >
         <BackIcon />
@@ -158,6 +171,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     requestsFeed,
     setSearchedChats,
     setSelectedChatId,
+    newChat,
+    searchedChats,
   } = useContext<any>(ChatMainStateContext);
 
   const condition =
@@ -177,7 +192,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
       {selectedChatId &&
         !!(
           Object.keys(chatsFeed || {}).length ||
-          Object.keys(requestsFeed || {}).length
+          Object.keys(requestsFeed || {}).length ||
+          Object.keys(searchedChats || {}).length
         ) &&
         modalOpen && <MessageBoxHeader />}
       {!selectedChatId && modalOpen && activeSubTab && <SubTabHeader />}
@@ -189,7 +205,6 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
             cursor={!modalOpen ? 'default' : 'pointer'}
             onClick={() => {
               setActiveTab(PUSH_TABS.CHATS);
-              
 
               setSearchedChats(null);
               setSelectedChatId(null);
@@ -217,7 +232,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
           width="12px"
           height="13.4px"
           cursor="pointer"
-          alignSelf='baseline'
+          alignSelf="baseline"
           onClick={onMaximizeMinimizeToggle}
         >
           {modalOpen ? <MinimizeIcon /> : <MaximizeIcon />}

@@ -4,7 +4,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import type { ChatFeedsType} from '../..';
 import { Constants } from '../..';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
 
 
 interface fetchRequests {
@@ -18,7 +18,7 @@ const useFetchRequests = () => {
   const { setRequestsFeed} =
   useContext<any>(ChatMainStateContext);
   const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatPropsContext);
+  useContext<any>(ChatAndNotificationPropsContext);
   
   const fetchRequests = useCallback(async ({ page, requestLimit }: fetchRequests)  => {
 
@@ -49,7 +49,7 @@ const useFetchRequests = () => {
     } finally {
       setLoading(false);
     }
-  }, [decryptedPgpPvtKey]);
+  }, [decryptedPgpPvtKey,env]);
 
   return { fetchRequests, error, loading };
 };

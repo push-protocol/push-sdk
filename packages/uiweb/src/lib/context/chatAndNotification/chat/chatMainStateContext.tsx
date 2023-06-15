@@ -1,9 +1,9 @@
 import type { IFeeds, IMessageIPFS, IUser } from '@pushprotocol/restapi';
 import React, { createContext, useContext, useState } from 'react';
-import { getData } from '../../helpers/chat/localStorage';
-import type { ChatFeedsType, PushSubTabs, PushTabs, Web3NameListType } from '../../types';
-import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
-import ChatPropsContext from './chatPropsContext';
+import { getData } from '../../../helpers/chat/localStorage';
+import type { ChatFeedsType, PushSubTabs, PushTabs, Web3NameListType } from '../../../types';
+import { PUSH_SUB_TABS, PUSH_TABS } from '../../../types';
+import ChatPropsContext from '../chatAndNotificationPropsContext';
 
 type ChatMessagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 

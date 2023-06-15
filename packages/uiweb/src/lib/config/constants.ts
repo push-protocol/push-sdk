@@ -80,12 +80,16 @@ export const ProfilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACA
 export const PushSubTabTitle = {
   REQUESTS: {
     title: 'Chat request',
+  },
+  SPAM: {
+    title: 'Spam',
   }
 };
 
 
 export const chatLimit = 10;
 export const requestLimit = 10;
+export const notificationLimit = 10;
 
 export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;

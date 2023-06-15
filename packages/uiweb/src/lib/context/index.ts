@@ -1,12 +1,15 @@
 import SupportChatPropsContext from "./supportChat/supportChatPropsContext";
 import SupportChatMainStateContext from "./supportChat/supportChatMainStateContext";
-import ChatMainStateContextProvider, { ChatMainStateContext } from "./chat/chatMainStateContext";
-import ChatPropsContext from "./chat/chatPropsContext";
+import ChatMainStateContextProvider, { ChatMainStateContext } from "./chatAndNotification/chat/chatMainStateContext";
+import ChatAndNotificationPropsContext from "./chatAndNotification/chatAndNotificationPropsContext";
+import NotificationMainStateContextProvider,{NotificationMainStateContext} from "./chatAndNotification/notifcation/notificationMainStateContext";
 
 export {
   SupportChatPropsContext,
   SupportChatMainStateContext,
   ChatMainStateContextProvider,
-  ChatPropsContext,
-  ChatMainStateContext
+  ChatAndNotificationPropsContext,
+  ChatMainStateContext,
+  NotificationMainStateContext,
+  NotificationMainStateContextProvider
 };

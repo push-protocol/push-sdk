@@ -1,13 +1,13 @@
-import useFetchRequests from '../../../../hooks/chat/useFetchRequests';
+import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
-import { ChatMainStateContext, ChatPropsContext } from '../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
 import { ChatList } from './ChatList';
-import { Section, Span } from '../../../reusables/sharedStyling';
-import { Spinner } from '../../../reusables/Spinner';
-import { requestLimit } from '../../../../config';
-import type { ChatFeedsType } from '../../../../types';
-import { useIsInViewport } from '../../../../hooks';
+import { Section, Span } from '../../../../reusables/sharedStyling';
+import { Spinner } from '../../../../reusables/Spinner';
+import { requestLimit } from '../../../../../config';
+import type { ChatFeedsType } from '../../../../../types';
+import { useIsInViewport } from '../../../../../hooks';
 
 export const RequestsFeedList = () => {
   const { requestsFeed, setRequestsFeed } = useContext<any>(ChatMainStateContext);
@@ -16,7 +16,7 @@ export const RequestsFeedList = () => {
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);
   const isInViewport1 = useIsInViewport(pageRef, '1px');
   const { decryptedPgpPvtKey, env } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(ChatAndNotificationPropsContext);
   const { fetchRequests, loading } = useFetchRequests();
 
   const fetchRequestList = async () => {

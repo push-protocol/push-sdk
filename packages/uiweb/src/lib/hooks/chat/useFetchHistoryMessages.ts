@@ -4,7 +4,7 @@ import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
 
 
 
@@ -21,7 +21,7 @@ const useFetchHistoryMessages
   const { chats,setChat,selectedChatId} =
   useContext<any>(ChatMainStateContext);
   const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatPropsContext);
+  useContext<any>(ChatAndNotificationPropsContext);
 
   const historyMessages = useCallback(async ({threadHash,limit = 10,}:HistoryMessagesParams) => {
 

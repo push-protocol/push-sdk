@@ -2,7 +2,7 @@ import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
-import { ChatMainStateContext, ChatPropsContext } from '../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
 import { getData, setData } from '../../helpers/chat/localStorage';
 import type { ChatFeedsType} from '../../types';
 import { LOCAL_STORAGE_KEYS } from '../../types';
@@ -16,7 +16,7 @@ const useFetchChats = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { account, env, decryptedPgpPvtKey } =
-    useContext<any>(ChatPropsContext);
+    useContext<any>(ChatAndNotificationPropsContext);
 
   const fetchChats = useCallback(
     async ({ page, chatLimit }: fetchChats) => {
@@ -51,7 +51,7 @@ const useFetchChats = () => {
         setLoading(false);
       }
     },
-    [decryptedPgpPvtKey]
+    [decryptedPgpPvtKey,env]
   );
 
   return { fetchChats, error, loading };
