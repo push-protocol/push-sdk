@@ -241,11 +241,11 @@ class EnvOptionsType {
   String? env;
 }
 
-class WalletType {
-  String? account;
-  Object? signer;
-  // SignerType? signer;
-}
+// class WalletType {
+//   String? account;
+//   Object? signer;
+//   // SignerType? signer;
+// }
 
 class EncryptedPrivateKeyTypeV1 {}
 // class EncryptedPrivateKeyTypeV1 extends EthEncryptedData {}
@@ -260,13 +260,31 @@ class EncryptedPrivateKeyTypeV2 {
 }
 
 class EncryptedPrivateKeyType {
+  EncryptedPrivateKeyType({
+    this.ciphertext,
+    this.nonce,
+    this.version,
+    this.encryptedPassword,
+    this.salt,
+    this.preKey,
+  });
   String? version;
-  late String nonce;
+  String? nonce;
   String? ephemPublicKey;
-  late String ciphertext;
+  String? ciphertext;
   String? salt;
   String? preKey;
   EncryptedPrivateKeyTypeV2? encryptedPassword;
+
+  toJson() {
+    return {
+      if (ciphertext != null) 'ciphertext': ciphertext,
+      if (salt != null) 'salt': salt,
+      if (nonce != null) 'nonce': nonce,
+      if (version != null) 'version': version,
+      if (preKey != null) 'preKey': preKey,
+    };
+  }
 }
 
 class MessageWithCID {

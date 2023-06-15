@@ -6,7 +6,7 @@ Future<String> getUserDID(String address, ENV env) async {
       return address;
     }
 
-    User? user = await getUser(address: address);
+    User? user = await UserRepo.getUser(address: address);
     if (user != null && user.did != null) {
       return user.did!;
     }

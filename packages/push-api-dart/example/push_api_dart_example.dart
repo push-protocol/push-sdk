@@ -1,8 +1,11 @@
-// import 'package:push_api_dart/push_api_dart.dart';
-
-import 'package:push_api_dart/push_api_dart.dart' as push;
+import 'package:ethers/signers/wallet.dart';
+import 'package:push_api_dart/push_api_dart.dart';
 
 void main() {
-  push.initPush();
-  push.getUser(address: '0xe4512932F6621FF9EB014FCe73259F620A7802BD');
+  // const mnemonic =
+  //     "wine album quarter custom birth great leisure bid gossip rabbit early choice";
+  // final walletMnemonic = Wallet.fromMnemonic(mnemonic);
+  // UserRepo.createUser(wallet: walletMnemonic);
+
+  encryptV1('police', '', '');
 }
