@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';
-import 'package:encrypt/encrypt.dart';
 import 'package:ethers/signers/wallet.dart' as ethers;
 import 'package:ethers/signers/wallet.dart';
 import 'package:pointycastle/export.dart';
@@ -84,7 +83,6 @@ String bytesToHex(List<int> bytes) {
 
 Future<List<int>> getRandomValues(pcrandom.FortunaRandom random, int length) {
   final values = Uint8List(length).toList();
-
   return Future.value(values);
 }
 
@@ -229,4 +227,54 @@ final _rand = Random.secure();
 /// This produces a list of `count` random bytes.
 List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
+}
+
+Future<EncryptedPrivateKeyType> encryptPGPKeyV2(
+  String encryptionType,
+  String privateKey,
+  Wallet wallet,
+  Map<String, dynamic>? additionalMeta,
+) async {
+  EncryptedPrivateKeyType encryptedPrivateKey;
+
+  switch (encryptionType) {
+    case Constants.ENC_TYPE_V1:
+      String walletPublicKey;
+      if (wallet.signer.privateKey != null) {
+        walletPublicKey =
+            getEncryptionPublicKey(wallet.signer.privateKey.substring(2));
+      } else {
+        walletPublicKey = await getPublicKey(wallet);
+      }
+      encryptedPrivateKey =
+          encryptV1(privateKey, walletPublicKey, encryptionType);
+      break;
+    case Constants.ENC_TYPE_V3:
+      final input = bytesToHex(await getRandomValues(FortunaRandom(), 32));
+      final enableProfileMessage = 'Enable Push Profile \n$input';
+      final verificationProof =
+          await getEip191Signature(wallet, enableProfileMessage);
+      final secret = verificationProof['secret'];
+      final encodedPrivateKey = utf8.encode(privateKey);
+      encryptedPrivateKey =
+          await encryptV2(encodedPrivateKey, hexToBytes(secret ?? ''));
+      encryptedPrivateKey.version = Constants.ENC_TYPE_V3;
+      encryptedPrivateKey.preKey = input;
+      break;
+    case Constants.ENC_TYPE_V4:
+      if (additionalMeta == null ||
+          additionalMeta['NFTPGP_V1']['password'] == null) {
+        throw Exception('Password is required!');
+      }
+      final encodedPrivateKey = utf8.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(encodedPrivateKey,
+          hexToBytes(stringToHex(additionalMeta['NFTPGP_V1']['password'])));
+      encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
+      encryptedPrivateKey.preKey = '';
+      break;
+    default:
+      throw Exception('Invalid Encryption Type');
+  }
+
+  return encryptedPrivateKey;
 }

@@ -5,9 +5,9 @@ String generateRandomSecret(int length) {
   final characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   final charactersLength = characters.length;
-  String result = '';
+  final buffer = StringBuffer();
   for (var i = 0; i < length; i++) {
-    result += characters[random.nextInt(charactersLength)];
+    buffer.write(characters[random.nextInt(charactersLength)]);
   }
-  return result;
+  return buffer.toString();
 }
