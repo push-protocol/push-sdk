@@ -5,11 +5,16 @@ export interface ISCWSModalProps { // Space Creation Widget Schedule Modal Inter
     closeScheduleModal?: MouseEventHandler;
     makeCreateVisible?: MouseEventHandler;
     makeInviteVisible?: MouseEventHandler;
+
+    dateValue?: any;
+    onDateChange?: any;
+    timeValue?: any;
+    onTimeChange?: any;
 }
 
 export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
 
-    const { closeScheduleModal, makeCreateVisible, makeInviteVisible } = props;
+    const { closeScheduleModal, makeCreateVisible, makeInviteVisible, dateValue, onDateChange, timeValue, onTimeChange } = props;
 
     return (
         <ModalOverlay>
@@ -27,6 +32,18 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
                 >
                     back button
                 </BackBtn>
+
+                <input
+                    type="text"
+                    value={dateValue}
+                    onChange={onDateChange}
+                />
+
+                <input
+                    type="text"
+                    value={timeValue}
+                    onChange={onTimeChange}
+                />
 
                 <button
                     onClick={makeInviteVisible}

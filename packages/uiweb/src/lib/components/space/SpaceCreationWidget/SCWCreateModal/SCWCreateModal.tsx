@@ -1,13 +1,16 @@
-import React, { MouseEventHandler } from 'react'
+import React, { MouseEventHandler, useState } from 'react'
 import styled from 'styled-components'
 
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
-    isScheduleVisible?: MouseEventHandler;
+    isScheduleVisible?: any;
     closeCreateModal?: MouseEventHandler;
+    onInputChange?: any;
+    inputValue?: any;
 }
 
 export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
-    const { isScheduleVisible, closeCreateModal } = props;
+    const { isScheduleVisible, closeCreateModal, onInputChange, inputValue } = props;
+
     return (
         <div>
             <ModalOverlay>
@@ -18,6 +21,12 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
                     >
                         Schedule Space
                     </button>
+
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={onInputChange}
+                    />
 
                     <CloseBtn
                         onClick={closeCreateModal}

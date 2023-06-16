@@ -31,6 +31,20 @@ export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
 
+    const [spaceState, setSpaceState] = useState({
+        spaceName: '',
+        date: '',
+        time: '',
+    })
+
+    const handleNameChange = (event: any) => {
+        setSpaceState({spaceName: event.target.value, date: '', time: ''})
+    };
+
+    // const handleDateTimeChange = (event) => {
+    //     setSpaceState({date: '', time: ''})
+    // }
+
     const theme = useContext(ThemeContext);
 
     const showCreateSpace = () => {
@@ -71,10 +85,14 @@ export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
                 {btnText}
             </CreateButton>
 
+            {spaceState.spaceName}
+
             {isCreateModalVisible &&
                 <SCWCreateModal
                     isScheduleVisible={showScheduleSpace}
                     closeCreateModal={closeCreateModal}
+                    inputValue={spaceState.spaceName}
+                    onInputChange={handleNameChange}
                 />
             }
 
@@ -83,6 +101,9 @@ export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
                     closeScheduleModal={closeScheduleModal}
                     makeCreateVisible={showCreateSpace}
                     makeInviteVisible={showInviteSpace}
+                    // dateValue={spaceState.date}
+                    // onDateChange={handleDateTimeChange}
+                    // timeValue={spaceState.time}
                 />
             }
 
