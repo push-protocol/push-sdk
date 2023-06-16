@@ -1,10 +1,10 @@
 /**
  * Get Date and Time in Day.
- * @param {string} datestring - The JavaScript Date String or Date Object.
+ * @param {string | Date} datestring - The JavaScript Date String or Date Object.
  * @returns {string} - The Date and Time in Day, DD Month at HH:MM AM format.
  */
 
-export function getDateAndTime(datestring: string) {
+export function getDateAndTime(datestring: string | Date) {
   const date = new Date(datestring);
 
   //Day of Week
@@ -49,11 +49,11 @@ export function getDateAndTime(datestring: string) {
 
 /**
  * Get Status of the Space.
- * @param {string} datestring - The JavaScript Date String or Date Object.
+ * @param {string | Date} datestring - The JavaScript Date String or Date Object.
  * @returns {string} - The Status of the Space.
  */
 
-export function getStatus(datestring: string) {
+export function getStatus(datestring: Date | string) {
   const date = new Date(datestring);
   const now = new Date();
   const diff = date.getTime() - now.getTime();

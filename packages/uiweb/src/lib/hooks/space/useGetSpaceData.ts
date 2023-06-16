@@ -7,12 +7,7 @@ export const useGetSpaceData = (spaceId: string) => {
 
   useEffect(() => {
     (async () => {
-      if (spaceBannerData) {
-        console.log('Cache Data used!');
-        console.log(spaceId in spaceBannerData);
-        // setTimeout(() => {
-        //   console.log(spaceBannerData[spaceId].spaceId);
-        // }, 5000);
+      if (spaceBannerData && spaceId in spaceBannerData) {
         return spaceBannerData;
       } else {
         await PushAPI.space
@@ -20,12 +15,11 @@ export const useGetSpaceData = (spaceId: string) => {
             spaceId: spaceId,
           })
           .then((response) => {
-            setSpaceBannerData({spaceId: response});
+            setSpaceBannerData({[spaceId]:response});
           })
           .catch((error) => {
             console.log(error);
           });
-        console.log('API called.');
         return spaceBannerData;
       }
     })();
