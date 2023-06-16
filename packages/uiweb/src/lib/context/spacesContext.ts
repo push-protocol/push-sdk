@@ -1,19 +1,20 @@
 import React, { createContext } from 'react';
+import { SpaceDTO } from '@pushprotocol/restapi';
 
-export interface ISpaceBannerData {
-  spaceId: string;
-  apiData: {
-    spaceName: string;
-    members : any;
-    pendingMembers : [];
-    scheduleAt: string;
-  };
-}
+// export interface ISpaceBannerData {
+//   spaceId: string;
+//   apiData: {
+//     spaceName: string;
+//     members : any;
+//     pendingMembers : [];
+//     scheduleAt: string;
+//   };
+// }
 
 export interface ISpaceDataContextValues {
   trendingListData: any;
   setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
-  spaceBannerData: ISpaceBannerData | null;
+  spaceBannerData: {[key:string]: SpaceDTO} | null;
   setSpaceBannerData: React.Dispatch<React.SetStateAction<any>>;
 }
 

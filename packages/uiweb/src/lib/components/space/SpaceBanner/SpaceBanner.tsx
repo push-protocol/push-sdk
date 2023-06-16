@@ -32,97 +32,99 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   const theme = React.useContext(ThemeContext);
   const { spaceBannerData } = useSpaceData();
   useGetSpaceData(spaceId); // Fetches the space data from cache or from the API
+  console.log(spaceBannerData);
 
   return (
-      <Container orientation={orientation} status={getStatus(spaceBannerData?.apiData.scheduleAt as string)} theme={theme}>
-        <ProfileContainer orientation={orientation}>
-          <PfpContainer>
-            <Pfp src={spaceBannerData?.apiData.members[0].image} alt="pfp" />
-          </PfpContainer>
-          <HostContainer>
-            <HostName>
-              {spaceBannerData?.apiData.members[0].wallet.slice(7)}
-              <Host>Host</Host>
-            </HostName>
-            <HostHandle>
-              {/* Fetch the handle from Lenster */}@
-              {spaceBannerData?.apiData.members[0].wallet.slice(7)}
-            </HostHandle>
-          </HostContainer>
-        </ProfileContainer>
-        {orientation === 'maximized' ? null : (
-          <Icon
-            src={
-              getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
-                ? live
-                : getStatus(spaceBannerData?.apiData.scheduleAt as string ) === 'Scheduled'
-                ? scheduled
-                : '' // Ended
-            }
-            alt="status"
-          />
-        )}
-        <Title orientation={orientation}>
-          {orientation === 'pill'
-            ? `${spaceBannerData?.apiData.spaceName.slice(0, 20)}...`
-            : spaceBannerData?.apiData.spaceName}
-        </Title>
-        <Status orientation={orientation}>
-          <Time orientation={orientation}>
-            <Icon
-              src={
-                getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
-                  ? live
-                  : getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Scheduled'
-                  ? scheduled
-                  : '' // Ended
-              }
-              alt="status"
-            />
-            <TimeText>
-              {getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
-                ? 'Live'
-                : getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Scheduled'
-                ? `${getDateAndTime(spaceBannerData?.apiData.scheduleAt as string)}`
-                : 'Ended'}
-            </TimeText>
-          </Time>
-          <Participants>
-            <ParticipantsIconContainer orientation={orientation}>
-              {orientation === 'pill'
-                ? spaceBannerData &&
-                  (spaceBannerData.apiData.pendingMembers as []).map(
-                    (person, index) =>
-                      index < 2 && (
-                        <ParticipantsIcon
-                          src={(person as any)?.image}
-                          alt="avatar"
-                          className={`index${index}`}
-                        />
-                      )
-                  )
-                : spaceBannerData &&
-                  (spaceBannerData?.apiData.pendingMembers as []).map(
-                    (person, index) =>
-                      index < 3 && (
-                        <ParticipantsIcon
-                          src={(person as any)?.image}
-                          alt="avatar"
-                          className={`index${index}`}
-                        />
-                      )
-                  )}
-            </ParticipantsIconContainer>
-            <ParticipantsText>
-              {orientation === 'pill'
-                ? spaceBannerData &&
-                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) -2}`
-                : spaceBannerData &&
-                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) - 3}`}
-            </ParticipantsText>
-          </Participants>
-        </Status>
-      </Container>
+    <></>
+      // <Container orientation={orientation} status={getStatus(spaceBannerData?.apiData.scheduleAt as string)} theme={theme}>
+      //   <ProfileContainer orientation={orientation}>
+      //     <PfpContainer>
+      //       <Pfp src={spaceBannerData?.apiData.members[0].image} alt="pfp" />
+      //     </PfpContainer>
+      //     <HostContainer>
+      //       <HostName>
+      //         {spaceBannerData?.apiData.members[0].wallet.slice(7)}
+      //         <Host>Host</Host>
+      //       </HostName>
+      //       <HostHandle>
+      //         {/* Fetch the handle from Lenster */}@
+      //         {spaceBannerData?.apiData.members[0].wallet.slice(7)}
+      //       </HostHandle>
+      //     </HostContainer>
+      //   </ProfileContainer>
+      //   {orientation === 'maximized' ? null : (
+      //     <Icon
+      //       src={
+      //         getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
+      //           ? live
+      //           : getStatus(spaceBannerData?.apiData.scheduleAt as string ) === 'Scheduled'
+      //           ? scheduled
+      //           : '' // Ended
+      //       }
+      //       alt="status"
+      //     />
+      //   )}
+      //   <Title orientation={orientation}>
+      //     {orientation === 'pill'
+      //       ? `${spaceBannerData?.apiData.spaceName.slice(0, 20)}...`
+      //       : spaceBannerData?.apiData.spaceName}
+      //   </Title>
+      //   <Status orientation={orientation}>
+      //     <Time orientation={orientation}>
+      //       <Icon
+      //         src={
+      //           getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
+      //             ? live
+      //             : getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Scheduled'
+      //             ? scheduled
+      //             : '' // Ended
+      //         }
+      //         alt="status"
+      //       />
+      //       <TimeText>
+      //         {getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Live'
+      //           ? 'Live'
+      //           : getStatus(spaceBannerData?.apiData.scheduleAt as string) === 'Scheduled'
+      //           ? `${getDateAndTime(spaceBannerData?.apiData.scheduleAt as string)}`
+      //           : 'Ended'}
+      //       </TimeText>
+      //     </Time>
+      //     <Participants>
+      //       <ParticipantsIconContainer orientation={orientation}>
+      //         {orientation === 'pill'
+      //           ? spaceBannerData &&
+      //             (spaceBannerData.apiData.pendingMembers as []).map(
+      //               (person, index) =>
+      //                 index < 2 && (
+      //                   <ParticipantsIcon
+      //                     src={(person as any)?.image}
+      //                     alt="avatar"
+      //                     className={`index${index}`}
+      //                   />
+      //                 )
+      //             )
+      //           : spaceBannerData &&
+      //             (spaceBannerData?.apiData.pendingMembers as []).map(
+      //               (person, index) =>
+      //                 index < 3 && (
+      //                   <ParticipantsIcon
+      //                     src={(person as any)?.image}
+      //                     alt="avatar"
+      //                     className={`index${index}`}
+      //                   />
+      //                 )
+      //             )}
+      //       </ParticipantsIconContainer>
+      //       <ParticipantsText>
+      //         {orientation === 'pill'
+      //           ? spaceBannerData &&
+      //             `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) -2}`
+      //           : spaceBannerData &&
+      //             `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) - 3}`}
+      //       </ParticipantsText>
+      //     </Participants>
+      //   </Status>
+      // </Container>
   );
 };
 
