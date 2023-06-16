@@ -33,14 +33,23 @@ class UserRepo {
     };
     final String address = await wallet.getAddress();
 
+    print("address $address");
+
     if (!isValidETHAddress(address)) {
       throw Exception('Invalid address!');
     }
 
     final caip10 = walletToPCAIP10(address);
+
+    print("caip10 $caip10");
+
     var encryptionType = version;
 
+    print("encryptionType $encryptionType");
+
     final keyPairs = await generateKeyPair();
+
+    print("keyPairs $keyPairs");
 
     final publicKey = await preparePGPPublicKey(
       encryptionType,

@@ -7,8 +7,6 @@ import '../../../push_api_dart.dart';
 
 HttpService http = HttpService();
 
-
-
 log(Object? data) {
   final env = providerContainer.read(envProvider);
   if (env == ENV.dev || env == ENV.local) {
@@ -70,8 +68,6 @@ class HttpService {
         url,
         headers: header(),
       );
-      log('Status Code:${response.statusCode}');
-      log('Response : ${response.body}');
 
       if (response.body.isEmpty) {
         return <String, dynamic>{};

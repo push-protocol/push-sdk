@@ -1,7 +1,9 @@
 import 'package:openpgp/openpgp.dart';
 
 Future<KeyPair> generateKeyPair() async {
+  print("Step-1");
   final keys = await OpenPGP.generate();
+  print("Step-2");
   return keys;
 }
 /*
