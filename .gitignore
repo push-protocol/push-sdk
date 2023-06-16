@@ -289,12 +289,7 @@ packages/restapi/yarn.lock
 yarn.lock
 *.env
 packages/push-api-dart/.flutter-plugins
-*.lock
-packages/push-api-dart/.flutter-plugins
 packages/push-api-dart/.flutter-plugins-dependencies
-packages/push-api-dart/.flutter-plugins
-packages/push-api-dart/.flutter-plugins
 packages/demo-flutter/pubspec.lock
 packages/demo-flutter/ios/Podfile.lock
-packages/push-api-dart/.flutter-plugins-dependencies
-packages/push-api-dart/.flutter-plugins
+packages/demo-flutter/ios/Runner.xcodeproj/project.pbxproj
