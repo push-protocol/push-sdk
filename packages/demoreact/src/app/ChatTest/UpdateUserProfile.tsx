@@ -70,7 +70,9 @@ const UpdateUserProfile = () => {
               name: name,
               desc: desc,
               picture: pic,
-              blockedUsersList: blockedUsersList ? blockedUsersList.split(",") : null,
+              blockedUsersList: blockedUsersList
+                ? blockedUsersList.split(',')
+                : undefined,
             },
             env,
             progressHook: handleProgress,
@@ -84,7 +86,9 @@ const UpdateUserProfile = () => {
               name: name,
               desc: desc,
               picture: pic,
-              blockedUsersList: blockedUsersList ? blockedUsersList.split(",") : null,
+              blockedUsersList: blockedUsersList
+                ? blockedUsersList.split(',')
+                : undefined,
             },
             env,
             progressHook: handleProgress,
