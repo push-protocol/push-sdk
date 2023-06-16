@@ -29,6 +29,7 @@ import {
 import getIncomingIndexFromAddress from './helpers/getIncomingIndexFromAddress';
 import getConnectedAddresses from './helpers/getConnectedAddresses';
 import getConnectToAddresses from './helpers/getConnectToAddresses';
+import { VIDEO_CALL_TYPE } from '../payloads/constants';
 
 export const initVideoCallData: VideoCallData = {
   meta: {
@@ -63,17 +64,18 @@ export const initVideoCallData: VideoCallData = {
 
 export class Video {
   // user, call related info
-  private signer: SignerType;
-  private chainId: number;
-  private pgpPrivateKey: string;
-  private env: ENV;
+  protected signer: SignerType;
+  protected chainId: number;
+  protected pgpPrivateKey: string;
+  protected env: ENV;
+  protected callType: VIDEO_CALL_TYPE;
 
   // storing the peer instance
   private peerInstances: {
     [key: string]: any;
   } = {};
 
-  private data: VideoCallData;
+  protected data: VideoCallData;
   setData: (fn: (data: VideoCallData) => VideoCallData) => void;
 
   constructor({
@@ -82,17 +84,20 @@ export class Video {
     pgpPrivateKey,
     env,
     setData,
+    callType,
   }: {
     signer: SignerType;
     chainId: number;
     pgpPrivateKey: string;
-    env?: ENV;
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
+    env?: ENV;
+    callType?: VIDEO_CALL_TYPE;
   }) {
     this.signer = signer;
     this.chainId = chainId;
     this.pgpPrivateKey = pgpPrivateKey;
     this.env = env ? env : Constants.ENV.PROD;
+    this.callType = callType ? callType : VIDEO_CALL_TYPE.PUSH_VIDEO;
 
     // init the react state
     setData(() => initVideoCallData);
@@ -137,200 +142,198 @@ export class Video {
 
   async request(options: VideoRequestInputOptions): Promise<void> {
     const {
-      senderAddress, // notification sender
-      recipientAddress, // notification receiver
+      senderAddress,
+      recipientAddress,
       chatId,
       onReceiveMessage = (message: string) => {
         console.log('received a meesage', message);
       },
       retry = false,
+      details,
     } = options || {};
 
-    try {
-      console.log(
-        'request',
-        'options',
-        options,
-        'localStream',
-        this.data.local.stream
-      );
+    console.log('request', 'options', options);
 
-      this.peerInstances[recipientAddress] = new Peer({
-        initiator: true,
-        trickle: false,
-        stream: this.data.local.stream,
-      });
+    const recipientAddresses = Array.isArray(recipientAddress)
+      ? recipientAddress
+      : [recipientAddress];
 
-      this.peerInstances[recipientAddress].on('signal', (data: any) => {
-        this.setData((oldData) => {
-          return produce(oldData, (draft) => {
-            draft.meta.initiator.signal = data;
-          });
+    recipientAddresses.forEach((recipientAddress) => {
+      try {
+        this.peerInstances[recipientAddress] = new Peer({
+          initiator: true,
+          trickle: false,
+          stream: this.data.local.stream,
         });
 
-        // sending notification to the recipientAddress with video call signaling data
-        sendVideoCallNotification(
-          {
-            signer: this.signer,
-            chainId: this.chainId,
-            pgpPrivateKey: this.pgpPrivateKey,
-          },
-          {
-            senderAddress,
-            recipientAddress,
-            status: retry
-              ? VideoCallStatus.RETRY_INITIALIZED
-              : VideoCallStatus.INITIALIZED,
-            chatId,
-            signalData: data,
-            env: this.env,
-          }
-        );
-      });
-
-      this.peerInstances[recipientAddress].on('connect', () => {
-        this.peerInstances[recipientAddress].send(
-          JSON.stringify({
-            type: 'isVideoOn',
-            value: this.data.local.video,
-          })
-        );
-        this.peerInstances[recipientAddress].send(
-          JSON.stringify({
-            type: 'isAudioOn',
-            value: this.data.local.audio,
-          })
-        );
-      });
-
-      this.peerInstances[recipientAddress].on('data', (data: any) => {
-        if (isJSON(data)) {
-          const parsedData = JSON.parse(data);
-
-          if (parsedData.type === 'connectedAddress') {
-            console.log('CONNECTED ADDRESSES', parsedData.value);
-
-            const receivedConnectedAddresses = parsedData.value;
-            const localConnectedAddresses = getConnectedAddresses({
-              incomingPeers: this.data.incoming,
-            });
-
-            // find out the address to which local peer is not connected to but the remote peer is
-            // then connect with them
-            const connectToAddresses = getConnectToAddresses({
-              localAddress: senderAddress,
-              localConnectedAddresses,
-              receivedConnectedAddresses,
-            });
-            for (const connectToAddress of connectToAddresses) {
-              this.request({
-                senderAddress,
-                recipientAddress: connectToAddress,
-                chatId,
-              });
-            }
-          }
-
-          if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.value);
-            this.setData((oldData) => {
-              return produce(oldData, (draft) => {
-                const incomingIndex = getIncomingIndexFromAddress(
-                  oldData.incoming,
-                  recipientAddress
-                );
-                draft.incoming[incomingIndex].video = parsedData.value;
-              });
-            });
-          }
-
-          if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.value);
-            this.setData((oldData) => {
-              return produce(oldData, (draft) => {
-                const incomingIndex = getIncomingIndexFromAddress(
-                  oldData.incoming,
-                  recipientAddress
-                );
-                draft.incoming[incomingIndex].audio = parsedData.value;
-              });
-            });
-          }
-
-          if (parsedData.type === 'endCall') {
-            console.log('END CALL');
-            // destroy the local stream
-            if (this.data.local.stream) {
-              endStream(this.data.local.stream);
-            }
-
-            // reset the state
-            this.setData(() => initVideoCallData);
-          }
-        } else {
-          onReceiveMessage(data);
-        }
-      });
-
-      this.peerInstances[recipientAddress].on(
-        'stream',
-        (currentStream: MediaStream) => {
-          console.log('received incoming stream', currentStream);
+        this.peerInstances[recipientAddress].on('signal', (data: any) => {
           this.setData((oldData) => {
             return produce(oldData, (draft) => {
-              const incomingIndex = getIncomingIndexFromAddress(
-                oldData.incoming,
-                recipientAddress
-              );
-              draft.incoming[incomingIndex].stream = currentStream;
+              draft.meta.initiator.signal = data;
             });
           });
-        }
-      );
 
-      // set videoCallInfo state with status 1 (call initiated)
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          const incomingIndex = getIncomingIndexFromAddress(
-            oldData.incoming,
-            recipientAddress
+          // sending notification to the recipientAddress with video call signaling data
+          sendVideoCallNotification(
+            {
+              signer: this.signer,
+              chainId: this.chainId,
+              pgpPrivateKey: this.pgpPrivateKey,
+            },
+            {
+              senderAddress,
+              recipientAddress,
+              status: retry
+                ? VideoCallStatus.RETRY_INITIALIZED
+                : VideoCallStatus.INITIALIZED,
+              chatId,
+              signalData: data,
+              env: this.env,
+              callType: this.callType,
+              callDetails: details,
+            }
           );
-
-          draft.local.address = senderAddress;
-          draft.incoming[incomingIndex].address = recipientAddress;
-          draft.meta.chatId = chatId;
-          draft.meta.initiator.address = senderAddress;
-          draft.incoming[incomingIndex].status = retry
-            ? VideoCallStatus.RETRY_INITIALIZED
-            : VideoCallStatus.INITIALIZED;
-          draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
         });
-      });
-    } catch (err) {
-      console.log('error in request', err);
-    }
+
+        this.peerInstances[recipientAddress].on('connect', () => {
+          this.peerInstances[recipientAddress].send(
+            JSON.stringify({
+              type: 'isVideoOn',
+              value: this.data.local.video,
+            })
+          );
+          this.peerInstances[recipientAddress].send(
+            JSON.stringify({
+              type: 'isAudioOn',
+              value: this.data.local.audio,
+            })
+          );
+        });
+
+        this.peerInstances[recipientAddress].on('data', (data: any) => {
+          if (isJSON(data)) {
+            const parsedData = JSON.parse(data);
+
+            if (parsedData.type === 'connectedAddress') {
+              console.log('CONNECTED ADDRESSES', parsedData.value);
+
+              const receivedConnectedAddresses = parsedData.value;
+              const localConnectedAddresses = getConnectedAddresses({
+                incomingPeers: this.data.incoming,
+              });
+
+              // find out the address to which local peer is not connected to but the remote peer is
+              // then connect with them
+              const connectToAddresses = getConnectToAddresses({
+                localAddress: senderAddress,
+                localConnectedAddresses,
+                receivedConnectedAddresses,
+              });
+              for (const connectToAddress of connectToAddresses) {
+                this.request({
+                  senderAddress,
+                  recipientAddress: connectToAddress,
+                  chatId,
+                });
+              }
+            }
+
+            if (parsedData.type === 'isVideoOn') {
+              console.log('IS VIDEO ON', parsedData.value);
+              this.setData((oldData) => {
+                return produce(oldData, (draft) => {
+                  const incomingIndex = getIncomingIndexFromAddress(
+                    oldData.incoming,
+                    recipientAddress
+                  );
+                  draft.incoming[incomingIndex].video = parsedData.value;
+                });
+              });
+            }
+
+            if (parsedData.type === 'isAudioOn') {
+              console.log('IS AUDIO ON', parsedData.value);
+              this.setData((oldData) => {
+                return produce(oldData, (draft) => {
+                  const incomingIndex = getIncomingIndexFromAddress(
+                    oldData.incoming,
+                    recipientAddress
+                  );
+                  draft.incoming[incomingIndex].audio = parsedData.value;
+                });
+              });
+            }
+
+            if (parsedData.type === 'endCall') {
+              console.log('END CALL');
+              // destroy the local stream
+              if (this.data.local.stream) {
+                endStream(this.data.local.stream);
+              }
+
+              // reset the state
+              this.setData(() => initVideoCallData);
+            }
+          } else {
+            onReceiveMessage(data);
+          }
+        });
+
+        this.peerInstances[recipientAddress].on(
+          'stream',
+          (currentStream: MediaStream) => {
+            console.log('received incoming stream', currentStream);
+            this.setData((oldData) => {
+              return produce(oldData, (draft) => {
+                const incomingIndex = getIncomingIndexFromAddress(
+                  oldData.incoming,
+                  recipientAddress
+                );
+                draft.incoming[incomingIndex].stream = currentStream;
+              });
+            });
+          }
+        );
+
+        // set videoCallInfo state with status 1 (call initiated)
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            const incomingIndex = getIncomingIndexFromAddress(
+              oldData.incoming,
+              recipientAddress
+            );
+
+            draft.local.address = senderAddress;
+            draft.incoming[incomingIndex].address = recipientAddress;
+            draft.meta.chatId = chatId;
+            draft.meta.initiator.address = senderAddress;
+            draft.incoming[incomingIndex].status = retry
+              ? VideoCallStatus.RETRY_INITIALIZED
+              : VideoCallStatus.INITIALIZED;
+            draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
+          });
+        });
+      } catch (err) {
+        console.log('error in request', err);
+      }
+    });
   }
 
   async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {
     const {
       signalData,
-      senderAddress, // notification sender
-      recipientAddress, // notification receiver
+      senderAddress,
+      recipientAddress,
       chatId,
       onReceiveMessage = (message: string) => {
         console.log('received a meesage', message);
       },
       retry = false,
+      details,
     } = options || {};
 
     try {
-      console.log(
-        'accept request',
-        'options',
-        options,
-        'localStream',
-        this.data.local.stream
-      );
+      console.log('accept request', 'options', options);
 
       this.peerInstances[recipientAddress] = new Peer({
         initiator: false,
@@ -362,6 +365,8 @@ export class Video {
             chatId,
             signalData: data,
             env: this.env,
+            callType: this.callType,
+            callDetails: details,
           }
         );
       });
@@ -530,6 +535,7 @@ export class Video {
           chatId,
           signalData: null,
           env: this.env,
+          callType: this.callType,
         }
       );
     }
@@ -624,6 +630,7 @@ export class Video {
             chatId: this.data.meta.chatId,
             signalData: null,
             env: this.env,
+            callType: this.callType,
           }
         );
       }

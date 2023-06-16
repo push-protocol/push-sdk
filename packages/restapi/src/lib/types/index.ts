@@ -3,6 +3,9 @@ import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_INVITE_ROLES,
+  SPACE_REQUEST_TYPE,
 } from '../../lib/payloads/constants';
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -259,7 +262,7 @@ export interface Member {
 export enum ChatStatus {
   ACTIVE = 'ACTIVE',
   PENDING = 'PENDING',
-  ENDED = 'ENDED'
+  ENDED = 'ENDED',
 }
 export interface GroupDTO {
   members: {
@@ -317,7 +320,12 @@ export interface SpaceDTO {
   spaceId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  status: ChatStatus | null
+  status: ChatStatus | null;
+  inviteeDetails: { [key: string]: SPACE_INVITE_ROLES };
+}
+
+export interface SpaceData extends SpaceDTO {
+  connectionData: VideoCallData;
 }
 
 export interface Subscribers {
@@ -488,10 +496,14 @@ export type VideoCreateInputOptions = {
 
 export type VideoRequestInputOptions = {
   senderAddress: string;
-  recipientAddress: string;
+  recipientAddress: string | string[];
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -501,6 +513,10 @@ export type VideoAcceptRequestInputOptions = {
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_ACCEPT_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoConnectInputOptions = {

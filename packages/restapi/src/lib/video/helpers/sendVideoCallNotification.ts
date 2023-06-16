@@ -1,8 +1,18 @@
 import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
-import { ADDITIONAL_META_TYPE } from '../../payloads/constants';
+import {
+  NOTIFICATION_TYPE,
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_REQUEST_TYPE,
+  VIDEO_CALL_TYPE,
+} from '../../payloads/constants';
 import { SignerType, VideoCallStatus } from '../../types';
+
+interface CallDetailsType {
+  type: SPACE_REQUEST_TYPE | SPACE_ACCEPT_REQUEST_TYPE;
+  data: Record<string, unknown>;
+};
 
 interface VideoCallInfoType {
   recipientAddress: string;
@@ -11,6 +21,8 @@ interface VideoCallInfoType {
   signalData: any;
   status: VideoCallStatus;
   env?: ENV;
+  callType?: VIDEO_CALL_TYPE;
+  callDetails?: CallDetailsType;
 }
 
 interface UserInfoType {
@@ -25,6 +37,7 @@ interface VideoDataType {
   chatId: string;
   signalData?: any;
   status: VideoCallStatus;
+  callDetails?: CallDetailsType;
 }
 
 const sendVideoCallNotification = async (
@@ -33,9 +46,11 @@ const sendVideoCallNotification = async (
     recipientAddress,
     senderAddress,
     chatId,
-    signalData = null,
     status,
+    signalData = null,
     env = Constants.ENV.PROD,
+    callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
+    callDetails
   }: VideoCallInfoType
 ) => {
   try {
@@ -45,6 +60,7 @@ const sendVideoCallNotification = async (
       chatId,
       signalData,
       status,
+      callDetails
     };
 
     console.log('sendVideoCallNotification', 'videoData', videoData);
@@ -57,12 +73,14 @@ const sendVideoCallNotification = async (
 
     const notificationText = `Video Call from ${senderAddress}`;
 
+    const notificationType = NOTIFICATION_TYPE.TARGETTED;
+
     await sendNotification({
       senderType: 1, // for chat notification
       signer,
       pgpPrivateKey,
       chatId,
-      type: 3,
+      type: notificationType,
       identityType: 2,
       notification: {
         title: notificationText,
@@ -74,9 +92,9 @@ const sendVideoCallNotification = async (
         cta: '',
         img: '',
         additionalMeta: {
-          type: `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`,
+          type: `${callType}+1`,
           data: JSON.stringify(videoData),
-        }
+        },
       },
       recipients: recipientAddressInCaip,
       channel: senderAddressInCaip,
