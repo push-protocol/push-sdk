@@ -1,19 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import live from './assets/live.svg';
-import scheduled from './assets/CalendarBlank.svg';
-
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { useSpaceData } from './../../../hooks';
 import { getDateAndTime, getStatus } from './utils';
+import { useSpaceData, useGetSpaceData } from './../../../hooks';
 
-import * as PushAPI from '@pushprotocol/restapi';
+import live from './../../../icons/live.svg';
+import scheduled from './../../../icons/scheduled.svg';
 
 export interface ISpaceBannerProps {
   spaceId: string;
-  orientation?: 'maximized' | 'minimized';
+  orientation?: 'maximized' | 'minimized' | 'pill';
 }
 
 /**
@@ -32,22 +30,8 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
 
   const theme = React.useContext(ThemeContext);
-  // const [spaceBannerData, setSpaceBannerData] = React.useState<any>();
-  const { spaceBannerData, setSpaceBannerData } = useSpaceData();
-
-  React.useEffect(() => {
-    (async () => {
-      await PushAPI.space.get({
-        spaceId: spaceId,
-      })
-        .then((response) => {
-          setSpaceBannerData({spaceId: spaceId, apiData: response});
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
-  }, [spaceId, spaceBannerData, setSpaceBannerData]);
+  const { spaceBannerData } = useSpaceData();
+  useGetSpaceData(spaceId); // Fetches the space data from cache or from the API
 
   return (
       <Container orientation={orientation} status={getStatus(spaceBannerData?.apiData.scheduleAt as string)} theme={theme}>
@@ -79,11 +63,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           />
         )}
         <Title orientation={orientation}>
-          {orientation === 'minimized'
+          {orientation === 'pill'
             ? `${spaceBannerData?.apiData.spaceName.slice(0, 20)}...`
             : spaceBannerData?.apiData.spaceName}
         </Title>
-        <Status>
+        <Status orientation={orientation}>
           <Time orientation={orientation}>
             <Icon
               src={
@@ -105,11 +89,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           </Time>
           <Participants>
             <ParticipantsIconContainer orientation={orientation}>
-              {orientation === 'maximized'
+              {orientation === 'pill'
                 ? spaceBannerData &&
                   (spaceBannerData.apiData.pendingMembers as []).map(
                     (person, index) =>
-                      index < 3 && (
+                      index < 2 && (
                         <ParticipantsIcon
                           src={(person as any)?.image}
                           alt="avatar"
@@ -120,7 +104,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
                 : spaceBannerData &&
                   (spaceBannerData?.apiData.pendingMembers as []).map(
                     (person, index) =>
-                      index < 2 && (
+                      index < 3 && (
                         <ParticipantsIcon
                           src={(person as any)?.image}
                           alt="avatar"
@@ -130,11 +114,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
                   )}
             </ParticipantsIconContainer>
             <ParticipantsText>
-              {orientation === 'maximized'
+              {orientation === 'pill'
                 ? spaceBannerData &&
-                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) -3}`
+                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) -2}`
                 : spaceBannerData &&
-                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) - 2}`}
+                  `+${((spaceBannerData?.apiData.pendingMembers as []).length as number) - 3}`}
             </ParticipantsText>
           </Participants>
         </Status>
@@ -152,11 +136,11 @@ const Container = styled.div<IThemeProps>`
   align-items: ${(props) =>
     props.orientation === 'maximized' ? 'flex-start' : 'center'};
   padding: ${(props) =>
-    props.orientation === 'maximized' ? '16px' : '0 11px'};
+    props.orientation === 'maximized' ? '16px' : props.orientation === 'minimized'? '0 20px': '0 11px'};
   gap: ${(props) => (props.orientation === 'maximized' ? '16px' : '8px')};
   width: ${(props) =>
-    props.orientation === 'maximized' ? '37vw' : 'fit-content'};
-  height: ${(props) => (props.orientation === 'maximized' ? 'auto' : '63px')};
+    props.orientation === 'maximized' ? 'inherit' : props.orientation === 'minimized' ? 'inherit' : 'fit-content'};
+  height: ${(props) => (props.orientation === 'maximized' ? 'auto' : props.orientation ==='minimized' ? '40px' : '63px')};
   background: ${(props) =>
     props.status === 'Live'
       ? props.theme.bannerBackground1
@@ -236,7 +220,7 @@ const Title = styled.div<{ orientation?: string }>`
   font-weight: ${(props) =>
     props.orientation === 'maximized' ? '700' : '500'};
   font-size: ${(props) =>
-    props.orientation === 'maximized' ? '20px' : '12px'};
+    props.orientation === 'maximized' ? '20px' : props.orientation === 'minimized' ? '16px' : '12px'};
   line-height: 130%;
   width: 90%;
   line-clamp: ${(props) => (props.orientation === 'maximized' ? '3' : '2')};
@@ -246,10 +230,10 @@ const Title = styled.div<{ orientation?: string }>`
   }
 }`;
 
-const Status = styled.div`
+const Status = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: ${(props) => (props.orientation === 'maximized' ? '100%' : 'fit-content')};
   justify-content: space-between;
   align-items: center;
 }`;
@@ -285,7 +269,7 @@ const Participants = styled.div`
 const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  width: ${(props) => (props.orientation === 'maximized' ? '62px' : '46.5px')};
+  width: ${(props) => (props.orientation === 'pill' ? '46.5px' : '62px')};
   padding: 0 4px;
 }`;
 

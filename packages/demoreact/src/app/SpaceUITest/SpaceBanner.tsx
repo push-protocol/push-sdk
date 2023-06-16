@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useSpaceComponents } from './useSpaceComponents';
 import { Section, SectionItem } from '../components/StyledComponents';
-import { Checkbox } from '../components/Checkbox';
+import Dropdown from '../components/Dropdown';
 
 export const SpaceBanner = () => {
   const { SpaceBannerComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
-  const [isMaximized, setIsMaximized] = useState<boolean>(true);
+  const [orientation, setOrientation] = useState('');
   const updateSpaceId = (e: React.SyntheticEvent<HTMLElement>) => {
     setSpaceId((e.target as HTMLInputElement).value);
   };
 
-  const updateIsMaximized = () => {
-    setIsMaximized(!isMaximized);
+  const updateOrientation = (e: any) => {
+    setOrientation(e.target.value);
   };
 
   return (
@@ -27,16 +27,28 @@ export const SpaceBanner = () => {
             style={{ width: 400, height: 30 }}
           />
         </SectionItem>
-        <Checkbox
-          id="isMaximized"
-          label="Maximized"
-          value={isMaximized}
-          onChange={updateIsMaximized}
+        <Dropdown
+          label="orientation"
+          options={[
+            { label: 'maximized', value: 'maximized' },
+            { label: 'minimized', value: 'minimized' },
+            { label: 'pill', value: 'pill' },
+          ]}
+          value={orientation}
+          onChange={updateOrientation}
         />
       </Section>
       <SpaceBannerComponent
         spaceId={spaceId}
-        orientation={isMaximized ? 'maximized' : 'minimized'}
+        orientation={
+          orientation === 'maximized'
+            ? 'maximized'
+            : orientation === 'minimized'
+            ? 'minimized'
+            : orientation === 'pill'
+            ? 'pill'
+            : undefined
+        }
       />
     </div>
   );
