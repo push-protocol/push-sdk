@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { getDateAndTime, getStatus } from './utils';
+import { ParticipantContainer } from '../reusables/ParticipantContainer';
 import { useSpaceData, useGetSpaceData } from './../../../hooks';
 
 import live from './../../../icons/live.svg';
@@ -87,45 +88,13 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
                 : 'Ended'}
             </TimeText>
           </Time>
-          <Participants>
-            <ParticipantsIconContainer orientation={orientation}>
-              {orientation === 'pill'
-                ? spaceBannerData &&
-                  (spaceBannerData?.[spaceId]?.pendingMembers as []).map(
-                    (person, index) =>
-                      index < 2 && (
-                        <ParticipantsIcon
-                          src={(person as any)?.image}
-                          alt="avatar"
-                          className={`index${index}`}
-                        />
-                      )
-                  )
-                : spaceBannerData && spaceBannerData[spaceId] &&
-                  (spaceBannerData[spaceId]?.pendingMembers as []).map(
-                    (person, index) =>
-                      index < 3 && (
-                        <ParticipantsIcon
-                          src={(person as any)?.image}
-                          alt="avatar"
-                          className={`index${index}`}
-                        />
-                      )
-                  )}
-            </ParticipantsIconContainer>
-            <ParticipantsText>
-              {orientation === 'pill'
-                ? spaceBannerData && spaceBannerData[spaceId] &&
-                  `+${((spaceBannerData?.[spaceId]?.pendingMembers as []).length as number) -2}`
-                : spaceBannerData && spaceBannerData[spaceId] &&
-                  `+${((spaceBannerData?.[spaceId]?.pendingMembers as []).length as number) - 3}`}
-            </ParticipantsText>
-          </Participants>
+          <ParticipantContainer participants={(spaceBannerData?.[spaceId]?.pendingMembers as [])} orientation={orientation}/>
         </Status>
       </Container>
   );
 };
 
+// (spaceBannerData?.[spaceId]?.pendingMembers as [])
 // Styling
 const Container = styled.div<IThemeProps>`
   display: flex;
@@ -257,50 +226,4 @@ const TimeText = styled.div<{ status?: string }>`
   font-size: 14px;
   line-height: 150%;
   color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
-}`;
-
-const Participants = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}`;
-
-const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  width: ${(props) => (props.orientation === 'pill' ? '46.5px' : '62px')};
-  padding: 0 4px;
-}`;
-
-const ParticipantsIcon = styled.img` 
-  width: 31px;
-  height: 31px;
-  border-radius: 50%;
-
-  &.index0 {
-    position: relative;
-    top: 0;
-    left: 0;
-    z-index: 3;
-  }
-  &.index1 {
-    position: relative;
-    top: 0;
-    left: -50%;
-    z-index: 2;
-  }
-  &.index2 {
-    position: relative;
-    top: 0;
-    left: -100%;
-    z-index: 1;
-  }
-}`;
-
-const ParticipantsText = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto;
 }`;
