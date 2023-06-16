@@ -47,345 +47,397 @@ describe('PushAPI.chat.send', () => {
     account2 = `eip155:${walletAddress2}`;
   });
 
-  it('W2W Profile to NFT Profile', async () => {
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: _nftAccount1,
-      account: account1,
-      signer: _signer1,
-      env: _env,
+  describe('Sending message to different versioned Profile', () => {
+    it('W2W Profile to NFT Profile', async () => {
+      await send({
+        messageContent: MESSAGE,
+        receiverAddress: _nftAccount1,
+        account: account1,
+        signer: _signer1,
+        env: _env,
+      });
+    });
+    it('NFT Profile to W2W Profile', async () => {
+      await send({
+        messageContent: MESSAGE,
+        receiverAddress: account1,
+        account: _nftAccount1,
+        signer: _nftSigner1,
+        env: _env,
+      });
+    });
+    it('NFT Profile to NFT Profile', async () => {
+      await send({
+        messageContent: MESSAGE,
+        receiverAddress: _nftAccount2,
+        account: _nftAccount1,
+        signer: _nftSigner1,
+        env: _env,
+      });
+    });
+    it('v1 W2W Profile to v1 W2W Profile', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+    });
+    it('v1 W2W Profile to v3 W2W Profile', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V3,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+    });
+    it('v3 W2W Profile to v1 W2W Profile', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V3,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+    });
+    it('v3 W2W Profile to v3 W2W Profile', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V3,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V3,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+    });
+    it('v1 W2W Profile to v1 W2W Profile(upgraded to v3 in between)', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+      await upgrade({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      // able to depcrypt after upgrade
+      const receivedMessagePostUpdate = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessagePostUpdate.messageContent).to.be.equal(MESSAGE);
+      // able to decrypt new messages post upgrade
+      const msgRequest2 = await send({
+        messageContent: MESSAGE2,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest2.encType).to.be.equal('pgp');
+      const receivedMessagePostUpdate2 = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE2);
+    });
+    it('v1 W2W Profile(upgraded to v3 in between) to v1 W2W Profile', async () => {
+      const user1 = await create({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user2 = await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const user1PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user1.encryptedPrivateKey,
+        signer: _signer1,
+        env: _env,
+        toUpgrade: false,
+      });
+      const user2PrivatePGPKey = await decryptPGPKey({
+        encryptedPGPPrivateKey: user2.encryptedPrivateKey,
+        signer: _signer2,
+        env: _env,
+        toUpgrade: false,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest.encType).to.be.equal('pgp');
+      const receivedMessage = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
+      await upgrade({
+        account: account1,
+        env: _env,
+        signer: _signer1,
+      });
+      // able to send after upgrade
+      const msgRequest2 = await send({
+        messageContent: MESSAGE3,
+        receiverAddress: walletAddress2,
+        pgpPrivateKey: user1PrivatePGPKey,
+        signer: _signer1,
+        env: _env,
+      });
+      expect(msgRequest2.encType).to.be.equal('pgp');
+      const receivedMessagePostUpdate2 = (
+        await requests({
+          account: account2,
+          pgpPrivateKey: user2PrivatePGPKey,
+          toDecrypt: true,
+          env: _env,
+        })
+      )[0].msg;
+      expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE3);
     });
   });
-  it('NFT Profile to W2W Profile', async () => {
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: account1,
-      account: _nftAccount1,
-      signer: _nftSigner1,
-      env: _env,
-    });
-  });
-  it('NFT Profile to NFT Profile', async () => {
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: _nftAccount2,
-      account: _nftAccount1,
-      signer: _nftSigner1,
-      env: _env,
-    });
-  });
-  it('v1 W2W Profile to v1 W2W Profile', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
+  describe.only('Sending message - Type Text', () => {
+    it('PlainText messageContent', async () => {
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        signer: _signer1,
         env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-  });
-  it('v1 W2W Profile to v3 W2W Profile', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V1,
+      });
+      console.log(msgRequest);
     });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V3,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
+    it('PlainText messageObj', async () => {
+      const msgRequest = await send({
+        messageObj: {
+          message: MESSAGE,
+          messageType: 'Text',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
         env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-  });
-  it('v3 W2W Profile to v1 W2W Profile', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V3,
+      });
+      console.log(msgRequest);
     });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
+    it('Encrypted messageContent', async () => {
+      await create({
         account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
         env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-  });
-  it('v3 W2W Profile to v3 W2W Profile', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V3,
-    });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V3,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msgRequest = await send({
+        messageContent: MESSAGE,
+        receiverAddress: walletAddress2,
+        signer: _signer1,
         env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-  });
-  it('v1 W2W Profile to v1 W2W Profile(upgraded to v3 in between)', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V1,
+      });
+      console.log(msgRequest);
     });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
+    it('Encrypted messageObj', async () => {
+      const msgRequest = await send({
+        messageObj: {
+          message: MESSAGE,
+          messageType: 'Text',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
         env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-    await upgrade({
-      account: account2,
-      env: _env,
-      signer: _signer2,
+      });
+      console.log(msgRequest);
     });
-    // able to depcrypt after upgrade
-    const receivedMessagePostUpdate = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
-        env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessagePostUpdate.messageContent).to.be.equal(MESSAGE);
-    // able to decrypt new messages post upgrade
-    const msgRequest2 = await send({
-      messageContent: MESSAGE2,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest2.encType).to.be.equal('pgp');
-    const receivedMessagePostUpdate2 = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
-        env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE2);
-  });
-  it('v1 W2W Profile(upgraded to v3 in between) to v1 W2W Profile', async () => {
-    const user1 = await create({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user2 = await create({
-      account: account2,
-      env: _env,
-      signer: _signer2,
-      version: Constants.ENC_TYPE_V1,
-    });
-    const user1PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user1.encryptedPrivateKey,
-      signer: _signer1,
-      env: _env,
-      toUpgrade: false,
-    });
-    const user2PrivatePGPKey = await decryptPGPKey({
-      encryptedPGPPrivateKey: user2.encryptedPrivateKey,
-      signer: _signer2,
-      env: _env,
-      toUpgrade: false,
-    });
-    const msgRequest = await send({
-      messageContent: MESSAGE,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest.encType).to.be.equal('pgp');
-    const receivedMessage = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
-        env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessage.messageContent).to.be.equal(MESSAGE);
-    await upgrade({
-      account: account1,
-      env: _env,
-      signer: _signer1,
-    });
-    // able to send after upgrade
-    const msgRequest2 = await send({
-      messageContent: MESSAGE3,
-      receiverAddress: walletAddress2,
-      pgpPrivateKey: user1PrivatePGPKey,
-      signer: _signer1,
-      env: _env,
-    });
-    expect(msgRequest2.encType).to.be.equal('pgp');
-    const receivedMessagePostUpdate2 = (
-      await requests({
-        account: account2,
-        pgpPrivateKey: user2PrivatePGPKey,
-        toDecrypt: true,
-        env: _env,
-      })
-    )[0].msg;
-    expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE3);
   });
 });

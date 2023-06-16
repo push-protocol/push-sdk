@@ -139,16 +139,37 @@ export interface IMessageIPFS {
   toCAIP10: string;
   fromDID: string;
   toDID: string;
+  messageObj?: {
+    message: string;
+    messageType: string;
+    meta?: string;
+  };
+  verificationProof?: string;
   messageType: string;
+  /**
+   * @deprecated - Use messageObj.message instead
+   */
   messageContent: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   sigType: string;
   link: string | null;
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-  deprecated?: boolean; // scope only at sdk level
-  deprecatedCode?: string; // scope only at sdk level
+  /**
+   * scope only at sdk level
+   */
+  deprecated?: boolean;
+  /**
+   * scope only at sdk level
+   */
+  deprecatedCode?: string;
 }
 export interface IFeeds {
   msg: IMessageIPFS;
@@ -287,29 +308,34 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 }
 
 export interface ChatOptionsType extends AccountEnvOptionsType {
+  messageObj?: {
+    message: string;
+    messageType: string;
+    meta?: string;
+  } | null;
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
   receiverAddress: string;
   pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
-  /**
-   * Api key is now optional
-   */
-  apiKey?: string;
 }
 
 export interface ChatSendOptionsType {
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageObj?: {
+    message: string;
+    messageType: string;
+    meta?: string;
+  };
   receiverAddress: string;
   pgpPrivateKey?: string;
-  /**
-   * Api key is now optional
-   */
-  apiKey?: string;
-  env?: ENV;
   account?: string;
   signer?: SignerType;
+  env?: ENV;
+  /**
+   * @deprecated - Use messageobj instead
+   */
+  messageContent?: string;
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {

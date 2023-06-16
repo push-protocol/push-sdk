@@ -13,19 +13,19 @@ import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 
 /**
- * Send a message to an address or a group
+ * Send a message to an address, nft or a group
  */
 export const send = async (
   options: ChatSendOptionsType
 ): Promise<MessageWithCID> => {
   const {
+    messageObj = null,
     messageContent = '',
     messageType = 'Text',
     receiverAddress,
     account = null,
     signer = null,
     pgpPrivateKey = null,
-    apiKey = '',
     env = Constants.ENV.PROD,
   } = options || {};
 
@@ -46,6 +46,17 @@ export const send = async (
       isGroup = true;
     }
 
+    //these need to be backward compatible
+    const currentAllowedTypes = ['Text', 'Image', 'File', 'GIF', 'MediaEmbed'];
+    let updatedMessageContent = messageContent;
+    if (messageObj) {
+      updatedMessageContent = messageObj.message;
+    }
+    if (!currentAllowedTypes.includes(messageType)) {
+      updatedMessageContent =
+        'MessageType Not Supported by this sdk version. Plz upgrade !!!';
+    }
+
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const receiver = await getUserDID(receiverAddress, env);
     let conversationResponse: any = null;
@@ -58,11 +69,11 @@ export const send = async (
     }
     if (conversationResponse && !conversationResponse?.threadHash) {
       return start({
-        messageContent: messageContent,
-        messageType: messageType,
+        messageObj,
+        messageContent: updatedMessageContent,
+        messageType,
         receiverAddress: receiver,
         connectedUser,
-        apiKey,
         env,
       });
     } else {
@@ -71,7 +82,8 @@ export const send = async (
       const body: ISendMessagePayload = await sendMessagePayload(
         receiver,
         connectedUser,
-        messageContent,
+        messageObj,
+        updatedMessageContent,
         messageType,
         env
       );

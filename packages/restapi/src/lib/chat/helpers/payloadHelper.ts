@@ -3,19 +3,34 @@ import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
-
+import { sign } from './pgp';
+import * as AES from './aes';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageContent: string;
+  messageObj?: {
+    message: string;
+    messageType: string;
+    meta?: string;
+  } | null;
   messageType: string;
-  signature: string | null | undefined;
   encType: string;
   encryptedSecret: string | null | undefined;
+  verificationProof?: string;
+  /**
+   * @deprecated - Use messageObj instead
+   */
+  messageContent: string;
+  /**
+   * @deprecated - Use messageObj instead
+   */
+  signature: string | null | undefined;
+  /**
+   * @deprecated - Use messageObj instead
+   */
   sigType: string | null | undefined;
-  verificationProof?: string | null | undefined;
 }
 
 export interface IApproveRequestPayload {
@@ -55,6 +70,11 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
+  messageObj: null | {
+    message: string;
+    messageType: string;
+    meta?: string;
+  },
   messageContent: string,
   messageType: string,
   env: ENV
@@ -77,6 +97,7 @@ export const sendMessagePayload = async (
     }
   }
 
+  const secretKey: string = AES.generateRandomSecret(15);
   const { message, encryptionType, aesEncryptedSecret, signature } =
     (await getEncryptedRequest(
       receiverAddress,
@@ -84,7 +105,8 @@ export const sendMessagePayload = async (
       messageContent,
       isGroup,
       env,
-      group
+      group,
+      secretKey
     )) || {};
 
   const body: ISendMessagePayload = {
@@ -99,6 +121,59 @@ export const sendMessagePayload = async (
     encryptedSecret: aesEncryptedSecret!,
     sigType: 'pgp',
   };
+
+  if (messageObj) {
+    let meta: string | undefined = undefined;
+    const message = (
+      await getEncryptedRequest(
+        receiverAddress,
+        senderCreatedUser,
+        messageObj.message,
+        isGroup,
+        env,
+        group,
+        secretKey
+      )
+    ).message;
+    if (messageObj.meta) {
+      meta = (
+        await getEncryptedRequest(
+          receiverAddress,
+          senderCreatedUser,
+          messageObj.meta,
+          isGroup,
+          env,
+          group,
+          secretKey
+        )
+      ).message;
+    }
+
+    body.messageObj = {
+      message: message,
+      messageType: messageObj.messageType,
+    };
+    if (meta) {
+      body.messageObj.meta = meta;
+    }
+    //Construct verification Proof
+    const bodyToBeHashed = {
+      fromDID: body.fromDID,
+      toDID: body.fromDID,
+      fromCAIP10: body.fromCAIP10,
+      toCAIP10: body.toCAIP10,
+      messageObj: body.messageObj,
+      messageType: body.messageType,
+      encType: body.encType,
+      encryptedSecret: body.encryptedSecret,
+    };
+    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+    const signature: string = await sign({
+      message: hash,
+      signingKey: senderCreatedUser.privateKey!,
+    });
+    body.verificationProof = `pgp:${signature}`;
+  }
   return body;
 };
 
