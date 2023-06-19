@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { getDateAndTime, getStatus } from './utils';
+import { getDateAndTime } from '../helpers/date';
+import { getSpaceStatus } from '../helpers/space';
 import { ParticipantContainer } from '../reusables/ParticipantContainer';
-import { useSpaceData, useGetSpaceData } from './../../../hooks';
 
 import live from './../../../icons/live.svg';
 import scheduled from './../../../icons/scheduled.svg';
+import { useSpaceData, useGetSpaceData } from './../../../hooks';
 
 export interface ISpaceBannerProps {
   spaceId: string;
@@ -31,32 +32,33 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
 
   const theme = React.useContext(ThemeContext);
-  const { spaceBannerData } = useSpaceData();
-  useGetSpaceData(spaceId); // Fetches the space data from cache or from the API
+  const {spaceBannerData} = useSpaceData();
+  useGetSpaceData(spaceId);
+  const spaceData = spaceBannerData?.[spaceId] // Fetches the space data from cache or from the API
 
   return (
-      <Container orientation={orientation} status={getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date)} theme={theme}>
+      <Container orientation={orientation} status={getSpaceStatus(spaceData?.scheduleAt as Date)} theme={theme}>
         <ProfileContainer orientation={orientation}>
           <PfpContainer>
-            <Pfp src={spaceBannerData?.[spaceId]?.members[0].image} alt="pfp" />
+            <Pfp src={spaceData?.members[0].image} alt="pfp" />
           </PfpContainer>
           <HostContainer>
             <HostName>
-              {spaceBannerData?.[spaceId]?.members[0].wallet.slice(7)}
+              {spaceData?.members[0].wallet.slice(7)}
               <Host>Host</Host>
             </HostName>
             <HostHandle>
               {/* Fetch the handle from Lenster */}@
-              {spaceBannerData?.[spaceId]?.members[0].wallet.slice(7)}
+              {spaceData?.members[0].wallet.slice(7)}
             </HostHandle>
           </HostContainer>
         </ProfileContainer>
         {orientation === 'maximized' ? null : (
           <Icon
             src={
-              getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Live'
+              getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
                 ? live
-                : getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Scheduled'
+                : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
                 ? scheduled
                 : '' // Ended
             }
@@ -65,36 +67,35 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         )}
         <Title orientation={orientation}>
           {orientation === 'pill'
-            ? `${spaceBannerData?.[spaceId]?.spaceName.slice(0, 20)}...`
-            : spaceBannerData?.[spaceId]?.spaceName}
+            ? `${spaceData?.spaceName.slice(0, 20)}...`
+            : spaceData?.spaceName}
         </Title>
         <Status orientation={orientation}>
           <Time orientation={orientation}>
             <Icon
               src={
-                getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Live'
+                getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
                   ? live
-                  : getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Scheduled'
+                  : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
                   ? scheduled
                   : '' // Ended
               }
               alt="status"
             />
             <TimeText>
-              {getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Live'
+              {getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
                 ? 'Live'
-                : getStatus(spaceBannerData?.[spaceId]?.scheduleAt as Date) === 'Scheduled'
-                ? `${getDateAndTime(spaceBannerData?.[spaceId]?.scheduleAt as Date)}`
+                : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
+                ? `${getDateAndTime(spaceData?.scheduleAt as Date)}`
                 : 'Ended'}
             </TimeText>
           </Time>
-          <ParticipantContainer participants={(spaceBannerData?.[spaceId]?.pendingMembers as [])} orientation={orientation}/>
+          <ParticipantContainer participants={(spaceData?.pendingMembers as [])} orientation={orientation}/>
         </Status>
       </Container>
   );
 };
 
-// (spaceBannerData?.[spaceId]?.pendingMembers as [])
 // Styling
 const Container = styled.div<IThemeProps>`
   display: flex;
