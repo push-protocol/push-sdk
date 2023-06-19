@@ -22,7 +22,7 @@ class UserRepo {
 
   static Future<User?> createUser({
     required Wallet wallet,
-    String version = Constants.ENC_TYPE_V1,
+    String version = Constants.ENC_TYPE_V3,
     Map<ENCRYPTION_TYPE, Map<String, dynamic>>? additionalMeta,
   }) async {
     const passPrefix = r'$0Pc';
@@ -43,26 +43,18 @@ class UserRepo {
     final keyPairs = await generateKeyPair();
 
     final publicKey = await preparePGPPublicKey(
-      encryptionType,
-      keyPairs.publicKey,
-      wallet,
+      encryptionType: encryptionType,
+      generatedPublicKey: keyPairs.publicKey,
+      wallet: wallet,
     );
-    log('public key preparePGPPublicKey: $publicKey');
 
-    late EncryptedPrivateKeyType encryptedPrivateKey;
-    if (encryptionType == Constants.ENC_TYPE_V4) {
-      encryptedPrivateKey = await encryptPGPKey(
-        encryptionType,
-        keyPairs.privateKey,
-        wallet,
-      );
-    } else {
-      encryptedPrivateKey = await encryptPGPKey(
-        encryptionType,
-        keyPairs.privateKey,
-        wallet,
-      );
-    }
+    EncryptedPrivateKeyType encryptedPrivateKey = await encryptPGPKey(
+      encryptionType: encryptionType,
+      generatedPrivateKey: keyPairs.privateKey,
+      wallet: wallet,
+    );
+
+    log(encryptedPrivateKey.toJson());
 
     final data = {
       "caip10": caip10,
@@ -76,7 +68,7 @@ class UserRepo {
     log('create user data:');
     log(data);
 
-    final result = await http.post(path: '/apis/v2/users/', data: data);
+    final result = await http.post(path: '/v2/users', data: data);
 
     log('create user result');
     log(result);

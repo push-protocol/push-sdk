@@ -37,28 +37,23 @@ class UidProvider extends StateNotifier<String?> {
       Map<String, dynamic> decodedToken =
           JwtDecoder.decode(credentials.idToken ?? '');
 
-      print(decodedToken['user']);
-
       final uid = decodedToken['user']['uid'];
       state = uid;
     }
   }
 
   logInWithMnemonics() async {
-    // // Create a wallet instance from a mnemonic...
     const mnemonic =
         "wine album quarter custom birth great leisure bid gossip rabbit early choice";
-    // "announce room limb pattern dry unit scale effort smooth jazz weasel alcohol";
     final walletMnemonic = Wallet.fromMnemonic(mnemonic);
-    // // print('adderss: ${walletMnemonic.address}');
-    // // print('privateKey: ${walletMnemonic.privateKey}');
-    // // print('publicKey: ${walletMnemonic.publicKey}');
 
-    // push.UserRepo.createUser(wallet: walletMnemonic);
+    push.UserRepo.getUser(address: walletMnemonic.address ?? '');
+  }
 
-    push.encrypt(
-      push.generateRandomBytes(32),
-      push.generateRandomBytes(32),
-    );
+  testOopenGP() {
+    const mnemonic =
+        "wine album quarter custom birth great leisure bid gossip rabbit early choice";
+    final wallet = Wallet.fromMnemonic(mnemonic);
+    push.UserRepo.createUser(wallet: wallet);
   }
 }

@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - openpgp (0.6.0):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - openpgp (from `.symlinks/plugins/openpgp/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  openpgp:
+    :path: ".symlinks/plugins/openpgp/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  openpgp: e0eb8d0e9a3b31ee405ca23a0042025b5e66f09b
+
+PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+
+COCOAPODS: 1.12.0

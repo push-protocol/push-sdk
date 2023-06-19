@@ -17,6 +17,7 @@ dependencies:
   push_api_dart:
     path: ../push-api-dart
   ethers: ^0.0.1+3
+  web3lib: ^2.3.5
   
 
 dev_dependencies:

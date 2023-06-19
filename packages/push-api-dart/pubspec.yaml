@@ -28,3 +28,5 @@ dependencies:
   eth_sig_util: ^0.0.9
   encrypt: ^5.0.1
   cryptography: ^2.5.0
+  convert: ^3.1.1
+  web3lib: ^2.3.5
