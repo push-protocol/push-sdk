@@ -54,7 +54,13 @@ import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 import SpaceUITest from './SpaceUITest/SpaceUITest';
-import { SpacesComponentProvider, SpaceWidget, SpaceBanner, CreateSpaceComponent } from './SpaceUITest';
+import {
+  SpacesComponentProvider,
+  SpaceWidget,
+  SpaceBanner,
+  SpaceFeed,
+  CreateSpaceComponent,
+} from './SpaceUITest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -244,7 +250,10 @@ export function App() {
                       </NavMenu>
                     }
                   />
-                  <Route path="/notifications" element={<NotificationsTest />} />
+                  <Route
+                    path="/notifications"
+                    element={<NotificationsTest />}
+                  />
                   <Route path="/secret" element={<SecretNotificationsTest />} />
 
                   <Route path="/channels" element={<ChannelsTest />} />
@@ -266,9 +275,15 @@ export function App() {
 
                   {/* chat method  routes */}
                   <Route path="/get" element={<GetUserTest />} />
-                  <Route path="/getUsersBatch" element={<GetUsersBatchTest />} />
+                  <Route
+                    path="/getUsersBatch"
+                    element={<GetUsersBatchTest />}
+                  />
                   <Route path="/create" element={<CreateUserTest />} />
-                  <Route path="/updateUserprofile" element={<UpdateUserProfile />} />
+                  <Route
+                    path="/updateUserprofile"
+                    element={<UpdateUserProfile />}
+                  />
                   <Route path="/authUpdate" element={<AuthUpdateUserTest />} />
                   <Route path="/send" element={<SendMessageTest />} />
                   <Route path="/approve" element={<ApproveRequestTest />} />
@@ -278,10 +293,22 @@ export function App() {
                   <Route path="/requests" element={<GetRequestsTest />} />
                   <Route path="/createGroup" element={<CreateGroupTest />} />
                   <Route path="/getGroup" element={<GetGroupTest />} />
-                  <Route path="/addMembersToGroup" element={<AddMembersToGroupTest />} />
-                  <Route path="/addAdminsToGroup" element={<AddAdminsToGroupTest />} />
-                  <Route path="/removeMembersFromGroup" element={<RemoveMembersFromGroupTest />} />
-                  <Route path="/removeAdminsFromGroup" element={<RemoveAdminsFromGroupTest />} />
+                  <Route
+                    path="/addMembersToGroup"
+                    element={<AddMembersToGroupTest />}
+                  />
+                  <Route
+                    path="/addAdminsToGroup"
+                    element={<AddAdminsToGroupTest />}
+                  />
+                  <Route
+                    path="/removeMembersFromGroup"
+                    element={<RemoveMembersFromGroupTest />}
+                  />
+                  <Route
+                    path="/removeAdminsFromGroup"
+                    element={<RemoveAdminsFromGroupTest />}
+                  />
                   <Route path="/updateGroup" element={<UpdateGroupTest />} />
 
                   {/* spaces method  routes */}
@@ -290,22 +317,46 @@ export function App() {
                   <Route path="/updateSpace" element={<UpdateSpaceTest />} />
                   <Route path="/getSpace" element={<GetSpaceTest />} />
                   <Route path="/getSpaceInfo" element={<GetSpaceInfoTest />} />
-                  <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
+                  <Route
+                    path="/approveSpace"
+                    element={<ApproveSpaceRequestTest />}
+                  />
                   <Route path="/startSpace" element={<StartSpaceTest />} />
                   <Route path="/stopSpace" element={<StopSpaceTest />} />
-                  <Route path="/addAdminsToSpace" element={<AddAdminsToSpaceTest />} />
-                  <Route path="/addMembersToSpace" element={<AddMembersToSpaceTest />} />
-                  <Route path="/removeMembersFromSpace" element={<RemoveMembersFromSpaceTest />} />
-                  <Route path="/removeAdminsFromSpace" element={<RemoveAdminsFromSpaceTest />} />
+                  <Route
+                    path="/addAdminsToSpace"
+                    element={<AddAdminsToSpaceTest />}
+                  />
+                  <Route
+                    path="/addMembersToSpace"
+                    element={<AddMembersToSpaceTest />}
+                  />
+                  <Route
+                    path="/removeMembersFromSpace"
+                    element={<RemoveMembersFromSpaceTest />}
+                  />
+                  <Route
+                    path="/removeAdminsFromSpace"
+                    element={<RemoveAdminsFromSpaceTest />}
+                  />
                   <Route path="/getSpaces" element={<GetSpacesTest />} />
-                  <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
-                  <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
+                  <Route
+                    path="/getSpacesRequests"
+                    element={<GetSpacesRequestsTest />}
+                  />
+                  <Route
+                    path="/getSpacesTrending"
+                    element={<GetSpacesTrendingTest />}
+                  />
 
                   {/* spaces ui components routes */}
                   <Route path="spaceWidget" element={<SpaceWidget />} />
+                  <Route path="spaceFeed" element={<SpaceFeed />} />
                   <Route path="spaceBanner" element={<SpaceBanner />} />
-                  <Route path="createSpaceUI" element={<CreateSpaceComponent />} />
-
+                  <Route
+                    path="createSpaceUI"
+                    element={<CreateSpaceComponent />}
+                  />
                 </Routes>
                 <ChatSupportTest />
               </SpacesComponentProvider>
