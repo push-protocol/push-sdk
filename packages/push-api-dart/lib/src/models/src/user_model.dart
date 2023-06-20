@@ -1,3 +1,14 @@
+class EthWallet {
+  final String address;
+  final String? publicKey, privateKey;
+
+  EthWallet({
+    required this.address,
+    required this.publicKey,
+    required this.privateKey,
+  });
+}
+
 class User {
   late int msgSent;
   late int maxMsgPersisted;

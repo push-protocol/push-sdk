@@ -24,7 +24,7 @@ class UidProvider extends StateNotifier<String?> {
   }
 
   onGetUser() async {
-    await push.UserRepo.getUser(address: state!);
+    await push.getUser(address: state!);
   }
 
   logInWithEarthOne() async {
@@ -47,13 +47,18 @@ class UidProvider extends StateNotifier<String?> {
         "wine album quarter custom birth great leisure bid gossip rabbit early choice";
     final walletMnemonic = Wallet.fromMnemonic(mnemonic);
 
-    push.UserRepo.getUser(address: walletMnemonic.address ?? '');
+    push.getUser(address: walletMnemonic.address ?? '');
   }
 
   testOopenGP() {
     const mnemonic =
         "wine album quarter custom birth great leisure bid gossip rabbit early choice";
     final wallet = Wallet.fromMnemonic(mnemonic);
-    push.UserRepo.createUser(wallet: wallet);
+    push.createUser(
+        wallet: push.EthWallet(
+      address: wallet.address!,
+      publicKey: wallet.publicKey,
+      privateKey: wallet.privateKey,
+    ));
   }
 }

@@ -1,12 +1,12 @@
 import '../../../push_api_dart.dart';
 
-Future<String> getUserDID(String address, ENV env) async {
+Future<String> getUserDID({required String address}) async {
   if (isValidCAIP10NFTAddress(address)) {
     if (address.split(':').length == 6) {
       return address;
     }
 
-    User? user = await UserRepo.getUser(address: address);
+    User? user = await getUser(address: address);
     if (user != null && user.did != null) {
       return user.did!;
     }
@@ -69,7 +69,8 @@ CAIPDetailsType? getCAIPDetails(String addressInCAIP) {
   return null;
 }
 
-String getFallbackETHCAIPAddress(ENV env, String address) {
+String getFallbackETHCAIPAddress({ENV? env, required String address}) {
+  env ??= providerContainer.read(envProvider);
   int chainId = 1; // by default PROD
   if (env == ENV.dev || env == ENV.staging || env == ENV.local) {
     chainId = 5;
@@ -79,13 +80,13 @@ String getFallbackETHCAIPAddress(ENV env, String address) {
 
 Future<String> getCAIPAddress(ENV env, String address, [String? msg]) async {
   if (isValidCAIP10NFTAddress(address)) {
-    return await getUserDID(address, env);
+    return await getUserDID(address: address);
   }
   if (validateCAIP(address)) {
     return address;
   } else {
     if (isValidETHAddress(address)) {
-      return getFallbackETHCAIPAddress(env, address);
+      return getFallbackETHCAIPAddress(env: env, address: address);
     } else {
       throw Error();
     }
