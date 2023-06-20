@@ -1,5 +1,25 @@
 import * as openpgp from 'openpgp';
 
+interface IPGPHelper{
+  generateKeyPair(): Promise<{ privateKeyArmored: string; publicKeyArmored: string }>
+}
+
+const PGPHelper:IPGPHelper = {
+  async generateKeyPair(){
+    const keys = await openpgp.generateKey({
+      type: 'rsa',
+      rsaBits: 2048,
+      userIDs: [{ name: '', email: '' }]
+    })
+    return {
+      privateKeyArmored: keys.privateKey,
+      publicKeyArmored: keys.publicKey
+    }
+  }
+}
+
+export {IPGPHelper, PGPHelper}
+
 export const generateKeyPair = async (): Promise<{ privateKeyArmored: string; publicKeyArmored: string }> => {
   const keys = await openpgp.generateKey({
     type: 'rsa',

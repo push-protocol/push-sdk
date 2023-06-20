@@ -1,6 +1,7 @@
 import {
+  IPGPHelper,
+  PGPHelper,
   createUserService,
-  generateKeyPair,
   generateRandomSecret,
   getAccountAddress,
   getWallet,
@@ -37,7 +38,12 @@ export type CreateUserProps = {
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const create = async (options: CreateUserProps): Promise<IUser> => {
+export const create = async (options:CreateUserProps):Promise<IUser>=>{
+  return await createUserCore(options, PGPHelper)
+}
+
+export const createUserCore = async ( options: CreateUserProps,
+  pgpHelper: IPGPHelper): Promise<IUser> => {
   const passPrefix = '$0Pc'; //password prefix to ensure password validation
   const {
     env = Constants.ENV.PROD,
@@ -80,7 +86,7 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
-    const keyPairs = await generateKeyPair();
+    const keyPairs = await pgpHelper.generateKeyPair();
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);

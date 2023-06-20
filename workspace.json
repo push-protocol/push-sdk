@@ -6,7 +6,6 @@
     "demoreact": "packages/demoreact",
     "examples-sdk-backend-node": "packages/examples/sdk-backend-node",
     "ledgerlive": "packages/ledgerlive",
-    "reactnative": "packages/reactnative",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiembed": "packages/uiembed",
