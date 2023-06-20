@@ -8,7 +8,7 @@ enum ENV {
 }
 
 final envProvider =
-    StateNotifierProvider<EnvProvider, ENV>((ref) => EnvProvider(ENV.dev));
+    StateNotifierProvider<EnvProvider, ENV>((ref) => EnvProvider(ENV.staging));
 
 class EnvProvider extends StateNotifier<ENV> {
   EnvProvider(super.state);
