@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 
-const FIXED_HEIGHT = '485px';
+const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
+const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
 
 interface WidgetContentProps {
   shareUrl?: string;
@@ -17,7 +18,7 @@ interface WidgetContentProps {
 }
 export const WidgetContent: React.FC<WidgetContentProps> = ({ shareUrl, isHost, isLive, isJoined, isTimeToStartSpace, isMember }: WidgetContentProps) => {
   return (
-    <Container>
+    <Container height={isLive ? LIVE_WIDGET_CONTENT_FIXED_HEIGHT : SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT}>
       {isLive
         ?
           <LiveWidgetContent 
@@ -37,11 +38,11 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({ shareUrl, isHost, 
 };
 
 //styles
-const Container = styled.div`
+const Container = styled.div<{height: string}>`
   display: flex;
   flex-direction: column;
   border-bottom: ${(props) => props.theme.border};
-  height: ${FIXED_HEIGHT};
+  height: ${(props) => props.height};
   align-items: center;
   justify-content: space-between;
 `;
