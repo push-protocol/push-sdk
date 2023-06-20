@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
-import { sign } from '../chat/helpers';
+import { getUserDID, sign } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
   getAPIBaseUrls,
@@ -28,6 +28,7 @@ type ProfileUpdateProps = {
     name?: string;
     desc?: string;
     picture?: string;
+    blockedUsersList?: Array<string>;
   };
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
@@ -55,17 +56,35 @@ export const profileUpdate = async (
     if (!user || !user.did) {
       throw new Error('User not Found!');
     }
+    let blockedUsersList = null;
+    if(profile.blockedUsersList ){
+
+      for (const element of profile.blockedUsersList ) {
+        // Check if the element is a valid CAIP-10 address
+        if (!isValidETHAddress(element)) {
+          throw new Error('Invalid address in the blockedUsersList: ' + element);
+        }
+      }
+
+      const convertedBlockedListUsersPromise = profile.blockedUsersList.map(async (each) => {
+        return getUserDID(each, env);
+      });
+      blockedUsersList = await Promise.all(convertedBlockedListUsersPromise);
+    }
+
     const updatedProfile = {
       name: profile.name ? profile.name : user.profile.name,
       desc: profile.desc ? profile.desc : user.profile.desc,
       picture: profile.picture ? profile.picture : user.profile.picture,
+      // If profile.blockedUsersList is empty no users in block list
+      blockedUsersList: profile.blockedUsersList ? blockedUsersList : [] 
     };
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
     const signature = await sign({
       message: hash,
       signingKey: pgpPrivateKey,
     });
-    const sigType = 'pgp';
+    const sigType = 'pgpv2';
     const verificationProof = `${sigType}:${signature}`;
 
     const body = { ...updatedProfile, verificationProof };
