@@ -44,7 +44,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           </PfpContainer>
           <HostContainer>
             <HostName>
-              {spaceData?.members[0].wallet.slice(7)}
+              <Name>{spaceData?.members[0].wallet.slice(7)}</Name>
               <Host>Host</Host>
             </HostName>
             <HostHandle>
@@ -116,8 +116,11 @@ const Container = styled.div<IThemeProps>`
       ? props.theme.bannerBackground1
       : props.theme.bannerBackground2};
   border-radius: ${(props) =>
-    props.orientation === 'maximized' ? '17px' : '24px'};
+    props.orientation === 'maximized' ? '17px' : props.orientation === 'minimized' ? '12px' : '24px'};
   color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
 
   @media(max-width: 425px) {
     min-width: ${(props) => (props.orientation === 'maximized' ? '100%' : '0')};
@@ -128,7 +131,11 @@ const ProfileContainer = styled.div<{ orientation?: string }>`
   display: ${(props) => (props.orientation === 'maximized' ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: space-between;
-  width: fit-content;
+  width: min-content;
+
+  @media (max-width: 510px) {
+    justify-content: flex-start;
+  }
 }`;
 
 const PfpContainer = styled.div`
@@ -148,6 +155,16 @@ const HostContainer = styled.div`
   align-items: flex-start;
   font-family: 'Strawford';
   padding-left: 8px;
+
+  @media (max-width: 510px) {
+    width: 70%;
+    overflow: hidden;
+  }
+
+  @media (max-width: 392px) {
+    width: 60%;
+    overflow: hidden;
+  }
 }`;
 
 const HostName = styled.div`
@@ -155,6 +172,13 @@ const HostName = styled.div`
   flex-direction: row;
   font-weight: 500;
   font-size: 15px;
+  width: 100%;
+}`;
+
+const Name = styled.span`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }`;
 
 const Host = styled.div<{ status?: string }>`
@@ -179,6 +203,10 @@ const Host = styled.div<{ status?: string }>`
 const HostHandle = styled.div<{ status?: string }>`
   color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
   padding: 0;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }`;
 
 const Title = styled.div<{ orientation?: string }>`
