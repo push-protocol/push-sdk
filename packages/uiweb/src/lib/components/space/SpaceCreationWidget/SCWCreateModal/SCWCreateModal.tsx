@@ -1,6 +1,8 @@
 import React, { MouseEventHandler, useState } from 'react'
 import styled from 'styled-components'
 
+import { Modal } from '../common/Modal'
+
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
     isScheduleVisible?: any;
     closeCreateModal?: MouseEventHandler;
@@ -13,56 +15,30 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
 
     return (
         <div>
-            <ModalOverlay>
-                <ModalParent>
-                    Create Modal
-                    <button
-                        onClick={isScheduleVisible}
-                    >
-                        Schedule Space
-                    </button>
+            <Modal>
+                <button
+                    onClick={isScheduleVisible}
+                >
+                    Schedule Space
+                </button>
 
-                    <input
-                        type="text"
-                        value={inputValue}
-                        onChange={onInputChange}
-                    />
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={onInputChange}
+                />
 
-                    <CloseBtn
-                        onClick={closeCreateModal}
-                    >
-                        close create modal
-                    </CloseBtn>
-                </ModalParent>
-            </ModalOverlay>
+                <CloseBtn
+                    onClick={closeCreateModal}
+                >
+                    close create modal
+                </CloseBtn>
+            </Modal>
         </div>
     )
 }
 
 /* styling */
-const ModalParent = styled.div<ISCWCModalProps>`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 5rem;
-    background-color: red;
-
-    display: flex;
-    flex-direction: column;
-`;
-
-const ModalOverlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Black with 50% opacity */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
 
 const CloseBtn = styled.button`
     position: absolute;

@@ -4,9 +4,10 @@ import styled from 'styled-components'
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
     makeScheduleVisible?: MouseEventHandler;
+    createSpace?: MouseEventHandler;
 }
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
-    const { closeInviteModal, makeScheduleVisible } = props;
+    const { closeInviteModal, makeScheduleVisible, createSpace } = props;
     return (
         <div>
             <ModalOverlay>
@@ -24,6 +25,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     >
                         back button
                     </BackBtn>
+
+                    <button
+                    onClick={createSpace}>
+                        CREATE SPACE
+                    </button>
                 </ModalParent>
             </ModalOverlay>
         </div>

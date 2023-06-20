@@ -1,9 +1,5 @@
-import React, { useContext, useState } from 'react'
+import React, { MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components';
-
-import { SCWCreateModal } from '../SCWCreateModal/SCWCreateModal'
-import { SCWScheduleModal } from '../SCWScheduleModal/SCWScheduleModal';
-import { SCWInviteModal } from '../SCWInviteModal/SCWInviteModal';
 
 import { ISpacesTheme } from '../../theme';
 import { ThemeContext } from '../../theme/ThemeProvider';
@@ -12,6 +8,7 @@ export interface ISCWButtonProps { // Space Creation Widget Button Interface
     btnText?: string;
     customStyle?: any;
     theme?: ISpacesTheme;
+    onCreate?: MouseEventHandler;
 }
 
 const defaultProps: ISCWButtonProps = {
@@ -25,94 +22,19 @@ const defaultProps: ISCWButtonProps = {
 }
 
 export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
-    const { btnText, customStyle } = props;
-
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-    const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
-    const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
-
-    const [spaceState, setSpaceState] = useState({
-        spaceName: '',
-        date: '',
-        time: '',
-    })
-
-    const handleNameChange = (event: any) => {
-        setSpaceState({spaceName: event.target.value, date: '', time: ''})
-    };
-
-    // const handleDateTimeChange = (event) => {
-    //     setSpaceState({date: '', time: ''})
-    // }
-
+    const { btnText, customStyle, onCreate } = props;
+    
     const theme = useContext(ThemeContext);
-
-    const showCreateSpace = () => {
-        setIsCreateModalVisible(!isCreateModalVisible);
-        setIsScheduleModalVisible(false);
-    }
-
-    const showScheduleSpace = () => {
-        setIsScheduleModalVisible(!isScheduleModalVisible);
-        setIsCreateModalVisible(false);
-        setIsInviteModalVisible(false);
-    }
-
-    const showInviteSpace = () => {
-        setIsInviteModalVisible(!isInviteModalVisible);
-        setIsScheduleModalVisible(false);
-    }
-
-    const closeCreateModal = () => {
-        setIsCreateModalVisible(false);
-    }
-
-    const closeScheduleModal = () => {
-        setIsScheduleModalVisible(false);
-    }
-
-    const closeInviteModal = () => {
-        setIsInviteModalVisible(false);
-    }
 
     return (
         <div>
             <CreateButton
                 customStyle={customStyle}
                 theme={theme}
-                onClick={showCreateSpace}
+                onClick={onCreate}
             >
                 {btnText}
             </CreateButton>
-
-            {spaceState.spaceName}
-
-            {isCreateModalVisible &&
-                <SCWCreateModal
-                    isScheduleVisible={showScheduleSpace}
-                    closeCreateModal={closeCreateModal}
-                    inputValue={spaceState.spaceName}
-                    onInputChange={handleNameChange}
-                />
-            }
-
-            {isScheduleModalVisible &&
-                <SCWScheduleModal
-                    closeScheduleModal={closeScheduleModal}
-                    makeCreateVisible={showCreateSpace}
-                    makeInviteVisible={showInviteSpace}
-                    // dateValue={spaceState.date}
-                    // onDateChange={handleDateTimeChange}
-                    // timeValue={spaceState.time}
-                />
-            }
-
-            {isInviteModalVisible &&
-                <SCWInviteModal
-                    closeInviteModal={closeInviteModal}
-                    makeScheduleVisible={showScheduleSpace}
-                />
-            }
         </div>
     )
 }
