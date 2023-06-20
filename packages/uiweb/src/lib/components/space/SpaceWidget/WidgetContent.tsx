@@ -1,12 +1,37 @@
-import React, { useContext } from 'react';
-import MinimizeIcon from '../../../icons/chat/minimize.svg';
+import React from 'react';
 import styled from 'styled-components';
+import { LiveWidgetContent } from './LiveWidgetContent';
+import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 
-export const WidgetContent: React.FC = () => {
+const FIXED_HEIGHT = '485px';
 
+interface WidgetContentProps {
+  shareUrl?: string;
+
+  // temp props only for testing demo purpose for now
+  isHost?: boolean;
+  isLive?: boolean;
+  isJoined?: boolean;
+  isTimeToStartSpace? :boolean;
+  isMember?: boolean;
+}
+export const WidgetContent: React.FC<WidgetContentProps> = ({ shareUrl, isHost, isLive, isJoined, isTimeToStartSpace, isMember }: WidgetContentProps) => {
   return (
     <Container>
-      <Span>Hello Content</Span>
+      {isLive
+        ?
+          <LiveWidgetContent 
+            isHost={isHost}
+            isJoined={isJoined}
+          />
+        :
+          <ScheduledWidgetContent 
+            shareUrl={shareUrl}
+            isHost={isHost}
+            isMember={isMember}
+            isTimeToStartSpace={isTimeToStartSpace}
+          />
+      }
     </Container>
   );
 };
@@ -14,36 +39,9 @@ export const WidgetContent: React.FC = () => {
 //styles
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   border-bottom: ${(props) => props.theme.border};
+  height: ${FIXED_HEIGHT};
   align-items: center;
   justify-content: space-between;
-  padding: 17px;
-`;
-
-const Section = styled.div`
-  padding: 10px 5px;
-  cursor: pointer;
-`;
-
-const Image = styled.img`
-  display: flex;
-  max-height: initial;
-  vertical-align: middle;
-  overflow: initial;
-  cursor: pointer;
-  justify-content: flex-end;
-`;
-
-const Span = styled.span`
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color:${(props: any): string => props.theme.textColorPrimary || '#000'};
-  margin-left: 27%;
-  flex: none;
-  order: 0;
-  flex-grow: 0;
 `;

@@ -1,16 +1,41 @@
 import React from 'react';
-import SettingsIcon from '../../../icons/settings.svg';
 import styled from 'styled-components';
+import { Item, Text } from '../../../config';
+import { formatDate } from '../../../helpers';
 
-export const WidgetHeader: React.FC = () => {
+import SettingsIcon from '../../../icons/settings.svg';
+import CaretDownIcon from '../../../icons/CaretDown.svg';
+import CaretUpIcon from '../../../icons/CaretUp.svg';
+import CalendarIcon from '../../../icons/calendar.svg';
+import LiveIcon from '../../../icons/live.svg';
+import { CloseSvg } from '../../../icons/CloseSvg';
+
+export interface IWidgetHeaderProps {
+  onClose: () => void;
+  isMinimized: boolean;
+  setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleWidgetVisibility: () => void;
+
+  // temp props
+  isLive?: boolean;
+  isHost?: boolean;
+}
+
+export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onClose, isMinimized, setIsMinimized, toggleWidgetVisibility }: IWidgetHeaderProps) => {
+  const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
+
+  const handleCloseWidget = () => {
+    toggleWidgetVisibility();
+    onClose();
+  }
 
   return (
     <Container>
-      {true && 
+      {!isLive && 
         <Section>
           <ProfileContainer>
             <PfpContainer>
-              <Pfp src={"https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg"} alt="pfp" />
+              <Pfp src={tempImageUrl} alt="pfp" />
             </PfpContainer>
             <HostContainer>
               <HostName>
@@ -22,17 +47,74 @@ export const WidgetHeader: React.FC = () => {
               </HostHandle>
             </HostContainer>
           </ProfileContainer>
-          <div style={{display: 'flex'}}>
-            <Button padding='6.5px 16.5px'>Edit space</Button>
+          <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'}>
+            {isHost &&
+              <Button padding='6.5px 16.5px'>Edit space</Button>
+            } 
             <Image
               src={SettingsIcon}
-              alt="Minimize icon"
+              alt="Settings icon"
             />
-          </div>
+            <Item marginLeft={'8px'} display={'flex'}>
+              <Image
+                onClick={() => setIsMinimized(!isMinimized)}
+                src={isMinimized ? CaretUpIcon : CaretDownIcon}
+                alt="Maximize/Minimize icon"
+              />
+            </Item>
+            <Item marginLeft={'8px'} display={'flex'} onClick={handleCloseWidget}>
+              <CloseSvg stroke='white' height='15' width='15'/>
+            </Item>
+          </Item>
         </Section>
       }
-      <Text>Lenster partners with Push Protocol to bring seamless and secure data transfer</Text>
-      {/* Lenster partners with Push Protocol to bring seamless and secure data transfer */}
+      <Section>
+        <Text fontSize={'16px'} fontWeight={700}>Lenster partners with Push Protocol to bring seamless and secure data transfer</Text>
+        {isLive &&
+          <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'} marginLeft={'24px'}>
+            <Image
+              src={SettingsIcon}
+              alt="Settings icon"
+            />
+            <Item marginLeft={'8px'} display={'flex'}>
+              <Image
+                onClick={() => setIsMinimized(!isMinimized)}
+                src={isMinimized ? CaretUpIcon : CaretDownIcon}
+                alt="Maximize/Minimize icon"
+              />
+            </Item>
+            <Item marginLeft={'8px'} display={'flex'} onClick={handleCloseWidget}>
+              <CloseSvg stroke='white' height='15' width='15'/>
+            </Item>
+          </Item>
+          }
+      </Section>
+      {!isLive &&
+        <Item display={'flex'} marginTop={'12px'} alignItems={'center'}>
+          <Image
+            src={CalendarIcon}
+            alt="Calendar Icon"
+          />
+          <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>{formatDate(Date.now())}</Item>
+        </Item>
+      }
+      {isLive &&
+        <Section marginTop='12px'>
+          <Item display={'flex'} alignItems={'center'}>
+            <Image
+              src={LiveIcon}
+              alt="Calendar Icon"
+            />
+            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>Live</Text>
+          </Item>
+          <Item display={'flex'} alignItems={'center'}>
+            <Item>
+              {/* ToDo: Add participants icons */}
+            </Item>
+            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>+190 Listeners</Text>
+          </Item>
+        </Section>
+      }
     </Container>
   );
 };
@@ -41,7 +123,6 @@ export const WidgetHeader: React.FC = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 12px 12px 0 0;
   color: white;
   padding: 16px 24px;
   background: linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%), linear-gradient(87.17deg, #EA4E93 0%, #DB2777 0.01%, #9963F7 100%), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 50.52%, #FFDED3 100%, #FFCFC5 100%), linear-gradient(0deg, #8B5CF6, #8B5CF6), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 57.29%, #FF95D5 100%), #FFFFFF;
@@ -58,9 +139,10 @@ const Image = styled.img`
   align-self: center;
 `;
 
-const Section = styled.div`
+const Section = styled.div<{marginTop?: string}>`
   display: flex;
   justify-content: space-between;
+  margin-top: ${(props) => props.marginTop};
 `
 
 const ProfileContainer = styled.div`
@@ -99,11 +181,11 @@ const HostName = styled.div`
   font-size: 15px;
 }`;
 
-const Text = styled.div`
-  display: flex;
-  font-weight: 700;
-  font-size: 16px;
-}`;
+// const Text = styled.div`
+//   display: flex;
+//   font-weight: 700;
+//   font-size: 16px;
+// }`;
 
 const Host = styled.div<{ status?: string }>`
   display: flex;
