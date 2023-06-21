@@ -14,6 +14,7 @@ import { pCAIP10ToWallet } from '../../../../../helpers';
 import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
+import { MainContext } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -51,7 +52,17 @@ const Message = ({
 
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
-  const { setSelectedChatId, web3NameList, activeTab } =
+  const {
+    newChat,
+    setNewChat,
+    activeTab,
+    setActiveTab,
+    setActiveSubTab,
+    activeSubTab
+  } = useContext<any>(MainContext)
+
+
+  const { setSelectedChatId, web3NameList } =
     useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
 

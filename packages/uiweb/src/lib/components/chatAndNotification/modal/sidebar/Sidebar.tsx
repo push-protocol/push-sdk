@@ -32,6 +32,7 @@ import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
+import { MainContext } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 export type TabPropType = {
   tabName: string;
@@ -49,8 +50,8 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const { setActiveTab, activeTab, setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+  const {activeTab, setActiveTab } = useContext<any>(MainContext)
+  const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -104,8 +105,9 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   tabValue,
   isClickable = false,
 }) => {
-  const { setActiveSubTab, activeSubTab, setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+
+  const { setActiveSubTab, activeSubTab } = useContext<any>(MainContext);
+  const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -158,17 +160,21 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
+
+  const {
+    newChat,
+    setNewChat,
+    activeTab,
+    activeSubTab
+  } = useContext<any>(MainContext)
+
   const {
     chatsFeed,
     requestsFeed,
-    activeTab,
     setRequestsFeed,
     searchedChats,
-    activeSubTab,
-    newChat,
     web3NameList,
     setSearchedChats,
-    setNewChat,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
   const { env } = useContext<any>(ChatAndNotificationPropsContext);

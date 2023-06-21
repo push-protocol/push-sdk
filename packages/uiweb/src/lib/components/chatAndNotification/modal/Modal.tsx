@@ -8,10 +8,14 @@ import { MessageBox } from './messageBox/MessageBox';
 import { RequestsFeedList } from './sidebar/chatSidebar/RequestsFeedList';
 import { SpamNotificationFeedList } from './sidebar/notificationSidebar/SpamNotificationFeedList';
 import { Sidebar } from './sidebar/Sidebar';
+import { MainContext } from '../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 export const Modal = () => {
-  const { selectedChatId, activeSubTab, chatsFeed, requestsFeed,searchedChats } =
-    useContext<any>(ChatMainStateContext);
+
+  const { activeSubTab } = useContext<any>(MainContext)
+  const { selectedChatId, chatsFeed, requestsFeed, searchedChats } = useContext<any>(ChatMainStateContext);
+
+  
   return (
     <Section height="550px" width="100%" maxHeight="550px" overflow="hidden">
       {!selectedChatId && !activeSubTab && <Sidebar />}
@@ -24,7 +28,7 @@ export const Modal = () => {
 
       {selectedChatId &&
         ((Object.keys(chatsFeed || {}).length ||
-        Object.keys(requestsFeed || {}).length ||  Object.keys(searchedChats || {}).length) ? (
+          Object.keys(requestsFeed || {}).length || Object.keys(searchedChats || {}).length) ? (
           <MessageBox />
         ) : (
           <Spinner />

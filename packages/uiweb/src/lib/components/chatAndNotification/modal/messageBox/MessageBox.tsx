@@ -18,6 +18,7 @@ import type { FileMessageContent} from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
+import { MainContext } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 const CHATS_FETCH_LIMIT = 15;
 
@@ -186,16 +187,18 @@ const Messages = ({ chat }: { chat: IMessageIPFS }) => {
 
 export const MessageBox = () => {
   const {
+    activeTab,
+    setActiveTab,
+  } = useContext<any>(MainContext)
+  const {
     selectedChatId,
     chatsFeed,
     requestsFeed,
     chats,
     setRequestsFeed,
-    setActiveTab,
     setChatFeed,
     setSearchedChats,
     setSelectedChatId,
-    activeTab,
   } = useContext<any>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatAndNotificationPropsContext);

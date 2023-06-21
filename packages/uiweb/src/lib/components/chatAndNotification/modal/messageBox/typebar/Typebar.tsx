@@ -16,6 +16,7 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
+import { MainContext } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type GIFType = {
   url: string;
@@ -34,8 +35,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { selectedChatId, chatsFeed, setSearchedChats, newChat,requestsFeed, setNewChat } =
-    useContext<any>(ChatMainStateContext);
+  const { newChat, setNewChat } = useContext<any>(MainContext)
+  const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } = useContext<any>(ChatMainStateContext);
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
@@ -55,9 +56,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         messageType: type as any,
       });
       scrollToBottom();
-      
-      if(chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
-      setSearchedChats(null);
+
+      if (chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
+        setSearchedChats(null);
       if (newChat) setNewChat(false);
       if (!chatsFeed[selectedChatId]) fetchRequests({ page, requestLimit });
     } catch (error) {
@@ -73,7 +74,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
 
   const sendTextMsg = async () => {
     if (typedMessage.trim() !== '') {
-    
+
       await sendPushMessage(typedMessage as string, 'Text');
       setTypedMessage('');
     }

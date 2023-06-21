@@ -17,6 +17,7 @@ import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
+import { MainContext } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -48,15 +49,17 @@ export const UnreadChats = ({
 
 export const MessageBoxHeader = () => {
   const {
+    activeTab,
+    setActiveTab,
+    setActiveSubTab,
+    activeSubTab 
+  } = useContext<any>(MainContext)
+  const {
     selectedChatId,
     chatsFeed,
     requestsFeed,
     web3NameList,
     searchedChats,
-    setActiveTab,
-    setActiveSubTab,
-    activeSubTab,
-    activeTab,
     setSearchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
@@ -122,9 +125,11 @@ export const MessageBoxHeader = () => {
 
 export const SubTabHeader = () => {
   const {
-    setActiveTab,
-    activeSubTab,
     activeTab,
+    setActiveTab,
+    activeSubTab 
+  } = useContext<any>(MainContext)
+  const {
     setSearchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
@@ -163,15 +168,17 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   modalOpen,
 }) => {
   const {
-    setActiveTab,
-    activeSubTab,
-    selectedChatId,
     setNewChat,
+    setActiveTab,
+    activeSubTab 
+  } = useContext<any>(MainContext)
+
+  const {
+    selectedChatId,
     chatsFeed,
     requestsFeed,
     setSearchedChats,
     setSelectedChatId,
-    newChat,
     searchedChats,
   } = useContext<any>(ChatMainStateContext);
 

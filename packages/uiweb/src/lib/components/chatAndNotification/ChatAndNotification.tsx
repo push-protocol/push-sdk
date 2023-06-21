@@ -28,17 +28,20 @@ import {
 } from '../../helpers';
 import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
+import { MainContext } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
 export const ChatAndNotification = () => {
   const {
+    setNewChat,
+    setActiveTab,
+    setActiveSubTab,
+  } = useContext<any>(MainContext)
+  const {
     setChatsFeed,
     setRequestsFeed,
-    setActiveTab,
     setSelectedChatId,
-    setActiveSubTab,
-    setNewChat,
     setSearchedChats,
     setChats,
     setConnectedProfile,
@@ -72,10 +75,10 @@ export const ChatAndNotification = () => {
     if (subscriptionStatus.size) {
       return;
     }
-   (async()=>{
-    fetchUserSubscriptions();
+    (async () => {
+      fetchUserSubscriptions();
     })();
-   
+
   }, [env, account]);
 
 
