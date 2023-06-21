@@ -1,2 +1,2 @@
 export * from "./useSpaceData";
-export * from "./useGetSpaceData";
+export * from "./useGetSpaceInfo";

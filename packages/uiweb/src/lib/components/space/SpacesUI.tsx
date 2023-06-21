@@ -30,7 +30,7 @@ export class SpacesUI {
   }
 
   SpaceBanner: React.FC<ISpaceBannerProps> = (options : ISpaceBannerProps) => {
-    const { spaceBannerData, setSpaceBannerData } = useSpaceData();
+    const { spaceInfo, setSpaceInfo } = useSpaceData();
 
     // Use spaceBannerData and setSpaceBannerData in your component
 
@@ -56,7 +56,7 @@ export class SpacesUI {
   connectToSockets = () => {
     // Connect to sockets and listen for events
     // Update spaceBannerData or trendingListData based on events
-    const { setSpaceBannerData, setTrendingListData } = useSpaceData();
+    const { setSpaceInfo, setTrendingListData } = useSpaceData();
 
     // Example of updating spaceBannerData
     //setSpaceBannerData();

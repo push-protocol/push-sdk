@@ -9,7 +9,7 @@ import { ParticipantContainer } from '../reusables/ParticipantContainer';
 
 import live from './../../../icons/live.svg';
 import scheduled from './../../../icons/scheduled.svg';
-import { useSpaceData, useGetSpaceData } from './../../../hooks';
+import { useGetSpaceInfo } from './../../../hooks';
 
 export interface ISpaceBannerProps {
   spaceId: string;
@@ -32,9 +32,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
 
   const theme = React.useContext(ThemeContext);
-  const {spaceBannerData} = useSpaceData();
-  useGetSpaceData(spaceId);
-  const spaceData = spaceBannerData?.[spaceId] // Fetches the space data from cache or from the API
+  const spaceData = useGetSpaceInfo(spaceId);
 
   return (
       <Container orientation={orientation} status={getSpaceStatus(spaceData?.scheduleAt as Date)} theme={theme}>
