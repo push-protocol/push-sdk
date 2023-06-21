@@ -10,7 +10,7 @@ import { pCAIP10ToWallet, } from '../../helpers';
 import type { PushTabs } from '../../types';
 import { PUSH_TABS } from '../../types';
 import type { WithRequiredProperty } from '../../utilities';
-import MainContextProvider from '../../context/chatAndNotification/chatAndNotificationMainContext';
+import ChatAndNotificationMainContextProvider from '../../context/chatAndNotification';
 
 export type ChatAndNotificationProps = {
   account: string;
@@ -46,13 +46,13 @@ export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   return (
 
     <ChatAndNotificationPropsContext.Provider value={chatAndNotificationPropsData}>
-      <MainContextProvider>
+      <ChatAndNotificationMainContextProvider>
         <ChatMainStateContextProvider>
           <NotificationMainStateContextProvider>
             <ChatAndNotification />
           </NotificationMainStateContextProvider>
         </ChatMainStateContextProvider>
-      </MainContextProvider>
+      </ChatAndNotificationMainContextProvider>
     </ChatAndNotificationPropsContext.Provider>
   );
 };

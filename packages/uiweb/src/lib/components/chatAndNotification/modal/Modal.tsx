@@ -8,11 +8,11 @@ import { MessageBox } from './messageBox/MessageBox';
 import { RequestsFeedList } from './sidebar/chatSidebar/RequestsFeedList';
 import { SpamNotificationFeedList } from './sidebar/notificationSidebar/SpamNotificationFeedList';
 import { Sidebar } from './sidebar/Sidebar';
-import { MainContext } from '../../../context/chatAndNotification/chatAndNotificationMainContext';
+import { ChatAndNotificationMainContext } from '../../../context/chatAndNotification';
 
 export const Modal = () => {
 
-  const { activeSubTab } = useContext<any>(MainContext)
+  const { activeSubTab } = useContext<any>(ChatAndNotificationMainContext)
   const { selectedChatId, chatsFeed, requestsFeed, searchedChats } = useContext<any>(ChatMainStateContext);
 
   

@@ -32,7 +32,7 @@ import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
-import { MainContext } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
+import { ChatAndNotificationMainContext } from '../../../../context/chatAndNotification';
 
 export type TabPropType = {
   tabName: string;
@@ -50,7 +50,7 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const {activeTab, setActiveTab } = useContext<any>(MainContext)
+  const {activeTab, setActiveTab } = useContext<any>(ChatAndNotificationMainContext)
   const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
@@ -106,7 +106,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   isClickable = false,
 }) => {
 
-  const { setActiveSubTab, activeSubTab } = useContext<any>(MainContext);
+  const { setActiveSubTab, activeSubTab } = useContext<any>(ChatAndNotificationMainContext);
   const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
@@ -166,7 +166,7 @@ export const Sidebar = () => {
     setNewChat,
     activeTab,
     activeSubTab
-  } = useContext<any>(MainContext)
+  } = useContext<any>(ChatAndNotificationMainContext)
 
   const {
     chatsFeed,

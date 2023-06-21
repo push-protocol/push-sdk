@@ -17,7 +17,7 @@ import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
-import { MainContext } from '../../context/chatAndNotification/chatAndNotificationMainContext';
+import { ChatAndNotificationMainContext } from '../../context/chatAndNotification';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -53,7 +53,7 @@ export const MessageBoxHeader = () => {
     setActiveTab,
     setActiveSubTab,
     activeSubTab 
-  } = useContext<any>(MainContext)
+  } = useContext<any>(ChatAndNotificationMainContext)
   const {
     selectedChatId,
     chatsFeed,
@@ -128,7 +128,7 @@ export const SubTabHeader = () => {
     activeTab,
     setActiveTab,
     activeSubTab 
-  } = useContext<any>(MainContext)
+  } = useContext<any>(ChatAndNotificationMainContext)
   const {
     setSearchedChats,
     setSelectedChatId,
@@ -171,7 +171,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     setNewChat,
     setActiveTab,
     activeSubTab 
-  } = useContext<any>(MainContext)
+  } = useContext<any>(ChatAndNotificationMainContext)
 
   const {
     selectedChatId,

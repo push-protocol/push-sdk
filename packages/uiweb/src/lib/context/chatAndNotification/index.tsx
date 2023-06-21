@@ -2,7 +2,7 @@ import { createContext, useState } from 'react';
 import type { PushSubTabs, PushTabs } from '../../types';
 import { PUSH_TABS } from '../../types';
 
-export type MainContextType = {
+export type ChatAndNotificationMainContextType = {
   activeTab: PushTabs;
   setActiveTab: (tabName: PushTabs) => void;
   activeSubTab: PushSubTabs | null;
@@ -11,11 +11,12 @@ export type MainContextType = {
   setNewChat: (flag: boolean) => void;
 };
 
-export const MainContext = createContext<MainContextType>(
-  {} as MainContextType
+// MainContext
+export const ChatAndNotificationMainContext = createContext<ChatAndNotificationMainContextType>(
+  {} as ChatAndNotificationMainContextType
 );
 
-const MainContextProvider = ({ children }: { children: React.ReactNode }) => {
+const ChatAndNotificationMainContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeTab, setTab] = useState<PushTabs>(PUSH_TABS.CHATS);
   const [activeSubTab, setSubTab] = useState<PushSubTabs | null>(null);
   const [newChat,setNewChat]=useState<boolean>(false);
@@ -31,7 +32,7 @@ const MainContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <MainContext.Provider value={{ 
+    <ChatAndNotificationMainContext.Provider value={{ 
         newChat,
         setNewChat,
         activeTab,
@@ -40,8 +41,8 @@ const MainContextProvider = ({ children }: { children: React.ReactNode }) => {
         activeSubTab,
       }}>
       {children}
-    </MainContext.Provider>
+    </ChatAndNotificationMainContext.Provider>
   )
 };
 
-export default MainContextProvider;
+export default ChatAndNotificationMainContextProvider;

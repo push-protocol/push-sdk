@@ -18,7 +18,7 @@ import type { FileMessageContent} from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
-import { MainContext } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
+import { ChatAndNotificationMainContext } from '../../../../context/chatAndNotification';
 
 const CHATS_FETCH_LIMIT = 15;
 
@@ -189,7 +189,7 @@ export const MessageBox = () => {
   const {
     activeTab,
     setActiveTab,
-  } = useContext<any>(MainContext)
+  } = useContext<any>(ChatAndNotificationMainContext)
   const {
     selectedChatId,
     chatsFeed,

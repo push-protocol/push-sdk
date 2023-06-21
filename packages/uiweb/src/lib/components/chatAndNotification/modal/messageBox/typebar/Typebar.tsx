@@ -16,7 +16,7 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
-import { MainContext } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
+import { ChatAndNotificationMainContext } from '../../../../../context/chatAndNotification';
 
 type GIFType = {
   url: string;
@@ -35,7 +35,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { newChat, setNewChat } = useContext<any>(MainContext)
+  const { newChat, setNewChat } = useContext<any>(ChatAndNotificationMainContext)
   const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } = useContext<any>(ChatMainStateContext);
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
