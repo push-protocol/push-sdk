@@ -197,7 +197,6 @@ export class Video {
         if (isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].video = parsedData.isVideoOn;
@@ -206,7 +205,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].audio = parsedData.isAudioOn;
@@ -215,7 +213,10 @@ export class Video {
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            // destroy the peerInstance
+            this.peerInstance?.destroy();
+            this.peerInstance = null;
+
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -230,7 +231,6 @@ export class Video {
       });
 
       this.peerInstance.on('stream', (currentStream: MediaStream) => {
-        console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.incoming[0].stream = currentStream;
@@ -273,9 +273,29 @@ export class Video {
         'accept request',
         'options',
         options,
-        'localStream',
-        this.data.local.stream
+        'peerInstance',
+        this.peerInstance
       );
+
+      // if peerInstance is not null -> acceptRequest/request was called before
+      if (this.peerInstance) {
+        // to prevent connection error we stop the exec of acceptRequest
+        return Promise.resolve();
+      }
+
+      // set videoCallInfo state with status 2 (call received)
+      this.setData((oldData) => {
+        return produce(oldData, (draft) => {
+          draft.local.address = senderAddress;
+          draft.incoming[0].address = recipientAddress;
+          draft.meta.chatId = chatId;
+          draft.meta.initiator.address = senderAddress;
+          draft.incoming[0].status = retry
+            ? VideoCallStatus.RETRY_RECEIVED
+            : VideoCallStatus.RECEIVED;
+          draft.incoming[0].retryCount += retry ? 1 : 0;
+        });
+      });
 
       this.peerInstance = new Peer({
         initiator: false,
@@ -338,7 +358,6 @@ export class Video {
         if (isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].video = parsedData.isVideoOn;
@@ -347,7 +366,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].audio = parsedData.isAudioOn;
@@ -356,7 +374,10 @@ export class Video {
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            // destroy the peerInstance
+            this.peerInstance?.destroy();
+            this.peerInstance = null;
+
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -371,25 +392,10 @@ export class Video {
       });
 
       this.peerInstance.on('stream', (currentStream: MediaStream) => {
-        console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.incoming[0].stream = currentStream;
           });
-        });
-      });
-
-      // set videoCallInfo state with status 2 (call received)
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          draft.local.address = senderAddress;
-          draft.incoming[0].address = recipientAddress;
-          draft.meta.chatId = chatId;
-          draft.meta.initiator.address = senderAddress;
-          draft.incoming[0].status = retry
-            ? VideoCallStatus.RETRY_RECEIVED
-            : VideoCallStatus.RECEIVED;
-          draft.incoming[0].retryCount += retry ? 1 : 0;
         });
       });
     } catch (err) {
@@ -458,7 +464,6 @@ export class Video {
         this.peerInstance?.send(
           JSON.stringify({ type: 'endCall', endCall: true })
         );
-        this.peerInstance?.destroy();
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
@@ -479,6 +484,10 @@ export class Video {
         );
       }
 
+      // destroy the peerInstance
+      this.peerInstance?.destroy();
+      this.peerInstance = null;
+
       // destroy the local stream
       if (this.data.local.stream) {
         endStream(this.data.local.stream);
@@ -496,13 +505,6 @@ export class Video {
   enableVideo(options: EnableVideoInputOptions): void {
     const { state } = options || {};
 
-    console.log(
-      'enableVideo',
-      'current video',
-      this.data.local.video,
-      'requested state',
-      state
-    );
     if (this.data.local.video !== state) {
       // need to change the video state
 
@@ -517,8 +519,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartVideoStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopVideoStream(this.data.local.stream);
         }
         this.setData((oldData) => {
@@ -532,15 +533,7 @@ export class Video {
 
   enableAudio(options: EnableAudioInputOptions): void {
     const { state } = options || {};
-
-    console.log(
-      'enableAudio',
-      'current audio',
-      this.data.local.audio,
-      'requested state',
-      state
-    );
-
+    
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
@@ -552,8 +545,7 @@ export class Video {
       if (this.data.local.stream) {
         if (state) {
           restartAudioStream(this.data.local.stream);
-        }
-        else {
+        } else {
           stopAudioStream(this.data.local.stream);
         }
         this.setData((oldData) => {

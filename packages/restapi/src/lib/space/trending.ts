@@ -29,7 +29,7 @@ export const trending = async (
     limit = 10,
   } = options || {};
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/trending?page=${page}&limit=${limit}`;
+  const apiEndpoint = `${API_BASE_URL}/v1/spaces/trending?page=${page}&limit=${limit}`;
   try {
  
     const response = await axios.get(apiEndpoint);

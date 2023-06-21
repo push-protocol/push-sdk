@@ -71,7 +71,6 @@ export const createUserService = async (options: CreateUserOptionsType) => {
       return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
       throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
@@ -115,7 +114,6 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
       return populateDeprecatedUser(response.data);
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
       throw Error(`[Push SDK] - API ${requestUrl}: ${err}`);
     });
 };
