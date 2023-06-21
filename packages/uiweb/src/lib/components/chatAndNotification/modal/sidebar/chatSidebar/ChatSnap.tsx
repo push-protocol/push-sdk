@@ -1,5 +1,5 @@
 import type { IFeeds } from '@pushprotocol/restapi';
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext, ChatAndNotificationMainContext } from '../../../../../context';
 import {
   checkIfUnread,
   dateToFromNowDaily,
@@ -51,7 +51,17 @@ const Message = ({
 
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
-  const { setSelectedChatId, web3NameList, activeTab } =
+  const {
+    newChat,
+    setNewChat,
+    activeTab,
+    setActiveTab,
+    setActiveSubTab,
+    activeSubTab
+  } = useContext<any>(ChatAndNotificationMainContext)
+
+
+  const { setSelectedChatId, web3NameList } =
     useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
 

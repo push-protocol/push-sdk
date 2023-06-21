@@ -8,6 +8,7 @@ import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
@@ -33,12 +34,14 @@ import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSub
 
 export const ChatAndNotification = () => {
   const {
+    setNewChat,
+    setActiveTab,
+    setActiveSubTab,
+  } = useContext<any>(ChatAndNotificationMainContext)
+  const {
     setChatsFeed,
     setRequestsFeed,
-    setActiveTab,
     setSelectedChatId,
-    setActiveSubTab,
-    setNewChat,
     setSearchedChats,
     setChats,
     setConnectedProfile,
@@ -72,10 +75,10 @@ export const ChatAndNotification = () => {
     if (subscriptionStatus.size) {
       return;
     }
-   (async()=>{
-    fetchUserSubscriptions();
+    (async () => {
+      fetchUserSubscriptions();
     })();
-   
+
   }, [env, account]);
 
 

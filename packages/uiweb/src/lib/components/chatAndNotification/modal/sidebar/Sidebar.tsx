@@ -13,6 +13,7 @@ import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../../../context';
 import useFetchChats from '../../../../hooks/chat/useFetchChats';
 import { Spinner } from '../../../reusables/Spinner';
@@ -49,8 +50,8 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const { setActiveTab, activeTab, setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+  const {activeTab, setActiveTab } = useContext<any>(ChatAndNotificationMainContext)
+  const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -104,8 +105,9 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   tabValue,
   isClickable = false,
 }) => {
-  const { setActiveSubTab, activeSubTab, setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+
+  const { setActiveSubTab, activeSubTab } = useContext<any>(ChatAndNotificationMainContext);
+  const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -158,17 +160,21 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
+
+  const {
+    newChat,
+    setNewChat,
+    activeTab,
+    activeSubTab
+  } = useContext<any>(ChatAndNotificationMainContext)
+
   const {
     chatsFeed,
     requestsFeed,
-    activeTab,
     setRequestsFeed,
     searchedChats,
-    activeSubTab,
-    newChat,
     web3NameList,
     setSearchedChats,
-    setNewChat,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
   const { env } = useContext<any>(ChatAndNotificationPropsContext);

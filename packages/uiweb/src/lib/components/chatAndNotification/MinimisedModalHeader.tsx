@@ -9,6 +9,7 @@ import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../context';
 import type { PushSubTabs, PushTabs } from '../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
@@ -48,15 +49,17 @@ export const UnreadChats = ({
 
 export const MessageBoxHeader = () => {
   const {
+    activeTab,
+    setActiveTab,
+    setActiveSubTab,
+    activeSubTab 
+  } = useContext<any>(ChatAndNotificationMainContext)
+  const {
     selectedChatId,
     chatsFeed,
     requestsFeed,
     web3NameList,
     searchedChats,
-    setActiveTab,
-    setActiveSubTab,
-    activeSubTab,
-    activeTab,
     setSearchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
@@ -122,9 +125,11 @@ export const MessageBoxHeader = () => {
 
 export const SubTabHeader = () => {
   const {
-    setActiveTab,
-    activeSubTab,
     activeTab,
+    setActiveTab,
+    activeSubTab 
+  } = useContext<any>(ChatAndNotificationMainContext)
+  const {
     setSearchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
@@ -163,15 +168,17 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   modalOpen,
 }) => {
   const {
-    setActiveTab,
-    activeSubTab,
-    selectedChatId,
     setNewChat,
+    setActiveTab,
+    activeSubTab 
+  } = useContext<any>(ChatAndNotificationMainContext)
+
+  const {
+    selectedChatId,
     chatsFeed,
     requestsFeed,
     setSearchedChats,
     setSelectedChatId,
-    newChat,
     searchedChats,
   } = useContext<any>(ChatMainStateContext);
 
