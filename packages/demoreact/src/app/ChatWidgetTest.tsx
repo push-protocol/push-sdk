@@ -38,6 +38,7 @@ export const ChatWidgetTest = () => {
       account={account}
       env={env}
       decryptedPgpPvtKey={pvtKey}
+      signer={librarySigner}
       // activeTab={PUSH_TABS.APP_NOTIFICATIONS}
       // activeChat='eip155:0xcc45BaEb518CcbC7f8B01f8D7665fbe3A0D59f07'
     />

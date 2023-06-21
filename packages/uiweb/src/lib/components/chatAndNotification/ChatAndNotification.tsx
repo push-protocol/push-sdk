@@ -27,6 +27,7 @@ import {
   walletToPCAIP10,
 } from '../../helpers';
 import useFetchNotification from '../../hooks/notifications/useFetchNotification';
+import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -49,56 +50,36 @@ export const ChatAndNotification = () => {
     setInboxNotifsFeed,
     setSpamNotifsFeed,
     spamNotifsFeed,
+    subscriptionStatus
   } = useContext<any>(NotificationMainStateContext);
-  const { decryptedPgpPvtKey, account, env, activeChosenTab, activeChat } =
-    useContext<any>(ChatAndNotificationPropsContext);
+  const {
+    decryptedPgpPvtKey,
+    account,
+    env,
+    activeChosenTab,
+    activeChat,
+    onClose,
+  } = useContext<any>(ChatAndNotificationPropsContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { fetchChatProfile } = useGetChatProfile();
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
   const { fetchNotification } = useFetchNotification();
+  const { fetchUserSubscriptions } = useFetchUserSubscriptions();
   usePushChatSocket();
 
-  //make these helper fucntion
-  //notification
-  const fetchInboxNotificationList = async () => {
-    const feeds: NotificationFeedsType | undefined = await fetchNotification({
-      page: 1,
-      limit: notificationLimit,
-      spam: true,
-    });
-    //change type of notification
-    if (feeds) {
-      const firstFeeds: NotificationFeedsType = { ...feeds };
-      setSpamNotifsFeed(firstFeeds);
-    }
-  };
-
-  const fetchSpamNotificationList = async () => {
-    const feeds: NotificationFeedsType | undefined = await fetchNotification({
-      page: 1,
-      limit: notificationLimit,
-    });
-    //change type of notification
-    if (feeds) {
-      const firstFeeds: NotificationFeedsType = { ...feeds };
-      setInboxNotifsFeed(firstFeeds);
-    }
-  };
-
   useEffect(() => {
-    if (Object.keys(inboxNotifsFeed).length) {
+    if (subscriptionStatus.size) {
       return;
     }
-    fetchInboxNotificationList();
+   (async()=>{
+    fetchUserSubscriptions();
+    })();
+   
   }, [env, account]);
 
-  useEffect(() => {
-    if (Object.keys(spamNotifsFeed).length) {
-      return;
-    }
-    fetchSpamNotificationList();
-  }, [env, account]);
+
+
 
   //make a helper for the function
   const fetchRequestList = async () => {
@@ -204,7 +185,7 @@ export const ChatAndNotification = () => {
       overflow="hidden"
     >
       <MinimisedModalHeader
-        onMaximizeMinimizeToggle={onMaximizeMinimizeToggle}
+        onMaximizeMinimizeToggle={onClose ?? onMaximizeMinimizeToggle}
         modalOpen={modalOpen}
       />
       {modalOpen && <Modal />}

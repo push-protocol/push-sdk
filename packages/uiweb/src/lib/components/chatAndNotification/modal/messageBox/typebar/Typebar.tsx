@@ -148,7 +148,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       alignItems="center"
       justifyContent="space-between"
     >
-      <Section gap="20px">
+      <Section gap="8px">
         <Div
           width="20px"
           cursor="pointer"
@@ -251,7 +251,7 @@ const MultiLineInput = styled.textarea`
   }
   font-weight: 400;
   font-size: 16px;
-  width: 290px;
+  width: 27vw;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;

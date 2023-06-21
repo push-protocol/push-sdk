@@ -1,4 +1,4 @@
-import type { Env, IFeeds, IUser, ParsedResponseType } from '@pushprotocol/restapi';
+import type { Env, IFeeds, IUser } from '@pushprotocol/restapi';
 import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import {
@@ -7,7 +7,7 @@ import {
   ProfilePicture,
 } from '../../config';
 import type { GetProfileParams } from '../../hooks';
-import type { ChatFeedsType, NotificationFeedsType, Web3NameListType } from '../../types';
+import type { ChatFeedsType, NotificationFeedsType, ParsedNotificationType, Web3NameListType } from '../../types';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getUdResolver } from '../udResolver';
 import { displayDefaultUser } from './user';
@@ -97,7 +97,7 @@ export const getSearchedNotificationsList = (
   obj: NotificationFeedsType
 ) => {
 
-  const matchedObjects: Record<string, ParsedResponseType> = {};
+  const matchedObjects: Record<string, ParsedNotificationType> = {};
 
   if (substring) {
     Object.keys(obj).forEach((key) => {

@@ -112,7 +112,7 @@ const TooltipContent = styled.div`
   }
   &.bottom-right {
     bottom: calc(30px * -1);
-    transform: translateX(-10%);
+    transform: translateX(-32%) translateY(5%);
     &::before {
         bottom: 100%;
         border-bottom-color: #000;
@@ -123,7 +123,7 @@ const TooltipContent = styled.div`
     left: auto;
     right: calc(100% + 10px);
     top: 50%;
-    transform: translateX(0) translateY(-50%);
+    transform: translateX(0) ;
     &::before {
       left: auto;
       right: calc(6px * -2);

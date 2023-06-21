@@ -43,7 +43,11 @@ export type SignerType = ethers.Signer & {
   privateKey?: string;
 };
 
-export type NotificationFeedsType = { [key: string]:ParsedResponseType};
+export type ParsedNotificationType = ParsedResponseType & {
+  channel:string;
+};
+
+export type NotificationFeedsType = { [key: string]:ParsedNotificationType};
 export type ChatFeedsType = { [key: string]:IFeeds};
 export interface Web3NameListType {
   [key: string]: string;

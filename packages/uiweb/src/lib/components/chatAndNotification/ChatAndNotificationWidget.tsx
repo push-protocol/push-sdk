@@ -5,16 +5,19 @@ import { Constants } from '../../config';
 import {ChatMainStateContextProvider} from '../../context';
 
 import { ChatAndNotification } from './ChatAndNotification';
-import type { Env } from '@pushprotocol/restapi';
+import type { Env, SignerType } from '@pushprotocol/restapi';
 import { pCAIP10ToWallet,  } from '../../helpers';
 import type { PushTabs} from '../../types';
 import { PUSH_TABS } from '../../types';
+import type { WithRequiredProperty } from '../../utilities';
 
 export type ChatAndNotificationProps = {
   account: string;
   decryptedPgpPvtKey: string; //have to make it optional for new users
   activeTab?:PushTabs,
   activeChat?:string,
+  onClose?:()=>void,
+  signer?:WithRequiredProperty<SignerType, '_signTypedData'>
   env?: Env;
 };
 
@@ -24,6 +27,8 @@ export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   decryptedPgpPvtKey = null,
   activeTab = PUSH_TABS.CHATS,
   activeChat = null,
+  onClose = null,
+  signer = null,
   env = Constants.ENV.PROD,
 }) => {
 
@@ -32,6 +37,8 @@ export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
     decryptedPgpPvtKey,
     activeChosenTab:activeTab,
     activeChat:activeChat,
+    onClose,
+    signer,
     env,
   };
 

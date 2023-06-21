@@ -2,6 +2,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import type { ParsedResponseType} from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { ChatAndNotificationPropsContext } from '../../context';
+import { ParsedNotificationType } from '../../types';
 
 
 interface fetchNotification {
@@ -43,7 +44,7 @@ const useFetchNotification = () => {
           each['channel'] = map2.get(each.sid);
       })
        const modifiedNotifObj = Object.fromEntries(
-        parsedResponse.map((e:ParsedResponseType) => [e.sid, e])
+        parsedResponse.map((e:any) => [e.sid, e])
      )
         return modifiedNotifObj;
       } catch (error: Error | any) {
@@ -51,6 +52,9 @@ const useFetchNotification = () => {
         setError(error.message);
         console.log(error);
         return;
+      }
+      finally {
+        setLoading(false);
       }
     },
     [account,env]

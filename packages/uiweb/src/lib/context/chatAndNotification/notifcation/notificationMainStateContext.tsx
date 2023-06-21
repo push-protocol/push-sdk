@@ -1,32 +1,29 @@
-import type {
-  ParsedResponseType,
-  IFeeds,
-  IMessageIPFS,
-  IUser,
-} from '@pushprotocol/restapi';
 import React, { createContext, useContext, useState } from 'react';
-import { getData } from '../../../helpers/chat/localStorage';
 import type {
-  ChatFeedsType,
   NotificationFeedsType,
-  PushSubTabs,
-  PushTabs,
-  Web3NameListType,
+  ParsedNotificationType,
 } from '../../../types';
-import { PUSH_SUB_TABS, PUSH_TABS } from '../../../types';
 
 export type NotificationMainStateContextType = {
   inboxNotifsFeed: NotificationFeedsType;
+  allInboxNotifFeed: NotificationFeedsType;
+  setAllInboxNotifsFeed: (allInboxNotifsFeed: NotificationFeedsType) => void;
   setInboxNotifsFeed: (inboxNotifsFeed: NotificationFeedsType) => void;
   setInboxNotifFeed: (
     id: string,
-    newInboxNotifFeed: ParsedResponseType
+    newInboxNotifFeed: ParsedNotificationType
   ) => void;
   spamNotifsFeed: NotificationFeedsType;
   setSpamNotifsFeed: (spamNotifsFeed: NotificationFeedsType) => void;
-  setSpamNotifFeed: (id: string, newSpamNotifFeed: ParsedResponseType) => void;
+  setSpamNotifFeed: (
+    id: string,
+    newSpamNotifFeed: ParsedNotificationType
+  ) => void;
   searchedNotifications: NotificationFeedsType | null;
   setSearchedNotifications: (chats: NotificationFeedsType | null) => void;
+  subscriptionStatus:  Map<string, boolean>;
+  setSubscriptionStatus: (subscriptionStatus: Map<string, boolean>) => void;
+  setChannelSubscriptionStatus: (id: string, status: boolean) => void;
 };
 
 export const NotificationMainStateContext =
@@ -42,15 +39,21 @@ const NotificationMainStateContextProvider = ({
   const [inboxNotifsFeed, setInboxNotifsFeed] = useState<NotificationFeedsType>(
     {} as NotificationFeedsType
   );
+  const [allInboxNotifFeed, setAllInboxNotifsFeed] = useState<NotificationFeedsType>(
+    {} as NotificationFeedsType
+  );
   const [spamNotifsFeed, setSpamNotifsFeed] = useState<NotificationFeedsType>(
     {} as NotificationFeedsType
+  );
+  const [subscriptionStatus, setSubscriptionStatus] = useState<Map<string, boolean>>(
+    {} as Map<string, boolean>
   );
   const [searchedNotifications, setSearchedNotifications] =
     useState<NotificationFeedsType | null>(null);
 
   const setInboxNotifFeed = (
     id: string,
-    newInboxNotifFeed: ParsedResponseType
+    newInboxNotifFeed: ParsedNotificationType
   ) => {
     setInboxNotifsFeed((prevInboxNotifFeed: NotificationFeedsType) => ({
       [id]: newInboxNotifFeed,
@@ -59,11 +62,21 @@ const NotificationMainStateContextProvider = ({
   };
   const setSpamNotifFeed = (
     id: string,
-    newSpamNotifFeed: ParsedResponseType
+    newSpamNotifFeed: ParsedNotificationType
   ) => {
     setSpamNotifsFeed((prevSpamNotifFeed: NotificationFeedsType) => ({
       [id]: newSpamNotifFeed,
       ...prevSpamNotifFeed,
+    }));
+  };
+
+  const setChannelSubscriptionStatus = (
+    id: string,
+    status: boolean
+  ) => {
+    setSubscriptionStatus((prevStatus: Map<string, boolean>) => ({
+      [id]: status,
+      ...prevStatus,
     }));
   };
 
@@ -74,10 +87,15 @@ const NotificationMainStateContextProvider = ({
         setInboxNotifFeed,
         setInboxNotifsFeed,
         spamNotifsFeed,
+        allInboxNotifFeed,
+        setAllInboxNotifsFeed,
         setSpamNotifFeed,
         setSpamNotifsFeed,
         searchedNotifications,
         setSearchedNotifications,
+        subscriptionStatus,
+        setChannelSubscriptionStatus,
+        setSubscriptionStatus
       }}
     >
       {children}

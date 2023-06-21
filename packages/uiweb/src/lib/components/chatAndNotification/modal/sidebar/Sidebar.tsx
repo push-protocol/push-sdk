@@ -45,6 +45,7 @@ type SidebarSubTabsPropType = {
     icon: any;
   };
   tabValue: PushSubTabs;
+  isClickable?: boolean;
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
@@ -101,34 +102,40 @@ const SidebarTabs = () => {
 const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   subTab,
   tabValue,
+  isClickable = false,
 }) => {
-  const { setActiveSubTab,activeSubTab, setSearchedChats, setSelectedChatId } =
+  const { setActiveSubTab, activeSubTab, setSearchedChats, setSelectedChatId } =
     useContext<any>(ChatMainStateContext);
-    const {
-      setSearchedNotifications
-    } = useContext<any>(NotificationMainStateContext);
+  const { setSearchedNotifications } = useContext<any>(
+    NotificationMainStateContext
+  );
   return (
     <SubContainer
       justifyContent="start"
       gap="15px"
       padding="15px 8px"
-      cursor="pointer"
+      cursor={isClickable ? 'pointer' : 'default'}
       onClick={() => {
-        setActiveSubTab(tabValue);
-        if (activeSubTab === PUSH_SUB_TABS.REQUESTS) {
-          setSearchedChats(null);
-          setSelectedChatId(null);
-        } else if (activeSubTab === PUSH_SUB_TABS.SPAM) {
-          setSearchedNotifications(null);
+        if (isClickable) {
+          setActiveSubTab(tabValue);
+          if (activeSubTab === PUSH_SUB_TABS.REQUESTS) {
+            setSearchedChats(null);
+            setSelectedChatId(null);
+          } else if (activeSubTab === PUSH_SUB_TABS.SPAM) {
+            setSearchedNotifications(null);
+          }
         }
- 
       }}
     >
       <Span
-        padding={tabValue === PUSH_SUB_TABS.REQUESTS?"16px 17px 15px 18px":"15px 15px 11px 16px"}
+        padding={
+          tabValue === PUSH_SUB_TABS.REQUESTS
+            ? '16px 17px 15px 18px'
+            : '15px 15px 11px 16px'
+        }
         borderRadius="100%"
         border="1px solid #DDDDDF"
-        cursor="pointer"
+        cursor={isClickable ? 'pointer' : 'default'}
       >
         {subTab.icon}
       </Span>
@@ -136,7 +143,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
         flexDirection="column"
         alignItems="start"
         gap="5px"
-        cursor="pointer"
+        cursor={isClickable ? 'pointer' : 'default'}
       >
         <Span fontWeight="700" fontSize="16px" color="#000">
           {subTab.title}
@@ -168,6 +175,7 @@ export const Sidebar = () => {
   const {
     spamNotifsFeed,
     inboxNotifsFeed,
+    allInboxNotifFeed,
     setSearchedNotifications,
     searchedNotifications,
   } = useContext<any>(NotificationMainStateContext);
@@ -212,20 +220,26 @@ export const Sidebar = () => {
     else {
       // if (!newChat) setSearchedChats({});
       // else {
-        const result = await getNewChatUser({
-          searchText: searchedText,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          const defaultFeed = getDefaultFeedObject({ user: result });
-          setSearchedChats({ [defaultFeed.did]: defaultFeed });
-          setNewChat(true);
-        } else setSearchedChats({});
+      const result = await getNewChatUser({
+        searchText: searchedText,
+        fetchChatProfile,
+        env,
+      });
+      if (result) {
+        const defaultFeed = getDefaultFeedObject({ user: result });
+        setSearchedChats({ [defaultFeed.did]: defaultFeed });
+        setNewChat(true);
+      } else setSearchedChats({});
       // }
     }
   };
 
+  const onChatSearchReset = () => {
+    setSearchedChats(null);
+    if (newChat) {
+      setNewChat(false);
+    }
+  };
   const handleNotifSearch = async ({
     searchedText,
     feed,
@@ -247,22 +261,23 @@ export const Sidebar = () => {
       {!newChat && <SidebarTabs />}
 
       {activeSubTab !== PUSH_SUB_TABS.REQUESTS &&
-       ( activeTab === PUSH_TABS.CHATS || newChat)&& (
+        (activeTab === PUSH_TABS.CHATS || newChat) && (
           <Search
             feed={chatsFeed}
             handleSearch={handleChatSearch}
-            onSearchReset={() => setSearchedChats(null)}
-            placeholder='Search User'
+            onSearchReset={onChatSearchReset}
+            placeholder="Search User"
           />
         )}
 
       {activeSubTab !== PUSH_SUB_TABS.SPAM &&
-        activeTab === PUSH_TABS.APP_NOTIFICATIONS && !newChat && (
+        activeTab === PUSH_TABS.APP_NOTIFICATIONS &&
+        !newChat && (
           <Search
-            feed={inboxNotifsFeed}
+            feed={allInboxNotifFeed}
             handleSearch={handleNotifSearch}
             onSearchReset={() => setSearchedNotifications(null)}
-            placeholder='Search Notification'
+            placeholder="Search Notification"
           />
         )}
 
@@ -274,17 +289,26 @@ export const Sidebar = () => {
             <SidebarSubTabs
               subTab={PushSubTabDetails.REQUESTS}
               tabValue="REQUESTS"
+              isClickable={!!Object.keys(requestsFeed).length}
             />
             {activeSubTab !== PUSH_SUB_TABS.REQUESTS && <ChatsFeedList />}
           </>
         )}
-      {!newChat && !searchedNotifications && activeTab === PUSH_TABS.APP_NOTIFICATIONS && (
-        <>
-          <SidebarSubTabs subTab={PushSubTabDetails.SPAM} tabValue="SPAM" />
-          {activeSubTab !== PUSH_SUB_TABS.SPAM && <InboxNotificationFeedList />}
-        </>
-      )}
-      {(activeTab === PUSH_TABS.CHATS || newChat)&& (
+      {!newChat &&
+        !searchedNotifications &&
+        activeTab === PUSH_TABS.APP_NOTIFICATIONS && (
+          <>
+            <SidebarSubTabs
+              subTab={PushSubTabDetails.SPAM}
+              tabValue="SPAM"
+              isClickable={!!Object.keys(spamNotifsFeed).length}
+            />
+            {activeSubTab !== PUSH_SUB_TABS.SPAM && (
+              <InboxNotificationFeedList />
+            )}
+          </>
+        )}
+      {(activeTab === PUSH_TABS.CHATS || newChat) && (
         <>
           <ChatListCard
             overflow="hidden auto"
@@ -305,7 +329,7 @@ export const Sidebar = () => {
         </>
       )}
 
-      {activeTab === PUSH_TABS.APP_NOTIFICATIONS && !newChat  && (
+      {activeTab === PUSH_TABS.APP_NOTIFICATIONS && !newChat && (
         <>
           <NotificationListCard>
             {searchedNotifications &&

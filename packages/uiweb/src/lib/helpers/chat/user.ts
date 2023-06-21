@@ -25,6 +25,7 @@ export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {
       desc: null,
       picture: ProfilePicture,
       profileVerificationProof: null,
+      blockedUsersList:null,
     },
     verificationProof: '',
   };

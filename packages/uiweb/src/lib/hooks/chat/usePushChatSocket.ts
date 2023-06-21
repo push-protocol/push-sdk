@@ -1,4 +1,4 @@
-import type { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
+import type { IFeeds, IMessageIPFS} from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -72,10 +72,13 @@ const usePushChatSocket = (): PushChatSocket => {
 
     pushChatSocket?.on(
       EVENTS.CHAT_RECEIVED_MESSAGE,
-      async (chat: IMessageIPFS) => {
+      async (chat: any) => {
         if (!connectedProfile || !decryptedPgpPvtKey) {
           return;
         }
+ 
+        if( chat.messageCategory === 'Request' && chat.messageContent === null && chat.messageType === null && chat.messageOrigin === 'self')
+        return;
 
         const response = await PushAPI.chat.decryptConversation({
           messages: [chat],
