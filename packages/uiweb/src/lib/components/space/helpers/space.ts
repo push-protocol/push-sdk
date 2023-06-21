@@ -4,7 +4,8 @@
  * @returns {string} - The Status of the Space.
  */
 
-export function getSpaceStatus(datestring: Date | string) {
+export type ISpaceStatus = 'Live' | 'Scheduled' | 'Ended';
+export function getSpaceStatus(datestring: Date | string): ISpaceStatus {
     const date = new Date(datestring);
     const now = new Date();
     const diff = date.getTime() - now.getTime();

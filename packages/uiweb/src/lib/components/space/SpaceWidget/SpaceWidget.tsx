@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+
 import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
 import { SpaceDTO } from '@pushprotocol/restapi';
+
 import { ENV } from '../../../config';
 import { ISpaceWidgetProps } from '../exportedTypes';
 

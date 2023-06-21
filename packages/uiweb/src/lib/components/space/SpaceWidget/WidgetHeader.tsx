@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { Item, Text } from '../../../config';
 import { formatDate } from '../../../helpers';
 
@@ -169,8 +170,6 @@ const HostContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-samarendra-push marked this conversation as resolved.
-  font-family: 'Strawford';
   padding-left: 8px;
 }`;
 
@@ -180,12 +179,6 @@ const HostName = styled.div`
   font-weight: 600;
   font-size: 15px;
 }`;
-
-// const Text = styled.div`
-//   display: flex;
-//   font-weight: 700;
-//   font-size: 16px;
-// }`;
 
 const Host = styled.div<{ status?: string }>`
   display: flex;

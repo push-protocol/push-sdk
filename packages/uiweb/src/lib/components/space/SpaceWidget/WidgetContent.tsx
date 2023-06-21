@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 

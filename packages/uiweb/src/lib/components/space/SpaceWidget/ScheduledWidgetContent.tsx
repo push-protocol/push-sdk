@@ -1,4 +1,5 @@
 import styled from "styled-components";
+
 import { Button, Container, Image, Item, Text } from "../../../config";
 import { formatDate } from "../../../helpers";
 
@@ -62,6 +63,19 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({ 
         :
           <SpaceInfoText>This space will go live on {formatDate(Date.now())}</SpaceInfoText>
       }
+      {isHost && isTimeToStartSpace && (
+         <Button 
+          padding={'9px 34px'} 
+          borderRadius={'8px'} 
+          background={'#8B5CF6'} 
+          border={'1px solid #703BEB'}
+          cursor={'pointer'}
+        >
+          <Text fontSize="14px" fontWeight={600} color="#fff">
+            Start this space
+          </Text>
+        </Button>
+      )}
       {!isHost && !isMember && (
         <Button 
           padding={'9px 34px'} 
