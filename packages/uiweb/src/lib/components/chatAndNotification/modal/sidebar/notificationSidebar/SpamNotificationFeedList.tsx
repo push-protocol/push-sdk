@@ -12,8 +12,6 @@ import { NotificationFeedList } from './NotificationFeedList';
 
 export const SpamNotificationFeedList = () => {
   const { spamNotifsFeed } = useContext<any>(NotificationMainStateContext);
-  const { signer} = useContext<any>(ChatAndNotificationPropsContext);
-  console.log(spamNotifsFeed);
 
   return (
     <SpamNotifListCard
@@ -24,7 +22,7 @@ export const SpamNotificationFeedList = () => {
       padding="0 3px"
     >
       <Div>
-        <NotificationFeedList notificationFeeds={spamNotifsFeed} isSpam={true && signer} />
+        <NotificationFeedList notificationFeeds={spamNotifsFeed} />
       </Div>
     </SpamNotifListCard>
   );

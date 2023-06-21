@@ -183,7 +183,7 @@ const usePushChatSocket = (): PushChatSocket => {
 
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({
-        user: account, // change to normal account after backend is corrected for lowercase
+        user: account, 
         socketType: CHAT_SOCKET_TYPE,
         env: env,
       });

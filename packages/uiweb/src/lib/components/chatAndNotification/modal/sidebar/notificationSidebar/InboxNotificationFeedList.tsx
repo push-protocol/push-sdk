@@ -84,9 +84,7 @@ export const InboxNotificationFeedList = () => {
   }, [fetchNotification, env, page, account]);
 
   useEffect(() => {
-    console.log('in here');
-    console.log(!isInViewport1 || loading);
-    console.log(Object.keys(notificationLimit).length < notificationLimit);
+
     if (
       !isInViewport1 ||
       loading ||

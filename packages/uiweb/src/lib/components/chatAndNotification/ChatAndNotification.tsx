@@ -46,11 +46,10 @@ export const ChatAndNotification = () => {
     chatsFeed,
   } = useContext<any>(ChatMainStateContext);
   const {
-    inboxNotifsFeed,
     setInboxNotifsFeed,
     setSpamNotifsFeed,
-    spamNotifsFeed,
-    subscriptionStatus
+    subscriptionStatus,
+    setSubscriptionStatus
   } = useContext<any>(NotificationMainStateContext);
   const {
     decryptedPgpPvtKey,
@@ -72,6 +71,7 @@ export const ChatAndNotification = () => {
     if (subscriptionStatus.size) {
       return;
     }
+  
    (async()=>{
     fetchUserSubscriptions();
     })();
@@ -126,6 +126,9 @@ export const ChatAndNotification = () => {
   useEffect(() => {
     setChatsFeed({});
     setRequestsFeed({});
+    setInboxNotifsFeed({});
+    setSpamNotifsFeed({});
+    setSubscriptionStatus(new Map());
     setActiveTab(activeChosenTab);
 
     // set active tab if present
