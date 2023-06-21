@@ -31,6 +31,9 @@ const SpaceUITest = () => {
           <Link to="/spaceWidget" className="nav-button">
             SPACES WIDGET
           </Link>
+          <Link to="/spaceBanner" className="nav-button">
+            SPACES BANNER
+          </Link>
         </NavMenu>
       </Section>
     </div>

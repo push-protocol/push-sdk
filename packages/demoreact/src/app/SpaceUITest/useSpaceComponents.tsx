@@ -1,10 +1,11 @@
-import { ISpaceWidgetProps, SpacesUI } from "@pushprotocol/uiweb";
+import { ISpaceBannerProps, ISpaceWidgetProps, SpacesUI } from "@pushprotocol/uiweb";
 import { useContext } from "react";
 import { EnvContext, Web3Context } from "../context";
 
 export interface IUseSpaceReturnValues {
   spaceUI: SpacesUI;
   SpaceWidgetComponent: React.FC<ISpaceWidgetProps>
+  SpaceBannerComponent: React.FC<ISpaceBannerProps>
 }
 
 export const useSpaceComponents = (): IUseSpaceReturnValues => {
@@ -21,6 +22,7 @@ export const useSpaceComponents = (): IUseSpaceReturnValues => {
 
   return {
     spaceUI,
-    SpaceWidgetComponent: spaceUI.SpaceWidget
+    SpaceWidgetComponent: spaceUI.SpaceWidget,
+    SpaceBannerComponent: spaceUI.SpaceBanner,
   }
 }
