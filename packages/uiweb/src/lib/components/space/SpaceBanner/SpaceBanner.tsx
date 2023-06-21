@@ -121,21 +121,13 @@ const Container = styled.div<IThemeProps>`
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  @media(max-width: 425px) {
-    min-width: ${(props) => (props.orientation === 'maximized' ? '100%' : '0')};
-  }
 }`;
 
 const ProfileContainer = styled.div<{ orientation?: string }>`
   display: ${(props) => (props.orientation === 'maximized' ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: space-between;
-  width: min-content;
-
-  @media (max-width: 510px) {
-    justify-content: flex-start;
-  }
+  width: 100%;
 }`;
 
 const PfpContainer = styled.div`
@@ -155,16 +147,9 @@ const HostContainer = styled.div`
   align-items: flex-start;
   font-family: 'Strawford';
   padding-left: 8px;
-
-  @media (max-width: 510px) {
-    width: 70%;
-    overflow: hidden;
-  }
-
-  @media (max-width: 392px) {
-    width: 60%;
-    overflow: hidden;
-  }
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }`;
 
 const HostName = styled.div`
