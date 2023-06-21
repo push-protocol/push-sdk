@@ -46,4 +46,3 @@ export function getDateAndTime(datestring: string | Date) {
   
     return `${weekday}, ${day} ${month} at ${hour}:${minute} ${amOrPm}`;
   }
-  

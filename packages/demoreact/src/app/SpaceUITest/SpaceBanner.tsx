@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+
 import { useSpaceComponents } from './useSpaceComponents';
 import { Section, SectionItem } from '../components/StyledComponents';
 import Dropdown from '../components/Dropdown';
 
 export const SpaceBanner = () => {
   const { SpaceBannerComponent } = useSpaceComponents();
+
   const [spaceId, setSpaceId] = useState<string>('');
   const [orientation, setOrientation] = useState('maximized');
+
   const updateSpaceId = (e: React.SyntheticEvent<HTMLElement>) => {
     setSpaceId((e.target as HTMLInputElement).value);
   };
