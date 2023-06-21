@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatAndNotificationPropsContext, NotificationMainStateContextProvider } from '../../context';
+import { ChatAndNotificationMainContextProvider, ChatAndNotificationPropsContext, NotificationMainStateContextProvider } from '../../context';
 import 'font-awesome/css/font-awesome.min.css';
 import { Constants } from '../../config';
 import { ChatMainStateContextProvider } from '../../context';
@@ -10,7 +10,6 @@ import { pCAIP10ToWallet, } from '../../helpers';
 import type { PushTabs } from '../../types';
 import { PUSH_TABS } from '../../types';
 import type { WithRequiredProperty } from '../../utilities';
-import ChatAndNotificationMainContextProvider from '../../context/chatAndNotification';
 
 export type ChatAndNotificationProps = {
   account: string;

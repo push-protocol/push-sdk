@@ -9,6 +9,7 @@ import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../context';
 import type { PushSubTabs, PushTabs } from '../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
@@ -17,7 +18,6 @@ import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
-import { ChatAndNotificationMainContext } from '../../context/chatAndNotification';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;

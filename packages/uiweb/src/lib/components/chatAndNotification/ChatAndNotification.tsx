@@ -8,6 +8,7 @@ import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
@@ -28,7 +29,6 @@ import {
 } from '../../helpers';
 import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
-import { ChatAndNotificationMainContext } from '../../context/chatAndNotification';
 
 //make changes for users who dont have decryptedPgpPvtKey
 

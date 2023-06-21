@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
-import { ChatMainStateContext } from '../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../context';
 import { PUSH_SUB_TABS } from '../../../types';
 import { Section } from '../../reusables/sharedStyling';
 import { Spinner } from '../../reusables/Spinner';
@@ -8,7 +8,6 @@ import { MessageBox } from './messageBox/MessageBox';
 import { RequestsFeedList } from './sidebar/chatSidebar/RequestsFeedList';
 import { SpamNotificationFeedList } from './sidebar/notificationSidebar/SpamNotificationFeedList';
 import { Sidebar } from './sidebar/Sidebar';
-import { ChatAndNotificationMainContext } from '../../../context/chatAndNotification';
 
 export const Modal = () => {
 

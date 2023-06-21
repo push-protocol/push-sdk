@@ -1,4 +1,4 @@
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext, ChatAndNotificationMainContext } from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -18,7 +18,6 @@ import type { FileMessageContent} from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
-import { ChatAndNotificationMainContext } from '../../../../context/chatAndNotification';
 
 const CHATS_FETCH_LIMIT = 15;
 

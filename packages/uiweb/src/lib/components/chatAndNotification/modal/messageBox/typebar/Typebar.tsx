@@ -7,7 +7,7 @@ import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
-import { ChatMainStateContext } from '../../../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
@@ -16,7 +16,6 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
-import { ChatAndNotificationMainContext } from '../../../../../context/chatAndNotification';
 
 type GIFType = {
   url: string;

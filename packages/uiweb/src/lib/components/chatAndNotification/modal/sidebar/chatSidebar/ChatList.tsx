@@ -1,8 +1,7 @@
 import type { ChatFeedsType } from '../../../../../types';
 import React, { useContext } from 'react';
 import { ChatSnap } from './ChatSnap';
-import { ChatMainStateContext } from '../../../../../context';
-import { ChatAndNotificationMainContext } from '../../../../../context/chatAndNotification';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
 
 type ChatListPropType = {
   chatsFeed: ChatFeedsType;
