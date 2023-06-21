@@ -1,7 +1,7 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 String generateRandomSecret(int length) {
-  final random = Random.secure();
+  final random = math.Random.secure();
   final characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   final charactersLength = characters.length;
@@ -10,4 +10,8 @@ String generateRandomSecret(int length) {
     buffer.write(characters[random.nextInt(charactersLength)]);
   }
   return buffer.toString();
+}
+
+aesDecrypt({required String cipherText, required String secretKey}) async {
+  //TODO implement aesDecrypt
 }

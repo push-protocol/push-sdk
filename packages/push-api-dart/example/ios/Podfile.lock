@@ -1,20 +1,26 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_aes_ecb_pkcs5 (0.0.1):
+    - Flutter
   - openpgp (0.6.0):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_aes_ecb_pkcs5 (from `.symlinks/plugins/flutter_aes_ecb_pkcs5/ios`)
   - openpgp (from `.symlinks/plugins/openpgp/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_aes_ecb_pkcs5:
+    :path: ".symlinks/plugins/flutter_aes_ecb_pkcs5/ios"
   openpgp:
     :path: ".symlinks/plugins/openpgp/ios"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_aes_ecb_pkcs5: fb682a7bb13f29cfbb33f88f7e1ed2211eacf5db
   openpgp: e0eb8d0e9a3b31ee405ca23a0042025b5e66f09b
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189

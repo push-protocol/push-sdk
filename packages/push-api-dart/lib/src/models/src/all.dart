@@ -143,25 +143,6 @@ class MessageIPFS {
   String? deprecatedCode; // scope only at sdk level
 }
 
-class Feeds {
-  late MessageIPFS msg;
-  late String did;
-  late String wallets;
-  String? profilePicture;
-  String? publicKey;
-  String? about;
-  String? threadhash;
-  String? intent;
-  String? intentSentBy;
-  late DateTime intentTimestamp;
-  late String combinedDID;
-  String? cid;
-  String? chatId;
-  GroupDTO? groupInformation;
-  bool? deprecated; // scope only at sdk level
-  String? deprecatedCode; // scope only at sdk level
-}
-
 class Member {
   late String wallet;
   late String publicKey;
@@ -259,8 +240,8 @@ class EncryptedPrivateKeyTypeV2 {
   EncryptedPrivateKeyTypeV2? encryptedPassword;
 }
 
-class EncryptedPrivateKeyType {
-  EncryptedPrivateKeyType({
+class EncryptedPrivateKeyModel {
+  EncryptedPrivateKeyModel({
     this.ciphertext,
     this.nonce,
     this.version,

@@ -7,11 +7,9 @@ import '../../../push_api_dart.dart';
 
 HttpService http = HttpService();
 
-
-
 log(Object? data) {
   final env = providerContainer.read(envProvider);
-  if (env == ENV.dev || env == ENV.local) {
+  if (env == ENV.dev || env == ENV.local || env == ENV.staging) {
     print(data);
   }
 }

@@ -4,11 +4,10 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:dart_pg/dart_pg.dart' as pg;
 import 'package:web3lib/web3lib.dart' as web3;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';
-import 'package:ethers/signers/wallet.dart' as ethers;
-import 'package:ethers/signers/wallet.dart';
 
 import '../../../push_api_dart.dart';
 
@@ -22,7 +21,7 @@ String generateHash(dynamic message) {
 Future<String> preparePGPPublicKey({
   String encryptionType = Constants.ENC_TYPE_V3,
   required String generatedPublicKey,
-  required ethers.Wallet wallet,
+  required EthWallet wallet,
 }) async {
   String chatPublicKey;
 
@@ -66,18 +65,17 @@ Future<String> preparePGPPublicKey({
 }
 
 Future<Map<String, dynamic>> getEip191Signature(
-  ethers.Wallet? wallet,
+  EthWallet? wallet,
   String message, {
   String version = 'v1',
 }) async {
-  if (wallet == null || wallet.signingKey == null) {
+  if (wallet == null || wallet.privateKey == null) {
     print('This method is deprecated. Provide signer in the function');
     // Sending a random signature for backward compatibility
     return {'signature': 'xyz', 'sigType': 'a'};
   }
 
-  web3.Credentials credentials =
-      web3.EthPrivateKey.fromHex('${wallet.privateKey}');
+  web3.Credentials credentials = web3.EthPrivateKey.fromHex(wallet.privateKey!);
   List<int> codeUnits = utf8.encode(message);
 
   // EIP191 signature
@@ -107,17 +105,21 @@ String stringToHex(String input) {
   return hexPairs.join('');
 }
 
-Future<EncryptedPrivateKeyType> encryptPGPKey({
+Future<EncryptedPrivateKeyModel> encryptPGPKey({
   String encryptionType = Constants.ENC_TYPE_V3,
   required String generatedPrivateKey,
-  required Wallet wallet,
+  required EthWallet wallet,
   dynamic additionalMeta,
 }) async {
-  EncryptedPrivateKeyType encryptedPrivateKey;
+  if (wallet.publicKey == null) {
+    throw Exception('Public key is required');
+  }
+
+  EncryptedPrivateKeyModel encryptedPrivateKey;
 
   switch (encryptionType) {
     case Constants.ENC_TYPE_V1:
-      String walletPublicKey = wallet.publicKey ?? '';
+      String walletPublicKey = wallet.publicKey!;
 
       encryptedPrivateKey =
           encryptV1(generatedPrivateKey, walletPublicKey, encryptionType);
@@ -164,7 +166,7 @@ Future<EncryptedPrivateKeyType> encryptPGPKey({
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
 
-Future<EncryptedPrivateKeyType> encryptV2({
+Future<EncryptedPrivateKeyModel> encryptV2({
   required List<int> encodedPrivateKey,
   required List<int> data,
 }) async {
@@ -179,26 +181,23 @@ Future<EncryptedPrivateKeyType> encryptV2({
     nonce: nonce,
   );
 
-  return EncryptedPrivateKeyType(
+  return EncryptedPrivateKeyModel(
       ciphertext: bytesToHex(secretBox.cipherText),
       nonce: bytesToHex(nonce),
       salt: generateRandomSecret(KDFSaltSize));
 }
 
-EncryptedPrivateKeyType encryptV1(
+EncryptedPrivateKeyModel encryptV1(
   String text,
   String encryptionPublicKey,
   String version,
 ) {
   String signature = '';
 
-  final result =
-      SimplePublicKey(hexToBytes(stringToHex(text)), type: KeyPairType.x25519);
+  // final result =
+  //     SimplePublicKey(hexToBytes(stringToHex(text)), type: KeyPairType.x25519);
 
-  print(bytesToHex(result.bytes));
-  print(bytesToHex(result.bytes));
-
-  return EncryptedPrivateKeyType(
+  return EncryptedPrivateKeyModel(
     version: version,
     ciphertext: signature,
     nonce: '',
@@ -210,4 +209,30 @@ final _rand = Random.secure();
 /// This produces a list of `count` random bytes.
 List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
+}
+
+Future<String> decryptAndVerifySignature({
+  required String cipherText,
+  required String encryptedSecretKey,
+  required String publicKeyArmored,
+  required String signatureArmored,
+  required String privateKeyArmored,
+  required Message message,
+}) async {
+  //TODO implement  decryptAndVerifySignature
+
+  try {
+    aesDecrypt(cipherText: cipherText, secretKey: privateKeyArmored);
+    return cipherText;
+  } catch (err) {
+    return 'Unable to decrypt message';
+  }
+}
+
+pgpDecrypt({
+  required String cipherText,
+  required String privateKeyArmored,
+  required String signatureArmored,
+}) async {
+//TODO implement pgpDecrypt
 }
