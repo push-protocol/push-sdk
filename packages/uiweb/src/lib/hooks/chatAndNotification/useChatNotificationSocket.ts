@@ -8,6 +8,7 @@ import {
   NotificationMainStateContext,
 } from '../../context';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import { ChatAndNotificationMainContext, ChatAndNotificationMainContextType } from '../../context/chatAndNotification/ChatAndNotificationMainContext';
 import {
   checkIfIntent,
   getData,
@@ -22,17 +23,17 @@ import {
 import type { ChatSocketType} from '../../types';
 import { CHAT_SOCKET_TYPE } from '../../types';
 
-import useFetchChat from './useFetchChat';
+import useFetchChat from '../chat/useFetchChat';
 
-interface PushChatSocket {
-  pushChatSocket: any;
+interface PushChatNotificationSocket {
+  pushChatNotificationSocket: any;
   isSDKSocketConnected: boolean;
   messagesSinceLastConnection: any;
   groupInformationSinceLastConnection: any;
   notificationFeedSinceLastConnection: any; //add type
 }
 
-export type pushChatSocketType = {
+export type pushChatNotificationSocketType = {
   socketType?: ChatSocketType;
 };
 
@@ -49,9 +50,9 @@ const getChatId = ({
   return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
 };
 
-const usePushChatSocket = ({
+const useChatNotificationSocket = ({
   socketType = CHAT_SOCKET_TYPE.NOTIFICATION,
-}: pushChatSocketType): PushChatSocket => {
+}: pushChatNotificationSocketType): PushChatNotificationSocket => {
   const [isSDKSocketConnected, setIsSDKSocketConnected] =
     useState<boolean>(false);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
@@ -77,23 +78,22 @@ const usePushChatSocket = ({
     setRequestFeed,
     requestsFeed,
     selectedChatId,
-    pushChatSocket,
-    setPushChatSocket,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { subscriptionStatus, setInboxNotifFeed, setSpamNotifFeed } =
     useContext<any>(NotificationMainStateContext);
+  const {pushChatNotificationSocket,setPushChatNotificationSocket}=  useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
 
   const addSocketEvents = useCallback(() => {
-    pushChatSocket?.on(EVENTS.CONNECT, () => {
+    pushChatNotificationSocket?.on(EVENTS.CONNECT, () => {
       setIsSDKSocketConnected(true);
     });
 
-    pushChatSocket?.on(EVENTS.DISCONNECT, (err: any) => {
+    pushChatNotificationSocket?.on(EVENTS.DISCONNECT, (err: any) => {
       console.log(err);
       setIsSDKSocketConnected(false);
     });
 
-    pushChatSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+    pushChatNotificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const parseApiResponse = convertReponseToParsedArray([feedItem]);
       if (subscriptionStatus.get(parseApiResponse[0].channel))
         setInboxNotifFeed(parseApiResponse[0].sid, parseApiResponse[0]);
@@ -102,7 +102,7 @@ const usePushChatSocket = ({
       setNotificationFeedSinceLastConnection(feedItem);
     });
 
-    pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
+    pushChatNotificationSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
       if (!connectedProfile || !decryptedPgpPvtKey) {
         return;
       }
@@ -170,11 +170,11 @@ const usePushChatSocket = ({
       setMessagesSinceLastConnection(chat);
     });
 
-    pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
+    pushChatNotificationSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
       setGroupInformationSinceLastConnection(groupInfo);
     });
   }, [
-    pushChatSocket,
+    pushChatNotificationSocket,
     decryptedPgpPvtKey,
     chatsFeed,
     requestsFeed,
@@ -186,23 +186,23 @@ const usePushChatSocket = ({
   ]);
 
   const removeSocketEvents = useCallback(() => {
-    pushChatSocket?.off(EVENTS.CONNECT);
-    pushChatSocket?.off(EVENTS.DISCONNECT);
-    pushChatSocket?.off(EVENTS.CHAT_GROUPS);
-    pushChatSocket?.off(EVENTS.CHAT_RECEIVED_MESSAGE);
-  }, [pushChatSocket]);
+    pushChatNotificationSocket?.off(EVENTS.CONNECT);
+    pushChatNotificationSocket?.off(EVENTS.DISCONNECT);
+    pushChatNotificationSocket?.off(EVENTS.CHAT_GROUPS);
+    pushChatNotificationSocket?.off(EVENTS.CHAT_RECEIVED_MESSAGE);
+  }, [pushChatNotificationSocket]);
 
   useEffect(() => {
-    if (pushChatSocket) {
+    if (pushChatNotificationSocket) {
       addSocketEvents();
     }
 
     return () => {
-      if (pushChatSocket) {
+      if (pushChatNotificationSocket) {
         removeSocketEvents();
       }
     };
-  }, [addSocketEvents, pushChatSocket, removeSocketEvents]);
+  }, [addSocketEvents, pushChatNotificationSocket, removeSocketEvents]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -211,8 +211,8 @@ const usePushChatSocket = ({
    */
   useEffect(() => {
     if (decryptedPgpPvtKey) {
-      if (pushChatSocket) {
-        pushChatSocket?.disconnect();
+      if (pushChatNotificationSocket) {
+        pushChatNotificationSocket?.disconnect();
       }
       let chainId = 1;
       (async () => {
@@ -227,13 +227,13 @@ const usePushChatSocket = ({
         socketType,
         env: env,
       });
-      setPushChatSocket(connectionObject);
+      setPushChatNotificationSocket(connectionObject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decryptedPgpPvtKey, env]);
 
   return {
-    pushChatSocket,
+    pushChatNotificationSocket,
     isSDKSocketConnected,
     messagesSinceLastConnection,
     groupInformationSinceLastConnection,
@@ -241,4 +241,4 @@ const usePushChatSocket = ({
   };
 };
 
-export default usePushChatSocket;
+export default useChatNotificationSocket;

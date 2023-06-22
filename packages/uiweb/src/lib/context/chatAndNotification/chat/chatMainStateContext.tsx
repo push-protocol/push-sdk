@@ -26,8 +26,6 @@ export type ChatMainStateContextType = {
   setConnectedProfile: (connectedProfile: IUser) => void;
   searchedChats: ChatFeedsType | null;
   setSearchedChats: (chats:ChatFeedsType | null) => void;
-  pushChatSocket: any; // replace any with the actual type of socket connection
-  setPushChatSocket: (pushChatSocket: any) => void;
 }
 
 export const ChatMainStateContext = createContext<ChatMainStateContextType>({} as ChatMainStateContextType);
@@ -40,7 +38,6 @@ const [requestsFeed,setRequestsFeed] =useState<ChatFeedsType>({} as ChatFeedsTyp
 const [chats,setChats] = useState<Map<string, ChatMessagetype> >(new Map());
 const [selectedChatId,setSelectedChatId] = useState<string | null>(null);
 const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
-const [pushChatSocket,setPushChatSocket] = useState<any>(null);
 
 
 
@@ -95,8 +92,6 @@ const [pushChatSocket,setPushChatSocket] = useState<any>(null);
         web3NameList,
         setWeb3NameList,
         setWeb3Name,
-        pushChatSocket,
-        setPushChatSocket
       }}>
 
       {children}

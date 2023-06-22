@@ -13,7 +13,6 @@ import {
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
-import usePushChatSocket from '../../hooks/chat/usePushChatSocket';
 import {
   chatLimit,
   device,
@@ -30,6 +29,7 @@ import {
 } from '../../helpers';
 import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
+import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -68,8 +68,8 @@ export const ChatAndNotification = () => {
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
-  usePushChatSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
-  usePushChatSocket({});
+  useChatNotificationSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
+  useChatNotificationSocket({});
 
   useEffect(() => {
     if (subscriptionStatus.size) {
