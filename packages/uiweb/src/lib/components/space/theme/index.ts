@@ -3,26 +3,56 @@
  */
 
 export interface ISpacesTheme {
-    primary?: string;
-    secondary?: string;
-    tertiary?: string;
-    bannerBackground1?: string;
-    bannerBackground2?: string;
-    fontFamily?: string;
+  titleBg?: string;
+  titleTextColor?: string;
+  bgColorPrimary?: string;
+  bgColorSecondary?: string;
+  textColorPrimary?: string;
+  textColorSecondary?: string;
+  textGradient?: string;
+  btnColorPrimary?: string;
+  btnOutline?: string;
+  borderColor?: string;
+  borderRadius?: string;
+  containerBorderRadius?: string;
+  statusColorError?: string;
+  statusColorSuccess?: string;
+  iconColorPrimary?: string;
+  fontFamily?: string;
 }
 
 export const lightTheme: ISpacesTheme = {
-    primary: 'rgba(213, 58, 148, 1)',
-    secondary: 'rgba(255, 255, 255, 1)',
-    tertiary: 'rgba(249, 235, 243, 1)',
-    bannerBackground1: 'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
-    bannerBackground2: '#EDE9FE'
+  titleBg: 'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
+  titleTextColor: '#fff',
+  bgColorPrimary: '#fff',
+  bgColorSecondary: '#EDE9FE',
+  textColorPrimary: '#000',
+  textColorSecondary: '#71717A',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)',
+  btnColorPrimary: '#8B5CF6',
+  btnOutline: '#8B5CF6',
+  borderColor: '#DCDCDF',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#82828A'
 };
 
 export const darkTheme: ISpacesTheme = {
-    primary: 'rgba(213, 58, 148, 1)',
-    secondary: 'rgba(255, 255, 255, 0)',
-    tertiary: 'rgba(64, 70, 80, 1)',
-    bannerBackground1: 'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
-    bannerBackground2: '#EDE9FE'
+  titleBg: 'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
+  titleTextColor: '#fff',
+  bgColorPrimary: '#000',
+  bgColorSecondary: '#292344',
+  textColorPrimary: '#fff',
+  textColorSecondary: '#71717A',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)',
+  btnColorPrimary: '#8B5CF6',
+  btnOutline: '#8B5CF6',
+  borderColor: '#3F3F46',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#71717A'
 };

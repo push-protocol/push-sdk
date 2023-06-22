@@ -33,6 +33,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (props) => {
 }
 
 const Header = styled.div<IThemeProps>`
-  background-image: ${(props) => props.theme.bannerBackground1};
+  background-image: ${(props) => props.theme.titleBg};
   color: ${(props) => props.theme.primary};
 `;
