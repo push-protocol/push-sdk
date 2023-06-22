@@ -227,7 +227,7 @@ const useChatNotificationSocket = ({
         socketType,
         env: env,
       });
-      setPushChatNotificationSocket(connectionObject);
+      // setPushChatNotificationSocket(connectionObject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decryptedPgpPvtKey, env]);
