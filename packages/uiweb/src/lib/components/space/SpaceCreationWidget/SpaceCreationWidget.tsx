@@ -1,8 +1,6 @@
 import { useContext, useState } from 'react'
 import * as PushAPI from '@pushprotocol/restapi';
 
-import { Web3Context } from 'packages/demoreact/src/app/context'
-
 import { SCWCreateModal } from './SCWCreateModal/SCWCreateModal'
 import { SCWScheduleModal } from './SCWScheduleModal/SCWScheduleModal';
 import { SCWInviteModal } from './SCWInviteModal/SCWInviteModal';
@@ -12,10 +10,8 @@ export interface ISpaceCreateWidgetProps {
     CustomComponent?: any;
 }
 
-const SpaceCreationWidget = (props: any) => {
+export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
     const { CustomComponent } = props;
-
-    const { library } = useContext<any>(Web3Context);
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
@@ -71,7 +67,7 @@ const SpaceCreationWidget = (props: any) => {
     const testCreateSpace = async () => {
         try {
         //   setLoading(true);
-            const librarySigner = await library.getSigner();
+            // const librarySigner = await library.getSigner();
         
             // const response = await PushAPI.space.create({
             //     spaceName: spaceState.spaceName,
@@ -141,5 +137,3 @@ const SpaceCreationWidget = (props: any) => {
         </div>
     )
 }
-
-export default SpaceCreationWidget;

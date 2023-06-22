@@ -1,8 +1,8 @@
 import React, { MouseEventHandler } from 'react'
 import styled from 'styled-components'
-import { ModalHeader } from '../common/ModalHeader';
-import { Modal } from '../common/Modal';
-import { Button } from '../common/Button';
+import { ModalHeader } from '../../reusables/ModalHeader';
+import { Modal } from '../../reusables/Modal';
+import { Button } from '../../reusables/Button';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;

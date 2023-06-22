@@ -3,6 +3,7 @@ import { ISpaceFeedProps } from "./SpaceFeed";
 import { ISpacesUIProps, SpacesUI } from "./SpacesUI";
 import { ISpaceTrendingListProps } from "./SpaceTrendingList";
 import { ISpaceWidgetProps } from "./SpaceWidget";
+import { ISpaceCreateWidgetProps } from "./SpaceCreationWidget";
 
 export {
   SpacesUI,
@@ -10,5 +11,6 @@ export {
   ISpaceWidgetProps,
   ISpaceBannerProps,
   ISpaceFeedProps,
-  ISpaceTrendingListProps
+  ISpaceTrendingListProps,
+  ISpaceCreateWidgetProps
 }

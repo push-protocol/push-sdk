@@ -4,7 +4,7 @@ import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { ISpaceWidgetProps, SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
-import SpaceCreationWidget from './SpaceCreationWidget/SpaceCreationWidget';
+import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
