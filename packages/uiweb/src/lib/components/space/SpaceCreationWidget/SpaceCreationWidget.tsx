@@ -94,8 +94,6 @@ const SpaceCreationWidget = (props: any) => {
         }
     };
 
-    console.log(CustomComponent)
-
     return (
         <div>
             {

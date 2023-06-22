@@ -1,6 +1,9 @@
 import React, { MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { Modal } from '../common/Modal';
+import { ModalHeader } from '../common/ModalHeader';
+import { TextInputWithCounter } from '../common/TextInput';
+import { Button } from '../common/Button';
 
 export interface ISCWSModalProps { // Space Creation Widget Schedule Modal Interface
     closeScheduleModal?: MouseEventHandler;
@@ -19,52 +22,31 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
 
     return (
         <Modal>
-            Schedule Modal
-
-            <CloseBtn
-                onClick={closeScheduleModal}
-            >
-                close Schedule modal
-            </CloseBtn>
-
-            <BackBtn
-                onClick={makeCreateVisible}
-            >
-                back button
-            </BackBtn>
-
-            <input
-                type="text"
-                value={dateValue}
-                onChange={onDateChange}
+            <ModalHeader
+                heading='Schedule space modal'
+                backCallback={makeCreateVisible}
+                closeCallback={closeScheduleModal}
             />
 
-            <input
-                type="text"
-                value={timeValue}
-                onChange={onTimeChange}
+            <TextInputWithCounter
+                labelName='Date'
+                inputValue={dateValue}
+                onInputChange={onDateChange}
+                charCount={12}
             />
 
-            <button
+            <TextInputWithCounter
+                labelName='Time'
+                inputValue={timeValue}
+                onInputChange={onTimeChange}
+                charCount={12}
+            />
+
+            <Button
                 onClick={makeInviteVisible}
             >
-                open invite modal
-            </button>
+                Schedule Space
+            </Button>
         </Modal>
     )
 }
-
-/* styling */
-const BackBtn = styled.button`
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 1rem;
-`;
-
-const CloseBtn = styled.button`
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1rem;
-`;

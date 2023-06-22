@@ -1,5 +1,8 @@
 import React, { MouseEventHandler } from 'react'
 import styled from 'styled-components'
+import { ModalHeader } from '../common/ModalHeader';
+import { Modal } from '../common/Modal';
+import { Button } from '../common/Button';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -10,64 +13,20 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const { closeInviteModal, makeScheduleVisible, createSpace } = props;
     return (
         <div>
-            <ModalOverlay>
-                <ModalParent>
-                    Invite Modal
+            <Modal>
+                <ModalHeader
+                    heading='invite to space modal'
+                    backCallback={makeScheduleVisible}
+                    closeCallback={closeInviteModal}
+                />
 
-                    <CloseBtn
-                        onClick={closeInviteModal}
-                    >
-                        close invite modal
-                    </CloseBtn>
-
-                    <BackBtn
-                        onClick={makeScheduleVisible}
-                    >
-                        back button
-                    </BackBtn>
-
-                    <button
-                    onClick={createSpace}>
-                        CREATE SPACE
-                    </button>
-                </ModalParent>
-            </ModalOverlay>
+                <Button
+                    onClick={createSpace}
+                    width='500px'
+                >
+                    Schedule Space
+                </Button>
+            </Modal>
         </div>
     )
 }
-
-/* styling */
-const ModalParent = styled.div<ISCWIModalProps>`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 6rem;
-    background-color: green;
-`;
-
-const ModalOverlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Black with 50% opacity */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const CloseBtn = styled.button`
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1rem;
-`;
-
-const BackBtn = styled.button`
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 1rem;
-`;

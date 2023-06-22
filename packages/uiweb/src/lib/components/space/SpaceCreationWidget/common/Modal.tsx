@@ -1,17 +1,11 @@
-import React, { MouseEventHandler, useState } from 'react'
+/**
+ * @file Modal
+ * generic modal component for spaces UI
+ * does not handle any business logic, acts only as a container
+ */
 import styled from 'styled-components'
 
-export interface IModalProps { // Space Creation Widget Create Modal Interface
-    isVisible?: any;
-    closeModal?: MouseEventHandler;
-    onInputChange?: any;
-    inputValue?: any;
-    children?: any;
-}
-
-export const Modal: React.FC<IModalProps> = (props) => {
-    // const { isVisible, closeModal, onInputChange, inputValue } = props;
-
+export const Modal = (props: any) => {
     return (
         <div>
             <ModalOverlay>
@@ -43,9 +37,12 @@ const ModalParent = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 5rem;
-    background-color: red;
 
     display: flex;
     flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+
+    background: #FFFFFF;
+    border-radius: 12px;
 `;

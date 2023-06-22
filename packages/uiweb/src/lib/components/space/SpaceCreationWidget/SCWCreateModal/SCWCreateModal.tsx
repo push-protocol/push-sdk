@@ -2,6 +2,9 @@ import React, { MouseEventHandler, useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal } from '../common/Modal'
+import { Button } from '../common/Button';
+import { ModalHeader } from '../common/ModalHeader';
+import { TextInputWithCounter } from '../common/TextInput';
 
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
     isScheduleVisible?: any;
@@ -16,33 +19,26 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     return (
         <div>
             <Modal>
-                <button
-                    onClick={isScheduleVisible}
-                >
-                    Schedule Space
-                </button>
-
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={onInputChange}
+                <ModalHeader
+                    heading='Create your space'
+                    closeCallback={closeCreateModal}
                 />
 
-                <CloseBtn
-                    onClick={closeCreateModal}
+                <TextInputWithCounter
+                    labelName='Name'
+                    inputValue={inputValue}
+                    onInputChange={onInputChange}
+                    charCount={50}
+                />
+
+                <Button
+                    onClick={isScheduleVisible}
                 >
-                    close create modal
-                </CloseBtn>
+                    Create Space
+                </Button>
             </Modal>
         </div>
     )
 }
 
 /* styling */
-
-const CloseBtn = styled.button`
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1rem;
-`;
