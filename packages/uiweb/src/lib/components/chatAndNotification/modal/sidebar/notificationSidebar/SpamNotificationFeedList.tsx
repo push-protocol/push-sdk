@@ -12,9 +12,9 @@ import { Spinner } from '../../../../reusables/Spinner';
 
 import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
-import { notificationLimit } from 'packages/uiweb/src/lib/config';
-import { NotificationFeedsType } from 'packages/uiweb/src/lib/types';
-import useFetchNotification from 'packages/uiweb/src/lib/hooks/notifications/useFetchNotification';
+import { notificationLimit } from '../../../../../config';
+import type { NotificationFeedsType } from '../../../../../types';
+import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
 
 export const SpamNotificationFeedList = () => {
   const { spamNotifsFeed, setSpamNotifsFeed } = useContext<any>(

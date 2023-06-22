@@ -1,6 +1,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
-import { ApiNotificationType } from '@pushprotocol/restapi';
-import { NotificationFeedsType, ParsedNotificationType } from '../../types';
+import type { ApiNotificationType } from '@pushprotocol/restapi';
+import type { ParsedNotificationType } from '../../types';
+import { NotificationFeedsType } from '../../types';
 
 export const convertReponseToParsedArray = (response: ApiNotificationType[]) =>{
     const parsedResponse = PushAPI.utils.parseApiResponse(response);

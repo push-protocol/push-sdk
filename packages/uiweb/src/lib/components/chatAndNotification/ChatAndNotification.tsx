@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import { ChatFeedsType, CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
+import type { ChatFeedsType} from '../../types';
+import { CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,

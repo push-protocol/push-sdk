@@ -19,7 +19,8 @@ import {
   convertAddressToAddrCaip,
   convertReponseToParsedArray,
 } from '../../helpers/notification';
-import { ChatSocketType, CHAT_SOCKET_TYPE } from '../../types';
+import type { ChatSocketType} from '../../types';
+import { CHAT_SOCKET_TYPE } from '../../types';
 
 import useFetchChat from './useFetchChat';
 
