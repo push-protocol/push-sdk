@@ -1,7 +1,6 @@
 import 'package:push_api_dart/push_api_dart.dart';
-import 'package:push_api_dart/src/providers/src/user_provider.dart';
 
-getInboxList({
+Future<List<Feeds>> getInboxList({
   required List<Feeds> feedsList,
   required String user,
   required String pgpPrivateKey,
@@ -47,4 +46,36 @@ getInboxList({
   }
 
   return feedsOutputlist;
+}
+
+List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
+  Map<String, String> latestDIDs = {};
+
+  for (var chat in chats) {
+    if (isValidCAIP10NFTAddress(chat.did!)) {
+      List<String> didParts = chat.did!.split(':');
+      String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
+      String timestamp = didParts[5];
+
+      if (!latestDIDs.containsKey(didWithoutTimestamp) ||
+          timestamp.compareTo(latestDIDs[didWithoutTimestamp]!.split(':')[5]) >
+              0) {
+        latestDIDs[didWithoutTimestamp] = chat.did!;
+      }
+    }
+  }
+
+  for (var chat in chats) {
+    if (isValidCAIP10NFTAddress(chat.did!)) {
+      List<String> didParts = chat.did!.split(':');
+      String didWithoutTimestamp = didParts.sublist(0, 5).join(':');
+
+      if (latestDIDs[didWithoutTimestamp] != chat.did!) {
+        chat.deprecated = true;
+        chat.deprecatedCode = 'NFT Owner Changed';
+      }
+    }
+  }
+
+  return chats;
 }

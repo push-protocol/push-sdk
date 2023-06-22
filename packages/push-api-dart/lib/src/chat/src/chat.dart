@@ -6,12 +6,11 @@ import 'package:push_api_dart/push_api_dart.dart';
 ///toDecrypt: If true, the method will return decrypted message content in response
 ///page index - default 1
 ///limit: no of items per page - default 10 - max 30
-Future<List<Feeds>?> chats({
+Future<Feeds?> chat({
   String? accountAddress,
   String? pgpPrivateKey,
+  required String recipient,
   bool toDecrypt = false,
-  int page = 1,
-  int limit = 10,
 }) async {
   String? userDID;
   if (accountAddress == null) {
@@ -30,17 +29,19 @@ Future<List<Feeds>?> chats({
     throw Exception('Private Key is required.');
   }
 
+  final recipientWallet = await getUserDID(address: recipient);
+
   try {
     final result = await http.get(
-      path: '/v1/chat/users/$userDID/chats?page=$page&limit=$limit',
+      path: '/v1/chat/users/$userDID/chat/$recipientWallet',
     );
 
-    if (result == null || result['chats'] == null) {
+    if (result == null) {
       return null;
     }
 
-    final chatList =
-        (result['chats'] as List).map((e) => Feeds.fromJson(e)).toList();
+    final chatList = [Feeds.fromJson(result)];
+
     final updatedChats = addDeprecatedInfo(chatList);
     final feedWithInbox = await getInboxList(
       feedsList: updatedChats,
@@ -49,7 +50,7 @@ Future<List<Feeds>?> chats({
       toDecrypt: toDecrypt,
     );
 
-    return feedWithInbox;
+    return feedWithInbox.first;
   } catch (e) {
     log(e);
     throw Exception('[Push SDK] - API chats: $e');

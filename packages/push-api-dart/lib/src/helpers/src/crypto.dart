@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:dart_pg/dart_pg.dart' as pg;
 import 'package:web3lib/web3lib.dart' as web3;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';

@@ -15,6 +15,8 @@ class Feeds {
   String? name;
   dynamic groupInformation;
   Message? msg;
+  bool? deprecated;
+  String? deprecatedCode;
 
   Feeds(
       {this.chatId,
