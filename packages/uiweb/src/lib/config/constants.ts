@@ -89,7 +89,7 @@ export const PushSubTabTitle = {
 
 export const chatLimit = 10;
 export const requestLimit = 10;
-export const notificationLimit = 3;
+export const notificationLimit = 5;
 
 export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;

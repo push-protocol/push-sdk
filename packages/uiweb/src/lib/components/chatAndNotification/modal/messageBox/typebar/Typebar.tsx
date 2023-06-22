@@ -7,7 +7,7 @@ import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
-import { ChatMainStateContext } from '../../../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
@@ -34,8 +34,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { selectedChatId, chatsFeed, setSearchedChats, newChat,requestsFeed, setNewChat } =
-    useContext<any>(ChatMainStateContext);
+  const { newChat, setNewChat } = useContext<any>(ChatAndNotificationMainContext)
+  const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } = useContext<any>(ChatMainStateContext);
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
@@ -55,9 +55,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         messageType: type as any,
       });
       scrollToBottom();
-      
-      if(chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
-      setSearchedChats(null);
+
+      if (chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
+        setSearchedChats(null);
       if (newChat) setNewChat(false);
       if (!chatsFeed[selectedChatId]) fetchRequests({ page, requestLimit });
     } catch (error) {
@@ -73,7 +73,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
 
   const sendTextMsg = async () => {
     if (typedMessage.trim() !== '') {
-    
+
       await sendPushMessage(typedMessage as string, 'Text');
       setTypedMessage('');
     }

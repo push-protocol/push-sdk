@@ -1,4 +1,4 @@
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext, ChatAndNotificationMainContext } from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -186,16 +186,18 @@ const Messages = ({ chat }: { chat: IMessageIPFS }) => {
 
 export const MessageBox = () => {
   const {
+    activeTab,
+    setActiveTab,
+  } = useContext<any>(ChatAndNotificationMainContext)
+  const {
     selectedChatId,
     chatsFeed,
     requestsFeed,
     chats,
     setRequestsFeed,
-    setActiveTab,
     setChatFeed,
     setSearchedChats,
     setSelectedChatId,
-    activeTab,
   } = useContext<any>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatAndNotificationPropsContext);

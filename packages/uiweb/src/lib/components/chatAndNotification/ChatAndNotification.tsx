@@ -3,11 +3,12 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import type { ChatFeedsType, NotificationFeedsType } from '../../types';
+import { ChatFeedsType, CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
+  ChatAndNotificationMainContext,
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
@@ -33,12 +34,14 @@ import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSub
 
 export const ChatAndNotification = () => {
   const {
+    setNewChat,
+    setActiveTab,
+    setActiveSubTab,
+  } = useContext<any>(ChatAndNotificationMainContext)
+  const {
     setChatsFeed,
     setRequestsFeed,
-    setActiveTab,
     setSelectedChatId,
-    setActiveSubTab,
-    setNewChat,
     setSearchedChats,
     setChats,
     setConnectedProfile,
@@ -63,9 +66,9 @@ export const ChatAndNotification = () => {
   const { fetchChatProfile } = useGetChatProfile();
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
-  const { fetchNotification } = useFetchNotification();
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
-  usePushChatSocket();
+  usePushChatSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
+  usePushChatSocket({});
 
   useEffect(() => {
     if (subscriptionStatus.size) {
@@ -75,7 +78,7 @@ export const ChatAndNotification = () => {
    (async()=>{
     fetchUserSubscriptions();
     })();
-   
+
   }, [env, account]);
 
 

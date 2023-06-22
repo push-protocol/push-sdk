@@ -16,9 +16,8 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
   const { onSubscribeToChannel } = useOnSubscribeToChannel();
   const { signer} = useContext<any>(ChatAndNotificationPropsContext);
   const isSubscribedFn = (channel: string) => {
-    return subscriptionStatus[channel];
+    return subscriptionStatus.get(channel);
   };
-
   return (
     <>
       {!!Object.keys(notificationFeeds || {}).length &&
@@ -31,9 +30,9 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
             icon={notificationFeeds[id].icon}
             image={notificationFeeds[id].image}
             theme={'light'}
-            isSpam={!!signer&& subscriptionStatus[notificationFeeds[id].channel]}
+            isSpam={(!!signer&& !subscriptionStatus.get(notificationFeeds[id].channel))}
             subscribeFn={
-              !!signer&& subscriptionStatus[notificationFeeds[id].channel]
+              (!!signer&& !subscriptionStatus.get(notificationFeeds[id].channel))
                 ? () =>
                     onSubscribeToChannel({
                       channelAddress: notificationFeeds[id].channel,
@@ -41,7 +40,7 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
                 : undefined
             }
             isSubscribedFn={
-              (!!signer&& subscriptionStatus[notificationFeeds[id].channel])
+              (!!signer&& !subscriptionStatus.get(notificationFeeds[id].channel))
                 ? async () => isSubscribedFn(notificationFeeds[id].channel)
                 : undefined
             }

@@ -22,7 +22,7 @@ export const InboxNotificationFeedList = () => {
     allInboxNotifFeed,
     setAllInboxNotifsFeed,
     setSpamNotifsFeed,
-    spamNotifsFeed
+    spamNotifsFeed,
   } = useContext<any>(NotificationMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const { account, env } = useContext<any>(ChatAndNotificationPropsContext);
@@ -52,6 +52,7 @@ export const InboxNotificationFeedList = () => {
   }, [env, account]);
 
   const fetchInboxNotificationList = async () => {
+    console.log(notificationLimit);
     const feeds: NotificationFeedsType | undefined = await fetchNotification({
       page: 1,
       limit: notificationLimit,
@@ -84,11 +85,10 @@ export const InboxNotificationFeedList = () => {
   }, [fetchNotification, env, page, account]);
 
   useEffect(() => {
-
     if (
       !isInViewport1 ||
       loading ||
-      Object.keys(notificationLimit).length < notificationLimit
+      Object.keys(inboxNotifsFeed).length < notificationLimit
     ) {
       return;
     }
@@ -117,8 +117,6 @@ export const InboxNotificationFeedList = () => {
     }
   };
 
-  console.log(inboxNotifsFeed);
-
   return (
     <InboxNotifListCard
       overflow="hidden auto"
@@ -128,12 +126,9 @@ export const InboxNotificationFeedList = () => {
     >
       {(!loading || paginateLoading) &&
       Object.keys(inboxNotifsFeed || {}).length ? (
-        <Section>
-          <Div>
-            <NotificationFeedList notificationFeeds={inboxNotifsFeed} />
-          </Div>
-          <div ref={pageRef} />
-        </Section>
+        <Div>
+          <NotificationFeedList notificationFeeds={inboxNotifsFeed} />
+        </Div>
       ) : (
         !paginateLoading &&
         loading && (
@@ -145,6 +140,8 @@ export const InboxNotificationFeedList = () => {
       {!loading && Object.keys(inboxNotifsFeed).length === 0 && (
         <Span margin="20px 0 0 0">No messages from apps yet</Span>
       )}
+
+      <div ref={pageRef} />
 
       {paginateLoading && (
         <Section margin="10px  0">
