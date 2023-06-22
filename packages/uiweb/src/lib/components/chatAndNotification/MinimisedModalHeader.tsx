@@ -185,9 +185,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
       padding={`0 0 ${condition ? '19px' : '23px'} 0 `}
       borderWidth={`0 0 ${condition ? '1px' : '0'} 0 `}
       borderStyle={`none none ${condition ? 'dashed' : 'none'} none `}
-      borderColor={`transparent transparent ${
-        condition ? '#ededee' : 'transparent'
-      }  transparent`}
+      borderColor={`transparent transparent ${condition ? '#ededee' : 'transparent'
+        }  transparent`}
     >
       {selectedChatId &&
         !!(
@@ -210,7 +209,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
               setSelectedChatId(null);
             }}
           >
-            Messages
+            {newChat ? 'New Message' :  'Messages'}
           </Span>
           {/* <UnreadChats 
           // numberOfUnreadMessages="3"
@@ -218,12 +217,16 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
         </Section>
       )}
       <Section gap="20px">
-        {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
+        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) || !modalOpen) && (
           <Div
             width="20px"
             height="20px"
             cursor="pointer"
-            onClick={() => setNewChat(true)}
+            onClick={() => {
+              if (modalOpen) {
+                setNewChat(true)
+              }
+            }}
           >
             <NewChatIcon />
           </Div>

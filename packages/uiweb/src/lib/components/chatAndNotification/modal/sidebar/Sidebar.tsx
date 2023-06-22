@@ -162,6 +162,7 @@ export const Sidebar = () => {
     chatsFeed,
     requestsFeed,
     activeTab,
+    setActiveTab,
     setRequestsFeed,
     searchedChats,
     activeSubTab,
@@ -228,7 +229,7 @@ export const Sidebar = () => {
       if (result) {
         const defaultFeed = getDefaultFeedObject({ user: result });
         setSearchedChats({ [defaultFeed.did]: defaultFeed });
-        setNewChat(true);
+        // setNewChat(true);
       } else setSearchedChats({});
       // }
     }
@@ -237,7 +238,7 @@ export const Sidebar = () => {
   const onChatSearchReset = () => {
     setSearchedChats(null);
     if (newChat) {
-      setNewChat(false);
+      // setNewChat(false);
     }
   };
   const handleNotifSearch = async ({
@@ -260,8 +261,15 @@ export const Sidebar = () => {
     >
       {!newChat && <SidebarTabs />}
 
+      {newChat && <Search
+        feed={chatsFeed}
+        handleSearch={handleChatSearch}
+        onSearchReset={onChatSearchReset}
+        placeholder="Search User"
+      />}
+
       {activeSubTab !== PUSH_SUB_TABS.REQUESTS &&
-        (activeTab === PUSH_TABS.CHATS || newChat) && (
+        (activeTab === PUSH_TABS.CHATS && !newChat) && (
           <Search
             feed={chatsFeed}
             handleSearch={handleChatSearch}
