@@ -103,10 +103,11 @@ const Input = styled.input`
   background: #ededee;
   border: none;
   width: 90%;
+  padding:5px 0px;
   &:focus {
     outline: none;
     background-origin: border;
-    border: 1px solid transparent !important;
+    // border: 1px solid transparent !important;
     background-clip: padding-box, border-box;
   }
   &::placeholder {

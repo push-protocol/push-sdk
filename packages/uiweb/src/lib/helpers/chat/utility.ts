@@ -1,5 +1,5 @@
 export const shortenText = (text: string,len: number) => {
-    if (text?.length > len) return text.substring(0, len) + '...';
+    if (text?.length > len) return text.substring(0, len) + '...' + text.substring(text.length - len);
     else return text;
   };
 

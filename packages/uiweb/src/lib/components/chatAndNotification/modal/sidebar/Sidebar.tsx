@@ -111,6 +111,10 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
+  const { requestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+
+  console.log("requestsFeed", requestsFeed)
+
   return (
     <SubContainer
       justifyContent="start"
@@ -150,7 +154,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
         <Span fontWeight="700" fontSize="16px" color="#000">
           {subTab.title}
         </Span>
-        <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+        <Span cursor='pointer' textAlign="left" fontWeight="400" fontSize="16px" color={isClickable ? "#0D67FE " : "#62626A"}>
           {subTab.subTitle}
         </Span>
       </Section>
@@ -160,6 +164,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
+
 
   const {
     newChat,
@@ -197,7 +202,7 @@ export const Sidebar = () => {
   const PushSubTabDetails: PushSubTabDetailsType = {
     REQUESTS: {
       title: PushSubTabTitle.REQUESTS.title,
-      subTitle: `you have ${shortenNumber(
+      subTitle: ` ${shortenNumber(
         Object.keys(requestsFeed || {}).length
       )} requests from people you may know`,
       icon: <AngleArrowIcon />,
@@ -272,7 +277,7 @@ export const Sidebar = () => {
             feed={chatsFeed}
             handleSearch={handleChatSearch}
             onSearchReset={onChatSearchReset}
-            placeholder="Search User"
+            placeholder="Search Name or domain"
           />
         )}
 

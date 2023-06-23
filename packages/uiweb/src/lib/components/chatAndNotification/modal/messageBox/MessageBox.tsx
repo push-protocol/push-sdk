@@ -124,12 +124,13 @@ const MessageCard = ({
   position: number;
 }) => {
   const time = moment(chat.timestamp).format('hh:mm a');
+  console.log("Position", time,chat, position)
   return (
     <Section
       gap="5px"
       background={position ? '#0D67FE' : '#EDEDEE'}
       padding="8px 12px"
-      borderRadius={position ? '2px 12px 0px 12px' : '12px 12px 12px 0px'}
+      borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
       margin="5px 0"
       alignSelf={position ? 'end' : 'start'}
       justifyContent="start"
@@ -377,9 +378,10 @@ export const MessageBox = () => {
               borderRadius="12px 12px 12px 0px"
               alignSelf="start"
               justifyContent="start"
-              maxWidth="80%"
+              maxWidth="320px"
               minWidth="15%"
               position="relative"
+              flexDirection='column'
             >
               <Span
                 alignSelf="center"
@@ -387,19 +389,20 @@ export const MessageBox = () => {
                 fontSize="16px"
                 fontWeight="400"
                 color="#000"
+                lineHeight='24px'
               >
-                Please accept to enable push chat from this wallet
+                Please accept the Push Chat request to continue the conversation
               </Span>
-              <Section
-                width="36px"
-                height="36px"
-                cursor="pointer"
-                alignItems='center'
+              <Button
+                // width="36px"
+                // height="36px"
+                // cursor="pointer"
+                // alignItems='center'
                 onClick={() => handleApproveChatRequest()}
               >
-                {approveLoader ? <Spinner /> :  <CheckCircleIcon />}
-               
-              </Section>
+                {/* {approveLoader ? <Spinner /> :  <CheckCircleIcon />} */}
+               Accept
+              </Button>
        
             </Section>
           )}
@@ -435,4 +438,18 @@ const FileDownloadIcon = styled.i`
 
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
+`;
+
+const Button = styled.button`
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  margin:15px 0px 8px 0px;
+  padding: 16.5px 16.5px 13px 18.5px;
+  background: #0D67FE;
+  color: white;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
 `;
