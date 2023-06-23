@@ -57,7 +57,9 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [To send a message](#to-send-a-message)
     - [To approve a chat request](#to-approve-a-chat-request)
     - [To create a group](#to-create-a-group)
+    - [To create a token gated group](#to-create-a-token-gated-group)
     - [To update group details](#to-update-group-details)
+    - [To update token gated group details](#to-update-token-gated-group-details)
     - [To get group details by group name](#to-get-group-details-by-group-name)
     - [To get group details by chatId](#to-get-group-details-by-chatid)
     - [Chat Helper Utils](#chat-helper-utils)
@@ -3018,6 +3020,34 @@ const response = await PushAPI.chat.createGroup({
 });
 ```
 
+### **To create a token gated group**
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.chat.createGroup({
+  groupName:'Push Group Chat 3',
+  groupDescription: 'This is the oficial group for Push Protocol',
+  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  groupImage: &lt;group image link&gt; ,
+  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+  numberOfERC20: 20,
+  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+  numberOfNFTTokens: 2,
+  isPublic: true,
+  account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+  env: 'staging',
+  pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
+```
+
 Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
@@ -3028,6 +3058,10 @@ Allowed Options (params with _ are mandatory)
 | members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
 | isPublic* | boolean | - | true for public group, false for private group |
+| contractAddressERC20 | string | null | ERC20 Contract Address |
+| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT | string | null | NFT Contract Address |
+| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -3119,10 +3153,10 @@ Allowed Options (params with _ are mandatory)
       image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4AcXBsYnEMBRF0TsPJSpgsklVg2sxOLKbUAlqQhMMAtfiGlSCC3A4m342EBiW/ec80uvzxdhbxVqnE+t9PBlZpxPrfTyx5mXDEs6EM+Es7K3yn/ZWsYQz4Uw4C/OyYe2tYl0pY83c1CrWvGxYwplwJpyF2AvWyljshZErZax1OrFiL1jCmXAmnAVuulLmLwlnwplwFvjlShlrbxVrXjZG9lax5pSxYi9YwplwJpwFboq9MHQ8uUM4E86Es0d6fb4YsRdGrpQZib0wcqWMJZwJZ8LZDzUmMp+amfSXAAAAAElFTkSuQmCC'
     }
   ],
-  contractAddressERC20: null,
-  numberOfERC20: 0,
-  contractAddressNFT: null,
-  numberOfNFTTokens: 0,
+  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+  numberOfERC20: 20,
+  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+  numberOfNFTTokens: 2,
   verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
     '\n' +
     'wsBzBAEBCAAnBYJj+WS9CZCGEDC4tnEnkBYhBOsVjR1d6YVXhTJwoYYQMLi2\n' +
@@ -3175,6 +3209,37 @@ const response = await PushAPI.chat.updateGroup({
 });
 ```
 
+
+### **To update token gated group details**
+
+Note - updateGroup is an idompotent call
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.chat.updateGroup({
+    chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+    groupName: 'Push Group Chat 3',
+    groupDescription: 'This is the oficial group for Push Protocol',
+    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    groupImage: &lt;group image link&gt; ,
+    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+    numberOfERC20: 20,
+    contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+    numberOfNFTTokens: 2,
+    account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+    env: 'staging',
+    pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
+```
+
 Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
@@ -3185,6 +3250,10 @@ Allowed Options (params with _ are mandatory)
 | groupImage* | string | - | group image link |
 | members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
+| contractAddressERC20 | string | null | ERC20 Contract Address |
+| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT | string | null | NFT Contract Address |
+| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -3291,10 +3360,10 @@ Allowed Options (params with _ are mandatory)
       image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA2ElEQVR4AcXBsYnEMBRF0TsPJSpgsklVg2sxOLKbUAlqQhMMAtfiGlSCC3A4m342EBiW/ec80uvzxdhbxVqnE+t9PBlZpxPrfTyx5mXDEs6EM+Es7K3yn/ZWsYQz4Uw4C/OyYe2tYl0pY83c1CrWvGxYwplwJpyF2AvWyljshZErZax1OrFiL1jCmXAmnAVuulLmLwlnwplwFvjlShlrbxVrXjZG9lax5pSxYi9YwplwJpwFboq9MHQ8uUM4E86Es0d6fb4YsRdGrpQZib0wcqWMJZwJZ8LZDzUmMp+amfSXAAAAAElFTkSuQmCC'
     }
   ],
-  contractAddressERC20: null,
-  numberOfERC20: 0,
-  contractAddressNFT: null,
-  numberOfNFTTokens: 0,
+  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+  numberOfERC20: 20,
+  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+  numberOfNFTTokens: 2,
   verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
     '\n' +
     'wsBzBAEBCAAnBYJj+WlwCZCGEDC4tnEnkBYhBOsVjR1d6YVXhTJwoYYQMLi2\n' +
