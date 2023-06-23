@@ -19,12 +19,17 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
     const [spaceState, setSpaceState] = useState({
         spaceName: '',
+        spaceDescription: '',
         date: '',
         time: '',
     })
 
     const handleNameChange = (event: any) => {
         setSpaceState((prevState) => ({...prevState, spaceName: event.target.value}))
+    };
+
+    const handleDescriptionChange = (event: any) => {
+        setSpaceState((prevState) => ({...prevState, spaceDescription: event.target.value}))
     };
 
     const onDateChange = (event: any) => {
@@ -110,8 +115,11 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                 <SCWCreateModal
                     isScheduleVisible={showScheduleSpace}
                     closeCreateModal={closeCreateModal}
-                    inputValue={spaceState.spaceName}
-                    onInputChange={handleNameChange}
+                    nameValue={spaceState.spaceName}
+                    descriptionValue={spaceState.spaceDescription}
+                    handleNameChange={handleNameChange}
+                    handleDescriptionChange={handleDescriptionChange}
+                    isDescriptionEnabled={false}
                 />
             }
 

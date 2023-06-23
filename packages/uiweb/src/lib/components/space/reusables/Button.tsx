@@ -1,8 +1,9 @@
 /**
- * @file 
+ * @file Button
+ * generic button component for spaces
  */
 
-import React, { MouseEventHandler, useContext } from 'react'
+import { MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components';
 
 import { ISpacesTheme } from '../theme';
@@ -10,20 +11,22 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IButtonProps {
     width?: string;
-    children?: any;
+    children: any;
     onClick?: MouseEventHandler;
-    theme?: ISpacesTheme
+    theme?: ISpacesTheme;
+    customStyle?: any;
 }
 
 export const Button = (props: IButtonProps) => {
     const theme = useContext(ThemeContext);
 
-    const { onClick, width } = props;
+    const { onClick, width, customStyle } = props;
     return (
         <SpacesButton
             onClick={onClick}
             width={width}
             theme={theme}
+            customStyle={customStyle}
         >
             { props.children }
         </SpacesButton>
@@ -39,8 +42,8 @@ const SpacesButton = styled.button<IButtonProps>`
     padding: 10px 16px;
     margin-top: 12px;
 
-    background: ${(props => props.theme.btnColorPrimary)};
-    border: 1px solid ${(props => props.theme.btnOutline)};
+    background: ${(props => props.customStyle ? props.customStyle.background : props.theme.btnColorPrimary)};
+    border: 1px solid ${(props => props.customStyle ? props.customStyle.borderColor : props.theme.btnOutline)};
     color: ${(props => props.theme.titleTextColor)};
     border-radius: 8px;
     font-size: 14px;

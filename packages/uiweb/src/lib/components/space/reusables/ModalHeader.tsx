@@ -1,6 +1,8 @@
 import { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
+import { CloseSvg } from '../../../icons/CloseSvg';
+
 export interface IModalHeaderProps {
     heading: string;
     backCallback?: MouseEventHandler;
@@ -31,7 +33,7 @@ export const ModalHeader = (props: IModalHeaderProps) => {
                     <CloseBtn
                         onClick={props.closeCallback}
                     >
-                        x
+                        <CloseSvg />
                     </CloseBtn>
                     : null
                 }
