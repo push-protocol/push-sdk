@@ -1,5 +1,8 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useContext } from 'react';
 import styled from 'styled-components';
+
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface ITextInputProps {
     charCount: number;
@@ -9,6 +12,8 @@ export interface ITextInputProps {
 }
 
 export const TextInputWithCounter = (props: ITextInputProps) => {
+    const theme = useContext(ThemeContext);
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newText = event.target.value;
         const count = newText.length;
@@ -22,9 +27,9 @@ export const TextInputWithCounter = (props: ITextInputProps) => {
         <InputContainer>
             <LabelContainer>
                 <label>{props.labelName}</label>
-                {props.inputValue.length} / {props.charCount}
+                <CharCounter theme={theme}>{props.inputValue.length} / {props.charCount}</CharCounter>
             </LabelContainer>
-            <Input value={props.inputValue} onChange={handleChange} />
+            <Input theme={theme} value={props.inputValue} onChange={handleChange} />
         </InputContainer>
     );
 };
@@ -40,16 +45,22 @@ const InputContainer = styled.div`
 const LabelContainer = styled.div`
     display: flex;
     justify-content: space-between;
+
+    font-weight: 500;
 `;
 
-const Input = styled.input`
+const Input = styled.input<ISpacesTheme>`
     padding: 16px;
     margin-top: 12px;
 
     width: 330px;
 
     background: #FFFFFF;
-    border: 1px solid #8B5CF6;
-    box-shadow: -1px -1px 4px rgba(139, 92, 246, 0.14), 1px 1px 4px rgba(139, 92, 246, 0.12);
+    border: 1px solid ${(props => props.theme.btnOutline)};
+    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
     border-radius: 12px;
+`;
+
+const CharCounter = styled.div<ISpacesTheme>`
+    color: ${(props => props.theme.textColorSecondary)};
 `;

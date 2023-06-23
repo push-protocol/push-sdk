@@ -46,8 +46,8 @@ const CreateButton = styled.button<ISCWButtonProps>`
     border: ${props => props.customStyle.border};
     font-size: ${props => props.customStyle.fontSize};
 
-    background-image: ${(props) => props.theme.bannerBackground1};
-    color: ${(props) => props.theme.secondary};
+    background-image: ${(props) => props.theme.titleBg};
+    color: ${(props) => props.theme.titleTextColor};
 
     cursor: pointer;
 `;

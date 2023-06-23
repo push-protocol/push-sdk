@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from 'react'
-import styled from 'styled-components'
+
 import { Modal } from '../../reusables/Modal';
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { TextInputWithCounter } from '../../reusables/TextInput';
@@ -23,20 +23,19 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
     return (
         <Modal>
             <ModalHeader
-                heading='Schedule space modal'
+                heading='Schedule your space'
                 backCallback={makeCreateVisible}
                 closeCallback={closeScheduleModal}
             />
 
             <TextInputWithCounter
-                labelName='Date'
+                labelName='Select date and time'
                 inputValue={dateValue}
                 onInputChange={onDateChange}
                 charCount={12}
             />
 
             <TextInputWithCounter
-                labelName='Time'
                 inputValue={timeValue}
                 onInputChange={onTimeChange}
                 charCount={12}

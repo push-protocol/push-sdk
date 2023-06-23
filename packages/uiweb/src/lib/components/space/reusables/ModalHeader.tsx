@@ -76,4 +76,6 @@ const CenterText = styled.div`
     left: 50%;
     transform: translateX(-50%);
     margin: 1.5rem 0;
+
+    font-weight: 500;
 `;
