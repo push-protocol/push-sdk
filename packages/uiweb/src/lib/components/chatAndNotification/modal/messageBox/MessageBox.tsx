@@ -341,7 +341,7 @@ export const MessageBox = () => {
         flexDirection="column"
         alignItems="start"
         borderWidth="0 0 1px 0"
-        borderStyle="none none solid none"
+        // borderStyle={ "none none solid none"}
         borderColor="transparent transparent #dddddf transparent"
       >
        {selectedMessages? <MessageListCard

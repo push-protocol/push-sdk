@@ -32,6 +32,8 @@ import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
+import NewMessageContent from './NewMessageContent';
+import { SearchIcon } from '../../../../icons/Search';
 
 export type TabPropType = {
   tabName: string;
@@ -229,7 +231,7 @@ export const Sidebar = () => {
       if (result) {
         const defaultFeed = getDefaultFeedObject({ user: result });
         setSearchedChats({ [defaultFeed.did]: defaultFeed });
-        // setNewChat(true);
+        setNewChat(true);
       } else setSearchedChats({});
       // }
     }
@@ -261,15 +263,15 @@ export const Sidebar = () => {
     >
       {!newChat && <SidebarTabs />}
 
-      {newChat && <Search
+      {/* {newChat && <Search
         feed={chatsFeed}
         handleSearch={handleChatSearch}
         onSearchReset={onChatSearchReset}
         placeholder="Search User"
-      />}
+      />} */}
 
       {activeSubTab !== PUSH_SUB_TABS.REQUESTS &&
-        (activeTab === PUSH_TABS.CHATS && !newChat) && (
+        (activeTab === PUSH_TABS.CHATS || newChat) && (
           <Search
             feed={chatsFeed}
             handleSearch={handleChatSearch}
@@ -331,7 +333,7 @@ export const Sidebar = () => {
           </ChatListCard>
           {searchedChats && !Object.keys(searchedChats).length && (
             <Span width="100%" margin="10px 0 0 10px" textAlign="left">
-              No user found
+             <NewMessageContent IconComponent={<SearchIcon height='40' width='40'/>} title='No Results' subTitle=''/>
             </Span>
           )}
         </>

@@ -10,6 +10,7 @@ import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { ChatMainStateContext, ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import { BackIcon } from '../../../../icons/Back';
 import { NewMessage } from '../../../../icons/NewMessage';
+import NewMessageContent from './NewMessageContent';
 
 type SearchPropType = {
   feed: ChatFeedsType | NotificationFeedsType;
@@ -159,36 +160,13 @@ export const Search: React.FC<SearchPropType> = ({
             </SubSection>
           </Section>
 
-          {!searchedChats && <Section flexDirection='column' margin='77px 0 0 0 ' gap='15px'>
-
-            <NewMessage />
-            <Section flexDirection='column' gap='10px'>
-              <Span
-                textAlign="center"
-                fontSize="18px"
-                fontWeight="700"
-                lineHeight='24px'
-                color={'#62626A'}
-              >
-                Start a new chat
-              </Span>
-              <Span
-                textAlign="center"
-                fontSize="14px"
-                fontWeight="400"
-                lineHeight='20px'
-                color={'#62626A'}
-                padding='0px 100px'
-
-              >
-                Start by searching for a domain or wallet address
-              </Span>
-            </Section>
-          </Section>}
-
-
-
-
+          {!searchedChats && (
+            <NewMessageContent
+              IconComponent={<NewMessage />}
+              title=" Start a new chat"
+              subTitle=" Start by searching for a domain or wallet address"
+            />
+          )}
 
         </Section>
       )}
