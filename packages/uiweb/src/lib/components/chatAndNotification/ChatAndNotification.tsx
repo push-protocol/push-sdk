@@ -68,8 +68,9 @@ export const ChatAndNotification = () => {
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
-  useChatNotificationSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
   useChatNotificationSocket({});
+
+  useChatNotificationSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
 
   useEffect(() => {
     if (subscriptionStatus.size) {

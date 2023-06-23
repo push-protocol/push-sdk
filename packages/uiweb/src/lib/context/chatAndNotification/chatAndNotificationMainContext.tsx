@@ -9,8 +9,6 @@ export type ChatAndNotificationMainContextType = {
   setActiveSubTab: (tabName: PushSubTabs) => void;
   newChat: boolean;
   setNewChat: (flag: boolean) => void;
-  pushChatNotificationSocket: any; 
-  setPushChatNotificationSocket: (pushChatNotificationSocket: any) => void;
 };
 
 // MainContext
@@ -22,7 +20,6 @@ const ChatAndNotificationMainContextProvider = ({ children }: { children: React.
   const [activeTab, setTab] = useState<PushTabs>(PUSH_TABS.CHATS);
   const [activeSubTab, setSubTab] = useState<PushSubTabs | null>(null);
   const [newChat,setNewChat]=useState<boolean>(false);
-  const [pushChatNotificationSocket,setPushChatNotificationSocket] = useState<any>(null);
 
 
   const setActiveTab = (tabName: PushTabs) => {
@@ -43,8 +40,6 @@ const ChatAndNotificationMainContextProvider = ({ children }: { children: React.
         setActiveTab,
         setActiveSubTab,
         activeSubTab,
-        pushChatNotificationSocket,
-        setPushChatNotificationSocket
       }}>
       {children}
     </ChatAndNotificationMainContext.Provider>
