@@ -1,4 +1,8 @@
-import { ChatMainStateContext, ChatAndNotificationPropsContext, ChatAndNotificationMainContext } from '../../../../context';
+import {
+  ChatMainStateContext,
+  ChatAndNotificationPropsContext,
+  ChatAndNotificationMainContext,
+} from '../../../../context';
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
@@ -14,7 +18,7 @@ import {
 import { pCAIP10ToWallet } from '../../../../helpers';
 import { CheckCircleIcon } from '../../../../icons/CheckCircle';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
-import type { FileMessageContent} from '../../../../types';
+import type { FileMessageContent } from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
@@ -185,10 +189,9 @@ const Messages = ({ chat }: { chat: IMessageIPFS }) => {
 };
 
 export const MessageBox = () => {
-  const {
-    activeTab,
-    setActiveTab,
-  } = useContext<any>(ChatAndNotificationMainContext)
+  const { activeTab, setActiveTab } = useContext<any>(
+    ChatAndNotificationMainContext
+  );
   const {
     selectedChatId,
     chatsFeed,
@@ -197,13 +200,17 @@ export const MessageBox = () => {
     setRequestsFeed,
     setChatFeed,
     setSearchedChats,
+    searchedChats,
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
-  const { account, env, decryptedPgpPvtKey } =
-    useContext<any>(ChatAndNotificationPropsContext);
- 
+  const { account, env, decryptedPgpPvtKey } = useContext<any>(
+    ChatAndNotificationPropsContext
+  );
+
   const selectedChat =
-    chatsFeed[selectedChatId] || requestsFeed[selectedChatId];
+    chatsFeed[selectedChatId] ||
+    requestsFeed[selectedChatId] ||
+    (searchedChats ? searchedChats[selectedChatId] : null);
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId);
   const dates = new Set();
@@ -211,7 +218,8 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest,loading:approveLoader } = useApproveChatRequest();
+  const { approveChatRequest, loading: approveLoader } =
+    useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -263,7 +271,7 @@ export const MessageBox = () => {
     if (
       selectedChatId &&
       selectedMessages &&
-      selectedMessages?.messages.length 
+      selectedMessages?.messages.length
       // selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
     ) {
       scrollToBottom(null);
@@ -272,7 +280,6 @@ export const MessageBox = () => {
 
   //optimise it
   const getChatCall = async () => {
-
     let threadHash = null;
     if (!selectedMessages && selectedChat?.threadhash) {
       threadHash = selectedChat?.threadhash;
@@ -286,7 +293,7 @@ export const MessageBox = () => {
       });
     }
   };
-  
+
   useEffect(() => {
     // // only for user who has requests but hasn't created user in push chat yet
     // if (selectedMessages?.messages.length) {
@@ -324,7 +331,7 @@ export const MessageBox = () => {
       return;
     }
   };
-  
+
   return (
     <Section
       flexDirection="column"
@@ -346,67 +353,94 @@ export const MessageBox = () => {
         borderStyle="none none solid none"
         borderColor="transparent transparent #dddddf transparent"
       >
-       {selectedMessages? <MessageListCard
-          flexDirection="column"
-          justifyContent="start"
-          width="100%"
-          overflow="hidden scroll"
-          padding="0 3px 15px 3px"
-          ref={listInnerRef}
-          onScroll={onScroll}
-        >
-      
-          {selectedMessages?.messages.map(
-            (chat: IMessageIPFS, index: number) => {
-              const dateNum = moment(chat.timestamp).format('ddMMyyyy');
+       {!loading && <>
+        {selectedChat && !selectedChat.publicKey ? (
+          <Span
+            margin="10px"
+            fontSize="13px"
+            color="rgb(101, 119, 149)"
+            alignSelf="center"
+          >
+            Messages are not encrypted until chat request is accepted.
+          </Span>
+        ) : (
+          <Span
+            margin="10px"
+            fontSize="13px"
+            color="rgb(101, 119, 149)"
+            alignSelf="center"
+            textAlign='left'
+          >
+            Messages are end-to-end encrypted. Only users in this chat can
+            view or listen to them.
+          </Span>
+        )}
+        {selectedMessages ? (
+          <MessageListCard
+            flexDirection="column"
+            justifyContent="start"
+            width="100%"
+            overflow="hidden scroll"
+            padding="0 3px 15px 3px"
+            ref={listInnerRef}
+            onScroll={onScroll}
+          >
+            {selectedMessages?.messages.map(
+              (chat: IMessageIPFS, index: number) => {
+                const dateNum = moment(chat.timestamp).format('ddMMyyyy');
 
-              return (
-                <>
-                  {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
-                  <Messages chat={chat} key={index} />
-                </>
-              );
-            }
-          )}
-          {requestFeedids.includes(selectedChatId) && (
-            <Section
-              gap="5px"
-              background="#EDEDEE"
-              padding="8px 12px"
-              margin="5px 0"
-              borderRadius="12px 12px 12px 0px"
-              alignSelf="start"
-              justifyContent="start"
-              maxWidth="80%"
-              minWidth="15%"
-              position="relative"
-            >
-              <Span
-                alignSelf="center"
-                textAlign="left"
-                fontSize="16px"
-                fontWeight="400"
-                color="#000"
-              >
-                Please accept to enable push chat from this wallet
-              </Span>
+                return (
+                  <>
+                    {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
+                    <Messages chat={chat} key={index} />
+                  </>
+                );
+              }
+            )}
+            {requestFeedids.includes(selectedChatId) && (
               <Section
-                width="36px"
-                height="36px"
-                cursor="pointer"
-                alignItems='center'
-                onClick={() => handleApproveChatRequest()}
+                gap="5px"
+                background="#EDEDEE"
+                padding="8px 12px"
+                margin="5px 0"
+                borderRadius="12px 12px 12px 0px"
+                alignSelf="start"
+                justifyContent="start"
+                maxWidth="80%"
+                minWidth="15%"
+                position="relative"
               >
-                {approveLoader ? <Spinner /> :  <CheckCircleIcon />}
-               
+                <Span
+                  alignSelf="center"
+                  textAlign="left"
+                  fontSize="16px"
+                  fontWeight="400"
+                  color="#000"
+                >
+                  Please accept to enable push chat from this wallet
+                </Span>
+                <Section
+                  width="36px"
+                  height="36px"
+                  cursor="pointer"
+                  alignItems="center"
+                  onClick={() => handleApproveChatRequest()}
+                >
+                  {approveLoader ? <Spinner /> : <CheckCircleIcon />}
+                </Section>
               </Section>
-       
-            </Section>
-          )}
-          <div ref={bottomRef} />
-        </MessageListCard>
-        :!loading && <Span margin='20px' fontSize='13px' color='rgb(101, 119, 149)'>This is your first conversation with recipient.
-        Start the conversation by sending a message.</Span>}
+            )}
+            <div ref={bottomRef} />
+          </MessageListCard>
+        ) : null
+        //  (
+        //   <Span margin="20px" fontSize="13px" color="rgb(101, 119, 149)">
+        //     This is your first conversation with recipient. Start the
+        //     conversation by sending a message.
+        //   </Span>
+        // )
+        }
+        </>}
       </Section>
 
       {!requestFeedids.includes(selectedChatId) && (

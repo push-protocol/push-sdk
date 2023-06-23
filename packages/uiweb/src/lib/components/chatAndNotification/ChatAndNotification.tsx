@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import type { ChatFeedsType} from '../../types';
+import type { ChatFeedsType } from '../../types';
 import { CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
 import {
   ChatMainStateContext,
@@ -34,11 +34,9 @@ import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNo
 //make changes for users who dont have decryptedPgpPvtKey
 
 export const ChatAndNotification = () => {
-  const {
-    setNewChat,
-    setActiveTab,
-    setActiveSubTab,
-  } = useContext<any>(ChatAndNotificationMainContext)
+  const { setNewChat, setActiveTab, setActiveSubTab } = useContext<any>(
+    ChatAndNotificationMainContext
+  );
   const {
     setChatsFeed,
     setRequestsFeed,
@@ -53,7 +51,7 @@ export const ChatAndNotification = () => {
     setInboxNotifsFeed,
     setSpamNotifsFeed,
     subscriptionStatus,
-    setSubscriptionStatus
+    setSubscriptionStatus,
   } = useContext<any>(NotificationMainStateContext);
   const {
     decryptedPgpPvtKey,
@@ -70,21 +68,26 @@ export const ChatAndNotification = () => {
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
   useChatNotificationSocket({});
 
-  useChatNotificationSocket({socketType:CHAT_SOCKET_TYPE.CHAT});
+  useChatNotificationSocket({ socketType: CHAT_SOCKET_TYPE.CHAT });
 
   useEffect(() => {
-    if (subscriptionStatus.size) {
-      return;
+    setChatsFeed({});
+    setRequestsFeed({});
+    setInboxNotifsFeed({});
+    setSpamNotifsFeed({});
+    // setSubscriptionStatus(new Map());
+    setActiveTab(activeChosenTab);
+
+    // set active tab if present
+    if (activeChosenTab) {
+      setActiveTab(activeChosenTab);
+      setModalOpen(true);
     }
-  
-   (async()=>{
-    fetchUserSubscriptions();
-    })();
+    setActiveSubTab(null);
 
-  }, [env, account]);
-
-
-
+    setNewChat(false);
+    setChats(new Map());
+  }, [account, decryptedPgpPvtKey, env, activeChosenTab]);
 
   //make a helper for the function
   const fetchRequestList = async () => {
@@ -129,23 +132,10 @@ export const ChatAndNotification = () => {
   }, [account]);
 
   useEffect(() => {
-    setChatsFeed({});
-    setRequestsFeed({});
-    setInboxNotifsFeed({});
-    setSpamNotifsFeed({});
-    setSubscriptionStatus(new Map());
-    setActiveTab(activeChosenTab);
-
-    // set active tab if present
-    if (activeChosenTab) {
-      setActiveTab(activeChosenTab);
-      setModalOpen(true);
-    }
-    setActiveSubTab(null);
-
-    setNewChat(false);
-    setChats(new Map());
-  }, [account, decryptedPgpPvtKey, env, activeChosenTab]);
+    (async () => {
+      fetchUserSubscriptions();
+    })();
+  }, [env, account]);
 
   useEffect(() => {
     (async () => {
@@ -180,6 +170,12 @@ export const ChatAndNotification = () => {
     setModalOpen(!modalOpen);
   };
 
+  const toggleOverflow = (val:string) => {
+    if (typeof window != 'undefined' && window.document) {
+      document.body.style.overflow = val;
+  }
+  }
+
   return (
     <Container
       width="472px"
@@ -191,6 +187,8 @@ export const ChatAndNotification = () => {
       right="12px"
       bottom="18px"
       overflow="hidden"
+      onMouseEnter={() => toggleOverflow('hidden')}
+      onMouseLeave={() => toggleOverflow('unset')}
     >
       <MinimisedModalHeader
         onMaximizeMinimizeToggle={onClose ?? onMaximizeMinimizeToggle}

@@ -94,8 +94,14 @@ const useChatNotificationSocket = ({
 
     pushChatNotificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const parseApiResponse = convertReponseToParsedArray([feedItem]);
+      console.log(subscriptionStatus.get(parseApiResponse[0].channel))
+      console.log(subscriptionStatus)
+      console.log(parseApiResponse[0].channel)
+      console.log(parseApiResponse)
       if (subscriptionStatus.get(parseApiResponse[0].channel))
+      { console.log("in hree")
         setInboxNotifFeed(parseApiResponse[0].sid, parseApiResponse[0]);
+      }
       else setSpamNotifFeed(parseApiResponse[0].sid, parseApiResponse[0]);
 
       setNotificationFeedSinceLastConnection(feedItem);

@@ -19,7 +19,6 @@ const useFetchUserSubscriptions = () => {
   const fetchUserSubscriptions = useCallback(async () => {
     setLoading(true);
     try {
-      console.log(env);
       const chainId = await signer.getChainId();
       const results = await PushAPI.user.getSubscriptions({
         user: convertAddressToAddrCaip(account, chainId), // user address in CAIP
@@ -29,7 +28,6 @@ const useFetchUserSubscriptions = () => {
       results.forEach((subscription: { channel: string }) =>
         subscriptionsMapping.set(subscription.channel, true)
       );
-      console.log(results)
       setSubscriptionStatus(subscriptionsMapping);
     } catch (error: Error | any) {
       setLoading(false);
