@@ -17,7 +17,7 @@ log(Object? data) {
 class HttpService {
   static const timeOutSeconds = 30;
 
-  Map<String, String>? header() {
+  Map<String, String>? header(String? authorization) {
     final Map<String, String> header = {"Content-Type": "application/json"};
 
     log('HEADER---$header');
@@ -27,6 +27,7 @@ class HttpService {
 
   Future<Map<String, dynamic>?> post({
     String? baseUrl,
+    String? authorization,
     required String path,
     required data,
   }) async {
@@ -40,7 +41,7 @@ class HttpService {
       response = await http_package.post(
         url,
         body: jsonEncode(data),
-        headers: header(),
+        headers: header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
@@ -56,6 +57,7 @@ class HttpService {
 
   Future<Map<String, dynamic>?> get({
     String? baseUrl,
+    String? authorization,
     required String path,
   }) async {
     http_package.Response? response;
@@ -66,7 +68,7 @@ class HttpService {
 
       response = await http_package.get(
         url,
-        headers: header(),
+        headers: header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
@@ -83,6 +85,7 @@ class HttpService {
 
   Future getBytes({
     String? baseUrl,
+    String? authorization,
     required String path,
   }) async {
     http_package.Response? response;
@@ -93,7 +96,7 @@ class HttpService {
 
       response = await http_package.get(
         url,
-        headers: header(),
+        headers: header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
@@ -110,6 +113,7 @@ class HttpService {
 
   Future<Map<String, dynamic>?> put({
     String? baseUrl,
+    String? authorization,
     required String path,
     var data,
   }) async {
@@ -123,7 +127,7 @@ class HttpService {
       response = await http_package.put(
         url,
         body: data == null ? null : jsonEncode(data),
-        headers: header(),
+        headers: header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
@@ -139,6 +143,7 @@ class HttpService {
 
   Future<Map<String, dynamic>?> delete({
     String? baseUrl,
+    String? authorization,
     required String path,
     String? id,
     bool check401 = true,
@@ -151,7 +156,7 @@ class HttpService {
 
       response = await http_package.delete(
         url,
-        headers: header(),
+        headers: header(authorization),
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');

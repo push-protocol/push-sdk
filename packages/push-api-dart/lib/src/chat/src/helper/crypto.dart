@@ -37,3 +37,13 @@ Future<List<Feeds>> decryptFeeds({
 
   return feeds;
 }
+
+getEncryptedRequest({
+  required String receiverAddress,
+  required User senderCreatedUser,
+  required String message,
+  required bool isGroup,
+  GroupDTO? group,
+}) {
+  //Todo implement getEncryptedRequest
+}

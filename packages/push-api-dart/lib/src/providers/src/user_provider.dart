@@ -34,3 +34,7 @@ class EthWalletProvider extends StateNotifier<EthWallet?> {
         .setCurrentUserByAddress(wallet.address);
   }
 }
+
+User? getCachedUser() {
+  return providerContainer.read(userProvider);
+}

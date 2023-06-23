@@ -15,7 +15,7 @@ Future<Feeds?> chat({
   String? userDID;
   if (accountAddress == null) {
     //copy cached did
-    userDID = providerContainer.read(userProvider)?.did;
+    userDID = getCachedUser()?.did;
   } else {
     userDID = await getUserDID(address: accountAddress);
   }
@@ -24,7 +24,7 @@ Future<Feeds?> chat({
     throw Exception('Account address is required.');
   }
 
-  pgpPrivateKey ??= providerContainer.read(userProvider)?.encryptedPrivateKey;
+  pgpPrivateKey ??= getCachedUser()?.encryptedPrivateKey;
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
   }

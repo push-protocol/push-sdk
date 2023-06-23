@@ -7,3 +7,5 @@ export 'src/chat.dart';
 export 'src/chats.dart';
 export 'src/requests.dart';
 export 'src/ipfs.dart';
+export 'src/start.dart';
+export 'src/get_group.dart';

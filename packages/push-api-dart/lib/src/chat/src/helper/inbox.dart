@@ -33,8 +33,8 @@ Future<List<Feeds>> getInboxList({
   }
 
   if (toDecrypt) {
-    final connectedUser = providerContainer.read(userProvider) ??
-        await getUser(address: pCAIP10ToWallet(user));
+    final connectedUser =
+        getCachedUser() ?? await getUser(address: pCAIP10ToWallet(user));
     if (connectedUser == null) {
       throw Exception('Cannot find user');
     }

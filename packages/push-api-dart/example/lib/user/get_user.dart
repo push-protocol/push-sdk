@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ethers/signers/wallet.dart';
 import 'package:push_api_dart/push_api_dart.dart';
 
@@ -9,5 +11,6 @@ void testGetUser() async {
   print('walletMnemonic.address: ${walletMnemonic.address}');
   final result = await getUser(address: walletMnemonic.address ?? '');
 
-  print(result);
+  final decodePVKey = jsonDecode('${result?.encryptedPrivateKey}');
+  print('decodePVKey: ${(decodePVKey as Map).keys}');
 }

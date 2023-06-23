@@ -149,22 +149,118 @@ class Member {
 }
 
 class GroupDTO {
-  late List<Member> members;
-  late List<Member> pendingMembers;
+  List<MemberDTO> members;
+  List<MemberDTO> pendingMembers;
   String? contractAddressERC20;
-  late int numberOfERC20;
+  int numberOfERC20;
   String? contractAddressNFT;
-  late int numberOfNFTTokens;
-  late String verificationProof;
+  int numberOfNFTTokens;
+  String verificationProof;
   String? groupImage;
-  late String groupName;
-  late bool isPublic;
+  String groupName;
+  bool isPublic;
   String? groupDescription;
-  late String groupCreator;
-  late String chatId;
+  String groupCreator;
+  String chatId;
   DateTime? scheduleAt;
   DateTime? scheduleEnd;
-  late String groupType;
+  String groupType;
+
+  GroupDTO({
+    required this.members,
+    required this.pendingMembers,
+    this.contractAddressERC20,
+    required this.numberOfERC20,
+    this.contractAddressNFT,
+    required this.numberOfNFTTokens,
+    required this.verificationProof,
+    this.groupImage,
+    required this.groupName,
+    required this.isPublic,
+    this.groupDescription,
+    required this.groupCreator,
+    required this.chatId,
+    this.scheduleAt,
+    this.scheduleEnd,
+    required this.groupType,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['members'] = members.map((member) => member.toJson()).toList();
+    data['pendingMembers'] =
+        pendingMembers.map((member) => member.toJson()).toList();
+    data['contractAddressERC20'] = contractAddressERC20;
+    data['numberOfERC20'] = numberOfERC20;
+    data['contractAddressNFT'] = contractAddressNFT;
+    data['numberOfNFTTokens'] = numberOfNFTTokens;
+    data['verificationProof'] = verificationProof;
+    data['groupImage'] = groupImage;
+    data['groupName'] = groupName;
+    data['isPublic'] = isPublic;
+    data['groupDescription'] = groupDescription;
+    data['groupCreator'] = groupCreator;
+    data['chatId'] = chatId;
+    data['scheduleAt'] = scheduleAt?.toIso8601String();
+    data['scheduleEnd'] = scheduleEnd?.toIso8601String();
+    data['groupType'] = groupType;
+    return data;
+  }
+
+  GroupDTO.fromJson(Map<String, dynamic> json)
+      : members = (json['members'] as List)
+            .map((member) => MemberDTO.fromJson(member))
+            .toList(),
+        pendingMembers = (json['pendingMembers'] as List)
+            .map((member) => MemberDTO.fromJson(member))
+            .toList(),
+        contractAddressERC20 = json['contractAddressERC20'],
+        numberOfERC20 = json['numberOfERC20'],
+        contractAddressNFT = json['contractAddressNFT'],
+        numberOfNFTTokens = json['numberOfNFTTokens'],
+        verificationProof = json['verificationProof'],
+        groupImage = json['groupImage'],
+        groupName = json['groupName'],
+        isPublic = json['isPublic'],
+        groupDescription = json['groupDescription'],
+        groupCreator = json['groupCreator'],
+        chatId = json['chatId'],
+        scheduleAt = json['scheduleAt'] != null
+            ? DateTime.parse(json['scheduleAt'])
+            : null,
+        scheduleEnd = json['scheduleEnd'] != null
+            ? DateTime.parse(json['scheduleEnd'])
+            : null,
+        groupType = json['groupType'];
+}
+
+class MemberDTO {
+  String wallet;
+  String publicKey;
+  bool isAdmin;
+  String image;
+
+  MemberDTO({
+    required this.wallet,
+    required this.publicKey,
+    required this.isAdmin,
+    required this.image,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['wallet'] = wallet;
+    data['publicKey'] = publicKey;
+    data['isAdmin'] = isAdmin;
+    data['image'] = image;
+    return data;
+  }
+
+  MemberDTO.fromJson(Map<String, dynamic> json)
+      : wallet = json['wallet'],
+        publicKey = json['publicKey'],
+        isAdmin = json['isAdmin'],
+        image = json['image'];
 }
 
 class Subscribers {
@@ -246,6 +342,7 @@ class EncryptedPrivateKeyModel {
     this.nonce,
     this.version,
     this.encryptedPassword,
+    this.ephemPublicKey,
     this.salt,
     this.preKey,
   });
@@ -265,6 +362,17 @@ class EncryptedPrivateKeyModel {
       if (version != null) 'version': version,
       if (preKey != null) 'preKey': preKey,
     };
+  }
+
+  static EncryptedPrivateKeyModel fromJson(Map<String, dynamic> json) {
+    return EncryptedPrivateKeyModel(
+      version: json['version'],
+      nonce: json['nonce'],
+      ephemPublicKey: json['ephemPublicKey'],
+      ciphertext: json['ciphertext'],
+      salt: json['salt'],
+      preKey: json['preKey'],
+    );
   }
 }
 

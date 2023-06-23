@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:push_api_dart/push_api_dart.dart';
 
 import 'chat/fetch_chat.dart';
+import 'user/get_user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,6 @@ void main() async {
   await initPush(wallet: pushWallet);
 
   // testCreateUser();
-  // testGetUser();
-  testFetchP2PChat();
+  testGetUser();
+  // testFetchP2PChat();
 }

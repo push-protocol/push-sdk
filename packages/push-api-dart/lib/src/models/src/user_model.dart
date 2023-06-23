@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:push_api_dart/push_api_dart.dart';
+
 class EthWallet {
   final String address;
   final String? publicKey, privateKey;
@@ -57,6 +61,11 @@ class User {
       data['profile'] = profile!.toJson();
     }
     return data;
+  }
+
+  EncryptedPrivateKeyModel get parsedPrivateKey {
+    final jsonDecodePrivateKey = jsonDecode(encryptedPrivateKey);
+    return EncryptedPrivateKeyModel.fromJson(jsonDecodePrivateKey);
   }
 }
 
