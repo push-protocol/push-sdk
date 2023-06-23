@@ -187,6 +187,7 @@ export const Sidebar = () => {
   } = useContext<any>(NotificationMainStateContext);
   const { fetchChatProfile } = useGetChatProfile();
 
+  console.log(searchedChats)
   type PushSubTabDetailsType = {
     [key in PushSubTabs]: {
       title: string;
@@ -235,7 +236,7 @@ export const Sidebar = () => {
         const defaultFeed = getDefaultFeedObject({ user: result });
         setSearchedChats({ [defaultFeed.did]: defaultFeed });
         setNewChat(true);
-      } else setSearchedChats({});
+      } else{console.log("in here"); setSearchedChats({});}
       // }
     }
   };

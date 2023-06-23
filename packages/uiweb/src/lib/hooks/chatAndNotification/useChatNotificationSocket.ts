@@ -82,8 +82,9 @@ const useChatNotificationSocket = ({
   const { subscriptionStatus, setInboxNotifFeed, setSpamNotifFeed } =
     useContext<any>(NotificationMainStateContext);
   const {pushChatNotificationSocket,setPushChatNotificationSocket}=  useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
-
+console.log(pushChatNotificationSocket)
   const addSocketEvents = useCallback(() => {
+    console.log('add')
     pushChatNotificationSocket?.on(EVENTS.CONNECT, () => {
       setIsSDKSocketConnected(true);
     });
@@ -103,10 +104,12 @@ const useChatNotificationSocket = ({
     });
 
     pushChatNotificationSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
+      console.log(chat)
+
       if (!connectedProfile || !decryptedPgpPvtKey) {
         return;
       }
-
+console.log(chat)
       if (
         chat.messageCategory === 'Request' &&
         chat.messageContent === null &&
@@ -123,12 +126,15 @@ const useChatNotificationSocket = ({
       });
 
       if (response && response.length) {
+        console.log(response)
         const msg = response[0];
         const chatId = getChatId({ msg, account });
+        console.log(chatId)
+        console.log(chatsFeed)
         let newOne: IFeeds = {} as IFeeds;
         if (chatsFeed[chatId]) {
           newOne = chatsFeed[chatId];
-
+console.log(msg)
           setChat(chatId, {
             messages: Array.isArray(chats.get(chatId)?.messages)
               ? [...chats.get(chatId)!.messages, msg]
@@ -227,7 +233,7 @@ const useChatNotificationSocket = ({
         socketType,
         env: env,
       });
-      // setPushChatNotificationSocket(connectionObject);
+      setPushChatNotificationSocket(connectionObject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decryptedPgpPvtKey, env]);

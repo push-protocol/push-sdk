@@ -9,7 +9,7 @@ export type ChatAndNotificationMainContextType = {
   setActiveSubTab: (tabName: PushSubTabs) => void;
   newChat: boolean;
   setNewChat: (flag: boolean) => void;
-  pushChatNotificationSocket: any; // replace any with the actual type of socket connection
+  pushChatNotificationSocket: any; 
   setPushChatNotificationSocket: (pushChatNotificationSocket: any) => void;
 };
 

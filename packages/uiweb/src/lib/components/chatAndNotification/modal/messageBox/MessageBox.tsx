@@ -351,7 +351,7 @@ export const MessageBox = () => {
           justifyContent="start"
           width="100%"
           overflow="hidden scroll"
-          padding="0 3px"
+          padding="0 3px 15px 3px"
           ref={listInnerRef}
           onScroll={onScroll}
         >
@@ -405,7 +405,7 @@ export const MessageBox = () => {
           )}
           <div ref={bottomRef} />
         </MessageListCard>
-        :<Span margin='20px' fontSize='13px' color='rgb(101, 119, 149)'>This is your first conversation with recipient.
+        :!loading && <Span margin='20px' fontSize='13px' color='rgb(101, 119, 149)'>This is your first conversation with recipient.
         Start the conversation by sending a message.</Span>}
       </Section>
 
