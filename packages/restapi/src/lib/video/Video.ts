@@ -146,7 +146,7 @@ export class Video {
       );
 
       // fetching the iceServers config
-      const iceServerConfig = await getIceServerConfig();
+      const iceServerConfig = await getIceServerConfig(this.env);
 
       this.peerInstance = new Peer({
         initiator: true,
@@ -305,7 +305,7 @@ export class Video {
       });
 
       // fetching the iceServers config
-      const iceServerConfig = await getIceServerConfig();
+      const iceServerConfig = await getIceServerConfig(this.env);
 
       this.peerInstance = new Peer({
         initiator: false,
