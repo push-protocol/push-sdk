@@ -13,6 +13,7 @@ import {
   stopVideoStream,
 } from './helpers/mediaToggle';
 import isJSON from './helpers/isJSON';
+import { getIceServerConfig } from './helpers/getIceServerConfig';
 
 import {
   SignerType,
@@ -144,10 +145,16 @@ export class Video {
         this.data.local.stream
       );
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig();
+
       this.peerInstance = new Peer({
         initiator: true,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
       });
 
       this.peerInstance.on('signal', (data: any) => {
@@ -297,10 +304,16 @@ export class Video {
         });
       });
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig();
+
       this.peerInstance = new Peer({
         initiator: false,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
       });
 
       // setup error handler
