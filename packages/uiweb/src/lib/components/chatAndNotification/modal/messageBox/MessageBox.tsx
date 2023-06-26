@@ -124,7 +124,6 @@ const MessageCard = ({
   position: number;
 }) => {
   const time = moment(chat.timestamp).format('hh:mm a');
-  console.log("Position", time,chat, position)
   return (
     <Section
       gap="5px"
@@ -212,7 +211,7 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest,loading:approveLoader } = useApproveChatRequest();
+  const { approveChatRequest,loading:approveLoading } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -378,7 +377,7 @@ export const MessageBox = () => {
               borderRadius="12px 12px 12px 0px"
               alignSelf="start"
               justifyContent="start"
-              maxWidth="320px"
+              maxWidth="68%"
               minWidth="15%"
               position="relative"
               flexDirection='column'
@@ -394,14 +393,10 @@ export const MessageBox = () => {
                 Please accept the Push Chat request to continue the conversation
               </Span>
               <Button
-                // width="36px"
-                // height="36px"
-                // cursor="pointer"
-                // alignItems='center'
-                onClick={() => handleApproveChatRequest()}
+                onClick={() => !approveLoading?handleApproveChatRequest():null}
               >
-                {/* {approveLoader ? <Spinner /> :  <CheckCircleIcon />} */}
-               Accept
+             
+             {approveLoading ? <Spinner color='#fff' size='24'/>  :'Accept'}
               </Button>
        
             </Section>
@@ -442,6 +437,8 @@ const FileDownloadIconAnchor = styled.a`
 
 const Button = styled.button`
   border: none;
+  display:flex;
+  justify-content:center;
   cursor: pointer;
   border-radius: 8px;
   margin:15px 0px 8px 0px;
@@ -449,6 +446,7 @@ const Button = styled.button`
   background: #0D67FE;
   color: white;
   width: 100%;
+  text-align:center;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;

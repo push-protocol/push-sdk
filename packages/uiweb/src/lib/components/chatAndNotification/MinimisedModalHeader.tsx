@@ -48,12 +48,8 @@ export const UnreadChats = ({
 };
 
 export const MessageBoxHeader = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    setActiveSubTab,
-    activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
+  const { activeTab, setActiveTab, setActiveSubTab, activeSubTab } =
+    useContext<any>(ChatAndNotificationMainContext);
   const {
     selectedChatId,
     chatsFeed,
@@ -64,6 +60,7 @@ export const MessageBoxHeader = () => {
     setSelectedChatId,
   } = useContext<any>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
+  const { spamNotifsFeed } = useContext<any>(NotificationMainStateContext);
   const selectedChat =
     chatsFeed[selectedChatId] ||
     requestsFeed[selectedChatId] ||
@@ -77,7 +74,13 @@ export const MessageBoxHeader = () => {
   const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
 
   const handleBack = () => {
-    if (activeSubTab) {
+    if (
+      activeSubTab &&
+      ((activeSubTab === PUSH_SUB_TABS.REQUESTS &&
+        Object.keys(requestsFeed || {}).length) ||
+        (activeSubTab === PUSH_SUB_TABS.SPAM &&
+          Object.keys(spamNotifsFeed || {}).length))
+    ) {
       setActiveSubTab(PUSH_SUB_TABS[activeSubTab as PushSubTabs]);
     } else {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
@@ -124,15 +127,11 @@ export const MessageBoxHeader = () => {
 };
 
 export const SubTabHeader = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
-  const {
-    setSearchedChats,
-    setSelectedChatId,
-  } = useContext<any>(ChatMainStateContext);
+  const { activeTab, setActiveTab, activeSubTab } = useContext<any>(
+    ChatAndNotificationMainContext
+  );
+  const { setSearchedChats, setSelectedChatId } =
+    useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -167,11 +166,9 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   onMaximizeMinimizeToggle,
   modalOpen,
 }) => {
-  const {
-    setNewChat,
-    setActiveTab,
-    activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
+  const { setNewChat, setActiveTab, activeSubTab } = useContext<any>(
+    ChatAndNotificationMainContext
+  );
 
   const {
     selectedChatId,

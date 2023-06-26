@@ -30,9 +30,7 @@ const Message = ({
 }) => {
   return messageType === 'Text' ? (
     <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
-      {messageContent?.length > 25
-        ? messageContent?.slice(0, 40) + '...'
-        : messageContent}
+      {shortenText(messageContent, 40)}
     </Span>
   ) : messageType === 'Image' ? (
     <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
@@ -51,15 +49,6 @@ const Message = ({
 
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
-  const {
-    newChat,
-    setNewChat,
-    activeTab,
-    setActiveTab,
-    setActiveSubTab,
-    activeSubTab
-  } = useContext<any>(ChatAndNotificationMainContext)
-
 
   const { setSelectedChatId, web3NameList } =
     useContext<any>(ChatMainStateContext);
@@ -95,8 +84,8 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
         />
         <Section flexDirection="column" gap="8px" alignItems="start" cursor='pointer'>
           <NameSpan fontWeight="700" fontSize="16px" color="#000" cursor='pointer'>
-          {(chat?.name)?shortenText(chat?.name, 30) :
-         ( web3Name ?? shortenText(chat?.did?.split(':')[1], 8))}
+          {(chat?.name)?shortenText(chat?.name, 30,true) :
+         ( web3Name ?? shortenText(chat?.did?.split(':')[1], 8,true))}
 
           </NameSpan>
           <Message

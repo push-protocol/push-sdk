@@ -1,5 +1,5 @@
-export const shortenText = (text: string,len: number) => {
-    if (text?.length > len) return text.substring(0, len) + '...' + text.substring(text.length - len);
+export const shortenText = (text: string,len: number,_inBetween:boolean = false) => {
+    if (text?.length > len) return `${text.substring(0, len)}...${_inBetween?text.substring(text.length - len):''}`;
     else return text;
   };
 

@@ -111,9 +111,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
-  const { requestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
-  console.log("requestsFeed", requestsFeed)
 
   return (
     <SubContainer
@@ -209,9 +207,9 @@ export const Sidebar = () => {
     },
     SPAM: {
       title: PushSubTabTitle.SPAM.title,
-      subTitle: `you have ${shortenNumber(
+      subTitle: `${shortenNumber(
         Object.keys(spamNotifsFeed || {}).length
-      )} inbox messages in your spam box`,
+      )} messages in your spam box`,
       icon: <SpamIconSvg />,
     },
   };
