@@ -28,6 +28,44 @@ import { ChatMainStateContextType } from '../../../../context/chatAndNotificatio
 
 const CHATS_FETCH_LIMIT = 15;
 
+const EncryptionMessageContent = {
+  ENCRYPTED:{
+IconComponent: <EncryptionIcon />,
+text:'Messages are end-to-end encrypted. Only users in this chat can view or listen to them.'
+  },
+  NO_ENCRYPTED:{
+    IconComponent: <NoEncryptionIcon />,
+    text:'Messages are not encrypted until chat request is accepted.'
+  }
+}
+const EncryptionMessage = ({
+  id
+}: {
+  id:'ENCRYPTED' | 'NO_ENCRYPTED'
+}) => {
+  return (
+    <Section  padding="12px"
+    gap="8px"
+    borderRadius="12px"
+    borderStyle="solid"
+    borderWidth="1px"
+    borderColor="var(--neutral-neutral-100, #EDEDEE)"
+    background='var(--neutral-neutral-050, #F5F5F5)'
+    margin="10px 10px 0px">
+      {EncryptionMessageContent[id].IconComponent}
+
+      <Span
+        fontSize="13px"
+        color="var(--neutral-neutral-600, #62626A)"
+        fontWeight='600'
+        textAlign="left"
+      >
+          {EncryptionMessageContent[id].text}
+      </Span>
+    </Section>
+  );
+};
+
 const FileCard = ({
   chat,
   position,
@@ -357,48 +395,10 @@ export const MessageBox = () => {
         {!loading && (
           <>
             {selectedChat && !selectedChat.publicKey ? (
-              <Section
-                padding="12px"
-                gap="8px"
-                borderRadius="12px"
-                borderStyle="solid"
-                borderWidth="1px"
-                borderColor="var(--neutral-neutral-100, #EDEDEE)"
-                background='var(--neutral-neutral-050, #F5F5F5)'
-                margin="10px"
-              >
-                <NoEncryptionIcon />
-                <Span
-                  
-                  fontSize="13px"
-                  color="var(--neutral-neutral-600, #62626A)"
-                  fontWeight='600'
-                  textAlign='left'
-                >
-                  Messages are not encrypted until chat request is accepted.
-                </Span>
-              </Section>
+                <EncryptionMessage id={'NO_ENCRYPTED'}/>
+            
             ) : (
-              <Section  padding="12px"
-              gap="8px"
-              borderRadius="12px"
-              borderStyle="solid"
-              borderWidth="1px"
-              borderColor="var(--neutral-neutral-100, #EDEDEE)"
-              background='var(--neutral-neutral-050, #F5F5F5)'
-              margin="10px">
-                <EncryptionIcon />
-
-                <Span
-                  fontSize="13px"
-                  color="var(--neutral-neutral-600, #62626A)"
-                  fontWeight='600'
-                  textAlign="left"
-                >
-                  Messages are end-to-end encrypted. Only users in this chat can
-                  view or listen to them.
-                </Span>
-              </Section>
+              <EncryptionMessage id={'ENCRYPTED'}/>
             )}
             {
               selectedMessages ? (
@@ -461,12 +461,7 @@ export const MessageBox = () => {
                   <div ref={bottomRef} />
                 </MessageListCard>
               ) : null
-              //  (
-              //   <Span margin="20px" fontSize="13px" color="rgb(101, 119, 149)">
-              //     This is your first conversation with recipient. Start the
-              //     conversation by sending a message.
-              //   </Span>
-              // )
+            
             }
           </>
         )}
