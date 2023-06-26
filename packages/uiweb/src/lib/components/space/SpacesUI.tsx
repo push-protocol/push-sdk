@@ -4,6 +4,7 @@ import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { ISpaceWidgetComponentProps, SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
+import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
@@ -51,6 +52,10 @@ export class SpacesUI {
     // Use trendingListData and setTrendingListData in your component
 
     return <SpaceTrendingList />;
+  }
+
+  SpaceCreationButtonWidget = () => {
+    return <SpaceCreationWidget />
   }
 
   connectToSockets = () => {
