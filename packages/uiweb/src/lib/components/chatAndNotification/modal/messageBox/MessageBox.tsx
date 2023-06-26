@@ -22,6 +22,8 @@ import type { FileMessageContent } from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
+import { EncryptionIcon } from '../../../../icons/Encryption';
+import { NoEncryptionIcon } from '../../../../icons/NoEncryption';
 
 const CHATS_FETCH_LIMIT = 15;
 
@@ -319,8 +321,6 @@ export const MessageBox = () => {
           const selectedRequest = updatedRequestsfeed[selectedChatId];
           delete updatedRequestsfeed[selectedChatId];
           setChatFeed(selectedChatId, selectedRequest);
-          // setActiveTab(PUSH_TABS.CHATS);
-          // setSelectedChatId(null);
           setSearchedChats(null);
           setRequestsFeed(updatedRequestsfeed);
         }
@@ -353,94 +353,122 @@ export const MessageBox = () => {
         borderStyle="none none solid none"
         borderColor="transparent transparent #dddddf transparent"
       >
-       {!loading && <>
-        {selectedChat && !selectedChat.publicKey ? (
-          <Span
-            margin="10px"
-            fontSize="13px"
-            color="rgb(101, 119, 149)"
-            alignSelf="center"
-          >
-            Messages are not encrypted until chat request is accepted.
-          </Span>
-        ) : (
-          <Span
-            margin="10px"
-            fontSize="13px"
-            color="rgb(101, 119, 149)"
-            alignSelf="center"
-            textAlign='left'
-          >
-            Messages are end-to-end encrypted. Only users in this chat can
-            view or listen to them.
-          </Span>
-        )}
-        {selectedMessages ? (
-          <MessageListCard
-            flexDirection="column"
-            justifyContent="start"
-            width="100%"
-            overflow="hidden scroll"
-            padding="0 3px 15px 3px"
-            ref={listInnerRef}
-            onScroll={onScroll}
-          >
-            {selectedMessages?.messages.map(
-              (chat: IMessageIPFS, index: number) => {
-                const dateNum = moment(chat.timestamp).format('ddMMyyyy');
-
-                return (
-                  <>
-                    {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
-                    <Messages chat={chat} key={index} />
-                  </>
-                );
-              }
-            )}
-            {requestFeedids.includes(selectedChatId) && (
+        {!loading && (
+          <>
+            {selectedChat && !selectedChat.publicKey ? (
               <Section
-                gap="5px"
-                background="#EDEDEE"
-                padding="8px 12px"
-                margin="5px 0"
-                borderRadius="12px 12px 12px 0px"
-                alignSelf="start"
-                justifyContent="start"
-                maxWidth="80%"
-                minWidth="15%"
-                position="relative"
+                padding="12px"
+                gap="8px"
+                borderRadius="12px"
+                borderStyle="solid"
+                borderWidth="1px"
+                borderColor="var(--neutral-neutral-100, #EDEDEE)"
+                background='var(--neutral-neutral-050, #F5F5F5)'
+                margin="10px"
               >
+                <NoEncryptionIcon />
                 <Span
-                  alignSelf="center"
-                  textAlign="left"
-                  fontSize="16px"
-                  fontWeight="400"
-                  color="#000"
+                  
+                  fontSize="13px"
+                  color="var(--neutral-neutral-600, #62626A)"
+                  fontWeight='600'
+                  textAlign='left'
                 >
-                  Please accept to enable push chat from this wallet
+                  Messages are not encrypted until chat request is accepted.
                 </Span>
-                <Section
-                  width="36px"
-                  height="36px"
-                  cursor="pointer"
-                  alignItems="center"
-                  onClick={() => handleApproveChatRequest()}
+              </Section>
+            ) : (
+              <Section  padding="12px"
+              gap="8px"
+              borderRadius="12px"
+              borderStyle="solid"
+              borderWidth="1px"
+              borderColor="var(--neutral-neutral-100, #EDEDEE)"
+              background='var(--neutral-neutral-050, #F5F5F5)'
+              margin="10px">
+                <EncryptionIcon />
+
+                <Span
+                  fontSize="13px"
+                  color="var(--neutral-neutral-600, #62626A)"
+                  fontWeight='600'
+                  textAlign="left"
                 >
-                  {approveLoader ? <Spinner /> : <CheckCircleIcon />}
-                </Section>
+                  Messages are end-to-end encrypted. Only users in this chat can
+                  view or listen to them.
+                </Span>
               </Section>
             )}
-            <div ref={bottomRef} />
-          </MessageListCard>
-        ) : null
-        //  (
-        //   <Span margin="20px" fontSize="13px" color="rgb(101, 119, 149)">
-        //     This is your first conversation with recipient. Start the
-        //     conversation by sending a message.
-        //   </Span>
-        // )
-        }
-        </>}
+            {
+              selectedMessages ? (
+                <MessageListCard
+                  flexDirection="column"
+                  justifyContent="start"
+                  width="100%"
+                  overflow="hidden scroll"
+                  padding="0 3px 15px 3px"
+                  ref={listInnerRef}
+                  onScroll={onScroll}
+                >
+                  {selectedMessages?.messages.map(
+                    (chat: IMessageIPFS, index: number) => {
+                      const dateNum = moment(chat.timestamp).format('ddMMyyyy');
+
+                      return (
+                        <>
+                          {dates.has(dateNum)
+                            ? null
+                            : renderDate({ chat, dateNum })}
+                          <Messages chat={chat} key={index} />
+                        </>
+                      );
+                    }
+                  )}
+                  {requestFeedids.includes(selectedChatId) && (
+                    <Section
+                      gap="5px"
+                      background="#EDEDEE"
+                      padding="8px 12px"
+                      margin="5px 0"
+                      borderRadius="12px 12px 12px 0px"
+                      alignSelf="start"
+                      justifyContent="start"
+                      maxWidth="80%"
+                      minWidth="15%"
+                      position="relative"
+                    >
+                      <Span
+                        alignSelf="center"
+                        textAlign="left"
+                        fontSize="16px"
+                        fontWeight="400"
+                        color="#000"
+                      >
+                        Please accept to enable push chat from this wallet
+                      </Span>
+                      <Section
+                        width="36px"
+                        height="36px"
+                        cursor="pointer"
+                        alignItems="center"
+                        onClick={() => handleApproveChatRequest()}
+                      >
+                        {approveLoader ? <Spinner /> : <CheckCircleIcon />}
+                      </Section>
+                    </Section>
+                  )}
+                  <div ref={bottomRef} />
+                </MessageListCard>
+              ) : null
+              //  (
+              //   <Span margin="20px" fontSize="13px" color="rgb(101, 119, 149)">
+              //     This is your first conversation with recipient. Start the
+              //     conversation by sending a message.
+              //   </Span>
+              // )
+            }
+          </>
+        )}
       </Section>
 
       {!requestFeedids.includes(selectedChatId) && (
