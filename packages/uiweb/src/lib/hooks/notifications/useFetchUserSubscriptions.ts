@@ -6,11 +6,12 @@ import {
   NotificationMainStateContext,
 } from '../../context';
 import { ParsedNotificationType } from '../../types';
+import { convertAddressToAddrCaip } from '../../helpers/notification';
 
 const useFetchUserSubscriptions = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env } = useContext<any>(ChatAndNotificationPropsContext);
+  const { account, env,signer } = useContext<any>(ChatAndNotificationPropsContext);
   const { setSubscriptionStatus } = useContext<any>(
     NotificationMainStateContext
   );
@@ -18,9 +19,9 @@ const useFetchUserSubscriptions = () => {
   const fetchUserSubscriptions = useCallback(async () => {
     setLoading(true);
     try {
-      console.log(env);
+      const chainId = await signer.getChainId();
       const results = await PushAPI.user.getSubscriptions({
-        user: account, // user address in CAIP
+        user: convertAddressToAddrCaip(account, chainId), // user address in CAIP
         env,
       });
       const subscriptionsMapping = new Map();

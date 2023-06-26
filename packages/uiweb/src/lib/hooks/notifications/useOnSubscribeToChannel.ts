@@ -33,7 +33,6 @@ const useOnSubscribeToChannel = () => {
           channelAddress: convertAddressToAddrCaip(channelAddress, chainId), // channel address in CAIP
           userAddress: convertAddressToAddrCaip(account, chainId), // user address in CAIP
           onSuccess: () => {
-            //do something
             setChannelSubscriptionStatus(channelAddress,true);
             setSuccess(true);
           },

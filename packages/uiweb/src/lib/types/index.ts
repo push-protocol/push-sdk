@@ -57,6 +57,11 @@ export const PUSH_TABS = {
   APP_NOTIFICATIONS: 'APP_NOTIFICATIONS'
 } as const;
 
+export const CHAT_SOCKET_TYPE = {
+  CHAT: 'chat',
+  NOTIFICATION: 'notification'
+} as const;
+
 export const PUSH_SUB_TABS = {
   REQUESTS: 'REQUESTS',
   SPAM:'SPAM'
@@ -66,9 +71,19 @@ export const LOCAL_STORAGE_KEYS = {
   CHATS: 'CHATS',
 } as const;
 
+export const SIDEBAR_PLACEHOLDER_KEYS = {
+  CHAT: 'CHAT',
+  SEARCH: 'SEARCH',
+  NOTIFICATION: 'NOTIFICATION'
+} as const;
+
+export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
+
 export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
 export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
 export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
+export type ChatSocketType = (typeof CHAT_SOCKET_TYPE)[keyof typeof CHAT_SOCKET_TYPE];
+
 export interface FileMessageContent {
   content: string
   name: string

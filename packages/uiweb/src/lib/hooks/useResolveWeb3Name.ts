@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { CoreContractChainId, ENV, InfuraAPIKey } from '../config';
 import { ChatMainStateContext } from '../context';
+import { ChatMainStateContextType } from '../context/chatAndNotification/chat/chatMainStateContext';
 
 // Internal Components
 
@@ -42,7 +43,7 @@ const getUnstoppableName = async (checksumWallet: string,setWeb3Name:(id:string,
 
 export function useResolveWeb3Name(address: string,env:Env) {
 
-  const { web3NameList,setWeb3Name,selectedChatId } = useContext<any>(ChatMainStateContext);
+  const { web3NameList,setWeb3Name,selectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
 
   useEffect(() => {

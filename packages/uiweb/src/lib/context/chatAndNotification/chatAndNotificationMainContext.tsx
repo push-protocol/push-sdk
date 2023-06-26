@@ -21,6 +21,7 @@ const ChatAndNotificationMainContextProvider = ({ children }: { children: React.
   const [activeSubTab, setSubTab] = useState<PushSubTabs | null>(null);
   const [newChat,setNewChat]=useState<boolean>(false);
 
+
   const setActiveTab = (tabName: PushTabs) => {
     setNewChat(false);
     setSubTab(null);
