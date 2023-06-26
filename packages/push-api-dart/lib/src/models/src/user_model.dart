@@ -13,14 +13,25 @@ class EthWallet {
   });
 }
 
+class ConnectedUser extends User {
+  final User user;
+
+  final String? privateKey;
+
+  ConnectedUser({
+    required this.user,
+    required this.privateKey,
+  }) : super();
+}
+
 class User {
   late int msgSent;
   late int maxMsgPersisted;
   late String wallets;
   late String encryptedPrivateKey;
   late String publicKey;
-  late String verificationProof;
 
+  String? verificationProof;
   String? did;
   UserProfile? profile;
   String? name;
@@ -36,7 +47,13 @@ class User {
   String? linkedListHash;
   List<dynamic>? nfts;
 
-  String? privateKey;
+  User({
+    this.did,
+    this.profile,
+    this.name,
+    this.about,
+    this.verificationProof,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     did = json['did'];

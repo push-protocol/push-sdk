@@ -268,11 +268,6 @@ class Subscribers {
   late List<String> subscribers;
 }
 
-class ConnectedUser extends User {
-  String? privateKey;
-
-  ConnectedUser.fromJson(super.json) : super.fromJson();
-}
 
 class MessageIPFSWithCID extends MessageIPFS {
   late String cid;
