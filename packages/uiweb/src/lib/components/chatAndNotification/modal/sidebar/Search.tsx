@@ -9,13 +9,14 @@ import { SearchIcon } from '../../../../icons/Search';
 import { CloseIcon } from '../../../../icons/Close';
 import { Spinner } from '../../../reusables/Spinner';
 import { Div, Section, Span } from '../../../reusables/sharedStyling';
+import type {
+  ChatMainStateContextType} from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import {
-  ChatMainStateContext,
-  ChatMainStateContextType,
+  ChatMainStateContext
 } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import { BackIcon } from '../../../../icons/Back';
 import { ChatAndNotificationMainContext } from '../../../../context';
-import { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/ChatAndNotificationMainContext';
+import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type SearchPropType = {
   feed: ChatFeedsType | NotificationFeedsType;

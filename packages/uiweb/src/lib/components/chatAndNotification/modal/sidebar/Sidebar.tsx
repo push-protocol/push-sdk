@@ -2,12 +2,13 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { ChatList } from './chatSidebar/ChatList';
 import { Search } from './Search';
-import {
+import type {
   ChatFeedsType,
-  SIDEBAR_PLACEHOLDER_KEYS,
   NotificationFeedsType,
   PushSubTabs,
-  PushTabs,
+  PushTabs} from '../../../../types';
+import {
+  SIDEBAR_PLACEHOLDER_KEYS
 } from '../../../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../../../types';
 import {
@@ -17,7 +18,7 @@ import {
   ChatAndNotificationMainContext,
 } from '../../../../context';
 import useFetchChats from '../../../../hooks/chat/useFetchChats';
-import { Section, Span, Image, Div } from '../../../reusables/sharedStyling';
+import { Section, Span, Div } from '../../../reusables/sharedStyling';
 import { ChatsFeedList } from './chatSidebar/ChatsFeedList';
 import type { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import { AngleArrowIcon } from '../../../../icons/AngleArrow';
@@ -34,7 +35,7 @@ import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificati
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
 import {SidebarPlaceholder} from './SidebarPlaceholder';
-import { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/ChatAndNotificationMainContext';
+import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 
 export type TabPropType = {

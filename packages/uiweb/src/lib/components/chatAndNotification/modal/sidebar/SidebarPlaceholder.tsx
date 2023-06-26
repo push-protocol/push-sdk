@@ -1,7 +1,7 @@
 import { NewMessage } from '../../../../icons/NewMessage';
 import { SearchIcon } from '../../../../icons/Search';
-import { SidebarPlaceholderKeys } from '../../../../types';
-import React from 'react';
+import type { SidebarPlaceholderKeys } from '../../../../types';
+import type React from 'react';
 import { Section, Span } from '../../../reusables';
 
 type SidebarPlaceholderPropsType = {

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
 import type { ChatFeedsType } from '../../types';
-import { CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
+import { CHAT_SOCKET_TYPE } from '../../types';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
@@ -16,7 +16,6 @@ import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
 import {
   chatLimit,
   device,
-  notificationLimit,
   requestLimit,
 } from '../../config';
 import useFetchRequests from '../../hooks/chat/useFetchRequests';
@@ -27,10 +26,9 @@ import {
   getNewChatUser,
   walletToPCAIP10,
 } from '../../helpers';
-import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
 import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
-import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -51,8 +49,7 @@ export const ChatAndNotification = () => {
   const {
     setInboxNotifsFeed,
     setSpamNotifsFeed,
-    subscriptionStatus,
-    setSubscriptionStatus,
+
   } = useContext<any>(NotificationMainStateContext);
   const {
     decryptedPgpPvtKey,

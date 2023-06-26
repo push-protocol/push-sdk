@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 import { CoreContractChainId, ENV, InfuraAPIKey } from '../config';
 import { ChatMainStateContext } from '../context';
-import { ChatMainStateContextType } from '../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../context/chatAndNotification/chat/chatMainStateContext';
 
 // Internal Components
 

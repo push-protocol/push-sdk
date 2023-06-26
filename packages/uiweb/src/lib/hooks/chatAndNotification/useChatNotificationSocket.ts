@@ -8,7 +8,7 @@ import {
   NotificationMainStateContext,
 } from '../../context';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
-import { ChatAndNotificationMainContext, ChatAndNotificationMainContextType } from '../../context/chatAndNotification/ChatAndNotificationMainContext';
+import { ChatAndNotificationMainContext, ChatAndNotificationMainContextType } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 import {
   checkIfIntent,
   getData,

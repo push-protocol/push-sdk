@@ -4,13 +4,14 @@ import styled from 'styled-components';
 
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
 import { ChatList } from './ChatList';
-import { Section, Span } from '../../../../reusables/sharedStyling';
+import { Section } from '../../../../reusables/sharedStyling';
 import { Spinner } from '../../../../reusables/Spinner';
 import { chatLimit } from '../../../../../config';
-import { ChatFeedsType, SIDEBAR_PLACEHOLDER_KEYS } from '../../../../../types';
+import type { ChatFeedsType} from '../../../../../types';
+import { SIDEBAR_PLACEHOLDER_KEYS } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
 import { SidebarPlaceholder } from '../SidebarPlaceholder';
-import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const ChatsFeedList = () => {
   const { chatsFeed, setChatsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);

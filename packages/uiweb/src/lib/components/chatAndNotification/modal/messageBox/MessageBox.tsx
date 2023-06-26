@@ -24,7 +24,7 @@ import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
 import { EncryptionIcon } from '../../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../../icons/NoEncryption';
-import { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 const CHATS_FETCH_LIMIT = 15;
 

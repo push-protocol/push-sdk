@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { Div, Image, Section } from '../../../../reusables/sharedStyling';
+import { Div, Section } from '../../../../reusables/sharedStyling';
 import { EmojiIcon } from '../../../../../icons/Emoji';
 import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
@@ -16,8 +16,8 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
-import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
-import { ChatAndNotificationMainContextType } from '../../../../../context/chatAndNotification/ChatAndNotificationMainContext';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatAndNotificationMainContextType } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type GIFType = {
   url: string;

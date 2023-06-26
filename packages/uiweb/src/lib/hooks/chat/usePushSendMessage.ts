@@ -3,7 +3,7 @@ import { Env, IFeeds } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
-import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import useFetchChat from './useFetchChat';
 
 interface SendMessageParams {

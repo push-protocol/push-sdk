@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { ChatAndNotificationMainContextProvider, ChatAndNotificationPropsContext, NotificationMainStateContextProvider } from '../../context';
 import 'font-awesome/css/font-awesome.min.css';
 import { Constants } from '../../config';

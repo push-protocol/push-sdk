@@ -18,8 +18,8 @@ import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
-import { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/ChatAndNotificationMainContext';
-import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/chatAndNotificationMainContext';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;

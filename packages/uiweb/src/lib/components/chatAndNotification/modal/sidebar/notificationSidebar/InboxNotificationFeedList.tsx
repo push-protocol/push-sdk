@@ -6,14 +6,15 @@ import {
   NotificationMainStateContext,
 } from '../../../../../context';
 
-import { Div, Section, Span } from '../../../../reusables/sharedStyling';
+import { Div, Section } from '../../../../reusables/sharedStyling';
 import { Spinner } from '../../../../reusables/Spinner';
 
 import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
 import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
+import type {
+  NotificationFeedsType} from '../../../../../types';
 import {
-  NotificationFeedsType,
   SIDEBAR_PLACEHOLDER_KEYS,
 } from '../../../../../types';
 import { notificationLimit } from '../../../../../config';

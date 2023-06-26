@@ -5,7 +5,7 @@ import { useCallback, useContext, useState } from 'react';
 import type { ChatFeedsType} from '../..';
 import { Constants } from '../..';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
-import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 
 interface fetchRequests {

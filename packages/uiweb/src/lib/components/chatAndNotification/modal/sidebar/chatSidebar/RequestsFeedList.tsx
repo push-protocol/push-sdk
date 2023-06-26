@@ -8,7 +8,7 @@ import { Spinner } from '../../../../reusables/Spinner';
 import { requestLimit } from '../../../../../config';
 import type { ChatFeedsType } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
-import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const RequestsFeedList = () => {
   const { requestsFeed, setRequestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);

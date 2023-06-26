@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import type React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { SpinnerSvg } from '../../icons/SpinnerSvg';
 

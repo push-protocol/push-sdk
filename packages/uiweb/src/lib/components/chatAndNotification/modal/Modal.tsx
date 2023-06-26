@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
-import styled from 'styled-components';
+import React, { useContext } from 'react';
 import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../context';
-import { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
-import { ChatAndNotificationMainContextType } from '../../../context/chatAndNotification/ChatAndNotificationMainContext';
+import type { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatAndNotificationMainContextType } from '../../../context/chatAndNotification/chatAndNotificationMainContext';
 import { PUSH_SUB_TABS } from '../../../types';
 import { Section } from '../../reusables/sharedStyling';
 import { Spinner } from '../../reusables/Spinner';

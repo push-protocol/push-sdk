@@ -6,7 +6,7 @@ import {
   setData,
   shortenText,
 } from '../../../../../helpers';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Section, Span, Image } from '../../../../reusables/sharedStyling';
 import { UnreadChats } from '../../../MinimisedModalHeader';
@@ -14,7 +14,7 @@ import { pCAIP10ToWallet } from '../../../../../helpers';
 import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
-import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 type ChatSnapPropType = {
   chat: IFeeds;
