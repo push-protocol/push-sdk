@@ -14,9 +14,9 @@ const SidebarPlaceholderContent = {
     subTitle: '',
     IconComponent: <SearchIcon height="40" width="40" />,
   },
-  CHAT: {
+  NEW_CHAT: {
     title: 'Start a new chat',
-    subTitle: 'Start by searching for a domain or wallet address',
+    subTitle: 'Start by searching for a domain or wallet address.',
     IconComponent: <NewMessage />,
   },
   NOTIFICATION: {
@@ -25,12 +25,17 @@ const SidebarPlaceholderContent = {
       'Keep an eye out for upcoming messages from the apps you connect with.',
     IconComponent: <NewMessage />,
   },
+  CHAT: {
+    title: 'Start your first chat',
+    subTitle: 'Get started by messaging a friend.',
+    IconComponent: <NewMessage />,
+  },
 };
 export const SidebarPlaceholder: React.FC<SidebarPlaceholderPropsType> = ({ id }) => {
   return (
     <Section flexDirection="column" margin="77px 0 0 0 " gap="15px">
       {SidebarPlaceholderContent[id].IconComponent}
-      <Section flexDirection="column" gap="10px">
+      <Section flexDirection="column" gap="7px">
         <Span
           textAlign="center"
           fontSize="18px"

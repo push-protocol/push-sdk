@@ -29,38 +29,36 @@ import type { ChatMainStateContextType } from '../../../../context/chatAndNotifi
 const CHATS_FETCH_LIMIT = 15;
 
 const EncryptionMessageContent = {
-  ENCRYPTED:{
-IconComponent: <EncryptionIcon />,
-text:'Messages are end-to-end encrypted. Only users in this chat can view or listen to them.'
+  ENCRYPTED: {
+    IconComponent: <EncryptionIcon />,
+    text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them.',
   },
-  NO_ENCRYPTED:{
+  NO_ENCRYPTED: {
     IconComponent: <NoEncryptionIcon />,
-    text:'Messages are not encrypted until chat request is accepted.'
-  }
-}
-const EncryptionMessage = ({
-  id
-}: {
-  id:'ENCRYPTED' | 'NO_ENCRYPTED'
-}) => {
+    text: 'Messages are not encrypted until chat request is accepted.',
+  },
+};
+const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
   return (
-    <Section  padding="12px"
-    gap="8px"
-    borderRadius="12px"
-    borderStyle="solid"
-    borderWidth="1px"
-    borderColor="var(--neutral-neutral-100, #EDEDEE)"
-    background='var(--neutral-neutral-050, #F5F5F5)'
-    margin="10px 10px 0px">
+    <Section
+      padding="12px"
+      gap="8px"
+      borderRadius="12px"
+      borderStyle="solid"
+      borderWidth="1px"
+      borderColor="var(--neutral-neutral-100, #EDEDEE)"
+      background="var(--neutral-neutral-050, #F5F5F5)"
+      margin="10px 10px 0px"
+    >
       {EncryptionMessageContent[id].IconComponent}
 
       <Span
         fontSize="13px"
         color="var(--neutral-neutral-600, #62626A)"
-        fontWeight='600'
+        fontWeight="600"
         textAlign="left"
       >
-          {EncryptionMessageContent[id].text}
+        {EncryptionMessageContent[id].text}
       </Span>
     </Section>
   );
@@ -174,7 +172,7 @@ const MessageCard = ({
       gap="5px"
       background={position ? '#0D67FE' : '#EDEDEE'}
       padding="8px 12px"
-      borderRadius={position ? '2px 12px 0px 12px' : '12px 12px 12px 0px'}
+      borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
       margin="5px 0"
       alignSelf={position ? 'end' : 'start'}
       justifyContent="start"
@@ -259,8 +257,7 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest, loading: approveLoader } =
-    useApproveChatRequest();
+  const { approveChatRequest,loading:approveLoading } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -380,91 +377,90 @@ export const MessageBox = () => {
       overflow="hidden"
       height="100%"
     >
-      {loading ? <Spinner /> : ''}
       <Section
         width="100%"
         height="85%"
-        overflow="hidden"
         justifyContent="start"
         flexDirection="column"
         alignItems="start"
         borderWidth="0 0 1px 0"
         // borderStyle={ "none none solid none"}
+        overflow="hidden scroll"
+        ref={listInnerRef}
+        onScroll={onScroll}
         borderColor="transparent transparent #dddddf transparent"
       >
-        {!loading && (
-          <>
-            {selectedChat && !selectedChat.publicKey ? (
-                <EncryptionMessage id={'NO_ENCRYPTED'}/>
-            
-            ) : (
-              <EncryptionMessage id={'ENCRYPTED'}/>
-            )}
-            {
-              selectedMessages ? (
-                <MessageListCard
-                  flexDirection="column"
-                  justifyContent="start"
-                  width="100%"
-                  overflow="hidden scroll"
-                  padding="0 3px 15px 3px"
-                  ref={listInnerRef}
-                  onScroll={onScroll}
-                >
-                  {selectedMessages?.messages.map(
-                    (chat: IMessageIPFS, index: number) => {
-                      const dateNum = moment(chat.timestamp).format('ddMMyyyy');
+        <>
+          {selectedChat && !selectedChat.publicKey ? (
+            <EncryptionMessage id={'NO_ENCRYPTED'} />
+          ) : (
+            <EncryptionMessage id={'ENCRYPTED'} />
+          )}
+          {loading ? <Spinner /> : ''}
 
-                      return (
-                        <>
-                          {dates.has(dateNum)
-                            ? null
-                            : renderDate({ chat, dateNum })}
-                          <Messages chat={chat} key={index} />
-                        </>
-                      );
+          {selectedMessages ? (
+            <MessageListCard
+              flexDirection="column"
+              justifyContent="start"
+              width="100%"
+              padding="0 3px 15px 3px"
+            >
+              {selectedMessages?.messages.map(
+                (chat: IMessageIPFS, index: number) => {
+                  const dateNum = moment(chat.timestamp).format('ddMMyyyy');
+
+                  return (
+                    <>
+                      {dates.has(dateNum)
+                        ? null
+                        : renderDate({ chat, dateNum })}
+                      <Messages chat={chat} key={index} />
+                    </>
+                  );
+                }
+              )}
+              {requestFeedids.includes(selectedChatId as string) && (
+                <Section
+                  gap="5px"
+                  background="#EDEDEE"
+                  padding="8px 12px"
+                  margin="5px 0"
+                  borderRadius="12px 12px 12px 0px"
+                  alignSelf="start"
+                  justifyContent="start"
+                  maxWidth="68%"
+                  minWidth="15%"
+                  position="relative"
+                  flexDirection="column"
+                >
+                  <Span
+                    alignSelf="center"
+                    textAlign="left"
+                    fontSize="16px"
+                    fontWeight="400"
+                    color="#000"
+                    lineHeight="24px"
+                  >
+                    Please accept the Push Chat request to continue the
+                    conversation
+                  </Span>
+                  <Button
+                    onClick={() =>
+                      !approveLoading ? handleApproveChatRequest() : null
                     }
-                  )}
-                  {requestFeedids.includes(selectedChatId as string) && (
-                    <Section
-                      gap="5px"
-                      background="#EDEDEE"
-                      padding="8px 12px"
-                      margin="5px 0"
-                      borderRadius="12px 12px 12px 0px"
-                      alignSelf="start"
-                      justifyContent="start"
-                      maxWidth="80%"
-                      minWidth="15%"
-                      position="relative"
-                    >
-                      <Span
-                        alignSelf="center"
-                        textAlign="left"
-                        fontSize="16px"
-                        fontWeight="400"
-                        color="#000"
-                      >
-                        Please accept to enable push chat from this wallet
-                      </Span>
-                      <Section
-                        width="36px"
-                        height="36px"
-                        cursor="pointer"
-                        alignItems="center"
-                        onClick={() => handleApproveChatRequest()}
-                      >
-                        {approveLoader ? <Spinner /> : <CheckCircleIcon />}
-                      </Section>
-                    </Section>
-                  )}
-                  <div ref={bottomRef} />
-                </MessageListCard>
-              ) : null
-            
-            }
-          </>
-        )}
+                  >
+                    {approveLoading ? (
+                      <Spinner color="#fff" size="24" />
+                    ) : (
+                      'Accept'
+                    )}
+                  </Button>
+                </Section>
+              )}
+              <div ref={bottomRef} />
+            </MessageListCard>
+          ) : null}
+        </>
       </Section>
 
       {!requestFeedids.includes(selectedChatId as string) && (
@@ -493,4 +489,21 @@ const FileDownloadIcon = styled.i`
 
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
+`;
+
+const Button = styled.button`
+  border: none;
+  display:flex;
+  justify-content:center;
+  cursor: pointer;
+  border-radius: 8px;
+  margin:15px 0px 8px 0px;
+  padding: 16.5px 16.5px 13px 18.5px;
+  background: #0D67FE;
+  color: white;
+  width: 100%;
+  text-align:center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
 `;

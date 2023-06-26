@@ -74,7 +74,8 @@ export const LOCAL_STORAGE_KEYS = {
 export const SIDEBAR_PLACEHOLDER_KEYS = {
   CHAT: 'CHAT',
   SEARCH: 'SEARCH',
-  NOTIFICATION: 'NOTIFICATION'
+  NOTIFICATION: 'NOTIFICATION',
+  NEW_CHAT: 'NEW_CHAT'
 } as const;
 
 export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];

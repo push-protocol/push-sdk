@@ -66,6 +66,7 @@ export const MessageBoxHeader = () => {
     setSelectedChatId,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
+  const { spamNotifsFeed } = useContext<any>(NotificationMainStateContext);
   const selectedChat =
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
@@ -79,7 +80,13 @@ export const MessageBoxHeader = () => {
   const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
 
   const handleBack = () => {
-    if (activeSubTab) {
+    if (
+      activeSubTab &&
+      ((activeSubTab === PUSH_SUB_TABS.REQUESTS &&
+        Object.keys(requestsFeed || {}).length) ||
+        (activeSubTab === PUSH_SUB_TABS.SPAM &&
+          Object.keys(spamNotifsFeed || {}).length))
+    ) {
       setActiveSubTab(PUSH_SUB_TABS[activeSubTab as PushSubTabs]);
     } else {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);

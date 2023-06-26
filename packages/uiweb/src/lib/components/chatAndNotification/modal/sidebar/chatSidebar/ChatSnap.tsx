@@ -30,21 +30,19 @@ const Message = ({
   messageType: string;
 }) => {
   return messageType === 'Text' ? (
-    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
-      {messageContent?.length > 25
-        ? messageContent?.slice(0, 25) + '...'
-        : messageContent}
+    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
+      {shortenText(messageContent, 40)}
     </Span>
   ) : messageType === 'Image' ? (
-    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
       <i className="fa fa-picture-o" aria-hidden="true"></i> Image
     </Span>
   ) : messageType === 'File' ? (
-    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
       <i className="fa fa-file" aria-hidden="true"></i> File
     </Span>
   ) : messageType === 'GIF' || messageType === 'MediaEmbed' ? (
-    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+    <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
       <i className="fa fa-picture-o" aria-hidden="true"></i> Media
     </Span>
   ) : null;
@@ -52,8 +50,6 @@ const Message = ({
 
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
- 
-
 
   const { setSelectedChatId, web3NameList } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
@@ -78,18 +74,19 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
       padding="15px 15px"
       onClick={() => handleOnClick()}
     >
-      <Section gap="18px">
+      <Section gap="18px" cursor='pointer'>
         <Image
           src={chat.profilePicture!}
           alt="profile picture"
           width="36px"
           height="36px"
           borderRadius="100%"
+          cursor='pointer'
         />
-        <Section flexDirection="column" gap="8px" alignItems="start">
-          <NameSpan fontWeight="700" fontSize="16px" color="#000">
-          {(chat?.name)?shortenText(chat?.name, 30) :
-         ( web3Name ?? shortenText(chat?.did?.split(':')[1], 20))}
+        <Section flexDirection="column" gap="8px" alignItems="start" cursor='pointer'>
+          <NameSpan fontWeight="700" fontSize="16px" color="#000" cursor='pointer'>
+          {(chat?.name)?shortenText(chat?.name, 30,true) :
+         ( web3Name ?? shortenText(chat?.did?.split(':')[1], 8,true))}
 
           </NameSpan>
           <Message
@@ -102,9 +99,11 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
         flexDirection="column"
         alignItems="end"
         gap="12px"
+        cursor='pointer'
         justifyContent="flex-start"
+        
       >
-        <Span fontWeight="400" fontSize="12px" color="#62626A">
+        <Span fontWeight="400" fontSize="12px" color="#62626A" cursor='pointer'>
           {chat?.msg?.timestamp
             ? dateToFromNowDaily(chat?.msg?.timestamp as number)
             : ''}
@@ -125,6 +124,7 @@ const Container = styled(Section)`
   cursor: pointer;
   &:hover {
     background: #f4f5fa;
+    border-radius:10px;
   }
 `;
 
