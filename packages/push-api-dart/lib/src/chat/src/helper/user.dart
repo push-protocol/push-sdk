@@ -1,6 +1,6 @@
 import 'package:push_api_dart/push_api_dart.dart';
 
-Future<User?> getConnectedUserV2({required EthWallet wallet}) async {
+Future<ConnectedUser?> getConnectedUserV2({required EthWallet wallet}) async {
   final user = await getUser(address: wallet.address);
 
   if (user == null) {
@@ -8,7 +8,7 @@ Future<User?> getConnectedUserV2({required EthWallet wallet}) async {
   }
 
   if (wallet.privateKey != null) {
-    user.privateKey = wallet.privateKey;
+    return ConnectedUser(user: user, privateKey: wallet.privateKey);
   } else {
     final decryptedPrivateKey = await getDecryptedPrivateKey(
       address: wallet.address,
@@ -16,8 +16,6 @@ Future<User?> getConnectedUserV2({required EthWallet wallet}) async {
       user: user,
     );
 
-    user.privateKey = decryptedPrivateKey;
+    return ConnectedUser(user: user, privateKey: decryptedPrivateKey);
   }
-
-  return user;
 }

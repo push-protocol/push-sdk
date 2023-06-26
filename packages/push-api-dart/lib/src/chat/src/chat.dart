@@ -42,7 +42,8 @@ Future<Feeds?> chat({
 
     final chatList = [Feeds.fromJson(result)];
 
-    final updatedChats = addDeprecatedInfo(chatList);
+    final updatedChats = chatList;
+    // addDeprecatedInfo(chatList);
     final feedWithInbox = await getInboxList(
       feedsList: updatedChats,
       user: userDID,

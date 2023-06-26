@@ -12,3 +12,4 @@ export 'src/ipfs.dart';
 export 'src/start.dart';
 export 'src/get_group.dart';
 export 'src/create_group.dart';
+export 'src/get_group_by_name.dart';
