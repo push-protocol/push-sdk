@@ -47,3 +47,13 @@ getEncryptedRequest({
 }) {
   //Todo implement getEncryptedRequest
 }
+
+Future<String> getDecryptedPrivateKey({
+  required String address,
+  required EthWallet wallet,
+  required User user,
+}) async {
+//TODO implement getDecryptedPrivateKey
+
+  return '';
+}

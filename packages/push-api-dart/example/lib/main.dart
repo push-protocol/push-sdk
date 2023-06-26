@@ -2,7 +2,6 @@ import 'package:ethers/signers/wallet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:push_api_dart/push_api_dart.dart';
 
-import 'chat/fetch_chat.dart';
 import 'user/get_user.dart';
 
 void main() async {
@@ -22,6 +21,26 @@ void main() async {
   await initPush(wallet: pushWallet);
 
   // testCreateUser();
-  testGetUser();
+  // testGetUser();
   // testFetchP2PChat();
+
+  final bodyToBeHashed = {
+    'groupName': 'groupName',
+    'groupDescription': 'groupDescription',
+    'members': <String>[],
+    'groupImage': 'groupImage',
+    'admins': <String>[],
+    'isPublic': false,
+    'contractAddressNFT': 'contractAddressNFT',
+    'numberOfNFTs': 0,
+    'contractAddressERC20': 'contractAddressERC20',
+    'numberOfERC20': 0,
+    'groupCreator': 'userDID',
+  };
+
+  final hash = generateHash(bodyToBeHashed);
+
+  
+
+  print('hash: $hash');
 }

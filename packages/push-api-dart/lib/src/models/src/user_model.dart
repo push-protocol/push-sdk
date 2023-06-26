@@ -36,6 +36,8 @@ class User {
   String? linkedListHash;
   List<dynamic>? nfts;
 
+  String? privateKey;
+
   User.fromJson(Map<String, dynamic> json) {
     did = json['did'];
     wallets = json['wallets'];

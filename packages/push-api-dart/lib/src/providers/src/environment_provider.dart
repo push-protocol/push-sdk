@@ -1,5 +1,7 @@
 import 'package:riverpod/riverpod.dart';
 
+import '../../../push_api_dart.dart';
+
 enum ENV {
   prod,
   staging,
@@ -16,4 +18,8 @@ class EnvProvider extends StateNotifier<ENV> {
   setEnv(ENV newValue) {
     state = newValue;
   }
+}
+
+ENV getCachedENV() {
+  return providerContainer.read(envProvider);
 }

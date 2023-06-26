@@ -38,3 +38,6 @@ class EthWalletProvider extends StateNotifier<EthWallet?> {
 User? getCachedUser() {
   return providerContainer.read(userProvider);
 }
+EthWallet? getCachedWallet() {
+  return providerContainer.read(userEthWalletProvider);
+}
