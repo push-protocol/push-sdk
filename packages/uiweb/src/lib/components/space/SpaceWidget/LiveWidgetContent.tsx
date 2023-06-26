@@ -1,6 +1,6 @@
-import { Button, Image, Item, Text } from "../../../config";
 import { ILiveSpaceProfileContainerProps, LiveSpaceProfileContainer } from "./LiveSpaceProfileContainer";
 
+import { Button, Image, Item, Text } from "../../../config";
 import MicOnIcon from '../../../icons/micon.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';

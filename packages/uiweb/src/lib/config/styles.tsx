@@ -24,6 +24,7 @@ const commonStyle = css<CommonStyles>`
   margin: ${(props) => props.margin};
   margin-top: ${(props) => props.marginTop};
   margin-left: ${(props) => props.marginLeft};
+  margin-bottom: ${(props) => props.marginBottom};
   min-width: ${(props) => props.minWidth};
   max-width: ${(props) => props.maxWidth};
   overflow-y: ${(props) => props.overflowY};

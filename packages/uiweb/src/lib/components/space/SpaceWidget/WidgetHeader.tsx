@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 import { Item, Text } from '../../../config';
@@ -10,9 +10,10 @@ import CaretUpIcon from '../../../icons/CaretUp.svg';
 import CalendarIcon from '../../../icons/calendar.svg';
 import LiveIcon from '../../../icons/live.svg';
 import { CloseSvg } from '../../../icons/CloseSvg';
+import { HostPfpContainer } from '../reusables';
 
 export interface IWidgetHeaderProps {
-  onClose: () => void;
+  onClose: MouseEventHandler;
   isMinimized: boolean;
   setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>;
   toggleWidgetVisibility: () => void;
@@ -25,29 +26,21 @@ export interface IWidgetHeaderProps {
 export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onClose, isMinimized, setIsMinimized, toggleWidgetVisibility }: IWidgetHeaderProps) => {
   const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
-  const handleCloseWidget = () => {
+  const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    // Call for hiding the widget
     toggleWidgetVisibility();
-    onClose();
-  }
+  
+    // Call for running onClose handler from prop
+    onClose(event);
+  };
 
   return (
     <Container>
       {!isLive && 
         <Section>
-          <ProfileContainer>
-            <PfpContainer>
-              <Pfp src={tempImageUrl} alt="pfp" />
-            </PfpContainer>
-            <HostContainer>
-              <HostName>
-                Laris
-                <Host status="live">Host</Host>
-              </HostName>
-              <HostHandle status="live">
-                {/* Fetch the handle from Lenster */}@hbjbjhb
-              </HostHandle>
-            </HostContainer>
-          </ProfileContainer>
+          <Item marginBottom={'12px'}>
+            <HostPfpContainer statusTheme='Live' imageUrl={tempImageUrl} name={'Laris'} handle={'vjdfvjhvj'} />
+          </Item>
           <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'}>
             {isHost &&
               <Button padding='6.5px 16.5px'>Edit space</Button>

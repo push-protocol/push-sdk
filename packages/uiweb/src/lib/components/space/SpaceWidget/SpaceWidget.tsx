@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import styled from 'styled-components';
+import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
-import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { ENV } from '../../../config';
 import { ISpaceWidgetProps } from '../exportedTypes';
@@ -24,7 +24,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetComponentProps> = (options: ISpac
     env, 
     spaceId,
     shareUrl,
-    onClose = () => { /* */ }, // Assign an empty function as default
+    onClose = (() => { /** */}) as MouseEventHandler<HTMLDivElement>,
 
     isHost, isLive, isJoined, isMember, isTimeToStartSpace
   } = options || {};

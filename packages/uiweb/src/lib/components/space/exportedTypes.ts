@@ -1,3 +1,5 @@
+import { MouseEventHandler } from "react";
+
 import { ENV } from "../../config";
 import { SignerType } from "../../types";
 
@@ -16,7 +18,7 @@ export interface ISpaceWidgetProps {
   spaceId?: string;
   width?: number;
   shareUrl?: string;
-  onClose?: () => void;
+  onClose?: MouseEventHandler;
 
   // props only for testing demo purpose for now
   isHost?: boolean;
