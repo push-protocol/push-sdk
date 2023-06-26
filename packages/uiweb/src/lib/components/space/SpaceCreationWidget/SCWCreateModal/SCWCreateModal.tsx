@@ -1,11 +1,11 @@
 import React, { MouseEventHandler, useState } from 'react'
 import styled from 'styled-components'
+import { CloseSvg } from 'packages/uiweb/src/lib/icons/CloseSvg';
 
 import { Modal } from '../../reusables/Modal'
 import { Button } from '../../reusables/Button';
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { TextInputWithCounter } from '../../reusables/TextInput';
-import { CloseSvg } from 'packages/uiweb/src/lib/icons/CloseSvg';
 
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
     isScheduleVisible?: any;

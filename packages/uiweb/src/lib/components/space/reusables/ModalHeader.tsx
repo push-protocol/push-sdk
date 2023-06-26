@@ -2,6 +2,7 @@ import { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 import { CloseSvg } from '../../../icons/CloseSvg';
+import { ArrowLeft } from '../../../icons/ArrowLeft';
 
 export interface IModalHeaderProps {
     heading: string;
@@ -18,7 +19,7 @@ export const ModalHeader = (props: IModalHeaderProps) => {
                     <BackBtn
                         onClick={props.backCallback}
                     >
-                        back
+                        <ArrowLeft />
                     </BackBtn>
                     :
                     null
@@ -56,6 +57,13 @@ const BackBtn = styled.button`
     top: 0;
     left: 0;
     margin: 1.5rem;
+
+    border: none;
+    background: transparent;
+
+    &:hover {
+        cursor: pointer;
+    }
 `;
 
 const CloseBtn = styled.button`

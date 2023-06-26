@@ -1,4 +1,6 @@
 import React, { MouseEventHandler } from 'react'
+import styled from 'styled-components';
+import { CloseSvg } from 'packages/uiweb/src/lib/icons/CloseSvg';
 
 import { Modal } from '../../reusables/Modal';
 import { ModalHeader } from '../../reusables/ModalHeader';
@@ -19,6 +21,12 @@ export interface ISCWSModalProps { // Space Creation Widget Schedule Modal Inter
 export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
 
     const { closeScheduleModal, makeCreateVisible, makeInviteVisible, dateValue, timeValue, onDateChange, onTimeChange } = props;
+
+    const secBtn = {
+        background: 'transparent',
+        borderColor: '#8b5cf6'
+    }
+
 
     return (
         <Modal>
@@ -41,11 +49,27 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
                 charCount={12}
             />
 
-            <Button
-                onClick={makeInviteVisible}
-            >
-                Schedule Space
-            </Button>
+            <ButtonContainer>
+                    <Button
+                        onClick={makeInviteVisible}
+                        width='85%'
+                    >
+                        Schedule Space
+                    </Button>
+
+                    <Button
+                        width='40px'
+                        customStyle={secBtn}
+                    >
+                        <CloseSvg />
+                    </Button>
+                </ButtonContainer>
         </Modal>
     )
 }
+
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+`;
