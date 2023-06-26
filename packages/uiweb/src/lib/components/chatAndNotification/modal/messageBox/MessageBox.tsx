@@ -257,8 +257,7 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest, loading: approveLoading } =
-    useApproveChatRequest();
+  const { approveChatRequest,loading:approveLoading } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -494,16 +493,16 @@ const FileDownloadIconAnchor = styled.a`
 
 const Button = styled.button`
   border: none;
-  display: flex;
-  justify-content: center;
+  display:flex;
+  justify-content:center;
   cursor: pointer;
   border-radius: 8px;
-  margin: 15px 0px 8px 0px;
+  margin:15px 0px 8px 0px;
   padding: 16.5px 16.5px 13px 18.5px;
-  background: #0d67fe;
+  background: #0D67FE;
   color: white;
   width: 100%;
-  text-align: center;
+  text-align:center;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
