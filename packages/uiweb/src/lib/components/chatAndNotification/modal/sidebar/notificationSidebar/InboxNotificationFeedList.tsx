@@ -12,8 +12,12 @@ import { Spinner } from '../../../../reusables/Spinner';
 import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
 import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
-import type { NotificationFeedsType } from '../../../../../types';
+import {
+  NotificationFeedsType,
+  SIDEBAR_PLACEHOLDER_KEYS,
+} from '../../../../../types';
 import { notificationLimit } from '../../../../../config';
+import { SidebarPlaceholder } from '../SidebarPlaceholder';
 
 export const InboxNotificationFeedList = () => {
   const {
@@ -22,7 +26,7 @@ export const InboxNotificationFeedList = () => {
     allInboxNotifFeed,
     setAllInboxNotifsFeed,
     setSpamNotifsFeed,
-    spamNotifsFeed
+    spamNotifsFeed,
   } = useContext<any>(NotificationMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const { account, env } = useContext<any>(ChatAndNotificationPropsContext);
@@ -145,7 +149,7 @@ export const InboxNotificationFeedList = () => {
         )
       )}
       {!loading && Object.keys(inboxNotifsFeed).length === 0 && (
-        <Span margin="20px 0 0 0">No messages from apps yet</Span>
+        <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.NOTIFICATION} />
       )}
 
       {paginateLoading && (

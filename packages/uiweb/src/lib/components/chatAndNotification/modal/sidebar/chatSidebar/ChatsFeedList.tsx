@@ -7,8 +7,9 @@ import { ChatList } from './ChatList';
 import { Section, Span } from '../../../../reusables/sharedStyling';
 import { Spinner } from '../../../../reusables/Spinner';
 import { chatLimit } from '../../../../../config';
-import type { ChatFeedsType } from '../../../../../types';
+import { ChatFeedsType, SIDEBAR_PLACEHOLDER_KEYS } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
+import { SidebarPlaceholder } from '../SidebarPlaceholder';
 
 export const ChatsFeedList = () => {
   const { chatsFeed, setChatsFeed } = useContext<any>(ChatMainStateContext);
@@ -84,7 +85,9 @@ export const ChatsFeedList = () => {
         )
       )}
       {!loading && Object.keys(chatsFeed).length === 0 && (
-        <Span margin='20px 0 0 0'>No Chats yet</Span>
+       <SidebarPlaceholder
+       id={SIDEBAR_PLACEHOLDER_KEYS.CHAT}
+      />
       )}
 
       <div ref={pageRef} />

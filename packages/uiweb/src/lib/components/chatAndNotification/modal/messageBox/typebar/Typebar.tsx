@@ -32,7 +32,6 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const [gifOpen, setGifOpen] = useState<boolean>(false);
-  const [value, setValue] = useState('');
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
   const { selectedChatId, chatsFeed, setSearchedChats, newChat, requestsFeed, setNewChat } =
@@ -41,7 +40,6 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
   const onChangeTypedMessage = (val: string) => {
-    setValue(val);
     setTypedMessage(val);
   };
 
@@ -149,7 +147,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
 
 
     }
-  }, [textAreaRef, value]);
+  }, [textAreaRef, typedMessage]);
 
   return (
     <Container>
@@ -270,7 +268,7 @@ const Container = styled.div`
 `;
 const MultiLineInput = styled.textarea`
   ::placeholder {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
   }
   font-family:inherit;
   font-weight: 400;
@@ -298,7 +296,7 @@ const MultiLineInput = styled.textarea`
     padding-top: 5px;
   }
   @media ${device.mobileL} {
-    width: 230px;
+    width: 27vw;
   }
   min-height: 25px;
   max-height: 75px;
