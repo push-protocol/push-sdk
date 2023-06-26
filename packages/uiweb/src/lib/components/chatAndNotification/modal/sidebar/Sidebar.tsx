@@ -114,6 +114,8 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
+
+
   return (
     <SubContainer
       justifyContent="start"
@@ -153,7 +155,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
         <Span fontWeight="700" fontSize="16px" color="#000">
           {subTab.title}
         </Span>
-        <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+        <Span cursor='pointer' textAlign="left" fontWeight="400" fontSize="16px" color={isClickable ? "#0D67FE " : "#62626A"}>
           {subTab.subTitle}
         </Span>
       </Section>
@@ -163,6 +165,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
+
 
   const {
     newChat,
@@ -199,16 +202,16 @@ export const Sidebar = () => {
   const PushSubTabDetails: PushSubTabDetailsType = {
     REQUESTS: {
       title: PushSubTabTitle.REQUESTS.title,
-      subTitle: `you have ${shortenNumber(
+      subTitle: ` ${shortenNumber(
         Object.keys(requestsFeed || {}).length
       )} requests from people you may know`,
       icon: <AngleArrowIcon />,
     },
     SPAM: {
       title: PushSubTabTitle.SPAM.title,
-      subTitle: `you have ${shortenNumber(
+      subTitle: `${shortenNumber(
         Object.keys(spamNotifsFeed || {}).length
-      )} inbox messages in your spam box`,
+      )} messages in your spam box`,
       icon: <SpamIconSvg />,
     },
   };

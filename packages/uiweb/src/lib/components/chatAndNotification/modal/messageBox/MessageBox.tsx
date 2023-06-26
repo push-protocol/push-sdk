@@ -174,7 +174,7 @@ const MessageCard = ({
       gap="5px"
       background={position ? '#0D67FE' : '#EDEDEE'}
       padding="8px 12px"
-      borderRadius={position ? '2px 12px 0px 12px' : '12px 12px 12px 0px'}
+      borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
       margin="5px 0"
       alignSelf={position ? 'end' : 'start'}
       justifyContent="start"
@@ -259,8 +259,7 @@ export const MessageBox = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest, loading: approveLoader } =
-    useApproveChatRequest();
+  const { approveChatRequest,loading:approveLoading } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -426,37 +425,37 @@ export const MessageBox = () => {
                     }
                   )}
                   {requestFeedids.includes(selectedChatId as string) && (
-                    <Section
-                      gap="5px"
-                      background="#EDEDEE"
-                      padding="8px 12px"
-                      margin="5px 0"
-                      borderRadius="12px 12px 12px 0px"
-                      alignSelf="start"
-                      justifyContent="start"
-                      maxWidth="80%"
-                      minWidth="15%"
-                      position="relative"
-                    >
-                      <Span
-                        alignSelf="center"
-                        textAlign="left"
-                        fontSize="16px"
-                        fontWeight="400"
-                        color="#000"
-                      >
-                        Please accept to enable push chat from this wallet
-                      </Span>
-                      <Section
-                        width="36px"
-                        height="36px"
-                        cursor="pointer"
-                        alignItems="center"
-                        onClick={() => handleApproveChatRequest()}
-                      >
-                        {approveLoader ? <Spinner /> : <CheckCircleIcon />}
-                      </Section>
-                    </Section>
+                 <Section
+                 gap="5px"
+                 background="#EDEDEE"
+                 padding="8px 12px"
+                 margin="5px 0"
+                 borderRadius="12px 12px 12px 0px"
+                 alignSelf="start"
+                 justifyContent="start"
+                 maxWidth="68%"
+                 minWidth="15%"
+                 position="relative"
+                 flexDirection='column'
+               >
+                 <Span
+                   alignSelf="center"
+                   textAlign="left"
+                   fontSize="16px"
+                   fontWeight="400"
+                   color="#000"
+                   lineHeight='24px'
+                 >
+                   Please accept the Push Chat request to continue the conversation
+                 </Span>
+                 <Button
+                   onClick={() => !approveLoading?handleApproveChatRequest():null}
+                 >
+                
+                {approveLoading ? <Spinner color='#fff' size='24'/>  :'Accept'}
+                 </Button>
+          
+               </Section>
                   )}
                   <div ref={bottomRef} />
                 </MessageListCard>
@@ -493,4 +492,21 @@ const FileDownloadIcon = styled.i`
 
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
+`;
+
+const Button = styled.button`
+  border: none;
+  display:flex;
+  justify-content:center;
+  cursor: pointer;
+  border-radius: 8px;
+  margin:15px 0px 8px 0px;
+  padding: 16.5px 16.5px 13px 18.5px;
+  background: #0D67FE;
+  color: white;
+  width: 100%;
+  text-align:center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
 `;
