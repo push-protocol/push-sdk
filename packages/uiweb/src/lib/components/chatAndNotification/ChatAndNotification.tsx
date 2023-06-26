@@ -30,6 +30,7 @@ import {
 import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
 import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
+import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -46,7 +47,7 @@ export const ChatAndNotification = () => {
     setConnectedProfile,
     requestsFeed,
     chatsFeed,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const {
     setInboxNotifsFeed,
     setSpamNotifsFeed,

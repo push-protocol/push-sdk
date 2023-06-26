@@ -24,6 +24,7 @@ import { Typebar } from './typebar/Typebar';
 import { FILE_ICON } from '../../../../config';
 import { EncryptionIcon } from '../../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../../icons/NoEncryption';
+import { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 const CHATS_FETCH_LIMIT = 15;
 
@@ -204,17 +205,17 @@ export const MessageBox = () => {
     setSearchedChats,
     searchedChats,
     setSelectedChatId,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } = useContext<any>(
     ChatAndNotificationPropsContext
   );
 
   const selectedChat =
-    chatsFeed[selectedChatId] ||
-    requestsFeed[selectedChatId] ||
-    (searchedChats ? searchedChats[selectedChatId] : null);
+    chatsFeed[selectedChatId as string] ||
+    requestsFeed[selectedChatId as string] ||
+    (searchedChats ? searchedChats[selectedChatId as string] : null);
   const requestFeedids = Object.keys(requestsFeed);
-  const selectedMessages = chats.get(selectedChatId);
+  const selectedMessages = chats.get(selectedChatId as string);
   const dates = new Set();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -278,7 +279,7 @@ export const MessageBox = () => {
     ) {
       scrollToBottom(null);
     }
-  }, [chats.get(selectedChatId)]);
+  }, [chats.get(selectedChatId as string)]);
 
   //optimise it
   const getChatCall = async () => {
@@ -350,7 +351,7 @@ export const MessageBox = () => {
         flexDirection="column"
         alignItems="start"
         borderWidth="0 0 1px 0"
-        borderStyle="none none solid none"
+        // borderStyle={ "none none solid none"}
         borderColor="transparent transparent #dddddf transparent"
       >
         {!loading && (
@@ -424,7 +425,7 @@ export const MessageBox = () => {
                       );
                     }
                   )}
-                  {requestFeedids.includes(selectedChatId) && (
+                  {requestFeedids.includes(selectedChatId as string) && (
                     <Section
                       gap="5px"
                       background="#EDEDEE"
@@ -471,7 +472,7 @@ export const MessageBox = () => {
         )}
       </Section>
 
-      {!requestFeedids.includes(selectedChatId) && (
+      {!requestFeedids.includes(selectedChatId as string) && (
         <Typebar scrollToBottom={scrollToBottom} />
       )}
     </Section>

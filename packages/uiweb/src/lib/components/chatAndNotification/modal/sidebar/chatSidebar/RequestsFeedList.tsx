@@ -8,9 +8,10 @@ import { Spinner } from '../../../../reusables/Spinner';
 import { requestLimit } from '../../../../../config';
 import type { ChatFeedsType } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
+import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const RequestsFeedList = () => {
-  const { requestsFeed, setRequestsFeed } = useContext<any>(ChatMainStateContext);
+  const { requestsFeed, setRequestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);

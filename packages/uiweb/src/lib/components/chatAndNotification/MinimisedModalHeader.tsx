@@ -18,6 +18,8 @@ import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { ethers } from 'ethers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
+import { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/ChatAndNotificationMainContext';
+import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -53,7 +55,7 @@ export const MessageBoxHeader = () => {
     setActiveTab,
     setActiveSubTab,
     activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
+  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   const {
     selectedChatId,
     chatsFeed,
@@ -62,12 +64,12 @@ export const MessageBoxHeader = () => {
     searchedChats,
     setSearchedChats,
     setSelectedChatId,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
   const selectedChat =
-    chatsFeed[selectedChatId] ||
-    requestsFeed[selectedChatId] ||
-    (searchedChats ? searchedChats[selectedChatId] : null);
+    chatsFeed[selectedChatId as string] ||
+    requestsFeed[selectedChatId as string] ||
+    (searchedChats ? searchedChats[selectedChatId as string] : null);
 
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
@@ -128,11 +130,11 @@ export const SubTabHeader = () => {
     activeTab,
     setActiveTab,
     activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
+  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   const {
     setSearchedChats,
     setSelectedChatId,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -168,10 +170,11 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   modalOpen,
 }) => {
   const {
+    newChat,
     setNewChat,
     setActiveTab,
     activeSubTab 
-  } = useContext<any>(ChatAndNotificationMainContext)
+  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
 
   const {
     selectedChatId,
@@ -180,7 +183,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     setSearchedChats,
     setSelectedChatId,
     searchedChats,
-  } = useContext<any>(ChatMainStateContext);
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
   const condition =
     (selectedChatId && modalOpen) ||
@@ -192,9 +195,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
       padding={`0 0 ${condition ? '19px' : '23px'} 0 `}
       borderWidth={`0 0 ${condition ? '1px' : '0'} 0 `}
       borderStyle={`none none ${condition ? 'dashed' : 'none'} none `}
-      borderColor={`transparent transparent ${
-        condition ? '#ededee' : 'transparent'
-      }  transparent`}
+      borderColor={`transparent transparent ${condition ? '#ededee' : 'transparent'
+        }  transparent`}
     >
       {selectedChatId &&
         !!(
@@ -217,7 +219,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
               setSelectedChatId(null);
             }}
           >
-            Messages
+            {newChat ? 'New Message' :  'Messages'}
           </Span>
           {/* <UnreadChats 
           // numberOfUnreadMessages="3"
@@ -225,12 +227,16 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
         </Section>
       )}
       <Section gap="20px">
-        {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
+        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) || !modalOpen) && (
           <Div
             width="20px"
             height="20px"
             cursor="pointer"
-            onClick={() => setNewChat(true)}
+            onClick={() => {
+              if (modalOpen) {
+                setNewChat(true)
+              }
+            }}
           >
             <NewChatIcon />
           </Div>
