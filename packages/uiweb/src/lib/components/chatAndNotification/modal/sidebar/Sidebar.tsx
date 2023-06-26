@@ -37,6 +37,7 @@ import {SidebarPlaceholder} from './SidebarPlaceholder';
 import { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/ChatAndNotificationMainContext';
 
 
+
 export type TabPropType = {
   tabName: string;
   tabValue: PushTabs;
@@ -238,7 +239,9 @@ export const Sidebar = () => {
         const defaultFeed = getDefaultFeedObject({ user: result });
         setSearchedChats({ [defaultFeed.did]: defaultFeed });
         setNewChat(true);
-      } else setSearchedChats({});
+      } else {
+        setSearchedChats({});
+      }
     }
   };
 
@@ -287,7 +290,7 @@ export const Sidebar = () => {
 
       {!searchedChats && newChat && (
         <SidebarPlaceholder
-         id={SIDEBAR_PLACEHOLDER_KEYS.CHAT}
+         id={SIDEBAR_PLACEHOLDER_KEYS.NEW_CHAT}
         />
       )}
       {!newChat &&
