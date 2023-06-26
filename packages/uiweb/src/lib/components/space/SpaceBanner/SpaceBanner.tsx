@@ -106,8 +106,8 @@ const Container = styled.div<IThemeProps>`
   height: ${(props) => (props.orientation === 'maximized' ? 'auto' : props.orientation ==='minimized' ? '40px' : '63px')};
   background: ${(props) =>
     props.status === 'Live'
-      ? props.theme.bannerBackground1
-      : props.theme.bannerBackground2};
+      ? props.theme.titleBg
+      : props.theme.bgColorSecondary};
   border-radius: ${(props) =>
     props.orientation === 'maximized' ? '17px' : props.orientation === 'minimized' ? '12px' : '24px'};
   color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};

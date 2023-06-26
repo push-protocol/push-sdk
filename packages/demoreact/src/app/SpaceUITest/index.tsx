@@ -13,7 +13,7 @@ export const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => 
   const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
-    primary: '#00ffff',
+    titleTextColor: 'red',
   }
 
   return (
