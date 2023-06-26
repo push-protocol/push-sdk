@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
-import { ChatMainStateContext } from '../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../context';
+import { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
+import { ChatAndNotificationMainContextType } from '../../../context/chatAndNotification/ChatAndNotificationMainContext';
 import { PUSH_SUB_TABS } from '../../../types';
 import { Section } from '../../reusables/sharedStyling';
 import { Spinner } from '../../reusables/Spinner';
@@ -10,8 +12,11 @@ import { SpamNotificationFeedList } from './sidebar/notificationSidebar/SpamNoti
 import { Sidebar } from './sidebar/Sidebar';
 
 export const Modal = () => {
-  const { selectedChatId, activeSubTab, chatsFeed, requestsFeed,searchedChats } =
-    useContext<any>(ChatMainStateContext);
+
+  const { activeSubTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { selectedChatId, chatsFeed, requestsFeed, searchedChats } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+
+  
   return (
     <Section height="550px" width="100%" maxHeight="550px" overflow="hidden">
       {!selectedChatId && !activeSubTab && <Sidebar />}
@@ -24,7 +29,7 @@ export const Modal = () => {
 
       {selectedChatId &&
         ((Object.keys(chatsFeed || {}).length ||
-        Object.keys(requestsFeed || {}).length ||  Object.keys(searchedChats || {}).length) ? (
+          Object.keys(requestsFeed || {}).length || Object.keys(searchedChats || {}).length) ? (
           <MessageBox />
         ) : (
           <Spinner />

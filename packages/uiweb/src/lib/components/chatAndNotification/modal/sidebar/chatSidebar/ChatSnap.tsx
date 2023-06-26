@@ -1,5 +1,5 @@
 import type { IFeeds } from '@pushprotocol/restapi';
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
+import { ChatMainStateContext, ChatAndNotificationPropsContext, ChatAndNotificationMainContext } from '../../../../../context';
 import {
   checkIfUnread,
   dateToFromNowDaily,
@@ -14,6 +14,7 @@ import { pCAIP10ToWallet } from '../../../../../helpers';
 import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
+import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -51,8 +52,11 @@ const Message = ({
 
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
-  const { setSelectedChatId, web3NameList, activeTab } =
-    useContext<any>(ChatMainStateContext);
+ 
+
+
+  const { setSelectedChatId, web3NameList } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
 
   useResolveWeb3Name(chat?.did, env);

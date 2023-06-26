@@ -21,7 +21,7 @@ export type NotificationMainStateContextType = {
   ) => void;
   searchedNotifications: NotificationFeedsType | null;
   setSearchedNotifications: (chats: NotificationFeedsType | null) => void;
-  subscriptionStatus:  Map<string, boolean>;
+  subscriptionStatus: Map<string, boolean>;
   setSubscriptionStatus: (subscriptionStatus: Map<string, boolean>) => void;
   setChannelSubscriptionStatus: (id: string, status: boolean) => void;
 };
@@ -39,15 +39,14 @@ const NotificationMainStateContextProvider = ({
   const [inboxNotifsFeed, setInboxNotifsFeed] = useState<NotificationFeedsType>(
     {} as NotificationFeedsType
   );
-  const [allInboxNotifFeed, setAllInboxNotifsFeed] = useState<NotificationFeedsType>(
-    {} as NotificationFeedsType
-  );
+  const [allInboxNotifFeed, setAllInboxNotifsFeed] =
+    useState<NotificationFeedsType>({} as NotificationFeedsType);
   const [spamNotifsFeed, setSpamNotifsFeed] = useState<NotificationFeedsType>(
     {} as NotificationFeedsType
   );
-  const [subscriptionStatus, setSubscriptionStatus] = useState<Map<string, boolean>>(
-    {} as Map<string, boolean>
-  );
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    Map<string, boolean>
+  >({} as Map<string, boolean>);
   const [searchedNotifications, setSearchedNotifications] =
     useState<NotificationFeedsType | null>(null);
 
@@ -70,14 +69,10 @@ const NotificationMainStateContextProvider = ({
     }));
   };
 
-  const setChannelSubscriptionStatus = (
-    id: string,
-    status: boolean
-  ) => {
-    setSubscriptionStatus((prevStatus: Map<string, boolean>) => ({
-      [id]: status,
-      ...prevStatus,
-    }));
+  const setChannelSubscriptionStatus = (id: string, status: boolean) => {
+    const tempSubscriptionStatus = new Map(subscriptionStatus);
+    tempSubscriptionStatus.set(id, status);
+    setSubscriptionStatus(tempSubscriptionStatus);
   };
 
   return (
@@ -95,7 +90,7 @@ const NotificationMainStateContextProvider = ({
         setSearchedNotifications,
         subscriptionStatus,
         setChannelSubscriptionStatus,
-        setSubscriptionStatus
+        setSubscriptionStatus,
       }}
     >
       {children}

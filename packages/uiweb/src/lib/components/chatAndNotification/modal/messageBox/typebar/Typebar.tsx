@@ -7,7 +7,7 @@ import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
-import { ChatMainStateContext } from '../../../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
@@ -16,6 +16,8 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
+import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import { ChatAndNotificationMainContextType } from '../../../../../context/chatAndNotification/ChatAndNotificationMainContext';
 
 type GIFType = {
   url: string;
@@ -34,8 +36,12 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { selectedChatId, chatsFeed, setSearchedChats, newChat, requestsFeed, setNewChat } =
-    useContext<any>(ChatMainStateContext);
+  const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
+    const {
+      newChat,
+      setNewChat,
+    } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
@@ -51,15 +57,15 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
     try {
       await sendMessage({
         message: content,
-        receiver: selectedChatId,
+        receiver: selectedChatId as string,
         messageType: type as any,
       });
       scrollToBottom();
 
-      if (chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
+      if (chatsFeed[selectedChatId as string] || requestsFeed[selectedChatId as string])
         setSearchedChats(null);
       if (newChat) setNewChat(false);
-      if (!chatsFeed[selectedChatId]) fetchRequests({ page, requestLimit });
+      if (!chatsFeed[selectedChatId as string]) fetchRequests({ page, requestLimit });
     } catch (error) {
       console.log(error);
       //handle error

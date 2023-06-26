@@ -10,9 +10,10 @@ import { chatLimit } from '../../../../../config';
 import { ChatFeedsType, SIDEBAR_PLACEHOLDER_KEYS } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
 import { SidebarPlaceholder } from '../SidebarPlaceholder';
+import { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const ChatsFeedList = () => {
-  const { chatsFeed, setChatsFeed } = useContext<any>(ChatMainStateContext);
+  const { chatsFeed, setChatsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);

@@ -14,6 +14,8 @@ import {
   ChatMainStateContextType,
 } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import { BackIcon } from '../../../../icons/Back';
+import { ChatAndNotificationMainContext } from '../../../../context';
+import { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/ChatAndNotificationMainContext';
 
 type SearchPropType = {
   feed: ChatFeedsType | NotificationFeedsType;
@@ -34,21 +36,31 @@ export const Search: React.FC<SearchPropType> = ({
     setSearchedText(val);
   };
 
-  const { newChat, setActiveTab, searchedChats, setSearchedChats } =
+  const {  searchedChats, setSearchedChats } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
 
+    const {
+      newChat,
+      setActiveTab
+    } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   React.useEffect(() => {
     setLoading(true);
     const getData = setTimeout(() => {
-      if (searchedText) {
-        handleSearch({ searchedText, feed });
-      } else {
-        onSearchReset();
-      }
+      onSearch();
       setLoading(false);
     }, 2000);
     return () => clearTimeout(getData);
   }, [searchedText]);
+
+  
+ const onSearch  = () =>{
+  if (searchedText.trim() !== '') {
+    console.log("in here handle")
+    handleSearch({ searchedText, feed });
+  } else {
+    onSearchReset();
+  }
+ }
 
   return (
     <Container
@@ -80,7 +92,7 @@ export const Search: React.FC<SearchPropType> = ({
           placeholder={placeholder}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
-              handleSearch({ searchedText, feed });
+              onSearch()
             }
           }}
         />
@@ -90,7 +102,7 @@ export const Search: React.FC<SearchPropType> = ({
               cursor="pointer"
               width="17.49px"
               height="17.49px"
-              onClick={() => handleSearch({ searchedText, feed })}
+              onClick={() => onSearch()}
             >
               <SearchIcon />
             </Div>

@@ -56,6 +56,7 @@ export const InboxNotificationFeedList = () => {
   }, [env, account]);
 
   const fetchInboxNotificationList = async () => {
+    console.log(notificationLimit);
     const feeds: NotificationFeedsType | undefined = await fetchNotification({
       page: 1,
       limit: notificationLimit,
@@ -88,13 +89,10 @@ export const InboxNotificationFeedList = () => {
   }, [fetchNotification, env, page, account]);
 
   useEffect(() => {
-    console.log('in here');
-    console.log(!isInViewport1 || loading);
-    console.log(Object.keys(notificationLimit).length < notificationLimit);
     if (
       !isInViewport1 ||
       loading ||
-      Object.keys(notificationLimit).length < notificationLimit
+      Object.keys(inboxNotifsFeed).length < notificationLimit
     ) {
       return;
     }
@@ -123,8 +121,6 @@ export const InboxNotificationFeedList = () => {
     }
   };
 
-  console.log(inboxNotifsFeed);
-
   return (
     <InboxNotifListCard
       overflow="hidden auto"
@@ -134,12 +130,9 @@ export const InboxNotificationFeedList = () => {
     >
       {(!loading || paginateLoading) &&
       Object.keys(inboxNotifsFeed || {}).length ? (
-        <Section>
-          <Div>
-            <NotificationFeedList notificationFeeds={inboxNotifsFeed} />
-          </Div>
-          <div ref={pageRef} />
-        </Section>
+        <Div>
+          <NotificationFeedList notificationFeeds={inboxNotifsFeed} />
+        </Div>
       ) : (
         !paginateLoading &&
         loading && (
@@ -151,6 +144,8 @@ export const InboxNotificationFeedList = () => {
       {!loading && Object.keys(inboxNotifsFeed).length === 0 && (
         <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.NOTIFICATION} />
       )}
+
+      <div ref={pageRef} />
 
       {paginateLoading && (
         <Section margin="10px  0">

@@ -21,15 +21,15 @@ export const getObjectsWithMatchingKeys = (
 
   if (substring) {
     Object.keys(obj).forEach((key) => {
-      if (key.includes(substring)) {
+      if (key.toLowerCase().includes(substring.toLowerCase())) {
         matchedObjects[key] = obj[key];
       } else if (obj[key].name) {
-        if ((obj[key].name as string).includes(substring)) {
+        if ((obj[key].name?.toLowerCase() as string).includes(substring.toLowerCase())) {
           matchedObjects[key] = obj[key];
         }
       } else {
         Object.keys(web3NameList).forEach((key) => {
-          if (web3NameList[key].includes(substring)) {
+          if (web3NameList[key].toLowerCase().includes(substring.toLowerCase())) {
             matchedObjects[key] = obj[walletToPCAIP10(key)];
           }
         });
@@ -101,11 +101,11 @@ export const getSearchedNotificationsList = (
 
   if (substring) {
     Object.keys(obj).forEach((key) => {
-      if ((obj[key].app).includes(substring)) {
+      if ((obj[key].app.toLowerCase()).includes(substring.toLowerCase())) {
         matchedObjects[key] = obj[key];
       } 
      else{
-      if ((obj[key].title).includes(substring)) {
+      if ((obj[key].title.toLowerCase()).includes(substring.toLowerCase())) {
         matchedObjects[key] = obj[key];
       } 
      }

@@ -5,6 +5,7 @@ import { useCallback, useContext, useState } from 'react';
 import type { ChatFeedsType} from '../..';
 import { Constants } from '../..';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
+import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 
 interface fetchRequests {
@@ -16,7 +17,7 @@ const useFetchRequests = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { setRequestsFeed} =
-  useContext<any>(ChatMainStateContext);
+  useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { account, env,decryptedPgpPvtKey } =
   useContext<any>(ChatAndNotificationPropsContext);
   

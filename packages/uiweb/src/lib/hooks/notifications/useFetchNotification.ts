@@ -3,6 +3,7 @@ import type { ParsedResponseType} from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { ChatAndNotificationPropsContext } from '../../context';
 import { ParsedNotificationType } from '../../types';
+import { convertReponseToParsedArray } from '../../helpers/notification';
 
 
 interface fetchNotification {
@@ -31,21 +32,12 @@ const useFetchNotification = () => {
           spam,
           limit: limit
         });
-        const parsedResponse = PushAPI.utils.parseApiResponse(results);
-        const map1 = new Map();
-        const map2 = new Map();
-        results.forEach( (each:any) => {
-          map1.set(each.payload.data.sid , each.epoch);
-          map2.set(each.payload.data.sid , each.sender);
-      })
-      parsedResponse.forEach( (each:any) => {
-          each['date'] = map1.get(each.sid);
-          each['epoch'] = (new Date(each['date']).getTime() / 1000);
-          each['channel'] = map2.get(each.sid);
-      })
-       const modifiedNotifObj = Object.fromEntries(
-        parsedResponse.map((e:any) => [e.sid, e])
-     )
+        console.log(results)
+        const parsedResponse = convertReponseToParsedArray(results);
+        const modifiedNotifObj = Object.fromEntries(
+          parsedResponse.map((e: any) => [e.sid, e])
+        );
+        
         return modifiedNotifObj;
       } catch (error: Error | any) {
         setLoading(false);

@@ -3,6 +3,7 @@ import SupportChatMainStateContext from "./supportChat/supportChatMainStateConte
 import ChatMainStateContextProvider, { ChatMainStateContext } from "./chatAndNotification/chat/chatMainStateContext";
 import ChatAndNotificationPropsContext from "./chatAndNotification/chatAndNotificationPropsContext";
 import NotificationMainStateContextProvider,{NotificationMainStateContext} from "./chatAndNotification/notifcation/notificationMainStateContext";
+import ChatAndNotificationMainContextProvider, { ChatAndNotificationMainContext } from "./chatAndNotification/ChatAndNotificationMainContext";
 
 export {
   SupportChatPropsContext,
@@ -11,5 +12,7 @@ export {
   ChatAndNotificationPropsContext,
   ChatMainStateContext,
   NotificationMainStateContext,
-  NotificationMainStateContextProvider
+  NotificationMainStateContextProvider,
+  ChatAndNotificationMainContextProvider,
+  ChatAndNotificationMainContext
 };

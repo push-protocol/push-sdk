@@ -3,6 +3,7 @@ import { Env, IFeeds } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
+import { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import useFetchChat from './useFetchChat';
 
 interface SendMessageParams {
@@ -16,7 +17,7 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { setChatFeed, setChat, chatsFeed, chats, selectedChatId } =
-    useContext<any>(ChatMainStateContext);
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatAndNotificationPropsContext);
 
