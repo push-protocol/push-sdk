@@ -6,16 +6,37 @@ Future<KeyPair> generateKeyPair() async {
 }
 
 Future<String> sign(
-    {required String message, required String signingKey}) async {
-  //TODO implement sign
+    {required String message,
+    required String publicKey,
+    required String privateKey}) async {
+  return await OpenPGP.sign(message, publicKey, privateKey, "");
+}
 
+Future<String> pgpEncrypt({
+  required String plainText,
+  required List<String> keys,
+}) async {
+  final combinedPGPKey = keys.join();
 
-  // final messageObject = await OpenPGP.createMessage(text: message);
-  // final privateKey = await OpenPGP.readPrivateKey(armoredKey: signingKey);
-  // final signedMessage = await OpenPGP.sign(
-  //   message: messageObject,
-  //   signingKeys: [privateKey],
-  //   detached: true,
-  // );
-  return message;
+  // TODO: Figure out the armor part
+  // for (var i = 0; i < keys.length; i++) {
+  //   final armoredKey = keys[i];
+  //   final pgpKey = await OpenPGP.armorEncode(armoredKey);
+  //   pgpKeys.add(pgpKey);
+  // }
+
+  final encrypted = await OpenPGP.encrypt(
+    plainText,
+    combinedPGPKey,
+  );
+
+  return encrypted;
+}
+
+pgpDecrypt({
+  required String cipherText,
+  required String privateKeyArmored,
+  required String signatureArmored,
+}) async {
+//TODO implement pgpDecrypt
 }
