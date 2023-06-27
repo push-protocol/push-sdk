@@ -124,18 +124,19 @@ Future<IEncryptedRequest?> getEncryptedRequest({
             publicKey: senderCreatedUser.publicKey);
 
         return IEncryptedRequest(
-            message: response['cipherText'],
+            message: response['cipherText']!,
             encryptionType: 'pgp',
-            aesEncryptedSecret: response['encryptedSecret'],
-            signature: response['signature']);
+            aesEncryptedSecret: response['encryptedSecret']!,
+            signature: response['signature']!);
       }
     }
   } else if (group != null) {
-    if (group['isPublic']) {
-      final signature = await signMessageWithPGP({
-        'message': message,
-        'privateKeyArmored': senderCreatedUser.privateKey,
-      });
+    if (group.isPublic) {
+      final signature = await signMessageWithPGP(
+        message: message,
+        publicKey: senderCreatedUser.publicKey,
+        privateKeyArmored: senderCreatedUser.privateKey!,
+      );
 
       return IEncryptedRequest(
           message: message,
@@ -144,19 +145,19 @@ Future<IEncryptedRequest?> getEncryptedRequest({
           signature: signature);
     } else {
       final publicKeys =
-          group['members'].map((member) => member['publicKey']).toList();
+          group.members.map((member) => member.publicKey).toList();
 
-      final response = await encryptAndSign({
-        'plainText': message,
-        'keys': publicKeys,
-        'privateKeyArmored': senderCreatedUser.privateKey,
-      });
+      final response = await encryptAndSign(
+          plainText: message,
+          keys: publicKeys,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+          publicKey: senderCreatedUser.publicKey);
 
       return IEncryptedRequest(
-          message: response['cipherText'],
+          message: response['cipherText']!,
           encryptionType: 'pgp',
-          aesEncryptedSecret: response['encryptedSecret'],
-          signature: response['signature']);
+          aesEncryptedSecret: response['encryptedSecret']!,
+          signature: response['signature']!);
     }
   }
 }

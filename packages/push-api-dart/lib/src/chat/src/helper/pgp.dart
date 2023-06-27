@@ -16,21 +16,21 @@ Future<String> pgpEncrypt({
   required String plainText,
   required List<String> keys,
 }) async {
-  // final pgpKeys = [];
+  final combinedPGPKey = keys.join();
 
+  // TODO: Figure out the armor part
   // for (var i = 0; i < keys.length; i++) {
   //   final armoredKey = keys[i];
   //   final pgpKey = await OpenPGP.armorEncode(armoredKey);
   //   pgpKeys.add(pgpKey);
   // }
 
-  // final message = await Message.fromText(plainText);
-  // final encrypted = await Encryptor.encrypt(
-  //   message: message,
-  //   encryptionKeys: pgpKeys,
-  // );
+  final encrypted = await OpenPGP.encrypt(
+    plainText,
+    combinedPGPKey,
+  );
 
-  // return encrypted;
+  return encrypted;
 }
 
 pgpDecrypt({
