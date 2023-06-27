@@ -68,3 +68,17 @@ class Feeds {
     return data;
   }
 }
+
+class IEncryptedRequest {
+  final String message;
+  final String encryptionType;
+  final String aesEncryptedSecret;
+  final String signature;
+
+  IEncryptedRequest({
+    required this.message,
+    required this.encryptionType,
+    required this.aesEncryptedSecret,
+    required this.signature,
+  });
+}

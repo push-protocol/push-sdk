@@ -227,11 +227,3 @@ Future<String> decryptAndVerifySignature({
     return 'Unable to decrypt message';
   }
 }
-
-pgpDecrypt({
-  required String cipherText,
-  required String privateKeyArmored,
-  required String signatureArmored,
-}) async {
-//TODO implement pgpDecrypt
-}

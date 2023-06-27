@@ -38,14 +38,127 @@ Future<List<Feeds>> decryptFeeds({
   return feeds;
 }
 
-getEncryptedRequest({
+Future<String> signMessageWithPGP(
+    {required String message,
+    required String publicKey,
+    required String privateKeyArmored}) async {
+  final signature = await sign(
+      message: message, publicKey: publicKey, privateKey: privateKeyArmored);
+  return signature;
+}
+
+Future<Map<String, String>> encryptAndSign(
+    {required String plainText,
+    required List<String> keys,
+    required String privateKeyArmored,
+    required String publicKey}) async {
+  final secretKey = generateRandomSecret(15);
+  final cipherText =
+      await aesEncrypt(plainText: plainText, secretKey: secretKey);
+
+  final encryptedSecret = await pgpEncrypt(plainText: secretKey, keys: keys);
+
+  final signature = await sign(
+      message: cipherText, privateKey: privateKeyArmored, publicKey: publicKey);
+
+  return {
+    'cipherText': cipherText,
+    'encryptedSecret': encryptedSecret,
+    'signature': signature,
+    'sigType': 'pgp',
+    'encType': 'pgp',
+  };
+}
+
+Future<IEncryptedRequest?> getEncryptedRequest({
   required String receiverAddress,
-  required User senderCreatedUser,
+  required ConnectedUser senderCreatedUser,
   required String message,
   required bool isGroup,
   GroupDTO? group,
-}) {
-  //Todo implement getEncryptedRequest
+}) async {
+  if (!isGroup) {
+    final User? receiverCreatedUser = await getUser(address: receiverAddress);
+
+    if (receiverCreatedUser == null || receiverCreatedUser.publicKey == null) {
+      if (!isValidETHAddress(receiverAddress)) {
+        throw Exception('Invalid receiver address!');
+      }
+
+      await createUserService(
+          user: receiverAddress, publicKey: '', encryptedPrivateKey: '');
+      // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
+
+      final signature = await signMessageWithPGP(
+        message: message,
+        publicKey: senderCreatedUser.publicKey,
+        privateKeyArmored: senderCreatedUser.privateKey!,
+      );
+
+      return IEncryptedRequest(
+          message: message,
+          encryptionType: 'PlainText',
+          aesEncryptedSecret: '',
+          signature: signature);
+    } else {
+      // It's possible for a user to be created but the PGP keys still not created
+
+      if (!receiverCreatedUser.publicKey
+          .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
+        final signature = await signMessageWithPGP(
+          message: message,
+          publicKey: senderCreatedUser.publicKey,
+          privateKeyArmored: senderCreatedUser.privateKey!,
+        );
+
+        return IEncryptedRequest(
+            message: message,
+            encryptionType: 'PlainText',
+            aesEncryptedSecret: '',
+            signature: signature);
+      } else {
+        final response = await encryptAndSign(
+            plainText: message,
+            keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
+            privateKeyArmored: senderCreatedUser.privateKey!,
+            publicKey: senderCreatedUser.publicKey);
+
+        return IEncryptedRequest(
+            message: response['cipherText'],
+            encryptionType: 'pgp',
+            aesEncryptedSecret: response['encryptedSecret'],
+            signature: response['signature']);
+      }
+    }
+  } else if (group != null) {
+    if (group['isPublic']) {
+      final signature = await signMessageWithPGP({
+        'message': message,
+        'privateKeyArmored': senderCreatedUser.privateKey,
+      });
+
+      return IEncryptedRequest(
+          message: message,
+          encryptionType: 'PlainText',
+          aesEncryptedSecret: '',
+          signature: signature);
+    } else {
+      final publicKeys =
+          group['members'].map((member) => member['publicKey']).toList();
+
+      final response = await encryptAndSign({
+        'plainText': message,
+        'keys': publicKeys,
+        'privateKeyArmored': senderCreatedUser.privateKey,
+      });
+
+      return IEncryptedRequest(
+          message: response['cipherText'],
+          encryptionType: 'pgp',
+          aesEncryptedSecret: response['encryptedSecret'],
+          signature: response['signature']);
+    }
+  }
 }
 
 Future<String> getDecryptedPrivateKey({
@@ -53,7 +166,7 @@ Future<String> getDecryptedPrivateKey({
   required EthWallet wallet,
   required User user,
 }) async {
-//TODO implement getDecryptedPrivateKey
+// TODO implement getDecryptedPrivateKey
 
   return '';
 }
