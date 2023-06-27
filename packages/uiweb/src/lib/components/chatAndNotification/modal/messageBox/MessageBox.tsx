@@ -16,7 +16,6 @@ import {
   shortenText,
 } from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
-import { CheckCircleIcon } from '../../../../icons/CheckCircle';
 import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
 import type { FileMessageContent } from '../../../../types';
 
@@ -377,7 +376,7 @@ export const MessageBox = () => {
       overflow="hidden"
       height="100%"
     >
-      <Section
+      <Container
         width="100%"
         height="85%"
         justifyContent="start"
@@ -461,7 +460,7 @@ export const MessageBox = () => {
             </MessageListCard>
           ) : null}
         </>
-      </Section>
+      </Container>
 
       {!requestFeedids.includes(selectedChatId as string) && (
         <Typebar scrollToBottom={scrollToBottom} />
@@ -473,16 +472,19 @@ export const MessageBox = () => {
 //styles
 
 const MessageListCard = styled(Section)`
-  &::-webkit-scrollbar-thumb {
-    background: rgb(181 181 186);
-    border-radius: 10px;
-  }
 
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
 `;
 
+const Container = styled(Section)`
+&::-webkit-scrollbar-thumb {
+  background: rgb(181 181 186);
+  border-radius: 10px;
+}
+
+&::-webkit-scrollbar {
+  width: 5px;
+}
+`;
 const FileDownloadIcon = styled.i`
   color: #575757;
 `;
