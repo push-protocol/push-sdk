@@ -1,6 +1,13 @@
 /**
  * @file Button
  * generic button component for spaces
+ * Represents the props for the Button component.
+ * @interface IButtonProps
+ * @property {string} [width] - The width of the button. Optional.
+ * @property {React.ReactNode} children - The content of the button.
+ * @property {React.MouseEventHandler} [onClick] - The click event handler for the button. Optional.
+ * @property {ISpacesTheme} [theme] - The theme for the button. Optional.
+ * @property {any} [customStyle] - Custom styles for the button. Optional.
  */
 
 import { MouseEventHandler, useContext } from 'react'
@@ -17,10 +24,17 @@ export interface IButtonProps {
     customStyle?: any;
 }
 
-export const Button = (props: IButtonProps) => {
+/**
+ * A button component.
+ * @function Button
+ * @param {IButtonProps} props - The props for the Button component.
+ * @returns {JSX.Element} The rendered Button component.
+ */
+export const Button: React.FC<IButtonProps> = (props) => {
     const theme = useContext(ThemeContext);
 
     const { onClick, width, customStyle } = props;
+
     return (
         <SpacesButton
             onClick={onClick}
@@ -39,15 +53,15 @@ const SpacesButton = styled.button<IButtonProps>`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 10px 16px;
+    padding: ${(props => props.customStyle ? props.customStyle.padding : '10px 16px')};
     margin-top: 12px;
 
     background: ${(props => props.customStyle ? props.customStyle.background : props.theme.btnColorPrimary)};
     border: 1px solid ${(props => props.customStyle ? props.customStyle.borderColor : props.theme.btnOutline)};
-    color: ${(props => props.theme.titleTextColor)};
+    color: ${(props => props.customStyle ? props.customStyle.color : props.theme.titleTextColor)};
     border-radius: 8px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: ${(props => props.customStyle ? props.customStyle.fontWeight : '700')};
 
     /* Inside auto layout */
     flex: none;
@@ -58,7 +72,6 @@ const SpacesButton = styled.button<IButtonProps>`
 
     &:hover {
         cursor: pointer;
-        background: ${(props => props.theme.btnOutline)};
     }
 
     width: ${(props => props.width ? props.width : '100%')};

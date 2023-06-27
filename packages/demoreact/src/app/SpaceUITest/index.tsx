@@ -14,7 +14,7 @@ export const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => 
   const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
-    titleTextColor: 'beige',
+    statusColorError: 'red',
   }
 
   return (

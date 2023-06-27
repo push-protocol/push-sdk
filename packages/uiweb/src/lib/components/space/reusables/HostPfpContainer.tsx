@@ -42,17 +42,17 @@ const ProfileContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: center;
-}`;
+`;
 
 const PfpContainer = styled.div`
   display: flex;
-}`;
+`;
 
 const Pfp = styled.img<{ imageHeight?: string }>`
   height: ${(props) => (props.imageHeight ?? '32px')};
   width: ${(props) => (props.imageHeight ?? '32px')};;
   border-radius: 50%;
-}`;
+`;
 
 const HostContainer = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ const HostContainer = styled.div`
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-}`;
+`;
 
 const HostName = styled.div`
   display: flex;
@@ -71,13 +71,13 @@ const HostName = styled.div`
   font-weight: 600;
   font-size: 15px;
   width: 100%;
-}`;
+`;
 
 const Name = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}`;
+`;
 
 const Host = styled.div<{ statusTheme?: string }>`
   display: flex;
@@ -96,7 +96,7 @@ const Host = styled.div<{ statusTheme?: string }>`
   border-radius: 6px;
   font-weight: 500;
   font-size: 10px;
-}`;
+`;
 
 const HostHandle = styled.div<{ statusTheme?: string }>`
   color: ${(props) => (props.statusTheme === 'Live' ? 'inherit' : '#71717A')};
@@ -108,4 +108,4 @@ const HostHandle = styled.div<{ statusTheme?: string }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}`;
+`;
