@@ -79,6 +79,7 @@ type SectionStyleProps = {
   borderWidth?: string;
   borderRadius?: string;
   flex?: string;
+  zIndex?: string;
 };
 
 export const Section = styled.div<SectionStyleProps>`
@@ -114,6 +115,7 @@ export const Section = styled.div<SectionStyleProps>`
   border-width: ${(props) => props.borderWidth || 'initial'};
   border-color: ${(props) => props.borderColor || 'initial'};
   border-style: ${(props) => props.borderStyle || 'initial'};
+  z-index: ${(props) => props.zIndex || '0'};
 `;
 
 type ImageStyleProps = {

@@ -50,11 +50,30 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const {activeTab, setActiveTab } = useContext<any>(ChatAndNotificationMainContext)
+  const { activeTab, setActiveTab } = useContext<any>(ChatAndNotificationMainContext)
   const { setSearchedChats, setSelectedChatId } = useContext<any>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
+
+  const UnreadChats = () => {
+    return (
+      <Section
+        borderRadius='100px'
+        background={activeTab === tabValue ? '#0D67FE' : '#62626A'}
+        height='20px'
+        width='20px'
+      >
+        <Span
+          fontSize='12px'
+          color='#FFFFFF'
+        >
+          2
+        </Span>
+      </Section>
+    )
+  }
+
   return (
     <Section
       gap="10px"
@@ -70,9 +89,15 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
           setSearchedNotifications(null);
         }
       }}
-      borderColor={activeTab === tabValue ? '#0D67FE' : '#DDDDDF'}
-      borderWidth={activeTab === tabValue ? '0 0 2px 0' : '0 0 1px 0'}
-      padding="0 0 15px 0"
+      borderColor={activeTab === tabValue ? '#0D67FE' : '#C8C8CB'}
+      borderWidth={activeTab === tabValue ? ' 2px ' : tabValue === PUSH_TABS.CHATS ? '1px 0px 1px 1px' : '1px 1px 1px 0px'}
+      borderRadius={activeTab === tabValue ? '8px' : tabValue === PUSH_TABS.CHATS ? '8px 0px 0px 8px' : '0px 8px 8px 0px'}
+      position='relative'
+      background={activeTab === tabValue ? '#F0F5FF;' : '#FFF'}
+      left={tabValue === PUSH_TABS.APP_NOTIFICATIONS ? '-5px' : '0px'}
+      right={tabValue === PUSH_TABS.CHATS ? '5px' : '0px'}
+      padding="8px 0 8px 0"
+      zIndex={activeTab === tabValue ? '10' : '0'}
     >
       <TabTitleSpan
         color={activeTab === tabValue ? '#0D67FE' : '#62626A'}
@@ -82,18 +107,23 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
       >
         {tabName}
       </TabTitleSpan>
-      {/* <UnreadChats
-        // numberOfUnreadMessages="2"
-        background="rgb(13 103 254 / 28%)"
-        color="#0D67FE"
-      /> */}
+      <UnreadChats
+      // numberOfUnreadMessages="2"
+      // background="rgb(13 103 254 / 28%)"
+      // color="#0D67FE"
+      />
+
     </Section>
   );
 };
 
+
+
 const SidebarTabs = () => {
   return (
-    <Section padding=" 0 0 10px 0">
+    <Section
+      // borderWidth='1px' borderColor='#C8C8CB' borderStyle='solid' borderRadius='9px' 
+      margin=" 0 0 10px 0">
       <Tab tabName="Chat" tabValue={PUSH_TABS.CHATS} />
       <Tab tabName="App Notifications" tabValue={PUSH_TABS.APP_NOTIFICATIONS} />
     </Section>
@@ -234,7 +264,7 @@ export const Sidebar = () => {
         const defaultFeed = getDefaultFeedObject({ user: result });
         setSearchedChats({ [defaultFeed.did]: defaultFeed });
         setNewChat(true);
-      } else{setSearchedChats({});}
+      } else { setSearchedChats({}); }
     }
   };
 
