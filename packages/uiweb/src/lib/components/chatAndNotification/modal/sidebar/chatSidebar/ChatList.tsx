@@ -15,7 +15,7 @@ export const ChatList: React.FC<ChatListPropType> = ({ chatsFeed }) => {
     <>
       {!!Object.keys(chatsFeed || {}).length &&
         Object.keys(chatsFeed).map((id: string) => (
-          <ChatSnap chat={chatsFeed[id]} id={id} />
+          <ChatSnap chat={chatsFeed[id]} id={id} key={id} />
         ))}
     </>
   );

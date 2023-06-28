@@ -205,14 +205,14 @@ export const Sidebar = () => {
     REQUESTS: {
       title: PushSubTabTitle.REQUESTS.title,
       subTitle: ` ${shortenNumber(
-        Object.keys(requestsFeed || {}).length
+        Object.keys(requestsFeed || {}).length,10
       )} requests from people you may know`,
       icon: <AngleArrowIcon />,
     },
     SPAM: {
       title: PushSubTabTitle.SPAM.title,
       subTitle: `${shortenNumber(
-        Object.keys(spamNotifsFeed || {}).length
+        Object.keys(spamNotifsFeed || {}).length,5
       )} messages in your spam box`,
       icon: <SpamIconSvg />,
     },

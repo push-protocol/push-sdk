@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { SpinnerSvg } from '../../icons/SpinnerSvg';
 

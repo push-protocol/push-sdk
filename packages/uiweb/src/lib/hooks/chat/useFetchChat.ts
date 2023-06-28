@@ -38,7 +38,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [decryptedPgpPvtKey]
+    [decryptedPgpPvtKey,env]
   );
 
   return { fetchChat, error, loading };

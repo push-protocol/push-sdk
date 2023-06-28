@@ -318,6 +318,7 @@ export const MessageBox = () => {
   //optimise it
   const getChatCall = async () => {
     let threadHash = null;
+   
     if (!selectedMessages && selectedChat?.threadhash) {
       threadHash = selectedChat?.threadhash;
     } else if (chats.size && selectedMessages?.lastThreadHash) {
@@ -338,6 +339,7 @@ export const MessageBox = () => {
     // }
 
     (async function () {
+
       await getChatCall();
     })();
   }, [selectedChatId]);

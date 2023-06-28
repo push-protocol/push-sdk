@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { ChatAndNotificationMainContextProvider, ChatAndNotificationPropsContext, NotificationMainStateContextProvider } from '../../context';
 import 'font-awesome/css/font-awesome.min.css';
 import { Constants } from '../../config';
@@ -25,7 +25,7 @@ export type ChatAndNotificationProps = {
 export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   account,
   decryptedPgpPvtKey = null,
-  activeTab = PUSH_TABS.CHATS,
+  activeTab = null,
   activeChat = null,
   onClose = null,
   signer = null,

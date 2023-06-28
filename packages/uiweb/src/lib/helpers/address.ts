@@ -9,6 +9,7 @@ export const walletToPCAIP10 = (account: string): string => {
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
+  if(wallet)
   wallet = wallet.replace('eip155:', '');
   return wallet;
 };

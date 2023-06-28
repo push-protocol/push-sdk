@@ -31,7 +31,7 @@ const Message = ({
 }) => {
   return messageType === 'Text' ? (
     <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>
-      {shortenText(messageContent, 40)}
+      {shortenText(messageContent, 28)}
     </Span>
   ) : messageType === 'Image' ? (
     <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A" cursor='pointer'>

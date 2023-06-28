@@ -88,7 +88,7 @@ export const RequestsFeedList = () => {
       <Span margin='20px 0 0 0'>No Requests yet</Span>
     )}
 
-    <div ref={pageRef} />
+<div ref={pageRef} style={{padding:'1px'}}></div>
 
     {paginateLoading && (
       <Section margin="10px 0">

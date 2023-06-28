@@ -2,25 +2,30 @@ import useFetchChats from '../../../../../hooks/chat/useFetchChats';
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
+import {
+  ChatMainStateContext,
+  ChatAndNotificationPropsContext,
+} from '../../../../../context';
 import { ChatList } from './ChatList';
 import { Section } from '../../../../reusables/sharedStyling';
 import { Spinner } from '../../../../reusables/Spinner';
 import { chatLimit } from '../../../../../config';
-import type { ChatFeedsType} from '../../../../../types';
+import type { ChatFeedsType } from '../../../../../types';
 import { SIDEBAR_PLACEHOLDER_KEYS } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
 import { SidebarPlaceholder } from '../SidebarPlaceholder';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const ChatsFeedList = () => {
-  const { chatsFeed, setChatsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { chatsFeed, setChatsFeed } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);
   const isInViewport1 = useIsInViewport(pageRef, '1px');
-  const { decryptedPgpPvtKey, account, env } =
-    useContext<any>(ChatAndNotificationPropsContext);
+  const { decryptedPgpPvtKey, account, env } = useContext<any>(
+    ChatAndNotificationPropsContext
+  );
   const { fetchChats, loading } = useFetchChats();
 
   const fetchChatList = async () => {
@@ -36,7 +41,7 @@ export const ChatsFeedList = () => {
     if (decryptedPgpPvtKey) {
       fetchChatList();
     }
-  }, [fetchChats, decryptedPgpPvtKey, env, page,account]);
+  }, [fetchChats, env, page, account]);
 
   useEffect(() => {
     if (
@@ -70,7 +75,6 @@ export const ChatsFeedList = () => {
     }
   };
 
-
   return (
     <ChatListCard
       overflow="hidden auto"
@@ -80,19 +84,18 @@ export const ChatsFeedList = () => {
       {(!loading || paginateLoading) && Object.keys(chatsFeed || {}).length ? (
         <ChatList chatsFeed={chatsFeed} />
       ) : (
-        !paginateLoading && loading && (
+        !paginateLoading &&
+        loading && (
           <Section margin="10px 0">
             <Spinner />
           </Section>
         )
       )}
       {!loading && Object.keys(chatsFeed).length === 0 && (
-       <SidebarPlaceholder
-       id={SIDEBAR_PLACEHOLDER_KEYS.CHAT}
-      />
+        <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.CHAT} />
       )}
 
-      <div ref={pageRef} />
+      <div ref={pageRef} style={{ padding: '1px' }}></div>
 
       {paginateLoading && (
         <Section margin="10px  0">

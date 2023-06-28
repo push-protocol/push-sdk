@@ -18,12 +18,12 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
   const isSubscribedFn = (channel: string) => {
     return subscriptionStatus.get(channel);
   };
-  console.log(notificationFeeds)
   return (
     <>
       {!!Object.keys(notificationFeeds || {}).length &&
         Object.keys(notificationFeeds).map((id: string) => (
           <NotificationItem
+          key={id}
             notificationTitle={notificationFeeds[id].title}
             notificationBody={notificationFeeds[id].message}
             cta={notificationFeeds[id].cta}

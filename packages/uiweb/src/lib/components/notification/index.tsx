@@ -11,7 +11,7 @@ import ActionButton from './styled/ActionButton';
 import { useDecrypt, DecryptButton } from './decrypt';
 import chainDetails from './chainDetails';
 
-import LinkSVG from "../../icons/link.svg";
+import { LinkIcon } from "../../icons/Link";
 
 // ================= Define types
 export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "BSC_MAINNET" | "BSC_TESTNET" | "OPTIMISM_MAINNET" | "OPTIMISM_TESTNET" | "POLYGON_ZK_EVM_TESTNET" | "POLYGON_ZK_EVM_MAINNET" | "THE_GRAPH" | undefined;
@@ -144,7 +144,6 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   },[isSubscribedFn, isSpam]);
   
   if (isSubscribed && isSpam) return null;
-
   // render
   return (
     <Container
@@ -218,7 +217,10 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             {
               isCtaURLValid
               ?
-                <img src={LinkSVG} alt="CTA link" style={{height: "20px", marginLeft: "7px"}} />
+              <span style={{height: "20px", marginLeft: "7px"}} >
+                <LinkIcon />
+                </span>
+                  
               :
                 ""
             }

@@ -70,8 +70,8 @@ export const MessageBoxHeader = () => {
   const selectedChat =
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
-    (searchedChats ? searchedChats[selectedChatId as string] : null);
-
+    ((Object.keys(searchedChats || {}).length )? searchedChats![selectedChatId as string] : null);
+   
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -98,7 +98,7 @@ export const MessageBoxHeader = () => {
     }
   };
   return (
-    <Section gap="12px">
+   selectedChat? <Section gap="12px">
       <Div
         width="16px"
         height="16px"
@@ -128,7 +128,7 @@ export const MessageBoxHeader = () => {
           </Span>
         </Tooltip>
       </Section>
-    </Section>
+    </Section>:null
   );
 };
 
@@ -191,7 +191,6 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     setSelectedChatId,
     searchedChats,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
-
   const condition =
     (selectedChatId && modalOpen) ||
     (!selectedChatId && modalOpen && activeSubTab);
