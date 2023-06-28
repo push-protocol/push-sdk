@@ -7,9 +7,9 @@ import OpenPGP from 'react-native-fast-openpgp';
 import { ethers } from 'ethers';
 
 import * as PushApi from '@pushprotocol/restapi';
-import { CreateUserProps } from '@pushprotocol/restapi/src/lib/user/createUser.js';
 import { IPGPHelper } from '@pushprotocol/restapi/src/lib/chat/helpers/pgp.js';
-import { ENV } from '@pushprotocol/restapi/src/lib/constants.js';
+import Constants from '@pushprotocol/restapi/src/lib/constants.js';
+import { decryptPGPKey } from '@pushprotocol/restapi/src/lib/helpers/crypto.js';
 
 // TODO:fix this
 //@ts-ignore
@@ -31,11 +31,39 @@ const PGPHelper: IPGPHelper = {
       publicKeyArmored: keys.publicKey,
     };
   },
+
+  async sign({ message, signingKey }) {
+    const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
+    const signature = await OpenPGP.sign(message, publicKey, signingKey, '');
+    return signature.replace('\nVersion: openpgp-mobile', '');
+  },
+
+  async pgpEncrypt({ keys, plainText }) {
+    console.log('keys', keys);
+    const encryptedSecret = await OpenPGP.encrypt(plainText, keys.join('\n'));
+    console.log('encryptedSecret', encryptedSecret);
+    return encryptedSecret;
+  },
 };
 
-const createUser = async (options: CreateUserProps) => {
-  let user = await PushApi.user.createUserCore(options, PGPHelper);
-  return user;
+const createUser = async (options: PushApi.user.CreateUserProps) => {
+  return await PushApi.user.createUserCore(options, PGPHelper);
+};
+
+const get = async (options: PushApi.AccountEnvOptionsType) => {
+  return await PushApi.user.get(options);
+};
+
+const profileUpdate = async (options: PushApi.user.ProfileUpdateProps) => {
+  return await PushApi.user.profile.updateCore(options, PGPHelper);
+};
+
+const send = async (options: PushApi.ChatSendOptionsType) => {
+  return await PushApi.chat.sendCore(options, PGPHelper);
+};
+
+const approve = async (options: PushApi.chat.ApproveRequestOptionsType) => {
+  return await PushApi.chat.approveCore(options, PGPHelper);
 };
 
 // checking if ethers works
@@ -52,11 +80,18 @@ const genRandomAddress = async () => {
   return address;
 };
 
+const profileUpgrade = PushApi.user.auth.update;
+
 export {
   PGPHelper,
   genRandomAddress,
   createUser,
+  get,
+  profileUpdate,
   PushApi,
-  CreateUserProps,
-  ENV,
+  decryptPGPKey,
+  profileUpgrade,
+  send,
+  approve,
+  Constants,
 };
