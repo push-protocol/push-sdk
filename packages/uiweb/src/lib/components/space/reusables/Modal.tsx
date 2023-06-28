@@ -5,11 +5,16 @@
  */
 import styled from 'styled-components'
 
-export const Modal = (props: any) => {
+interface IModalProps {
+    width?: string;
+    children: any;
+}
+
+export const Modal = (props: IModalProps) => {
     return (
         <div>
             <ModalOverlay>
-                <ModalParent>
+                <ModalParent width={props.width}>
                     { props.children }
                 </ModalParent>
             </ModalOverlay>
@@ -31,8 +36,7 @@ const ModalOverlay = styled.div`
     align-items: center;
 `;
 
-// const ModalParent = styled.div<IModalProps>`
-const ModalParent = styled.div`
+const ModalParent = styled.div<IModalProps>`
     position: absolute;
     top: 50%;
     left: 50%;
@@ -45,4 +49,6 @@ const ModalParent = styled.div`
 
     background: #FFFFFF;
     border-radius: 12px;
+
+    width: ${(props => props.width ? props.width : 'auto')};
 `;
