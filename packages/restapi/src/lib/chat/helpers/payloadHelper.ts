@@ -1,8 +1,9 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO } from '../../types';
-import { getEncryptedRequest } from './crypto';
+import { getEncryptedRequestCore } from './crypto';
 import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
+import { IPGPHelper, PGPHelper } from './pgp';
 
 export interface ISendMessagePayload {
   fromDID: string;
@@ -59,6 +60,25 @@ export const sendMessagePayload = async (
   messageType: string,
   env: ENV
 ): Promise<ISendMessagePayload> => {
+  return await sendMessagePayloadCore(
+    receiverAddress,
+    senderCreatedUser,
+    messageContent,
+    messageType,
+    env,
+    PGPHelper,
+  );
+};
+
+
+export const sendMessagePayloadCore = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  messageContent: string,
+  messageType: string,
+  env: ENV,
+  pgpHelper: IPGPHelper,
+): Promise<ISendMessagePayload> => {
   let isGroup = true;
   if (isValidETHAddress(receiverAddress)) {
     isGroup = false;
@@ -78,13 +98,14 @@ export const sendMessagePayload = async (
   }
 
   const { message, encryptionType, aesEncryptedSecret, signature } =
-    (await getEncryptedRequest(
+    (await getEncryptedRequestCore(
       receiverAddress,
       senderCreatedUser,
       messageContent,
       isGroup,
       env,
-      group
+      group,
+      pgpHelper,
     )) || {};
 
   const body: ISendMessagePayload = {
