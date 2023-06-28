@@ -16,7 +16,7 @@ import { authUpdate } from '../../../src/lib/user/auth.updateUser';
 
 describe('ProgressHook Tests', () => {
   const _env = Constants.ENV.DEV;
-  let provider = ethers.getDefaultProvider(5);
+  let provider = ethers.getDefaultProvider(11155111);
   let _signer: any;
   let walletAddress: string;
   let account: string;
@@ -29,7 +29,7 @@ describe('ProgressHook Tests', () => {
   const _nftAccount1 = `nft:eip155:${process.env['NFT_CHAIN_ID_1']}:${process.env['NFT_CONTRACT_ADDRESS_1']}:${process.env['NFT_TOKEN_ID_1']}`;
 
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     _signer = new ethers.Wallet(WALLET.privateKey, provider);
     walletAddress = _signer.address;

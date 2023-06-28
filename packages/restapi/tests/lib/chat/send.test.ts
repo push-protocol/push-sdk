@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 describe('PushAPI.chat.send', () => {
   const _env = Constants.ENV.DEV;
-  const provider = ethers.getDefaultProvider(5);
+  const provider = ethers.getDefaultProvider(11155111);
   let _signer1: any;
   let walletAddress1: string;
   let account1: string;
