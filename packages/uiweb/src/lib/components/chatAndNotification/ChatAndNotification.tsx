@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import { ChatFeedsType, PUSH_TABS } from '../../types';
+import type { ChatFeedsType} from '../../types';
+import { PUSH_TABS } from '../../types';
 import { CHAT_SOCKET_TYPE } from '../../types';
 import {
   ChatMainStateContext,
@@ -25,7 +26,7 @@ import {
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
 import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
-import { IFeeds } from '@pushprotocol/restapi';
+import type { IFeeds } from '@pushprotocol/restapi';
 import useFetchChat from '../../hooks/chat/useFetchChat';
 
 //make changes for users who dont have decryptedPgpPvtKey
