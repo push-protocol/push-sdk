@@ -1,8 +1,16 @@
 import 'package:openpgp/openpgp.dart';
 
 Future<KeyPair> generateKeyPair() async {
-  final keys = await OpenPGP.generate();
-  return keys;
+  final keyOptions = KeyOptions()
+    ..algorithm = Algorithm.RSA
+    ..rsaBits = 2048;
+
+  final keyPair = await OpenPGP.generate(
+      options: Options()
+        ..name = ''
+        ..email = ''
+        ..keyOptions = keyOptions);
+  return keyPair;
 }
 
 Future<String> sign(
