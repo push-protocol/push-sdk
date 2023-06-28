@@ -63,6 +63,7 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
         background={activeTab === tabValue ? '#0D67FE' : '#62626A'}
         height='20px'
         width='20px'
+        alignSelf='center'
       >
         <Span
           fontSize='12px'
