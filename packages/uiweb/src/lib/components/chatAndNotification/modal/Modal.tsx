@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
-import styled from 'styled-components';
+import React, { useContext } from 'react';
 import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../context';
+import type { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatAndNotificationMainContextType } from '../../../context/chatAndNotification/chatAndNotificationMainContext';
 import { PUSH_SUB_TABS } from '../../../types';
 import { Section } from '../../reusables/sharedStyling';
 import { Spinner } from '../../reusables/Spinner';
@@ -11,8 +12,8 @@ import { Sidebar } from './sidebar/Sidebar';
 
 export const Modal = () => {
 
-  const { activeSubTab } = useContext<any>(ChatAndNotificationMainContext)
-  const { selectedChatId, chatsFeed, requestsFeed, searchedChats } = useContext<any>(ChatMainStateContext);
+  const { activeSubTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { selectedChatId, chatsFeed, requestsFeed, searchedChats } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
   
   return (

@@ -3,8 +3,9 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import type { ChatFeedsType } from '../../types';
-import { CHAT_SOCKET_TYPE, NotificationFeedsType } from '../../types';
+import type { ChatFeedsType} from '../../types';
+import { PUSH_TABS } from '../../types';
+import { CHAT_SOCKET_TYPE } from '../../types';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
@@ -13,12 +14,7 @@ import {
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
 import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
-import {
-  chatLimit,
-  device,
-  notificationLimit,
-  requestLimit,
-} from '../../config';
+import { chatLimit, device, requestLimit } from '../../config';
 import useFetchRequests from '../../hooks/chat/useFetchRequests';
 import useFetchChats from '../../hooks/chat/useFetchChats';
 import {
@@ -27,9 +23,11 @@ import {
   getNewChatUser,
   walletToPCAIP10,
 } from '../../helpers';
-import useFetchNotification from '../../hooks/notifications/useFetchNotification';
 import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
 import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { IFeeds } from '@pushprotocol/restapi';
+import useFetchChat from '../../hooks/chat/useFetchChat';
 
 //make changes for users who dont have decryptedPgpPvtKey
 
@@ -42,17 +40,15 @@ export const ChatAndNotification = () => {
     setRequestsFeed,
     setSelectedChatId,
     setSearchedChats,
-    setChats,
+    chats,
     setConnectedProfile,
     requestsFeed,
     chatsFeed,
-  } = useContext<any>(ChatMainStateContext);
-  const {
-    setInboxNotifsFeed,
-    setSpamNotifsFeed,
-    subscriptionStatus,
-    setSubscriptionStatus,
-  } = useContext<any>(NotificationMainStateContext);
+    setChats
+  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { setInboxNotifsFeed, setSpamNotifsFeed } = useContext<any>(
+    NotificationMainStateContext
+  );
   const {
     decryptedPgpPvtKey,
     account,
@@ -65,6 +61,7 @@ export const ChatAndNotification = () => {
   const { fetchChatProfile } = useGetChatProfile();
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
+  const { fetchChat } = useFetchChat();
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
   useChatNotificationSocket({});
 
@@ -75,19 +72,18 @@ export const ChatAndNotification = () => {
     setRequestsFeed({});
     setInboxNotifsFeed({});
     setSpamNotifsFeed({});
-    // setSubscriptionStatus(new Map());
-    setActiveTab(activeChosenTab);
-
     // set active tab if present
     if (activeChosenTab) {
       setActiveTab(activeChosenTab);
       setModalOpen(true);
     }
+    else{
+      setActiveTab(PUSH_TABS.CHATS);
+    }
     setActiveSubTab(null);
-
-    setNewChat(false);
     setChats(new Map());
-  }, [account, decryptedPgpPvtKey, env, activeChosenTab]);
+    setNewChat(false);
+  }, [account, env, activeChosenTab]);
 
   //make a helper for the function
   const fetchRequestList = async () => {
@@ -118,7 +114,7 @@ export const ChatAndNotification = () => {
     if (decryptedPgpPvtKey) {
       fetchChatList();
     }
-  }, [fetchChats, decryptedPgpPvtKey, env, account]);
+  }, [fetchChats, env, account]);
 
   useEffect(() => {
     (async () => {
@@ -144,37 +140,50 @@ export const ChatAndNotification = () => {
         if (address) {
           setModalOpen(true);
           setSelectedChatId(walletToPCAIP10(address));
-          const selectedChat = chatsFeed[address] || requestsFeed[address];
+          let selectedChat = chatsFeed[address] || requestsFeed[address];
           if (!selectedChat) {
-            const result = await getNewChatUser({
-              searchText: address,
-              fetchChatProfile,
-              env,
-            });
+            selectedChat = (await fetchChat({
+              recipientAddress: walletToPCAIP10(address),
+            })) as IFeeds;
+            if (!Object.keys(selectedChat|| {}).length) {
+              const result = await getNewChatUser({
+                searchText: address,
+                fetchChatProfile,
+                env,
+              });
 
-            if (result) {
-              const defaultFeed = getDefaultFeedObject({ user: result });
-              setSearchedChats({ [defaultFeed.did]: defaultFeed });
+              if (result) {
+                selectedChat = getDefaultFeedObject({ user: result });
+              }
             }
-          } else {
-            setSearchedChats(null);
+            
           }
+          setSearchedChats({
+            [selectedChat.did ?? selectedChat.chatId]: selectedChat,
+          });
+
+        }
+        else{
+          setSearchedChats(null);
+          setSelectedChatId(null);
         }
       } else {
+
+        setSelectedChatId(null);
         setSearchedChats(null);
       }
+      // setChats(new Map())
     })();
-  }, [activeChat]);
-
+  }, [activeChat,env,account]);
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
   };
 
-  const toggleOverflow = (val:string) => {
+  const toggleOverflow = (val: string) => {
     if (typeof window != 'undefined' && window.document) {
       document.body.style.overflow = val;
-  }
-  }
+    }
+  };
 
   return (
     <Container

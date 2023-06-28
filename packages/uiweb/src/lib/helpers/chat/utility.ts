@@ -1,11 +1,11 @@
-export const shortenText = (text: string,len: number) => {
-    if (text?.length > len) return text.substring(0, len) + '...';
+export const shortenText = (text: string,len: number,_inBetween = false) => {
+    if (text?.length > len) return `${text.substring(0, len)}...${_inBetween?text.substring(text.length - len):''}`;
     else return text;
   };
 
 
-export  const shortenNumber = (val: number) => {
-    if (val >= 10) return '10+';
+export  const shortenNumber = (val: number,limit:number) => {
+    if (val >= limit) return `${limit}+`;
     return val;
   };
 

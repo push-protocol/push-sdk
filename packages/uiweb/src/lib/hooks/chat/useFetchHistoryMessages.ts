@@ -5,6 +5,7 @@ import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../config';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
+import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 
 
 
@@ -19,7 +20,7 @@ const useFetchHistoryMessages
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { chats,setChat,selectedChatId} =
-  useContext<any>(ChatMainStateContext);
+  useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { account, env,decryptedPgpPvtKey } =
   useContext<any>(ChatAndNotificationPropsContext);
 
@@ -36,22 +37,23 @@ const useFetchHistoryMessages
             env: env
           });
           chatHistory.reverse();
-          if (chats.get(selectedChatId)) {
+          if (chats.get(selectedChatId as string)) {
             const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
             const messages = Object.values(
-              [...chatHistory, ...chats.get(selectedChatId)!.messages].reduce((uniqueMap, message) => {
+              [...chatHistory, ...chats.get(selectedChatId  as string)!.messages].reduce((uniqueMap, message) => {
                 if (message.timestamp && !uniqueMap[message.timestamp]) {
                   uniqueMap[message.timestamp] = message;
                 }
                 return uniqueMap;
               }, uniqueMap)
             );
-            setChat(selectedChatId, {
+            setChat(selectedChatId  as string, {
               messages: messages,
               lastThreadHash: chatHistory[0].link
             });
           } else {
-            setChat(selectedChatId, { messages: chatHistory, lastThreadHash: chatHistory[0].link });
+            console.log(chatHistory)
+            setChat(selectedChatId  as string, { messages: chatHistory, lastThreadHash: chatHistory[0].link });
           }
     } catch (error: Error | any) {
       setLoading(false);

@@ -39,7 +39,7 @@ export const ChatWidgetTest = () => {
       decryptedPgpPvtKey={pvtKey}
       signer={librarySigner}
       // activeTab={PUSH_TABS.APP_NOTIFICATIONS}
-      // activeChat='eip155:0xcc45BaEb518CcbC7f8B01f8D7665fbe3A0D59f07'
+      activeChat='0x8bB172fe60fF10493eFcE7E64ABB2a557519f579'
     />
   );
 };

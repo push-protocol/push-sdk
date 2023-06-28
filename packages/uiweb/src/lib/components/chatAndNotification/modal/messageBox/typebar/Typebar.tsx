@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { Div, Image, Section } from '../../../../reusables/sharedStyling';
+import { Div, Section } from '../../../../reusables/sharedStyling';
 import { EmojiIcon } from '../../../../../icons/Emoji';
 import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
@@ -16,6 +16,8 @@ import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
 import { useClickAway } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatAndNotificationMainContextType } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
 
 type GIFType = {
   url: string;
@@ -34,8 +36,12 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const [gifOpen, setGifOpen] = useState<boolean>(false);
   const modalRef = useRef(null);
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
-  const { newChat, setNewChat } = useContext<any>(ChatAndNotificationMainContext)
-  const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } = useContext<any>(ChatMainStateContext);
+  const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
+    const {
+      newChat,
+      setNewChat,
+    } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
@@ -51,15 +57,15 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
     try {
       await sendMessage({
         message: content,
-        receiver: selectedChatId,
+        receiver: selectedChatId as string,
         messageType: type as any,
       });
       scrollToBottom();
 
-      if (chatsFeed[selectedChatId] || requestsFeed[selectedChatId])
+      if (chatsFeed[selectedChatId as string] || requestsFeed[selectedChatId as string])
         setSearchedChats(null);
       if (newChat) setNewChat(false);
-      if (!chatsFeed[selectedChatId]) fetchRequests({ page, requestLimit });
+      if (!chatsFeed[selectedChatId as string]) fetchRequests({ page, requestLimit });
     } catch (error) {
       console.log(error);
       //handle error
@@ -135,120 +141,142 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
     }
   };
 
+  //for fixing the typebar height
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (textAreaRef?.current?.style) {
+      textAreaRef.current.style.height = 25 + 'px';
+      const scrollHeight = textAreaRef.current?.scrollHeight;
+      textAreaRef.current.style.height = scrollHeight + 'px';
+
+      console.log("height", scrollHeight, textAreaRef.current.style.height)
+
+
+    }
+  }, [textAreaRef, typedMessage]);
+
   return (
-    <Container
-      borderColor="#DDDDDF"
-      borderStyle="solid"
-      borderWidth="1px"
-      borderRadius="8px"
-      gap="10px"
-      padding="13px 17px"
-      margin="12px 0 12px 0"
-      background="#fff"
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      <Section gap="8px">
-        <Div
-          width="20px"
-          cursor="pointer"
-          height="20px"
-          onClick={() => setShowEmojis(!showEmojis)}
-        >
-          <EmojiIcon />
-        </Div>
-
-        {showEmojis && (
-          <Section
-            ref={modalRef}
-            position="absolute"
-            bottom="3.5rem"
-            left="3.7rem"
+    <Container>
+      <Section
+        borderColor="#DDDDDF"
+        borderStyle="solid"
+        borderWidth="1px"
+        borderRadius="8px"
+        gap="10px"
+        padding="13px 17px"
+        margin="12px 0 12px 0"
+        background="#fff"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Section gap="8px" flex='1'>
+          <Div
+            width="20px"
+            cursor="pointer"
+            height="20px"
+            onClick={() => setShowEmojis(!showEmojis)}
           >
-            <EmojiPicker onEmojiClick={addEmoji} width={300} height={350} />
-          </Section>
-        )}
-        <MultiLineInput
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-              sendTextMsg();
-            }
-          }}
-          placeholder="Type your message..."
-          onChange={(e) => onChangeTypedMessage(e.target.value)}
-          value={typedMessage}
-          rows={1}
-        />
-      </Section>
-      <Section gap="11.5px">
-        <Section
-          width="34px"
-          height="30px"
-          cursor="pointer"
-          alignSelf='center'
-          onClick={() => setGifOpen(!gifOpen)}
-        >
-          <GifIcon />
-        </Section>
+            <EmojiIcon />
+          </Div>
 
-        {gifOpen && (
-          <Section
-            position="absolute"
-            bottom="3.5rem"
-            right="6.6rem"
-            ref={modalRef}
-          >
-            <GifPicker
-              onGifClick={sendGIF}
-              width={350}
-              height={350}
-              tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-            />
-          </Section>
-        )}
-        <Section onClick={handleUploadFile}>
-          {!(loading || filesUploading) && (
-            <>
-              <Section
-                width="17px"
-                height="17px"
-                cursor="pointer"
-                alignSelf='center'
-                onClick={() => setNewChat(true)}
-              >
-                <AttachmentIcon />
-              </Section>
-
-              <FileInput
-                type="file"
-                ref={fileUploadInputRef}
-                onChange={(e) => uploadFile(e)}
-              />
-            </>
+          {showEmojis && (
+            <Section
+              ref={modalRef}
+              position="absolute"
+              bottom="3.5rem"
+              left="3.7rem"
+            >
+              <EmojiPicker onEmojiClick={addEmoji} width={300} height={350} />
+            </Section>
           )}
+          <MultiLineInput
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                sendTextMsg();
+              }
+            }}
+            placeholder="Type your message..."
+            onChange={(e) => onChangeTypedMessage(e.target.value)}
+            value={typedMessage}
+            ref={textAreaRef}
+            rows={1}
+          />
         </Section>
-        {!(loading || filesUploading) && (
+        <Section gap="11.5px">
           <Section
+            width="34px"
+            height="30px"
             cursor="pointer"
             alignSelf='center'
-            onClick={() => sendTextMsg()}
+            onClick={() => setGifOpen(!gifOpen)}
           >
-            <SendIcon />
+            <GifIcon />
           </Section>
-        )}
 
-        {(loading || filesUploading) && <Spinner size="22" />}
+          {gifOpen && (
+            <Section
+              position="absolute"
+              bottom="3.5rem"
+              right="6.6rem"
+              ref={modalRef}
+            >
+              <GifPicker
+                onGifClick={sendGIF}
+                width={350}
+                height={350}
+                tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+              />
+            </Section>
+          )}
+          <Section onClick={handleUploadFile}>
+            {!(loading || filesUploading) && (
+              <>
+                <Section
+                  width="17px"
+                  height="17px"
+                  cursor="pointer"
+                  alignSelf='center'
+                  onClick={() => setNewChat(true)}
+                >
+                  <AttachmentIcon />
+                </Section>
+
+                <FileInput
+                  type="file"
+                  ref={fileUploadInputRef}
+                  onChange={(e) => uploadFile(e)}
+                />
+              </>
+            )}
+          </Section>
+          {!(loading || filesUploading) && (
+            <Section
+              cursor="pointer"
+              alignSelf='center'
+              onClick={() => sendTextMsg()}
+            >
+              <SendIcon />
+            </Section>
+          )}
+
+          {(loading || filesUploading) && <Spinner size="22" />}
+        </Section>
       </Section>
+
     </Container>
   );
 };
 
 //styles
-const Container = styled(Section)``;
+const Container = styled.div`
+  width:100%;
+  border-top:1px solid #DDDDDF;
+`;
 const MultiLineInput = styled.textarea`
   ::placeholder {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
   }
+  font-family:inherit;
   font-weight: 400;
   font-size: 16px;
   width: 27vw;
@@ -258,6 +286,9 @@ const MultiLineInput = styled.textarea`
   border: none;
   color: #000;
   resize: none;
+  flex:1;
+  padding-right:15px;
+  align-self: end;
   &&::-webkit-scrollbar {
     width: 4px;
   }
@@ -271,8 +302,10 @@ const MultiLineInput = styled.textarea`
     padding-top: 5px;
   }
   @media ${device.mobileL} {
-    width: 230px;
+    width: 27vw;
   }
+  min-height: 25px;
+  max-height: 75px;
 `;
 const FileInput = styled.input`
   display: none;

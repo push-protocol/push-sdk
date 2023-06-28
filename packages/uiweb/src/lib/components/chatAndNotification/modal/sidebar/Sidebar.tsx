@@ -6,7 +6,9 @@ import type {
   ChatFeedsType,
   NotificationFeedsType,
   PushSubTabs,
-  PushTabs,
+  PushTabs} from '../../../../types';
+import {
+  SIDEBAR_PLACEHOLDER_KEYS
 } from '../../../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../../../types';
 import {
@@ -16,8 +18,7 @@ import {
   ChatAndNotificationMainContext,
 } from '../../../../context';
 import useFetchChats from '../../../../hooks/chat/useFetchChats';
-import { Spinner } from '../../../reusables/Spinner';
-import { Section, Span, Image, Div } from '../../../reusables/sharedStyling';
+import { Section, Span, Div } from '../../../reusables/sharedStyling';
 import { ChatsFeedList } from './chatSidebar/ChatsFeedList';
 import type { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
 import { AngleArrowIcon } from '../../../../icons/AngleArrow';
@@ -33,6 +34,10 @@ import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
+import {SidebarPlaceholder} from './SidebarPlaceholder';
+import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
+
+
 
 export type TabPropType = {
   tabName: string;
@@ -50,11 +55,8 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const { activeTab, setActiveTab } = useContext<any>(
-    ChatAndNotificationMainContext
-  );
-  const { setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+  const {activeTab, setActiveTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { setSearchedChats, setSelectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -149,14 +151,14 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   tabValue,
   isClickable = false,
 }) => {
-  const { setActiveSubTab, activeSubTab } = useContext<any>(
-    ChatAndNotificationMainContext
-  );
-  const { setSearchedChats, setSelectedChatId } =
-    useContext<any>(ChatMainStateContext);
+
+  const { setActiveSubTab, activeSubTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
+  const { setSearchedChats, setSelectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
+
+
   return (
     <SubContainer
       justifyContent="start"
@@ -196,7 +198,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
         <Span fontWeight="700" fontSize="16px" color="#000">
           {subTab.title}
         </Span>
-        <Span textAlign="left" fontWeight="400" fontSize="16px" color="#62626A">
+        <Span cursor='pointer' textAlign="left" fontWeight="400" fontSize="16px" color={isClickable ? "#0D67FE " : "#62626A"}>
           {subTab.subTitle}
         </Span>
       </Section>
@@ -207,9 +209,13 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
 
-  const { newChat, setNewChat, activeTab, activeSubTab } = useContext<any>(
-    ChatAndNotificationMainContext
-  );
+
+  const {
+    newChat,
+    setNewChat,
+    activeTab,
+    activeSubTab
+  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
 
   const {
     chatsFeed,
@@ -238,16 +244,16 @@ export const Sidebar = () => {
   const PushSubTabDetails: PushSubTabDetailsType = {
     REQUESTS: {
       title: PushSubTabTitle.REQUESTS.title,
-      subTitle: `you have ${shortenNumber(
-        Object.keys(requestsFeed || {}).length
+      subTitle: ` ${shortenNumber(
+        Object.keys(requestsFeed || {}).length,10
       )} requests from people you may know`,
       icon: <AngleArrowIcon />,
     },
     SPAM: {
       title: PushSubTabTitle.SPAM.title,
-      subTitle: `you have ${shortenNumber(
-        Object.keys(spamNotifsFeed || {}).length
-      )} inbox messages in your spam box`,
+      subTitle: `${shortenNumber(
+        Object.keys(spamNotifsFeed || {}).length,5
+      )} messages in your spam box`,
       icon: <SpamIconSvg />,
     },
   };
@@ -282,9 +288,6 @@ export const Sidebar = () => {
 
   const onChatSearchReset = () => {
     setSearchedChats(null);
-    if (newChat) {
-      setNewChat(false);
-    }
   };
   const handleNotifSearch = async ({
     searchedText,
@@ -311,7 +314,7 @@ export const Sidebar = () => {
             feed={chatsFeed}
             handleSearch={handleChatSearch}
             onSearchReset={onChatSearchReset}
-            placeholder="Search User"
+            placeholder="Search name or domain"
           />
         )}
 
@@ -326,6 +329,11 @@ export const Sidebar = () => {
           />
         )}
 
+      {!searchedChats && newChat && (
+        <SidebarPlaceholder
+         id={SIDEBAR_PLACEHOLDER_KEYS.NEW_CHAT}
+        />
+      )}
       {!newChat &&
         !chatsLoading &&
         !searchedChats &&
@@ -367,9 +375,9 @@ export const Sidebar = () => {
             )}
           </ChatListCard>
           {searchedChats && !Object.keys(searchedChats).length && (
-            <Span width="100%" margin="10px 0 0 10px" textAlign="left">
-              No user found
-            </Span>
+              <SidebarPlaceholder
+                  id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH}
+              />
           )}
         </>
       )}
@@ -385,14 +393,12 @@ export const Sidebar = () => {
               )}
           </NotificationListCard>
           {searchedNotifications && !Object.keys(searchedNotifications).length && (
-            <Span width="100%" margin="10px 0 0 10px" textAlign="left">
-              No notifications found
-            </Span>
+             <SidebarPlaceholder
+             id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH}
+         />
           )}
         </>
       )}
-      {/* Spinner not working shift to chatsFeedList */}
-      {chatsLoading && <Spinner />}
     </Section>
   );
 };

@@ -32,8 +32,8 @@ const useFetchNotification = () => {
           spam,
           limit: limit
         });
-        console.log(results)
         const parsedResponse = convertReponseToParsedArray(results);
+        console.log(parsedResponse)
         const modifiedNotifObj = Object.fromEntries(
           parsedResponse.map((e: any) => [e.sid, e])
         );

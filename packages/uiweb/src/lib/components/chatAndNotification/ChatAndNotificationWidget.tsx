@@ -25,7 +25,7 @@ export type ChatAndNotificationProps = {
 export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   account,
   decryptedPgpPvtKey = null,
-  activeTab = PUSH_TABS.CHATS,
+  activeTab = null,
   activeChat = null,
   onClose = null,
   signer = null,

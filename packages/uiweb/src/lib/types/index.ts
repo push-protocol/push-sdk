@@ -71,6 +71,15 @@ export const LOCAL_STORAGE_KEYS = {
   CHATS: 'CHATS',
 } as const;
 
+export const SIDEBAR_PLACEHOLDER_KEYS = {
+  CHAT: 'CHAT',
+  SEARCH: 'SEARCH',
+  NOTIFICATION: 'NOTIFICATION',
+  NEW_CHAT: 'NEW_CHAT'
+} as const;
+
+export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
+
 export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
 export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
 export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];

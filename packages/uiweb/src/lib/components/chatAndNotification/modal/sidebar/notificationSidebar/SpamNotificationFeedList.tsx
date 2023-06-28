@@ -1,4 +1,3 @@
-import useFetchChats from '../../../../../hooks/chat/useFetchChats';
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 
@@ -35,10 +34,8 @@ export const SpamNotificationFeedList = () => {
     });
     if (feeds) {
       const firstFeeds: NotificationFeedsType = { ...feeds };
-      console.log(firstFeeds);
       setSpamNotifsFeed(firstFeeds);
     }
-    console.log({});
   };
 
   useEffect(() => {
@@ -70,16 +67,13 @@ export const SpamNotificationFeedList = () => {
     }
     try {
       setPaginateLoading(true);
-      console.log(page);
       const feeds = await fetchNotification({
         page,
         limit: notificationLimit,
         spam: true,
       });
       const newFeed: NotificationFeedsType = { ...spamNotifsFeed, ...feeds };
-      console.log(spamNotifsFeed);
-      console.log(feeds);
-      console.log(newFeed);
+    
 
       setSpamNotifsFeed(newFeed);
     } catch (error) {
@@ -114,7 +108,7 @@ export const SpamNotificationFeedList = () => {
       {!loading && Object.keys(spamNotifsFeed).length === 0 && (
         <Span margin="20px 0 0 0">No messages from apps yet</Span>
       )}
-      <div ref={pageRef} />
+      <div ref={pageRef} style={{padding:'1px'}}></div>
 
       {paginateLoading && (
         <Section margin="10px  0">

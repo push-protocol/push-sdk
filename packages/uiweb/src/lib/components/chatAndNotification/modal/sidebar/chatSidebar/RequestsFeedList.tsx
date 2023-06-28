@@ -8,9 +8,10 @@ import { Spinner } from '../../../../reusables/Spinner';
 import { requestLimit } from '../../../../../config';
 import type { ChatFeedsType } from '../../../../../types';
 import { useIsInViewport } from '../../../../../hooks';
+import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const RequestsFeedList = () => {
-  const { requestsFeed, setRequestsFeed } = useContext<any>(ChatMainStateContext);
+  const { requestsFeed, setRequestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);
@@ -87,7 +88,7 @@ export const RequestsFeedList = () => {
       <Span margin='20px 0 0 0'>No Requests yet</Span>
     )}
 
-    <div ref={pageRef} />
+<div ref={pageRef} style={{padding:'1px'}}></div>
 
     {paginateLoading && (
       <Section margin="10px 0">

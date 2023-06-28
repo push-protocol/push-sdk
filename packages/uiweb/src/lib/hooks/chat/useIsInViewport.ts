@@ -7,13 +7,14 @@ export function useIsInViewport(element: any, rootMargin: any) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
+  
         setState(entry.isIntersecting);
       },
       { rootMargin }
     );
 
     element.current && observer.observe(element.current);
-
+  
     return () => observer.disconnect();
   }, []);
 

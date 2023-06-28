@@ -23,6 +23,7 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
       {!!Object.keys(notificationFeeds || {}).length &&
         Object.keys(notificationFeeds).map((id: string) => (
           <NotificationItem
+          key={id}
             notificationTitle={notificationFeeds[id].title}
             notificationBody={notificationFeeds[id].message}
             cta={notificationFeeds[id].cta}

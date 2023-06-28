@@ -6,14 +6,19 @@ import {
   NotificationMainStateContext,
 } from '../../../../../context';
 
-import { Div, Section, Span } from '../../../../reusables/sharedStyling';
+import { Div, Section } from '../../../../reusables/sharedStyling';
 import { Spinner } from '../../../../reusables/Spinner';
 
 import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
 import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
-import type { NotificationFeedsType } from '../../../../../types';
+import type {
+  NotificationFeedsType, ParsedNotificationType} from '../../../../../types';
+import {
+  SIDEBAR_PLACEHOLDER_KEYS,
+} from '../../../../../types';
 import { notificationLimit } from '../../../../../config';
+import { SidebarPlaceholder } from '../SidebarPlaceholder';
 
 export const InboxNotificationFeedList = () => {
   const {
@@ -31,6 +36,7 @@ export const InboxNotificationFeedList = () => {
   const isInViewport1 = useIsInViewport(pageRef, '1px');
   const { fetchNotification, loading } = useFetchNotification();
 
+ 
   const fetchSpamNotificationList = async () => {
     const feeds: NotificationFeedsType | undefined = await fetchNotification({
       page: 1,
@@ -52,7 +58,6 @@ export const InboxNotificationFeedList = () => {
   }, [env, account]);
 
   const fetchInboxNotificationList = async () => {
-    console.log(notificationLimit);
     const feeds: NotificationFeedsType | undefined = await fetchNotification({
       page: 1,
       limit: notificationLimit,
@@ -60,6 +65,7 @@ export const InboxNotificationFeedList = () => {
     //change type of notification
     if (feeds) {
       const firstFeeds: NotificationFeedsType = { ...feeds };
+      console.log(" in here")
       setInboxNotifsFeed(firstFeeds);
     }
   };
@@ -87,14 +93,14 @@ export const InboxNotificationFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading ||
+      loading 
+      ||
       Object.keys(inboxNotifsFeed).length < notificationLimit
     ) {
       return;
     }
 
     const newPage = page + 1;
-
     setPage(newPage);
     // eslint-disable-next-line no-use-before-define
     callFeeds(newPage);
@@ -107,7 +113,9 @@ export const InboxNotificationFeedList = () => {
     try {
       setPaginateLoading(true);
       const feeds = await fetchNotification({ page, limit: notificationLimit });
-      const newFeed: NotificationFeedsType = { ...inboxNotifsFeed, ...feeds };
+     
+      
+      const newFeed:NotificationFeedsType = {...inboxNotifsFeed,...feeds};
       setInboxNotifsFeed(newFeed);
     } catch (error) {
       console.log(error);
@@ -138,10 +146,10 @@ export const InboxNotificationFeedList = () => {
         )
       )}
       {!loading && Object.keys(inboxNotifsFeed).length === 0 && (
-        <Span margin="20px 0 0 0">No messages from apps yet</Span>
+        <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.NOTIFICATION} />
       )}
 
-      <div ref={pageRef} />
+      <div ref={pageRef} style={{padding:'1px'}}></div>
 
       {paginateLoading && (
         <Section margin="10px  0">
