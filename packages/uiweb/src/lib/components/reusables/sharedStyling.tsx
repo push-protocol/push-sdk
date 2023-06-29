@@ -80,6 +80,7 @@ type SectionStyleProps = {
   borderRadius?: string;
   flex?: string;
   zIndex?: string;
+  active?:boolean
 };
 
 export const Section = styled.div<SectionStyleProps>`

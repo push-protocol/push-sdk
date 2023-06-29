@@ -7,7 +7,7 @@ import {
   shortenText,
 } from '../../../../../helpers';
 import React, { useContext } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Section, Span, Image } from '../../../../reusables/sharedStyling';
 import { UnreadChats } from '../../../MinimisedModalHeader';
 import { pCAIP10ToWallet } from '../../../../../helpers';
@@ -19,6 +19,7 @@ import type { ChatMainStateContextType } from '../../../../../context/chatAndNot
 type ChatSnapPropType = {
   chat: IFeeds;
   id: string;
+  modalOpen?:boolean
 };
 
 //fix messageType type
@@ -49,7 +50,7 @@ const Message = ({
 };
 
 
-export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
+export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id, modalOpen }) => {
 
   const { setSelectedChatId, web3NameList } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
@@ -68,11 +69,14 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
     setData({ chatId: id, value: chat });
   };
 
+  const open = modalOpen===undefined ? true : modalOpen;
+
   return (
     <Container
       justifyContent="space-between"
-      padding="15px 15px"
+      padding={open ? "15px 15px" : " 0px "}
       onClick={() => handleOnClick()}
+      active={open}
     >
       <Section gap="18px" cursor='pointer'>
         <Image
@@ -95,7 +99,7 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
           />
         </Section>
       </Section>
-      <Section
+      {open && <Section
         flexDirection="column"
         alignItems="end"
         gap="12px"
@@ -113,19 +117,27 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id }) => {
           //  numberOfUnreadMessages="3"
           />
         )}
-      </Section>
+      </Section>}
     </Container>
   );
 };
 
 //styles
 const Container = styled(Section)`
-  border-bottom: 1px dashed #ededee;
-  cursor: pointer;
-  &:hover {
-    background: #f4f5fa;
-    border-radius:10px;
-  }
+  // border-bottom: 1px dashed #ededee;
+  border-bottom: ${(props)=>props.active && '1px dashed #ededee'};
+  cursor: ${(props)=>props.active && 'pointer'};;
+ 
+
+  ${(props:any) =>
+    props.active &&
+    css`
+    &:hover {
+      background: #f4f5fa;
+      border-radius:10px;
+    }
+    `};
+
 `;
 
 const NameSpan = styled(Span)`

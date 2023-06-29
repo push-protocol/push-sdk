@@ -20,6 +20,7 @@ import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
 import type { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import { ChatSnap } from './modal/sidebar/chatSidebar/ChatSnap';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -54,7 +55,7 @@ export const MessageBoxHeader = () => {
     activeTab,
     setActiveTab,
     setActiveSubTab,
-    activeSubTab 
+    activeSubTab
   } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
   const {
     selectedChatId,
@@ -92,7 +93,7 @@ export const MessageBoxHeader = () => {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
     }
     if (activeSubTab === PUSH_SUB_TABS.REQUESTS || !activeSubTab) {
-      setSelectedChatId(null);
+      setSelectedChatId("");
 
       setSearchedChats(null);
     }
@@ -155,7 +156,7 @@ export const SubTabHeader = () => {
           setActiveTab(activeTab);
           if (activeSubTab === PUSH_SUB_TABS.REQUESTS) {
             setSearchedChats(null);
-            setSelectedChatId(null);
+            setSelectedChatId("");
           }
           if (activeSubTab === PUSH_SUB_TABS.SPAM) {
             setSearchedNotifications(null);
@@ -191,6 +192,19 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     setSelectedChatId,
     searchedChats,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+
+  const SnapMessageHeader = () => {
+    if (activeSubTab === 'REQUESTS') {
+      return (
+        <ChatSnap chat={requestsFeed[selectedChatId]} id={selectedChatId} modalOpen={modalOpen} />
+      )
+    } else {
+      return (
+        <ChatSnap chat={chatsFeed[selectedChatId]} id={selectedChatId} modalOpen={modalOpen} />
+      )
+    }
+  }
+
   const condition =
     (selectedChatId && modalOpen) ||
     (!selectedChatId && modalOpen && activeSubTab);
@@ -211,8 +225,11 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
           Object.keys(searchedChats || {}).length
         ) &&
         modalOpen && <MessageBoxHeader />}
+
+      {selectedChatId && !modalOpen && <SnapMessageHeader />}
+
       {!selectedChatId && modalOpen && activeSubTab && <SubTabHeader />}
-      {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
+      {((!selectedChatId && modalOpen && !activeSubTab) || (!modalOpen && !selectedChatId)) && (
         <Section gap="4px">
           <Span
             fontWeight="700"
@@ -222,7 +239,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
               setActiveTab(PUSH_TABS.CHATS);
 
               setSearchedChats(null);
-              setSelectedChatId(null);
+              setSelectedChatId("");
             }}
           >
             {newChat ? 'New Message' :  'Messages'}
@@ -233,7 +250,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
         </Section>
       )}
       <Section gap="20px">
-        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) || !modalOpen) && (
+        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) || (!modalOpen && !selectedChatId)) && (
           <Div
             width="20px"
             height="20px"

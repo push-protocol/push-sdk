@@ -89,7 +89,7 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
         setActiveTab(tabValue);
         if (activeTab === PUSH_TABS.CHATS) {
           setSearchedChats(null);
-          setSelectedChatId(null);
+          setSelectedChatId("");
         } else if (activeTab === PUSH_TABS.APP_NOTIFICATIONS) {
           setSearchedNotifications(null);
         }
@@ -170,7 +170,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
           setActiveSubTab(tabValue);
           if (activeSubTab === PUSH_SUB_TABS.REQUESTS) {
             setSearchedChats(null);
-            setSelectedChatId(null);
+            setSelectedChatId("");
           } else if (activeSubTab === PUSH_SUB_TABS.SPAM) {
             setSearchedNotifications(null);
           }

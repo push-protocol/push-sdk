@@ -165,11 +165,11 @@ export const ChatAndNotification = () => {
         }
         else{
           setSearchedChats(null);
-          setSelectedChatId(null);
+          setSelectedChatId("");
         }
       } else {
 
-        setSelectedChatId(null);
+        setSelectedChatId("");
         setSearchedChats(null);
       }
       // setChats(new Map())
