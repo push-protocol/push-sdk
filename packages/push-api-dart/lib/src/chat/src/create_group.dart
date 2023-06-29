@@ -63,7 +63,8 @@ createGroup({
 
     final signature = await sign(
       message: hash,
-      signingKey: wallet!.privateKey!,
+      privateKey: wallet!.privateKey!,
+      publicKey: wallet.publicKey!,
     );
 
     const sigType = 'pgp';

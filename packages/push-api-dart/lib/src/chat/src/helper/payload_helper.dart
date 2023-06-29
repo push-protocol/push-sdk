@@ -2,7 +2,7 @@ import '../../../../push_api_dart.dart';
 
 Future<SendMessagePayload> sendMessagePayload({
   required String receiverAddress,
-  required User senderCreatedUser,
+  required ConnectedUser senderCreatedUser,
   required String messageContent,
   required String messageType,
 }) async {

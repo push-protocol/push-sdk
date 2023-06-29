@@ -5,10 +5,10 @@ start({
   String messageContent = '',
   String messageType = 'Text',
   required String receiverAddress,
-  User? connectedUser,
+  ConnectedUser? connectedUser,
   apiKey = '',
 }) async {
-  connectedUser ??= getCachedUser();
+  // connectedUser ??= getCachedUser();
   if (connectedUser == null) {
     throw Exception('Account address is required.');
   }
@@ -28,9 +28,12 @@ start({
   };
 
   final hash = generateHash(bodyToBeHashed);
+
+  //TODO add sign function parameter values
   final String signature = await sign(
     message: hash,
-    signingKey: connectedUser.encryptedPrivateKey,
+    privateKey: connectedUser.encryptedPrivateKey,
+    publicKey: '',
   );
 
   const sigType = 'pgp';
