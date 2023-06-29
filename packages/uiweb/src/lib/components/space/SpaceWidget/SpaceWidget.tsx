@@ -47,7 +47,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetComponentProps> = (options: ISpac
         isHost={isHost}
         isLive={isLive}
       />
-      {!isMinimized &&
         <WidgetContent 
           shareUrl={shareUrl}
           isHost={isHost}
@@ -55,8 +54,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetComponentProps> = (options: ISpac
           isJoined={isJoined}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}
+          isMinimized={isMinimized}
         />
-      }
     </Container>
   );
 }
@@ -68,6 +67,7 @@ interface WidgetContainerProps {
   zIndex?: number;
   hidden: boolean;
 }
+
 const Container = styled.div<WidgetContainerProps>`
   font-family: 'Strawford'; // update to fontFamily theme 
   border-radius: 12px; // update acc to theme
