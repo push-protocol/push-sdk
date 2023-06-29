@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 
 import { Modal } from '../reusables/Modal';
@@ -142,13 +142,31 @@ const Listeners: React.FC = () => {
 interface ISpaceMembersModalProps {
   onClose: () => void;
 }
+enum MemberTabsEnum {
+  CoHost = 'Co-Host',
+  Speakers = 'Speakers',
+  Requests = 'Requests',
+  Listeners = 'Listeners',
+}
 
 export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose }: ISpaceMembersModalProps) => {
 
-    const [activeTab, setActiveTab] = useState<number>(0);
+    const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.CoHost);
 
-    const handleTabClick = (index: number) => {
+    const handleTabClick = (index: MemberTabsEnum) => {
       setActiveTab(index);
+    };
+
+    const renderTabs = (): ReactNode => {
+      return Object.values(MemberTabsEnum).map((tab) => (
+        <Tab
+          key={tab}
+          active={activeTab === tab}
+          onClick={() => handleTabClick(tab)}
+        >
+          {tab}
+        </Tab>
+      ));
     };
 
     return (
@@ -168,24 +186,13 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
             />
 
             <TabContainer>
-              <Tab active={activeTab === 0} onClick={() => handleTabClick(0)}>
-                Co-host
-              </Tab>
-              <Tab active={activeTab === 1} onClick={() => handleTabClick(1)}>
-                Speakers
-              </Tab>
-              <Tab active={activeTab === 2} onClick={() => handleTabClick(2)}>
-                Requests
-              </Tab>
-              <Tab active={activeTab === 3} onClick={() => handleTabClick(3)}>
-                Listeners
-              </Tab>
+              {renderTabs()}
             </TabContainer>
 
-            {activeTab === 0 && <CoHosts />}
-            {activeTab === 1 && <Speakers />}
-            {activeTab === 2 && <Requests />}
-            {activeTab === 3 && <Listeners />}
+            {activeTab === MemberTabsEnum.CoHost && <CoHosts />}
+            {activeTab === MemberTabsEnum.Speakers && <Speakers />}
+            {activeTab === MemberTabsEnum.Requests && <Requests />}
+            {activeTab === MemberTabsEnum.Listeners && <Listeners />}
 
             <Button 
               padding={'16px'} 
