@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { ILiveSpaceProfileContainerProps, LiveSpaceProfileContainer } from "./LiveSpaceProfileContainer";
 import { SpaceMembersSectionModal } from "./SpaceMembersSectionModal";
@@ -7,7 +7,6 @@ import { Button, Image, Item, Text } from "../../../config";
 import MicOnIcon from '../../../icons/micon.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
-import { useState } from "react";
 
 const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
@@ -164,10 +163,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({ isJoined, 
               <Text color="white" fontSize={'16px'} fontWeight={'600'}>Join this space</Text>
             </Button>
         }
-        {showMembersModal &&
+        {showMembersModal 
+          ?
           <SpaceMembersSectionModal 
             onClose={() => setShowMembersModal(false)}
           />
+          :
+          null
         }
       </Item>
     </>
