@@ -65,7 +65,7 @@ const ModalParent = styled.div<IModalProps>`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 16px;
+    padding: 24px 20px;
 
     background: #FFFFFF;
     border-radius: 12px;

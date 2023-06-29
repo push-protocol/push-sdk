@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { ILiveSpaceProfileContainerProps, LiveSpaceProfileContainer } from "./LiveSpaceProfileContainer";
+import { SpaceMembersSectionModal } from "./SpaceMembersSectionModal";
 
 import { Button, Image, Item, Text } from "../../../config";
 import MicOnIcon from '../../../icons/micon.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useState } from "react";
-import { SpaceMembersSectionModal } from "../SpaceMembersSectionModal";
 
 const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
