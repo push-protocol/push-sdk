@@ -8,8 +8,8 @@ import ChatPropsContext from '../chatAndNotificationPropsContext';
 type ChatMessagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
 export type ChatMainStateContextType = {
-  selectedChatId: string | null;
-  setSelectedChatId: (chatId: string | null) => void;
+  selectedChatId: string| null;
+  setSelectedChatId: (chatId: string|null) => void;
   chatsFeed: ChatFeedsType;
   setChatsFeed: (chatsFeed: ChatFeedsType) => void;
   setChatFeed: (id: string, newChatFeed: IFeeds) => void;
@@ -36,7 +36,7 @@ const [connectedProfile,setConnectedProfile]=useState<IUser | undefined>(undefin
 const [chatsFeed,setChatsFeed] =useState<ChatFeedsType>({} as ChatFeedsType);
 const [requestsFeed,setRequestsFeed] =useState<ChatFeedsType>({} as ChatFeedsType);
 const [chats,setChats] = useState<Map<string, ChatMessagetype> >(new Map());
-const [selectedChatId,setSelectedChatId] = useState<string | null>(null);
+const [selectedChatId,setSelectedChatId] = useState<string|null>(null);
 const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
 
 

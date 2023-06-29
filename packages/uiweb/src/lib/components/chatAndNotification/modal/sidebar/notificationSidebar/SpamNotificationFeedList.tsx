@@ -90,6 +90,9 @@ export const SpamNotificationFeedList = () => {
       justifyContent="start"
       flexDirection="column"
       width="100%"
+      borderWidth="1px 0 00"
+      borderStyle={ "dashed none none none"}
+      borderColor="#dddddf transparent transparent transparent"
       padding="0 3px"
     >
       {(!loading || paginateLoading) &&

@@ -44,6 +44,7 @@ export const ChatAndNotification = () => {
     setConnectedProfile,
     requestsFeed,
     chatsFeed,
+    selectedChatId,
     setChats
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setInboxNotifsFeed, setSpamNotifsFeed } = useContext<any>(
@@ -185,6 +186,7 @@ export const ChatAndNotification = () => {
     }
   };
 
+
   return (
     <Container
       width="472px"
@@ -192,7 +194,7 @@ export const ChatAndNotification = () => {
       maxHeight="600px"
       position="fixed"
       background="#fff"
-      padding="24px 24px 0 24px"
+      padding='0 20px'
       right="12px"
       bottom="18px"
       overflow="hidden"
