@@ -3,24 +3,44 @@
  * generic modal component for spaces UI
  * does not handle any business logic, acts only as a container
  */
+import { useRef } from 'react';
 import styled from 'styled-components'
 
+import { useClickAway } from '../../../hooks';
+
 interface IModalProps {
-    width?: string;
-    children: any;
+  width?: string;
+  clickawayClose?: () => void;
+  children: any;
 }
 
-export const Modal = (props: IModalProps) => {
-    return (
-        <div>
-            <ModalOverlay>
-                <ModalParent width={props.width}>
-                    { props.children }
-                </ModalParent>
-            </ModalOverlay>
-        </div>
-    )
-}
+const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) => {
+  const modalRef = useRef(null);
+
+  useClickAway(modalRef, () => {
+    if (clickawayClose) {
+      clickawayClose();
+    }
+  });
+
+  return (
+    <ModalParent ref={modalRef} width={width}>
+      {children}
+    </ModalParent>
+  );
+};
+
+export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
+  return (
+    <ModalOverlay>
+      {clickawayClose ? (
+        <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>{children}</ClickawayCloseModal>
+      ) : (
+        <ModalParent width={width}>{children}</ModalParent>
+      )}
+    </ModalOverlay>
+  );
+};
 
 /* styling */
 
@@ -45,7 +65,7 @@ const ModalParent = styled.div<IModalProps>`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 16px;
+    padding: 24px 20px;
 
     background: #FFFFFF;
     border-radius: 12px;

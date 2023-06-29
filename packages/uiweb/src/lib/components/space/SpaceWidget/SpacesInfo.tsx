@@ -31,7 +31,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
     return (
         <Modal
-            width='440px'
+            width='400px'
         >
             <SpacesInfoContainer>
             <ModalHeader

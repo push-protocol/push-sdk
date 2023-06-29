@@ -51,7 +51,7 @@ const ParentContainer = styled.div<{ border?: boolean }>`
     justify-content: space-between;
     align-items: center;
 
-    padding: 8px 12px;
+    padding: 8px 16px;
 
     border: ${(props => props.border ? '1px solid #E4E4E7' : 'none')};
     border-radius: 16px;
