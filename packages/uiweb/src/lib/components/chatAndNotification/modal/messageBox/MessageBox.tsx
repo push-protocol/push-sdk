@@ -384,12 +384,12 @@ export const MessageBox = () => {
         justifyContent="start"
         flexDirection="column"
         alignItems="start"
-        borderWidth="0 0 1px 0"
-        // borderStyle={ "none none solid none"}
+        borderWidth="1px 0"
+        borderStyle={ "dashed none none none"}
         overflow="hidden scroll"
         ref={listInnerRef}
         onScroll={onScroll}
-        borderColor="transparent transparent #dddddf transparent"
+        borderColor="#dddddf transparent #dddddf transparent"
       >
         <>
           {selectedChat && !selectedChat.publicKey ? (

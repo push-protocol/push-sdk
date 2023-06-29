@@ -74,6 +74,9 @@ export const RequestsFeedList = () => {
     justifyContent="start"
     width='100%'
     flexDirection="column"
+    borderWidth="1px 0 00"
+    borderStyle={ "dashed none none none"}
+    borderColor="#dddddf transparent transparent transparent"
   >
     {(!loading || paginateLoading) && Object.keys(requestsFeed || {}).length ? (
       <ChatList chatsFeed={requestsFeed} />

@@ -20,6 +20,7 @@ import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
 import type { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import { ChatSnap } from './modal/sidebar/chatSidebar/ChatSnap';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -50,12 +51,10 @@ export const UnreadChats = ({
 };
 
 export const MessageBoxHeader = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    setActiveSubTab,
-    activeSubTab 
-  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { activeTab, setActiveTab, setActiveSubTab, activeSubTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
   const {
     selectedChatId,
     chatsFeed,
@@ -70,8 +69,10 @@ export const MessageBoxHeader = () => {
   const selectedChat =
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
-    ((Object.keys(searchedChats || {}).length )? searchedChats![selectedChatId as string] : null);
-   
+    (Object.keys(searchedChats || {}).length
+      ? searchedChats![selectedChatId as string]
+      : null);
+
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -92,13 +93,14 @@ export const MessageBoxHeader = () => {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
     }
     if (activeSubTab === PUSH_SUB_TABS.REQUESTS || !activeSubTab) {
-      setSelectedChatId(null);
+      setSelectedChatId('');
 
       setSearchedChats(null);
     }
   };
-  return (
-   selectedChat? <Section gap="12px">
+  return selectedChat ? (
+    <Section gap="12px"  padding='23px 2px'
+    >
       <Div
         width="16px"
         height="16px"
@@ -128,25 +130,22 @@ export const MessageBoxHeader = () => {
           </Span>
         </Tooltip>
       </Section>
-    </Section>:null
-  );
+    </Section>
+  ) : null;
 };
 
 export const SubTabHeader = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    activeSubTab 
-  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
-  const {
-    setSearchedChats,
-    setSelectedChatId,
-  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { activeTab, setActiveTab, activeSubTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
+  const { setSearchedChats, setSelectedChatId } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
   return (
-    <Section gap="12px">
+    <Section gap="12px" padding='23px 2px'>
       <Div
         width="16px"
         height="16px"
@@ -176,12 +175,10 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   onMaximizeMinimizeToggle,
   modalOpen,
 }) => {
-  const {
-    newChat,
-    setNewChat,
-    setActiveTab,
-    activeSubTab 
-  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { newChat, setNewChat, setActiveTab, activeSubTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
 
   const {
     selectedChatId,
@@ -191,18 +188,28 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
     setSelectedChatId,
     searchedChats,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+
+  const SnapMessageHeader = () => {
+    return (
+      <ChatSnap
+        chat={activeSubTab === PUSH_SUB_TABS.REQUESTS?requestsFeed[selectedChatId as string]:chatsFeed[selectedChatId as string]}
+        id={selectedChatId as string}
+        modalOpen={modalOpen}
+      />
+    );
+  };
+
   const condition =
     (selectedChatId && modalOpen) ||
     (!selectedChatId && modalOpen && activeSubTab);
+  const snapCondition = 
+    (selectedChatId && !modalOpen);
   return (
     <Container
       justifyContent="space-between"
       alignItems="center"
-      padding={`0 0 ${condition ? '19px' : '23px'} 0 `}
-      borderWidth={`0 0 ${condition ? '1px' : '0'} 0 `}
-      borderStyle={`none none ${condition ? 'dashed' : 'none'} none `}
-      borderColor={`transparent transparent ${condition ? '#ededee' : 'transparent'
-        }  transparent`}
+      padding={`${snapCondition ? '12px' : '0'} 0 `}
+      
     >
       {selectedChatId &&
         !!(
@@ -211,12 +218,17 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
           Object.keys(searchedChats || {}).length
         ) &&
         modalOpen && <MessageBoxHeader />}
+
+      {selectedChatId && !modalOpen && <SnapMessageHeader />}
+
       {!selectedChatId && modalOpen && activeSubTab && <SubTabHeader />}
-      {((!selectedChatId && modalOpen && !activeSubTab) || !modalOpen) && (
+      {((!selectedChatId && modalOpen && !activeSubTab) ||
+        (!modalOpen && !selectedChatId)) && (
         <Section gap="4px">
           <Span
             fontWeight="700"
             fontSize="18px"
+            padding='24px 2px'
             cursor={!modalOpen ? 'default' : 'pointer'}
             onClick={() => {
               setActiveTab(PUSH_TABS.CHATS);
@@ -225,7 +237,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
               setSelectedChatId(null);
             }}
           >
-            {newChat ? 'New Message' :  'Messages'}
+            {newChat ? 'New Message' : 'Messages'}
           </Span>
           {/* <UnreadChats 
           // numberOfUnreadMessages="3"
@@ -233,14 +245,15 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
         </Section>
       )}
       <Section gap="20px">
-        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) || !modalOpen) && (
+        {((!selectedChatId && modalOpen && !activeSubTab && !newChat) ||
+          (!modalOpen && !selectedChatId)) && (
           <Div
             width="20px"
             height="20px"
             cursor="pointer"
             onClick={() => {
               if (modalOpen) {
-                setNewChat(true)
+                setNewChat(true);
               }
             }}
           >
@@ -251,7 +264,8 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
           width="12px"
           height="13.4px"
           cursor="pointer"
-          alignSelf="baseline"
+          // alignSelf={selectedChatId && !modalOpen ? 'center' : 'baseline'}
+          alignSelf='center'
           onClick={onMaximizeMinimizeToggle}
         >
           {modalOpen ? <MinimizeIcon /> : <MaximizeIcon />}
@@ -265,3 +279,5 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
 const Container = styled(Section)`
   box-sizing: border-box;
 `;
+
+
