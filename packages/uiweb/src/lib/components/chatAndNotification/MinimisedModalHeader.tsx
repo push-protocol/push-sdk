@@ -268,7 +268,7 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
           width="12px"
           height="13.4px"
           cursor="pointer"
-          alignSelf="baseline"
+          alignSelf={selectedChatId && !modalOpen ? "center" : "baseline"}
           onClick={onMaximizeMinimizeToggle}
         >
           {modalOpen ? <MinimizeIcon /> : <MaximizeIcon />}
