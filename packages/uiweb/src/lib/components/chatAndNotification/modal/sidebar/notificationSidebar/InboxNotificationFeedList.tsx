@@ -65,7 +65,6 @@ export const InboxNotificationFeedList = () => {
     //change type of notification
     if (feeds) {
       const firstFeeds: NotificationFeedsType = { ...feeds };
-      console.log(" in here")
       setInboxNotifsFeed(firstFeeds);
     }
   };
@@ -112,10 +111,9 @@ export const InboxNotificationFeedList = () => {
     }
     try {
       setPaginateLoading(true);
-      const feeds = await fetchNotification({ page, limit: notificationLimit });
-     
-      
+      const feeds = await fetchNotification({ page, limit: notificationLimit });      
       const newFeed:NotificationFeedsType = {...inboxNotifsFeed,...feeds};
+    
       setInboxNotifsFeed(newFeed);
     } catch (error) {
       console.log(error);

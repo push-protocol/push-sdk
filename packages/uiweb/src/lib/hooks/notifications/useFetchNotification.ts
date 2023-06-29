@@ -35,7 +35,7 @@ const useFetchNotification = () => {
         const parsedResponse = convertReponseToParsedArray(results);
         console.log(parsedResponse)
         const modifiedNotifObj = Object.fromEntries(
-          parsedResponse.map((e: any) => [e.sid, e])
+          parsedResponse.map((e: any) => [`notif${e.sid}`, e])
         );
         
         return modifiedNotifObj;

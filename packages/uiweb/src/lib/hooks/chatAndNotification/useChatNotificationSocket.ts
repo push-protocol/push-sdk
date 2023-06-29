@@ -97,8 +97,8 @@ const useChatNotificationSocket = ({
     pushChatNotificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const parseApiResponse = convertReponseToParsedArray([feedItem]);
       if (subscriptionStatus.get(parseApiResponse[0].channel)) {
-        setInboxNotifFeed(parseApiResponse[0].sid, parseApiResponse[0]);
-      } else setSpamNotifFeed(parseApiResponse[0].sid, parseApiResponse[0]);
+        setInboxNotifFeed(`notif${parseApiResponse[0].sid}`, parseApiResponse[0]);
+      } else setSpamNotifFeed(`notif${parseApiResponse[0].sid}`, parseApiResponse[0]);
 
       setNotificationFeedSinceLastConnection(feedItem);
     });

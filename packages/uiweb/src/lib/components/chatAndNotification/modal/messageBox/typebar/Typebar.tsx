@@ -149,7 +149,6 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       const scrollHeight = textAreaRef.current?.scrollHeight;
       textAreaRef.current.style.height = scrollHeight + 'px';
 
-      console.log("height", scrollHeight, textAreaRef.current.style.height)
 
 
     }

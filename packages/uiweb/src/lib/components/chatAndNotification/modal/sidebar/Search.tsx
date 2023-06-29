@@ -56,7 +56,6 @@ export const Search: React.FC<SearchPropType> = ({
   
  const onSearch  = () =>{
   if (searchedText.trim() !== '') {
-    console.log("in here handle")
     handleSearch({ searchedText, feed });
   } else {
     onSearchReset();
