@@ -3,19 +3,43 @@
  * generic modal component for spaces UI
  * does not handle any business logic, acts only as a container
  */
+import { useRef } from 'react';
 import styled from 'styled-components'
 
-export const Modal = (props: any) => {
-    return (
-        <div>
-            <ModalOverlay>
-                <ModalParent>
-                    { props.children }
-                </ModalParent>
-            </ModalOverlay>
-        </div>
-    )
+import { useClickAway } from '../../../hooks';
+
+interface ModalProps {
+  clickawayClose?: () => void;
+  children: React.ReactNode;
 }
+
+const ClickawayCloseModal = ({ children, clickawayClose }: ModalProps) => {
+  const modalRef = useRef(null);
+
+  useClickAway(modalRef, () => {
+    if (clickawayClose) {
+      clickawayClose();
+    }
+  });
+
+  return (
+    <ModalParent ref={modalRef}>
+      {children}
+    </ModalParent>
+  );
+};
+
+export const Modal = ({ clickawayClose, children }: ModalProps) => {
+  return (
+    <ModalOverlay>
+      {clickawayClose ? (
+        <ClickawayCloseModal clickawayClose={clickawayClose}>{children}</ClickawayCloseModal>
+      ) : (
+        <ModalParent>{children}</ModalParent>
+      )}
+    </ModalOverlay>
+  );
+};
 
 /* styling */
 

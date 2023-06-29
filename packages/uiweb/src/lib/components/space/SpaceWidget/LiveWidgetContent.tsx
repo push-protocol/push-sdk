@@ -1,9 +1,13 @@
+import React from 'react';
+
 import { ILiveSpaceProfileContainerProps, LiveSpaceProfileContainer } from "./LiveSpaceProfileContainer";
 
 import { Button, Image, Item, Text } from "../../../config";
 import MicOnIcon from '../../../icons/micon.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
+import { useState } from "react";
+import { SpaceMembersSectionModal } from "../SpaceMembersSectionModal";
 
 const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
@@ -90,6 +94,8 @@ interface LiveWidgetContentProps {
   isJoined?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({ isJoined, isHost }) => {
+  const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
+
   return (
     <>
       <Item flex={'1'} display={'flex'} padding={'16px 10px'} flexWrap={'wrap'} justifyContent={'flex-start'} gap={'24px 12px'} overflowY={'auto'} alignContent={'flex-start'}>
@@ -122,6 +128,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({ isJoined, 
                   height={'24px'}
                   src={MembersIcon}
                   cursor={'pointer'}
+                  onClick={() => setShowMembersModal(true)}
                   alt="Members Icon"
                 />
                 <Image
@@ -156,6 +163,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({ isJoined, 
             >
               <Text color="white" fontSize={'16px'} fontWeight={'600'}>Join this space</Text>
             </Button>
+        }
+        {showMembersModal &&
+          <SpaceMembersSectionModal 
+            onClose={() => setShowMembersModal(false)}
+          />
         }
       </Item>
     </>

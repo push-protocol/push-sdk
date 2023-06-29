@@ -1,5 +1,4 @@
-import { useContext, useState } from 'react'
-import * as PushAPI from '@pushprotocol/restapi';
+import { useState } from 'react'
 
 import { SCWCreateModal } from './SCWCreateModal/SCWCreateModal'
 import { SCWScheduleModal } from './SCWScheduleModal/SCWScheduleModal';
