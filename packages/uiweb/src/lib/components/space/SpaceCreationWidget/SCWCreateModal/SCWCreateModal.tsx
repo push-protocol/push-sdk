@@ -29,7 +29,6 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     }
 
     return (
-        <div>
             <Modal>
                 <ModalHeader
                     heading='Create your space'
@@ -70,7 +69,6 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
                     </Button>
                 </ButtonContainer>
             </Modal>
-        </div>
     )
 }
 
