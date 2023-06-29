@@ -8,12 +8,13 @@ import styled from 'styled-components'
 
 import { useClickAway } from '../../../hooks';
 
-interface ModalProps {
+interface IModalProps {
+  width?: string;
   clickawayClose?: () => void;
-  children: React.ReactNode;
+  children: any;
 }
 
-const ClickawayCloseModal = ({ children, clickawayClose }: ModalProps) => {
+const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) => {
   const modalRef = useRef(null);
 
   useClickAway(modalRef, () => {
@@ -23,19 +24,19 @@ const ClickawayCloseModal = ({ children, clickawayClose }: ModalProps) => {
   });
 
   return (
-    <ModalParent ref={modalRef}>
+    <ModalParent ref={modalRef} width={width}>
       {children}
     </ModalParent>
   );
 };
 
-export const Modal = ({ clickawayClose, children }: ModalProps) => {
+export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
   return (
     <ModalOverlay>
       {clickawayClose ? (
-        <ClickawayCloseModal clickawayClose={clickawayClose}>{children}</ClickawayCloseModal>
+        <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>{children}</ClickawayCloseModal>
       ) : (
-        <ModalParent>{children}</ModalParent>
+        <ModalParent width={width}>{children}</ModalParent>
       )}
     </ModalOverlay>
   );
@@ -55,8 +56,7 @@ const ModalOverlay = styled.div`
     align-items: center;
 `;
 
-// const ModalParent = styled.div<IModalProps>`
-const ModalParent = styled.div`
+const ModalParent = styled.div<IModalProps>`
     position: absolute;
     top: 50%;
     left: 50%;
@@ -69,4 +69,6 @@ const ModalParent = styled.div`
 
     background: #FFFFFF;
     border-radius: 12px;
+
+    width: ${(props => props.width ? props.width : 'auto')};
 `;
