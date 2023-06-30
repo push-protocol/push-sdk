@@ -24,11 +24,13 @@ import type { ChatMainStateContextType } from '../../../../context/chatAndNotifi
 import { AngleArrowIcon } from '../../../../icons/AngleArrow';
 import { device, PushSubTabTitle } from '../../../../config';
 import {
+  getAddress,
   getDefaultFeedObject,
   getNewChatUser,
   getObjectsWithMatchingKeys,
   getSearchedNotificationsList,
   shortenNumber,
+  walletToPCAIP10,
 } from '../../../../helpers';
 import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
@@ -36,7 +38,8 @@ import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
 import {SidebarPlaceholder} from './SidebarPlaceholder';
 import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
-
+import useFetchChat from '../../../../hooks/chat/useFetchChat';
+import type { IFeeds } from '@pushprotocol/restapi';
 
 
 export type TabPropType = {
@@ -208,7 +211,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
-
+  const { fetchChat } = useFetchChat();
 
   const {
     newChat,
@@ -268,17 +271,28 @@ export const Sidebar = () => {
       searchedText,
       web3NameList
     );
-
     if (Object.keys(result || {}).length) setSearchedChats(result);
     else {
-      const result = await getNewChatUser({
-        searchText: searchedText,
-        fetchChatProfile,
-        env,
-      });
+
+      const address = await getAddress(searchedText, env);
+      let result = (await fetchChat({
+        recipientAddress: walletToPCAIP10(address as string),
+      })) as IFeeds;
+
+      if (!Object.keys(result|| {}).length){
+        const newChatUser = await getNewChatUser({
+          searchText: searchedText,
+          fetchChatProfile,
+          env,
+        });
+
+        if(newChatUser){
+          result = getDefaultFeedObject({ user: newChatUser });
+        }
+      }
+      
       if (result) {
-        const defaultFeed = getDefaultFeedObject({ user: result });
-        setSearchedChats({ [defaultFeed.did.toLowerCase()]: defaultFeed });
+        setSearchedChats({ [result.did.toLowerCase()]: result });
         setNewChat(true);
       } else {
         setSearchedChats({});
