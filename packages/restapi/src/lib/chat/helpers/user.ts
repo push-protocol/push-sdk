@@ -1,8 +1,8 @@
 import Constants, { ENV } from '../../constants';
-import { get, create } from '../../user';
+import { get, create, createUserCore } from '../../user';
 import { IConnectedUser, IUser, SignerType, walletType } from '../../types';
 import { getAccountAddress } from './wallet';
-import { getDecryptedPrivateKey } from '.';
+import { IPGPHelper, PGPHelper, getDecryptedPrivateKey } from '.';
 import {
   isValidCAIP10NFTAddress,
   isValidETHAddress,
@@ -79,6 +79,15 @@ export const getConnectedUserV2 = async (
   privateKey: string | null,
   env: ENV
 ): Promise<IConnectedUser> => {
+  return await getConnectedUserV2Core(wallet, privateKey, env, PGPHelper);
+};
+
+export const getConnectedUserV2Core = async (
+  wallet: walletType,
+  privateKey: string | null,
+  env: ENV,
+  pgpHelper: IPGPHelper,
+): Promise<IConnectedUser> => {
   const address = await getAccountAddress(wallet);
   const user = await get({ account: address, env: env || Constants.ENV.PROD });
   if (user?.encryptedPrivateKey) {
@@ -111,7 +120,7 @@ export const getConnectedUserV2 = async (
       createUserProps.signer = wallet.signer;
     }
     createUserProps.env = env;
-    const newUser = await create(createUserProps);
+    const newUser = await createUserCore(createUserProps, pgpHelper);
     const decryptedPrivateKey = await getDecryptedPrivateKey(
       wallet,
       newUser,

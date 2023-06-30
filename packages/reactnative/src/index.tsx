@@ -10,6 +10,11 @@ import * as PushApi from '@pushprotocol/restapi';
 import { CreateUserProps } from '@pushprotocol/restapi/src/lib/user/createUser.js';
 import { IPGPHelper } from '@pushprotocol/restapi/src/lib/chat/helpers/pgp.js';
 import { ENV } from '@pushprotocol/restapi/src/lib/constants.js';
+import { LatestMessagesOptionsType } from '@pushprotocol/restapi/src/lib/chat/latestMessage.js';
+import { HistoricalMessagesOptionsType } from '@pushprotocol/restapi/src/lib/chat/historicalMessages.js';
+import { ChatCreateGroupType } from '@pushprotocol/restapi/src/lib/chat/createGroup.js';
+import { ChatUpdateGroupType } from '../../restapi/src/lib/chat/updateGroup.js';
+import { ChatsOptionsType } from '../../restapi/src/lib/chat/chats.js';
 
 // TODO:fix this
 //@ts-ignore
@@ -31,12 +36,59 @@ const PGPHelper: IPGPHelper = {
       publicKeyArmored: keys.publicKey,
     };
   },
+
+  async sign({ message, signingKey }) {
+    const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
+    const signature = await OpenPGP.sign(message, publicKey, signingKey, '');
+    return signature.replace('\nVersion: openpgp-mobile', '');
+  },
+
+  async pgpEncrypt({ keys, plainText }) {
+    console.log('keys', keys);
+    const encryptedSecret = await OpenPGP.encrypt(plainText, keys.join('\n'));
+    console.log('encryptedSecret', encryptedSecret);
+    return encryptedSecret;
+  },
 };
 
 const createUser = async (options: CreateUserProps) => {
   let user = await PushApi.user.createUserCore(options, PGPHelper);
   return user;
 };
+
+const conversationHash = async (options: PushApi.ConversationHashOptionsType) => {
+  let hash = await PushApi.chat.conversationHashCore(options, PGPHelper);
+  return hash;
+};
+
+const chats = async (options: ChatsOptionsType) => {
+  let chatsList = await PushApi.chat.chatsCore(options, PGPHelper);
+  return chatsList;
+}
+
+const latest = async (options: LatestMessagesOptionsType) => {
+  let latestMsg = await PushApi.chat.latestCore(options, PGPHelper);
+  return latestMsg;
+};
+
+const history = async (options: HistoricalMessagesOptionsType) => {
+  let msg = await PushApi.chat.historyCore(options, PGPHelper);
+  return msg;
+}
+
+const createGroup = async (options: ChatCreateGroupType) => {
+  try {
+    let group = await PushApi.chat.createGroupCore(options, PGPHelper);
+    return group;
+  } catch (err) {
+    console.log(err, "err inside sdk")
+  }
+}
+
+const updateGroup = async (options: ChatUpdateGroupType) => {
+  let updatedGroup = await PushApi.chat.updateGroupCore(options, PGPHelper);
+  return updatedGroup;
+}
 
 // checking if ethers works
 const genRandomAddress = async () => {
@@ -59,4 +111,10 @@ export {
   PushApi,
   CreateUserProps,
   ENV,
+  conversationHash,
+  latest,
+  history,
+  createGroup,
+  updateGroup,
+  chats
 };
