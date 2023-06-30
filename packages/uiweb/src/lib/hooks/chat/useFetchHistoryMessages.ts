@@ -52,7 +52,6 @@ const useFetchHistoryMessages
               lastThreadHash: chatHistory[0].link
             });
           } else {
-            console.log(chatHistory)
             setChat(selectedChatId  as string, { messages: chatHistory, lastThreadHash: chatHistory[0].link });
           }
     } catch (error: Error | any) {

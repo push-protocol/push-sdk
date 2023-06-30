@@ -183,9 +183,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
               ref={modalRef}
               position="absolute"
               bottom="3.5rem"
-              left="3.7rem"
+              left="1.7rem"
             >
-              <EmojiPicker onEmojiClick={addEmoji} width={300} height={350} />
+              <EmojiPicker onEmojiClick={addEmoji} width={'80%'} height={300} />
             </Section>
           )}
           <MultiLineInput
@@ -221,8 +221,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             >
               <GifPicker
                 onGifClick={sendGIF}
-                width={350}
-                height={350}
+                width={'80%'}
+                height={300}
                 tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
               />
             </Section>
@@ -270,6 +270,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
 const Container = styled.div`
   width:100%;
   border-top:1px solid #DDDDDF;
+  overflow:hidden;
 `;
 const MultiLineInput = styled.textarea`
   ::placeholder {
@@ -278,7 +279,7 @@ const MultiLineInput = styled.textarea`
   font-family:inherit;
   font-weight: 400;
   font-size: 16px;
-  width: 27vw;
+  // width: 27vw;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
@@ -300,9 +301,9 @@ const MultiLineInput = styled.textarea`
     color: #000;
     padding-top: 5px;
   }
-  @media ${device.mobileL} {
-    width: 27vw;
-  }
+  // @media ${device.mobileL} {
+  //   width: 27vw;
+  // }
   min-height: 25px;
   max-height: 75px;
 `;

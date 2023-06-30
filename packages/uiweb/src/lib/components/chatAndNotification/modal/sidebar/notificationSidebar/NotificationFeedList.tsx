@@ -4,6 +4,7 @@ import type { chainNameType } from '../../../../notification';
 import { NotificationItem } from '../../../../notification';
 import { ChatAndNotificationPropsContext, NotificationMainStateContext } from '../../../../../context';
 import useOnSubscribeToChannel from '../../../../../hooks/notifications/useOnSubscribeToChannel';
+import { Div } from '../../../../reusables';
 
 type NotificationFeedListPropType = {
   notificationFeeds: NotificationFeedsType;
@@ -49,6 +50,7 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
             url={notificationFeeds[id].url}
           />
         ))}
+       
     </>
   );
 };
