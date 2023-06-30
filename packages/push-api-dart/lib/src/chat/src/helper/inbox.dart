@@ -8,12 +8,12 @@ Future<List<Feeds>> getInboxList({
 }) async {
   final List<Feeds> feedsOutputlist = [];
   for (var feed in feedsList) {
-    late Message? message;
+    late IMessageIPFS? message;
     if (feed.threadhash != null) {
       message = await getCID(cid: feed.threadhash!);
     }
     // This is for groups that are created without any message
-    message ??= Message(
+    message ??= IMessageIPFS(
       encType: 'PlainText',
       encryptedSecret: '',
       fromCAIP10: '',
@@ -58,7 +58,8 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
       String timestamp = didParts[5];
 
       if (!latestDIDs.containsKey(didWithoutTimestamp) ||
-          timestamp.compareTo(latestDIDs[didWithoutTimestamp]!.split(':')[5]) >
+          timestamp.compareTo(
+                  latestDIDs[didWithoutTimestamp].toString().split(':')[5]) >
               0) {
         latestDIDs[didWithoutTimestamp] = chat.did!;
       }
@@ -79,3 +80,42 @@ List<Feeds> addDeprecatedInfo(List<Feeds> chats) {
 
   return chats;
 }
+
+List<IMessageIPFS> addDeprecatedInfoToMessages(List<IMessageIPFS> chats) {
+  Map<String, String> latestDIDs = {};
+
+  for (var chat in chats) {
+    if (isValidCAIP10NFTAddress(chat.fromDID)) {
+      String didWithoutTimestamp =
+          chat.fromDID.split(':').sublist(0, 5).join(':');
+      String timestamp = chat.fromDID.split(':')[5];
+
+      if (!latestDIDs.containsKey(didWithoutTimestamp) ||
+          timestamp.compareTo(
+                  latestDIDs[didWithoutTimestamp].toString().split(':')[5]) >
+              0) {
+        latestDIDs[didWithoutTimestamp] = chat.fromDID;
+      }
+    }
+  }
+
+  for (var chat in chats) {
+    if (isValidCAIP10NFTAddress(chat.fromDID)) {
+      String didWithoutTimestamp =
+          chat.fromDID.split(':').sublist(0, 5).join(':');
+
+      if (latestDIDs[didWithoutTimestamp] != chat.fromDID) {
+        chat.deprecated = true;
+        chat.deprecatedCode = 'NFT Owner Changed';
+      }
+    }
+  }
+
+  return chats;
+}
+
+decryptConversation({
+  required List<IMessageIPFS> messages,
+  required User? connectedUser,
+  required String pgpPrivateKey,
+}) {}

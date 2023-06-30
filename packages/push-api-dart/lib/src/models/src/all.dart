@@ -126,23 +126,6 @@ class NotificationPayload {
   late dynamic recipients;
 }
 
-class MessageIPFS {
-  late String fromCAIP10;
-  late String toCAIP10;
-  late String fromDID;
-  late String toDID;
-  late String messageType;
-  late String messageContent;
-  late String signature;
-  late String sigType;
-  late String? link;
-  late int? timestamp;
-  late String encType;
-  late String encryptedSecret;
-  bool? deprecated; // scope only at sdk level
-  String? deprecatedCode; // scope only at sdk level
-}
-
 class Member {
   late String wallet;
   late String publicKey;
@@ -268,9 +251,20 @@ class Subscribers {
   late List<String> subscribers;
 }
 
-
-class MessageIPFSWithCID extends MessageIPFS {
+class MessageIPFSWithCID extends IMessageIPFS {
   late String cid;
+
+  MessageIPFSWithCID(
+      {required super.fromCAIP10,
+      required super.toCAIP10,
+      required super.fromDID,
+      required super.toDID,
+      required super.messageType,
+      required super.messageContent,
+      required super.signature,
+      required super.sigType,
+      required super.encType,
+      required super.encryptedSecret});
 }
 
 class AccountEnvOptionsType extends EnvOptionsType {
@@ -369,24 +363,6 @@ class EncryptedPrivateKeyModel {
       preKey: json['preKey'],
     );
   }
-}
-
-class MessageWithCID {
-  late String cid;
-  late String chatId;
-  late String link;
-  late String fromCAIP10;
-  late String toCAIP10;
-  late String fromDID;
-  late String toDID;
-  late String messageType;
-  late String messageContent;
-  late String signature;
-  late String sigType;
-  int? timestamp;
-  late String encType;
-  late String encryptedSecret;
-  String? verificationProof;
 }
 
 class MediaStream {

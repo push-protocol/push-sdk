@@ -1,7 +1,6 @@
 import 'package:push_api_dart/push_api_dart.dart';
-import 'package:push_api_dart/src/chat/src/helper/payload_helper.dart';
 
-start({
+Future<MessageWithCID?> start({
   String messageContent = '',
   String messageType = 'Text',
   required String receiverAddress,
@@ -41,9 +40,14 @@ start({
 
   body.verificationProof = verificationProof;
 
-  http.post(
+  final result = await http.post(
     authorization: apiKey,
     path: '/v1/chat/request',
     data: body.toJson(),
   );
+
+  if (result == null) {
+    return null;
+  }
+  return MessageWithCID.fromJson(result);
 }

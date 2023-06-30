@@ -216,7 +216,7 @@ Future<String> decryptAndVerifySignature({
   required String publicKeyArmored,
   required String signatureArmored,
   required String privateKeyArmored,
-  required Message message,
+  required IMessageIPFS message,
 }) async {
   //TODO implement  decryptAndVerifySignature
 
