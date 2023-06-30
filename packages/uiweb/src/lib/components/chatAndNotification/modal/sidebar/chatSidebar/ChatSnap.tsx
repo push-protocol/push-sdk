@@ -95,11 +95,13 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
   const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
 
   const handleOnClick = () => {
+    console.log(id)
     setSelectedChatId(id);
     setData({ chatId: id, value: chat });
   };
 
   const open = modalOpen === undefined ? true : modalOpen;
+  console.log(chat)
   return (
     <Container
       justifyContent="space-between"

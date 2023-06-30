@@ -109,7 +109,7 @@ const useChatNotificationSocket = ({
         if (!connectedProfile || !decryptedPgpPvtKey) {
           return;
         }
-        const chatId = getChatId({ msg: chat, account });
+        const chatId = getChatId({ msg: chat, account }).toLowerCase();
 
         if (
           chat.messageCategory === 'Request' &&
@@ -119,11 +119,11 @@ const useChatNotificationSocket = ({
           if (chat.messageOrigin === 'other') {
             const user = await fetchChatProfile({ profileId: chatId });
 
-            if (user) {
+            if (user || Object.keys(user || {}).length) {
               let newOne: IFeeds = {} as IFeeds;
               newOne = chatsFeed[chatId];
-
-              newOne['publicKey'] = user.publicKey;
+console.log(user)
+              newOne['publicKey'] = user!.publicKey;
 
               setChatFeed(chatId, newOne);
             }
@@ -167,9 +167,12 @@ const useChatNotificationSocket = ({
             const fetchedChat: IFeeds = (await fetchChat({
               recipientAddress: chatId,
             })) as IFeeds;
-            if (checkIfIntent({ chat: fetchedChat, account }))
+            console.log(chatId)
+            if (Object.keys(fetchedChat || {}).length &&checkIfIntent({ chat: fetchedChat, account }))
               setRequestFeed(chatId, fetchedChat);
             else setChatFeed(chatId, fetchedChat);
+            console.log("in here")
+            console.log(msg)
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]

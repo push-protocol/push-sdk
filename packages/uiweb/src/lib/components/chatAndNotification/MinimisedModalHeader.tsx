@@ -72,7 +72,8 @@ export const MessageBoxHeader = () => {
     (Object.keys(searchedChats || {}).length
       ? searchedChats![selectedChatId as string]
       : null);
-
+      console.log(selectedChatId)
+console.log(searchedChats)
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
@@ -93,7 +94,7 @@ export const MessageBoxHeader = () => {
       setActiveTab(PUSH_TABS[activeTab as PushTabs]);
     }
     if (activeSubTab === PUSH_SUB_TABS.REQUESTS || !activeSubTab) {
-      setSelectedChatId('');
+      setSelectedChatId(null);
 
       setSearchedChats(null);
     }
@@ -209,7 +210,10 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
       justifyContent="space-between"
       alignItems="center"
       padding={`${snapCondition ? '12px' : '0'} 0 `}
-      
+      borderWidth={`0 0 ${condition ? '1px' : '0'} 0 `}
+      borderStyle={`none none ${condition ? 'dashed' : 'none'} none `}
+      borderColor={`transparent transparent ${condition ? '#ededee' : 'transparent'
+        }  transparent`}
     >
       {selectedChatId &&
         !!(

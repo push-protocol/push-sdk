@@ -140,8 +140,9 @@ export const ChatAndNotification = () => {
         const address = await getAddress(activeChat, env);
         if (address) {
           setModalOpen(true);
-          setSelectedChatId(walletToPCAIP10(address));
-          let selectedChat = chatsFeed[address] || requestsFeed[address];
+          setSelectedChatId(walletToPCAIP10(address).toLowerCase());
+          console.log(walletToPCAIP10(address).toLowerCase())
+          let selectedChat = chatsFeed[walletToPCAIP10(address).toLowerCase()] || requestsFeed[walletToPCAIP10(address).toLowerCase()];
           if (!selectedChat) {
             selectedChat = (await fetchChat({
               recipientAddress: walletToPCAIP10(address),
@@ -159,8 +160,9 @@ export const ChatAndNotification = () => {
             }
             
           }
+          console.log(selectedChat)
           setSearchedChats({
-            [selectedChat.did ?? selectedChat.chatId]: selectedChat,
+            [selectedChat.did.toLowerCase() ?? selectedChat.chatId]: selectedChat,
           });
 
         }
@@ -176,6 +178,7 @@ export const ChatAndNotification = () => {
       // setChats(new Map())
     })();
   }, [activeChat,env,account]);
+
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
   };

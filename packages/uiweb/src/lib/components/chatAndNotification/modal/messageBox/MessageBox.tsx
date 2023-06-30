@@ -249,8 +249,12 @@ export const MessageBox = () => {
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
     (searchedChats ? searchedChats[selectedChatId as string] : null);
+    console.log(searchedChats)
+    console.log(chats)
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId as string);
+  console.log(selectedChatId)
+  console.log(selectedMessages)
   const dates = new Set();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -384,12 +388,12 @@ export const MessageBox = () => {
         justifyContent="start"
         flexDirection="column"
         alignItems="start"
-        borderWidth="1px 0"
-        borderStyle={ "dashed none none none"}
+        borderWidth="0 0 1px 0"
+        borderStyle={ "none none none none"}
         overflow="hidden scroll"
         ref={listInnerRef}
         onScroll={onScroll}
-        borderColor="#dddddf transparent #dddddf transparent"
+        borderColor="transparent transparent #dddddf transparent"
       >
         <>
           {selectedChat && !selectedChat.publicKey ? (

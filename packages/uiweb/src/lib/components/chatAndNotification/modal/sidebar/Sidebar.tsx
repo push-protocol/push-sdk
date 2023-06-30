@@ -278,7 +278,7 @@ export const Sidebar = () => {
       });
       if (result) {
         const defaultFeed = getDefaultFeedObject({ user: result });
-        setSearchedChats({ [defaultFeed.did]: defaultFeed });
+        setSearchedChats({ [defaultFeed.did.toLowerCase()]: defaultFeed });
         setNewChat(true);
       } else {
         setSearchedChats({});

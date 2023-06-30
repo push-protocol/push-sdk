@@ -36,9 +36,9 @@ const useFetchChats = () => {
 
         for (const chat of chats) {
           if (!chat?.groupInformation) {
-            modifiedChatsObj[chat.did ?? chat.chatId] = chat;
-            if (!getData(chat.did ?? chat.chatId))
-              setData({ chatId: chat.did ?? chat.chatId, value: chat });
+            modifiedChatsObj[chat.did.toLowerCase() ?? chat.chatId] = chat;
+            if (!getData(chat.did.toLowerCase() ?? chat.chatId))
+              setData({ chatId: chat.did.toLowerCase() ?? chat.chatId, value: chat });
           }
         }
         return modifiedChatsObj;

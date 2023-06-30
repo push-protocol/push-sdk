@@ -19,7 +19,7 @@ const getEnsName = async (provider: ethers.providers.BaseProvider | any, checksu
   provider.lookupAddress(checksumWallet).then(async (ens:string) => {
     if (ens) {
       ensName = ens;
-      setWeb3Name(checksumWallet,ensName)
+      setWeb3Name(checksumWallet.toLowerCase(),ensName)
     } else {
       ensName = null;
     }
@@ -34,7 +34,7 @@ const getUnstoppableName = async (checksumWallet: string,setWeb3Name:(id:string,
   // attempt reverse resolution on provided address
   let udName = await udResolver.reverse(checksumWallet);
   if (udName) {
-    setWeb3Name(checksumWallet,udName)
+    setWeb3Name(checksumWallet.toLowerCase(),udName)
   } else {
     udName = null;
   }

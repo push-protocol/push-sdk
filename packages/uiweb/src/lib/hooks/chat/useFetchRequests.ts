@@ -39,7 +39,7 @@ const useFetchRequests = () => {
 
       for (const request of requests) {
         if(!request?.groupInformation)
-        modifiedRequestsObj[request.did ?? request.chatId] = request;
+        modifiedRequestsObj[request.did.toLowerCase() ?? request.chatId] = request;
       }
       return modifiedRequestsObj;
     } catch (error: Error | any) {
