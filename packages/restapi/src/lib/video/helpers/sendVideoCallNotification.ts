@@ -4,13 +4,14 @@ import { sendNotification } from '../../payloads';
 import {
   NOTIFICATION_TYPE,
   SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_DISCONNECT_TYPE,
   SPACE_REQUEST_TYPE,
   VIDEO_CALL_TYPE,
 } from '../../payloads/constants';
 import { SignerType, VideoCallStatus } from '../../types';
 
 interface CallDetailsType {
-  type: SPACE_REQUEST_TYPE | SPACE_ACCEPT_REQUEST_TYPE;
+  type: SPACE_REQUEST_TYPE | SPACE_ACCEPT_REQUEST_TYPE | SPACE_DISCONNECT_TYPE;
   data: Record<string, unknown>;
 };
 

@@ -1,20 +1,26 @@
 import { produce } from 'immer';
 
 import { Video, initVideoCallData } from '../video';
-import { start } from './start';
 import { create as createSpace } from './create';
+import { update } from './update';
+import { start } from './start';
 import { inviteToPromote } from './inviteToPromote';
 import { acceptPromotionInvite } from './acceptPromotionInvite';
 import { connectInvitee } from './connectInvitee';
 import { rejectPromotionInvite } from './rejectPromotionInvite';
-
-import { EnvOptionsType, SignerType, SpaceDTO, SpaceData } from '../types';
-import { VIDEO_CALL_TYPE } from '../payloads/constants';
-import Constants from '../constants';
 import { requestToBePromoted } from './requestToBePromoted';
 import { acceptPromotionRequest } from './acceptPromotionRequest';
 import { rejectPromotionRequest } from './rejectPromotionRequest';
 import { connectPromotor } from './connectPromotor';
+import { addSpeaker } from './addSpeaker';
+import { removeSpeaker } from './removeSpeaker';
+import { join } from './join';
+import { leave } from './leave';
+import { stop } from './stop';
+
+import { EnvOptionsType, SignerType, SpaceDTO, SpaceData } from '../types';
+import { VIDEO_CALL_TYPE } from '../payloads/constants';
+import Constants from '../constants';
 
 const initSpaceSpecificData = {
   members: [],
@@ -148,21 +154,46 @@ class Space extends Video {
 
   public initialize = createSpace;
 
+  public update = update;
+
   public createAudioStream = async () => {
     await this.create({ audio: true, video: false });
   };
 
   public start = start;
 
+  // to promote a listener to a speaker/co-host
   public inviteToPromote = inviteToPromote;
   public acceptPromotionInvite = acceptPromotionInvite;
   public connectInvitee = connectInvitee;
   public rejectPromotionInvite = rejectPromotionInvite;
 
+  // listener requests to be promoted to a speaker
   public requestToBePromoted = requestToBePromoted;
   public acceptPromotionRequest = acceptPromotionRequest;
   public connectPromotor = connectPromotor;
   public rejectPromotionRequest = rejectPromotionRequest;
+
+  /*
+    - add/remove speaker to the space group as admins
+    - these methods are only to be used when the space hasnt started yet
+  */
+  public addSpeaker = addSpeaker;
+  public removeSpeaker = removeSpeaker;
+
+  /*
+    - add/remove co-host to the space group as admins
+    - add/remove them from the meta message
+    - these methods are only to be used when the space hasnt started yet
+  */
+  // public addCoHost = addCoHost;
+  // public removeCoHost = removeCoHost;
+
+  // add listner to the space group as member
+  public join = join;
+
+  public leave = leave;
+  public stop = stop;
 }
 
 export default Space;

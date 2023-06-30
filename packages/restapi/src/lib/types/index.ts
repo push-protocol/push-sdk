@@ -4,6 +4,7 @@ import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
   SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_DISCONNECT_TYPE,
   SPACE_INVITE_ROLES,
   SPACE_REQUEST_TYPE,
 } from '../../lib/payloads/constants';
@@ -526,6 +527,10 @@ export type VideoConnectInputOptions = {
 
 export type VideoDisconnectOptions = {
   peerAddress: string;
+  details?: {
+    type: SPACE_DISCONNECT_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type EnableVideoInputOptions = {

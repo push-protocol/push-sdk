@@ -56,14 +56,19 @@ export enum VIDEO_CALL_TYPE {
 }
 
 export enum SPACE_REQUEST_TYPE {
-  JOIN, // start
-  INVITE_TO_PROMOTE,
-  REQUEST_TO_PROMOTE,
+  JOIN, // space has started
+  INVITE_TO_PROMOTE, // host invites someone to be promoted as the speaker
+  REQUEST_TO_PROMOTE, // someone requests the host to be promoted to a spaeker
 }
 
 export enum SPACE_ACCEPT_REQUEST_TYPE {
   ACCEPT_INVITE,
   ACCEPT_PROMOTION,
+}
+
+export enum SPACE_DISCONNECT_TYPE {
+  STOP, // space is stopped/ended
+  LEAVE // speaker leaves a space
 }
 
 export enum SPACE_INVITE_ROLES {

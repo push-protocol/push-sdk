@@ -14,13 +14,10 @@ export interface StartSpaceType extends EnvOptionsType {
 }
 
 import type Space from './Space';
+import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 
 export async function start(this: Space): Promise<void> {
   try {
-    if (this.signer === null) {
-      throw new Error(`Signer is necessary!`);
-    }
-
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,
       env: this.env,
@@ -45,7 +42,6 @@ export async function start(this: Space): Promise<void> {
       groupDescription: space.spaceDescription,
       members: convertedMembers,
       admins: convertedAdmins,
-      account: null,
       signer: this.signer,
       env: this.env,
       pgpPrivateKey: this.pgpPrivateKey,
@@ -58,14 +54,22 @@ export async function start(this: Space): Promise<void> {
     this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
 
     /*
-        - Try calling all the members + co hosts (broadcast)
+        - Try calling all the speakers (admins)
         - Create a mesh based webRTC connection with all those who pick up
     */
     this.request({
       senderAddress: this.data.local.address,
-      recipientAddress: [...convertedAdmins, ...convertedMembers],
+      recipientAddress: [...convertedAdmins],
       chatId: this.spaceSpecificData.spaceId,
+      details: {
+        type: SPACE_REQUEST_TYPE.JOIN,
+        data: {},
+      },
     });
+
+    // if this peer is the host then start the livepeer playback and store the playback URL group meta
+    // send a notification to all the added listeners (members) telling the space has started
+
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${start.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${start.name} -: ${err}`);

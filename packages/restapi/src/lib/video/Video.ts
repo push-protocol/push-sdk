@@ -29,7 +29,7 @@ import {
 import getIncomingIndexFromAddress from './helpers/getIncomingIndexFromAddress';
 import getConnectedAddresses from './helpers/getConnectedAddresses';
 import getConnectToAddresses from './helpers/getConnectToAddresses';
-import { VIDEO_CALL_TYPE } from '../payloads/constants';
+import { SPACE_DISCONNECT_TYPE, VIDEO_CALL_TYPE } from '../payloads/constants';
 
 export const initVideoCallData: VideoCallData = {
   meta: {
@@ -266,13 +266,33 @@ export class Video {
 
             if (parsedData.type === 'endCall') {
               console.log('END CALL');
-              // destroy the local stream
-              if (this.data.local.stream) {
-                endStream(this.data.local.stream);
+
+              if (
+                this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+                parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
+              ) {
+                // destroy connection to only the current peer
+              }
+              if (
+                this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+                parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
+              ) {
+                // destroy connection to all the peers
               }
 
-              // reset the state
-              this.setData(() => initVideoCallData);
+              if (
+                this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO ||
+                (this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+                  parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP)
+              ) {
+                // destroy the local stream
+                if (this.data.local.stream) {
+                  endStream(this.data.local.stream);
+                }
+
+                // reset the state
+                this.setData(() => initVideoCallData);
+              }
             }
           } else {
             onReceiveMessage(data);
@@ -461,13 +481,33 @@ export class Video {
 
           if (parsedData.type === 'endCall') {
             console.log('END CALL');
-            // destroy the local stream
-            if (this.data.local.stream) {
-              endStream(this.data.local.stream);
+
+            if (
+              this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+              parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
+            ) {
+              // destroy connection to only the current peer
+            }
+            if (
+              this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+              parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
+            ) {
+              // destroy connection to all the peers
             }
 
-            // reset the state
-            this.setData(() => initVideoCallData);
+            if (
+              this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO ||
+              (this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+                parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP)
+            ) {
+              // destroy the local stream
+              if (this.data.local.stream) {
+                endStream(this.data.local.stream);
+              }
+
+              // reset the state
+              this.setData(() => initVideoCallData);
+            }
           }
         } else {
           onReceiveMessage(data);
@@ -594,7 +634,7 @@ export class Video {
   }
 
   disconnect(options: VideoDisconnectOptions): void {
-    const { peerAddress } = options || {};
+    const { peerAddress, details } = options || {};
 
     try {
       const incomingIndex = getIncomingIndexFromAddress(
@@ -611,7 +651,7 @@ export class Video {
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
       ) {
         this.peerInstances[peerAddress]?.send(
-          JSON.stringify({ type: 'endCall', value: true })
+          JSON.stringify({ type: 'endCall', value: true, details })
         );
         this.peerInstances[peerAddress]?.destroy();
       } else {
@@ -631,6 +671,7 @@ export class Video {
             signalData: null,
             env: this.env,
             callType: this.callType,
+            callDetails: details,
           }
         );
       }
