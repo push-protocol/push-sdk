@@ -1,12 +1,12 @@
 import '../../../push_api_dart.dart';
 
-class Api {
-  static String getQueryParams(Map<dynamic, dynamic> obj) {
-    return obj.keys
-        .map((key) => '$key=${Uri.encodeComponent(obj[key])}')
-        .join('&');
-  }
+String getQueryParams(Map<dynamic, dynamic> obj) {
+  return obj.keys
+      .map((key) => '$key=${Uri.encodeComponent(obj[key])}')
+      .join('&');
+}
 
+class Api {
   int getLimit([int? passedLimit]) {
     if (passedLimit == null) return Constants.PAGINATION['LIMIT'];
 
@@ -31,6 +31,4 @@ class Api {
    */
     ENV.local: 'http://localhost:4200/apis',
   };
-
-
 }

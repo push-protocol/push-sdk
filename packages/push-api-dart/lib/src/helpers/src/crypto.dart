@@ -227,3 +227,17 @@ Future<String> decryptAndVerifySignature({
     return 'Unable to decrypt message';
   }
 }
+
+decryptPGPKey({
+  encryptedPGPPrivateKey,
+  account,
+  signer,
+  toUpgrade = false,
+  additionalMeta,
+}) {}
+
+verifyPGPPublicKey({
+  required String encryptedPrivateKey,
+  required String publicKey,
+  required String did,
+}) async {}

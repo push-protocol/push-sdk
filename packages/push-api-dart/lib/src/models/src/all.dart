@@ -62,26 +62,6 @@ class AndroidNotification {
   late bool defaultVibrateTimings;
 }
 
-class Notification {
-  late String body;
-  late String title;
-}
-
-// The output response from parsing a notification object
-class ParsedResponseType {
-  late String cta;
-  late String title;
-  late String message;
-  late String icon;
-  late String url;
-  late String sid;
-  late String app;
-  late String image;
-  late String blockchain;
-  late String secret;
-  late Notification notification;
-}
-
 class SendNotificationInputOptions {
   int? senderType;
   late dynamic signer;
@@ -341,7 +321,7 @@ class EncryptedPrivateKeyModel {
   String? ciphertext;
   String? salt;
   String? preKey;
-  EncryptedPrivateKeyTypeV2? encryptedPassword;
+  dynamic encryptedPassword;
 
   toJson() {
     return {

@@ -1,2 +1,10 @@
+export 'src/auth.update_user.dart';
 export 'src/create_user.dart';
+export 'src/decrypt_auth.dart';
+export 'src/get_delegations.dart';
+export 'src/get_feeds.dart';
+export 'src/get_subscriptions.dart';
 export 'src/get_user.dart';
+export 'src/get_users_batch.dart';
+export 'src/profile.update_user.dart';
+export 'src/upgrade_user.dart';
