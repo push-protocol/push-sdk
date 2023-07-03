@@ -676,6 +676,10 @@ export class Video {
         );
       }
 
+      // destroy the peerInstance
+      this.peerInstance?.destroy();
+      this.peerInstance = null;
+
       // destroy the local stream
       if (this.data.local.stream) {
         endStream(this.data.local.stream);
@@ -693,13 +697,6 @@ export class Video {
   enableVideo(options: EnableVideoInputOptions): void {
     const { state, peerAddress } = options || {};
 
-    console.log(
-      'enableVideo',
-      'current video',
-      this.data.local.video,
-      'requested state',
-      state
-    );
     if (this.data.local.video !== state) {
       // need to change the video state
 
