@@ -78,7 +78,7 @@ String getFallbackETHCAIPAddress({ENV? env, required String address}) {
   return 'eip155:$chainId:$address';
 }
 
-Future<String> getCAIPAddress(ENV env, String address, [String? msg]) async {
+Future<String> getCAIPAddress({required String address}) async {
   if (isValidCAIP10NFTAddress(address)) {
     return await getUserDID(address: address);
   }
@@ -86,9 +86,9 @@ Future<String> getCAIPAddress(ENV env, String address, [String? msg]) async {
     return address;
   } else {
     if (isValidETHAddress(address)) {
-      return getFallbackETHCAIPAddress(env: env, address: address);
+      return getFallbackETHCAIPAddress(address: address);
     } else {
-      throw Error();
+      throw Exception('invalid address');
     }
   }
 }

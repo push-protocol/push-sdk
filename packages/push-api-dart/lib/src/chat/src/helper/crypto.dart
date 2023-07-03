@@ -20,7 +20,7 @@ Future<List<Feeds>> decryptFeeds({
     if (msg.encType != 'PlainText') {
       if (msg.fromCAIP10 != connectedUser.wallets.split(',')[0]) {
         if (!gotOtherPeer) {
-          otherPeer = await getUser(address: msg.fromCAIP10 ?? '');
+          otherPeer = await getUser(address: msg.fromCAIP10);
           gotOtherPeer = true;
         }
         signatureValidationPubliKey = otherPeer!.publicKey;
@@ -29,10 +29,10 @@ Future<List<Feeds>> decryptFeeds({
       }
 
       feed.msg?.messageContent = await decryptAndVerifySignature(
-        cipherText: msg.messageContent!,
-        encryptedSecretKey: msg.encryptedSecret!,
+        cipherText: msg.messageContent,
+        encryptedSecretKey: msg.encryptedSecret,
         publicKeyArmored: signatureValidationPubliKey,
-        signatureArmored: msg.signature!,
+        signatureArmored: msg.signature,
         privateKeyArmored: pgpPrivateKey,
         message: msg,
       );
@@ -84,7 +84,8 @@ Future<IEncryptedRequest?> getEncryptedRequest({
   if (!isGroup) {
     final User? receiverCreatedUser = await getUser(address: receiverAddress);
 
-    if (receiverCreatedUser == null || receiverCreatedUser.publicKey == null) {
+    if (receiverCreatedUser == null ||
+        receiverCreatedUser.publicKey.isNotEmpty) {
       if (!isValidETHAddress(receiverAddress)) {
         throw Exception('Invalid receiver address!');
       }
@@ -164,6 +165,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
           signature: response['signature']!);
     }
   }
+  return null;
 }
 
 Future<Map<String, dynamic>> getEip712Signature(

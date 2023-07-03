@@ -5,7 +5,7 @@ import '../../../push_api_dart.dart';
 Future<User?> createUser({
   required EthWallet wallet,
   String version = Constants.ENC_TYPE_V3,
-  Map<ENCRYPTION_TYPE, Map<String, dynamic>>? additionalMeta,
+  Map<dynamic, Map<String, dynamic>>? additionalMeta,
 }) async {
   const passPrefix = r'$0Pc';
   additionalMeta ??= {

@@ -1,6 +1,6 @@
 import '../../../push_api_dart.dart';
 
-createGroup({
+Future<GroupDTO?> updateGroup({
   EthWallet? wallet,
   required String groupName,
   required String groupDescription,
@@ -14,6 +14,7 @@ createGroup({
   int? numberOfERC20,
   String? pgpPrivateKey,
   String? meta,
+  required String chatId,
 }) async {
   try {
     String? userDID;
@@ -34,11 +35,15 @@ createGroup({
       throw Exception('Private Key is required');
     }
 
-    createGroupRequestValidator(
-        groupName: groupName,
-        groupDescription: groupDescription,
-        members: members,
-        admins: admins);
+    updateGroupRequestValidator(
+      chatId,
+      groupName,
+      groupDescription,
+      groupImage,
+      members,
+      admins,
+      userDID,
+    );
 
     final convertedMembersDIDList =
         await Future.wait(members.map((item) => getUserDID(address: item)));
@@ -48,15 +53,10 @@ createGroup({
     final bodyToBeHashed = {
       'groupName': groupName,
       'groupDescription': groupDescription,
-      'members': convertedMembersDIDList,
       'groupImage': groupImage,
+      'members': convertedMembersDIDList,
       'admins': convertedAdminsDIDList,
-      'isPublic': isPublic,
-      'contractAddressNFT': contractAddressNFT,
-      'numberOfNFTs': numberOfNFTs ?? 0,
-      'contractAddressERC20': contractAddressERC20,
-      'numberOfERC20': numberOfERC20 ?? 0,
-      'groupCreator': userDID,
+      'chatId': chatId,
     };
 
     final hash = generateHash(bodyToBeHashed);
@@ -67,39 +67,31 @@ createGroup({
       publicKey: wallet.publicKey!,
     );
 
-    const sigType = 'pgp';
-
-    final String verificationProof = '$sigType:$signature';
+    final sigType = 'pgp';
+    final verificationProof = '$sigType:$signature:$userDID';
 
     final body = {
       'groupName': groupName,
-      'groupDescription': groupDescription,
-      'members': members,
       'groupImage': groupImage,
-      'admins': admins,
-      'isPublic': isPublic,
-      'contractAddressNFT': contractAddressNFT,
-      'numberOfNFTs': numberOfNFTs,
-      'contractAddressERC20': contractAddressERC20,
-      'numberOfERC20': numberOfERC20,
-      'groupCreator': userDID,
+      'groupDescription': groupDescription,
+      'members': convertedMembersDIDList,
+      'admins': convertedAdminsDIDList,
+      'address': userDID,
       'verificationProof': verificationProof,
-      'meta': meta,
     };
 
-    final result = await http.post(
-      path: '/v1/chat/groups',
+    final result = await http.put(
+      path: '/v1/chat/groups/$chatId',
       data: body,
     );
 
     if (result == null) {
-      throw Exception(result);
+      return null;
     }
 
     return GroupDTO.fromJson(result);
-    
   } catch (e) {
-    log("[Push SDK] - API  - Error - API createGroup -: $e ");
+    log("[Push SDK] - API  - Error - API updateGroup -: $e ");
     rethrow;
   }
 }

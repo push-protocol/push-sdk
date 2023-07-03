@@ -260,7 +260,7 @@ Future<String> decryptAndVerifySignature({
   required String publicKeyArmored,
   required String signatureArmored,
   required String privateKeyArmored,
-  required Message message,
+  required IMessageIPFS message,
 }) async {
   //TODO implement  decryptAndVerifySignature
 
@@ -406,3 +406,9 @@ Future<String> decryptPGPKey({
     throw Exception('[Push SDK] - API - Error - API decryptPGPKey -: $err');
   }
 }
+
+verifyPGPPublicKey({
+  required String encryptedPrivateKey,
+  required String publicKey,
+  required String did,
+}) async {}

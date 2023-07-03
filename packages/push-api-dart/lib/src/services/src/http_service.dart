@@ -55,10 +55,13 @@ class HttpService {
     }
   }
 
-  Future<Map<String, dynamic>?> get({
+
+/// make skipJsonDecode = true if expected result is not in json format
+  Future<dynamic> get({
     String? baseUrl,
     String? authorization,
     required String path,
+    bool skipJsonDecode = false,
   }) async {
     http_package.Response? response;
     try {
@@ -72,6 +75,10 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
+
+      if (skipJsonDecode) {
+        return response.body;
+      }
 
       if (response.body.isEmpty) {
         return <String, dynamic>{};

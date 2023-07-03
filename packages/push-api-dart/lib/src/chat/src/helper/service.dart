@@ -46,3 +46,35 @@ Future<User> createUserService({
     throw Exception('[Push SDK] - API $requestPath: Error');
   }
 }
+
+getConversationHashService({
+  required String conversationId,
+  required String account,
+}) async {
+  final path =
+      '/v1/chat/users/${walletToPCAIP10(account)}/conversations/$conversationId/hash';
+
+  return http.get(
+    path: path,
+    skipJsonDecode: true,
+  );
+}
+
+Future<List<IMessageIPFS>?> getMessagesService({
+  required String threadhash,
+  required int limit,
+}) async {
+  final path = '/v1/chat/conversationhash/$threadhash?fetchLimit=$limit';
+
+  final result = await http.get(path: path);
+
+  if (result == null) {
+    return null;
+  }
+
+  if (result is List) {
+    return result.map((e) => IMessageIPFS.fromJson(e)).toList();
+  }
+
+  return null;
+}

@@ -39,21 +39,17 @@ Future<List<Feeds>?> chats({
       return null;
     }
 
-    log('chats 1');
 
     final chatList =
         (result['chats'] as List).map((e) => Feeds.fromJson(e)).toList();
-    log('chats 2');
     final updatedChats = chatList;
     addDeprecatedInfo(chatList);
-    log('chats 3');
     final feedWithInbox = await getInboxList(
       feedsList: updatedChats,
       user: userDID,
       pgpPrivateKey: pgpPrivateKey,
       toDecrypt: toDecrypt,
     );
-    log('chats 4');
 
     return feedWithInbox;
   } catch (e) {

@@ -1,12 +1,24 @@
-// ignore_for_file: constant_identifier_names, camel_case_types
+// ignore_for_file: constant_identifier_names, camel_case_types, non_constant_identifier_names
 
+// enum ENCRYPTION_TYPE {
+//   PGP_V1,
+//   PGP_V2,
+//   PGP_V3,
+//   NFTPGP_V1,
+// }
 
+class ENCRYPTION_TYPE {
+  static const PGP_V1 = 'x25519-xsalsa20-poly1305';
+  static const PGP_V2 = 'aes256GcmHkdfSha256';
+  static const PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256';
+  static const NFTPGP_V1 = 'pgpv1:nft';
+}
 
-enum ENCRYPTION_TYPE {
-  PGP_V1,
-  PGP_V2,
-  PGP_V3,
-  NFTPGP_V1,
+class Pagination {
+  static const INITIAL_PAGE = 1;
+  static const LIMIT = 10;
+  static const LIMIT_MIN = 1;
+  static const LIMIT_MAX = 50;
 }
 
 class Constants {

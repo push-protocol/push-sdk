@@ -62,26 +62,6 @@ class AndroidNotification {
   late bool defaultVibrateTimings;
 }
 
-class Notification {
-  late String body;
-  late String title;
-}
-
-// The output response from parsing a notification object
-class ParsedResponseType {
-  late String cta;
-  late String title;
-  late String message;
-  late String icon;
-  late String url;
-  late String sid;
-  late String app;
-  late String image;
-  late String blockchain;
-  late String secret;
-  late Notification notification;
-}
-
 class SendNotificationInputOptions {
   int? senderType;
   late dynamic signer;
@@ -124,23 +104,6 @@ class NotificationPayload {
   late NotificationOptions notification;
   late Data data;
   late dynamic recipients;
-}
-
-class MessageIPFS {
-  late String fromCAIP10;
-  late String toCAIP10;
-  late String fromDID;
-  late String toDID;
-  late String messageType;
-  late String messageContent;
-  late String signature;
-  late String sigType;
-  late String? link;
-  late int? timestamp;
-  late String encType;
-  late String encryptedSecret;
-  bool? deprecated; // scope only at sdk level
-  String? deprecatedCode; // scope only at sdk level
 }
 
 class Member {
@@ -268,8 +231,20 @@ class Subscribers {
   late List<String> subscribers;
 }
 
-class MessageIPFSWithCID extends MessageIPFS {
+class MessageIPFSWithCID extends IMessageIPFS {
   late String cid;
+
+  MessageIPFSWithCID(
+      {required super.fromCAIP10,
+      required super.toCAIP10,
+      required super.fromDID,
+      required super.toDID,
+      required super.messageType,
+      required super.messageContent,
+      required super.signature,
+      required super.sigType,
+      required super.encType,
+      required super.encryptedSecret});
 }
 
 class AccountEnvOptionsType extends EnvOptionsType {
@@ -346,7 +321,7 @@ class EncryptedPrivateKeyModel {
   String? ciphertext;
   String? salt;
   String? preKey;
-  EncryptedPrivateKeyTypeV2? encryptedPassword;
+  dynamic encryptedPassword;
 
   toJson() {
     return {
