@@ -8,7 +8,7 @@ export const usePopularSpaces = () => {
   const { popularPage, setPopularPage, popularSpaces, setPopularSpaces } =
     useSpaceData();
 
-  const fetchPopularSpaces = useCallback(async () => {
+  const fetchPopularSpaces = async () => {
     try {
       const res = await PushAPI.space.trending({
         page: popularPage,
@@ -32,10 +32,9 @@ export const usePopularSpaces = () => {
     } catch (error) {
       console.error('Error while fetching popular spaces:', error);
     }
-  }, [popularPage]);
+  };
 
   useEffect(() => {
     fetchPopularSpaces();
-  }, [fetchPopularSpaces]);
+  }, [popularPage]);
 };
-

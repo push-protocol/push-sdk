@@ -9,7 +9,7 @@ export const useSpaceRequests = (account: string) => {
   const { requestPage, setRequestPage, spaceRequests, setSpaceRequests } =
     useSpaceData();
 
-  const fetchPopularSpaces = async () => {
+  const fetchSpaceRequests = async () => {
     try {
       const res = await PushAPI.space.requests({
         account: account,
@@ -32,11 +32,11 @@ export const useSpaceRequests = (account: string) => {
         });
       }
     } catch (error) {
-      console.error('Error while fetching popular spaces:', error);
+      console.error('Error while fetching spaces requests:', error);
     }
   };
 
   useEffect(() => {
-    fetchPopularSpaces();
+    fetchSpaceRequests();
   }, [requestPage]);
 };

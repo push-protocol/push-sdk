@@ -8,7 +8,7 @@ export const useMySpaces = (account: string) => {
 
   const { spacesPage, setSpacesPage, mySpaces, setMySpaces } = useSpaceData();
 
-  const fetchPopularSpaces = async () => {
+  const fetchMySpaces = async () => {
     try {
       const res = await PushAPI.space.spaces({
         account: account,
@@ -31,11 +31,11 @@ export const useMySpaces = (account: string) => {
         });
       }
     } catch (error) {
-      console.error('Error while fetching popular spaces:', error);
+      console.error('Error while fetching Spaces For You:', error);
     }
   };
 
   useEffect(() => {
-    fetchPopularSpaces();
+    fetchMySpaces();
   }, [spacesPage]);
 };

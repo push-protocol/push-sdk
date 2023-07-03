@@ -5,7 +5,12 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 import { SpaceBanner } from '../SpaceBanner';
 
-import { useSpaceData, useMySpaces, usePopularSpaces, useSpaceRequests } from '../../../hooks';
+import {
+  useSpaceData,
+  useMySpaces,
+  usePopularSpaces,
+  useSpaceRequests,
+} from '../../../hooks';
 
 export interface ISpaceFeedProps {
   account?: any;
@@ -14,6 +19,12 @@ export interface ISpaceFeedProps {
   width?: number;
   sortingOrder?: string[];
   showTabs?: boolean;
+}
+
+export enum Tabs {
+  ForYou = 'For You',
+  Popular = 'Popular',
+  Requests = 'Requests',
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
@@ -55,9 +66,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
       (document.documentElement && document.documentElement.scrollHeight) ||
       document.body.scrollHeight;
     if (scrollTop + window.innerHeight + 1 >= scrollHeight) {
-      if (tab === 'For You') setSpacesPage(spacesPage + 1);
-      if (tab === 'Popular') setPopularPage(popularPage + 1);
-      if (tab === 'Requests') setRequestPage(requestPage + 1);
+      if (tab === Tabs.ForYou) setSpacesPage(spacesPage + 1);
+      if (tab === Tabs.Popular) setPopularPage(popularPage + 1);
+      if (tab === Tabs.Requests) setRequestPage(requestPage + 1);
     }
   };
 
