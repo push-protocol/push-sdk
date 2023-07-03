@@ -118,50 +118,52 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               );
             })}
           </Navigation>
-          <Container width={width} height={height}>
-            {tab === 'For You' ? (
-              <Spaces orientation={orientation}>
-                {mySpaces &&
-                  mySpaces.map((space: { spaceId: string }, index: any) => {
-                    return (
-                      <SpaceBanner
-                        spaceId={space.spaceId}
-                        orientation="maximized"
-                      />
-                    );
-                  })}
-              </Spaces>
-            ) : tab === 'Popular' ? (
-              <PopularSpaces>
-                <Text>Popular Spaces</Text>
-                {popularSpaces &&
-                  popularSpaces.map(
-                    (space: { spaceId: string }, index: any) => {
+          <ScrollContainer width={width} height={height}>
+            <Container>
+              {tab === 'For You' ? (
+                <Spaces orientation={orientation}>
+                  {mySpaces &&
+                    mySpaces.map((space: { spaceId: string }, index: any) => {
                       return (
                         <SpaceBanner
                           spaceId={space.spaceId}
                           orientation="maximized"
                         />
                       );
-                    }
-                  )}
-              </PopularSpaces>
-            ) : (
-              <Spaces orientation={orientation}>
-                {spaceRequests &&
-                  spaceRequests.map(
-                    (space: { spaceId: string }, index: any) => {
-                      return (
-                        <SpaceBanner
-                          spaceId={space.spaceId}
-                          orientation="maximized"
-                        />
-                      );
-                    }
-                  )}
-              </Spaces>
-            )}
-          </Container>
+                    })}
+                </Spaces>
+              ) : tab === 'Popular' ? (
+                <PopularSpaces>
+                  <Text>Popular Spaces</Text>
+                  {popularSpaces &&
+                    popularSpaces.map(
+                      (space: { spaceId: string }, index: any) => {
+                        return (
+                          <SpaceBanner
+                            spaceId={space.spaceId}
+                            orientation="maximized"
+                          />
+                        );
+                      }
+                    )}
+                </PopularSpaces>
+              ) : (
+                <Spaces orientation={orientation}>
+                  {spaceRequests &&
+                    spaceRequests.map(
+                      (space: { spaceId: string }, index: any) => {
+                        return (
+                          <SpaceBanner
+                            spaceId={space.spaceId}
+                            orientation="maximized"
+                          />
+                        );
+                      }
+                    )}
+                </Spaces>
+              )}
+            </Container>
+          </ScrollContainer>
         </>
       )}
     </div>
@@ -169,15 +171,17 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 };
 
 //Styling
-const Container = styled.div<{ height?: number; width?: number }>`
+const ScrollContainer = styled.div<{ height?: number; width?: number }>`
+  width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
+  height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
+  overflow-y: scroll;
+}`;
+const Container = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: left;
   background: #ffffff;
   border: 1px solid #dcdcdf;
   border-radius: 12px;
-  width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
-  height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   padding: 24px 32px;
 }`;
 
