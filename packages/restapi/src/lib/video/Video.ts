@@ -13,6 +13,7 @@ import {
   stopVideoStream,
 } from './helpers/mediaToggle';
 import isJSON from './helpers/isJSON';
+import { getIceServerConfig } from './helpers/getIceServerConfig';
 
 import {
   SignerType,
@@ -144,10 +145,16 @@ export class Video {
         this.data.local.stream
       );
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
       this.peerInstance = new Peer({
         initiator: true,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
       });
 
       this.peerInstance.on('signal', (data: any) => {
@@ -297,10 +304,43 @@ export class Video {
         });
       });
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
       this.peerInstance = new Peer({
         initiator: false,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
+      });
+
+      // setup error handler
+      this.peerInstance.on('error', (err: any) => {
+        console.log('error in accept request', err);
+
+        if (this.data.incoming[0].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect();
+        }
+
+        // retrying in case of connection error
+        sendVideoCallNotification(
+          {
+            signer: this.signer,
+            chainId: this.chainId,
+            pgpPrivateKey: this.pgpPrivateKey,
+          },
+          {
+            senderAddress,
+            recipientAddress,
+            status: VideoCallStatus.RETRY_INITIALIZED,
+            chatId,
+            signalData: null,
+            env: this.env,
+          }
+        );
       });
 
       this.peerInstance.signal(signalData);
@@ -400,28 +440,6 @@ export class Video {
       });
     } catch (err) {
       console.log('error in accept request', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      sendVideoCallNotification(
-        {
-          signer: this.signer,
-          chainId: this.chainId,
-          pgpPrivateKey: this.pgpPrivateKey,
-        },
-        {
-          senderAddress,
-          recipientAddress,
-          status: VideoCallStatus.RETRY_INITIALIZED,
-          chatId,
-          signalData: null,
-          env: this.env,
-        }
-      );
     }
   }
 
@@ -430,6 +448,24 @@ export class Video {
 
     try {
       console.log('connect', 'options', options);
+
+      // setup error handler
+      this.peerInstance.on('error', (err: any) => {
+        console.log('error in connect', err);
+
+        if (this.data.incoming[0].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect();
+        }
+
+        // retrying in case of connection error
+        this.request({
+          senderAddress: this.data.local.address,
+          recipientAddress: this.data.incoming[0].address,
+          chatId: this.data.meta.chatId,
+          retry: true,
+        });
+      });
 
       this.peerInstance?.signal(signalData);
 
@@ -441,19 +477,6 @@ export class Video {
       });
     } catch (err) {
       console.log('error in connect', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      this.request({
-        senderAddress: this.data.local.address,
-        recipientAddress: this.data.incoming[0].address,
-        chatId: this.data.meta.chatId,
-        retry: true,
-      });
     }
   }
 
@@ -533,7 +556,7 @@ export class Video {
 
   enableAudio(options: EnableAudioInputOptions): void {
     const { state } = options || {};
-    
+
     if (this.data.local.audio !== state) {
       // need to change the audio state
 

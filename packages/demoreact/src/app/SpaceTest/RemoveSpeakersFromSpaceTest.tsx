@@ -10,12 +10,12 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import SpaceTest from './SpaceTest';
 
-const AddMembersToSpaceTest = () => {
+const RemoveSpeakersFromSpaceTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceId, setSpaceId] = useState<string>('');
-  const [memberAddress, setMemberAddress] = useState<string>('');
+  const [speakerAddress, setSpeakerAddress] = useState<string>('');
   const [sendResponse, setSendResponse] = useState<any>('');
   const [account, setAccount] = useState<string>(acc);
 
@@ -23,20 +23,21 @@ const AddMembersToSpaceTest = () => {
     setSpaceId((e.target as HTMLInputElement).value);
   };
 
-  const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setMemberAddress((e.target as HTMLInputElement).value);
+  const updateSpeakerId = (e: React.SyntheticEvent<HTMLElement>) => {
+    setSpeakerAddress((e.target as HTMLInputElement).value);
   };
 
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
-    setAccount((e.target as HTMLInputElement).value);
+      setAccount((e.target as HTMLInputElement).value);
   };
-  const addMembersToSpaceTest = async () => {
+
+  const removeSpeakersFromSpaceTest = async () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const response = await PushAPI.space.addMembersToSpace({
+      const response = await PushAPI.space.removeSpeakers({
         spaceId: spaceId,
-        members: memberAddress ? memberAddress.split(',') : [],
+        speakers: speakerAddress ? speakerAddress.split(',') : [],
         env,
         account: account,
         signer: librarySigner,
@@ -52,13 +53,13 @@ const AddMembersToSpaceTest = () => {
   return (
     <div>
       <SpaceTest />
-      <h2>Add Members to Space Test page</h2>
+      <h2>Remove Speakers from Group Test page</h2>
 
       <Loader show={isLoading} />
 
       <Section>
         <SectionItem>
-          <SectionButton onClick={addMembersToSpaceTest}>Add Members to Space</SectionButton>
+          <SectionButton onClick={removeSpeakersFromSpaceTest}>Remove Speakers from Space</SectionButton>
         </SectionItem>
          <SectionItem>
               <label>spaceId</label>
@@ -70,11 +71,11 @@ const AddMembersToSpaceTest = () => {
               />
         </SectionItem>
          <SectionItem>
-              <label>members (comma separated)</label>
+              <label>speakers (comma separated)</label>
               <input
                 type="text"
-                onChange={updateMemberId}
-                value={memberAddress}
+                onChange={updateSpeakerId}
+                value={speakerAddress}
                 style={{ width: 400, height: 30 }}
               />
         </SectionItem>
@@ -86,7 +87,7 @@ const AddMembersToSpaceTest = () => {
                 value={account}
                 style={{ width: 400, height: 30 }}
               />
-        </SectionItem>
+          </SectionItem>
          <SectionItem>
           <div>
             {sendResponse ? (
@@ -101,4 +102,4 @@ const AddMembersToSpaceTest = () => {
   );
 };
 
-export default AddMembersToSpaceTest;
+export default RemoveSpeakersFromSpaceTest;

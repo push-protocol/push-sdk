@@ -35,7 +35,7 @@ const AddAdminsToGroupTest = () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const response = await PushAPI.chat.addAdminsToGroup({
+      const response = await PushAPI.chat.addAdmins({
         chatId: chatId,
         admins: memberAddress ? memberAddress.split(',') : [],
         env,
