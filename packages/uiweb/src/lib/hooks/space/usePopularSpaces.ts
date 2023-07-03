@@ -1,5 +1,5 @@
 import { useSpaceData } from './useSpaceData';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
 

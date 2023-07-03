@@ -7,10 +7,12 @@ import { SpaceBanner } from '../SpaceBanner';
 
 import {
   useSpaceData,
+  useFeedScroll,
   useMySpaces,
   usePopularSpaces,
   useSpaceRequests,
 } from '../../../hooks';
+import { Spinner } from '../../chat/Spinner';
 
 export interface ISpaceFeedProps {
   account?: any;
@@ -32,12 +34,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   orientation = 'veritcal',
   height,
   width,
-  sortingOrder = ['For You', 'Popular', 'Requests'],
+  sortingOrder = [Tabs.ForYou, Tabs.Popular, Tabs.Requests],
   showTabs = true,
 }) => {
-  const LIMIT = 10;
-
   const [tab, setTab] = useState<string>(sortingOrder[0]);
+  const [loading, setLoading] = useState(false);
 
   const {
     spacesPage,
@@ -54,21 +55,29 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setSpaceRequests,
   } = useSpaceData();
 
+  const listInnerRef = useFeedScroll(mySpaces.length);
+
   const handleTabChange = (tab: string) => {
     setTab(tab);
   };
 
-  const handleScroll = () => {
-    const scrollTop =
-      (document.documentElement && document.documentElement.scrollTop) ||
-      document.body.scrollTop;
-    const scrollHeight =
-      (document.documentElement && document.documentElement.scrollHeight) ||
-      document.body.scrollHeight;
-    if (scrollTop + window.innerHeight + 1 >= scrollHeight) {
-      if (tab === Tabs.ForYou) setSpacesPage(spacesPage + 1);
-      if (tab === Tabs.Popular) setPopularPage(popularPage + 1);
-      if (tab === Tabs.Requests) setRequestPage(requestPage + 1);
+  const loadMoreData = async () => {
+    setLoading(true);
+    if (tab === Tabs.ForYou) setSpacesPage(spacesPage + 1);
+    if (tab === Tabs.Popular) setPopularPage(popularPage + 1);
+    if (tab === Tabs.Requests) setRequestPage(requestPage + 1);
+    setLoading(false);
+  };
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop } = listInnerRef.current;
+      const { offsetHeight } = listInnerRef.current;
+      const { scrollHeight } = listInnerRef.current;
+
+      if (scrollTop + offsetHeight + 1 >= scrollHeight) {
+        loadMoreData();
+      }
     }
   };
 
@@ -76,12 +85,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   useMySpaces(account);
   usePopularSpaces();
   useSpaceRequests(account);
-
-  //Infinte scroll
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <div>
@@ -118,7 +121,12 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               );
             })}
           </Navigation>
-          <ScrollContainer width={width} height={height}>
+          <ScrollContainer
+            width={width}
+            height={height}
+            ref={listInnerRef}
+            onScroll={onScroll}
+          >
             <Container>
               {tab === 'For You' ? (
                 <Spaces orientation={orientation}>
@@ -164,6 +172,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               )}
             </Container>
           </ScrollContainer>
+          {loading && <Spinner size="40" />}
         </>
       )}
     </div>
@@ -174,7 +183,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
-  overflow-y: scroll;
+  overflow-y: auto;
 }`;
 const Container = styled.div`
   display: flex;
@@ -191,7 +200,6 @@ const Navigation = styled.div<{
 }>`
   display: ${(props) => (props.showTabs ? 'flex' : 'none')};
   flex-direction: row;
-  border-bottom: 1px solid #DCDCDF;
   margin-bottom: 27px;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
 }`;
@@ -201,7 +209,7 @@ const NavButton = styled.button<{ active?: boolean }>`
   font-weight: 450;
   font-size: 14px;
   border: none;
-  border-bottom: ${(props) => (props.active ? '1px solid #8B5CF6' : 'none')};
+  border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
   background: none;
 }`;
 

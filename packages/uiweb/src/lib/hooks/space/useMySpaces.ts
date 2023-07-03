@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import * as PushAPI from '@pushprotocol/restapi';
 
 export const useMySpaces = (account: string) => {
-  const LIMIT = 10;
+  const LIMIT = 1;
 
   const { spacesPage, setSpacesPage, mySpaces, setMySpaces } = useSpaceData();
 
