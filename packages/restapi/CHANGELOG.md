@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.18...restapi-0.0.1-alpha.19) (2023-07-03)
+
+
+### Bug Fixes
+
+* added silent notifications ([#467](https://github.com/ethereum-push-notification-service/push-sdk/issues/467)) ([88bafe4](https://github.com/ethereum-push-notification-service/push-sdk/commit/88bafe49d489cfe399efa7166407a50574995b16))
+* Merge branch 'alpha' into alpha-deployment ([a15e368](https://github.com/ethereum-push-notification-service/push-sdk/commit/a15e368241215e2e2219792afd718567d621bf2a))
+* merge main ([6998d35](https://github.com/ethereum-push-notification-service/push-sdk/commit/6998d35aa181f17a5ad8d9501943a6a867814650))
+* rename based on new convention ([0e34479](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e34479b1581abd59e0f853d6547e23a0afb5e28))
+* **video:** add error handlers and turn server config ([#466](https://github.com/ethereum-push-notification-service/push-sdk/issues/466)) ([cda9a28](https://github.com/ethereum-push-notification-service/push-sdk/commit/cda9a28bbb99bf8bd40bcd13f3c486cbf1ebe5a2))
+
+
+
 ## [0.0.1-alpha.18](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.17...restapi-0.0.1-alpha.18) (2023-06-20)
 
 
