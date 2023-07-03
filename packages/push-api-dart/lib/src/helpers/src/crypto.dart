@@ -136,8 +136,8 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
       List<int> encodedPrivateKey = utf8.encode(generatedPrivateKey);
 
       encryptedPrivateKey = await encryptV2(
-        encodedPrivateKey: encodedPrivateKey,
-        data: utf8.encode(secret),
+        data: encodedPrivateKey,
+        secret: utf8.encode(secret),
       );
 
       encryptedPrivateKey.version = encryptionType;
@@ -150,8 +150,8 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
       }
       List<int> encodedPrivateKey = utf8.encode(generatedPrivateKey);
       encryptedPrivateKey = await encryptV2(
-        encodedPrivateKey: encodedPrivateKey,
-        data: hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password)),
+        data: encodedPrivateKey,
+        secret: hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password)),
       );
       encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
       encryptedPrivateKey.preKey = '';
@@ -165,6 +165,7 @@ Future<EncryptedPrivateKeyModel> encryptPGPKey({
 const KDFSaltSize = 32;
 const AESGCMNonceSize = 12;
 
+// Derive AES-256-GCM key from a shared secret and salt
 Future<SecretKey> hkdf(List<int> secret, List<int> salt) async {
   final hkdfAlgorithm = Hkdf(
     hmac: Hmac.sha256(),
