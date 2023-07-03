@@ -1,13 +1,8 @@
-import Constants from '../constants';
-import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
-import {
-  groupDtoToSpaceDto
-} from './../chat/helpers';
+import { SpaceDTO } from '../types';
+import { groupDtoToSpaceDto } from './../chat/helpers';
 import { createGroup } from '../chat/createGroup';
 
-export interface ChatCreateSpaceType extends EnvOptionsType {
-  account?: string;
-  signer?: SignerType;
+export interface ChatCreateSpaceType {
   spaceName: string;
   spaceDescription: string;
   members: Array<string>;
@@ -18,18 +13,18 @@ export interface ChatCreateSpaceType extends EnvOptionsType {
   numberOfNFTs?: number;
   contractAddressERC20?: string;
   numberOfERC20?: number;
-  pgpPrivateKey?: string;
   meta?: string;
-  scheduleAt: Date
-  scheduleEnd?: Date | null
+  scheduleAt: Date;
+  scheduleEnd?: Date | null;
 }
 
-export const create = async (
+import type Space from './Space';
+
+export async function create(
+  this: Space,
   options: ChatCreateSpaceType
-): Promise<SpaceDTO> => {
+): Promise<void> {
   const {
-    account = null,
-    signer = null,
     spaceName,
     spaceDescription,
     members,
@@ -40,47 +35,39 @@ export const create = async (
     numberOfNFTs,
     contractAddressERC20,
     numberOfERC20,
-    env = Constants.ENV.PROD,
-    pgpPrivateKey = null,
     meta,
     scheduleAt,
     scheduleEnd,
   } = options || {};
 
   try {
-    if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
+    if (this.signer === null) {
+      throw new Error(`Signer is necessary!`);
     }
 
-    const group = await createGroup({    
-        account: account,
-        signer: signer,
-        groupName: spaceName,
-        groupDescription: spaceDescription,
-        members: members,
-        groupImage: spaceImage,
-        admins: admins,
-        isPublic: isPublic,
-        contractAddressNFT: contractAddressNFT,
-        numberOfNFTs: numberOfNFTs,
-        contractAddressERC20: contractAddressERC20,
-        numberOfERC20: numberOfERC20,
-        env: env,
-        pgpPrivateKey: pgpPrivateKey,
-        meta: meta,
-        groupType: "spaces",
-        scheduleAt: scheduleAt,
-        scheduleEnd: scheduleEnd,
+    const group = await createGroup({
+      signer: this.signer,
+      groupName: spaceName,
+      groupDescription: spaceDescription,
+      members: members,
+      groupImage: spaceImage,
+      admins: admins,
+      isPublic: isPublic,
+      contractAddressNFT: contractAddressNFT,
+      numberOfNFTs: numberOfNFTs,
+      contractAddressERC20: contractAddressERC20,
+      numberOfERC20: numberOfERC20,
+      env: this.env,
+      pgpPrivateKey: this.pgpPrivateKey,
+      meta: meta,
+      groupType: 'spaces',
+      scheduleAt: scheduleAt,
+      scheduleEnd: scheduleEnd,
     });
- 
-    return groupDtoToSpaceDto(group)    
+
+    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${create.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${create.name} -: ${err}`
-    );
+    console.error(`[Push SDK] - API  - Error - API ${create.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${create.name} -: ${err}`);
   }
-};
+}
