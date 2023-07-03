@@ -5,9 +5,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 import { SpaceBanner } from '../SpaceBanner';
 
-import { useSpaceData, usePopularSpaces } from '../../../hooks';
-import { useMySpaces } from '../../../hooks/space/useMySpaces';
-import { useSpaceRequests } from '../../../hooks/space/useSpaceRequests';
+import { useSpaceData, useMySpaces, usePopularSpaces, useSpaceRequests } from '../../../hooks';
 
 export interface ISpaceFeedProps {
   account?: any;

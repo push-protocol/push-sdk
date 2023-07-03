@@ -32,7 +32,7 @@ export const useSpaceComponents = (): IUseSpaceReturnValues => {
     spaceUI,
     SpaceWidgetComponent: spaceUI.SpaceWidget,
     SpaceBannerComponent: spaceUI.SpaceBanner,
-    CreateSpaceComponent: spaceUI.SpaceCreationButtonWidget,
     SpaceFeedComponent: spaceUI.SpaceFeed,
+    CreateSpaceComponent: spaceUI.SpaceCreationButtonWidget,
   };
 };

@@ -47,7 +47,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setRequestPage: () => {
     /**/
   },
-  mySpaces: null,
+  mySpaces: [],
   setMySpaces: () => {
     /**/
   },
@@ -55,7 +55,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setPopularSpaces: () => {
     /**/
   },
-  spaceRequests: null,
+  spaceRequests: [],
   setSpaceRequests: () => {
     /**/
   },
