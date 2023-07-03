@@ -1,7 +1,8 @@
-import {  isValidETHAddress, walletToPCAIP10 } from '../helpers';
+import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, GroupDTO } from '../types';
 import {
+  getWallet,
   getMembersList,
   getAdminsList
 } from './helpers';
@@ -11,20 +12,23 @@ import {
 import {
   updateGroup
 } from './updateGroup';
-export interface RemoveMembersFromGroupType extends EnvOptionsType {
+export interface RemoveAdminsFromGroupType extends EnvOptionsType {
   chatId: string;
-  members: Array<string>;
+  admins: Array<string>;
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null; 
 }
 
-export const removeMembersFromGroup = async (
-  options: RemoveMembersFromGroupType
+/**
+ * Update Group information
+ */
+export const removeAdmins = async (
+  options: RemoveAdminsFromGroupType
 ): Promise<GroupDTO> => {
   const {
     chatId,
-    members,
+    admins,
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
@@ -35,13 +39,13 @@ export const removeMembersFromGroup = async (
       throw new Error(`At least one from account or signer is necessary!`);
     }
   
-    if (!members || members.length === 0) {
-      throw new Error("Member address array cannot be empty!");
+    if (!admins || admins.length === 0) {
+      throw new Error("Admin address array cannot be empty!");
     }
   
-    members.forEach((member) => {
-      if (!isValidETHAddress(member)) {
-        throw new Error(`Invalid member address: ${member}`);
+    admins.forEach((admin) => {
+      if (!isValidETHAddress(admin)) {
+        throw new Error(`Invalid admin address: ${admin}`);
       }
     });
 
@@ -54,22 +58,32 @@ export const removeMembersFromGroup = async (
         group.members, group.pendingMembers
     );
 
-    const membersToBeRemoved = members.map((member) => walletToPCAIP10(member));
+    const adminsToBeRemoved = admins.map((admin) => walletToPCAIP10(admin));
 
-    membersToBeRemoved.forEach((member) => {
-      if (!convertedMembers.includes(member)) {
-        throw new Error(`Member ${member} not present in the list`);
+    adminsToBeRemoved.forEach((admin) => {
+      if (!convertedMembers.includes(admin)) {
+        throw new Error(`Member ${admin} not present in the list`);
+      }
+    });
+
+    let convertedAdmins = getAdminsList(
+        group.members, group.pendingMembers
+    );
+
+    adminsToBeRemoved.forEach((admin) => {
+      if (!convertedAdmins.includes(admin)) {
+        throw new Error(`Admin ${admin} not present in the list`);
       }
     });
 
     convertedMembers = convertedMembers.filter(
-      (member) => !membersToBeRemoved.includes(member)
+      (member) => !adminsToBeRemoved.includes(member)
     );
 
-    const convertedAdmins = getAdminsList(
-        group.members, group.pendingMembers
+    convertedAdmins = convertedAdmins.filter(
+      (member) => !adminsToBeRemoved.includes(member)
     );
-    
+
     return await updateGroup({
       chatId: chatId,
       groupName: group.groupName,
@@ -87,11 +101,11 @@ export const removeMembersFromGroup = async (
   });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API ${removeMembersFromGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${removeAdmins.name} -:  `,
       err
     );
     throw Error(
-      `[Push SDK] - API  - Error - API ${removeMembersFromGroup.name} -: ${err}`
+      `[Push SDK] - API  - Error - API ${removeAdmins.name} -: ${err}`
     );
   }
 };

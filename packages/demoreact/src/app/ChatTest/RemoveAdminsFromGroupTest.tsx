@@ -35,7 +35,7 @@ const RemoveAdminsFromGroupTest = () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const response = await PushAPI.chat.removeAdminsFromGroup({
+      const response = await PushAPI.chat.removeAdmins({
         chatId: chatId,
         admins: memberAddress ? memberAddress.split(',') : [],
         env,

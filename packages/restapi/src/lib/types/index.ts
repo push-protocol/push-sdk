@@ -300,13 +300,13 @@ export interface SpaceDTO {
   members: {
     wallet: string;
     publicKey: string;
-    isAdmin: boolean;
+    isSpeaker: boolean;
     image: string;
   }[];
   pendingMembers: {
     wallet: string;
     publicKey: string;
-    isAdmin: boolean;
+    isSpeaker: boolean;
     image: string;
   }[];
   contractAddressERC20: string | null;

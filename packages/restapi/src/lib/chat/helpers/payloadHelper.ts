@@ -161,8 +161,18 @@ export const createGroupPayload = (
 
 export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
   const spaceDto: SpaceDTO = {
-    members: groupDto.members,
-    pendingMembers: groupDto.pendingMembers,
+    members: groupDto.members.map((member) => ({
+      wallet: member.wallet,
+      publicKey: member.publicKey,
+      isSpeaker: member.isAdmin,
+      image: member.image,
+    })),
+    pendingMembers: groupDto.pendingMembers.map((pendingMember) => ({
+      wallet: pendingMember.wallet,
+      publicKey: pendingMember.publicKey,
+      isSpeaker: pendingMember.isAdmin,
+      image: pendingMember.image,
+    })),
     contractAddressERC20: groupDto.contractAddressERC20,
     numberOfERC20: groupDto.numberOfERC20,
     contractAddressNFT: groupDto.contractAddressNFT,

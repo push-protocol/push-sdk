@@ -46,10 +46,10 @@ import StartSpaceTest from './SpaceTest/StartSpaceTest';
 import StopSpaceTest from './SpaceTest/StopSpaceTest';
 import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
 import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
-import AddAdminsToSpaceTest from './SpaceTest/AddAdminsToSpaceTest';
-import AddMembersToSpaceTest from './SpaceTest/AddMembersToSpaceTest';
-import RemoveMembersFromSpaceTest from './SpaceTest/RemoveMembersFromSpaceTest';
-import RemoveAdminsFromSpaceTest from './SpaceTest/RemoveAdminsFromSpaceTest';
+import AddSpeakersToSpaceTest from './SpaceTest/AddSpeakersToSpaceTest';
+import AddListenersToSpaceTest from './SpaceTest/AddListenersToSpaceTest';
+import RemoveListenersFromSpaceTest from './SpaceTest/RemoveListenersFromSpaceTest';
+import RemoveSpeakersFromSpaceTest from './SpaceTest/RemoveSpeakersFromSpaceTest';
 import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
@@ -284,10 +284,10 @@ export function App() {
                 <Route path="/approveSpace" element={<ApproveSpaceRequestTest />} />
                 <Route path="/startSpace" element={<StartSpaceTest />} />
                 <Route path="/stopSpace" element={<StopSpaceTest />} />
-                <Route path="/addAdminsToSpace" element={<AddAdminsToSpaceTest />} />
-                <Route path="/addMembersToSpace" element={<AddMembersToSpaceTest />} />
-                <Route path="/removeMembersFromSpace" element={<RemoveMembersFromSpaceTest />} />
-                <Route path="/removeAdminsFromSpace" element={<RemoveAdminsFromSpaceTest />} />
+                <Route path="/addSpeakersToSpace" element={<AddSpeakersToSpaceTest />} />
+                <Route path="/addListenersToSpace" element={<AddListenersToSpaceTest />} />
+                <Route path="/removeListenersFromSpace" element={<RemoveListenersFromSpaceTest />} />
+                <Route path="/removeSpeakersFromSpace" element={<RemoveSpeakersFromSpaceTest />} />
                 <Route path="/getSpaces" element={<GetSpacesTest />} />
                 <Route path="/getSpacesRequests" element={<GetSpacesRequestsTest />} />
                 <Route path="/getSpacesTrending" element={<GetSpacesTrendingTest />} />
