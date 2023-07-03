@@ -3,7 +3,10 @@ import React from 'react';
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { ISpaceWidgetProps, SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
-import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
+import {
+  ISpaceTrendingListProps,
+  SpaceTrendingList,
+} from './SpaceTrendingList';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
@@ -29,21 +32,21 @@ export class SpacesUI {
     this.env = props.env;
   }
 
-  SpaceBanner: React.FC<ISpaceBannerProps> = (options : ISpaceBannerProps) => {
+  SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {
     const { spaceInfo, setSpaceInfo } = useSpaceData();
 
     // Use spaceBannerData and setSpaceBannerData in your component
 
     return <SpaceBanner {...options} />;
-  }
+  };
 
   SpaceWidget: React.FC<ISpaceWidgetProps> = () => {
     return <SpaceWidget />;
-  }
+  };
 
-  SpaceFeed: React.FC<ISpaceFeedProps> = () => {
-    return <SpaceFeed />;
-  }
+  SpaceFeed: React.FC<ISpaceFeedProps> = (options: ISpaceFeedProps) => {
+    return <SpaceFeed {...options} />;
+  };
 
   SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
     const { trendingListData, setTrendingListData } = useSpaceData();
@@ -51,7 +54,7 @@ export class SpacesUI {
     // Use trendingListData and setTrendingListData in your component
 
     return <SpaceTrendingList />;
-  }
+  };
 
   connectToSockets = () => {
     // Connect to sockets and listen for events
@@ -60,11 +63,11 @@ export class SpacesUI {
 
     // Example of updating spaceBannerData
     //setSpaceBannerData();
-  }
+  };
 
   init = () => {
     // Initialization logic
     // Call connectToSockets or any other initialization tasks
     this.connectToSockets();
-  }
+  };
 }

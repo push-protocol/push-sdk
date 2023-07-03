@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { SpacesUI } from "../components";
-import { ThemeContext } from "../components/space/theme/ThemeProvider";
-import { ISpacesTheme, lightTheme } from "../components/space/theme";
-import { ISpaceDataContextValues, ISpaceInfo, SpaceDataContext } from "../context/spacesContext";
-import { SpaceDTO } from "@pushprotocol/restapi";
+import { SpacesUI } from '../components';
+import { ThemeContext } from '../components/space/theme/ThemeProvider';
+import { ISpacesTheme, lightTheme } from '../components/space/theme';
+import {
+  ISpaceDataContextValues,
+  ISpaceInfo,
+  SpaceDataContext,
+} from '../context/spacesContext';
+import { SpaceDTO } from '@pushprotocol/restapi';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -12,14 +16,24 @@ export interface ISpacesUIProviderProps {
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+export const SpacesUIProvider = ({
+  spaceUI,
+  theme,
+  children,
+}: ISpacesUIProviderProps) => {
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
+  const [spacesPage, setSpacesPage] = useState<number>(1);
+  const [popularPage, setPopularPage] = useState<number>(1);
+  const [requestPage, setRequestPage] = useState<number>(1);
+  const [mySpaces, setMySpaces] = useState<any>();
+  const [popularSpaces, setPopularSpaces] = useState<any>();
+  const [spaceRequests, setSpaceRequests] = useState<any>();
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
       ...prevState,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -32,7 +46,19 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
     setTrendingListData,
     spaceInfo,
     setSpaceInfo: setSpaceInfoItem,
-    getSpaceInfo
+    getSpaceInfo,
+    spacesPage,
+    setSpacesPage,
+    popularPage,
+    setPopularPage,
+    requestPage,
+    setRequestPage,
+    mySpaces,
+    setMySpaces,
+    popularSpaces,
+    setPopularSpaces,
+    spaceRequests,
+    setSpaceRequests,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
@@ -46,4 +72,4 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
       </SpaceDataContext.Provider>
     </ThemeContext.Provider>
   );
-}
+};
