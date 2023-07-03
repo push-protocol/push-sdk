@@ -37,6 +37,9 @@ const SpaceUITest = () => {
           <Link to="/spaceBanner" className="nav-button">
             SPACES BANNER
           </Link>
+          <Link to="/createSpaceUI" className="nav-button">
+            CREATE SPACE
+          </Link>
         </NavMenu>
       </Section>
     </div>

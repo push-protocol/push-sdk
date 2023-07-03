@@ -6,6 +6,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { getDateAndTime } from '../helpers/date';
 import { getSpaceStatus } from '../helpers/space';
 import { ParticipantContainer } from '../reusables/ParticipantContainer';
+import { HostPfpContainer } from '../reusables';
 
 import live from './../../../icons/live.svg';
 import scheduled from './../../../icons/scheduled.svg';
@@ -36,21 +37,15 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 
   return (
       <Container orientation={orientation} status={getSpaceStatus(spaceData?.scheduleAt as Date)} theme={theme}>
-        <ProfileContainer orientation={orientation}>
-          <PfpContainer>
-            <Pfp src={spaceData?.members[0].image} alt="pfp" />
-          </PfpContainer>
-          <HostContainer>
-            <HostName>
-              <Name>{spaceData?.members[0].wallet.slice(7)}</Name>
-              <Host>Host</Host>
-            </HostName>
-            <HostHandle>
-              {/* Fetch the handle from Lenster */}@
-              {spaceData?.members[0].wallet.slice(7)}
-            </HostHandle>
-          </HostContainer>
-        </ProfileContainer>
+        {orientation === "maximized" && 
+          <HostPfpContainer
+            name={spaceData?.members[0].wallet.slice(7)}
+            statusTheme={getSpaceStatus(spaceData?.scheduleAt as Date)}
+            imageHeight={'48px'}
+            imageUrl={spaceData?.members[0].image}
+            handle={spaceData?.members[0].wallet.slice(7)}
+          />  
+        }
         {orientation === 'maximized' ? null : (
           <Icon
             src={
@@ -111,84 +106,13 @@ const Container = styled.div<IThemeProps>`
   height: ${(props) => (props.orientation === 'maximized' ? 'auto' : props.orientation ==='minimized' ? '40px' : '63px')};
   background: ${(props) =>
     props.status === 'Live'
-      ? props.theme.bannerBackground1
-      : props.theme.bannerBackground2};
+      ? props.theme.titleBg
+      : props.theme.bgColorSecondary};
   border-radius: ${(props) =>
     props.orientation === 'maximized' ? '17px' : props.orientation === 'minimized' ? '12px' : '24px'};
   color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};
   min-width: 0;
   text-overflow: ellipsis;
-  overflow: hidden;
-}`;
-
-const ProfileContainer = styled.div<{ orientation?: string }>`
-  display: ${(props) => (props.orientation === 'maximized' ? 'flex' : 'none')};
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}`;
-
-const PfpContainer = styled.div`
-  margin: 5px 0;
-}`;
-
-const Pfp = styled.img`
-  height: 48px;
-  width: 48px;
-  border-radius: 50%;
-}`;
-
-const HostContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  font-family: 'Strawford';
-  padding-left: 8px;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}`;
-
-const HostName = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-weight: 500;
-  font-size: 15px;
-  width: 100%;
-}`;
-
-const Name = styled.span`
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}`;
-
-const Host = styled.div<{ status?: string }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 2px 8px;
-  margin-left: 8px;
-  line-height: 18px;
-  width: max-content;
-  height: 19px;
-  background: ${(props) =>
-    props.status === 'live'
-      ? 'rgba(255, 255, 255, 0.2);'
-      : 'rgba(139, 92, 246, 0.2)'};
-  color: ${(props) => (props.status === 'live' ? 'inherit' : '#8B5CF6')};
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 10px;
-}`;
-
-const HostHandle = styled.div<{ status?: string }>`
-  color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
-  padding: 0;
-  width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   overflow: hidden;
 }`;
 

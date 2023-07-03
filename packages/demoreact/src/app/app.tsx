@@ -54,7 +54,7 @@ import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 import SpaceUITest from './SpaceUITest/SpaceUITest';
-import { SpacesComponentProvider, SpaceWidget, SpaceFeed, SpaceBanner } from './SpaceUITest';
+import { SpacesComponentProvider, SpaceWidget, SpaceBanner, SpaceFeed, CreateSpaceComponent } from './SpaceUITest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -305,6 +305,7 @@ export function App() {
                   <Route path="spaceWidget" element={<SpaceWidget />} />
                   <Route path="spaceFeed" element={<SpaceFeed />} />
                   <Route path="spaceBanner" element={<SpaceBanner />} />
+                  <Route path="createSpaceUI" element={<CreateSpaceComponent />} />
 
                 </Routes>
                 <ChatSupportTest />

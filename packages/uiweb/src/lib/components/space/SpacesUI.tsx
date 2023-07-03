@@ -1,23 +1,15 @@
 import React from 'react';
 
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
-import { ISpaceWidgetProps, SpaceWidget } from './SpaceWidget';
+import { ISpaceWidgetComponentProps, SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
-import {
-  ISpaceTrendingListProps,
-  SpaceTrendingList,
-} from './SpaceTrendingList';
+import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
+import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
 import { useSpaceData } from '../../hooks';
-
-export interface ISpacesUIProps {
-  account: string;
-  signer: SignerType;
-  pgpPrivateKey: string;
-  env: ENV;
-}
+import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
 export class SpacesUI {
   private account: string;
@@ -40,9 +32,15 @@ export class SpacesUI {
     return <SpaceBanner {...options} />;
   };
 
-  SpaceWidget: React.FC<ISpaceWidgetProps> = () => {
-    return <SpaceWidget />;
-  };
+  SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
+    const { env } = this;
+    const widgetProps: ISpaceWidgetComponentProps = {
+      ...options,
+      env
+    };
+
+    return <SpaceWidget {...widgetProps} />
+  }
 
   SpaceFeed: React.FC<ISpaceFeedProps> = (options: ISpaceFeedProps) => {
     return <SpaceFeed {...options} />;
@@ -55,6 +53,10 @@ export class SpacesUI {
 
     return <SpaceTrendingList />;
   };
+
+  SpaceCreationButtonWidget = () => {
+    return <SpaceCreationWidget />
+  }
 
   connectToSockets = () => {
     // Connect to sockets and listen for events

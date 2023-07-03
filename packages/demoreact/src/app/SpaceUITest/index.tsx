@@ -5,6 +5,7 @@ export * from './SpaceUITest';
 export * from './SpaceWidget';
 export * from './SpaceFeed';
 export * from "./SpaceBanner";
+export * from "./CreateSpaceComponent";
 
 export interface ISpacesComponentProps {
   children: React.ReactNode;
@@ -16,8 +17,8 @@ export const SpacesComponentProvider = ({
   const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
-    primary: '#00ffff',
-  };
+    statusColorError: 'red',
+  }
 
   return (
     <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>

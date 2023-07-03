@@ -1,4 +1,5 @@
-import { ISpaceFeedProps, ISpaceBannerProps, ISpaceWidgetProps, SpacesUI } from "@pushprotocol/uiweb";
+
+import { ISpaceFeedProps, ISpaceBannerProps, ISpaceWidgetProps, ISpaceCreateWidgetProps, SpacesUI } from "@pushprotocol/uiweb";
 import React, { useContext } from "react";
 import { EnvContext, Web3Context } from "../context";
 
@@ -7,6 +8,7 @@ export interface IUseSpaceReturnValues {
   SpaceWidgetComponent: React.FC<ISpaceWidgetProps>
   SpaceFeedComponent: React.FC<ISpaceFeedProps>
   SpaceBannerComponent: React.FC<ISpaceBannerProps>
+  CreateSpaceComponent: React.FC<ISpaceCreateWidgetProps>
 }
 
 export const useSpaceComponents = (): IUseSpaceReturnValues => {
@@ -26,5 +28,6 @@ export const useSpaceComponents = (): IUseSpaceReturnValues => {
     SpaceWidgetComponent: spaceUI.SpaceWidget,
     SpaceBannerComponent: spaceUI.SpaceBanner,
     SpaceFeedComponent: spaceUI.SpaceFeed
+    CreateSpaceComponent: spaceUI.SpaceCreationButtonWidget,
   }
 }
