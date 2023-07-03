@@ -7,8 +7,8 @@ import {
 } from '../types';
 import {
     groupDtoToSpaceDto,
-    getMembersList,
-    getAdminsList
+    getSpacesMembersList,
+    getSpaceAdminsList
 } from './../chat/helpers';
 import {
     get
@@ -47,10 +47,10 @@ export const start = async (
             throw new Error("Unable to start the space as it is not in the pending state");
         }
 
-        const convertedMembers = getMembersList(
+        const convertedMembers = getSpacesMembersList(
             space.members, space.pendingMembers
         );
-        const convertedAdmins = getAdminsList(
+        const convertedAdmins = getSpaceAdminsList(
             space.members, space.pendingMembers
         );
 

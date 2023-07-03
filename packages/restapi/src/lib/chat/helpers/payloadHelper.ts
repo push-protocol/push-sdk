@@ -246,6 +246,32 @@ export const getAdminsList = (
   return adminList;
 };
 
+export const getSpaceAdminsList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const adminsFromMembers = members
+    ? convertToWalletAddressList(members.filter((admin) => admin.isSpeaker))
+    : [];
+
+  const adminsFromPendingMembers = pendingMembers
+    ? convertToWalletAddressList(pendingMembers.filter((admin) => admin.isSpeaker))
+    : [];
+
+  const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
+  return adminList;
+};
+
 export const convertToWalletAddressList = (memberList: { wallet: string }[]): string[] => {
   return memberList ? memberList.map((member) => member.wallet) : [];
 };
@@ -261,6 +287,24 @@ export const getMembersList = (
     wallet: string;
     publicKey: string;
     isAdmin: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const allMembers = [...(members || []), ...(pendingMembers || [])];
+  return convertToWalletAddressList(allMembers);
+};
+
+export const getSpacesMembersList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
     image: string;
   }[]
 ): Array<string> => {

@@ -7,8 +7,8 @@ import {
 } from '../types';
 import {
     groupDtoToSpaceDto,
-    getMembersList,
-    getAdminsList
+    getSpacesMembersList,
+    getSpaceAdminsList
 } from '../chat/helpers';
 import {
     updateGroup
@@ -47,10 +47,10 @@ export const stop = async (
             throw new Error("Space already ended");
         }
 
-        const convertedMembers = getMembersList(
+        const convertedMembers = getSpacesMembersList(
             space.members, space.pendingMembers
         );
-        const convertedAdmins = getAdminsList(
+        const convertedAdmins = getSpaceAdminsList(
             space.members, space.pendingMembers
         );
 
