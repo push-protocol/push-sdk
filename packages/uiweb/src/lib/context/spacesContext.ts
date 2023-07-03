@@ -51,7 +51,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setMySpaces: () => {
     /**/
   },
-  popularSpaces: null,
+  popularSpaces: [],
   setPopularSpaces: () => {
     /**/
   },

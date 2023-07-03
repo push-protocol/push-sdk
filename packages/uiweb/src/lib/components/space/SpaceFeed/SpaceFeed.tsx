@@ -5,7 +5,9 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 import { SpaceBanner } from '../SpaceBanner';
 
-import { useSpaceData } from '../../../hooks';
+import { useSpaceData, usePopularSpaces } from '../../../hooks';
+import { useMySpaces } from '../../../hooks/space/useMySpaces';
+import { useSpaceRequests } from '../../../hooks/space/useSpaceRequests';
 
 export interface ISpaceFeedProps {
   account?: any;
@@ -24,7 +26,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   sortingOrder = ['For You', 'Popular', 'Requests'],
   showTabs = true,
 }) => {
-
   const LIMIT = 10;
 
   const [tab, setTab] = useState<string>(sortingOrder[0]);
@@ -48,58 +49,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setTab(tab);
   };
 
-  const getMySpaces = async () => {
-    const options = {
-      account: account,
-      page: spacesPage,
-      limit: LIMIT,
-    };
-    await PushAPI.space.spaces(options).then((res) => {
-      const spaces = res;
-      if (spaces) {
-        if (spaces.length === 0) return;
-        setMySpaces((prevSpaces: any = []) => [...prevSpaces, ...spaces]);
-      }
-    });
-  };
-
-  const getPopularSpaces = async () => {
-    await PushAPI.space
-      .trending({
-        page: popularPage,
-        limit: LIMIT,
-      })
-      .then((res) => {
-        const popularSpaces = res;
-        if (popularSpaces) {
-          if (popularSpaces.length === 0) return;
-          setPopularSpaces((prevSpaces: any = []) => [
-            ...prevSpaces,
-            ...popularSpaces,
-          ]);
-        }
-      });
-  };
-
-  const getSpaceRequests = async () => {
-    await PushAPI.space
-      .requests({
-        account: account,
-        page: requestPage,
-        limit: LIMIT,
-      })
-      .then((res) => {
-        const spaceRequests = res;
-        if (spaceRequests) {
-          if (spaceRequests.length === 0) return;
-          setSpaceRequests((prevRequests: any = []) => [
-            ...prevRequests,
-            ...spaceRequests,
-          ]);
-        }
-      });
-  };
-
   const handleScroll = () => {
     const scrollTop =
       (document.documentElement && document.documentElement.scrollTop) ||
@@ -115,17 +64,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   //API calls
-  useEffect(() => {
-    if (tab === 'For You') {
-      getMySpaces();
-    } else if (tab === 'Popular') {
-      getPopularSpaces();
-    } else {
-      getSpaceRequests();
-    }
-  }, [tab, account, spacesPage, popularPage, requestPage]);
+  useMySpaces(account);
+  usePopularSpaces();
+  useSpaceRequests(account);
 
-//Infinte scroll
+  //Infinte scroll
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
