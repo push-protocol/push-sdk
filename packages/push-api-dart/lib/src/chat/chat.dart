@@ -5,6 +5,7 @@ export 'src/helper/crypto.dart';
 export 'src/helper/validators.dart';
 export 'src/helper/user.dart';
 export 'src/helper/service.dart';
+export 'src/helper/signature.dart';
 export 'src/helper/payload_helper.dart';
 
 export 'src/chat.dart';

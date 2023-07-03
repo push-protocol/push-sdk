@@ -345,6 +345,41 @@ class EncryptedPrivateKeyModel {
   }
 }
 
+class ProgressHookType {
+  String progressId;
+  String progressTitle;
+  String progressInfo;
+  String level;
+
+  ProgressHookType({
+    required this.progressId,
+    required this.progressTitle,
+    required this.progressInfo,
+    required this.level,
+  });
+}
+
+typedef ProgressHookTypeFunction = ProgressHookType Function(
+    List<dynamic> args);
+
+class MessageWithCID {
+  late String cid;
+  late String chatId;
+  late String link;
+  late String fromCAIP10;
+  late String toCAIP10;
+  late String fromDID;
+  late String toDID;
+  late String messageType;
+  late String messageContent;
+  late String signature;
+  late String sigType;
+  int? timestamp;
+  late String encType;
+  late String encryptedSecret;
+  String? verificationProof;
+}
+
 class MediaStream {
   MediaStream? stream;
   String? audio;

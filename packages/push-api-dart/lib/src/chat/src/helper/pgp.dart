@@ -1,8 +1,16 @@
 import 'package:openpgp/openpgp.dart';
 
 Future<KeyPair> generateKeyPair() async {
-  final keys = await OpenPGP.generate();
-  return keys;
+  final keyOptions = KeyOptions()
+    ..algorithm = Algorithm.RSA
+    ..rsaBits = 2048;
+
+  final keyPair = await OpenPGP.generate(
+      options: Options()
+        ..name = ''
+        ..email = ''
+        ..keyOptions = keyOptions);
+  return keyPair;
 }
 
 Future<String> sign(
@@ -17,13 +25,6 @@ Future<String> pgpEncrypt({
   required List<String> keys,
 }) async {
   final combinedPGPKey = keys.join();
-
-  // TODO: Figure out the armor part
-  // for (var i = 0; i < keys.length; i++) {
-  //   final armoredKey = keys[i];
-  //   final pgpKey = await OpenPGP.armorEncode(armoredKey);
-  //   pgpKeys.add(pgpKey);
-  // }
 
   final encrypted = await OpenPGP.encrypt(
     plainText,
