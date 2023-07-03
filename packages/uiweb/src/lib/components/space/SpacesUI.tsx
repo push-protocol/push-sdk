@@ -24,13 +24,13 @@ export class SpacesUI {
     this.env = props.env;
   }
 
-  SpaceBanner: React.FC<ISpaceBannerProps> = (options : ISpaceBannerProps) => {
+  SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {
     const { spaceInfo, setSpaceInfo } = useSpaceData();
 
     // Use spaceBannerData and setSpaceBannerData in your component
 
     return <SpaceBanner {...options} />;
-  }
+  };
 
   SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
     const { env } = this;
@@ -42,9 +42,9 @@ export class SpacesUI {
     return <SpaceWidget {...widgetProps} />
   }
 
-  SpaceFeed: React.FC<ISpaceFeedProps> = () => {
-    return <SpaceFeed />;
-  }
+  SpaceFeed: React.FC<ISpaceFeedProps> = (options: ISpaceFeedProps) => {
+    return <SpaceFeed {...options} />;
+  };
 
   SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
     const { trendingListData, setTrendingListData } = useSpaceData();
@@ -52,7 +52,7 @@ export class SpacesUI {
     // Use trendingListData and setTrendingListData in your component
 
     return <SpaceTrendingList />;
-  }
+  };
 
   SpaceCreationButtonWidget = () => {
     return <SpaceCreationWidget />
@@ -65,11 +65,11 @@ export class SpacesUI {
 
     // Example of updating spaceBannerData
     //setSpaceBannerData();
-  }
+  };
 
   init = () => {
     // Initialization logic
     // Call connectToSockets or any other initialization tasks
     this.connectToSockets();
-  }
+  };
 }
