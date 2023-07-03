@@ -6,7 +6,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "ethers": "^5.6.8"
+    "ethers": "^5.6.8 || ^6.0.0"
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^5.0.2",

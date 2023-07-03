@@ -4,7 +4,6 @@ import {
   getEncryptionPublicKey,
 } from '@metamask/eth-sig-util';
 import * as CryptoJS from 'crypto-js';
-import { ethers } from 'ethers';
 import {
   aesDecrypt,
   getAccountAddress,
@@ -32,6 +31,7 @@ import {
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
+import { provider } from './ethers';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -52,9 +52,7 @@ if (typeof window !== 'undefined' && window.crypto) {
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const address: string = account || (await signer?.getAddress()) || '';
-  const metamaskProvider = new ethers.providers.Web3Provider(
-    (window as any).ethereum
-  );
+  const metamaskProvider = provider((window as any).ethereum);
   const web3Provider: any = signer?.provider || metamaskProvider;
 
   const keyB64 = await web3Provider.provider.request({
@@ -144,9 +142,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             privateKey: wallet?.signer?.privateKey.substring(2),
           });
         } else {
-          const metamaskProvider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
+          const metamaskProvider = provider((window as any).ethereum);
           const web3Provider: any = signer?.provider || metamaskProvider;
           privateKey = await web3Provider.provider.request({
             method: 'eth_decrypt',

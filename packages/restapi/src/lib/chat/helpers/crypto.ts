@@ -20,6 +20,7 @@ import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
+import { getChainId, signTypedData } from '../../helpers/signer';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -307,14 +308,15 @@ export const getEip712Signature = async (
   const _signer = wallet?.signer;
   let chainId: number;
   try {
-    chainId = await _signer.getChainId();
+    chainId = await getChainId(_signer);
   } catch (err) {
     chainId = 1;
   }
   const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  const signedMessage = await _signer?._signTypedData!(
+  const signedMessage = await signTypedData(
+    _signer,
     isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash }

@@ -2,8 +2,7 @@ import {
   recoverTypedSignature,
   SignTypedDataVersion,
 } from '@metamask/eth-sig-util';
-import * as ethers from 'ethers';
-import { hashMessage } from 'ethers/lib/utils';
+import { recoverAddress, hashMessage } from '../../helpers/ethers';
 
 /**
  *
@@ -133,10 +132,7 @@ export const verifyProfileSignature = (
     }
   } else {
     // EIP191 sig validation
-    const recoveredAddress = ethers.utils.recoverAddress(
-      hashMessage(signedData),
-      signature
-    );
+    const recoveredAddress = recoverAddress(hashMessage(signedData), signature);
     if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
       return true;
     } else return false;

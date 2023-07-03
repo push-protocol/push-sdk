@@ -344,7 +344,6 @@ export interface UserInfo {
 }
 
 export type SignerType = ethers.Signer & {
-  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
   privateKey?: string;
 };
 

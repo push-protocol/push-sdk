@@ -15,6 +15,7 @@ import {
   SOURCE_TYPES,
 } from './constants';
 import { getConnectedUser, sign } from '../chat/helpers';
+import { signTypedData } from '../helpers/signer';
 
 export function getUUID() {
   return uuidv4();
@@ -252,7 +253,7 @@ export async function getVerificationProof({
         chainId: chainId,
         verifyingContract: verifyingContract,
       };
-      const signature = await signer._signTypedData(domain, type, message);
+      const signature = await signTypedData(signer, domain, type, message);
       verificationProof = `eip712v2:${signature}::uid::${uuid}`;
       break;
     }

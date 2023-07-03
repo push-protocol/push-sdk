@@ -1,14 +1,13 @@
-// import * as ethers from 'ethers';
-import { ethers } from 'ethers';
 import * as Constants from './constants';
 import { ENV } from './constants';
+import { isAddress } from './ethersHelper';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address }: { address: string }) => boolean;
 }
 
 export function isValidETHAddress(address: string) {
-  return ethers.utils.isAddress(address);
+  return isAddress(address);
 }
 
 const AddressValidators: AddressValidatorsType = {
@@ -29,7 +28,7 @@ export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
       Number(walletComponent[4]) > 0 &&
       !isNaN(Number(walletComponent[2])) &&
       Number(walletComponent[2]) > 0 &&
-      ethers.utils.isAddress(walletComponent[3]) &&
+      isAddress(walletComponent[3]) &&
       walletComponent[1] === 'eip155'
     );
   } catch (err) {
