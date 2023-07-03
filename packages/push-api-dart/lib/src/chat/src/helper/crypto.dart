@@ -1,4 +1,8 @@
+// ignore_for_file: constant_identifier_names
+
 import '../../../../push_api_dart.dart';
+
+const SIG_TYPE_V2 = 'eip712v2';
 
 Future<List<Feeds>> decryptFeeds({
   required List<Feeds> feeds,
@@ -162,12 +166,47 @@ Future<IEncryptedRequest?> getEncryptedRequest({
   }
 }
 
+Future<Map<String, dynamic>> getEip712Signature(
+  EthWallet wallet,
+  String hash,
+  bool isDomainEmpty,
+) async {
+  final typeInformation = getTypeInformation();
+
+  // TODO: Make chain id dynamic
+  int chainId = 2013;
+
+  final domain = getDomainInformation(chainId);
+
+  // sign a message using EIP712
+  // TODO
+  final signedMessage = "";
+
+  final verificationProof = isDomainEmpty
+      ? '$SIG_TYPE_V2:$signedMessage'
+      : '$SIG_TYPE_V2:$chainId:$signedMessage';
+
+  return {'verificationProof': verificationProof};
+}
+
+Future<Map<String, dynamic>> getEip191Signature(
+    EthWallet wallet, String message,
+    {String version = 'v1'}) async {
+  // EIP191 signature
+  // TODO
+  final signature = "";
+
+  final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
+
+  return {'verificationProof': '$sigType:$signature'};
+}
+
 Future<String> getDecryptedPrivateKey({
-  required String address,
   required EthWallet wallet,
   required User user,
+  required String address,
 }) async {
-// TODO implement getDecryptedPrivateKey
+  String decryptedPrivateKey;
 
-  return '';
+  return decryptedPrivateKey;
 }

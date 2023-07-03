@@ -268,7 +268,6 @@ class Subscribers {
   late List<String> subscribers;
 }
 
-
 class MessageIPFSWithCID extends MessageIPFS {
   late String cid;
 }
@@ -370,6 +369,23 @@ class EncryptedPrivateKeyModel {
     );
   }
 }
+
+class ProgressHookType {
+  String progressId;
+  String progressTitle;
+  String progressInfo;
+  String level;
+
+  ProgressHookType({
+    required this.progressId,
+    required this.progressTitle,
+    required this.progressInfo,
+    required this.level,
+  });
+}
+
+typedef ProgressHookTypeFunction = ProgressHookType Function(
+    List<dynamic> args);
 
 class MessageWithCID {
   late String cid;

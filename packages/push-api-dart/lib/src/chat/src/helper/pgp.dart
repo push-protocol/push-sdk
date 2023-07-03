@@ -26,13 +26,6 @@ Future<String> pgpEncrypt({
 }) async {
   final combinedPGPKey = keys.join();
 
-  // TODO: Figure out the armor part
-  // for (var i = 0; i < keys.length; i++) {
-  //   final armoredKey = keys[i];
-  //   final pgpKey = await OpenPGP.armorEncode(armoredKey);
-  //   pgpKeys.add(pgpKey);
-  // }
-
   final encrypted = await OpenPGP.encrypt(
     plainText,
     combinedPGPKey,
