@@ -141,7 +141,6 @@ export const ChatAndNotification = () => {
         if (address) {
           setModalOpen(true);
           setSelectedChatId(walletToPCAIP10(address).toLowerCase());
-          console.log(walletToPCAIP10(address).toLowerCase())
           let selectedChat = chatsFeed[walletToPCAIP10(address).toLowerCase()] || requestsFeed[walletToPCAIP10(address).toLowerCase()];
           if (!selectedChat) {
             selectedChat = (await fetchChat({
@@ -160,7 +159,6 @@ export const ChatAndNotification = () => {
             }
             
           }
-          console.log(selectedChat)
           setSearchedChats({
             [selectedChat.did.toLowerCase() ?? selectedChat.chatId]: selectedChat,
           });

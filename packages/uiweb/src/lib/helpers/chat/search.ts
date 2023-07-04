@@ -25,14 +25,12 @@ export const getObjectsWithMatchingKeys = (
         matchedObjects[key] = obj[key];
       } else if (obj[key].name) {
         if ((obj[key].name?.toLowerCase() as string).includes(substring.toLowerCase())) {
-          console.log(obj[key])
           matchedObjects[key] = obj[key];
         }
       } else {
         Object.keys(web3NameList).forEach((key) => {
           if (web3NameList[key].toLowerCase().includes(substring.toLowerCase())) {
            
-            console.log(walletToPCAIP10(key))
             matchedObjects[walletToPCAIP10(key)] = obj[walletToPCAIP10(key)];
           }
         });
