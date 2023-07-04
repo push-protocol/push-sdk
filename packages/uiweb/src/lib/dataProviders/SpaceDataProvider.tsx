@@ -30,6 +30,7 @@ export const SpacesUIProvider = ({
   const [mySpaces, setMySpaces] = useState([] as SpaceIFeeds[]);
   const [popularSpaces, setPopularSpaces] = useState([] as SpaceIFeeds[]);
   const [spaceRequests, setSpaceRequests] = useState([] as SpaceIFeeds[]);
+  const [loading, setLoading] = useState(false);
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
@@ -60,6 +61,8 @@ export const SpacesUIProvider = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
+    loading,
+    setLoading,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);

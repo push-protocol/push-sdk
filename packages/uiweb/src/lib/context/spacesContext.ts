@@ -23,6 +23,8 @@ export interface ISpaceDataContextValues {
   setPopularSpaces: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
   spaceRequests: SpaceIFeeds[];
   setSpaceRequests: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -57,6 +59,10 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   },
   spaceRequests: [] as SpaceIFeeds[],
   setSpaceRequests: () => {
+    /**/
+  },
+  loading: false,
+  setLoading: () => {
     /**/
   },
 };

@@ -5,7 +5,7 @@ import { SpaceBanner } from '../SpaceBanner';
 
 import { Checkbox } from '../reusables/Checkbox';
 
-import { Spinner } from '../../chat/Spinner';
+import { Spinner } from '../reusables/Spinner';
 
 import {
   useSpaceData,
@@ -16,6 +16,7 @@ import {
 } from '../../../hooks';
 
 import filter from './../../../icons/filter.svg';
+import { SpaceIFeeds } from '@pushprotocol/restapi';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -52,7 +53,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   showTabs = true,
 }) => {
   const [tab, setTab] = useState<string>(sortingOrder[0]);
-  const [loading, setLoading] = useState(false);
   const [liveFilter, setLiveFilter] = useState(
     filter === FilterEnums.Live ? true : false
   );
@@ -71,6 +71,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaces,
     popularSpaces,
     spaceRequests,
+    loading,
+    setLoading,
   } = useSpaceData();
 
   const listInnerRef = useFeedScroll(mySpaces.length);
@@ -138,16 +140,16 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
             ? mySpaces &&
-              mySpaces.map((space: { spaceId: string }, index: any) => {
+              mySpaces.map((space: any, index: any) => {
                 return (
                   <SpaceBanner spaceId={space.spaceId} orientation="pill" />
                 );
               })
             : mySpaces &&
-              mySpaces.map((space: { spaceId: string }, index: any) => {
+              mySpaces.map((space: any, index: any) => {
                 return (
                   <SpaceBanner
-                    spaceId={space.spaceId}
+                    spaceId={space?.spaceId}
                     orientation="maximized"
                   />
                 );
@@ -237,9 +239,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                     )}
                 </Spaces>
               )}
+              {loading && <Spinner size="40" />}
             </Container>
           </ScrollContainer>
-          {loading && <Spinner size="40" />}
         </>
       )}
     </div>
@@ -254,7 +256,8 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
 }`;
 const Container = styled.div`
   display: flex;
-  align-items: left;
+  flex-direction: column;
+  align-items: center;
   background: #ffffff;
   border: 1px solid #dcdcdf;
   border-radius: 12px;

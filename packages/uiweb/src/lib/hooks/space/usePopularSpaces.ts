@@ -5,10 +5,17 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 export const usePopularSpaces = () => {
   const LIMIT = 10;
-  const { popularPage, setPopularPage, popularSpaces, setPopularSpaces } =
-    useSpaceData();
+  const {
+    popularPage,
+    setPopularPage,
+    popularSpaces,
+    setPopularSpaces,
+    loading,
+    setLoading,
+  } = useSpaceData();
 
   const fetchPopularSpaces = async () => {
+    setLoading(true);
     try {
       const res = await PushAPI.space.trending({
         page: popularPage,
@@ -17,7 +24,10 @@ export const usePopularSpaces = () => {
 
       const newPopularSpaces = res || [];
 
-      if (newPopularSpaces.length === 0) return;
+      if (newPopularSpaces.length === 0) {
+        setLoading(false);
+        return;
+      }
       if (newPopularSpaces.length > 0) {
         setPopularSpaces((prevSpaces: any = []) => {
           const existingIds = new Set(
@@ -32,6 +42,7 @@ export const usePopularSpaces = () => {
     } catch (error) {
       console.error('Error while fetching popular spaces:', error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

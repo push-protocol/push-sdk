@@ -6,9 +6,17 @@ import * as PushAPI from '@pushprotocol/restapi';
 export const useMySpaces = (account: string) => {
   const LIMIT = 1;
 
-  const { spacesPage, setSpacesPage, mySpaces, setMySpaces } = useSpaceData();
+  const {
+    spacesPage,
+    setSpacesPage,
+    mySpaces,
+    setMySpaces,
+    loading,
+    setLoading,
+  } = useSpaceData();
 
   const fetchMySpaces = async () => {
+    setLoading(true);
     try {
       const res = await PushAPI.space.spaces({
         account: account,
@@ -18,7 +26,10 @@ export const useMySpaces = (account: string) => {
 
       const newMySpaces = res || [];
 
-      if (newMySpaces.length === 0) return;
+      if (newMySpaces.length === 0) {
+        setLoading(false);
+        return;
+      }
       if (newMySpaces.length > 0) {
         setMySpaces((prevSpaces: any = []) => {
           const existingIds = new Set(
@@ -33,6 +44,7 @@ export const useMySpaces = (account: string) => {
     } catch (error) {
       console.error('Error while fetching Spaces For You:', error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
