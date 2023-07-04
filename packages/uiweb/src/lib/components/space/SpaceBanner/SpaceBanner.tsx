@@ -44,33 +44,39 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   };
 
   return (
-      <Container 
-        orientation={orientation} 
-        status={getSpaceStatus(spaceData?.status)}
-        theme={theme}
-        onClick={handleClick}
-        clickable={Boolean(onBannerClick)}
-      >
-        {orientation === "maximized" && 
-          <HostPfpContainer
-            name={spaceData?.members[0].wallet.slice(7)}
-            statusTheme={getSpaceStatus(spaceData?.status)}
-            imageHeight={'48px'}
-            imageUrl={spaceData?.members[0].image}
-            handle={spaceData?.members[0].wallet.slice(7)}
-          />  
-        }
-        {orientation === 'maximized' ? null : (
-          <Icon
-            src={
-              getSpaceStatus(spaceData?.status) === 'Live'
-                ? live
-                : getSpaceStatus(spaceData?.status) === 'Scheduled'
-                ? scheduled
-                : '' // Ended
-            }
-            alt="status"
-          />
+    <Container
+      orientation={orientation}
+      status={getSpaceStatus(spaceData?.status)}
+      theme={theme}
+    >
+      {orientation === 'maximized' && (
+        <HostPfpContainer
+          name={spaceData?.members[0].wallet.slice(7)}
+          statusTheme={getSpaceStatus(spaceData?.status)}
+          imageHeight={'48px'}
+          imageUrl={spaceData?.members[0].image}
+          handle={spaceData?.members[0].wallet.slice(7)}
+        />
+      )}
+      {orientation === 'maximized' ? null : (
+        <Icon
+          src={
+            getSpaceStatus(spaceData?.status) === 'Live'
+              ? live
+              : getSpaceStatus(spaceData?.status) === 'Scheduled'
+              ? scheduled
+              : '' // Ended
+          }
+          alt="status"
+        />
+      )}
+      <Title orientation={orientation}>
+        {orientation === 'pill'
+          ? `${spaceData?.spaceName.slice(0, 20)}...`
+          : spaceData?.spaceName}
+      </Title>
+      <Status orientation={orientation}>
+        <Time orientation={orientation}>
           <TimeText>
             {getSpaceStatus(spaceData?.status) === 'Live'
               ? 'Live'
@@ -130,7 +136,7 @@ const Container = styled.div<IThemeProps>`
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-  cursor: ${props => props.clickable && 'pointer'};
+  cursor: ${(props) => props.clickable && 'pointer'};
 }`;
 
 const Title = styled.div<{ orientation?: string }>`
