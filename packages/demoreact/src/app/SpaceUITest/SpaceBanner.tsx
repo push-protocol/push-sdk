@@ -18,6 +18,10 @@ export const SpaceBanner = () => {
     setOrientation(e.target.value);
   };
 
+  const onClickHandler = (arg: string) => {
+    console.log(arg);
+  }
+
   return (
     <div>
       <Section>
@@ -43,6 +47,7 @@ export const SpaceBanner = () => {
       </Section>
       <SpaceBannerComponent
         spaceId={spaceId}
+        onBannerClick={onClickHandler}
         orientation={
           orientation === 'maximized'
             ? 'maximized'

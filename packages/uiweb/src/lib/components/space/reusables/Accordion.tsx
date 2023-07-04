@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from '../../../icons/CaretDownGrey.svg';
 import CaretUpIcon from '../../../icons/CaretUpGrey.svg';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 interface IAccordionProps {
     title: string;
+    items?: number;
     children: React.ReactNode;
 }
 
-const Accordion: React.FC<IAccordionProps> = ({ title, children }) => {
+const Accordion: React.FC<IAccordionProps> = ({ title, items, children }) => {
+    const theme = useContext(ThemeContext)
+
     const [isOpen, setIsOpen] = useState(true);
 
     const toggleAccordion = () => {
@@ -21,14 +25,14 @@ const Accordion: React.FC<IAccordionProps> = ({ title, children }) => {
             <AccordionTitle onClick={toggleAccordion}>
                 <Title>
                     <div>{title}</div>
-                    <PendingCount>2</PendingCount>
+                    { items ? <PendingCount theme={theme}>{items}</PendingCount> : null }
                 </Title>
                 <Image
                     src={isOpen ? CaretUpIcon : CaretDownIcon}
                     alt="Maximize/Minimize icon"
                 />
             </AccordionTitle>
-            {isOpen ? <AccordionBody>{children}</AccordionBody> : null}
+            <AccordionBody isOpen={isOpen}>{children}</AccordionBody>
         </AccordionParent>
     );
 };
@@ -43,9 +47,10 @@ const AccordionParent = styled.div`
     margin: 16px 0;
 `;
 
-const AccordionBody = styled.div`
-    max-height: 200px;
+const AccordionBody = styled.div<{ isOpen: boolean }>`
     overflow-y: scroll;
+    max-height: ${({ isOpen }) => (isOpen ? '200px' : '0')};
+    transition: max-height 200ms ease-out;
 `;
 
 const AccordionTitle = styled.div`
@@ -64,12 +69,12 @@ const Title = styled.div`
 `;
 
 const PendingCount = styled.div`
-    background: #8B5CF6;
+    background: ${(props => props.theme.btnColorPrimary)};
     border-radius: 8px;
     padding: 4px 10px;
     margin-left: 6px;
     font-size: 13px;
-    color: white;
+    color: ${(props => props.theme.titleTextColor)};
 `;
 
 const Image = styled.img`

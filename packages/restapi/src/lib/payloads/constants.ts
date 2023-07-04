@@ -46,6 +46,34 @@ export enum NOTIFICATION_TYPE {
 export enum ADDITIONAL_META_TYPE {
   CUSTOM = 0,
   PUSH_VIDEO = 1,
+  PUSH_SPACE = 2,
+}
+
+// Subset of ADDITIONAL_META_TYPE, to be used exclusively for Push Video, Spaces
+export enum VIDEO_CALL_TYPE {
+  PUSH_VIDEO = 1,
+  PUSH_SPACE = 2,
+}
+
+export enum SPACE_REQUEST_TYPE {
+  JOIN, // space has started
+  INVITE_TO_PROMOTE, // host invites someone to be promoted as the speaker
+  REQUEST_TO_PROMOTE, // someone requests the host to be promoted to a spaeker
+}
+
+export enum SPACE_ACCEPT_REQUEST_TYPE {
+  ACCEPT_INVITE,
+  ACCEPT_PROMOTION,
+}
+
+export enum SPACE_DISCONNECT_TYPE {
+  STOP, // space is stopped/ended
+  LEAVE // speaker leaves a space
+}
+
+export enum SPACE_INVITE_ROLES {
+  CO_HOST,
+  SPEAKER,
 }
 
 export const DEFAULT_DOMAIN = 'push.org';
