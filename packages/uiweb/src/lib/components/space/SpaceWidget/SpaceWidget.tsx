@@ -5,23 +5,18 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
 
-import { ENV } from '../../../config';
 import { ISpaceWidgetProps } from '../exportedTypes';
-
-export interface ISpaceWidgetComponentProps extends ISpaceWidgetProps{
-  env: ENV;
-}
+import { useSpaceData } from '../../../hooks';
 
 const DEFAULT_OFFSET = 16;
 const DEFAULT_MAXWIDTH = 415;
 
-export const SpaceWidget: React.FC<ISpaceWidgetComponentProps> = (options: ISpaceWidgetComponentProps) => {
+export const SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
   const {
     bottomOffset = DEFAULT_OFFSET,
     rightOffset = DEFAULT_OFFSET,
     width,
     zIndex = 1000,
-    env, 
     spaceId,
     shareUrl,
     onClose = (() => { /** */}) as MouseEventHandler<HTMLDivElement>,
@@ -31,6 +26,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetComponentProps> = (options: ISpac
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [spaceData, setSpaceData] = useState<SpaceDTO>(); // use hook in banner's pr to get spaceData from context
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
+
+  const { env } = useSpaceData();
 
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
