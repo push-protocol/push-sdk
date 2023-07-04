@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import * as PushAPI from '@pushprotocol/restapi';
-
 import { SpaceBanner } from '../SpaceBanner';
+
+import { Checkbox } from '../reusables/Checkbox';
+
+import { Spinner } from '../../chat/Spinner';
 
 import {
   useSpaceData,
@@ -12,8 +14,25 @@ import {
   usePopularSpaces,
   useSpaceRequests,
 } from '../../../hooks';
-import { Spinner } from '../../chat/Spinner';
 
+import filter from './../../../icons/filter.svg';
+
+enum OrientationEnums {
+  Horizontal = 'horizontal',
+  Vertical = 'vertical',
+}
+
+enum Tabs {
+  ForYou = 'For You',
+  Popular = 'Popular',
+  Requests = 'Requests',
+}
+
+enum FilterEnums {
+  All = 'All',
+  Live = 'Live',
+  Scheduled = 'Scheduled',
+}
 export interface ISpaceFeedProps {
   account?: any;
   orientation?: 'horizontal' | 'vertical';
@@ -21,12 +40,7 @@ export interface ISpaceFeedProps {
   width?: number;
   sortingOrder?: string[];
   showTabs?: boolean;
-}
-
-export enum Tabs {
-  ForYou = 'For You',
-  Popular = 'Popular',
-  Requests = 'Requests',
+  filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
@@ -39,6 +53,13 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 }) => {
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [loading, setLoading] = useState(false);
+  const [liveFilter, setLiveFilter] = useState(
+    filter === FilterEnums.Live ? true : false
+  );
+  const [scheduledFilter, setScheduledFilter] = useState(
+    filter === FilterEnums.Scheduled ? true : false
+  );
+  const [showFilter, setShowFilter] = useState(false);
 
   const {
     spacesPage,
@@ -48,17 +69,42 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     requestPage,
     setRequestPage,
     mySpaces,
-    setMySpaces,
     popularSpaces,
-    setPopularSpaces,
     spaceRequests,
-    setSpaceRequests,
   } = useSpaceData();
 
   const listInnerRef = useFeedScroll(mySpaces.length);
 
   const handleTabChange = (tab: string) => {
     setTab(tab);
+  };
+
+  const handleLive = () => {
+    setLiveFilter(!liveFilter);
+  };
+
+  const handleScheduled = () => {
+    setScheduledFilter(!scheduledFilter);
+  };
+
+  const handleShowFilter = () => {
+    setShowFilter(!showFilter);
+  };
+
+  const handleFilterData = (spacesList: any) => {
+    if (liveFilter && scheduledFilter) {
+      return spacesList;
+    } else if (liveFilter) {
+      return spacesList.filter(
+        (space: any) => space.spaceInformation.status === 'ACTIVE'
+      );
+    } else if (scheduledFilter) {
+      return spacesList.filter(
+        (space: any) => space.spaceInformation.status === 'PENDING'
+      );
+    } else {
+      return spacesList;
+    }
   };
 
   const loadMoreData = async () => {
@@ -88,9 +134,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 
   return (
     <div>
-      {orientation === 'horizontal' ? (
+      {orientation === OrientationEnums.Horizontal ? (
         <Spaces orientation={orientation}>
-          {orientation === 'horizontal'
+          {orientation === OrientationEnums.Horizontal
             ? mySpaces &&
               mySpaces.map((space: { spaceId: string }, index: any) => {
                 return (
@@ -110,16 +156,35 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
       ) : (
         <>
           <Navigation showTabs={showTabs} width={width}>
-            {sortingOrder.map((tabName: string) => {
-              return (
-                <NavButton
-                  active={tab === tabName}
-                  onClick={() => handleTabChange(tabName)}
-                >
-                  {tabName}
-                </NavButton>
-              );
-            })}
+            <NavButtonWrapper>
+              {sortingOrder.map((tabName: string) => {
+                return (
+                  <NavButton
+                    active={tab === tabName}
+                    onClick={() => handleTabChange(tabName)}
+                  >
+                    {tabName}
+                  </NavButton>
+                );
+              })}
+            </NavButtonWrapper>
+            <Filter>
+              <FilterButton onClick={handleShowFilter} />
+              <FilterContainer showFilter={showFilter}>
+                <Checkbox
+                  id=""
+                  label="Show Live"
+                  value={liveFilter}
+                  onChange={handleLive}
+                />
+                <Checkbox
+                  id=""
+                  label="Show Scheduled"
+                  value={scheduledFilter}
+                  onChange={handleScheduled}
+                />
+              </FilterContainer>
+            </Filter>
           </Navigation>
           <ScrollContainer
             width={width}
@@ -128,23 +193,25 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             onScroll={onScroll}
           >
             <Container>
-              {tab === 'For You' ? (
+              {tab === Tabs.ForYou ? (
                 <Spaces orientation={orientation}>
                   {mySpaces &&
-                    mySpaces.map((space: { spaceId: string }, index: any) => {
-                      return (
-                        <SpaceBanner
-                          spaceId={space.spaceId}
-                          orientation="maximized"
-                        />
-                      );
-                    })}
+                    handleFilterData(mySpaces).map(
+                      (space: { spaceId: string }, index: any) => {
+                        return (
+                          <SpaceBanner
+                            spaceId={space.spaceId}
+                            orientation="maximized"
+                          />
+                        );
+                      }
+                    )}
                 </Spaces>
-              ) : tab === 'Popular' ? (
+              ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
                   <Text>Popular Spaces</Text>
                   {popularSpaces &&
-                    popularSpaces.map(
+                    handleFilterData(popularSpaces).map(
                       (space: { spaceId: string }, index: any) => {
                         return (
                           <SpaceBanner
@@ -158,7 +225,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ) : (
                 <Spaces orientation={orientation}>
                   {spaceRequests &&
-                    spaceRequests.map(
+                    handleFilterData(spaceRequests).map(
                       (space: { spaceId: string }, index: any) => {
                         return (
                           <SpaceBanner
@@ -200,8 +267,17 @@ const Navigation = styled.div<{
 }>`
   display: ${(props) => (props.showTabs ? 'flex' : 'none')};
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 27px;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
+}`;
+
+const NavButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }`;
 
 const NavButton = styled.button<{ active?: boolean }>`
@@ -211,6 +287,26 @@ const NavButton = styled.button<{ active?: boolean }>`
   border: none;
   border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
   background: none;
+}`;
+
+const Filter = styled.div`
+  border: none;
+  width: 24px;
+  height: 24px;
+}`;
+
+const FilterButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: url(${filter}) no-repeat center;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: 0;
+  right: 0;
+  z-index: 2;
 }`;
 
 const Spaces = styled.div<{ orientation?: string }>`
@@ -243,4 +339,22 @@ const Text = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 18px;
+}`;
+
+const FilterContainer = styled.div<{ showFilter: boolean }>`
+  display: ${(props) => (props.showFilter ? 'flex' : 'none')};
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: #ffffff;
+  min-width: 160px;
+  height: auto;
+  padding: 18px 0px 18px 22px;
+  border-radius: 12px;
+  border: 1px solid #DCDCDF;
+  gap: 16px;
+  position: relative;
+  top: 16px;
+  right: 160px;
+  z-index: 1;
 }`;
