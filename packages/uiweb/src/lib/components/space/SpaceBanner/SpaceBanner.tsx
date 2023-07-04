@@ -31,61 +31,67 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   spaceId,
   orientation,
 }) => {
-
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
 
   return (
-      <Container orientation={orientation} status={getSpaceStatus(spaceData?.scheduleAt as Date)} theme={theme}>
-        {orientation === "maximized" && 
-          <HostPfpContainer
-            name={spaceData?.members[0].wallet.slice(7)}
-            statusTheme={getSpaceStatus(spaceData?.scheduleAt as Date)}
-            imageHeight={'48px'}
-            imageUrl={spaceData?.members[0].image}
-            handle={spaceData?.members[0].wallet.slice(7)}
-          />  
-        }
-        {orientation === 'maximized' ? null : (
+    <Container
+      orientation={orientation}
+      status={getSpaceStatus(spaceData?.status)}
+      theme={theme}
+    >
+      {orientation === 'maximized' && (
+        <HostPfpContainer
+          name={spaceData?.members[0].wallet.slice(7)}
+          statusTheme={getSpaceStatus(spaceData?.status)}
+          imageHeight={'48px'}
+          imageUrl={spaceData?.members[0].image}
+          handle={spaceData?.members[0].wallet.slice(7)}
+        />
+      )}
+      {orientation === 'maximized' ? null : (
+        <Icon
+          src={
+            getSpaceStatus(spaceData?.status) === 'Live'
+              ? live
+              : getSpaceStatus(spaceData?.status) === 'Scheduled'
+              ? scheduled
+              : '' // Ended
+          }
+          alt="status"
+        />
+      )}
+      <Title orientation={orientation}>
+        {orientation === 'pill'
+          ? `${spaceData?.spaceName.slice(0, 20)}...`
+          : spaceData?.spaceName}
+      </Title>
+      <Status orientation={orientation}>
+        <Time orientation={orientation}>
           <Icon
             src={
-              getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
+              getSpaceStatus(spaceData?.status) === 'Live'
                 ? live
-                : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
+                : getSpaceStatus(spaceData?.status) === 'Scheduled'
                 ? scheduled
                 : '' // Ended
             }
             alt="status"
           />
-        )}
-        <Title orientation={orientation}>
-          {orientation === 'pill'
-            ? `${spaceData?.spaceName.slice(0, 20)}...`
-            : spaceData?.spaceName}
-        </Title>
-        <Status orientation={orientation}>
-          <Time orientation={orientation}>
-            <Icon
-              src={
-                getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
-                  ? live
-                  : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
-                  ? scheduled
-                  : '' // Ended
-              }
-              alt="status"
-            />
-            <TimeText>
-              {getSpaceStatus(spaceData?.scheduleAt as Date) === 'Live'
-                ? 'Live'
-                : getSpaceStatus(spaceData?.scheduleAt as Date) === 'Scheduled'
-                ? `${getDateAndTime(spaceData?.scheduleAt as Date)}`
-                : 'Ended'}
-            </TimeText>
-          </Time>
-          <ParticipantContainer participants={(spaceData?.pendingMembers as [])} orientation={orientation}/>
-        </Status>
-      </Container>
+          <TimeText>
+            {getSpaceStatus(spaceData?.status) === 'Live'
+              ? 'Live'
+              : getSpaceStatus(spaceData?.status) === 'Scheduled'
+              ? `${getDateAndTime(spaceData?.scheduleAt as Date)}`
+              : 'Ended'}
+          </TimeText>
+        </Time>
+        <ParticipantContainer
+          participants={spaceData?.pendingMembers as []}
+          orientation={orientation}
+        />
+      </Status>
+    </Container>
   );
 };
 
@@ -99,17 +105,34 @@ const Container = styled.div<IThemeProps>`
   align-items: ${(props) =>
     props.orientation === 'maximized' ? 'flex-start' : 'center'};
   padding: ${(props) =>
-    props.orientation === 'maximized' ? '16px' : props.orientation === 'minimized'? '0 20px': '0 11px'};
+    props.orientation === 'maximized'
+      ? '16px'
+      : props.orientation === 'minimized'
+      ? '0 20px'
+      : '0 11px'};
   gap: ${(props) => (props.orientation === 'maximized' ? '16px' : '8px')};
   width: ${(props) =>
-    props.orientation === 'maximized' ? 'inherit' : props.orientation === 'minimized' ? 'inherit' : 'fit-content'};
-  height: ${(props) => (props.orientation === 'maximized' ? 'auto' : props.orientation ==='minimized' ? '40px' : '63px')};
+    props.orientation === 'maximized'
+      ? 'inherit'
+      : props.orientation === 'minimized'
+      ? 'inherit'
+      : 'fit-content'};
+  height: ${(props) =>
+    props.orientation === 'maximized'
+      ? 'auto'
+      : props.orientation === 'minimized'
+      ? '40px'
+      : '63px'};
   background: ${(props) =>
     props.status === 'Live'
       ? props.theme.titleBg
       : props.theme.bgColorSecondary};
   border-radius: ${(props) =>
-    props.orientation === 'maximized' ? '17px' : props.orientation === 'minimized' ? '12px' : '24px'};
+    props.orientation === 'maximized'
+      ? '17px'
+      : props.orientation === 'minimized'
+      ? '12px'
+      : '24px'};
   color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};
   min-width: 0;
   text-overflow: ellipsis;
@@ -125,7 +148,11 @@ const Title = styled.div<{ orientation?: string }>`
   font-weight: ${(props) =>
     props.orientation === 'maximized' ? '700' : '500'};
   font-size: ${(props) =>
-    props.orientation === 'maximized' ? '20px' : props.orientation === 'minimized' ? '16px' : '12px'};
+    props.orientation === 'maximized'
+      ? '20px'
+      : props.orientation === 'minimized'
+      ? '16px'
+      : '12px'};
   line-height: 130%;
   width: 90%;
   line-clamp: ${(props) => (props.orientation === 'maximized' ? '3' : '2')};
@@ -138,7 +165,8 @@ const Title = styled.div<{ orientation?: string }>`
 const Status = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
-  width: ${(props) => (props.orientation === 'maximized' ? '100%' : 'fit-content')};
+  width: ${(props) =>
+    props.orientation === 'maximized' ? '100%' : 'fit-content'};
   justify-content: space-between;
   align-items: center;
 }`;
