@@ -42,6 +42,7 @@ export interface ISpaceFeedProps {
   sortingOrder?: string[];
   showTabs?: boolean;
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
+  showFilter?: boolean;
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
@@ -51,15 +52,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   width,
   sortingOrder = [Tabs.ForYou, Tabs.Popular, Tabs.Requests],
   showTabs = true,
+  filter = FilterEnums.All,
+  showFilter = true,
 }) => {
   const [tab, setTab] = useState<string>(sortingOrder[0]);
-  const [liveFilter, setLiveFilter] = useState(
-    filter === FilterEnums.Live ? true : false
-  );
-  const [scheduledFilter, setScheduledFilter] = useState(
-    filter === FilterEnums.Scheduled ? true : false
-  );
-  const [showFilter, setShowFilter] = useState(false);
+  const [filterTab, setFilterTab] = useState(filter);
 
   const {
     spacesPage,
@@ -81,26 +78,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setTab(tab);
   };
 
-  const handleLive = () => {
-    setLiveFilter(!liveFilter);
-  };
-
-  const handleScheduled = () => {
-    setScheduledFilter(!scheduledFilter);
-  };
-
-  const handleShowFilter = () => {
-    setShowFilter(!showFilter);
-  };
-
   const handleFilterData = (spacesList: any) => {
-    if (liveFilter && scheduledFilter) {
+    if (filterTab === FilterEnums.All) {
       return spacesList;
-    } else if (liveFilter) {
+    } else if (filterTab === FilterEnums.Live) {
       return spacesList.filter(
         (space: any) => space.spaceInformation.status === 'ACTIVE'
       );
-    } else if (scheduledFilter) {
+    } else if (filterTab === FilterEnums.Scheduled) {
       return spacesList.filter(
         (space: any) => space.spaceInformation.status === 'PENDING'
       );
@@ -170,24 +155,27 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 );
               })}
             </NavButtonWrapper>
-            <Filter>
-              <FilterButton onClick={handleShowFilter} />
-              <FilterContainer showFilter={showFilter}>
-                <Checkbox
-                  id=""
-                  label="Show Live"
-                  value={liveFilter}
-                  onChange={handleLive}
-                />
-                <Checkbox
-                  id=""
-                  label="Show Scheduled"
-                  value={scheduledFilter}
-                  onChange={handleScheduled}
-                />
-              </FilterContainer>
-            </Filter>
           </Navigation>
+          <Filter showFilter={showFilter}>
+            <FilterButton
+              active={filterTab === FilterEnums.All}
+              onClick={() => setFilterTab(FilterEnums.All)}
+            >
+              All
+            </FilterButton>
+            <FilterButton
+              active={filterTab === FilterEnums.Live}
+              onClick={() => setFilterTab(FilterEnums.Live)}
+            >
+              Live
+            </FilterButton>
+            <FilterButton
+              active={filterTab === FilterEnums.Scheduled}
+              onClick={() => setFilterTab(FilterEnums.Scheduled)}
+            >
+              Scheduled
+            </FilterButton>
+          </Filter>
           <ScrollContainer
             width={width}
             height={height}
@@ -272,7 +260,6 @@ const Navigation = styled.div<{
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 27px;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   border-bottom: 1px solid #DCDCDF;
 }`;
@@ -292,26 +279,6 @@ const NavButton = styled.button<{ active?: boolean }>`
   border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
   background: none;
   color : ${(props) => (props.active ? '#000000' : '#71717A')};
-}`;
-
-const Filter = styled.div`
-  border: none;
-  width: 24px;
-  height: 24px;
-}`;
-
-const FilterButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  background: url(${filter}) no-repeat center;
-  width: 24px;
-  height: 24px;
-  position: relative;
-  top: 0;
-  right: 0;
-  z-index: 2;
 }`;
 
 const Spaces = styled.div<{ orientation?: string }>`
@@ -346,20 +313,26 @@ const Text = styled.div`
   font-size: 18px;
 }`;
 
-const FilterContainer = styled.div<{ showFilter: boolean }>`
+const Filter = styled.div<{ showFilter?: boolean }>`
   display: ${(props) => (props.showFilter ? 'flex' : 'none')};
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   background: #ffffff;
-  min-width: 160px;
-  height: auto;
-  padding: 18px 0px 18px 22px;
-  border-radius: 12px;
-  border: 1px solid #DCDCDF;
-  gap: 16px;
-  position: relative;
-  top: 16px;
-  right: 160px;
-  z-index: 1;
+  width: 100%;
+  margin: 22px 0;
+}`;
+
+const FilterButton = styled.button<{ active: boolean }>`
+  display: inline-flex;
+  height: 30px;
+  padding: 0px 16px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 99px;
+  border: 1px solid #C4B5FD;
+  background: ${(props) => (props.active ? '#8B5CF6' : '#EDE9FE')};
+  color: ${(props) => (!props.active ? '#8B5CF6' : '#FFF')};
+  margin-right: 8px;
+  font-size: 14px;
 }`;
