@@ -29,6 +29,25 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         padding: '14px',
     }
 
+    const TEMP_MEMBERS = [
+        {
+            handle: 's4m4',
+            name: 'Samarendra'
+        },
+        {
+            handle: 'aamsa',
+            name: 'Aam Saltman'
+        },
+        {
+            handle: 's4m4',
+            name: 'Samarendra'
+        },
+        {
+            handle: 'aamsa',
+            name: 'Aam Saltman'
+        },
+    ]
+
     return (
         <Modal
             width='400px'
@@ -58,20 +77,17 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                 Invite Members
             </Button>
 
-            <Accordion title='Pending Invites'>
-                <ProfileContainer
-                    imageHeight='48px'
-                    handle={'s4m4'}
-                    name={'Samarendra'}
-                    imageUrl={tempImageUrl}
-                />
-
-                <ProfileContainer
-                    imageHeight='48px'
-                    handle={'aamsa'}
-                    name={'Aam Saltman'}
-                    imageUrl={tempImageUrl}
-                />
+            <Accordion title='Pending Invites' items={TEMP_MEMBERS.length}>
+                {
+                    TEMP_MEMBERS.map((item) => {
+                        return <ProfileContainer
+                            imageHeight='48px'
+                            handle={item.handle}
+                            name={item.name}
+                            imageUrl={tempImageUrl}
+                        />  
+                    })
+                }
             </Accordion>
 
             <ProfileContainer

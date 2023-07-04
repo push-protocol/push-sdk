@@ -1,15 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { SignerType, SpaceDTO, SpaceIFeeds } from "@pushprotocol/restapi";
 
-import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
-
-import { SpacesUI } from '../components';
-import { ThemeContext } from '../components/space/theme/ThemeProvider';
-import { ISpacesTheme, lightTheme } from '../components/space/theme';
-import {
-  ISpaceDataContextValues,
-  ISpaceInfo,
-  SpaceDataContext,
-} from '../context/spacesContext';
+import { SpacesUI } from "../components";
+import { ThemeContext } from "../components/space/theme/ThemeProvider";
+import { ISpacesTheme, lightTheme } from "../components/space/theme";
+import { ISpaceDataContextValues, ISpaceInfo, SpaceDataContext } from "../context/spacesContext";
+import { ENV } from "../config";
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -17,11 +13,11 @@ export interface ISpacesUIProviderProps {
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({
-  spaceUI,
-  theme,
-  children,
-}: ISpacesUIProviderProps) => {
+export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+  const [account, setAccount] = useState<string>('');
+  const [signer, setSigner] = useState<SignerType>();
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
+  const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
   const [spacesPage, setSpacesPage] = useState<number>(1);
@@ -44,6 +40,14 @@ export const SpacesUIProvider = ({
   };
 
   const value: ISpaceDataContextValues = {
+    account,
+    setAccount,
+    signer,
+    setSigner,
+    pgpPrivateKey,
+    setPgpPrivateKey,
+    env,
+    setEnv,
     trendingListData,
     setTrendingListData,
     spaceInfo,

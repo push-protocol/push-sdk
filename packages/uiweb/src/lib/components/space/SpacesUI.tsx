@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
-import { ISpaceWidgetComponentProps, SpaceWidget } from './SpaceWidget';
+import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
 import { SpaceCreationWidget } from './SpaceCreationWidget';
@@ -33,13 +33,7 @@ export class SpacesUI {
   };
 
   SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
-    const { env } = this;
-    const widgetProps: ISpaceWidgetComponentProps = {
-      ...options,
-      env
-    };
-
-    return <SpaceWidget {...widgetProps} />
+    return <SpaceWidget {...options} />
   }
 
   SpaceFeed: React.FC<ISpaceFeedProps> = (options: ISpaceFeedProps) => {
@@ -69,6 +63,12 @@ export class SpacesUI {
 
   init = () => {
     // Initialization logic
+    const { setAccount, setSigner, setPgpPrivateKey, setEnv } = useSpaceData();
+    setAccount(this.account);
+    setSigner(this.signer);
+    setPgpPrivateKey(this.pgpPrivateKey);
+    setEnv(this.env);
+
     // Call connectToSockets or any other initialization tasks
     this.connectToSockets();
   };

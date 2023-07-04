@@ -1,4 +1,4 @@
-import React, { useState, MouseEventHandler } from 'react';
+import React, { useState, MouseEventHandler, useContext } from 'react';
 import styled from 'styled-components';
 
 import { Item, Text } from '../../../config';
@@ -12,6 +12,7 @@ import LiveIcon from '../../../icons/live.svg';
 import { CloseSvg } from '../../../icons/CloseSvg';
 import { HostPfpContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
@@ -25,6 +26,8 @@ export interface IWidgetHeaderProps {
 }
 
 export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onClose, isMinimized, setIsMinimized, toggleWidgetVisibility }: IWidgetHeaderProps) => {
+  const theme = useContext(ThemeContext);
+
   const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
   const [isSpacesInfoVisible, setIsSpacesInfoVisible] = useState(false);
@@ -47,7 +50,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onC
   }
 
   return (
-    <Container>
+    <Container theme={theme}>
       {!isLive && 
         <Section>
           <Item marginBottom={'12px'}>
@@ -140,9 +143,9 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onC
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  color: white;
+  color: ${(props => props.theme.titleTextColor)};
   padding: 16px 24px;
-  background: linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%), linear-gradient(87.17deg, #EA4E93 0%, #DB2777 0.01%, #9963F7 100%), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 50.52%, #FFDED3 100%, #FFCFC5 100%), linear-gradient(0deg, #8B5CF6, #8B5CF6), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 57.29%, #FF95D5 100%), #FFFFFF;
+  background: ${(props => props.theme.titleBg)};
 `;
 
 const Image = styled.img`
