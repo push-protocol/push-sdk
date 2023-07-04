@@ -1,29 +1,29 @@
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
-import { groupDtoToSpaceDto } from './../chat/helpers';
-import { addAdminsToGroup } from '../chat/addAdminsToGroup';
+import { groupDtoToSpaceDto } from '../chat/helpers';
+import { addAdmins } from '../chat/addAdmins';
 
-export interface AddAdminsToSpaceType extends EnvOptionsType {
+export interface AddSpeakersToSpaceType extends EnvOptionsType {
   spaceId: string;
-  admins: Array<string>;
+  speakers: Array<string>;
   account?: string;
   signer?: SignerType;
   pgpPrivateKey?: string;
 }
 
-export const addAdminsToSpace = async (options: AddAdminsToSpaceType): Promise<SpaceDTO> => {
+export const addSpeakers = async (options: AddSpeakersToSpaceType): Promise<SpaceDTO> => {
   const {
     spaceId,
-    admins,
+    speakers,
     account = null,
     signer = null,
     env = options?.env ?? Constants.ENV.PROD,
     pgpPrivateKey = options?.pgpPrivateKey ?? null,
   } = options;
 
-  const group = await addAdminsToGroup({
+  const group = await addAdmins({
     chatId: spaceId,
-    admins: admins,
+    admins: speakers,
     account: account,
     signer: signer,
     env: env,

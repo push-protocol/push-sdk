@@ -1,8 +1,8 @@
 import { EnvOptionsType, SignerType, ChatStatus } from '../types';
 import {
   groupDtoToSpaceDto,
-  getMembersList,
-  getAdminsList,
+  getSpacesMembersList,
+  getSpaceAdminsList,
 } from './../chat/helpers';
 import { get } from './get';
 import { updateGroup } from '../chat/updateGroup';
@@ -29,11 +29,14 @@ export async function start(this: Space): Promise<void> {
       );
     }
 
-    const convertedMembers = getMembersList(
+    const convertedMembers = getSpacesMembersList(
       space.members,
       space.pendingMembers
     );
-    const convertedAdmins = getAdminsList(space.members, space.pendingMembers);
+    const convertedAdmins = getSpaceAdminsList(
+      space.members,
+      space.pendingMembers
+    );
 
     const group = await updateGroup({
       chatId: this.spaceSpecificData.spaceId,
@@ -69,7 +72,6 @@ export async function start(this: Space): Promise<void> {
 
     // if this peer is the host then start the livepeer playback and store the playback URL group meta
     // send a notification to all the added listeners (members) telling the space has started
-
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${start.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${start.name} -: ${err}`);

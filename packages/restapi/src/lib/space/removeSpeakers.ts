@@ -6,33 +6,33 @@ import {
 } from '../types';
 import {
   groupDtoToSpaceDto
-} from './../chat/helpers';
+} from '../chat/helpers';
 import {
-    removeAdminsFromGroup
-} from '../chat/removeAdminsFromGroup';
-export interface RemoveAdminsFromSpaceType extends EnvOptionsType {
+    removeAdmins
+} from '../chat/removeAdmins';
+export interface RemoveSpeakersFromSpaceType extends EnvOptionsType {
   spaceId: string;
-  admins: Array < string > ;
+  speakers: Array < string > ;
   account ? : string;
   signer ? : SignerType;
   pgpPrivateKey ? : string;
 }
 
-export const removeAdminsFromSpace = async (
-  options: RemoveAdminsFromSpaceType
+export const removeSpeakers = async (
+  options: RemoveSpeakersFromSpaceType
 ): Promise < SpaceDTO > => {
   const {
       spaceId,
-      admins,
+      speakers,
       account = null,
       signer = null,
       env = Constants.ENV.PROD,
       pgpPrivateKey = null,
   } = options || {};
   try {
-      const group = await removeAdminsFromGroup({
+      const group = await removeAdmins({
         chatId: spaceId,
-        admins: admins,
+        admins: speakers,
         account: account,
         signer: signer,
         env: env,
@@ -42,11 +42,11 @@ export const removeAdminsFromSpace = async (
       return groupDtoToSpaceDto(group);
   } catch (err) {
       console.error(
-          `[Push SDK] - API  - Error - API ${removeAdminsFromSpace.name} -:  `,
+          `[Push SDK] - API  - Error - API ${removeSpeakers.name} -:  `,
           err
       );
       throw Error(
-          `[Push SDK] - API  - Error - API ${removeAdminsFromSpace.name} -: ${err}`
+          `[Push SDK] - API  - Error - API ${removeSpeakers.name} -: ${err}`
       );
   }
 };

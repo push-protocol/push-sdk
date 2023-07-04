@@ -13,6 +13,7 @@ import {
   stopVideoStream,
 } from './helpers/mediaToggle';
 import isJSON from './helpers/isJSON';
+import { getIceServerConfig } from './helpers/getIceServerConfig';
 
 import {
   SignerType,
@@ -158,12 +159,17 @@ export class Video {
       ? recipientAddress
       : [recipientAddress];
 
-    recipientAddresses.forEach((recipientAddress) => {
+    for (const recipientAddress of recipientAddresses) {
       try {
+        // fetching the iceServers config
+        const iceServerConfig = await getIceServerConfig(this.env);
         this.peerInstances[recipientAddress] = new Peer({
           initiator: true,
           trickle: false,
           stream: this.data.local.stream,
+          config: {
+            iceServers: iceServerConfig,
+          },
         });
 
         this.peerInstances[recipientAddress].on('signal', (data: any) => {
@@ -336,7 +342,7 @@ export class Video {
       } catch (err) {
         console.log('error in request', err);
       }
-    });
+    }
   }
 
   async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {
@@ -355,10 +361,68 @@ export class Video {
     try {
       console.log('accept request', 'options', options);
 
+      // if peerInstance is not null -> acceptRequest/request was called before
+      if (this.peerInstances[recipientAddress]) {
+        // to prevent connection error we stop the exec of acceptRequest
+        return Promise.resolve();
+      }
+
+      // set videoCallInfo state with status 2 (call received)
+      this.setData((oldData) => {
+        return produce(oldData, (draft) => {
+          const incomingIndex = getIncomingIndexFromAddress(
+            oldData.incoming,
+            recipientAddress
+          );
+
+          draft.local.address = senderAddress;
+          draft.incoming[incomingIndex].address = recipientAddress;
+          draft.meta.chatId = chatId;
+          draft.meta.initiator.address = senderAddress;
+          draft.incoming[incomingIndex].status = retry
+            ? VideoCallStatus.RETRY_RECEIVED
+            : VideoCallStatus.RECEIVED;
+          draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
+        });
+      });
+
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
       this.peerInstances[recipientAddress] = new Peer({
         initiator: false,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
+      });
+
+      // setup error handler
+      this.peerInstances[recipientAddress].on('error', (err: any) => {
+        console.log('error in accept request', err);
+
+        if (this.data.incoming[0].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect({ peerAddress: recipientAddress });
+        }
+
+        // retrying in case of connection error
+        sendVideoCallNotification(
+          {
+            signer: this.signer,
+            chainId: this.chainId,
+            pgpPrivateKey: this.pgpPrivateKey,
+          },
+          {
+            senderAddress,
+            recipientAddress,
+            status: VideoCallStatus.RETRY_INITIALIZED,
+            chatId,
+            signalData: null,
+            env: this.env,
+          }
+        );
       });
 
       this.peerInstances[recipientAddress].signal(signalData);
@@ -529,55 +593,8 @@ export class Video {
           });
         }
       );
-
-      // set videoCallInfo state with status 2 (call received)
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          const incomingIndex = getIncomingIndexFromAddress(
-            oldData.incoming,
-            recipientAddress
-          );
-
-          draft.local.address = senderAddress;
-          draft.incoming[incomingIndex].address = recipientAddress;
-          draft.meta.chatId = chatId;
-          draft.meta.initiator.address = senderAddress;
-          draft.incoming[incomingIndex].status = retry
-            ? VideoCallStatus.RETRY_RECEIVED
-            : VideoCallStatus.RECEIVED;
-          draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
-        });
-      });
     } catch (err) {
       console.log('error in accept request', err);
-
-      const incomingIndex = getIncomingIndexFromAddress(
-        this.data.incoming,
-        recipientAddress
-      );
-
-      if (this.data.incoming[incomingIndex].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect({ peerAddress: recipientAddress });
-      }
-
-      // retrying in case of connection error
-      sendVideoCallNotification(
-        {
-          signer: this.signer,
-          chainId: this.chainId,
-          pgpPrivateKey: this.pgpPrivateKey,
-        },
-        {
-          senderAddress,
-          recipientAddress,
-          status: VideoCallStatus.RETRY_INITIALIZED,
-          chatId,
-          signalData: null,
-          env: this.env,
-          callType: this.callType,
-        }
-      );
     }
   }
 
@@ -586,6 +603,29 @@ export class Video {
 
     try {
       console.log('connect', 'options', options);
+
+      // setup error handler
+      this.peerInstances[peerAddress].on('error', (err: any) => {
+        console.log('error in connect', err);
+
+        const incomingIndex = getIncomingIndexFromAddress(
+          this.data.incoming,
+          peerAddress
+        );
+
+        if (this.data.incoming[incomingIndex].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect({ peerAddress });
+        }
+
+        // retrying in case of connection error
+        this.request({
+          senderAddress: this.data.local.address,
+          recipientAddress: this.data.incoming[incomingIndex].address,
+          chatId: this.data.meta.chatId,
+          retry: true,
+        });
+      });
 
       this.peerInstances[peerAddress]?.signal(signalData);
 
@@ -612,24 +652,6 @@ export class Video {
       });
     } catch (err) {
       console.log('error in connect', err);
-
-      const incomingIndex = getIncomingIndexFromAddress(
-        this.data.incoming,
-        peerAddress
-      );
-
-      if (this.data.incoming[incomingIndex].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect({ peerAddress });
-      }
-
-      // retrying in case of connection error
-      this.request({
-        senderAddress: this.data.local.address,
-        recipientAddress: this.data.incoming[incomingIndex].address,
-        chatId: this.data.meta.chatId,
-        retry: true,
-      });
     }
   }
 
@@ -677,8 +699,8 @@ export class Video {
       }
 
       // destroy the peerInstance
-      this.peerInstance?.destroy();
-      this.peerInstance = null;
+      this.peerInstances[peerAddress]?.destroy();
+      this.peerInstances[peerAddress] = null;
 
       // destroy the local stream
       if (this.data.local.stream) {
@@ -732,14 +754,6 @@ export class Video {
 
   enableAudio(options: EnableAudioInputOptions): void {
     const { state, peerAddress } = options || {};
-
-    console.log(
-      'enableAudio',
-      'current audio',
-      this.data.local.audio,
-      'requested state',
-      state
-    );
 
     if (this.data.local.audio !== state) {
       // need to change the audio state

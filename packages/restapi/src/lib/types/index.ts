@@ -11,7 +11,7 @@ import {
 import { ENV } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 
-export type Env = (typeof ENV)[keyof typeof ENV];
+export type Env = typeof ENV[keyof typeof ENV];
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -95,7 +95,9 @@ export interface ISendNotificationInputOptions {
     body: string;
     cta: string;
     img: string;
-    metadata?: any;
+    hidden?: boolean;
+    etime?: number;
+    silent?: boolean;
     additionalMeta?:
       | {
           /**
@@ -107,10 +109,23 @@ export interface ISendNotificationInputOptions {
           domain?: string;
         }
       | string;
+    /**
+     * @deprecated
+     * use additionalMeta instead
+     */
+    metadata?: any;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
+  /**
+   * @deprecated
+   * use payload.etime instead
+   */
   expiry?: number;
+  /**
+   * @deprecated
+   * use payload.hidden instead
+   */
   hidden?: boolean;
   graph?: {
     id: string;
@@ -304,13 +319,13 @@ export interface SpaceDTO {
   members: {
     wallet: string;
     publicKey: string;
-    isAdmin: boolean;
+    isSpeaker: boolean;
     image: string;
   }[];
   pendingMembers: {
     wallet: string;
     publicKey: string;
-    isAdmin: boolean;
+    isSpeaker: boolean;
     image: string;
   }[];
   contractAddressERC20: string | null;

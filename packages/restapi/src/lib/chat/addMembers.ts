@@ -23,7 +23,7 @@ export interface AddMembersToGroupType extends EnvOptionsType {
 /**
  * Update Group information
  */
-export const addMembersToGroup = async (
+export const addMembers = async (
   options: AddMembersToGroupType
 ): Promise<GroupDTO> => {
   const {
@@ -91,11 +91,11 @@ export const addMembersToGroup = async (
   });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API ${addMembersToGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${addMembers.name} -:  `,
       err
     );
     throw Error(
-      `[Push SDK] - API  - Error - API ${addMembersToGroup.name} -: ${err}`
+      `[Push SDK] - API  - Error - API ${addMembers.name} -: ${err}`
     );
   }
 };
