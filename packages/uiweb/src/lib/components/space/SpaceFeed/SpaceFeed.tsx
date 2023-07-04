@@ -274,6 +274,7 @@ const Navigation = styled.div<{
   align-items: center;
   margin-bottom: 27px;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
+  border-bottom: 1px solid #DCDCDF;
 }`;
 
 const NavButtonWrapper = styled.div`
@@ -290,6 +291,7 @@ const NavButton = styled.button<{ active?: boolean }>`
   border: none;
   border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
   background: none;
+  color : ${(props) => (props.active ? '#000000' : '#71717A')};
 }`;
 
 const Filter = styled.div`
