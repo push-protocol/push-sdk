@@ -17,7 +17,6 @@ import {
 import {
   PGPHelper,
   genRandomAddress,
-  CreateUserProps,
   createUser,
   get,
   PushApi,
@@ -64,7 +63,7 @@ export default function App() {
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
 
-    const options: CreateUserProps = {
+    const options: PushApi.user.CreateUserProps = {
       account: account,
       signer: signer,
       env: Constants.ENV.STAGING,
@@ -72,8 +71,7 @@ export default function App() {
 
     console.log('create user', account);
 
-    console.log('create user fn', PushApi.user.create);
-    const res = await PushApi.user.create(options);
+    const res = await createUser(options);
     console.log('success', res.did);
   };
 
@@ -95,12 +93,14 @@ export default function App() {
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
 
+    console.log('creating user...');
     const user = await createUser({
       account: account,
       signer: signer,
       env: Constants.ENV.DEV,
     });
 
+    console.log('decrypting pgp key...');
     const pgpPK = await decryptPGPKey({
       account: user.did,
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -108,6 +108,7 @@ export default function App() {
       signer: signer,
     });
 
+    console.log('updating profile...');
     await profileUpdate({
       account: account,
       env: Constants.ENV.DEV,
@@ -117,6 +118,7 @@ export default function App() {
         desc: 'Updated Desc',
       },
     });
+    console.log('successfully updated profile');
   };
 
   const handleProfileUpgrade = async () => {
