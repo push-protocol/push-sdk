@@ -48,11 +48,13 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       orientation={orientation}
       status={getSpaceStatus(spaceData?.status)}
       theme={theme}
+      onClick={handleClick}
+      clickable={Boolean(onBannerClick)}
     >
       {orientation === 'maximized' && (
         <HostPfpContainer
           name={spaceData?.members[0].wallet.slice(7)}
-          statusTheme={getSpaceStatus(spaceData?.status)}
+          statusTheme={getSpaceStatus(spaceData?.scheduleAt as Date)}
           imageHeight={'48px'}
           imageUrl={spaceData?.members[0].image}
           handle={spaceData?.members[0].wallet.slice(7)}
@@ -77,6 +79,16 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       </Title>
       <Status orientation={orientation}>
         <Time orientation={orientation}>
+          <Icon
+            src={
+              getSpaceStatus(spaceData?.status) === 'Live'
+                ? live
+                : getSpaceStatus(spaceData?.status) === 'Scheduled'
+                ? scheduled
+                : '' // Ended
+            }
+            alt="status"
+          />
           <TimeText>
             {getSpaceStatus(spaceData?.status) === 'Live'
               ? 'Live'
