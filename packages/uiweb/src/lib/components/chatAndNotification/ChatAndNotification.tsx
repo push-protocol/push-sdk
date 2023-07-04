@@ -195,7 +195,7 @@ export const ChatAndNotification = () => {
       maxHeight="600px"
       position="fixed"
       background="#fff"
-      padding='0 20px'
+      padding='0 15px'
       right="12px"
       bottom="18px"
       overflow="hidden"
