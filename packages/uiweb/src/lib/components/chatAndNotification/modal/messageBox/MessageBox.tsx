@@ -249,18 +249,14 @@ export const MessageBox = () => {
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
     (searchedChats ? searchedChats[selectedChatId as string] : null);
-    console.log(searchedChats)
-    console.log(chats)
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId as string);
-  console.log(selectedChatId)
-  console.log(selectedMessages)
   const dates = new Set();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { historyMessages, loading } = useFetchHistoryMessages();
-  const { approveChatRequest,loading:approveLoading } = useApproveChatRequest();
+  const { approveChatRequest, loading: approveLoading } = useApproveChatRequest();
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -322,7 +318,7 @@ export const MessageBox = () => {
   //optimise it
   const getChatCall = async () => {
     let threadHash = null;
-   
+
     if (!selectedMessages && selectedChat?.threadhash) {
       threadHash = selectedChat?.threadhash;
     } else if (chats.size && selectedMessages?.lastThreadHash) {
@@ -389,7 +385,7 @@ export const MessageBox = () => {
         flexDirection="column"
         alignItems="start"
         borderWidth="0 0 1px 0"
-        borderStyle={ "none none none none"}
+        borderStyle={"none none none none"}
         overflow="hidden scroll"
         ref={listInnerRef}
         onScroll={onScroll}
@@ -412,8 +408,7 @@ export const MessageBox = () => {
             >
               {selectedMessages?.messages.map(
                 (chat: IMessageIPFS, index: number) => {
-                  const dateNum = moment(chat.timestamp).format('ddMMyyyy');
-
+                  const dateNum = moment(chat.timestamp).format('L');
                   return (
                     <>
                       {dates.has(dateNum)
@@ -501,17 +496,19 @@ const FileDownloadIconAnchor = styled.a`
 
 const Button = styled.button`
   border: none;
-  display:flex;
-  justify-content:center;
   cursor: pointer;
   border-radius: 8px;
   margin:15px 0px 8px 0px;
-  padding: 16.5px 16.5px 13px 18.5px;
   background: #0D67FE;
   color: white;
   width: 100%;
-  text-align:center;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
+  max-height: 48px;
+  min-height: 48px;
+  padding: 0px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
