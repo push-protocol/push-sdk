@@ -1,5 +1,5 @@
 import React, { createContext } from 'react';
-import { SpaceDTO } from '@pushprotocol/restapi';
+import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
 export interface ISpaceInfo {
   [key: string]: SpaceDTO;
@@ -17,12 +17,12 @@ export interface ISpaceDataContextValues {
   setPopularPage: React.Dispatch<React.SetStateAction<number>>;
   requestPage: number;
   setRequestPage: React.Dispatch<React.SetStateAction<number>>;
-  mySpaces: any;
-  setMySpaces: React.Dispatch<React.SetStateAction<any>>;
-  popularSpaces: any;
-  setPopularSpaces: React.Dispatch<React.SetStateAction<any>>;
-  spaceRequests: any;
-  setSpaceRequests: React.Dispatch<React.SetStateAction<any>>;
+  mySpaces: SpaceIFeeds[];
+  setMySpaces: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
+  popularSpaces: SpaceIFeeds[];
+  setPopularSpaces: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
+  spaceRequests: SpaceIFeeds[];
+  setSpaceRequests: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -47,15 +47,15 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setRequestPage: () => {
     /**/
   },
-  mySpaces: [],
+  mySpaces: [] as SpaceIFeeds[],
   setMySpaces: () => {
     /**/
   },
-  popularSpaces: [],
+  popularSpaces: [] as SpaceIFeeds[],
   setPopularSpaces: () => {
     /**/
   },
-  spaceRequests: [],
+  spaceRequests: [] as SpaceIFeeds[],
   setSpaceRequests: () => {
     /**/
   },

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { SpaceDTO } from '@pushprotocol/restapi';
+import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
 import { SpacesUI } from '../components';
 import { ThemeContext } from '../components/space/theme/ThemeProvider';
@@ -27,9 +27,9 @@ export const SpacesUIProvider = ({
   const [spacesPage, setSpacesPage] = useState<number>(1);
   const [popularPage, setPopularPage] = useState<number>(1);
   const [requestPage, setRequestPage] = useState<number>(1);
-  const [mySpaces, setMySpaces] = useState<any>([]);
-  const [popularSpaces, setPopularSpaces] = useState<any>([]);
-  const [spaceRequests, setSpaceRequests] = useState<any>([]);
+  const [mySpaces, setMySpaces] = useState([] as SpaceIFeeds[]);
+  const [popularSpaces, setPopularSpaces] = useState([] as SpaceIFeeds[]);
+  const [spaceRequests, setSpaceRequests] = useState([] as SpaceIFeeds[]);
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
