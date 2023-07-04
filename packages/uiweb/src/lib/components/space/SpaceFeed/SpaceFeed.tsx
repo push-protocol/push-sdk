@@ -44,7 +44,6 @@ export interface ISpaceFeedProps {
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
   showFilter?: boolean;
   onBannerClick?: (arg: string) => void;
-  clickable?: boolean;
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
@@ -57,7 +56,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   filter = FilterEnums.All,
   showFilter = true,
   onBannerClick,
-  clickable = false,
 }) => {
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [filterTab, setFilterTab] = useState(filter);
@@ -98,9 +96,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     }
   };
 
-  const handleClick = () => {
+  const handleClick = (spaceId: string) => {
     if (onBannerClick) {
-      onBannerClick('');
+      onBannerClick(spaceId || '');
     }
   };
 
@@ -192,7 +190,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             ref={listInnerRef}
             onScroll={onScroll}
           >
-            <Container onClick={handleClick} clickable={Boolean(onBannerClick)}>
+            <Container>
               {tab === Tabs.ForYou ? (
                 <Spaces orientation={orientation}>
                   {mySpaces &&
@@ -202,6 +200,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                           <SpaceBanner
                             spaceId={space.spaceId}
                             orientation="maximized"
+                            onBannerClick={handleClick}
                           />
                         );
                       }
@@ -252,7 +251,7 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
 }`;
-const Container = styled.div<{ clickable: boolean }>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
