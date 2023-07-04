@@ -92,16 +92,12 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
   const checksumWallet = walletLowercase
     ? ethers.utils.getAddress(walletLowercase)
     : null;
-  const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
-
+  const web3Name = checksumWallet ? web3NameList[checksumWallet.toLowerCase()] : null;
   const handleOnClick = () => {
-    console.log(id)
     setSelectedChatId(id);
     setData({ chatId: id, value: chat });
   };
-
   const open = modalOpen === undefined ? true : modalOpen;
-  console.log(chat)
   return (
     <Container
       justifyContent="space-between"

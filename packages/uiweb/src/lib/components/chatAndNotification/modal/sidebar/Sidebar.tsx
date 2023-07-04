@@ -233,7 +233,6 @@ export const Sidebar = () => {
     searchedNotifications,
   } = useContext<any>(NotificationMainStateContext);
   const { fetchChatProfile } = useGetChatProfile();
-
   type PushSubTabDetailsType = {
     [key in PushSubTabs]: {
       title: string;
@@ -285,7 +284,6 @@ export const Sidebar = () => {
       }
     }
   };
-
   const onChatSearchReset = () => {
     setSearchedChats(null);
   };
