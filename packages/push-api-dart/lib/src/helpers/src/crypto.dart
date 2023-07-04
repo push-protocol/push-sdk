@@ -214,13 +214,13 @@ Future<List<int>> decryptV2({
   required EncryptedPrivateKeyModel encryptedData,
   required List<int> secret,
 }) async {
-  final key =
-      await hkdf(secret, hexToBytes(encryptedData.salt!));
+  final key = await hkdf(secret, hexToBytes(encryptedData.salt!));
 
   final algorithm = AesGcm.with256bits(nonceLength: AESGCMNonceSize);
 
   // Construct the secret box
-  final secretBox = SecretBox(hexToBytes(encryptedData.ciphertext!), nonce: hexToBytes(encryptedData.nonce!), mac: Mac.empty)
+  final secretBox = SecretBox(hexToBytes(encryptedData.ciphertext!),
+      nonce: hexToBytes(encryptedData.nonce!), mac: Mac.empty);
 
   // Decrypt
   final decryptedText = await algorithm.decrypt(
@@ -280,8 +280,6 @@ Future<String> decryptPGPKey({
   dynamic additionalMeta,
   Function? progressHook,
 }) async {
-  final env = getCachedENV();
-
   try {
     if (wallet.publicKey == null) {
       throw Exception('Public key is required');
@@ -291,7 +289,7 @@ Future<String> decryptPGPKey({
     String? privateKey;
 
     // Report Progress
-    progressHook?.call(PROGRESSHOOK['PUSH-DECRYPT-01'] as Map<String, dynamic>);
+    progressHook?.call(PROGRESSHOOK['PUSH-DECRYPT-01']);
 
     switch (encryptionType) {
       // case Constants.ENC_TYPE_V1:
@@ -299,8 +297,8 @@ Future<String> decryptPGPKey({
       case Constants.ENC_TYPE_V2:
         {
           final input = jsonDecode(encryptedPGPPrivateKey)['preKey'];
-          final enableProfileMessage = 'Enable Push Chat Profile \n' + input;
-          Uint8List encodedPrivateKey;
+          final enableProfileMessage = 'Enable Push Chat Profile \n$input';
+          List<int> encodedPrivateKey;
           try {
             final secret = (await getEip712Signature(
               wallet,
@@ -308,8 +306,8 @@ Future<String> decryptPGPKey({
               true,
             ))['verificationProof'];
             encodedPrivateKey = await decryptV2(
-              jsonDecode(encryptedPGPPrivateKey),
-              hexToBytes(secret ?? ''),
+              encryptedData: jsonDecode(encryptedPGPPrivateKey),
+              secret: hexToBytes(secret ?? ''),
             );
           } catch (err) {
             final secret = (await getEip712Signature(
@@ -318,8 +316,8 @@ Future<String> decryptPGPKey({
               false,
             ))['verificationProof'];
             encodedPrivateKey = await decryptV2(
-              jsonDecode(encryptedPGPPrivateKey),
-              hexToBytes(secret ?? ''),
+              encryptedData: jsonDecode(encryptedPGPPrivateKey),
+              secret: hexToBytes(secret ?? ''),
             );
           }
           final dec = utf8.decoder;
@@ -328,19 +326,15 @@ Future<String> decryptPGPKey({
         }
       case Constants.ENC_TYPE_V3:
         {
-          if (wallet?.signer == null) {
-            throw Exception(
-                'Cannot Decrypt this encryption version without signer!');
-          }
           final input = jsonDecode(encryptedPGPPrivateKey)['preKey'];
-          final enableProfileMessage = 'Enable Push Profile \n' + input;
+          final enableProfileMessage = 'Enable Push Profile \n$input';
           final secret = (await getEip191Signature(
             wallet,
             enableProfileMessage,
           ))['verificationProof'];
           final encodedPrivateKey = await decryptV2(
-            jsonDecode(encryptedPGPPrivateKey),
-            hexToBytes(secret ?? ''),
+            encryptedData: jsonDecode(encryptedPGPPrivateKey),
+            secret: hexToBytes(secret ?? ''),
           );
           final dec = utf8.decoder;
           privateKey = dec.convert(encodedPrivateKey);
@@ -350,25 +344,18 @@ Future<String> decryptPGPKey({
         {
           String? password;
           if (additionalMeta?.containsKey('NFTPGP_V1') == true) {
-            password = additionalMeta!['NFTPGP_V1']['password'];
+            password = additionalMeta['NFTPGP_V1']['password'];
           } else {
-            if (wallet?.signer == null) {
-              throw Exception(
-                  'Cannot Decrypt this encryption version without signer!');
-            }
             final encryptedPassword =
                 jsonDecode(encryptedPGPPrivateKey)['encryptedPassword'];
             password = await decryptPGPKey(
-              DecryptPgpKeyProps(
-                encryptedPGPPrivateKey: jsonEncode(encryptedPassword),
-                signer: signer,
-                env: env,
-              ),
+              encryptedPGPPrivateKey: jsonEncode(encryptedPassword),
+              wallet: wallet,
             );
           }
           final encodedPrivateKey = await decryptV2(
-            jsonDecode(encryptedPGPPrivateKey),
-            hexToBytes(stringToHex(password ?? '')),
+            encryptedData: jsonDecode(encryptedPGPPrivateKey),
+            secret: hexToBytes(stringToHex(password ?? '')),
           );
           final dec = utf8.decoder;
           privateKey = dec.convert(encodedPrivateKey);
@@ -378,32 +365,16 @@ Future<String> decryptPGPKey({
         throw Exception('Invalid Encryption Type');
     }
 
-    // try key upgradation
-    if (signer != null &&
-        toUpgrade == true &&
-        encryptionType != Constants.ENC_TYPE_V4) {
-      try {
-        await upgrade(
-            env: env,
-            account: address,
-            signer: signer,
-            progressHook: progressHook);
-      } catch (err) {
-        // Report Progress
-        final errorProgressHook =
-            PROGRESSHOOK['PUSH-ERROR-01'] as ProgressHookTypeFunction;
-        progressHook?.call(errorProgressHook(err));
-      }
-    }
+    // TODO: Add key upgradation logic (not urgent)
 
     // Report Progress
-    progressHook?.call(PROGRESSHOOK['PUSH-DECRYPT-02'] as Map<String, dynamic>);
-    return privateKey!;
+    progressHook?.call(PROGRESSHOOK['PUSH-DECRYPT-02'] as ProgressHookType);
+    return privateKey;
   } catch (err) {
     // Report Progress
     final errorProgressHook =
         PROGRESSHOOK['PUSH-ERROR-00'] as ProgressHookTypeFunction;
-    progressHook?.call(errorProgressHook('decryptPGPKey', err));
+    progressHook?.call(errorProgressHook(['decryptPGPKey', err]));
     throw Exception('[Push SDK] - API - Error - API decryptPGPKey -: $err');
   }
 }
