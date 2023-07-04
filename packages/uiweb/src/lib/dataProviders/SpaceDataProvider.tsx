@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { SignerType, SpaceDTO } from "@pushprotocol/restapi";
 
 import { SpacesUI } from "../components";
 import { ThemeContext } from "../components/space/theme/ThemeProvider";
 import { ISpacesTheme, lightTheme } from "../components/space/theme";
 import { ISpaceDataContextValues, ISpaceInfo, SpaceDataContext } from "../context/spacesContext";
-import { SpaceDTO } from "@pushprotocol/restapi";
+import { ENV } from "../config";
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -13,6 +14,10 @@ export interface ISpacesUIProviderProps {
 }
 
 export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+  const [account, setAccount] = useState<string>('');
+  const [signer, setSigner] = useState<SignerType>();
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
+  const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
 
@@ -28,6 +33,14 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
   };
 
   const value: ISpaceDataContextValues = {
+    account,
+    setAccount,
+    signer,
+    setSigner,
+    pgpPrivateKey,
+    setPgpPrivateKey,
+    env,
+    setEnv,
     trendingListData,
     setTrendingListData,
     spaceInfo,
