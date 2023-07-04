@@ -27,13 +27,11 @@ describe('PushAPI.chat.send', () => {
     `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`,
     provider
   );
-  const _nftWalletAddress1 = _nftSigner1.address;
   const _nftAccount1 = `nft:eip155:${process.env['NFT_CHAIN_ID_1']}:${process.env['NFT_CONTRACT_ADDRESS_1']}:${process.env['NFT_TOKEN_ID_1']}`;
   const _nftSigner2 = new ethers.Wallet(
     `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_2']}`,
     provider
   );
-  const _nftWalletAddress2 = _nftSigner2.address;
   const _nftAccount2 = `nft:eip155:${process.env['NFT_CHAIN_ID_2']}:${process.env['NFT_CONTRACT_ADDRESS_2']}:${process.env['NFT_TOKEN_ID_2']}`;
 
   beforeEach(() => {
@@ -390,7 +388,7 @@ describe('PushAPI.chat.send', () => {
       expect(receivedMessagePostUpdate2.messageContent).to.be.equal(MESSAGE3);
     });
   });
-  describe.only('Sending message - Type Text', () => {
+  describe('Sending message - Type Text', () => {
     it('PlainText messageContent', async () => {
       const msgRequest = await send({
         messageContent: MESSAGE,
@@ -403,8 +401,7 @@ describe('PushAPI.chat.send', () => {
     it('PlainText messageObj', async () => {
       const msgRequest = await send({
         messageObj: {
-          message: MESSAGE,
-          messageType: 'Text',
+          content: MESSAGE,
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -430,8 +427,7 @@ describe('PushAPI.chat.send', () => {
     it('Encrypted messageObj', async () => {
       const msgRequest = await send({
         messageObj: {
-          message: MESSAGE,
-          messageType: 'Text',
+          content: MESSAGE,
         },
         receiverAddress: walletAddress2,
         signer: _signer1,

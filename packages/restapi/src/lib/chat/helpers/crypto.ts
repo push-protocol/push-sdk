@@ -361,7 +361,10 @@ export const decryptAndVerifyMessage = async (
    * VERIFICATION
    * If verification proof is present then check that else check messageContent Signature
    */
-  if (message.verificationProof) {
+  if (
+    message.verificationProof &&
+    message.verificationProof.split(':')[0] === 'pgpv2'
+  ) {
     const bodyToBeHashed = {
       fromDID: message.fromDID,
       toDID: message.fromDID,
@@ -423,15 +426,13 @@ export const decryptAndVerifyMessage = async (
     cipherText: message.messageContent,
     secretKey,
   });
-  if (message.messageObj)
-    message.messageObj.message = aesDecrypt({
-      cipherText: message.messageObj.message,
-      secretKey,
-    });
-  if (message.messageObj && message.messageObj.meta)
-    message.messageObj.meta = aesDecrypt({
-      cipherText: message.messageObj.meta,
-      secretKey,
-    });
+  if (message.messageObj) {
+    message.messageObj = JSON.parse(
+      aesDecrypt({
+        cipherText: message.messageObj as string,
+        secretKey,
+      })
+    );
+  }
   return message;
 };

@@ -25,21 +25,22 @@ export enum ENCRYPTION_TYPE {
  * SUPPORTED MESSAGE TYPES FOR PUSH CHAT
  */
 export enum MessageType {
-  Text = 1,
-  Image = 2,
+  TEXT = 'Text',
+  IMAGE = 'Image',
+  FILE = 'File',
+  MEDIA_EMBED = 'MediaEmbed',
+  META = 'Meta',
   /**
-   * @deprecated
+   * @deprecated - Use MediaEmbed Instead
    */
-  GIF = 3,
-  Payment = 4,
-  Video = 5,
-  Audio = 6,
-  File = 7,
-  MediaEmbed = 8,
-  Meta = 9,
-  Custom = 10,
-  Reply = 11,
-  Composite = 12,
+  GIF = 'GIF',
+
+  // TODO
+  // AUDIO = 'Audio',
+  // VIDEO = 'Video',
+  // PAYMENT = 'Payment',
+  // REPLY = 'Reply',
+  // COMPOSITE = 'Composite',
 }
 
 const Constants = {

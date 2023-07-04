@@ -4,8 +4,9 @@ import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
 } from '../../lib/payloads/constants';
-import { ENV } from '../constants';
+import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
+import { META_MESSAGE_META } from './metaTypes';
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -139,17 +140,18 @@ export interface IMessageIPFS {
   toCAIP10: string;
   fromDID: string;
   toDID: string;
-  messageObj?: {
-    message: string;
-    messageType: string;
-    meta?: string;
-  };
-  verificationProof?: string;
   messageType: string;
+  messageObj?:
+    | {
+        content: string;
+        meta?: META_MESSAGE_META;
+      }
+    | string;
   /**
-   * @deprecated - Use messageObj.message instead
+   * @deprecated - Use messageObj.content instead
    */
   messageContent: string;
+  verificationProof?: string;
   /**
    * @deprecated - Use verificationProof instead
    */
@@ -307,35 +309,43 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
   account: string;
 }
 
-export interface ChatOptionsType extends AccountEnvOptionsType {
-  messageObj?: {
-    message: string;
-    messageType: string;
-    meta?: string;
-  } | null;
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
+export interface ChatStartOptionsType {
+  messageType: `${MessageType}`;
+  messageObj: {
+    content: string;
+    meta?: META_MESSAGE_META;
+  };
+  /**
+   * @deprecated - To be used for now to provide backward compatibility
+   */
+  messageContent: string;
   receiverAddress: string;
-  pgpPrivateKey?: string;
   connectedUser: IConnectedUser;
+  env: ENV;
 }
 
+/**
+ * EXPORTED ( Chat.send )
+ */
 export interface ChatSendOptionsType {
+  messageType?: `${MessageType}`;
   messageObj?: {
-    message: string;
-    messageType: string;
-    meta?: string;
+    content: string;
+    meta?: META_MESSAGE_META;
   };
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
+  messageContent?: string;
   receiverAddress: string;
   pgpPrivateKey?: string;
   account?: string;
   signer?: SignerType;
   env?: ENV;
   /**
-   * @deprecated - Use messageobj instead
+   * @deprecated APIkey is not needed now
    */
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
+  apiKey?: string;
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
