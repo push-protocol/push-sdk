@@ -24,9 +24,10 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetPr
     isHost, isLive, isJoined, isMember, isTimeToStartSpace
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
-  const { env } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO>(); // use hook in banner's pr to get spaceData from context
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
+
+  const { env } = useSpaceData();
 
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
