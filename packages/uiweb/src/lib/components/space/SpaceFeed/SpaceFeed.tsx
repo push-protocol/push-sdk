@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 import { SpaceBanner } from '../SpaceBanner';
 
-import { Checkbox } from '../reusables/Checkbox';
-
 import { Spinner } from '../reusables/Spinner';
 
 import {
@@ -14,9 +12,6 @@ import {
   usePopularSpaces,
   useSpaceRequests,
 } from '../../../hooks';
-
-import filter from './../../../icons/filter.svg';
-import { SpaceIFeeds } from '@pushprotocol/restapi';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -135,7 +130,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             ? mySpaces &&
               mySpaces.map((space: any, index: any) => {
                 return (
-                  <SpaceBanner spaceId={space.spaceId} orientation="pill" />
+                  <SpaceBanner
+                    spaceId={space.spaceId}
+                    orientation="pill"
+                    onBannerClick={handleClick}
+                  />
                 );
               })
             : mySpaces &&
@@ -144,6 +143,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   <SpaceBanner
                     spaceId={space?.spaceId}
                     orientation="maximized"
+                    onBannerClick={handleClick}
                   />
                 );
               })}
@@ -216,6 +216,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                           <SpaceBanner
                             spaceId={space.spaceId}
                             orientation="maximized"
+                            onBannerClick={handleClick}
                           />
                         );
                       }
@@ -230,6 +231,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                           <SpaceBanner
                             spaceId={space.spaceId}
                             orientation="maximized"
+                            onBannerClick={handleClick}
                           />
                         );
                       }
@@ -259,7 +261,6 @@ const Container = styled.div`
   border: 1px solid #dcdcdf;
   border-radius: 12px;
   padding: 24px 32px;
-  cursor: ${(props) => props.clickable && 'pointer'};
 }`;
 
 const Navigation = styled.div<{
