@@ -6,3 +6,4 @@ export * from './useResolveWeb3Name';
 export * from './notifications';
 export * from './chatAndNotification';
 export * from './useDivOffsetWidth';
+export * from './useDeviceWidthCheck';

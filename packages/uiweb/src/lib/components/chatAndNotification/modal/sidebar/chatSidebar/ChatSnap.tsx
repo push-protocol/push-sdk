@@ -2,7 +2,6 @@ import type { IFeeds } from '@pushprotocol/restapi';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
-  ChatAndNotificationMainContext,
 } from '../../../../../context';
 import {
   checkIfUnread,
@@ -19,6 +18,7 @@ import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
+import { useDeviceWidthCheck } from 'packages/uiweb/src/lib/hooks';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -34,6 +34,8 @@ const Message = ({
   messageContent: string;
   messageType: string;
 }) => {
+  const isMobile = useDeviceWidthCheck(425);
+  const digitsToDisplay = isMobile ? 18 : 37;
   return messageType === 'Text' ? (
     <Span
       textAlign="left"
@@ -42,7 +44,7 @@ const Message = ({
       color="#62626A"
       cursor="pointer"
     >
-      {shortenText(messageContent, 36)}
+      {shortenText(messageContent, digitsToDisplay)}
     </Span>
   ) : messageType === 'Image' ? (
     <Span
@@ -86,6 +88,9 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
 
+  const isMobile = useDeviceWidthCheck(425);
+  const digitsToDisplay = chat?.name ? isMobile ? 15 : 30 : isMobile ? 6 : 8;
+
   useResolveWeb3Name(chat?.did, env);
   //shift to helper
   const walletLowercase = pCAIP10ToWallet(chat?.did)?.toLowerCase();
@@ -127,8 +132,8 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
             cursor="pointer"
           >
             {chat?.name
-              ? shortenText(chat?.name, 30, true)
-              : web3Name ?? shortenText(chat?.did?.split(':')[1], 8, true)}
+              ? shortenText(chat?.name, digitsToDisplay, false)
+              : web3Name ?? shortenText(chat?.did?.split(':')[1], digitsToDisplay, true)}
           </NameSpan>
           <Message
             messageContent={chat?.msg?.messageContent}
