@@ -13,6 +13,7 @@ import {
   stopVideoStream,
 } from './helpers/mediaToggle';
 import isJSON from './helpers/isJSON';
+import { getIceServerConfig } from './helpers/getIceServerConfig';
 
 import {
   SignerType,
@@ -144,10 +145,16 @@ export class Video {
         this.data.local.stream
       );
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
       this.peerInstance = new Peer({
         initiator: true,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
       });
 
       this.peerInstance.on('signal', (data: any) => {
@@ -197,7 +204,6 @@ export class Video {
         if (isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].video = parsedData.isVideoOn;
@@ -206,7 +212,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].audio = parsedData.isAudioOn;
@@ -215,7 +220,10 @@ export class Video {
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            // destroy the peerInstance
+            this.peerInstance?.destroy();
+            this.peerInstance = null;
+
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -230,7 +238,6 @@ export class Video {
       });
 
       this.peerInstance.on('stream', (currentStream: MediaStream) => {
-        console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.incoming[0].stream = currentStream;
@@ -273,8 +280,8 @@ export class Video {
         'accept request',
         'options',
         options,
-        'localStream',
-        this.data.local.stream
+        'peerInstance',
+        this.peerInstance
       );
 
       // if peerInstance is not null -> acceptRequest/request was called before
@@ -283,10 +290,57 @@ export class Video {
         return Promise.resolve();
       }
 
+      // set videoCallInfo state with status 2 (call received)
+      this.setData((oldData) => {
+        return produce(oldData, (draft) => {
+          draft.local.address = senderAddress;
+          draft.incoming[0].address = recipientAddress;
+          draft.meta.chatId = chatId;
+          draft.meta.initiator.address = senderAddress;
+          draft.incoming[0].status = retry
+            ? VideoCallStatus.RETRY_RECEIVED
+            : VideoCallStatus.RECEIVED;
+          draft.incoming[0].retryCount += retry ? 1 : 0;
+        });
+      });
+
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
       this.peerInstance = new Peer({
         initiator: false,
         trickle: false,
         stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
+      });
+
+      // setup error handler
+      this.peerInstance.on('error', (err: any) => {
+        console.log('error in accept request', err);
+
+        if (this.data.incoming[0].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect();
+        }
+
+        // retrying in case of connection error
+        sendVideoCallNotification(
+          {
+            signer: this.signer,
+            chainId: this.chainId,
+            pgpPrivateKey: this.pgpPrivateKey,
+          },
+          {
+            senderAddress,
+            recipientAddress,
+            status: VideoCallStatus.RETRY_INITIALIZED,
+            chatId,
+            signalData: null,
+            env: this.env,
+          }
+        );
       });
 
       this.peerInstance.signal(signalData);
@@ -344,7 +398,6 @@ export class Video {
         if (isJSON(data)) {
           const parsedData = JSON.parse(data);
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.isVideoOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].video = parsedData.isVideoOn;
@@ -353,7 +406,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.isAudioOn);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[0].audio = parsedData.isAudioOn;
@@ -362,7 +414,10 @@ export class Video {
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL', parsedData.endCall);
+            // destroy the peerInstance
+            this.peerInstance?.destroy();
+            this.peerInstance = null;
+
             // destroy the local stream
             if (this.data.local.stream) {
               endStream(this.data.local.stream);
@@ -377,51 +432,14 @@ export class Video {
       });
 
       this.peerInstance.on('stream', (currentStream: MediaStream) => {
-        console.log('received incoming stream', currentStream);
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.incoming[0].stream = currentStream;
           });
         });
       });
-
-      // set videoCallInfo state with status 2 (call received)
-      this.setData((oldData) => {
-        return produce(oldData, (draft) => {
-          draft.local.address = senderAddress;
-          draft.incoming[0].address = recipientAddress;
-          draft.meta.chatId = chatId;
-          draft.meta.initiator.address = senderAddress;
-          draft.incoming[0].status = retry
-            ? VideoCallStatus.RETRY_RECEIVED
-            : VideoCallStatus.RECEIVED;
-          draft.incoming[0].retryCount += retry ? 1 : 0;
-        });
-      });
     } catch (err) {
       console.log('error in accept request', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      sendVideoCallNotification(
-        {
-          signer: this.signer,
-          chainId: this.chainId,
-          pgpPrivateKey: this.pgpPrivateKey,
-        },
-        {
-          senderAddress,
-          recipientAddress,
-          status: VideoCallStatus.RETRY_INITIALIZED,
-          chatId,
-          signalData: null,
-          env: this.env,
-        }
-      );
     }
   }
 
@@ -430,6 +448,24 @@ export class Video {
 
     try {
       console.log('connect', 'options', options);
+
+      // setup error handler
+      this.peerInstance.on('error', (err: any) => {
+        console.log('error in connect', err);
+
+        if (this.data.incoming[0].retryCount >= 5) {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect();
+        }
+
+        // retrying in case of connection error
+        this.request({
+          senderAddress: this.data.local.address,
+          recipientAddress: this.data.incoming[0].address,
+          chatId: this.data.meta.chatId,
+          retry: true,
+        });
+      });
 
       this.peerInstance?.signal(signalData);
 
@@ -441,19 +477,6 @@ export class Video {
       });
     } catch (err) {
       console.log('error in connect', err);
-
-      if (this.data.incoming[0].retryCount >= 5) {
-        console.log('Max retries exceeded, please try again.');
-        this.disconnect();
-      }
-
-      // retrying in case of connection error
-      this.request({
-        senderAddress: this.data.local.address,
-        recipientAddress: this.data.incoming[0].address,
-        chatId: this.data.meta.chatId,
-        retry: true,
-      });
     }
   }
 
@@ -464,7 +487,6 @@ export class Video {
         this.peerInstance?.send(
           JSON.stringify({ type: 'endCall', endCall: true })
         );
-        this.peerInstance?.destroy();
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
@@ -486,6 +508,7 @@ export class Video {
       }
 
       // destroy the peerInstance
+      this.peerInstance?.destroy();
       this.peerInstance = null;
 
       // destroy the local stream
@@ -505,13 +528,6 @@ export class Video {
   enableVideo(options: EnableVideoInputOptions): void {
     const { state } = options || {};
 
-    console.log(
-      'enableVideo',
-      'current video',
-      this.data.local.video,
-      'requested state',
-      state
-    );
     if (this.data.local.video !== state) {
       // need to change the video state
 
@@ -540,14 +556,6 @@ export class Video {
 
   enableAudio(options: EnableAudioInputOptions): void {
     const { state } = options || {};
-
-    console.log(
-      'enableAudio',
-      'current audio',
-      this.data.local.audio,
-      'requested state',
-      state
-    );
 
     if (this.data.local.audio !== state) {
       // need to change the audio state

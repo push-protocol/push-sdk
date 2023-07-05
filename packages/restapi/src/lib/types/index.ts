@@ -8,6 +8,8 @@ import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { META_MESSAGE_META } from './metaTypes';
 
+export type Env = typeof ENV[keyof typeof ENV];
+
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
   payload_id: number;
@@ -90,7 +92,9 @@ export interface ISendNotificationInputOptions {
     body: string;
     cta: string;
     img: string;
-    metadata?: any;
+    hidden?: boolean;
+    etime?: number;
+    silent?: boolean;
     additionalMeta?:
       | {
           /**
@@ -102,10 +106,23 @@ export interface ISendNotificationInputOptions {
           domain?: string;
         }
       | string;
+    /**
+     * @deprecated
+     * use additionalMeta instead
+     */
+    metadata?: any;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
+  /**
+   * @deprecated
+   * use payload.etime instead
+   */
   expiry?: number;
+  /**
+   * @deprecated
+   * use payload.hidden instead
+   */
   hidden?: boolean;
   graph?: {
     id: string;
@@ -178,6 +195,7 @@ export interface IFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
+  name: string | null;
   publicKey: string | null;
   about: string | null;
   threadhash: string | null;
@@ -201,6 +219,7 @@ export interface IUser {
     desc: string | null;
     picture: string | null;
     profileVerificationProof: string | null;
+    blockedUsersList: Array<string> | null;
   };
   encryptedPrivateKey: string;
   publicKey: string;

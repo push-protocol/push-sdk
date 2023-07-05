@@ -44,11 +44,23 @@ export function getPayloadForAPIInput(
         amsg: inputOptions?.payload?.body || '',
         asub: inputOptions?.payload?.title || '',
         type: inputOptions?.type?.toString() || '',
+        //deprecated
         ...(inputOptions?.expiry && { etime: inputOptions?.expiry }),
+        ...(inputOptions?.payload?.etime && {
+          etime: inputOptions?.payload?.etime,
+        }),
+        //deprecated
         ...(inputOptions?.hidden && { hidden: inputOptions?.hidden }),
+        ...(inputOptions?.payload?.hidden && {
+          hidden: inputOptions?.payload?.hidden,
+        }),
+        ...(inputOptions?.payload?.silent && {
+          silent: inputOptions?.payload?.silent,
+        }),
         ...(inputOptions?.payload?.sectype && {
           sectype: inputOptions?.payload?.sectype,
         }),
+        //deprecated
         ...(inputOptions?.payload?.metadata && {
           metadata: inputOptions?.payload?.metadata,
         }),
