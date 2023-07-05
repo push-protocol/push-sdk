@@ -150,7 +150,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       textAreaRef.current.style.height = scrollHeight + 'px';
 
 
-
+      
     }
   }, [textAreaRef, typedMessage]);
 
@@ -162,8 +162,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         borderWidth="1px"
         borderRadius="8px"
         gap="10px"
-        padding="13px 17px"
-        margin="12px 0 12px 0"
+        padding="12px 17px 15px 17px"
         background="#fff"
         alignItems="center"
         justifyContent="space-between"
@@ -173,6 +172,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             width="20px"
             cursor="pointer"
             height="20px"
+            alignSelf='end'
             onClick={() => setShowEmojis(!showEmojis)}
           >
             <EmojiIcon />
@@ -204,9 +204,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         <Section gap="11.5px">
           <Section
             width="34px"
-            height="30px"
+            height="24px"
             cursor="pointer"
-            alignSelf='center'
+            alignSelf='end'
             onClick={() => setGifOpen(!gifOpen)}
           >
             <GifIcon />
@@ -232,9 +232,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
               <>
                 <Section
                   width="17px"
-                  height="17px"
+                  height="24px"
                   cursor="pointer"
-                  alignSelf='center'
+                  alignSelf='end'
                   onClick={() => setNewChat(true)}
                 >
                   <AttachmentIcon />
@@ -251,7 +251,8 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           {!(loading || filesUploading) && (
             <Section
               cursor="pointer"
-              alignSelf='center'
+              alignSelf='end'
+              height='24px'
               onClick={() => sendTextMsg()}
             >
               <SendIcon />
@@ -271,13 +272,16 @@ const Container = styled.div`
   width:100%;
   border-top:1px solid #DDDDDF;
   overflow:hidden;
+  padding:15px 0px;
 `;
 const MultiLineInput = styled.textarea`
   ::placeholder {
-    transform: translateY(-2px);
+    transform: translateY(1px);
+    font-size:16px;
   }
   font-family:inherit;
   font-weight: 400;
+  transform: translateY(3px);
   font-size: 16px;
   // width: 27vw;
   outline: none;
@@ -287,7 +291,7 @@ const MultiLineInput = styled.textarea`
   color: #000;
   resize: none;
   flex:1;
-  padding-right:15px;
+  padding-right:5px;
   align-self: end;
   &&::-webkit-scrollbar {
     width: 4px;
@@ -299,13 +303,14 @@ const MultiLineInput = styled.textarea`
   }
   ::placeholder {
     color: #000;
-    padding-top: 5px;
+    // padding-top: 5px;
   }
   // @media ${device.mobileL} {
   //   width: 27vw;
   // }
   min-height: 25px;
-  max-height: 75px;
+  max-height: 80px;
+  word-break: break-word;
 `;
 const FileInput = styled.input`
   display: none;

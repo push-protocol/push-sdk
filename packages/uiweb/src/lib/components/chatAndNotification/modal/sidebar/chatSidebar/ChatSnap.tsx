@@ -35,7 +35,7 @@ const Message = ({
   messageType: string;
 }) => {
   const isMobile = useDeviceWidthCheck(425);
-  const digitsToDisplay = isMobile ? 18 : 36;
+  const digitsToDisplay = isMobile ? 18 : 37;
   return messageType === 'Text' ? (
     <Span
       textAlign="left"
