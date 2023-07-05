@@ -64,7 +64,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     spaceRequests,
     setSpaceRequests,
     loading,
-    setLoading,
   } = useSpaceData();
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
