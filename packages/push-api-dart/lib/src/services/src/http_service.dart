@@ -25,11 +25,12 @@ class HttpService {
     return header;
   }
 
-  Future<Map<String, dynamic>?> post({
+  Future<dynamic> post({
     String? baseUrl,
     String? authorization,
     required String path,
     required data,
+    bool skipJsonDecode = false,
   }) async {
     http_package.Response? response;
     try {
@@ -45,6 +46,12 @@ class HttpService {
       );
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
+      log('isFailure : ${isFailure(response.statusCode)}');
+
+      if (skipJsonDecode || isFailure(response.statusCode)) {
+        return response.body;
+      }
+
       if (response.body.isEmpty) {
         return <String, dynamic>{};
       }
@@ -55,8 +62,7 @@ class HttpService {
     }
   }
 
-
-/// make skipJsonDecode = true if expected result is not in json format
+  /// make skipJsonDecode = true if expected result is not in json format
   Future<dynamic> get({
     String? baseUrl,
     String? authorization,
@@ -76,7 +82,7 @@ class HttpService {
       log('Status Code:${response.statusCode}');
       log('Response : ${response.body}');
 
-      if (skipJsonDecode) {
+      if (skipJsonDecode || isFailure(response.statusCode)) {
         return response.body;
       }
 
@@ -175,5 +181,9 @@ class HttpService {
       log(exception.toString());
       rethrow;
     }
+  }
+
+  bool isFailure(int statusCode) {
+    return statusCode < 200 || statusCode > 299;
   }
 }

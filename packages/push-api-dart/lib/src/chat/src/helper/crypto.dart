@@ -199,8 +199,8 @@ Future<Map<String, dynamic>> getEip712Signature(
 Future<Map<String, dynamic>> getEip191Signature(Wallet wallet, String message,
     {String version = 'v1'}) async {
   // EIP191 signature
-  // TODO
-  final signature = "";
+
+  final signature = wallet.signer?.signMessage(message) ?? "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
 

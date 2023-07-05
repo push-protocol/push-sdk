@@ -53,6 +53,8 @@ Future<User?> createUser({
 
   if (result == null) {
     return null;
+  } else if (result is String) {
+    throw Exception(result);
   } else {
     return User.fromJson(result);
   }

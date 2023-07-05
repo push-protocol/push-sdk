@@ -1,7 +1,9 @@
 import 'package:ethers/signers/wallet.dart';
 import 'package:example/chat/fetch_group_by_name.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:push_api_dart/push_api_dart.dart' as push ;
+import 'package:push_api_dart/push_api_dart.dart' as push;
+
+import 'user/create_user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,9 +16,8 @@ void main() async {
 
   final pushWallet = push.Wallet(
     address: walletMnemonic.address!,
-
   );
   await push.initPush(wallet: pushWallet);
 
-  testFetchGroupByName();
+  testCreateUser();
 }

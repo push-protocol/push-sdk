@@ -14,9 +14,16 @@ class Wallet {
 }
 
 abstract class Signer {
+  String? privateKey;
   Future<String> getEip191Signature(String message);
   Future<String> getEip712Signature(String message);
   String getAddress();
+
+  /// Returns the signed-message.
+  Future<String> signMessage(String message);
+
+  getChainId();
+  Future<String> signTypedData({dynamic domain, dynamic types, dynamic value});
 }
 
 class ConnectedUser extends User {
