@@ -2,7 +2,6 @@ import type { IFeeds } from '@pushprotocol/restapi';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
-  ChatAndNotificationMainContext,
 } from '../../../../../context';
 import {
   checkIfUnread,
@@ -19,7 +18,7 @@ import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
-import { useDeviceWidthCheck } from 'packages/uiweb/src/lib/context/chatAndNotification/useDeviceWidthCheck';
+import { useDeviceWidthCheck } from 'packages/uiweb/src/lib/hooks';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -36,7 +35,7 @@ const Message = ({
   messageType: string;
 }) => {
   const isMobile = useDeviceWidthCheck(425);
-  const digitsToDisplay = isMobile ? 18 : 32;
+  const digitsToDisplay = isMobile ? 18 : 36;
   return messageType === 'Text' ? (
     <Span
       textAlign="left"

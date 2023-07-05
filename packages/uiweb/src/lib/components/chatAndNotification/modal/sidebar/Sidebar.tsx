@@ -455,7 +455,7 @@ const NotificationListCard = styled(Div)`
 `;
 
 const TabTitleSpan = styled(Span)`
-  @media ${device.mobileS} {
-    font-size: 15px;
+  @media ${device.mobileL} {
+    font-size: 14px;
   }
 `;
