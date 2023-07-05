@@ -4,6 +4,12 @@ class Profile {
   String? name;
   String? desc;
   String? picture;
+
+  Profile({
+    this.name,
+    this.desc,
+    this.picture,
+  });
 }
 
 Future<User?> profileUpdate({
