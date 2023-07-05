@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react'
+import React, { useState, MouseEventHandler } from 'react'
 import styled from 'styled-components';
 
 import { Modal } from '../../reusables/Modal';
@@ -27,7 +27,6 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
         background: 'transparent',
         borderColor: '#8b5cf6'
     }
-
 
     return (
         <Modal>
