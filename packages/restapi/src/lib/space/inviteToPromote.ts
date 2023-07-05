@@ -16,7 +16,7 @@ export async function inviteToPromote(
   // adding address to the invitee map
   this.setSpaceSpecificData((oldData) => {
     return produce(oldData, (draft) => {
-      draft.inviteeDetails[inviteeAddress] = role;
+      if (draft.inviteeDetails) draft.inviteeDetails[inviteeAddress] = role;
     });
   });
 

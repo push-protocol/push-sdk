@@ -342,7 +342,7 @@ export interface SpaceDTO {
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
-  inviteeDetails: { [key: string]: SPACE_INVITE_ROLES };
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
 }
 
 export interface SpaceData extends SpaceDTO {

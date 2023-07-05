@@ -1,6 +1,6 @@
 import { EnvOptionsType } from '../types';
 import { groupDtoToSpaceDto } from '../chat/helpers';
-import { addAdminsToGroup } from '../chat/addAdminsToGroup';
+import { addAdmins } from '../chat/addAdmins';
 
 import type Space from './Space';
 
@@ -14,7 +14,7 @@ export async function addSpeaker(
 ): Promise<void> {
   const { address } = options;
   try {
-    const group = await addAdminsToGroup({
+    const group = await addAdmins({
       chatId: this.spaceSpecificData.spaceId,
       admins: [address],
       signer: this.signer,
