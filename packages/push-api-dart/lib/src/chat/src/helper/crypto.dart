@@ -181,7 +181,7 @@ Future<Map<String, dynamic>> getEip712Signature(
   final domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  // TODO
+  // TODO: use the signer method for eip712 signature
   final signedMessage = "";
 
   final verificationProof = isDomainEmpty
@@ -195,7 +195,7 @@ Future<Map<String, dynamic>> getEip191Signature(
     EthWallet wallet, String message,
     {String version = 'v1'}) async {
   // EIP191 signature
-  // TODO
+  // TODO: use the signer method for eip191 signature
   final signature = "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';

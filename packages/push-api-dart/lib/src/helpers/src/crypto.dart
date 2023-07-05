@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:web3lib/web3lib.dart' as web3;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';
 
@@ -61,27 +60,6 @@ Future<String> preparePGPPublicKey({
   }
 
   return chatPublicKey;
-}
-
-Future<Map<String, dynamic>> getEip191Signature(
-  EthWallet? wallet,
-  String message, {
-  String version = 'v1',
-}) async {
-  if (wallet == null || wallet.privateKey == null) {
-    print('This method is deprecated. Provide signer in the function');
-    // Sending a random signature for backward compatibility
-    return {'signature': 'xyz', 'sigType': 'a'};
-  }
-
-  web3.Credentials credentials = web3.EthPrivateKey.fromHex(wallet.privateKey!);
-  List<int> codeUnits = utf8.encode(message);
-
-  // EIP191 signature
-  final signed = await credentials.sign(Uint8List.fromList(codeUnits));
-
-  final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-  return {'verificationProof': '$sigType:0x${bytesToHex(signed)}'};
 }
 
 String bytesToHex(List<int> bytes) {
@@ -255,24 +233,6 @@ List<int> generateRandomBytes(int count) {
   return List.generate(count, (_) => _rand.nextInt(256));
 }
 
-Future<String> decryptAndVerifySignature({
-  required String cipherText,
-  required String encryptedSecretKey,
-  required String publicKeyArmored,
-  required String signatureArmored,
-  required String privateKeyArmored,
-  required IMessageIPFS message,
-}) async {
-  //TODO implement  decryptAndVerifySignature
-
-  try {
-    aesDecrypt(cipherText: cipherText, secretKey: privateKeyArmored);
-    return cipherText;
-  } catch (err) {
-    return 'Unable to decrypt message';
-  }
-}
-
 Future<String> decryptPGPKey({
   required String encryptedPGPPrivateKey,
   required EthWallet wallet,
@@ -378,6 +338,86 @@ Future<String> decryptPGPKey({
     throw Exception('[Push SDK] - API - Error - API decryptPGPKey -: $err');
   }
 }
+
+Future<String> decryptMessage({
+  required String encryptedPGPPrivateKey,
+  required String encryptionType,
+  required String encryptedSecret,
+  required String pgpPrivateKey,
+  required String signature,
+  required String signatureValidationPubliKey,
+  required IMessageIPFS message,
+}) async {
+  String plainText;
+
+  if (encryptionType != 'PlainText') {
+    plainText = await decryptAndVerifySignature(
+      cipherText: encryptedPGPPrivateKey,
+      encryptedSecretKey: encryptedSecret,
+      privateKeyArmored: pgpPrivateKey,
+      publicKeyArmored: signatureValidationPubliKey,
+      signatureArmored: signature,
+      message: message,
+    );
+  } else {
+    plainText = encryptedPGPPrivateKey;
+  }
+
+  return plainText;
+}
+
+// TODO: Complete the decryptAndVerifySignature implementation
+// Future<String> decryptAndVerifySignature({
+//   required String cipherText,
+//   required String encryptedSecretKey,
+//   required String publicKeyArmored,
+//   required String signatureArmored,
+//   required String privateKeyArmored,
+//   required IMessageIPFS message,
+// }) async {
+//   try {
+//     // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
+//     final String secretKey = await pgpDecrypt(
+//       cipherText: encryptedSecretKey,
+//       toPrivateKeyArmored: privateKeyArmored,
+//     );
+
+//     if (message.link == null) {
+//       final bodyToBeHashed = {
+//         'fromDID': message.fromDID,
+//         'toDID': message.toDID,
+//         'messageContent': message.messageContent,
+//         'messageType': message.messageType,
+//       };
+
+//       final hash = sha256.convert(utf8.encode(json.encode(bodyToBeHashed))).toString();
+
+//       try {
+//         await verifySignature(
+//           messageContent: hash,
+//           signatureArmored: signatureArmored,
+//           publicKeyArmored: publicKeyArmored,
+//         );
+//       } catch (err) {
+//         await verifySignature(
+//           messageContent: cipherText,
+//           signatureArmored: signatureArmored,
+//           publicKeyArmored: publicKeyArmored,
+//         );
+//       }
+//     } else {
+//       await verifySignature(
+//         messageContent: cipherText,
+//         signatureArmored: signatureArmored,
+//         publicKeyArmored: publicKeyArmored,
+//       );
+//     }
+
+//     return aesDecrypt(cipherText: cipherText, secretKey: secretKey);
+//   } catch (err) {
+//     return 'Unable to decrypt message';
+//   }
+// }
 
 verifyPGPPublicKey({
   required String encryptedPrivateKey,

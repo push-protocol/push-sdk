@@ -34,10 +34,11 @@ Future<String> pgpEncrypt({
   return encrypted;
 }
 
-pgpDecrypt({
+Future<String> pgpDecrypt({
   required String cipherText,
-  required String privateKeyArmored,
-  required String signatureArmored,
+  required String toPrivateKeyArmored,
 }) async {
-//TODO implement pgpDecrypt
+  final decrypted = await OpenPGP.decrypt(cipherText, toPrivateKeyArmored, "");
+
+  return decrypted;
 }
