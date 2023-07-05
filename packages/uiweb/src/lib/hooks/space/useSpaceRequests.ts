@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import * as PushAPI from '@pushprotocol/restapi';
 
 export const useSpaceRequests = (account: string) => {
-  const LIMIT = 10;
+  const LIMIT = 1;
 
   const { spaceRequests, setSpaceRequests, loading, setLoading } =
     useSpaceData();
@@ -18,21 +18,15 @@ export const useSpaceRequests = (account: string) => {
         limit: LIMIT,
       });
 
-      const newSpaceRequests = res || [];
+      const newSpaceRequests = res;
 
       if (newSpaceRequests.length === 0) {
-        setSpaceRequests({ lastPage: spaceRequests.currentPage });
+        setSpaceRequests({ lastPage: -1 });
         setLoading(false);
         return;
       }
       if (newSpaceRequests.length > 0) {
-        const existingIds = new Set(
-          spaceRequests.apiData?.map((space: any) => space.spaceId)
-        );
-        const uniqueSpaces = newSpaceRequests.filter(
-          (space) => !existingIds.has(space.spaceId)
-        );
-        setSpaceRequests({ apiData: uniqueSpaces });
+        setSpaceRequests({ apiData: newSpaceRequests });
       }
     } catch (error) {
       console.error('Error while fetching spaces requests:', error);
@@ -42,5 +36,5 @@ export const useSpaceRequests = (account: string) => {
 
   useEffect(() => {
     fetchSpaceRequests();
-  }, []);
+  }, [spaceRequests.currentPage]);
 };

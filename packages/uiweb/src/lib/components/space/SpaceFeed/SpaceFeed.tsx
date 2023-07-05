@@ -43,7 +43,7 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  account = '0x6e9FECae20313664f97d4429886860221cb29c7A',
+  account = '0x04bE5701AB5b2f2117332b4748020737B29a2e1D',
   orientation = 'veritcal',
   height,
   width,
@@ -95,24 +95,37 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     }
   };
 
-  const incrementSpacePage = (spaces: ISpacePaginationData) => {
-    if (!spaces.lastPage) {
+  const incrementSpacePage = async (spaces: ISpacePaginationData) => {
+    if (
+      loading === false &&
+      spaces.currentPage &&
+      spaces.lastPage &&
+      spaces.currentPage < spaces.lastPage
+    ) {
       if (spaces === mySpaces)
         spaces.currentPage &&
-          setMySpaces({ currentPage: spaces.currentPage + 1 });
+          setMySpaces({
+            currentPage: spaces.currentPage + 1,
+            lastPage: spaces.lastPage + 1,
+          });
       if (spaces === popularSpaces)
         spaces.currentPage &&
-          setPopularSpaces({ currentPage: spaces.currentPage + 1 });
+          setPopularSpaces({
+            currentPage: spaces.currentPage + 1,
+            lastPage: spaces.lastPage + 1,
+          });
       if (spaces === spaceRequests)
         spaces.currentPage &&
-          setSpaceRequests({ currentPage: spaces.currentPage + 1 });
+          setSpaceRequests({
+            currentPage: spaces.currentPage + 1,
+            lastPage: spaces.lastPage + 1,
+          });
     } else {
       return;
     }
   };
 
   const loadMoreData = async () => {
-    setLoading(true);
     if (tab === Tabs.ForYou) {
       incrementSpacePage(mySpaces);
     }
@@ -122,8 +135,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     if (tab === Tabs.Requests) {
       incrementSpacePage(spaceRequests);
     }
-
-    setLoading(false);
   };
 
   const onScroll = () => {
@@ -142,6 +153,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   useMySpaces(account);
   usePopularSpaces();
   useSpaceRequests(account);
+
+  console.log('requests', spaceRequests);
 
   return (
     <div>
@@ -215,7 +228,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               {tab === Tabs.ForYou ? (
                 <Spaces orientation={orientation}>
                   {mySpaces &&
-                    handleFilterData(mySpaces).map(
+                    handleFilterData(mySpaces.apiData).map(
                       (space: { spaceId: string }, index: any) => {
                         return (
                           <SpaceBanner
@@ -231,7 +244,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 <PopularSpaces>
                   <Text>Popular Spaces</Text>
                   {popularSpaces &&
-                    handleFilterData(popularSpaces).map(
+                    handleFilterData(popularSpaces.apiData).map(
                       (space: { spaceId: string }, index: any) => {
                         return (
                           <SpaceBanner
@@ -246,7 +259,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ) : (
                 <Spaces orientation={orientation}>
                   {spaceRequests &&
-                    handleFilterData(spaceRequests).map(
+                    handleFilterData(spaceRequests.apiData).map(
                       (space: { spaceId: string }, index: any) => {
                         return (
                           <SpaceBanner

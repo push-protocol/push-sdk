@@ -67,7 +67,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   mySpaces: {
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData,
   setMySpaces: () => {
     /**/
@@ -75,7 +75,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   popularSpaces: {
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData,
   setPopularSpaces: () => {
     /**/
@@ -83,7 +83,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   spaceRequests: {
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData,
   setSpaceRequests: () => {
     /**/

@@ -16,21 +16,15 @@ export const usePopularSpaces = () => {
         limit: LIMIT,
       });
 
-      const newPopularSpaces = res || [];
+      const newPopularSpaces = res;
 
       if (newPopularSpaces.length === 0) {
-        setPopularSpaces({ lastPage: popularSpaces.currentPage });
+        setPopularSpaces({ lastPage: -1 });
         setLoading(false);
         return;
       }
       if (newPopularSpaces.length > 0) {
-        const existingIds = new Set(
-          popularSpaces.apiData?.map((space: any) => space.spaceId)
-        );
-        const uniqueSpaces = newPopularSpaces.filter(
-          (space) => !existingIds.has(space.spaceId)
-        );
-        setPopularSpaces({ apiData: uniqueSpaces });
+        setPopularSpaces({ apiData: newPopularSpaces });
       }
     } catch (error) {
       console.error('Error while fetching popular spaces:', error);
@@ -40,5 +34,5 @@ export const usePopularSpaces = () => {
 
   useEffect(() => {
     fetchPopularSpaces();
-  }, []);
+  }, [popularSpaces.currentPage]);
 };

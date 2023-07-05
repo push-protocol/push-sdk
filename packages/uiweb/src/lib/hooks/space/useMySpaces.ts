@@ -2,6 +2,7 @@ import { useSpaceData } from './useSpaceData';
 import { useEffect } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
+import { ISpacePaginationData } from '../../context/spacesContext';
 
 export const useMySpaces = (account: string) => {
   const LIMIT = 1;
@@ -17,21 +18,15 @@ export const useMySpaces = (account: string) => {
         limit: LIMIT,
       });
 
-      const newMySpaces = res || [];
+      const newMySpaces = res;
 
       if (newMySpaces.length === 0) {
-        setMySpaces({ lastPage: mySpaces.currentPage });
+        setMySpaces({ lastPage: -1 });
         setLoading(false);
         return;
       }
       if (newMySpaces.length > 0) {
-        const existingIds = new Set(
-          mySpaces.apiData?.map((space: any) => space.spaceId)
-        );
-        const uniqueSpaces = newMySpaces.filter(
-          (space) => !existingIds.has(space.spaceId)
-        );
-        setMySpaces({ apiData: uniqueSpaces });
+        setMySpaces({ apiData: newMySpaces });
       }
     } catch (error) {
       console.error('Error while fetching Spaces For You:', error);
@@ -41,5 +36,5 @@ export const useMySpaces = (account: string) => {
 
   useEffect(() => {
     fetchMySpaces();
-  }, []);
+  }, [mySpaces.currentPage]);
 };

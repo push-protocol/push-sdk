@@ -34,19 +34,19 @@ export const SpacesUIProvider = ({
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData);
 
   const [popularSpaces, setPopularSpaces] = useState({
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData);
 
   const [spaceRequests, setSpaceRequests] = useState({
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
-    lastPage: undefined,
+    lastPage: 2,
   } as ISpacePaginationData);
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
@@ -60,14 +60,90 @@ export const SpacesUIProvider = ({
     return spaceInfo[spaceId];
   };
 
-  const setSpacePaginationInfo = (
+  const setMySpacePaginationInfo = (
     paginationInfo: ISpacePaginationData
   ): void => {
     const { apiData, currentPage, lastPage } = paginationInfo;
     setMySpaces((prevState) => {
+      if (apiData) {
+        const existingIds = new Set(
+          prevState.apiData?.map((space: any) => space.spaceId)
+        );
+        console.log('Existing ID', existingIds);
+        const uniqueSpaces = apiData?.filter(
+          (space) => !existingIds.has(space.spaceId)
+        );
+        console.log('Unique Spaces', uniqueSpaces);
+        return {
+          ...prevState,
+          ...(uniqueSpaces &&
+            prevState.apiData && {
+              apiData: [...prevState.apiData, ...uniqueSpaces],
+            }),
+        };
+      }
       return {
         ...prevState,
-        ...(apiData && { apiData }),
+        ...(currentPage && { currentPage }),
+        ...(lastPage && { lastPage }),
+      };
+    });
+  };
+
+  const setPopularSpacePaginationInfo = (
+    paginationInfo: ISpacePaginationData
+  ): void => {
+    const { apiData, currentPage, lastPage } = paginationInfo;
+    setPopularSpaces((prevState) => {
+      if (apiData) {
+        const existingIds = new Set(
+          prevState.apiData?.map((space: any) => space.spaceId)
+        );
+        console.log('Existing ID', existingIds);
+        const uniqueSpaces = apiData?.filter(
+          (space) => !existingIds.has(space.spaceId)
+        );
+        console.log('Unique Spaces', uniqueSpaces);
+        return {
+          ...prevState,
+          ...(uniqueSpaces &&
+            prevState.apiData && {
+              apiData: [...prevState.apiData, ...uniqueSpaces],
+            }),
+        };
+      }
+      return {
+        ...prevState,
+        ...(currentPage && { currentPage }),
+        ...(lastPage && { lastPage }),
+      };
+    });
+  };
+
+  const setSpacesRequestPaginationInfo = (
+    paginationInfo: ISpacePaginationData
+  ): void => {
+    const { apiData, currentPage, lastPage } = paginationInfo;
+    setSpaceRequests((prevState) => {
+      if (apiData) {
+        const existingIds = new Set(
+          prevState.apiData?.map((space: any) => space.spaceId)
+        );
+        console.log('Existing ID', existingIds);
+        const uniqueSpaces = apiData?.filter(
+          (space) => !existingIds.has(space.spaceId)
+        );
+        console.log('Unique Spaces', uniqueSpaces);
+        return {
+          ...prevState,
+          ...(uniqueSpaces &&
+            prevState.apiData && {
+              apiData: [...prevState.apiData, ...uniqueSpaces],
+            }),
+        };
+      }
+      return {
+        ...prevState,
         ...(currentPage && { currentPage }),
         ...(lastPage && { lastPage }),
       };
@@ -89,11 +165,11 @@ export const SpacesUIProvider = ({
     setSpaceInfo: setSpaceInfoItem,
     getSpaceInfo,
     mySpaces,
-    setMySpaces: setSpacePaginationInfo,
+    setMySpaces: setMySpacePaginationInfo,
     popularSpaces,
-    setPopularSpaces: setSpacePaginationInfo,
+    setPopularSpaces: setPopularSpacePaginationInfo,
     spaceRequests,
-    setSpaceRequests: setSpacePaginationInfo,
+    setSpaceRequests: setSpacesRequestPaginationInfo,
     loading,
     setLoading,
   };
