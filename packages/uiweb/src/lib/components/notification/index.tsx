@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import IPFSIcon from "../ipfsicon";
 import ImageOverlayComponent from "../overlay";
@@ -12,6 +12,7 @@ import { useDecrypt, DecryptButton } from './decrypt';
 import chainDetails from './chainDetails';
 
 import { LinkIcon } from "../../icons/Link";
+import { useDivOffsetWidth } from "../../hooks";
 
 // ================= Define types
 export type chainNameType = "ETH_TEST_GOERLI" | "POLYGON_TEST_MUMBAI" | "ETH_MAINNET" | "POLYGON_MAINNET" | "BSC_MAINNET" | "BSC_TESTNET" | "OPTIMISM_MAINNET" | "OPTIMISM_TESTNET" | "POLYGON_ZK_EVM_TESTNET" | "POLYGON_ZK_EVM_MAINNET" | "THE_GRAPH" | undefined;
@@ -37,8 +38,10 @@ export type NotificationItemProps = {
 
 type ContainerDataType = {
   timestamp?: string;
+}& OffsetWidthType;
+type OffsetWidthType = {
+  offsetWidth: number;
 };
-
 type CTADataType = {
   cta?: boolean;
 };
@@ -83,7 +86,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const [imageOverlay, setImageOverlay] = React.useState("");
   const [subscribeLoading, setSubscribeLoading] = React.useState(false);
   const [isSubscribed, setIsSubscribed] = React.useState(true); //use this to confirm if this is s
-
+  const [divRef, offsetWidth] = useDivOffsetWidth();
+  
   const showMetaInfo = isSecret || timeStamp;
   // console.log({
   //   chainName,
@@ -149,11 +153,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     <Container
       timestamp={timeStamp}
       theme={theme}
+      offsetWidth={offsetWidth}
+      ref={divRef}
     >
       {/* header that only pops up on small devices */}
       <MobileHeader theme={theme}>
         <HeaderButton theme={theme}>
-          <ImageContainer theme={theme}>
+          <ImageContainer theme={theme}  offsetWidth={offsetWidth}>
             <IPFSIcon icon={icon} />
           </ImageContainer>
           <ChannelName onClick={goToURL}>
@@ -162,19 +168,20 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         </HeaderButton>
         {chainName && chainDetails[chainName] ? (
           <BlockchainContainer>
-            <ChainIconSVG>{chainDetails[chainName].icon}</ChainIconSVG>
+            <ChainIconSVG  offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
           </BlockchainContainer>
         ) : null}
         </MobileHeader>
       {/* header that only pops up on small devices */}
 
       {/* content of the component */}
-      <ContentSection onClick={isCtaURLValid ? gotToCTA : undefined} theme={theme} cta={isCtaURLValid}>
+      <ContentSection  offsetWidth={offsetWidth} onClick={isCtaURLValid ? gotToCTA : undefined} theme={theme} cta={isCtaURLValid}>
         {/* section for media content */}
         {notifImage &&
           // if its an image then render this
           (!MediaHelper.isMediaSupportedVideo(notifImage) ? (
             <MobileImage
+            offsetWidth={offsetWidth}
               theme={theme}
               style={{ cursor: "pointer" }}
               onClick={() => setImageOverlay(notifImage || "")}
@@ -183,7 +190,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : // if its a youtube url, RENDER THIS
           MediaHelper.isMediaYoutube(notifImage) ? (
-            <MobileImage theme={theme}>
+            <MobileImage 
+            offsetWidth={offsetWidth} theme={theme}>
               <iframe
                 id="ytplayer"
                 width="640"
@@ -195,7 +203,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : (
             // if its aN MP4 url, RENDER THIS
-            <MobileImage theme={theme}>
+            <MobileImage theme={theme}  offsetWidth={offsetWidth}>
               <video width="360" height="100%" controls>
                 <source src={notifImage} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -208,6 +216,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         <ChannelDetailsWrapper>
           <ChannelTitle 
             cta={isCtaURLValid}
+            offsetWidth={offsetWidth}
             theme={theme}
           >
             <ChannelTitleText>
@@ -226,7 +235,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             }
           </ChannelTitle>
           <ChannelDesc>
-            <ChannelDescLabel cta={isCtaURLValid} theme={theme}>
+            <ChannelDescLabel cta={isCtaURLValid} theme={theme} >
               <ParseMarkdownText text={notifBody} />
             </ChannelDescLabel>
           </ChannelDesc>
@@ -313,7 +322,7 @@ NotificationItem.defaultProps = {
 const MD_BREAKPOINT = "50050px"; //set an arbitrarily large number because we no longer use this breakpoint
 const SM_BREAKPOINT = "900px";
 
-const ContentSection = styled.div<CTADataType>`
+const ContentSection = styled.div<CTADataType & OffsetWidthType>`
   display: flex;
   padding: 15px 16px;
 
@@ -322,16 +331,26 @@ const ContentSection = styled.div<CTADataType>`
   &:hover{
     background: ${(props) => (props.cta ? (props.theme === "light" ? "#e8eaf680" : "#404650") : "none")};
   }
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (min-width: ${SM_BREAKPOINT}) {
+      align-items: flex-start;
+      flex-direction: row;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    @media (max-width: ${SM_BREAKPOINT}) {
+      flex-direction: column;
+    }
+    `};
   
-  @media (min-width: ${SM_BREAKPOINT}) {
-    align-items: flex-start;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-  }
-  @media (max-width: ${SM_BREAKPOINT}) {
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
     flex-direction: column;
-  }
+  
+    `};
 `;
 
 const BlockchainContainer = styled.div`
@@ -341,7 +360,7 @@ const BlockchainContainer = styled.div`
   font-weight: 700;
 `;
 
-const ChainIconSVG = styled.div`
+const ChainIconSVG = styled.div<OffsetWidthType>`
   width: 28px;
   height: 28px;
 
@@ -353,9 +372,11 @@ const ChainIconSVG = styled.div`
     width: 18px;
     height: 18px;
   }
+ 
 `;
 
-const MobileImage = styled.div`
+const MobileImage = styled.div<OffsetWidthType>`
+  overflow:hidden;
   img,
   iframe,
   video {
@@ -367,31 +388,55 @@ const MobileImage = styled.div`
     border: 0;
   }
 
-  @media (min-width: ${SM_BREAKPOINT}) {
-    border: 1px solid ${props => props.theme === 'light' ? '#ededed' : '#444'};
-    border-radius: 10px;
-    min-width: 220px;
-    width: 220px;
-    height: 200px;
-  }
 
-  @media (max-width: ${SM_BREAKPOINT}) {
-    display: block;
-    width: 100%;
-    max-height: 200px;
-    margin-bottom: 12px;
-    border: 0;
 
-    img,
-    iframe,
-    video {
-      border: 0;
-      border-radius: 0;
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (min-width: ${SM_BREAKPOINT}) {
+      border: 1px solid ${props => props.theme === 'light' ? '#ededed' : '#444'};
+      border-radius: 10px;
+      min-width: 220px;
+      width: 220px;
+      height: 200px;
     }
-  }
+    @media (max-width: ${SM_BREAKPOINT}) {
+      display: block;
+      width: 100%;
+      max-height: 200px;
+      margin-bottom: 12px;
+      border: 0;
+  
+      img,
+      iframe,
+      video {
+        border: 0;
+        border-radius: 0;
+      }
+    }
+    `};
+  
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
+    display: block;
+      width: 100%;
+      max-height: 200px;
+      margin-bottom: 12px;
+      border: 0;
+  
+      img,
+      iframe,
+      video {
+        border: 0;
+        border-radius: 0;
+      }
+  
+    `};
+  
 `;
 
-const ImageContainer = styled.span`
+const ImageContainer = styled.span<OffsetWidthType>`
   background: ${(props) => (props.theme === "light" ? "#ededed" : "#444")};
   display: inline-block;
   margin-right: 10px;
@@ -461,7 +506,7 @@ const HeaderButton = styled.div`
   color: ${(props) => (props.theme === "light" ? "#333333" : "#C5CAE9")};
 `;
 
-const ChannelTitle = styled.div<CTADataType>`
+const ChannelTitle = styled.div<CTADataType & OffsetWidthType>`
   width: fit-content;
   display: flex;
   align-items: center;
@@ -476,9 +521,21 @@ const ChannelTitle = styled.div<CTADataType>`
     color: ${(props) => (props.theme === "light" ? "#333333" : "#C5CAE9")};
   }
 
-  @media (max-width: ${SM_BREAKPOINT}) {
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (max-width: ${SM_BREAKPOINT}) {
+      margin-bottom: 6px;
+    }
+    `};
+  
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
     margin-bottom: 6px;
-  }
+  
+    `};
+  
 `;
 
 const ChannelTitleText = styled.div`
