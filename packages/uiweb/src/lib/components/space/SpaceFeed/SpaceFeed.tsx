@@ -43,7 +43,7 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  account = '0x04bE5701AB5b2f2117332b4748020737B29a2e1D',
+  account = '0x6e9FECae20313664f97d4429886860221cb29c7A',
   orientation = 'veritcal',
   height,
   width,
