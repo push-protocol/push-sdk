@@ -2,6 +2,49 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.18...restapi-0.0.1-alpha.19) (2023-07-03)
+
+
+### Bug Fixes
+
+* added silent notifications ([#467](https://github.com/ethereum-push-notification-service/push-sdk/issues/467)) ([88bafe4](https://github.com/ethereum-push-notification-service/push-sdk/commit/88bafe49d489cfe399efa7166407a50574995b16))
+* Merge branch 'alpha' into alpha-deployment ([a15e368](https://github.com/ethereum-push-notification-service/push-sdk/commit/a15e368241215e2e2219792afd718567d621bf2a))
+* merge main ([6998d35](https://github.com/ethereum-push-notification-service/push-sdk/commit/6998d35aa181f17a5ad8d9501943a6a867814650))
+* rename based on new convention ([0e34479](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e34479b1581abd59e0f853d6547e23a0afb5e28))
+* **video:** add error handlers and turn server config ([#466](https://github.com/ethereum-push-notification-service/push-sdk/issues/466)) ([cda9a28](https://github.com/ethereum-push-notification-service/push-sdk/commit/cda9a28bbb99bf8bd40bcd13f3c486cbf1ebe5a2))
+
+
+
+## [0.0.1-alpha.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.18...restapi-0.0.1-alpha.19) (2023-07-03)
+
+
+### Bug Fixes
+
+* added silent notifications ([#467](https://github.com/ethereum-push-notification-service/push-sdk/issues/467)) ([88bafe4](https://github.com/ethereum-push-notification-service/push-sdk/commit/88bafe49d489cfe399efa7166407a50574995b16))
+* Merge branch 'alpha' into alpha-deployment ([a15e368](https://github.com/ethereum-push-notification-service/push-sdk/commit/a15e368241215e2e2219792afd718567d621bf2a))
+* merge main ([6998d35](https://github.com/ethereum-push-notification-service/push-sdk/commit/6998d35aa181f17a5ad8d9501943a6a867814650))
+* rename based on new convention ([0e34479](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e34479b1581abd59e0f853d6547e23a0afb5e28))
+* **video:** add error handlers and turn server config ([#466](https://github.com/ethereum-push-notification-service/push-sdk/issues/466)) ([cda9a28](https://github.com/ethereum-push-notification-service/push-sdk/commit/cda9a28bbb99bf8bd40bcd13f3c486cbf1ebe5a2))
+
+
+
+## [0.0.1-alpha.18](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.17...restapi-0.0.1-alpha.18) (2023-06-20)
+
+
+### Bug Fixes
+
+* add blockedUsersList functionality to SDK ([#444](https://github.com/ethereum-push-notification-service/push-sdk/issues/444)) ([d66e3ff](https://github.com/ethereum-push-notification-service/push-sdk/commit/d66e3ff9fcb7b775705315654a759800b367122d))
+* add name to SpaceIFeeds ([9c22271](https://github.com/ethereum-push-notification-service/push-sdk/commit/9c222715d0f15ae912b90661f9d18d42bddc4c89))
+* added types for Env and name in Ifeeds ([#452](https://github.com/ethereum-push-notification-service/push-sdk/issues/452)) ([301808e](https://github.com/ethereum-push-notification-service/push-sdk/commit/301808e81fc66df10a0f64b65eb7d13375702e00))
+* destroy peer instance in disconnect ([#451](https://github.com/ethereum-push-notification-service/push-sdk/issues/451)) ([439fd96](https://github.com/ethereum-push-notification-service/push-sdk/commit/439fd9627168e31b8626c88368eebb3a4443a092))
+* Merge branch 'alpha' into alpha-deployment ([b521522](https://github.com/ethereum-push-notification-service/push-sdk/commit/b521522c3b147b789a03b2683da4b6cefac795fe))
+* Merge branch 'main' into alpha ([64de06f](https://github.com/ethereum-push-notification-service/push-sdk/commit/64de06fc3cfd4359cf0d7fb70212e775ce9e51b9))
+* merge main ([27105a2](https://github.com/ethereum-push-notification-service/push-sdk/commit/27105a247fe4bd4db78a41be06ef6a2d52fb6b21))
+* update path ([10d62b1](https://github.com/ethereum-push-notification-service/push-sdk/commit/10d62b1a017b3d0a5044a4ab33bdce183f795f51))
+* **video:** clear the peer instance in disconnect ([#445](https://github.com/ethereum-push-notification-service/push-sdk/issues/445)) ([db32d2c](https://github.com/ethereum-push-notification-service/push-sdk/commit/db32d2c901d8a208d409b6c09a716dee653b06f9))
+
+
+
 ## [0.0.1-alpha.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.16...restapi-0.0.1-alpha.17) (2023-06-08)
 
 
