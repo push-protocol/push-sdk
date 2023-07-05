@@ -7,6 +7,12 @@ export interface ISpaceInfo {
   [key: string]: SpaceDTO;
 }
 
+export interface ISpacePaginationData {
+  apiData?: SpaceIFeeds[];
+  currentPage?: number;
+  lastPage?: number;
+}
+
 export interface ISpaceDataContextValues {
   account: string;
   setAccount: React.Dispatch<React.SetStateAction<string>>;
@@ -21,31 +27,33 @@ export interface ISpaceDataContextValues {
   spaceInfo: ISpaceInfo;
   setSpaceInfo: (key: string, value: SpaceDTO) => void;
   getSpaceInfo: (key: string) => SpaceDTO | undefined;
-  spacesPage: number;
-  setSpacesPage: React.Dispatch<React.SetStateAction<number>>;
-  popularPage: number;
-  setPopularPage: React.Dispatch<React.SetStateAction<number>>;
-  requestPage: number;
-  setRequestPage: React.Dispatch<React.SetStateAction<number>>;
-  mySpaces: SpaceIFeeds[];
-  setMySpaces: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
-  popularSpaces: SpaceIFeeds[];
-  setPopularSpaces: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
-  spaceRequests: SpaceIFeeds[];
-  setSpaceRequests: React.Dispatch<React.SetStateAction<SpaceIFeeds[]>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  mySpaces: ISpacePaginationData;
+  setMySpaces: (paginationData: ISpacePaginationData) => void;
+  popularSpaces: ISpacePaginationData;
+  setPopularSpaces: (paginationData: ISpacePaginationData) => void;
+  spaceRequests: ISpacePaginationData;
+  setSpaceRequests: (paginationData: ISpacePaginationData) => void;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   account: '',
-  setAccount: () => { /**/ },
+  setAccount: () => {
+    /**/
+  },
   signer: undefined,
-  setSigner: () => { /**/ },
+  setSigner: () => {
+    /**/
+  },
   pgpPrivateKey: '',
-  setPgpPrivateKey: () => { /**/ },
+  setPgpPrivateKey: () => {
+    /**/
+  },
   env: ENV.PROD,
-  setEnv: () => { /**/ },
+  setEnv: () => {
+    /**/
+  },
   trendingListData: null,
   setTrendingListData: () => {
     /**/
@@ -55,27 +63,28 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
     /**/
   },
   getSpaceInfo: () => undefined,
-  spacesPage: 1,
-  setSpacesPage: () => {
-    /**/
-  },
-  popularPage: 1,
-  setPopularPage: () => {
-    /**/
-  },
-  requestPage: 1,
-  setRequestPage: () => {
-    /**/
-  },
-  mySpaces: [] as SpaceIFeeds[],
+
+  mySpaces: {
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData,
   setMySpaces: () => {
     /**/
   },
-  popularSpaces: [] as SpaceIFeeds[],
+  popularSpaces: {
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData,
   setPopularSpaces: () => {
     /**/
   },
-  spaceRequests: [] as SpaceIFeeds[],
+  spaceRequests: {
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData,
   setSpaceRequests: () => {
     /**/
   },

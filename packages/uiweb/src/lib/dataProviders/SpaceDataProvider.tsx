@@ -1,11 +1,16 @@
-import { useState } from "react";
-import { SignerType, SpaceDTO, SpaceIFeeds } from "@pushprotocol/restapi";
+import { useState } from 'react';
+import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
-import { SpacesUI } from "../components";
-import { ThemeContext } from "../components/space/theme/ThemeProvider";
-import { ISpacesTheme, lightTheme } from "../components/space/theme";
-import { ISpaceDataContextValues, ISpaceInfo, SpaceDataContext } from "../context/spacesContext";
-import { ENV } from "../config";
+import { SpacesUI } from '../components';
+import { ThemeContext } from '../components/space/theme/ThemeProvider';
+import { ISpacesTheme, lightTheme } from '../components/space/theme';
+import {
+  ISpaceDataContextValues,
+  ISpaceInfo,
+  ISpacePaginationData,
+  SpaceDataContext,
+} from '../context/spacesContext';
+import { ENV } from '../config';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -13,20 +18,36 @@ export interface ISpacesUIProviderProps {
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+export const SpacesUIProvider = ({
+  spaceUI,
+  theme,
+  children,
+}: ISpacesUIProviderProps) => {
   const [account, setAccount] = useState<string>('');
   const [signer, setSigner] = useState<SignerType>();
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
-  const [spacesPage, setSpacesPage] = useState<number>(1);
-  const [popularPage, setPopularPage] = useState<number>(1);
-  const [requestPage, setRequestPage] = useState<number>(1);
-  const [mySpaces, setMySpaces] = useState([] as SpaceIFeeds[]);
-  const [popularSpaces, setPopularSpaces] = useState([] as SpaceIFeeds[]);
-  const [spaceRequests, setSpaceRequests] = useState([] as SpaceIFeeds[]);
   const [loading, setLoading] = useState(false);
+
+  const [mySpaces, setMySpaces] = useState({
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData);
+
+  const [popularSpaces, setPopularSpaces] = useState({
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData);
+
+  const [spaceRequests, setSpaceRequests] = useState({
+    apiData: [] as SpaceIFeeds[],
+    currentPage: 1,
+    lastPage: undefined,
+  } as ISpacePaginationData);
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
@@ -37,6 +58,20 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
+  };
+
+  const setSpacePaginationInfo = (
+    paginationInfo: ISpacePaginationData
+  ): void => {
+    const { apiData, currentPage, lastPage } = paginationInfo;
+    setMySpaces((prevState) => {
+      return {
+        ...prevState,
+        ...(apiData && { apiData }),
+        ...(currentPage && { currentPage }),
+        ...(lastPage && { lastPage }),
+      };
+    });
   };
 
   const value: ISpaceDataContextValues = {
@@ -53,18 +88,12 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
     spaceInfo,
     setSpaceInfo: setSpaceInfoItem,
     getSpaceInfo,
-    spacesPage,
-    setSpacesPage,
-    popularPage,
-    setPopularPage,
-    requestPage,
-    setRequestPage,
     mySpaces,
-    setMySpaces,
+    setMySpaces: setSpacePaginationInfo,
     popularSpaces,
-    setPopularSpaces,
+    setPopularSpaces: setSpacePaginationInfo,
     spaceRequests,
-    setSpaceRequests,
+    setSpaceRequests: setSpacePaginationInfo,
     loading,
     setLoading,
   };

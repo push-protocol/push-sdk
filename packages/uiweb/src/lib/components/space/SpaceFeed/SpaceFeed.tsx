@@ -12,6 +12,7 @@ import {
   usePopularSpaces,
   useSpaceRequests,
 } from '../../../hooks';
+import { ISpacePaginationData } from '../../../context/spacesContext';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -56,20 +57,17 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   const [filterTab, setFilterTab] = useState(filter);
 
   const {
-    spacesPage,
-    setSpacesPage,
-    popularPage,
-    setPopularPage,
-    requestPage,
-    setRequestPage,
     mySpaces,
+    setMySpaces,
     popularSpaces,
+    setPopularSpaces,
     spaceRequests,
+    setSpaceRequests,
     loading,
     setLoading,
   } = useSpaceData();
 
-  const listInnerRef = useFeedScroll(mySpaces.length);
+  const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
   const handleTabChange = (tab: string) => {
     setTab(tab);
@@ -97,11 +95,34 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     }
   };
 
+  const incrementSpacePage = (spaces: ISpacePaginationData) => {
+    if (!spaces.lastPage) {
+      if (spaces === mySpaces)
+        spaces.currentPage &&
+          setMySpaces({ currentPage: spaces.currentPage + 1 });
+      if (spaces === popularSpaces)
+        spaces.currentPage &&
+          setPopularSpaces({ currentPage: spaces.currentPage + 1 });
+      if (spaces === spaceRequests)
+        spaces.currentPage &&
+          setSpaceRequests({ currentPage: spaces.currentPage + 1 });
+    } else {
+      return;
+    }
+  };
+
   const loadMoreData = async () => {
     setLoading(true);
-    if (tab === Tabs.ForYou) setSpacesPage(spacesPage + 1);
-    if (tab === Tabs.Popular) setPopularPage(popularPage + 1);
-    if (tab === Tabs.Requests) setRequestPage(requestPage + 1);
+    if (tab === Tabs.ForYou) {
+      incrementSpacePage(mySpaces);
+    }
+    if (tab === Tabs.Popular) {
+      incrementSpacePage(popularSpaces);
+    }
+    if (tab === Tabs.Requests) {
+      incrementSpacePage(spaceRequests);
+    }
+
     setLoading(false);
   };
 
@@ -128,7 +149,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
             ? mySpaces &&
-              mySpaces.map((space: any, index: any) => {
+              mySpaces.apiData?.map((space: any, index: any) => {
                 return (
                   <SpaceBanner
                     spaceId={space.spaceId}
@@ -138,7 +159,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 );
               })
             : mySpaces &&
-              mySpaces.map((space: any, index: any) => {
+              mySpaces.apiData?.map((space: any, index: any) => {
                 return (
                   <SpaceBanner
                     spaceId={space?.spaceId}
@@ -290,6 +311,10 @@ const NavButton = styled.button<{ active?: boolean }>`
   border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
   background: none;
   color : ${(props) => (props.active ? '#000000' : '#71717A')};
+
+  &:hover {
+    cursor: pointer;
+  }
 }`;
 
 const Spaces = styled.div<{ orientation?: string }>`
@@ -346,4 +371,8 @@ const FilterButton = styled.button<{ active: boolean }>`
   color: ${(props) => (!props.active ? '#8B5CF6' : '#FFF')};
   margin-right: 8px;
   font-size: 14px;
+
+  &:hover {
+    cursor: pointer;
+  }
 }`;
