@@ -1,46 +1,45 @@
 import Constants from '../constants';
-import { ChatStatus, EnvOptionsType } from '../types';
-import {
-  getSpaceAdminsList,
-  getSpacesMembersList,
-  groupDtoToSpaceDto,
-} from './../chat/helpers';
+import { EnvOptionsType, SpaceDTO, SignerType, ChatStatus } from '../types';
+import { groupDtoToSpaceDto } from './../chat/helpers';
 import { updateGroup } from '../chat/updateGroup';
 import { get } from './get';
 
-import type Space from './Space';
-
 export interface ChatUpdateSpaceType extends EnvOptionsType {
+  signer: SignerType;
+  spaceId: string;
   spaceName: string;
   spaceImage: string | null;
   spaceDescription: string;
-  scheduleAt?: Date;
+  members: Array<string>;
+  admins: Array<string>;
+  pgpPrivateKey?: string;
+  scheduleAt: Date;
   scheduleEnd?: Date | null;
+  status: ChatStatus;
 }
 
-export async function update(
-  this: Space,
+export const update = async (
   options: ChatUpdateSpaceType
-): Promise<void> {
+): Promise<SpaceDTO> => {
   const {
+    spaceId,
     spaceName,
     spaceImage,
     spaceDescription,
+    members,
+    admins,
+    signer,
     env = Constants.ENV.PROD,
+    pgpPrivateKey = null,
     scheduleAt,
     scheduleEnd,
+    status,
   } = options || {};
   try {
     const space = await get({
-      spaceId: this.spaceSpecificData.spaceId,
-      env: this.env,
+      spaceId,
+      env,
     });
-
-    const convertedMembers = getSpacesMembersList(
-      space.members,
-      space.pendingMembers
-    );
-    const convertedAdmins = getSpaceAdminsList(space.members, space.pendingMembers);
 
     if (space.status === ChatStatus.ACTIVE && scheduleAt) {
       throw new Error('Unable change the start date/time of an active space');
@@ -51,23 +50,23 @@ export async function update(
     }
 
     const group = await updateGroup({
-      chatId: this.spaceSpecificData.spaceId,
+      chatId: spaceId,
       groupName: spaceName,
       groupImage: spaceImage,
       groupDescription: spaceDescription,
-      members: convertedMembers,
-      admins: convertedAdmins,
-      signer: this.signer,
+      members: members,
+      admins: admins,
+      signer: signer,
       env: env,
-      pgpPrivateKey: this.pgpPrivateKey,
+      pgpPrivateKey: pgpPrivateKey,
       scheduleAt: scheduleAt,
       scheduleEnd: scheduleEnd,
+      status: status,
     });
 
-    // update space specific data
-    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
+    return groupDtoToSpaceDto(group);
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${update.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${update.name} -: ${err}`);
   }
-}
+};

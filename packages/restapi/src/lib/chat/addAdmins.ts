@@ -19,7 +19,7 @@ export interface AddAdminsToGroupType extends EnvOptionsType {
   pgpPrivateKey?: string | null; 
 }
 
-export const addAdminsToGroup = async (
+export const addAdmins = async (
   options: AddAdminsToGroupType
 ): Promise<GroupDTO> => {
   const {
@@ -93,11 +93,11 @@ export const addAdminsToGroup = async (
     });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API ${addAdminsToGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${addAdmins.name} -:  `,
       err
     );
     throw Error(
-      `[Push SDK] - API  - Error - API ${addAdminsToGroup.name} -: ${err}`
+      `[Push SDK] - API  - Error - API ${addAdmins.name} -: ${err}`
     );
   }
 };

@@ -1,6 +1,8 @@
 import { EnvOptionsType } from '../types';
 import { groupDtoToSpaceDto } from '../chat/helpers';
-import { removeAdminsFromGroup } from '../chat/removeAdminsFromGroup';
+import {
+  removeAdmins
+} from '../chat/removeAdmins';
 import type Space from './Space';
 
 export interface RemoveSpeakerType extends EnvOptionsType {
@@ -13,7 +15,7 @@ export async function removeSpeaker(
 ): Promise<void> {
   const { address } = options;
   try {
-    const group = await removeAdminsFromGroup({
+    const group = await removeAdmins({
       chatId: this.spaceSpecificData.spaceId,
       admins: [address],
       signer: this.signer,

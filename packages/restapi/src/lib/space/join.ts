@@ -1,9 +1,9 @@
-import { addMembersToGroup, groupDtoToSpaceDto } from '../chat';
+import { addMembers, groupDtoToSpaceDto } from '../chat';
 import type Space from './Space';
 
 export async function join(this: Space) {
   try {
-    const group = await addMembersToGroup({
+    const group = await addMembers({
       chatId: this.spaceSpecificData.spaceId,
       members: [this.data.local.address],
       signer: this.signer,

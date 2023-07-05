@@ -1,8 +1,10 @@
-import { SpaceDTO } from '../types';
+import Constants from '../constants';
+import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
 import { groupDtoToSpaceDto } from './../chat/helpers';
 import { createGroup } from '../chat/createGroup';
 
-export interface ChatCreateSpaceType {
+export interface ChatCreateSpaceType extends EnvOptionsType {
+  signer: SignerType;
   spaceName: string;
   spaceDescription: string;
   members: Array<string>;
@@ -13,18 +15,15 @@ export interface ChatCreateSpaceType {
   numberOfNFTs?: number;
   contractAddressERC20?: string;
   numberOfERC20?: number;
+  pgpPrivateKey?: string;
   meta?: string;
   scheduleAt: Date;
   scheduleEnd?: Date | null;
 }
 
-import type Space from './Space';
-
-export async function create(
-  this: Space,
-  options: ChatCreateSpaceType
-): Promise<void> {
+export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
   const {
+    signer,
     spaceName,
     spaceDescription,
     members,
@@ -35,18 +34,16 @@ export async function create(
     numberOfNFTs,
     contractAddressERC20,
     numberOfERC20,
+    env = Constants.ENV.PROD,
+    pgpPrivateKey = null,
     meta,
     scheduleAt,
     scheduleEnd,
   } = options || {};
 
   try {
-    if (this.signer === null) {
-      throw new Error(`Signer is necessary!`);
-    }
-
     const group = await createGroup({
-      signer: this.signer,
+      signer,
       groupName: spaceName,
       groupDescription: spaceDescription,
       members: members,
@@ -57,15 +54,15 @@ export async function create(
       numberOfNFTs: numberOfNFTs,
       contractAddressERC20: contractAddressERC20,
       numberOfERC20: numberOfERC20,
-      env: this.env,
-      pgpPrivateKey: this.pgpPrivateKey,
+      env,
+      pgpPrivateKey,
       meta: meta,
       groupType: 'spaces',
       scheduleAt: scheduleAt,
       scheduleEnd: scheduleEnd,
     });
 
-    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
+    return groupDtoToSpaceDto(group);
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${create.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${create.name} -: ${err}`);

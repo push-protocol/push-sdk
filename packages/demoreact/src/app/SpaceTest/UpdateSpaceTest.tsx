@@ -48,7 +48,7 @@ const UpdateSpaceTest = () => {
     setMembers((e.target as HTMLInputElement).value);
   };
 
- 
+
   const updateAdmins= (e: React.SyntheticEvent<HTMLElement>) => {
     setAdmins((e.target as HTMLInputElement).value);
   };
@@ -81,7 +81,6 @@ const UpdateSpaceTest = () => {
         spaceDescription,
         members: members.split(','),
         admins: admins.split(','),
-        account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
         scheduleAt:  new Date(scheduleAt) ,
@@ -148,7 +147,7 @@ const UpdateSpaceTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
-        
+
             <SectionItem style={{ marginTop: 20 }}>
               <label>members</label>
               <input

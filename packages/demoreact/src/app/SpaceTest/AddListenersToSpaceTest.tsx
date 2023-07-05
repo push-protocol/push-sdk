@@ -10,12 +10,12 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import SpaceTest from './SpaceTest';
 
-const AddAdminsToSpaceTest = () => {
+const AddListenersToSpaceTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [spaceId, setSpaceId] = useState<string>('');
-  const [memberAddress, setMemberAddress] = useState<string>('');
+  const [listenerAddress, setListenerAddress] = useState<string>('');
   const [sendResponse, setSendResponse] = useState<any>('');
   const [account, setAccount] = useState<string>(acc);
 
@@ -23,21 +23,20 @@ const AddAdminsToSpaceTest = () => {
     setSpaceId((e.target as HTMLInputElement).value);
   };
 
-  const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
-    setMemberAddress((e.target as HTMLInputElement).value);
+  const updateListenerId = (e: React.SyntheticEvent<HTMLElement>) => {
+    setListenerAddress((e.target as HTMLInputElement).value);
   };
 
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
   };
-
-  const testAddAdminsToSpaceTest = async () => {
+  const addListenersToSpaceTest = async () => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const response = await PushAPI.space.addAdminsToSpace({
+      const response = await PushAPI.space.addListeners({
         spaceId: spaceId,
-        admins: memberAddress ? memberAddress.split(',') : [],
+        listeners: listenerAddress ? listenerAddress.split(',') : [],
         env,
         account: account,
         signer: librarySigner,
@@ -50,17 +49,16 @@ const AddAdminsToSpaceTest = () => {
       setLoading(false);
     }
   };
-
   return (
     <div>
       <SpaceTest />
-      <h2>Add Admins to Space Test page</h2>
+      <h2>Add Listeners to Space Test page</h2>
 
       <Loader show={isLoading} />
 
       <Section>
         <SectionItem>
-          <SectionButton onClick={testAddAdminsToSpaceTest}>Add Admins to Space</SectionButton>
+          <SectionButton onClick={addListenersToSpaceTest}>Add Listeners to Space</SectionButton>
         </SectionItem>
          <SectionItem>
               <label>spaceId</label>
@@ -72,11 +70,11 @@ const AddAdminsToSpaceTest = () => {
               />
         </SectionItem>
          <SectionItem>
-              <label>members (comma separated)</label>
+              <label>listeners (comma separated)</label>
               <input
                 type="text"
-                onChange={updateMemberId}
-                value={memberAddress}
+                onChange={updateListenerId}
+                value={listenerAddress}
                 style={{ width: 400, height: 30 }}
               />
         </SectionItem>
@@ -103,4 +101,4 @@ const AddAdminsToSpaceTest = () => {
   );
 };
 
-export default AddAdminsToSpaceTest;
+export default AddListenersToSpaceTest;
