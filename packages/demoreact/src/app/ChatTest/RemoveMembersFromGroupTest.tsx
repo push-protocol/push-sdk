@@ -30,7 +30,7 @@ const updateMemberId = (e: React.SyntheticEvent<HTMLElement>) => {
     try {
       setLoading(true);
       const librarySigner = await library.getSigner();
-      const response = await PushAPI.chat.removeMembersFromGroup({
+      const response = await PushAPI.chat.removeMembers({
         chatId: chatId,
         members: memberAddress ? memberAddress.split(',') : [],
         env,

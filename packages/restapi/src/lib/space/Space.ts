@@ -1,7 +1,6 @@
 import { produce } from 'immer';
 
 import { Video, initVideoCallData } from '../video';
-import { create as createSpace } from './create';
 import { update } from './update';
 import { start } from './start';
 import { inviteToPromote } from './inviteToPromote';
@@ -151,8 +150,6 @@ class Space extends Video {
   }
 
   // adding instance methods
-
-  public initialize = createSpace;
 
   public update = update;
 

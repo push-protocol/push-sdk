@@ -1,7 +1,7 @@
 import {
   groupDtoToSpaceDto,
-  getMembersList,
-  getAdminsList,
+  getSpacesMembersList,
+  getSpaceAdminsList,
 } from '../chat/helpers';
 import { updateGroup } from '../chat/updateGroup';
 import { get } from './get';
@@ -23,11 +23,14 @@ export async function stop(this: Space): Promise<void> {
       throw new Error('Space already ended');
     }
 
-    const convertedMembers = getMembersList(
+    const convertedMembers = getSpacesMembersList(
       space.members,
       space.pendingMembers
     );
-    const convertedAdmins = getAdminsList(space.members, space.pendingMembers);
+    const convertedAdmins = getSpaceAdminsList(
+      space.members,
+      space.pendingMembers
+    );
 
     const group = await updateGroup({
       chatId: this.spaceSpecificData.spaceId,
