@@ -84,7 +84,6 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
   //     </Section>
   //   )
   //}
-
   return (
     <Section
       gap="10px"
@@ -230,6 +229,7 @@ export const Sidebar = () => {
     requestsFeed,
     searchedChats,
     web3NameList,
+    selectedChatId,
     setSearchedChats,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
@@ -266,7 +266,6 @@ export const Sidebar = () => {
       icon: <SpamIconSvg />,
     },
   };
-
   type handleSearchType = {
     searchedText: string;
     feed: ChatFeedsType | NotificationFeedsType;
