@@ -36,9 +36,9 @@ Future<SendMessagePayload> sendMessagePayload({
   var signature = encryptedRequest?.signature;
 
   final body = SendMessagePayload(
-    fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    fromDID: walletToPCAIP10(senderCreatedUser.wallets!.split(',')[0]),
     toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
-    fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets!.split(',')[0]),
     toCAIP10: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     messageContent: message!,
     messageType: messageType,

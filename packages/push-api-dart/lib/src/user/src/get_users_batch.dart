@@ -31,8 +31,8 @@ getBatch({
     for (var item in result['users']) {
       var user = User.fromJson(item);
       user.publicKey = verifyPGPPublicKey(
-        encryptedPrivateKey: user.encryptedPrivateKey,
-        publicKey: user.publicKey,
+        encryptedPrivateKey: user.encryptedPrivateKey!,
+        publicKey: user.publicKey!,
         did: user.did!,
       );
 

@@ -2,23 +2,16 @@ import 'package:push_api_dart/push_api_dart.dart';
 
 Future<String?> approve({
   required String senderAddress,
-  String? accountAddress,
+  String? account,
+  Signer? signer,
   String? pgpPrivateKey,
   status = 'Approved',
 }) async {
-  String? userDID;
-  if (accountAddress == null) {
-    //copy cached did
-    userDID = getCachedUser()?.did;
-  } else {
-    userDID = await getUserDID(address: accountAddress);
+  if (account == null && signer == null) {
+    throw Exception('At least one from account or signer is necessary!');
   }
-
-  if (userDID == null) {
-    throw Exception('Account address is required.');
-  }
-
-  pgpPrivateKey ??= getCachedWallet()?.privateKey;
+  final wallet = getWallet(address: account, signer: signer);
+  final address = getAccountAddress(wallet);
 
   if (pgpPrivateKey == null) {
     throw Exception('Private Key is required.');
@@ -29,11 +22,11 @@ Future<String?> approve({
   late String fromDID, toDID;
 
   if (isGroup) {
-    fromDID = await getUserDID(address: userDID);
+    fromDID = await getUserDID(address: address);
     toDID = await getUserDID(address: senderAddress);
   } else {
     fromDID = await getUserDID(address: senderAddress);
-    toDID = await getUserDID(address: userDID);
+    toDID = await getUserDID(address: address);
   }
 
   final bodyToBeHashed = {

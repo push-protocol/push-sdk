@@ -4,33 +4,21 @@ Future<MessageWithCID?> send({
   required String messageContent,
   String messageType = 'Text',
   required String receiverAddress,
-  required String account,
-  EthWallet? wallet,
+  String? account,
+  Signer? signer,
   required String pgpPrivateKey,
   required String apiKey,
 }) async {
   try {
-    String? address;
-    wallet ??= getCachedWallet();
-
-    if (wallet == null) {
-      //copy cached did
-      address = getCachedUser()?.did;
-    } else {
-      address = await getUserDID(address: wallet.address);
+    if (account == null && signer == null) {
+      throw Exception('At least one from account or signer is necessary!');
     }
-
-    if (address == null) {
-      throw Exception('Account address is required.');
-    }
-
-    if (wallet?.privateKey == null) {
-      throw Exception('Private Key is required');
-    }
+    final wallet = getWallet(address: account, signer: signer);
+    String address = getAccountAddress(wallet);
 
     bool isGroup = !isValidETHAddress(receiverAddress);
 
-    final connectedUser = await getConnectedUserV2(wallet: wallet!);
+    final connectedUser = await getConnectedUserV2(wallet: wallet);
     final receiver = await getUserDID(address: receiverAddress);
 
     String? conversationResponse;
@@ -38,7 +26,7 @@ Future<MessageWithCID?> send({
     if (isGroup) {
       conversationResponse = await conversationHash(
         conversationId: receiver,
-        account: connectedUser?.user.did ?? account,
+        account: address,
       );
     }
 

@@ -5,9 +5,8 @@ import '../../../push_api_dart.dart';
 final userProvider =
     StateNotifierProvider<UserProvider, User?>((ref) => UserProvider(ref));
 
-final userEthWalletProvider =
-    StateNotifierProvider<EthWalletProvider, EthWallet?>(
-        (ref) => EthWalletProvider(ref));
+final userEthWalletProvider = StateNotifierProvider<EthWalletProvider, Wallet?>(
+    (ref) => EthWalletProvider(ref));
 
 class UserProvider extends StateNotifier<User?> {
   StateNotifierProviderRef ref;
@@ -22,22 +21,23 @@ class UserProvider extends StateNotifier<User?> {
   }
 }
 
-class EthWalletProvider extends StateNotifier<EthWallet?> {
+class EthWalletProvider extends StateNotifier<Wallet?> {
   StateNotifierProviderRef ref;
   EthWalletProvider(this.ref, [super.state]);
 
-  setCurrentUserEthWallet(EthWallet wallet) async {
+  setCurrentUserEthWallet(Wallet wallet) async {
     state = wallet;
 
     await ref
         .read(userProvider.notifier)
-        .setCurrentUserByAddress(wallet.address);
+        .setCurrentUserByAddress(wallet.address??'');
   }
 }
 
 User? getCachedUser() {
   return providerContainer.read(userProvider);
 }
-EthWallet? getCachedWallet() {
+
+Wallet? getCachedWallet() {
   return providerContainer.read(userEthWalletProvider);
 }

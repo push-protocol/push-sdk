@@ -3,7 +3,7 @@ import '../../../push_api_dart.dart';
 Future<User?> authUpdate({
   required String pgpPrivateKey,
   required String pgpEncryptionVersion,
-  EthWallet? wallet,
+  Wallet? wallet,
   required String pgpPublicKey,
   required String account,
   additionalMeta,

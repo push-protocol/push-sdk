@@ -1,4 +1,3 @@
-
 class IMessageIPFS {
   String fromCAIP10;
   String toCAIP10;
@@ -70,7 +69,6 @@ class IMessageIPFS {
     return data;
   }
 }
-
 
 class MessageWithCID {
   String cid;
