@@ -1,5 +1,5 @@
 import 'package:ethers/signers/wallet.dart';
-import 'package:push_api_dart/push_api_dart.dart';
+import 'package:push_api_dart/push_api_dart.dart' as push;
 
 void testCreateUser() async {
   const mnemonic =
@@ -7,12 +7,12 @@ void testCreateUser() async {
   final walletMnemonic = Wallet.fromMnemonic(mnemonic);
 
   print('walletMnemonic.address: ${walletMnemonic.address}');
-  final pushWallet = EthWallet(
+  final pushWallet = Wallet(
     address: walletMnemonic.address!,
     publicKey: walletMnemonic.publicKey!,
     privateKey: walletMnemonic.privateKey!,
   );
-  final result = await createUser(wallet: pushWallet);
+  // final result = await push.createUser(signer: push.Signer);
 
-  print(result);
+  // print(result);
 }

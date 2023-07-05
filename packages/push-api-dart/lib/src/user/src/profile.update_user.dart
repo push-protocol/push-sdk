@@ -55,8 +55,8 @@ Future<User?> profileUpdate({
 
     var updatedUser = User.fromJson(result);
     updatedUser.publicKey = verifyPGPPublicKey(
-      encryptedPrivateKey: updatedUser.encryptedPrivateKey,
-      publicKey: updatedUser.publicKey,
+      encryptedPrivateKey: updatedUser.encryptedPrivateKey!,
+      publicKey: updatedUser.publicKey!,
       did: updatedUser.did!,
     );
 

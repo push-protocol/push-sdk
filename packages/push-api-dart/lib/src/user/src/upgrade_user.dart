@@ -1,24 +1,26 @@
 import '../../../push_api_dart.dart';
 
 Future<User?> upgrade({
-  EthWallet? wallet,
+  String? account,
+  Signer? signer,
   additionalMeta,
+  required Function(ProgressHookType) progressHook,
 }) async {
   try {
-    wallet ??= getCachedWallet();
-    final address = wallet?.address ?? getCachedUser()?.did;
+    final wallet = getWallet(address: account, signer: signer);
+    final address = getAccountAddress(wallet);
 
-    if (address == null || !isValidETHAddress(address)) {
+    if (!isValidETHAddress(address)) {
       throw Exception('Invalid address!');
     }
 
-    var user = getCachedUser() ?? await getUser(address: address);
+    var user = await getUser(address: address);
     if (user == null) {
       throw Exception('User Not Found!');
     }
 
     final recommendedPgpEncryptionVersion = ENCRYPTION_TYPE.PGP_V3;
-    final version = user.parsedPrivateKey.version;
+    final version = user.parsedPrivateKey!.version;
 
     if (version == recommendedPgpEncryptionVersion ||
         version == ENCRYPTION_TYPE.NFTPGP_V1) {
@@ -26,8 +28,8 @@ Future<User?> upgrade({
     }
 
     final pgpPrivateKey = await decryptPGPKey(
-      encryptedPGPPrivateKey: user.encryptedPrivateKey,
-      signer: wallet,
+      encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+      wallet: wallet,
       toUpgrade: false,
       additionalMeta: additionalMeta,
     );
@@ -36,7 +38,7 @@ Future<User?> upgrade({
       pgpPrivateKey: pgpPrivateKey, // decrypted pgp priv key
       pgpEncryptionVersion: recommendedPgpEncryptionVersion,
       wallet: wallet,
-      pgpPublicKey: user.publicKey,
+      pgpPublicKey: user.publicKey!,
       account: user.did!,
       additionalMeta: additionalMeta,
     );

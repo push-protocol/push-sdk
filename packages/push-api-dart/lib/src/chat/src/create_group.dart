@@ -1,7 +1,8 @@
 import '../../../push_api_dart.dart';
 
 createGroup({
-  EthWallet? wallet,
+  String? account,
+  Signer? signer,
   required String groupName,
   required String groupDescription,
   required String groupImage,
@@ -16,23 +17,11 @@ createGroup({
   String? meta,
 }) async {
   try {
-    String? userDID;
-    wallet ??= getCachedWallet();
-
-    if (wallet == null) {
-      //copy cached did
-      userDID = getCachedUser()?.did;
-    } else {
-      userDID = await getUserDID(address: wallet.address);
+    if (account == null && signer == null) {
+      throw Exception('At least one from account or signer is necessary!');
     }
-
-    if (userDID == null) {
-      throw Exception('Account address is required.');
-    }
-
-    if (wallet?.privateKey == null) {
-      throw Exception('Private Key is required');
-    }
+    final wallet = getWallet(address: account, signer: signer);
+    String address = getAccountAddress(wallet);
 
     createGroupRequestValidator(
         groupName: groupName,
@@ -45,6 +34,11 @@ createGroup({
     final convertedAdminsDIDList =
         await Future.wait(admins.map((item) => getUserDID(address: item)));
 
+    final connectedUser = await getConnectedUserV2(
+      wallet: wallet,
+      privateKey: pgpPrivateKey,
+    );
+
     final bodyToBeHashed = {
       'groupName': groupName,
       'groupDescription': groupDescription,
@@ -56,15 +50,15 @@ createGroup({
       'numberOfNFTs': numberOfNFTs ?? 0,
       'contractAddressERC20': contractAddressERC20,
       'numberOfERC20': numberOfERC20 ?? 0,
-      'groupCreator': userDID,
+      'groupCreator': address,
     };
 
     final hash = generateHash(bodyToBeHashed);
 
     final signature = await sign(
       message: hash,
-      privateKey: wallet!.privateKey!,
-      publicKey: wallet.publicKey!,
+      privateKey: connectedUser!.user.encryptedPrivateKey!,
+      publicKey: connectedUser.user.publicKey!,
     );
 
     const sigType = 'pgp';
@@ -82,7 +76,7 @@ createGroup({
       'numberOfNFTs': numberOfNFTs,
       'contractAddressERC20': contractAddressERC20,
       'numberOfERC20': numberOfERC20,
-      'groupCreator': userDID,
+      'groupCreator': address,
       'verificationProof': verificationProof,
       'meta': meta,
     };
@@ -97,7 +91,6 @@ createGroup({
     }
 
     return GroupDTO.fromJson(result);
-    
   } catch (e) {
     log("[Push SDK] - API  - Error - API createGroup -: $e ");
     rethrow;

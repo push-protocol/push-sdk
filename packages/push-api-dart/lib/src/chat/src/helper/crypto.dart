@@ -18,14 +18,14 @@ Future<List<Feeds>> decryptFeeds({
     final msg = feed.msg!;
 
     if (msg.encType != 'PlainText') {
-      if (msg.fromCAIP10 != connectedUser.wallets.split(',')[0]) {
+      if (msg.fromCAIP10 != connectedUser.wallets!.split(',')[0]) {
         if (!gotOtherPeer) {
           otherPeer = await getUser(address: msg.fromCAIP10);
           gotOtherPeer = true;
         }
-        signatureValidationPubliKey = otherPeer!.publicKey;
+        signatureValidationPubliKey = otherPeer!.publicKey!;
       } else {
-        signatureValidationPubliKey = connectedUser.publicKey;
+        signatureValidationPubliKey = connectedUser.publicKey!;
       }
 
       feed.msg?.messageContent = await decryptAndVerifySignature(
@@ -84,19 +84,21 @@ Future<IEncryptedRequest?> getEncryptedRequest({
   if (!isGroup) {
     final User? receiverCreatedUser = await getUser(address: receiverAddress);
 
-    if (receiverCreatedUser == null ||
-        receiverCreatedUser.publicKey.isNotEmpty) {
+    if (receiverCreatedUser != null || receiverCreatedUser?.publicKey != null) {
       if (!isValidETHAddress(receiverAddress)) {
         throw Exception('Invalid receiver address!');
       }
 
       await createUserService(
-          user: receiverAddress, publicKey: '', encryptedPrivateKey: '');
+        user: receiverAddress,
+        publicKey: '',
+        encryptedPrivateKey: '',
+      );
       // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
 
       final signature = await signMessageWithPGP(
         message: message,
-        publicKey: senderCreatedUser.publicKey,
+        publicKey: senderCreatedUser.publicKey!,
         privateKeyArmored: senderCreatedUser.privateKey!,
       );
 
@@ -108,11 +110,11 @@ Future<IEncryptedRequest?> getEncryptedRequest({
     } else {
       // It's possible for a user to be created but the PGP keys still not created
 
-      if (!receiverCreatedUser.publicKey
+      if (!receiverCreatedUser!.publicKey!
           .contains('-----BEGIN PGP PUBLIC KEY BLOCK-----')) {
         final signature = await signMessageWithPGP(
           message: message,
-          publicKey: senderCreatedUser.publicKey,
+          publicKey: senderCreatedUser.publicKey!,
           privateKeyArmored: senderCreatedUser.privateKey!,
         );
 
@@ -124,9 +126,12 @@ Future<IEncryptedRequest?> getEncryptedRequest({
       } else {
         final response = await encryptAndSign(
             plainText: message,
-            keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
+            keys: [
+              receiverCreatedUser.publicKey!,
+              senderCreatedUser.publicKey!
+            ],
             privateKeyArmored: senderCreatedUser.privateKey!,
-            publicKey: senderCreatedUser.publicKey);
+            publicKey: senderCreatedUser.publicKey!);
 
         return IEncryptedRequest(
             message: response['cipherText']!,
@@ -139,7 +144,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
     if (group.isPublic) {
       final signature = await signMessageWithPGP(
         message: message,
-        publicKey: senderCreatedUser.publicKey,
+        publicKey: senderCreatedUser.publicKey!,
         privateKeyArmored: senderCreatedUser.privateKey!,
       );
 
@@ -156,7 +161,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
           plainText: message,
           keys: publicKeys,
           privateKeyArmored: senderCreatedUser.privateKey!,
-          publicKey: senderCreatedUser.publicKey);
+          publicKey: senderCreatedUser.publicKey!);
 
       return IEncryptedRequest(
           message: response['cipherText']!,
@@ -169,7 +174,7 @@ Future<IEncryptedRequest?> getEncryptedRequest({
 }
 
 Future<Map<String, dynamic>> getEip712Signature(
-  EthWallet wallet,
+  Wallet wallet,
   String hash,
   bool isDomainEmpty,
 ) async {
@@ -191,8 +196,7 @@ Future<Map<String, dynamic>> getEip712Signature(
   return {'verificationProof': verificationProof};
 }
 
-Future<Map<String, dynamic>> getEip191Signature(
-    EthWallet wallet, String message,
+Future<Map<String, dynamic>> getEip191Signature(Wallet wallet, String message,
     {String version = 'v1'}) async {
   // EIP191 signature
   // TODO
@@ -204,11 +208,16 @@ Future<Map<String, dynamic>> getEip191Signature(
 }
 
 Future<String> getDecryptedPrivateKey({
-  required EthWallet wallet,
+  required Wallet wallet,
   required User user,
   required String address,
 }) async {
-  String decryptedPrivateKey;
-
-  return decryptedPrivateKey;
+  if (wallet.signer != null) {
+    return decryptPGPKey(
+      encryptedPGPPrivateKey: user.encryptedPrivateKey!,
+      wallet: wallet,
+    );
+  } else {
+    throw Exception('Provide signer');
+  }
 }

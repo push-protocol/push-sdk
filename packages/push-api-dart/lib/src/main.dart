@@ -1,6 +1,6 @@
 import '../push_api_dart.dart';
 
-initPush({ENV env = ENV.staging, EthWallet? wallet}) async {
+initPush({ENV env = ENV.staging, Wallet? wallet}) async {
   providerContainer.read(envProvider.notifier).setEnv(env);
 
   if (wallet != null) {

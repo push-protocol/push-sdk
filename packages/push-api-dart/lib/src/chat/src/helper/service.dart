@@ -2,10 +2,16 @@ import 'package:push_api_dart/push_api_dart.dart';
 
 Future<User> createUserService({
   required String user,
-  EthWallet? wallet,
+  Wallet? wallet,
   required String publicKey,
   required String encryptedPrivateKey,
 }) async {
+  wallet ??= getCachedWallet();
+
+  if (wallet == null || wallet.signer == null) {
+    throw Exception('Provide signer');
+  }
+
   final requestPath = '/v2/users/';
 
   if (isValidCAIP10NFTAddress(user)) {

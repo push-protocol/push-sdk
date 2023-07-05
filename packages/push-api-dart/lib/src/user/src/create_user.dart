@@ -3,9 +3,10 @@ import 'dart:convert';
 import '../../../push_api_dart.dart';
 
 Future<User?> createUser({
-  required EthWallet wallet,
+  required Signer signer,
   String version = Constants.ENC_TYPE_V3,
   Map<dynamic, Map<String, dynamic>>? additionalMeta,
+  required Function(ProgressHookType) progressHook,
 }) async {
   const passPrefix = r'$0Pc';
   additionalMeta ??= {
@@ -13,7 +14,8 @@ Future<User?> createUser({
       'password': passPrefix + generateRandomSecret(10),
     },
   };
-  final String address = wallet.address;
+  final wallet = getWallet(signer: signer);
+  final String address = signer.getAddress();
 
   if (!isValidETHAddress(address)) {
     throw Exception('Invalid address!');
@@ -21,8 +23,10 @@ Future<User?> createUser({
 
   final caip10 = walletToPCAIP10(address);
   var encryptionType = version;
+  progressHook(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
 
   final keyPairs = await generateKeyPair();
+  progressHook(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
 
   final publicKey = await preparePGPPublicKey(
     encryptionType: encryptionType,
@@ -53,5 +57,3 @@ Future<User?> createUser({
     return User.fromJson(result);
   }
 }
-
-class UserRepo {}

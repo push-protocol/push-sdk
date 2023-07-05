@@ -20,7 +20,7 @@ String generateHash(dynamic message) {
 Future<String> preparePGPPublicKey({
   String encryptionType = Constants.ENC_TYPE_V3,
   required String generatedPublicKey,
-  required EthWallet wallet,
+  required Wallet wallet,
 }) async {
   String chatPublicKey;
 
@@ -63,26 +63,26 @@ Future<String> preparePGPPublicKey({
   return chatPublicKey;
 }
 
-Future<Map<String, dynamic>> getEip191Signature(
-  EthWallet? wallet,
-  String message, {
-  String version = 'v1',
-}) async {
-  if (wallet == null || wallet.privateKey == null) {
-    print('This method is deprecated. Provide signer in the function');
-    // Sending a random signature for backward compatibility
-    return {'signature': 'xyz', 'sigType': 'a'};
-  }
+// Future<Map<String, dynamic>> getEip191Signature(
+//   EthWallet? wallet,
+//   String message, {
+//   String version = 'v1',
+// }) async {
+//   if (wallet == null || wallet.privateKey == null) {
+//     print('This method is deprecated. Provide signer in the function');
+//     // Sending a random signature for backward compatibility
+//     return {'signature': 'xyz', 'sigType': 'a'};
+//   }
 
-  web3.Credentials credentials = web3.EthPrivateKey.fromHex(wallet.privateKey!);
-  List<int> codeUnits = utf8.encode(message);
+//   web3.Credentials credentials = web3.EthPrivateKey.fromHex(wallet.privateKey!);
+//   List<int> codeUnits = utf8.encode(message);
 
-  // EIP191 signature
-  final signed = await credentials.sign(Uint8List.fromList(codeUnits));
+//   // EIP191 signature
+//   final signed = await credentials.sign(Uint8List.fromList(codeUnits));
 
-  final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
-  return {'verificationProof': '$sigType:0x${bytesToHex(signed)}'};
-}
+//   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
+//   return {'verificationProof': '$sigType:0x${bytesToHex(signed)}'};
+// }
 
 String bytesToHex(List<int> bytes) {
   final hexPairs = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0'));
@@ -107,11 +107,11 @@ String stringToHex(String input) {
 Future<EncryptedPrivateKeyModel> encryptPGPKey({
   String encryptionType = Constants.ENC_TYPE_V3,
   required String generatedPrivateKey,
-  required EthWallet wallet,
+  required Wallet wallet,
   dynamic additionalMeta,
 }) async {
-  if (wallet.publicKey == null) {
-    throw Exception('Public key is required');
+  if (wallet.signer == null) {
+    throw Exception('Provide signer in the function');
   }
 
   EncryptedPrivateKeyModel encryptedPrivateKey;
@@ -275,14 +275,14 @@ Future<String> decryptAndVerifySignature({
 
 Future<String> decryptPGPKey({
   required String encryptedPGPPrivateKey,
-  required EthWallet wallet,
+  required Wallet wallet,
   bool? toUpgrade = false,
   dynamic additionalMeta,
   Function? progressHook,
 }) async {
   try {
-    if (wallet.publicKey == null) {
-      throw Exception('Public key is required');
+    if (wallet.signer == null && wallet.address == null) {
+      throw Exception('At least one from account or signer is necessary!');
     }
 
     final encryptionType = jsonDecode(encryptedPGPPrivateKey)['version'];

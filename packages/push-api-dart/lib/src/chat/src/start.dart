@@ -31,8 +31,8 @@ Future<MessageWithCID?> start({
   //TODO add sign function parameter values
   final String signature = await sign(
     message: hash,
-    privateKey: connectedUser.encryptedPrivateKey,
-    publicKey: '',
+    privateKey: connectedUser.user.encryptedPrivateKey!,
+    publicKey: connectedUser.user.publicKey!,
   );
 
   const sigType = 'pgp';

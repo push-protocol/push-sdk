@@ -1,7 +1,8 @@
 import '../../../push_api_dart.dart';
 
 Future<GroupDTO?> updateGroup({
-  EthWallet? wallet,
+  String? account,
+  Signer? signer,
   required String groupName,
   required String groupDescription,
   required String groupImage,
@@ -17,23 +18,12 @@ Future<GroupDTO?> updateGroup({
   required String chatId,
 }) async {
   try {
-    String? userDID;
-    wallet ??= getCachedWallet();
-
-    if (wallet == null) {
-      //copy cached did
-      userDID = getCachedUser()?.did;
-    } else {
-      userDID = await getUserDID(address: wallet.address);
+    if (account == null && signer == null) {
+      throw Exception('At least one from account or signer is necessary!');
     }
 
-    if (userDID == null) {
-      throw Exception('Account address is required.');
-    }
-
-    if (wallet?.privateKey == null) {
-      throw Exception('Private Key is required');
-    }
+    final wallet = getWallet(address: account, signer: signer);
+    String userDID = getAccountAddress(wallet);
 
     updateGroupRequestValidator(
       chatId,
@@ -43,6 +33,11 @@ Future<GroupDTO?> updateGroup({
       members,
       admins,
       userDID,
+    );
+
+    final connectedUser = await getConnectedUserV2(
+      wallet: wallet,
+      privateKey: pgpPrivateKey,
     );
 
     final convertedMembersDIDList =
@@ -63,8 +58,8 @@ Future<GroupDTO?> updateGroup({
 
     final signature = await sign(
       message: hash,
-      privateKey: wallet!.privateKey!,
-      publicKey: wallet.publicKey!,
+      privateKey: connectedUser!.user.encryptedPrivateKey!,
+      publicKey: connectedUser.user.publicKey!,
     );
 
     final sigType = 'pgp';

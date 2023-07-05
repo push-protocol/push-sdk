@@ -2,34 +2,39 @@ import 'dart:convert';
 
 import 'package:push_api_dart/push_api_dart.dart';
 
-class EthWallet {
-  final String address;
-  final String? publicKey, privateKey;
+class Wallet {
+  String? _address;
+  Signer? signer;
 
-  EthWallet({
-    required this.address,
-    required this.publicKey,
-    required this.privateKey,
-  });
+  Wallet({String? address, this.signer}) {
+    _address = address;
+  }
+
+  String? get address => _address ?? signer?.getAddress();
+}
+
+abstract class Signer {
+  Future<String> getEip191Signature(String message);
+  Future<String> getEip712Signature(String message);
+  String getAddress();
 }
 
 class ConnectedUser extends User {
   final User user;
-
   final String? privateKey;
 
   ConnectedUser({
     required this.user,
     required this.privateKey,
-  }) : super();
+  });
 }
 
 class User {
-  late int msgSent;
-  late int maxMsgPersisted;
-  late String wallets;
-  late String encryptedPrivateKey;
-  late String publicKey;
+  int? msgSent;
+  int? maxMsgPersisted;
+  String? wallets;
+  String? encryptedPrivateKey;
+  String? publicKey;
 
   String? verificationProof;
   String? did;
@@ -82,8 +87,11 @@ class User {
     return data;
   }
 
-  EncryptedPrivateKeyModel get parsedPrivateKey {
-    final jsonDecodePrivateKey = jsonDecode(encryptedPrivateKey);
+  EncryptedPrivateKeyModel? get parsedPrivateKey {
+    if (encryptedPrivateKey == null) {
+      return null;
+    }
+    final jsonDecodePrivateKey = jsonDecode(encryptedPrivateKey!);
     return EncryptedPrivateKeyModel.fromJson(jsonDecodePrivateKey);
   }
 }
