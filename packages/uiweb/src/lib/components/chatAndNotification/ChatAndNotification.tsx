@@ -190,12 +190,12 @@ export const ChatAndNotification = () => {
 
   return (
     <Container
-      width="472px"
+      width="470px"
       flexDirection="column"
       maxHeight="600px"
       position="fixed"
       background="#fff"
-      padding='0 15px'
+      padding='0 20px 0 22px'
       right="12px"
       bottom="18px"
       overflow="hidden"

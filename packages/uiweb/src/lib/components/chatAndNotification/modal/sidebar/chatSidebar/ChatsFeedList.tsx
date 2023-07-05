@@ -108,7 +108,7 @@ export const ChatsFeedList = () => {
 
 //styles
 const ChatListCard = styled(Section)`
-  padding:0px 5px 0px 0px;
+  padding:0px 3px 0px 0px;
   &::-webkit-scrollbar-thumb {
     background: rgb(181 181 186);
     border-radius: 10px;
