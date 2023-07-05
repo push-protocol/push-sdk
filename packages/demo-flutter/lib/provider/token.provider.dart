@@ -54,11 +54,11 @@ class UidProvider extends StateNotifier<String?> {
     const mnemonic =
         "wine album quarter custom birth great leisure bid gossip rabbit early choice";
     final wallet = Wallet.fromMnemonic(mnemonic);
-    push.createUser(
-        wallet: push.EthWallet(
-      address: wallet.address!,
-      publicKey: wallet.publicKey,
-      privateKey: wallet.privateKey,
-    ));
+    // push.createUser(
+    //     wallet: push.EthWallet(
+    //   address: wallet.address!,
+    //   publicKey: wallet.publicKey,
+    //   privateKey: wallet.privateKey,
+    // ));
   }
 }

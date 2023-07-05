@@ -196,8 +196,11 @@ Future<Map<String, dynamic>> getEip712Signature(
   return {'verificationProof': verificationProof};
 }
 
-Future<Map<String, dynamic>> getEip191Signature(Wallet wallet, String message,
-    {String version = 'v1'}) async {
+Future<Map<String, dynamic>> getEip191Signature(
+  Wallet wallet,
+  String message, {
+  String version = 'v1',
+}) async {
   // EIP191 signature
 
   final signature = wallet.signer?.signMessage(message) ?? "";

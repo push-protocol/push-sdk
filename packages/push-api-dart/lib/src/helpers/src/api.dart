@@ -1,8 +1,8 @@
 import '../../../push_api_dart.dart';
 
-String getQueryParams(Map<dynamic, dynamic> obj) {
-  return obj.keys
-      .map((key) => '$key=${Uri.encodeComponent(obj[key])}')
+String getQueryParams(Map<dynamic, dynamic> data) {
+  return data.keys
+      .map((key) => '$key=${Uri.encodeComponent(data[key].toString())}')
       .join('&');
 }
 

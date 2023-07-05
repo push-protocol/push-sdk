@@ -1,6 +1,6 @@
 // The output response from parsing a notification object
 
-class ParsedResponseType {
+class FeedResponse {
   String cta;
   String title;
   String message;
@@ -13,7 +13,7 @@ class ParsedResponseType {
   String secret;
   Notification notification;
 
-  ParsedResponseType({
+  FeedResponse({
     required this.cta,
     required this.title,
     required this.message,
@@ -43,8 +43,8 @@ class ParsedResponseType {
     };
   }
 
-  factory ParsedResponseType.fromJson(Map<String, dynamic> json) {
-    return ParsedResponseType(
+  factory FeedResponse.fromJson(Map<String, dynamic> json) {
+    return FeedResponse(
       cta: json['cta'] as String,
       title: json['title'] as String,
       message: json['message'] as String,
@@ -55,7 +55,8 @@ class ParsedResponseType {
       image: json['image'] as String,
       blockchain: json['blockchain'] as String,
       secret: json['secret'] as String,
-      notification: Notification.fromJson(json['notification'] as Map<String, dynamic>),
+      notification:
+          Notification.fromJson(json['notification'] as Map<String, dynamic>),
     );
   }
 }

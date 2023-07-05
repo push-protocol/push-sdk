@@ -1,11 +1,11 @@
 import '../../push_api_dart.dart';
 
-List<ParsedResponseType> parseApiResponse(List response) {
+List<FeedResponse> parseApiResponse(List response) {
   return response.map((apiNotification) {
     final payload = apiNotification['payload'];
     final notification = apiNotification['payload']['notification'];
 
-    return ParsedResponseType(
+    return FeedResponse(
       cta: payload['cta'],
       title: payload['asub'] ?? '',
       message: payload['bigMessage'] ?? notification['body'] ?? '',

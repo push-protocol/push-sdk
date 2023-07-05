@@ -2,7 +2,7 @@ import 'package:push_api_dart/src/utils/parse_api.dart';
 
 import '../../../push_api_dart.dart';
 
-getFeeds({
+Future<List<FeedResponse>?> getFeeds({
   required String address,
   int page = Pagination.INITIAL_PAGE,
   int limit = Pagination.LIMIT,
@@ -23,9 +23,5 @@ getFeeds({
     return null;
   }
 
-  if (raw) {
-    return result;
-  } else {
-    return parseApiResponse(result);
-  }
+  return parseApiResponse(result["feeds"]);
 }
