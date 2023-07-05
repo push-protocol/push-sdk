@@ -5,3 +5,4 @@ export * from './useSDKSocket';
 export * from './useResolveWeb3Name';
 export * from './notifications';
 export * from './chatAndNotification';
+export * from './useDivOffsetWidth';
