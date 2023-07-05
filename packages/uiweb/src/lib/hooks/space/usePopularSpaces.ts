@@ -5,8 +5,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 export const usePopularSpaces = () => {
   const LIMIT = 10;
-  const { popularSpaces, setPopularSpaces, loading, setLoading } =
-    useSpaceData();
+  const { popularSpaces, setPopularSpaces, setLoading } = useSpaceData();
 
   const fetchPopularSpaces = async () => {
     setLoading(true);

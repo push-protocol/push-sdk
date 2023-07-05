@@ -12,7 +12,9 @@ import {
   usePopularSpaces,
   useSpaceRequests,
 } from '../../../hooks';
+
 import { ISpacePaginationData } from '../../../context/spacesContext';
+import { SpaceIFeeds } from '@pushprotocol/restapi';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -31,7 +33,7 @@ enum FilterEnums {
   Scheduled = 'Scheduled',
 }
 export interface ISpaceFeedProps {
-  account?: any;
+  account?: string;
   orientation?: 'horizontal' | 'vertical';
   height?: number;
   width?: number;
@@ -72,16 +74,16 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setTab(tab);
   };
 
-  const handleFilterData = (spacesList: any) => {
+  const handleFilterData = (spacesList: SpaceIFeeds[]) => {
     if (filterTab === FilterEnums.All) {
       return spacesList;
     } else if (filterTab === FilterEnums.Live) {
       return spacesList.filter(
-        (space: any) => space.spaceInformation.status === 'ACTIVE'
+        (space: SpaceIFeeds) => space.spaceInformation?.status === 'ACTIVE'
       );
     } else if (filterTab === FilterEnums.Scheduled) {
       return spacesList.filter(
-        (space: any) => space.spaceInformation.status === 'PENDING'
+        (space: SpaceIFeeds) => space.spaceInformation?.status === 'PENDING'
       );
     } else {
       return spacesList;
@@ -161,20 +163,20 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
             ? mySpaces &&
-              mySpaces.apiData?.map((space: any, index: any) => {
+              mySpaces.apiData?.map((space: SpaceIFeeds) => {
                 return (
                   <SpaceBanner
-                    spaceId={space.spaceId}
+                    spaceId={space.spaceId as string}
                     orientation="pill"
                     onBannerClick={handleClick}
                   />
                 );
               })
             : mySpaces &&
-              mySpaces.apiData?.map((space: any, index: any) => {
+              mySpaces.apiData?.map((space: SpaceIFeeds) => {
                 return (
                   <SpaceBanner
-                    spaceId={space?.spaceId}
+                    spaceId={space.spaceId as string}
                     orientation="maximized"
                     onBannerClick={handleClick}
                   />
@@ -183,7 +185,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         </Spaces>
       ) : (
         <>
-          <Navigation showTabs={showTabs} width={width}>
+          <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
             <NavButtonWrapper>
               {sortingOrder.map((tabName: string) => {
                 return (
@@ -227,11 +229,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               {tab === Tabs.ForYou ? (
                 <Spaces orientation={orientation}>
                   {mySpaces &&
-                    handleFilterData(mySpaces.apiData).map(
-                      (space: { spaceId: string }, index: any) => {
+                    handleFilterData(mySpaces.apiData as SpaceIFeeds[]).map(
+                      (space: SpaceIFeeds) => {
                         return (
                           <SpaceBanner
-                            spaceId={space.spaceId}
+                            spaceId={space.spaceId as string}
                             orientation="maximized"
                             onBannerClick={handleClick}
                           />
@@ -243,32 +245,32 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 <PopularSpaces>
                   <Text>Popular Spaces</Text>
                   {popularSpaces &&
-                    handleFilterData(popularSpaces.apiData).map(
-                      (space: { spaceId: string }, index: any) => {
-                        return (
-                          <SpaceBanner
-                            spaceId={space.spaceId}
-                            orientation="maximized"
-                            onBannerClick={handleClick}
-                          />
-                        );
-                      }
-                    )}
+                    handleFilterData(
+                      popularSpaces.apiData as SpaceIFeeds[]
+                    ).map((space: SpaceIFeeds) => {
+                      return (
+                        <SpaceBanner
+                          spaceId={space.spaceId as string}
+                          orientation="maximized"
+                          onBannerClick={handleClick}
+                        />
+                      );
+                    })}
                 </PopularSpaces>
               ) : (
                 <Spaces orientation={orientation}>
                   {spaceRequests &&
-                    handleFilterData(spaceRequests.apiData).map(
-                      (space: { spaceId: string }, index: any) => {
-                        return (
-                          <SpaceBanner
-                            spaceId={space.spaceId}
-                            orientation="maximized"
-                            onBannerClick={handleClick}
-                          />
-                        );
-                      }
-                    )}
+                    handleFilterData(
+                      spaceRequests.apiData as SpaceIFeeds[]
+                    ).map((space: SpaceIFeeds) => {
+                      return (
+                        <SpaceBanner
+                          spaceId={space.spaceId as string}
+                          orientation="maximized"
+                          onBannerClick={handleClick}
+                        />
+                      );
+                    })}
                 </Spaces>
               )}
               {loading && <Spinner size="40" />}
@@ -298,6 +300,7 @@ const Container = styled.div`
 
 const Navigation = styled.div<{
   showTabs?: boolean;
+  showFilter?: boolean;
   width?: number;
 }>`
   display: ${(props) => (props.showTabs ? 'flex' : 'none')};
@@ -306,6 +309,7 @@ const Navigation = styled.div<{
   align-items: center;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   border-bottom: 1px solid #DCDCDF;
+  margin-bottom: ${(props) => (props.showFilter ? '0' : '27px')};
 }`;
 
 const NavButtonWrapper = styled.div`

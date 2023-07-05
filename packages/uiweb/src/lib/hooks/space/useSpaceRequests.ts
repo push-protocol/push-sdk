@@ -6,8 +6,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 export const useSpaceRequests = (account: string) => {
   const LIMIT = 1;
 
-  const { spaceRequests, setSpaceRequests, loading, setLoading } =
-    useSpaceData();
+  const { spaceRequests, setSpaceRequests, setLoading } = useSpaceData();
 
   const fetchSpaceRequests = async () => {
     setLoading(true);

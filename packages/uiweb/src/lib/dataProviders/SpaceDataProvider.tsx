@@ -67,7 +67,7 @@ export const SpacesUIProvider = ({
     setMySpaces((prevState) => {
       if (apiData) {
         const existingIds = new Set(
-          prevState.apiData?.map((space: any) => space.spaceId)
+          prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
         console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
@@ -97,7 +97,7 @@ export const SpacesUIProvider = ({
     setPopularSpaces((prevState) => {
       if (apiData) {
         const existingIds = new Set(
-          prevState.apiData?.map((space: any) => space.spaceId)
+          prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
         console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
@@ -127,7 +127,7 @@ export const SpacesUIProvider = ({
     setSpaceRequests((prevState) => {
       if (apiData) {
         const existingIds = new Set(
-          prevState.apiData?.map((space: any) => space.spaceId)
+          prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
         console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(

@@ -7,7 +7,7 @@ import { ISpacePaginationData } from '../../context/spacesContext';
 export const useMySpaces = (account: string) => {
   const LIMIT = 1;
 
-  const { mySpaces, setMySpaces, loading, setLoading } = useSpaceData();
+  const { mySpaces, setMySpaces, setLoading } = useSpaceData();
 
   const fetchMySpaces = async () => {
     setLoading(true);
