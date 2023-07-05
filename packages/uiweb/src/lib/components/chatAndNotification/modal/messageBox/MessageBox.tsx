@@ -405,8 +405,8 @@ export const MessageBox = () => {
             <MessageListCard
               flexDirection="column"
               justifyContent="start"
-              width="100%"
-              padding="0 3px 15px 3px"
+              // width="100%"
+              padding="0 2px 15px 2px"
             >
               {selectedMessages?.messages.map(
                 (chat: IMessageIPFS, index: number) => {
