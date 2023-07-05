@@ -15,6 +15,7 @@ import { useGetSpaceInfo } from './../../../hooks';
 export interface ISpaceBannerProps {
   spaceId: string;
   orientation?: 'maximized' | 'minimized' | 'pill';
+  onBannerClick?: (arg: string) => void;
 }
 
 /**
@@ -25,18 +26,32 @@ interface IThemeProps {
   theme?: ISpacesTheme;
   orientation?: string;
   status?: string;
+  clickable?: boolean;
 }
 
 export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   spaceId,
   orientation,
+  onBannerClick,
 }) => {
 
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
 
+  const handleClick = () => {
+    if (onBannerClick) {
+      onBannerClick(spaceData?.spaceId || '');
+    }
+  };
+
   return (
-      <Container orientation={orientation} status={getSpaceStatus(spaceData?.scheduleAt as Date)} theme={theme}>
+      <Container 
+        orientation={orientation} 
+        status={getSpaceStatus(spaceData?.scheduleAt as Date)} 
+        theme={theme}
+        onClick={handleClick}
+        clickable={Boolean(onBannerClick)}
+      >
         {orientation === "maximized" && 
           <HostPfpContainer
             name={spaceData?.members[0].wallet.slice(7)}
@@ -114,6 +129,7 @@ const Container = styled.div<IThemeProps>`
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
+  cursor: ${props => props.clickable && 'pointer'};
 }`;
 
 const Title = styled.div<{ orientation?: string }>`

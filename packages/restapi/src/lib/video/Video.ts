@@ -626,7 +626,7 @@ export class Video {
           retry: true,
         });
       });
-
+      
       this.peerInstances[peerAddress]?.signal(signalData);
 
       // send the addresses the local peer is connected to remote peer
