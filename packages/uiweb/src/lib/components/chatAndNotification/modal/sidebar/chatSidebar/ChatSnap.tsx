@@ -42,7 +42,7 @@ const Message = ({
       color="#62626A"
       cursor="pointer"
     >
-      {shortenText(messageContent, 28)}
+      {shortenText(messageContent, 36)}
     </Span>
   ) : messageType === 'Image' ? (
     <Span

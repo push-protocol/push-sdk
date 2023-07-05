@@ -78,7 +78,6 @@ export const MessageBoxHeader = () => {
     ? ethers.utils.getAddress(walletLowercase)
     : null;
   const web3Name = checksumWallet ? web3NameList[checksumWallet.toLowerCase()] : null;
-
   const handleBack = () => {
     if (
       activeSubTab &&
@@ -189,9 +188,15 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
 
   const SnapMessageHeader = () => {
+    const selectedChat =
+    chatsFeed[selectedChatId as string] ||
+    requestsFeed[selectedChatId as string] ||
+    (Object.keys(searchedChats || {}).length
+      ? searchedChats![selectedChatId as string]
+      : null);
     return (
       <ChatSnap
-        chat={activeSubTab === PUSH_SUB_TABS.REQUESTS?requestsFeed[selectedChatId as string]:chatsFeed[selectedChatId as string]}
+        chat={selectedChat}
         id={selectedChatId as string}
         modalOpen={modalOpen}
       />
@@ -234,7 +239,6 @@ export const MinimisedModalHeader: React.FC<MinimisedModalHeaderPropType> = ({
             cursor={!modalOpen ? 'default' : 'pointer'}
             onClick={() => {
               setActiveTab(PUSH_TABS.CHATS);
-
               setSearchedChats(null);
               setSelectedChatId(null);
             }}
