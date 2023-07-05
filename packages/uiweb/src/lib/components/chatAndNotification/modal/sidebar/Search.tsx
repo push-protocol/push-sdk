@@ -37,7 +37,7 @@ export const Search: React.FC<SearchPropType> = ({
     setSearchedText(val);
   };
 
-  const {  searchedChats, setSearchedChats } =
+  const {  setSearchedChats } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
 
     const {

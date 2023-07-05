@@ -249,8 +249,10 @@ export const MessageBox = () => {
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
     (searchedChats ? searchedChats[selectedChatId as string] : null);
+   
   const requestFeedids = Object.keys(requestsFeed);
   const selectedMessages = chats.get(selectedChatId as string);
+  
   const dates = new Set();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -403,8 +405,8 @@ export const MessageBox = () => {
             <MessageListCard
               flexDirection="column"
               justifyContent="start"
-              width="100%"
-              padding="0 3px 15px 3px"
+              // width="100%"
+              padding="0 2px 15px 2px"
             >
               {selectedMessages?.messages.map(
                 (chat: IMessageIPFS, index: number) => {

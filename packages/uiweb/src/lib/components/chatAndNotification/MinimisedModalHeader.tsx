@@ -72,14 +72,12 @@ export const MessageBoxHeader = () => {
     (Object.keys(searchedChats || {}).length
       ? searchedChats![selectedChatId as string]
       : null);
-      console.log(selectedChatId)
-console.log(searchedChats)
   useResolveWeb3Name(selectedChat?.did, env);
   const walletLowercase = pCAIP10ToWallet(selectedChat?.did)?.toLowerCase();
   const checksumWallet = walletLowercase
     ? ethers.utils.getAddress(walletLowercase)
     : null;
-  const web3Name = checksumWallet ? web3NameList[checksumWallet] : null;
+  const web3Name = checksumWallet ? web3NameList[checksumWallet.toLowerCase()] : null;
 
   const handleBack = () => {
     if (

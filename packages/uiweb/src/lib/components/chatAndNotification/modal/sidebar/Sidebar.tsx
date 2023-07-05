@@ -6,10 +6,9 @@ import type {
   ChatFeedsType,
   NotificationFeedsType,
   PushSubTabs,
-  PushTabs} from '../../../../types';
-import {
-  SIDEBAR_PLACEHOLDER_KEYS
+  PushTabs,
 } from '../../../../types';
+import { SIDEBAR_PLACEHOLDER_KEYS } from '../../../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../../../types';
 import {
   ChatMainStateContext,
@@ -24,20 +23,22 @@ import type { ChatMainStateContextType } from '../../../../context/chatAndNotifi
 import { AngleArrowIcon } from '../../../../icons/AngleArrow';
 import { device, PushSubTabTitle } from '../../../../config';
 import {
+  getAddress,
   getDefaultFeedObject,
   getNewChatUser,
   getObjectsWithMatchingKeys,
   getSearchedNotificationsList,
   shortenNumber,
+  walletToPCAIP10,
 } from '../../../../helpers';
 import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
 import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
-import {SidebarPlaceholder} from './SidebarPlaceholder';
+import { SidebarPlaceholder } from './SidebarPlaceholder';
 import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
-
-
+import useFetchChat from '../../../../hooks/chat/useFetchChat';
+import type { IFeeds } from '@pushprotocol/restapi';
 
 export type TabPropType = {
   tabName: string;
@@ -55,8 +56,12 @@ type SidebarSubTabsPropType = {
 };
 
 const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
-  const {activeTab, setActiveTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
-  const { setSearchedChats, setSelectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { activeTab, setActiveTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
+  const { setSearchedChats, setSelectedChatId } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
@@ -102,8 +107,7 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
           ? 'solid none solid solid'
           : 'solid solid solid none'
       }
-
-      borderWidth='2px'
+      borderWidth="2px"
       borderRadius={
         activeTab === tabValue
           ? '8px'
@@ -137,9 +141,7 @@ const Tab: React.FC<TabPropType> = ({ tabName, tabValue }) => {
 
 const SidebarTabs = () => {
   return (
-    <Section
-      margin=" 0 0 5px 0"
-    >
+    <Section margin=" 0 0 5px 0">
       <Tab tabName="Chat" tabValue={PUSH_TABS.CHATS} />
       <Tab tabName="App Notifications" tabValue={PUSH_TABS.APP_NOTIFICATIONS} />
     </Section>
@@ -151,13 +153,15 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
   tabValue,
   isClickable = false,
 }) => {
-
-  const { setActiveSubTab, activeSubTab } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
-  const { setSearchedChats, setSelectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { setActiveSubTab, activeSubTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
+  const { setSearchedChats, setSelectedChatId } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { setSearchedNotifications } = useContext<any>(
     NotificationMainStateContext
   );
-
 
   return (
     <SubContainer
@@ -198,7 +202,13 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
         <Span fontWeight="700" fontSize="16px" color="#000">
           {subTab.title}
         </Span>
-        <Span cursor='pointer' textAlign="left" fontWeight="400" fontSize="16px" color={isClickable ? "#0D67FE " : "#62626A"}>
+        <Span
+          cursor="pointer"
+          textAlign="left"
+          fontWeight="400"
+          fontSize="16px"
+          color={isClickable ? '#0D67FE ' : '#62626A'}
+        >
           {subTab.subTitle}
         </Span>
       </Section>
@@ -208,14 +218,12 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
 
 export const Sidebar = () => {
   const { loading: chatsLoading } = useFetchChats();
+  const { fetchChat } = useFetchChat();
 
-
-  const {
-    newChat,
-    setNewChat,
-    activeTab,
-    activeSubTab
-  } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { newChat, setNewChat, activeTab, activeSubTab } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
 
   const {
     chatsFeed,
@@ -233,7 +241,6 @@ export const Sidebar = () => {
     searchedNotifications,
   } = useContext<any>(NotificationMainStateContext);
   const { fetchChatProfile } = useGetChatProfile();
-
   type PushSubTabDetailsType = {
     [key in PushSubTabs]: {
       title: string;
@@ -245,14 +252,16 @@ export const Sidebar = () => {
     REQUESTS: {
       title: PushSubTabTitle.REQUESTS.title,
       subTitle: ` ${shortenNumber(
-        Object.keys(requestsFeed || {}).length,10
+        Object.keys(requestsFeed || {}).length,
+        10
       )} requests from people you may know`,
       icon: <AngleArrowIcon />,
     },
     SPAM: {
       title: PushSubTabTitle.SPAM.title,
       subTitle: `${shortenNumber(
-        Object.keys(spamNotifsFeed || {}).length,5
+        Object.keys(spamNotifsFeed || {}).length,
+        5
       )} messages in your spam box`,
       icon: <SpamIconSvg />,
     },
@@ -268,24 +277,39 @@ export const Sidebar = () => {
       searchedText,
       web3NameList
     );
-
     if (Object.keys(result || {}).length) setSearchedChats(result);
     else {
-      const result = await getNewChatUser({
-        searchText: searchedText,
-        fetchChatProfile,
-        env,
-      });
-      if (result) {
-        const defaultFeed = getDefaultFeedObject({ user: result });
-        setSearchedChats({ [defaultFeed.did.toLowerCase()]: defaultFeed });
-        setNewChat(true);
-      } else {
-        setSearchedChats({});
-      }
+      // const address = await getAddress(searchedText, env);
+      let newChatFeed;
+        const newChatUser = await getNewChatUser({
+          searchText: searchedText,
+          fetchChatProfile,
+          env,
+        });
+
+        if (newChatUser) {
+           newChatFeed = (await fetchChat({
+            recipientAddress: newChatUser!.did,
+          })) as IFeeds;
+          if (!Object.keys(newChatFeed || {}).length)
+            {
+              newChatFeed = getDefaultFeedObject({ user: newChatUser });
+              setSearchedChats({ [newChatFeed.did.toLowerCase()]: newChatFeed });
+              setNewChat(true);
+            }
+            else{
+              setSearchedChats({ [newChatFeed.did.toLowerCase()]: newChatFeed });
+            }
+        }
+        else{
+          if (!Object.keys(newChatFeed || {}).length) {
+            setSearchedChats({});
+          }
+        }
+
+     
     }
   };
-
   const onChatSearchReset = () => {
     setSearchedChats(null);
   };
@@ -330,9 +354,7 @@ export const Sidebar = () => {
         )}
 
       {!searchedChats && newChat && (
-        <SidebarPlaceholder
-         id={SIDEBAR_PLACEHOLDER_KEYS.NEW_CHAT}
-        />
+        <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.NEW_CHAT} />
       )}
       {!newChat &&
         !chatsLoading &&
@@ -375,9 +397,7 @@ export const Sidebar = () => {
             )}
           </ChatListCard>
           {searchedChats && !Object.keys(searchedChats).length && (
-              <SidebarPlaceholder
-                  id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH}
-              />
+            <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH} />
           )}
         </>
       )}
@@ -392,11 +412,10 @@ export const Sidebar = () => {
                 />
               )}
           </NotificationListCard>
-          {searchedNotifications && !Object.keys(searchedNotifications).length && (
-             <SidebarPlaceholder
-             id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH}
-         />
-          )}
+          {searchedNotifications &&
+            !Object.keys(searchedNotifications).length && (
+              <SidebarPlaceholder id={SIDEBAR_PLACEHOLDER_KEYS.SEARCH} />
+            )}
         </>
       )}
     </Section>

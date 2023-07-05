@@ -57,7 +57,7 @@ export function useResolveWeb3Name(address: string,env:Env) {
               // attempt ENS name resolution first, with a fallback to Unstoppable Domains if
               // a value is not found from ENS.
               Object.keys(web3NameList).forEach(element => {
-                if(web3NameList[checksumWallet]){
+                if(web3NameList[checksumWallet.toLowerCase()]){
                   return;
                 }
               });
