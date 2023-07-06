@@ -8,7 +8,7 @@ export const SpaceFeed = () => {
   const [showTab, setShowTab] = useState<boolean>(true);
   const [horizontal, setHorizontal] = useState<boolean>(false);
   const [width, setWidth] = useState<number>();
-  const [height, setHeight] = useState<number>(160);
+  const [height, setHeight] = useState<number>(500);
   const [sortingOrder, setSortingOrder] = useState<string[]>([]);
 
   const handleShowTab = () => {

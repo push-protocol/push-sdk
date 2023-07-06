@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import { SpaceIFeeds } from '@pushprotocol/restapi';
+
 import { SpaceBanner } from '../SpaceBanner';
 
 import { Spinner } from '../reusables/Spinner';
@@ -14,7 +16,7 @@ import {
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
-import { SpaceIFeeds } from '@pushprotocol/restapi';
+import spacesIcon from '../../../icons/Spaces.svg';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -24,7 +26,7 @@ enum OrientationEnums {
 enum Tabs {
   ForYou = 'For You',
   Popular = 'Popular',
-  Requests = 'Requests',
+  HostedByYou = 'Hosted by you',
 }
 
 enum FilterEnums {
@@ -49,7 +51,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   orientation = 'veritcal',
   height,
   width,
-  sortingOrder = [Tabs.ForYou, Tabs.Popular, Tabs.Requests],
+  sortingOrder = [Tabs.ForYou, Tabs.Popular, Tabs.HostedByYou],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
@@ -104,10 +106,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     ) {
       if (spaces === mySpaces)
         spaces.currentPage &&
-          setMySpaces({
-            currentPage: spaces.currentPage + 1,
-            lastPage: spaces.lastPage + 1,
-          });
+          console.log('spaces.currentPage', spaces.currentPage, Date.now());
+      setMySpaces({
+        currentPage: spaces.currentPage + 1,
+        lastPage: spaces.lastPage + 1,
+      });
       if (spaces === popularSpaces)
         spaces.currentPage &&
           setPopularSpaces({
@@ -132,7 +135,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     if (tab === Tabs.Popular) {
       incrementSpacePage(popularSpaces);
     }
-    if (tab === Tabs.Requests) {
+    if (tab === Tabs.HostedByYou) {
       incrementSpacePage(spaceRequests);
     }
   };
@@ -267,19 +270,30 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ) : (
                 <Spaces orientation={orientation}>
                   {spaceRequests &&
-                    handleFilterData(
-                      spaceRequests.apiData as SpaceIFeeds[]
-                    ).map((space: SpaceIFeeds) => {
-                      return (
-                        <SpaceBanner
-                          spaceId={space.spaceId as string}
-                          orientation="maximized"
-                          onBannerClick={
-                            onBannerClickHandler ? handleClick : undefined
-                          }
-                        />
-                      );
-                    })}
+                    (handleFilterData(spaceRequests.apiData as SpaceIFeeds[])
+                      .length === 0 ? (
+                      <NoSpaces>
+                        <SpacesIcon src={spacesIcon} />
+                        <NoSpacesTextV1>Create a space</NoSpacesTextV1>
+                        <NoSpacesTextV2>
+                          Get started by creating a space
+                        </NoSpacesTextV2>
+                      </NoSpaces>
+                    ) : (
+                      handleFilterData(
+                        spaceRequests.apiData as SpaceIFeeds[]
+                      ).map((space: SpaceIFeeds) => {
+                        return (
+                          <SpaceBanner
+                            spaceId={space.spaceId as string}
+                            orientation="maximized"
+                            onBannerClick={
+                              onBannerClickHandler ? handleClick : undefined
+                            }
+                          />
+                        );
+                      })
+                    ))}
                 </Spaces>
               )}
               {loading && <Spinner size="40" />}
@@ -400,4 +414,30 @@ const FilterButton = styled.button<{ active: boolean }>`
   &:hover {
     cursor: pointer;
   }
+}`;
+
+const NoSpaces = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}`;
+
+const SpacesIcon = styled.img`
+  width: 36px;
+  height: 36px;
+}`;
+
+const NoSpacesTextV1 = styled.div`
+  font-family: 'Strawford';
+  font-weight: 450;
+  font-size: 16px;
+  color: #000;
+}`;
+
+const NoSpacesTextV2 = styled.div`
+  font-family: 'Strawford';
+  font-weight: 450;
+  color: #71717A;
+  font-size: 14px;
 }`;
