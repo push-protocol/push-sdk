@@ -27,8 +27,6 @@ export interface ISpaceDataContextValues {
   spaceInfo: ISpaceInfo;
   setSpaceInfo: (key: string, value: SpaceDTO) => void;
   getSpaceInfo: (key: string) => SpaceDTO | undefined;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   mySpaces: ISpacePaginationData;
   setMySpaces: (paginationData: ISpacePaginationData) => void;
   popularSpaces: ISpacePaginationData;
@@ -86,10 +84,6 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
     lastPage: 2,
   } as ISpacePaginationData,
   setSpaceRequests: () => {
-    /**/
-  },
-  loading: false,
-  setLoading: () => {
     /**/
   },
 };

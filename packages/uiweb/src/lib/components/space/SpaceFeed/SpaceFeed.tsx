@@ -65,7 +65,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
-    loading,
   } = useSpaceData();
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
@@ -151,9 +150,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   //API calls
-  useMySpaces(account);
-  usePopularSpaces();
-  useSpaceRequests(account);
+  const mySpaceLoading = useMySpaces(account);
+  const popularSpaceLoading = usePopularSpaces();
+  const spaceRequestsLoading = useSpaceRequests(account);
+  const { loading } =
+    mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
     <div>

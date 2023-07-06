@@ -29,7 +29,6 @@ export const SpacesUIProvider = ({
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
-  const [loading, setLoading] = useState(false);
 
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
@@ -170,8 +169,6 @@ export const SpacesUIProvider = ({
     setPopularSpaces: setPopularSpacePaginationInfo,
     spaceRequests,
     setSpaceRequests: setSpacesRequestPaginationInfo,
-    loading,
-    setLoading,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);

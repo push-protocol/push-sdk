@@ -1,12 +1,13 @@
 import { useSpaceData } from './useSpaceData';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
 
 export const useSpaceRequests = (account: string) => {
   const LIMIT = 1;
 
-  const { spaceRequests, setSpaceRequests, setLoading } = useSpaceData();
+  const { spaceRequests, setSpaceRequests } = useSpaceData();
+  const [loading, setLoading] = useState(false);
 
   const fetchSpaceRequests = async () => {
     setLoading(true);
@@ -36,4 +37,6 @@ export const useSpaceRequests = (account: string) => {
   useEffect(() => {
     fetchSpaceRequests();
   }, [spaceRequests.currentPage]);
+
+  return { loading };
 };

@@ -1,11 +1,12 @@
 import { useSpaceData } from './useSpaceData';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
 
 export const usePopularSpaces = () => {
   const LIMIT = 10;
-  const { popularSpaces, setPopularSpaces, setLoading } = useSpaceData();
+  const { popularSpaces, setPopularSpaces } = useSpaceData();
+  const [loading, setLoading] = useState(false);
 
   const fetchPopularSpaces = async () => {
     setLoading(true);
@@ -34,4 +35,6 @@ export const usePopularSpaces = () => {
   useEffect(() => {
     fetchPopularSpaces();
   }, [popularSpaces.currentPage]);
+
+  return { loading };
 };
