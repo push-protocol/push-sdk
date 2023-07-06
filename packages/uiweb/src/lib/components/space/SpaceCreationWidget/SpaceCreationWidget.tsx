@@ -84,9 +84,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         //   setLoading(true);
             // const librarySigner = await library.getSigner();
         
-            const response = await PushAPI.space.create(spaceCreate);
+            // const response = await PushAPI.space.create(spaceCreate);
     
-            console.log(response);
+            // console.log(response);
         //   setSendResponse(response);
         } catch (e:any) {
             console.error(e.message);

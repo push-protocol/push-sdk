@@ -1,6 +1,8 @@
 import React, { useState, MouseEventHandler } from 'react'
 import styled from 'styled-components';
 
+import DateTimePicker from '../../reusables/DateTimePicker';
+
 import { Modal } from '../../reusables/Modal';
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { TextInputWithCounter } from '../../reusables/TextInput';
@@ -28,6 +30,11 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
         borderColor: '#8b5cf6'
     }
 
+    const handleDateTimeChange = (dateTime: Date) => {
+        // Handle the selected date and time here
+        console.log(dateTime);
+    };
+
     return (
         <Modal>
             <ModalHeader
@@ -36,18 +43,7 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
                 closeCallback={closeScheduleModal}
             />
 
-            <TextInputWithCounter
-                labelName='Select date and time'
-                inputValue={dateValue}
-                onInputChange={onDateChange}
-                charCount={12}
-            />
-
-            <TextInputWithCounter
-                inputValue={timeValue}
-                onInputChange={onTimeChange}
-                charCount={12}
-            />
+            <DateTimePicker onDateTimeChange={handleDateTimeChange} />
 
             <ButtonContainer>
                     <Button
