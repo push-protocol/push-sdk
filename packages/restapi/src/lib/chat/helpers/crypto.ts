@@ -1,5 +1,6 @@
 import * as PGP from './pgp';
 import * as AES from './aes';
+import * as CryptoJS from 'crypto-js';
 import {
   IConnectedUser,
   IFeeds,

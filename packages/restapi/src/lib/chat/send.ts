@@ -58,17 +58,14 @@ export const send = async (
     });
 
     let apiEndpoint: string;
-    if (
-      !isGroup ||
-      (conversationResponse && !conversationResponse?.threadHash)
-    ) {
+    if (!isGroup && conversationResponse && !conversationResponse?.threadHash) {
       apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
     } else {
       apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
     }
 
     const body: ISendMessagePayload = await sendMessagePayload(
-      receiverAddress,
+      receiver,
       sender,
       messageObj,
       messageContent,

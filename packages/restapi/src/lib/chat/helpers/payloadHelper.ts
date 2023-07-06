@@ -141,7 +141,6 @@ export const sendMessagePayload = async (
     signingKey: senderCreatedUser.privateKey!,
   });
   body.verificationProof = `pgpv2:${signature}`;
-  console.log(body);
   return body;
 };
 
