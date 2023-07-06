@@ -419,21 +419,22 @@ export const decryptAndVerifyMessage = async (
    * 1. Decrypt AES Key
    * 2. Decrypt messageObj.message, messageObj.meta , messageContent
    */
+  const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
   const secretKey: string = await pgpDecrypt({
     cipherText: message.encryptedSecret,
     toPrivateKeyArmored: pgpPrivateKey,
   });
-  message.messageContent = aesDecrypt({
+  decryptedMessage.messageContent = aesDecrypt({
     cipherText: message.messageContent,
     secretKey,
   });
   if (message.messageObj) {
-    message.messageObj = JSON.parse(
+    decryptedMessage.messageObj = JSON.parse(
       aesDecrypt({
         cipherText: message.messageObj as string,
         secretKey,
       })
     );
   }
-  return message;
+  return decryptedMessage;
 };

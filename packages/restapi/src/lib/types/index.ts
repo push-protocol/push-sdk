@@ -431,8 +431,23 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
+  messageObj?:
+    | {
+        content: string;
+        meta?: META_MESSAGE_META;
+      }
+    | string;
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use VerificationProof instead
+   */
   sigType: string;
   timestamp?: number;
   encType: string;
