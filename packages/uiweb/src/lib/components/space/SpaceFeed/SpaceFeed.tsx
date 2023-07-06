@@ -41,7 +41,7 @@ export interface ISpaceFeedProps {
   showTabs?: boolean;
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
   showFilter?: boolean;
-  onBannerClick?: (arg: string) => void;
+  onBannerClickHandler?: (arg: string) => void;
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
@@ -53,7 +53,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
-  onBannerClick,
+  onBannerClickHandler,
 }) => {
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [filterTab, setFilterTab] = useState(filter);
@@ -91,8 +91,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   const handleClick = (spaceId: string) => {
-    if (onBannerClick) {
-      onBannerClick(spaceId || '');
+    if (onBannerClickHandler) {
+      return onBannerClickHandler(spaceId || '');
     }
   };
 
@@ -155,8 +155,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   usePopularSpaces();
   useSpaceRequests(account);
 
-  console.log('requests', spaceRequests);
-
   return (
     <div>
       {orientation === OrientationEnums.Horizontal ? (
@@ -168,7 +166,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   <SpaceBanner
                     spaceId={space.spaceId as string}
                     orientation="pill"
-                    onBannerClick={handleClick}
+                    onBannerClick={
+                      onBannerClickHandler ? handleClick : undefined
+                    }
                   />
                 );
               })
@@ -178,7 +178,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   <SpaceBanner
                     spaceId={space.spaceId as string}
                     orientation="maximized"
-                    onBannerClick={handleClick}
+                    onBannerClick={
+                      onBannerClickHandler ? handleClick : undefined
+                    }
                   />
                 );
               })}
@@ -235,7 +237,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                           <SpaceBanner
                             spaceId={space.spaceId as string}
                             orientation="maximized"
-                            onBannerClick={handleClick}
+                            onBannerClick={
+                              onBannerClickHandler ? handleClick : undefined
+                            }
                           />
                         );
                       }
@@ -252,7 +256,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                         <SpaceBanner
                           spaceId={space.spaceId as string}
                           orientation="maximized"
-                          onBannerClick={handleClick}
+                          onBannerClick={
+                            onBannerClickHandler ? handleClick : undefined
+                          }
                         />
                       );
                     })}
@@ -267,7 +273,9 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                         <SpaceBanner
                           spaceId={space.spaceId as string}
                           orientation="maximized"
-                          onBannerClick={handleClick}
+                          onBannerClick={
+                            onBannerClickHandler ? handleClick : undefined
+                          }
                         />
                       );
                     })}

@@ -2,7 +2,6 @@ import { useSpaceData } from './useSpaceData';
 import { useEffect } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { ISpacePaginationData } from '../../context/spacesContext';
 
 export const useMySpaces = (account: string) => {
   const LIMIT = 1;
