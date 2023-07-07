@@ -10,12 +10,13 @@ import CaretUpIcon from '../../../icons/CaretUp.svg';
 import CalendarIcon from '../../../icons/calendar.svg';
 import LiveIcon from '../../../icons/live.svg';
 import { CloseSvg } from '../../../icons/CloseSvg';
-import { HostPfpContainer } from '../reusables';
+import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
+  spaceData?: any;
   isMinimized: boolean;
   setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>;
   toggleWidgetVisibility: () => void;
@@ -25,46 +26,66 @@ export interface IWidgetHeaderProps {
   isHost?: boolean;
 }
 
-export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onClose, isMinimized, setIsMinimized, toggleWidgetVisibility }: IWidgetHeaderProps) => {
+export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
+  onClose,
+  isMinimized,
+  isHost,
+  isLive,
+  setIsMinimized,
+  toggleWidgetVisibility,
+  spaceData,
+}: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
 
-  const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
+  const tempImageUrl =
+    'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
 
   const [isSpacesInfoVisible, setIsSpacesInfoVisible] = useState(false);
-
-  const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (event) => {
+  const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (
+    event
+  ) => {
     // Call for hiding the widget
     toggleWidgetVisibility();
-  
+
     // Call for running onClose handler from prop
     onClose(event);
   };
 
   const showSpacesInfo = () => {
     setIsSpacesInfoVisible(!isSpacesInfoVisible);
-    console.log(isSpacesInfoVisible)
-  }
+    console.log(isSpacesInfoVisible);
+  };
 
   const closeSpacesInfo = () => {
     setIsSpacesInfoVisible(false);
-  }
+  };
 
   return (
     <Container theme={theme}>
-      {!isLive && 
+      {!isLive && (
         <Section>
           <Item marginBottom={'12px'}>
-            <HostPfpContainer statusTheme='Live' imageUrl={tempImageUrl} name={'Laris'} handle={'vjdfvjhvj'} />
+            <HostPfpContainer
+              statusTheme="Live"
+              imageUrl={spaceData?.members[0]?.image || tempImageUrl}
+              name={
+                `${spaceData?.spaceCreator?.slice(
+                  7,
+                  12
+                )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+              }
+              handle={
+                `${spaceData?.spaceCreator?.slice(
+                  7,
+                  12
+                )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+              }
+            />
           </Item>
           <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'}>
-            {isHost &&
-              <Button padding='6.5px 16.5px'>Edit space</Button>
-            } 
+            {isHost && <Button padding="6.5px 16.5px">Edit space</Button>}
             <Item marginLeft={'8px'} display={'flex'} onClick={showSpacesInfo}>
-              <Image
-                alt="Settings icon"
-                src={SettingsIcon}
-              />
+              <Image alt="Settings icon" src={SettingsIcon} />
             </Item>
             <Item marginLeft={'8px'} display={'flex'}>
               <Image
@@ -73,21 +94,29 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onC
                 alt="Maximize/Minimize icon"
               />
             </Item>
-            <Item marginLeft={'8px'} display={'flex'} onClick={handleCloseWidget}>
-              <CloseSvg stroke='white' height='15' width='15'/>
+            <Item
+              marginLeft={'8px'}
+              display={'flex'}
+              onClick={handleCloseWidget}
+            >
+              <CloseSvg stroke="white" height="15" width="15" />
             </Item>
           </Item>
         </Section>
-      }
+      )}
       <Section>
-        <Text fontSize={'16px'} fontWeight={700}>Lenster partners with Push Protocol to bring seamless and secure data transfer</Text>
-        {isLive &&
-          <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'} marginLeft={'24px'}>
+        <Text fontSize={'16px'} fontWeight={700}>
+          {spaceData?.spaceName || 'Test Space'}
+        </Text>
+        {isLive && (
+          <Item
+            display={'flex'}
+            alignSelf={'flex-start'}
+            alignItems={'center'}
+            marginLeft={'24px'}
+          >
             <Item marginLeft={'8px'} display={'flex'} onClick={showSpacesInfo}>
-              <Image
-                alt="Settings icon"
-                src={SettingsIcon}
-              />
+              <Image alt="Settings icon" src={SettingsIcon} />
             </Item>
             <Item marginLeft={'8px'} display={'flex'}>
               <Image
@@ -96,45 +125,48 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onC
                 alt="Maximize/Minimize icon"
               />
             </Item>
-            <Item marginLeft={'8px'} display={'flex'} onClick={handleCloseWidget}>
-              <CloseSvg stroke='white' height='15' width='15'/>
+            <Item
+              marginLeft={'8px'}
+              display={'flex'}
+              onClick={handleCloseWidget}
+            >
+              <CloseSvg stroke="white" height="15" width="15" />
             </Item>
           </Item>
-          }
+        )}
       </Section>
-      {!isLive &&
+      {!isLive && (
         <Item display={'flex'} marginTop={'12px'} alignItems={'center'}>
-          <Image
-            src={CalendarIcon}
-            alt="Calendar Icon"
-          />
-          <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>{formatDate(Date.now())}</Item>
+          <Image src={CalendarIcon} alt="Calendar Icon" />
+          <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>
+            {formatDate(spaceData?.scheduleAt || new Date())}
+          </Item>
         </Item>
-      }
-      {isLive &&
-        <Section marginTop='12px'>
+      )}
+      {isLive && (
+        <Section marginTop="12px">
           <Item display={'flex'} alignItems={'center'}>
-            <Image
-              src={LiveIcon}
-              alt="Calendar Icon"
-            />
-            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>Live</Text>
+            <Image src={LiveIcon} alt="Calendar Icon" />
+            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
+              Live
+            </Text>
           </Item>
           <Item display={'flex'} alignItems={'center'}>
             <Item>
-              {/* ToDo: Add participants icons */}
+              <ParticipantContainer
+                participants={spaceData?.members}
+                orientation="maximized"
+              />
             </Item>
-            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>+190 Listeners</Text>
+            {/* <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
+              +190 Listeners
+            </Text> */}
           </Item>
         </Section>
-      }
-      {
-        isSpacesInfoVisible ?
-        <SpacesInfo
-          closeSpacesInfo={closeSpacesInfo}
-        />
-        : null
-      }
+      )}
+      {isSpacesInfoVisible ? (
+        <SpacesInfo closeSpacesInfo={closeSpacesInfo} />
+      ) : null}
     </Container>
   );
 };
@@ -143,9 +175,9 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({ isLive, isHost, onC
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  color: ${(props => props.theme.titleTextColor)};
+  color: ${(props) => props.theme.titleTextColor};
   padding: 16px 24px;
-  background: ${(props => props.theme.titleBg)};
+  background: ${(props) => props.theme.titleBg};
 `;
 
 const Image = styled.img`
@@ -159,20 +191,21 @@ const Image = styled.img`
   align-self: center;
 `;
 
-const Section = styled.div<{marginTop?: string}>`
+const Section = styled.div<{ marginTop?: string }>`
   display: flex;
   justify-content: space-between;
   margin-top: ${(props) => props.marginTop};
-`
+`;
 
 const Button = styled.button<{
   padding?: string;
   color?: string;
 }>`
-  padding: ${(props) => (props.padding ?? '0px')};
+  padding: ${(props) => props.padding ?? '0px'};
   color: ${(props) => props.color ?? 'inherit'};
+  margin-left: 10px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   border: none;
   cursor: pointer;
-`
+`;
