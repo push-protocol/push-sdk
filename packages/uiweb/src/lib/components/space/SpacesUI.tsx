@@ -3,7 +3,7 @@ import React from 'react';
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
-import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
+import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
 import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
@@ -40,12 +40,8 @@ export class SpacesUI {
     return <SpaceFeed {...options} />;
   };
 
-  SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
-    const { trendingListData, setTrendingListData } = useSpaceData();
-
-    // Use trendingListData and setTrendingListData in your component
-
-    return <SpaceTrendingList />;
+  SpaceInvites: React.FC<ISpaceInvitesProps> = (options: ISpaceInvitesProps) => {
+    return <SpaceInvites {...options} />;
   };
 
   SpaceCreationButtonWidget = () => {

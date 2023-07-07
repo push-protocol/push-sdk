@@ -1,14 +1,14 @@
 import { ISpaceBannerProps } from "./SpaceBanner";
 import { ISpaceFeedProps } from "./SpaceFeed";
 import { SpacesUI } from "./SpacesUI";
-import { ISpaceTrendingListProps } from "./SpaceTrendingList";
+import { ISpaceInvitesProps } from "./SpaceInvites";
 import { ISpaceCreateWidgetProps } from "./SpaceCreationWidget";
 
 export {
   SpacesUI,
   ISpaceBannerProps,
   ISpaceFeedProps,
-  ISpaceTrendingListProps,
+  ISpaceInvitesProps,
   ISpaceCreateWidgetProps
 }
 
