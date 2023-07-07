@@ -4,8 +4,9 @@ import {
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
 } from '../../lib/payloads/constants';
-import { ENV } from '../constants';
+import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
+import { META_MESSAGE_META } from './metaTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -157,15 +158,37 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
+  messageObj?:
+    | {
+        content: string;
+        meta?: META_MESSAGE_META;
+      }
+    | string;
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent: string;
+  verificationProof?: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   sigType: string;
   link: string | null;
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-  deprecated?: boolean; // scope only at sdk level
-  deprecatedCode?: string; // scope only at sdk level
+  /**
+   * scope only at sdk level
+   */
+  deprecated?: boolean;
+  /**
+   * scope only at sdk level
+   */
+  deprecatedCode?: string;
 }
 export interface IFeeds {
   msg: IMessageIPFS;
@@ -359,30 +382,43 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
   account: string;
 }
 
-export interface ChatOptionsType extends AccountEnvOptionsType {
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
-  receiverAddress: string;
-  pgpPrivateKey?: string;
-  connectedUser: IConnectedUser;
+export interface ChatStartOptionsType {
+  messageType: `${MessageType}`;
+  messageObj: {
+    content: string;
+    meta?: META_MESSAGE_META;
+  };
   /**
-   * Api key is now optional
+   * @deprecated - To be used for now to provide backward compatibility
    */
-  apiKey?: string;
+  messageContent: string;
+  receiverAddress: string;
+  connectedUser: IConnectedUser;
+  env: ENV;
 }
 
+/**
+ * EXPORTED ( Chat.send )
+ */
 export interface ChatSendOptionsType {
+  messageType?: `${MessageType}`;
+  messageObj?: {
+    content: string;
+    meta?: META_MESSAGE_META;
+  };
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
   receiverAddress: string;
   pgpPrivateKey?: string;
-  /**
-   * Api key is now optional
-   */
-  apiKey?: string;
-  env?: ENV;
   account?: string;
   signer?: SignerType;
+  env?: ENV;
+  /**
+   * @deprecated APIkey is not needed now
+   */
+  apiKey?: string;
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
@@ -449,8 +485,23 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
+  messageObj?:
+    | {
+        content: string;
+        meta?: META_MESSAGE_META;
+      }
+    | string;
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use VerificationProof instead
+   */
   sigType: string;
   timestamp?: number;
   encType: string;
