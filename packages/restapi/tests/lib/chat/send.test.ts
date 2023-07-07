@@ -6,9 +6,16 @@ import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 import { upgrade } from '../../../src/lib/user/upgradeUser';
 import { decryptPGPKey } from '../../../src/lib/helpers';
-import { send } from '../../../src/lib/chat';
+import { createGroup, send } from '../../../src/lib/chat';
 import { MessageWithCID, SignerType } from '../../../src/lib/types';
 import { decryptAndVerifyMessage } from '../../../src/lib/chat/helpers';
+import {
+  adjectives,
+  animals,
+  colors,
+  uniqueNamesGenerator,
+} from 'unique-names-generator';
+
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
 describe('PushAPI.chat.send', () => {
@@ -460,37 +467,105 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('EncType - Plaintext', async () => {
+    it('should throw error for w2w', async () => {
       const content = 'xyz created group PUSH';
-      const msg = await send({
-        messageType: 'Meta',
-        messageObj: { content, meta: { action: 1, info: { affected: [] } } },
-        receiverAddress: account2,
+      await expect(
+        send({
+          messageType: 'Meta',
+          messageObj: { content, meta: { action: 1, info: { affected: [] } } },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for non member of group', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
         signer: _signer1,
         env: _env,
       });
-      await expectMsg(
-        msg,
-        'Meta',
-        { content, meta: { action: 1, info: { affected: [] } } },
-        account1,
-        _signer2,
-        account2,
-        'PlainText'
-      );
+      const content = 'xyz created group PUSH';
+      await expect(
+        send({
+          messageType: 'Meta',
+          messageObj: { content, meta: { action: 1, info: { affected: [] } } },
+          receiverAddress: group.chatId,
+          signer: _signer2,
+          env: _env,
+        })
+      ).to.be.rejected;
     });
-    it('EncType - pgp', async () => {
-      await create({
-        account: account2,
+    it('should throw error for Non-Admin member of group', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
         env: _env,
-        signer: _signer2,
-        version: Constants.ENC_TYPE_V1,
+      });
+      const content = 'xyz created group PUSH';
+      await expect(
+        send({
+          messageType: 'Meta',
+          messageObj: { content, meta: { action: 1, info: { affected: [] } } },
+          receiverAddress: group.chatId,
+          signer: _signer2,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('EncType - PlainText ( Public Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
       });
       const content = 'xyz created group PUSH';
       const msg = await send({
         messageType: 'Meta',
         messageObj: { content, meta: { action: 1, info: { affected: [] } } },
-        receiverAddress: account2,
+        receiverAddress: group.chatId,
         signer: _signer1,
         env: _env,
       });
@@ -500,7 +575,45 @@ describe('PushAPI.chat.send', () => {
         { content, meta: { action: 1, info: { affected: [] } } },
         account1,
         _signer1,
-        account2,
+        group.chatId,
+        'PlainText'
+      );
+    });
+    it('EncType - pgp ( Private Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: false,
+        signer: _signer1,
+        env: _env,
+      });
+      const content = 'xyz created group PUSH';
+      const msg = await send({
+        messageType: 'Meta',
+        messageObj: { content, meta: { action: 1, info: { affected: [] } } },
+        receiverAddress: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        'Meta',
+        { content, meta: { action: 1, info: { affected: [] } } },
+        account1,
+        _signer1,
+        group.chatId,
         'pgp'
       );
     });
