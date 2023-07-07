@@ -18,15 +18,11 @@ export interface ISpacesUIProviderProps {
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({
-  spaceUI,
-  theme,
-  children,
-}: ISpacesUIProviderProps) => {
-  const [account, setAccount] = useState<string>('');
-  const [signer, setSigner] = useState<SignerType>();
-  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+  const [account, setAccount] = useState<string>(spaceUI.account);
+  const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(spaceUI.pgpPrivateKey);
+  const [env, setEnv] = useState<ENV>(spaceUI.env);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
 

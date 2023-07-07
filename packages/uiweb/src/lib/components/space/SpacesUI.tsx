@@ -12,10 +12,10 @@ import { useSpaceData } from '../../hooks';
 import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
 export class SpacesUI {
-  private account: string;
-  private signer: SignerType;
-  private pgpPrivateKey: string;
-  private env: ENV;
+  public account: string;
+  public signer: SignerType;
+  public pgpPrivateKey: string;
+  public env: ENV;
 
   constructor(props: ISpacesUIProps) {
     this.account = props.account;
@@ -63,11 +63,6 @@ export class SpacesUI {
 
   init = () => {
     // Initialization logic
-    const { setAccount, setSigner, setPgpPrivateKey, setEnv } = useSpaceData();
-    setAccount(this.account);
-    setSigner(this.signer);
-    setPgpPrivateKey(this.pgpPrivateKey);
-    setEnv(this.env);
 
     // Call connectToSockets or any other initialization tasks
     this.connectToSockets();
