@@ -1,3 +1,6 @@
+/**
+ * SUPPORTED ENVIRONEMENTS
+ */
 export enum ENV {
   PROD = 'prod',
   STAGING = 'staging',
@@ -8,11 +11,36 @@ export enum ENV {
   LOCAL = 'local',
 }
 
+/**
+ * SUPPORTED ENCRYPTIONS FOR PUSH PROFILE
+ */
 export enum ENCRYPTION_TYPE {
   PGP_V1 = 'x25519-xsalsa20-poly1305',
   PGP_V2 = 'aes256GcmHkdfSha256',
   PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256',
   NFTPGP_V1 = 'pgpv1:nft',
+}
+
+/**
+ * SUPPORTED MESSAGE TYPES FOR PUSH CHAT
+ */
+export enum MessageType {
+  TEXT = 'Text',
+  IMAGE = 'Image',
+  FILE = 'File',
+  MEDIA_EMBED = 'MediaEmbed',
+  META = 'Meta',
+  /**
+   * @deprecated - Use MediaEmbed Instead
+   */
+  GIF = 'GIF',
+
+  // TODO
+  // AUDIO = 'Audio',
+  // VIDEO = 'Video',
+  // PAYMENT = 'Payment',
+  // REPLY = 'Reply',
+  // COMPOSITE = 'Composite',
 }
 
 const Constants = {
