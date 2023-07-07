@@ -3,6 +3,7 @@ import React from 'react';
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
+import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
 import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
@@ -42,6 +43,9 @@ export class SpacesUI {
     return <SpaceFeed {...options} />;
   };
 
+  SpaceInvites: React.FC<ISpaceInvitesProps> = (options: ISpaceInvitesProps) => {
+    return <SpaceInvites {...options} />;
+  };
 
   SpaceCreationButtonWidget = () => {
     return <SpaceCreationWidget />

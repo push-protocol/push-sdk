@@ -41,6 +41,8 @@ const InputContainer = styled.div`
     flex-direction: column;
 
     margin: 16px 0;
+
+    font-family: 'Strawford'; // update to fontFamily theme 
 `;
 
 const LabelContainer = styled.div`

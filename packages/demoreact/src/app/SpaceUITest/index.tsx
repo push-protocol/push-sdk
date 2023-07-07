@@ -6,6 +6,7 @@ export * from './SpaceWidget';
 export * from './SpaceFeed';
 export * from "./SpaceBanner";
 export * from "./CreateSpaceComponent";
+export * from "./SpaceInvites";
 
 export interface ISpacesComponentProps {
   children: React.ReactNode;

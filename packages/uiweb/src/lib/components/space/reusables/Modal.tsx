@@ -18,6 +18,7 @@ interface IModalProps {
 
 const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) => {
     const modalRef = useRef(null);
+    const theme = useContext(ThemeContext)
 
     useClickAway(modalRef, () => {
         if (clickawayClose) {
@@ -26,8 +27,8 @@ const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) =
     });
 
     return (
-        <ModalParent ref={modalRef} width={width}>
-        {children}
+        <ModalParent ref={modalRef} width={width} theme={theme}>
+          {children}
         </ModalParent>
     );
 };
