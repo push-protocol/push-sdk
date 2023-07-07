@@ -33,7 +33,7 @@ interface IThemeProps {
 export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   spaceId,
   orientation,
-  isInvite = true,
+  isInvite,
   onBannerClick,
 }) => {
   const theme = React.useContext(ThemeContext);
