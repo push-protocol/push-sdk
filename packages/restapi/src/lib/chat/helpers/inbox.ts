@@ -1,13 +1,9 @@
 import Constants, { ENV } from '../../constants';
-import {
-  decryptMessage,
-  isValidCAIP10NFTAddress,
-  pCAIP10ToWallet,
-} from '../../helpers';
+import { isValidCAIP10NFTAddress, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
-import { decryptFeeds } from './crypto';
+import { decryptFeeds, decryptAndVerifyMessage } from './crypto';
 
 type InboxListsType = {
   lists: IFeeds[];
@@ -77,7 +73,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
   } = options || {};
   let otherPeer: IUser;
   let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
-  for (const message of messages) {
+  for (let message of messages) {
     let gotOtherPeer = false;
     if (message.encType !== 'PlainText') {
       if (!pgpPrivateKey) {
@@ -92,15 +88,11 @@ export const decryptConversation = async (options: DecryptConverationType) => {
       } else {
         signatureValidationPubliKey = connectedUser.publicKey;
       }
-      message.messageContent = await decryptMessage({
-        encryptedPGPPrivateKey: message.messageContent,
-        encryptedSecret: message.encryptedSecret,
-        encryptionType: message.encType,
-        signature: message.signature,
-        signatureValidationPubliKey: signatureValidationPubliKey,
-        pgpPrivateKey,
-        message: message,
-      });
+      message = await decryptAndVerifyMessage(
+        message,
+        signatureValidationPubliKey,
+        pgpPrivateKey
+      );
     }
   }
   return messages;
