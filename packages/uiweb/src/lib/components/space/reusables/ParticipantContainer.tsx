@@ -41,8 +41,12 @@ export const ParticipantContainer: React.FC<IParticipantContainerProps> = ({
       </ParticipantsIconContainer>
       <ParticipantsText>
         {orientation === 'pill'
-          ? participants && `+${(participants.length as number) - 2}`
-          : participants && `+${(participants.length as number) - 3}`}
+          ? participants && (participants.length as number) - 3 > 0
+            ? `+${(participants.length as number) - 3}`
+            : null
+          : participants && (participants.length as number) - 3 > 0
+          ? `+${(participants.length as number) - 3}`
+          : null}
       </ParticipantsText>
     </Participants>
   );
