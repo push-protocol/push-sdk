@@ -15,8 +15,6 @@ export const useGetCustomizeProfile = (account?: string, profile?: MembersValueT
   const { customizeProfile: { customizeProfile } }: ISpaceDataContextValues = useSpaceData();
   const [customizedProfile, setCustomizedProfile] = useState<Profile | undefined>(profile);
 
-  console.log(account, profile);
-
   useEffect(() => {
     if(!profile || !account) {
       return;
@@ -25,7 +23,6 @@ export const useGetCustomizeProfile = (account?: string, profile?: MembersValueT
     const fetchData = async () => {
       try {
         const response = await customizeProfile(account);
-        console.log(response, profile);
         setCustomizedProfile({...profile, ...response});
       } catch (error) {
         console.error(error);
