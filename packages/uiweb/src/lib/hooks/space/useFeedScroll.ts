@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const useChatScroll = <T>(
+export const useFeedScroll = <T>(
   dep: T,
 ): React.MutableRefObject<HTMLDivElement | null> => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -8,6 +8,6 @@ export const useChatScroll = <T>(
     if (ref.current) {
       ref.current.scrollTop = 0;
     }
-  }, [dep]);
+  }, []);
   return ref;
 };
