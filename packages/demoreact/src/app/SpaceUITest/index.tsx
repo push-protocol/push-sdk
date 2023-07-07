@@ -1,8 +1,9 @@
-import { SpacesUIProvider } from "@pushprotocol/uiweb";
-import { useSpaceComponents } from "./useSpaceComponents";
+import { SpacesUIProvider } from '@pushprotocol/uiweb';
+import { useSpaceComponents } from './useSpaceComponents';
 
-export * from "./SpaceUITest";
-export * from "./SpaceWidget";
+export * from './SpaceUITest';
+export * from './SpaceWidget';
+export * from './SpaceFeed';
 export * from "./SpaceBanner";
 export * from "./CreateSpaceComponent";
 
@@ -10,7 +11,9 @@ export interface ISpacesComponentProps {
   children: React.ReactNode;
 }
 
-export const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
+export const SpacesComponentProvider = ({
+  children,
+}: ISpacesComponentProps) => {
   const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
@@ -21,5 +24,5 @@ export const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => 
     <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
       {children}
     </SpacesUIProvider>
-  )
-}
+  );
+};
