@@ -15,6 +15,7 @@ import { useGetSpaceInfo } from './../../../hooks';
 export interface ISpaceBannerProps {
   spaceId: string;
   orientation?: 'maximized' | 'minimized' | 'pill';
+  isInvite?: boolean;
   onBannerClick?: (arg: string) => void;
 }
 
@@ -32,6 +33,7 @@ interface IThemeProps {
 export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   spaceId,
   orientation,
+  isInvite = true,
   onBannerClick,
 }) => {
   const theme = React.useContext(ThemeContext);
@@ -102,6 +104,12 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           orientation={orientation}
         />
       </Status>
+      {isInvite === true && getSpaceStatus(spaceData?.status) === 'Live' ? (
+        <InviteButton status="Live">Join this space</InviteButton>
+      ) : isInvite === true &&
+        getSpaceStatus(spaceData?.status) === 'Scheduled' ? (
+        <InviteButton status="Scheduled">Remind Me</InviteButton>
+      ) : null}
     </Container>
   );
 };
@@ -202,4 +210,18 @@ const TimeText = styled.div<{ status?: string }>`
   font-size: 14px;
   line-height: 150%;
   color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
+}`;
+
+const InviteButton = styled.button<{ status?: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  width: 100%;
+  color: ${(props) => (props.status === 'Live' ? '#FFF' : '#8B5CF6')};
+  border-radius: 8px;
+  border: ${(props) =>
+    props.status === 'Live' ? '1px solid #FFF' : '1px solid #8B5CF6'};
+  background: transparent;
+  cursor: pointer;
 }`;

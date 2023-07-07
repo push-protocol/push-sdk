@@ -51,7 +51,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   orientation = 'veritcal',
   height,
   width,
-  sortingOrder = [Tabs.ForYou, Tabs.Popular, Tabs.HostedByYou],
+  sortingOrder = [Tabs.Popular, Tabs.ForYou, Tabs.HostedByYou],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
@@ -88,6 +88,25 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
       );
     } else {
       return spacesList;
+    }
+  };
+
+  const handleMySpacesFilter = (spacesList: SpaceIFeeds[]) => {
+    if (tab === Tabs.HostedByYou) {
+      return spacesList.filter(
+        (space: SpaceIFeeds) =>
+          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() ===
+          account.toUpperCase()
+      );
+    }
+    if (tab === Tabs.ForYou) {
+      return spacesList.filter(
+        (space: SpaceIFeeds) =>
+          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() !==
+          account.toUpperCase()
+      );
+    } else {
+      return handleFilterData(spacesList);
     }
   };
 
@@ -234,9 +253,21 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             <Container>
               {tab === Tabs.ForYou ? (
                 <Spaces orientation={orientation}>
-                  {mySpaces &&
-                    handleFilterData(mySpaces.apiData as SpaceIFeeds[]).map(
-                      (space: SpaceIFeeds) => {
+                  {mySpaces.apiData &&
+                    (handleFilterData(
+                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
+                    ).length === 0 ? (
+                      <NoSpaces>
+                        <SpacesIcon src={spacesIcon} />
+                        <NoSpacesTextV1>Join a space</NoSpacesTextV1>
+                        <NoSpacesTextV2>
+                          Get started by joining a space
+                        </NoSpacesTextV2>
+                      </NoSpaces>
+                    ) : (
+                      handleFilterData(
+                        handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
+                      ).map((space: SpaceIFeeds) => {
                         return (
                           <SpaceBanner
                             spaceId={space.spaceId as string}
@@ -246,8 +277,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                             }
                           />
                         );
-                      }
-                    )}
+                      })
+                    ))}
                 </Spaces>
               ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
@@ -269,9 +300,10 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 </PopularSpaces>
               ) : (
                 <Spaces orientation={orientation}>
-                  {spaceRequests &&
-                    (handleFilterData(spaceRequests.apiData as SpaceIFeeds[])
-                      .length === 0 ? (
+                  {mySpaces.apiData &&
+                    (handleFilterData(
+                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
+                    ).length === 0 ? (
                       <NoSpaces>
                         <SpacesIcon src={spacesIcon} />
                         <NoSpacesTextV1>Create a space</NoSpacesTextV1>
@@ -281,7 +313,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                       </NoSpaces>
                     ) : (
                       handleFilterData(
-                        spaceRequests.apiData as SpaceIFeeds[]
+                        handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
                       ).map((space: SpaceIFeeds) => {
                         return (
                           <SpaceBanner
@@ -421,6 +453,7 @@ const NoSpaces = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 130px 0;
 }`;
 
 const SpacesIcon = styled.img`

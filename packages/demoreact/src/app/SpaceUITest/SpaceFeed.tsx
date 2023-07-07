@@ -77,6 +77,9 @@ export const SpaceFeed = () => {
         orientation={horizontal ? 'horizontal' : 'vertical'}
         width={width}
         height={height}
+        onBannerClickHandler={(spaceId: string) => {
+          console.log('spaceId: ', spaceId);
+        }}
       />
     </>
   );
