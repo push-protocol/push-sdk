@@ -10,7 +10,7 @@ import { HostPfpContainer } from '../reusables';
 
 import live from './../../../icons/live.svg';
 import scheduled from './../../../icons/scheduled.svg';
-import { useGetSpaceInfo } from './../../../hooks';
+import { useGetCustomizeProfile, useGetSpaceInfo } from './../../../hooks';
 
 export interface ISpaceBannerProps {
   spaceId: string;
@@ -38,6 +38,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
+  const hostProfile = useGetCustomizeProfile(spaceData?.members[0].wallet.split(':')[1], spaceData?.members[0]);
 
   const handleClick = () => {
     if (onBannerClick) {
@@ -55,11 +56,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
     >
       {orientation === 'maximized' && (
         <HostPfpContainer
-          name={spaceData?.members[0].wallet.slice(7)}
+          name={hostProfile?.wallet.slice(7)}
           statusTheme={getSpaceStatus(spaceData?.scheduleAt as Date)}
           imageHeight={'48px'}
-          imageUrl={spaceData?.members[0].image}
-          handle={spaceData?.members[0].wallet.slice(7)}
+          imageUrl={hostProfile?.image}
+          handle={hostProfile?.handle || hostProfile?.wallet.slice(7)}
         />
       )}
       {orientation === 'maximized' ? null : (

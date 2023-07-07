@@ -4,6 +4,7 @@ import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 import { SpacesUI } from '../components';
 import { ThemeContext } from '../components/space/theme/ThemeProvider';
 import { ISpacesTheme, lightTheme } from '../components/space/theme';
+import { ProfileCustomizationFunction } from '../components/space/SpacesUI'
 import {
   ISpaceDataContextValues,
   ISpaceInfo,
@@ -23,7 +24,7 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(spaceUI.pgpPrivateKey);
   const [env, setEnv] = useState<ENV>(spaceUI.env);
-  const [trendingListData, setTrendingListData] = useState(null);
+  const [customizeProfile, setCustomizeProfile] = useState<{ customizeProfile: ProfileCustomizationFunction }>({ customizeProfile: spaceUI.customizeProfile });
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
 
   const [mySpaces, setMySpaces] = useState({
@@ -154,8 +155,8 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
     setPgpPrivateKey,
     env,
     setEnv,
-    trendingListData,
-    setTrendingListData,
+    customizeProfile,
+    setCustomizeProfile,
     spaceInfo,
     setSpaceInfo: setSpaceInfoItem,
     getSpaceInfo,

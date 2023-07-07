@@ -3,32 +3,34 @@ import React from 'react';
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
-import { ISpaceTrendingListProps, SpaceTrendingList } from './SpaceTrendingList';
 import { SpaceCreationWidget } from './SpaceCreationWidget';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
-import { useSpaceData } from '../../hooks';
 import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
+
+export type ProfileCustomizationFunction = (account: string) => Promise<{
+  name?: string;
+  image?: string;
+  handle?: string;
+}>;
 
 export class SpacesUI {
   public account: string;
   public signer: SignerType;
   public pgpPrivateKey: string;
   public env: ENV;
+  public customizeProfile: ProfileCustomizationFunction;
 
   constructor(props: ISpacesUIProps) {
     this.account = props.account;
     this.signer = props.signer;
     this.pgpPrivateKey = props.pgpPrivateKey;
     this.env = props.env;
+    this.customizeProfile = props.customizeProfile || ((account) => Promise.resolve({}));
   }
 
   SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {
-    const { spaceInfo, setSpaceInfo } = useSpaceData();
-
-    // Use spaceBannerData and setSpaceBannerData in your component
-
     return <SpaceBanner {...options} />;
   };
 
@@ -40,13 +42,6 @@ export class SpacesUI {
     return <SpaceFeed {...options} />;
   };
 
-  SpaceTrendingList: React.FC<ISpaceTrendingListProps> = () => {
-    const { trendingListData, setTrendingListData } = useSpaceData();
-
-    // Use trendingListData and setTrendingListData in your component
-
-    return <SpaceTrendingList />;
-  };
 
   SpaceCreationButtonWidget = () => {
     return <SpaceCreationWidget />
@@ -55,7 +50,6 @@ export class SpacesUI {
   connectToSockets = () => {
     // Connect to sockets and listen for events
     // Update spaceBannerData or trendingListData based on events
-    const { setSpaceInfo, setTrendingListData } = useSpaceData();
 
     // Example of updating spaceBannerData
     //setSpaceBannerData();

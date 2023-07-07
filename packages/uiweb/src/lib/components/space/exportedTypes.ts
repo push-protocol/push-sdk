@@ -1,5 +1,7 @@
 import { MouseEventHandler } from "react";
 
+import { ProfileCustomizationFunction } from "./SpacesUI";
+
 import { ENV } from "../../config";
 import { SignerType } from "../../types";
 
@@ -8,6 +10,7 @@ export interface ISpacesUIProps {
   signer: SignerType;
   pgpPrivateKey: string;
   env: ENV;
+  customizeProfile?: ProfileCustomizationFunction;
 }
 
 export interface ISpaceWidgetProps {

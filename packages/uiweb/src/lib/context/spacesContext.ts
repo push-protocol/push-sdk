@@ -2,6 +2,7 @@ import React, { createContext } from 'react';
 import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 import { SignerType } from '../types';
 import { ENV } from '../config';
+import { ProfileCustomizationFunction } from '../components/space/SpacesUI';
 
 export interface ISpaceInfo {
   [key: string]: SpaceDTO;
@@ -22,8 +23,8 @@ export interface ISpaceDataContextValues {
   setPgpPrivateKey: React.Dispatch<React.SetStateAction<string>>;
   env: ENV;
   setEnv: React.Dispatch<React.SetStateAction<ENV>>;
-  trendingListData: any;
-  setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
+  customizeProfile: { customizeProfile: ProfileCustomizationFunction };
+  setCustomizeProfile: React.Dispatch<React.SetStateAction<{ customizeProfile: ProfileCustomizationFunction }>>;
   spaceInfo: ISpaceInfo;
   setSpaceInfo: (key: string, value: SpaceDTO) => void;
   getSpaceInfo: (key: string) => SpaceDTO | undefined;
@@ -52,8 +53,8 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setEnv: () => {
     /**/
   },
-  trendingListData: null,
-  setTrendingListData: () => {
+  customizeProfile: {customizeProfile: ((account: string) => Promise.resolve({}))},
+  setCustomizeProfile: () => {
     /**/
   },
   spaceInfo: {} as ISpaceInfo,
