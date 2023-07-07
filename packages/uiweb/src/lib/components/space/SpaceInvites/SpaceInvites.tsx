@@ -62,8 +62,12 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
       {modalOpen && (
         <Modal clickawayClose={handleCloseModal} width="450px">
           <ModalHeader
-            heading='Spaces Invites'
-            headingBadgeNumber={spaceRequests.apiData?.length}
+            heading="Spaces Invites"
+            headingBadgeNumber={
+              (spaceRequests.apiData?.length as number) > 0
+                ? spaceRequests.apiData?.length
+                : undefined
+            }
             closeCallback={handleCloseModal}
           />
           <ScrollContainer ref={containerRef} onScroll={onScrollContainer}>
