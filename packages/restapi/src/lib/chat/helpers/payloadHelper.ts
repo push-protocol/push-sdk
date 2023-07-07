@@ -202,7 +202,8 @@ export const updateGroupPayload = (
   members: Array<string>,
   admins: Array<string>,
   address: string,
-  verificationProof: string
+  verificationProof: string,
+  meta?: string | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -212,6 +213,7 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    ...(meta !== undefined && { meta: meta }),
   };
   return body;
 };
