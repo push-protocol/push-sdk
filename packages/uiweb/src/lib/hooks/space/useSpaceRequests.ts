@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import * as PushAPI from '@pushprotocol/restapi';
 
 export const useSpaceRequests = (account: string) => {
-  const LIMIT = 1;
+  const LIMIT = 2;
 
   const { spaceRequests, setSpaceRequests } = useSpaceData();
   const [loading, setLoading] = useState(false);
