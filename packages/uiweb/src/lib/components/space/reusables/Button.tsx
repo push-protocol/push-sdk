@@ -18,6 +18,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IButtonProps {
     width?: string;
+    height?: string;
     children: any;
     onClick?: MouseEventHandler;
     theme?: ISpacesTheme;
@@ -33,12 +34,13 @@ export interface IButtonProps {
 export const Button: React.FC<IButtonProps> = (props) => {
     const theme = useContext(ThemeContext);
 
-    const { onClick, width, customStyle } = props;
+    const { onClick, width, height, customStyle } = props;
 
     return (
         <SpacesButton
             onClick={onClick}
             width={width}
+            height={height}
             theme={theme}
             customStyle={customStyle}
         >
@@ -57,11 +59,12 @@ const SpacesButton = styled.button<IButtonProps>`
     margin-top: 12px;
 
     background: ${(props => props.customStyle ? props.customStyle.background : props.theme.btnColorPrimary)};
-    border: 1px solid ${(props => props.customStyle ? props.customStyle.borderColor : props.theme.btnOutline)};
+    border: 2px solid ${(props => props.customStyle ? props.customStyle.borderColor : props.theme.btnOutline)};
     color: ${(props => props.customStyle ? props.customStyle.color : props.theme.titleTextColor)};
     border-radius: 8px;
     font-size: 14px;
     font-weight: ${(props => props.customStyle ? props.customStyle.fontWeight : '700')};
+    font-family: 'Strawford'; // update to fontFamily theme 
 
     /* Inside auto layout */
     flex: none;
@@ -75,4 +78,5 @@ const SpacesButton = styled.button<IButtonProps>`
     }
 
     width: ${(props => props.width ? props.width : '100%')};
+    height: ${(props => props.height ? props.height : '100%')};
 `;

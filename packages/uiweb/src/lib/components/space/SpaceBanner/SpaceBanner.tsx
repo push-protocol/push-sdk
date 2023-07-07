@@ -156,8 +156,8 @@ const Container = styled.div<IThemeProps>`
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-  cursor: ${(props) => props.clickable && 'pointer'};
-}`;
+  cursor: ${props => props.clickable && 'pointer'};
+`;
 
 const Title = styled.div<{ orientation?: string }>`
   display: flex;
@@ -180,7 +180,7 @@ const Title = styled.div<{ orientation?: string }>`
   @media (max-width: 425px) {
     width: 95%;
   }
-}`;
+`;
 
 const Status = styled.div<IThemeProps>`
   display: flex;
@@ -189,28 +189,28 @@ const Status = styled.div<IThemeProps>`
     props.orientation === 'maximized' ? '100%' : 'fit-content'};
   justify-content: space-between;
   align-items: center;
-}`;
+`;
 
 const Time = styled.div<{ orientation?: string }>`
   display: ${(props) => (props.orientation === 'maximized' ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}`;
+`;
 
 const Icon = styled.img`
   height: 24px;
   width: 24px;
   padding: 0 11px 0 0;
   align-self: center;
-}`;
+`;
 
 const TimeText = styled.div<{ status?: string }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
   color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
-}`;
+`;
 
 const InviteButton = styled.button<{ status?: string }>`
   display: flex;
@@ -224,4 +224,4 @@ const InviteButton = styled.button<{ status?: string }>`
     props.status === 'Live' ? '1px solid #FFF' : '1px solid #8B5CF6'};
   background: transparent;
   cursor: pointer;
-}`;
+`;
