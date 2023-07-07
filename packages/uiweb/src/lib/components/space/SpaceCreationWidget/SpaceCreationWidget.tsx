@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 
 import { SCWCreateModal } from './SCWCreateModal/SCWCreateModal'
@@ -18,6 +19,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
+
+    const [isLoading, setLoading] = useState(false);
 
     const [spaceState, setSpaceState] = useState({
         spaceName: '',
@@ -47,6 +50,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const showCreateSpace = () => {
         setIsCreateModalVisible(!isCreateModalVisible);
         setIsScheduleModalVisible(false);
+        setIsInviteModalVisible(false);
     }
 
     const showScheduleSpace = () => {
@@ -58,6 +62,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const showInviteSpace = () => {
         setIsInviteModalVisible(!isInviteModalVisible);
         setIsScheduleModalVisible(false);
+        setIsCreateModalVisible(false);
     }
 
     const closeCreateModal = () => {
@@ -71,38 +76,34 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const closeInviteModal = () => {
         setIsInviteModalVisible(false);
     }
-
-    console.log(typeof spaceState.date)
-    console.log(typeof spaceState.time)
     
     const testCreateSpace = async () => {
         const spaceCreate = {
             spaceName: spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: ['0x9452BCAf507CD6547574b78B810a723d8868C85a'],
+            members: [],
             spaceImage: 'asd',
-            admins: ['0x2A7CFA3017DF1ED93A23DA2896466FE1D6A7FCAE'],
+            admins: [],
             isPublic: true,
             scheduleAt: spaceState.date,
             signer: signer as PushAPI.SignerType,
         }
 
         try {
-        //   setLoading(true);
-        
+            setLoading(true);
             const response = await PushAPI.space.create(spaceCreate);
     
             console.log(response);
-        //   setSendResponse(response);
         } catch (e:any) {
             console.error(e.message);
         } finally {
-        //   setLoading(false);
+            setLoading(false);
+            closeInviteModal();
         }
     };
 
     return (
-        <div>
+        <SCWContainer>
             {
                 CustomComponent
                 ?
@@ -119,13 +120,14 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
             {isCreateModalVisible &&
                 <SCWCreateModal
-                    isScheduleVisible={showScheduleSpace}
+                    isInviteVisible={showInviteSpace}
                     closeCreateModal={closeCreateModal}
                     nameValue={spaceState.spaceName}
                     descriptionValue={spaceState.spaceDescription}
                     handleNameChange={handleNameChange}
                     handleDescriptionChange={handleDescriptionChange}
                     isDescriptionEnabled={false}
+                    isScheduleVisible={showScheduleSpace}
                 />
             }
 
@@ -144,10 +146,15 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             {isInviteModalVisible &&
                 <SCWInviteModal
                     closeInviteModal={closeInviteModal}
-                    makeScheduleVisible={showScheduleSpace}
+                    makeScheduleVisible={showCreateSpace}
                     createSpace={testCreateSpace}
+                    isLoading={isLoading}
                 />
             }
-        </div>
+        </SCWContainer>
     )
 }
+
+const SCWContainer = styled.div`
+    font-family: 'Strawford'; // update to fontFamily theme 
+`;
