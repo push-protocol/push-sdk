@@ -70,6 +70,7 @@ export class Video {
   protected pgpPrivateKey: string;
   protected env: ENV;
   protected callType: VIDEO_CALL_TYPE;
+  protected onReceiveStream: (receivedStream: MediaStream) => void;
 
   // storing the peer instance
   private peerInstances: {
@@ -83,9 +84,12 @@ export class Video {
     signer,
     chainId,
     pgpPrivateKey,
-    env,
+    env = Constants.ENV.PROD,
     setData,
-    callType,
+    callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
+    onReceiveStream = () => {
+      return;
+    },
   }: {
     signer: SignerType;
     chainId: number;
@@ -93,12 +97,14 @@ export class Video {
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
     env?: ENV;
     callType?: VIDEO_CALL_TYPE;
+    onReceiveStream?: (receivedStream: MediaStream) => void;
   }) {
     this.signer = signer;
     this.chainId = chainId;
     this.pgpPrivateKey = pgpPrivateKey;
-    this.env = env ? env : Constants.ENV.PROD;
-    this.callType = callType ? callType : VIDEO_CALL_TYPE.PUSH_VIDEO;
+    this.env = env;
+    this.callType = callType;
+    this.onReceiveStream = onReceiveStream;
 
     // init the react state
     setData(() => initVideoCallData);
@@ -309,6 +315,7 @@ export class Video {
           'stream',
           (currentStream: MediaStream) => {
             console.log('received incoming stream', currentStream);
+            this.onReceiveStream(currentStream);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 const incomingIndex = getIncomingIndexFromAddress(
@@ -582,6 +589,7 @@ export class Video {
         'stream',
         (currentStream: MediaStream) => {
           console.log('received incoming stream', currentStream);
+          this.onReceiveStream(currentStream);
           this.setData((oldData) => {
             return produce(oldData, (draft) => {
               const incomingIndex = getIncomingIndexFromAddress(
@@ -626,7 +634,7 @@ export class Video {
           retry: true,
         });
       });
-      
+
       this.peerInstances[peerAddress]?.signal(signalData);
 
       // send the addresses the local peer is connected to remote peer

@@ -17,9 +17,17 @@ import { join } from './join';
 import { leave } from './leave';
 import { stop } from './stop';
 
-import { EnvOptionsType, SignerType, SpaceDTO, SpaceData } from '../types';
+import { VideoStreamMerger } from 'video-stream-merger';
+import {
+  ChatStatus,
+  EnvOptionsType,
+  SignerType,
+  SpaceDTO,
+  SpaceData,
+} from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
 import Constants from '../constants';
+import addToMergedStream from './helpers/addToMergedStream';
 
 const initSpaceSpecificData = {
   members: [],
@@ -56,6 +64,14 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
 // declaring the Space class
 class Space extends Video {
+  /*
+    - temporarily store the streamKey on the class
+    - will be used by the host to cast to the stream
+  */
+  // protected streamKey: string | null = null;
+
+  protected mergeStreamObject: VideoStreamMerger | null = null;
+
   protected spaceSpecificData: SpaceDTO;
   protected setSpaceSpecificData: (fn: (data: SpaceDTO) => SpaceDTO) => void;
 
@@ -79,6 +95,16 @@ class Space extends Video {
       pgpPrivateKey,
       env,
       callType: VIDEO_CALL_TYPE.PUSH_SPACE,
+      onReceiveStream: (receivedStream: MediaStream) => {
+        // for a space, that has started broadcast & the local peer is the host
+        if (
+          this.spaceSpecificData.status === ChatStatus.ACTIVE &&
+          this.data.meta.broadcast?.hostAddress &&
+          this.data.meta.broadcast.hostAddress === this.data.local.address
+        ) {
+          addToMergedStream(this.mergeStreamObject!, receivedStream);
+        }
+      },
       setData: function () {
         return;
       }, // setData will be overridden below
