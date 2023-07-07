@@ -1,50 +1,33 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 interface DateTimePickerProps {
-    onDateTimeChange: (dateTime: Date) => void;
+    propsDate: Date;
+    propsTime: string;
+    onDateChange?: any;
+    onTimeChange?: any;
 }
 
-const DateTimePicker: React.FC<DateTimePickerProps> = ({ onDateTimeChange }) => {
+const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
     const theme = useContext(ThemeContext);
-
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [selectedTime, setSelectedTime] = useState<string>('00:00');
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const date = new Date(event.target.value);
-        setSelectedDate(date);
-        onDateTimeChange(new Date(date.getFullYear(), date.getMonth(), date.getDate(), getHours(selectedTime), getMinutes(selectedTime)));
+        props.onDateChange(date);
     };
 
     const handleTimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const time = event.target.value;
-        setSelectedTime(time);
-        onDateTimeChange(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), getHours(time), getMinutes(time)));
-    };
-
-    const getHours = (timeString: string) => {
-        const [hours] = timeString.split(':');
-        return parseInt(hours, 10);
-    };
-
-    const getMinutes = (timeString: string) => {
-        const [, minutes] = timeString.split(':');
-        return parseInt(minutes, 10);
+        props.onTimeChange(time);
     };
 
     return (
         <DateTimeCont>
             <div>Select date and time</div>
-            <Input theme={theme} type="date" value={selectedDate.toISOString().split('T')[0]} onChange={handleDateChange} />
-            <Select theme={theme} value={selectedTime} onChange={handleTimeChange}>
-                <option value="00:00">12:00 AM</option>
-                <option value="01:00">1:00 AM</option>
-                <option value="01:00">2:00 AM</option>
-                <option value="01:00">3:00 AM</option>
-                <option value="01:00">4:00 AM</option>
-                <option value="23:00">11:00 PM</option>
+            <Input theme={theme} type="date" value={props.propsDate.toISOString().split('T')[0]} onChange={handleDateChange} />
+            <Select theme={theme} value={props.propsTime} onChange={handleTimeChange}>
+                <option value="00:00">{new Date().getTime()}</option>
             </Select>
         </DateTimeCont>
     );

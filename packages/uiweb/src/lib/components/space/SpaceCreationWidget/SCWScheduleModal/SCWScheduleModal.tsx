@@ -43,7 +43,12 @@ export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
                 closeCallback={closeScheduleModal}
             />
 
-            <DateTimePicker onDateTimeChange={handleDateTimeChange} />
+            <DateTimePicker
+                onDateChange={onDateChange}
+                onTimeChange={onTimeChange}
+                propsDate={dateValue}
+                propsTime={timeValue}
+            />
 
             <ButtonContainer>
                     <Button
