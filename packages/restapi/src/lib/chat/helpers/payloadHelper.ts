@@ -176,7 +176,7 @@ export const createGroupPayload = (
   contractAddressERC20?: string,
   numberOfERC20?: number,
   meta?: string,
-  groupType? : string | null,
+  groupType?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null
 ): ICreateGroupRequestPayload => {
@@ -196,7 +196,7 @@ export const createGroupPayload = (
     meta: meta,
     groupType: groupType,
     scheduleAt: scheduleAt,
-    scheduleEnd: scheduleEnd
+    scheduleEnd: scheduleEnd,
   };
   return body;
 };
@@ -228,7 +228,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     spaceId: groupDto.chatId,
     scheduleAt: groupDto.scheduleAt,
     scheduleEnd: groupDto.scheduleEnd,
-    status: groupDto.status ?? null
+    status: groupDto.status ?? null,
   };
   return spaceDto;
 };
@@ -243,7 +243,8 @@ export const updateGroupPayload = (
   verificationProof: string,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
-  status?: ChatStatus | null
+  status?: ChatStatus | null,
+  meta?: string | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -255,7 +256,8 @@ export const updateGroupPayload = (
     verificationProof: verificationProof,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
-    status: status
+    status: status,
+    ...(meta !== undefined && { meta: meta }),
   };
   return body;
 };
@@ -281,7 +283,9 @@ export const getAdminsList = (
     : [];
 
   const adminsFromPendingMembers = pendingMembers
-    ? convertToWalletAddressList(pendingMembers.filter((admin) => admin.isAdmin))
+    ? convertToWalletAddressList(
+        pendingMembers.filter((admin) => admin.isAdmin)
+      )
     : [];
 
   const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
@@ -307,14 +311,18 @@ export const getSpaceAdminsList = (
     : [];
 
   const adminsFromPendingMembers = pendingMembers
-    ? convertToWalletAddressList(pendingMembers.filter((admin) => admin.isSpeaker))
+    ? convertToWalletAddressList(
+        pendingMembers.filter((admin) => admin.isSpeaker)
+      )
     : [];
 
   const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
   return adminList;
 };
 
-export const convertToWalletAddressList = (memberList: { wallet: string }[]): string[] => {
+export const convertToWalletAddressList = (
+  memberList: { wallet: string }[]
+): string[] => {
   return memberList ? memberList.map((member) => member.wallet) : [];
 };
 

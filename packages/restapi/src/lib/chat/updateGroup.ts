@@ -11,7 +11,7 @@ import {
   getUserDID,
   getConnectedUserV2,
   updateGroupRequestValidator,
-  validateScheduleDates
+  validateScheduleDates,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -25,9 +25,13 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
   members: Array<string>;
   admins: Array<string>;
   pgpPrivateKey?: string | null;
-  scheduleAt?: Date | null
-  scheduleEnd?: Date | null
-  status?: ChatStatus | null
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
+  // If meta is not passed, old meta is not affected
+  // If passed as null will update to null
+  // If passed as string will update to that value
+  meta?: string | null;
 }
 
 /**
@@ -50,6 +54,7 @@ export const updateGroup = async (
     scheduleAt,
     scheduleEnd,
     status,
+    meta,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -66,7 +71,7 @@ export const updateGroup = async (
       admins,
       address
     );
-    validateScheduleDates(scheduleAt, scheduleEnd)
+    validateScheduleDates(scheduleAt, scheduleEnd);
 
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const convertedMembersPromise = members.map(async (each) => {
@@ -105,6 +110,7 @@ export const updateGroup = async (
       scheduleAt,
       scheduleEnd,
       status,
+      meta
     );
 
     return axios
