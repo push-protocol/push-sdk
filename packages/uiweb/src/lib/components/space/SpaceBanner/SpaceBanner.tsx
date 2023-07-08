@@ -39,6 +39,8 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
 
+  const spaceStatus = getSpaceStatus(spaceData?.status);
+
   const handleClick = () => {
     if (onBannerClick) {
       onBannerClick(spaceData?.spaceId || '');
@@ -48,7 +50,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   return (
     <Container
       orientation={orientation}
-      status={getSpaceStatus(spaceData?.status)}
+      status={spaceStatus}
       theme={theme}
       onClick={handleClick}
       clickable={Boolean(onBannerClick)}
@@ -56,7 +58,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       {orientation === 'maximized' && (
         <HostPfpContainer
           name={spaceData?.members[0].wallet.slice(7)}
-          statusTheme={getSpaceStatus(spaceData?.scheduleAt as Date)}
+          statusTheme={spaceStatus}
           imageHeight={'48px'}
           imageUrl={spaceData?.members[0].image}
           handle={spaceData?.members[0].wallet.slice(7)}
@@ -65,9 +67,9 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       {orientation === 'maximized' ? null : (
         <Icon
           src={
-            getSpaceStatus(spaceData?.status) === 'Live'
+            spaceStatus === 'Live'
               ? live
-              : getSpaceStatus(spaceData?.status) === 'Scheduled'
+              : spaceStatus === 'Scheduled'
               ? scheduled
               : '' // Ended
           }
@@ -83,18 +85,18 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         <Time orientation={orientation}>
           <Icon
             src={
-              getSpaceStatus(spaceData?.status) === 'Live'
+              spaceStatus === 'Live'
                 ? live
-                : getSpaceStatus(spaceData?.status) === 'Scheduled'
+                : spaceStatus === 'Scheduled'
                 ? scheduled
                 : '' // Ended
             }
             alt="status"
           />
-          <TimeText>
-            {getSpaceStatus(spaceData?.status) === 'Live'
+          <TimeText status={spaceStatus}>
+            {spaceStatus === 'Live'
               ? 'Live'
-              : getSpaceStatus(spaceData?.status) === 'Scheduled'
+              : spaceStatus === 'Scheduled'
               ? `${getDateAndTime(spaceData?.scheduleAt as Date)}`
               : 'Ended'}
           </TimeText>
@@ -104,10 +106,10 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           orientation={orientation}
         />
       </Status>
-      {isInvite === true && getSpaceStatus(spaceData?.status) === 'Live' ? (
+      {isInvite === true && spaceStatus === 'Live' ? (
         <InviteButton status="Live">Join this space</InviteButton>
       ) : isInvite === true &&
-        getSpaceStatus(spaceData?.status) === 'Scheduled' ? (
+        spaceStatus === 'Scheduled' ? (
         <InviteButton status="Scheduled">Remind Me</InviteButton>
       ) : null}
     </Container>
@@ -209,7 +211,7 @@ const TimeText = styled.div<{ status?: string }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-  color: ${(props) => (props.status === 'live' ? 'inherit' : '#71717A')};
+  color: ${(props) => (props.status === 'Live' ? '#fff' : '#71717A')};
 `;
 
 const InviteButton = styled.button<{ status?: string }>`
