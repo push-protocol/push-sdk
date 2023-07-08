@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 
 import * as PushAPI from '@pushprotocol/restapi';
 
-export const useSpaceRequests = (account: string) => {
+export const useSpaceRequests = (account?: string) => {
   const LIMIT = 2;
 
   const { spaceRequests, setSpaceRequests } = useSpaceData();
   const [loading, setLoading] = useState(false);
 
   const fetchSpaceRequests = async () => {
+    if (!account) return;
     setLoading(true);
     try {
       const res = await PushAPI.space.requests({
