@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
 import { SpacesUI } from '../components';
@@ -12,19 +12,31 @@ import {
 } from '../context/spacesContext';
 import { ENV } from '../config';
 
+import * as PushAPI from '@pushprotocol/restapi';
+
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
   theme: ISpacesTheme;
   children: React.ReactNode;
 }
 
-export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProviderProps) => {
+export const SpacesUIProvider = ({
+  spaceUI,
+  theme,
+  children,
+}: ISpacesUIProviderProps) => {
+  const spacesObjectRef = useRef({} as PushAPI.space.Space);
   const [account, setAccount] = useState<string>(spaceUI.account);
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
-  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(spaceUI.pgpPrivateKey);
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
+    spaceUI.pgpPrivateKey
+  );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
+  const [spaceObjectData, setSpaceObjectData] = useState<PushAPI.SpaceData>(
+    PushAPI.space.initSpaceData
+  );
 
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
@@ -49,6 +61,18 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
       ...prevState,
       [key]: value,
     }));
+  };
+
+  const initSpaceObject = async (spaceId: string) => {
+    spacesObjectRef.current = new PushAPI.space.Space({
+      signer,
+      pgpPrivateKey,
+      address: account,
+      chainId: 3,
+      env,
+      setSpaceData: setSpaceObjectData,
+    });
+    await spacesObjectRef.current.initialize({ spaceId });
   };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
@@ -165,6 +189,9 @@ export const SpacesUIProvider = ({ spaceUI, theme, children }: ISpacesUIProvider
     setPopularSpaces: setPopularSpacePaginationInfo,
     spaceRequests,
     setSpaceRequests: setSpacesRequestPaginationInfo,
+    spaceObjectData,
+    setSpaceObjectData,
+    initSpaceObject,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);

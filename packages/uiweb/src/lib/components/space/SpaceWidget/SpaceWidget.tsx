@@ -18,7 +18,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const {
     bottomOffset = DEFAULT_OFFSET,
     rightOffset = DEFAULT_OFFSET,
-    account = '0x6e9FECae20313664f97d4429886860221cb29c7A',
     width,
     zIndex = 1000,
     spaceId,
@@ -30,6 +29,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     isTimeToStartSpace,
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
+  const { account } = useSpaceData();
 
   // const [spaceData, setSpaceData] = useState<SpaceDTO>();
   const spaceData = useGetSpaceInfo(spaceId); // use hook in banner's pr to get spaceData from context

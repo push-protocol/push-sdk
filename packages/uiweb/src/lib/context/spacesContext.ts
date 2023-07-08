@@ -33,6 +33,9 @@ export interface ISpaceDataContextValues {
   setPopularSpaces: (paginationData: ISpacePaginationData) => void;
   spaceRequests: ISpacePaginationData;
   setSpaceRequests: (paginationData: ISpacePaginationData) => void;
+  spaceObjectData: any;
+  setSpaceObjectData: (data: any) => void;
+  initSpaceObject: (data: any) => void;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -84,6 +87,13 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
     lastPage: 2,
   } as ISpacePaginationData,
   setSpaceRequests: () => {
+    /**/
+  },
+  spaceObjectData: {},
+  setSpaceObjectData: () => {
+    /**/
+  },
+  initSpaceObject: () => {
     /**/
   },
 };
