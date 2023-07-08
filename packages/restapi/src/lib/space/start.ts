@@ -7,7 +7,8 @@ import {
 import { get } from './get';
 import { updateGroup } from '../chat/updateGroup';
 import getMergeStreamObject from './helpers/getMergeStreamObject';
-import { createStream } from 'livepeer';
+// import { createStream } from 'livepeer';
+import axios from 'axios';
 import { Client, isSupported } from '@livepeer/webrtmp-sdk';
 
 export interface StartSpaceType extends EnvOptionsType {
@@ -21,7 +22,13 @@ import type Space from './Space';
 import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 import { produce } from 'immer';
 
-export async function start(this: Space): Promise<void> {
+type StartType = {
+  livepeerApiKey: string;
+};
+
+export async function start(this: Space, options: StartType): Promise<void> {
+  const { livepeerApiKey } = options || {};
+
   try {
     // TODO: Only allow the host to execute this function
 
@@ -101,21 +108,30 @@ export async function start(this: Space): Promise<void> {
     // store the mergeStreamObject
     this.mergeStreamObject = mergeStreamObject;
 
-    // create a new livepeer stream object
-    const { streamKey, playbackId } = await createStream({
+    const url = 'https://livepeer.studio/api/stream';
+    const data = {
       name: this.spaceSpecificData.spaceName,
       record: true,
+    };
+
+    const { data: responseData } = await axios.post(url, data, {
+      headers: {
+        Authorization: 'Bearer ' + livepeerApiKey,
+      },
     });
+
+    const { streamKey, playbackId } = responseData;
+
+    console.log('livepeer details', streamKey, playbackId);
 
     // TODO: store the playbackId on group meta data, temp -> groupDescription
     this.update({ spaceDescription: playbackId });
 
-    // store the stream key
-    // this.streamKey = streamKey;
-
     if (!isSupported()) {
-      console.log('webrtmp-sdk is not currently supported on this browser')
+      console.log('webrtmp-sdk is not currently supported on this browser');
     }
+
+    console.log('stream key', streamKey);
 
     // cast to the stream
     const client = new Client();

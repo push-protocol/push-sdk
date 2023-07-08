@@ -67,7 +67,9 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   useEffect(() => {
     async function startSpace() {
       if (!spaceObjectData.connectionData.local.stream) return;
-      await spacesObjectRef.current.start();
+      await spacesObjectRef.current.start({
+        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      });
     }
     startSpace();
   }, [spaceObjectData.connectionData.local.stream]);
