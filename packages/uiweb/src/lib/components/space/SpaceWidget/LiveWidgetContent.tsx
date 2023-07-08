@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import {
-  ILiveSpaceProfileContainerProps,
-  LiveSpaceProfileContainer,
-} from './LiveSpaceProfileContainer';
+import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
 
 import { Button, Image, Item, Text } from '../../../config';
@@ -14,85 +12,9 @@ import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
-// const tempImageUrl =
-//   'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
+import { useSpaceData } from '../../../hooks';
 
-// const LiveProfilesInSpace: Array<ILiveSpaceProfileContainerProps> = [
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Ethan',
-//     designation: 'Host',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'James',
-//     designation: 'Co-host',
-//     mic: false,
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Ava',
-//     designation: 'Co-host',
-//     mic: false,
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Charlotte',
-//     designation: 'Speaker',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Noah',
-//     designation: 'Listener',
-//     requested: true,
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'William',
-//     designation: 'Listener',
-//     requested: true,
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Crypto',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Harper',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'Gabriel',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'cjdbsjc',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'clisdjc',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'oksxo',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'xasp[xp',
-//     designation: 'Listener',
-//   },
-//   {
-//     profilePic: tempImageUrl,
-//     name: 'ixccdcd',
-//     designation: 'Listener',
-//   },
-// ];
+import { Player } from '@livepeer/react';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -109,6 +31,16 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
+  const [playBackUrl, setPlayBackUrl] = useState<string>('');
+  const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
+
+  const handleJoinSpace = async () => {
+    initSpaceObject(spaceData?.spaceId as string);
+    await spacesObjectRef?.current?.join();
+    const playBackUrl = spaceObjectData.spaceDescription;
+    setPlayBackUrl(playBackUrl);
+    console.log('Space Joined');
+  };
 
   return (
     <>
@@ -199,6 +131,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
+            <PeerPlayer title="spaceAudio" playbackId={playBackUrl} autoPlay />
           </Item>
         ) : (
           <Button
@@ -210,6 +143,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             background={
               'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%), linear-gradient(87.17deg, #EA4E93 0%, #DB2777 0.01%, #9963F7 100%), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 50.52%, #FFDED3 100%, #FFCFC5 100%), linear-gradient(0deg, #8B5CF6, #8B5CF6), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 57.29%, #FF95D5 100%), #FFFFFF'
             }
+            onClick={handleJoinSpace}
           >
             <Text color="white" fontSize={'16px'} fontWeight={'600'}>
               Join this space
@@ -225,3 +159,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     </>
   );
 };
+
+const PeerPlayer = styled(Player)`
+  width: 0;
+  height: 0;
+}`;
