@@ -40,6 +40,8 @@ const InputContainer = styled.div`
     flex-direction: column;
 
     margin: 16px 0;
+
+    font-family: 'Strawford'; // update to fontFamily theme 
 `;
 
 const LabelContainer = styled.div`
@@ -59,6 +61,9 @@ const Input = styled.input<ISpacesTheme>`
     border: 1px solid ${(props => props.theme.btnOutline)};
     box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
     border-radius: 12px;
+
+    font-family: 'Strawford'; // update to fontFamily theme 
+    font-size: 14px;
 `;
 
 const CharCounter = styled.div<ISpacesTheme>`

@@ -6,21 +6,24 @@ import { Button } from '../../reusables/Button';
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { TextInputWithCounter } from '../../reusables/TextInput';
 
-import { CloseSvg } from '../../../../icons/CloseSvg';
+import { CalendarPurple } from '../../../../icons/CalendarPurple';
 
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
-    isScheduleVisible?: any;
+    isInviteVisible?: any;
     closeCreateModal?: MouseEventHandler;
     handleNameChange?: any;
     handleDescriptionChange?: any;
     nameValue?: any;
     descriptionValue?: any;
     isDescriptionEnabled: boolean;
+    isScheduleVisible?: any;
 }
 
 export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     const { 
-        isScheduleVisible, closeCreateModal, handleNameChange, handleDescriptionChange, nameValue, descriptionValue, isDescriptionEnabled,
+        isInviteVisible, closeCreateModal, handleNameChange,
+        handleDescriptionChange, nameValue, descriptionValue,
+        isDescriptionEnabled, isScheduleVisible,
     } = props;
 
     const secBtn = {
@@ -39,7 +42,7 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
                     labelName='Name'
                     inputValue={nameValue}
                     onInputChange={handleNameChange}
-                    charCount={50}
+                    charCount={70}
                 />
 
                 {
@@ -55,18 +58,22 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
 
                 <ButtonContainer>
                     <Button
-                        onClick={isScheduleVisible}
+                        onClick={isInviteVisible}
                         width='85%'
                     >
                         Create Space
                     </Button>
 
-                    <Button
-                        width='40px'
-                        customStyle={secBtn}
-                    >
-                        <CloseSvg />
-                    </Button>
+                    <div title="Schedule your Space">
+                        <Button
+                            width='40px'
+                            height='41px'
+                            customStyle={secBtn}
+                            onClick={isScheduleVisible}
+                        >
+                            <CalendarPurple height='20' width='20' />
+                        </Button>
+                    </div>
                 </ButtonContainer>
             </Modal>
     )

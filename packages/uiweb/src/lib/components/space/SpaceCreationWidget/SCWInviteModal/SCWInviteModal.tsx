@@ -1,6 +1,8 @@
 import React, { useState, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 
+import CircularProgressSpinner from '../../../loader/loader';
+
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { Modal } from '../../reusables/Modal';
 import { Button } from '../../reusables/Button';
@@ -11,10 +13,11 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     closeInviteModal?: MouseEventHandler;
     makeScheduleVisible?: MouseEventHandler;
     createSpace?: MouseEventHandler;
+    isLoading?: boolean;
 }
 
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
-    const { closeInviteModal, makeScheduleVisible, createSpace } = props;
+    const { closeInviteModal, makeScheduleVisible, createSpace, isLoading } = props;
 
     const [invitedMember, setInvitedMember] = useState('')
 
@@ -89,7 +92,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     onClick={createSpace}
                     width='max-content'
                 >
-                    Create Space
+                    {
+                        isLoading ?
+                        <CircularProgressSpinner />
+                        : 'Create Space'
+                    }
                 </Button>
             </Modal>
         </div>

@@ -60,6 +60,7 @@ import {
   SpaceBanner,
   SpaceFeed,
   CreateSpaceComponent,
+  SpaceInvitesComponent
 } from './SpaceUITest';
 
 window.Buffer = window.Buffer || Buffer;
@@ -352,6 +353,7 @@ export function App() {
                   <Route path="spaceWidget" element={<SpaceWidget />} />
                   <Route path="spaceFeed" element={<SpaceFeed />} />
                   <Route path="spaceBanner" element={<SpaceBanner />} />
+                  <Route path="spaceInvites" element={<SpaceInvitesComponent />} />
                   <Route
                     path="createSpaceUI"
                     element={<CreateSpaceComponent />}
