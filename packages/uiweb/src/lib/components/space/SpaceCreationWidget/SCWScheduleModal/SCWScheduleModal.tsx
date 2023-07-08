@@ -16,14 +16,18 @@ export interface ISCWSModalProps { // Space Creation Widget Schedule Modal Inter
     onDateChange?: any;
     timeValue?: any;
     onTimeChange?: any;
+
+    onClose: () => void;
 }
 
 export const SCWScheduleModal: React.FC<ISCWSModalProps> = (props) => {
 
-    const { closeScheduleModal, makeCreateVisible, makeInviteVisible, dateValue, timeValue, onDateChange, onTimeChange } = props;
+    const { closeScheduleModal, makeCreateVisible, makeInviteVisible, dateValue, timeValue, onDateChange, onTimeChange, onClose } = props;
 
     return (
-        <Modal>
+        <Modal
+            clickawayClose={onClose}
+        >
             <ModalHeader
                 heading='Schedule your space'
                 backCallback={makeCreateVisible}

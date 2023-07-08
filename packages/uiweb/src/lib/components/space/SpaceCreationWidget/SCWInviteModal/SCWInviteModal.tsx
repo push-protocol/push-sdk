@@ -1,5 +1,6 @@
 import React, { useState, MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components'
+import * as PushAPI from '@pushprotocol/restapi';
 
 import CircularProgressSpinner from '../../../loader/loader';
 
@@ -9,6 +10,8 @@ import { Button } from '../../reusables/Button';
 import { SearchInput } from '../../reusables/SearchInput';
 import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
+import { SpaceDataContext } from 'packages/uiweb/src/lib/context';
+import { Spinner } from '../../reusables/Spinner';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -19,6 +22,7 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     setTempMembers?: any;
     invitedMembersList?: any;
     setInvitedMembersList?: any;
+    onClose: () => void;
 }
 
 interface User {
@@ -33,27 +37,35 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setTempMembers,
         invitedMembersList,
         setInvitedMembersList,
+        onClose
     } = props;
+
+    const { env } = useContext(SpaceDataContext)
 
     const theme = useContext(ThemeContext);
 
     const [invitedMember, setInvitedMember] = useState('')
+    const [loadingAccount, setLoadingAccount] = useState(false)
 
-    // const [tempMembers, setTempMembers] = useState<User[]>([
-    //     {
-    //         handle: 's4m4',
-    //         name: 'Samarendra'
-    //     },
-    //     {
-    //         handle: 'aamsa',
-    //         name: 'Aam Saltman'
-    //     },
-    // ])
+    const [searchedUser, setSearchedUser]= useState<any>({});
 
-    // const [invitedMembersList, setInvitedMembersList] = useState<User[]>([])
-
-    const searchMember = (event: any) => {
+    const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
+
+        try {
+            setLoadingAccount(true);
+            const response = await PushAPI.user.get({
+                account: event.target.value,
+                env,
+            });
+            
+            setSearchedUser(response);
+            console.log(response);
+        } catch (e:any) {
+            console.error(e.message);
+        } finally {
+            setLoadingAccount(false);
+        }
     }
 
     const clearInput = () => {
@@ -61,7 +73,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     }
 
     const handleInviteUser = (index: any) => {
-        console.log('logged')
         const user = tempMembers[index];
 
         const updatedTempArray = [...tempMembers];
@@ -81,7 +92,9 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
 
     return (
         <div>
-            <Modal>
+            <Modal
+                clickawayClose={onClose}
+            >
                 <ModalHeader
                     heading='Invite members'
                     backCallback={makeScheduleVisible}
@@ -96,6 +109,23 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 />
 
                 <MembersList>
+                    {
+                        loadingAccount ?? <CircularProgressSpinner />
+                    }
+                    {
+                        Object.keys(searchedUser).length === 0 ?
+                        null
+                        : <ProfileContainer
+                            imageHeight='48px'
+                            handle={searchedUser.wallets.substring(7)}
+                            // handle='test'
+                            name='Test'
+                            imageUrl={searchedUser.profile.picture}
+                            contBtn='Add +'
+                            // btnCallback={() => handleInviteUser()}
+                            border
+                        />
+                    }
                     {
                         tempMembers.map((item: any, index: any) => {
                             return <ProfileContainer
@@ -138,7 +168,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 >
                     {
                         isLoading ?
-                        <CircularProgressSpinner />
+                        <Spinner />
                         : 'Create Space'
                     }
                 </Button>

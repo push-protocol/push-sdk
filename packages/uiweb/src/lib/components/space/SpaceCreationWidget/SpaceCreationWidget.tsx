@@ -144,6 +144,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     handleDescriptionChange={handleDescriptionChange}
                     isDescriptionEnabled={false}
                     isScheduleVisible={showScheduleSpace}
+                    onClose={closeCreateModal}
                 />
             }
 
@@ -156,6 +157,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     timeValue={spaceState.time}
                     onDateChange={onDateChange}
                     onTimeChange={onTimeChange}
+                    onClose={closeScheduleModal}
                 />
             }
 
@@ -169,6 +171,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     setTempMembers={setTempMembers}
                     invitedMembersList={invitedMembersList}
                     setInvitedMembersList={setInvitedMembersList}
+                    onClose={closeInviteModal}
                 />
             }
         </SCWContainer>

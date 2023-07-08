@@ -94,7 +94,6 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
                     value={selectedAMPM}
                     onChange={(e) => setSelectedAMPM(e.target.value)}
                     placeholder='AM/PM'
-                    width='40%'
                 >
                     <option value={'AM'}>AM</option>
                     <option value={'PM'}>PM</option>
