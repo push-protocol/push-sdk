@@ -107,7 +107,8 @@ export async function start(this: Space): Promise<void> {
       record: true,
     });
 
-    // TODO: store the playbackId on group meta data
+    // TODO: store the playbackId on group meta data, temp -> groupDescription
+    this.update({ spaceDescription: playbackId });
 
     // store the stream key
     // this.streamKey = streamKey;

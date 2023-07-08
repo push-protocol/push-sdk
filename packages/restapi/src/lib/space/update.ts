@@ -1,5 +1,4 @@
-import Constants from '../constants';
-import { ChatStatus, EnvOptionsType } from '../types';
+import { ChatStatus } from '../types';
 import {
   getSpaceAdminsList,
   getSpacesMembersList,
@@ -10,10 +9,10 @@ import { get } from './get';
 
 import type Space from './Space';
 
-export interface ChatUpdateSpaceType extends EnvOptionsType {
-  spaceName: string;
-  spaceImage: string | null;
-  spaceDescription: string;
+export interface ChatUpdateSpaceType {
+  spaceName?: string;
+  spaceImage?: string | null;
+  spaceDescription?: string;
   scheduleAt?: Date;
   scheduleEnd?: Date | null;
 }
@@ -22,14 +21,8 @@ export async function update(
   this: Space,
   options: ChatUpdateSpaceType
 ): Promise<void> {
-  const {
-    spaceName,
-    spaceImage,
-    spaceDescription,
-    env = Constants.ENV.PROD,
-    scheduleAt,
-    scheduleEnd,
-  } = options || {};
+  const { spaceName, spaceImage, spaceDescription, scheduleAt, scheduleEnd } =
+    options || {};
   try {
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,
@@ -40,7 +33,10 @@ export async function update(
       space.members,
       space.pendingMembers
     );
-    const convertedAdmins = getSpaceAdminsList(space.members, space.pendingMembers);
+    const convertedAdmins = getSpaceAdminsList(
+      space.members,
+      space.pendingMembers
+    );
 
     if (space.status === ChatStatus.ACTIVE && scheduleAt) {
       throw new Error('Unable change the start date/time of an active space');
@@ -52,16 +48,18 @@ export async function update(
 
     const group = await updateGroup({
       chatId: this.spaceSpecificData.spaceId,
-      groupName: spaceName,
-      groupImage: spaceImage,
-      groupDescription: spaceDescription,
+      groupName: spaceName ? spaceName : space.spaceName,
+      groupImage: spaceImage ? spaceImage : space.spaceImage,
+      groupDescription: spaceDescription
+        ? spaceDescription
+        : space.spaceDescription,
       members: convertedMembers,
       admins: convertedAdmins,
       signer: this.signer,
-      env: env,
+      env: this.env,
       pgpPrivateKey: this.pgpPrivateKey,
-      scheduleAt: scheduleAt,
-      scheduleEnd: scheduleEnd,
+      scheduleAt: scheduleAt ? scheduleAt : space.scheduleAt,
+      scheduleEnd: scheduleEnd ? scheduleEnd : space.scheduleEnd,
     });
 
     // update space specific data
