@@ -74,7 +74,6 @@ export const SpacesUIProvider = ({
       setSpaceData: setSpaceObjectData,
     });
     await spacesObjectRef.current.initialize({ spaceId });
-    await spacesObjectRef.current.createAudioStream();
   };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {

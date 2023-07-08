@@ -34,7 +34,8 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   //Initialize the space object
 
   const handleStartSpace = async () => {
-    initSpaceObject(spaceData?.spaceId as string);
+    await initSpaceObject(spaceData?.spaceId as string);
+    await spacesObjectRef.current.createAudioStream();
     // Start the space by calling the start method on the space object
 
     console.log('Space Started');

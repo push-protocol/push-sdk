@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
@@ -35,7 +35,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    initSpaceObject(spaceData?.spaceId as string);
+    await initSpaceObject(spaceData?.spaceId as string);
     await spacesObjectRef?.current?.join();
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
