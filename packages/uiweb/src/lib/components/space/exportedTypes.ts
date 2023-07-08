@@ -12,6 +12,7 @@ export interface ISpacesUIProps {
 
 export interface ISpaceWidgetProps {
   // Add props specific to the SpaceWidget class method
+  account?: string;
   bottomOffset?: number;
   rightOffset?: number;
   zIndex?: number;

@@ -6,8 +6,9 @@ import {
   SpacesUI,
   ISpaceInvitesProps,
 } from '@pushprotocol/uiweb';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { EnvContext, Web3Context } from '../context';
+import * as PushAPI from '@pushprotocol/restapi';
 
 export interface IUseSpaceReturnValues {
   spaceUI: SpacesUI;
@@ -20,15 +21,37 @@ export interface IUseSpaceReturnValues {
 
 export const useSpaceComponents = (): IUseSpaceReturnValues => {
   const { account, library } = useContext<any>(Web3Context);
-  const librarySigner = library.getSigner();
   const { env } = useContext<any>(EnvContext);
+  const librarySigner = library.getSigner();
+
+  const [pgpPrivateKey, setPgpPrivateKey] = useState('');
 
   const spaceUI = new SpacesUI({
     account: account,
     signer: librarySigner,
-    pgpPrivateKey: 'random pvt key',
+    pgpPrivateKey: pgpPrivateKey,
     env: env,
   });
+
+  useEffect(() => {
+    (async () => {
+      if (!account || !env || !library) return;
+
+      const user = await PushAPI.user.get({ account, env });
+      let pgpPrivateKey;
+      const librarySigner = await library.getSigner(account);
+      if (user?.encryptedPrivateKey) {
+        pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account,
+          signer: librarySigner,
+          env,
+        });
+      }
+
+      setPgpPrivateKey(pgpPrivateKey);
+    })();
+  }, [account, env, library]);
 
   return {
     spaceUI,
