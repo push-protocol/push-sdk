@@ -16,7 +16,7 @@ export interface ISpaceWidgetProps {
   bottomOffset?: number;
   rightOffset?: number;
   zIndex?: number;
-  spaceId: string;
+  spaceId?: string;
   width?: number;
   shareUrl?: string;
   onClose?: MouseEventHandler;

@@ -32,7 +32,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const { account } = useSpaceData();
 
   // const [spaceData, setSpaceData] = useState<SpaceDTO>();
-  const spaceData = useGetSpaceInfo(spaceId); // use hook in banner's pr to get spaceData from context
+  const spaceData = useGetSpaceInfo(spaceId as string); // use hook in banner's pr to get spaceData from context
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
   const isLive = isLiveSpace(spaceData as SpaceDTO);
