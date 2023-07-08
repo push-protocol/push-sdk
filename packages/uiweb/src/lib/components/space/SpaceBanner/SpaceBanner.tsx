@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { SpaceBannerLoadingSkeleton } from './SpaceBannerLoadingSkeleton';
+
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { getDateAndTime } from '../helpers/date';
@@ -46,6 +48,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       onBannerClick(spaceData?.spaceId || '');
     }
   };
+
+  // Check if the spaceData is not available, show the skeleton loading effect
+  if (!spaceData) {
+    return <SpaceBannerLoadingSkeleton />;
+  }
 
   return (
     <Container
