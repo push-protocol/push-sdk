@@ -66,6 +66,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       flexDirection={'column'}
       justifyContent={'center'}
       gap={'15px'}
+      padding={'0 24px'}
     >
       <Image
         width={'41px'}

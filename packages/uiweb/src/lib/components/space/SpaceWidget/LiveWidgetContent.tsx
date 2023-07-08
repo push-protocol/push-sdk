@@ -8,6 +8,8 @@ import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
 
 import { Button, Image, Item, Text } from '../../../config';
 import MicOnIcon from '../../../icons/micon.svg';
+import MicEngagedIcon from '../../../icons/MicEngage.svg';
+import MuteIcon from '../../../icons/Muted.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
@@ -97,13 +99,16 @@ interface LiveWidgetContentProps {
   // temp props only for testing demo purpose for now
   isHost?: boolean;
   isJoined?: boolean;
+  isSpeaker?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
   isJoined,
   isHost,
+  isSpeaker,
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
+  const [isMicOn, setIsMicOn] = useState<boolean>(true);
 
   return (
     <>
@@ -141,15 +146,28 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
+              onClick={() =>
+                isHost || isSpeaker ? setIsMicOn(!isMicOn) : null
+              }
             >
               <Image
                 width={'14px'}
                 height={'20px'}
-                src={MicOnIcon}
+                src={
+                  isHost || isSpeaker
+                    ? isMicOn
+                      ? MicEngagedIcon
+                      : MuteIcon
+                    : MicOnIcon
+                }
                 alt="Mic Icon"
               />
               <Text color="#8B5CF6" fontSize={'14px'} fontWeight={600}>
-                Request
+                {isHost || isSpeaker
+                  ? isMicOn
+                    ? 'Speaking'
+                    : 'Muted'
+                  : 'Request'}
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>

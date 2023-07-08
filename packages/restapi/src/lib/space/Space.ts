@@ -64,7 +64,7 @@ export interface SpaceConstructorType extends EnvOptionsType {
 }
 
 // declaring the Space class
-class Space extends Video {
+ export class Space extends Video {
   /*
     - temporarily store the streamKey on the class
     - will be used by the host to cast to the stream
