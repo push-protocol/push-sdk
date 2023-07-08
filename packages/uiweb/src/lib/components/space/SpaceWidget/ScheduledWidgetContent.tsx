@@ -8,8 +8,8 @@ import TwitterIcon from '../../../icons/twitterVector.svg';
 import CopyIcon from '../../../icons/copyVector.svg';
 import AtIcon from '../../../icons/atVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
-import * as PushAPI from '@pushprotocol/restapi';
 import { isTimeToStart } from './helpers/utils';
+import { useSpaceData } from '../../../hooks';
 
 interface ScheduledWidgetContentProps {
   account?: string;
@@ -29,9 +29,14 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   isMember,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = isTimeToStart(spaceData as SpaceDTO);
+  const { spacesObjectRef, initSpaceObject } = useSpaceData();
+
+  //Initialize the space object
+  if (spaceData) initSpaceObject(spaceData?.spaceId as string);
 
   const handleStartSpace = async () => {
-    console.log('Space Started!');
+    // Start the space by calling the start method on the space object
+    await spacesObjectRef.current.start();
   };
 
   const handleShareTweet = () => {

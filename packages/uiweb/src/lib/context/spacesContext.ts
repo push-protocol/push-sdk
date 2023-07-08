@@ -98,7 +98,9 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   initSpaceObject: () => {
     /**/
   },
-  spacesObjectRef: {} as PushAPI.space.Space,
+  spacesObjectRef: {
+    current: null,
+  } as React.MutableRefObject<any>,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(
