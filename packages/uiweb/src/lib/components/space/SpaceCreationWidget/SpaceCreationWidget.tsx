@@ -46,7 +46,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         spaceName: '',
         spaceDescription: '',
         date: new Date(),
-        time: new Date().getTime(),
+        time: new Date(),
     })
 
     const { signer } = useSpaceData();
@@ -63,8 +63,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         setSpaceState((prevState) => ({...prevState, date: dateValue}))
     };
 
-    const onTimeChange = (event: any) => {
-        setSpaceState((prevState) => ({...prevState, time: event.target.value}))
+    const onTimeChange = (timeValue: any) => {
+        setSpaceState((prevState) => ({...prevState, time: timeValue}))
     };
 
     const showCreateSpace = () => {
@@ -101,11 +101,11 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         const spaceCreate = {
             spaceName: spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: [], // add member address from invitedMembers array here
+            members: [], // add member address from temp array here
             spaceImage: 'asd',
             admins: [],
             isPublic: true,
-            scheduleAt: spaceState.date,
+            scheduleAt: new Date(spaceState.time),
             signer: signer as PushAPI.SignerType,
         }
 
@@ -133,10 +133,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     onCreate={showCreateSpace}
                 />
             }
-
-            {spaceState.spaceName}
-            {spaceState.date.toDateString()}
-            {spaceState.time}
 
             {isCreateModalVisible &&
                 <SCWCreateModal

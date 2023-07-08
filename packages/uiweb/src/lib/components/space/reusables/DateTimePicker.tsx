@@ -2,8 +2,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { Modal } from './Modal';
-
 import { ThemeContext } from '../theme/ThemeProvider';
 
 interface DateTimePickerProps {
@@ -13,62 +11,58 @@ interface DateTimePickerProps {
     onTimeChange?: any;
 }
 
-// interface Time {
-//     hours: string;
-//     minutes: string;
-//     period: string;
-// }
-
 const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
+    const {
+        propsDate, onDateChange, onTimeChange,
+    } = props;
     const theme = useContext(ThemeContext);
 
-    // const [time, setTime] = useState<Time>({
-    //     hours: '00',
-    //     minutes: '00',
-    //     period: 'AM'
-    // });
+    const [selectedHours, setSelectedHours] = useState('1');
+    const [selectedMinutes, setSelectedMinutes] = useState('0');
+    const [selectedAMPM, setSelectedAMPM] = useState('AM');
+    const [timeHumanReadable, setTimeHumanReadable] = useState(0);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const date = new Date(event.target.value);
-        props.onDateChange(date);
+        onDateChange(date);
     };
 
-    // const handleTimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //     const time = event.target.value;
-    //     props.onTimeChange(time);
-    // };
+    const getTime = (hours: number, minutes: number, ampm: string, propsDate: Date) => {
+        let totalMinutes = hours * 60 + minutes;
+    
+        if (ampm === 'PM' && hours !== 12) {
+          totalMinutes += 12 * 60;
+        } else if (ampm === 'AM' && hours === 12) {
+          totalMinutes -= 12 * 60;
+        }
 
-    // const handleChange = (event: any) => {
-    //     setTime({
-    //         ...time,
-    //         [event.target.name]: event.target.value
-    //     });
-    // };
+        const date = new Date(propsDate);
+        date.setHours(0, 0, 0, 0);
+        date.setMinutes(totalMinutes);
 
-    // const getTimeInEpoch = () => {
-    //     let { hours, minutes, period } = time;
-    //     hours = hours === '12' ? '00' : hours;
-    //     hours = period === 'PM' ? parseInt(hours, 10) + 12 : hours;
-    //     const date = new Date();
-    //     date.setHours(hours);
-    //     date.setMinutes(minutes);
-    //     const epochTime = date.getTime();
-    //     console.log(epochTime);
-    // };
+        return date.getTime();
+    };
 
-    // useEffect(() => {
-    //     getTimeInEpoch();
-    // }, [time]);
+    useEffect(() => {
+        const hours = parseInt(selectedHours, 10);
+        const minutes = parseInt(selectedMinutes, 10);
+        const ampm = selectedAMPM;
+    
+        const newTimeEpoch = getTime(hours, minutes, ampm, propsDate);
+        setTimeHumanReadable(newTimeEpoch);
+
+        onTimeChange(newTimeEpoch)
+    }, [selectedHours, selectedMinutes, selectedAMPM, propsDate]);
 
     return (
         <DateTimeCont>
             <div>Select date and time</div>
-            <Input theme={theme} type="date" value={props.propsDate.toISOString().split('T')[0]} onChange={handleDateChange} />
+            <Input theme={theme} type="date" value={propsDate.toISOString().split('T')[0]} onChange={handleDateChange} />
             <TimeContainer>
                 <Select
                     theme={theme}
-                    // value={props.propsTime}
-                    // onChange={handleChange}
+                    value={selectedHours}
+                    onChange={(e) => setSelectedHours(e.target.value)}
                     placeholder='Hours'
                 >
                     <option value={'00'}>00</option>
@@ -86,8 +80,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
                 </Select>
                 <Select
                     theme={theme}
-                    // value={props.propsTime}
-                    // onChange={handleChange}
+                    value={selectedMinutes}
+                    onChange={(e) => setSelectedMinutes(e.target.value)}
                     placeholder='Minutes'
                 >
                     <option value={'00'}>00</option>
@@ -97,8 +91,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
                 </Select>
                 <Select
                     theme={theme}
-                    // value={props.propsTime}
-                    // onChange={handleChange}
+                    value={selectedAMPM}
+                    onChange={(e) => setSelectedAMPM(e.target.value)}
                     placeholder='AM/PM'
                     width='40%'
                 >
@@ -106,9 +100,6 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
                     <option value={'PM'}>PM</option>
                 </Select>
             </TimeContainer>
-            {/* <Select theme={theme} value={props.propsTime} onChange={handleTimeChange}>
-                <option value={new Date().getTime()}>Current Time</option>
-            </Select> */}
         </DateTimeCont>
     );
 };
