@@ -13,12 +13,32 @@ export interface ISpaceCreateWidgetProps {
     CustomComponent?: any;
 }
 
+//Temporary interface for demo
+interface User {
+    handle: string;
+    name: string;
+}
+
+
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
     const { CustomComponent } = props;
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
+
+    const [tempMembers, setTempMembers] = useState<User[]>([
+        {
+            handle: 's4m4',
+            name: 'Samarendra'
+        },
+        {
+            handle: 'aamsa',
+            name: 'Aam Saltman'
+        },
+    ])
+
+    const [invitedMembersList, setInvitedMembersList] = useState<User[]>([])
 
     const [isLoading, setLoading] = useState(false);
 
@@ -81,7 +101,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         const spaceCreate = {
             spaceName: spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: [],
+            members: [], // add member address from invitedMembers array here
             spaceImage: 'asd',
             admins: [],
             isPublic: true,
@@ -149,6 +169,10 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     makeScheduleVisible={showCreateSpace}
                     createSpace={testCreateSpace}
                     isLoading={isLoading}
+                    tempMembers={tempMembers}
+                    setTempMembers={setTempMembers}
+                    invitedMembersList={invitedMembersList}
+                    setInvitedMembersList={setInvitedMembersList}
                 />
             }
         </SCWContainer>
