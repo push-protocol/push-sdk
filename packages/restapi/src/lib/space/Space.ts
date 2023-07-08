@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 
+import Constants from '../constants';
 import { Video, initVideoCallData } from '../video';
 import { update } from './update';
 import { start } from './start';
@@ -16,6 +17,8 @@ import { removeSpeaker } from './removeSpeaker';
 import { join } from './join';
 import { leave } from './leave';
 import { stop } from './stop';
+import { initialize } from './initialize';
+import addToMergedStream from './helpers/addToMergedStream';
 
 import { VideoStreamMerger } from 'video-stream-merger';
 import {
@@ -26,8 +29,6 @@ import {
   SpaceData,
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
-import Constants from '../constants';
-import addToMergedStream from './helpers/addToMergedStream';
 
 const initSpaceSpecificData = {
   members: [],
@@ -110,11 +111,7 @@ class Space extends Video {
       }, // setData will be overridden below
     });
 
-    // init the state maintained by the developer
-    setSpaceData(() => initSpaceData);
-
-    // init the spaceSpecificData class variable
-    this.spaceSpecificData = initSpaceSpecificData;
+    // setting state changing functions
 
     /*
       - Will be used internally in the class
@@ -133,13 +130,6 @@ class Space extends Video {
       // update the video class variable
       this.data = newVideoData;
     };
-
-    // set the local address inside video call 'data'
-    this.setData((oldVideoCallData) => {
-      return produce(oldVideoCallData, (draft) => {
-        draft.local.address = address;
-      });
-    });
 
     /*
       - Will be used internally in the class
@@ -173,9 +163,27 @@ class Space extends Video {
       // update the video data and update the external state
       this.setData(() => newConnectionData);
     };
-  }
+
+    // initializing state
+
+    // set the local address inside video call 'data'
+    this.setData((oldVideoCallData) => {
+      return produce(oldVideoCallData, (draft) => {
+        draft.local.address = address;
+      });
+    });
+
+    // init the state maintained by the developer
+    setSpaceData(() => initSpaceData);
+
+    // init the spaceSpecificData class variable
+    this.spaceSpecificData = initSpaceSpecificData;
+  };
+
 
   // adding instance methods
+
+  public initialize = initialize;
 
   public update = update;
 
