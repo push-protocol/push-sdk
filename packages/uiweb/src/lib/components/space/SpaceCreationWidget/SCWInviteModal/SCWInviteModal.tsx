@@ -113,12 +113,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         loadingAccount ?? <CircularProgressSpinner />
                     }
                     {
-                        Object.keys(searchedUser).length === 0 ?
-                        null
+                        Object.keys(searchedUser).length === 0
+                        ? null
                         : <ProfileContainer
                             imageHeight='48px'
                             handle={searchedUser.wallets.substring(7)}
-                            // handle='test'
                             name='Test'
                             imageUrl={searchedUser.profile.picture}
                             contBtn='Add +'

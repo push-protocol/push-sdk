@@ -148,4 +148,6 @@ const HostHandle = styled.div<{ theme?: any }>`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    width: 160px;
+    text-overflow: ellipsis;
 `;
