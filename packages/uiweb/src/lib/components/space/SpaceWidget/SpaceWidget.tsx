@@ -39,6 +39,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const isHost = isHostOfSpace(account, spaceData as SpaceDTO);
   const isMember = isMemberOfSpace(account, spaceData as SpaceDTO);
 
+  console.log(isLive);
+
   const { env } = useSpaceData();
 
   const toggleWidgetVisibility = () => {

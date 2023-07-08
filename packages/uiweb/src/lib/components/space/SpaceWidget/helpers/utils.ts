@@ -15,7 +15,7 @@ export const isMemberOfSpace = (account: string, spaceData: SpaceDTO) => {
 };
 
 export const isLiveSpace = (spaceData: SpaceDTO) => {
-  return getSpaceStatus(spaceData) === 'Live';
+  return getSpaceStatus(spaceData?.status) === 'Live';
 };
 
 export const isTimeToStart = (spaceData: SpaceDTO, now: Date) => {

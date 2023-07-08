@@ -73,7 +73,6 @@ export const SpaceFeed = () => {
       />
       <SpaceFeedComponent
         showTabs={showTab}
-        account={address}
         orientation={horizontal ? 'horizontal' : 'vertical'}
         width={width}
         height={height}

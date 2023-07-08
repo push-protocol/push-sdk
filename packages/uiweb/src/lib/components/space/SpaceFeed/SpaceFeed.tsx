@@ -35,7 +35,6 @@ enum FilterEnums {
   Scheduled = 'Scheduled',
 }
 export interface ISpaceFeedProps {
-  account?: string;
   orientation?: 'horizontal' | 'vertical';
   height?: number;
   width?: number;
@@ -47,7 +46,6 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  account = '0x6e9FECae20313664f97d4429886860221cb29c7A',
   orientation = 'veritcal',
   height,
   width,
@@ -61,6 +59,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   const [filterTab, setFilterTab] = useState(filter);
 
   const {
+    account,
     mySpaces,
     setMySpaces,
     popularSpaces,
@@ -96,14 +95,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
       return spacesList.filter(
         (space: SpaceIFeeds) =>
           space.spaceInformation?.spaceCreator.slice(7).toUpperCase() ===
-          account.toUpperCase()
+          account?.toUpperCase()
       );
     }
     if (tab === Tabs.ForYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
           space.spaceInformation?.spaceCreator.slice(7).toUpperCase() !==
-          account.toUpperCase()
+          account?.toUpperCase()
       );
     } else {
       return handleFilterData(spacesList);
@@ -159,6 +158,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     }
   };
 
+  console.log(account);
+
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
@@ -172,6 +173,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   //API calls
+
   const mySpaceLoading = useMySpaces(account);
   const popularSpaceLoading = usePopularSpaces();
   const spaceRequestsLoading = useSpaceRequests(account);
