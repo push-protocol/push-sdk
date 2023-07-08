@@ -8,7 +8,7 @@ import { get } from './get';
 import { updateGroup } from '../chat/updateGroup';
 import getMergeStreamObject from './helpers/getMergeStreamObject';
 import { createStream } from 'livepeer';
-import { Client } from '@livepeer/webrtmp-sdk';
+import { Client, isSupported } from '@livepeer/webrtmp-sdk';
 
 export interface StartSpaceType extends EnvOptionsType {
   spaceId: string;
@@ -112,6 +112,10 @@ export async function start(this: Space): Promise<void> {
 
     // store the stream key
     // this.streamKey = streamKey;
+
+    if (!isSupported()) {
+      console.log('webrtmp-sdk is not currently supported on this browser')
+    }
 
     // cast to the stream
     const client = new Client();
