@@ -192,6 +192,7 @@ export const SpacesUIProvider = ({
     spaceObjectData,
     setSpaceObjectData,
     initSpaceObject,
+    spacesObjectRef,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);

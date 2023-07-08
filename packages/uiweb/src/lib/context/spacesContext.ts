@@ -1,4 +1,5 @@
 import React, { createContext } from 'react';
+import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 import { SignerType } from '../types';
 import { ENV } from '../config';
@@ -36,6 +37,7 @@ export interface ISpaceDataContextValues {
   spaceObjectData: any;
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => void;
+  spacesObjectRef: React.MutableRefObject<any>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -96,6 +98,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   initSpaceObject: () => {
     /**/
   },
+  spacesObjectRef: {} as PushAPI.space.Space,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(
