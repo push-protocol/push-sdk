@@ -498,7 +498,7 @@ export type VideoCallData = {
     broadcast?: {
       livepeerInfo: any;
       hostAddress: string;
-      coHostAddress: string;
+      coHostAddress?: string;
     };
   };
   local: {
