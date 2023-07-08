@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 
+import Constants from '../constants';
 import { Video, initVideoCallData } from '../video';
 import { update } from './update';
 import { start } from './start';
@@ -16,10 +17,18 @@ import { removeSpeaker } from './removeSpeaker';
 import { join } from './join';
 import { leave } from './leave';
 import { stop } from './stop';
+import { initialize } from './initialize';
+import addToMergedStream from './helpers/addToMergedStream';
 
-import { EnvOptionsType, SignerType, SpaceDTO, SpaceData } from '../types';
+import { VideoStreamMerger } from 'video-stream-merger';
+import {
+  ChatStatus,
+  EnvOptionsType,
+  SignerType,
+  SpaceDTO,
+  SpaceData,
+} from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
-import Constants from '../constants';
 
 const initSpaceSpecificData = {
   members: [],
@@ -56,6 +65,14 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
 // declaring the Space class
 class Space extends Video {
+  /*
+    - temporarily store the streamKey on the class
+    - will be used by the host to cast to the stream
+  */
+  // protected streamKey: string | null = null;
+
+  protected mergeStreamObject: VideoStreamMerger | null = null;
+
   protected spaceSpecificData: SpaceDTO;
   protected setSpaceSpecificData: (fn: (data: SpaceDTO) => SpaceDTO) => void;
 
@@ -79,16 +96,22 @@ class Space extends Video {
       pgpPrivateKey,
       env,
       callType: VIDEO_CALL_TYPE.PUSH_SPACE,
+      onReceiveStream: (receivedStream: MediaStream) => {
+        // for a space, that has started broadcast & the local peer is the host
+        if (
+          this.spaceSpecificData.status === ChatStatus.ACTIVE &&
+          this.data.meta.broadcast?.hostAddress &&
+          this.data.meta.broadcast.hostAddress === this.data.local.address
+        ) {
+          addToMergedStream(this.mergeStreamObject!, receivedStream);
+        }
+      },
       setData: function () {
         return;
       }, // setData will be overridden below
     });
 
-    // init the state maintained by the developer
-    setSpaceData(() => initSpaceData);
-
-    // init the spaceSpecificData class variable
-    this.spaceSpecificData = initSpaceSpecificData;
+    // setting state changing functions
 
     /*
       - Will be used internally in the class
@@ -107,13 +130,6 @@ class Space extends Video {
       // update the video class variable
       this.data = newVideoData;
     };
-
-    // set the local address inside video call 'data'
-    this.setData((oldVideoCallData) => {
-      return produce(oldVideoCallData, (draft) => {
-        draft.local.address = address;
-      });
-    });
 
     /*
       - Will be used internally in the class
@@ -147,9 +163,27 @@ class Space extends Video {
       // update the video data and update the external state
       this.setData(() => newConnectionData);
     };
-  }
+
+    // initializing state
+
+    // set the local address inside video call 'data'
+    this.setData((oldVideoCallData) => {
+      return produce(oldVideoCallData, (draft) => {
+        draft.local.address = address;
+      });
+    });
+
+    // init the state maintained by the developer
+    setSpaceData(() => initSpaceData);
+
+    // init the spaceSpecificData class variable
+    this.spaceSpecificData = initSpaceSpecificData;
+  };
+
 
   // adding instance methods
+
+  public initialize = initialize;
 
   public update = update;
 
