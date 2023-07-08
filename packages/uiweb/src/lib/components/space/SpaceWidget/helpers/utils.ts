@@ -18,14 +18,12 @@ export const isLiveSpace = (spaceData: SpaceDTO) => {
   return getSpaceStatus(spaceData) === 'Live';
 };
 
-export const isTimeToStart = (spaceData: SpaceDTO) => {
-  const now = new Date();
+export const isTimeToStart = (spaceData: SpaceDTO, now: Date) => {
   const isScheduled = spaceData?.status === 'PENDING';
   const scheduledTime = spaceData?.scheduleAt as Date;
 
   //true 15 min before scheduledTime
   if (scheduledTime && isScheduled) {
-    console.log(scheduledTime);
     return now.getTime() >= new Date(scheduledTime).getTime() - 15 * 60 * 1000;
   } else {
     return false;

@@ -64,6 +64,7 @@ export const SpacesUIProvider = ({
   };
 
   const initSpaceObject = async (spaceId: string) => {
+    console.log(pgpPrivateKey);
     spacesObjectRef.current = new PushAPI.space.Space({
       signer,
       pgpPrivateKey,
@@ -73,6 +74,7 @@ export const SpacesUIProvider = ({
       setSpaceData: setSpaceObjectData,
     });
     await spacesObjectRef.current.initialize({ spaceId });
+    await spacesObjectRef.current.createAudioStream();
   };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {

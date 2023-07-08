@@ -36,7 +36,7 @@ export interface ISpaceDataContextValues {
   setSpaceRequests: (paginationData: ISpacePaginationData) => void;
   spaceObjectData: any;
   setSpaceObjectData: (data: any) => void;
-  initSpaceObject: (data: any) => void;
+  initSpaceObject: (data: any) => Promise<void>;
   spacesObjectRef: React.MutableRefObject<any>;
 }
 
@@ -95,7 +95,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setSpaceObjectData: () => {
     /**/
   },
-  initSpaceObject: () => {
+  initSpaceObject: async() => {
     /**/
   },
   spacesObjectRef: {
