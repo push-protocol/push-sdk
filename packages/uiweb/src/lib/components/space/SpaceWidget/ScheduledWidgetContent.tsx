@@ -8,8 +8,8 @@ import TwitterIcon from '../../../icons/twitterVector.svg';
 import CopyIcon from '../../../icons/copyVector.svg';
 import AtIcon from '../../../icons/atVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
-import { isTimeToStart } from './helpers/utils';
 import { useSpaceData } from '../../../hooks';
+import { useEffect } from 'react';
 
 interface ScheduledWidgetContentProps {
   account?: string;
@@ -28,15 +28,16 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   isHost,
   isMember,
 }: ScheduledWidgetContentProps) => {
-  const isTimeToStartSpace = isTimeToStart(spaceData as SpaceDTO);
-  const { spacesObjectRef, initSpaceObject } = useSpaceData();
+  const isTimeToStartSpace = true;
+  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
 
   //Initialize the space object
-  if (spaceData) initSpaceObject(spaceData?.spaceId as string);
 
   const handleStartSpace = async () => {
+    initSpaceObject(spaceData?.spaceId as string);
     // Start the space by calling the start method on the space object
-    await spacesObjectRef.current.start();
+
+    console.log('Space Started');
   };
 
   const handleShareTweet = () => {
@@ -62,6 +63,14 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
+
+  useEffect(() => {
+    async function startSpace() {
+      if (!spaceObjectData.connectionData.local.stream) return;
+      await spacesObjectRef.current.start();
+    }
+    startSpace();
+  }, [spaceObjectData.connectionData.local.stream]);
 
   return (
     <Container
