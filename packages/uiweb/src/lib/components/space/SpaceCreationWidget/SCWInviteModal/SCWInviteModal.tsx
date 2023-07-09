@@ -2,8 +2,6 @@ import React, { useState, MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
-import CircularProgressSpinner from '../../../loader/loader';
-
 import { ModalHeader } from '../../reusables/ModalHeader';
 import { Modal } from '../../reusables/Modal';
 import { Button } from '../../reusables/Button';
@@ -12,17 +10,25 @@ import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
 import { Spinner } from '../../reusables/Spinner';
 
+import CircularProgressSpinner from '../../../loader/loader';
+
 import { useSpaceData } from '../../../../hooks';
+import SettingsIcon from '../../../../icons/settingsBlack.svg';
+import { Image } from '../../../../config';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
     makeScheduleVisible?: MouseEventHandler;
     createSpace?: MouseEventHandler;
     isLoading?: boolean;
-    tempMembers?: any;
-    setTempMembers?: any;
     invitedMembersList?: any;
     setInvitedMembersList?: any;
+    invitedAddressList?: any;
+    setInvitedAddressList?: any;
+    adminsList?: any;
+    setAdminsList?: any;
+    adminsAddressList?: any;
+    setAdminsAddressList?: any;
     onClose: () => void;
 }
 
@@ -34,10 +40,14 @@ interface User {
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const {
         closeInviteModal, makeScheduleVisible, createSpace, isLoading,
-        tempMembers,
-        setTempMembers,
         invitedMembersList,
         setInvitedMembersList,
+        invitedAddressList,
+        setInvitedAddressList,
+        adminsList,
+        setAdminsList,
+        adminsAddressList,
+        setAdminsAddressList,
         onClose
     } = props;
 
@@ -49,6 +59,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const [loadingAccount, setLoadingAccount] = useState(false)
 
     const [searchedUser, setSearchedUser]= useState<any>({});
+    const [errorMsg, setErrorMsg] = useState<any>('');
 
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
@@ -59,11 +70,13 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 account: event.target.value,
                 env,
             });
-            
+
             setSearchedUser(response);
-            console.log(response);
+            setErrorMsg('');
         } catch (e:any) {
             console.error(e.message);
+            setSearchedUser({});
+            setErrorMsg(e.message);
         } finally {
             setLoadingAccount(false);
         }
@@ -71,21 +84,29 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
 
     const clearInput = () => {
         setInvitedMember('');
+        setSearchedUser({});
+        setErrorMsg('');
     }
 
-    const handleInviteUser = (index: any) => {
-        const user = tempMembers[index];
-
-        const updatedTempArray = [...tempMembers];
-        updatedTempArray.splice(index, 1);
-        setTempMembers(updatedTempArray);
-
+    const handleInviteMember = (user: any) => {
+        setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
         setInvitedMembersList([...invitedMembersList, user]);
-    };
 
-    const handleDeleteInvitedUser = (index: number) => {
-        const updatedArray = [...invitedMembersList];
-        updatedArray.splice(index, 1);
+        clearInput();
+    }
+
+    const handlePromoteToAdmin = (user: any) => {
+        setAdminsList([...adminsList, user])
+        setAdminsAddressList([...adminsAddressList, user.did.substring(7)]);
+
+        const updatedArray = invitedMembersList.filter((item: any) => item !== user)
+        setInvitedMembersList(updatedArray);
+
+        clearInput();
+    }
+
+    const handleDeleteInvitedUser = (user: any) => {
+        const updatedArray = invitedMembersList.filter((item: any) => item !== user)
         setInvitedMembersList(updatedArray);
     };
 
@@ -108,37 +129,23 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     onInputChange={searchMember}
                     clearInput={clearInput}
                 />
+                {errorMsg}
 
                 <MembersList>
-                    {
-                        loadingAccount ?? <CircularProgressSpinner />
-                    }
+                    {loadingAccount && <Spinner />}
                     {
                         Object.keys(searchedUser).length === 0 ?
                         null
                         : <ProfileContainer
                             imageHeight='48px'
-                            handle={searchedUser.wallets.substring(7)}
+                            handle={searchedUser.did.substring(7)}
                             // handle='test'
-                            name='Test'
+                            name={searchedUser.profile.name ?? searchedUser.did.substring(7)}
                             imageUrl={searchedUser.profile.picture}
-                            contBtn='Add +'
-                            // btnCallback={() => handleInviteUser()}
+                            contBtn={<ContBtn>Add +</ContBtn>}
+                            btnCallback={() => handleInviteMember(searchedUser)}
                             border
                         />
-                    }
-                    {
-                        tempMembers.map((item: any, index: any) => {
-                            return <ProfileContainer
-                                        imageHeight='48px'
-                                        handle={item.handle}
-                                        name={item.name}
-                                        imageUrl={tempImageUrl}
-                                        contBtn='Add +'
-                                        btnCallback={() => handleInviteUser(index)}
-                                        border
-                                    />  
-                        })
                     }
                 </MembersList>
 
@@ -147,16 +154,57 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     <InvitedList>
                         <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
                         {
-                            invitedMembersList.map((item: any, index: number) => {
+                            invitedMembersList.map((item: any) => {
                                 return <ProfileContainer
-                                            imageHeight='48px'
-                                            handle={item.handle}
-                                            name={item.name}
-                                            imageUrl={tempImageUrl}
-                                            contBtn='x'
-                                            btnCallback={() => handleDeleteInvitedUser(index)}
-                                            border
-                                        />  
+                                    imageHeight='48px'
+                                    handle={item.did.substring(7)}
+                                    name={item.profile.name ?? item.did.substring(7)}
+                                    imageUrl={item.profile.picture}
+                                    contBtn={
+                                        <SettingsCont>
+                                            <Image
+                                                alt="Settings icon"
+                                                height={'40px'}
+                                                src={SettingsIcon}
+                                            />
+                                        </SettingsCont>
+                                    }
+                                    // btnCallback={() => handleDeleteInvitedUser(item)}
+                                    removeCallback={() => handleDeleteInvitedUser(item)}
+                                    promoteCallback={() => handlePromoteToAdmin(item)}
+                                    border
+                                />
+                            })
+                        }
+                    </InvitedList>
+                    : null
+                }
+
+                {
+                    adminsList.length ?
+                    <InvitedList>
+                        <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
+                        {
+                            adminsList.map((item: any) => {
+                                return <ProfileContainer
+                                    imageHeight='48px'
+                                    handle={item.did.substring(7)}
+                                    name={item.profile.name ?? item.did.substring(7)}
+                                    imageUrl={item.profile.picture}
+                                    contBtn={
+                                        <SettingsCont>
+                                            <Image
+                                                alt="Settings icon"
+                                                height={'40px'}
+                                                src={SettingsIcon}
+                                            />
+                                        </SettingsCont>
+                                    }
+                                    // btnCallback={() => handleDeleteInvitedUser(item)}
+                                    removeCallback={() => handleDeleteInvitedUser(item)}
+                                    // promoteCallback={() => handlePromoteToAdmin(item)}
+                                    border
+                                />
                             })
                         }
                     </InvitedList>
@@ -169,7 +217,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 >
                     {
                         isLoading ?
-                        <Spinner />
+                        <CircularProgressSpinner />
                         : 'Create Space'
                     }
                 </Button>
@@ -207,4 +255,30 @@ const PendingCount = styled.div`
     margin-left: 6px;
     font-size: 13px;
     color: ${(props => props.theme.titleTextColor)};
+`;
+
+const SettingsCont = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+`;
+
+const ContBtn = styled.button`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 8px;
+    line-height: 18px;
+    width: max-content;
+    background: transparent;
+    color: #8B5CF6;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid #8B5CF6;
+    cursor: pointer;
 `;
