@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import React, { useState, MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
@@ -71,7 +72,16 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 env,
             });
 
-            setSearchedUser(response);
+            if(response === null) {
+                const nullUser = {
+                    walletAddress: event.target.value,
+                    name: event.target.value,
+                    image: tempImageUrl,
+                };
+                setSearchedUser(nullUser)
+            } else {
+                setSearchedUser(response);
+            }
             setErrorMsg('');
         } catch (e:any) {
             console.error(e.message);
@@ -89,18 +99,36 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     }
 
     const handleInviteMember = (user: any) => {
-        setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
-        setInvitedMembersList([...invitedMembersList, user]);
+        if (user.did) {
+            setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
+            setInvitedMembersList([...invitedMembersList, user]);
+        } else {
+            setInvitedAddressList([...invitedAddressList, user.walletAddress])
+            setInvitedMembersList([...invitedMembersList, user]);
+        }
 
         clearInput();
     }
 
     const handlePromoteToAdmin = (user: any) => {
-        setAdminsList([...adminsList, user])
-        setAdminsAddressList([...adminsAddressList, user.did.substring(7)]);
+        if (user.did) {
+            setAdminsList([...adminsList, user])
+            setAdminsAddressList([...adminsAddressList, user.did.substring(7)]);
+        } else {
+            setAdminsList([...adminsList, user])
+            setAdminsAddressList([...adminsAddressList, user.walletAddress]);
+        }
 
         const updatedArray = invitedMembersList.filter((item: any) => item !== user)
         setInvitedMembersList(updatedArray);
+
+        if (user.did) {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
+            setInvitedAddressList(updateAddressArray);
+        } else {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            setInvitedAddressList(updateAddressArray);
+        }
 
         clearInput();
     }
@@ -136,6 +164,17 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {
                         Object.keys(searchedUser).length === 0 ?
                         null
+                        : searchedUser.hasOwnProperty('walletAddress') ?
+                        <ProfileContainer
+                            imageHeight='48px'
+                            handle={searchedUser.walletAddress}
+                            // handle='test'
+                            name={searchedUser.name}
+                            imageUrl={searchedUser.image}
+                            contBtn={<ContBtn>Add +</ContBtn>}
+                            btnCallback={() => handleInviteMember(searchedUser)}
+                            border
+                        />
                         : <ProfileContainer
                             imageHeight='48px'
                             handle={searchedUser.did.substring(7)}
@@ -155,25 +194,47 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
                         {
                             invitedMembersList.map((item: any) => {
-                                return <ProfileContainer
-                                    imageHeight='48px'
-                                    handle={item.did.substring(7)}
-                                    name={item.profile.name ?? item.did.substring(7)}
-                                    imageUrl={item.profile.picture}
-                                    contBtn={
-                                        <SettingsCont>
-                                            <Image
-                                                alt="Settings icon"
-                                                height={'40px'}
-                                                src={SettingsIcon}
-                                            />
-                                        </SettingsCont>
-                                    }
-                                    // btnCallback={() => handleDeleteInvitedUser(item)}
-                                    removeCallback={() => handleDeleteInvitedUser(item)}
-                                    promoteCallback={() => handlePromoteToAdmin(item)}
-                                    border
-                                />
+                                if (item.hasOwnProperty('walletAddress')) {
+                                    return <ProfileContainer
+                                        imageHeight='48px'
+                                        handle={item.walletAddress}
+                                        name={item.name}
+                                        imageUrl={item.image}
+                                        contBtn={
+                                            <SettingsCont>
+                                                <Image
+                                                    alt="Settings icon"
+                                                    height={'40px'}
+                                                    src={SettingsIcon}
+                                                />
+                                            </SettingsCont>
+                                        }
+                                        // btnCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        promoteCallback={() => handlePromoteToAdmin(item)}
+                                        border
+                                    />
+                                } else {
+                                    return <ProfileContainer
+                                        imageHeight='48px'
+                                        handle={item.did.substring(7)}
+                                        name={item.profile.name ?? item.did.substring(7)}
+                                        imageUrl={item.profile.picture}
+                                        contBtn={
+                                            <SettingsCont>
+                                                <Image
+                                                    alt="Settings icon"
+                                                    height={'40px'}
+                                                    src={SettingsIcon}
+                                                />
+                                            </SettingsCont>
+                                        }
+                                        // btnCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        promoteCallback={() => handlePromoteToAdmin(item)}
+                                        border
+                                    />
+                                }
                             })
                         }
                     </InvitedList>
@@ -186,25 +247,47 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
                         {
                             adminsList.map((item: any) => {
-                                return <ProfileContainer
-                                    imageHeight='48px'
-                                    handle={item.did.substring(7)}
-                                    name={item.profile.name ?? item.did.substring(7)}
-                                    imageUrl={item.profile.picture}
-                                    contBtn={
-                                        <SettingsCont>
-                                            <Image
-                                                alt="Settings icon"
-                                                height={'40px'}
-                                                src={SettingsIcon}
-                                            />
-                                        </SettingsCont>
-                                    }
-                                    // btnCallback={() => handleDeleteInvitedUser(item)}
-                                    removeCallback={() => handleDeleteInvitedUser(item)}
-                                    // promoteCallback={() => handlePromoteToAdmin(item)}
-                                    border
-                                />
+                                if (item.hasOwnProperty('walletAddress')) {
+                                    return <ProfileContainer
+                                        imageHeight='48px'
+                                        handle={item.walletAddress}
+                                        name={item.name}
+                                        imageUrl={item.image}
+                                        contBtn={
+                                            <SettingsCont>
+                                                <Image
+                                                    alt="Settings icon"
+                                                    height={'40px'}
+                                                    src={SettingsIcon}
+                                                />
+                                            </SettingsCont>
+                                        }
+                                        // btnCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        promoteCallback={() => handlePromoteToAdmin(item)}
+                                        border
+                                    />
+                                } else {
+                                    return <ProfileContainer
+                                        imageHeight='48px'
+                                        handle={item.did.substring(7)}
+                                        name={item.profile.name ?? item.did.substring(7)}
+                                        imageUrl={item.profile.picture}
+                                        contBtn={
+                                            <SettingsCont>
+                                                <Image
+                                                    alt="Settings icon"
+                                                    height={'40px'}
+                                                    src={SettingsIcon}
+                                                />
+                                            </SettingsCont>
+                                        }
+                                        // btnCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        // promoteCallback={() => handlePromoteToAdmin(item)}
+                                        border
+                                    />
+                                }
                             })
                         }
                     </InvitedList>

@@ -22,9 +22,10 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
     const [invitedMembersList, setInvitedMembersList] = useState([])
     const [invitedAddressList, setInvitedAddressList] = useState([])
+    console.log("🚀 ~ file: SpaceCreationWidget.tsx:25 ~ invitedAddressList:", invitedAddressList)
     const [adminsList, setAdminsList] = useState([])
     const [adminsAddressList, setAdminsAddressList] = useState([])
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:34 ~ adminsAddressList:", adminsAddressList)
+    console.log("🚀 ~ file: SpaceCreationWidget.tsx:27 ~ adminsAddressList:", adminsAddressList)
 
     const [isLoading, setLoading] = useState(false);
 
