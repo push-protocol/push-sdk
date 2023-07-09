@@ -31,20 +31,20 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     isTimeToStartSpace,
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
-  const { account, env } = useSpaceData();
+  const { account, spaceObjectData, initSpaceObject, env } = useSpaceData();
 
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
   useEffect(() => {
-    if(!spaceId) {
+    if (!spaceId) {
       return;
     }
     setWidgetHidden(!spaceId);
     const fetchData = async () => {
       try {
-        if(getSpaceInfo(spaceId)) {
+        if (getSpaceInfo(spaceId)) {
           setSpaceData(getSpaceInfo(spaceId));
           return;
         }
@@ -54,10 +54,21 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
       } catch (error) {
         console.error(error);
       }
-    }
+    };
 
     fetchData();
   }, [spaceId]);
+
+  useEffect(() => {
+    (async () => {
+      if (!spaceData) {
+        return;
+      }
+      if (isLiveSpace(spaceData as SpaceDTO)) {
+        await initSpaceObject(spaceData?.spaceId as string);
+      }
+    })();
+  }, [spaceData]);
 
   const isLive = isLiveSpace(spaceData as SpaceDTO);
   const isHost = isHostOfSpace(account, spaceData as SpaceDTO);

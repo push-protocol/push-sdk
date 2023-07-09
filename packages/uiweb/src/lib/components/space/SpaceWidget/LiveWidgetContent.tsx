@@ -37,12 +37,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    await initSpaceObject(spaceData?.spaceId as string);
+    // await initSpaceObject(spaceData?.spaceId as string);
     await spacesObjectRef?.current?.join();
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
     console.log('Space Joined');
   };
+  console.log('spaceObjectData', spaceObjectData);
 
   return (
     <>
@@ -56,15 +57,19 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map((profile) => (
-          <LiveSpaceProfileContainer
-            isHost={isHost}
-            isSpeaker={isSpeaker}
-            wallet={profile.address}
-            image={tempImageUrl}
-            stream={profile.stream}
-          />
-        ))}
+        {spaceObjectData.connectionData.incoming.map(
+          (profile) => (
+            (
+              <LiveSpaceProfileContainer
+                isHost={isHost}
+                isSpeaker={isSpeaker}
+                wallet={profile.address}
+                image={tempImageUrl}
+                stream={profile.stream}
+              />
+            )
+          )
+        )}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
