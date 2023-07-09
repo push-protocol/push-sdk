@@ -99,7 +99,7 @@ const Host = styled.div<{ statusTheme?: string }>`
 `;
 
 const HostHandle = styled.div<{ statusTheme?: string }>`
-  color: ${(props) => (props.statusTheme === 'Live' ? 'inherit' : '#71717A')};
+  color: ${(props) => (props.statusTheme === 'Live' ? '#F5F5F5E5' : '#71717A')};
   padding: 0;
   font-weight: 450;
   font-size: 14px;

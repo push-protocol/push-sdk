@@ -8,7 +8,9 @@ export interface IProfileContainerProps {
     imageUrl?: string;
     tag?: string;
     imageHeight?: string;
-    border?: boolean
+    border?: boolean;
+    contBtn?: any;
+    btnCallback?: any;
 }
 
 export const ProfileContainer: React.FC<IProfileContainerProps> = ({
@@ -18,6 +20,8 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
     tag,
     imageHeight,
     border = false,
+    contBtn,
+    btnCallback,
 }: IProfileContainerProps) => {
     const theme = useContext(ThemeContext);
 
@@ -40,6 +44,7 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                     }
                 </ProfileDetails>
                 { tag ? <Host>{tag}</Host> : null }
+                { contBtn ? <ContBtn onClick={btnCallback}>{contBtn}</ContBtn> : null }
             </HostContainer>
         </ParentContainer>
     );
@@ -111,6 +116,24 @@ const Host = styled.div`
     font-size: 12px;
     padding: 6px 10px;
     border-radius: 8px;
+`;
+
+const ContBtn = styled.button`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 8px;
+    line-height: 18px;
+    width: max-content;
+    background: transparent;
+    color: #8B5CF6;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #8B5CF6;
+    cursor: pointer;
 `;
 
 const HostHandle = styled.div<{ theme?: any }>`

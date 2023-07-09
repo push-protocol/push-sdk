@@ -13,6 +13,13 @@ export interface ISpaceCreateWidgetProps {
     CustomComponent?: any;
 }
 
+//Temporary interface for demo
+interface User {
+    handle: string;
+    name: string;
+}
+
+
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
     const { CustomComponent } = props;
 
@@ -20,13 +27,26 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
 
+    const [tempMembers, setTempMembers] = useState<User[]>([
+        {
+            handle: 's4m4',
+            name: 'Samarendra'
+        },
+        {
+            handle: 'aamsa',
+            name: 'Aam Saltman'
+        },
+    ])
+
+    const [invitedMembersList, setInvitedMembersList] = useState<User[]>([])
+
     const [isLoading, setLoading] = useState(false);
 
     const [spaceState, setSpaceState] = useState({
         spaceName: '',
         spaceDescription: '',
         date: new Date(),
-        time: new Date().getTime(),
+        time: new Date(),
     })
 
     const { signer } = useSpaceData();
@@ -43,8 +63,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         setSpaceState((prevState) => ({...prevState, date: dateValue}))
     };
 
-    const onTimeChange = (event: any) => {
-        setSpaceState((prevState) => ({...prevState, time: event.target.value}))
+    const onTimeChange = (timeValue: any) => {
+        setSpaceState((prevState) => ({...prevState, time: timeValue}))
     };
 
     const showCreateSpace = () => {
@@ -81,11 +101,11 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         const spaceCreate = {
             spaceName: spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: [],
+            members: [], // add member address from temp array here
             spaceImage: 'asd',
             admins: [],
             isPublic: true,
-            scheduleAt: spaceState.date,
+            scheduleAt: new Date(spaceState.time),
             signer: signer as PushAPI.SignerType,
         }
 
@@ -114,10 +134,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                 />
             }
 
-            {spaceState.spaceName}
-            {spaceState.date.toDateString()}
-            {spaceState.time}
-
             {isCreateModalVisible &&
                 <SCWCreateModal
                     isInviteVisible={showInviteSpace}
@@ -128,6 +144,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     handleDescriptionChange={handleDescriptionChange}
                     isDescriptionEnabled={false}
                     isScheduleVisible={showScheduleSpace}
+                    onClose={closeCreateModal}
                 />
             }
 
@@ -140,6 +157,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     timeValue={spaceState.time}
                     onDateChange={onDateChange}
                     onTimeChange={onTimeChange}
+                    onClose={closeScheduleModal}
                 />
             }
 
@@ -149,6 +167,11 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     makeScheduleVisible={showCreateSpace}
                     createSpace={testCreateSpace}
                     isLoading={isLoading}
+                    tempMembers={tempMembers}
+                    setTempMembers={setTempMembers}
+                    invitedMembersList={invitedMembersList}
+                    setInvitedMembersList={setInvitedMembersList}
+                    onClose={closeInviteModal}
                 />
             }
         </SCWContainer>

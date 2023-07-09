@@ -17,13 +17,14 @@ export interface ISCWCModalProps { // Space Creation Widget Create Modal Interfa
     descriptionValue?: any;
     isDescriptionEnabled: boolean;
     isScheduleVisible?: any;
+    onClose: () => void;
 }
 
 export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     const { 
         isInviteVisible, closeCreateModal, handleNameChange,
         handleDescriptionChange, nameValue, descriptionValue,
-        isDescriptionEnabled, isScheduleVisible,
+        isDescriptionEnabled, isScheduleVisible, onClose,
     } = props;
 
     const secBtn = {
@@ -32,7 +33,9 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     }
 
     return (
-            <Modal>
+            <Modal
+                clickawayClose={onClose}
+            >
                 <ModalHeader
                     heading='Create your space'
                     closeCallback={closeCreateModal}
