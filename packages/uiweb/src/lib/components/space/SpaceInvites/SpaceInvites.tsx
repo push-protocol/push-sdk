@@ -21,13 +21,15 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
+  const { spacesObjectRef, spaceObjectData, initSpaceObject, setSpaceWidgetId } = useSpaceData();
 
   const handleJoinSpace = async (space: any) => {
     await initSpaceObject(space?.spaceId as string);
     await spacesObjectRef?.current?.join();
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
+    handleCloseModal();
+    setSpaceWidgetId(space?.spaceId as string)
     console.log('Space Joined');
   };
 
