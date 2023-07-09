@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
 import { SpacesUI } from '../components';
@@ -31,7 +31,7 @@ export const SpacesUIProvider = ({
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
   );
-  const [env, setEnv] = useState<ENV>(ENV.DEV);
+  const [env, setEnv] = useState<ENV>(spaceUI.env);
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
 
   const [trendingListData, setTrendingListData] = useState(null);
@@ -199,6 +199,13 @@ export const SpacesUIProvider = ({
     initSpaceObject,
     spacesObjectRef,
   };
+
+  useEffect(() => {
+    setAccount(spaceUI.account);
+    setSigner(spaceUI.signer);
+    setEnv(spaceUI.env);
+    setPgpPrivateKey(spaceUI.pgpPrivateKey);
+  }, [spaceUI]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
