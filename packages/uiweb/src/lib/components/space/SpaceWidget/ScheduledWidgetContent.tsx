@@ -64,16 +64,16 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
-
+  console.log('spaceObjectData', spaceObjectData);
   useEffect(() => {
     async function startSpace() {
-      if (!spaceObjectData.connectionData.local.stream) return;
+      if (!spaceObjectData?.connectionData?.local.stream) return;
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
       });
     }
     startSpace();
-  }, [spaceObjectData.connectionData.local.stream]);
+  }, [spaceObjectData?.connectionData?.local.stream]);
 
   return (
     <Container

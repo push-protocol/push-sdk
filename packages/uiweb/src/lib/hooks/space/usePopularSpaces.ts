@@ -5,7 +5,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 export const usePopularSpaces = () => {
   const LIMIT = 10;
-  const { popularSpaces, setPopularSpaces } = useSpaceData();
+  const { popularSpaces, setPopularSpaces, env } = useSpaceData();
   const [loading, setLoading] = useState(false);
 
   const fetchPopularSpaces = async () => {
@@ -14,6 +14,7 @@ export const usePopularSpaces = () => {
       const res = await PushAPI.space.trending({
         page: popularSpaces.currentPage,
         limit: LIMIT,
+        env
       });
 
       const newPopularSpaces = res;
