@@ -10,8 +10,9 @@ import { Button } from '../../reusables/Button';
 import { SearchInput } from '../../reusables/SearchInput';
 import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
-import { SpaceDataContext } from 'packages/uiweb/src/lib/context';
 import { Spinner } from '../../reusables/Spinner';
+
+import { useSpaceData } from '../../../../hooks';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -40,7 +41,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         onClose
     } = props;
 
-    const { env } = useContext(SpaceDataContext)
+    const { env } = useSpaceData();
 
     const theme = useContext(ThemeContext);
 

@@ -22,7 +22,7 @@ export interface IUseSpaceReturnValues {
 export const useSpaceComponents = (): IUseSpaceReturnValues => {
   const { account, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
-  const librarySigner = library.getSigner();
+  const librarySigner = library?.getSigner();
 
   const [pgpPrivateKey, setPgpPrivateKey] = useState('');
 

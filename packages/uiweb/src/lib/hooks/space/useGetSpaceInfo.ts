@@ -8,6 +8,9 @@ export const useGetSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
   const [spaceData, setSpaceDataState] = useState<SpaceDTO | undefined>(getSpaceInfo(spaceId));
 
   useEffect(() => {
+    if(!spaceId) {
+      return;
+    }
     const fetchData = async () => {
       if (!spaceData) {
         try {
