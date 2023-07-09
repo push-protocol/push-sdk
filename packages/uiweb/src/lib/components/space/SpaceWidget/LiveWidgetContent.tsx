@@ -35,7 +35,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    initSpaceObject(spaceData?.spaceId as string);
+    await initSpaceObject(spaceData?.spaceId as string);
     await spacesObjectRef?.current?.join();
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
