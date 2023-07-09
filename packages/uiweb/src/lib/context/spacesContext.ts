@@ -40,6 +40,8 @@ export interface ISpaceDataContextValues {
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => Promise<void>;
   spacesObjectRef: React.MutableRefObject<any>;
+  isJoined: boolean;
+  isLive: boolean;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -106,6 +108,8 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   spacesObjectRef: {
     current: null,
   } as React.MutableRefObject<any>,
+  isJoined: false,
+  isLive: false,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

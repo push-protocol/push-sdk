@@ -15,6 +15,8 @@ import { ENV } from '../config';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useSpaceNotificationSocket } from '../hooks';
 
+import { isLiveSpace } from '../components/space/SpaceWidget/helpers/utils';
+
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
   theme: ISpacesTheme;
@@ -58,6 +60,13 @@ export const SpacesUIProvider = ({
     currentPage: 1,
     lastPage: 2,
   } as ISpacePaginationData);
+
+  const isJoined = Boolean(
+    spaceObjectData?.connectionData?.meta?.broadcast?.livepeerInfo ||
+      spaceObjectData?.spaceDescription
+  );
+
+  const isLive = isLiveSpace(spaceObjectData);
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
@@ -198,6 +207,8 @@ export const SpacesUIProvider = ({
     setSpaceObjectData,
     initSpaceObject,
     spacesObjectRef,
+    isJoined,
+    isLive,
   };
 
   useEffect(() => {

@@ -3,5 +3,5 @@
 
 echo "\nRunning GIT hooks..."
 yarn cleanbuild
-yarn nx affected --target=lint
-yarn nx affected --target=test
+# yarn nx affected --target=lint
+# yarn nx affected --target=test

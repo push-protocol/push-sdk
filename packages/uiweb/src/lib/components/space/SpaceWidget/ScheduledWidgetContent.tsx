@@ -9,7 +9,7 @@ import CopyIcon from '../../../icons/copyVector.svg';
 import AtIcon from '../../../icons/atVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ScheduledWidgetContentProps {
   account?: string;
@@ -29,13 +29,21 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   isMember,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
-  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
+  const {
+    spacesObjectRef,
+    initSpaceObject,
+    spaceObjectData,
+    isJoined,
+    isLive,
+  } = useSpaceData();
+  const [isStarted, setIsStarted] = useState<boolean>(false);
 
   //Initialize the space object
 
   const handleStartSpace = async () => {
     await initSpaceObject(spaceData?.spaceId as string);
     await spacesObjectRef.current.createAudioStream();
+    setIsStarted(true);
     // Start the space by calling the start method on the space object
 
     console.log('Space Started');
@@ -64,16 +72,20 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
-  
+
   useEffect(() => {
     async function startSpace() {
-      if (!spaceObjectData?.connectionData?.local.stream) return;
+      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
       });
+      setIsStarted(false);
     }
     startSpace();
-  }, [spaceObjectData?.connectionData?.local.stream]);
+  }, [isStarted]);
+
+  console.log('Rendering ScheduledWidgetContent');
+  console.log('isStarted?', isStarted);
 
   return (
     <Container

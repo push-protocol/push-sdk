@@ -27,14 +27,13 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     onClose = (() => {
       /** */
     }) as MouseEventHandler<HTMLDivElement>,
-    isJoined,
     isTimeToStartSpace,
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const { account, spaceObjectData, initSpaceObject, env } = useSpaceData();
 
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const { getSpaceInfo, setSpaceInfo } = useSpaceData();
+  const { getSpaceInfo, setSpaceInfo, isLive } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
   useEffect(() => {
@@ -70,7 +69,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     })();
   }, [spaceData]);
 
-  const isLive = isLiveSpace(spaceData as SpaceDTO);
   const isHost = isHostOfSpace(account, spaceData as SpaceDTO);
   const isMember = isMemberOfSpace(account, spaceData as SpaceDTO);
 
@@ -78,6 +76,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!widgetHidden);
   };
 
+  console.log('Rendering SpaceWidget');
   // Implement the SpaceWidget component
   return (
     <Container
@@ -93,7 +92,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         setIsMinimized={setIsMinimized}
         toggleWidgetVisibility={toggleWidgetVisibility}
         isHost={isHost}
-        isLive={isLive}
         spaceData={spaceData}
       />
       <WidgetContent
@@ -101,8 +99,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         spaceData={spaceData}
         shareUrl={shareUrl}
         isHost={isHost}
-        isLive={isLive}
-        isJoined={isJoined}
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}

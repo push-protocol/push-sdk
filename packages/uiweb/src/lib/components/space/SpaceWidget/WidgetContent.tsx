@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 import { SpaceDTO } from '@pushprotocol/restapi';
+import { useSpaceData } from '../../../hooks';
 
 const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
 const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
@@ -17,7 +18,6 @@ interface WidgetContentProps {
   // temp props only for testing demo purpose for now
   isHost?: boolean;
   isLive?: boolean;
-  isJoined?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
 }
@@ -25,13 +25,14 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   account,
   spaceData,
   shareUrl,
-  isLive,
   isHost,
-  isJoined,
   isTimeToStartSpace,
   isMember,
   isMinimized,
 }: WidgetContentProps) => {
+  const { isLive } = useSpaceData();
+
+  console.log('Rendering WidgetContent');
   return (
     <Container
       isMinimized={isMinimized}
@@ -42,11 +43,7 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
       }
     >
       {isLive ? (
-        <LiveWidgetContent
-          spaceData={spaceData}
-          isHost={isHost}
-          isJoined={isJoined}
-        />
+        <LiveWidgetContent spaceData={spaceData} isHost={isHost} />
       ) : (
         <ScheduledWidgetContent
           spaceData={spaceData}

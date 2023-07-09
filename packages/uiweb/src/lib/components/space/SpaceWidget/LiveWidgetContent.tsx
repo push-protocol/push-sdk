@@ -20,15 +20,14 @@ interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isJoined?: boolean;
   isSpeaker?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
-  isJoined,
   isHost,
   isSpeaker,
 }) => {
+  const { isJoined } = useSpaceData();
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
@@ -45,6 +44,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
   console.log('spaceObjectData', spaceObjectData);
 
+  console.log('Rendering LiveWidgetContent');
+
   return (
     <>
       <Item
@@ -57,19 +58,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map(
-          (profile) => (
-            (
-              <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
-                wallet={profile.address}
-                image={tempImageUrl}
-                stream={profile.stream}
-              />
-            )
-          )
-        )}
+        {spaceObjectData.connectionData.incoming.map((profile) => (
+          <LiveSpaceProfileContainer
+            isHost={isHost}
+            isSpeaker={isSpeaker}
+            wallet={profile.address}
+            image={tempImageUrl}
+            stream={profile.stream}
+          />
+        ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
