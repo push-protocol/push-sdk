@@ -25,6 +25,7 @@ export const SpacesUIProvider = ({
   theme,
   children,
 }: ISpacesUIProviderProps) => {
+  console.log('SpaceUI', spaceUI);
   const spacesObjectRef = useRef({} as PushAPI.space.Space);
   const [account, setAccount] = useState<string>(spaceUI.account);
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);

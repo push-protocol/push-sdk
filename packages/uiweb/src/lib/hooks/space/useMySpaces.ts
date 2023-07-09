@@ -6,7 +6,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 export const useMySpaces = (account?: string) => {
   const LIMIT = 10;
 
-  const { mySpaces, setMySpaces } = useSpaceData();
+  const { mySpaces, setMySpaces, env } = useSpaceData();
   const [loading, setLoading] = useState(false);
 
   const fetchMySpaces = async () => {
@@ -17,6 +17,7 @@ export const useMySpaces = (account?: string) => {
         account: account,
         page: mySpaces.currentPage,
         limit: LIMIT,
+        env,
       });
 
       const newMySpaces = res;
