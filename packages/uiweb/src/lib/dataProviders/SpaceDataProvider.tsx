@@ -31,8 +31,9 @@ export const SpacesUIProvider = ({
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
   );
-  const [env, setEnv] = useState<ENV>(spaceUI.env);
+  const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
+
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
   const [spaceObjectData, setSpaceObjectData] = useState<PushAPI.SpaceData>(

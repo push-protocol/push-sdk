@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ISpaceDataContextValues, SpaceDataContext } from '../../context/spacesContext';
 import { SpaceDTO } from '@pushprotocol/restapi';
+import { ENV } from '../../config';
 
 export const useGetSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
   const { getSpaceInfo, setSpaceInfo }: ISpaceDataContextValues = useContext(SpaceDataContext);
@@ -14,7 +15,7 @@ export const useGetSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     const fetchData = async () => {
       if (!spaceData) {
         try {
-          const response = await PushAPI.space.get({ spaceId });
+          const response = await PushAPI.space.get({ spaceId, env: ENV.DEV });
           setSpaceInfo(spaceId, response);
           setSpaceDataState(response);
         } catch (error) {

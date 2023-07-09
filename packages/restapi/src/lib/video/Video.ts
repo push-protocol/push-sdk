@@ -30,7 +30,11 @@ import {
 import getIncomingIndexFromAddress from './helpers/getIncomingIndexFromAddress';
 import getConnectedAddresses from './helpers/getConnectedAddresses';
 import getConnectToAddresses from './helpers/getConnectToAddresses';
-import { SPACE_DISCONNECT_TYPE, VIDEO_CALL_TYPE } from '../payloads/constants';
+import {
+  SPACE_DISCONNECT_TYPE,
+  SPACE_REQUEST_TYPE,
+  VIDEO_CALL_TYPE,
+} from '../payloads/constants';
 
 export const initVideoCallData: VideoCallData = {
   meta: {
@@ -246,6 +250,10 @@ export class Video {
                   senderAddress,
                   recipientAddress: connectToAddress,
                   chatId,
+                  details: {
+                    type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
+                    data: {},
+                  },
                 });
               }
             }
@@ -512,6 +520,10 @@ export class Video {
                 senderAddress,
                 recipientAddress: connectToAddress,
                 chatId,
+                details: {
+                  type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
+                  data: {},
+                },
               });
             }
 

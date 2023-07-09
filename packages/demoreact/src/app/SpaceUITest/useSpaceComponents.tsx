@@ -26,6 +26,9 @@ export const useSpaceComponents = (): IUseSpaceReturnValues => {
 
   const [pgpPrivateKey, setPgpPrivateKey] = useState('');
 
+  console.log("demo", env);
+
+
   const spaceUI = new SpacesUI({
     account: account,
     signer: librarySigner,

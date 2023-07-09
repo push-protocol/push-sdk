@@ -32,7 +32,7 @@ interface UserInfoType {
   pgpPrivateKey: string;
 }
 
-interface VideoDataType {
+export interface VideoDataType {
   recipientAddress: string;
   senderAddress: string;
   chatId: string;

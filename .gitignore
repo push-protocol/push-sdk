@@ -288,3 +288,6 @@ buck-out/
 packages/restapi/yarn.lock
 yarn.lock
 *.env
+
+# Next js
+**/.next

@@ -55,7 +55,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setPgpPrivateKey: () => {
     /**/
   },
-  env: ENV.PROD,
+  env: ENV.DEV,
   setEnv: () => {
     /**/
   },
