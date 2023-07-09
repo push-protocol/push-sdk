@@ -13,6 +13,7 @@ import {
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
+import { useSpaceNotificationSocket } from '../hooks';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -25,7 +26,6 @@ export const SpacesUIProvider = ({
   theme,
   children,
 }: ISpacesUIProviderProps) => {
-  console.log('SpaceUI', spaceUI);
   const spacesObjectRef = useRef({} as PushAPI.space.Space);
   const [account, setAccount] = useState<string>(spaceUI.account);
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
@@ -211,6 +211,7 @@ export const SpacesUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
+  useSpaceNotificationSocket({ account, env });
 
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>

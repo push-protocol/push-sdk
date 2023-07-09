@@ -64,7 +64,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
-  console.log('spaceObjectData', spaceObjectData);
+  
   useEffect(() => {
     async function startSpace() {
       if (!spaceObjectData?.connectionData?.local.stream) return;

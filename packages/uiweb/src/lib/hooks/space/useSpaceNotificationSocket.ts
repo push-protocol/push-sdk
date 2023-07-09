@@ -1,0 +1,86 @@
+import { useCallback, useEffect, useState } from 'react';
+import {
+  createSocketConnection,
+  EVENTS
+} from '@pushprotocol/socket';
+import { ENV } from '../../config';
+
+const NOTIFICATION_SOCKET_TYPE = 'notification';
+
+export type SDKSocketHookOptions = {
+  account?: string | null,
+  env?: ENV,
+};
+
+export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocketHookOptions) => {
+  const [notificationSocket, setNotificationSocket] = useState<any>(null);
+  const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
+    useState<boolean>(false);
+
+  const addSocketEvents = useCallback(() => {
+    notificationSocket?.on(EVENTS.CONNECT, () => {
+      setIsNotificationSocketConnected(true);
+    });
+
+    notificationSocket?.on(EVENTS.DISCONNECT, () => {
+      setIsNotificationSocketConnected(false);
+    });
+
+    notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
+      /** */
+    });
+  }, [
+    notificationSocket
+  ]);
+
+  const removeSocketEvents = useCallback(() => {
+    notificationSocket?.off(EVENTS.CONNECT);
+    notificationSocket?.off(EVENTS.DISCONNECT);
+    notificationSocket?.off(EVENTS.USER_FEEDS);
+  }, [notificationSocket]);
+
+  useEffect(() => {
+    if (notificationSocket) {
+      addSocketEvents();
+    }
+
+    return () => {
+      if (notificationSocket) {
+        removeSocketEvents();
+      }
+    };
+  }, [addSocketEvents, notificationSocket, removeSocketEvents]);
+
+  /**
+   * Whenever the requisite params to create a connection object change
+   *  - disconnect the old connection 
+   *  - create a new connection object
+   */
+  useEffect(() => {
+    if (account) {
+      if (notificationSocket) {
+        // console.log('=================>>> disconnection in the hook');
+        notificationSocket?.disconnect();
+      }
+      const main = async () => {
+        const connectionObject = createSocketConnection({
+          user: account,
+          env,
+          socketType: NOTIFICATION_SOCKET_TYPE,
+          socketOptions: { autoConnect: true , reconnectionAttempts: 3}
+        });
+        console.warn('new connection object: ', connectionObject);
+
+        setNotificationSocket(connectionObject);
+      };
+      main().catch((err) => console.error(err));
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, env]);
+
+  return {
+    notificationSocket,
+    isNotificationSocketConnected
+  }
+};
