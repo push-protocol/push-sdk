@@ -29,6 +29,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   isHost,
   isSpeaker,
 }) => {
+  const tempImageUrl =
+    'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
@@ -54,12 +56,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceData?.members.map((profile) => (
+        {spaceObjectData.connectionData.incoming.map((profile) => (
           <LiveSpaceProfileContainer
             isHost={isHost}
-            isSpeaker={profile.isSpeaker}
-            wallet={profile.wallet}
-            image={profile.image}
+            isSpeaker={isSpeaker}
+            wallet={profile.address}
+            image={tempImageUrl}
+            stream={profile.stream}
           />
         ))}
       </Item>
