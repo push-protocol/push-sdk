@@ -1,15 +1,18 @@
+import { IMediaStream } from '@pushprotocol/restapi';
 import { Image, Item, Text } from '../../../config';
 
 import HandIcon from '../../../icons/hand.svg';
 import MicOffIcon from '../../../icons/micoff.svg';
+import { VideoPlayer } from './VideoPlayer';
 
 export interface ILiveSpaceProfileContainerProps {
   wallet: string;
   isHost?: boolean;
-  isSpeaker: boolean;
+  isSpeaker?: boolean;
   image: string;
   requested?: boolean;
   mic?: boolean;
+  stream?: IMediaStream;
 }
 
 export const LiveSpaceProfileContainer = (
@@ -22,6 +25,7 @@ export const LiveSpaceProfileContainer = (
     image,
     requested = false,
     mic = true,
+    stream,
   } = options || {};
 
   return (
@@ -40,6 +44,7 @@ export const LiveSpaceProfileContainer = (
       />
       <Text fontSize={'17px'} marginTop={'4px'} fontWeight={600}>
         {wallet.slice(7, 12).concat('...')}
+        {stream && <VideoPlayer videoCallData={stream} />}
       </Text>
       {requested ? (
         <Item

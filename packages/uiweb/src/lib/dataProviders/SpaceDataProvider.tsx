@@ -67,7 +67,6 @@ export const SpacesUIProvider = ({
   };
 
   const initSpaceObject = async (spaceId: string) => {
-    console.log(pgpPrivateKey);
     spacesObjectRef.current = new PushAPI.space.Space({
       signer,
       pgpPrivateKey,
