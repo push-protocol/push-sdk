@@ -95,7 +95,7 @@ export async function start(this: Space, options: StartType): Promise<void> {
       recipientAddress: [...convertedAdmins],
       chatId: this.spaceSpecificData.spaceId,
       details: {
-        type: SPACE_REQUEST_TYPE.JOIN,
+        type: SPACE_REQUEST_TYPE.JOIN_SPEAKER,
         data: {},
       },
     });

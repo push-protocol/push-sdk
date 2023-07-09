@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
@@ -33,7 +33,19 @@ export class SpacesUI {
   };
 
   SpaceWidget: React.FC<ISpaceWidgetProps> = (options: ISpaceWidgetProps) => {
-    return <SpaceWidget {...options} />
+    const { spaceId } = options;
+    const { spaceWidgetId } = useSpaceData();
+    const [SpaceId, setSpaceId] = useState<string | undefined>(spaceId);
+
+    useEffect(() => {
+      setSpaceId(spaceId);
+    }, [spaceId, setSpaceId]);
+    
+    useEffect(() => {
+      setSpaceId(spaceWidgetId);
+    }, [spaceWidgetId, setSpaceId]);
+    
+    return <SpaceWidget {...options} spaceId={SpaceId} />;
   }
 
   SpaceFeed: React.FC<ISpaceFeedProps> = (options: ISpaceFeedProps) => {

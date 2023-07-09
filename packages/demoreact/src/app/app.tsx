@@ -62,6 +62,7 @@ import {
   CreateSpaceComponent,
   SpaceInvitesComponent
 } from './SpaceUITest';
+import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -159,6 +160,9 @@ export function App() {
 
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
+
+  const { SpaceWidgetComponent } = useSpaceComponents();
+  const [spaceId, setSpaceId] = useState<string>('');
 
   const socketData = useSDKSocket({
     account: web3Data.account,
@@ -360,6 +364,7 @@ export function App() {
                   />
                 </Routes>
                 <ChatSupportTest />
+                <SpaceWidgetComponent spaceId={spaceId} />
               </SpacesComponentProvider>
             </SocketContext.Provider>
           </Web3Context.Provider>

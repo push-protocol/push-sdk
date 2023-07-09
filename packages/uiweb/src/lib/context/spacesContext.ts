@@ -28,6 +28,8 @@ export interface ISpaceDataContextValues {
   spaceInfo: ISpaceInfo;
   setSpaceInfo: (key: string, value: SpaceDTO) => void;
   getSpaceInfo: (key: string) => SpaceDTO | undefined;
+  spaceWidgetId: string;
+  setSpaceWidgetId: React.Dispatch<React.SetStateAction<string>>;
   mySpaces: ISpacePaginationData;
   setMySpaces: (paginationData: ISpacePaginationData) => void;
   popularSpaces: ISpacePaginationData;
@@ -53,7 +55,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setPgpPrivateKey: () => {
     /**/
   },
-  env: ENV.PROD,
+  env: ENV.DEV,
   setEnv: () => {
     /**/
   },
@@ -66,7 +68,10 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
     /**/
   },
   getSpaceInfo: () => undefined,
-
+  spaceWidgetId: '',
+  setSpaceWidgetId: () => {
+    /**/
+  },
   mySpaces: {
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,

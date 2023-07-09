@@ -1,13 +1,15 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { SpaceDTO } from '@pushprotocol/restapi';
+import * as PushAPI from '@pushprotocol/restapi';
 
 import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
 
 import { ISpaceWidgetProps } from '../exportedTypes';
-import { useGetSpaceInfo, useSpaceData } from '../../../hooks';
 import { isLiveSpace, isHostOfSpace, isMemberOfSpace } from './helpers/utils';
-import { SpaceDTO } from '@pushprotocol/restapi';
+
+import { useSpaceData } from '../../../hooks';
 
 const DEFAULT_OFFSET = 16;
 const DEFAULT_MAXWIDTH = 415;
@@ -29,19 +31,39 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     isTimeToStartSpace,
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
-  const { account } = useSpaceData();
+  const { account, env } = useSpaceData();
 
-  // const [spaceData, setSpaceData] = useState<SpaceDTO>();
-  const spaceData = useGetSpaceInfo(spaceId as string); // use hook in banner's pr to get spaceData from context
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const { getSpaceInfo, setSpaceInfo } = useSpaceData();
+  const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
+
+  useEffect(() => {
+    if(!spaceId) {
+      return;
+    }
+    setWidgetHidden(!spaceId);
+    const fetchData = async () => {
+      try {
+        if(getSpaceInfo(spaceId)) {
+          setSpaceData(getSpaceInfo(spaceId));
+          return;
+        }
+        const response = await PushAPI.space.get({ spaceId, env });
+        setSpaceInfo(spaceId, response);
+        setSpaceData(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+  }, [spaceId]);
 
   const isLive = isLiveSpace(spaceData as SpaceDTO);
   const isHost = isHostOfSpace(account, spaceData as SpaceDTO);
   const isMember = isMemberOfSpace(account, spaceData as SpaceDTO);
 
   console.log(isLive);
-
-  const { env } = useSpaceData();
 
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);

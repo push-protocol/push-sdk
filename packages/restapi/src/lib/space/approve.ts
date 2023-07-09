@@ -24,7 +24,7 @@ export const approve = async (
       status = 'Approved',
           account = null,
           signer = null,
-          senderAddress,
+          senderAddress, // space id
           env = Constants.ENV.PROD,
           pgpPrivateKey = null,
   } = options || {};
