@@ -19,6 +19,7 @@ export interface ISpaceBannerProps {
   orientation?: 'maximized' | 'minimized' | 'pill';
   isInvite?: boolean;
   onBannerClick?: (arg: string) => void;
+  onJoin?: any;
 }
 
 /**
@@ -37,6 +38,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   orientation,
   isInvite,
   onBannerClick,
+  onJoin,
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
@@ -114,7 +116,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         />
       </Status>
       {isInvite === true && spaceStatus === 'Live' ? (
-        <InviteButton status="Live">Join this space</InviteButton>
+        <InviteButton status="Live" onClick={onJoin}>Join this space</InviteButton>
       ) : isInvite === true &&
         spaceStatus === 'Scheduled' ? (
         <InviteButton status="Scheduled">Remind Me</InviteButton>
