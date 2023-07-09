@@ -92,7 +92,12 @@ export async function start(this: Space, options: StartType): Promise<void> {
     */
     this.request({
       senderAddress: this.data.local.address,
-      recipientAddress: [...convertedAdmins],
+      recipientAddress: convertedAdmins.map((convertedAdmin) => {
+        if (convertedAdmin.startsWith('eip155:')) {
+          return convertedAdmin.split('eip155:')[1];
+        }
+        return convertedAdmin;
+      }),
       chatId: this.spaceSpecificData.spaceId,
       details: {
         type: SPACE_REQUEST_TYPE.JOIN_SPEAKER,

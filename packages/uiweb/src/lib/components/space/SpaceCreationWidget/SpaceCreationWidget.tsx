@@ -13,13 +13,6 @@ export interface ISpaceCreateWidgetProps {
     CustomComponent?: any;
 }
 
-//Temporary interface for demo
-interface User {
-    handle: string;
-    name: string;
-}
-
-
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
     const { CustomComponent } = props;
 
@@ -27,18 +20,12 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
     const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
 
-    const [tempMembers, setTempMembers] = useState<User[]>([
-        {
-            handle: 's4m4',
-            name: 'Samarendra'
-        },
-        {
-            handle: 'aamsa',
-            name: 'Aam Saltman'
-        },
-    ])
-
-    const [invitedMembersList, setInvitedMembersList] = useState<User[]>([])
+    const [invitedMembersList, setInvitedMembersList] = useState([])
+    const [invitedAddressList, setInvitedAddressList] = useState([])
+    console.log("🚀 ~ file: SpaceCreationWidget.tsx:25 ~ invitedAddressList:", invitedAddressList)
+    const [adminsList, setAdminsList] = useState([])
+    const [adminsAddressList, setAdminsAddressList] = useState([])
+    console.log("🚀 ~ file: SpaceCreationWidget.tsx:27 ~ adminsAddressList:", adminsAddressList)
 
     const [isLoading, setLoading] = useState(false);
 
@@ -101,9 +88,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         const spaceCreate = {
             spaceName: spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: [], // add member address from temp array here
+            members: invitedAddressList,
             spaceImage: 'asd',
-            admins: [],
+            admins: adminsAddressList,
             isPublic: true,
             scheduleAt: new Date(spaceState.time),
             signer: signer as PushAPI.SignerType,
@@ -167,10 +154,14 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     makeScheduleVisible={showCreateSpace}
                     createSpace={testCreateSpace}
                     isLoading={isLoading}
-                    tempMembers={tempMembers}
-                    setTempMembers={setTempMembers}
                     invitedMembersList={invitedMembersList}
                     setInvitedMembersList={setInvitedMembersList}
+                    invitedAddressList={invitedAddressList}
+                    setInvitedAddressList={setInvitedAddressList}
+                    adminsList={adminsList}
+                    setAdminsList={setAdminsList}
+                    adminsAddressList={adminsAddressList}
+                    setAdminsAddressList={setAdminsAddressList}
                     onClose={closeInviteModal}
                 />
             }

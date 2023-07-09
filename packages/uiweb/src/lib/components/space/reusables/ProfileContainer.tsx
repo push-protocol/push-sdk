@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -11,6 +11,8 @@ export interface IProfileContainerProps {
     border?: boolean;
     contBtn?: any;
     btnCallback?: any;
+    removeCallback?: any;
+    promoteCallback?: any;
 }
 
 export const ProfileContainer: React.FC<IProfileContainerProps> = ({
@@ -22,8 +24,16 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
     border = false,
     contBtn,
     btnCallback,
+    removeCallback,
+    promoteCallback,
 }: IProfileContainerProps) => {
     const theme = useContext(ThemeContext);
+
+    const [isDDOpen, setIsDDOpen] = useState(false)
+
+    const handleDDState = () => {
+        setIsDDOpen(!isDDOpen)
+    }
 
     return (
         <ParentContainer
@@ -44,8 +54,26 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                     }
                 </ProfileDetails>
                 { tag ? <Host>{tag}</Host> : null }
-                { contBtn ? <ContBtn onClick={btnCallback}>{contBtn}</ContBtn> : null }
+                { contBtn ? <div onClick={btnCallback ?? handleDDState}>{contBtn}</div> : null }
             </HostContainer>
+
+            {
+                isDDOpen ?
+                <DropDown theme={theme}>
+                    <DDItem onClick={removeCallback}>
+                        Remove
+                    </DDItem>
+
+                    <DDItem onClick={promoteCallback}>
+                        Make Admin
+                    </DDItem>
+
+                    <DDItem onClick={handleDDState}>
+                        Close <br/> This Dropdown
+                    </DDItem>
+                </DropDown>
+                : null
+            }
         </ParentContainer>
     );
 };
@@ -55,6 +83,8 @@ const ParentContainer = styled.div<{ border?: boolean }>`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    position: relative;
 
     padding: 8px 16px;
 
@@ -86,6 +116,13 @@ const HostContainer = styled.div`
 const ProfileDetails = styled.div`
     display: flex;
     flex-direction: column;
+
+    flex-grow: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    width: 200px;
 `;
 
 const HostName = styled.div`
@@ -118,24 +155,6 @@ const Host = styled.div`
     border-radius: 8px;
 `;
 
-const ContBtn = styled.button`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: 8px;
-    line-height: 18px;
-    width: max-content;
-    background: transparent;
-    color: #8B5CF6;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid #8B5CF6;
-    cursor: pointer;
-`;
-
 const HostHandle = styled.div<{ theme?: any }>`
     background: ${(props => props.theme.textGradient)};
     -webkit-background-clip: text;
@@ -148,4 +167,28 @@ const HostHandle = styled.div<{ theme?: any }>`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+`;
+
+const DropDown = styled.div<{ theme?: any }>`
+    position: absolute;
+    top: 0px;
+    right: 0px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    justify-content: center;
+    align-items: start;
+
+    padding: 16px;
+    background: ${(props => props.theme.bgColorPrimary)};
+    color: ${(props => props.theme.textColorPrimary)};
+    border-radius: 16px;
+
+    border: 1px solid ${(props => props.theme.borderColor)};
+`;
+
+const DDItem = styled.div`
+    cursor: pointer;
 `;

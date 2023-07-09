@@ -71,7 +71,7 @@ export const SpacesUIProvider = ({
       signer,
       pgpPrivateKey,
       address: account,
-      chainId: 3,
+      chainId: 5,
       env,
       setSpaceData: setSpaceObjectData,
     });

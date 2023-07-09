@@ -171,6 +171,39 @@ export class Video {
 
     for (const recipientAddress of recipientAddresses) {
       try {
+        // set videoCallInfo state with status 1 (call initiated)
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.local.address = senderAddress;
+            draft.meta.chatId = chatId;
+            draft.meta.initiator.address = senderAddress;
+
+            const incomingIndex = getIncomingIndexFromAddress(
+              oldData.incoming,
+              recipientAddress
+            );
+
+            if (incomingIndex === -1) {
+              draft.incoming.push({
+                stream: null,
+                audio: null,
+                video: null,
+                address: recipientAddress,
+                status: retry
+                  ? VideoCallStatus.RETRY_INITIALIZED
+                  : VideoCallStatus.INITIALIZED,
+                retryCount: retry ? 1 : 0,
+              });
+            } else {
+              draft.incoming[incomingIndex].address = recipientAddress;
+              draft.incoming[incomingIndex].status = retry
+                ? VideoCallStatus.RETRY_INITIALIZED
+                : VideoCallStatus.INITIALIZED;
+              draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
+            }
+          });
+        });
+
         // fetching the iceServers config
         const iceServerConfig = await getIceServerConfig(this.env);
         this.peerInstances[recipientAddress] = new Peer({
@@ -335,25 +368,6 @@ export class Video {
             });
           }
         );
-
-        // set videoCallInfo state with status 1 (call initiated)
-        this.setData((oldData) => {
-          return produce(oldData, (draft) => {
-            const incomingIndex = getIncomingIndexFromAddress(
-              oldData.incoming,
-              recipientAddress
-            );
-
-            draft.local.address = senderAddress;
-            draft.incoming[incomingIndex].address = recipientAddress;
-            draft.meta.chatId = chatId;
-            draft.meta.initiator.address = senderAddress;
-            draft.incoming[incomingIndex].status = retry
-              ? VideoCallStatus.RETRY_INITIALIZED
-              : VideoCallStatus.INITIALIZED;
-            draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
-          });
-        });
       } catch (err) {
         console.log('error in request', err);
       }
@@ -385,19 +399,33 @@ export class Video {
       // set videoCallInfo state with status 2 (call received)
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
+          draft.local.address = senderAddress;
+          draft.meta.chatId = chatId;
+          draft.meta.initiator.address = senderAddress;
+
           const incomingIndex = getIncomingIndexFromAddress(
             oldData.incoming,
             recipientAddress
           );
 
-          draft.local.address = senderAddress;
-          draft.incoming[incomingIndex].address = recipientAddress;
-          draft.meta.chatId = chatId;
-          draft.meta.initiator.address = senderAddress;
-          draft.incoming[incomingIndex].status = retry
-            ? VideoCallStatus.RETRY_RECEIVED
-            : VideoCallStatus.RECEIVED;
-          draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
+          if (incomingIndex === -1) {
+            draft.incoming.push({
+              stream: null,
+              audio: null,
+              video: null,
+              address: recipientAddress,
+              status: retry
+                ? VideoCallStatus.RETRY_INITIALIZED
+                : VideoCallStatus.INITIALIZED,
+              retryCount: retry ? 1 : 0,
+            });
+          } else {
+            draft.incoming[incomingIndex].address = recipientAddress;
+            draft.incoming[incomingIndex].status = retry
+              ? VideoCallStatus.RETRY_RECEIVED
+              : VideoCallStatus.RECEIVED;
+            draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
+          }
         });
       });
 
