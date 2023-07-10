@@ -32,7 +32,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, speakerData, setSpaceWidgetId } = useSpaceData();
+  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, setSpaceWidgetId } = useSpaceData();
 
   const handleJoinSpace = async () => {
     if(!spaceData) {
@@ -54,7 +54,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
     setSpaceWidgetId(spaceData?.spaceId as string)
   };
-  console.log('spaceObjectData', spaceObjectData);
 
   return (
     <>
@@ -90,7 +89,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                   isSpeaker={isSpeaker}
                   wallet={profile.wallet}
                   image={tempImageUrl}
-                  // stream={profile.stream}
                 />
               )
             )
