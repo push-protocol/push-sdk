@@ -20,7 +20,8 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
-  setIsSpaceLive?: React.Dispatch<React.SetStateAction<boolean>>;
+  isSpaceLive: boolean;
+  setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   account,
@@ -28,6 +29,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   shareUrl,
   isHost,
   isMember,
+  isSpaceLive,
   setIsSpaceLive,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
@@ -47,19 +49,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     setIsStarted(true);
     console.log('Space Started');
   };
-      
-  useEffect(() => {
-    async function startSpace() {
-      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
-      // Start the space by calling the start method on the space object
-      await spacesObjectRef.current.start({
-        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
-      });
-      setIsStarted(false);
-    }
-    startSpace();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isStarted]);
 
   const handleShareTweet = () => {
     if (!shareUrl) return;
@@ -87,6 +76,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
+      if(isSpaceLive) return;
       if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',

@@ -206,15 +206,25 @@ export const SpacesUIProvider = ({
   };
 
   const isSpeaker = Boolean(
-    spaceObjectData?.members?.find(
-      (member) => member.wallet === account && member.isSpeaker
-    )
+    spaceObjectData?.members?.find((member) => {
+      const address = member.wallet.replace('eip155:', '');
+      return (
+        address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
+      );
+    })
   );
 
   const isListener = Boolean(
-    spaceObjectData?.members?.find(
-      (member) => member.wallet === account && !member.isSpeaker
-    )
+    spaceObjectData?.members?.find((member) => {
+      console.log('member', member);
+      const address = member.wallet.replace('eip155:', '');
+      return address.toUpperCase() === account.toUpperCase() && !member.isSpeaker;
+    }) ||
+      spaceObjectData?.pendingMembers?.find((member) => {
+        console.log('pending member', member);
+        const address = member.wallet.replace('eip155:', '');
+        return address.toUpperCase() === account.toUpperCase() && !member.isSpeaker;
+      })
   );
 
   const value: ISpaceDataContextValues = {

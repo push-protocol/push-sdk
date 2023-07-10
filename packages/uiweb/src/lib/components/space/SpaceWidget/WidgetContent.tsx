@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { LiveWidgetContent } from './LiveWidgetContent';
@@ -32,9 +32,15 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   isLive,
 }: WidgetContentProps) => {
   // const { isLive } = useSpaceData();
-  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(isLive);
+  console.log('isLiveInWidgetContent', isLive);
+  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(false);
+  console.log('isSpaceLive', isSpaceLive);
 
   console.log('Rendering WidgetContent');
+  useEffect(() => {
+    setIsSpaceLive(isLive);
+  }, [isLive]);
+
   return (
     <Container
       isMinimized={isMinimized}
@@ -53,6 +59,7 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           isHost={isHost}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}
+          isSpaceLive={isSpaceLive}
           setIsSpaceLive={setIsSpaceLive}
         />
       )}
