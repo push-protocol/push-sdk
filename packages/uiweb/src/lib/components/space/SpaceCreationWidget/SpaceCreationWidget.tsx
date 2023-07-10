@@ -22,10 +22,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
     const [invitedMembersList, setInvitedMembersList] = useState([])
     const [invitedAddressList, setInvitedAddressList] = useState([])
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:25 ~ invitedAddressList:", invitedAddressList)
+
     const [adminsList, setAdminsList] = useState([])
     const [adminsAddressList, setAdminsAddressList] = useState([])
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:27 ~ adminsAddressList:", adminsAddressList)
 
     const [isLoading, setLoading] = useState(false);
 
@@ -35,10 +34,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         date: new Date(),
         time: Date.now(),
     })
-
-    console.log(Date.now() > spaceState.time)
-    console.log(new Date(spaceState.time))
-    console.log(new Date(Date.now()))
 
     const { signer, env } = useSpaceData();
 
@@ -87,6 +82,23 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const closeInviteModal = () => {
         setIsInviteModalVisible(false);
     }
+
+    const clearAllState = () => {
+        setIsCreateModalVisible(false)
+        setIsScheduleModalVisible(false)
+        setIsInviteModalVisible(false)
+        setInvitedMembersList([])
+        setInvitedAddressList([])
+        setAdminsList([])
+        setAdminsAddressList([])
+        setLoading(false)
+        setSpaceState({
+            spaceName: '',
+            spaceDescription: '',
+            date: new Date(),
+            time: Date.now(),
+        })
+    }
     
     const testCreateSpace = async () => {
         const spaceCreate = {
@@ -111,6 +123,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         } finally {
             setLoading(false);
             closeInviteModal();
+            clearAllState();
         }
     };
 

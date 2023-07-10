@@ -79,10 +79,13 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                     <DDItem onClick={removeCallback}>
                         Remove
                     </DDItem>
-
-                    <DDItem onClick={promoteCallback}>
-                        Make Admin
-                    </DDItem>
+                    {
+                        promoteCallback ?
+                        <DDItem onClick={promoteCallback}>
+                            Make Admin
+                        </DDItem>
+                        : null
+                    }
                 </DropDown>
                 : null
             }
@@ -222,5 +225,6 @@ const fadeOut = keyframes`
     }
     to {
         opacity: 0;
+        visibility: hidden;
     }
 `;

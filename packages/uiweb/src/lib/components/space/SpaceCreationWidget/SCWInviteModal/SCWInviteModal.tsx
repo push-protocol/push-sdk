@@ -111,12 +111,13 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     }
 
     const handleInviteMember = (user: any) => {
-        if(invitedAddressList.includes(user.did.substring(7)) || adminsAddressList.includes(user.did.substring(7))) {
+        if(
+            (invitedAddressList.length !== 0 && adminsAddressList.length !== 0)
+            && (invitedAddressList.includes(user.did.substring(7)) || adminsAddressList.includes(user.did.substring(7)))
+        ) {
             handleError('Already Invited');
             return;
         }
-        console.log(invitedAddressList.includes(user.did.substring(7)))
-        console.log(invitedAddressList)
 
         if (user.did) {
             setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
@@ -162,6 +163,19 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         } else {
             const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
             setInvitedAddressList(updateAddressArray);
+        }
+    };
+
+    const handleDeleteInvitedAdmin = (user: any) => {
+        const updatedArray = adminsList.filter((item: any) => item !== user)
+        setAdminsList(updatedArray);
+
+        if (user.did) {
+            const updateAdminAddressArray = adminsAddressList.filter((item: string) => item !== user.did.substring(7))
+            setAdminsAddressList(updateAdminAddressArray);
+        } else {
+            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.walletAddress)
+            setAdminsAddressList(updateAddressArray);
         }
     };
 
@@ -290,8 +304,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                             </SettingsCont>
                                         }
                                         // btnCallback={() => handleDeleteInvitedUser(item)}
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
-                                        promoteCallback={() => handlePromoteToAdmin(item)}
+                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
+                                        // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
                                     />
                                 } else {
@@ -310,7 +324,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                             </SettingsCont>
                                         }
                                         // btnCallback={() => handleDeleteInvitedUser(item)}
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
                                     />
