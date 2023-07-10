@@ -105,7 +105,6 @@ const CreateSpaceTest = () => {
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,
         contractAddressERC20,
         numberOfERC20: numberOfERC20 != null ? Number(numberOfERC20) : undefined,
-        account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
         meta: meta,

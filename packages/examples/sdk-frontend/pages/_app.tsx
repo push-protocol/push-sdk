@@ -1,23 +1,24 @@
-import type { AppProps } from "next/app";
+import type { AppProps } from 'next/app';
 
 import {
   getDefaultWallets,
   RainbowKitProvider,
   darkTheme,
-} from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { goerli } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+} from '@rainbow-me/rainbowkit';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { goerli } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
 
-import "@rainbow-me/rainbowkit/styles.css";
-import "../styles/globals.css";
-import { useEffect, useState } from "react";
+import '@rainbow-me/rainbowkit/styles.css';
+import '../styles/globals.css';
+import { useEffect, useState } from 'react';
+import { SpacesComponentProvider } from './spaces';
 
 const { chains, provider } = configureChains([goerli], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
-  appName: "Connect",
-  projectId: "connect",
+  appName: 'Connect',
+  projectId: 'connect',
   chains,
 });
 
@@ -40,7 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       {loadWagmi ? (
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider theme={darkTheme()} chains={chains}>
-            <Component {...pageProps} />
+            <SpacesComponentProvider>
+              <Component {...pageProps} />
+            </SpacesComponentProvider>
           </RainbowKitProvider>
         </WagmiConfig>
       ) : null}
