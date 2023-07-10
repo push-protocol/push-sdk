@@ -46,7 +46,8 @@ const SendMessageTest = () => {
                 | 'Image'
                 | 'File'
                 | 'GIF'
-                | 'MediaURL'
+                | 'MediaEmbed'
+                | 'Meta'
                 | undefined,
               receiverAddress,
               signer: librarySigner,
@@ -68,7 +69,8 @@ const SendMessageTest = () => {
                 | 'Image'
                 | 'File'
                 | 'GIF'
-                | 'MediaURL'
+                | 'MediaEmbed'
+                | 'Meta'
                 | undefined,
               receiverAddress,
               signer: pvtKeySigner,

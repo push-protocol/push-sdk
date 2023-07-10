@@ -7,7 +7,6 @@ import {
 import { get } from './get';
 import { updateGroup } from '../chat/updateGroup';
 import getMergeStreamObject from './helpers/getMergeStreamObject';
-// import { createStream } from 'livepeer';
 import axios from 'axios';
 import { Client, isSupported } from '@livepeer/webrtmp-sdk';
 
