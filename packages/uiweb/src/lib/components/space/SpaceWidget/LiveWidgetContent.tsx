@@ -13,18 +13,14 @@ import MembersIcon from '../../../icons/Members.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
-
 import { Player } from '@livepeer/react';
-
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isJoined?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
-  isJoined,
   isHost
 }) => {
   const tempImageUrl =
@@ -32,12 +28,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, setSpaceWidgetId } = useSpaceData();
+  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, setSpaceWidgetId, isJoined } = useSpaceData();
 
   const handleJoinSpace = async () => {
     if(!spaceData) {
       return;
     }
+    
+    await initSpaceObject(spaceData?.spaceId as string);
 
     if(isSpeaker) {
       // create audio stream
@@ -54,6 +52,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
     setSpaceWidgetId(spaceData?.spaceId as string)
   };
+        
+  useEffect(() => {
+    if (!spaceObjectData.spaceDescription) return;
+    const playBackUrl = spaceObjectData.spaceDescription;
+    setPlayBackUrl(playBackUrl);
+  }, [spaceObjectData.spaceDescription]);
+      
+  console.log('spaceObjectData', spaceObjectData);
+  console.log('playBackUrl', playBackUrl);
 
   return (
     <>
@@ -163,7 +170,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && <PeerPlayer title="spaceAudio" playbackId={playBackUrl} autoPlay />}
+            {isListener && playBackUrl.length > 0 && (
+              <PeerPlayer
+                title="spaceAudio"
+                playbackId={playBackUrl}
+                autoPlay
+              />
+            )}
           </Item>
         ) : (
           <Button

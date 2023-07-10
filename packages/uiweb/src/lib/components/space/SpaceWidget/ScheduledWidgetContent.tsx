@@ -9,7 +9,7 @@ import CopyIcon from '../../../icons/copyVector.svg';
 import AtIcon from '../../../icons/atVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ScheduledWidgetContentProps {
   account?: string;
@@ -29,26 +29,35 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   isMember,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
-  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
+  const {
+    spacesObjectRef,
+    initSpaceObject,
+    spaceObjectData,
+    isJoined,
+  } = useSpaceData();
+  const [isStarted, setIsStarted] = useState<boolean>(false);
 
   const handleStartSpace = async () => {
     console.log('initializing space object');
     await initSpaceObject(spaceData?.spaceId as string);
     console.log('creating audio stream');
     await spacesObjectRef.current.createAudioStream();
+    setIsStarted(true);
+    console.log('Space Started');
   };
-
+      
   useEffect(() => {
     async function startSpace() {
-      console.log('start space initiated');
-      if (!spaceObjectData?.connectionData?.local.stream) return;
+      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
+      // Start the space by calling the start method on the space object
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
       });
+      setIsStarted(false);
     }
     startSpace();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceObjectData?.connectionData?.local.stream]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStarted]);
 
   const handleShareTweet = () => {
     if (!shareUrl) return;

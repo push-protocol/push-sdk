@@ -44,8 +44,8 @@ export interface ISpaceDataContextValues {
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => Promise<void>;
   spacesObjectRef: React.MutableRefObject<any>;
-  speakerData: ISpaceSpeakerData;
-  setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
+  isJoined: boolean;
+  // isLive: boolean;
   isSpeaker: boolean;
   isListener: boolean;
 }
@@ -114,10 +114,8 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   spacesObjectRef: {
     current: null,
   } as React.MutableRefObject<any>,
-  speakerData: {} as ISpaceSpeakerData,
-  setSpeakerData: () => {
-    /** */
-  },
+  isJoined: false,
+  // isLive: false,
   isSpeaker: false,
   isListener: false,
 };

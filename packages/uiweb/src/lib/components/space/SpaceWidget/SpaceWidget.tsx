@@ -27,7 +27,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     onClose = (() => {
       /** */
     }) as MouseEventHandler<HTMLDivElement>,
-    isJoined,
     isTimeToStartSpace,
   } = options || {};
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
@@ -36,6 +35,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
+
+  const isLive = isLiveSpace(spaceData as SpaceDTO);
 
   useEffect(() => {
     if (!spaceId) {
@@ -59,18 +60,19 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     fetchData();
   }, [spaceId]);
 
-  useEffect(() => {
-    (async () => {
-      if (!spaceData) {
-        return;
-      }
-      if (isLiveSpace(spaceData as SpaceDTO)) {
-        await initSpaceObject(spaceData?.spaceId as string);
-      }
-    })();
-  }, [spaceData]);
 
-  const isLive = isLiveSpace(spaceData as SpaceDTO);
+  // To Be Implemented Later via Meta messages.
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!spaceData) {
+  //       return;
+  //     }
+  //     if (isLiveSpace(spaceData as SpaceDTO)) {
+  //       await initSpaceObject(spaceData?.spaceId as string);
+  //     }
+  //   })();
+  // }, [spaceData]);
+
   const isHost = isHostOfSpace(account, spaceData as SpaceDTO);
   const isMember = isMemberOfSpace(account, spaceData as SpaceDTO);
 
@@ -78,6 +80,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!widgetHidden);
   };
 
+  console.log('Rendering SpaceWidget');
   // Implement the SpaceWidget component
   return (
     <Container
@@ -102,7 +105,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         shareUrl={shareUrl}
         isHost={isHost}
         isLive={isLive}
-        isJoined={isJoined}
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}
