@@ -4055,7 +4055,7 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // actual api
-const response = await PushAPI.chat.updateGroup({
+const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
@@ -4064,6 +4064,7 @@ const response = await PushAPI.chat.updateGroup({
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
+    status: PushAPI.ChatStatus.PENDING,
     account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
     env: 'staging',
     pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
@@ -4084,13 +4085,16 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // actual api
-const response = await PushAPI.chat.updateGroup({
+const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
     members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     spaceImage: &lt;group image link&gt; ,
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+	  scheduleAt: '2023-07-15T14:48:00.000Z',
+	  scheduleEnd: '2023-07-15T15:48:00.000Z',
+    status: PushAPI.ChatStatus.PENDING,
     contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
     numberOfERC20: 20,
     contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
@@ -4104,11 +4108,12 @@ const response = await PushAPI.chat.updateGroup({
 Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| chatId_ | string | - | chatId of the group |
+| spaceId_ | string | - | Id of the space |
 | account* | string | - | user address |
-| spaceName* | string | - | group name |
-| spaceDescription* | string | - | group description |
-| spaceImage* | string | - | group image link |
+| spaceName* | string | - | space name |
+| spaceDescription* | string | - | space description |
+| spaceImage* | string | - | space image |
+| status* | string | - | space status - 'ACTIVE', 'PENDING', 'ENDED' |
 | members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
 | scheduleAt* | Date | - | Date time when the space is scheduled to start |
@@ -4119,3 +4124,102 @@ Allowed Options (params with _ are mandatory)
 | numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+
+<details>
+  <summary><b>Expected response (update space)</b></summary>
+
+```typescript
+// PushAPI.space.update | Response - 200 OK
+{
+  members: [
+    {
+      wallet: 'eip155:0x367c6555b2CAD9C2d2656066EC3996Ba12cD058d',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGSr17UBCADhEXWz/lsg0sDA+QRygzl+4t84/YYa459nzFRNB36jkbU8\n' +
+        'FxRsE6oZTu0Leanup7aul4trJJ4qyA6xFfDjprDzrm1Gtp/gos46Lxk+br64\n' +
+        'lzgqTfSKpBs9UWqOcr4Vnoq9WeOiFZax0DhN//7ibIQDWIJ0E6iOc8uiSoGZ\n' +
+        's4AHTx7GtUvHxIUAk/hQY8UjjDNyhgCSrmdPeWt/SVbmFCHchdH/KhSK8JVq\n' +
+        'qs8/nKx2Tm/nmAdWFZDqIJxd5tVuXXMxTZYZADZfmBltR2F/8GkF7hfX/aOo\n' +
+        'gGQ/u2FPbCKRjtedfJi3WsPUKtyFg6QdwBnOQmYn0fGXlPGR7UVSsmIVABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZKvXtQQLCQcICZD2NRrvru2XMgMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBM1nsbalDm3PtLAK2/Y1Gu+u7ZcyAADzuwgAmTBbnBQZ2w06\n' +
+        'RbLmcZf8cYTof1X3mpYBa1lprMltib2jZQdu8DxhZBapYIE1O0UzV2Dy8IXj\n' +
+        'zavtNFZiLR8FTwkrXQ3DGrZylnqjLkQ6m2jZsGIypb2OpTlBIBnjW98Dh99F\n' +
+        'egI/5wse59IfGhYXVcKluKDAW2ezUJx8BhacZCwf/S8iG9YKrZctS5cVZxQw\n' +
+        'SymXv88msoQrWhxmu2AT0rNsZ656ANMr/MuUjKMxQsoNCNIkp5kE0UTGfMwc\n' +
+        'c69Gabs9uOPOqAGeSBGVfw+uJig/RJ4MWDCbj6QIDsV5FFRvTmJmmSNLNH5y\n' +
+        '83pHxE+923z6NiPWRonbns3pFNvhnc7ATQRkq9e1AQgAxjGMkGhs2OTW8fW/\n' +
+        '4tloJOID0UIDrz/24uX4JU+qjTqMzFyNGaNagT8n0xDH2E63YFmketip4QA2\n' +
+        '6kUBICKR2Y5kNNzkJXK4NYfa5OXEIS+lw+X7oMXd9YJ/D1fig1XD4Bf0ofsZ\n' +
+        'QIxHOn6w3T/wQHOBpu+cqE3d0pW+6s6hZ4mkuPk6OXrkBSEtynk4ADQS+a3b\n' +
+        'PrCGU9rJy2OnbP+lMr3onv/6BR/DFE4qCIfQt0cLu4nhAuYVYrOupi3p9eBQ\n' +
+        'z/oWHCSNQVQSW2/vHp0YwMj2r3jSGdoZ3pcfy4iXOa7xEyeauOn/pHK+syOX\n' +
+        'Pv64DHncql4AJFj9tw4rZ2/kkQARAQABwsB2BBgBCAAqBYJkq9e1CZD2NRrv\n' +
+        'ru2XMgKbDBYhBM1nsbalDm3PtLAK2/Y1Gu+u7ZcyAADapwf/XF6I2NifyL/h\n' +
+        '2aVsr2lL2At732336je3WM6QnA/q1x9lmxX646c9eETUQvLLhT5RZmx1X8Fa\n' +
+        'X/qGMKJe+BWLFPy5k6LnOezvvOxHGV+dzRndlWbnC9d3AZhThciw/Rd8V9W6\n' +
+        'd6luo7+Apdd3rS17hG4gElhNX1drq5TuWR89yxA5oXcIqA+u3jBdpz0qo/ME\n' +
+        '+63r0AubixdM7rgV0skugaIXvqMKtfMC/V2A8mCL5AmRXCyfMBIsEA0L5YA1\n' +
+        'wsKlHIQAy3jiPdY/2q5KUWJsR9o/IFirjnTd5vywtYsscOq/KnfLKdc2cVOr\n' +
+        'e/vSkTOrD+dVTlxGhADoud4kvcOPtg==\n' +
+        '=6H2/\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isSpeaker: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAy0lEQVR4AcXBMU5DMRBF0cvI63FJETn7oXY3K3CBNHX2g/WFKKdnLdCOUnyEgnjnPH2+v35RXPagOsbmEZc9qI6xqQwxQ8wQa9w5xuYvHWNzxhAzxAyxxg8ynKrPxZkMp+pzccYQM8QMsZbhVH0uzmQ4j8hwKkPMEDPEWp+LKsOp+lxUGc6ZPhdVhlP1uagMMUPMEGsZzn/KcCpDzBAzxBp3+lxUGU718vzGmVtcqfpcVBlOZYgZYoZY63PxG7ePK4/oc1EZYoaYIfYN05Y0ReqpB6sAAAAASUVORK5CYII='
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0xB026B0A8BB1fea997a73c5a84fe7aF8cAab1AcF2',
+      publicKey: '',
+      isSpeaker: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4ElEQVR4AcXBsU0EMRCG0Y+RC3ETzpwheqAFOnBmOZtSNqGC02abOaUAdwLp3AU+IYT+916+Pj6/CXLp/Kc1B5EhZogZYokn1hxEuXR21hxEuXR2DDFDzBBLuXSiNQdRaxeR+2CntYvIfRDl0okMMUPMEEs8cZw37pQbO8fJnUVlxxAzxAyxxINcOtGag7/IpbNjiBlihlh6f30jcq9EuXSiNQc7uXSiNQdRaxeRIWaIGWLJvRK1dhEdJ3dy6fxGaxeReyUyxAwxQyzxwL0SLSpRLp2dNQeRT7YMMUPMEPsB1yM4zt7CMugAAAAASUVORK5CYII='
+    },
+    {
+      wallet: 'eip155:0x9b70FD7164ec0Ed3E1B3E318836522340dd2e125',
+      publicKey: '',
+      isSpeaker: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA0UlEQVR4AcXBMWoDMRRF0ZtnkWYKgddgGKbSVrSILFBbUWUMLrICgwqXQ9L+NDKDIe+cj8+v7x+CPhpRyZV39NGISq5EwkyYCbN0f9z4a2Omj8ZMyZVo2Tei++NGJMyEmTBLz9OVqOTKTMmVIy7nlaiPRiTMhJkwS8u+8Z+WfSMSZsJMmKXLeWWmj0a07Bszz9OVqORKdDmvRMJMmAmzxAslV45ZOUKYCTNhlvpozJRcifpozJRcifpozAgzYSbMEi/00YhKrsz00ThCmAkzYfYLlLsvpsHyBx0AAAAASUVORK5CYII='
+    },
+    {
+      wallet: 'eip155:0x1A050099a08D7faf3b5923669a0FAe42A0872D72',
+      publicKey: null,
+      isSpeaker: false,
+      image: null
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJkq9e1CZD2NRrvru2XMhYhBM1nsbalDm3PtLAK2/Y1Gu+u\n' +
+    '7ZcyAAA0igf/Tgo/WU4C5g4UtHPCwU/jThQwjElzCa96bZU8bCXsgnoO1NMI\n' +
+    'fwI7FxIw8FmFrktHIWT10T/9vq2ItyUvpbWRhnD5zt5aRhJ1KA1z06iwkoUt\n' +
+    'DLiPfveoSDyIhUIjx5PUMN0r/tXmLhj3CrkHx1hiPBxEkhi9brfFcOvX57HS\n' +
+    'VOKOeeUa4G1cmk6dtzLHWT4p7ekrFhZPHXDtZUMZEU2wbMkB6bRqlZ7UYLbN\n' +
+    '7+0AvCu7uaCYG0zfbl3oZc6DkIm9jnBknsII6Hqv7Dc9NLAUBWo8tPrW2/KN\n' +
+    '8Bv/gk5HPb16tOihIUjs8v45wO3oTPAQYbJGdF6ta+HyiKO8JWipbw==\n' +
+    '=wkHz\n' +
+    '-----END PGP SIGNATURE-----\n' +
+    ':null',
+  spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  spaceName: 'mobile_aquamarine_constrictor',
+  isPublic: true,
+  spaceDescription: 'conventional_crimson_dove',
+  spaceCreator: 'eip155:0x367c6555b2CAD9C2d2656066EC3996Ba12cD058d',
+  spaceId: 'spaces:108f766a5053e2b985d0843e806f741da5ad754d128aff0710e526eebc127afc',
+  scheduleAt: '2023-07-15T14:48:00.000Z',
+  scheduleEnd: '2023-07-15T15:48:00.000Z',
+  status: 'PENDING'
+}
+
+
+```
+
+</details>
+
+---
