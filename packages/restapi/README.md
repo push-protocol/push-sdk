@@ -85,6 +85,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
       - [isInitiator](#isinitiator)
   - [For Spaces](#for-spaces)
     - [To create a space](#to-create-a-space)
+    - [To create a token gated space](#to-create-a-token-gated-space)
     - [To update space details](#to-update-space-details)
     - [To start a space](#to-start-a-space)
     - [To stop a space](#to-stop-a-space)
@@ -3889,11 +3890,41 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 
 // actual api
 const response = await PushAPI.space.create({
-  spaceName:'Push Space 3',
-  spaceDescription: 'This is the oficial group for Push Protocol',
+  spaceName:'wasteful_indigo_warbler',
+  spaceDescription: 'boring_emerald_gamefowl',
   members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-  spaceImage: &lt;group image link&gt; ,
+  spaceImage: &lt;space image link&gt; ,
   admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  isPublic: true,
+  account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+  env: 'staging',
+  pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+  scheduleAt: new Date("2024-07-15T14:48:00.000Z"),
+  scheduleEnd: new Date("2024-07-15T15:48:00.000Z")
+});
+```
+
+### **To create a token gated space**
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.space.create({
+  spaceName:'wasteful_indigo_warbler',
+  spaceDescription: 'boring_emerald_gamefowl',
+  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  spaceImage: &lt;space image link&gt; ,
+  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+  numberOfERC20: 20,
+  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+  numberOfNFTTokens: 2,
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
