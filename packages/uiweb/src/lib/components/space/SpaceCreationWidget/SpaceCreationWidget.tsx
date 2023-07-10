@@ -40,7 +40,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     console.log(new Date(spaceState.time))
     console.log(new Date(Date.now()))
 
-    const { signer } = useSpaceData();
+    const { signer, env } = useSpaceData();
 
     const handleNameChange = (event: any) => {
         setSpaceState((prevState) => ({...prevState, spaceName: event.target.value}))
@@ -98,6 +98,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             isPublic: true,
             scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 60000),
             signer: signer as PushAPI.SignerType,
+            env: env,
         }
 
         try {
