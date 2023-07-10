@@ -88,15 +88,14 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [To create a token gated space](#to-create-a-token-gated-space)
     - [To update space details](#to-update-space-details)
     - [To update token gated space details](#to-update-token-gated-space-details)
+    - [To get space details by spaceId](#to-get-space-details-by-spaceId)
     - [To start a space](#to-start-a-space)
     - [To stop a space](#to-stop-a-space)
-    - [To approve a space](#to-approve-a-space)
+    - [To approve a space request](#to-approve-a-space-request)
     - [To add a listener to space](#to-add-a-listener-to-space)
     - [To remove a listener from space](#to-remove-a-listener-from-space)
     - [To add a speaker to space](#to-add-a-speaker-to-space)
     - [To remove a speaker from space](#to-remove-a-speaker-from-space)
-    - [To get space details by space name](#to-get-space-details-by-space-name)
-    - [To get space details by spaceId](#to-get-space-details-by-spaceId)
     - [Fetching list of user spaces](#fetching-list-of-user-spaces)
     - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
     - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
@@ -4558,3 +4557,33 @@ Allowed Options (params with _ are mandatory)
 ---
 
 
+### **To approve a space request**
+
+```typescript
+const response = await PushAPI.space.approve({
+  status: 'Approved',
+  account: '0x18C0Ab0809589c423Ac9eb42897258757b6b3d3d',
+  senderAddress: '0x873a538254f8162377296326BB3eDDbA7d00F8E9', // spaceId
+  env: 'staging',
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| status | 'Approved' | 'Approved' | flag for approving and rejecting space request, supports only approving for now|
+| senderAddress_ | string | - | space request sender's address or spaceId of a space |
+| signer\* | - | - | signer object |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+<details>
+  <summary><b>Expected response (approve space request for a spaceId)</b></summary>
+
+```typescript
+// PushAPI_space_approve | Response - 204 OK
+```
+
+</details>
+
+---
