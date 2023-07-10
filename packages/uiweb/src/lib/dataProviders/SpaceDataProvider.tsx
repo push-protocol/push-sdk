@@ -89,7 +89,10 @@ export const SpacesUIProvider = ({
     }));
   };
 
-  const setSpeakerDataItem = (key: string, value: PushAPI.video.VideoDataType): void => {
+  const setSpeakerDataItem = (
+    key: string,
+    value: PushAPI.video.VideoDataType
+  ): void => {
     setSpeakerData((prevState) => ({
       ...prevState,
       [key]: value,
@@ -203,11 +206,15 @@ export const SpacesUIProvider = ({
   };
 
   const isSpeaker = Boolean(
-    spaceObjectData?.members?.find((member) => member.wallet === account && member.isSpeaker)
+    spaceObjectData?.members?.find(
+      (member) => member.wallet === account && member.isSpeaker
+    )
   );
-  
+
   const isListener = Boolean(
-    spaceObjectData?.members?.find((member) => member.wallet === account && !member.isSpeaker)
+    spaceObjectData?.members?.find(
+      (member) => member.wallet === account && !member.isSpeaker
+    )
   );
 
   const value: ISpaceDataContextValues = {
@@ -237,9 +244,10 @@ export const SpacesUIProvider = ({
     initSpaceObject,
     spacesObjectRef,
     isJoined,
-    // isLive,
     isSpeaker,
-    isListener
+    isListener,
+    speakerData,
+    setSpeakerData: setSpeakerDataItem,
   };
 
   useEffect(() => {
