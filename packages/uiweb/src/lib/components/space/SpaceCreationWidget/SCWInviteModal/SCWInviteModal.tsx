@@ -52,9 +52,9 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         onClose
     } = props;
 
-    const { env } = useSpaceData();
-
     const theme = useContext(ThemeContext);
+
+    const { env, account } = useSpaceData();
 
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
@@ -64,6 +64,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
 
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
+
+        if (event.target.value === account) {
+            handleError('Cannot add Host to members');
+            return;
+        }
 
         try {
             setLoadingAccount(true);
@@ -98,7 +103,21 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setErrorMsg('');
     }
 
+    const handleError = (errMsg: string) => {
+        setErrorMsg(errMsg);
+        setTimeout(() => {
+            setErrorMsg('')
+        }, 2000);
+    }
+
     const handleInviteMember = (user: any) => {
+        if(invitedAddressList.includes(user.did.substring(7)) || adminsAddressList.includes(user.did.substring(7))) {
+            handleError('Already Invited');
+            return;
+        }
+        console.log(invitedAddressList.includes(user.did.substring(7)))
+        console.log(invitedAddressList)
+
         if (user.did) {
             setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
             setInvitedMembersList([...invitedMembersList, user]);
@@ -136,6 +155,14 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const handleDeleteInvitedUser = (user: any) => {
         const updatedArray = invitedMembersList.filter((item: any) => item !== user)
         setInvitedMembersList(updatedArray);
+
+        if (user.did) {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
+            setInvitedAddressList(updateAddressArray);
+        } else {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            setInvitedAddressList(updateAddressArray);
+        }
     };
 
     const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
@@ -157,7 +184,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     onInputChange={searchMember}
                     clearInput={clearInput}
                 />
-                {errorMsg}
+                <ErrorMessage>{errorMsg}</ErrorMessage>
 
                 <MembersList>
                     {loadingAccount && <Spinner />}
@@ -364,4 +391,10 @@ const ContBtn = styled.button`
     border-radius: 8px;
     border: 1px solid #8B5CF6;
     cursor: pointer;
+`;
+
+const ErrorMessage = styled.div`
+    color: #E93636;
+    font-size: 14px;
+    margin-bottom: 8px;
 `;

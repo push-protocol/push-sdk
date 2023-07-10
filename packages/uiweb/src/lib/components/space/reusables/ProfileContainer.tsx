@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useState, useRef, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IProfileContainerProps {
@@ -29,11 +29,27 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
 }: IProfileContainerProps) => {
     const theme = useContext(ThemeContext);
 
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
     const [isDDOpen, setIsDDOpen] = useState(false)
 
     const handleDDState = () => {
         setIsDDOpen(!isDDOpen)
     }
+
+    useEffect(() => {
+        const handleOutsideClick = (event: any) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDDOpen(false);
+            }
+        };
+    
+        document.addEventListener('mousedown', handleOutsideClick);
+    
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
 
     return (
         <ParentContainer
@@ -59,17 +75,13 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
 
             {
                 isDDOpen ?
-                <DropDown theme={theme}>
+                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
                     <DDItem onClick={removeCallback}>
                         Remove
                     </DDItem>
 
                     <DDItem onClick={promoteCallback}>
                         Make Admin
-                    </DDItem>
-
-                    <DDItem onClick={handleDDState}>
-                        Close <br/> This Dropdown
                     </DDItem>
                 </DropDown>
                 : null
@@ -169,7 +181,7 @@ const HostHandle = styled.div<{ theme?: any }>`
     overflow: hidden;
 `;
 
-const DropDown = styled.div<{ theme?: any }>`
+const DropDown = styled.div<{ theme?: any, isDDOpen: any }>`
     position: absolute;
     top: 0px;
     right: 0px;
@@ -181,6 +193,8 @@ const DropDown = styled.div<{ theme?: any }>`
     justify-content: center;
     align-items: start;
 
+    animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
+
     padding: 16px;
     background: ${(props => props.theme.bgColorPrimary)};
     color: ${(props => props.theme.textColorPrimary)};
@@ -191,4 +205,22 @@ const DropDown = styled.div<{ theme?: any }>`
 
 const DDItem = styled.div`
     cursor: pointer;
+`;
+
+const fadeIn = keyframes`
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+`;
+
+const fadeOut = keyframes`
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 `;

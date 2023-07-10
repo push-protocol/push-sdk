@@ -33,8 +33,12 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         spaceName: '',
         spaceDescription: '',
         date: new Date(),
-        time: new Date(),
+        time: Date.now(),
     })
+
+    console.log(Date.now() > spaceState.time)
+    console.log(new Date(spaceState.time))
+    console.log(new Date(Date.now()))
 
     const { signer } = useSpaceData();
 
@@ -92,7 +96,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             spaceImage: 'asd',
             admins: adminsAddressList,
             isPublic: true,
-            scheduleAt: new Date(spaceState.time),
+            scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 60000),
             signer: signer as PushAPI.SignerType,
         }
 
