@@ -35,7 +35,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         time: Date.now(),
     })
 
-    const { signer, env } = useSpaceData();
+    const { signer, env, account } = useSpaceData();
 
     const handleNameChange = (event: any) => {
         setSpaceState((prevState) => ({...prevState, spaceName: event.target.value}))
@@ -102,7 +102,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     
     const testCreateSpace = async () => {
         const spaceCreate = {
-            spaceName: spaceState.spaceName,
+            spaceName: spaceState.spaceName.length === 0 ? `${account}'s Space` : spaceState.spaceName,
             spaceDescription: 'Push Space',
             members: invitedAddressList,
             spaceImage: 'asd',
