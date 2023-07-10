@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
-import Constants from '../constants';
+import Constants, { MessageType } from '../constants';
 import { ChatSendOptionsType, MessageWithCID } from '../types';
 import {
   getAccountAddress,
@@ -9,85 +9,147 @@ import {
   getWallet,
 } from './helpers';
 import { conversationHash } from './conversationHash';
-import { start } from './start';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
+import { getGroup } from './getGroup';
 
 /**
- * Send a message to an address or a group
+ * SENDS A PUSH CHAT MESSAGE
  */
 export const send = async (
   options: ChatSendOptionsType
 ): Promise<MessageWithCID> => {
   const {
-    messageContent = '',
     messageType = 'Text',
     receiverAddress,
+    pgpPrivateKey = null,
     account = null,
     signer = null,
-    pgpPrivateKey = null,
-    apiKey = '',
     env = Constants.ENV.PROD,
 
   } = options || {};
 
   try {
-    if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
-    }
+    await validateOptions(options);
 
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
-
-    if (!isValidETHAddress(address)) {
-      throw new Error(`Invalid address!`);
-    }
-
-    let isGroup = false;
-    if (!isValidETHAddress(receiverAddress)) {
-      isGroup = true;
-    }
-
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const sender = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const receiver = await getUserDID(receiverAddress, env);
-    let conversationResponse: any = null;
-    if (!isGroup) {
-      conversationResponse = await conversationHash({
-        conversationId: receiver,
-        account: connectedUser.did,
-        env,
-      });
-    }
-    if (conversationResponse && !conversationResponse?.threadHash) {
-      return start({
-        messageContent: messageContent,
-        messageType: messageType,
-        receiverAddress: receiver,
-        connectedUser,
-        apiKey,
-        env,
-      });
-    } else {
-      const API_BASE_URL = getAPIBaseUrls(env);
-      const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
-      const body: ISendMessagePayload = await sendMessagePayload(
-        receiver,
-        connectedUser,
-        messageContent,
-        messageType,
-        env
-      );
-
-      return axios
-        .post(apiEndpoint, body)
-        .then((response) => {
-          return response.data;
+    const API_BASE_URL = getAPIBaseUrls(env);
+    const isGroup = isValidETHAddress(receiverAddress) ? false : true;
+    const group = isGroup
+      ? await getGroup({
+          chatId: receiverAddress,
+          env: env,
         })
-        .catch((err) => {
-          throw new Error(err);
-        });
+      : null;
+
+    let messageObj = options.messageObj;
+    // possible for initial types 'Text', 'Image', 'File', 'GIF', 'MediaEmbed'
+    if (!messageObj) {
+      messageObj = {
+        content: options.messageContent ? options.messageContent : '',
+      };
     }
+    const messageContent = messageObj.content; // provide backward compatibility & override deprecated field
+
+    const conversationResponse = await conversationHash({
+      conversationId: receiver,
+      account: sender.did,
+      env,
+    });
+
+    let apiEndpoint: string;
+    if (!isGroup && conversationResponse && !conversationResponse?.threadHash) {
+      apiEndpoint = `${API_BASE_URL}/v1/chat/request`;
+    } else {
+      apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
+    }
+
+    const body: ISendMessagePayload = await sendMessagePayload(
+      receiver,
+      sender,
+      messageObj,
+      messageContent,
+      messageType,
+      group,
+      env
+    );
+    return (await axios.post(apiEndpoint, body)).data;
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);
+  }
+};
+
+const validateOptions = async (options: ChatSendOptionsType) => {
+  const {
+    messageType = 'Text',
+    messageObj,
+    messageContent,
+    receiverAddress,
+    pgpPrivateKey = null,
+    account = null,
+    signer = null,
+    env,
+  } = options;
+
+  if (!account && !signer) {
+    throw new Error(
+      `Unable to detect sender. Please ensure that either 'account' or 'signer' is properly defined.`
+    );
+  }
+
+  if (!signer && !pgpPrivateKey) {
+    throw new Error(
+      `Unable to decrypt keys. Please ensure that either 'signer' or 'pgpPrivateKey' is properly defined.`
+    );
+  }
+
+  const wallet = getWallet({ account, signer });
+  const address = await getAccountAddress(wallet);
+  if (!isValidETHAddress(address)) {
+    throw new Error(
+      `Invalid sender. Please ensure that either 'account' or 'signer' is properly defined.`
+    );
+  }
+
+  const isGroup = isValidETHAddress(receiverAddress) ? false : true;
+  if (isGroup) {
+    const group = await getGroup({
+      chatId: receiverAddress,
+      env: env,
+    });
+    if (!group) {
+      throw new Error(
+        `Invalid receiver. Please ensure 'receiver' is a valid DID or ChatId in case of Group.`
+      );
+    }
+  }
+
+  if (messageType === MessageType.META) {
+    if (
+      !(messageObj instanceof Object) ||
+      !(messageObj.meta instanceof Object) ||
+      !('action' in messageObj.meta) ||
+      !('info' in messageObj.meta) ||
+      !(messageObj.meta.info.affected instanceof Array)
+    ) {
+      throw new Error(
+        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
+      );
+    }
+  } else {
+    if (messageObj && messageObj.meta) {
+      throw new Error(
+        `Unable to parse this messageType. Meta is not allowed for this messageType.`
+      );
+    }
+  }
+
+  if (!pgpPrivateKey) {
+    // WARNING - WALLET SIGNING POPUPS
+  }
+  if (messageContent) {
+    // WARNING - DEPRECATED AND TO BE REMOVED IN UPCOMING MAJOR RELEASE
   }
 };

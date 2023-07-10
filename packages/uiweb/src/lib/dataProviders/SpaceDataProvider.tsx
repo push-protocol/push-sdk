@@ -80,7 +80,7 @@ export const SpacesUIProvider = ({
       signer,
       pgpPrivateKey,
       address: account,
-      chainId: 5,
+      chainId: 5, // TODO: Make this dynamic
       env,
       setSpaceData: setSpaceObjectData,
     });

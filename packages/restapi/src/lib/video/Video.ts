@@ -325,12 +325,27 @@ export class Video {
                 parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
               ) {
                 // destroy connection to only the current peer
+                this.peerInstances[recipientAddress]?.destroy();
+                this.peerInstances[recipientAddress] = null;
+                this.setData((oldData) => {
+                  return produce(oldData, (draft) => {
+                    const incomingIndex = getIncomingIndexFromAddress(
+                      oldData.incoming,
+                      recipientAddress
+                    );
+                    draft.incoming.splice(incomingIndex, 1);
+                  });
+                });
               }
               if (
                 this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
                 parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
               ) {
                 // destroy connection to all the peers
+                for (const connectedAddress in this.peerInstances) {
+                  this.peerInstances[connectedAddress]?.destroy();
+                  this.peerInstances[connectedAddress] = null;
+                }
               }
 
               if (
@@ -598,12 +613,27 @@ export class Video {
               parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
             ) {
               // destroy connection to only the current peer
+              this.peerInstances[recipientAddress]?.destroy();
+              this.peerInstances[recipientAddress] = null;
+              this.setData((oldData) => {
+                return produce(oldData, (draft) => {
+                  const incomingIndex = getIncomingIndexFromAddress(
+                    oldData.incoming,
+                    recipientAddress
+                  );
+                  draft.incoming.splice(incomingIndex, 1);
+                });
+              });
             }
             if (
               this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
               parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
             ) {
               // destroy connection to all the peers
+              for (const connectedAddress in this.peerInstances) {
+                this.peerInstances[connectedAddress]?.destroy();
+                this.peerInstances[connectedAddress] = null;
+              }
             }
 
             if (

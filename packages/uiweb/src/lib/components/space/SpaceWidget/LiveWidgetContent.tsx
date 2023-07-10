@@ -44,8 +44,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
   console.log('spaceObjectData', spaceObjectData);
 
-  console.log('Rendering LiveWidgetContent');
-
   return (
     <>
       <Item
@@ -58,15 +56,19 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map((profile) => (
-          <LiveSpaceProfileContainer
-            isHost={isHost}
-            isSpeaker={isSpeaker}
-            wallet={profile.address}
-            image={tempImageUrl}
-            stream={profile.stream}
-          />
-        ))}
+        {spaceObjectData.connectionData.incoming.map(
+          (profile) => (
+            (
+              <LiveSpaceProfileContainer
+                isHost={isHost}
+                isSpeaker={isSpeaker}
+                wallet={profile.address}
+                image={tempImageUrl}
+                stream={profile.stream}
+              />
+            )
+          )
+        )}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (

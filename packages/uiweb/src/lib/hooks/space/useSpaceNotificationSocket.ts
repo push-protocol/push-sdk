@@ -1,18 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  createSocketConnection,
-  EVENTS
-} from '@pushprotocol/socket';
+import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
+import * as PushAPI from '@pushprotocol/restapi';
+import { useSpaceData } from './useSpaceData';
 import { ENV } from '../../config';
 
 const NOTIFICATION_SOCKET_TYPE = 'notification';
 
 export type SDKSocketHookOptions = {
-  account?: string | null,
-  env?: ENV,
+  account?: string | null;
+  env?: ENV;
 };
 
-export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocketHookOptions) => {
+export const useSpaceNotificationSocket = ({
+  account,
+  env = ENV.PROD,
+}: SDKSocketHookOptions) => {
+  const { spacesObjectRef } = useSpaceData();
+
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
     useState<boolean>(false);
@@ -27,11 +31,62 @@ export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocke
     });
 
     notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-      /** */
+      const { payload } = feedItem;
+
+      if (
+        payload?.data?.additionalMeta?.type ===
+        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+      ) {
+        const {
+          status,
+          callDetails,
+          senderAddress,
+          recipientAddress,
+          signalData,
+          chatId: spaceId,
+        }: PushAPI.video.VideoDataType = JSON.parse(
+          payload.data.additionalMeta.data
+        );
+
+        if (status === PushAPI.VideoCallStatus.INITIALIZED) {
+          if (
+            callDetails?.type ===
+            PushAPI.payloads.SPACE_REQUEST_TYPE.JOIN_SPEAKER
+          ) {
+            // @Nilesh
+            // host has started the space and is asking speakers to join in (real-time)
+            // we need to store the receivedSpaceData.signalData, chatId -> spaceId
+            // so that we can use then when the speaker wants to join the space from space invites
+          }
+          if (
+            callDetails?.type ===
+            PushAPI.payloads.SPACE_REQUEST_TYPE.ESTABLISH_MESH
+          ) {
+            spacesObjectRef.current?.acceptRequest({
+              signalData,
+              senderAddress: recipientAddress,
+              recipientAddress: senderAddress,
+              chatId: spaceId,
+            });
+          }
+        }
+        if (status === PushAPI.VideoCallStatus.RECEIVED) {
+          spacesObjectRef.current?.connect({
+            signalData,
+            peerAddress: senderAddress,
+          });
+        }
+        if (status === PushAPI.VideoCallStatus.DISCONNECTED) {
+          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.LEAVE){
+            // later -> the 'senderAddress' has left the space
+          }
+          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.STOP){
+            // later -> space has been ended by the host
+          }
+        }
+      }
     });
-  }, [
-    notificationSocket
-  ]);
+  }, [notificationSocket]);
 
   const removeSocketEvents = useCallback(() => {
     notificationSocket?.off(EVENTS.CONNECT);
@@ -53,7 +108,7 @@ export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocke
 
   /**
    * Whenever the requisite params to create a connection object change
-   *  - disconnect the old connection 
+   *  - disconnect the old connection
    *  - create a new connection object
    */
   useEffect(() => {
@@ -67,7 +122,7 @@ export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocke
           user: account,
           env,
           socketType: NOTIFICATION_SOCKET_TYPE,
-          socketOptions: { autoConnect: true , reconnectionAttempts: 3}
+          socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
         });
         console.warn('new connection object: ', connectionObject);
 
@@ -76,11 +131,11 @@ export const useSpaceNotificationSocket = ({ account, env = ENV.PROD }: SDKSocke
       main().catch((err) => console.error(err));
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, env]);
 
   return {
     notificationSocket,
-    isNotificationSocketConnected
-  }
+    isNotificationSocketConnected,
+  };
 };

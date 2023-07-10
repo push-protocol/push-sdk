@@ -20,6 +20,19 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
+  const [playBackUrl, setPlayBackUrl] = useState<string>('');
+  const { spacesObjectRef, spaceObjectData, initSpaceObject, setSpaceWidgetId } = useSpaceData();
+
+  const handleJoinSpace = async (space: any) => {
+    await initSpaceObject(space?.spaceId as string);
+    await spacesObjectRef?.current?.join();
+    const playBackUrl = spaceObjectData.spaceDescription;
+    setPlayBackUrl(playBackUrl);
+    handleCloseModal();
+    setSpaceWidgetId(space?.spaceId as string)
+    console.log('Space Joined');
+  };
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -79,6 +92,7 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
                         spaceId={space.spaceId}
                         orientation="maximized"
                         isInvite={true}
+                        onJoin={() => handleJoinSpace(space)}
                       />
                     );
                   })
@@ -120,11 +134,11 @@ const ScrollContainer = styled.div`
     background:#8B5CF6;
     border-radius: 99px;
   }
-}`;
+`;
 
 const InviteContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin: 0 10px;
-}`;
+`;
