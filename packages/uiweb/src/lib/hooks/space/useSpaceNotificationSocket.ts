@@ -15,7 +15,8 @@ export const useSpaceNotificationSocket = ({
   account,
   env = ENV.PROD,
 }: SDKSocketHookOptions) => {
-  const { spacesObjectRef, setSpeakerData, setSpaceRequests, spaceRequests } = useSpaceData();
+  const { spacesObjectRef, setSpeakerData, setSpaceRequests, spaceRequests } =
+    useSpaceData();
 
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
@@ -32,6 +33,8 @@ export const useSpaceNotificationSocket = ({
 
     notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const { payload } = feedItem;
+
+      console.log('RECEIVED USER FEEDS NOTIF', payload);
 
       if (
         payload?.data?.additionalMeta?.type ===
@@ -56,30 +59,37 @@ export const useSpaceNotificationSocket = ({
             // @Nilesh
             // host has started the space and is asking speakers to join in (real-time)
             // we need to store the JSON.parse(
-          // payload.data.additionalMeta.data
-          // );, chatId -> spaceId
-              setSpeakerData(chatId, JSON.parse(
-                payload.data.additionalMeta.data
-              ));
+            // payload.data.additionalMeta.data
+            // );, chatId -> spaceId
 
-              const updatedData = spaceRequests?.apiData?.map(item => {
-                if (item.spaceId === chatId) {
-                  return {
-                    ...item,
-                    spaceInformation: {
-                      ...item.spaceInformation,
-                      status: 'ACTIVE'
-                    }
-                  };
-                }
-                return item;
-              });
-              
-              setSpaceRequests({ 
-                apiData: updatedData as PushAPI.SpaceIFeeds[]
-              })
+            // setSpeakerData(chatId, JSON.parse(
+            //   payload.data.additionalMeta.data
+            // ));
+            // const updatedData = spaceRequests?.apiData?.map(item => {
+            //   if (item.spaceId === chatId) {
+            //     return {
+            //       ...item,
+            //       spaceInformation: {
+            //         ...item.spaceInformation,
+            //         status: 'ACTIVE'
+            //       }
+            //     };
+            //   }
+            //   return item;
+            // });
+            // setSpaceRequests({
+            //   apiData: updatedData as PushAPI.SpaceIFeeds[]
+            // })
 
             // so that we can use then when the speaker wants to join the space from space invites
+
+            // TODO: see if check for speaker is req
+            spacesObjectRef.current?.acceptRequest({
+              senderAddress: recipientAddress,
+              recipientAddress: senderAddress,
+              signalData,
+              chatId,
+            });
           }
           if (
             callDetails?.type ===
@@ -100,10 +110,14 @@ export const useSpaceNotificationSocket = ({
           });
         }
         if (status === PushAPI.VideoCallStatus.DISCONNECTED) {
-          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.LEAVE){
+          if (
+            callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.LEAVE
+          ) {
             // later -> the 'senderAddress' has left the space
           }
-          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.STOP){
+          if (
+            callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.STOP
+          ) {
             // later -> space has been ended by the host
           }
         }
