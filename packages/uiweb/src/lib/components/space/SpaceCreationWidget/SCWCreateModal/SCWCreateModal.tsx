@@ -45,7 +45,7 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
                     labelName='Name'
                     inputValue={nameValue}
                     onInputChange={handleNameChange}
-                    charCount={70}
+                    charCount={50}
                 />
 
                 {

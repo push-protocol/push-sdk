@@ -1,22 +1,19 @@
-import { SPACE_ACCEPT_REQUEST_TYPE } from '../payloads/constants';
+import {
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_REQUEST_TYPE,
+} from '../payloads/constants';
 import { ChatStatus } from '../types';
 import { VideoDataType } from '../video/helpers/sendVideoCallNotification';
 import { approve } from './approve';
 import { get } from './get';
 import type Space from './Space';
 
-export interface JoinSpaceType {
-  recievedVideoData?: VideoDataType; // only required when joining as a speaker
-}
-
 /**
  *
  * @param options
  *  recievedVideoData: only required when joining as a speaker
  */
-export async function join(this: Space, options: JoinSpaceType) {
-  const { recievedVideoData = null } = options || {};
-
+export async function join(this: Space) {
   try {
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,
@@ -57,27 +54,19 @@ export async function join(this: Space, options: JoinSpaceType) {
         signer: this.signer,
         pgpPrivateKey: this.pgpPrivateKey,
         senderAddress: this.spaceSpecificData.spaceId,
-        env: this.env
+        env: this.env,
       });
     }
 
     if (isSpeaker || isSpeakerPending) {
-      if (!recievedVideoData)
-        throw new Error('Joining as a speaker failed due to bad video data');
-
-      if (recievedVideoData.chatId !== this.spaceSpecificData.spaceId)
-        throw new Error(
-          'Joining as a speaker failed due to mismatch in space id'
-        );
-
-      // call acceptRequest to initiate connection
-      await this.acceptRequest({
-        senderAddress: recievedVideoData.recipientAddress,
-        recipientAddress: recievedVideoData.senderAddress,
-        signalData: recievedVideoData.signalData,
-        chatId: recievedVideoData.chatId,
+      // Call the host and join the mesh connection
+      const hostAddress = space.spaceCreator.replace('eip155:', '');
+      this.request({
+        senderAddress: this.data.local.address,
+        recipientAddress: hostAddress,
+        chatId: this.spaceSpecificData.spaceId,
         details: {
-          type: SPACE_ACCEPT_REQUEST_TYPE.ACCEPT_JOIN_SPEAKER,
+          type: SPACE_REQUEST_TYPE.JOIN_SPEAKER,
           data: {},
         },
       });

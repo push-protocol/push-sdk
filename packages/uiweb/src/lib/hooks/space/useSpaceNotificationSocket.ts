@@ -33,6 +33,8 @@ export const useSpaceNotificationSocket = ({
     notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const { payload } = feedItem;
 
+      console.log('RECEIVED USER FEEDS NOTIF', payload);
+
       if (
         payload?.data?.additionalMeta?.type ===
         `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
@@ -43,7 +45,7 @@ export const useSpaceNotificationSocket = ({
           senderAddress,
           recipientAddress,
           signalData,
-          chatId: spaceId,
+          chatId,
         }: PushAPI.video.VideoDataType = JSON.parse(
           payload.data.additionalMeta.data
         );
@@ -53,10 +55,13 @@ export const useSpaceNotificationSocket = ({
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.JOIN_SPEAKER
           ) {
-            // @Nilesh
-            // host has started the space and is asking speakers to join in (real-time)
-            // we need to store the receivedSpaceData.signalData, chatId -> spaceId
-            // so that we can use then when the speaker wants to join the space from space invites
+            // TODO: see if check for speaker is req
+            spacesObjectRef.current?.acceptRequest({
+              senderAddress: recipientAddress,
+              recipientAddress: senderAddress,
+              signalData,
+              chatId,
+            });
           }
           if (
             callDetails?.type ===
@@ -66,7 +71,7 @@ export const useSpaceNotificationSocket = ({
               signalData,
               senderAddress: recipientAddress,
               recipientAddress: senderAddress,
-              chatId: spaceId,
+              chatId: chatId,
             });
           }
         }
@@ -77,10 +82,14 @@ export const useSpaceNotificationSocket = ({
           });
         }
         if (status === PushAPI.VideoCallStatus.DISCONNECTED) {
-          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.LEAVE){
+          if (
+            callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.LEAVE
+          ) {
             // later -> the 'senderAddress' has left the space
           }
-          if(callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.STOP){
+          if (
+            callDetails?.type === PushAPI.payloads.SPACE_DISCONNECT_TYPE.STOP
+          ) {
             // later -> space has been ended by the host
           }
         }
