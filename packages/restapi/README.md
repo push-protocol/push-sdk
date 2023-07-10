@@ -87,6 +87,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [To create a space](#to-create-a-space)
     - [To create a token gated space](#to-create-a-token-gated-space)
     - [To update space details](#to-update-space-details)
+    - [To update token gated space details](#to-update-token-gated-space-details)
     - [To start a space](#to-start-a-space)
     - [To stop a space](#to-stop-a-space)
     - [To approve a space](#to-approve-a-space)
@@ -4008,10 +4009,10 @@ Allowed Options (params with _ are mandatory)
 			image: null
 		}
 	],
-	contractAddressERC20: null,
-	numberOfERC20: 0,
-	contractAddressNFT: null,
-	numberOfNFTTokens: 0,
+  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+  numberOfERC20: 20,
+  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+  numberOfNFTTokens: 2,
 	verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
 		'\n' +
 		'wsBzBAEBCAAnBYJkq7LBCZDwrCS5ulOLwRYhBFKpO7zcSRed+QmbIfCsJLm6\n' +
@@ -4040,3 +4041,81 @@ Allowed Options (params with _ are mandatory)
 </details>
 
 ---
+
+### **To update space details**
+
+Note - updateSpace is an idompotent call
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.chat.updateGroup({
+    spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
+    spaceName: 'Push Space 3',
+    spaceDescription: 'This is the oficial space for Push Protocol',
+    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    spaceImage: &lt;group image link&gt; ,
+    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+	  scheduleAt: '2023-07-15T14:48:00.000Z',
+	  scheduleEnd: '2023-07-15T15:48:00.000Z',
+    account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+    env: 'staging',
+    pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
+```
+
+
+### **To update token gated space details**
+
+Note - updateSpace is an idompotent call
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.chat.updateGroup({
+    spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
+    spaceName: 'Push Space 3',
+    spaceDescription: 'This is the oficial space for Push Protocol',
+    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    spaceImage: &lt;group image link&gt; ,
+    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
+    numberOfERC20: 20,
+    contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
+    numberOfNFTTokens: 2,
+    account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+    env: 'staging',
+    pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| chatId_ | string | - | chatId of the group |
+| account* | string | - | user address |
+| spaceName* | string | - | group name |
+| spaceDescription* | string | - | group description |
+| spaceImage* | string | - | group image link |
+| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
+| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| scheduleAt* | Date | - | Date time when the space is scheduled to start |
+| scheduleEnd | Date | - | Date time when the space is scheduled to end |
+| contractAddressERC20 | string | null | ERC20 Contract Address |
+| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT | string | null | NFT Contract Address |
+| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
