@@ -25,6 +25,7 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     // speaker logic
     if(isSpeaker) {
       await initSpaceObject(space?.spaceId as string);
+      // create audio stream
       const data = speakerData[space?.spaceId];
       if (data) {
         await spacesObjectRef?.current?.join(data);

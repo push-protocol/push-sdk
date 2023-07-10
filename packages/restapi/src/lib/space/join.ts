@@ -8,18 +8,12 @@ import { approve } from './approve';
 import { get } from './get';
 import type Space from './Space';
 
-export interface JoinSpaceType {
-  recievedVideoData?: VideoDataType; // only required when joining as a speaker
-}
-
 /**
  *
  * @param options
  *  recievedVideoData: only required when joining as a speaker
  */
-export async function join(this: Space, options: JoinSpaceType) {
-  const { recievedVideoData = null } = options || {};
-
+export async function join(this: Space) {
   try {
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,

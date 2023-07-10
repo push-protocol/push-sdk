@@ -15,8 +15,7 @@ export const useSpaceNotificationSocket = ({
   account,
   env = ENV.PROD,
 }: SDKSocketHookOptions) => {
-  const { spacesObjectRef, setSpeakerData, setSpaceRequests, spaceRequests } =
-    useSpaceData();
+  const { spacesObjectRef } = useSpaceData();
 
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
@@ -56,33 +55,6 @@ export const useSpaceNotificationSocket = ({
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.JOIN_SPEAKER
           ) {
-            // @Nilesh
-            // host has started the space and is asking speakers to join in (real-time)
-            // we need to store the JSON.parse(
-            // payload.data.additionalMeta.data
-            // );, chatId -> spaceId
-
-            // setSpeakerData(chatId, JSON.parse(
-            //   payload.data.additionalMeta.data
-            // ));
-            // const updatedData = spaceRequests?.apiData?.map(item => {
-            //   if (item.spaceId === chatId) {
-            //     return {
-            //       ...item,
-            //       spaceInformation: {
-            //         ...item.spaceInformation,
-            //         status: 'ACTIVE'
-            //       }
-            //     };
-            //   }
-            //   return item;
-            // });
-            // setSpaceRequests({
-            //   apiData: updatedData as PushAPI.SpaceIFeeds[]
-            // })
-
-            // so that we can use then when the speaker wants to join the space from space invites
-
             // TODO: see if check for speaker is req
             spacesObjectRef.current?.acceptRequest({
               senderAddress: recipientAddress,

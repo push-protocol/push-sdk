@@ -40,9 +40,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
 
     if(isSpeaker) {
-      const data = speakerData[spaceData?.spaceId];
-      if (data) 
-        await spacesObjectRef?.current?.join(data);
+      // create audio stream
+      await spacesObjectRef?.current?.join();
     }
 
     // listener logic
