@@ -18,38 +18,47 @@ interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isSpeaker?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
-  isHost,
-  isSpeaker,
+  isHost
 }) => {
-  const { isJoined } = useSpaceData();
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
+  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, setSpaceWidgetId, isJoined } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    try {
-      await initSpaceObject(spaceData?.spaceId as string);
-      await spacesObjectRef?.current?.join({});
-      // const playBackUrl = spaceObjectData.spaceDescription;
-      // setPlayBackUrl(playBackUrl);
-      console.log('Space Joined');
-    } catch (err) {
-      console.log(err);
+    if(!spaceData) {
+      return;
     }
-  };
+    
+    await initSpaceObject(spaceData?.spaceId as string);
 
+    if(isSpeaker) {
+      // create audio stream
+      await spacesObjectRef?.current?.join();
+    }
+
+    // listener logic
+    if(isListener) {
+      await spacesObjectRef?.current?.join();
+      const playBackUrl = spaceObjectData.spaceDescription;
+      setPlayBackUrl(playBackUrl);
+      console.log('Space Joined');
+    }
+
+    setSpaceWidgetId(spaceData?.spaceId as string)
+  };
+        
   useEffect(() => {
     if (!spaceObjectData.spaceDescription) return;
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
   }, [spaceObjectData.spaceDescription]);
+      
   console.log('spaceObjectData', spaceObjectData);
   console.log('playBackUrl', playBackUrl);
 
@@ -65,15 +74,33 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map((profile) => (
-          <LiveSpaceProfileContainer
-            isHost={isHost}
-            isSpeaker={isSpeaker}
-            wallet={profile.address}
-            image={tempImageUrl}
-            stream={profile.stream}
-          />
-        ))}
+        {isSpeaker && spaceObjectData.connectionData.incoming.map(
+          (profile) => (
+            (
+              <LiveSpaceProfileContainer
+                isHost={isHost}
+                isSpeaker={isSpeaker}
+                wallet={profile.address}
+                image={tempImageUrl}
+                stream={profile.stream}
+              />
+            )
+          )
+        )}
+        {
+          isListener && spaceObjectData.members.map(
+            (profile) => (
+              (
+                <LiveSpaceProfileContainer
+                  isHost={isHost}
+                  isSpeaker={isSpeaker}
+                  wallet={profile.wallet}
+                  image={tempImageUrl}
+                />
+              )
+            )
+          )
+        }
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
@@ -143,7 +170,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {playBackUrl.length > 0 && (
+            {isListener && playBackUrl.length > 0 && (
               <PeerPlayer
                 title="spaceAudio"
                 playbackId={playBackUrl}
