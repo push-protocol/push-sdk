@@ -8,12 +8,13 @@ import {
   ISpaceDataContextValues,
   ISpaceInfo,
   ISpacePaginationData,
+  ISpaceSpeakerData,
   SpaceDataContext,
 } from '../context/spacesContext';
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceNotificationSocket } from '../hooks';
+import { usePushSpaceSocket, useSpaceNotificationSocket } from '../hooks';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -34,6 +35,8 @@ export const SpacesUIProvider = ({
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
+
+  const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
@@ -61,6 +64,13 @@ export const SpacesUIProvider = ({
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
+  const setSpeakerDataItem = (key: string, value: PushAPI.video.VideoDataType): void => {
+    setSpeakerData((prevState) => ({
       ...prevState,
       [key]: value,
     }));
@@ -172,6 +182,14 @@ export const SpacesUIProvider = ({
     });
   };
 
+  const isSpeaker = Boolean(
+    spaceObjectData?.members?.find((member) => member.wallet === account && member.isSpeaker)
+  );
+  
+  const isListener = Boolean(
+    spaceObjectData?.members?.find((member) => member.wallet === account && !member.isSpeaker)
+  );
+
   const value: ISpaceDataContextValues = {
     account,
     setAccount,
@@ -198,6 +216,10 @@ export const SpacesUIProvider = ({
     setSpaceObjectData,
     initSpaceObject,
     spacesObjectRef,
+    speakerData,
+    setSpeakerData: setSpeakerDataItem,
+    isSpeaker,
+    isListener
   };
 
   useEffect(() => {
@@ -211,6 +233,7 @@ export const SpacesUIProvider = ({
 
   spaceUI.init();
   useSpaceNotificationSocket({ account, env });
+  usePushSpaceSocket({ account, env });
 
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>

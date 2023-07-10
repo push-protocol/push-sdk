@@ -110,7 +110,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             isPublic: true,
             scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 60000),
             signer: signer as PushAPI.SignerType,
-            env: env,
+            env
         }
 
         try {

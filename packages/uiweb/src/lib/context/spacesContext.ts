@@ -8,6 +8,10 @@ export interface ISpaceInfo {
   [key: string]: SpaceDTO;
 }
 
+export interface ISpaceSpeakerData {
+  [key: string]: PushAPI.video.VideoDataType;
+}
+
 export interface ISpacePaginationData {
   apiData?: SpaceIFeeds[];
   currentPage?: number;
@@ -40,6 +44,10 @@ export interface ISpaceDataContextValues {
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => Promise<void>;
   spacesObjectRef: React.MutableRefObject<any>;
+  speakerData: ISpaceSpeakerData;
+  setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
+  isSpeaker: boolean;
+  isListener: boolean;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -106,6 +114,12 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   spacesObjectRef: {
     current: null,
   } as React.MutableRefObject<any>,
+  speakerData: {} as ISpaceSpeakerData,
+  setSpeakerData: () => {
+    /** */
+  },
+  isSpeaker: false,
+  isListener: false,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

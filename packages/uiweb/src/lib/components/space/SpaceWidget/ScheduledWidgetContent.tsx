@@ -31,15 +31,24 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const isTimeToStartSpace = true;
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
 
-  //Initialize the space object
-
   const handleStartSpace = async () => {
+    console.log('initializing space object');
     await initSpaceObject(spaceData?.spaceId as string);
+    console.log('creating audio stream');
     await spacesObjectRef.current.createAudioStream();
-    // Start the space by calling the start method on the space object
-
-    console.log('Space Started');
   };
+
+  useEffect(() => {
+    async function startSpace() {
+      console.log('start space initiated');
+      if (!spaceObjectData?.connectionData?.local.stream) return;
+      await spacesObjectRef.current.start({
+        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      });
+    }
+    startSpace();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceObjectData?.connectionData?.local.stream]);
 
   const handleShareTweet = () => {
     if (!shareUrl) return;
@@ -64,16 +73,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
-  
-  useEffect(() => {
-    async function startSpace() {
-      if (!spaceObjectData?.connectionData?.local.stream) return;
-      await spacesObjectRef.current.start({
-        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
-      });
-    }
-    startSpace();
-  }, [spaceObjectData?.connectionData?.local.stream]);
 
   return (
     <Container
