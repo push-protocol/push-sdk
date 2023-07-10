@@ -53,8 +53,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     if (isListener) {
       console.log('joining as a listner');
       await spacesObjectRef?.current?.join();
-      const playBackUrl = spaceObjectData.spaceDescription;
-      setPlayBackUrl(playBackUrl);
       setSpaceWidgetId(spaceData?.spaceId as string);
       console.log('space joined');
     }
@@ -80,6 +78,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   console.log('spaceObjectData', spaceObjectData);
   console.log('playBackUrl', playBackUrl);
+  console.log('isListener', isListener);
 
   return (
     <>

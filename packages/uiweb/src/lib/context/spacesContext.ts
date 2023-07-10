@@ -48,6 +48,8 @@ export interface ISpaceDataContextValues {
   // isLive: boolean;
   isSpeaker: boolean;
   isListener: boolean;
+  speakerData: ISpaceSpeakerData;
+  setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -118,6 +120,10 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   // isLive: false,
   isSpeaker: false,
   isListener: false,
+  speakerData: {} as ISpaceSpeakerData,
+  setSpeakerData: () => {
+    /** */
+  },
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { LiveWidgetContent } from './LiveWidgetContent';
@@ -17,7 +17,7 @@ interface WidgetContentProps {
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isLive?: boolean;
+  isLive: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
 }
@@ -32,18 +32,25 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   isLive,
 }: WidgetContentProps) => {
   // const { isLive } = useSpaceData();
+  console.log('isLiveInWidgetContent', isLive);
+  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(false);
+  console.log('isSpaceLive', isSpaceLive);
 
   console.log('Rendering WidgetContent');
+  useEffect(() => {
+    setIsSpaceLive(isLive);
+  }, [isLive]);
+
   return (
     <Container
       isMinimized={isMinimized}
       height={
-        isLive
+        isSpaceLive
           ? LIVE_WIDGET_CONTENT_FIXED_HEIGHT
           : SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT
       }
     >
-      {isLive ? (
+      {isSpaceLive ? (
         <LiveWidgetContent spaceData={spaceData} isHost={isHost} />
       ) : (
         <ScheduledWidgetContent
@@ -52,6 +59,8 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           isHost={isHost}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}
+          isSpaceLive={isSpaceLive}
+          setIsSpaceLive={setIsSpaceLive}
         />
       )}
     </Container>
