@@ -83,6 +83,21 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
       - [enableVideo](#enablevideo)
       - [enableAudio](#enableaudio)
       - [isInitiator](#isinitiator)
+  - [For Spaces](#for-spaces)
+    - [To create a space](#to-create-a-space)
+    - [To update space details](#to-update-space-details)
+    - [To start a space](#to-start-a-space)
+    - [To stop a space](#to-stop-a-space)
+    - [To approve a space](#to-approve-a-space)
+    - [To add a listener to space](#to-add-a-listener-to-space)
+    - [To remove a listener from space](#to-remove-a-listener-from-space)
+    - [To add a speaker to space](#to-add-a-speaker-to-space)
+    - [To remove a speaker from space](#to-remove-a-speaker-from-space)
+    - [To get space details by space name](#to-get-space-details-by-space-name)
+    - [To get space details by spaceId](#to-get-space-details-by-spaceId)
+    - [Fetching list of user spaces](#fetching-list-of-user-spaces)
+    - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
+    - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
 
 # How to use in your app?
 
@@ -3857,3 +3872,140 @@ Allowed Options (params with \* are mandatory)
 ```typescript
 isInitiator(): boolean
 ```
+
+---
+
+## For Spaces
+
+### **To create a space**
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7', env: 'staging');
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
+
+// actual api
+const response = await PushAPI.space.create({
+  spaceName:'Push Space 3',
+  spaceDescription: 'This is the oficial group for Push Protocol',
+  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  spaceImage: &lt;group image link&gt; ,
+  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  isPublic: true,
+  account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
+  env: 'staging',
+  pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
+  scheduleAt: new Date("2024-07-15T14:48:00.000Z"),
+  scheduleEnd: new Date("2024-07-15T15:48:00.000Z")
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| account_ | string | - | user address |
+| spaceName* | string | - | group name |
+| spaceDescription* | string | - | group description |
+| spaceImage* | string | - | group image link |
+| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
+| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| isPublic* | boolean | - | true for public space, false for private space |
+| scheduleAt* | Date | - | Date time when the space is scheduled to start |
+| scheduleEnd | Date | - | Date time when the space is scheduled to end |
+| contractAddressERC20 | string | null | ERC20 Contract Address |
+| numberOfERC20 | int | 0 | Minimum number of tokens required to join the space |
+| contractAddressNFT | string | null | NFT Contract Address |
+| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the space |
+| pgpPrivateKey | string | null | mandatory for users having pgp keys|
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+<details>
+  <summary><b>Expected response (create space)</b></summary>
+
+```typescript
+// PushAPI.space.create | Response - 200 OK
+{
+	members: [{
+		wallet: 'eip155:0x727C819feB2c7F99c66d71B8411521bca2010023',
+		publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+			'\n' +
+			'xsBNBGSrssEBCACg3ZjrZB40Xqr5IKIEtFldaeQyJPNwDACMekY77yApav0B\n' +
+			'RwiqhFJDFJKcprSHg/vYdqalAIGRQ+J98VMBtHweurIubD/ODB6WknOms7ZY\n' +
+			'3ummaEzyFRombuq/C75o/0ImCi2v0PJBI3kdpwzOjiTt8S44yoAVOcTf9jyg\n' +
+			'vTEVCOM81yqCf0mDB4t0jqRYewlQuJegORXDKHKTfZcnQybBkDYUGgmxOcyF\n' +
+			'BaPMhSiWqAAqqb4gcFO2QKq69JoiE9dzSuF/7dvAq2QZRogC/GQW2Q9yQbq3\n' +
+			'CvMNO4H2KUZzegaq2s2nMPGMXPNf4GZcZVJE1phWgAnApxTf5kUFfKr1ABEB\n' +
+			'AAHNAMLAigQQAQgAPgWCZKuywQQLCQcICZDwrCS5ulOLwQMVCAoEFgACAQIZ\n' +
+			'AQKbAwIeARYhBFKpO7zcSRed+QmbIfCsJLm6U4vBAABZMwf+OIbBcFQ7x++1\n' +
+			'NINOYbP9v0PyJvpllDcUORbk3uiPMpvDuQYAe2Fd4dY2Y91l3VdpIm/w6HQy\n' +
+			'y81Y694w4E7PRVhDwHivv5D10VE9MF3h6qOHrLLpvdhpMaB5Ur8ts5rU2zOu\n' +
+			'64HR04/BVO9N0nrE9iywIgVMOy6IrS+OgK3r75PPX35bam/kbbmZHeygFaE9\n' +
+			'+mgQVdhwgF5borekIiz1Rc8CPA/P1yZy8QQl4KGmJEs+hOc5rPnUWwarvaAH\n' +
+			'mPb6H0/mG81eXBOjpJlSFu6d/uqKLpoAw5fkvFoIsNwovYpyQkSbhzwe4T2N\n' +
+			'jGqGd0+La03QdB5FbaiwcnJ96lU6oM7ATQRkq7LBAQgAxu9uK1+p62+/RvcF\n' +
+			'Mz7g3A8SJiN76NYxk29sjQ9gW74B/IdPv5TlUVhG6PGr2c3SucASlEHieagY\n' +
+			'CXM2+fpdu4rQ6EKRAe+30GFopfzhX1d0zv9d5BE6q1ML5mkrpDECH5iuqah7\n' +
+			'smmbRdWE7zRSGaHyEfVqAG3wfMzzN0BcchxxR4vMCNKYLs9v2Q09ecO7DgaY\n' +
+			'5CZqxaFlTo+auuDhE0XU7WRbNL77izocV1Sm+McRyo28PrFTcrRRznD1nP0V\n' +
+			'eZ4+aoulqyYA+gBBaIUdSA5kQXJiy67crB50yX3V6zLIfptD2ThHPjTY/inW\n' +
+			'wVHVug4jIWUQ1QQw/q9qvGxAzQARAQABwsB2BBgBCAAqBYJkq7LBCZDwrCS5\n' +
+			'ulOLwQKbDBYhBFKpO7zcSRed+QmbIfCsJLm6U4vBAADu6wf+NJDX/3NAxQKN\n' +
+			'Iigj0GkBm/y69iFmQvWJxxtiYCNu8VBhm8MkcghUJ8G2tWP9ueUOM8sMTEa+\n' +
+			'G+l+wSNwh/1yisF3FutDpy6l+fiy6kPPD4vl08jY3GrqSuWWfMxTJhMZ5D6v\n' +
+			'OW2EfdyET+oP5eOnCd6p0EXP2ic48rVHDdU2iWeg0RkGvZP3t2LljWFdLbvw\n' +
+			'h7+wSD1i4LY4slUIdbLdDSLN1gWFN1HXzX10mpX0grV2sBdfkNyHhF0WcIat\n' +
+			'sD9HpAx2M62yP2D9D9UZVrW7WfmOoyL1NrnXSJsI8CRFDzujvpIrr7875zSi\n' +
+			'VnxDVyt7twc7cYqRDHsNYuxAuE815A==\n' +
+			'=2jvb\n' +
+			'-----END PGP PUBLIC KEY BLOCK-----\n',
+		isSpeaker: true,
+		image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA4klEQVR4AcXBoW3FMBRA0dsn75E9skAU6BkMSk1CA0xNsoBnMLSyQPbIDgVlLX0OcPX1Vb1zPj6/v35QWg5o61bQok+MHHVHazmgrVtBE4wJxgRjjofzmuj4xCuiT2iRCe2gJxgTjAnGXMuBTi2MRJ8YOerOSMsBTTAmGBOMuXUraNEntKPuaEfdeUX0iU4taIIxwZhgzPGH6BP/STAmGBOMOR6W+UY7r4l3LPONttITjAnGBGMu+kSnFrQlB96xbgUt+oQmGBOMCcYcDy0HRs5rYmSZb7SWA1pkQhOMCcYEY78uSjTZAXCkaQAAAABJRU5ErkJggg=='
+	}],
+	pendingMembers: [{
+			wallet: 'eip155:0x5f4e9e7Fcc17a943178c0b0881b09E8Ef9D34437',
+			publicKey: null,
+			isSpeaker: false,
+			image: null
+		},
+		{
+			wallet: 'eip155:0xFedfA2b276676C5c6ce753ddb4B05d00104E9236',
+			publicKey: null,
+			isSpeaker: false,
+			image: null
+		}
+	],
+	contractAddressERC20: null,
+	numberOfERC20: 0,
+	contractAddressNFT: null,
+	numberOfNFTTokens: 0,
+	verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+		'\n' +
+		'wsBzBAEBCAAnBYJkq7LBCZDwrCS5ulOLwRYhBFKpO7zcSRed+QmbIfCsJLm6\n' +
+		'U4vBAAAAHwf+K4f0gxaP56X4Cv2zlPWB9iUPi/1FOnx8ZF7oEf9xJSv/xA7v\n' +
+		'9LHBTZ2Y9AQlJpy0WLB7KGF7mVV1MdUKHjn2SFQ+1h+8d+FIHXfmB7Ie4alP\n' +
+		'nnar6XjtMVKYyqXRzMzCq2F7Fjea1sUOXBxAeyJstAGG6nvsU51imaAtGQlQ\n' +
+		'u7ih8D9UkiOe719v5GyI1vtiS+hHGlYo0+A7WVImH6SuVyPZ3UyPvLxXpeKs\n' +
+		'1SeEfuvfmKHbswm1DDGOknyo7fJ/QgKqOfkwsBIrYRNGwPGEKt8pHdwNxsNn\n' +
+		'hNQtlFqtmtvieaxbhJQKXHbVgNv206xNsUBrK/U2nCakx7EMmxikFg==\n' +
+		'=tz9T\n' +
+		'-----END PGP SIGNATURE-----\n',
+	spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+	spaceName: 'wasteful_indigo_warbler',
+	isPublic: true,
+	spaceDescription: 'boring_emerald_gamefowl',
+	spaceCreator: 'eip155:0x727C819feB2c7F99c66d71B8411521bca2010023',
+	spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
+	scheduleAt: '2023-07-15T14:48:00.000Z',
+	scheduleEnd: '2023-07-15T15:48:00.000Z',
+	status: 'PENDING'
+}
+
+
+```
+
+</details>
+
+---
