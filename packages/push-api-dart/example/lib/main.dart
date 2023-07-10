@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
-import 'user/update_user.dart';
+import 'chat/fetch_chats.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  testUpdateUser();
+  // testFetchP2PChat();
+  testFetchChats();
 }

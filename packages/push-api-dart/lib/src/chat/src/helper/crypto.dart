@@ -178,12 +178,12 @@ Future<Map<String, dynamic>> getEip712Signature(
   String hash,
   bool isDomainEmpty,
 ) async {
-  final typeInformation = getTypeInformation();
+  // final typeInformation = getTypeInformation();
 
   // TODO: Make chain id dynamic
   int chainId = 2013;
 
-  final domain = getDomainInformation(chainId);
+  // final domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
   // TODO
@@ -201,9 +201,15 @@ Future<Map<String, dynamic>> getEip191Signature(
   String message, {
   String version = 'v1',
 }) async {
+  if (wallet.signer == null) {
+    log('This method is deprecated. Provide signer in the function');
+    // sending random signature for making it backward compatible
+    return {'signature': 'xyz', 'sigType': 'a'};
+  }
+
   // EIP191 signature
 
-  final signature = wallet.signer?.signMessage(message) ?? "";
+  final signature = await wallet.signer?.getEip191Signature(message) ?? "";
 
   final sigType = version == 'v1' ? 'eip191' : 'eip191v2';
 

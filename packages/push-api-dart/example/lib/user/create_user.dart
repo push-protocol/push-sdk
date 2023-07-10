@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:ethers/signers/wallet.dart';
 import 'package:push_api_dart/push_api_dart.dart' as push;
+import 'package:eth_sig_util/eth_sig_util.dart' as eth_sig;
 
 void testCreateUser() async {
   const mnemonic =
@@ -37,9 +41,18 @@ class SignerPrivateKey extends push.Signer {
   }
 
   @override
-  Future<String> getEip191Signature(String message) {
-    // TODO: implement getEip191Signature
-    throw UnimplementedError();
+  Future<String> getEip191Signature(String message) async {
+    try {
+      var m = utf8.encode(message);
+      
+
+      String signature = eth_sig.EthSigUtil.signMessage(
+          privateKey: wallet.privateKey, message: Uint8List.fromList(m));
+      return signature;
+    } catch (e) {
+      print('override: getEip191Signature: error$e');
+      return message;
+    }
   }
 
   @override
@@ -50,7 +63,15 @@ class SignerPrivateKey extends push.Signer {
 
   @override
   Future<String> signMessage(String message) async {
-    return message;
+    try {
+      var m = utf8.encode(message);
+
+      String signature = eth_sig.EthSigUtil.signMessage(
+          privateKey: wallet.privateKey, message: Uint8List.fromList(m));
+      return signature;
+    } catch (e) {
+      return message;
+    }
   }
 
   @override

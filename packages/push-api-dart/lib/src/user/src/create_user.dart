@@ -33,7 +33,7 @@ Future<User?> createUser({
     generatedPublicKey: keyPairs.publicKey,
     wallet: wallet,
   );
-
+  progressHook(PROGRESSHOOK['PUSH-CREATE-03'] as ProgressHookType);
   EncryptedPrivateKeyModel encryptedPrivateKey = await encryptPGPKey(
     encryptionType: encryptionType,
     generatedPrivateKey: keyPairs.privateKey,

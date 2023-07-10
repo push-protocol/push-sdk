@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:web3lib/web3lib.dart' as web3;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:cryptography/cryptography.dart';
 
@@ -327,14 +326,22 @@ Future<String> decryptPGPKey({
       case Constants.ENC_TYPE_V3:
         {
           final input = jsonDecode(encryptedPGPPrivateKey)['preKey'];
+
+
           final enableProfileMessage = 'Enable Push Profile \n$input';
-          final secret = (await getEip191Signature(
+          final signed = await getEip191Signature(
             wallet,
             enableProfileMessage,
-          ))['verificationProof'];
+          );
+          final secret = signed['verificationProof'];
+          final secretBytes = hexToBytes(secret ?? '');
+          // final secretBytes = utf8.encode(secret); //  hexToBytes(secret ?? '');
+
+
           final encodedPrivateKey = await decryptV2(
-            encryptedData: jsonDecode(encryptedPGPPrivateKey),
-            secret: hexToBytes(secret ?? ''),
+            encryptedData: EncryptedPrivateKeyModel.fromJson(
+                jsonDecode(encryptedPGPPrivateKey)),
+            secret: secretBytes,
           );
           final dec = utf8.decoder;
           privateKey = dec.convert(encodedPrivateKey);
@@ -372,9 +379,9 @@ Future<String> decryptPGPKey({
     return privateKey;
   } catch (err) {
     // Report Progress
-    final errorProgressHook =
-        PROGRESSHOOK['PUSH-ERROR-00'] as ProgressHookTypeFunction;
-    progressHook?.call(errorProgressHook(['decryptPGPKey', err]));
+    // final errorProgressHook =
+    //     PROGRESSHOOK['PUSH-ERROR-00'] as ProgressHookTypeFunction;
+    // progressHook?.call(errorProgressHook(['decryptPGPKey', err]));
     throw Exception('[Push SDK] - API - Error - API decryptPGPKey -: $err');
   }
 }

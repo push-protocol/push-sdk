@@ -32,5 +32,6 @@ dependencies:
   encrypt: ^5.0.1
   cryptography: ^2.5.0
 
+
   push_api_dart:
     path: '../'
