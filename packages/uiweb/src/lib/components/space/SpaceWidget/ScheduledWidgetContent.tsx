@@ -34,7 +34,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     initSpaceObject,
     spaceObjectData,
     isJoined,
-    isLive,
   } = useSpaceData();
   const [isStarted, setIsStarted] = useState<boolean>(false);
 

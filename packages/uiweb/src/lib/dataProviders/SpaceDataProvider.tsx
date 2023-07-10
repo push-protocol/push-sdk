@@ -15,7 +15,12 @@ import { ENV } from '../config';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useSpaceNotificationSocket } from '../hooks';
 
-import { isLiveSpace } from '../components/space/SpaceWidget/helpers/utils';
+import {
+  LivepeerConfig,
+  Player,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -66,7 +71,13 @@ export const SpacesUIProvider = ({
       spaceObjectData?.spaceDescription
   );
 
-  const isLive = isLiveSpace(spaceObjectData);
+  const livepeerClient = createReactClient({
+    provider: studioProvider({
+      apiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+    }),
+  });
+
+  // const isLive = isLiveSpace();
 
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
@@ -208,7 +219,7 @@ export const SpacesUIProvider = ({
     initSpaceObject,
     spacesObjectRef,
     isJoined,
-    isLive,
+    // isLive,
   };
 
   useEffect(() => {
@@ -224,10 +235,12 @@ export const SpacesUIProvider = ({
   useSpaceNotificationSocket({ account, env });
 
   return (
-    <ThemeContext.Provider value={PROVIDER_THEME}>
-      <SpaceDataContext.Provider value={value}>
-        {children}
-      </SpaceDataContext.Provider>
-    </ThemeContext.Provider>
+    <LivepeerConfig client={livepeerClient}>
+      <ThemeContext.Provider value={PROVIDER_THEME}>
+        <SpaceDataContext.Provider value={value}>
+          {children}
+        </SpaceDataContext.Provider>
+      </ThemeContext.Provider>
+    </LivepeerConfig>
   );
 };

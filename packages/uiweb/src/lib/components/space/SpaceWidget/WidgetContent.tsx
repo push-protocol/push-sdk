@@ -29,8 +29,9 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   isTimeToStartSpace,
   isMember,
   isMinimized,
+  isLive,
 }: WidgetContentProps) => {
-  const { isLive } = useSpaceData();
+  // const { isLive } = useSpaceData();
 
   console.log('Rendering WidgetContent');
   return (

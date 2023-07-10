@@ -13,9 +13,7 @@ import MembersIcon from '../../../icons/Members.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
-
 import { Player } from '@livepeer/react';
-
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
@@ -36,13 +34,24 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    // await initSpaceObject(spaceData?.spaceId as string);
-    await spacesObjectRef?.current?.join();
+    try {
+      await initSpaceObject(spaceData?.spaceId as string);
+      await spacesObjectRef?.current?.join({});
+      // const playBackUrl = spaceObjectData.spaceDescription;
+      // setPlayBackUrl(playBackUrl);
+      console.log('Space Joined');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (!spaceObjectData.spaceDescription) return;
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
-    console.log('Space Joined');
-  };
+  }, [spaceObjectData.spaceDescription]);
   console.log('spaceObjectData', spaceObjectData);
+  console.log('playBackUrl', playBackUrl);
 
   return (
     <>
@@ -56,19 +65,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map(
-          (profile) => (
-            (
-              <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
-                wallet={profile.address}
-                image={tempImageUrl}
-                stream={profile.stream}
-              />
-            )
-          )
-        )}
+        {spaceObjectData.connectionData.incoming.map((profile) => (
+          <LiveSpaceProfileContainer
+            isHost={isHost}
+            isSpeaker={isSpeaker}
+            wallet={profile.address}
+            image={tempImageUrl}
+            stream={profile.stream}
+          />
+        ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
@@ -138,7 +143,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            <PeerPlayer title="spaceAudio" playbackId={playBackUrl} autoPlay />
+            {playBackUrl.length > 0 && (
+              <PeerPlayer
+                title="spaceAudio"
+                playbackId={playBackUrl}
+                autoPlay
+              />
+            )}
           </Item>
         ) : (
           <Button

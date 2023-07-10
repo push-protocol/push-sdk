@@ -34,9 +34,10 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   setIsMinimized,
   toggleWidgetVisibility,
   spaceData,
+  isLive,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
-  const { isLive } = useSpaceData();
+  // const { isLive } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
