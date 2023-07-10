@@ -22,10 +22,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
     const [invitedMembersList, setInvitedMembersList] = useState([])
     const [invitedAddressList, setInvitedAddressList] = useState([])
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:25 ~ invitedAddressList:", invitedAddressList)
+
     const [adminsList, setAdminsList] = useState([])
     const [adminsAddressList, setAdminsAddressList] = useState([])
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:27 ~ adminsAddressList:", adminsAddressList)
 
     const [isLoading, setLoading] = useState(false);
 
@@ -33,10 +32,10 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         spaceName: '',
         spaceDescription: '',
         date: new Date(),
-        time: new Date(),
+        time: Date.now(),
     })
 
-    const { signer, env } = useSpaceData();
+    const { signer, env, account } = useSpaceData();
 
     const handleNameChange = (event: any) => {
         setSpaceState((prevState) => ({...prevState, spaceName: event.target.value}))
@@ -83,16 +82,33 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     const closeInviteModal = () => {
         setIsInviteModalVisible(false);
     }
+
+    const clearAllState = () => {
+        setIsCreateModalVisible(false)
+        setIsScheduleModalVisible(false)
+        setIsInviteModalVisible(false)
+        setInvitedMembersList([])
+        setInvitedAddressList([])
+        setAdminsList([])
+        setAdminsAddressList([])
+        setLoading(false)
+        setSpaceState({
+            spaceName: '',
+            spaceDescription: '',
+            date: new Date(),
+            time: Date.now(),
+        })
+    }
     
     const testCreateSpace = async () => {
         const spaceCreate = {
-            spaceName: spaceState.spaceName,
+            spaceName: spaceState.spaceName.length === 0 ? `${account}'s Space` : spaceState.spaceName,
             spaceDescription: 'Push Space',
             members: invitedAddressList,
             spaceImage: 'asd',
             admins: adminsAddressList,
             isPublic: true,
-            scheduleAt: new Date(spaceState.time),
+            scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 60000),
             signer: signer as PushAPI.SignerType,
             env
         }
@@ -107,6 +123,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         } finally {
             setLoading(false);
             closeInviteModal();
+            clearAllState();
         }
     };
 
