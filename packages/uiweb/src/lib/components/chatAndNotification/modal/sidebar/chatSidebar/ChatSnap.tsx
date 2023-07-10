@@ -18,7 +18,7 @@ import { ethers } from 'ethers';
 import { useResolveWeb3Name } from '../../../../../hooks';
 import { device } from '../../../../../config';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
-import { useDeviceWidthCheck } from 'packages/uiweb/src/lib/hooks';
+import { useDeviceWidthCheck } from '../../../../../hooks';
 
 type ChatSnapPropType = {
   chat: IFeeds;

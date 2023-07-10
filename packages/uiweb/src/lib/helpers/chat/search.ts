@@ -78,9 +78,10 @@ export const getAddress = async (searchText: string, env: Env) => {
   if (searchText.includes('.')) {
     try {
       address =
-        (await provider.resolveName(searchText)) ||
+      (await udResolver.owner(searchText)) ||
+        (await provider.resolveName(searchText)) ;
         // (await library.resolveName(searchText)) ||
-        (await udResolver.owner(searchText));
+      
 
       return address;
     } catch (err) {

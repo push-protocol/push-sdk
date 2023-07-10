@@ -63,7 +63,7 @@ export function useResolveWeb3Name(address: string,env:Env) {
               });
               
              
-              (await getEnsName(provider, checksumWallet,setWeb3Name)) || (await getUnstoppableName(checksumWallet,setWeb3Name,env));
+              (await getUnstoppableName(checksumWallet,setWeb3Name,env)) || (await getEnsName(provider, checksumWallet,setWeb3Name)) ;
              
            
           } catch (e) {
