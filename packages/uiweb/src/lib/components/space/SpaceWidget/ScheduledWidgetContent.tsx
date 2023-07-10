@@ -33,19 +33,20 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     spacesObjectRef,
     initSpaceObject,
     spaceObjectData,
-    isJoined,
   } = useSpaceData();
   const [isStarted, setIsStarted] = useState<boolean>(false);
 
   const handleStartSpace = async () => {
     console.log('initializing space object');
     await initSpaceObject(spaceData?.spaceId as string);
+
     console.log('creating audio stream');
     await spacesObjectRef.current.createAudioStream();
+
     setIsStarted(true);
     console.log('Space Started');
   };
-      
+
   useEffect(() => {
     async function startSpace() {
       if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;

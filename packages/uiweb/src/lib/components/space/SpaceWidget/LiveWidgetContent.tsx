@@ -21,44 +21,63 @@ interface LiveWidgetContentProps {
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
-  isHost
+  isHost,
 }) => {
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, isSpeaker, isListener, setSpaceWidgetId, isJoined } = useSpaceData();
+  const {
+    spacesObjectRef,
+    spaceObjectData,
+    isSpeaker,
+    isListener,
+    setSpaceWidgetId,
+    isJoined,
+    initSpaceObject,
+  } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    if(!spaceData) {
+    if (!spaceData) {
       return;
     }
-    
+
     await initSpaceObject(spaceData?.spaceId as string);
 
-    if(isSpeaker) {
-      // create audio stream
-      await spacesObjectRef?.current?.join();
+    if (isSpeaker) {
+      // create audio stream as we'll need it to start the mesh connection
+      console.log('creating audio stream');
+      await spacesObjectRef.current.createAudioStream();
     }
-
-    // listener logic
-    if(isListener) {
+    if (isListener) {
+      console.log('joining as a listner');
       await spacesObjectRef?.current?.join();
       const playBackUrl = spaceObjectData.spaceDescription;
       setPlayBackUrl(playBackUrl);
-      console.log('Space Joined');
+      setSpaceWidgetId(spaceData?.spaceId as string);
+      console.log('space joined');
     }
-
-    setSpaceWidgetId(spaceData?.spaceId as string)
   };
-        
+
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
+    const joinSpaceAsSpeaker = async () => {
+      console.log('joining as a speaker');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceData?.spaceId as string);
+      console.log('space joined');
+    };
+    joinSpaceAsSpeaker();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceObjectData?.connectionData?.local.stream]);
+
   useEffect(() => {
     if (!spaceObjectData.spaceDescription) return;
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
   }, [spaceObjectData.spaceDescription]);
-      
+
   console.log('spaceObjectData', spaceObjectData);
   console.log('playBackUrl', playBackUrl);
 
@@ -74,33 +93,25 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {isSpeaker && spaceObjectData.connectionData.incoming.map(
-          (profile) => (
-            (
-              <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
-                wallet={profile.address}
-                image={tempImageUrl}
-                stream={profile.stream}
-              />
-            )
-          )
-        )}
-        {
-          isListener && spaceObjectData.members.map(
-            (profile) => (
-              (
-                <LiveSpaceProfileContainer
-                  isHost={isHost}
-                  isSpeaker={isSpeaker}
-                  wallet={profile.wallet}
-                  image={tempImageUrl}
-                />
-              )
-            )
-          )
-        }
+        {isSpeaker &&
+          spaceObjectData.connectionData.incoming.map((profile) => (
+            <LiveSpaceProfileContainer
+              isHost={isHost}
+              isSpeaker={isSpeaker}
+              wallet={profile.address}
+              image={tempImageUrl}
+              stream={profile.stream}
+            />
+          ))}
+        {isListener &&
+          spaceObjectData.members.map((profile) => (
+            <LiveSpaceProfileContainer
+              isHost={isHost}
+              isSpeaker={isSpeaker}
+              wallet={profile.wallet}
+              image={tempImageUrl}
+            />
+          ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
