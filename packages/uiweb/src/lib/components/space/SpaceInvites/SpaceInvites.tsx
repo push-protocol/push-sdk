@@ -7,30 +7,41 @@ import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
 export interface ISpaceInvitesProps {
-  account?: string;
   children?: React.ReactNode;
 }
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
-  account = '0x04bE5701AB5b2f2117332b4748020737B29a2e1D',
   children,
 }: ISpaceInvitesProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const { spaceRequests, setSpaceRequests } = useSpaceData();
+  const { spaceRequests, setSpaceRequests, speakerData } = useSpaceData();
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, initSpaceObject, setSpaceWidgetId } = useSpaceData();
+  const { spacesObjectRef, spaceObjectData, initSpaceObject, setSpaceWidgetId, isSpeaker, isListener, account } = useSpaceData();
 
   const handleJoinSpace = async (space: any) => {
-    await initSpaceObject(space?.spaceId as string);
-    await spacesObjectRef?.current?.join();
-    const playBackUrl = spaceObjectData.spaceDescription;
-    setPlayBackUrl(playBackUrl);
-    handleCloseModal();
-    setSpaceWidgetId(space?.spaceId as string)
-    console.log('Space Joined');
+    // speaker logic
+    if(isSpeaker) {
+      await initSpaceObject(space?.spaceId as string);
+      const data = speakerData[space?.spaceId];
+      if (data) {
+        await spacesObjectRef?.current?.join(data);
+        setSpaceWidgetId(space?.spaceId as string)
+      }
+    }
+
+    // listener logic
+    if(isListener) {
+      await initSpaceObject(space?.spaceId as string);
+      await spacesObjectRef?.current?.join();
+      const playBackUrl = spaceObjectData.spaceDescription;
+      setPlayBackUrl(playBackUrl);
+      handleCloseModal();
+      setSpaceWidgetId(space?.spaceId as string)
+      console.log('Space Joined');
+    }
   };
 
   const handleOpenModal = () => {

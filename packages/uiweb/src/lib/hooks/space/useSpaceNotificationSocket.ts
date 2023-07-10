@@ -15,7 +15,7 @@ export const useSpaceNotificationSocket = ({
   account,
   env = ENV.PROD,
 }: SDKSocketHookOptions) => {
-  const { spacesObjectRef } = useSpaceData();
+  const { spacesObjectRef, setSpeakerData, setSpaceRequests, spaceRequests } = useSpaceData();
 
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
@@ -43,7 +43,7 @@ export const useSpaceNotificationSocket = ({
           senderAddress,
           recipientAddress,
           signalData,
-          chatId: spaceId,
+          chatId,
         }: PushAPI.video.VideoDataType = JSON.parse(
           payload.data.additionalMeta.data
         );
@@ -55,7 +55,30 @@ export const useSpaceNotificationSocket = ({
           ) {
             // @Nilesh
             // host has started the space and is asking speakers to join in (real-time)
-            // we need to store the receivedSpaceData.signalData, chatId -> spaceId
+            // we need to store the JSON.parse(
+          // payload.data.additionalMeta.data
+          // );, chatId -> spaceId
+              setSpeakerData(chatId, JSON.parse(
+                payload.data.additionalMeta.data
+              ));
+
+              const updatedData = spaceRequests?.apiData?.map(item => {
+                if (item.spaceId === chatId) {
+                  return {
+                    ...item,
+                    spaceInformation: {
+                      ...item.spaceInformation,
+                      status: 'ACTIVE'
+                    }
+                  };
+                }
+                return item;
+              });
+              
+              setSpaceRequests({ 
+                apiData: updatedData as PushAPI.SpaceIFeeds[]
+              })
+
             // so that we can use then when the speaker wants to join the space from space invites
           }
           if (
@@ -66,7 +89,7 @@ export const useSpaceNotificationSocket = ({
               signalData,
               senderAddress: recipientAddress,
               recipientAddress: senderAddress,
-              chatId: spaceId,
+              chatId: chatId,
             });
           }
         }

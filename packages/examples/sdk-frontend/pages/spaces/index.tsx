@@ -28,6 +28,7 @@ export const SpacesComponentProvider = ({
 };
 
 const Spaces: NextPage = () => {
+  const { SpaceWidgetComponent } = useSpaceComponents();
   return (
     <SpacesComponentProvider>
       <Container>
@@ -49,6 +50,7 @@ const Spaces: NextPage = () => {
             <Link href="/spaces/invites">Spaces Invites</Link>
           </Button>
         </Section>
+        <SpaceWidgetComponent />
       </Container>
     </SpacesComponentProvider>
   );
