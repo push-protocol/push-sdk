@@ -4215,7 +4215,6 @@ Allowed Options (params with _ are mandatory)
   scheduleEnd: '2023-07-15T15:48:00.000Z',
   status: 'PENDING'
 }
-
 ```
 </details>
 
@@ -4327,7 +4326,6 @@ Allowed Options (params with _ are mandatory)
   status: 'PENDING'
 }
 ```
-
 </details>
 
 ---
@@ -4464,7 +4462,7 @@ Allowed Options (params with _ are mandatory)
   <summary><b>Expected response (stop space by space id)</b></summary>
 
 ```typescript
-// PushAPI_space_start | Response - 200 OK
+// PushAPI_space_stop | Response - 200 OK
 {
   members: [
     {
