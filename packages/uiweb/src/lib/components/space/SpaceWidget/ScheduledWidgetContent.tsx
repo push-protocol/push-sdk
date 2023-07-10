@@ -20,6 +20,7 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
+  setIsSpaceLive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   account,
@@ -27,6 +28,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   shareUrl,
   isHost,
   isMember,
+  setIsSpaceLive,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
   const {
@@ -82,6 +84,21 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
+
+  useEffect(() => {
+    async function startSpace() {
+      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
+      await spacesObjectRef.current.start({
+        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      });
+      setIsStarted(false);
+      setIsSpaceLive && setIsSpaceLive(true);
+    }
+    startSpace();
+  }, [isStarted]);
+
+  console.log('Rendering ScheduledWidgetContent');
+  console.log('isStarted?', isStarted);
 
   return (
     <Container
