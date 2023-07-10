@@ -29,6 +29,7 @@ export type NotificationItemProps = {
   subscribeFn?: () => Promise<unknown>;
   isSubscribedFn?: () => Promise<unknown>;
   theme: string | undefined;
+  // themeObject: 
   chainName: chainNameType;
   isSecret?: boolean;
   decryptFn?: () => Promise<{ title: string, body: string, cta: string, image: string }>;
