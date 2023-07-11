@@ -45,12 +45,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
 
     await initSpaceObject(spaceData?.spaceId as string);
-
-    if (isSpeaker) {
-      // create audio stream as we'll need it to start the mesh connection
-      console.log('creating audio stream');
-      await spacesObjectRef.current.createAudioStream();
-    }
+    
     if (isListener) {
       console.log('joining as a listner');
       await spacesObjectRef?.current?.join();
@@ -58,6 +53,18 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       console.log('space joined');
     }
   };
+
+  useEffect(()=>{
+    const createAudioStream = async () => {
+      console.log("isSpeaker", isSpeaker);
+      if (isSpeaker) {
+        // create audio stream as we'll need it to start the mesh connection
+        console.log('creating audio stream');
+        await spacesObjectRef.current.createAudioStream();
+      }
+    }
+    createAudioStream();
+  }, [isSpeaker])
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;

@@ -207,23 +207,38 @@ export const SpacesUIProvider = ({
 
   const isSpeaker = Boolean(
     spaceObjectData?.members?.find((member) => {
+      if (
+        account?.toUpperCase() ===
+        spaceObjectData.spaceCreator.replace('eip155:', '').toUpperCase()
+      )
+        return false;
       const address = member.wallet.replace('eip155:', '');
       return (
         address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
       );
-    })
+    }) ||
+      spaceObjectData?.pendingMembers?.find((member) => {
+        const address = member.wallet.replace('eip155:', '');
+        return (
+          address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
+        );
+      })
   );
 
   const isListener = Boolean(
     spaceObjectData?.members?.find((member) => {
       console.log('member', member);
       const address = member.wallet.replace('eip155:', '');
-      return address.toUpperCase() === account.toUpperCase() && !member.isSpeaker;
+      return (
+        address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
+      );
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
         console.log('pending member', member);
         const address = member.wallet.replace('eip155:', '');
-        return address.toUpperCase() === account.toUpperCase() && !member.isSpeaker;
+        return (
+          address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
+        );
       })
   );
 

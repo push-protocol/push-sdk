@@ -61,7 +61,7 @@ export async function join(this: Space) {
     if (isSpeaker || isSpeakerPending) {
       // Call the host and join the mesh connection
       const hostAddress = space.spaceCreator.replace('eip155:', '');
-      this.request({
+      await this.request({
         senderAddress: this.data.local.address,
         recipientAddress: hostAddress,
         chatId: this.spaceSpecificData.spaceId,

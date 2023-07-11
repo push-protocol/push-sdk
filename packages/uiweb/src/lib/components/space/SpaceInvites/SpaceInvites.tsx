@@ -55,9 +55,9 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     const joinSpaceAsSpeaker = async () => {
       console.log('joining as a speaker');
       await spacesObjectRef?.current?.join();
-      handleCloseModal();
       setSpaceWidgetId(spaceId);
       console.log('space joined');
+      handleCloseModal();
     };
     joinSpaceAsSpeaker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
