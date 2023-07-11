@@ -31,6 +31,7 @@ import {
   profileUpgrade,
   send,
   Constants,
+  approve,
 } from '@push/react-native-sdk';
 
 function generatePrivateKey() {
@@ -171,7 +172,6 @@ export default function App() {
     const { signer, chatId, groupName } = await handleCreateGroup();
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
-    console.log(signer);
 
     const res = await updateGroup({
       groupName,
@@ -338,6 +338,53 @@ export default function App() {
     });
     console.log('sent message!');
   };
+
+  const handleApproveRequest = async () => {
+    console.log('sending request...');
+
+    const pk1 = generatePrivateKey();
+    const pk2 = generatePrivateKey();
+
+    const signer1 = new ethers.Wallet(pk1);
+    const signer2 = new ethers.Wallet(pk2);
+
+    const account1 = `eip155:${signer1.address}`;
+    const account2 = `eip155:${signer2.address}`;
+
+    const MESSAGE = 'Hey There!!!';
+
+    await createUser({
+      account: account1,
+      signer: signer1,
+      env: Constants.ENV.DEV,
+    });
+
+    await createUser({
+      account: account2,
+      signer: signer2,
+      env: Constants.ENV.DEV,
+    });
+
+    await send({
+      messageContent: MESSAGE,
+      receiverAddress: signer2.address,
+      account: account1,
+      signer: signer1,
+      env: Constants.ENV.DEV,
+    });
+
+    console.log('approving request...');
+    await approve({
+      senderAddress: signer1.address,
+      status: 'Approved',
+      account: account2,
+      signer: signer2,
+      env: Constants.ENV.DEV,
+    });
+
+    console.log('successfully approved request!');
+  };
+
   return (
     <ScrollView style={styles.container} overScrollMode="never">
       <WebViewCrypto />
@@ -370,6 +417,9 @@ export default function App() {
       </Text>
       <Text style={styles.button} onPress={handleSend}>
         Send Message
+      </Text>
+      <Text style={styles.button} onPress={handleApproveRequest}>
+        Approve Request
       </Text>
     </ScrollView>
   );

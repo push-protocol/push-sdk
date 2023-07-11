@@ -13,7 +13,6 @@ import {
   IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import { get } from '../user';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**

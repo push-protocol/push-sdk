@@ -45,9 +45,7 @@ const PGPHelper: IPGPHelper = {
   },
 
   async pgpEncrypt({ keys, plainText }) {
-    console.log('keys', keys);
     const encryptedSecret = await OpenPGP.encrypt(plainText, keys.join('\n'));
-    console.log('encryptedSecret', encryptedSecret);
     return encryptedSecret;
   },
 };
@@ -95,12 +93,8 @@ const history = async (options: HistoricalMessagesOptionsType) => {
 };
 
 const createGroup = async (options: ChatCreateGroupType) => {
-  try {
-    let group = await PushApi.chat.createGroupCore(options, PGPHelper);
-    return group;
-  } catch (err) {
-    console.log(err, 'err inside sdk');
-  }
+  let group = await PushApi.chat.createGroupCore(options, PGPHelper);
+  return group;
 };
 
 const updateGroup = async (options: ChatUpdateGroupType) => {
