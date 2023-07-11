@@ -72,7 +72,9 @@ const approve = async (options: PushApi.chat.ApproveRequestOptionsType) => {
   return await PushApi.chat.approveCore(options, PGPHelper);
 };
 
-const conversationHash = async (options: PushApi.ConversationHashOptionsType) => {
+const conversationHash = async (
+  options: PushApi.ConversationHashOptionsType
+) => {
   let hash = await PushApi.chat.conversationHashCore(options, PGPHelper);
   return hash;
 };
@@ -80,7 +82,7 @@ const conversationHash = async (options: PushApi.ConversationHashOptionsType) =>
 const chats = async (options: ChatsOptionsType) => {
   let chatsList = await PushApi.chat.chatsCore(options, PGPHelper);
   return chatsList;
-}
+};
 
 const latest = async (options: LatestMessagesOptionsType) => {
   let latestMsg = await PushApi.chat.latestCore(options, PGPHelper);
@@ -90,21 +92,21 @@ const latest = async (options: LatestMessagesOptionsType) => {
 const history = async (options: HistoricalMessagesOptionsType) => {
   let msg = await PushApi.chat.historyCore(options, PGPHelper);
   return msg;
-}
+};
 
 const createGroup = async (options: ChatCreateGroupType) => {
   try {
     let group = await PushApi.chat.createGroupCore(options, PGPHelper);
     return group;
   } catch (err) {
-    console.log(err, "err inside sdk")
+    console.log(err, 'err inside sdk');
   }
-}
+};
 
 const updateGroup = async (options: ChatUpdateGroupType) => {
   let updatedGroup = await PushApi.chat.updateGroupCore(options, PGPHelper);
   return updatedGroup;
-}
+};
 
 // checking if ethers works
 const genRandomAddress = async () => {
@@ -129,14 +131,13 @@ export {
   get,
   profileUpdate,
   PushApi,
-  CreateUserProps,
   ENV,
   conversationHash,
   latest,
   history,
   createGroup,
   updateGroup,
-  chats
+  chats,
   decryptPGPKey,
   profileUpgrade,
   send,
