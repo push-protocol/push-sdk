@@ -32,6 +32,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const {
     spacesObjectRef,
     spaceObjectData,
+    setSpaceObjectData,
     isSpeaker,
     isListener,
     setSpaceWidgetId,
@@ -45,7 +46,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
 
     await initSpaceObject(spaceData?.spaceId as string);
-    
+
     if (isListener) {
       console.log('joining as a listner');
       await spacesObjectRef?.current?.join();
@@ -54,17 +55,40 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
   };
 
-  useEffect(()=>{
+  const handleEndSpace = async () => {
+    if (!spacesObjectRef?.current) return;
+    await spacesObjectRef?.current?.stop();
+    spacesObjectRef.current = null;
+    setSpaceObjectData(null);
+    window.alert('Space ended');
+  };
+
+  const handleLeaveSpace = async () => {
+    if (!spacesObjectRef?.current) return;
+    if (isHost || isSpeaker) {
+      await spacesObjectRef?.current?.leave();
+      spacesObjectRef.current = null;
+      setSpaceObjectData(null);
+      console.log('Space left');
+    }
+    if (isListener) {
+      spacesObjectRef.current = null;
+      setSpaceObjectData(null);
+      window.alert('Thank you listening, Bye!');
+    }
+  };
+
+  useEffect(() => {
     const createAudioStream = async () => {
-      console.log("isSpeaker", isSpeaker);
+      console.log('isSpeaker', isSpeaker);
       if (isSpeaker) {
         // create audio stream as we'll need it to start the mesh connection
         console.log('creating audio stream');
         await spacesObjectRef.current.createAudioStream();
       }
-    }
+    };
     createAudioStream();
-  }, [isSpeaker])
+  }, [isSpeaker]);
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
@@ -75,14 +99,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       console.log('space joined');
     };
     joinSpaceAsSpeaker();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spaceObjectData?.connectionData?.local.stream]);
 
   useEffect(() => {
-    if (!spaceObjectData.spaceDescription) return;
-    const playBackUrl = spaceObjectData.spaceDescription;
+    if (!spaceObjectData?.spaceDescription) return;
+    const playBackUrl = spaceObjectData?.spaceDescription;
     setPlayBackUrl(playBackUrl);
-  }, [spaceObjectData.spaceDescription]);
+  }, [spaceObjectData?.spaceDescription]);
 
   // console.log('spaceObjectData', spaceObjectData);
   // console.log('playBackUrl', playBackUrl);
@@ -184,6 +208,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 cursor={'pointer'}
                 border={'1px solid #8B5CF6'}
                 borderRadius={'12px'}
+                onClick={isHost ? handleEndSpace : handleLeaveSpace}
               >
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
