@@ -1,6 +1,8 @@
 import { runNotificaitonsUseCases } from './notification';
 import { runChatUseCases, runNFTChatUseCases } from './chat';
 import { runVideoUseCases } from './video';
+import { runSpacesUseCases } from './spaces';
+
 import { config } from './config';
 import { ENV } from './types';
 
@@ -12,10 +14,11 @@ const start = async (): Promise<void> => {
   console.log(`${returnHeadingLog()}`);
   console.log(`${returnENVLog()}`);
 
-  await runNotificaitonsUseCases();
+  /*await runNotificaitonsUseCases();
   await runChatUseCases();
   await runNFTChatUseCases();
-  await runVideoUseCases();
+  await runVideoUseCases();*/
+  await runSpacesUseCases();
 };
 
 start();
