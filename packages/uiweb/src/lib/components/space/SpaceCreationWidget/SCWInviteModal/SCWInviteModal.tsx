@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext } from 'react'
+import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -16,6 +16,8 @@ import CircularProgressSpinner from '../../../loader/loader';
 import { useSpaceData } from '../../../../hooks';
 import SettingsIcon from '../../../../icons/settingsBlack.svg';
 import { Image } from '../../../../config';
+
+import { createIcon } from '../../helpers/blockies';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -78,11 +80,18 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             });
 
             if(response === null) {
+                const icon = createIcon({
+                    seed: event.target.value,
+                    size: 10,
+                    scale: 3,
+                });
+
                 const nullUser = {
                     walletAddress: event.target.value,
                     name: event.target.value,
-                    image: tempImageUrl,
+                    image: icon.toDataURL(),
                 };
+
                 setSearchedUser(nullUser)
             } else {
                 setSearchedUser(response);
@@ -198,6 +207,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     onInputChange={searchMember}
                     clearInput={clearInput}
                 />
+
                 <ErrorMessage>{errorMsg}</ErrorMessage>
 
                 <MembersList>

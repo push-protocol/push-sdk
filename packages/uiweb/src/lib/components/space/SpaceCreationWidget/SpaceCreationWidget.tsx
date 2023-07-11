@@ -108,7 +108,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             spaceImage: 'asd',
             admins: adminsAddressList,
             isPublic: true,
-            scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 60000),
+            scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 120000),
             signer: signer as PushAPI.SignerType,
             env
         }
