@@ -14,10 +14,10 @@ const start = async (): Promise<void> => {
   console.log(`${returnHeadingLog()}`);
   console.log(`${returnENVLog()}`);
 
-  /*await runNotificaitonsUseCases();
+  await runNotificaitonsUseCases();
   await runChatUseCases();
   await runNFTChatUseCases();
-  await runVideoUseCases();*/
+  await runVideoUseCases();
   await runSpacesUseCases();
 };
 

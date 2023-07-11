@@ -264,16 +264,16 @@ async function PushAPI_space_start_and_stop(
     const spaceId = response.spaceId
 
     // This is causing bug - Aman to check
-    /*response = await PushAPI.space.start({
+    /*const response2 = await PushAPI.space.start({
       spaceId: spaceId,
       env: env as ENV,
       signer: signer,
-    });*/
+    });
 
     console.log('PushAPI_space_start | Response - 200 OK');
     if (!silent) {
-        console.log(response);
-    }
+        console.log(response2);
+    }*/
 
     // This is causing bug - Aman to check
     /*response = await PushAPI.space.stop({
