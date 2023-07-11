@@ -5,3 +5,4 @@ export * from './useMySpaces';
 export * from './useSpaceRequests';
 export * from './useFeedScroll';
 export * from './useSpaceNotificationSocket';
+export * from './usePushSpaceSocket';

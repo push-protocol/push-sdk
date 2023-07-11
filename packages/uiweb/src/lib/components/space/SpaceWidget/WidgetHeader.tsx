@@ -13,6 +13,7 @@ import { CloseSvg } from '../../../icons/CloseSvg';
 import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { useSpaceData } from '../../../hooks';
 
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
@@ -30,12 +31,13 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   onClose,
   isMinimized,
   isHost,
-  isLive,
   setIsMinimized,
   toggleWidgetVisibility,
   spaceData,
+  isLive,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
+  // const { isLive } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';

@@ -9,7 +9,7 @@ import CopyIcon from '../../../icons/copyVector.svg';
 import AtIcon from '../../../icons/atVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ScheduledWidgetContentProps {
   account?: string;
@@ -20,6 +20,8 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
+  isSpaceLive: boolean;
+  setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   account,
@@ -27,17 +29,25 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   shareUrl,
   isHost,
   isMember,
+  isSpaceLive,
+  setIsSpaceLive,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
-  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
-
-  //Initialize the space object
+  const {
+    spacesObjectRef,
+    initSpaceObject,
+    spaceObjectData,
+  } = useSpaceData();
+  const [isStarted, setIsStarted] = useState<boolean>(false);
 
   const handleStartSpace = async () => {
+    console.log('initializing space object');
     await initSpaceObject(spaceData?.spaceId as string);
-    await spacesObjectRef.current.createAudioStream();
-    // Start the space by calling the start method on the space object
 
+    console.log('creating audio stream');
+    await spacesObjectRef.current.createAudioStream();
+
+    setIsStarted(true);
     console.log('Space Started');
   };
 
@@ -64,16 +74,22 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       console.error('Failed to copy URL:', error);
     }
   };
-  
+
   useEffect(() => {
     async function startSpace() {
-      if (!spaceObjectData?.connectionData?.local.stream) return;
+      if(isSpaceLive) return;
+      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
       });
+      setIsStarted(false);
+      setIsSpaceLive && setIsSpaceLive(true);
     }
     startSpace();
-  }, [spaceObjectData?.connectionData?.local.stream]);
+  }, [isStarted]);
+
+  console.log('Rendering ScheduledWidgetContent');
+  console.log('isStarted?', isStarted);
 
   return (
     <Container

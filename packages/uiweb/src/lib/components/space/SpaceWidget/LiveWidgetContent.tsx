@@ -13,37 +13,80 @@ import MembersIcon from '../../../icons/Members.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
-
 import { Player } from '@livepeer/react';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isJoined?: boolean;
-  isSpeaker?: boolean;
 }
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
-  isJoined,
   isHost,
-  isSpeaker,
 }) => {
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, initSpaceObject } = useSpaceData();
+  const {
+    spacesObjectRef,
+    spaceObjectData,
+    isSpeaker,
+    isListener,
+    setSpaceWidgetId,
+    isJoined,
+    initSpaceObject,
+  } = useSpaceData();
 
   const handleJoinSpace = async () => {
-    // await initSpaceObject(spaceData?.spaceId as string);
-    await spacesObjectRef?.current?.join();
+    if (!spaceData) {
+      return;
+    }
+
+    await initSpaceObject(spaceData?.spaceId as string);
+    
+    if (isListener) {
+      console.log('joining as a listner');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceData?.spaceId as string);
+      console.log('space joined');
+    }
+  };
+
+  useEffect(()=>{
+    const createAudioStream = async () => {
+      console.log("isSpeaker", isSpeaker);
+      if (isSpeaker) {
+        // create audio stream as we'll need it to start the mesh connection
+        console.log('creating audio stream');
+        await spacesObjectRef.current.createAudioStream();
+      }
+    }
+    createAudioStream();
+  }, [isSpeaker])
+
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
+    const joinSpaceAsSpeaker = async () => {
+      console.log('joining as a speaker');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceData?.spaceId as string);
+      console.log('space joined');
+    };
+    joinSpaceAsSpeaker();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceObjectData?.connectionData?.local.stream]);
+
+  useEffect(() => {
+    if (!spaceObjectData.spaceDescription) return;
     const playBackUrl = spaceObjectData.spaceDescription;
     setPlayBackUrl(playBackUrl);
-    console.log('Space Joined');
-  };
-  console.log('spaceObjectData', spaceObjectData);
+  }, [spaceObjectData.spaceDescription]);
+
+  // console.log('spaceObjectData', spaceObjectData);
+  // console.log('playBackUrl', playBackUrl);
+  // console.log('isListener', isListener);
 
   return (
     <>
@@ -57,19 +100,25 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {spaceObjectData.connectionData.incoming.map(
-          (profile) => (
-            (
-              <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
-                wallet={profile.address}
-                image={tempImageUrl}
-                stream={profile.stream}
-              />
-            )
-          )
-        )}
+        {isSpeaker &&
+          spaceObjectData.connectionData.incoming.map((profile) => (
+            <LiveSpaceProfileContainer
+              isHost={isHost}
+              isSpeaker={isSpeaker}
+              wallet={profile.address}
+              image={tempImageUrl}
+              stream={profile.stream}
+            />
+          ))}
+        {isListener &&
+          spaceObjectData.members.map((profile) => (
+            <LiveSpaceProfileContainer
+              isHost={isHost}
+              isSpeaker={isSpeaker}
+              wallet={profile.wallet}
+              image={tempImageUrl}
+            />
+          ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
@@ -139,7 +188,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            <PeerPlayer title="spaceAudio" playbackId={playBackUrl} autoPlay />
+            {isListener && playBackUrl.length > 0 && (
+              <PeerPlayer
+                title="spaceAudio"
+                playbackId={playBackUrl}
+                autoPlay
+              />
+            )}
           </Item>
         ) : (
           <Button

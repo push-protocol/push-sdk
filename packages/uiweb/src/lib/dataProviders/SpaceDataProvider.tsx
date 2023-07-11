@@ -8,12 +8,20 @@ import {
   ISpaceDataContextValues,
   ISpaceInfo,
   ISpacePaginationData,
+  ISpaceSpeakerData,
   SpaceDataContext,
 } from '../context/spacesContext';
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceNotificationSocket } from '../hooks';
+import { usePushSpaceSocket, useSpaceNotificationSocket } from '../hooks';
+
+import {
+  LivepeerConfig,
+  Player,
+  createReactClient,
+  studioProvider,
+} from '@livepeer/react';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -34,6 +42,8 @@ export const SpacesUIProvider = ({
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
+
+  const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
   const [trendingListData, setTrendingListData] = useState(null);
   const [spaceInfo, setSpaceInfo] = useState({} as ISpaceInfo);
@@ -59,8 +69,31 @@ export const SpacesUIProvider = ({
     lastPage: 2,
   } as ISpacePaginationData);
 
+  const isJoined = Boolean(
+    spaceObjectData?.connectionData?.meta?.broadcast?.livepeerInfo ||
+      spaceObjectData?.spaceDescription
+  );
+
+  const livepeerClient = createReactClient({
+    provider: studioProvider({
+      apiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+    }),
+  });
+
+  // const isLive = isLiveSpace();
+
   const setSpaceInfoItem = (key: string, value: SpaceDTO): void => {
     setSpaceInfo((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
+  const setSpeakerDataItem = (
+    key: string,
+    value: PushAPI.video.VideoDataType
+  ): void => {
+    setSpeakerData((prevState) => ({
       ...prevState,
       [key]: value,
     }));
@@ -172,6 +205,43 @@ export const SpacesUIProvider = ({
     });
   };
 
+  const isSpeaker = Boolean(
+    spaceObjectData?.members?.find((member) => {
+      if (
+        account?.toUpperCase() ===
+        spaceObjectData.spaceCreator.replace('eip155:', '').toUpperCase()
+      )
+        return false;
+      const address = member.wallet.replace('eip155:', '');
+      return (
+        address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
+      );
+    }) ||
+      spaceObjectData?.pendingMembers?.find((member) => {
+        const address = member.wallet.replace('eip155:', '');
+        return (
+          address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
+        );
+      })
+  );
+
+  const isListener = Boolean(
+    spaceObjectData?.members?.find((member) => {
+      console.log('member', member);
+      const address = member.wallet.replace('eip155:', '');
+      return (
+        address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
+      );
+    }) ||
+      spaceObjectData?.pendingMembers?.find((member) => {
+        console.log('pending member', member);
+        const address = member.wallet.replace('eip155:', '');
+        return (
+          address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
+        );
+      })
+  );
+
   const value: ISpaceDataContextValues = {
     account,
     setAccount,
@@ -198,6 +268,11 @@ export const SpacesUIProvider = ({
     setSpaceObjectData,
     initSpaceObject,
     spacesObjectRef,
+    isJoined,
+    isSpeaker,
+    isListener,
+    speakerData,
+    setSpeakerData: setSpeakerDataItem,
   };
 
   useEffect(() => {
@@ -211,12 +286,15 @@ export const SpacesUIProvider = ({
 
   spaceUI.init();
   useSpaceNotificationSocket({ account, env });
+  usePushSpaceSocket({ account, env });
 
   return (
-    <ThemeContext.Provider value={PROVIDER_THEME}>
-      <SpaceDataContext.Provider value={value}>
-        {children}
-      </SpaceDataContext.Provider>
-    </ThemeContext.Provider>
+    <LivepeerConfig client={livepeerClient}>
+      <ThemeContext.Provider value={PROVIDER_THEME}>
+        <SpaceDataContext.Provider value={value}>
+          {children}
+        </SpaceDataContext.Provider>
+      </ThemeContext.Provider>
+    </LivepeerConfig>
   );
 };
