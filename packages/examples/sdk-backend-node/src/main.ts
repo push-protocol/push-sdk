@@ -48,6 +48,18 @@ const groupDescription = uniqueNamesGenerator({
 const groupImage =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
 
+const spaceName = uniqueNamesGenerator({
+    dictionaries: [adjectives, colors, animals],
+  });
+
+const spaceDescription = uniqueNamesGenerator({
+    dictionaries: [adjectives, colors, animals],
+  });
+
+const spaceImage =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+
 // NFT Chat Data
 const nftChainId1 = process.env.NFT_CHAIN_ID_1;
 const nftContractAddress1 = process.env.NFT_CONTRACT_ADDRESS_1;
@@ -1006,6 +1018,436 @@ async function PushAPI_chat_video_call_notification(
   }
 }
 
+
+// Push Space - PushAPI.space.create
+async function PushAPI_space_create(
+  silent = !showAPIResponse
+): Promise<string> {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: signer,
+  });
+
+  const response = await PushAPI.space.create({
+    spaceName,
+    spaceDescription,
+    members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+    spaceImage,
+    admins: [],
+    isPublic: true,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+    scheduleAt: new Date("2023-07-15T14:48:00.000Z"),
+    scheduleEnd: new Date("2023-07-15T15:48:00.000Z")
+  });
+  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+  return response.spaceId;
+}
+
+// Push Space - PushAPI.space.update
+async function PushAPI_space_update(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  // Actual API
+  // Convert image to base 64 and pass
+  // This is an idempotent operation, meaning it requires all space info to be passed no matter if only few things change
+  // Why so? To ensure that verificationProof always is able to replicate the current space info (trustless since signature is stored with the info)
+  const response = await PushAPI.space.update({
+    spaceId,
+    spaceName,
+    spaceDescription,
+    members: [
+      `eip155:${randomWallet1}`,
+      `eip155:${randomWallet2}`,
+      `eip155:${randomWallet3}`,
+      `eip155:${signer.address}`,
+    ],
+    spaceImage,
+    admins: [`eip155:${signer.address}`], // takes signer as admin automatically, add more if you want to
+    scheduleAt: new Date("2023-07-15T14:48:00.000Z"),
+    scheduleEnd: new Date("2023-07-15T15:48:00.000Z"),
+    status: PushAPI.ChatStatus.PENDING,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_update | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+}
+
+// Push Space - PushAPI.space.get
+async function PushAPI_space_get(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  const response = await PushAPI.space.get({
+    spaceId: spaceId,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_get | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+}
+
+// Push Space - PushAPI.space.start
+// Push Space - PushAPI.space.stop
+async function PushAPI_space_start_and_stop(
+  silent = !showAPIResponse
+): Promise<string> {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: signer,
+  });
+
+  const now = new Date();
+  const start = new Date(now.getTime() + 10 * 60000)
+  const end = new Date(now.getTime() + 60 * 60000);
+
+  const response = await PushAPI.space.create({
+    spaceName: uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+    }),
+    spaceDescription,
+    members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+    spaceImage,
+    admins: [],
+    isPublic: true,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+    scheduleAt: start,  // Sets scheduleAt to the current time + 10 min
+    scheduleEnd: end,  // Sets scheduleEnd to 60 minutes from now
+  });
+  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+
+  const spaceId = response.spaceId
+
+    // This is causing bug - Aman to check
+  /*response = await PushAPI.space.start({
+    spaceId: spaceId,
+    env: env as ENV,
+    signer: signer,
+  });*/
+
+  console.log('PushAPI_space_start | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+
+  // This is causing bug - Aman to check
+  /*response = await PushAPI.space.stop({
+    spaceId: spaceId,
+    env: env as ENV,
+    signer: signer,
+  });*/
+
+  console.log('PushAPI_space_stop | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+  return spaceId;
+}
+
+
+// Push Space - PushAPI.space.approve
+async function PushAPI_space_approve(
+  silent = !showAPIResponse
+): Promise<string> {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: signer,
+  });
+
+  const now = new Date();
+
+  const start = new Date(now.getTime() + 10 * 60000)
+  const end = new Date(now.getTime() + 60 * 60000);
+
+  const response = await PushAPI.space.create({
+    spaceName: uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+    }),
+    spaceDescription,
+    members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+    spaceImage,
+    admins: [],
+    isPublic: true,
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+    scheduleAt: start,  // Sets scheduleAt to the current time + 10 min
+    scheduleEnd: end,  // Sets scheduleEnd to 60 minutes from now
+  });
+  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+
+  const spaceId = response.spaceId
+
+  const secondUser = await PushAPI.user.get({
+    account: `eip155:${signerSecondAccount.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKeyUser2 = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: secondUser.encryptedPrivateKey,
+
+    signer: signerSecondAccount,
+  });
+
+  // Actual api
+  const approveResponse = await PushAPI.chat.approve({
+    status: 'Approved',
+    senderAddress: spaceId, // receiver's address or spaceId of a group
+    signer: signerSecondAccount,
+    pgpPrivateKey: pgpDecrpyptedPvtKeyUser2,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_approve | Response - 200 OK');
+  if (!silent) {
+    console.log(approveResponse);
+  }
+  return spaceId;
+}
+
+// Push Space - PushAPI.space.addListeners
+async function PushAPI_space_add_listeners(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  
+  const response = await PushAPI.space.addListeners({
+    spaceId,
+    listeners: [
+      `eip155:${ethers.Wallet.createRandom().address}`,
+      `eip155:${ethers.Wallet.createRandom().address}`,
+      `eip155:${ethers.Wallet.createRandom().address}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_addListeners | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+}
+
+// Push Space - PushAPI.space.removeListeners
+async function PushAPI_space_remove_listeners(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  const a1 = ethers.Wallet.createRandom().address;
+  const a2 = ethers.Wallet.createRandom().address;
+  const a3 = ethers.Wallet.createRandom().address;
+
+  const response = await PushAPI.space.addListeners({
+    spaceId,
+    listeners: [
+      `eip155:${a1}`,
+      `eip155:${a2}`,
+      `eip155:${a3}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_addListeners | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+
+  const response2 = await PushAPI.space.removeListeners({
+    spaceId,
+    listeners: [
+      `eip155:${a1}`,
+      `eip155:${a2}`,
+      `eip155:${a3}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_removeListeners | Response - 200 OK');
+  if (!silent) {
+    console.log(response2);
+  }
+}
+
+// Push Space - PushAPI.space.addSpeakers
+async function PushAPI_space_add_speakers(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  
+  const response = await PushAPI.space.addSpeakers({
+    spaceId,
+    speakers: [
+      `eip155:${ethers.Wallet.createRandom().address}`,
+      `eip155:${ethers.Wallet.createRandom().address}`,
+      `eip155:${ethers.Wallet.createRandom().address}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_addSpeakers | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+}
+
+// Push Space - PushAPI.space.removeSpeakers
+async function PushAPI_space_remove_speakers(
+  spaceId: string,
+  silent = !showAPIResponse
+) {
+  // Fetch user
+  const user = await PushAPI.user.get({
+    account: `eip155:${signer.address}`,
+    env: env as ENV,
+  });
+
+  // Decrypt PGP Key
+  const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+
+    signer: signer,
+  });
+
+  const a1 = ethers.Wallet.createRandom().address;
+  const a2 = ethers.Wallet.createRandom().address;
+  const a3 = ethers.Wallet.createRandom().address;
+
+  const response = await PushAPI.space.addSpeakers({
+    spaceId,
+    speakers: [
+      `eip155:${a1}`,
+      `eip155:${a2}`,
+      `eip155:${a3}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_addSpeakers | Response - 200 OK');
+  if (!silent) {
+    console.log(response);
+  }
+
+  const response2 = await PushAPI.space.removeSpeakers({
+    spaceId,
+    speakers: [
+      `eip155:${a1}`,
+      `eip155:${a2}`,
+      `eip155:${a3}`,
+    ],   
+    signer: signer,
+    pgpPrivateKey: pgpDecrpyptedPvtKey,
+    env: env as ENV,
+  });
+
+  console.log('PushAPI_space_removeSpeakers | Response - 200 OK');
+  if (!silent) {
+    console.log(response2);
+  }
+}
+
 // Push Chat - Run Chat Use cases
 async function runNFTChatUseCases() {
   console.log(`
@@ -1573,7 +2015,7 @@ async function PushNFTChatSDKSocket(silent = !showAPIResponse) {
     });
 
     // Actual api
-    const response = await PushAPI.chat.send({
+      await PushAPI.chat.send({
       messageContent: "Gm gm! It's me... Mario",
       messageType: 'Text',
       receiverAddress: nftAccount2,
@@ -1603,6 +2045,67 @@ async function PushNFTChatSDKSocket(silent = !showAPIResponse) {
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
   await delay(4000);
+}
+
+async function runSpacesUserCases() {
+  console.log(`
+                                                                                                                       
+                                                                                                                       
+  SSSSSSSSSSSSSSS PPPPPPPPPPPPPPPPP        AAA                  CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE   SSSSSSSSSSSSSSS 
+SS:::::::::::::::SP::::::::::::::::P      A:::A              CCC::::::::::::CE::::::::::::::::::::E SS:::::::::::::::S
+S:::::SSSSSS::::::SP::::::PPPPPP:::::P    A:::::A           CC:::::::::::::::CE::::::::::::::::::::ES:::::SSSSSS::::::S
+S:::::S     SSSSSSSPP:::::P     P:::::P  A:::::::A         C:::::CCCCCCCC::::CEE::::::EEEEEEEEE::::ES:::::S     SSSSSSS
+S:::::S              P::::P     P:::::P A:::::::::A       C:::::C       CCCCCC  E:::::E       EEEEEES:::::S            
+S:::::S              P::::P     P:::::PA:::::A:::::A     C:::::C                E:::::E             S:::::S            
+S::::SSSS           P::::PPPPPP:::::PA:::::A A:::::A    C:::::C                E::::::EEEEEEEEEE    S::::SSSS         
+ SS::::::SSSSS      P:::::::::::::PPA:::::A   A:::::A   C:::::C                E:::::::::::::::E     SS::::::SSSSS    
+   SSS::::::::SS    P::::PPPPPPPPP A:::::A     A:::::A  C:::::C                E:::::::::::::::E       SSS::::::::SS  
+      SSSSSS::::S   P::::P        A:::::AAAAAAAAA:::::A C:::::C                E::::::EEEEEEEEEE          SSSSSS::::S 
+           S:::::S  P::::P       A:::::::::::::::::::::AC:::::C                E:::::E                         S:::::S
+           S:::::S  P::::P      A:::::AAAAAAAAAAAAA:::::AC:::::C       CCCCCC  E:::::E       EEEEEE            S:::::S
+SSSSSSS     S:::::SPP::::::PP   A:::::A             A:::::AC:::::CCCCCCCC::::CEE::::::EEEEEEEE:::::ESSSSSSS     S:::::S
+S::::::SSSSSS:::::SP::::::::P  A:::::A               A:::::ACC:::::::::::::::CE::::::::::::::::::::ES::::::SSSSSS:::::S
+S:::::::::::::::SS P::::::::P A:::::A                 A:::::A CCC::::::::::::CE::::::::::::::::::::ES:::::::::::::::SS 
+SSSSSSSSSSSSSSS   PPPPPPPPPPAAAAAAA                   AAAAAAA   CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE SSSSSSSSSSSSSSS   
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+`)
+
+  console.log('PushAPI.user.create');
+  await PushAPI_user_create();
+
+  console.log('PushAPI.space.create');
+  const spaceId = await PushAPI_space_create();
+
+  console.log('PushAPI.space.update');
+  await PushAPI_space_update(spaceId);
+
+  console.log('PushAPI.space.get');
+  await PushAPI_space_get(spaceId);
+
+  console.log('PushAPI.space.start');
+  console.log('PushAPI.space.stop');
+  await PushAPI_space_start_and_stop();
+
+  console.log('PushAPI.space.approve');
+  await PushAPI_space_approve();
+
+  console.log('PushAPI.space.addListeners');
+  await PushAPI_space_add_listeners(spaceId);
+
+  console.log('PushAPI.space.removeListeners');
+  await PushAPI_space_remove_listeners(spaceId);
+
+  console.log('PushAPI.space.addSpeakers');
+  await PushAPI_space_add_speakers(spaceId);
+
+  console.log('PushAPI.space.removeSpeakers');
+  await PushAPI_space_remove_speakers(spaceId);
 }
 
 // Push Video - Run Video Use cases
@@ -1762,7 +2265,8 @@ async function PushVideoSDKSocket() {
 }
 
 // Use Cases
-function start() {
+async function start() {
+  await runSpacesUserCases();
   console.log(`${returnHeadingLog()}`);
   console.log(`${returnENVLog()}`);
   runNotificaitonsUseCases().then(() => {
@@ -1778,8 +2282,10 @@ function start() {
           */
           runVideoUseCases();
         }
+      }).then(() => {
+        runSpacesUserCases();
       });
-    });
+    })
   });
 }
 
