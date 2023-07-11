@@ -3,6 +3,10 @@ import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_DISCONNECT_TYPE,
+  SPACE_INVITE_ROLES,
+  SPACE_REQUEST_TYPE,
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -360,7 +364,12 @@ export interface SpaceDTO {
   spaceId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  status: ChatStatus | null
+  status: ChatStatus | null;
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+}
+
+export interface SpaceData extends SpaceDTO {
+  connectionData: VideoCallData;
 }
 
 export interface Subscribers {
@@ -540,7 +549,7 @@ export type VideoCallData = {
     broadcast?: {
       livepeerInfo: any;
       hostAddress: string;
-      coHostAddress: string;
+      coHostAddress?: string;
     };
   };
   local: {
@@ -549,7 +558,7 @@ export type VideoCallData = {
     video: boolean | null;
     address: string;
   };
-  incoming: [PeerData];
+  incoming: PeerData[];
 };
 
 export type VideoCreateInputOptions = {
@@ -560,10 +569,14 @@ export type VideoCreateInputOptions = {
 
 export type VideoRequestInputOptions = {
   senderAddress: string;
-  recipientAddress: string;
+  recipientAddress: string | string[];
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -573,16 +586,31 @@ export type VideoAcceptRequestInputOptions = {
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_ACCEPT_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress: string;
+};
+
+export type VideoDisconnectOptions = {
+  peerAddress: string;
+  details?: {
+    type: SPACE_DISCONNECT_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type EnableVideoInputOptions = {
   state: boolean;
+  peerAddress: string;
 };
 
 export type EnableAudioInputOptions = {
   state: boolean;
+  peerAddress: string;
 };

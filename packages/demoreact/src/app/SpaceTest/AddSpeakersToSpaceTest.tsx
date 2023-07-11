@@ -39,7 +39,6 @@ const AddSpeakersToSpaceTest = () => {
         spaceId: spaceId,
         speakers: speakerAddress ? speakerAddress.split(',') : [],
         env,
-        account: account,
         signer: librarySigner,
       });
       setSendResponse(response);

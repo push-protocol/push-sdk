@@ -1,83 +1,72 @@
-import Constants from '../constants';
 import {
-    EnvOptionsType,
-    SpaceDTO,
-    SignerType,
-    ChatStatus
-} from '../types';
-import {
-    groupDtoToSpaceDto,
-    getSpacesMembersList,
-    getSpaceAdminsList
+  groupDtoToSpaceDto,
+  getSpacesMembersList,
+  getSpaceAdminsList,
 } from '../chat/helpers';
-import {
-    updateGroup
-} from '../chat/updateGroup';
-import {
-    get
-} from './get';
-export interface StopSpaceType extends EnvOptionsType {
-    spaceId: string;
-    account ? : string;
-    signer ? : SignerType;
-    pgpPrivateKey ? : string;
-}
+import { updateGroup } from '../chat/updateGroup';
+import { get } from './get';
 
-export const stop = async (
-    options: StopSpaceType
-): Promise < SpaceDTO > => {
-    const {
-        spaceId,
-        account = null,
-        signer = null,
-        env = Constants.ENV.PROD,
-        pgpPrivateKey = null,
-    } = options || {};
-    try {
-        if (account == null && signer == null) {
-            throw new Error(`At least one from account or signer is necessary!`);
-        }
+import type Space from './Space';
+import { ChatStatus } from '../types';
+import { SPACE_DISCONNECT_TYPE } from '../payloads/constants';
 
-        const space = await get({
-            spaceId: spaceId,
-            env,
-        })
+export async function stop(this: Space): Promise<void> {
+  try {
+    // should be only called by the host
 
-        if (space.status === ChatStatus.ENDED) {
-            throw new Error("Space already ended");
-        }
+    const space = await get({
+      spaceId: this.spaceSpecificData.spaceId,
+      env: this.env,
+    });
 
-        const convertedMembers = getSpacesMembersList(
-            space.members, space.pendingMembers
-        );
-        const convertedAdmins = getSpaceAdminsList(
-            space.members, space.pendingMembers
-        );
-
-        const group = await updateGroup({
-            chatId: spaceId,
-            groupName: space.spaceName,
-            groupImage: space.spaceImage,
-            groupDescription: space.spaceDescription,
-            members: convertedMembers,
-            admins: convertedAdmins,
-            account: account,
-            signer: signer,
-            env: env,
-            pgpPrivateKey: pgpPrivateKey,
-            scheduleAt: space.scheduleAt,
-            scheduleEnd: space.scheduleEnd,
-            status: ChatStatus.ENDED
-        });
-
-        return groupDtoToSpaceDto(group);
-    } catch (err) {
-        console.error(
-            `[Push SDK] - API  - Error - API ${stop.name} -:  `,
-            err
-        );
-        throw Error(
-            `[Push SDK] - API  - Error - API ${stop.name} -: ${err}`
-        );
+    if (space.status === ChatStatus.ENDED) {
+      throw new Error('Space already ended');
     }
-};
+
+    const convertedMembers = getSpacesMembersList(
+      space.members,
+      space.pendingMembers
+    );
+    const convertedAdmins = getSpaceAdminsList(
+      space.members,
+      space.pendingMembers
+    );
+
+    const group = await updateGroup({
+      chatId: this.spaceSpecificData.spaceId,
+      groupName: space.spaceName,
+      groupImage: space.spaceImage,
+      groupDescription: space.spaceDescription,
+      members: convertedMembers,
+      admins: convertedAdmins,
+      signer: this.signer,
+      env: this.env,
+      pgpPrivateKey: this.pgpPrivateKey,
+      scheduleAt: space.scheduleAt,
+      scheduleEnd: space.scheduleEnd,
+      status: ChatStatus.ENDED,
+    });
+
+    // update space specific data
+    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
+
+    // stop livepeer playback
+
+    /*
+      - disconnect with every incoming peer in the mesh connection
+      - other peers should also end their connections as we want to destroy the mesh connection
+    */
+    this.data.incoming.forEach(({ address }) => {
+      this.disconnect({
+        peerAddress: address,
+        details: {
+          type: SPACE_DISCONNECT_TYPE.STOP,
+          data: {},
+        },
+      });
+    });
+  } catch (err) {
+    console.error(`[Push SDK] - API  - Error - API ${stop.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${stop.name} -: ${err}`);
+  }
+}

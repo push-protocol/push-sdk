@@ -1,52 +1,41 @@
 import Constants from '../constants';
-import {
-  EnvOptionsType,
-  SignerType,
-  SpaceDTO
-} from '../types';
-import {
-  groupDtoToSpaceDto
-} from '../chat/helpers';
-import {
-    removeAdmins
-} from '../chat/removeAdmins';
+import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
+import { groupDtoToSpaceDto } from '../chat/helpers';
+import { removeAdmins } from '../chat/removeAdmins';
 export interface RemoveSpeakersFromSpaceType extends EnvOptionsType {
   spaceId: string;
-  speakers: Array < string > ;
-  account ? : string;
-  signer ? : SignerType;
-  pgpPrivateKey ? : string;
+  speakers: Array<string>;
+  signer: SignerType;
+  pgpPrivateKey?: string;
 }
 
 export const removeSpeakers = async (
   options: RemoveSpeakersFromSpaceType
-): Promise < SpaceDTO > => {
+): Promise<SpaceDTO> => {
   const {
-      spaceId,
-      speakers,
-      account = null,
-      signer = null,
-      env = Constants.ENV.PROD,
-      pgpPrivateKey = null,
+    spaceId,
+    speakers,
+    signer = null,
+    env = Constants.ENV.PROD,
+    pgpPrivateKey = null,
   } = options || {};
   try {
-      const group = await removeAdmins({
-        chatId: spaceId,
-        admins: speakers,
-        account: account,
-        signer: signer,
-        env: env,
-        pgpPrivateKey: pgpPrivateKey
-      });
+    const group = await removeAdmins({
+      chatId: spaceId,
+      admins: speakers,
+      signer: signer,
+      env: env,
+      pgpPrivateKey: pgpPrivateKey,
+    });
 
-      return groupDtoToSpaceDto(group);
+    return groupDtoToSpaceDto(group);
   } catch (err) {
-      console.error(
-          `[Push SDK] - API  - Error - API ${removeSpeakers.name} -:  `,
-          err
-      );
-      throw Error(
-          `[Push SDK] - API  - Error - API ${removeSpeakers.name} -: ${err}`
-      );
+    console.error(
+      `[Push SDK] - API  - Error - API ${removeSpeakers.name} -:  `,
+      err
+    );
+    throw Error(
+      `[Push SDK] - API  - Error - API ${removeSpeakers.name} -: ${err}`
+    );
   }
 };

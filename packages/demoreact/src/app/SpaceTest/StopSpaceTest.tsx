@@ -31,12 +31,12 @@ const StopSpaceTest = () => {
       setLoading(true);
       const librarySigner = await library.getSigner();
 
-      const response = await PushAPI.space.stop({
-        spaceId: spaceId,
-        signer: librarySigner,
-        env: env,
-      });
-      setSendResponse(response);
+      // const response = await PushAPI.space.stop({
+      //   spaceId: spaceId,
+      //   signer: librarySigner,
+      //   env: env,
+      // });
+      // setSendResponse(response);
 
     } catch (e) {
       console.error(e);
