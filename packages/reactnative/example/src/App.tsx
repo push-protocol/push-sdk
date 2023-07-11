@@ -51,6 +51,17 @@ function generatePrivateKey() {
   return privateKey;
 }
 
+function generateRandomString() {
+  var characters = '0123456789abcdef';
+  var keyLength = 40;
+  var randomString = '';
+  for (var i = 0; i < keyLength; i++) {
+    var randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+  return randomString;
+}
+
 export default function App() {
   const handlePgp = async () => {
     let res = await PGPHelper.generateKeyPair();
@@ -125,16 +136,16 @@ export default function App() {
   };
 
   const handleCreateGroup = async () => {
-    // const pk = generatePrivateKey();
-    const signer = new ethers.Wallet(
-      '07da77f7471e5cf046ea3793421cbce90fd42a4cfcf520046a490ca1a9b636e0'
-    );
+    const pk = generatePrivateKey();
+    const signer = new ethers.Wallet(pk);
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
     console.log(signer);
 
+    const groupName = generateRandomString();
+
     const res = await createGroup({
-      groupName: 'finaltestingnativesdk',
+      groupName: groupName,
       groupDescription: 'satyamstesing',
       groupImage: 'https://github.com',
       account: account,
@@ -148,23 +159,25 @@ export default function App() {
       env: ENV.DEV,
     });
     console.log(res, 'res');
+
+    return {
+      chatId: res.chatId,
+      groupName,
+      signer,
+    };
   };
 
   const handleUpdateGroup = async () => {
-    // const pk = generatePrivateKey();
-    const signer = new ethers.Wallet(
-      '07da77f7471e5cf046ea3793421cbce90fd42a4cfcf520046a490ca1a9b636e0'
-    );
+    const { signer, chatId, groupName } = await handleCreateGroup();
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
     console.log(signer);
 
     const res = await updateGroup({
-      groupName: 'finaltestingnativesdkkkk',
+      groupName,
       groupDescription: 'satyamstesing',
       groupImage: 'https://github.com',
-      chatId:
-        'f21e7d4678630fad41b1882eb9a6b0374181c23e9adf3209ff918257eec34bff',
+      chatId,
       account: account,
       signer: signer,
       admins: ['0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5'],
@@ -177,6 +190,7 @@ export default function App() {
     });
     console.log(res, 'ress');
   };
+
   const handleGetUser = async () => {
     const options: PushApi.AccountEnvOptionsType = {
       account: '0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
