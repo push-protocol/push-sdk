@@ -10,6 +10,7 @@ import Accordion from '../reusables/Accordion';
 
 export interface ISpacesInfoProps {
     closeSpacesInfo: MouseEventHandler;
+    spaceData: any;
 }
 
 interface IThemeProps {
@@ -17,6 +18,8 @@ interface IThemeProps {
 }
 
 export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
+    const { spaceData } = props;
+    console.log("🚀 ~ file: SpacesInfo.tsx:22 ~ spaceData:", spaceData)
     const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
     const theme = useContext(ThemeContext);
@@ -29,24 +32,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         padding: '14px',
     }
 
-    const TEMP_MEMBERS = [
-        {
-            handle: 's4m4',
-            name: 'Samarendra'
-        },
-        {
-            handle: 'aamsa',
-            name: 'Aam Saltman'
-        },
-        {
-            handle: 's4m4',
-            name: 'Samarendra'
-        },
-        {
-            handle: 'aamsa',
-            name: 'Aam Saltman'
-        },
-    ]
+    const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
 
     return (
         <Modal
@@ -54,21 +40,21 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         >
             <SpacesInfoContainer>
             <ModalHeader
-                heading='Spaces info'
+                heading='Spaces Info'
                 closeCallback={props.closeSpacesInfo}
             />
 
             <ProfileContainer
-                imageUrl={tempImageUrl}
-                name={'Arnab Chatterjee'}
-                handle={'arn4b'}
+                imageUrl={spaceData.members[0].image}
+                name={spaceData.members[0].wallet.substring(7)}
+                handle={spaceData.members[0].wallet.substring(7)}
                 imageHeight='48px'
                 tag='Host'
             />
 
             <SpacesDetailsContainer>
-                <Title>larryscruff's space</Title>
-                <Description theme={theme}>Ac orci quam cras in placerat. Sollicitudin tristique sed nisi proin duis.</Description>
+                <Title>{spaceData.spaceName}</Title>
+                <Description theme={theme}>{spaceData.spaceDescription}</Description>
             </SpacesDetailsContainer>
 
             <Button
@@ -77,27 +63,32 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                 Invite Members
             </Button>
 
-            <Accordion title='Pending Invites' items={TEMP_MEMBERS.length}>
+            <Accordion title='Pending Invites' items={spaceData.pendingMembers.length}>
                 {
-                    TEMP_MEMBERS.map((item) => {
+                    spaceData.pendingMembers.map((item: any) => {
                         return <ProfileContainer
+                            tag={item.isSpeaker ? 'Co-Host' : undefined}
                             imageHeight='48px'
-                            handle={item.handle}
-                            name={item.name}
-                            imageUrl={tempImageUrl}
+                            handle={item.wallet.substring(7)}
+                            name={item.wallet.substring(7)}
+                            imageUrl={item.image}
                         />  
                     })
                 }
             </Accordion>
 
-            <ProfileContainer
-                border
-                tag='Co-Host'
-                imageHeight='48px'
-                handle={'n1lesh'}
-                name={'Nilesh Gupta'}
-                imageUrl={tempImageUrl}
-            />
+            {
+                adminsArray.slice(1).map((item: any) => {
+                    return <ProfileContainer
+                        border
+                        tag="Co-Host"
+                        imageHeight='48px'
+                        handle={item.wallet.substring(7)}
+                        name={item.wallet.substring(7)}
+                        imageUrl={item.image}
+                    />  
+                })
+            }
 
             </SpacesInfoContainer>
         </Modal>
@@ -108,6 +99,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 /** styling */
 const SpacesInfoContainer = styled.div`
     color: black;
+    width: 400px;
 `;
 
 const SpacesDetailsContainer = styled.div`

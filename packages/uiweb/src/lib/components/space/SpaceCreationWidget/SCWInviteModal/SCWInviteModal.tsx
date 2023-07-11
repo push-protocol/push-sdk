@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
+import React, { useState, MouseEventHandler, useContext } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -10,6 +10,7 @@ import { SearchInput } from '../../reusables/SearchInput';
 import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
 import { Spinner } from '../../reusables/Spinner';
+import { createIcon } from '../../helpers/blockies';
 
 import CircularProgressSpinner from '../../../loader/loader';
 
@@ -17,7 +18,12 @@ import { useSpaceData } from '../../../../hooks';
 import SettingsIcon from '../../../../icons/settingsBlack.svg';
 import { Image } from '../../../../config';
 
-import { createIcon } from '../../helpers/blockies';
+
+export interface ICustomSearchResult {
+    name: string;
+    walletAddress: string;
+    image: string; // dataURL as string
+}
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -33,11 +39,7 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     adminsAddressList?: any;
     setAdminsAddressList?: any;
     onClose: () => void;
-}
-
-interface User {
-    handle: string;
-    name: string;
+    customSearch?: (searchString: string) => ICustomSearchResult;
 }
 
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
@@ -51,7 +53,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setAdminsList,
         adminsAddressList,
         setAdminsAddressList,
-        onClose
+        onClose,
+        customSearch,
     } = props;
     const theme = useContext(ThemeContext);
 
@@ -70,7 +73,13 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             handleError('Cannot add Host to members');
             return;
         }
-        
+
+        if (customSearch) {
+            const customUserResponse = customSearch(event.target.value);
+            setSearchedUser(customUserResponse);
+            return;
+        }
+
         try {
             setLoadingAccount(true);
             const response = await PushAPI.user.get({
@@ -187,8 +196,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         }
     };
 
-    const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
-
     return (
         <div>
             <Modal
@@ -218,7 +225,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <ProfileContainer
                             imageHeight='48px'
                             handle={searchedUser.walletAddress}
-                            // handle='test'
                             name={searchedUser.name}
                             imageUrl={searchedUser.image}
                             contBtn={<ContBtn>Add +</ContBtn>}
@@ -228,7 +234,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         : <ProfileContainer
                             imageHeight='48px'
                             handle={searchedUser.did.substring(7)}
-                            // handle='test'
                             name={searchedUser.profile.name ?? searchedUser.did.substring(7)}
                             imageUrl={searchedUser.profile.picture}
                             contBtn={<ContBtn>Add +</ContBtn>}
@@ -259,7 +264,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                                 />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedUser(item)}
                                         promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -279,7 +283,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                                 />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedUser(item)}
                                         promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -312,7 +315,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                                 />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -332,7 +334,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                                 />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
