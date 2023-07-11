@@ -8,7 +8,6 @@ import {
   createGroupRequestValidator,
   getWallet,
   getUserDID,
-  getConnectedUserV2,
   IPGPHelper,
   PGPHelper,
   getConnectedUserV2Core,
@@ -33,8 +32,8 @@ export interface ChatCreateGroupType extends EnvOptionsType {
 }
 
 export const createGroup = async (options: ChatCreateGroupType) => {
-  return await  createGroupCore(options, PGPHelper);
-}
+  return await createGroupCore(options, PGPHelper);
+};
 
 export const createGroupCore = async (
   options: ChatCreateGroupType,
@@ -85,7 +84,12 @@ export const createGroupCore = async (
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
 
-    const connectedUser = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
+    const connectedUser = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
 
     const bodyToBeHashed = {
       groupName: groupName,
@@ -141,7 +145,7 @@ export const createGroupCore = async (
       });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API something something ${createGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${createGroup.name} -:  `,
       err
     );
     throw Error(
