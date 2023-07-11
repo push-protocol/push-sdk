@@ -37,7 +37,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
   const isLive = spaceData && spaceData?.status === 'ACTIVE' ? true : false;
-  console.log('isLiveInWidget', isLive)
+  // console.log('isLiveInWidget', isLive)
 
   useEffect(() => {
     if (!spaceId) {
@@ -61,7 +61,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     fetchData();
   }, [spaceId]);
 
-
   // To Be Implemented Later via Meta messages.
   // useEffect(() => {
   //   (async () => {
@@ -81,7 +80,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!widgetHidden);
   };
 
-  console.log('Rendering SpaceWidget');
+  // console.log('Rendering SpaceWidget');
+
   // Implement the SpaceWidget component
   return (
     <Container

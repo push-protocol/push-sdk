@@ -197,7 +197,6 @@ const DropDown = styled.div<{ theme?: any, isDDOpen: any }>`
     align-items: start;
 
     animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
-
     padding: 16px;
     background: ${(props => props.theme.bgColorPrimary)};
     color: ${(props => props.theme.textColorPrimary)};

@@ -51,7 +51,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setAdminsAddressList,
         onClose
     } = props;
-
     const theme = useContext(ThemeContext);
 
     const { env, account } = useSpaceData();
@@ -69,7 +68,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             handleError('Cannot add Host to members');
             return;
         }
-
+        
         try {
             setLoadingAccount(true);
             const response = await PushAPI.user.get({

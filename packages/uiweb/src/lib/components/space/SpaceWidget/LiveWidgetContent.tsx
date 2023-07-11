@@ -14,6 +14,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
 import { Player } from '@livepeer/react';
+
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
@@ -76,9 +77,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setPlayBackUrl(playBackUrl);
   }, [spaceObjectData.spaceDescription]);
 
-  console.log('spaceObjectData', spaceObjectData);
-  console.log('playBackUrl', playBackUrl);
-  console.log('isListener', isListener);
+  // console.log('spaceObjectData', spaceObjectData);
+  // console.log('playBackUrl', playBackUrl);
+  // console.log('isListener', isListener);
 
   return (
     <>
