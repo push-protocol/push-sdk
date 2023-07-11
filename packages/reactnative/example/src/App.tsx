@@ -2,7 +2,7 @@ import React from 'react';
 import { ethers } from 'ethers';
 
 import WebViewCrypto from 'react-native-webview-crypto';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import OpenPGP from 'react-native-fast-openpgp';
 import {
   NFT_CHAIN_ID_1,
@@ -18,8 +18,14 @@ import {
   PGPHelper,
   genRandomAddress,
   createUser,
-  get,
+  ENV,
+  conversationHash,
+  latest,
+  createGroup,
+  updateGroup,
+  chats,
   PushApi,
+  get,
   profileUpdate,
   decryptPGPKey,
   profileUpgrade,
@@ -45,6 +51,17 @@ function generatePrivateKey() {
   return privateKey;
 }
 
+function generateRandomString() {
+  var characters = '0123456789abcdef';
+  var keyLength = 40;
+  var randomString = '';
+  for (var i = 0; i < keyLength; i++) {
+    var randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+  return randomString;
+}
+
 export default function App() {
   const handlePgp = async () => {
     let res = await PGPHelper.generateKeyPair();
@@ -66,13 +83,112 @@ export default function App() {
     const options: PushApi.user.CreateUserProps = {
       account: account,
       signer: signer,
-      env: Constants.ENV.STAGING,
+      env: Constants.ENV.DEV,
     };
 
     console.log('create user', account);
 
     const res = await createUser(options);
     console.log('success', res.did);
+  };
+
+  const handleUserMsgs = async () => {
+    const signer = new ethers.Wallet(
+      '07da77f7471e5cf046ea3793421cbce90fd42a4cfcf520046a490ca1a9b636e0'
+    );
+    const walletAddress = signer.address;
+    const account = `eip155:${walletAddress}`;
+    console.log(signer);
+
+    const res = await conversationHash({
+      account: account,
+      conversationId:
+        'b353220b812bdb707bd93529aac6fac893438e5db791d7c9e6aab6773aaff90b',
+      env: ENV.DEV,
+    });
+
+    const res2 = await latest({
+      threadhash: res.threadHash,
+      toDecrypt: true,
+      account: account,
+      env: ENV.DEV,
+    });
+
+    const user = await PushApi.user.get({
+      account: account,
+      env: ENV.DEV,
+    });
+
+    const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
+      encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      signer: signer,
+    });
+
+    const chatList = await chats({
+      account: account,
+      pgpPrivateKey: pgpDecryptedPvtKey,
+      toDecrypt: true,
+      env: ENV.DEV,
+    });
+    console.log(user, 'user');
+    console.log(pgpDecryptedPvtKey, 'key');
+    console.log(chatList, 'Chatlist');
+  };
+
+  const handleCreateGroup = async () => {
+    const pk = generatePrivateKey();
+    const signer = new ethers.Wallet(pk);
+    const walletAddress = signer.address;
+    const account = `eip155:${walletAddress}`;
+    console.log(signer);
+
+    const groupName = generateRandomString();
+
+    const res = await createGroup({
+      groupName: groupName,
+      groupDescription: 'satyamstesing',
+      groupImage: 'https://github.com',
+      account: account,
+      signer: signer,
+      members: [
+        '0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5',
+        '0x6Ff7DF70cAACAd6B35d2d30eca6bbb4E86fEE62f',
+      ],
+      admins: [],
+      isPublic: true,
+      env: ENV.DEV,
+    });
+    console.log(res, 'res');
+
+    return {
+      chatId: res.chatId,
+      groupName,
+      signer,
+    };
+  };
+
+  const handleUpdateGroup = async () => {
+    const { signer, chatId, groupName } = await handleCreateGroup();
+    const walletAddress = signer.address;
+    const account = `eip155:${walletAddress}`;
+    console.log(signer);
+
+    const res = await updateGroup({
+      groupName,
+      groupDescription: 'satyamstesing',
+      groupImage: 'https://github.com',
+      chatId,
+      account: account,
+      signer: signer,
+      admins: ['0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5'],
+      members: [
+        '0x6Ff7DF70cAACAd6B35d2d30eca6bbb4E86fEE62f',
+        '0x6d118b28ebd82635A30b142D11B9eEEa2c0bea26',
+        '0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5',
+      ],
+      env: ENV.DEV,
+    });
+    console.log(res, 'ress');
   };
 
   const handleGetUser = async () => {
@@ -222,9 +338,8 @@ export default function App() {
     });
     console.log('sent message!');
   };
-
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} overScrollMode="never">
       <WebViewCrypto />
       <Text style={styles.button} onPress={handleUserCreate}>
         New User
@@ -234,6 +349,15 @@ export default function App() {
       </Text>
       <Text style={styles.button} onPress={handleEthers}>
         Log Address
+      </Text>
+      <Text style={styles.button} onPress={handleCreateGroup}>
+        Create Group
+      </Text>
+      <Text style={styles.button} onPress={handleUpdateGroup}>
+        update group
+      </Text>
+      <Text style={styles.button} onPress={handleUserMsgs}>
+        ConversationHash
       </Text>
       <Text style={styles.button} onPress={handleGetUser}>
         Get user
@@ -247,15 +371,13 @@ export default function App() {
       <Text style={styles.button} onPress={handleSend}>
         Send Message
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   box: {
     width: 60,
