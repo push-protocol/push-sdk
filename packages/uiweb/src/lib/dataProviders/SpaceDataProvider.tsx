@@ -113,6 +113,42 @@ export const SpacesUIProvider = ({
     await spacesObjectRef.current.initialize({ spaceId });
   };
 
+  const acceptSpaceRequest = async ({
+    senderAddress,
+    recipientAddress,
+    chatId,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER ACCEPT REQUEST',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current?.acceptRequest({
+      recipientAddress: senderAddress,
+      senderAddress: recipientAddress,
+      chatId,
+      signalData,
+    });
+  };
+
+  const connectSpaceRequest = async ({
+    senderAddress,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER CONNECT',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current.connect({
+      peerAddress: senderAddress,
+      signalData,
+    });
+  };
+
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
   };
@@ -277,6 +313,8 @@ export const SpacesUIProvider = ({
     isListener,
     speakerData,
     setSpeakerData: setSpeakerDataItem,
+    acceptSpaceRequest,
+    connectSpaceRequest,
   };
 
   const resetStates = () => {
@@ -302,7 +340,12 @@ export const SpacesUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
-  useSpaceNotificationSocket({ account, env });
+  useSpaceNotificationSocket({
+    account,
+    env,
+    acceptSpaceRequest,
+    connectSpaceRequest,
+  });
   usePushSpaceSocket({ account, env });
 
   return (

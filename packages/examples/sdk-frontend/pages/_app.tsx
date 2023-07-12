@@ -12,7 +12,8 @@ import { publicProvider } from 'wagmi/providers/public';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../styles/globals.css';
 import { useEffect, useState } from 'react';
-import { SpacesComponentProvider } from './spaces';
+import { SpacesUIProvider } from '@pushprotocol/uiweb';
+import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
 
 const { chains, provider } = configureChains([goerli], [publicProvider()]);
 
@@ -27,6 +28,24 @@ const wagmiClient = createClient({
   connectors,
   provider,
 });
+
+export interface ISpacesComponentProps {
+  children: React.ReactNode;
+}
+
+const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
+  const { spaceUI } = useSpaceComponents();
+
+  const customtheme = {
+    statusColorError: 'red',
+  };
+
+  return (
+    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
+      {children}
+    </SpacesUIProvider>
+  );
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [loadWagmi, setLoadWagmi] = useState(false);

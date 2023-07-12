@@ -3,34 +3,11 @@ import styled from 'styled-components';
 import { Button, Container } from '..';
 import Link from 'next/link';
 
-import { SpacesUIProvider } from '@pushprotocol/uiweb';
 import { useSpaceComponents } from './../../components/Spaces/useSpaceComponent';
-
-
-export interface ISpacesComponentProps {
-  children: React.ReactNode;
-}
-
-export const SpacesComponentProvider = ({
-  children,
-}: ISpacesComponentProps) => {
-  const { spaceUI } = useSpaceComponents();
-
-  const customtheme = {
-    statusColorError: 'red',
-  };
-
-  return (
-    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
-      {children}
-    </SpacesUIProvider>
-  );
-};
 
 const Spaces: NextPage = () => {
   const { SpaceWidgetComponent } = useSpaceComponents();
   return (
-    <SpacesComponentProvider>
       <Container>
         <h1>Spaces UI Test</h1>
         <Section>
@@ -52,7 +29,6 @@ const Spaces: NextPage = () => {
         </Section>
         <SpaceWidgetComponent />
       </Container>
-    </SpacesComponentProvider>
   );
 };
 

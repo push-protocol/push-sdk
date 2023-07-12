@@ -52,6 +52,8 @@ export interface ISpaceDataContextValues {
   isListener: boolean;
   speakerData: ISpaceSpeakerData;
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
+  acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -128,6 +130,12 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   isListener: false,
   speakerData: {} as ISpaceSpeakerData,
   setSpeakerData: () => {
+    /** */
+  },
+  acceptSpaceRequest: async () => {
+    /** */
+  },
+  connectSpaceRequest: async () => {
     /** */
   },
 };
