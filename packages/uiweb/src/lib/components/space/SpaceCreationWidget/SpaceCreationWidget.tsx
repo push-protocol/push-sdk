@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -10,11 +10,11 @@ import { SCWButton } from './SCWButton';
 import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceCreateWidgetProps {
-    CustomComponent?: any;
+    customComponent?: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
 }
 
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
-    const { CustomComponent } = props;
+    const { customComponent } = props;
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
@@ -130,9 +130,11 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     return (
         <SCWContainer>
             {
-                CustomComponent
+                customComponent
                 ?
-                <CustomComponent />
+                <CustomButtonComponent onClick={showCreateSpace}>
+                    {customComponent}
+                </CustomButtonComponent>
                 :
                 <SCWButton
                     onCreate={showCreateSpace}
@@ -189,4 +191,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
 const SCWContainer = styled.div`
     font-family: 'Strawford'; // update to fontFamily theme 
+`;
+
+const CustomButtonComponent = styled.div`
+    cursor: pointer;
 `;
