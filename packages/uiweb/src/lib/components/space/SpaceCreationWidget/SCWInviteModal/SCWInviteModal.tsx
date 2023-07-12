@@ -20,9 +20,10 @@ import { Image } from '../../../../config';
 
 
 export interface ICustomSearchResult {
-    name: string;
-    walletAddress: string;
-    image: string; // dataURL as string
+    account: string;
+    name?: string;
+    handle?: string;
+    image?: string; // dataURL as string
 }
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
@@ -76,7 +77,30 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
 
         if (customSearch) {
             const customUserResponse = customSearch(event.target.value);
-            setSearchedUser(customUserResponse);
+
+            const hasAccount = (obj: any, uniqueKey: string) => {
+                const keys = Object.keys(obj);
+                return keys.length < 4 && keys[0] === uniqueKey;
+            }
+
+            if(hasAccount(customUserResponse, 'account')) {
+                const icon = createIcon({
+                    seed: customUserResponse.account,
+                    size: 10,
+                    scale: 3,
+                });
+
+                const searchedUser = {
+                    handle: customUserResponse.account,
+                    name: customUserResponse.account,
+                    image: icon.toDataURL(),
+                };
+
+                setSearchedUser(searchedUser)
+            } else {
+                setSearchedUser(customUserResponse);
+            }
+
             return;
         }
 
@@ -95,7 +119,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 });
 
                 const nullUser = {
-                    walletAddress: event.target.value,
+                    handle: event.target.value,
                     name: event.target.value,
                     image: icon.toDataURL(),
                 };
@@ -140,7 +164,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
             setInvitedMembersList([...invitedMembersList, user]);
         } else {
-            setInvitedAddressList([...invitedAddressList, user.walletAddress])
+            setInvitedAddressList([...invitedAddressList, user.handle])
             setInvitedMembersList([...invitedMembersList, user]);
         }
 
@@ -153,7 +177,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             setAdminsAddressList([...adminsAddressList, user.did.substring(7)]);
         } else {
             setAdminsList([...adminsList, user])
-            setAdminsAddressList([...adminsAddressList, user.walletAddress]);
+            setAdminsAddressList([...adminsAddressList, user.handle]);
         }
 
         const updatedArray = invitedMembersList.filter((item: any) => item !== user)
@@ -163,7 +187,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
             setInvitedAddressList(updateAddressArray);
         } else {
-            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.handle)
             setInvitedAddressList(updateAddressArray);
         }
 
@@ -178,7 +202,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
             setInvitedAddressList(updateAddressArray);
         } else {
-            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.handle)
             setInvitedAddressList(updateAddressArray);
         }
     };
@@ -191,7 +215,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAdminAddressArray = adminsAddressList.filter((item: string) => item !== user.did.substring(7))
             setAdminsAddressList(updateAdminAddressArray);
         } else {
-            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.handle)
             setAdminsAddressList(updateAddressArray);
         }
     };
@@ -221,10 +245,10 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {
                         Object.keys(searchedUser).length === 0 ?
                         null
-                        : searchedUser.hasOwnProperty('walletAddress') ?
+                        : searchedUser.hasOwnProperty('handle') ?
                         <ProfileContainer
                             imageHeight='48px'
-                            handle={searchedUser.walletAddress}
+                            handle={searchedUser.handle}
                             name={searchedUser.name}
                             imageUrl={searchedUser.image}
                             contBtn={<ContBtn>Add +</ContBtn>}
@@ -249,10 +273,10 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
                         {
                             invitedMembersList.map((item: any) => {
-                                if (item.hasOwnProperty('walletAddress')) {
+                                if (item.hasOwnProperty('handle')) {
                                     return <ProfileContainer
                                         imageHeight='48px'
-                                        handle={item.walletAddress}
+                                        handle={item.handle}
                                         name={item.name}
                                         imageUrl={item.image}
                                         contBtn={
@@ -300,10 +324,10 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
                         {
                             adminsList.map((item: any) => {
-                                if (item.hasOwnProperty('walletAddress')) {
+                                if (item.hasOwnProperty('handle')) {
                                     return <ProfileContainer
                                         imageHeight='48px'
-                                        handle={item.walletAddress}
+                                        handle={item.handle}
                                         name={item.name}
                                         imageUrl={item.image}
                                         contBtn={
