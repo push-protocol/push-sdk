@@ -75,7 +75,7 @@ const Container = styled.div<{ height: string; isMinimized: boolean }>`
   border-bottom: ${(props) => props.theme.border};
 
   height: ${(props) => (props.isMinimized ? '0' : props.height)};
-  transition: height 200ms ease-out;
+  transition: height 300ms ease-out;
   overflow: hidden;
 
   align-items: center;

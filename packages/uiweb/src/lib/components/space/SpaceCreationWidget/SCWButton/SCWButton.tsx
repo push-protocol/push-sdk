@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ISpacesTheme } from '../../theme';
 import { ThemeContext } from '../../theme/ThemeProvider';
-import { SpacesLogo } from 'packages/uiweb/src/lib/icons/spacesLogo';
+import { SpacesLogo } from '../../../../icons/SpacesLogo';
 
 export interface ISCWButtonProps { // Space Creation Widget Button Interface
     btnText?: string;
@@ -35,7 +35,9 @@ export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
                 onClick={onCreate}
             >
                 <SpacesLogo />
-                {btnText}
+                <BtnText>
+                    {btnText}
+                </BtnText>
             </CreateButton>
         </div>
     )
@@ -51,7 +53,16 @@ const CreateButton = styled.button<ISCWButtonProps>`
     background-image: ${(props) => props.theme.titleBg};
     color: ${(props) => props.theme.titleTextColor};
 
+    display: flex;
+    align-items: center;
+
+    font-family: 'Strawford';
+
     cursor: pointer;
+`;
+
+const BtnText = styled.div`
+    margin-left: 6px;
 `;
 
 SCWButton.defaultProps = defaultProps;
