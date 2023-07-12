@@ -167,7 +167,10 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
         </Section>
       )}
       {isSpacesInfoVisible ? (
-        <SpacesInfo closeSpacesInfo={closeSpacesInfo} />
+        <SpacesInfo
+          closeSpacesInfo={closeSpacesInfo}
+          spaceData={spaceData}
+        />
       ) : null}
     </Container>
   );
