@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Modal } from '../reusables/Modal';
 import { Spinner } from '../reusables/Spinner';
@@ -7,12 +7,13 @@ import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
 export interface ISpaceInvitesProps {
-  account?: string;
   children?: React.ReactNode;
 }
 
+// temp
+let spaceId = "";
+
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
-  account = '0x04bE5701AB5b2f2117332b4748020737B29a2e1D',
   children,
 }: ISpaceInvitesProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -21,17 +22,46 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const { spacesObjectRef, spaceObjectData, initSpaceObject, setSpaceWidgetId } = useSpaceData();
+  const {
+    spacesObjectRef,
+    spaceObjectData,
+    initSpaceObject,
+    setSpaceWidgetId,
+    isSpeaker,
+    isListener,
+    account,
+  } = useSpaceData();
 
   const handleJoinSpace = async (space: any) => {
     await initSpaceObject(space?.spaceId as string);
-    await spacesObjectRef?.current?.join();
-    const playBackUrl = spaceObjectData.spaceDescription;
-    setPlayBackUrl(playBackUrl);
-    handleCloseModal();
-    setSpaceWidgetId(space?.spaceId as string)
-    console.log('Space Joined');
+
+    if (isSpeaker) {
+      // create audio stream
+      await spacesObjectRef.current.createAudioStream();
+      spaceId = space?.spaceId; // temp
+    }
+    if (isListener) {
+      await spacesObjectRef?.current?.join();
+      const playBackUrl = spaceObjectData.spaceDescription;
+      setPlayBackUrl(playBackUrl);
+      handleCloseModal();
+      setSpaceWidgetId(space?.spaceId as string);
+      console.log('space joined');
+    }
   };
+
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
+    const joinSpaceAsSpeaker = async () => {
+      console.log('joining as a speaker');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceId);
+      console.log('space joined');
+      handleCloseModal();
+    };
+    joinSpaceAsSpeaker();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceObjectData?.connectionData?.local.stream]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -121,17 +151,17 @@ const ScrollContainer = styled.div`
   margin-top: 24px;
   overflow-y: scroll;
 
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     margin-left: 10px;
     width: 8px;
     height: 8px;
   }
 
-  &::-webkit-scrollbar-thumb{
+  &::-webkit-scrollbar-thumb {
     -webkit-appearance: none;
     width: 4px;
     height: auto;
-    background:#8B5CF6;
+    background: #8b5cf6;
     border-radius: 99px;
   }
 `;

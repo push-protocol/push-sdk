@@ -14,6 +14,8 @@ import {
 const _env = Constants.ENV.DEV;
 let account: string;
 let signer: any;
+let account2: string;
+let signer2: any;
 let groupName: string;
 let groupDescription: string;
 const groupImage =
@@ -25,6 +27,10 @@ describe('Update Group', () => {
     const WALLET1 = ethers.Wallet.createRandom();
     signer = new ethers.Wallet(WALLET1.privateKey);
     account = `eip155:${signer.address}`;
+
+    const WALLET2 = ethers.Wallet.createRandom();
+    signer2 = new ethers.Wallet(WALLET2.privateKey);
+    account2 = `eip155:${signer2.address}`;
 
     groupName = uniqueNamesGenerator({
       dictionaries: [adjectives, colors, animals],
@@ -122,6 +128,40 @@ describe('Update Group', () => {
     });
     await expectGroup(updatedGroup, true, admins, members, true);
   });
+
+  it('AutoLeave', async () => {
+    const admins: string[] = [];
+    const members = [
+      account2,
+      // 'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
+    ];
+    // creator - account
+    const group = await createGroup({
+      groupName,
+      groupDescription,
+      members,
+      groupImage,
+      admins,
+      isPublic: true,
+      signer, //acount
+      env: _env,
+    });
+
+    const updatedMembers = [
+      'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
+    ];
+    const updatedGroup = await updateGroup({
+      groupName,
+      groupDescription,
+      members: [...updatedMembers, account],
+      groupImage,
+      admins: [account],
+      chatId: group.chatId,
+      signer: signer2, //acount2
+      env: _env,
+    });
+    await expectGroup(updatedGroup, true, admins, updatedMembers, false);
+  });
 });
 
 /**
@@ -142,8 +182,9 @@ const expectGroup = async (
   expect(group.members[0].image).to.be.a('string');
   expect(group.pendingMembers).to.be.an('array');
   expect(group.pendingMembers.length).to.equal(pendingMembers.length);
-  expect(group.pendingMembers[0].wallet).to.equal(pendingMembers[0]);
-  expect(group.pendingMembers[1].wallet).to.equal(pendingMembers[1]);
+  for (let i = 0; i < pendingMembers.length; i++) {
+    expect(group.pendingMembers[i].wallet).to.equal(pendingMembers[i]);
+  }
   expect(group.groupImage).to.equal(groupImage);
   expect(group.groupName).to.equal(groupName);
   expect(group.groupDescription).to.equal(groupDescription);

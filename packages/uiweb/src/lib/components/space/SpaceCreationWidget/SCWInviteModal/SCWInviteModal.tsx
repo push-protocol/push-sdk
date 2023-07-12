@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext } from 'react'
+import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -16,6 +16,8 @@ import CircularProgressSpinner from '../../../loader/loader';
 import { useSpaceData } from '../../../../hooks';
 import SettingsIcon from '../../../../icons/settingsBlack.svg';
 import { Image } from '../../../../config';
+
+import { createIcon } from '../../helpers/blockies';
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -51,10 +53,9 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setAdminsAddressList,
         onClose
     } = props;
-
-    const { env } = useSpaceData();
-
     const theme = useContext(ThemeContext);
+
+    const { env, account } = useSpaceData();
 
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
@@ -65,6 +66,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
 
+        if (event.target.value === account) {
+            handleError('Cannot add Host to members');
+            return;
+        }
+        
         try {
             setLoadingAccount(true);
             const response = await PushAPI.user.get({
@@ -73,11 +79,18 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             });
 
             if(response === null) {
+                const icon = createIcon({
+                    seed: event.target.value,
+                    size: 10,
+                    scale: 3,
+                });
+
                 const nullUser = {
                     walletAddress: event.target.value,
                     name: event.target.value,
-                    image: tempImageUrl,
+                    image: icon.toDataURL(),
                 };
+
                 setSearchedUser(nullUser)
             } else {
                 setSearchedUser(response);
@@ -98,7 +111,22 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setErrorMsg('');
     }
 
+    const handleError = (errMsg: string) => {
+        setErrorMsg(errMsg);
+        setTimeout(() => {
+            setErrorMsg('')
+        }, 2000);
+    }
+
     const handleInviteMember = (user: any) => {
+        if(
+            (invitedAddressList.length !== 0 && adminsAddressList.length !== 0)
+            && (invitedAddressList.includes(user.did.substring(7)) || adminsAddressList.includes(user.did.substring(7)))
+        ) {
+            handleError('Already Invited');
+            return;
+        }
+
         if (user.did) {
             setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
             setInvitedMembersList([...invitedMembersList, user]);
@@ -136,6 +164,27 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const handleDeleteInvitedUser = (user: any) => {
         const updatedArray = invitedMembersList.filter((item: any) => item !== user)
         setInvitedMembersList(updatedArray);
+
+        if (user.did) {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
+            setInvitedAddressList(updateAddressArray);
+        } else {
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            setInvitedAddressList(updateAddressArray);
+        }
+    };
+
+    const handleDeleteInvitedAdmin = (user: any) => {
+        const updatedArray = adminsList.filter((item: any) => item !== user)
+        setAdminsList(updatedArray);
+
+        if (user.did) {
+            const updateAdminAddressArray = adminsAddressList.filter((item: string) => item !== user.did.substring(7))
+            setAdminsAddressList(updateAdminAddressArray);
+        } else {
+            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.walletAddress)
+            setAdminsAddressList(updateAddressArray);
+        }
     };
 
     const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
@@ -157,7 +206,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     onInputChange={searchMember}
                     clearInput={clearInput}
                 />
-                {errorMsg}
+
+                <ErrorMessage>{errorMsg}</ErrorMessage>
 
                 <MembersList>
                     {loadingAccount && <Spinner />}
@@ -263,8 +313,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                             </SettingsCont>
                                         }
                                         // btnCallback={() => handleDeleteInvitedUser(item)}
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
-                                        promoteCallback={() => handlePromoteToAdmin(item)}
+                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
+                                        // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
                                     />
                                 } else {
@@ -283,7 +333,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                             </SettingsCont>
                                         }
                                         // btnCallback={() => handleDeleteInvitedUser(item)}
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
+                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
                                     />
@@ -364,4 +414,10 @@ const ContBtn = styled.button`
     border-radius: 8px;
     border: 1px solid #8B5CF6;
     cursor: pointer;
+`;
+
+const ErrorMessage = styled.div`
+    color: #E93636;
+    font-size: 14px;
+    margin-bottom: 8px;
 `;

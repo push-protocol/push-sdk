@@ -85,25 +85,6 @@ export async function start(this: Space, options: StartType): Promise<void> {
       });
     });
 
-    /*
-        - Try calling all the speakers (admins)
-        - Create a mesh based webRTC connection with all those who pick up
-    */
-    this.request({
-      senderAddress: this.data.local.address,
-      recipientAddress: convertedAdmins.map((convertedAdmin) => {
-        if (convertedAdmin.startsWith('eip155:')) {
-          return convertedAdmin.split('eip155:')[1];
-        }
-        return convertedAdmin;
-      }),
-      chatId: this.spaceSpecificData.spaceId,
-      details: {
-        type: SPACE_REQUEST_TYPE.JOIN_SPEAKER,
-        data: {},
-      },
-    });
-
     // start the livepeer playback and store the playback URL group meta
     // send a notification/meta message to all the added listeners (members) telling the space has started
 
@@ -134,8 +115,6 @@ export async function start(this: Space, options: StartType): Promise<void> {
     if (!isSupported()) {
       console.log('webrtmp-sdk is not currently supported on this browser');
     }
-
-    console.log('stream key', streamKey);
 
     // cast to the stream
     const client = new Client();

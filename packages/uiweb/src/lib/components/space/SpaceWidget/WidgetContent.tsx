@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 import { SpaceDTO } from '@pushprotocol/restapi';
+import { useSpaceData } from '../../../hooks';
 
 const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
 const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
@@ -16,8 +17,7 @@ interface WidgetContentProps {
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isLive?: boolean;
-  isJoined?: boolean;
+  isLive: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
 }
@@ -25,28 +25,33 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   account,
   spaceData,
   shareUrl,
-  isLive,
   isHost,
-  isJoined,
   isTimeToStartSpace,
   isMember,
   isMinimized,
+  isLive,
 }: WidgetContentProps) => {
+  // const { isLive } = useSpaceData();
+  console.log('isLiveInWidgetContent', isLive);
+  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(false);
+  console.log('isSpaceLive', isSpaceLive);
+
+  console.log('Rendering WidgetContent');
+  useEffect(() => {
+    setIsSpaceLive(isLive);
+  }, [isLive]);
+
   return (
     <Container
       isMinimized={isMinimized}
       height={
-        isLive
+        isSpaceLive
           ? LIVE_WIDGET_CONTENT_FIXED_HEIGHT
           : SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT
       }
     >
-      {isLive ? (
-        <LiveWidgetContent
-          spaceData={spaceData}
-          isHost={isHost}
-          isJoined={isJoined}
-        />
+      {isSpaceLive ? (
+        <LiveWidgetContent spaceData={spaceData} isHost={isHost} />
       ) : (
         <ScheduledWidgetContent
           spaceData={spaceData}
@@ -54,6 +59,8 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           isHost={isHost}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}
+          isSpaceLive={isSpaceLive}
+          setIsSpaceLive={setIsSpaceLive}
         />
       )}
     </Container>

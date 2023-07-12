@@ -17,10 +17,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
     } = props;
     const theme = useContext(ThemeContext);
 
-    const [selectedHours, setSelectedHours] = useState('1');
+    const [selectedHours, setSelectedHours] = useState('0');
     const [selectedMinutes, setSelectedMinutes] = useState('0');
     const [selectedAMPM, setSelectedAMPM] = useState('AM');
     const [timeHumanReadable, setTimeHumanReadable] = useState(0);
+    console.log("🚀 ~ file: DateTimePicker.tsx:24 ~ timeHumanReadable:", timeHumanReadable)
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const date = new Date(event.target.value);
@@ -65,7 +66,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
                     onChange={(e) => setSelectedHours(e.target.value)}
                     placeholder='Hours'
                 >
-                    <option value={'00'}>00</option>
+                    <option value={'00'}>12</option>
                     <option value={'01'}>01</option>
                     <option value={'02'}>02</option>
                     <option value={'03'}>03</option>
