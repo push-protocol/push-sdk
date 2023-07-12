@@ -4526,7 +4526,6 @@ Allowed Options (params with _ are mandatory)
 ---
 
 ### **To get space details by spaceId**
-
 ```typescript
 const response = await PushAPI.space.get({
   spaceId:
@@ -5462,6 +5461,517 @@ Allowed Options (params with _ are mandatory)
 	status: 'PENDING'
 }
 ```
+
+</details>
+
+---
+
+### **Fetching list of user spaces**
+
+```typescript
+const spaces = await PushAPI.space.spaces({
+  account: string;
+  pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
+  toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
+  env?: ENV;
+});
+```
+
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| account       | string  | -       | user address (Partial CAIP)                                            |
+| toDecrypt     | boolean | false   | if "true" the method will return decrypted message content in response |
+| pgpPrivateKey | string  | null    | mandatory for users having pgp keys                                    |
+| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
+
+**Example normal user:**
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get({
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  env: ENV.STAGING,
+})
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: signer);
+
+// actual api
+const spaces = await PushAPI.space.spaces({
+    account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+    toDecrypt: true,
+    pgpPrivateKey: pgpDecryptedPvtKey,
+    env: ENV.STAGING,
+});
+```
+
+**Example NFT user:**
+
+```typescript
+// Fetch user
+const user = await PushAPI.user.get({
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  env: env as ENV,
+});
+
+// Decrypt PGP Key
+const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+  encryptedPGPPrivateKey: user.encryptedPrivateKey,
+  signer: nftSigner,
+});
+
+// Actual api
+const spaces = await PushAPI.space.spaces({
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  toDecrypt: true,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
+```
+
+<details>
+  <summary><b>Expected response (Get spaces of a specific user)</b></summary>
+
+```typescript
+// PushAPI_space_spaces | Response - 200 OK
+// Array of spaces
+[
+  
+  {
+    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    about: null,
+    did: null,
+    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    intentTimestamp: '2023-07-12T01:11:32.000Z',
+    publicKey: null,
+    profilePicture: null,
+    threadhash: null,
+    wallets: null,
+    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    name: null,
+    spaceInformation: {
+      members: [Array],
+      pendingMembers: [Array],
+      contractAddressERC20: null,
+      numberOfERC20: 0,
+      contractAddressNFT: null,
+      numberOfNFTTokens: 0,
+      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
+        'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
+        'rr9XBDdWMgtzEU1diSPMbLDh1METR7n71EjG0AoeX5A2pkHI7R1vIxXUJR3G\n' +
+        'fzHENsfGaKLnhrL1wLjBQACzEsIqPrHl9RItdtKEs9izLmc+wV0GFJ5OjbAs\n' +
+        'ty/1Q36nnMB7sQ7Ytb9Op+q0TtZPZ7jF9CjX8KGav3P1xDQex9nfsXiDHlLK\n' +
+        'MqDePaaMO6RJUWAP2xTo2k1DDJQ2dpUhs9XyjMlvFhVbIcT1/lVRCPC8V3C8\n' +
+        'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
+        '=sLLC\n' +
+        '-----END PGP SIGNATURE-----\n',
+      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceName: 'statutory_amber_roadrunner',
+      isPublic: true,
+      spaceDescription: 'continued_bronze_pigeon',
+      spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      scheduleAt: '2023-07-12T06:51:32.000Z',
+      scheduleEnd: '2023-07-12T07:41:32.000Z',
+      status: 'PENDING'
+    },
+    msg: {
+      fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toCAIP10: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      fromDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      messageContent: "Gm gm! It's me... Mario",
+      messageType: 'Text',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
+        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
+        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
+        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
+        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
+        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
+        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
+        '=dcRD\n' +
+        '-----END PGP SIGNATURE-----\n',
+      timestamp: 1683530775648,
+      sigType: 'pgp',
+      encType: 'pgp',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
+        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
+        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
+        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
+        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
+        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
+        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
+        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
+        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
+        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
+        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
+        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
+        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
+        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
+        '=kzUH\n' +
+        '-----END PGP MESSAGE-----\n',
+      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
+    }
+  }
+ 
+]
+```
+
+| Parameter        | Type           | Description                                                                                                                     |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| spaceId          | `string`       | space identifier                                                                                                                |
+| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
+
+</details>
+
+---
+
+
+### **Fetching list of user space requests**
+
+```typescript
+const spaces = await PushAPI.space.requests({
+  account: string;
+  pgpPrivateKey?: string;
+  /**
+   * If true, the method will return decrypted message content in response
+   */
+  toDecrypt?: boolean;
+  /**
+   * Environment variable
+   */
+  env?: ENV;
+});
+```
+
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| account       | string  | -       | user address (Partial CAIP)                                            |
+| toDecrypt     | boolean | false   | if "true" the method will return decrypted message content in response |
+| pgpPrivateKey | string  | null    | mandatory for users having pgp keys                                    |
+| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
+
+**Example normal user:**
+
+```typescript
+// pre-requisite API calls that should be made before
+// need to get user and through that encryptedPvtKey of the user
+const user = await PushAPI.user.get({
+  account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+  env: ENV.STAGING,
+})
+
+// need to decrypt the encryptedPvtKey to pass in the api using helper function
+const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: signer);
+
+// actual api
+const spaces = await PushAPI.space.requests({
+    account: 'eip155:0xFe6C8E9e25f7bcF374412c5C81B2578aC473C0F7',
+    toDecrypt: true,
+    pgpPrivateKey: pgpDecryptedPvtKey,
+    env: ENV.STAGING,
+});
+```
+
+**Example NFT user:**
+
+```typescript
+// Fetch user
+const user = await PushAPI.user.get({
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  env: env as ENV,
+});
+
+// Decrypt PGP Key
+const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
+  encryptedPGPPrivateKey: user.encryptedPrivateKey,
+  signer: nftSigner,
+});
+
+// Actual api
+const spaces = await PushAPI.space.requests({
+  account: `nft:eip155:${nftChainId}:${nftContractAddress}:${nftTokenId}`,
+  toDecrypt: true,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
+```
+
+<details>
+  <summary><b>Expected response (Get spaces requests of a specific user)</b></summary>
+
+```typescript
+// PushAPI_space_requests | Response - 200 OK
+// Array of spaces
+[
+  
+  {
+    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    about: null,
+    did: null,
+    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    intentTimestamp: '2023-07-12T01:11:32.000Z',
+    publicKey: null,
+    profilePicture: null,
+    threadhash: null,
+    wallets: null,
+    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    name: null,
+    spaceInformation: {
+      members: [Array],
+      pendingMembers: [Array],
+      contractAddressERC20: null,
+      numberOfERC20: 0,
+      contractAddressNFT: null,
+      numberOfNFTTokens: 0,
+      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
+        'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
+        'rr9XBDdWMgtzEU1diSPMbLDh1METR7n71EjG0AoeX5A2pkHI7R1vIxXUJR3G\n' +
+        'fzHENsfGaKLnhrL1wLjBQACzEsIqPrHl9RItdtKEs9izLmc+wV0GFJ5OjbAs\n' +
+        'ty/1Q36nnMB7sQ7Ytb9Op+q0TtZPZ7jF9CjX8KGav3P1xDQex9nfsXiDHlLK\n' +
+        'MqDePaaMO6RJUWAP2xTo2k1DDJQ2dpUhs9XyjMlvFhVbIcT1/lVRCPC8V3C8\n' +
+        'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
+        '=sLLC\n' +
+        '-----END PGP SIGNATURE-----\n',
+      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceName: 'statutory_amber_roadrunner',
+      isPublic: true,
+      spaceDescription: 'continued_bronze_pigeon',
+      spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      scheduleAt: '2023-07-12T06:51:32.000Z',
+      scheduleEnd: '2023-07-12T07:41:32.000Z',
+      status: 'PENDING'
+    },
+    msg: {
+      fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toCAIP10: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      fromDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      messageContent: "Gm gm! It's me... Mario",
+      messageType: 'Text',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
+        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
+        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
+        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
+        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
+        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
+        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
+        '=dcRD\n' +
+        '-----END PGP SIGNATURE-----\n',
+      timestamp: 1683530775648,
+      sigType: 'pgp',
+      encType: 'pgp',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
+        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
+        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
+        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
+        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
+        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
+        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
+        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
+        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
+        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
+        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
+        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
+        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
+        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
+        '=kzUH\n' +
+        '-----END PGP MESSAGE-----\n',
+      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
+    }
+  }
+ 
+]
+```
+
+| Parameter        | Type           | Description                                                                                                                     |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| spaceId          | `string`       | space identifier                                                                                                                |
+| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
+
+</details>
+
+---
+
+### **Fetching list of trending spaces**
+
+```typescript
+const spaces = await PushAPI.space.trending({
+  env?: ENV;
+});
+```
+
+| Param         | Type    | Default | Remarks                                                                |
+| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
+| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
+| page | number | 1 | page index of the results |
+| limit | number | 10 | number of items in 1 page |
+
+
+<details>
+
+  <summary><b>Expected response (Get trending spaces)</b></summary>
+
+```typescript
+// PushAPI_space_trending | Response - 200 OK
+// Array of spaces
+[
+  
+  {
+    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    about: null,
+    did: null,
+    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    intentTimestamp: '2023-07-12T01:11:32.000Z',
+    publicKey: null,
+    profilePicture: null,
+    threadhash: null,
+    wallets: null,
+    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    name: null,
+    spaceInformation: {
+      members: [Array],
+      pendingMembers: [Array],
+      contractAddressERC20: null,
+      numberOfERC20: 0,
+      contractAddressNFT: null,
+      numberOfNFTTokens: 0,
+      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
+        'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
+        'rr9XBDdWMgtzEU1diSPMbLDh1METR7n71EjG0AoeX5A2pkHI7R1vIxXUJR3G\n' +
+        'fzHENsfGaKLnhrL1wLjBQACzEsIqPrHl9RItdtKEs9izLmc+wV0GFJ5OjbAs\n' +
+        'ty/1Q36nnMB7sQ7Ytb9Op+q0TtZPZ7jF9CjX8KGav3P1xDQex9nfsXiDHlLK\n' +
+        'MqDePaaMO6RJUWAP2xTo2k1DDJQ2dpUhs9XyjMlvFhVbIcT1/lVRCPC8V3C8\n' +
+        'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
+        '=sLLC\n' +
+        '-----END PGP SIGNATURE-----\n',
+      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceName: 'statutory_amber_roadrunner',
+      isPublic: true,
+      spaceDescription: 'continued_bronze_pigeon',
+      spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      scheduleAt: '2023-07-12T06:51:32.000Z',
+      scheduleEnd: '2023-07-12T07:41:32.000Z',
+      status: 'PENDING'
+    },
+    msg: {
+      fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toCAIP10: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      fromDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
+      toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+      messageContent: "Gm gm! It's me... Mario",
+      messageType: 'Text',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
+        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
+        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
+        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
+        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
+        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
+        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
+        '=dcRD\n' +
+        '-----END PGP SIGNATURE-----\n',
+      timestamp: 1683530775648,
+      sigType: 'pgp',
+      encType: 'pgp',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
+        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
+        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
+        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
+        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
+        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
+        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
+        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
+        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
+        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
+        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
+        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
+        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
+        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
+        '=kzUH\n' +
+        '-----END PGP MESSAGE-----\n',
+      link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
+    }
+  }
+ 
+]
+```
+
+| Parameter        | Type           | Description                                                                                                                     |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| spaceId          | `string`       | space identifier                                                                                                               |
+| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
 
 </details>
 
