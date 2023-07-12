@@ -22,6 +22,7 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { spaceChainId } from '../components/space/helpers/account';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -41,6 +42,7 @@ export const SpacesUIProvider = ({
     spaceUI.pgpPrivateKey
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
+  const [chainId, setChainId] = useState<number>(spaceChainId(spaceUI.account, spaceUI.env));
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
@@ -104,7 +106,7 @@ export const SpacesUIProvider = ({
       signer,
       pgpPrivateKey,
       address: account,
-      chainId: 5, // TODO: Make this dynamic
+      chainId: chainId,
       env,
       setSpaceData: setSpaceObjectData,
     });
@@ -251,6 +253,8 @@ export const SpacesUIProvider = ({
     setPgpPrivateKey,
     env,
     setEnv,
+    chainId,
+    setChainId,
     trendingListData,
     setTrendingListData,
     spaceInfo,
@@ -275,11 +279,24 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
   };
 
+  const resetStates = () => {
+    setSpaceWidgetId('');
+    setSpeakerData({});
+    setSpaceObjectData(PushAPI.space.initSpaceData);
+    setSpaceRequests({});
+    setMySpaces({});
+    setPopularSpaces({});
+  }
+
   useEffect(() => {
     setAccount(spaceUI.account);
     setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
     setPgpPrivateKey(spaceUI.pgpPrivateKey);
+    
+    // reset
+    setChainId(spaceChainId(spaceUI.account, spaceUI.env));
+    resetStates();
   }, [spaceUI]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
