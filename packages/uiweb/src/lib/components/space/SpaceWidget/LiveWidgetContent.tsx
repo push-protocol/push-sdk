@@ -14,6 +14,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
 import { Player } from '@livepeer/react';
+import * as PushAPI from '@pushprotocol/restapi';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -59,7 +60,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     if (!spacesObjectRef?.current) return;
     await spacesObjectRef?.current?.stop();
     spacesObjectRef.current = null;
-    setSpaceObjectData(null);
+    setSpaceObjectData(PushAPI.space.initSpaceData);
     window.alert('Space ended');
   };
 
@@ -68,12 +69,12 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     if (isHost || isSpeaker) {
       await spacesObjectRef?.current?.leave();
       spacesObjectRef.current = null;
-      setSpaceObjectData(null);
+      setSpaceObjectData(PushAPI.space.initSpaceData);
       console.log('Space left');
     }
     if (isListener) {
       spacesObjectRef.current = null;
-      setSpaceObjectData(null);
+      setSpaceObjectData(PushAPI.space.initSpaceData);
       window.alert('Thank you listening, Bye!');
     }
   };
