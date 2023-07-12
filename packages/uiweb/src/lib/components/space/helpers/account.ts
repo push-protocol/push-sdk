@@ -6,7 +6,7 @@ const ACCOUNT_START_TYPE = {
 }
 
 export const isNftProfile = (account: string) => {
-  return account.split(':')[0] === ACCOUNT_START_TYPE.NFT;
+  return account && account.split(':')[0] === ACCOUNT_START_TYPE.NFT;
 }
 
 export const spaceChainId = (account: string, env: ENV): number => {
