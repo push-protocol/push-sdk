@@ -1,4 +1,4 @@
-import React, { useContext, MouseEventHandler } from 'react'
+import React, { useContext, MouseEventHandler, useState } from 'react'
 import styled from 'styled-components';
 
 import { Modal } from '../reusables/Modal'
@@ -7,6 +7,7 @@ import { IThemeProviderProps, ThemeContext } from '../theme/ThemeProvider';
 import { Button } from '../reusables/Button';
 import { ProfileContainer } from '../reusables/ProfileContainer';
 import Accordion from '../reusables/Accordion';
+import { SpaceCreationWidget } from '../SpaceCreationWidget';
 
 export interface ISpacesInfoProps {
     closeSpacesInfo: MouseEventHandler;
@@ -19,10 +20,10 @@ interface IThemeProps {
 
 export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
     const { spaceData } = props;
-    console.log("🚀 ~ file: SpacesInfo.tsx:22 ~ spaceData:", spaceData)
-    const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
     const theme = useContext(ThemeContext);
+
+    const [isInviteVisible, setIsInviteVisible] = useState(false);
 
     const customStyle = {
         color: theme.textColorPrimary,
@@ -30,6 +31,10 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         borderColor: theme.borderColor,
         fontWeight: '500',
         padding: '14px',
+    }
+
+    const showExplicitInvite: React.MouseEventHandler = () => {
+        setIsInviteVisible(true);
     }
 
     const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
@@ -59,6 +64,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
             <Button
                 customStyle={customStyle}
+                onClick={showExplicitInvite}
             >
                 Invite Members
             </Button>
@@ -91,6 +97,15 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             }
 
             </SpacesInfoContainer>
+
+            {
+                isInviteVisible ?
+                <SpaceCreationWidget
+                    inviteOnly
+                    spaceData={spaceData}
+                />
+                : null
+            }
         </Modal>
     )
 }

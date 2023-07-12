@@ -19,9 +19,10 @@ export interface ISpacePaginationData {
 }
 
 export interface ICustomSearchResult {
-  name: string;
-  walletAddress: string;
-  image: string;
+  account: string;
+  name?: string;
+  handle?: string;
+  image?: string; // dataURL as string
 }
 
 export interface ISpaceDataContextValues {

@@ -40,7 +40,7 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     adminsAddressList?: any;
     setAdminsAddressList?: any;
     onClose: () => void;
-    customSearch?: (searchString: string) => ICustomSearchResult;
+    inviteOnly?: boolean;
 }
 
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
@@ -55,17 +55,18 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         adminsAddressList,
         setAdminsAddressList,
         onClose,
-        customSearch,
+        inviteOnly,
     } = props;
     const theme = useContext(ThemeContext);
+    console.log("🚀 ~ file: SCWInviteModal.tsx:60 ~ createSpace:", createSpace)
 
-    const { env, account } = useSpaceData();
+    const { env, account, customSearch } = useSpaceData();
 
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
 
     const [searchedUser, setSearchedUser]= useState<any>({});
-    const [errorMsg, setErrorMsg] = useState<any>('');
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
