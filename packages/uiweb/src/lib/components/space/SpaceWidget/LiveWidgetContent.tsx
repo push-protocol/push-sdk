@@ -106,7 +106,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {isSpeaker &&
+        {(isSpeaker || isHost) &&
           spaceObjectData.connectionData.incoming.map((profile) => (
             <LiveSpaceProfileContainer
               isHost={isHost}
