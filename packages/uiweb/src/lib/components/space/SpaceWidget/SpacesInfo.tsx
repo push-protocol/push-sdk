@@ -1,21 +1,20 @@
 import React, { useContext, MouseEventHandler, useState } from 'react'
 import styled from 'styled-components';
+import * as PushAPI from '@pushprotocol/restapi';
 
 import { Modal } from '../reusables/Modal'
 import { ModalHeader } from '../reusables/ModalHeader'
-import { IThemeProviderProps, ThemeContext } from '../theme/ThemeProvider';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { Button } from '../reusables/Button';
 import { ProfileContainer } from '../reusables/ProfileContainer';
 import Accordion from '../reusables/Accordion';
-import { SpaceCreationWidget } from '../SpaceCreationWidget';
+import { SCWInviteModal } from '../SpaceCreationWidget/SCWInviteModal';
+
+import { useSpaceData } from '../../../hooks';
 
 export interface ISpacesInfoProps {
     closeSpacesInfo: MouseEventHandler;
     spaceData: any;
-}
-
-interface IThemeProps {
-    theme: IThemeProviderProps;
 }
 
 export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
@@ -24,6 +23,16 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
     const theme = useContext(ThemeContext);
 
     const [isInviteVisible, setIsInviteVisible] = useState(false);
+
+    const [invitedMembersList, setInvitedMembersList] = useState([])
+    const [invitedAddressList, setInvitedAddressList] = useState([])
+
+    const [adminsList, setAdminsList] = useState([])
+    const [adminsAddressList, setAdminsAddressList] = useState([])
+
+    const [isLoading, setLoading] = useState(false);
+
+    const { signer, env } = useSpaceData();
 
     const customStyle = {
         color: theme.textColorPrimary,
@@ -37,7 +46,39 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         setIsInviteVisible(!isInviteVisible);
     }
 
+    const closeInviteModal = () => {
+        setIsInviteVisible(false);
+    }
+
     const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
+
+    const updateSpace = async () => {
+        const spaceUpdate = {
+            spaceName: spaceData.spaceName,
+            spaceDescription: 'Push Space',
+            members: invitedAddressList,
+            spaceImage: 'asd',
+            admins: adminsAddressList,
+            isPublic: true,
+            scheduleAt: new Date(Date.now() + 120000),
+            signer: signer as PushAPI.SignerType,
+            env,
+            spaceId: spaceData.spaceId,
+            status: spaceData.status,
+        }
+
+        try {
+            setLoading(true);
+            const response = await PushAPI.space.update(spaceUpdate);
+
+            console.log(response);
+        } catch (e:any) {
+            console.error(e.message);
+        } finally {
+            setLoading(false);
+            closeInviteModal();
+        }
+    };
 
     return (
         <Modal
@@ -98,10 +139,21 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
             {
                 isInviteVisible ?
-                <SpaceCreationWidget
-                inviteOnly
-                closeInvite={showExplicitInvite}
-                spaceData={spaceData}
+                <SCWInviteModal
+                    closeInviteModal={showExplicitInvite}
+                    makeScheduleVisible={showExplicitInvite}
+                    createSpace={updateSpace}
+                    isLoading={isLoading}
+                    invitedMembersList={invitedMembersList}
+                    setInvitedMembersList={setInvitedMembersList}
+                    invitedAddressList={invitedAddressList}
+                    setInvitedAddressList={setInvitedAddressList}
+                    adminsList={adminsList}
+                    setAdminsList={setAdminsList}
+                    adminsAddressList={adminsAddressList}
+                    setAdminsAddressList={setAdminsAddressList}
+                    onClose={showExplicitInvite}
+                    btnString='Update Space'
                 />
                 : null
             }

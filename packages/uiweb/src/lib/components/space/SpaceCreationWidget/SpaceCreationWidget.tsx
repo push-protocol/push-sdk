@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -11,13 +11,10 @@ import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceCreateWidgetProps {
     customComponent?: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
-    inviteOnly?: boolean;
-    spaceData?: any;
-    closeInvite?: any;
 }
 
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
-    const { customComponent, inviteOnly, spaceData, closeInvite } = props;
+    const { customComponent } = props;
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
@@ -83,7 +80,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     }
 
     const closeInviteModal = () => {
-        if (closeInvite) closeInvite();
         setIsInviteModalVisible(false);
     }
 
@@ -103,12 +99,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             time: Date.now(),
         })
     }
-
-    useEffect(() => {
-        if (inviteOnly) {
-            setIsInviteModalVisible(!isInviteModalVisible);
-        }
-    }, [inviteOnly]);
     
     const createSpace = async () => {
         const spaceCreate = {
@@ -137,115 +127,66 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         }
     };
 
-    const updateSpace = async () => {
-        const spaceUpdate = {
-            spaceName: spaceData.spaceName,
-            spaceDescription: 'Push Space',
-            members: invitedAddressList,
-            spaceImage: 'asd',
-            admins: adminsAddressList,
-            isPublic: true,
-            scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 120000),
-            signer: signer as PushAPI.SignerType,
-            env,
-            spaceId: spaceData.spaceId,
-            status: spaceData.status,
-        }
-
-        try {
-            setLoading(true);
-            const response = await PushAPI.space.update(spaceUpdate);
-
-            console.log(response);
-        } catch (e:any) {
-            console.error(e.message);
-        } finally {
-            setLoading(false);
-            closeInviteModal();
-            clearAllState();
-        }
-    };
-
     return (
         <div>
-            {
-                inviteOnly ?
-                (isInviteModalVisible && <SCWInviteModal
-                    closeInviteModal={closeInviteModal}
-                    makeScheduleVisible={closeInviteModal}
-                    createSpace={updateSpace}
-                    isLoading={isLoading}
-                    invitedMembersList={invitedMembersList}
-                    setInvitedMembersList={setInvitedMembersList}
-                    invitedAddressList={invitedAddressList}
-                    setInvitedAddressList={setInvitedAddressList}
-                    adminsList={adminsList}
-                    setAdminsList={setAdminsList}
-                    adminsAddressList={adminsAddressList}
-                    setAdminsAddressList={setAdminsAddressList}
-                    onClose={closeInviteModal}
-                    btnString='Update Space'
-                />)
-                :
-                <SCWContainer>
-                    {
-                        customComponent
-                        ?
-                        <CustomButtonComponent onClick={showCreateSpace}>
-                            {customComponent}
-                        </CustomButtonComponent>
-                        :
-                        <SCWButton
-                            onCreate={showCreateSpace}
-                        />
-                    }
+            <SCWContainer>
+                {
+                    customComponent
+                    ?
+                    <CustomButtonComponent onClick={showCreateSpace}>
+                        {customComponent}
+                    </CustomButtonComponent>
+                    :
+                    <SCWButton
+                        onCreate={showCreateSpace}
+                    />
+                }
 
-                    {isCreateModalVisible &&
-                        <SCWCreateModal
-                            isInviteVisible={showInviteSpace}
-                            closeCreateModal={closeCreateModal}
-                            nameValue={spaceState.spaceName}
-                            descriptionValue={spaceState.spaceDescription}
-                            handleNameChange={handleNameChange}
-                            handleDescriptionChange={handleDescriptionChange}
-                            isDescriptionEnabled={false}
-                            isScheduleVisible={showScheduleSpace}
-                            onClose={closeCreateModal}
-                        />
-                    }
+                {isCreateModalVisible &&
+                    <SCWCreateModal
+                        isInviteVisible={showInviteSpace}
+                        closeCreateModal={closeCreateModal}
+                        nameValue={spaceState.spaceName}
+                        descriptionValue={spaceState.spaceDescription}
+                        handleNameChange={handleNameChange}
+                        handleDescriptionChange={handleDescriptionChange}
+                        isDescriptionEnabled={false}
+                        isScheduleVisible={showScheduleSpace}
+                        onClose={closeCreateModal}
+                    />
+                }
 
-                    {isScheduleModalVisible &&
-                        <SCWScheduleModal
-                            closeScheduleModal={closeScheduleModal}
-                            makeCreateVisible={showCreateSpace}
-                            makeInviteVisible={showInviteSpace}
-                            dateValue={spaceState.date}
-                            timeValue={spaceState.time}
-                            onDateChange={onDateChange}
-                            onTimeChange={onTimeChange}
-                            onClose={closeScheduleModal}
-                        />
-                    }
+                {isScheduleModalVisible &&
+                    <SCWScheduleModal
+                        closeScheduleModal={closeScheduleModal}
+                        makeCreateVisible={showCreateSpace}
+                        makeInviteVisible={showInviteSpace}
+                        dateValue={spaceState.date}
+                        timeValue={spaceState.time}
+                        onDateChange={onDateChange}
+                        onTimeChange={onTimeChange}
+                        onClose={closeScheduleModal}
+                    />
+                }
 
-                    {isInviteModalVisible &&
-                        <SCWInviteModal
-                            closeInviteModal={closeInviteModal}
-                            makeScheduleVisible={showCreateSpace}
-                            createSpace={createSpace}
-                            isLoading={isLoading}
-                            invitedMembersList={invitedMembersList}
-                            setInvitedMembersList={setInvitedMembersList}
-                            invitedAddressList={invitedAddressList}
-                            setInvitedAddressList={setInvitedAddressList}
-                            adminsList={adminsList}
-                            setAdminsList={setAdminsList}
-                            adminsAddressList={adminsAddressList}
-                            setAdminsAddressList={setAdminsAddressList}
-                            onClose={closeInviteModal}
-                        />
-                    }
-                </SCWContainer>
-            }
+                {isInviteModalVisible &&
+                    <SCWInviteModal
+                        closeInviteModal={closeInviteModal}
+                        makeScheduleVisible={showCreateSpace}
+                        createSpace={createSpace}
+                        isLoading={isLoading}
+                        invitedMembersList={invitedMembersList}
+                        setInvitedMembersList={setInvitedMembersList}
+                        invitedAddressList={invitedAddressList}
+                        setInvitedAddressList={setInvitedAddressList}
+                        adminsList={adminsList}
+                        setAdminsList={setAdminsList}
+                        adminsAddressList={adminsAddressList}
+                        setAdminsAddressList={setAdminsAddressList}
+                        onClose={closeInviteModal}
+                    />
+                }
+            </SCWContainer>
         </div>
     )
 }

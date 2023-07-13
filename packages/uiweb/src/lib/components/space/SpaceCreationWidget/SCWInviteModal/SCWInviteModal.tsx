@@ -39,7 +39,7 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     setAdminsList?: any;
     adminsAddressList?: any;
     setAdminsAddressList?: any;
-    onClose: () => void;
+    onClose: any;
     btnString?: string;
 }
 
