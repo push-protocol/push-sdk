@@ -33,11 +33,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   setIsSpaceLive,
 }: ScheduledWidgetContentProps) => {
   const isTimeToStartSpace = true;
-  const {
-    spacesObjectRef,
-    initSpaceObject,
-    spaceObjectData,
-  } = useSpaceData();
+  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
   const [isStarted, setIsStarted] = useState<boolean>(false);
 
   const handleStartSpace = async () => {
@@ -77,7 +73,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
-      if(isSpaceLive) return;
+      if (isSpaceLive) return;
       if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
       await spacesObjectRef.current.start({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
@@ -209,7 +205,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   );
 };
 
-const SpaceInfoText = styled.span`
+export const SpaceInfoText = styled.span`
   font-size: 18px;
   font-weight: 600;
   text-align: center;

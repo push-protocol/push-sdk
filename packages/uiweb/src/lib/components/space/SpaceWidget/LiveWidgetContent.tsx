@@ -14,6 +14,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
 import { Player } from '@livepeer/react';
+import * as PushAPI from '@pushprotocol/restapi';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -32,6 +33,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const {
     spacesObjectRef,
     spaceObjectData,
+    setSpaceObjectData,
     isSpeaker,
     isListener,
     setSpaceWidgetId,
@@ -51,6 +53,29 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       await spacesObjectRef?.current?.join();
       setSpaceWidgetId(spaceData?.spaceId as string);
       console.log('space joined');
+    }
+  };
+
+  const handleEndSpace = async () => {
+    if (!spacesObjectRef?.current) return;
+    await spacesObjectRef?.current?.stop();
+    spacesObjectRef.current = null;
+    setSpaceObjectData(PushAPI.space.initSpaceData);
+    window.alert('Space ended');
+  };
+
+  const handleLeaveSpace = async () => {
+    if (!spacesObjectRef?.current) return;
+    if (isHost || isSpeaker) {
+      await spacesObjectRef?.current?.leave();
+      spacesObjectRef.current = null;
+      setSpaceObjectData(PushAPI.space.initSpaceData);
+      console.log('Space left');
+    }
+    if (isListener) {
+      spacesObjectRef.current = null;
+      setSpaceObjectData(PushAPI.space.initSpaceData);
+      window.alert('Thank you listening, Bye!');
     }
   };
 
@@ -85,10 +110,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [spaceObjectData?.connectionData?.local.stream]);
 
   useEffect(() => {
-    if (!spaceObjectData.spaceDescription) return;
-    const playBackUrl = spaceObjectData.spaceDescription;
+    if (!spaceObjectData?.spaceDescription) return;
+    const playBackUrl = spaceObjectData?.spaceDescription;
     setPlayBackUrl(playBackUrl);
-  }, [spaceObjectData.spaceDescription]);
+  }, [spaceObjectData?.spaceDescription]);
 
   // console.log('spaceObjectData', spaceObjectData);
   // console.log('playBackUrl', playBackUrl);
@@ -190,6 +215,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 cursor={'pointer'}
                 border={'1px solid #8B5CF6'}
                 borderRadius={'12px'}
+                onClick={isHost ? handleEndSpace : handleLeaveSpace}
               >
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
