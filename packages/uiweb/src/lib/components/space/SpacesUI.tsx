@@ -5,23 +5,27 @@ import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
 import { SpaceCreationWidget } from './SpaceCreationWidget';
+import { ICustomSearchResult } from './SpaceCreationWidget/SCWInviteModal';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
 import { useSpaceData } from '../../hooks';
 import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
+
 export class SpacesUI {
   public account: string;
   public signer: SignerType;
   public pgpPrivateKey: string;
   public env: ENV;
+  public customSearch: ICustomSearchResult | undefined;
 
   constructor(props: ISpacesUIProps) {
     this.account = props.account;
     this.signer = props.signer;
     this.pgpPrivateKey = props.pgpPrivateKey;
     this.env = props.env;
+    this.customSearch = props.customSearch;
   }
 
   SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {

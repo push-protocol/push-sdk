@@ -117,3 +117,13 @@ export function createIcon(opts: Options): HTMLCanvasElement {
 
     return canvas;
 }
+
+export function createBlockie(account: string): HTMLCanvasElement {
+    const iconParams = {
+        seed: account,
+        size: 10,
+        scale: 3,
+    };
+
+    return createIcon(iconParams);
+}

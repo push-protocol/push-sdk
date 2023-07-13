@@ -283,6 +283,8 @@ export const SpacesUIProvider = ({
       !isSpeaker
   );
 
+  const customSearch = undefined;
+
   const value: ISpaceDataContextValues = {
     account,
     setAccount,
@@ -318,6 +320,7 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
     acceptSpaceRequest,
     connectSpaceRequest,
+    customSearch,
   };
 
   const resetStates = () => {

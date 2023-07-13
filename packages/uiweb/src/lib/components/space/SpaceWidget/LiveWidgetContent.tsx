@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import * as PushAPI from '@pushprotocol/restapi';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
@@ -14,7 +15,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { useSpaceData } from '../../../hooks';
 import { Player } from '@livepeer/react';
-import * as PushAPI from '@pushprotocol/restapi';
+import { createBlockie } from '../helpers/blockies';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -39,6 +40,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     isJoined,
     initSpaceObject,
   } = useSpaceData();
+    console.log("🚀 ~ file: LiveWidgetContent.tsx:41 ~ spaceObjectData:", spaceObjectData)
 
   const isMicOn = spaceObjectData.connectionData.local.audio;
 
@@ -136,12 +138,12 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         alignContent={'flex-start'}
       >
         {(isSpeaker || isHost) &&
-          spaceObjectData.connectionData.incoming.map((profile) => (
+          spaceObjectData.connectionData.incoming.slice(1).map((profile) => (
             <LiveSpaceProfileContainer
               isHost={isHost}
               isSpeaker={isSpeaker}
               wallet={profile.address}
-              image={tempImageUrl}
+              image={createBlockie(profile.address).toDataURL().toString()}
               stream={profile.stream}
             />
           ))}
@@ -152,7 +154,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               isHost={isHost}
               isSpeaker={isSpeaker}
               wallet={profile.wallet}
-              image={tempImageUrl}
+              image={profile.image}
             />
           ))}
       </Item>
