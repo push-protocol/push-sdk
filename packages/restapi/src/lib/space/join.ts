@@ -1,6 +1,4 @@
-import {
-  SPACE_REQUEST_TYPE,
-} from '../payloads/constants';
+import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 import { ChatStatus } from '../types';
 import { approve } from './approve';
 import { get } from './get';
@@ -52,7 +50,7 @@ export async function join(this: Space) {
       this.data.incoming,
       hostAddress
     );
-    console.log("HOST ADDRESS", hostAddress, "INCOMING", this.data.incoming);
+    
     // check if we arent already connected to the host
     if ((isSpeaker || isSpeakerPending) && incomingIndex > -1) {
       return Promise.resolve();
