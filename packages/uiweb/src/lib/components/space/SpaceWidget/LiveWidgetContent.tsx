@@ -142,6 +142,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             />
           ))}
         {isListener &&
+          !isHost &&
           spaceObjectData.members.map((profile) => (
             <LiveSpaceProfileContainer
               isHost={isHost}
@@ -220,7 +221,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && playBackUrl.length > 0 && (
+            {isListener && !isHost && playBackUrl.length > 0 && (
               <PeerPlayer
                 title="spaceAudio"
                 playbackId={playBackUrl}
@@ -258,4 +259,4 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 const PeerPlayer = styled(Player)`
   width: 0;
   height: 0;
-}`;
+`;

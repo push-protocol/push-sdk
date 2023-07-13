@@ -278,6 +278,7 @@ export const SpacesUIProvider = ({
           address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
         );
       })
+      || !isSpeaker
   );
 
   const value: ISpaceDataContextValues = {
@@ -331,7 +332,7 @@ export const SpacesUIProvider = ({
     setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
     setPgpPrivateKey(spaceUI.pgpPrivateKey);
-    
+
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
     resetStates();
