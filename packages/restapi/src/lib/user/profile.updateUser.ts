@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
-import { getUserDID, sign } from '../chat/helpers';
+import { IPGPHelper, PGPHelper, getUserDID } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
   getAPIBaseUrls,
@@ -12,7 +12,7 @@ import { get } from './getUser';
 import { populateDeprecatedUser } from '../utils/populateIUser';
 import PROGRESSHOOK from '../progressHook';
 
-type ProfileUpdateProps = {
+export type ProfileUpdateProps = {
   /**
    * PGP Private Key
    */
@@ -39,6 +39,13 @@ type ProfileUpdateProps = {
  */
 export const profileUpdate = async (
   options: ProfileUpdateProps
+): Promise<IUser> => {
+  return profileUpdateCore(options, PGPHelper);
+};
+
+export const profileUpdateCore = async (
+  options: ProfileUpdateProps,
+  pgpHelper: IPGPHelper
 ): Promise<IUser> => {
   const {
     pgpPrivateKey,
@@ -80,7 +87,7 @@ export const profileUpdate = async (
       blockedUsersList: profile.blockedUsersList ? blockedUsersList : [] 
     };
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
-    const signature = await sign({
+    const signature = await pgpHelper.sign({
       message: hash,
       signingKey: pgpPrivateKey,
     });

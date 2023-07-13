@@ -2,11 +2,18 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { ChatOptionsType, MessageWithCID } from '../types';
-import { ISendMessagePayload, sendMessagePayload, sign } from './helpers';
+import { IPGPHelper, ISendMessagePayload, PGPHelper, sendMessagePayloadCore, sign } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
 export const start = async (
   options: Omit<ChatOptionsType, 'account'>
+): Promise<MessageWithCID> => {
+  return await startCore(options, PGPHelper);
+};
+
+export const startCore = async (
+  options: Omit<ChatOptionsType, 'account'>,
+  pgpHelper: IPGPHelper,
 ): Promise<MessageWithCID> => {
   const {
     messageContent = '',
@@ -22,12 +29,13 @@ export const start = async (
   const headers = {
     authorization: `Bearer ${apiKey}`,
   };
-  const body: ISendMessagePayload = await sendMessagePayload(
+  const body: ISendMessagePayload = await sendMessagePayloadCore(
     receiverAddress,
     connectedUser,
     messageContent,
     messageType,
-    env
+    env,
+    pgpHelper
   );
 
   const bodyToBeHashed = {
@@ -38,7 +46,7 @@ export const start = async (
   };
 
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: connectedUser.privateKey!,
   });

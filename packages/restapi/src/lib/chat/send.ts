@@ -3,20 +3,29 @@ import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { ChatSendOptionsType, MessageWithCID } from '../types';
 import {
+  IPGPHelper,
+  PGPHelper,
   getAccountAddress,
-  getConnectedUserV2,
+  getConnectedUserV2Core,
   getUserDID,
   getWallet,
 } from './helpers';
 import { conversationHash } from './conversationHash';
-import { start } from './start';
-import { ISendMessagePayload, sendMessagePayload } from './helpers';
+import { startCore } from './start';
+import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 
 /**
  * Send a message to an address or a group
  */
 export const send = async (
   options: ChatSendOptionsType
+): Promise<MessageWithCID> => {
+  return await sendCore(options, PGPHelper);
+};
+
+export const sendCore = async (
+  options: ChatSendOptionsType,
+  pgpHelper: IPGPHelper
 ): Promise<MessageWithCID> => {
   const {
     messageContent = '',
@@ -46,7 +55,7 @@ export const send = async (
       isGroup = true;
     }
 
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
     const receiver = await getUserDID(receiverAddress, env);
     let conversationResponse: any = null;
     if (!isGroup) {
@@ -57,23 +66,26 @@ export const send = async (
       });
     }
     if (conversationResponse && !conversationResponse?.threadHash) {
-      return start({
-        messageContent: messageContent,
-        messageType: messageType,
-        receiverAddress: receiver,
-        connectedUser,
-        apiKey,
-        env,
-      });
+      return startCore({
+          messageContent: messageContent,
+          messageType: messageType,
+          receiverAddress: receiver,
+          connectedUser,
+          apiKey,
+          env,
+        },
+        pgpHelper,
+      );
     } else {
       const API_BASE_URL = getAPIBaseUrls(env);
       const apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
-      const body: ISendMessagePayload = await sendMessagePayload(
+      const body: ISendMessagePayload = await sendMessagePayloadCore(
         receiver,
         connectedUser,
         messageContent,
         messageType,
-        env
+        env,
+        pgpHelper,
       );
 
       return axios
