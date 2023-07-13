@@ -94,8 +94,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const { notificationBody: parsedBody, timeStamp } = extractTimeStamp(
     notificationBody || ''
   );
-
   const themeObject = getCustomTheme(theme,customTheme!);
+
+
   const {
     notifTitle,
     notifBody,
@@ -196,6 +197,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       <ContentSection
         onClick={isCtaURLValid ? gotToCTA : undefined}
         theme={theme}
+        themeObject={themeObject!}
         cta={isCtaURLValid}
       >
         {/* section for media content */}
@@ -344,7 +346,7 @@ NotificationItem.defaultProps = {
 const MD_BREAKPOINT = '50050px'; //set an arbitrarily large number because we no longer use this breakpoint
 const SM_BREAKPOINT = '900px';
 
-const ContentSection = styled.div<CTADataType>`
+const ContentSection = styled.div<CTADataType & CustomThemeProps>`
   display: flex;
   padding: 15px 16px;
 
@@ -352,7 +354,7 @@ const ContentSection = styled.div<CTADataType>`
 
   &:hover {
     background: ${(props) =>
-      props.cta ? (props.theme === 'light' ? '#e8eaf680' : '#404650') : 'none'};
+      props.cta ? (props?.themeObject?.color?.contentHoverBackground) : 'none'};
   }
 
   @media (min-width: ${SM_BREAKPOINT}) {
@@ -518,7 +520,6 @@ const ChannelTitleText = styled.div<CustomThemeProps>`
   font-weight: ${(props) =>
     props?.themeObject?.fontWeight?.notificationTitleText};
 `;
-
 const ChannelDesc = styled.div<CustomThemeProps>`
   line-height: 20px;
   flex: 1;
@@ -527,7 +528,7 @@ const ChannelDesc = styled.div<CustomThemeProps>`
     props?.themeObject?.fontSize?.notificationContentText};
   color: ${(props) => props?.themeObject?.color?.notificationContentText};
   font-weight: ${(props) =>
-    props?.themeObject?.fontWeight?.notificationContentText}
+    props?.themeObject?.fontWeight?.notificationContentText};
   flex-direction: column;
 `;
 

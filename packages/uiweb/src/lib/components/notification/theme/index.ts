@@ -5,6 +5,7 @@ interface IBorderRadius {
 }
 interface IColor {
   accentBackground?: string;
+  contentHoverBackground?:string;
   channelNameText?: string;
   notificationTitleText?: string;
   notificationContentText?: string;
@@ -70,6 +71,7 @@ export const lightTheme: INotificationItemTheme = {
     ...baseTheme,
     color:{
         accentBackground: '#fff',
+        contentHoverBackground:'#e8eaf680',
         channelNameText:'#333333',
         notificationTitleText:'#333333',
         notificationContentText:'#333333',
@@ -86,6 +88,7 @@ export const darkTheme: INotificationItemTheme = {
     color:{
         accentBackground: '#2F3137',
         channelNameText:'#C5CAE9',
+        contentHoverBackground:'#404650',
         notificationTitleText:'#C5CAE9',
         notificationContentText:'#C5CAE9',
         timestamp:'#808080',
