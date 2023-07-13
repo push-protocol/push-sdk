@@ -202,7 +202,7 @@ const SidebarSubTabs: React.FC<SidebarSubTabsPropType> = ({
           {subTab.title}
         </Span>
         <Span
-          cursor="pointer"
+          cursor={isClickable ? 'pointer ' : 'default'}
           textAlign="left"
           fontWeight="400"
           fontSize="16px"

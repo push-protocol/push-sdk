@@ -382,7 +382,7 @@ export const MessageBox = () => {
     >
       <Container
         width="100%"
-        height="85%"
+        height={!requestFeedids.includes(selectedChatId as string)?'85%':'97%'}
         justifyContent="start"
         flexDirection="column"
         alignItems="start"

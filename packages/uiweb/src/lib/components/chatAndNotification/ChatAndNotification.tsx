@@ -183,7 +183,7 @@ export const ChatAndNotification = () => {
 
   const toggleOverflow = (val: string) => {
     if (typeof window != 'undefined' && window.document) {
-      document.body.style.overflow = val;
+      document.body.style.overflowY = val;
     }
   };
 
@@ -195,7 +195,7 @@ export const ChatAndNotification = () => {
       maxHeight="600px"
       position="fixed"
       background="#fff"
-      padding='0 20px 0 21px'
+   
       right="12px"
       bottom="18px"
       overflow="hidden"
@@ -215,15 +215,16 @@ export const ChatAndNotification = () => {
 
 const Container = styled(Section)`
   border: 1px solid #dddddf;
+  padding:0 20px 0 21px;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.08), 0px 0px 96px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(5px);
   /* Note: backdrop-filter has minimal browser support */
   border-radius: 8px;
+  // @media ${device.mobileL} {
+  //   width: 350px;
+  // }
   @media ${device.mobileL} {
-    width: 350px;
-  }
-  @media ${device.mobileS} {
     width: 330px;
-    padding: 24px 17px 0 17px;
+    padding: 0px 12px 0 12px;
   }
 `;

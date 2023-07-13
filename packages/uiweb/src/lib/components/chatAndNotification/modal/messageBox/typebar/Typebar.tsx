@@ -7,14 +7,17 @@ import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
-import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
+import {
+  ChatAndNotificationMainContext,
+  ChatMainStateContext,
+} from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
 import EmojiPicker from 'emoji-picker-react';
 import { device, PUBLIC_GOOGLE_TOKEN } from '../../../../../config';
 import GifPicker from 'gif-picker-react';
-import { useClickAway } from '../../../../../hooks';
+import { useClickAway, useDeviceWidthCheck } from '../../../../../hooks';
 import type { FileMessageContent } from '../../../../../types';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 import type { ChatAndNotificationMainContextType } from '../../../../../context/chatAndNotification/chatAndNotificationMainContext';
@@ -38,16 +41,17 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
   const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
-    const {
-      newChat,
-      setNewChat,
-    } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext)
+  const { newChat, setNewChat } =
+    useContext<ChatAndNotificationMainContextType>(
+      ChatAndNotificationMainContext
+    );
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
   const onChangeTypedMessage = (val: string) => {
-    setTypedMessage(val);
+    if (val.trim() !== '') setTypedMessage(val);
   };
+  const isMobile = useDeviceWidthCheck(425);
 
   useClickAway(modalRef, () => {
     setGifOpen(false);
@@ -62,10 +66,14 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       });
       scrollToBottom();
 
-      if (chatsFeed[selectedChatId as string] || requestsFeed[selectedChatId as string])
+      if (
+        chatsFeed[selectedChatId as string] ||
+        requestsFeed[selectedChatId as string]
+      )
         setSearchedChats(null);
       if (newChat) setNewChat(false);
-      if (!chatsFeed[selectedChatId as string]) fetchRequests({ page, requestLimit });
+      if (!chatsFeed[selectedChatId as string])
+        fetchRequests({ page, requestLimit });
     } catch (error) {
       console.log(error);
       //handle error
@@ -79,7 +87,6 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
 
   const sendTextMsg = async () => {
     if (typedMessage.trim() !== '') {
-
       await sendPushMessage(typedMessage as string, 'Text');
       setTypedMessage('');
     }
@@ -116,6 +123,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           if (file.size > TWO_MB) {
             console.log('Files larger than 2mb is now allowed');
             return;
+            // throw new Error('Files larger than 2mb is now allowed');
           }
           setFileUploading(true);
           const messageType = file.type.startsWith('image') ? 'Image' : 'File';
@@ -148,31 +156,27 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       textAreaRef.current.style.height = 25 + 'px';
       const scrollHeight = textAreaRef.current?.scrollHeight;
       textAreaRef.current.style.height = scrollHeight + 'px';
-
-
-      
     }
   }, [textAreaRef, typedMessage]);
 
   return (
     <Container>
-      <Section
+      <TypebarSection
         borderColor="#DDDDDF"
         borderStyle="solid"
         borderWidth="1px"
         borderRadius="8px"
-        gap="10px"
         padding="12px 17px 15px 17px"
         background="#fff"
         alignItems="center"
         justifyContent="space-between"
       >
-        <Section gap="8px" flex='1'>
+        <Section gap="8px" flex="1">
           <Div
             width="20px"
             cursor="pointer"
             height="20px"
-            alignSelf='end'
+            alignSelf="end"
             onClick={() => setShowEmojis(!showEmojis)}
           >
             <EmojiIcon />
@@ -183,14 +187,19 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
               ref={modalRef}
               position="absolute"
               bottom="3.5rem"
-              left="1.7rem"
+              left="3.5rem"
             >
-              <EmojiPicker onEmojiClick={addEmoji} width={'80%'} height={300} />
+              <EmojiPicker
+                onEmojiClick={addEmoji}
+                width={isMobile ? 260 : 320}
+                height={370}
+              />
             </Section>
           )}
           <MultiLineInput
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
                 sendTextMsg();
               }
             }}
@@ -201,12 +210,12 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             rows={1}
           />
         </Section>
-        <Section gap="11.5px">
+        <SendSection >
           <Section
             width="34px"
             height="24px"
             cursor="pointer"
-            alignSelf='end'
+            alignSelf="end"
             onClick={() => setGifOpen(!gifOpen)}
           >
             <GifIcon />
@@ -216,25 +225,25 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             <Section
               position="absolute"
               bottom="3.5rem"
-              right="6.6rem"
+              right={isMobile ? '5rem' : '8rem'}
               ref={modalRef}
             >
               <GifPicker
                 onGifClick={sendGIF}
-                width={'80%'}
-                height={300}
+                width={isMobile ? 260 : 320}
+                height={370}
                 tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
               />
             </Section>
           )}
           <Section onClick={handleUploadFile}>
-            {!(loading || filesUploading) && (
+            {!filesUploading && (
               <>
                 <Section
                   width="17px"
                   height="24px"
                   cursor="pointer"
-                  alignSelf='end'
+                  alignSelf="end"
                   onClick={() => setNewChat(true)}
                 >
                   <AttachmentIcon />
@@ -251,50 +260,64 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           {!(loading || filesUploading) && (
             <Section
               cursor="pointer"
-              alignSelf='end'
-              height='24px'
+              alignSelf="end"
+              height="24px"
               onClick={() => sendTextMsg()}
             >
               <SendIcon />
             </Section>
           )}
 
-          {(loading || filesUploading) && <Spinner size="22" />}
-        </Section>
-      </Section>
-
+          {(loading || filesUploading) && (
+            <Section alignSelf="end" height="24px">
+              <Spinner size="22" />
+            </Section>
+          )}
+        </SendSection>
+      </TypebarSection>
     </Container>
   );
 };
 
 //styles
 const Container = styled.div`
-  width:100%;
-  border-top:1px solid #DDDDDF;
-  overflow:hidden;
-  padding:15px 0px;
+  width: 100%;
+  border-top: 1px solid #dddddf;
+  overflow: hidden;
+  padding: 15px 0px;
+`;
+const TypebarSection = styled(Section)`
+  gap: 10px;
+  @media ${device.mobileL} {
+    gap: 0px;
+  }
+`;
+const SendSection = styled(Section)`
+  gap: 11.5px;
+  @media ${device.mobileL} {
+    gap: 7.5px;
+  }
 `;
 const MultiLineInput = styled.textarea`
-  ::placeholder {
-    transform: translateY(1px);
-    font-size:16px;
-  }
-  font-family:inherit;
+  font-family: inherit;
   font-weight: 400;
   transform: translateY(3px);
   font-size: 16px;
-  // width: 27vw;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
   border: none;
   color: #000;
   resize: none;
-  flex:1;
-  padding-right:5px;
+  flex: 1;
+  padding-right: 5px;
   align-self: end;
+  @media ${device.mobileL} {
+    font-size: 14px;
+  }
   &&::-webkit-scrollbar {
     width: 4px;
+    padding-right: 0px;
   }
   ::-webkit-scrollbar-thumb {
     background: rgb(181 181 186);
@@ -303,11 +326,12 @@ const MultiLineInput = styled.textarea`
   }
   ::placeholder {
     color: #000;
-    // padding-top: 5px;
+    transform: translateY(1px);
+    @media ${device.mobileL} {
+      font-size: 14px;
+    }
   }
-  // @media ${device.mobileL} {
-  //   width: 27vw;
-  // }
+
   min-height: 25px;
   max-height: 80px;
   word-break: break-word;

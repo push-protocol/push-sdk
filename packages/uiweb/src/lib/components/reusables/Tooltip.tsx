@@ -55,6 +55,7 @@ const TooltipWrapper = styled.div`
 
   display: inline-block;
   position: relative;
+  z-index: 1;
 `;
 
 /* Absolute positioning */

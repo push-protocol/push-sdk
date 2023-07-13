@@ -154,10 +154,12 @@ type DivStyleProps = {
   width?: string;
   cursor?: string;
   alignSelf?:string;
+  margin?:string;
 };
 export const Div = styled.div<DivStyleProps>`
   height: ${(props) => props.height || 'auto'};
   width: ${(props) => props.width || '100%'};
+   margin: ${(props) => props.margin || '0px'};
   cursor: ${(props) => props.cursor || 'default'};
   align-self: ${(props) => props.alignSelf || 'center'};
 `;

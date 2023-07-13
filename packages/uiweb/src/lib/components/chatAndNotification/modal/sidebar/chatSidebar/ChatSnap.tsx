@@ -35,7 +35,7 @@ const Message = ({
   messageType: string;
 }) => {
   const isMobile = useDeviceWidthCheck(425);
-  const digitsToDisplay = isMobile ? 18 : 37;
+  const digitsToDisplay = isMobile ? 27 : 48;
   return messageType === 'Text' ? (
     <Span
       textAlign="left"
@@ -89,7 +89,7 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
 
   const isMobile = useDeviceWidthCheck(425);
-  const digitsToDisplay = chat?.name ? isMobile ? 15 : 30 : isMobile ? 6 : 8;
+  const digitsToDisplay = chat?.name ? (isMobile ? 15 : 30) : isMobile ? 6 : 8;
 
   useResolveWeb3Name(chat?.did, env);
   //shift to helper
@@ -97,7 +97,9 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
   const checksumWallet = walletLowercase
     ? ethers.utils.getAddress(walletLowercase)
     : null;
-  const web3Name = checksumWallet ? web3NameList[checksumWallet.toLowerCase()] : null;
+  const web3Name = checksumWallet
+    ? web3NameList[checksumWallet.toLowerCase()]
+    : null;
   const handleOnClick = () => {
     setSelectedChatId(id);
     setData({ chatId: id, value: chat });
@@ -105,51 +107,34 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
   const open = modalOpen === undefined ? true : modalOpen;
   return (
     <Container
-      justifyContent="space-between"
+      justifyContent="flex-start"
       padding={open ? '15px 15px' : ' 0px '}
       onClick={() => handleOnClick()}
       active={open}
+      gap="18px"
+      cursor="pointer"
     >
-      <Section gap="18px" cursor="pointer">
-        <Image
-          src={chat.profilePicture!}
-          alt="profile picture"
-          width="36px"
-          height="36px"
-          borderRadius="100%"
-          cursor="pointer"
-        />
+      <Image
+        src={chat.profilePicture!}
+        alt="profile picture"
+        width="36px"
+        height="36px"
+        borderRadius="100%"
+        cursor="pointer"
+      />
+      <Section flexDirection="column" flex="2">
         <Section
-          flexDirection="column"
           gap={open ? '8px' : ' 2px '}
-          alignItems="start"
+          justifyContent="space-between"
           cursor="pointer"
         >
-          <NameSpan
-            fontWeight="700"
-            fontSize="16px"
-            color="#000"
-            cursor="pointer"
-          >
+          <NameSpan fontWeight="700" color="#000" cursor="pointer">
             {chat?.name
               ? shortenText(chat?.name, digitsToDisplay, false)
-              : web3Name ?? shortenText(chat?.did?.split(':')[1], digitsToDisplay, true)}
+              : web3Name ??
+                shortenText(chat?.did?.split(':')[1], digitsToDisplay, true)}
           </NameSpan>
-          <Message
-            messageContent={chat?.msg?.messageContent}
-            messageType={chat?.msg?.messageType}
-          />
-        </Section>
-      </Section>
-      {open && (
-        <Section
-          flexDirection="column"
-          alignItems="end"
-          gap="12px"
-          cursor="pointer"
-          justifyContent="flex-start"
-        >
-          <Span
+         {open &&  <Span
             fontWeight="400"
             fontSize="12px"
             color="#62626A"
@@ -158,14 +143,24 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({
             {chat?.msg?.timestamp
               ? dateToFromNowDaily(chat?.msg?.timestamp as number)
               : ''}
-          </Span>
-          {checkIfUnread(id, chat) && (
-            <UnreadChats
-            //  numberOfUnreadMessages="3"
-            />
-          )}
+          </Span>}
         </Section>
-      )}
+
+        
+          <Section gap="12px" cursor="pointer" justifyContent="space-between">
+            <Message
+              messageContent={chat?.msg?.messageContent}
+              messageType={chat?.msg?.messageType}
+            />
+
+           {open && checkIfUnread(id, chat) && (
+              <UnreadChats
+              //  numberOfUnreadMessages="3"
+              />
+            )}
+          </Section>
+        
+      </Section>
     </Container>
   );
 };
@@ -186,7 +181,8 @@ const Container = styled(Section)<{ active: boolean }>`
 `;
 
 const NameSpan = styled(Span)`
-  @media ${device.mobileS} {
+  font-size: 16px;
+  @media ${device.mobileL} {
     font-size: 14px;
   }
 `;
