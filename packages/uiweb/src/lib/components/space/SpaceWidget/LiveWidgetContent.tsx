@@ -82,7 +82,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   useEffect(() => {
     const createAudioStream = async () => {
       console.log('isSpeaker', isSpeaker);
-      if (isSpeaker) {
+      if (isSpeaker && !spaceObjectData?.connectionData?.local.stream) {
         // create audio stream as we'll need it to start the mesh connection
         console.log('creating audio stream');
         await spacesObjectRef.current.createAudioStream();
@@ -92,7 +92,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [isSpeaker]);
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
+    if (
+      !spaceObjectData?.connectionData?.local.stream ||
+      !isSpeaker ||
+      spaceObjectData.connectionData.incoming.length > 1
+    )
+      return;
+
     const joinSpaceAsSpeaker = async () => {
       console.log('joining as a speaker');
       await spacesObjectRef?.current?.join();
@@ -125,7 +131,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
-        {isSpeaker &&
+        {(isSpeaker || isHost) &&
           spaceObjectData.connectionData.incoming.map((profile) => (
             <LiveSpaceProfileContainer
               isHost={isHost}

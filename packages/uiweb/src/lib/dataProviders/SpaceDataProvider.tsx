@@ -22,6 +22,7 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { spaceChainId } from '../components/space/helpers/account';
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -41,6 +42,7 @@ export const SpacesUIProvider = ({
     spaceUI.pgpPrivateKey
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
+  const [chainId, setChainId] = useState<number>(spaceChainId(spaceUI.account, spaceUI.env));
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
@@ -104,11 +106,47 @@ export const SpacesUIProvider = ({
       signer,
       pgpPrivateKey,
       address: account,
-      chainId: 5, // TODO: Make this dynamic
+      chainId: chainId,
       env,
       setSpaceData: setSpaceObjectData,
     });
     await spacesObjectRef.current.initialize({ spaceId });
+  };
+
+  const acceptSpaceRequest = async ({
+    senderAddress,
+    recipientAddress,
+    chatId,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER ACCEPT REQUEST',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current?.acceptRequest({
+      recipientAddress: senderAddress,
+      senderAddress: recipientAddress,
+      chatId,
+      signalData,
+    });
+  };
+
+  const connectSpaceRequest = async ({
+    senderAddress,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER CONNECT',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current.connect({
+      peerAddress: senderAddress,
+      signalData,
+    });
   };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
@@ -251,6 +289,8 @@ export const SpacesUIProvider = ({
     setPgpPrivateKey,
     env,
     setEnv,
+    chainId,
+    setChainId,
     trendingListData,
     setTrendingListData,
     spaceInfo,
@@ -273,19 +313,39 @@ export const SpacesUIProvider = ({
     isListener,
     speakerData,
     setSpeakerData: setSpeakerDataItem,
+    acceptSpaceRequest,
+    connectSpaceRequest,
   };
+
+  const resetStates = () => {
+    setSpaceWidgetId('');
+    setSpeakerData({});
+    setSpaceObjectData(PushAPI.space.initSpaceData);
+    setSpaceRequests({});
+    setMySpaces({});
+    setPopularSpaces({});
+  }
 
   useEffect(() => {
     setAccount(spaceUI.account);
     setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
     setPgpPrivateKey(spaceUI.pgpPrivateKey);
+    
+    // reset
+    setChainId(spaceChainId(spaceUI.account, spaceUI.env));
+    resetStates();
   }, [spaceUI]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
-  useSpaceNotificationSocket({ account, env });
+  useSpaceNotificationSocket({
+    account,
+    env,
+    acceptSpaceRequest,
+    connectSpaceRequest,
+  });
   usePushSpaceSocket({ account, env });
 
   return (

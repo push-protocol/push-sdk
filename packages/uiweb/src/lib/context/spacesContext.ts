@@ -27,6 +27,8 @@ export interface ISpaceDataContextValues {
   setPgpPrivateKey: React.Dispatch<React.SetStateAction<string>>;
   env: ENV;
   setEnv: React.Dispatch<React.SetStateAction<ENV>>;
+  chainId: number;
+  setChainId: React.Dispatch<React.SetStateAction<number>>;
   trendingListData: any;
   setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
   spaceInfo: ISpaceInfo;
@@ -50,6 +52,8 @@ export interface ISpaceDataContextValues {
   isListener: boolean;
   speakerData: ISpaceSpeakerData;
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
+  acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -68,6 +72,10 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   env: ENV.DEV,
   setEnv: () => {
     /**/
+  },
+  chainId: 1,
+  setChainId: () => {
+    /** */
   },
   trendingListData: null,
   setTrendingListData: () => {
@@ -122,6 +130,12 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   isListener: false,
   speakerData: {} as ISpaceSpeakerData,
   setSpeakerData: () => {
+    /** */
+  },
+  acceptSpaceRequest: async () => {
+    /** */
+  },
+  connectSpaceRequest: async () => {
     /** */
   },
 };

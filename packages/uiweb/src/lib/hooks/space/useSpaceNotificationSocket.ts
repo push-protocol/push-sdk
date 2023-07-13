@@ -9,14 +9,20 @@ const NOTIFICATION_SOCKET_TYPE = 'notification';
 export type SDKSocketHookOptions = {
   account?: string | null;
   env?: ENV;
+  acceptSpaceRequest: (
+    spaceMetaData: PushAPI.video.VideoDataType
+  ) => Promise<void>;
+  connectSpaceRequest: (
+    spaceMetaData: PushAPI.video.VideoDataType
+  ) => Promise<void>;
 };
 
 export const useSpaceNotificationSocket = ({
   account,
+  acceptSpaceRequest,
+  connectSpaceRequest,
   env = ENV.PROD,
 }: SDKSocketHookOptions) => {
-  const { spacesObjectRef } = useSpaceData();
-
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
     useState<boolean>(false);
@@ -33,53 +39,44 @@ export const useSpaceNotificationSocket = ({
     notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const { payload } = feedItem;
 
-      console.log('RECEIVED USER FEEDS NOTIF', payload);
+      console.log(
+        'USER FEEDS NOTIFICATION RECEIVED',
+        payload?.data?.additionalMeta?.type,
+        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+      );
 
       if (
         payload?.data?.additionalMeta?.type ===
         `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
       ) {
-        const {
-          status,
-          callDetails,
-          senderAddress,
-          recipientAddress,
-          signalData,
-          chatId,
-        }: PushAPI.video.VideoDataType = JSON.parse(
+        const receivedSpaceMetaData: PushAPI.video.VideoDataType = JSON.parse(
           payload.data.additionalMeta.data
         );
+
+        const { callDetails, status } = receivedSpaceMetaData;
+
+        console.log('RECEIVED ADDITIONAL META DATA', receivedSpaceMetaData);
 
         if (status === PushAPI.VideoCallStatus.INITIALIZED) {
           if (
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.JOIN_SPEAKER
           ) {
+            console.log(
+              'ON HOST, ACCEPTING REQUEST OF AN ADDED SPEAKER TO JOIN'
+            );
             // TODO: see if check for speaker is req
-            spacesObjectRef.current?.acceptRequest({
-              senderAddress: recipientAddress,
-              recipientAddress: senderAddress,
-              signalData,
-              chatId,
-            });
+            acceptSpaceRequest(receivedSpaceMetaData);
           }
           if (
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.ESTABLISH_MESH
           ) {
-            spacesObjectRef.current?.acceptRequest({
-              signalData,
-              senderAddress: recipientAddress,
-              recipientAddress: senderAddress,
-              chatId: chatId,
-            });
+            acceptSpaceRequest(receivedSpaceMetaData);
           }
         }
         if (status === PushAPI.VideoCallStatus.RECEIVED) {
-          spacesObjectRef.current?.connect({
-            signalData,
-            peerAddress: senderAddress,
-          });
+          connectSpaceRequest(receivedSpaceMetaData);
         }
         if (status === PushAPI.VideoCallStatus.DISCONNECTED) {
           if (
@@ -95,7 +92,7 @@ export const useSpaceNotificationSocket = ({
         }
       }
     });
-  }, [notificationSocket]);
+  }, [acceptSpaceRequest, connectSpaceRequest, notificationSocket]);
 
   const removeSocketEvents = useCallback(() => {
     notificationSocket?.off(EVENTS.CONNECT);
