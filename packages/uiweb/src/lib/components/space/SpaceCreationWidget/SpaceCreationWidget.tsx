@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -13,11 +13,11 @@ export interface ISpaceCreateWidgetProps {
     customComponent?: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
     inviteOnly?: boolean;
     spaceData?: any;
+    closeInvite?: any;
 }
 
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
-    const { customComponent, inviteOnly, spaceData } = props;
-    console.log("🚀 ~ file: SpaceCreationWidget.tsx:20 ~ inviteOnly:", inviteOnly)
+    const { customComponent, inviteOnly, spaceData, closeInvite } = props;
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
@@ -83,6 +83,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     }
 
     const closeInviteModal = () => {
+        if (closeInvite) closeInvite();
         setIsInviteModalVisible(false);
     }
 
@@ -102,6 +103,12 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             time: Date.now(),
         })
     }
+
+    useEffect(() => {
+        if (inviteOnly) {
+            setIsInviteModalVisible(!isInviteModalVisible);
+        }
+    }, [inviteOnly]);
     
     const createSpace = async () => {
         const spaceCreate = {
@@ -115,7 +122,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             signer: signer as PushAPI.SignerType,
             env
         }
-        console.log('CREATE API')
+
         try {
             setLoading(true);
             const response = await PushAPI.space.create(spaceCreate);
@@ -144,7 +151,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             spaceId: spaceData.spaceId,
             status: spaceData.status,
         }
-        console.log('UPDATE API')
+
         try {
             setLoading(true);
             const response = await PushAPI.space.update(spaceUpdate);
@@ -163,9 +170,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         <div>
             {
                 inviteOnly ?
-                <SCWInviteModal
+                (isInviteModalVisible && <SCWInviteModal
                     closeInviteModal={closeInviteModal}
-                    makeScheduleVisible={showCreateSpace}
+                    makeScheduleVisible={closeInviteModal}
                     createSpace={updateSpace}
                     isLoading={isLoading}
                     invitedMembersList={invitedMembersList}
@@ -177,7 +184,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                     adminsAddressList={adminsAddressList}
                     setAdminsAddressList={setAdminsAddressList}
                     onClose={closeInviteModal}
-                />
+                    btnString='Update Space'
+                />)
                 :
                 <SCWContainer>
                     {
@@ -223,7 +231,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
                         <SCWInviteModal
                             closeInviteModal={closeInviteModal}
                             makeScheduleVisible={showCreateSpace}
-                            createSpace={updateSpace}
+                            createSpace={createSpace}
                             isLoading={isLoading}
                             invitedMembersList={invitedMembersList}
                             setInvitedMembersList={setInvitedMembersList}

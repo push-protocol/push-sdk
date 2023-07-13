@@ -34,7 +34,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
     }
 
     const showExplicitInvite: React.MouseEventHandler = () => {
-        setIsInviteVisible(true);
+        setIsInviteVisible(!isInviteVisible);
     }
 
     const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
@@ -43,7 +43,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         <Modal
             width='400px'
         >
-            <SpacesInfoContainer>
+            <SpacesInfoContainer theme={theme}>
             <ModalHeader
                 heading='Spaces Info'
                 closeCallback={props.closeSpacesInfo}
@@ -96,16 +96,16 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                 })
             }
 
-            </SpacesInfoContainer>
-
             {
                 isInviteVisible ?
                 <SpaceCreationWidget
-                    inviteOnly
-                    spaceData={spaceData}
+                inviteOnly
+                closeInvite={showExplicitInvite}
+                spaceData={spaceData}
                 />
                 : null
             }
+            </SpacesInfoContainer>
         </Modal>
     )
 }
@@ -113,8 +113,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
 /** styling */
 const SpacesInfoContainer = styled.div`
-    color: black;
-    width: 400px;
+    color: ${(props => props.theme.textColorPrimary)};
 `;
 
 const SpacesDetailsContainer = styled.div`
@@ -126,6 +125,6 @@ const Title = styled.div`
     font-weight: 500;
 `;
 
-const Description = styled.div<IThemeProps>`
+const Description = styled.div`
     color: ${(props => props.theme.textColorSecondary)};
 `;
