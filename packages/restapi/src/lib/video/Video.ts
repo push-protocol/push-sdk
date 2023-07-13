@@ -261,6 +261,7 @@ export class Video {
           const connectedAddresses = getConnectedAddresses({
             incomingPeers: this.data.incoming,
           });
+          console.log("CONNECT EVENT HANDLER IN REQUEST", "connectedAddresses", connectedAddresses);
           this.peerInstances[recipientAddress].send(
             JSON.stringify({
               type: 'connectedAddresses',
@@ -273,7 +274,7 @@ export class Video {
           if (isJSON(data)) {
             const parsedData = JSON.parse(data);
 
-            if (parsedData.type === 'connectedAddress') {
+            if (parsedData.type === 'connectedAddresses') {
               console.log('CONNECTED ADDRESSES', parsedData.value);
 
               const receivedConnectedAddresses = parsedData.value;
@@ -539,6 +540,7 @@ export class Video {
         const connectedAddresses = getConnectedAddresses({
           incomingPeers: this.data.incoming,
         });
+        console.log("CONNECT EVENT HANDLER IN ACCEPT REQUEST", "connectedAddresses", connectedAddresses);
         this.peerInstances[recipientAddress].send(
           JSON.stringify({
             type: 'connectedAddresses',
@@ -562,7 +564,7 @@ export class Video {
         if (isJSON(data)) {
           const parsedData = JSON.parse(data);
 
-          if (parsedData.type === 'connectedAddress') {
+          if (parsedData.type === 'connectedAddresses') {
             console.log('CONNECTED ADDRESSES', parsedData.value);
 
             const receivedConnectedAddresses = parsedData.value;
