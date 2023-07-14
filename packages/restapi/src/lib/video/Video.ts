@@ -261,7 +261,11 @@ export class Video {
           const connectedAddresses = getConnectedAddresses({
             incomingPeers: this.data.incoming,
           });
-          console.log("CONNECT EVENT HANDLER IN REQUEST", "connectedAddresses", connectedAddresses);
+          console.log(
+            'CONNECT EVENT HANDLER IN REQUEST',
+            'connectedAddresses',
+            connectedAddresses
+          );
           this.peerInstances[recipientAddress].send(
             JSON.stringify({
               type: 'connectedAddresses',
@@ -540,7 +544,11 @@ export class Video {
         const connectedAddresses = getConnectedAddresses({
           incomingPeers: this.data.incoming,
         });
-        console.log("CONNECT EVENT HANDLER IN ACCEPT REQUEST", "connectedAddresses", connectedAddresses);
+        console.log(
+          'CONNECT EVENT HANDLER IN ACCEPT REQUEST',
+          'connectedAddresses',
+          connectedAddresses
+        );
         this.peerInstances[recipientAddress].send(
           JSON.stringify({
             type: 'connectedAddresses',
@@ -795,25 +803,21 @@ export class Video {
   // functions for enabling/disabling local audio and video
 
   enableVideo(options: EnableVideoInputOptions): void {
-    const { state, peerAddress } = options || {};
+    const { state } = options || {};
 
     if (this.data.local.video !== state) {
       // need to change the video state
 
-      const incomingIndex = getIncomingIndexFromAddress(
-        this.data.incoming,
-        peerAddress
-      );
-
-      if (
-        this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
-      ) {
-        this.peerInstances[peerAddress]?.send(
-          JSON.stringify({
-            type: 'isVideoOn',
-            value: state,
-          })
-        );
+      // signal all the connected peers that the local peer has changed their video state
+      for (const incomingPeer of this.data.incoming) {
+        if (incomingPeer.status === VideoCallStatus.CONNECTED) {
+          this.peerInstances[incomingPeer.address]?.send(
+            JSON.stringify({
+              type: 'isVideoOn',
+              value: state,
+            })
+          );
+        }
       }
       if (this.data.local.stream) {
         if (state) {
@@ -831,22 +835,18 @@ export class Video {
   }
 
   enableAudio(options: EnableAudioInputOptions): void {
-    const { state, peerAddress } = options || {};
+    const { state } = options || {};
 
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
-      const incomingIndex = getIncomingIndexFromAddress(
-        this.data.incoming,
-        peerAddress
-      );
-
-      if (
-        this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
-      ) {
-        this.peerInstances[peerAddress]?.send(
-          JSON.stringify({ type: 'isAudioOn', value: state })
-        );
+      // signal all the connected peers that the local peer has changed their audio state
+      for (const incomingPeer of this.data.incoming) {
+        if (incomingPeer.status === VideoCallStatus.CONNECTED) {
+          this.peerInstances[incomingPeer.address]?.send(
+            JSON.stringify({ type: 'isAudioOn', value: state })
+          );
+        }
       }
       if (this.data.local.stream) {
         if (state) {
