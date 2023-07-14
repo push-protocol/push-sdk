@@ -5,12 +5,10 @@ import { EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  sign,
   updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
   getUserDID,
-  getConnectedUserV2,
   IPGPHelper,
   PGPHelper,
   getConnectedUserV2Core,
@@ -27,6 +25,10 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
   members: Array<string>;
   admins: Array<string>;
   pgpPrivateKey?: string;
+  // If meta is not passed, old meta is not affected
+  // If passed as null will update to null
+  // If passed as string will update to that value
+  meta?: string | null;
 }
 
 /**
@@ -54,6 +56,7 @@ export const updateGroupCore = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    meta,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -104,7 +107,8 @@ export const updateGroupCore = async (
       convertedMembers,
       convertedAdmins,
       connectedUser.did,
-      verificationProof
+      verificationProof,
+      meta
     );
 
     return axios

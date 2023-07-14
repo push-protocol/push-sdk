@@ -73,7 +73,7 @@ const approve = async (options: PushApi.chat.ApproveRequestOptionsType) => {
 const conversationHash = async (
   options: PushApi.ConversationHashOptionsType
 ) => {
-  let hash = await PushApi.chat.conversationHashCore(options, PGPHelper);
+  let hash = await PushApi.chat.conversationHash(options);
   return hash;
 };
 

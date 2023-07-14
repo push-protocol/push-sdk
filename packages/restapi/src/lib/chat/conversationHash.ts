@@ -1,7 +1,7 @@
 import Constants from '../constants';
 import { isValidETHAddress } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
-import { IPGPHelper, PGPHelper, getConversationHashService, getUserDID } from './helpers';
+import { getConversationHashService, getUserDID } from './helpers';
 
 /**
  * All chat messages are stored on IPFS. This function will return the latest message's CID (Content Identifier on IPFS).
@@ -9,13 +9,6 @@ import { IPGPHelper, PGPHelper, getConversationHashService, getUserDID } from '.
  */
 
 export const conversationHash = async(options: ConversationHashOptionsType) => {
-  return await conversationHashCore(options, PGPHelper);
-}
-
-export const conversationHashCore = async (
-  options: ConversationHashOptionsType,
-  pgpHelper: IPGPHelper
-) => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
   try {
     if (!isValidETHAddress(account)) {

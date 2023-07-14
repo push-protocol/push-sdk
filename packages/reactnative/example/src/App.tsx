@@ -101,23 +101,23 @@ export default function App() {
     const account = `eip155:${walletAddress}`;
     console.log(signer);
 
-    const res = await conversationHash({
+    const res = await PushApi.chat.conversationHash({
       account: account,
       conversationId:
         'b353220b812bdb707bd93529aac6fac893438e5db791d7c9e6aab6773aaff90b',
-      env: ENV.DEV,
+      env: ENV.STAGING,
     });
 
     const res2 = await latest({
       threadhash: res.threadHash,
       toDecrypt: true,
       account: account,
-      env: ENV.DEV,
+      env: ENV.STAGING,
     });
 
     const user = await PushApi.user.get({
       account: account,
-      env: ENV.DEV,
+      env: ENV.STAGING,
     });
 
     const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
@@ -129,7 +129,7 @@ export default function App() {
       account: account,
       pgpPrivateKey: pgpDecryptedPvtKey,
       toDecrypt: true,
-      env: ENV.DEV,
+      env: ENV.STAGING,
     });
     console.log(user, 'user');
     console.log(pgpDecryptedPvtKey, 'key');
