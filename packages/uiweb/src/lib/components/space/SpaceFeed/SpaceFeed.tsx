@@ -285,7 +285,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
                   <Text>Popular Spaces</Text>
-                  {popularSpaces &&
+                  {popularSpaces.apiData &&
                     handleFilterData(
                       popularSpaces.apiData as SpaceIFeeds[]
                     ).map((space: SpaceIFeeds) => {
