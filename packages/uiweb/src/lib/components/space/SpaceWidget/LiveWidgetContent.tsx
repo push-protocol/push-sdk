@@ -28,7 +28,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
-  const [isMicOn, setIsMicOn] = useState<boolean>(true);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const {
     spacesObjectRef,
@@ -40,6 +39,12 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     isJoined,
     initSpaceObject,
   } = useSpaceData();
+
+  const isMicOn = spaceObjectData.connectionData.local.audio;
+
+  const handleMicState = async () => {
+    await spacesObjectRef.current.enableAudio({ state: !isMicOn });
+  };
 
   const handleJoinSpace = async () => {
     if (!spaceData) {
@@ -166,9 +171,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() =>
-                isHost || isSpeaker ? setIsMicOn(!isMicOn) : null
-              }
+              onClick={() => (isHost || isSpeaker ? handleMicState : null)}
             >
               <Image
                 width={'14px'}
