@@ -2,6 +2,21 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.1.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.2...uiweb-1.1.0) (2023-07-14)
+
+
+### Bug Fixes
+
+* fixed issue with build uiweb ([#541](https://github.com/ethereum-push-notification-service/push-sdk/issues/541)) ([3e00f81](https://github.com/ethereum-push-notification-service/push-sdk/commit/3e00f81af99de5bee468c3320062aec243708798))
+
+
+### Features
+
+* add video sdk methods ([#395](https://github.com/ethereum-push-notification-service/push-sdk/issues/395)) ([4b9dd69](https://github.com/ethereum-push-notification-service/push-sdk/commit/4b9dd691ac1fde6a91be0478b20780f6755fbb4f)), closes [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295) [#309](https://github.com/ethereum-push-notification-service/push-sdk/issues/309) [#357](https://github.com/ethereum-push-notification-service/push-sdk/issues/357) [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)
+* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+
+
+
 ## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-1.0.2) (2023-05-13)
 
 
