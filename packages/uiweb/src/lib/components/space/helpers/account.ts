@@ -10,7 +10,7 @@ export const isNftProfile = (account: string) => {
 }
 
 export const spaceChainId = (account: string, env: ENV): number => {
-  if (isNftProfile(account)) 
+  if (account && isNftProfile(account)) 
     return Number(account.split(':')[2]);
   return env === ENV.PROD ? 1: 5; // Ethereum Mainnet Id
 }

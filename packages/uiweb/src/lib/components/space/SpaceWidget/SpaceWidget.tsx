@@ -23,7 +23,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     width,
     zIndex = 1000,
     spaceId,
-    shareUrl,
+    share,
     onClose = (() => {
       /** */
     }) as MouseEventHandler<HTMLDivElement>,
@@ -103,7 +103,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
       <WidgetContent
         account={account}
         spaceData={spaceData}
-        shareUrl={shareUrl}
+        share={share}
         isHost={isHost}
         isLive={isLive}
         isMember={isMember}

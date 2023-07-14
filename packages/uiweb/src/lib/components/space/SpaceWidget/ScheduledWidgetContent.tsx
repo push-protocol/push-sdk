@@ -6,15 +6,24 @@ import { formatDate } from '../../../helpers';
 import SpacesIcon from '../../../icons/Spaces.svg';
 import TwitterIcon from '../../../icons/twitterVector.svg';
 import CopyIcon from '../../../icons/copyVector.svg';
-import AtIcon from '../../../icons/atVector.svg';
+import LensterIcon from '../../../icons/lensterVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
 import { useEffect, useState } from 'react';
+import { generateLensterShareURL } from '../helpers/share';
+import { ShareConfig } from '../exportedTypes';
+
+enum ShareOptions {
+  Twitter = 'Twitter',
+  Lenster = 'Lenster',
+  CopyShareUrl = 'Copy Link',
+}
+
+export type ShareOptionsValues = keyof typeof ShareOptions;
 
 interface ScheduledWidgetContentProps {
-  account?: string;
   spaceData?: SpaceDTO;
-  shareUrl?: string;
+  share?: ShareConfig;
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
@@ -24,9 +33,8 @@ interface ScheduledWidgetContentProps {
   setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
-  account,
   spaceData,
-  shareUrl,
+  share,
   isHost,
   isMember,
   isSpaceLive,
@@ -35,6 +43,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const isTimeToStartSpace = true;
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const { shareUrl, shareOptions = ["Twitter", "Lenster", "CopyShareUrl"] } = share || {};
 
   const handleStartSpace = async () => {
     console.log('initializing space object');
@@ -59,6 +68,19 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     window.open(tweetUrl, '_blank');
   };
 
+  const handleShareLenster = () => {
+    if (!shareUrl) return;
+    const url = shareUrl;
+    const lensterShareText = 'Join this space';
+
+    const lensterShareUrl = generateLensterShareURL({
+      text: lensterShareText,
+      url
+    });
+
+    window.open(lensterShareUrl, '_blank');
+  }
+
   const handleCopyLink = async () => {
     try {
       if (!shareUrl) return;
@@ -69,6 +91,42 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     } catch (error) {
       console.error('Failed to copy URL:', error);
     }
+  };
+
+  const handleShareAction = (shareOption: ShareOptionsValues) => {
+    switch (shareOption) {
+      case ShareOptions.Twitter:
+        handleShareTweet();
+        break;
+      case ShareOptions.Lenster:
+        handleShareLenster();
+        break;
+      default:
+        handleCopyLink();
+        break;
+    }
+  };
+
+  const getShareOptionDetails = (shareOption: ShareOptionsValues) => {
+    let icon = '';
+    let alt = '';
+  
+    switch (shareOption) {
+      case ShareOptions.Twitter:
+        icon = TwitterIcon;
+        alt = 'Twitter Icon';
+        break;
+      case ShareOptions.Lenster:
+        icon = LensterIcon;
+        alt = 'Lenster Icon';
+        break;
+      default:
+        icon = CopyIcon;
+        alt = 'Copy Icon';
+        break;
+    }
+  
+    return { icon, alt };
   };
 
   useEffect(() => {
@@ -160,45 +218,26 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       )}
       {(!isHost || (isHost && !isTimeToStartSpace)) && shareUrl && (
         <Item display={'flex'} gap={'13px'}>
-          <ShareLinkItem>
-            <ShareLinkButton onClick={handleShareTweet}>
-              <Image
-                src={TwitterIcon}
-                alt="Twitter Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Twitter
+          {shareOptions.map((shareOption) => {
+            const { icon, alt } = getShareOptionDetails(shareOption);
+            return (
+              <ShareLinkItem key={shareOption}>
+                <ShareLinkButton
+                  onClick={() => handleShareAction(shareOption)}
+                >
+                  <Image 
+                    src={icon}
+                    alt={alt}
+                    width={'25px'}
+                    height={'22px'}
+                  />
+                </ShareLinkButton>
+                <Text fontSize={'12px'} fontWeight={600}>
+              {ShareOptions[shareOption]}
             </Text>
-          </ShareLinkItem>
-          <ShareLinkItem>
-            <ShareLinkButton onClick={handleCopyLink}>
-              <Image
-                src={CopyIcon}
-                alt="Copy Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Copy Link
-            </Text>
-          </ShareLinkItem>
-          <ShareLinkItem>
-            <ShareLinkButton>
-              <Image
-                src={AtIcon}
-                alt="At Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Email
-            </Text>
-          </ShareLinkItem>
+              </ShareLinkItem>
+            );
+          })}
         </Item>
       )}
     </Container>

@@ -143,7 +143,10 @@ export const SpaceWidget = () => {
         spaceId={spaceId} 
         width={Number(width)} 
         zIndex={Number(zIndex)}
-        shareUrl={shareUrl}
+        share={{
+          shareUrl: shareUrl,
+          shareOptions: ["Lenster", "Twitter", "CopyShareUrl"]
+        }}
         isHost={isHost}
         isLive={isLive}
         isJoined={isJoined}

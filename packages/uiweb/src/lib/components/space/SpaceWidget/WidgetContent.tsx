@@ -5,6 +5,7 @@ import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
+import { ShareConfig } from '../exportedTypes';
 
 const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
 const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
@@ -12,7 +13,7 @@ const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
 interface WidgetContentProps {
   account?: string; //Temp Prop to Test Host functionality
   spaceData?: SpaceDTO;
-  shareUrl?: string;
+  share?: ShareConfig;
   isMinimized: boolean;
 
   // temp props only for testing demo purpose for now
@@ -24,7 +25,7 @@ interface WidgetContentProps {
 export const WidgetContent: React.FC<WidgetContentProps> = ({
   account,
   spaceData,
-  shareUrl,
+  share,
   isHost,
   isTimeToStartSpace,
   isMember,
@@ -55,7 +56,7 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
       ) : (
         <ScheduledWidgetContent
           spaceData={spaceData}
-          shareUrl={shareUrl}
+          share={share}
           isHost={isHost}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}

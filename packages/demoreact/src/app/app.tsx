@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import ConnectButton from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
-import { Web3Context, EnvContext, SocketContext } from './context';
+import { Web3Context, EnvContext, SocketContext, AccountContext } from './context';
 import { useSDKSocket } from './hooks';
 import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
 import NotificationsTest from './NotificationsTest';
@@ -63,6 +63,7 @@ import {
   SpaceInvitesComponent
 } from './SpaceUITest';
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
+import * as PushAPI from "@pushprotocol/restapi";
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -156,17 +157,18 @@ const checkForWeb3Data = ({
 };
 
 export function App() {
-  const web3Data: Web3ReactState = useWeb3React();
+  const {account, library, active, chainId} = useWeb3React();
 
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
 
   const socketData = useSDKSocket({
-    account: web3Data.account,
-    chainId: web3Data.chainId,
+    account: account,
+    chainId: chainId,
     env,
     isCAIP,
   });
@@ -178,6 +180,26 @@ export function App() {
   const onChangeCAIP = () => {
     setIsCAIP(!isCAIP);
   };
+
+  useEffect(() => {
+    (async () => {
+      if (!account || !env || !library) return;
+
+      const user = await PushAPI.user.get({ account: account, env });
+      let pgpPrivateKey;
+      const librarySigner = await library.getSigner(account);
+      if (user?.encryptedPrivateKey) {
+        pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account: account,
+          signer: librarySigner,
+          env,
+        });
+      }
+
+      setPgpPrivateKey(pgpPrivateKey);
+    })();
+  }, [account, env, library]);
 
   return (
     <StyledApp>
@@ -210,9 +232,12 @@ export function App() {
 
       <hr />
       <EnvContext.Provider value={{ env, isCAIP }}>
-        {checkForWeb3Data(web3Data) ? (
-          <Web3Context.Provider value={web3Data}>
+        {checkForWeb3Data({
+          active, account, library, chainId
+        }) ? (
+          <Web3Context.Provider value={{account, active, library, chainId}}>
             <SocketContext.Provider value={socketData}>
+              <AccountContext.Provider value={{pgpPrivateKey}}>
               <SpacesComponentProvider>
                 <Routes>
                   <Route
@@ -366,6 +391,7 @@ export function App() {
                 <ChatSupportTest />
                 <SpaceWidgetComponent spaceId={spaceId} />
               </SpacesComponentProvider>
+              </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>
         ) : null}
