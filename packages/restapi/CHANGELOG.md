@@ -2,6 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.3.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.8...restapi-1.3.9) (2023-06-26)
+
+
+### Bug Fixes
+
+* add blockedUsersList functionality to SDK ([#444](https://github.com/ethereum-push-notification-service/push-sdk/issues/444)) ([d66e3ff](https://github.com/ethereum-push-notification-service/push-sdk/commit/d66e3ff9fcb7b775705315654a759800b367122d))
+* Merge branch 'main' into deployment ([a95a1aa](https://github.com/ethereum-push-notification-service/push-sdk/commit/a95a1aaef0b2ae579e40e17e898f7df58a00388f))
+* **video:** add error handlers and turn server config ([#466](https://github.com/ethereum-push-notification-service/push-sdk/issues/466)) ([cda9a28](https://github.com/ethereum-push-notification-service/push-sdk/commit/cda9a28bbb99bf8bd40bcd13f3c486cbf1ebe5a2))
+
+
+
+## [1.3.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.7...restapi-1.3.8) (2023-06-12)
+
+
+### Bug Fixes
+
+* added types for Env and name in Ifeeds ([#452](https://github.com/ethereum-push-notification-service/push-sdk/issues/452)) ([301808e](https://github.com/ethereum-push-notification-service/push-sdk/commit/301808e81fc66df10a0f64b65eb7d13375702e00))
+
+
+
 ## [1.3.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.3.6...restapi-1.3.7) (2023-06-12)
 
 

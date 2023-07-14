@@ -122,8 +122,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           const TWO_MB = 1024 * 1024 * 2;
           if (file.size > TWO_MB) {
             console.log('Files larger than 2mb is now allowed');
-            return;
-            // throw new Error('Files larger than 2mb is now allowed');
+            throw new Error('Files larger than 2mb is now allowed');
           }
           setFileUploading(true);
           const messageType = file.type.startsWith('image') ? 'Image' : 'File';

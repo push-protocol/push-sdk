@@ -10,7 +10,7 @@ interface SendMessageParams {
   message: string;
   receiver: string;
 
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
 const usePushSendMessage = () => {

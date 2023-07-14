@@ -1,6 +1,7 @@
 import type { NotificationFeedsType } from '../../../../../types';
 import React, { useContext } from 'react';
-import type { chainNameType } from '../../../../notification';
+import type { chainNameType, INotificationItemTheme} from '../../../../notification';
+import { notificationLightTheme } from '../../../../notification';
 import { NotificationItem } from '../../../../notification';
 import { ChatAndNotificationPropsContext, NotificationMainStateContext } from '../../../../../context';
 import useOnSubscribeToChannel from '../../../../../hooks/notifications/useOnSubscribeToChannel';
@@ -9,6 +10,35 @@ import { Div } from '../../../../reusables';
 type NotificationFeedListPropType = {
   notificationFeeds: NotificationFeedsType;
 };
+const customTheme: INotificationItemTheme = {...notificationLightTheme,...{
+  borderRadius:{
+    ...notificationLightTheme.borderRadius,
+    modal:'12px',
+  },
+  color:{
+    ...notificationLightTheme.color,
+      channelNameText:'#62626A',
+      notificationTitleText:'#000',
+      notificationContentText:'#62626A',
+      modalBorder:'#C8C8CB',
+      timestamp:'#62626A',
+  },
+  fontWeight:{
+    ...notificationLightTheme.fontWeight,
+    channelNameText:600,
+    notificationTitleText:600,
+    notificationContentText:500,
+    timestamp:400
+  },
+  fontSize:{
+    ...notificationLightTheme.fontSize,
+    channelNameText:'16px',
+    notificationTitleText:'16px',
+    notificationContentText:'16px',
+    timestamp:'12px'
+  },
+  modalDivider:'none'
+}};
 
 export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
   notificationFeeds,
@@ -31,7 +61,8 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
             app={notificationFeeds[id].app}
             icon={notificationFeeds[id].icon}
             image={notificationFeeds[id].image}
-            theme={'light'}
+            // theme={'light'}
+            customTheme={customTheme}
             isSpam={(!!signer&& !subscriptionStatus.get(notificationFeeds[id].channel))}
             subscribeFn={
               (!!signer&& !subscriptionStatus.get(notificationFeeds[id].channel))

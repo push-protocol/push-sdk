@@ -1,21 +1,38 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO } from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { getGroup } from '../getGroup';
 import { ENV } from '../../constants';
-
+import * as AES from './aes';
+import { META_MESSAGE_META } from '../../types/metaTypes';
+import { sign } from './pgp';
+import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageContent: string;
+  messageObj:
+    | {
+        content: string;
+        meta?: META_MESSAGE_META;
+      }
+    | string;
   messageType: string;
-  signature: string | null | undefined;
   encType: string;
   encryptedSecret: string | null | undefined;
+  verificationProof?: string;
+  /**
+   * @deprecated - Use messageObj instead
+   */
+  messageContent: string;
+  /**
+   * @deprecated - Use messageObj instead
+   */
+  signature: string | null | undefined;
+  /**
+   * @deprecated - Use messageObj instead
+   */
   sigType: string | null | undefined;
-  verificationProof?: string | null | undefined;
 }
 
 export interface IApproveRequestPayload {
@@ -55,50 +72,75 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
+  messageObj: {
+    content: string;
+    meta?: META_MESSAGE_META;
+  },
   messageContent: string,
   messageType: string,
+  group: GroupDTO | null,
   env: ENV
 ): Promise<ISendMessagePayload> => {
-  let isGroup = true;
-  if (isValidETHAddress(receiverAddress)) {
-    isGroup = false;
-  }
+  const isGroup = !isValidETHAddress(receiverAddress);
 
-  let group: GroupDTO | null = null;
+  const secretKey: string = AES.generateRandomSecret(15);
 
-  if (isGroup) {
-    group = await getGroup({
-      chatId: receiverAddress,
-      env: env,
-    });
-
-    if (!group) {
-      throw new Error(`Group not found!`);
-    }
-  }
-
-  const { message, encryptionType, aesEncryptedSecret, signature } =
-    (await getEncryptedRequest(
+  const { message: encryptedMessageContent, signature: deprecatedSignature } =
+    await getEncryptedRequest(
       receiverAddress,
       senderCreatedUser,
       messageContent,
       isGroup,
       env,
-      group
-    )) || {};
+      group,
+      secretKey
+    );
+  const {
+    message: encryptedMessageObj,
+    encryptionType,
+    aesEncryptedSecret,
+  } = await getEncryptedRequest(
+    receiverAddress,
+    senderCreatedUser,
+    JSON.stringify(messageObj),
+    isGroup,
+    env,
+    group,
+    secretKey
+  );
 
   const body: ISendMessagePayload = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
     toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
     fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
     toCAIP10: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
-    messageContent: message!,
     messageType,
-    signature: signature!,
+    messageObj:
+      encryptionType === 'PlainText' ? messageObj : encryptedMessageObj,
     encType: encryptionType!,
     encryptedSecret: aesEncryptedSecret!,
-    sigType: 'pgp',
+    messageContent: encryptedMessageContent,
+    signature: deprecatedSignature, //for backward compatibility
+    sigType: 'pgpv2',
   };
+
+  //build verificationProof
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.fromDID,
+    fromCAIP10: body.fromCAIP10,
+    toCAIP10: body.toCAIP10,
+    messageObj: body.messageObj,
+    messageType: body.messageType,
+    encType: body.encType,
+    encryptedSecret: body.encryptedSecret,
+  };
+  const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+  const signature: string = await sign({
+    message: hash,
+    signingKey: senderCreatedUser.privateKey!,
+  });
+  body.verificationProof = `pgpv2:${signature}`;
   return body;
 };
 
@@ -160,7 +202,8 @@ export const updateGroupPayload = (
   members: Array<string>,
   admins: Array<string>,
   address: string,
-  verificationProof: string
+  verificationProof: string,
+  meta?: string | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -170,6 +213,7 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    ...(meta !== undefined && { meta: meta }),
   };
   return body;
 };

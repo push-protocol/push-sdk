@@ -1,5 +1,6 @@
 import * as PGP from './pgp';
 import * as AES from './aes';
+import * as CryptoJS from 'crypto-js';
 import {
   IConnectedUser,
   IFeeds,
@@ -7,6 +8,7 @@ import {
   IUser,
   GroupDTO,
   walletType,
+  IMessageIPFS,
 } from '../../types';
 import { get } from '../../user';
 import {
@@ -14,12 +16,13 @@ import {
   decryptWithWalletRPCMethod,
   isValidETHAddress,
   walletToPCAIP10,
-  decryptAndVerifySignature,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
+import { pgpDecrypt, verifySignature } from './pgp';
+import { aesDecrypt } from './aes';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -29,15 +32,25 @@ interface IEncryptedRequest {
   aesEncryptedSecret: string;
   signature: string;
 }
+interface IDecryptMessage {
+  savedMsg: IMessageIPFSWithCID;
+  connectedUser: IConnectedUser;
+  account: string;
+  chainId: number;
+  currentChat: IFeeds;
+  inbox: IFeeds[];
+}
 
 export const encryptAndSign = async ({
   plainText,
   keys,
   privateKeyArmored,
+  secretKey,
 }: {
   plainText: string;
   keys: Array<string>;
   privateKeyArmored: string;
+  secretKey: string;
 }): Promise<{
   cipherText: string;
   encryptedSecret: string;
@@ -45,7 +58,6 @@ export const encryptAndSign = async ({
   sigType: string;
   encType: string;
 }> => {
-  const secretKey: string = AES.generateRandomSecret(15);
   const cipherText: string = AES.aesEncrypt({ plainText, secretKey });
   const encryptedSecret = await PGP.pgpEncrypt({
     plainText: secretKey,
@@ -113,27 +125,15 @@ export const decryptFeeds = async ({
       } else {
         signatureValidationPubliKey = connectedUser.publicKey!;
       }
-      feed.msg.messageContent = await decryptAndVerifySignature({
-        cipherText: feed.msg.messageContent,
-        encryptedSecretKey: feed.msg.encryptedSecret,
-        publicKeyArmored: signatureValidationPubliKey,
-        signatureArmored: feed.msg.signature,
-        privateKeyArmored: pgpPrivateKey,
-        message: feed.msg,
-      });
+      feed.msg = await decryptAndVerifyMessage(
+        feed.msg,
+        signatureValidationPubliKey,
+        pgpPrivateKey
+      );
     }
   }
   return feeds;
 };
-
-interface IDecryptMessage {
-  savedMsg: IMessageIPFSWithCID;
-  connectedUser: IConnectedUser;
-  account: string;
-  chainId: number;
-  currentChat: IFeeds;
-  inbox: IFeeds[];
-}
 
 export const decryptMessages = async ({
   savedMsg,
@@ -160,14 +160,11 @@ export const decryptMessages = async ({
           signatureValidationPubliKey = currentChat.publicKey;
         }
       }
-      savedMsg.messageContent = await decryptAndVerifySignature({
-        cipherText: savedMsg.messageContent,
-        encryptedSecretKey: savedMsg.encryptedSecret,
-        privateKeyArmored: connectedUser.privateKey,
-        publicKeyArmored: signatureValidationPubliKey,
-        signatureArmored: savedMsg.signature,
-        message: savedMsg,
-      });
+      savedMsg = (await decryptAndVerifyMessage(
+        savedMsg,
+        signatureValidationPubliKey,
+        connectedUser.privateKey
+      )) as IMessageIPFSWithCID;
     }
   }
   return savedMsg;
@@ -179,8 +176,9 @@ export const getEncryptedRequest = async (
   message: string,
   isGroup: boolean,
   env: ENV,
-  group: GroupDTO | null
-): Promise<IEncryptedRequest | void> => {
+  group: GroupDTO | null,
+  secretKey: string
+): Promise<IEncryptedRequest> => {
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
       account: receiverAddress,
@@ -234,6 +232,7 @@ export const getEncryptedRequest = async (
             plainText: message,
             keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
             privateKeyArmored: senderCreatedUser.privateKey!,
+            secretKey,
           }
         );
         return {
@@ -264,6 +263,7 @@ export const getEncryptedRequest = async (
         plainText: message,
         keys: publicKeys,
         privateKeyArmored: senderCreatedUser.privateKey!,
+        secretKey,
       });
       return {
         message: cipherText,
@@ -272,6 +272,8 @@ export const getEncryptedRequest = async (
         signature: signature,
       };
     }
+  } else {
+    throw new Error('Unable to find Group Data');
   }
 };
 
@@ -344,3 +346,101 @@ export async function getDecryptedPrivateKey(
   }
   return decryptedPrivateKey;
 }
+
+/**
+ * Decrypts and verifies a Push Chat Message
+ * @param message encrypted chat message
+ * @param pgpPublicKey pgp public key of signer of message - used for verification
+ * @param pgpPrivateKey pgp private key of receiver - used for decryption
+ */
+export const decryptAndVerifyMessage = async (
+  message: IMessageIPFS | IMessageIPFSWithCID,
+  pgpPublicKey: string,
+  pgpPrivateKey: string
+): Promise<IMessageIPFS | IMessageIPFSWithCID> => {
+  /**
+   * VERIFICATION
+   * If verification proof is present then check that else check messageContent Signature
+   */
+  if (
+    message.verificationProof &&
+    message.verificationProof.split(':')[0] === 'pgpv2'
+  ) {
+    const bodyToBeHashed = {
+      fromDID: message.fromDID,
+      toDID: message.fromDID,
+      fromCAIP10: message.fromCAIP10,
+      toCAIP10: message.toCAIP10,
+      messageObj: message.messageObj,
+      messageType: message.messageType,
+      encType: message.encType,
+      encryptedSecret: message.encryptedSecret,
+    };
+    const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+    const signature = message.verificationProof.split(':')[1];
+    await verifySignature({
+      messageContent: hash,
+      signatureArmored: signature,
+      publicKeyArmored: pgpPublicKey,
+    });
+  } else {
+    if (message.link == null) {
+      const bodyToBeHashed = {
+        fromDID: message.fromDID,
+        toDID: message.toDID,
+        messageContent: message.messageContent,
+        messageType: message.messageType,
+      };
+      const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+      try {
+        await verifySignature({
+          messageContent: hash,
+          signatureArmored: message.signature,
+          publicKeyArmored: pgpPublicKey,
+        });
+      } catch (err) {
+        await verifySignature({
+          messageContent: message.messageContent,
+          signatureArmored: message.signature,
+          publicKeyArmored: pgpPublicKey,
+        });
+      }
+    } else {
+      await verifySignature({
+        messageContent: message.messageContent,
+        signatureArmored: message.signature,
+        publicKeyArmored: pgpPublicKey,
+      });
+    }
+  }
+
+  /**
+   * DECRYPTION
+   * 1. Decrypt AES Key
+   * 2. Decrypt messageObj.message, messageObj.meta , messageContent
+   */
+  const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
+  try {
+    const secretKey: string = await pgpDecrypt({
+      cipherText: message.encryptedSecret,
+      toPrivateKeyArmored: pgpPrivateKey,
+    });
+    decryptedMessage.messageContent = aesDecrypt({
+      cipherText: message.messageContent,
+      secretKey,
+    });
+    if (message.messageObj) {
+      decryptedMessage.messageObj = JSON.parse(
+        aesDecrypt({
+          cipherText: message.messageObj as string,
+          secretKey,
+        })
+      );
+    }
+  } catch (err) {
+    decryptedMessage.messageContent = decryptedMessage.messageObj =
+      'Unable to Decrypt Message';
+  }
+
+  return decryptedMessage;
+};
