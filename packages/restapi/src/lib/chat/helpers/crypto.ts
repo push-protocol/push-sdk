@@ -420,21 +420,27 @@ export const decryptAndVerifyMessage = async (
    * 2. Decrypt messageObj.message, messageObj.meta , messageContent
    */
   const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
-  const secretKey: string = await pgpDecrypt({
-    cipherText: message.encryptedSecret,
-    toPrivateKeyArmored: pgpPrivateKey,
-  });
-  decryptedMessage.messageContent = aesDecrypt({
-    cipherText: message.messageContent,
-    secretKey,
-  });
-  if (message.messageObj) {
-    decryptedMessage.messageObj = JSON.parse(
-      aesDecrypt({
-        cipherText: message.messageObj as string,
-        secretKey,
-      })
-    );
+  try {
+    const secretKey: string = await pgpDecrypt({
+      cipherText: message.encryptedSecret,
+      toPrivateKeyArmored: pgpPrivateKey,
+    });
+    decryptedMessage.messageContent = aesDecrypt({
+      cipherText: message.messageContent,
+      secretKey,
+    });
+    if (message.messageObj) {
+      decryptedMessage.messageObj = JSON.parse(
+        aesDecrypt({
+          cipherText: message.messageObj as string,
+          secretKey,
+        })
+      );
+    }
+  } catch (err) {
+    decryptedMessage.messageContent = decryptedMessage.messageObj =
+      'Unable to Decrypt Message';
   }
+
   return decryptedMessage;
 };

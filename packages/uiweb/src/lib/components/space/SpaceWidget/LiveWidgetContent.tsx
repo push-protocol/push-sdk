@@ -47,7 +47,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
 
     await initSpaceObject(spaceData?.spaceId as string);
-
     if (isListener) {
       console.log('joining as a listner');
       await spacesObjectRef?.current?.join();
