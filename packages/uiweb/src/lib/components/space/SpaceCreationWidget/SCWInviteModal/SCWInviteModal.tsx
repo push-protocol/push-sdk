@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext } from 'react'
+import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 

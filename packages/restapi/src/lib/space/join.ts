@@ -50,7 +50,7 @@ export async function join(this: Space) {
       this.data.incoming,
       hostAddress
     );
-    
+
     // check if we arent already connected to the host
     if ((isSpeaker || isSpeakerPending) && incomingIndex > -1) {
       return Promise.resolve();

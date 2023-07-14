@@ -53,8 +53,8 @@ export const usePushSpaceSocket = ({
           }
           return item;
         });
-        
-        setSpaceRequests({ 
+
+        setSpaceRequests({
           apiData: updatedRequests as PushAPI.SpaceIFeeds[]
         })
 
@@ -67,8 +67,8 @@ export const usePushSpaceSocket = ({
           }
           return item;
         });
-        
-        setMySpaces({ 
+
+        setMySpaces({
           apiData: updatedMySpaces as PushAPI.SpaceIFeeds[]
         })
 
@@ -81,8 +81,8 @@ export const usePushSpaceSocket = ({
           }
           return item;
         });
-        
-        setPopularSpaces({ 
+
+        setPopularSpaces({
           apiData: updatedPopularSpaces as PushAPI.SpaceIFeeds[]
         })
     });
