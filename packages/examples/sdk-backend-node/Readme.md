@@ -1,20 +1,38 @@
 # SDK Backend Node Example
 
-This is an example project demonstrating how to implement Push Protocol on the backend using Node.js. 
-This example is a valuable resource for any developer looking to integrate Push Protocol into their backend services. By exploring the code, you can gain a deeper understanding of how to implement various features of the Push Protocol in a Node.js backend.
-
+Welcome to the SDK Backend Node Example project, a hands-on guide demonstrating how to leverage the power of Push Protocol in a backend environment using Node.js. This resource is an invaluable companion for developers keen to integrate Push Protocol into their backend services. Dive into the code to gain a comprehensive understanding of how to deploy various features of the Push Protocol in a Node.js backend.
 
 ## Overview
 
-The `sdk-backend-node` project provides a practical demonstration of how to set up and configure the EPNS on a server, including how to handle notifications and communicate with the blockchain.
+The `sdk-backend-node` project offers a practical tutorial on how to set up and configure Push Protocol on a server, including guidance on managing notifications and interfacing with the blockchain. This includes essential examples related to:
+
+- Push Notifications
+- Push Chat
+- Push NFT Chat
+- Push Video
+
+Through these examples, you'll see how these features can be successfully implemented and integrated using Push Protocol.
 
 ## Getting Started
 
-To get started with this project:
+Embark on your journey with this project by cloning the repository and installing the dependencies:
 
-1. Clone the `push-sdk` repository.
-2. Navigate to the `sdk-backend-node` directory.
-3. Install the necessary dependencies.
-4. Set up your environment variables based on the provided `.env.sample` file.
-5. Run the project.
+```bash
+git clone https://github.com/ethereum-push-notification-service/sdk.git
+cd sdk
+yarn install
+```
+***Note*** - We are using `yarn` and **strongly** advise to use yarn 1.x to avoid any NPM issues.
 
+## Setting up the SDK-Backend-Node 
+1. Navigate to the `sdk-backend-node` directory.
+2. Set up your environment variables by creating a `.env` file based on the provided `.env.sample` file.
+
+## Running the SDK-Backend-Node 
+### By GUI (preferred)
+1. Click on the `NX console` extension icon in the VSCode sidebar.
+2. Click on the `serve` target execute icon under `examples-sdk-backend-node`
+
+### By CLI
+1. Navigate to the root level of push-sdk repository.
+2. Run `yarn nx serve examples-sdk-backend-node`
