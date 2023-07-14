@@ -14,6 +14,7 @@ import '../styles/globals.css';
 import { useEffect, useState } from 'react';
 import { SpacesUIProvider } from '@pushprotocol/uiweb';
 import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
+import { AccountContext } from '../contexts';
 
 const { chains, provider } = configureChains([goerli], [publicProvider()]);
 
@@ -49,6 +50,7 @@ const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [loadWagmi, setLoadWagmi] = useState(false);
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
 
   useEffect(() => {
     setLoadWagmi(true);
@@ -60,9 +62,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       {loadWagmi ? (
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider theme={darkTheme()} chains={chains}>
-            <SpacesComponentProvider>
-              <Component {...pageProps} />
-            </SpacesComponentProvider>
+          <AccountContext.Provider value={{ pgpPrivateKey, setPgpPrivateKey }}>
+              <SpacesComponentProvider>
+                <Component {...pageProps} />
+              </SpacesComponentProvider>
+          </AccountContext.Provider>
           </RainbowKitProvider>
         </WagmiConfig>
       ) : null}
