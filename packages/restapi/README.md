@@ -185,7 +185,11 @@ const notifications = await PushAPI.user.getFeeds({
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-32: Add Euler staking PYT wrappers for AA tranche to IdleDAI\n' + '[timestamp:1676570405.922][timestamp: 1676570405]',
+    message:
+      '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-32: Add Euler staking PYT wrappers for AA tranche to IdleDAI\n' +
+      '[timestamp:1676570405.922][timestamp: 1676570405]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '3401597',
@@ -253,7 +257,11 @@ const notifications = await PushAPI.user.getFeeds({
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-31: Add AA Euler staking PYT wrappers to IdleUSDT, IdleUSDC and IdleWETH. Gauges rate to 0. Extend LM. \n' + '[timestamp:1674583206.258][timestamp: 1674583206]',
+    message:
+      '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-31: Add AA Euler staking PYT wrappers to IdleUSDT, IdleUSDC and IdleWETH. Gauges rate to 0. Extend LM. \n' +
+      '[timestamp:1674583206.258][timestamp: 1674583206]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '1784234',
@@ -295,7 +303,12 @@ const notifications = await PushAPI.user.getFeeds({
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-30: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' + ' \n' + '[timestamp:1672769747.911][timestamp: 1672769747]',
+    message:
+      '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-30: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
+      ' \n' +
+      '[timestamp:1672769747.911][timestamp: 1672769747]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '1080072',
@@ -311,7 +324,12 @@ const notifications = await PushAPI.user.getFeeds({
   {
     cta: 'https://idle.finance/#/governance/proposals',
     title: 'New Proposal',
-    message: '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' + '\n' + '[d:Proposal] : IIP-29: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' + ' \n' + '[timestamp:1671624005.155][timestamp: 1671624005]',
+    message:
+      '[d:Proposer] : 0xe8eA8bAE250028a8709A3841E0Ae1a44820d677b\n' +
+      '\n' +
+      '[d:Proposal] : IIP-29: Remove idleDAI wrapper for cpFOL-USDC (DAI) senior. Same for idleUSDC with cpWIN-USDC. Remove idleRAI, idleSUSD, idleTUSD and idleFEI from IdleController. Update voting delay in Governor \n' +
+      ' \n' +
+      '[timestamp:1671624005.155][timestamp: 1671624005]',
     icon: 'https://gateway.ipfs.io/ipfs/bafybeidgjepmup44yqmghcmmzp5aohj6yemjuwal3hozowp2mnxmtdjv5u/bafkreieqw4su7yuqf5ycow4ajpzjyimfl4umnnoe5fz2mq7ukrmqnesk2y',
     url: 'https://idle.finance/',
     sid: '935285',
@@ -548,7 +566,38 @@ Allowed Options (params with _ are mandatory)
 
 ```typescript
 // PushAPI.user.getSubscriptions | Response - 200 OK
-[{ channel: '0x0000000000000000000000000000000000000000' }, { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00' }, { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1' }, { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029' }, { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD' }, { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34' }, { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7' }, { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93' }, { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23' }, { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78' }, { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330' }, { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D' }, { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7' }, { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A' }, { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7' }, { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349' }, { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D' }, { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224' }, { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54' }, { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb' }, { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7' }, { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe' }, { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7' }, { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924' }, { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a' }, { channel: '0x025846389950A13292E63e4794C7D148FF57F995' }, { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77' }, { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681' }, { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52' }, { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7' }];
+[
+  { channel: '0x0000000000000000000000000000000000000000' },
+  { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00' },
+  { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1' },
+  { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029' },
+  { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD' },
+  { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34' },
+  { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7' },
+  { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93' },
+  { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23' },
+  { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78' },
+  { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330' },
+  { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D' },
+  { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7' },
+  { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A' },
+  { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7' },
+  { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349' },
+  { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D' },
+  { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224' },
+  { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54' },
+  { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb' },
+  { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7' },
+  { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe' },
+  { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7' },
+  { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924' },
+  { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a' },
+  { channel: '0x025846389950A13292E63e4794C7D148FF57F995' },
+  { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77' },
+  { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681' },
+  { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52' },
+  { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7' },
+];
 ```
 
 </details>
@@ -748,7 +797,8 @@ Allowed Options (params with _ are mandatory)
     processed: 1,
     attempts: 0,
     alias_address: '0x453552953C4e2732A38B93F7fB834e5AeF6F60f8',
-    alias_verification_event: '{"aliasAddress": "0x453552953C4e2732A38B93F7fB834e5AeF6F60f8", "aliasBlockchainId": "80001"}',
+    alias_verification_event:
+      '{"aliasAddress": "0x453552953C4e2732A38B93F7fB834e5AeF6F60f8", "aliasBlockchainId": "80001"}',
     is_alias_verified: 1,
     alias_blockchain_id: '80001',
     activation_status: 1,
@@ -968,7 +1018,8 @@ Allowed Options (params with _ are mandatory)
     processed: 1,
     attempts: 0,
     alias_address: '0x76AF8b0ED41EEBda6Eb2aA7991e0564cCFD1eC1F',
-    alias_verification_event: '{"aliasAddress": "0x76AF8b0ED41EEBda6Eb2aA7991e0564cCFD1eC1F", "aliasBlockchainId": "80001"}',
+    alias_verification_event:
+      '{"aliasAddress": "0x76AF8b0ED41EEBda6Eb2aA7991e0564cCFD1eC1F", "aliasBlockchainId": "80001"}',
     is_alias_verified: 1,
     alias_blockchain_id: '80001',
     activation_status: 1,
@@ -990,7 +1041,8 @@ Allowed Options (params with _ are mandatory)
     processed: 1,
     attempts: 0,
     alias_address: '0x0fEdC054075d14CF941A5cC62d22EBE9ad5de742',
-    alias_verification_event: '{"aliasAddress": "0x0fEdC054075d14CF941A5cC62d22EBE9ad5de742", "aliasBlockchainId": "80001"}',
+    alias_verification_event:
+      '{"aliasAddress": "0x0fEdC054075d14CF941A5cC62d22EBE9ad5de742", "aliasBlockchainId": "80001"}',
     is_alias_verified: 1,
     alias_blockchain_id: '80001',
     activation_status: 1,
@@ -1056,7 +1108,8 @@ Allowed Options (params with _ are mandatory)
     processed: 1,
     attempts: 0,
     alias_address: '0x11EaB508c309595F14E363e6a8d434BEab91eEBC',
-    alias_verification_event: '{"aliasAddress": "0x11EaB508c309595F14E363e6a8d434BEab91eEBC", "aliasBlockchainId": "80001"}',
+    alias_verification_event:
+      '{"aliasAddress": "0x11EaB508c309595F14E363e6a8d434BEab91eEBC", "aliasBlockchainId": "80001"}',
     is_alias_verified: 1,
     alias_blockchain_id: '80001',
     activation_status: 1,
@@ -1257,7 +1310,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  recipients: ['eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1'], // recipients addresses
+  recipients: [
+    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+  ], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
@@ -1310,7 +1366,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   type: PushAPI.payloads.NOTIFICATION_TYPE.SUBSET, // subset
   identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
-  recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients addresses
+  recipients: [
+    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+  ], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
@@ -1372,7 +1431,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients address
+  recipients: [
+    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+  ], // recipients address
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
@@ -1435,7 +1497,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     id: '_your_graph_id',
     counter: 3,
   },
-  recipients: ['eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3'], // recipients addresses
+  recipients: [
+    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+  ], // recipients addresses
   channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
@@ -1491,7 +1556,18 @@ const [oneNotification] = parsedResults;
 
 // Now this object can be directly used by for e.g. "@pushprotocol/uiweb"  NotificationItem component as props.
 
-const { cta, title, message, app, icon, image, url, blockchain, secret, notification } = oneNotification;
+const {
+  cta,
+  title,
+  message,
+  app,
+  icon,
+  image,
+  url,
+  blockchain,
+  secret,
+  notification,
+} = oneNotification;
 ```
 
 _We get the above `keys` after the parsing of the API repsonse._
@@ -1997,6 +2073,49 @@ export interface IUser {
 
 Example response normal user:
 
+**Version 1.2.x**
+
+```typescript
+export interface IUser {
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string;
+  encryptedPrivateKey: string;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  about: string | null;
+  name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
+}
+```
+
+| Parameter | Description |
+| --- | --- |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | PGP public key |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `encryptionType` | encryption type used to encrypt the private key |
+| `signature` | user payload signature used when creating a user |
+| `sigType` | signature type used when creating a user |
+| `about` | short user description |
+| `name` | user name |
+| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | NFT owner address |
+| `numMsg` | number of messages sent by the user |
+| `allowedNumMsg` | number of messages allowed to be sent by the user |
+| `linkedListHash` | cid from all messages this user has sent |
+| `nfts` | array of NFTs owned by the user |
+
+Example response:
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
@@ -2508,14 +2627,18 @@ const response = await PushAPI.chat.chats({
     chatId: 'dafdc288ccd416c22caa8adfc2c62ee23e83b2e351f60df91531e82fa7ca243e',
     about: null,
     did: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
-    intent: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7+eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    intent:
+      'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7+eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
     intentSentBy: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
     intentTimestamp: '2023-05-08T12:56:16.000Z',
-    publicKey: '{"key":"-----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\nxsBNBGRYo/8BCADhbpiwQf8PEXdi1V2BKfoHs8Vo7dM0FvukAlTGlk/778kV\\neriOXsBmFT3PciLWXRbh5CqsxXmshY030Ugb6h9x2FcgglzsLhJxc8cbCbpk\\nlK3wkZSAJbPX42rX6y2yvLZffdziAddliJFnE0gfV5WD/rxugYP/FIHyGt9y\\njKXuDwNAihp5qQeXaPs+vEqaVhExGUlwWhbBj/EepD8LMc4+inZMTBNxN213\\nnZTSWudaV6mnnrKNjkHTtK3tT6TTHAb5f5Xoz+zTNbMQecktRtF4r27ctRgQ\\nBUEnFkREdQR9vAmJuMmDeh0SKFAE44bNm8moSTHtwSyyjfoL2y7rLmkLABEB\\nAAHNAMLAigQQAQgAPgWCZFij/wQLCQcICZC/GLX8yhr5DwMVCAoEFgACAQIZ\\nAQKbAwIeARYhBIXvLPhJE+agImuJ578YtfzKGvkPAAA8eggAx6GWFsiVU0Jd\\nj3FxkYPwitvF2PdkzPKKLczhj82zNAt4njioYijjpItjw8Wq0cyWtTKfwb0v\\nZ5ty1X0MsOZATsF46PBz0nsBp7BxDutFjgKHQxGwlss+WD6yYqujPUdzmhMO\\n5KYh/McDrGhP939UZhSRhvAH78Id+2EG8Q74KHgAhfcrJvpHf/aBrF1+Gn07\\nSGuZ4GpzqVO7NaQlme1BAAFSZI+EZeCoCODZXJ6gdh1HC1/splLYtcT+FL0/\\nj0VQxVoaVpD5B5AgIQJp1QeFOIcLcFecRLY+RiXkfNJHHbkcCBXGTHuPY5CT\\noIohJfb45Y8wSjcZ3Ec+YOf+00UmP87ATQRkWKP/AQgA2MUK+aUDZE3PFaXG\\n/0H02iqUzu18FmSnPW0TmisHezdzI/LcZwqKapJawxHLsPiGK42xWa2ZBwgh\\n8xyMhspY9jv9u3uDaR/vR6y83+KaUlsSyvpUu0HAapWVIlE79p1/lLld5+Ui\\ny4Ap8VPMSd7sU0TZXGw/s8sBol1Lv1O1wJj0gc17IB1dahMppxnZlnoCtqBA\\nNeFZ8Ssx7+ZAhfvglCqvBo154+4UphqZLoGmGCZWIY3B3NU1EGRjQNnVNaSC\\nuRet3Qi85ni++52k6wR3tJLDqOxFKnYrv93nPENABSuYS8Uc04VvE0hfbjNF\\n6qeo5gah5O68F/xtI6MATZRIAQARAQABwsB2BBgBCAAqBYJkWKP/CZC/GLX8\\nyhr5DwKbDBYhBIXvLPhJE+agImuJ578YtfzKGvkPAAC3zgf+LZ2aNe1nY3au\\n9T57MqhfTMYIEWn/PJ0LAJFg3jgPTmzL4K+ZLSTdWEV7p8aMKrTloYSWENW+\\nuuj+MhMnOC1EonhmqYGHrsFTPdZR902a/mNPnxl8A8r7ixq1OAgq81qYVsQ1\\nQaC8uuJaqCxLediM5lVP95xz1qdKgNhKtG7cPlX8ljAL4KE3U2/Jjj/KiqED\\n0XaMqrt1y2qjjNF+ct+NbmqmwRaOKq8mWpFlPygA9dq6Sp1nCcwvYmxBQrbg\\nmTDldPF6tg7SqF83DN7DnUQt1cNQEUUv8SUiGnS/Dd01nhManNBLNtNpgCCf\\n4etbnA/WK08gsOhSeM3bBOSOjavwmA==\\n=qZBP\\n-----END PGP PUBLIC KEY BLOCK-----\\n","signature":"eip191:0xc56d79a25a832134b0438981f534c1c811bb8d1d1ea6f19b639e4dbc1fb64a4c65be377120dc4402d29b371dc378f00289640b037f6ad9e475fab5781ce067b81c"}',
-    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAyklEQVR4AcXBoa3DMABF0ZunTFBSVNQBAr1IFdA1AoMNvYiVRQy9QSUPklKX+Cv64J0zfdrz5IKwBEZKLVwhzISZMJv5Q4uJX5mRFhO9x74xIsyEmTCbW0z0HvvGyLGu/EeLiZ4wE2bCbLrf3idGwkyYCbO51EIvLIGRUgsjYQmMlFroCTNhJszmFhO/Mr1SC1eUWuiFJdBrMdETZsJMmE332/ukc6wrI6+cGTnWlZFXzvSEmTATZtOnPU8uaDEx8tg3rhBmwkyYfQE/njNZjYo1IgAAAABJRU5ErkJggg==',
+    publicKey:
+      '{"key":"-----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\nxsBNBGRYo/8BCADhbpiwQf8PEXdi1V2BKfoHs8Vo7dM0FvukAlTGlk/778kV\\neriOXsBmFT3PciLWXRbh5CqsxXmshY030Ugb6h9x2FcgglzsLhJxc8cbCbpk\\nlK3wkZSAJbPX42rX6y2yvLZffdziAddliJFnE0gfV5WD/rxugYP/FIHyGt9y\\njKXuDwNAihp5qQeXaPs+vEqaVhExGUlwWhbBj/EepD8LMc4+inZMTBNxN213\\nnZTSWudaV6mnnrKNjkHTtK3tT6TTHAb5f5Xoz+zTNbMQecktRtF4r27ctRgQ\\nBUEnFkREdQR9vAmJuMmDeh0SKFAE44bNm8moSTHtwSyyjfoL2y7rLmkLABEB\\nAAHNAMLAigQQAQgAPgWCZFij/wQLCQcICZC/GLX8yhr5DwMVCAoEFgACAQIZ\\nAQKbAwIeARYhBIXvLPhJE+agImuJ578YtfzKGvkPAAA8eggAx6GWFsiVU0Jd\\nj3FxkYPwitvF2PdkzPKKLczhj82zNAt4njioYijjpItjw8Wq0cyWtTKfwb0v\\nZ5ty1X0MsOZATsF46PBz0nsBp7BxDutFjgKHQxGwlss+WD6yYqujPUdzmhMO\\n5KYh/McDrGhP939UZhSRhvAH78Id+2EG8Q74KHgAhfcrJvpHf/aBrF1+Gn07\\nSGuZ4GpzqVO7NaQlme1BAAFSZI+EZeCoCODZXJ6gdh1HC1/splLYtcT+FL0/\\nj0VQxVoaVpD5B5AgIQJp1QeFOIcLcFecRLY+RiXkfNJHHbkcCBXGTHuPY5CT\\noIohJfb45Y8wSjcZ3Ec+YOf+00UmP87ATQRkWKP/AQgA2MUK+aUDZE3PFaXG\\n/0H02iqUzu18FmSnPW0TmisHezdzI/LcZwqKapJawxHLsPiGK42xWa2ZBwgh\\n8xyMhspY9jv9u3uDaR/vR6y83+KaUlsSyvpUu0HAapWVIlE79p1/lLld5+Ui\\ny4Ap8VPMSd7sU0TZXGw/s8sBol1Lv1O1wJj0gc17IB1dahMppxnZlnoCtqBA\\nNeFZ8Ssx7+ZAhfvglCqvBo154+4UphqZLoGmGCZWIY3B3NU1EGRjQNnVNaSC\\nuRet3Qi85ni++52k6wR3tJLDqOxFKnYrv93nPENABSuYS8Uc04VvE0hfbjNF\\n6qeo5gah5O68F/xtI6MATZRIAQARAQABwsB2BBgBCAAqBYJkWKP/CZC/GLX8\\nyhr5DwKbDBYhBIXvLPhJE+agImuJ578YtfzKGvkPAAC3zgf+LZ2aNe1nY3au\\n9T57MqhfTMYIEWn/PJ0LAJFg3jgPTmzL4K+ZLSTdWEV7p8aMKrTloYSWENW+\\nuuj+MhMnOC1EonhmqYGHrsFTPdZR902a/mNPnxl8A8r7ixq1OAgq81qYVsQ1\\nQaC8uuJaqCxLediM5lVP95xz1qdKgNhKtG7cPlX8ljAL4KE3U2/Jjj/KiqED\\n0XaMqrt1y2qjjNF+ct+NbmqmwRaOKq8mWpFlPygA9dq6Sp1nCcwvYmxBQrbg\\nmTDldPF6tg7SqF83DN7DnUQt1cNQEUUv8SUiGnS/Dd01nhManNBLNtNpgCCf\\n4etbnA/WK08gsOhSeM3bBOSOjavwmA==\\n=qZBP\\n-----END PGP PUBLIC KEY BLOCK-----\\n","signature":"eip191:0xc56d79a25a832134b0438981f534c1c811bb8d1d1ea6f19b639e4dbc1fb64a4c65be377120dc4402d29b371dc378f00289640b037f6ad9e475fab5781ce067b81c"}',
+    profilePicture:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAyklEQVR4AcXBoa3DMABF0ZunTFBSVNQBAr1IFdA1AoMNvYiVRQy9QSUPklKX+Cv64J0zfdrz5IKwBEZKLVwhzISZMJv5Q4uJX5mRFhO9x74xIsyEmTCbW0z0HvvGyLGu/EeLiZ4wE2bCbLrf3idGwkyYCbO51EIvLIGRUgsjYQmMlFroCTNhJszmFhO/Mr1SC1eUWuiFJdBrMdETZsJMmE332/ukc6wrI6+cGTnWlZFXzvSEmTATZtOnPU8uaDEx8tg3rhBmwkyYfQE/njNZjYo1IgAAAABJRU5ErkJggg==',
     threadhash: 'bafyreidfnsaz7pz3hsedtlgzj7beqnwj44h3bunpaouwmk4r4i5y5psyti',
     wallets: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
-    combinedDID: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7_eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
+    combinedDID:
+      'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7_eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
     name: null,
     msg: {
       fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
@@ -2524,11 +2647,40 @@ const response = await PushAPI.chat.chats({
       toDID: 'eip155:0x1C48fE875590f8e366447758b13982a3Ca7d9dBE',
       messageContent: "Gm gm! It's me... Mario",
       messageType: 'Text',
-      signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' + 'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' + 'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' + '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' + 'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' + 'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' + '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' + '=dcRD\n' + '-----END PGP SIGNATURE-----\n',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJkWKQWCZB7dzg7q3axjBYhBJFuYslzDGbuE+3FMnt3ODur\n' +
+        'drGMAAAjtAf/TXjtm2qb6aSikFPKYXm0Ekws+65fisJGf7T48MYkkfcD4t2e\n' +
+        'HXd9LtohzGhcztbOQfAND3yME1GWuMBIksq9rlyEA0ezwsGzCJVhBnkAHBe3\n' +
+        '+1v4/mNSMmInU8y6sOiLiOcW7ameJvZvDdPDJ0YHhc9dKDCIh1UAZEPAgx+z\n' +
+        'Wc0DM6pW8bT70dfgnuW2LlLGF5Z23Z1vbHmeszt78+xYY3ez/hoMHXUIE25z\n' +
+        'Wrnt75nasBBahtJ0mwH10ATnsQNE9hTi6XPGYxRSNDM9nyRxTQUpjhNmGS/+\n' +
+        '7oFyq8xTcRSaL7d3h8URp9hgFWher5ZZDyMV0jvk+HPguUX54g6Kgw==\n' +
+        '=dcRD\n' +
+        '-----END PGP SIGNATURE-----\n',
       timestamp: 1683530775648,
       sigType: 'pgp',
       encType: 'pgp',
-      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' + 'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' + 'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' + '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' + 'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' + 'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' + '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' + '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' + 'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' + 'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' + 'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' + 'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' + 'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' + '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' + '=kzUH\n' + '-----END PGP MESSAGE-----\n',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA9aU+JGZVRn/AQgA1pIJHyeJinU21r6At5S5ZaWeN0OEKVB2TjpqZ0IW\n' +
+        'lHLKQrQ8k3M16bN+Vf0P+DzDVOL84QRkBD56qSNVHOOCox5wcQeR01CczenV\n' +
+        'LUVvVjBzR2hj7Sdw+Q+M//rgeZPPUDbNyiVmGijelhwDqWd7IOoZY26AGXlm\n' +
+        '7YQiElvHN2HcYXaTlLAOy36BcccwHu3Tn06F77ZXaf8FnGMWOUy7wh1/jugg\n' +
+        'D17jUZGLYbmw+u5l9BOfljbw2pb4vtjWht0I1b4GYlKb+bYg/NY0UNsq7mSh\n' +
+        'dGAmOhy5tC2NMjLRRLfD2qasxHoHN50onlB6HcYLl0RCf31ebOgO6rMhUnxt\n' +
+        '9cHATAMLWLG2xubrYAEH/2tVeq2j7nJALGSFxjJPboOY57aiFrhXNQ/e/oXH\n' +
+        '//TNJgGWx4Ta++OuF2Oexbh9DIZhl6DWld9adXDDtBS/fEyjNsYqwoYlNEJN\n' +
+        'kLvSmokNNrE4MKC1A0GkhSh2MGQDNk42GSgz1tep8XSVc98MHqfNXCHVb5Oa\n' +
+        'OBeWKLFyElT3+KuZxSkCsnoO5YjuCGbXPyG06tXMHXMTncpj1ri+vpjUSnhD\n' +
+        'wn3o0zpNWu0GaWXIgTqj2ZouVwV2S1+wAJQjE8uI1JvBiMhA+X63/GCcApBu\n' +
+        'C7rN0Cs5NGXCn9VWp8i1SCp2NuZ38POABwsXUUkjpF24txyUDX8dbXlkzpao\n' +
+        'g93SQAElYYmyKbGp1TKhAZl2u40mgf2yCYDv2DLRfAKMJDLvmjXoUGEg2UYO\n' +
+        '11w6LD0pIykdKJmFtRls/uMnlcoBgDA=\n' +
+        '=kzUH\n' +
+        '-----END PGP MESSAGE-----\n',
       link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
     },
     groupInformation: undefined,
@@ -2613,25 +2765,98 @@ const chats = await PushAPI.chat.requests({
     intent: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
     intentSentBy: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
     intentTimestamp: '2023-01-07T03:51:11.000Z',
-    publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' + '\n' + 'xsBNBGOhhq8BCADP5Nzw0jOXhKO86ndGkY/JlD8AadVXmsLA+Yvoc22LrNTU\n' + 'QrfcDWaMAzpmtMWJlNEHSTieUPEgODm/qj422+rdskSedum3gq1HWn2bmqEI\n' + 'LrFc+zR3B70Pe7saEEmC/hXG53/8m7V0HsOuvkEjBa3pW3KElZIhimVvcgYR\n' + '9AnLjUYKR/lci1eXXsAz+J+RjgPlFfiIE0/3KYXwkjt9meSJDPCIcEIZ1tqw\n' + 'IkGRINM5XINMvC+FxPNQ+jIHF9WIzmUg4YfYZQbMo96j4LAV0kYvAB0qI2Y8\n' + 'DHAjHXYQ+fafRGOJwePASjDHUjcB9QEr1EPIMG3i4iFaBV2ZmePjzE7XABEB\n' + 'AAHNAMLAigQQAQgAPgUCY6GGrwQLCQcICRCUVlBnqYwnwgMVCAoEFgACAQIZ\n' + 'AQIbAwIeARYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAABLZAgAtVdxz75k3qFY\n' + 'qtwMdsrIPX4A7rpT/zCd2Yjl2asFdlkyAusfNdFEiff1dHz5+qBM88z/Zh+O\n' + '1FNDKS/WKL9qmZ+AceyidCjnRVTUeH6Mi/ZD/YZInJyLozCksb0Gciswl6Rp\n' + 'RHb6nXt0PebUFXTsOVxSeodaEGBgltd/V1bDHpfx8Wu03z3h/Jq2tI4s28XA\n' + 'S2lSZpG8+nC1zLOmpbYx8mdOe00ONBdnMvxAqckd437ns7Tu8sKW4SsRzjg1\n' + 'YHTmApRjai1L6bHn0P5Utz0BcynzrUn+bZ0cC+5Rq3kZvrjnaJOIutY+ALDF\n' + '4yWoVIz8KzzAUx1caVyVvwdFtjVTS87ATQRjoYavAQgA3nCB6WLASwBwp5r/\n' + 'WU8SiUzf/2srENNObpjxavmv2FVKcKfO0ehSi6ti22KSKnUgm5prlOMWsVl/\n' + 'wEClvpGw0Btdar4OQI7XdwkY8XUVB5Jff7cNpi4qE+4lIYqCTQief9H5GLC/\n' + 'QvpE53yZWGFK581OSaeomtibN5xAaUyEE8qITnYyjqA+SgffRFVN5/WOnnBK\n' + 'zbIHrXl2lXOFkegXaOk+Qxxikw9cSpHNV5YHVoDStRCJZKVU8JhKa7pYKkmC\n' + 'pSIiXT3IdSAqDiglDRxwX4KlFFhGZ1OGbBmPefN3pZ7/xvaM28TqSDNB7f89\n' + '/lc5UKLz5Em2aroEclT0YpKYGQARAQABwsB2BBgBCAAqBQJjoYavCRCUVlBn\n' + 'qYwnwgIbDBYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAAC6rwgAji6/qPQn/BN/\n' + 'BbwGBN+A8tWRuQLwrgOilg8oHWkyCIUK7DeBp+gpkSghjsnaEAqc94xaGD3U\n' + 'AfgcPGmC/Jx92W+bX8P40Iq8OvPgLgvG1u5Rf1a1SNYAuypQemuHYu3HOvUU\n' + 'vP+0omoiTWyNZVqsZA0FGIYQk9uRg8KGsLvXwzPPLqC5Yo3fyfQUmytBZfEf\n' + 'OwYwuvzx1RBHtvyZ32sfq//q4t2fXY0d49rg6l475zo3JsZsYtqZJCf9h6uK\n' + 'MrSFgvn8mJFlpwI1+g7X46VB+t8D1Ac35r9Bn9UIWieIyS2Aux2UwBsY2iET\n' + 'CdgkH8gWFBU7bdKsFh7BQX2ZhrxHXQ==\n' + '=Lr7Q\n' + '-----END PGP PUBLIC KEY BLOCK-----\n',
-    profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBobGEMBSG0W//idlKiKARaohMAzEIzFoEhgaQ1EAV6xCkmn32PpMZZue9e87j9Xx/uKGkSMu6X9whnAlnwlkoKdKy7hdWnTJN+4hVUqRFOBPOhLPH6/n+YAznwl86+hFLOBPOhLNQUsRa+5GW4VxoOfqRlpIilnAmnAlnYd0v/tO6X1jCmXAmnIWSIladMtbRj3xjOBesbt6whDPhTDgLdcrc0c0bLQcXLXXKWMKZcCachW7esOqUsUqKWHXKtBQ2rMpv3bxhCWfCmXD2A590MfREqrg1AAAAAElFTkSuQmCC',
+    publicKey:
+      '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+      '\n' +
+      'xsBNBGOhhq8BCADP5Nzw0jOXhKO86ndGkY/JlD8AadVXmsLA+Yvoc22LrNTU\n' +
+      'QrfcDWaMAzpmtMWJlNEHSTieUPEgODm/qj422+rdskSedum3gq1HWn2bmqEI\n' +
+      'LrFc+zR3B70Pe7saEEmC/hXG53/8m7V0HsOuvkEjBa3pW3KElZIhimVvcgYR\n' +
+      '9AnLjUYKR/lci1eXXsAz+J+RjgPlFfiIE0/3KYXwkjt9meSJDPCIcEIZ1tqw\n' +
+      'IkGRINM5XINMvC+FxPNQ+jIHF9WIzmUg4YfYZQbMo96j4LAV0kYvAB0qI2Y8\n' +
+      'DHAjHXYQ+fafRGOJwePASjDHUjcB9QEr1EPIMG3i4iFaBV2ZmePjzE7XABEB\n' +
+      'AAHNAMLAigQQAQgAPgUCY6GGrwQLCQcICRCUVlBnqYwnwgMVCAoEFgACAQIZ\n' +
+      'AQIbAwIeARYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAABLZAgAtVdxz75k3qFY\n' +
+      'qtwMdsrIPX4A7rpT/zCd2Yjl2asFdlkyAusfNdFEiff1dHz5+qBM88z/Zh+O\n' +
+      '1FNDKS/WKL9qmZ+AceyidCjnRVTUeH6Mi/ZD/YZInJyLozCksb0Gciswl6Rp\n' +
+      'RHb6nXt0PebUFXTsOVxSeodaEGBgltd/V1bDHpfx8Wu03z3h/Jq2tI4s28XA\n' +
+      'S2lSZpG8+nC1zLOmpbYx8mdOe00ONBdnMvxAqckd437ns7Tu8sKW4SsRzjg1\n' +
+      'YHTmApRjai1L6bHn0P5Utz0BcynzrUn+bZ0cC+5Rq3kZvrjnaJOIutY+ALDF\n' +
+      '4yWoVIz8KzzAUx1caVyVvwdFtjVTS87ATQRjoYavAQgA3nCB6WLASwBwp5r/\n' +
+      'WU8SiUzf/2srENNObpjxavmv2FVKcKfO0ehSi6ti22KSKnUgm5prlOMWsVl/\n' +
+      'wEClvpGw0Btdar4OQI7XdwkY8XUVB5Jff7cNpi4qE+4lIYqCTQief9H5GLC/\n' +
+      'QvpE53yZWGFK581OSaeomtibN5xAaUyEE8qITnYyjqA+SgffRFVN5/WOnnBK\n' +
+      'zbIHrXl2lXOFkegXaOk+Qxxikw9cSpHNV5YHVoDStRCJZKVU8JhKa7pYKkmC\n' +
+      'pSIiXT3IdSAqDiglDRxwX4KlFFhGZ1OGbBmPefN3pZ7/xvaM28TqSDNB7f89\n' +
+      '/lc5UKLz5Em2aroEclT0YpKYGQARAQABwsB2BBgBCAAqBQJjoYavCRCUVlBn\n' +
+      'qYwnwgIbDBYhBPYJKSdUrZzVgB9jy5RWUGepjCfCAAC6rwgAji6/qPQn/BN/\n' +
+      'BbwGBN+A8tWRuQLwrgOilg8oHWkyCIUK7DeBp+gpkSghjsnaEAqc94xaGD3U\n' +
+      'AfgcPGmC/Jx92W+bX8P40Iq8OvPgLgvG1u5Rf1a1SNYAuypQemuHYu3HOvUU\n' +
+      'vP+0omoiTWyNZVqsZA0FGIYQk9uRg8KGsLvXwzPPLqC5Yo3fyfQUmytBZfEf\n' +
+      'OwYwuvzx1RBHtvyZ32sfq//q4t2fXY0d49rg6l475zo3JsZsYtqZJCf9h6uK\n' +
+      'MrSFgvn8mJFlpwI1+g7X46VB+t8D1Ac35r9Bn9UIWieIyS2Aux2UwBsY2iET\n' +
+      'CdgkH8gWFBU7bdKsFh7BQX2ZhrxHXQ==\n' +
+      '=Lr7Q\n' +
+      '-----END PGP PUBLIC KEY BLOCK-----\n',
+    profilePicture:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA1UlEQVR4AcXBobGEMBSG0W//idlKiKARaohMAzEIzFoEhgaQ1EAV6xCkmn32PpMZZue9e87j9Xx/uKGkSMu6X9whnAlnwlkoKdKy7hdWnTJN+4hVUqRFOBPOhLPH6/n+YAznwl86+hFLOBPOhLNQUsRa+5GW4VxoOfqRlpIilnAmnAlnYd0v/tO6X1jCmXAmnIWSIladMtbRj3xjOBesbt6whDPhTDgLdcrc0c0bLQcXLXXKWMKZcCachW7esOqUsUqKWHXKtBQ2rMpv3bxhCWfCmXD2A590MfREqrg1AAAAAElFTkSuQmCC',
     threadhash: 'bafyreigs26i7k3g5u4xmqg44tecmkfvelclp5lletnikfbsrj7dhg5oi4y',
     wallets: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
-    combinedDID: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029_eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+    combinedDID:
+      'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029_eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
     name: 'copper-screeching-herring',
     msg: {
       link: 'bafyreibuez6o5hqqf6j45ekqxz7ixdtbxs6mhu3m6iv63etja6p2g43qom',
       toDID: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
       encType: 'pgp',
       fromDID: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
-      sigType: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' + 'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' + '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' + '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' + 'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' + 'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' + 'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' + '=n2B5\n' + '-----END PGP SIGNATURE-----\n',
+      sigType:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
+        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
+        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
+        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
+        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
+        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
+        '=n2B5\n' +
+        '-----END PGP SIGNATURE-----\n',
       toCAIP10: 'eip155:0x69e666767Ba3a661369e1e2F572EdE7ADC926029',
-      signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' + 'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' + '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' + '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' + 'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' + 'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' + 'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' + '=n2B5\n' + '-----END PGP SIGNATURE-----\n',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBQJjuJ7WCRCszcBmB607ShYhBEWdLV876c+znjS0l6zNwGYH\n' +
+        'rTtKAAAEUQgAiSLgvLRf4UM/VIOImO4I/CHt5vBCqvOjq8068K5Bb2ciRn0o\n' +
+        '8IqLV2eYKe8c0LK8Gf/CzZn7S13eux4FUlXcX7TlU9BpgHAVQIP4gDe7Q1XN\n' +
+        '1+rXFH+QW4P/Zv0knObHAby/7wYfD1ZfBrLbo5SpZEBDYQNYZ5t29y7aVD5e\n' +
+        'QMOoSvj5+y6SLDLJalb5daeSfaZtpNBsTZvUBLndNomT///gzrXRutkgW4T4\n' +
+        'bDipFPUvLMNvWM1qXJjDyYbyQnr8J8aq3FKoGs4Qs5Z2wcwx9RF54Izh81vd\n' +
+        'Y5jkZdpULqxjB4BH2mFGyB9Cp2e5cIpKriY597JCAc6Y6WfhgbIZoA==\n' +
+        '=n2B5\n' +
+        '-----END PGP SIGNATURE-----\n',
       timestamp: 1673043671357,
       fromCAIP10: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
       messageType: 'Text',
       messageContent: 'hey',
-      encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMAzJsNgcerTKoAQgAvzX9pBj4j7ytnwU7DwMsCMl6PUDx6qAQybQxrlby\n' + '+xkP1Cf1tOkLj1HP/oFHg3cX5HioM600jAaIYhCr8ib+M3ydvhKnti0mcpbn\n' + 'VnbWilrzyFUBE7T3eZY54JeFxIQ9mtjl/TmGryXpWD9FHjnSp22NRnbZIcZZ\n' + 'SHpatgDZYzRhHf9zqusBH2QUDKX1Ty7dIq9JD2AeS55l40IHNMPcP2btxfY1\n' + 'T7od8WvFYhlWQGtkbm8k42fwdK1mIJ3H/rOSeM8sTliYAECe+IhmpIevg4II\n' + 'Eel7eG81HjGciWt3Vs3FXkhuEUbQnMRAKfhaqalJNDriaWwzUMMt5a/rWdS1\n' + 'gMHATAN7roGwZ8OLswEH/2RmDHNAaDi11UT3uLAuQxNzlLeqxFaTPecSFaEW\n' + 'IFdJ+3ujcy3FHoyndK0S+ucFhP2V0hJRMHyyMiKNKSuUp6Q03NZ7Uqavqku3\n' + 'kVfAJ3tH6jlUWNetvV8t95OmYInqhC4MNk0nIhdI10bl89KmNRqsfQqKu5Hn\n' + '5b9Jy7B+XgjKNdj7iWx0FuFabVIQ3NIDnVBDLy8/mDTeB1HuAv/7KljBr0fC\n' + 'TtzSZij1Pu5+aIPWaGG2hJvxga9g5Zqfvdm79Wn3gfoOCz3FdXcp/n3732rY\n' + '+mrIE0DVUlWa0YbVotcSCzLlUpXlFts85Ok8W/N8ERtBMbbd2+e2tBKAP8Hs\n' + 'iYHSQAHz9V5LwQaFvujErtV5KZfD5DnB8RlUVJU4JKLDgYiXaP18O0fpsZyO\n' + '4fym770psCEPU4sc+flSJ0SxBa8m+yM=\n' + '=Cp3M\n' + '-----END PGP MESSAGE-----\n',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMAzJsNgcerTKoAQgAvzX9pBj4j7ytnwU7DwMsCMl6PUDx6qAQybQxrlby\n' +
+        '+xkP1Cf1tOkLj1HP/oFHg3cX5HioM600jAaIYhCr8ib+M3ydvhKnti0mcpbn\n' +
+        'VnbWilrzyFUBE7T3eZY54JeFxIQ9mtjl/TmGryXpWD9FHjnSp22NRnbZIcZZ\n' +
+        'SHpatgDZYzRhHf9zqusBH2QUDKX1Ty7dIq9JD2AeS55l40IHNMPcP2btxfY1\n' +
+        'T7od8WvFYhlWQGtkbm8k42fwdK1mIJ3H/rOSeM8sTliYAECe+IhmpIevg4II\n' +
+        'Eel7eG81HjGciWt3Vs3FXkhuEUbQnMRAKfhaqalJNDriaWwzUMMt5a/rWdS1\n' +
+        'gMHATAN7roGwZ8OLswEH/2RmDHNAaDi11UT3uLAuQxNzlLeqxFaTPecSFaEW\n' +
+        'IFdJ+3ujcy3FHoyndK0S+ucFhP2V0hJRMHyyMiKNKSuUp6Q03NZ7Uqavqku3\n' +
+        'kVfAJ3tH6jlUWNetvV8t95OmYInqhC4MNk0nIhdI10bl89KmNRqsfQqKu5Hn\n' +
+        '5b9Jy7B+XgjKNdj7iWx0FuFabVIQ3NIDnVBDLy8/mDTeB1HuAv/7KljBr0fC\n' +
+        'TtzSZij1Pu5+aIPWaGG2hJvxga9g5Zqfvdm79Wn3gfoOCz3FdXcp/n3732rY\n' +
+        '+mrIE0DVUlWa0YbVotcSCzLlUpXlFts85Ok8W/N8ERtBMbbd2+e2tBKAP8Hs\n' +
+        'iYHSQAHz9V5LwQaFvujErtV5KZfD5DnB8RlUVJU4JKLDgYiXaP18O0fpsZyO\n' +
+        '4fym770psCEPU4sc+flSJ0SxBa8m+yM=\n' +
+        '=Cp3M\n' +
+        '-----END PGP MESSAGE-----\n',
     },
     groupInformation: undefined,
   },
@@ -2767,12 +2992,41 @@ const chatHistory = await PushAPI.chat.latest({
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
+    signature:
+      '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
+    encryptedSecret:
+      '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n',
   },
 ];
 ```
@@ -2864,12 +3118,41 @@ const chatHistory = await PushAPI.chat.history({
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
+    signature:
+      '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
+    encryptedSecret:
+      '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n',
   },
   {
     link: null,
@@ -2918,21 +3201,56 @@ const user = await PushAPI.user.get(account: 'eip155:0xFe6C8E9e25f7bcF374412c5C8
 const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateKey: user.encryptedPrivateKey, signer: _signer);
 
 // actual api
+// sending Text message
 const response = await PushAPI.chat.send({
-  messageContent: "Gm gm! It's me... Mario",
-  messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF"
+  messageObj: {
+    content: "Gm gm! It's me... Mario"
+  },
+  messageType: 'Text', // can be "Text" | "Image" | "File" | "MediaEmbed" | "Meta"
   receiverAddress: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
   signer: _signer,
   pgpPrivateKey: pgpDecrpyptedPvtKey,
   env: 'staging',
 });
+
+// sending File message
+const response = await PushAPI.chat.send({
+  messageObj: {
+    content: "{\"content\":\"data:application/pdf;base64,JVBERi0xLjQKJ}"
+  },
+  messageType: 'File', // can be "Text" | "Image" | "File" | "MediaEmbed" | "Meta"
+  receiverAddress: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+  signer: _signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: 'staging',
+});
+
+// sending Meta Message
+// Note - Meta messages are only allowed in Groups and only from admins
+const response = await PushAPI.chat.send({
+  messageObj: {
+    content: "Alice.eth create the grp 'xyz'",
+    meta: {
+      action: META_ACTION.CREATE_GROUP
+      info: { // any added info that is not visible but can be programmatically understoodaffected: [] // address[] that are affected by meta action
+			}
+    }
+  }
+  messageType: 'Meta', // can be "Text" | "Image" | "File" | "MediaEmbed" | "Meta"
+  receiverAddress: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+  signer: _signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: 'staging',
+});
+
 ```
 
 Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| messageContent | string | '' | message to be sent |
-| messageType | 'Text' &#124; 'Image' &#124; 'File' &#124; 'GIF' | 'Text'| type of messageContent |
+| messageObj | `{ content : string; meta?: META_MESSAGE_META; }` | - | message to be sent |
+| messageContent | string | '' | ( DEPRECATED ) message to be sent |
+| messageType | 'Text' &#124; 'Image' &#124; 'File' &#124; 'MediaEmbed' &#124; 'Meta' | 'Text'| type of messageContent |
 | receiverAddress_ | string | - | user address or group chat id (Partial CAIP) |
 | signer\* | - | - | signer object |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
@@ -2948,6 +3266,9 @@ Allowed Options (params with _ are mandatory)
   toCAIP10: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
   fromDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
   toDID: 'eip155:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  messageObj: {
+    content: "Gm gm! It's me... Mario",
+  },
   messageContent: "Gm gm! It's me... Mario",
   messageType: 'Text',
   signature: '',
@@ -3208,7 +3529,6 @@ const response = await PushAPI.chat.updateGroup({
     pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
 });
 ```
-
 
 ### **To update token gated group details**
 
@@ -3582,12 +3902,41 @@ Allowed Options (params with _ are mandatory)
     fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     sigType: 'pgp',
     toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-    signature: '-----BEGIN PGP SIGNATURE-----\n' + '\n' + 'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' + 'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' + 'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' + 'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' + 'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' + 'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' + 'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' + '=qLiJ\n' + '-----END PGP SIGNATURE-----\n',
+    signature:
+      '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
     timestamp: 1669831523684,
     fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
     messageType: 'Text',
     messageContent: 'Hi',
-    encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' + '\n' + 'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' + 'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' + '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' + 'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' + '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' + 'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' + 'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' + 'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' + 'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' + 'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' + 'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' + 'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' + 'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' + 'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' + '=43Ta\n' + '-----END PGP MESSAGE-----\n',
+    encryptedSecret:
+      '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n',
   },
   {
     link: null,

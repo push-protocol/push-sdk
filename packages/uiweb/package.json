@@ -6,15 +6,17 @@
   },
   "dependencies": {
     "@pushprotocol/socket": "^0.5.0",
+    "@unstoppabledomains/resolution": "^8.5.0",
     "date-fns": "^2.28.0",
-    "emoji-picker-react": "^3.5.1",
-    "html-react-parser": "^1.4.13"
+    "emoji-picker-react": "^4.4.9",
+    "html-react-parser": "^1.4.13",
+    "gif-picker-react": "^1.1.0",
+    "font-awesome": "^4.7.0"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "styled-components": "^5.3.5",
     "@pushprotocol/restapi": "^1.2.15",
-    "@pushprotocol/socket": "^0.5.0"
+    "@pushprotocol/socket": "^0.5.0",
+    "react": ">=16.8.0",
+    "styled-components": "^5.3.5"
   }
 }
-
