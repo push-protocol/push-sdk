@@ -34,6 +34,7 @@ import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
 import UpdateUserProfile from './ChatTest/UpdateUserProfile';
 import { Buffer } from 'buffer';
 import { ENV } from './helpers';
+import { ChatWidgetTest } from './ChatWidgetTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -248,7 +249,8 @@ export function App() {
                 <Route path="/getGroup" element={<GetGroupTest />} />
                 <Route path="/updateGroup" element={<UpdateGroupTest />} />
               </Routes>
-              <ChatSupportTest />
+              {/* <ChatSupportTest /> */}
+              <ChatWidgetTest/>
             </SocketContext.Provider>
           </Web3Context.Provider>
         ) : null}

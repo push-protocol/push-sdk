@@ -1,5 +1,5 @@
 
-import { ITheme } from "../types"
+import type { ITheme } from "../types"
 
 
 export const lightTheme: ITheme = {
