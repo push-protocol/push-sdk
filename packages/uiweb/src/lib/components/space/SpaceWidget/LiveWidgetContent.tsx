@@ -171,7 +171,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState : null)}
+              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
             >
               <Image
                 width={'14px'}
