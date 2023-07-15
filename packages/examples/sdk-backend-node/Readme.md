@@ -18,14 +18,14 @@ Through these examples, you'll see how these features can be successfully implem
 Embark on your journey with this project by cloning the repository and installing the dependencies:
 
 ```bash
-git clone https://github.com/ethereum-push-notification-service/sdk.git
-cd sdk
+git clone https://github.com/ethereum-push-notification-service/push-sdk.git
+cd push-sdk
 yarn install
 ```
 ***Note*** - We are using `yarn` and **strongly** advise to use yarn 1.x to avoid any NPM issues.
 
 ## Setting up the SDK-Backend-Node 
-1. Navigate to the `sdk-backend-node` directory.
+1. Navigate to the `packages/examples/sdk-backend-node` directory.
 2. Set up your environment variables by creating a `.env` file based on the provided `.env.sample` file.
 
 ## Running the SDK-Backend-Node 
@@ -35,4 +35,4 @@ yarn install
 
 ### By CLI
 1. Navigate to the root level of push-sdk repository.
-2. Run `yarn nx serve examples-sdk-backend-node`
+2. Run `yarn nx serve packages/examples/sdk-backend-node`
