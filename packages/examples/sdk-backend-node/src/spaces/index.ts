@@ -136,6 +136,10 @@ async function PushAPI_space_create(
         signer: signer,
     });
 
+    const now = new Date();
+    const start = new Date(now.getTime() + 10 * 60000)
+    const end = new Date(now.getTime() + 60 * 60000);
+
     const response = await PushAPI.space.create({
         spaceName,
         spaceDescription,
@@ -146,8 +150,8 @@ async function PushAPI_space_create(
         signer: signer,
         pgpPrivateKey: pgpDecrpyptedPvtKey,
         env: env as ENV,
-        scheduleAt: new Date("2023-07-15T14:48:00.000Z"),
-        scheduleEnd: new Date("2023-07-15T15:48:00.000Z")
+        scheduleAt: start,
+        scheduleEnd: end
     });
     console.log('PushAPI_chat_createSpace | Response - 200 OK');
     if (!silent) {
@@ -174,6 +178,11 @@ async function PushAPI_space_update(
         signer: signer,
     });
 
+    const now = new Date();
+    const start = new Date(now.getTime() + 10 * 60000)
+    const end = new Date(now.getTime() + 60 * 60000);
+
+
     // Actual API
     // Convert image to base 64 and pass
     // This is an idempotent operation, meaning it requires all space info to be passed no matter if only few things change
@@ -190,8 +199,8 @@ async function PushAPI_space_update(
         ],
         spaceImage,
         admins: [`eip155:${signer.address}`], // takes signer as admin automatically, add more if you want to
-        scheduleAt: new Date("2023-07-15T14:48:00.000Z"),
-        scheduleEnd: new Date("2023-07-15T15:48:00.000Z"),
+        scheduleAt: start,
+        scheduleEnd: end,
         status: PushAPI.ChatStatus.PENDING,
         signer: signer,
         pgpPrivateKey: pgpDecrpyptedPvtKey,
