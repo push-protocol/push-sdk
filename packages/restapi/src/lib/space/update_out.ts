@@ -10,8 +10,8 @@ export interface ChatUpdateSpaceType extends EnvOptionsType {
   spaceName: string;
   spaceImage: string | null;
   spaceDescription: string;
-  members: Array<string>;
-  admins: Array<string>;
+  listeners: Array<string>;
+  speakers: Array<string>;
   pgpPrivateKey?: string;
   scheduleAt: Date;
   scheduleEnd?: Date | null;
@@ -26,8 +26,8 @@ export const update = async (
     spaceName,
     spaceImage,
     spaceDescription,
-    members,
-    admins,
+    listeners,
+    speakers,
     signer,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
@@ -54,8 +54,8 @@ export const update = async (
       groupName: spaceName,
       groupImage: spaceImage,
       groupDescription: spaceDescription,
-      members: members,
-      admins: admins,
+      members: listeners,
+      admins: speakers,
       signer: signer,
       env: env,
       pgpPrivateKey: pgpPrivateKey,
