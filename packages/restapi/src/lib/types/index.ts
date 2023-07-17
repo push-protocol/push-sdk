@@ -306,7 +306,7 @@ export interface Member {
 export enum ChatStatus {
   ACTIVE = 'ACTIVE',
   PENDING = 'PENDING',
-  ENDED = 'ENDED'
+  ENDED = 'ENDED',
 }
 export interface GroupDTO {
   members: {
@@ -607,10 +607,8 @@ export type VideoDisconnectOptions = {
 
 export type EnableVideoInputOptions = {
   state: boolean;
-  peerAddress: string;
 };
 
 export type EnableAudioInputOptions = {
   state: boolean;
-  peerAddress: string;
 };

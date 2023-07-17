@@ -23,11 +23,13 @@ enum OrientationEnums {
   Vertical = 'vertical',
 }
 
-enum Tabs {
+export enum Tabs {
   ForYou = 'For You',
   Popular = 'Popular',
   HostedByYou = 'Hosted by you',
 }
+
+type TabsValues = keyof typeof Tabs;
 
 enum FilterEnums {
   All = 'All',
@@ -38,7 +40,7 @@ export interface ISpaceFeedProps {
   orientation?: 'horizontal' | 'vertical';
   height?: number;
   width?: number;
-  sortingOrder?: string[];
+  sortingOrder?: Array<TabsValues>;
   showTabs?: boolean;
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
   showFilter?: boolean;
@@ -46,10 +48,10 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  orientation = 'veritcal',
+  orientation = OrientationEnums.Vertical,
   height,
   width,
-  sortingOrder = [Tabs.Popular, Tabs.ForYou, Tabs.HostedByYou],
+  sortingOrder = ["Popular", "ForYou", "HostedByYou"],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
@@ -214,13 +216,13 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <>
           <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
             <NavButtonWrapper>
-              {sortingOrder.map((tabName: string) => {
+              {sortingOrder.map((tabName: TabsValues) => {
                 return (
                   <NavButton
                     active={tab === tabName}
                     onClick={() => handleTabChange(tabName)}
                   >
-                    {tabName}
+                    {Tabs[tabName]}
                   </NavButton>
                 );
               })}
@@ -285,7 +287,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
                   <Text>Popular Spaces</Text>
-                  {popularSpaces &&
+                  {popularSpaces.apiData &&
                     handleFilterData(
                       popularSpaces.apiData as SpaceIFeeds[]
                     ).map((space: SpaceIFeeds) => {

@@ -46,9 +46,9 @@ export const spaces = async (options: ChatsOptionsType): Promise<SpaceIFeeds[]> 
   try {
     const toDecrypt = false;
     const response = await axios.get(requestUrl);
-    const chats: SpaceIFeeds[] = response.data.chats;
+    const spaces: SpaceIFeeds[] = response.data.spaces;
     const feeds: SpaceIFeeds[] = await getSpaceInboxLists({
-      lists: chats,
+      lists: spaces,
       user: user,
       toDecrypt,
       pgpPrivateKey,

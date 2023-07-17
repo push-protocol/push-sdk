@@ -18,7 +18,6 @@ export interface StartSpaceType extends EnvOptionsType {
 }
 
 import type Space from './Space';
-import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 import { produce } from 'immer';
 
 type StartType = {

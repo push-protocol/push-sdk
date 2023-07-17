@@ -1,11 +1,9 @@
-import {
-  SPACE_ACCEPT_REQUEST_TYPE,
-  SPACE_REQUEST_TYPE,
-} from '../payloads/constants';
+import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 import { ChatStatus } from '../types';
-import { VideoDataType } from '../video/helpers/sendVideoCallNotification';
 import { approve } from './approve';
 import { get } from './get';
+import getIncomingIndexFromAddress from '../video/helpers/getIncomingIndexFromAddress';
+import getPlainAddress from './helpers/getPlainAddress';
 import type Space from './Space';
 
 /**
@@ -27,8 +25,9 @@ export async function join(this: Space) {
 
     let isSpeaker = false;
     let isListner = false;
+    const localAddress = getPlainAddress(this.data.local.address);
     space.members.forEach((member) => {
-      if (member.wallet === this.data.local.address) {
+      if (getPlainAddress(member.wallet) === localAddress) {
         if (member.isSpeaker) {
           isSpeaker = true;
         } else {
@@ -39,17 +38,28 @@ export async function join(this: Space) {
     let isSpeakerPending = false;
     space.pendingMembers.forEach((pendingMember) => {
       if (
-        pendingMember.wallet === this.data.local.address &&
+        getPlainAddress(pendingMember.wallet) === localAddress &&
         pendingMember.isSpeaker
       ) {
         isSpeakerPending = true;
       }
     });
 
+    const hostAddress = space.spaceCreator.replace('eip155:', '');
+    const incomingIndex = getIncomingIndexFromAddress(
+      this.data.incoming,
+      hostAddress
+    );
+
+    // check if we arent already connected to the host
+    if ((isSpeaker || isSpeakerPending) && incomingIndex > -1) {
+      return Promise.resolve();
+    }
+
     // acc to the found role (speaker or listner), executing req logic
 
     // if speaker is pending then approve first or if listner is pending/not found then approve first
-    if (isSpeakerPending || !isListner) {
+    if (!isSpeaker && !isListner) {
       await approve({
         signer: this.signer,
         pgpPrivateKey: this.pgpPrivateKey,
@@ -60,7 +70,6 @@ export async function join(this: Space) {
 
     if (isSpeaker || isSpeakerPending) {
       // Call the host and join the mesh connection
-      const hostAddress = space.spaceCreator.replace('eip155:', '');
       await this.request({
         senderAddress: this.data.local.address,
         recipientAddress: hostAddress,

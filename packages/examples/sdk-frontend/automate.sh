@@ -26,10 +26,6 @@ install=`yarn`
 sleep 1
 echo $install
 
-sleep 1
-run=`yarn run dev`
-echo $run
-
 
 sleep 1
 echo "See you soon, $who!"

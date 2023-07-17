@@ -33,9 +33,9 @@ export const trending = async (
   try {
  
     const response = await axios.get(apiEndpoint);
-    const chats: SpaceIFeeds[] = response.data.chats;
+    const spaces: SpaceIFeeds[] = response.data.spaces;
     const Feeds: SpaceIFeeds[] = await getTrendingSpaceInboxLists({
-      lists: chats,
+      lists: spaces,
       env,
     });
 

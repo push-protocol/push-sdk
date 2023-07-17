@@ -5,7 +5,7 @@ import Loader from './components/Loader';
 import { DarkIcon, LightIcon } from './components/Icons';
 import { Web3Context, EnvContext } from './context';
 import * as PushAPI from '@pushprotocol/restapi';
-import { NotificationItem, chainNameType, SubscribedModal } from '@pushprotocol/uiweb';
+import { NotificationItem, chainNameType, SubscribedModal, INotificationItemTheme, notificationBaseTheme, notificationLightTheme } from '@pushprotocol/uiweb';
 import { getCAIPAddress } from './helpers';
 
 import sampleNotifications from './data';
@@ -52,8 +52,34 @@ const NotificationsTest = () => {
   const [theme, setTheme] = useState('dark');
   const [viewType, setViewType] = useState('notif');
   const [showSubscribe, setShowSubscribe] = useState(false);
-
-
+  const customTheme: INotificationItemTheme = {...notificationLightTheme,...{
+    borderRadius:{
+      ...notificationLightTheme.borderRadius,
+      modal:'12px',
+    },
+    color:{
+      ...notificationLightTheme.color,
+        channelNameText:'#62626A',
+        notificationTitleText:'#000',
+        notificationContentText:'#62626A',
+        timestamp:'#62626A',
+    },
+    fontWeight:{
+      ...notificationLightTheme.fontWeight,
+      channelNameText:700,
+      notificationTitleText:700,
+      notificationContentText:800,
+      timestamp:400
+    },
+    fontSize:{
+      ...notificationLightTheme.fontSize,
+      channelNameText:'16px',
+      notificationTitleText:'16px',
+      notificationContentText:'16px',
+      timestamp:'12px'
+    },
+    modalDivider:'none'
+}};
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
@@ -171,6 +197,7 @@ const NotificationsTest = () => {
                       image={image}
                       url={url}
                       theme={theme}
+                      customTheme={customTheme}
                       // chainName="ETH_TEST_GOERLI"
                       chainName={blockchain as chainNameType}
                     />
