@@ -99,6 +99,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         spaceData={spaceData}
       />
       <WidgetContent
+        onClose={onClose}
         account={account}
         spaceData={spaceData}
         share={share}
@@ -107,6 +108,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}
+        toggleWidgetVisibility={toggleWidgetVisibility}
       />
     </Container>
   );

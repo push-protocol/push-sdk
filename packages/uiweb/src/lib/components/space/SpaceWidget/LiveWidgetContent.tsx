@@ -16,16 +16,19 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
 import { Player } from '@livepeer/react';
 import { createBlockie } from '../helpers/blockies';
+import { SpaceStatus } from './WidgetContent';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
+  setIsSpaceLive: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
   isHost,
+  setIsSpaceLive,
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
@@ -69,6 +72,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.stop?.();
     spacesObjectRef.current = null;
     setSpaceObjectData?.(PushAPI.space.initSpaceData);
+    setIsSpaceLive?.(SpaceStatus.Ended);
     window.alert('Space ended');
   };
 
@@ -143,7 +147,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 isHost={isHost}
                 isSpeaker={isSpeaker}
                 wallet={profile?.address}
-                image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+                image={createBlockie?.(profile?.address)
+                  ?.toDataURL()
+                  ?.toString()}
                 stream={profile?.stream}
               />
             ))}

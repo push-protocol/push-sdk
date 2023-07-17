@@ -12,6 +12,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
 import { generateLensterShareURL } from '../helpers/share';
 import { ShareConfig } from '../exportedTypes';
+import { SpaceStatus } from './WidgetContent';
 
 enum ShareOptions {
   Twitter = 'Twitter',
@@ -29,8 +30,8 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
-  isSpaceLive: boolean;
-  setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
+  isSpaceLive: any;
+  setIsSpaceLive: React.Dispatch<React.SetStateAction<any>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   spaceData,
@@ -132,13 +133,13 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
-      if (isSpaceLive) return;
+      if (isSpaceLive === SpaceStatus.Live) return;
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
       await spacesObjectRef?.current?.start?.({
-        livepeerApiKey: 'a74ebfa6-f9e6-4615-89bd-34b6190b1586',
+        livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
       });
       setIsStarted(false);
-      setIsSpaceLive && setIsSpaceLive(true);
+      setIsSpaceLive && setIsSpaceLive(SpaceStatus.Live);
     }
     startSpace();
   }, [isStarted]);

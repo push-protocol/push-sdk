@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 import { LiveWidgetContent } from './LiveWidgetContent';
@@ -22,6 +22,8 @@ interface WidgetContentProps {
   isLive: any;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
+  onClose: MouseEventHandler;
+  toggleWidgetVisibility: () => void;
 }
 
 export enum SpaceStatus {
@@ -39,6 +41,8 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   isMember,
   isMinimized,
   isLive,
+  onClose,
+  toggleWidgetVisibility,
 }: WidgetContentProps) => {
   // const { isLive } = useSpaceData();
   console.log('isLiveInWidgetContent', isLive);
@@ -68,7 +72,11 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
       }
     >
       {isSpaceLive === SpaceStatus.Live ? (
-        <LiveWidgetContent spaceData={spaceData} isHost={isHost} />
+        <LiveWidgetContent
+          spaceData={spaceData}
+          isHost={isHost}
+          setIsSpaceLive={setIsSpaceLive}
+        />
       ) : isSpaceLive === SpaceStatus.Scheduled ? (
         <ScheduledWidgetContent
           spaceData={spaceData}
@@ -80,7 +88,10 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           setIsSpaceLive={setIsSpaceLive}
         />
       ) : (
-        <EndWidgetContent />
+        <EndWidgetContent
+          onClose={onClose}
+          toggleWidgetVisibility={toggleWidgetVisibility}
+        />
       )}
     </Container>
   );

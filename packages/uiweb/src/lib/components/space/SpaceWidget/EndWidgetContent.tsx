@@ -1,15 +1,27 @@
-import React from 'react';
-import { Button, Container, Image, Text } from '../../../config';
+import React, { MouseEventHandler } from 'react';
+import { Item, Container, Image, Text } from '../../../config';
 import SpaceEnded from '../../../icons/SpaceEnded.svg';
 import { SpaceInfoText } from './ScheduledWidgetContent';
 
 interface IEndWidgetContentProps {
-  tempProp?: string;
+  onClose: MouseEventHandler;
+  toggleWidgetVisibility: () => void;
 }
 
-export const EndWidgetContent: React.FC<IEndWidgetContentProps> = (
-  IEndWidgetContentProps
-) => {
+export const EndWidgetContent: React.FC<IEndWidgetContentProps> = ({
+  onClose,
+  toggleWidgetVisibility,
+}) => {
+  const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (
+    event
+  ) => {
+    // Call for hiding the widget
+    toggleWidgetVisibility();
+
+    // Call for running onClose handler from prop
+    onClose(event);
+  };
+
   return (
     <Container
       display={'flex'}
@@ -27,17 +39,18 @@ export const EndWidgetContent: React.FC<IEndWidgetContentProps> = (
         alt="End Icon"
       ></Image>
       <SpaceInfoText>This Space has ended</SpaceInfoText>
-      <Button
+      <Item
         padding={'9px 34px'}
         borderRadius={'8px'}
         background={'#8B5CF6'}
         border={'1px solid #703BEB'}
         cursor={'pointer'}
+        onClick={handleCloseWidget}
       >
         <Text fontSize="14px" fontWeight={600} color="#fff">
           Close
         </Text>
-      </Button>
+      </Item>
     </Container>
   );
 };
