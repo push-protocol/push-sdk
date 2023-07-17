@@ -118,8 +118,7 @@ const Input = styled.input`
     width: 330px;
 
     background: #FFFFFF;
-    border: 1px solid ${(props => props.theme.btnOutline)};
-    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
+    border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 
     font-size: 16px;
@@ -137,8 +136,7 @@ const Select = styled.select<{ width?: string }>`
     margin-top: 12px;
 
     background: #FFFFFF;
-    border: 1px solid ${(props => props.theme.btnOutline)};
-    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
+    border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 
     font-size: 16px;

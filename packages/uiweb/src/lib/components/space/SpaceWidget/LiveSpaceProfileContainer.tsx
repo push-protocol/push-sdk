@@ -43,7 +43,7 @@ export const LiveSpaceProfileContainer = (
         borderRadius={'50%'}
       />
       <Text fontSize={'17px'} marginTop={'4px'} fontWeight={600}>
-        {wallet.slice(7, 12).concat('...')}
+        {wallet?.slice(7, 12).concat('...')}
         {stream && <VideoPlayer videoCallData={stream} />}
       </Text>
       {requested ? (

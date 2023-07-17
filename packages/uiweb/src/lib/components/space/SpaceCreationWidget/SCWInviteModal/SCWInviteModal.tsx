@@ -39,8 +39,8 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     setAdminsList?: any;
     adminsAddressList?: any;
     setAdminsAddressList?: any;
-    onClose: () => void;
-    customSearch?: (searchString: string) => ICustomSearchResult;
+    onClose: any;
+    btnString?: string;
 }
 
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
@@ -55,17 +55,17 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         adminsAddressList,
         setAdminsAddressList,
         onClose,
-        customSearch,
+        btnString,
     } = props;
     const theme = useContext(ThemeContext);
 
-    const { env, account } = useSpaceData();
+    const { env, account, customSearch } = useSpaceData();
 
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
 
     const [searchedUser, setSearchedUser]= useState<any>({});
-    const [errorMsg, setErrorMsg] = useState<any>('');
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
@@ -376,7 +376,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {
                         isLoading ?
                         <CircularProgressSpinner />
-                        : 'Create Space'
+                        : btnString ?? 'Create Space'
                     }
                 </Button>
             </Modal>

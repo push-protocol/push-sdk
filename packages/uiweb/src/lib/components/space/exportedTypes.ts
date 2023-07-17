@@ -1,5 +1,7 @@
 import { MouseEventHandler } from "react";
 
+import { ICustomSearchResult } from "./SpaceCreationWidget/SCWInviteModal";
+
 import { ENV } from "../../config";
 import { SignerType } from "../../types";
 import { ShareOptionsValues } from "./SpaceWidget/ScheduledWidgetContent";
@@ -9,6 +11,7 @@ export interface ISpacesUIProps {
   signer: SignerType;
   pgpPrivateKey: string;
   env: ENV;
+  customSearch?: ICustomSearchResult | undefined;
 }
 
 export interface ShareConfig {
