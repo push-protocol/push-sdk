@@ -104,9 +104,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         const spaceCreate = {
             spaceName: spaceState.spaceName.length === 0 ? `${account}'s Space` : spaceState.spaceName,
             spaceDescription: 'Push Space',
-            members: invitedAddressList,
+            listeners: invitedAddressList,
             spaceImage: 'asd',
-            admins: adminsAddressList,
+            speakers: adminsAddressList,
             isPublic: true,
             scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 120000),
             signer: signer as PushAPI.SignerType,

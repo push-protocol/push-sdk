@@ -56,9 +56,9 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         const spaceUpdate = {
             spaceName: spaceData?.spaceName,
             spaceDescription: 'Push Space',
-            members: invitedAddressList,
+            listeners: invitedAddressList,
             spaceImage: 'asd',
-            admins: adminsAddressList,
+            speakers: adminsAddressList,
             isPublic: true,
             scheduleAt: new Date(Date.now() + 120000),
             signer: signer as PushAPI.SignerType,
