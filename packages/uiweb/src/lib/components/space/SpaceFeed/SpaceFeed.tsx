@@ -51,7 +51,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   orientation = OrientationEnums.Vertical,
   height,
   width,
-  sortingOrder = ["Popular", "ForYou", "HostedByYou"],
+  sortingOrder = ['Popular', 'ForYou', 'HostedByYou'],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
@@ -185,33 +185,37 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   return (
     <div>
       {orientation === OrientationEnums.Horizontal ? (
-        <Spaces orientation={orientation}>
-          {orientation === OrientationEnums.Horizontal
-            ? mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="pill"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })
-            : mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="maximized"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })}
-        </Spaces>
+        <ScrollContainerHorizontal width={width}>
+          <Container2>
+          <Spaces orientation={orientation}>
+            {orientation === OrientationEnums.Horizontal
+              ? mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="pill"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })
+              : mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="maximized"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })}
+          </Spaces>
+          </Container2>
+        </ScrollContainerHorizontal>
       ) : (
         <>
           <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
@@ -249,7 +253,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             </FilterButton>
           </Filter>
           <ScrollContainer
-            width={width}
             height={height}
             ref={listInnerRef}
             onScroll={onScroll}
@@ -342,11 +345,24 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 };
 
 //Styling
-const ScrollContainer = styled.div<{ height?: number; width?: number }>`
-  width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
+const ScrollContainer = styled.div<{ height?: number }>`
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
 }`;
+
+const ScrollContainerHorizontal = styled.div<{ width?: number }>`
+  width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}`;
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: row;
+}`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -402,7 +418,7 @@ const Spaces = styled.div<{ orientation?: string }>`
   width: ${(props) =>
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
-  gap: 16px;
+  gap: ${(props) => (props.orientation === 'horizontal' ? '8px' : '16px')};
 }`;
 
 const PopularSpaces = styled.div`

@@ -146,7 +146,7 @@ const Container = styled.div<IThemeProps>`
       ? 'inherit'
       : props.orientation === 'minimized'
       ? 'inherit'
-      : 'fit-content'};
+      : '253px'};
   height: ${(props) =>
     props.orientation === 'maximized'
       ? 'auto'
