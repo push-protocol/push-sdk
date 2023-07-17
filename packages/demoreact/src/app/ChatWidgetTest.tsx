@@ -32,6 +32,9 @@ export const ChatWidgetTest = () => {
     })();
    
   },[account,env])
+  const onClose = () => {
+    console.log('in here widget')
+  };
   return (
     <ChatAndNotificationWidget
       account={account}

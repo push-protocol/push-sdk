@@ -1,29 +1,33 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType } from '../types';
+import { ChatStatus, EnvOptionsType, GroupDTO, SignerType } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
   sign,
-  updateGroupRequestValidator,
   getWallet,
   getAccountAddress,
   getUserDID,
   getConnectedUserV2,
+  updateGroupRequestValidator,
+  validateScheduleDates,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
   chatId: string;
   groupName: string;
-  groupImage: string;
+  groupImage: string | null;
   groupDescription: string;
   members: Array<string>;
   admins: Array<string>;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
   // If meta is not passed, old meta is not affected
   // If passed as null will update to null
   // If passed as string will update to that value
@@ -47,6 +51,9 @@ export const updateGroup = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    scheduleAt,
+    scheduleEnd,
+    status,
     meta,
   } = options || {};
   try {
@@ -60,11 +67,12 @@ export const updateGroup = async (
       chatId,
       groupName,
       groupDescription,
-      groupImage,
       members,
       admins,
       address
     );
+    validateScheduleDates(scheduleAt, scheduleEnd);
+
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const convertedMembersPromise = members.map(async (each) => {
       return getUserDID(each, env);
@@ -99,6 +107,9 @@ export const updateGroup = async (
       convertedAdmins,
       connectedUser.did,
       verificationProof,
+      scheduleAt,
+      scheduleEnd,
+      status,
       meta
     );
 

@@ -25,6 +25,7 @@ export const send = async (
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
+
   } = options || {};
 
   try {

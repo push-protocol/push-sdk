@@ -177,6 +177,7 @@ export const ChatAndNotification = () => {
     })();
   }, [activeChat,env,account]);
 
+
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
   };
@@ -187,6 +188,7 @@ export const ChatAndNotification = () => {
     }
   };
 
+  
 
   return (
     <Container
@@ -195,12 +197,12 @@ export const ChatAndNotification = () => {
       maxHeight="600px"
       position="fixed"
       background="#fff"
-   
       right="12px"
       bottom="18px"
       overflow="hidden"
-      onMouseEnter={() => toggleOverflow('hidden')}
-      onMouseLeave={() => toggleOverflow('unset')}
+    
+      // onMouseEnter={() => toggleOverflow('hidden')}
+      // onMouseLeave={() => toggleOverflow('auto')}
     >
       <MinimisedModalHeader
         onMaximizeMinimizeToggle={onClose ?? onMaximizeMinimizeToggle}

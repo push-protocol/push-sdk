@@ -5,6 +5,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
+    "@livepeer/react": "^2.6.0",
     "@pushprotocol/socket": "^0.5.0",
     "@unstoppabledomains/resolution": "^8.5.0",
     "date-fns": "^2.28.0",

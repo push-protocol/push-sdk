@@ -3,6 +3,10 @@ import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_DISCONNECT_TYPE,
+  SPACE_INVITE_ROLES,
+  SPACE_REQUEST_TYPE,
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -209,6 +213,25 @@ export interface IFeeds {
   deprecated?: boolean; // scope only at sdk level
   deprecatedCode?: string; // scope only at sdk level
 }
+
+export interface SpaceIFeeds {
+  msg: IMessageIPFS;
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  name: string | null;
+  publicKey: string | null;
+  about: string | null;
+  threadhash: string | null;
+  intent: string | null;
+  intentSentBy: string | null;
+  intentTimestamp: Date;
+  combinedDID: string;
+  cid?: string;
+  spaceId?: string;
+  spaceInformation?: SpaceDTO;
+}
+
 export interface IUser {
   msgSent: number;
   maxMsgPersisted: number;
@@ -280,6 +303,11 @@ export interface Member {
   publicKey: string;
 }
 
+export enum ChatStatus {
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+  ENDED = 'ENDED'
+}
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -301,12 +329,47 @@ export interface GroupDTO {
   groupImage: string | null;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string | null;
+  groupDescription: string;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  groupType: string;
+  groupType?: string;
+  status?: ChatStatus | null;
+}
+
+export interface SpaceDTO {
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  spaceImage: string | null;
+  spaceName: string;
+  isPublic: boolean;
+  spaceDescription: string;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status: ChatStatus | null;
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+}
+
+export interface SpaceData extends SpaceDTO {
+  connectionData: VideoCallData;
 }
 
 export interface Subscribers {
@@ -486,7 +549,7 @@ export type VideoCallData = {
     broadcast?: {
       livepeerInfo: any;
       hostAddress: string;
-      coHostAddress: string;
+      coHostAddress?: string;
     };
   };
   local: {
@@ -495,7 +558,7 @@ export type VideoCallData = {
     video: boolean | null;
     address: string;
   };
-  incoming: [PeerData];
+  incoming: PeerData[];
 };
 
 export type VideoCreateInputOptions = {
@@ -506,10 +569,14 @@ export type VideoCreateInputOptions = {
 
 export type VideoRequestInputOptions = {
   senderAddress: string;
-  recipientAddress: string;
+  recipientAddress: string | string[];
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -519,16 +586,31 @@ export type VideoAcceptRequestInputOptions = {
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_ACCEPT_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress: string;
+};
+
+export type VideoDisconnectOptions = {
+  peerAddress: string;
+  details?: {
+    type: SPACE_DISCONNECT_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type EnableVideoInputOptions = {
   state: boolean;
+  peerAddress: string;
 };
 
 export type EnableAudioInputOptions = {
   state: boolean;
+  peerAddress: string;
 };

@@ -27,7 +27,7 @@ export const AddressInfo: React.FC = () => {
         <ImgSpan>
           <Image
             src={
-              user?.profile.picture
+              user?.profile?.picture
                 ? user?.profile.picture
                 : Constants.DEFAULT_PROFILE_PICTURE
             }
