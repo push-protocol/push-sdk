@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
@@ -29,15 +29,28 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     }) as MouseEventHandler<HTMLDivElement>,
     isTimeToStartSpace,
   } = options || {};
-  const [widgetHidden, setWidgetHidden] = useState(!spaceId);
-  const { account, spaceObjectData, initSpaceObject, env } = useSpaceData();
 
+  const isLiveRef = useRef(false);
+
+  const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
+  console.log("🚀 ~ file: SpaceWidget.tsx:38 ~ spaceData:", spaceData)
+
+  const {
+    getSpaceInfo, setSpaceInfo, account, env,
+    spaceObjectData
+  } = useSpaceData();
 
   const spaceStatus = spaceData && spaceData?.status;
-  // console.log('isLiveInWidget', isLive)
+
+  useEffect(() => {
+    if (spaceObjectData.status) {
+      isLiveRef.current = spaceObjectData?.status === 'ACTIVE';
+    } else {
+      isLiveRef.current = spaceData?.status === 'ACTIVE';
+    }
+  }, [spaceData?.status, spaceObjectData.status])
 
   useEffect(() => {
     if (!spaceId) {
@@ -46,12 +59,12 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!spaceId);
     const fetchData = async () => {
       try {
-        if (getSpaceInfo?.(spaceId)) {
+        if (getSpaceInfo(spaceId)) {
           setSpaceData(getSpaceInfo(spaceId));
           return;
         }
         const response = await PushAPI.space.get({ spaceId, env });
-        setSpaceInfo?.(spaceId, response);
+        setSpaceInfo(spaceId, response);
         setSpaceData(response);
       } catch (error) {
         console.error(error);
@@ -59,7 +72,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     };
 
     fetchData();
-  }, [spaceId]);
+  }, [env, getSpaceInfo, setSpaceInfo, spaceId]);
 
   // To Be Implemented Later via Meta messages.
   // useEffect(() => {
@@ -79,6 +92,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
   };
+
+  console.log(isLiveRef.current)
 
   // Implement the SpaceWidget component
   return (

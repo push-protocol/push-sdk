@@ -44,10 +44,10 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   onClose,
   toggleWidgetVisibility,
 }: WidgetContentProps) => {
-  // const { isLive } = useSpaceData();
+  
   const [spaceStatusState, setSpaceStatusState] = useState<any>(SpaceStatus.Scheduled);
+  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(false);
 
-  console.log('Rendering WidgetContent');
   useEffect(() => {
     if (spaceStatus === SpaceStatus.Live) {
       setSpaceStatusState(SpaceStatus.Live);
