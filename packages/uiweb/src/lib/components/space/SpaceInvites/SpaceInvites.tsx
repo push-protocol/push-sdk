@@ -5,16 +5,44 @@ import { Spinner } from '../reusables/Spinner';
 import { ModalHeader } from '../reusables/ModalHeader';
 import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
+import LiveIcon from '../../../icons/live.svg';
 
 export interface ISpaceInvitesProps {
   children?: React.ReactNode;
+  btnText?: string;
+  customButtonStyle?: any;
+  customBadgeStyle?: any;
 }
 
+const defaultProps: ISpaceInvitesProps = {
+  btnText: 'Invites',
+  customButtonStyle: {
+    padding: '11px',
+    borderRadius: '8px',
+    border: '0px solid transparent',
+    fontSize: '1rem',
+    backgroundColor: '#8B5CF6',
+    color: '#fff',
+  },
+  customBadgeStyle: {
+    backgroundColor: '#000',
+    color: '#fff',
+    borderRadius: '8px',
+    marginLeft: '8px',
+    padding: '4px 8px',
+    fontSize: '13px',
+    fontWeight: 500,
+  },
+};
+
 // temp
-let spaceId = "";
+let spaceId = '';
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
+  btnText,
+  customButtonStyle,
+  customBadgeStyle,
 }: ISpaceInvitesProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { spaceRequests, setSpaceRequests } = useSpaceData();
@@ -98,7 +126,15 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   const { loading } = useSpaceRequests(account);
   return (
     <>
-      {!children && <Button onClick={handleOpenModal}>Space Invites</Button>}
+      {!children && (
+        <Button onClick={handleOpenModal} customButtonStyle={customButtonStyle}>
+          <img src={LiveIcon} alt="Live Icon" />
+          {btnText}
+          <NumberBadge customBadgeStyle={customBadgeStyle}>
+            {spaceRequests.apiData?.length}
+          </NumberBadge>
+        </Button>
+      )}
 
       {children && <div onClick={handleOpenModal}>{children}</div>}
 
@@ -136,13 +172,16 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   );
 };
 
-const Button = styled.button`
-  padding: 8px 16px;
-  background-color: #8b5cf6;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
+const Button = styled.button<{ customButtonStyle?: any }>`
+  padding: ${(props) => props.customButtonStyle.padding};
+  background-color: ${(props) => props.customButtonStyle.backgroundColor};
+  color: ${(props) => props.customButtonStyle.color};
+  border: ${(props) => props.customButtonStyle.border};
+  border-radius: ${(props) => props.customButtonStyle.borderRadius};
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 const ScrollContainer = styled.div`
@@ -172,3 +211,18 @@ const InviteContainer = styled.div`
   gap: 16px;
   margin: 0 10px;
 `;
+
+const NumberBadge = styled.div<{ customBadgeStyle?: any }>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:#000;
+    color: #fff;
+    border-radius: 8px;
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 500;
+}`;
+
+SpaceInvites.defaultProps = defaultProps;
