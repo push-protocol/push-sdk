@@ -10,24 +10,28 @@ import {
   getWallet,
   getUserDID,
   getConnectedUserV2,
+  validateScheduleDates,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
   groupName: string;
   groupDescription: string;
   members: Array<string>;
-  groupImage: string;
+  groupImage: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
   numberOfNFTs?: number;
   contractAddressERC20?: string;
   numberOfERC20?: number;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
   meta?: string;
+  groupType? : string | null,
+  scheduleAt ?: Date | null;
+  scheduleEnd?: Date | null;
 }
 
 export const createGroup = async (
@@ -49,12 +53,17 @@ export const createGroup = async (
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
     meta,
+    groupType,
+    scheduleAt,
+    scheduleEnd
   } = options || {};
 
   try {
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
+
+    validateScheduleDates(scheduleAt, scheduleEnd)
 
     const wallet = getWallet({ account, signer });
 
@@ -120,7 +129,10 @@ export const createGroup = async (
       numberOfNFTs,
       contractAddressERC20,
       numberOfERC20,
-      meta
+      meta,
+      groupType,
+      scheduleAt,
+      scheduleEnd
     );
 
     return axios

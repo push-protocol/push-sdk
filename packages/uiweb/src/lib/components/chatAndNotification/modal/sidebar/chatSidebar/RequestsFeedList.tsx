@@ -38,8 +38,9 @@ export const RequestsFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading ||
-      Object.keys(requestsFeed).length < requestLimit
+      loading 
+      // ||
+      // Object.keys(requestsFeed).length < requestLimit
     ) {
       return;
     }

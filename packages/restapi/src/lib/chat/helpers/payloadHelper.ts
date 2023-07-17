@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
 import * as AES from './aes';
@@ -46,9 +46,9 @@ export interface IApproveRequestPayload {
 
 export interface ICreateGroupRequestPayload {
   groupName: string;
-  groupDescription: string;
+  groupDescription: string | null;
   members: Array<string>;
-  groupImage: string;
+  groupImage: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -62,7 +62,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string;
+  groupImage: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -164,9 +164,9 @@ export const approveRequestPayload = (
 
 export const createGroupPayload = (
   groupName: string,
-  groupDescription: string,
+  groupDescription: string | null,
   members: Array<string>,
-  groupImage: string,
+  groupImage: string | null,
   admins: Array<string>,
   isPublic: boolean,
   groupCreator: string,
@@ -175,7 +175,10 @@ export const createGroupPayload = (
   numberOfNFTs?: number,
   contractAddressERC20?: string,
   numberOfERC20?: number,
-  meta?: string
+  meta?: string,
+  groupType?: string | null,
+  scheduleAt?: Date | null,
+  scheduleEnd?: Date | null
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -191,18 +194,56 @@ export const createGroupPayload = (
     groupCreator: groupCreator,
     verificationProof: verificationProof,
     meta: meta,
+    groupType: groupType,
+    scheduleAt: scheduleAt,
+    scheduleEnd: scheduleEnd,
   };
   return body;
 };
 
+export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
+  const spaceDto: SpaceDTO = {
+    members: groupDto.members.map((member) => ({
+      wallet: member.wallet,
+      publicKey: member.publicKey,
+      isSpeaker: member.isAdmin,
+      image: member.image,
+    })),
+    pendingMembers: groupDto.pendingMembers.map((pendingMember) => ({
+      wallet: pendingMember.wallet,
+      publicKey: pendingMember.publicKey,
+      isSpeaker: pendingMember.isAdmin,
+      image: pendingMember.image,
+    })),
+    contractAddressERC20: groupDto.contractAddressERC20,
+    numberOfERC20: groupDto.numberOfERC20,
+    contractAddressNFT: groupDto.contractAddressNFT,
+    numberOfNFTTokens: groupDto.numberOfNFTTokens,
+    verificationProof: groupDto.verificationProof,
+    spaceImage: groupDto.groupImage,
+    spaceName: groupDto.groupName,
+    isPublic: groupDto.isPublic,
+    spaceDescription: groupDto.groupDescription,
+    spaceCreator: groupDto.groupCreator,
+    spaceId: groupDto.chatId,
+    scheduleAt: groupDto.scheduleAt,
+    scheduleEnd: groupDto.scheduleEnd,
+    status: groupDto.status ?? null,
+  };
+  return spaceDto;
+};
+
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string,
-  groupDescription: string,
+  groupImage: string | null,
+  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  scheduleAt?: Date | null,
+  scheduleEnd?: Date | null,
+  status?: ChatStatus | null,
   meta?: string | null
 ): IUpdateGroupRequestPayload => {
   const body = {
@@ -213,7 +254,110 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    scheduleAt: scheduleAt,
+    scheduleEnd: scheduleEnd,
+    status: status,
     ...(meta !== undefined && { meta: meta }),
   };
   return body;
+};
+
+// helper.ts
+
+export const getAdminsList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const adminsFromMembers = members
+    ? convertToWalletAddressList(members.filter((admin) => admin.isAdmin))
+    : [];
+
+  const adminsFromPendingMembers = pendingMembers
+    ? convertToWalletAddressList(
+        pendingMembers.filter((admin) => admin.isAdmin)
+      )
+    : [];
+
+  const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
+  return adminList;
+};
+
+export const getSpaceAdminsList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const adminsFromMembers = members
+    ? convertToWalletAddressList(members.filter((admin) => admin.isSpeaker))
+    : [];
+
+  const adminsFromPendingMembers = pendingMembers
+    ? convertToWalletAddressList(
+        pendingMembers.filter((admin) => admin.isSpeaker)
+      )
+    : [];
+
+  const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
+  return adminList;
+};
+
+export const convertToWalletAddressList = (
+  memberList: { wallet: string }[]
+): string[] => {
+  return memberList ? memberList.map((member) => member.wallet) : [];
+};
+
+export const getMembersList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isAdmin: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const allMembers = [...(members || []), ...(pendingMembers || [])];
+  return convertToWalletAddressList(allMembers);
+};
+
+export const getSpacesMembersList = (
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[],
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[]
+): Array<string> => {
+  const allMembers = [...(members || []), ...(pendingMembers || [])];
+  return convertToWalletAddressList(allMembers);
 };
