@@ -9,96 +9,96 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
   - [Import SDK](#import-sdk)
-  - [About generating the "signer" object for different platforms](#about-generating-the-signer-object-for-different-platforms)
+  - [**About generating the "signer" object for different platforms**](#about-generating-the-signer-object-for-different-platforms)
     - [When using in SERVER-SIDE code:](#when-using-in-server-side-code)
     - [When using in FRONT-END code:](#when-using-in-front-end-code)
-  - [About blockchain agnostic address format](#about-blockchain-agnostic-address-format)
+  - [**About blockchain agnostic address format**](#about-blockchain-agnostic-address-format)
     - [Chat blockchain agnostic address format](#chat-blockchain-agnostic-address-format)
-  - [About Push contract addresses](#about-push-contract-addresses)
+  - [**About Push contract addresses**](#about-push-contract-addresses)
     - [Push core contract address](#push-core-contract-address)
     - [Push communicator contract address](#push-communicator-contract-address)
 - [SDK Features](#sdk-features)
   - [For Notification](#for-notification)
-    - [Fetching user notifications](#fetching-user-notifications)
-    - [Fetching user spam notifications](#fetching-user-spam-notifications)
-    - [Fetching user subscriptions](#fetching-user-subscriptions)
-    - [Fetching channel details](#fetching-channel-details)
-    - [Searching for channel(s)](#searching-for-channels)
-    - [Opt in to a channel](#opt-in-to-a-channel)
-    - [Opt out to a channel](#opt-out-to-a-channel)
-    - [Sending notification](#sending-notification)
-      - [Direct payload for single recipient(target)](#direct-payload-for-single-recipienttarget)
-      - [Direct payload for group of recipients(subset)](#direct-payload-for-group-of-recipientssubset)
-      - [Direct payload for all recipients(broadcast)](#direct-payload-for-all-recipientsbroadcast)
-      - [IPFS payload for single recipient(target)](#ipfs-payload-for-single-recipienttarget)
-      - [IPFS payload for group of recipients(subset)](#ipfs-payload-for-group-of-recipientssubset)
-      - [IPFS payload for all recipients(broadcast)](#ipfs-payload-for-all-recipientsbroadcast)
-      - [Minimal payload for single recipient(target)](#minimal-payload-for-single-recipienttarget)
-      - [Minimal payload for a group of recipient(subset)](#minimal-payload-for-a-group-of-recipientsubset)
-      - [Minimal payload for all recipients(broadcast)](#minimal-payload-for-all-recipientsbroadcast)
-      - [Graph payload for single recipient(target)](#graph-payload-for-single-recipienttarget)
-      - [Graph payload for group of recipients(subset)](#graph-payload-for-group-of-recipientssubset)
-      - [Graph payload for all recipients(broadcast)](#graph-payload-for-all-recipientsbroadcast)
+    - [**Fetching user notifications**](#fetching-user-notifications)
+    - [**Fetching user spam notifications**](#fetching-user-spam-notifications)
+    - [**Fetching user subscriptions**](#fetching-user-subscriptions)
+    - [**Fetching channel details**](#fetching-channel-details)
+    - [**Searching for channel(s)**](#searching-for-channels)
+    - [**Opt in to a channel**](#opt-in-to-a-channel)
+    - [**Opt out to a channel**](#opt-out-to-a-channel)
+    - [**Sending notification**](#sending-notification)
+      - [**Direct payload for single recipient(target)**](#direct-payload-for-single-recipienttarget)
+      - [**Direct payload for group of recipients(subset)**](#direct-payload-for-group-of-recipientssubset)
+      - [**Direct payload for all recipients(broadcast)**](#direct-payload-for-all-recipientsbroadcast)
+      - [**IPFS payload for single recipient(target)**](#ipfs-payload-for-single-recipienttarget)
+      - [**IPFS payload for group of recipients(subset)**](#ipfs-payload-for-group-of-recipientssubset)
+      - [**IPFS payload for all recipients(broadcast)**](#ipfs-payload-for-all-recipientsbroadcast)
+      - [**Minimal payload for single recipient(target)**](#minimal-payload-for-single-recipienttarget)
+      - [**Minimal payload for a group of recipient(subset)**](#minimal-payload-for-a-group-of-recipientsubset)
+      - [**Minimal payload for all recipients(broadcast)**](#minimal-payload-for-all-recipientsbroadcast)
+      - [**Graph payload for single recipient(target)**](#graph-payload-for-single-recipienttarget)
+      - [**Graph payload for group of recipients(subset)**](#graph-payload-for-group-of-recipientssubset)
+      - [**Graph payload for all recipients(broadcast)**](#graph-payload-for-all-recipientsbroadcast)
     - [Notification Helper Utils](#notification-helper-utils)
-      - [Parsing notifications](#parsing-notifications)
+      - [**Parsing notifications**](#parsing-notifications)
     - [Advanced Notifications (WIP)](#advanced-notifications-wip)
     - [DEPRECATED](#deprecated)
-      - [Get a channel's subscriber list of addresses](#get-a-channels-subscriber-list-of-addresses)
+      - [**Get a channel's subscriber list of addresses**](#get-a-channels-subscriber-list-of-addresses)
   - [For Chat](#for-chat)
-    - [Create user for chat](#create-user-for-chat)
-    - [Get user data for chat](#get-user-data-for-chat)
-    - [Decrypting encrypted pgp private key from user data](#decrypting-encrypted-pgp-private-key-from-user-data)
-    - [Updating chat user profile](#updating-user-profile)
-    - [Fetching list of user chats](#fetching-list-of-user-chats)
-    - [Fetching list of user chat requests](#fetching-list-of-user-chat-requests)
-    - [Fetching conversation hash between two users](#fetching-conversation-hash-between-two-users)
-    - [Fetching latest chat between two users](#fetching-latest-chat-between-two-users)
-    - [Fetching chat history between two users](#fetching-chat-history-between-two-users)
-    - [To send a message](#to-send-a-message)
-    - [To approve a chat request](#to-approve-a-chat-request)
-    - [To create a group](#to-create-a-group)
-    - [To create a token gated group](#to-create-a-token-gated-group)
-    - [To update group details](#to-update-group-details)
-    - [To update token gated group details](#to-update-token-gated-group-details)
-    - [To get group details by group name](#to-get-group-details-by-group-name)
-    - [To get group details by chatId](#to-get-group-details-by-chatid)
-    - [Chat Helper Utils](#chat-helper-utils)
-      - [Decrypting messages](#decrypting-messages)
+    - [**Create user for chat**](#create-user-for-chat)
+    - [**Get user data for chat**](#get-user-data-for-chat)
+    - [**Decrypting encrypted pgp private key from user data**](#decrypting-encrypted-pgp-private-key-from-user-data)
+    - [**Updating User Profile**](#updating-user-profile)
+    - [**Fetching list of user chats**](#fetching-list-of-user-chats)
+    - [**Fetching list of user chat requests**](#fetching-list-of-user-chat-requests)
+    - [**Fetching conversation hash between two users**](#fetching-conversation-hash-between-two-users)
+    - [**Fetching latest chat between two users**](#fetching-latest-chat-between-two-users)
+    - [**Fetching chat history between two users**](#fetching-chat-history-between-two-users)
+    - [**To send a message**](#to-send-a-message)
+    - [**To approve a chat request**](#to-approve-a-chat-request)
+    - [**To create a group**](#to-create-a-group)
+    - [**To create a token gated group**](#to-create-a-token-gated-group)
+    - [**To update group details**](#to-update-group-details)
+    - [**To update token gated group details**](#to-update-token-gated-group-details)
+    - [**To get group details by group name**](#to-get-group-details-by-group-name)
+    - [**To get group details by chatId**](#to-get-group-details-by-chatid)
+    - [**Chat Helper Utils**](#chat-helper-utils)
+      - [**Decrypting messages**](#decrypting-messages)
   - [For Video](#for-video)
-    - [Instance Variables](#instance-variables)
-      - [peerInstance](#peerinstance)
-      - [signer](#signer)
-      - [chainId](#chainid)
-      - [pgpPrivateKey](#pgpprivatekey)
-      - [env](#env)
-    - [data](#data)
-      - [setData](#setdata)
-    - [Methods](#methods)
-      - [constructor](#constructor)
-      - [create](#create)
-      - [request](#request)
-      - [acceptRequest](#acceptrequest)
-      - [connect](#connect)
-      - [disconnect](#disconnect)
-      - [enableVideo](#enablevideo)
-      - [enableAudio](#enableaudio)
-      - [isInitiator](#isinitiator)
+    - [**Instance Variables**](#instance-variables)
+      - [**peerInstance**](#peerinstance)
+      - [**signer**](#signer)
+      - [**chainId**](#chainid)
+      - [**pgpPrivateKey**](#pgpprivatekey)
+      - [**env**](#env)
+    - [**data**](#data)
+      - [**setData**](#setdata)
+    - [**Methods**](#methods)
+      - [**constructor**](#constructor)
+      - [**create**](#create)
+      - [**request**](#request)
+      - [**acceptRequest**](#acceptrequest)
+      - [**connect**](#connect)
+      - [**disconnect**](#disconnect)
+      - [**enableVideo**](#enablevideo)
+      - [**enableAudio**](#enableaudio)
+      - [**isInitiator**](#isinitiator)
   - [For Spaces](#for-spaces)
-    - [To create a space](#to-create-a-space)
-    - [To create a token gated space](#to-create-a-token-gated-space)
-    - [To update space details](#to-update-space-details)
-    - [To update token gated space details](#to-update-token-gated-space-details)
-    - [To get space details by spaceId](#to-get-space-details-by-spaceId)
-    - [To start a space](#to-start-a-space)
-    - [To stop a space](#to-stop-a-space)
-    - [To approve a space request](#to-approve-a-space-request)
-    - [To add listeners to space](#to-add-listeners-to-space)
-    - [To remove listeners from space](#to-remove-listeners-from-space)
-    - [To add speakers to space](#to-add-speakers-to-space)
-    - [To remove speakers from space](#to-remove-speakers-from-space)
-    - [Fetching list of user spaces](#fetching-list-of-user-spaces)
-    - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
-    - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
+    - [**To create a space**](#to-create-a-space)
+    - [**To create a token gated space**](#to-create-a-token-gated-space)
+    - [**To update space details**](#to-update-space-details)
+    - [**To update token gated space details**](#to-update-token-gated-space-details)
+    - [**To get space details by spaceId**](#to-get-space-details-by-spaceid)
+    - [**To start a space**](#to-start-a-space)
+    - [**To stop a space**](#to-stop-a-space)
+    - [**To approve a space request**](#to-approve-a-space-request)
+    - [**To add listeners to space**](#to-add-listeners-to-space)
+    - [**To remove listeners from space**](#to-remove-listeners-from-space)
+    - [**To add speakers to space**](#to-add-speakers-to-space)
+    - [**To remove speakers from space**](#to-remove-speakers-from-space)
+    - [**Fetching list of user spaces**](#fetching-list-of-user-spaces)
+    - [**Fetching list of user space requests**](#fetching-list-of-user-space-requests)
+    - [**Fetching list of trending spaces**](#fetching-list-of-trending-spaces)
 
 # How to use in your app?
 
@@ -4198,9 +4198,9 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 const response = await PushAPI.space.create({
   spaceName:'wasteful_indigo_warbler',
   spaceDescription: 'boring_emerald_gamefowl',
-  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  listeners: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   spaceImage: &lt;space image link&gt; ,
-  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
@@ -4224,9 +4224,9 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 const response = await PushAPI.space.create({
   spaceName:'wasteful_indigo_warbler',
   spaceDescription: 'boring_emerald_gamefowl',
-  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  listeners: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   spaceImage: &lt;space image link&gt; ,
-  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
   numberOfERC20: 20,
   contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
@@ -4247,8 +4247,8 @@ Allowed Options (params with _ are mandatory)
 | spaceName* | string | - | group name |
 | spaceDescription* | string | - | group description |
 | spaceImage* | string | - | group image link |
-| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
-| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| listeners* | Array<string> | - | wallet addresses of all listeners except speakers and spaceCreator |
+| speakers* | Array<string> | - | wallet addresses of all speakers except listeners and spaceCreator |
 | isPublic* | boolean | - | true for public space, false for private space |
 | scheduleAt\* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
@@ -4364,9 +4364,9 @@ const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
-    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    listeners: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     spaceImage: &lt;group image link&gt; ,
-    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
@@ -4393,9 +4393,9 @@ const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
-    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    listeners: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     spaceImage: &lt;group image link&gt; ,
-    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
@@ -4418,8 +4418,8 @@ Allowed Options (params with _ are mandatory)
 | spaceDescription* | string | - | space description |
 | spaceImage* | string | - | space image |
 | status* | string | - | space status - 'ACTIVE', 'PENDING', 'ENDED' |
-| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
-| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| listeners* | Array<string> | - | wallet addresses of all listeners except speakers and spaceCreator |
+| speakers* | Array<string> | - | wallet addresses of all speakers except listeners and spaceCreator |
 | scheduleAt* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
 | contractAddressERC20 | string | null | ERC20 Contract Address |

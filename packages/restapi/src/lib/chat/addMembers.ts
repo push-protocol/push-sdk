@@ -2,7 +2,6 @@ import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, GroupDTO } from '../types';
 import {
-  getWallet,
   getMembersList,
   getAdminsList
 } from './helpers';
@@ -48,8 +47,6 @@ export const addMembers = async (
         throw new Error(`Invalid member address: ${member}`);
       }
     });
-
-    const wallet = getWallet({ account, signer });
 
     const group = await getGroup({
         chatId: chatId,
