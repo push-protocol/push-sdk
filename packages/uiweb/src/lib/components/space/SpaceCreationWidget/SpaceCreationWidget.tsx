@@ -10,11 +10,11 @@ import { SCWButton } from './SCWButton';
 import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceCreateWidgetProps {
-    customComponent?: React.ReactElement<React.ButtonHTMLAttributes<HTMLButtonElement>>;
+  children?: React.ReactNode;
 }
 
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
-    const { customComponent } = props;
+    const { children } = props;
 
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
@@ -130,17 +130,13 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     return (
         <div>
             <SCWContainer>
-                {
-                    customComponent
-                    ?
-                    <CustomButtonComponent onClick={showCreateSpace}>
-                        {customComponent}
-                    </CustomButtonComponent>
-                    :
-                    <SCWButton
-                        onCreate={showCreateSpace}
-                    />
+                {!children && 
+                  <SCWButton
+                      onCreate={showCreateSpace}
+                  />
                 }
+
+                {children && <div onClick={showCreateSpace}>{children}</div>}
 
                 {isCreateModalVisible &&
                     <SCWCreateModal

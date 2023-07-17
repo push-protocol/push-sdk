@@ -4,7 +4,7 @@ import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
-import { SpaceCreationWidget } from './SpaceCreationWidget';
+import { ISpaceCreateWidgetProps, SpaceCreationWidget } from './SpaceCreationWidget';
 import { ICustomSearchResult } from './SpaceCreationWidget/SCWInviteModal';
 
 import { SignerType } from '../../types';
@@ -60,8 +60,8 @@ export class SpacesUI {
     return <SpaceInvites {...options} />;
   };
 
-  SpaceCreationButtonWidget = () => {
-    return <SpaceCreationWidget />
+  SpaceCreationButtonWidget = (options: ISpaceCreateWidgetProps) => {
+    return <SpaceCreationWidget  {...options} />
   }
 
   connectToSockets = () => {
