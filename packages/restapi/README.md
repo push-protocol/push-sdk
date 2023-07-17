@@ -4198,9 +4198,9 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 const response = await PushAPI.space.create({
   spaceName:'wasteful_indigo_warbler',
   spaceDescription: 'boring_emerald_gamefowl',
-  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  listeners: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   spaceImage: &lt;space image link&gt; ,
-  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
@@ -4224,9 +4224,9 @@ const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey(encryptedPGPPrivateK
 const response = await PushAPI.space.create({
   spaceName:'wasteful_indigo_warbler',
   spaceDescription: 'boring_emerald_gamefowl',
-  members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  listeners: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   spaceImage: &lt;space image link&gt; ,
-  admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+  speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
   numberOfERC20: 20,
   contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
@@ -4247,8 +4247,8 @@ Allowed Options (params with _ are mandatory)
 | spaceName* | string | - | group name |
 | spaceDescription* | string | - | group description |
 | spaceImage* | string | - | group image link |
-| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
-| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| listeners* | Array<string> | - | wallet addresses of all listeners except speakers and spaceCreator |
+| speakers* | Array<string> | - | wallet addresses of all speakers except listeners and spaceCreator |
 | isPublic* | boolean | - | true for public space, false for private space |
 | scheduleAt\* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
@@ -4364,9 +4364,9 @@ const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
-    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    listeners: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     spaceImage: &lt;group image link&gt; ,
-    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
@@ -4393,9 +4393,9 @@ const response = await PushAPI.space.update({
     spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
     spaceName: 'Push Space 3',
     spaceDescription: 'This is the oficial space for Push Protocol',
-    members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    listeners: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     spaceImage: &lt;group image link&gt; ,
-    admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
+    speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
@@ -4418,8 +4418,8 @@ Allowed Options (params with _ are mandatory)
 | spaceDescription* | string | - | space description |
 | spaceImage* | string | - | space image |
 | status* | string | - | space status - 'ACTIVE', 'PENDING', 'ENDED' |
-| members* | Array<string> | - | wallet addresses of all members except admins and spaceCreator |
-| admins* | Array<string> | - | wallet addresses of all admins except members and spaceCreator |
+| listeners* | Array<string> | - | wallet addresses of all listeners except speakers and spaceCreator |
+| speakers* | Array<string> | - | wallet addresses of all speakers except listeners and spaceCreator |
 | scheduleAt* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
 | contractAddressERC20 | string | null | ERC20 Contract Address |
