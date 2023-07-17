@@ -2001,6 +2001,49 @@ export interface IUser {
 
 Example response normal user:
 
+**Version 1.2.x**
+
+```typescript
+export interface IUser {
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  publicKey: string;
+  encryptedPrivateKey: string;
+  encryptionType: string;
+  signature: string;
+  sigType: string;
+  about: string | null;
+  name: string | null;
+  encryptedPassword: string | null;
+  nftOwner: string | null;
+  numMsg: number;
+  allowedNumMsg: number;
+  linkedListHash?: string | null;
+  nfts?: [] | null;
+}
+```
+
+| Parameter | Description |
+| --- | --- |
+| `did` | user decentralized identity |
+| `wallets` | all wallets associated to the did |
+| `profilePicture` | user chat profile picture. As of now i cannot be changed |
+| `publicKey` | PGP public key |
+| `encryptedPrivateKey` | encrypted private PGP key |
+| `encryptionType` | encryption type used to encrypt the private key |
+| `signature` | user payload signature used when creating a user |
+| `sigType` | signature type used when creating a user |
+| `about` | short user description |
+| `name` | user name |
+| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner` | NFT owner address |
+| `numMsg` | number of messages sent by the user |
+| `allowedNumMsg` | number of messages allowed to be sent by the user |
+| `linkedListHash` | cid from all messages this user has sent |
+| `nfts` | array of NFTs owned by the user |
+
+Example response:
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {

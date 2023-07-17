@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Web3Provider } from '@ethersproject/providers';
+import type { Web3Provider } from '@ethersproject/providers';
 
 export const walletToPCAIP10 = (account: string): string => {
   if (account.includes('eip155:')) {
@@ -9,6 +9,7 @@ export const walletToPCAIP10 = (account: string): string => {
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
+  if(wallet)
   wallet = wallet.replace('eip155:', '');
   return wallet;
 };
@@ -38,4 +39,9 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
       return null;
     }
   });
+};
+
+export const isPCAIP = (id: string) => {
+  const prefix = `eip155:`;
+  return id?.startsWith(prefix);
 };
