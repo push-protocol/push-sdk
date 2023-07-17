@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Button, Container, Image, Item, Text } from '../../../config';
 import { formatDate } from '../../../helpers';
+import CircularProgressSpinner from '../../loader/loader';
 
 import SpacesIcon from '../../../icons/Spaces.svg';
 import TwitterIcon from '../../../icons/twitterVector.svg';
@@ -41,19 +42,26 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   isSpaceLive,
   setIsSpaceLive,
 }: ScheduledWidgetContentProps) => {
-  const isTimeToStartSpace = true;
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
+
+  const isTimeToStartSpace = true;
+
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { shareUrl, shareOptions = ['Twitter', 'Lenster', 'CopyShareUrl'] } =
     share || {};
 
   const handleStartSpace = async () => {
+    setIsLoading(!isLoading);
+
     console.log('initializing space object');
     await initSpaceObject?.(spaceData?.spaceId as string);
 
     console.log('creating audio stream');
     await spacesObjectRef?.current?.createAudioStream?.();
 
+    setIsLoading(!isLoading);
     setIsStarted(true);
     console.log('Space Started');
   };
@@ -188,7 +196,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
           onClick={handleStartSpace}
         >
           <Text fontSize="14px" fontWeight={600} color="#fff">
-            Start this space
+            {isLoading ? <CircularProgressSpinner /> : 'Start this Space'}
           </Text>
         </Button>
       )}

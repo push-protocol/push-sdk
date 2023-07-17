@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import styled, { keyframes } from 'styled-components';
+import { Player } from '@livepeer/react';
 import * as PushAPI from '@pushprotocol/restapi';
+import { SpaceDTO } from '@pushprotocol/restapi';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
+
+import { createBlockie } from '../helpers/blockies';
+import { ThemeContext } from '../theme/ThemeProvider';
+
+import CircularProgressSpinner from '../../loader/loader';
 
 import { Button, Image, Item, Text } from '../../../config';
 import MicOnIcon from '../../../icons/micon.svg';
@@ -11,11 +18,7 @@ import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
-import { SpaceDTO } from '@pushprotocol/restapi';
-
 import { useSpaceData } from '../../../hooks';
-import { Player } from '@livepeer/react';
-import { createBlockie } from '../helpers/blockies';
 import { SpaceStatus } from './WidgetContent';
 
 interface LiveWidgetContentProps {
@@ -32,6 +35,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDDOpen, setIsDDOpen] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const theme = useContext(ThemeContext);
+
   const {
     spacesObjectRef,
     spaceObjectData,
@@ -53,16 +63,23 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
+  const handleDDState = () => {
+    setIsDDOpen(!isDDOpen);
+  };
+
   const handleJoinSpace = async () => {
     if (!spaceData) {
       return;
     }
 
-    await initSpaceObject?.(spaceData?.spaceId as string);
+    setIsLoading(!isLoading);
+
+    await initSpaceObject(spaceData?.spaceId as string);
     if (isListener) {
-      console.log('joining as a listener');
-      await spacesObjectRef?.current?.join?.();
-      setSpaceWidgetId?.(spaceData?.spaceId as string);
+      console.log('joining as a listner');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceData?.spaceId as string);
+      setIsLoading(!isLoading);
       console.log('space joined');
     }
   };
@@ -155,13 +172,21 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             ))}
         {isListener &&
           !isHost &&
-          spaceObjectData?.members?.map((profile) => (
-            <LiveSpaceProfileContainer
-              isHost={isHost}
-              isSpeaker={isSpeaker}
-              wallet={profile?.wallet}
-              image={profile?.image}
-            />
+          spaceObjectData?.members.map((profile) => (
+            <div onClick={handleDDState} style={{ position: 'relative' }}>
+              <LiveSpaceProfileContainer
+                isHost={isHost}
+                isSpeaker={isSpeaker}
+                wallet={profile?.wallet}
+                image={profile?.image}
+              />
+
+              {isDDOpen ? (
+                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
+                  <DDItem>Invite to Speak</DDItem>
+                </DropDown>
+              ) : null}
+            </div>
           ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
@@ -231,12 +256,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && !isHost && playBackUrl?.length > 0 && (
-              <PeerPlayer
-                title="spaceAudio"
-                playbackId={playBackUrl}
-                autoPlay
-              />
+            {isListener && !isHost && playBackUrl.length > 0 && (
+              <PeerPlayerDiv>
+                <Player title="spaceAudio" playbackId={playBackUrl} autoPlay />
+              </PeerPlayerDiv>
             )}
           </Item>
         ) : (
@@ -251,8 +274,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             }
             onClick={handleJoinSpace}
           >
-            <Text color="white" fontSize={'16px'} fontWeight={'600'}>
-              Join this space
+            <Text
+              color="white"
+              fontSize={'16px'}
+              fontWeight={'600'}
+              display="flex"
+              justifyContent="center"
+            >
+              {isLoading ? <CircularProgressSpinner /> : 'Join this Space'}
             </Text>
           </Button>
         )}
@@ -266,7 +295,52 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   );
 };
 
-const PeerPlayer = styled(Player)`
-  width: 0;
-  height: 0;
+const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
+  position: absolute;
+  top: 0px;
+  right: 0px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  justify-content: center;
+  align-items: start;
+
+  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
+  padding: 16px;
+  background: ${(props) => props.theme.bgColorPrimary};
+  color: ${(props) => props.theme.textColorPrimary};
+  border-radius: 16px;
+
+  border: 1px solid ${(props) => props.theme.borderColor};
+`;
+
+const DDItem = styled.div`
+  cursor: pointer;
+`;
+
+const fadeIn = keyframes`
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+`;
+
+const fadeOut = keyframes`
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+`;
+
+const PeerPlayerDiv = styled.div`
+  visibility: hidden;
+  position: absolute;
+  border: 5px solid red;
 `;

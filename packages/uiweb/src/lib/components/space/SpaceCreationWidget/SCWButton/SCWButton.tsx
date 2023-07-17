@@ -34,7 +34,7 @@ export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
                 theme={theme}
                 onClick={onCreate}
             >
-                <SpacesLogo />
+                <SpacesLogo color={theme.btnColorPrimary} />
                 <BtnText>
                     {btnText}
                 </BtnText>
@@ -50,7 +50,7 @@ const CreateButton = styled.button<ISCWButtonProps>`
     border: ${props => props.customStyle.border};
     font-size: ${props => props.customStyle.fontSize};
 
-    background-image: ${(props) => props.theme.titleBg};
+    background: ${(props) => props.theme.btnColorPrimary};
     color: ${(props) => props.theme.titleTextColor};
 
     display: flex;

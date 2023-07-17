@@ -43,7 +43,7 @@ export const LiveSpaceProfileContainer = (
         borderRadius={'50%'}
       />
       <Text fontSize={'17px'} marginTop={'4px'} fontWeight={600}>
-        {wallet?.slice(7, 12).concat('...')}
+        {wallet.replace('eip155:', '').slice(0, -36) + '...'}
         {stream && <VideoPlayer videoCallData={stream} />}
       </Text>
       {requested ? (

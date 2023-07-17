@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
-import styled from 'styled-components'
+import React, { useState, MouseEventHandler, useContext } from 'react'
+import styled, { ThemeProvider } from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
 import { ModalHeader } from '../../reusables/ModalHeader';
@@ -16,6 +16,7 @@ import CircularProgressSpinner from '../../../loader/loader';
 
 import { useSpaceData } from '../../../../hooks';
 import SettingsIcon from '../../../../icons/settingsBlack.svg';
+import { SettingsLogo } from '../../../../icons/SettingsLogo';
 import { Image } from '../../../../config';
 
 
@@ -221,7 +222,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     };
 
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <Modal
                 clickawayClose={onClose}
             >
@@ -281,11 +282,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.image}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
                                         removeCallback={() => handleDeleteInvitedUser(item)}
@@ -300,11 +297,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.profile.picture}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
                                         removeCallback={() => handleDeleteInvitedUser(item)}
@@ -332,11 +325,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.image}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
@@ -351,11 +340,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.profile.picture}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
@@ -380,7 +365,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     }
                 </Button>
             </Modal>
-        </div>
+        </ThemeProvider>
     )
 }
 
@@ -431,13 +416,13 @@ const ContBtn = styled.button`
     line-height: 18px;
     width: max-content;
     background: transparent;
-    color: #8B5CF6;
+    color: ${props => props.theme.btnColorPrimary};
     border-radius: 6px;
     font-weight: 500;
     font-size: 12px;
     padding: 4px 8px;
     border-radius: 8px;
-    border: 1px solid #8B5CF6;
+    border: 1px solid ${props => props.theme.btnOutline};
     cursor: pointer;
 `;
 
