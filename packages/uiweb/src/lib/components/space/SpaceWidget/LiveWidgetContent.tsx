@@ -144,6 +144,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       console.log('joining as a speaker');
       await spacesObjectRef?.current?.join?.();
       setSpaceWidgetId?.(spaceData?.spaceId as string);
+      setIsLoading(!isLoading);
       console.log('space joined');
     };
     joinSpaceAsSpeaker();
