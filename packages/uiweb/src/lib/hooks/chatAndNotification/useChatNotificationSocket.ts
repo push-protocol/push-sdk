@@ -97,8 +97,15 @@ const useChatNotificationSocket = ({
     pushChatNotificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const parseApiResponse = convertReponseToParsedArray([feedItem]);
       if (subscriptionStatus.get(parseApiResponse[0].channel)) {
-        setInboxNotifFeed(`notif${parseApiResponse[0].sid}`, parseApiResponse[0]);
-      } else setSpamNotifFeed(`notif${parseApiResponse[0].sid}`, parseApiResponse[0]);
+        setInboxNotifFeed(
+          `notif${parseApiResponse[0].sid}`,
+          parseApiResponse[0]
+        );
+      } else
+        setSpamNotifFeed(
+          `notif${parseApiResponse[0].sid}`,
+          parseApiResponse[0]
+        );
 
       setNotificationFeedSinceLastConnection(feedItem);
     });
@@ -110,7 +117,7 @@ const useChatNotificationSocket = ({
           return;
         }
         const chatId = getChatId({ msg: chat, account }).toLowerCase();
-
+        if (!isPCAIP(chatId)) return;
         if (
           chat.messageCategory === 'Request' &&
           chat.messageContent === null &&
@@ -122,7 +129,6 @@ const useChatNotificationSocket = ({
             if (user || Object.keys(user || {}).length) {
               let newOne: IFeeds = {} as IFeeds;
               newOne = chatsFeed[chatId];
-console.log(user)
               newOne['publicKey'] = user!.publicKey;
 
               setChatFeed(chatId, newOne);
@@ -167,12 +173,15 @@ console.log(user)
             const fetchedChat: IFeeds = (await fetchChat({
               recipientAddress: chatId,
             })) as IFeeds;
-            console.log(chatId)
-            if (Object.keys(fetchedChat || {}).length &&checkIfIntent({ chat: fetchedChat, account }))
+            console.log(chatId);
+            if (
+              Object.keys(fetchedChat || {}).length &&
+              checkIfIntent({ chat: fetchedChat, account })
+            )
               setRequestFeed(chatId, fetchedChat);
             else setChatFeed(chatId, fetchedChat);
-            console.log("in here")
-            console.log(msg)
+            console.log('in here');
+            console.log(msg);
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]

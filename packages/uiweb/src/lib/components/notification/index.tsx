@@ -19,8 +19,9 @@ import { LinkIcon } from "../../icons/Link";
 import { useDivOffsetWidth } from "../../hooks";
 
 import type { INotificationItemTheme} from './theme';
-import { getCustomTheme, lightTheme } from './theme';
-export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,baseTheme as notificationBaseTheme,INotificationItemTheme} from './theme';
+import { getCustomTheme } from './theme';
+export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,baseTheme as notificationBaseTheme, type INotificationItemTheme} from './theme';
+
 // ================= Define types
 export type chainNameType =
   | 'ETH_TEST_GOERLI'

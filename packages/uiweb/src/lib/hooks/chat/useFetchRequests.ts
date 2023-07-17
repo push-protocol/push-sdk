@@ -36,7 +36,7 @@ const useFetchRequests = () => {
 
       //conversation to map from array
       const modifiedRequestsObj: ChatFeedsType= {};
-
+console.log(requests)
       for (const request of requests) {
         if(!request?.groupInformation)
         modifiedRequestsObj[request.did.toLowerCase() ?? request.chatId] = request;
