@@ -255,12 +255,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && !isHost && playBackUrl?.length > 0 && (
-              <PeerPlayer
-                title="spaceAudio"
-                playbackId={playBackUrl}
-                autoPlay
-              />
+            {isListener && !isHost && playBackUrl.length > 0 && (
+              <PeerPlayerDiv>
+                <Player
+                  title="spaceAudio"
+                  playbackId={playBackUrl}
+                  autoPlay
+                />
+              </PeerPlayerDiv>
             )}
           </Item>
         ) : (
@@ -289,11 +291,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     </>
   );
 };
-
-const PeerPlayer = styled(Player)`
-  width: 0;
-  height: 0;
-`;
 
 const DropDown = styled.div<{ theme?: any, isDDOpen: any }>`
     position: absolute;
@@ -337,4 +334,10 @@ const fadeOut = keyframes`
         opacity: 0;
         visibility: hidden;
     }
+`;
+
+const PeerPlayerDiv = styled.div`
+  visibility: hidden;
+  position: absolute;
+  border: 5px solid red;
 `;
