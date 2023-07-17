@@ -43,7 +43,8 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const isTimeToStartSpace = true;
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
   const [isStarted, setIsStarted] = useState<boolean>(false);
-  const { shareUrl, shareOptions = ["Twitter", "Lenster", "CopyShareUrl"] } = share || {};
+  const { shareUrl, shareOptions = ['Twitter', 'Lenster', 'CopyShareUrl'] } =
+    share || {};
 
   const handleStartSpace = async () => {
     console.log('initializing space object');
@@ -75,11 +76,11 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
     const lensterShareUrl = generateLensterShareURL({
       text: lensterShareText,
-      url
+      url,
     });
 
     window.open(lensterShareUrl, '_blank');
-  }
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -134,7 +135,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       if (isSpaceLive) return;
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
       await spacesObjectRef?.current?.start?.({
-        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+        livepeerApiKey: 'a74ebfa6-f9e6-4615-89bd-34b6190b1586',
       });
       setIsStarted(false);
       setIsSpaceLive && setIsSpaceLive(true);
@@ -222,19 +223,12 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
             const { icon, alt } = getShareOptionDetails(shareOption);
             return (
               <ShareLinkItem key={shareOption}>
-                <ShareLinkButton
-                  onClick={() => handleShareAction(shareOption)}
-                >
-                  <Image
-                    src={icon}
-                    alt={alt}
-                    width={'25px'}
-                    height={'22px'}
-                  />
+                <ShareLinkButton onClick={() => handleShareAction(shareOption)}>
+                  <Image src={icon} alt={alt} width={'25px'} height={'22px'} />
                 </ShareLinkButton>
                 <Text fontSize={'12px'} fontWeight={600}>
-              {ShareOptions[shareOption]}
-            </Text>
+                  {ShareOptions[shareOption]}
+                </Text>
               </ShareLinkItem>
             );
           })}

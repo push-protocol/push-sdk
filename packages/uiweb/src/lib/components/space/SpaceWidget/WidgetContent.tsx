@@ -6,6 +6,7 @@ import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
 import { EndWidgetContent } from './EndWidgetContent';
+import { ShareConfig } from '../exportedTypes';
 
 const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
 const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
