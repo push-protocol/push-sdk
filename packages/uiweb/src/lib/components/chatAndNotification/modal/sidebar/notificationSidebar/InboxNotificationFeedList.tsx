@@ -90,6 +90,7 @@ export const InboxNotificationFeedList = () => {
   }, [fetchNotification, env, page, account]);
 
   useEffect(() => {
+   
     if (
       !isInViewport1 ||
       loading 

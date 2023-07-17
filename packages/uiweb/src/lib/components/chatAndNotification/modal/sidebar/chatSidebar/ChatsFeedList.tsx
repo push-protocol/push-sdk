@@ -46,8 +46,9 @@ export const ChatsFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading ||
-      Object.keys(chatsFeed).length < chatLimit
+      loading 
+      // ||
+      // Object.keys(chatsFeed).length < chatLimit
     ) {
       return;
     }
