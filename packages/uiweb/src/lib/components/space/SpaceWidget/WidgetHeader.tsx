@@ -1,5 +1,5 @@
 import React, { useState, MouseEventHandler, useContext } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { Item, Text } from '../../../config';
 import { formatDate } from '../../../helpers';
@@ -13,7 +13,6 @@ import { CloseSvg } from '../../../icons/CloseSvg';
 import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { useSpaceData } from '../../../hooks';
 
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
@@ -63,7 +62,8 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   };
 
   return (
-    <Container theme={theme}>
+    <ThemeProvider theme={theme}>
+    <Container>
       {!isLive && (
         <Section>
           <Item marginBottom={'12px'}>
@@ -173,6 +173,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
         />
       ) : null}
     </Container>
+    </ThemeProvider>
   );
 };
 

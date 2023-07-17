@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useContext } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -24,6 +24,7 @@ export const TextInputWithCounter = (props: ITextInputProps) => {
     };
 
     return (
+      <ThemeProvider theme={theme}>
         <InputContainer>
             <LabelContainer>
                 <label>{props.labelName}</label>
@@ -31,6 +32,7 @@ export const TextInputWithCounter = (props: ITextInputProps) => {
             </LabelContainer>
             <Input theme={theme} value={props.inputValue} onChange={handleChange} />
         </InputContainer>
+      </ThemeProvider>
     );
 };
 
@@ -49,6 +51,7 @@ const LabelContainer = styled.div`
     justify-content: space-between;
 
     font-weight: 500;
+    color: ${props => props.theme.textColorPrimary ?? '#000'}
 `;
 
 const Input = styled.input<ISpacesTheme>`
