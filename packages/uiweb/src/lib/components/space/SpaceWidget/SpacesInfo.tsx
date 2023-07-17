@@ -35,9 +35,9 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
     const { signer, env } = useSpaceData();
 
     const customStyle = {
-        color: theme.textColorPrimary,
-        background: theme.bgColorPrimary,
-        borderColor: theme.borderColor,
+        color: theme?.textColorPrimary,
+        background: theme?.bgColorPrimary,
+        borderColor: theme?.borderColor,
         fontWeight: '500',
         padding: '14px',
     }
@@ -50,11 +50,11 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
         setIsInviteVisible(false);
     }
 
-    const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
+    const adminsArray = spaceData?.members?.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
 
     const updateSpace = async () => {
         const spaceUpdate = {
-            spaceName: spaceData.spaceName,
+            spaceName: spaceData?.spaceName,
             spaceDescription: 'Push Space',
             members: invitedAddressList,
             spaceImage: 'asd',
@@ -63,8 +63,8 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             scheduleAt: new Date(Date.now() + 120000),
             signer: signer as PushAPI.SignerType,
             env,
-            spaceId: spaceData.spaceId,
-            status: spaceData.status,
+            spaceId: spaceData?.spaceId,
+            status: spaceData?.status,
         }
 
         try {
@@ -91,16 +91,16 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             />
 
             <ProfileContainer
-                imageUrl={spaceData.members[0].image}
-                name={spaceData.members[0].wallet.substring(7)}
-                handle={spaceData.members[0].wallet.substring(7)}
+                imageUrl={spaceData?.members[0]?.image}
+                name={spaceData?.members[0]?.wallet?.substring(7)}
+                handle={spaceData?.members[0]?.wallet?.substring(7)}
                 imageHeight='48px'
                 tag='Host'
             />
 
             <SpacesDetailsContainer>
-                <Title>{spaceData.spaceName}</Title>
-                <Description theme={theme}>{spaceData.spaceDescription}</Description>
+                <Title>{spaceData?.spaceName}</Title>
+                <Description theme={theme}>{spaceData?.spaceDescription}</Description>
             </SpacesDetailsContainer>
 
             <Button
@@ -110,29 +110,29 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                 Invite Members
             </Button>
 
-            <Accordion title='Pending Invites' items={spaceData.pendingMembers.length}>
-                {
+            <Accordion title='Pending Invites' items={spaceData?.pendingMembers?.length}>
+                {spaceData?.pendingMembers &&
                     spaceData.pendingMembers.map((item: any) => {
                         return <ProfileContainer
-                            tag={item.isSpeaker ? 'Co-Host' : undefined}
+                            tag={item?.isSpeaker ? 'Co-Host' : undefined}
                             imageHeight='48px'
-                            handle={item.wallet.substring(7)}
-                            name={item.wallet.substring(7)}
-                            imageUrl={item.image}
+                            handle={item?.wallet?.substring(7)}
+                            name={item?.wallet?.substring(7)}
+                            imageUrl={item?.image}
                         />  
                     })
                 }
             </Accordion>
 
-            {
+            {adminsArray && 
                 adminsArray.slice(1).map((item: any) => {
                     return <ProfileContainer
                         border
                         tag="Co-Host"
                         imageHeight='48px'
-                        handle={item.wallet.substring(7)}
-                        name={item.wallet.substring(7)}
-                        imageUrl={item.image}
+                        handle={item?.wallet?.substring(7)}
+                        name={item?.wallet?.substring(7)}
+                        imageUrl={item?.image}
                     />  
                 })
             }
@@ -165,7 +165,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
 /** styling */
 const SpacesInfoContainer = styled.div`
-    color: ${(props => props.theme.textColorPrimary)};
+    color: ${(props => props.theme?.textColorPrimary)};
 `;
 
 const SpacesDetailsContainer = styled.div`
@@ -178,5 +178,5 @@ const Title = styled.div`
 `;
 
 const Description = styled.div`
-    color: ${(props => props.theme.textColorSecondary)};
+    color: ${(props => props.theme?.textColorSecondary)};
 `;

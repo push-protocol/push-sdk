@@ -10,16 +10,16 @@ export const VideoPlayer: React.FC<IVideoPlayerProps> = ({ videoCallData }) => {
   const incomingVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (!incomingVideoRef.current) return;
+    if (!incomingVideoRef?.current) return;
     const video = incomingVideoRef.current;
     video.srcObject = videoCallData;
     video.play();
-  }, [incomingVideoRef, videoCallData]);
+  }, [incomingVideoRef?.current, videoCallData]);
 
   return <Video ref={incomingVideoRef}></Video>;
 };
 
 const Video = styled.video`
-    height:0;
-    width:0;
-}`;
+  height: 0;
+  width: 0;
+`;

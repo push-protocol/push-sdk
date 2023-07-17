@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Button, Container, Image, Item, Text } from '../../../config';
@@ -9,7 +10,6 @@ import CopyIcon from '../../../icons/copyVector.svg';
 import LensterIcon from '../../../icons/lensterVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { useEffect, useState } from 'react';
 import { generateLensterShareURL } from '../helpers/share';
 import { ShareConfig } from '../exportedTypes';
 
@@ -47,10 +47,10 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   const handleStartSpace = async () => {
     console.log('initializing space object');
-    await initSpaceObject(spaceData?.spaceId as string);
+    await initSpaceObject?.(spaceData?.spaceId as string);
 
     console.log('creating audio stream');
-    await spacesObjectRef.current.createAudioStream();
+    await spacesObjectRef?.current?.createAudioStream?.();
 
     setIsStarted(true);
     console.log('Space Started');
@@ -132,8 +132,8 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   useEffect(() => {
     async function startSpace() {
       if (isSpaceLive) return;
-      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
-      await spacesObjectRef.current.start({
+      if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
+      await spacesObjectRef?.current?.start?.({
         livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
       });
       setIsStarted(false);

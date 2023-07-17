@@ -36,8 +36,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  const isLive = spaceData && spaceData?.status === 'ACTIVE' ? true : false;
-  // console.log('isLiveInWidget', isLive)
+  const isLive = spaceData?.status === 'ACTIVE';
 
   useEffect(() => {
     if (!spaceId) {
@@ -46,12 +45,12 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!spaceId);
     const fetchData = async () => {
       try {
-        if (getSpaceInfo(spaceId)) {
+        if (getSpaceInfo?.(spaceId)) {
           setSpaceData(getSpaceInfo(spaceId));
           return;
         }
         const response = await PushAPI.space.get({ spaceId, env });
-        setSpaceInfo(spaceId, response);
+        setSpaceInfo?.(spaceId, response);
         setSpaceData(response);
       } catch (error) {
         console.error(error);
@@ -79,8 +78,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
   };
-
-  // console.log('Rendering SpaceWidget');
 
   // Implement the SpaceWidget component
   return (
