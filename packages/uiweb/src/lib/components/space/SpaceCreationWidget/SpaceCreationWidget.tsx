@@ -10,7 +10,7 @@ import { SCWButton } from './SCWButton';
 import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceCreateWidgetProps {
-  children?: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => {
@@ -116,7 +116,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         try {
             setLoading(true);
             const response = await PushAPI.space.create(spaceCreate);
-    
+
             console.log(response);
         } catch (e:any) {
             console.error(e.message);
@@ -131,9 +131,9 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         <div>
             <SCWContainer>
                 {!children && 
-                  <SCWButton
-                      onCreate={showCreateSpace}
-                  />
+                    <SCWButton
+                        onCreate={showCreateSpace}
+                    />
                 }
 
                 {children && <div onClick={showCreateSpace}>{children}</div>}
@@ -189,8 +189,4 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 
 const SCWContainer = styled.div`
     font-family: 'Strawford'; // update to fontFamily theme 
-`;
-
-const CustomButtonComponent = styled.div`
-    cursor: pointer;
 `;
