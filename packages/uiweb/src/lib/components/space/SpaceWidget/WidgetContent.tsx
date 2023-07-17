@@ -5,7 +5,7 @@ import { LiveWidgetContent } from './LiveWidgetContent';
 import { ScheduledWidgetContent } from './ScheduledWidgetContent';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { ShareConfig } from '../exportedTypes';
+import { EndWidgetContent } from './EndWidgetContent';
 
 const LIVE_WIDGET_CONTENT_FIXED_HEIGHT = '485px';
 const SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT = '350px';
@@ -18,10 +18,17 @@ interface WidgetContentProps {
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isLive: boolean;
+  isLive: any;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
 }
+
+export enum SpaceStatus {
+  Live = 'ACTIVE',
+  Scheduled = 'PENDING',
+  Ended = 'ENDED',
+}
+
 export const WidgetContent: React.FC<WidgetContentProps> = ({
   account,
   spaceData,
@@ -34,26 +41,34 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
 }: WidgetContentProps) => {
   // const { isLive } = useSpaceData();
   console.log('isLiveInWidgetContent', isLive);
-  const [isSpaceLive, setIsSpaceLive] = useState<boolean>(false);
+  const [isSpaceLive, setIsSpaceLive] = useState<any>(SpaceStatus.Scheduled);
   console.log('isSpaceLive', isSpaceLive);
 
   console.log('Rendering WidgetContent');
   useEffect(() => {
-    setIsSpaceLive(isLive);
+    if (isLive === SpaceStatus.Live) {
+      setIsSpaceLive(SpaceStatus.Live);
+    }
+    if (isLive === SpaceStatus.Scheduled) {
+      setIsSpaceLive(SpaceStatus.Scheduled);
+    }
+    if (isLive === SpaceStatus.Ended) {
+      setIsSpaceLive(SpaceStatus.Ended);
+    }
   }, [isLive]);
 
   return (
     <Container
       isMinimized={isMinimized}
       height={
-        isSpaceLive
+        isSpaceLive === SpaceStatus.Live
           ? LIVE_WIDGET_CONTENT_FIXED_HEIGHT
           : SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT
       }
     >
-      {isSpaceLive ? (
+      {isSpaceLive === SpaceStatus.Live ? (
         <LiveWidgetContent spaceData={spaceData} isHost={isHost} />
-      ) : (
+      ) : isSpaceLive === SpaceStatus.Scheduled ? (
         <ScheduledWidgetContent
           spaceData={spaceData}
           share={share}
@@ -63,6 +78,8 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           isSpaceLive={isSpaceLive}
           setIsSpaceLive={setIsSpaceLive}
         />
+      ) : (
+        <EndWidgetContent />
       )}
     </Container>
   );

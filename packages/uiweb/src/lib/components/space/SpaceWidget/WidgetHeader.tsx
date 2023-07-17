@@ -1,4 +1,9 @@
-import React, { useState, MouseEventHandler, useContext } from 'react';
+import React, {
+  useState,
+  MouseEventHandler,
+  useContext,
+  useEffect,
+} from 'react';
 import styled from 'styled-components';
 
 import { Item, Text } from '../../../config';
@@ -13,7 +18,8 @@ import { CloseSvg } from '../../../icons/CloseSvg';
 import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { useSpaceData } from '../../../hooks';
+
+import { SpaceStatus } from './WidgetContent';
 
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
@@ -23,7 +29,7 @@ export interface IWidgetHeaderProps {
   toggleWidgetVisibility: () => void;
 
   // temp props
-  isLive?: boolean;
+  isLive?: any;
   isHost?: boolean;
 }
 
@@ -37,12 +43,13 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   isLive,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
-  // const { isLive } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
 
   const [isSpacesInfoVisible, setIsSpacesInfoVisible] = useState(false);
+  const [isSpaceLive, setIsSpaceLive] = useState<any>(SpaceStatus.Scheduled);
+
   const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (
     event
   ) => {
@@ -62,9 +69,22 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
     setIsSpacesInfoVisible(false);
   };
 
+  useEffect(() => {
+    if (isLive === SpaceStatus.Live) {
+      setIsSpaceLive(SpaceStatus.Live);
+    }
+    if (isLive === SpaceStatus.Scheduled) {
+      setIsSpaceLive(SpaceStatus.Scheduled);
+    }
+    if (isLive === SpaceStatus.Ended) {
+      setIsSpaceLive(SpaceStatus.Ended);
+    }
+  }, [isLive]);
+
   return (
     <Container theme={theme}>
-      {!isLive && (
+      {(isSpaceLive === SpaceStatus.Scheduled ||
+        isSpaceLive === SpaceStatus.Ended) && (
         <Section>
           <Item marginBottom={'12px'}>
             <HostPfpContainer
@@ -110,7 +130,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
         <Text fontSize={'16px'} fontWeight={700}>
           {spaceData?.spaceName || 'Test Space'}
         </Text>
-        {isLive && (
+        {isSpaceLive === SpaceStatus.Live && (
           <Item
             display={'flex'}
             alignSelf={'flex-start'}
@@ -137,7 +157,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
           </Item>
         )}
       </Section>
-      {!isLive && (
+      {isSpaceLive === SpaceStatus.Scheduled && (
         <Item display={'flex'} marginTop={'12px'} alignItems={'center'}>
           <Image src={CalendarIcon} alt="Calendar Icon" />
           <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>
@@ -145,7 +165,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
           </Item>
         </Item>
       )}
-      {isLive && (
+      {isSpaceLive === SpaceStatus.Live && (
         <Section marginTop="12px">
           <Item display={'flex'} alignItems={'center'}>
             <Image src={LiveIcon} alt="Calendar Icon" />

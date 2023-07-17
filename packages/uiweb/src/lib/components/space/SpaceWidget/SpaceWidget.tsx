@@ -36,7 +36,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  const isLive = spaceData?.status === 'ACTIVE';
+  const isLive = spaceData && spaceData?.status;
+  // console.log('isLiveInWidget', isLive)
 
   useEffect(() => {
     if (!spaceId) {
