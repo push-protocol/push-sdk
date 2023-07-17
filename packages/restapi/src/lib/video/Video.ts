@@ -262,7 +262,7 @@ export class Video {
             incomingPeers: this.data.incoming,
           });
           console.log(
-            'CONNECT EVENT HANDLER IN REQUEST',
+            'REQUEST - SENDING THE CONNECTED ADDRESSES',
             'connectedAddresses',
             connectedAddresses
           );
@@ -279,7 +279,11 @@ export class Video {
             const parsedData = JSON.parse(data);
 
             if (parsedData.type === 'connectedAddresses') {
-              console.log('CONNECTED ADDRESSES', parsedData.value);
+              console.log(
+                'REQUEST - RECEIVING CONNECTED ADDRESSES',
+                'CONNECTED ADDRESSES',
+                parsedData.value
+              );
 
               const receivedConnectedAddresses = parsedData.value;
               const localConnectedAddresses = getConnectedAddresses({
@@ -545,7 +549,7 @@ export class Video {
           incomingPeers: this.data.incoming,
         });
         console.log(
-          'CONNECT EVENT HANDLER IN ACCEPT REQUEST',
+          'ACCEPT REQUEST - SENDING THE CONNECTED ADDRESSES',
           'connectedAddresses',
           connectedAddresses
         );
@@ -573,7 +577,11 @@ export class Video {
           const parsedData = JSON.parse(data);
 
           if (parsedData.type === 'connectedAddresses') {
-            console.log('CONNECTED ADDRESSES', parsedData.value);
+            console.log(
+              'ACCEPT REQUEST - RECEIVING CONNECTED ADDRESSES',
+              'CONNECTED ADDRESSES',
+              parsedData.value
+            );
 
             const receivedConnectedAddresses = parsedData.value;
             const localConnectedAddresses = getConnectedAddresses({

@@ -73,13 +73,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setIsLoading(!isLoading);
 
     await initSpaceObject(spaceData?.spaceId as string);
-    if (isListener) {
-      console.log('joining as a listner');
-      await spacesObjectRef?.current?.join();
-      setSpaceWidgetId(spaceData?.spaceId as string);
-      setIsLoading(!isLoading);
-      console.log('space joined');
-    }
+    // useEffects below will handle the rest
   };
 
   const handleEndSpace = async () => {
@@ -105,6 +99,26 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     }
   };
 
+  // for listener
+  useEffect(() => {
+    const JoinAsListner = async () => {
+      console.log('isListner', isListener);
+      if (
+        isListener &&
+        !isHost &&
+        spaceObjectData.connectionData.local.address
+      ) {
+        console.log('joining as a listener');
+        await spacesObjectRef?.current?.join?.();
+        setSpaceWidgetId?.(spaceData?.spaceId as string);
+        setIsLoading(!isLoading);
+        console.log('space joined');
+      }
+    };
+    JoinAsListner();
+  }, [isListener]);
+
+  // for speaker
   useEffect(() => {
     const createAudioStream = async () => {
       console.log('isSpeaker', isSpeaker);
@@ -117,6 +131,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     createAudioStream();
   }, [isSpeaker]);
 
+  // joining as a speaker
   useEffect(() => {
     if (
       !spaceObjectData?.connectionData?.local?.stream ||
@@ -129,6 +144,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       console.log('joining as a speaker');
       await spacesObjectRef?.current?.join?.();
       setSpaceWidgetId?.(spaceData?.spaceId as string);
+      setIsLoading(!isLoading);
       console.log('space joined');
     };
     joinSpaceAsSpeaker();
@@ -153,6 +169,21 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         overflowY={'auto'}
         alignContent={'flex-start'}
       >
+        {/* local peer details if speaker or host */}
+        {(isSpeaker || isHost) && (
+          <LiveSpaceProfileContainer
+            isHost={isHost}
+            isSpeaker={isSpeaker}
+            wallet={spaceObjectData?.connectionData?.local?.address}
+            image={createBlockie?.(
+              spaceObjectData?.connectionData?.local?.address
+            )
+              ?.toDataURL()
+              ?.toString()}
+          />
+        )}
+
+        {/* remote peer details if speaker or host */}
         {(isSpeaker || isHost) &&
           spaceObjectData?.connectionData?.incoming
             ?.slice(1)
@@ -161,10 +192,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 isHost={isHost}
                 isSpeaker={isSpeaker}
                 wallet={profile?.address}
-                image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+                image={createBlockie?.(profile?.address)
+                  ?.toDataURL()
+                  ?.toString()}
                 stream={profile?.stream}
               />
             ))}
+
+        {/* details of everyone in the space if a listner */}
         {isListener &&
           !isHost &&
           spaceObjectData?.members.map((profile) => (
