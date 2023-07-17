@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useSpaceComponents } from './../../components/Spaces/useSpaceComponent';
 import { useContext, useEffect, useState } from 'react';
 import { useAccount, useSigner } from 'wagmi';
-import * as PushAPI from "@pushprotocol/restapi";
+import * as PushAPI from '@pushprotocol/restapi';
 import { ENV } from '@pushprotocol/restapi/src/lib/constants';
 import { AccountContext } from '../../contexts';
 
@@ -14,7 +14,7 @@ const Spaces: NextPage = () => {
   const { address } = useAccount();
   const { data: signer } = useSigner();
 
-  const {pgpPrivateKey, setPgpPrivateKey} = useContext<any>(AccountContext);
+  const { pgpPrivateKey, setPgpPrivateKey } = useContext<any>(AccountContext);
   const { SpaceWidgetComponent } = useSpaceComponents();
   const env = ENV.DEV;
 
@@ -70,10 +70,10 @@ const Spaces: NextPage = () => {
 export default Spaces;
 
 const Section = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    wrap: wrap;
-}`;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+`;

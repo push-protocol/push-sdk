@@ -110,7 +110,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const getShareOptionDetails = (shareOption: ShareOptionsValues) => {
     let icon = '';
     let alt = '';
-  
+
     switch (shareOption) {
       case ShareOptions.Twitter:
         icon = TwitterIcon;
@@ -125,7 +125,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
         alt = 'Copy Icon';
         break;
     }
-  
+
     return { icon, alt };
   };
 
@@ -225,7 +225,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
                 <ShareLinkButton
                   onClick={() => handleShareAction(shareOption)}
                 >
-                  <Image 
+                  <Image
                     src={icon}
                     alt={alt}
                     width={'25px'}
