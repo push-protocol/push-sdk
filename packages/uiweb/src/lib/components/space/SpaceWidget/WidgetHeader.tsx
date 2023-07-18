@@ -1,4 +1,9 @@
-import React, { useState, MouseEventHandler, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  MouseEventHandler,
+  useContext,
+} from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { Item, Text } from '../../../config';
@@ -14,6 +19,8 @@ import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
 
+import { SpaceStatus } from './WidgetContent';
+
 export interface IWidgetHeaderProps {
   onClose: MouseEventHandler;
   spaceData?: any;
@@ -22,7 +29,7 @@ export interface IWidgetHeaderProps {
   toggleWidgetVisibility: () => void;
 
   // temp props
-  isLive?: boolean;
+  spaceStatus?: any;
   isHost?: boolean;
 }
 
@@ -33,15 +40,16 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   setIsMinimized,
   toggleWidgetVisibility,
   spaceData,
-  isLive,
+  spaceStatus,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
-  // const { isLive } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
 
   const [isSpacesInfoVisible, setIsSpacesInfoVisible] = useState(false);
+  const [isSpaceLive, setIsSpaceLive] = useState<any>(SpaceStatus.Scheduled);
+
   const handleCloseWidget: React.MouseEventHandler<HTMLDivElement> = (
     event
   ) => {
@@ -61,118 +69,140 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
     setIsSpacesInfoVisible(false);
   };
 
+  useEffect(() => {
+    if (spaceStatus === SpaceStatus.Live) {
+      setIsSpaceLive(SpaceStatus.Live);
+    }
+    if (spaceStatus === SpaceStatus.Scheduled) {
+      setIsSpaceLive(SpaceStatus.Scheduled);
+    }
+    if (spaceStatus === SpaceStatus.Ended) {
+      setIsSpaceLive(SpaceStatus.Ended);
+    }
+  }, [spaceStatus]);
+
   return (
     <ThemeProvider theme={theme}>
-    <Container>
-      {!isLive && (
+      <Container theme={theme}>
+        {(isSpaceLive === SpaceStatus.Scheduled ||
+          isSpaceLive === SpaceStatus.Ended) && (
+          <Section>
+            <Item marginBottom={'12px'}>
+              <HostPfpContainer
+                statusTheme="Live"
+                imageUrl={spaceData?.members[0]?.image || tempImageUrl}
+                name={
+                  `${spaceData?.spaceCreator?.slice(
+                    7,
+                    12
+                  )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+                }
+                handle={
+                  `${spaceData?.spaceCreator?.slice(
+                    7,
+                    12
+                  )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+                }
+              />
+            </Item>
+            <Item
+              display={'flex'}
+              alignSelf={'flex-start'}
+              alignItems={'center'}
+            >
+              {isHost && <Button padding="6.5px 16.5px">Edit space</Button>}
+              <Item
+                marginLeft={'8px'}
+                display={'flex'}
+                onClick={showSpacesInfo}
+              >
+                <Image alt="Settings icon" src={SettingsIcon} />
+              </Item>
+              <Item marginLeft={'8px'} display={'flex'}>
+                <Image
+                  onClick={() => setIsMinimized(!isMinimized)}
+                  src={isMinimized ? CaretUpIcon : CaretDownIcon}
+                  alt="Maximize/Minimize icon"
+                />
+              </Item>
+              <Item
+                marginLeft={'8px'}
+                display={'flex'}
+                onClick={handleCloseWidget}
+              >
+                <CloseSvg stroke="white" height="15" width="15" />
+              </Item>
+            </Item>
+          </Section>
+        )}
         <Section>
-          <Item marginBottom={'12px'}>
-            <HostPfpContainer
-              statusTheme="Live"
-              imageUrl={spaceData?.members[0]?.image || tempImageUrl}
-              name={
-                `${spaceData?.spaceCreator?.slice(
-                  7,
-                  12
-                )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
-              }
-              handle={
-                `${spaceData?.spaceCreator?.slice(
-                  7,
-                  12
-                )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
-              }
-            />
-          </Item>
-          <Item display={'flex'} alignSelf={'flex-start'} alignItems={'center'}>
-            {isHost && <Button padding="6.5px 16.5px">Edit space</Button>}
-            <Item marginLeft={'8px'} display={'flex'} onClick={showSpacesInfo}>
-              <Image alt="Settings icon" src={SettingsIcon} />
-            </Item>
-            <Item marginLeft={'8px'} display={'flex'}>
-              <Image
-                onClick={() => setIsMinimized(!isMinimized)}
-                src={isMinimized ? CaretUpIcon : CaretDownIcon}
-                alt="Maximize/Minimize icon"
-              />
-            </Item>
+          <Text fontSize={'16px'} fontWeight={700}>
+            {spaceData?.spaceName || 'Test Space'}
+          </Text>
+          {isSpaceLive === SpaceStatus.Live && (
             <Item
-              marginLeft={'8px'}
               display={'flex'}
-              onClick={handleCloseWidget}
+              alignSelf={'flex-start'}
+              alignItems={'center'}
+              marginLeft={'24px'}
             >
-              <CloseSvg stroke="white" height="15" width="15" />
+              <Item
+                marginLeft={'8px'}
+                display={'flex'}
+                onClick={showSpacesInfo}
+              >
+                <Image alt="Settings icon" src={SettingsIcon} />
+              </Item>
+              <Item marginLeft={'8px'} display={'flex'}>
+                <Image
+                  onClick={() => setIsMinimized(!isMinimized)}
+                  src={isMinimized ? CaretUpIcon : CaretDownIcon}
+                  alt="Maximize/Minimize icon"
+                />
+              </Item>
+              <Item
+                marginLeft={'8px'}
+                display={'flex'}
+                onClick={handleCloseWidget}
+              >
+                <CloseSvg stroke="white" height="15" width="15" />
+              </Item>
             </Item>
-          </Item>
+          )}
         </Section>
-      )}
-      <Section>
-        <Text fontSize={'16px'} fontWeight={700}>
-          {spaceData?.spaceName || 'Test Space'}
-        </Text>
-        {isLive && (
-          <Item
-            display={'flex'}
-            alignSelf={'flex-start'}
-            alignItems={'center'}
-            marginLeft={'24px'}
-          >
-            <Item marginLeft={'8px'} display={'flex'} onClick={showSpacesInfo}>
-              <Image alt="Settings icon" src={SettingsIcon} />
-            </Item>
-            <Item marginLeft={'8px'} display={'flex'}>
-              <Image
-                onClick={() => setIsMinimized(!isMinimized)}
-                src={isMinimized ? CaretUpIcon : CaretDownIcon}
-                alt="Maximize/Minimize icon"
-              />
-            </Item>
-            <Item
-              marginLeft={'8px'}
-              display={'flex'}
-              onClick={handleCloseWidget}
-            >
-              <CloseSvg stroke="white" height="15" width="15" />
+        {isSpaceLive === SpaceStatus.Scheduled && (
+          <Item display={'flex'} marginTop={'12px'} alignItems={'center'}>
+            <Image src={CalendarIcon} alt="Calendar Icon" />
+            <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>
+              {formatDate(spaceData?.scheduleAt || new Date())}
             </Item>
           </Item>
         )}
-      </Section>
-      {!isLive && (
-        <Item display={'flex'} marginTop={'12px'} alignItems={'center'}>
-          <Image src={CalendarIcon} alt="Calendar Icon" />
-          <Item marginLeft={'4px'} fontSize={'14px'} fontWeight={600}>
-            {formatDate(spaceData?.scheduleAt || new Date())}
-          </Item>
-        </Item>
-      )}
-      {isLive && (
-        <Section marginTop="12px">
-          <Item display={'flex'} alignItems={'center'}>
-            <Image src={LiveIcon} alt="Calendar Icon" />
-            <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
-              Live
-            </Text>
-          </Item>
-          <Item display={'flex'} alignItems={'center'}>
-            <Item>
-              <ParticipantContainer
-                participants={spaceData?.members}
-                orientation="maximized"
-              />
+        {isSpaceLive === SpaceStatus.Live && (
+          <Section marginTop="12px">
+            <Item display={'flex'} alignItems={'center'}>
+              <Image src={LiveIcon} alt="Calendar Icon" />
+              <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
+                Live
+              </Text>
             </Item>
-            {/* <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
+            <Item display={'flex'} alignItems={'center'}>
+              <Item>
+                <ParticipantContainer
+                  participants={spaceData?.members}
+                  orientation="maximized"
+                />
+              </Item>
+              {/* <Text fontSize={'14px'} fontWeight={600} marginLeft={'4px'}>
               +190 Listeners
             </Text> */}
-          </Item>
-        </Section>
-      )}
-      {isSpacesInfoVisible ? (
-        <SpacesInfo
-          closeSpacesInfo={closeSpacesInfo}
-          spaceData={spaceData}
-        />
-      ) : null}
-    </Container>
+            </Item>
+          </Section>
+        )}
+        {isSpacesInfoVisible ? (
+          <SpacesInfo closeSpacesInfo={closeSpacesInfo} spaceData={spaceData} />
+        ) : null}
+      </Container>
     </ThemeProvider>
   );
 };
