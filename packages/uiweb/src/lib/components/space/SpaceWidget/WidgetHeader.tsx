@@ -29,7 +29,7 @@ export interface IWidgetHeaderProps {
   toggleWidgetVisibility: () => void;
 
   // temp props
-  isLive?: any;
+  spaceStatus?: any;
   isHost?: boolean;
 }
 
@@ -40,7 +40,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   setIsMinimized,
   toggleWidgetVisibility,
   spaceData,
-  isLive,
+  spaceStatus,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
 
@@ -70,16 +70,16 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   };
 
   useEffect(() => {
-    if (isLive === SpaceStatus.Live) {
+    if (spaceStatus === SpaceStatus.Live) {
       setIsSpaceLive(SpaceStatus.Live);
     }
-    if (isLive === SpaceStatus.Scheduled) {
+    if (spaceStatus === SpaceStatus.Scheduled) {
       setIsSpaceLive(SpaceStatus.Scheduled);
     }
-    if (isLive === SpaceStatus.Ended) {
+    if (spaceStatus === SpaceStatus.Ended) {
       setIsSpaceLive(SpaceStatus.Ended);
     }
-  }, [isLive]);
+  }, [spaceStatus]);
 
   return (
     <ThemeProvider theme={theme}>

@@ -19,7 +19,7 @@ interface WidgetContentProps {
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  isLive: any;
+  spaceStatus: any;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
   onClose: MouseEventHandler;
@@ -40,52 +40,50 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   isTimeToStartSpace,
   isMember,
   isMinimized,
-  isLive,
+  spaceStatus,
   onClose,
   toggleWidgetVisibility,
 }: WidgetContentProps) => {
   // const { isLive } = useSpaceData();
-  console.log('isLiveInWidgetContent', isLive);
-  const [isSpaceLive, setIsSpaceLive] = useState<any>(SpaceStatus.Scheduled);
-  console.log('isSpaceLive', isSpaceLive);
+  const [spaceStatusState, setSpaceStatusState] = useState<any>(SpaceStatus.Scheduled);
 
   console.log('Rendering WidgetContent');
   useEffect(() => {
-    if (isLive === SpaceStatus.Live) {
-      setIsSpaceLive(SpaceStatus.Live);
+    if (spaceStatus === SpaceStatus.Live) {
+      setSpaceStatusState(SpaceStatus.Live);
     }
-    if (isLive === SpaceStatus.Scheduled) {
-      setIsSpaceLive(SpaceStatus.Scheduled);
+    if (spaceStatus === SpaceStatus.Scheduled) {
+      setSpaceStatusState(SpaceStatus.Scheduled);
     }
-    if (isLive === SpaceStatus.Ended) {
-      setIsSpaceLive(SpaceStatus.Ended);
+    if (spaceStatus === SpaceStatus.Ended) {
+      setSpaceStatusState(SpaceStatus.Ended);
     }
-  }, [isLive]);
+  }, [spaceStatus]);
 
   return (
     <Container
       isMinimized={isMinimized}
       height={
-        isSpaceLive === SpaceStatus.Live
+        spaceStatusState === SpaceStatus.Live
           ? LIVE_WIDGET_CONTENT_FIXED_HEIGHT
           : SCHEDULED_WIDGET_CONTENT_FIXED_HEIGHT
       }
     >
-      {isSpaceLive === SpaceStatus.Live ? (
+      {spaceStatusState === SpaceStatus.Live ? (
         <LiveWidgetContent
           spaceData={spaceData}
           isHost={isHost}
-          setIsSpaceLive={setIsSpaceLive}
+          setSpaceStatusState={setSpaceStatusState}
         />
-      ) : isSpaceLive === SpaceStatus.Scheduled ? (
+      ) : spaceStatusState === SpaceStatus.Scheduled ? (
         <ScheduledWidgetContent
           spaceData={spaceData}
           share={share}
           isHost={isHost}
           isMember={isMember}
           isTimeToStartSpace={isTimeToStartSpace}
-          isSpaceLive={isSpaceLive}
-          setIsSpaceLive={setIsSpaceLive}
+          spaceStatusState={spaceStatusState}
+          setSpaceStatusState={setSpaceStatusState}
         />
       ) : (
         <EndWidgetContent

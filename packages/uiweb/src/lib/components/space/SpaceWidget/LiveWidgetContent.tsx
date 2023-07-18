@@ -25,13 +25,13 @@ interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
-  setIsSpaceLive: React.Dispatch<React.SetStateAction<any>>;
+  setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
   isHost,
-  setIsSpaceLive,
+  setSpaceStatusState,
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
@@ -89,7 +89,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.stop?.();
     spacesObjectRef.current = null;
     setSpaceObjectData?.(PushAPI.space.initSpaceData);
-    setIsSpaceLive?.(SpaceStatus.Ended);
+    setSpaceStatusState?.(SpaceStatus.Ended);
     window.alert('Space ended');
   };
 

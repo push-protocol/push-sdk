@@ -31,16 +31,16 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
-  isSpaceLive: any;
-  setIsSpaceLive: React.Dispatch<React.SetStateAction<any>>;
+  spaceStatusState: any;
+  setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   spaceData,
   share,
   isHost,
   isMember,
-  isSpaceLive,
-  setIsSpaceLive,
+  spaceStatusState,
+  setSpaceStatusState,
 }: ScheduledWidgetContentProps) => {
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
 
@@ -141,13 +141,13 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
-      if (isSpaceLive === SpaceStatus.Live) return;
+      if (spaceStatusState === SpaceStatus.Live) return;
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
       await spacesObjectRef?.current?.start?.({
         livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
       });
       setIsStarted(false);
-      setIsSpaceLive && setIsSpaceLive(SpaceStatus.Live);
+      setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
     }
     startSpace();
   }, [isStarted]);

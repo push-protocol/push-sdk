@@ -36,7 +36,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  const isLive = spaceData && spaceData?.status;
+  const spaceStatus = spaceData && spaceData?.status;
   // console.log('isLiveInWidget', isLive)
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         setIsMinimized={setIsMinimized}
         toggleWidgetVisibility={toggleWidgetVisibility}
         isHost={isHost}
-        isLive={isLive}
+        spaceStatus={spaceStatus}
         spaceData={spaceData}
       />
       <WidgetContent
@@ -104,7 +104,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         spaceData={spaceData}
         share={share}
         isHost={isHost}
-        isLive={isLive}
+        spaceStatus={spaceStatus}
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}
