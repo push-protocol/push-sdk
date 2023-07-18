@@ -30,18 +30,16 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     isTimeToStartSpace,
   } = options || {};
 
-  const isLiveRef = useRef(false);
+  const spaceStatusRef = useRef<any>();
+  console.log("🚀 ~ file: SpaceWidget.tsx:34 ~ spaceStatusRef:", spaceStatusRef)
 
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  
   const {
     getSpaceInfo, setSpaceInfo, account, env, spaceInfo,
   } = useSpaceData();
-
-  const spaceStatus = spaceData && spaceData?.status;
 
   usePushSpaceSocket({ account, env });
 
@@ -71,7 +69,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   
   useEffect(() => {
     if (spaceId && spaceInfo[spaceId]) {
-      isLiveRef.current = spaceInfo[spaceId].status === 'ACTIVE';
+      spaceStatusRef.current = spaceInfo[spaceId].status;
     }
   }, [spaceId, spaceInfo])
 
@@ -109,7 +107,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         setIsMinimized={setIsMinimized}
         toggleWidgetVisibility={toggleWidgetVisibility}
         isHost={isHost}
-        spaceStatus={spaceStatus}
+        spaceStatus={spaceStatusRef.current}
         spaceData={spaceData}
       />
       <WidgetContent
@@ -118,7 +116,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         spaceData={spaceData}
         share={share}
         isHost={isHost}
-        spaceStatus={spaceStatus}
+        spaceStatus={spaceStatusRef.current}
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}
