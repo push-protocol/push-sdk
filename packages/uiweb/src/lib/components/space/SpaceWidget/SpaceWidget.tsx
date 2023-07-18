@@ -7,9 +7,9 @@ import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
 
 import { ISpaceWidgetProps } from '../exportedTypes';
-import { isLiveSpace, isHostOfSpace, isMemberOfSpace } from './helpers/utils';
+import { isHostOfSpace, isMemberOfSpace } from './helpers/utils';
 
-import { useSpaceData } from '../../../hooks';
+import { usePushSpaceSocket, useSpaceData } from '../../../hooks';
 
 const DEFAULT_OFFSET = 16;
 const DEFAULT_MAXWIDTH = 415;
@@ -35,28 +35,23 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
-  console.log("🚀 ~ file: SpaceWidget.tsx:38 ~ spaceData:", spaceData)
 
+  
   const {
-    getSpaceInfo, setSpaceInfo, account, env,
-    spaceObjectData
+    getSpaceInfo, setSpaceInfo, account, env, spaceInfo,
   } = useSpaceData();
 
   const spaceStatus = spaceData && spaceData?.status;
 
-  useEffect(() => {
-    if (spaceObjectData.status) {
-      isLiveRef.current = spaceObjectData?.status === 'ACTIVE';
-    } else {
-      isLiveRef.current = spaceData?.status === 'ACTIVE';
-    }
-  }, [spaceData?.status, spaceObjectData.status])
+  usePushSpaceSocket({ account, env });
 
   useEffect(() => {
     if (!spaceId) {
       return;
     }
+
     setWidgetHidden(!spaceId);
+
     const fetchData = async () => {
       try {
         if (getSpaceInfo(spaceId)) {
@@ -73,6 +68,12 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
 
     fetchData();
   }, [env, getSpaceInfo, setSpaceInfo, spaceId]);
+  
+  useEffect(() => {
+    if (spaceId && spaceInfo[spaceId]) {
+      isLiveRef.current = spaceInfo[spaceId].status === 'ACTIVE';
+    }
+  }, [spaceId, spaceInfo])
 
   // To Be Implemented Later via Meta messages.
   // useEffect(() => {
@@ -92,8 +93,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
   };
-
-  console.log(isLiveRef.current)
 
   // Implement the SpaceWidget component
   return (

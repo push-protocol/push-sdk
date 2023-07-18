@@ -44,8 +44,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 }: ScheduledWidgetContentProps) => {
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
 
-  console.log("🚀 ~ file: ScheduledWidgetContent.tsx:45 ~ spacesObjectRef:", spacesObjectRef)
-
   const isTimeToStartSpace = true;
 
   const [isStarted, setIsStarted] = useState<boolean>(false);
