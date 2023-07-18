@@ -52,10 +52,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     isJoined,
     initSpaceObject,
   } = useSpaceData();
-  console.log(
-    '🚀 ~ file: LiveWidgetContent.tsx:41 ~ spaceObjectData:',
-    spaceObjectData
-  );
+
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:53 ~ spacesObjectRef:", spacesObjectRef)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 

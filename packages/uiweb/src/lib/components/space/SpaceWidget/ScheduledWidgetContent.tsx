@@ -152,9 +152,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     startSpace();
   }, [isStarted]);
 
-  console.log('Rendering ScheduledWidgetContent');
-  console.log('isStarted?', isStarted);
-
   return (
     <Container
       display={'flex'}

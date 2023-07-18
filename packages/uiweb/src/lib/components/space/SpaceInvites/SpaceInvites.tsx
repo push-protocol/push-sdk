@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Modal } from '../reusables/Modal';
 import { Spinner } from '../reusables/Spinner';
 import { ModalHeader } from '../reusables/ModalHeader';
-import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
+import { useFeedScroll, useSpaceData, useSpaceRequests, usePushSpaceSocket } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
 export interface ISpaceInvitesProps {
@@ -30,7 +30,10 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     isSpeaker,
     isListener,
     account,
+    env,
   } = useSpaceData();
+
+  usePushSpaceSocket({ account, env });
 
   const handleJoinSpace = async (space: any) => {
     await initSpaceObject(space?.spaceId as string);

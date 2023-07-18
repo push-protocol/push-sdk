@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
@@ -7,9 +7,9 @@ import { WidgetContent } from './WidgetContent';
 import { WidgetHeader } from './WidgetHeader';
 
 import { ISpaceWidgetProps } from '../exportedTypes';
-import { isLiveSpace, isHostOfSpace, isMemberOfSpace } from './helpers/utils';
+import { isHostOfSpace, isMemberOfSpace } from './helpers/utils';
 
-import { useSpaceData } from '../../../hooks';
+import { usePushSpaceSocket, useSpaceData } from '../../../hooks';
 
 const DEFAULT_OFFSET = 16;
 const DEFAULT_MAXWIDTH = 415;
@@ -29,29 +29,34 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     }) as MouseEventHandler<HTMLDivElement>,
     isTimeToStartSpace,
   } = options || {};
-  const [widgetHidden, setWidgetHidden] = useState(!spaceId);
-  const { account, spaceObjectData, initSpaceObject, env } = useSpaceData();
 
+  const spaceStatusRef = useRef<any>();
+
+  const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const { getSpaceInfo, setSpaceInfo } = useSpaceData();
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  const spaceStatus = spaceData && spaceData?.status;
-  // console.log('isLiveInWidget', isLive)
+  const {
+    getSpaceInfo, setSpaceInfo, account, env, spaceInfo,
+  } = useSpaceData();
+
+  usePushSpaceSocket({ account, env });
 
   useEffect(() => {
     if (!spaceId) {
       return;
     }
+
     setWidgetHidden(!spaceId);
+
     const fetchData = async () => {
       try {
-        if (getSpaceInfo?.(spaceId)) {
+        if (getSpaceInfo(spaceId)) {
           setSpaceData(getSpaceInfo(spaceId));
           return;
         }
         const response = await PushAPI.space.get({ spaceId, env });
-        setSpaceInfo?.(spaceId, response);
+        setSpaceInfo(spaceId, response);
         setSpaceData(response);
       } catch (error) {
         console.error(error);
@@ -59,7 +64,13 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     };
 
     fetchData();
-  }, [spaceId]);
+  }, [env, getSpaceInfo, setSpaceInfo, spaceId]);
+  
+  useEffect(() => {
+    if (spaceId && spaceInfo[spaceId]) {
+      spaceStatusRef.current = spaceInfo[spaceId].status;
+    }
+  }, [spaceId, spaceInfo])
 
   // To Be Implemented Later via Meta messages.
   // useEffect(() => {
@@ -95,7 +106,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         setIsMinimized={setIsMinimized}
         toggleWidgetVisibility={toggleWidgetVisibility}
         isHost={isHost}
-        spaceStatus={spaceStatus}
+        spaceStatus={spaceStatusRef.current}
         spaceData={spaceData}
       />
       <WidgetContent
@@ -104,7 +115,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
         spaceData={spaceData}
         share={share}
         isHost={isHost}
-        spaceStatus={spaceStatus}
+        spaceStatus={spaceStatusRef.current}
         isMember={isMember}
         isTimeToStartSpace={isTimeToStartSpace}
         isMinimized={isMinimized}
