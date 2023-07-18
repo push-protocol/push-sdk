@@ -47,7 +47,7 @@ export const NotificationFeedList: React.FC<NotificationFeedListPropType> = ({
   const { onSubscribeToChannel } = useOnSubscribeToChannel();
   const { signer} = useContext<any>(ChatAndNotificationPropsContext);
   const isSubscribedFn = (channel: string) => {
-    return subscriptionStatus.get(channel);
+    return !!subscriptionStatus.get(channel);
   };
   return (
     <>
