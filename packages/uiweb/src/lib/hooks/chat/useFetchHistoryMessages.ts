@@ -28,6 +28,7 @@ const useFetchHistoryMessages
 
     setLoading(true);
     try {
+      console.log(account)
         const chatHistory:IMessageIPFS[] = await PushAPI.chat.history({
             threadhash: threadHash,
             account: account,

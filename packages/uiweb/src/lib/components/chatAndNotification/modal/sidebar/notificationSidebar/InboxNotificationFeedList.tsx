@@ -123,7 +123,6 @@ export const InboxNotificationFeedList = () => {
       setPaginateLoading(false);
     }
   };
-
   return (
     <InboxNotifListCard
       overflow="hidden auto"

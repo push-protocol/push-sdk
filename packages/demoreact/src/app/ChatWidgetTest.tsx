@@ -35,6 +35,7 @@ export const ChatWidgetTest = () => {
   const onClose = () => {
     console.log('in here widget')
   };
+  console.log(pvtKey)
   return (
     <ChatAndNotificationWidget
       account={account}
