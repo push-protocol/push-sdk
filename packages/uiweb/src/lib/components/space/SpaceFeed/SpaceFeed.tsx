@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import { SpaceIFeeds } from '@pushprotocol/restapi';
@@ -17,6 +17,9 @@ import {
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
+
+// import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -51,12 +54,13 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   orientation = OrientationEnums.Vertical,
   height,
   width,
-  sortingOrder = ["Popular", "ForYou", "HostedByYou"],
+  sortingOrder = ['Popular', 'ForYou', 'HostedByYou'],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
   onBannerClickHandler,
 }) => {
+  const theme = useContext(ThemeContext);
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [filterTab, setFilterTab] = useState(filter);
 
@@ -183,9 +187,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
-    <div>
+    <div
+      style={{
+        background: theme.bgColorPrimary,
+        color: theme.textColorPrimary,
+      }}
+    >
       {orientation === OrientationEnums.Horizontal ? (
-        <Spaces orientation={orientation}>
+        <Spaces orientation={orientation} theme={theme}>
           {orientation === OrientationEnums.Horizontal
             ? mySpaces &&
               mySpaces.apiData?.map((space: SpaceIFeeds) => {
@@ -214,13 +223,19 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         </Spaces>
       ) : (
         <>
-          <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
-            <NavButtonWrapper>
+          <Navigation
+            showTabs={showTabs}
+            width={width}
+            showFilter={showFilter}
+            theme={theme}
+          >
+            <NavButtonWrapper theme={theme}>
               {sortingOrder.map((tabName: TabsValues) => {
                 return (
                   <NavButton
                     active={tab === tabName}
                     onClick={() => handleTabChange(tabName)}
+                    theme={theme}
                   >
                     {Tabs[tabName]}
                   </NavButton>
@@ -228,22 +243,25 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               })}
             </NavButtonWrapper>
           </Navigation>
-          <Filter showFilter={showFilter}>
+          <Filter showFilter={showFilter} theme={theme}>
             <FilterButton
               active={filterTab === FilterEnums.All}
               onClick={() => setFilterTab(FilterEnums.All)}
+              theme={theme}
             >
               All
             </FilterButton>
             <FilterButton
               active={filterTab === FilterEnums.Live}
               onClick={() => setFilterTab(FilterEnums.Live)}
+              theme={theme}
             >
               Live
             </FilterButton>
             <FilterButton
               active={filterTab === FilterEnums.Scheduled}
               onClick={() => setFilterTab(FilterEnums.Scheduled)}
+              theme={theme}
             >
               Scheduled
             </FilterButton>
@@ -253,18 +271,21 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
             height={height}
             ref={listInnerRef}
             onScroll={onScroll}
+            theme={theme}
           >
-            <Container>
+            <Container theme={theme}>
               {tab === Tabs.ForYou ? (
-                <Spaces orientation={orientation}>
+                <Spaces orientation={orientation} theme={theme}>
                   {mySpaces.apiData &&
                     (handleFilterData(
                       handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
                     ).length === 0 ? (
-                      <NoSpaces>
+                      <NoSpaces theme={theme}>
                         <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1>Join a space</NoSpacesTextV1>
-                        <NoSpacesTextV2>
+                        <NoSpacesTextV1 theme={theme}>
+                          Join a space
+                        </NoSpacesTextV1>
+                        <NoSpacesTextV2 theme={theme}>
                           Get started by joining a space
                         </NoSpacesTextV2>
                       </NoSpaces>
@@ -285,8 +306,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                     ))}
                 </Spaces>
               ) : tab === Tabs.Popular ? (
-                <PopularSpaces>
-                  <Text>Popular Spaces</Text>
+                <PopularSpaces theme={theme}>
+                  <Text theme={theme}>Popular Spaces</Text>
                   {popularSpaces.apiData &&
                     handleFilterData(
                       popularSpaces.apiData as SpaceIFeeds[]
@@ -303,15 +324,17 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                     })}
                 </PopularSpaces>
               ) : (
-                <Spaces orientation={orientation}>
+                <Spaces orientation={orientation} theme={theme}>
                   {mySpaces.apiData &&
                     (handleFilterData(
                       handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
                     ).length === 0 ? (
-                      <NoSpaces>
+                      <NoSpaces theme={theme}>
                         <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1>Create a space</NoSpacesTextV1>
-                        <NoSpacesTextV2>
+                        <NoSpacesTextV1 theme={theme}>
+                          Create a space
+                        </NoSpacesTextV1>
+                        <NoSpacesTextV2 theme={theme}>
                           Get started by creating a space
                         </NoSpacesTextV2>
                       </NoSpaces>
@@ -351,8 +374,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #dcdcdf;
+  background: ${(props) => props.theme.bgColorPrimary};
+  border: 1px solid ${(props) => props.theme.borderColor};
   border-radius: 12px;
   padding: 24px 32px;
 }`;
@@ -367,8 +390,9 @@ const Navigation = styled.div<{
   justify-content: space-between;
   align-items: center;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
-  border-bottom: 1px solid #DCDCDF;
+  border-bottom: 1px solid ${(props) => props.theme.borderColor};
   margin-bottom: ${(props) => (props.showFilter ? '0' : '27px')};
+  background: ${(props) => props.theme.bgColorPrimary};
 }`;
 
 const NavButtonWrapper = styled.div`
@@ -383,9 +407,13 @@ const NavButton = styled.button<{ active?: boolean }>`
   font-weight: 450;
   font-size: 14px;
   border: none;
-  border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
+  border-bottom: ${(props) =>
+    props.active ? `2px solid ${props.theme.btnColorPrimary}` : 'none'};
   background: none;
-  color : ${(props) => (props.active ? '#000000' : '#71717A')};
+  color : ${(props) =>
+    props.active
+      ? `${props.theme.textColorPrimary}`
+      : `${props.theme.textColorSecondary}`};
 
   &:hover {
     cursor: pointer;
@@ -398,7 +426,7 @@ const Spaces = styled.div<{ orientation?: string }>`
     props.orientation === 'horizontal' ? 'row' : 'column'};
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${(props) => props.theme.bgColorPrimary};
   width: ${(props) =>
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
@@ -410,7 +438,7 @@ const PopularSpaces = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
+  background: ${(props) => props.theme.bgColorPrimary};
   width: 100%;  
   height: auto;
   gap: 16px;
@@ -429,7 +457,7 @@ const Filter = styled.div<{ showFilter?: boolean }>`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${(props) => props.theme.bgColorPrimary};
   width: 100%;
   margin: 22px 0;
 }`;
@@ -441,9 +469,15 @@ const FilterButton = styled.button<{ active: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 99px;
-  border: 1px solid #C4B5FD;
-  background: ${(props) => (props.active ? '#8B5CF6' : '#EDE9FE')};
-  color: ${(props) => (!props.active ? '#8B5CF6' : '#FFF')};
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background: ${(props) =>
+    props.active
+      ? `${props.theme.btnColorPrimary}`
+      : `${props.theme.bgColorSecondary}`};
+  color: ${(props) =>
+    !props.active
+      ? `${props.theme.btnColorPrimary}`
+      : `${props.theme.textColorPrimary}`};
   margin-right: 8px;
   font-size: 14px;
 
@@ -469,12 +503,12 @@ const NoSpacesTextV1 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 16px;
-  color: #000;
+  color: ${(props) => props.theme.textColorPrimary}};
 }`;
 
 const NoSpacesTextV2 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
-  color: #71717A;
+  color: ${(props) => props.theme.textColorSecondary}};
   font-size: 14px;
 }`;
