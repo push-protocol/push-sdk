@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/uiweb",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -13,7 +13,7 @@
     "html-react-parser": "^1.4.13",
     "gif-picker-react": "^1.1.0",
     "font-awesome": "^4.7.0",
-    "moment":"^2.29.4"
+    "moment": "^2.29.4"
   },
   "peerDependencies": {
     "@pushprotocol/restapi": "^1.2.15",
