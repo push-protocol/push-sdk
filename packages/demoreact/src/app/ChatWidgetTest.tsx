@@ -18,7 +18,6 @@ export const ChatWidgetTest = () => {
     (async()=>{
         const user = await PushAPI.user.get({ account: account, env });
         const pvtkey = null;
-        console.log(user)
         if (user?.encryptedPrivateKey) {
             const response = await PushAPI.chat.decryptPGPKey({
                 encryptedPGPPrivateKey: (user as IUser).encryptedPrivateKey,
@@ -35,7 +34,7 @@ export const ChatWidgetTest = () => {
   const onClose = () => {
     console.log('in here widget')
   };
-  console.log(pvtKey)
+
   return (
     <ChatAndNotificationWidget
       account={account}
