@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Button, Container, Image, Item, Text } from '../../../config';
 import { formatDate } from '../../../helpers';
-import CircularProgressSpinner from '../../loader/loader'
+import CircularProgressSpinner from '../../loader/loader';
 
 import SpacesIcon from '../../../icons/Spaces.svg';
 import TwitterIcon from '../../../icons/twitterVector.svg';
@@ -13,6 +13,7 @@ import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
 import { generateLensterShareURL } from '../helpers/share';
 import { ShareConfig } from '../exportedTypes';
+import { SpaceStatus } from './WidgetContent';
 
 enum ShareOptions {
   Twitter = 'Twitter',
@@ -30,16 +31,16 @@ interface ScheduledWidgetContentProps {
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
-  isSpaceLive: boolean;
-  setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
+  spaceStatusState: any;
+  setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   spaceData,
   share,
   isHost,
   isMember,
-  isSpaceLive,
-  setIsSpaceLive,
+  spaceStatusState,
+  setSpaceStatusState,
 }: ScheduledWidgetContentProps) => {
   const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
 
@@ -48,7 +49,8 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { shareUrl, shareOptions = ["Twitter", "Lenster", "CopyShareUrl"] } = share || {};
+  const { shareUrl, shareOptions = ['Twitter', 'Lenster', 'CopyShareUrl'] } =
+    share || {};
 
   const handleStartSpace = async () => {
     setIsLoading(!isLoading);
@@ -83,11 +85,11 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
     const lensterShareUrl = generateLensterShareURL({
       text: lensterShareText,
-      url
+      url,
     });
 
     window.open(lensterShareUrl, '_blank');
-  }
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -139,13 +141,13 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
-      if (isSpaceLive) return;
+      if (spaceStatusState === SpaceStatus.Live) return;
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
       await spacesObjectRef?.current?.start?.({
-        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+        livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
       });
       setIsStarted(false);
-      setIsSpaceLive && setIsSpaceLive(true);
+      setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
     }
     startSpace();
   }, [isStarted]);
@@ -230,19 +232,12 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
             const { icon, alt } = getShareOptionDetails(shareOption);
             return (
               <ShareLinkItem key={shareOption}>
-                <ShareLinkButton
-                  onClick={() => handleShareAction(shareOption)}
-                >
-                  <Image
-                    src={icon}
-                    alt={alt}
-                    width={'25px'}
-                    height={'22px'}
-                  />
+                <ShareLinkButton onClick={() => handleShareAction(shareOption)}>
+                  <Image src={icon} alt={alt} width={'25px'} height={'22px'} />
                 </ShareLinkButton>
                 <Text fontSize={'12px'} fontWeight={600}>
-              {ShareOptions[shareOption]}
-            </Text>
+                  {ShareOptions[shareOption]}
+                </Text>
               </ShareLinkItem>
             );
           })}
