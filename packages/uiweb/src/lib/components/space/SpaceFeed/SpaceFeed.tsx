@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceIFeeds } from '@pushprotocol/restapi';
 
@@ -17,6 +17,7 @@ import {
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -57,6 +58,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   showFilter = true,
   onBannerClickHandler,
 }) => {
+  const theme = useContext(ThemeContext);
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [filterTab, setFilterTab] = useState(filter);
 
@@ -183,7 +185,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       {orientation === OrientationEnums.Horizontal ? (
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
@@ -286,7 +288,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 </Spaces>
               ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
-                  <Text>Popular Spaces</Text>
                   {popularSpaces.apiData &&
                     handleFilterData(
                       popularSpaces.apiData as SpaceIFeeds[]
@@ -337,7 +338,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
           </ScrollContainer>
         </>
       )}
-    </div>
+    </ThemeProvider>
   );
 };
 
@@ -351,7 +352,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   border: 1px solid #dcdcdf;
   border-radius: 12px;
   padding: 24px 32px;
@@ -398,7 +399,7 @@ const Spaces = styled.div<{ orientation?: string }>`
     props.orientation === 'horizontal' ? 'row' : 'column'};
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   width: ${(props) =>
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
@@ -410,7 +411,7 @@ const PopularSpaces = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   width: 100%;  
   height: auto;
   gap: 16px;

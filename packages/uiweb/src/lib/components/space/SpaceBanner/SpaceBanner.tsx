@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceBannerLoadingSkeleton } from './SpaceBannerLoadingSkeleton';
 
@@ -12,7 +12,7 @@ import { HostPfpContainer } from '../reusables';
 
 import live from './../../../icons/live.svg';
 import scheduled from './../../../icons/scheduled.svg';
-import { useGetSpaceInfo } from './../../../hooks';
+import { useGetSpaceInfo, usePushSpaceSocket, useSpaceData } from './../../../hooks';
 
 export interface ISpaceBannerProps {
   spaceId: string;
@@ -42,6 +42,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
+  const { account, env } = useSpaceData();
 
   const spaceStatus = getSpaceStatus(spaceData?.status);
 
@@ -51,12 +52,15 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
     }
   };
 
+  usePushSpaceSocket({ account, env });
+
   // Check if the spaceData is not available, show the skeleton loading effect
   if (!spaceData) {
     return <SpaceBannerLoadingSkeleton />;
   }
 
   return (
+    <ThemeProvider theme={theme}>
     <Container
       orientation={orientation}
       status={spaceStatus}
@@ -85,7 +89,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           alt="status"
         />
       )}
-      <Title orientation={orientation}>
+      <Title orientation={orientation} status={spaceStatus}>
         {orientation === 'pill'
           ? `${spaceData?.spaceName.slice(0, 20)}...`
           : spaceData?.spaceName}
@@ -122,6 +126,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         <InviteButton status="Scheduled">Remind Me</InviteButton>
       ) : null}
     </Container>
+    </ThemeProvider>
   );
 };
 
@@ -170,7 +175,7 @@ const Container = styled.div<IThemeProps>`
   cursor: ${props => props.clickable && 'pointer'};
 `;
 
-const Title = styled.div<{ orientation?: string }>`
+const Title = styled.div<{ orientation?: string, status?: string }>`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -185,6 +190,10 @@ const Title = styled.div<{ orientation?: string }>`
       ? '16px'
       : '12px'};
   line-height: 130%;
+  color: ${(props) =>
+    props.status === 'Live'
+      ? props.theme.titleTextColor
+      : props.theme.textColorPrimary};
   width: 90%;
   line-clamp: ${(props) => (props.orientation === 'maximized' ? '3' : '2')};
 
@@ -220,7 +229,7 @@ const TimeText = styled.div<{ status?: string }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-  color: ${(props) => (props.status === 'Live' ? '#fff' : '#71717A')};
+  color: ${(props) => (props.status === 'Live' ? '#fff' : props.theme.textColorSecondary)};
 `;
 
 const InviteButton = styled.button<{ status?: string }>`
