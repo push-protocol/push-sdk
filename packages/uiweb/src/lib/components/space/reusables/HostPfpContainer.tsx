@@ -1,42 +1,59 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
+
 export interface IHostPfpContainerProps {
   name?: string;
   handle?: string;
   imageUrl?: string;
-  statusTheme: "Live" | "Scheduled" | "Ended";
+  statusTheme: 'Live' | 'Scheduled' | 'Ended';
+  imageHeight?: string;
+}
+
+interface IThemeProps {
+  theme?: ISpacesTheme;
+  statusTheme?: string;
   imageHeight?: string;
 }
 
 export const HostPfpContainer: React.FC<IHostPfpContainerProps> = ({
-  name = "Host Name",
-  handle = "Host Handle",
-  imageUrl = "",
+  name = 'Host Name',
+  handle = 'Host Handle',
+  imageUrl = '',
   statusTheme,
   imageHeight,
 }: IHostPfpContainerProps) => {
+  const theme = React.useContext(ThemeContext);
   return (
-    <ProfileContainer>
-      <PfpContainer>
-        <Pfp src={imageUrl} alt="host pfp" imageHeight={imageHeight} />
+    <ProfileContainer theme={theme}>
+      <PfpContainer theme={theme}>
+        <Pfp
+          src={imageUrl}
+          alt="host pfp"
+          imageHeight={imageHeight}
+          theme={theme}
+        />
       </PfpContainer>
-      <HostContainer>
-        <HostName>
-          <Name>{name}</Name>
-          <Host statusTheme={statusTheme}>Host</Host>
+      <HostContainer theme={theme}>
+        <HostName theme={theme}>
+          <Name theme={theme}>{name}</Name>
+          <Host statusTheme={statusTheme} theme={theme}>
+            Host
+          </Host>
         </HostName>
-        {handle &&
-          <HostHandle statusTheme={statusTheme}>
+        {handle && (
+          <HostHandle statusTheme={statusTheme} theme={theme}>
             {/* Fetch the handle from Lenster */}@{handle}
           </HostHandle>
-        }
+        )}
       </HostContainer>
     </ProfileContainer>
   );
 };
 
-const ProfileContainer = styled.div`
+const ProfileContainer = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -48,13 +65,13 @@ const PfpContainer = styled.div`
   display: flex;
 `;
 
-const Pfp = styled.img<{ imageHeight?: string }>`
-  height: ${(props) => (props.imageHeight ?? '32px')};
-  width: ${(props) => (props.imageHeight ?? '32px')};;
+const Pfp = styled.img<IThemeProps>`
+  height: ${(props) => props.imageHeight ?? '32px'};
+  width: ${(props) => props.imageHeight ?? '32px'};
   border-radius: 50%;
 `;
 
-const HostContainer = styled.div`
+const HostContainer = styled.div<IThemeProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -65,7 +82,7 @@ const HostContainer = styled.div`
   text-overflow: ellipsis;
 `;
 
-const HostName = styled.div`
+const HostName = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
   font-weight: 600;
@@ -73,13 +90,13 @@ const HostName = styled.div`
   width: 100%;
 `;
 
-const Name = styled.span`
+const Name = styled.span<IThemeProps>`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 `;
 
-const Host = styled.div<{ statusTheme?: string }>`
+const Host = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -90,16 +107,22 @@ const Host = styled.div<{ statusTheme?: string }>`
   height: 19px;
   background: ${(props) =>
     props.statusTheme === 'Live'
-      ? 'rgba(255, 255, 255, 0.2);'
-      : 'rgba(139, 92, 246, 0.2)'};
-  color: ${(props) => (props.statusTheme === 'Live' ? 'inherit' : '#8B5CF6')};
+      ? `${props.theme.btnOutline}`
+      : `${props.theme.btnOutline}`};
+  color: ${(props) =>
+    props.statusTheme === 'Live'
+      ? 'inherit'
+      : `${props.theme.bgColorSecondary}`};
   border-radius: 6px;
   font-weight: 500;
   font-size: 10px;
 `;
 
-const HostHandle = styled.div<{ statusTheme?: string }>`
-  color: ${(props) => (props.statusTheme === 'Live' ? '#F5F5F5E5' : '#71717A')};
+const HostHandle = styled.div<IThemeProps>`
+  color: ${(props) =>
+    props.statusTheme === 'Live'
+      ? `${props.theme.textColorPrimary}`
+      : `${props.theme.textColorSecondary}`};
   padding: 0;
   font-weight: 450;
   font-size: 14px;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Modal } from '../reusables/Modal';
 import { Spinner } from '../reusables/Spinner';
@@ -6,16 +6,24 @@ import { ModalHeader } from '../reusables/ModalHeader';
 import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
+
 export interface ISpaceInvitesProps {
   children?: React.ReactNode;
 }
 
+interface IThemeProps {
+  theme?: ISpacesTheme;
+}
+
 // temp
-let spaceId = "";
+let spaceId = '';
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
 }: ISpaceInvitesProps) => {
+  const theme = useContext(ThemeContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { spaceRequests, setSpaceRequests } = useSpaceData();
 
@@ -98,7 +106,11 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   const { loading } = useSpaceRequests(account);
   return (
     <>
-      {!children && <Button onClick={handleOpenModal}>Space Invites</Button>}
+      {!children && (
+        <Button onClick={handleOpenModal} theme={theme}>
+          Space Invites
+        </Button>
+      )}
 
       {children && <div onClick={handleOpenModal}>{children}</div>}
 
@@ -113,8 +125,12 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
             }
             closeCallback={handleCloseModal}
           />
-          <ScrollContainer ref={containerRef} onScroll={onScrollContainer}>
-            <InviteContainer>
+          <ScrollContainer
+            ref={containerRef}
+            onScroll={onScrollContainer}
+            theme={theme}
+          >
+            <InviteContainer theme={theme}>
               {spaceRequests.apiData
                 ? spaceRequests.apiData.map((space: any) => {
                     return (
@@ -136,16 +152,16 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   );
 };
 
-const Button = styled.button`
+const Button = styled.button<IThemeProps>`
   padding: 8px 16px;
-  background-color: #8b5cf6;
+  background-color: ${(props) => props.theme.btnColorPrimary};
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 `;
 
-const ScrollContainer = styled.div`
+const ScrollContainer = styled.div<IThemeProps>`
   max-height: 400px;
   width: inherit;
   margin-top: 24px;
@@ -161,12 +177,12 @@ const ScrollContainer = styled.div`
     -webkit-appearance: none;
     width: 4px;
     height: auto;
-    background: #8b5cf6;
+    background: ${(props) => props.theme.btnColorPrimary};
     border-radius: 99px;
   }
 `;
 
-const InviteContainer = styled.div`
+const InviteContainer = styled.div<IThemeProps>`
   display: flex;
   flex-direction: column;
   gap: 16px;

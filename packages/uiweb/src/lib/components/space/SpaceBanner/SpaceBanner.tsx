@@ -85,12 +85,12 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
           alt="status"
         />
       )}
-      <Title orientation={orientation}>
+      <Title orientation={orientation} theme={theme}>
         {orientation === 'pill'
           ? `${spaceData?.spaceName.slice(0, 20)}...`
           : spaceData?.spaceName}
       </Title>
-      <Status orientation={orientation}>
+      <Status orientation={orientation} theme={theme}>
         <Time orientation={orientation}>
           <Icon
             src={
@@ -116,10 +116,13 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         />
       </Status>
       {isInvite === true && spaceStatus === 'Live' ? (
-        <InviteButton status="Live" onClick={onJoin}>Join this space</InviteButton>
-      ) : isInvite === true &&
-        spaceStatus === 'Scheduled' ? (
-        <InviteButton status="Scheduled">Remind Me</InviteButton>
+        <InviteButton status="Live" onClick={onJoin} theme={theme}>
+          Join this space
+        </InviteButton>
+      ) : isInvite === true && spaceStatus === 'Scheduled' ? (
+        <InviteButton status="Scheduled" theme={theme}>
+          Remind Me
+        </InviteButton>
       ) : null}
     </Container>
   );
@@ -163,14 +166,17 @@ const Container = styled.div<IThemeProps>`
       : props.orientation === 'minimized'
       ? '12px'
       : '24px'};
-  color: ${(props) => (props.status === 'Live' ? '#f5f5f5' : '#1E1E1E')};
+  color: ${(props) =>
+    props.status === 'Live'
+      ? `${props.theme.titleTextColor}`
+      : `${props.theme.textColorPrimary}`};
   min-width: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-  cursor: ${props => props.clickable && 'pointer'};
+  cursor: ${(props) => props.clickable && 'pointer'};
 `;
 
-const Title = styled.div<{ orientation?: string }>`
+const Title = styled.div<IThemeProps>`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -202,7 +208,7 @@ const Status = styled.div<IThemeProps>`
   align-items: center;
 `;
 
-const Time = styled.div<{ orientation?: string }>`
+const Time = styled.div<IThemeProps>`
   display: ${(props) => (props.orientation === 'maximized' ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: center;
@@ -216,23 +222,31 @@ const Icon = styled.img`
   align-self: center;
 `;
 
-const TimeText = styled.div<{ status?: string }>`
+const TimeText = styled.div<IThemeProps>`
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-  color: ${(props) => (props.status === 'Live' ? '#fff' : '#71717A')};
+  color: ${(props) =>
+    props.status === 'Live'
+      ? `${props.theme.titleTextColor}`
+      : `${props.theme.textColorSecondary}`};
 `;
 
-const InviteButton = styled.button<{ status?: string }>`
+const InviteButton = styled.button<IThemeProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 36px;
   width: 100%;
-  color: ${(props) => (props.status === 'Live' ? '#FFF' : '#8B5CF6')};
+  color: ${(props) =>
+    props.status === 'Live'
+      ? `${props.theme.titleTextColor}`
+      : `${props.theme.btnColorPrimary}`};
   border-radius: 8px;
   border: ${(props) =>
-    props.status === 'Live' ? '1px solid #FFF' : '1px solid #8B5CF6'};
+    props.status === 'Live'
+      ? `1px solid ${props.theme.titleTextColor}`
+      : `1px solid ${props.theme.btnColorPrimary}`};
   background: transparent;
   cursor: pointer;
 `;
