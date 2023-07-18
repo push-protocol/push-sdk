@@ -31,7 +31,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   } = options || {};
 
   const spaceStatusRef = useRef<any>();
-  console.log("🚀 ~ file: SpaceWidget.tsx:34 ~ spaceStatusRef:", spaceStatusRef)
 
   const [widgetHidden, setWidgetHidden] = useState(!spaceId);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
