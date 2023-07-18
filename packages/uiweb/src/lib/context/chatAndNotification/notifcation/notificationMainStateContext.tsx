@@ -44,9 +44,7 @@ const NotificationMainStateContextProvider = ({
   const [spamNotifsFeed, setSpamNotifsFeed] = useState<NotificationFeedsType>(
     {} as NotificationFeedsType
   );
-  const [subscriptionStatus, setSubscriptionStatus] = useState<
-    Map<string, boolean>
-  >({} as Map<string, boolean>);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<Map<string, boolean>>(new Map());
   const [searchedNotifications, setSearchedNotifications] =
     useState<NotificationFeedsType | null>(null);
 
