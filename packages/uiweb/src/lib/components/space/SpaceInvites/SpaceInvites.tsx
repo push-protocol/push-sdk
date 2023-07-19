@@ -21,7 +21,6 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
-  const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const {
     spacesObjectRef,
     spaceObjectData,
@@ -39,17 +38,12 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     await initSpaceObject(space?.spaceId as string);
 
     if (isSpeaker) {
-      // create audio stream
-      await spacesObjectRef.current.createAudioStream();
-      spaceId = space?.spaceId; // temp
+      spaceId = space?.spaceId;
     }
     if (isListener) {
-      await spacesObjectRef?.current?.join();
-      const playBackUrl = spaceObjectData.spaceDescription;
-      setPlayBackUrl(playBackUrl);
       handleCloseModal();
       setSpaceWidgetId(space?.spaceId as string);
-      console.log('space joined');
+      console.log('modal to join space opened');
     }
   };
 
