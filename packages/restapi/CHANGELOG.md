@@ -2,6 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.25](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.24...restapi-0.0.1-alpha.25) (2023-07-19)
+
+
+### Bug Fixes
+
+* fix decryptConversation ([#554](https://github.com/ethereum-push-notification-service/push-sdk/issues/554)) ([ab01717](https://github.com/ethereum-push-notification-service/push-sdk/commit/ab0171716c18ea632d05a32bc29a67ff9b048785))
+* fix unable to decrypt case ([#527](https://github.com/ethereum-push-notification-service/push-sdk/issues/527)) ([ccdf532](https://github.com/ethereum-push-notification-service/push-sdk/commit/ccdf532517e50e40ae0d0645c6c836360152813f))
+* fixed merge conflicts ([dfab492](https://github.com/ethereum-push-notification-service/push-sdk/commit/dfab492127e821219c5fd5dc08ed08a172bee31b))
+* Merge branch 'alpha' into alpha-deployment ([a71302b](https://github.com/ethereum-push-notification-service/push-sdk/commit/a71302b4a5066cb9d00ca5d14e55228c558eda85))
+* Merge branch 'main' into alpha-deployment ([fe93d43](https://github.com/ethereum-push-notification-service/push-sdk/commit/fe93d43a103d5067b16d8f7a5d01835be1d1f40a))
+* renamed spaces variables and removed some unused variables ([3519d39](https://github.com/ethereum-push-notification-service/push-sdk/commit/3519d3982be389711f48891896478b7a35a71b73))
+* space api ([064e10d](https://github.com/ethereum-push-notification-service/push-sdk/commit/064e10d9c66ab1d39f799fd64a39652862b2f074))
+
+
+### Features
+
+* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+
+
+
 ## [0.0.1-alpha.24](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.23...restapi-0.0.1-alpha.24) (2023-07-14)
 
 
