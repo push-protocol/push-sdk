@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import IPFSIcon from '../ipfsicon';
 import ImageOverlayComponent from '../overlay';
@@ -15,9 +15,13 @@ import ActionButton from './styled/ActionButton';
 import { useDecrypt, DecryptButton } from './decrypt';
 import chainDetails from './chainDetails';
 
-import LinkSVG from '../../icons/link.svg';
-import { getCustomTheme, INotificationItemTheme, lightTheme } from './theme';
-export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,baseTheme as notificationBaseTheme,INotificationItemTheme} from './theme';
+import { LinkIcon } from "../../icons/Link";
+import { useDivOffsetWidth } from "../../hooks";
+
+import type { INotificationItemTheme} from './theme';
+import { getCustomTheme } from './theme';
+export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,baseTheme as notificationBaseTheme, type INotificationItemTheme} from './theme';
+
 // ================= Define types
 export type chainNameType =
   | 'ETH_TEST_GOERLI'
@@ -44,7 +48,7 @@ export type NotificationItemProps = {
   isSpam?: boolean;
   subscribeFn?: () => Promise<unknown>;
   isSubscribedFn?: () => Promise<unknown>;
-  theme: string | undefined;
+  theme?: string | undefined;
   customTheme?: INotificationItemTheme | undefined;
   chainName: chainNameType;
   isSecret?: boolean;
@@ -117,7 +121,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const [subscribeLoading, setSubscribeLoading] = React.useState(false);
   const [isSubscribed, setIsSubscribed] = React.useState(true); //use this to confirm if this is s
   const [divRef, offsetWidth] = useDivOffsetWidth();
-
+  
   const showMetaInfo = isSecret || timeStamp;
   // console.log({
   //   chainName,
@@ -179,11 +183,17 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   if (isSubscribed && isSpam) return null;
   // render
   return (
-    <Container timestamp={timeStamp} themeObject={themeObject!}>
+    <Container
+      timestamp={timeStamp}
+      theme={theme}
+      offsetWidth={offsetWidth}
+      ref={divRef}
+      themeObject={themeObject!}
+    >
       {/* header that only pops up on small devices */}
-      <MobileHeader themeObject={themeObject!}>
-        <HeaderButton themeObject={themeObject!}>
-          <ImageContainer theme={theme}>
+      <MobileHeader theme={theme} themeObject={themeObject!}>
+        <HeaderButton theme={theme} themeObject={themeObject!}>
+          <ImageContainer theme={theme}  offsetWidth={offsetWidth}>
             <IPFSIcon icon={icon} />
           </ImageContainer>
           <ChannelName onClick={goToURL}>{app}</ChannelName>
@@ -197,12 +207,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* header that only pops up on small devices */}
 
       {/* content of the component */}
-      <ContentSection
-        onClick={isCtaURLValid ? gotToCTA : undefined}
-        theme={theme}
-        themeObject={themeObject!}
-        cta={isCtaURLValid}
-      >
+      <ContentSection themeObject={themeObject!}  offsetWidth={offsetWidth} onClick={isCtaURLValid ? gotToCTA : undefined} theme={theme} cta={isCtaURLValid}>
         {/* section for media content */}
         {notifImage &&
           // if its an image then render this
@@ -217,7 +222,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : // if its a youtube url, RENDER THIS
           MediaHelper.isMediaYoutube(notifImage) ? (
-            <MobileImage
+            <MobileImage 
             offsetWidth={offsetWidth} theme={theme}>
               <iframe
                 id="ytplayer"
@@ -241,27 +246,29 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
         {/* section for text content */}
         <ChannelDetailsWrapper>
-          <ChannelTitle cta={isCtaURLValid} themeObject={themeObject!}>
+          <ChannelTitle 
+          themeObject={themeObject!}
+            cta={isCtaURLValid}
+            offsetWidth={offsetWidth}
+            theme={theme}
+          >
             <ChannelTitleText themeObject={themeObject!}>
               {notifTitle}
             </ChannelTitleText>
             {/* display link svg if notification has a valid cta url */}
-            {isCtaURLValid ? (
-              <img
-                src={LinkSVG}
-                alt="CTA link"
-                style={{ height: '20px', marginLeft: '7px' }}
-              />
-            ) : (
-              ''
-            )}
+            {
+              isCtaURLValid
+              ?
+              <span style={{height: "20px", marginLeft: "7px"}} >
+                <LinkIcon />
+                </span>
+                  
+              :
+                ""
+            }
           </ChannelTitle>
           <ChannelDesc themeObject={themeObject!}>
-            <ChannelDescLabel
-              themeObject={themeObject!}
-              cta={isCtaURLValid}
-              theme={theme}
-            >
+            <ChannelDescLabel  themeObject={themeObject!} cta={isCtaURLValid} theme={theme} >
               <ParseMarkdownText text={notifBody} />
             </ChannelDescLabel>
           </ChannelDesc>
@@ -351,7 +358,7 @@ NotificationItem.defaultProps = {
 const MD_BREAKPOINT = '50050px'; //set an arbitrarily large number because we no longer use this breakpoint
 const SM_BREAKPOINT = '900px';
 
-const ContentSection = styled.div<CTADataType & CustomThemeProps>`
+const ContentSection = styled.div<CTADataType & CustomThemeProps & OffsetWidthType>`
   display: flex;
   padding: 15px 16px;
 
@@ -361,16 +368,25 @@ const ContentSection = styled.div<CTADataType & CustomThemeProps>`
     background: ${(props) =>
       props.cta ? (props?.themeObject?.color?.contentHoverBackground) : 'none'};
   }
-
-  @media (min-width: ${SM_BREAKPOINT}) {
-    align-items: flex-start;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-  }
-  @media (max-width: ${SM_BREAKPOINT}) {
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (min-width: ${SM_BREAKPOINT}) {
+      align-items: flex-start;
+      flex-direction: row;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    @media (max-width: ${SM_BREAKPOINT}) {
+      flex-direction: column;
+    }
+    `};
+  
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
     flex-direction: column;
-
+  
     `};
 `;
 
@@ -395,7 +411,7 @@ const ChainIconSVG = styled.div<OffsetWidthType>`
     width: 18px;
     height: 18px;
   }
-
+ 
 `;
 
 const MobileImage = styled.div<OffsetWidthType>`
@@ -411,14 +427,6 @@ const MobileImage = styled.div<OffsetWidthType>`
     border: 0;
   }
 
-  @media (min-width: ${SM_BREAKPOINT}) {
-    border: 1px solid
-      ${(props) => (props.theme === 'light' ? '#ededed' : '#444')};
-    border-radius: 10px;
-    min-width: 220px;
-    width: 220px;
-    height: 200px;
-  }
 
 
   ${(props: any) =>
@@ -437,7 +445,7 @@ const MobileImage = styled.div<OffsetWidthType>`
       max-height: 200px;
       margin-bottom: 12px;
       border: 0;
-
+  
       img,
       iframe,
       video {
@@ -446,7 +454,7 @@ const MobileImage = styled.div<OffsetWidthType>`
       }
     }
     `};
-
+  
   ${(props: any) =>
     props.offsetWidth<=461 &&
     css`
@@ -455,20 +463,20 @@ const MobileImage = styled.div<OffsetWidthType>`
       max-height: 200px;
       margin-bottom: 12px;
       border: 0;
-
+  
       img,
       iframe,
       video {
         border: 0;
         border-radius: 0;
       }
-
+  
     `};
-
+  
 `;
 
-const ImageContainer = styled.span`
-  background: ${(props) => (props.theme === 'light' ? '#ededed' : '#444')};
+const ImageContainer = styled.span<OffsetWidthType>`
+  background: ${(props) => (props.theme === "light" ? "#ededed" : "#444")};
   display: inline-block;
   margin-right: 10px;
   border-radius: 5px;
@@ -534,7 +542,7 @@ const HeaderButton = styled.div<CustomThemeProps>`
   color: ${(props) => props?.themeObject?.color?.channelNameText};
 `;
 
-const ChannelTitle = styled.div<CTADataType & CustomThemeProps>`
+const ChannelTitle = styled.div<CTADataType & OffsetWidthType & CustomThemeProps>`
   width: fit-content;
   display: flex;
   align-items: center;
@@ -549,10 +557,6 @@ const ChannelTitle = styled.div<CTADataType & CustomThemeProps>`
     color: ${(props) => props?.themeObject?.color?.notificationTitleText};
   }
 
-  @media (max-width: ${MD_BREAKPOINT}) {
-    color: ${(props) => props?.themeObject?.color?.notificationTitleText};
-  }
-
   ${(props: any) =>
     props.offsetWidth>461 &&
     css`
@@ -560,14 +564,14 @@ const ChannelTitle = styled.div<CTADataType & CustomThemeProps>`
       margin-bottom: 6px;
     }
     `};
-
+  
   ${(props: any) =>
     props.offsetWidth<=461 &&
     css`
     margin-bottom: 6px;
-
+  
     `};
-
+  
 `;
 
 const ChannelTitleText = styled.div<CustomThemeProps>`

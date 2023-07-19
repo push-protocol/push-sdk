@@ -24,9 +24,6 @@ interface IThemeProps {
   theme?: ISpacesTheme;
 }
 
-// temp
-const spaceId = '';
-
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
   actionCallback,
@@ -41,19 +38,6 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   const { account, env } = useSpaceData();
 
   usePushSpaceSocket({ account, env });
-
-  useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
-    const joinSpaceAsSpeaker = async () => {
-      console.log('joining as a speaker');
-      await spacesObjectRef?.current?.join();
-      setSpaceWidgetId(spaceId);
-      console.log('space joined');
-      handleCloseModal();
-    };
-    joinSpaceAsSpeaker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceObjectData?.connectionData?.local.stream]);
 
   const handleOpenModal = () => {
     setModalOpen(true);

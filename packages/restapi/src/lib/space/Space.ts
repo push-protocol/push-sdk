@@ -12,8 +12,6 @@ import { requestToBePromoted } from './requestToBePromoted';
 import { acceptPromotionRequest } from './acceptPromotionRequest';
 import { rejectPromotionRequest } from './rejectPromotionRequest';
 import { connectPromotor } from './connectPromotor';
-import { addSpeaker } from './addSpeaker';
-import { removeSpeaker } from './removeSpeaker';
 import { join } from './join';
 import { leave } from './leave';
 import { stop } from './stop';
@@ -24,13 +22,27 @@ import { VideoStreamMerger } from 'video-stream-merger';
 import {
   ChatStatus,
   EnvOptionsType,
+  LiveSpaceData,
   SignerType,
-  SpaceDTO,
   SpaceData,
+  SpaceSpecificData,
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
+import getLiveSpaceData from './helpers/getLiveSpaceData';
+import sendLiveSpaceData from './helpers/sendLiveSpaceData';
+import { META_ACTION } from '../types/metaTypes';
+import { broadcastRaisedHand } from './broadcastRaisedHand';
+import { onReceiveMetaMessage } from './onReceiveMetaMessage';
+import { onJoinListener } from './onJoinListener';
 
-const initSpaceSpecificData = {
+export const initLiveSpaceData: LiveSpaceData = {
+  host: null,
+  coHosts: [],
+  speakers: [],
+  listeners: [],
+};
+
+export const initSpaceSpecificData: SpaceSpecificData = {
   members: [],
   pendingMembers: [],
   contractAddressERC20: null,
@@ -48,9 +60,10 @@ const initSpaceSpecificData = {
   scheduleEnd: null,
   status: null,
   inviteeDetails: {},
+  liveSpaceData: initLiveSpaceData,
 };
 
-export const initSpaceData = {
+export const initSpaceData: SpaceData = {
   ...initSpaceSpecificData,
   connectionData: initVideoCallData,
 };
@@ -64,17 +77,13 @@ export interface SpaceConstructorType extends EnvOptionsType {
 }
 
 // declaring the Space class
- export class Space extends Video {
-  /*
-    - temporarily store the streamKey on the class
-    - will be used by the host to cast to the stream
-  */
-  // protected streamKey: string | null = null;
-
+export class Space extends Video {
   protected mergeStreamObject: VideoStreamMerger | null = null;
 
-  protected spaceSpecificData: SpaceDTO;
-  protected setSpaceSpecificData: (fn: (data: SpaceDTO) => SpaceDTO) => void;
+  protected spaceSpecificData: SpaceSpecificData;
+  protected setSpaceSpecificData: (
+    fn: (data: SpaceSpecificData) => SpaceSpecificData
+  ) => void;
 
   // will be exposed and should be used from outside the class to change state
   setSpaceData: (fn: (data: SpaceData) => SpaceData) => void;
@@ -96,7 +105,11 @@ export interface SpaceConstructorType extends EnvOptionsType {
       pgpPrivateKey,
       env,
       callType: VIDEO_CALL_TYPE.PUSH_SPACE,
-      onReceiveStream: (receivedStream: MediaStream) => {
+      onReceiveStream: async (
+        receivedStream: MediaStream,
+        senderAddress: string,
+        audio: boolean | null
+      ) => {
         // for a space, that has started broadcast & the local peer is the host
         if (
           this.spaceSpecificData.status === ChatStatus.ACTIVE &&
@@ -104,6 +117,34 @@ export interface SpaceConstructorType extends EnvOptionsType {
           this.data.meta.broadcast.hostAddress === this.data.local.address
         ) {
           addToMergedStream(this.mergeStreamObject!, receivedStream);
+
+          // update live space info
+          const oldLiveSpaceData = await getLiveSpaceData({
+            localAddress: this.data.local.address,
+            pgpPrivateKey: this.pgpPrivateKey,
+            env: this.env,
+            spaceId: this.spaceSpecificData.spaceId,
+          });
+          const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
+            // TODO: Create distinction between speakers and co hosts
+            draft.speakers.push({
+              address: senderAddress,
+              audio,
+              emojiReactions: null,
+            });
+          });
+          await sendLiveSpaceData({
+            liveSpaceData: updatedLiveSpaceData,
+            pgpPrivateKey: this.pgpPrivateKey,
+            env: this.env,
+            spaceId: this.spaceSpecificData.spaceId,
+            signer: this.signer,
+            action: META_ACTION.PROMOTE_TO_ADMIN, // TODO: Add a meta action for SPEAKER_JOINED
+          });
+          this.setSpaceSpecificData(() => ({
+            ...this.spaceSpecificData,
+            liveSpaceData: updatedLiveSpaceData,
+          }));
         }
       },
       setData: function () {
@@ -178,8 +219,7 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
     // init the spaceSpecificData class variable
     this.spaceSpecificData = initSpaceSpecificData;
-  };
-
+  }
 
   // adding instance methods
 
@@ -193,6 +233,12 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
   public start = start;
 
+  public onReceiveMetaMessage = onReceiveMetaMessage;
+
+  // host will call this function from socket
+  // will fire a meta message if a new listener has joined the space
+  public onJoinListener = onJoinListener;
+
   // to promote a listener to a speaker/co-host
   public inviteToPromote = inviteToPromote;
   public acceptPromotionInvite = acceptPromotionInvite;
@@ -201,16 +247,10 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
   // listener requests to be promoted to a speaker
   public requestToBePromoted = requestToBePromoted;
+  public broadcastRaisedHand = broadcastRaisedHand; // will be called by the host after receiving the request to be promoted
   public acceptPromotionRequest = acceptPromotionRequest;
   public connectPromotor = connectPromotor;
   public rejectPromotionRequest = rejectPromotionRequest;
-
-  /*
-    - add/remove speaker to the space group as admins
-    - these methods are only to be used when the space hasnt started yet
-  */
-  public addSpeaker = addSpeaker;
-  public removeSpeaker = removeSpeaker;
 
   /*
     - add/remove co-host to the space group as admins

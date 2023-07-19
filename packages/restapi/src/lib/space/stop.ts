@@ -48,7 +48,10 @@ export async function stop(this: Space): Promise<void> {
     });
 
     // update space specific data
-    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
+    this.setSpaceSpecificData(() => ({
+      ...groupDtoToSpaceDto(group),
+      liveSpaceData: this.spaceSpecificData.liveSpaceData,
+    }));
 
     // stop livepeer playback
 

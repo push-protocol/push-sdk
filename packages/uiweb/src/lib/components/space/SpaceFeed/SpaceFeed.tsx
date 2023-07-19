@@ -60,7 +60,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   onBannerClickHandler,
 }) => {
   const theme = useContext(ThemeContext);
-  const [tab, setTab] = useState<string>(sortingOrder[0]);
+  const [tab, setTab] = useState<Tabs>(Tabs[sortingOrder[0]]);
   const [filterTab, setFilterTab] = useState(filter);
 
   const {
@@ -78,7 +78,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (tab: Tabs) => {
     setTab(tab);
   };
 
@@ -102,14 +102,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     if (tab === Tabs.HostedByYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() ===
+          space.spaceInformation?.spaceCreator.toUpperCase() ===
           account?.toUpperCase()
       );
     }
     if (tab === Tabs.ForYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() !==
+          space.spaceInformation?.spaceCreator.toUpperCase() !==
           account?.toUpperCase()
       );
     } else {
@@ -196,54 +196,50 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
           color: theme.textColorPrimary,
         }}
       >
-        {orientation === OrientationEnums.Horizontal ? (
-          <Spaces orientation={orientation}>
-            {orientation === OrientationEnums.Horizontal
-              ? mySpaces &&
-                mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                  return (
-                    <SpaceBanner
-                      spaceId={space.spaceId as string}
-                      orientation="pill"
-                      onBannerClick={
-                        onBannerClickHandler ? handleClick : undefined
-                      }
-                    />
-                  );
-                })
-              : mySpaces &&
-                mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                  return (
-                    <SpaceBanner
-                      spaceId={space.spaceId as string}
-                      orientation="maximized"
-                      onBannerClick={
-                        onBannerClickHandler ? handleClick : undefined
-                      }
-                    />
-                  );
-                })}
-          </Spaces>
-        ) : (
-          <>
-            <Navigation
-              showTabs={showTabs}
-              width={width}
-              showFilter={showFilter}
-            >
-              <NavButtonWrapper>
-                {sortingOrder.map((tabName: TabsValues) => {
-                  return (
-                    <NavButton
-                      active={tab === tabName}
-                      onClick={() => handleTabChange(tabName)}
-                    >
-                      {Tabs[tabName]}
-                    </NavButton>
-                  );
-                })}
-              </NavButtonWrapper>
-            </Navigation>
+      {orientation === OrientationEnums.Horizontal ? (
+        <Spaces orientation={orientation}>
+          {orientation === OrientationEnums.Horizontal
+            ? mySpaces &&
+              mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                return (
+                  <SpaceBanner
+                    spaceId={space.spaceId as string}
+                    orientation="pill"
+                    onBannerClick={
+                      onBannerClickHandler ? handleClick : undefined
+                    }
+                  />
+                );
+              })
+            : mySpaces &&
+              mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                return (
+                  <SpaceBanner
+                    spaceId={space.spaceId as string}
+                    orientation="maximized"
+                    onBannerClick={
+                      onBannerClickHandler ? handleClick : undefined
+                    }
+                  />
+                );
+              })}
+        </Spaces>
+      ) : (
+        <>
+          <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
+            <NavButtonWrapper>
+              {sortingOrder.map((tabName: TabsValues) => {
+                return (
+                  <NavButton
+                    active={tab === Tabs[tabName]}
+                    onClick={() => handleTabChange(Tabs[tabName])}
+                  >
+                    {Tabs[tabName]}
+                  </NavButton>
+                );
+              })}
+            </NavButtonWrapper>
+          </Navigation>
             <Filter showFilter={showFilter}>
               <FilterButton
                 active={filterTab === FilterEnums.All}

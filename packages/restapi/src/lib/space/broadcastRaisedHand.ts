@@ -4,20 +4,15 @@ import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/metaTypes';
 
-export interface RejectPromotionRequestType {
+export interface BroadcastRaisedHandType {
   promoteeAddress: string;
 }
 
-export async function rejectPromotionRequest(
+export async function broadcastRaisedHand(
   this: Space,
-  options: RejectPromotionRequestType
+  options: BroadcastRaisedHandType
 ) {
   const { promoteeAddress } = options || {};
-
-  // reject the promotion request
-  this.disconnect({
-    peerAddress: promoteeAddress,
-  });
 
   // update live space info
   const oldLiveSpaceData = await getLiveSpaceData({
@@ -28,7 +23,7 @@ export async function rejectPromotionRequest(
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
     const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = false;
+    draft.listeners[listnerIndex].handRaised = true;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,
@@ -36,7 +31,7 @@ export async function rejectPromotionRequest(
     env: this.env,
     spaceId: this.spaceSpecificData.spaceId,
     signer: this.signer,
-    action: META_ACTION.USER_INTERACTION, // TODO: Add a reject request type
+    action: META_ACTION.USER_INTERACTION,
   });
   this.setSpaceSpecificData(() => ({
     ...this.spaceSpecificData,
