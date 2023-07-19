@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceIFeeds } from '@pushprotocol/restapi';
 
@@ -189,111 +189,127 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
-    <div
-      style={{
-        background: theme.bgColorPrimary,
-        color: theme.textColorPrimary,
-      }}
-    >
-      {orientation === OrientationEnums.Horizontal ? (
-        <Spaces orientation={orientation} theme={theme}>
-          {orientation === OrientationEnums.Horizontal
-            ? mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="pill"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })
-            : mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="maximized"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })}
-        </Spaces>
-      ) : (
-        <>
-          <Navigation
-            showTabs={showTabs}
-            width={width}
-            showFilter={showFilter}
-            theme={theme}
-          >
-            <NavButtonWrapper theme={theme}>
-              {sortingOrder.map((tabName: TabsValues) => {
-                return (
-                  <NavButton
-                    active={tab === tabName}
-                    onClick={() => handleTabChange(tabName)}
-                    theme={theme}
-                  >
-                    {Tabs[tabName]}
-                  </NavButton>
-                );
-              })}
-            </NavButtonWrapper>
-          </Navigation>
-          <Filter showFilter={showFilter} theme={theme}>
-            <FilterButton
-              active={filterTab === FilterEnums.All}
-              onClick={() => setFilterTab(FilterEnums.All)}
-              theme={theme}
+    <ThemeProvider theme={theme}>
+      <div
+        style={{
+          background: theme.bgColorPrimary,
+          color: theme.textColorPrimary,
+        }}
+      >
+        {orientation === OrientationEnums.Horizontal ? (
+          <Spaces orientation={orientation}>
+            {orientation === OrientationEnums.Horizontal
+              ? mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="pill"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })
+              : mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="maximized"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })}
+          </Spaces>
+        ) : (
+          <>
+            <Navigation
+              showTabs={showTabs}
+              width={width}
+              showFilter={showFilter}
             >
-              All
-            </FilterButton>
-            <FilterButton
-              active={filterTab === FilterEnums.Live}
-              onClick={() => setFilterTab(FilterEnums.Live)}
-              theme={theme}
+              <NavButtonWrapper >
+                {sortingOrder.map((tabName: TabsValues) => {
+                  return (
+                    <NavButton
+                      active={tab === tabName}
+                      onClick={() => handleTabChange(tabName)}
+                    >
+                      {Tabs[tabName]}
+                    </NavButton>
+                  );
+                })}
+              </NavButtonWrapper>
+            </Navigation>
+            <Filter showFilter={showFilter}>
+              <FilterButton
+                active={filterTab === FilterEnums.All}
+                onClick={() => setFilterTab(FilterEnums.All)}
+              >
+                All
+              </FilterButton>
+              <FilterButton
+                active={filterTab === FilterEnums.Live}
+                onClick={() => setFilterTab(FilterEnums.Live)}
+              >
+                Live
+              </FilterButton>
+              <FilterButton
+                active={filterTab === FilterEnums.Scheduled}
+                onClick={() => setFilterTab(FilterEnums.Scheduled)}
+              >
+                Scheduled
+              </FilterButton>
+            </Filter>
+            <ScrollContainer
+              width={width}
+              height={height}
+              ref={listInnerRef}
+              onScroll={onScroll}
             >
-              Live
-            </FilterButton>
-            <FilterButton
-              active={filterTab === FilterEnums.Scheduled}
-              onClick={() => setFilterTab(FilterEnums.Scheduled)}
-              theme={theme}
-            >
-              Scheduled
-            </FilterButton>
-          </Filter>
-          <ScrollContainer
-            width={width}
-            height={height}
-            ref={listInnerRef}
-            onScroll={onScroll}
-            theme={theme}
-          >
-            <Container theme={theme}>
-              {tab === Tabs.ForYou ? (
-                <Spaces orientation={orientation} theme={theme}>
-                  {mySpaces.apiData &&
-                    (handleFilterData(
-                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                    ).length === 0 ? (
-                      <NoSpaces theme={theme}>
-                        <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1 theme={theme}>
-                          Join a space
-                        </NoSpacesTextV1>
-                        <NoSpacesTextV2 theme={theme}>
-                          Get started by joining a space
-                        </NoSpacesTextV2>
-                      </NoSpaces>
-                    ) : (
-                      handleFilterData(
+              <Container >
+                {tab === Tabs.ForYou ? (
+                  <Spaces orientation={orientation}>
+                    {mySpaces.apiData &&
+                      (handleFilterData(
                         handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
+                      ).length === 0 ? (
+                        <NoSpaces >
+                          <SpacesIcon src={spacesIcon} />
+                          <NoSpacesTextV1>
+                            Join a space
+                          </NoSpacesTextV1>
+                          <NoSpacesTextV2>
+                            Get started by joining a space
+                          </NoSpacesTextV2>
+                        </NoSpaces>
+                      ) : (
+                        handleFilterData(
+                          handleMySpacesFilter(
+                            mySpaces.apiData as SpaceIFeeds[]
+                          )
+                        ).map((space: SpaceIFeeds) => {
+                          return (
+                            <SpaceBanner
+                              spaceId={space.spaceId as string}
+                              orientation="maximized"
+                              onBannerClick={
+                                onBannerClickHandler ? handleClick : undefined
+                              }
+                            />
+                          );
+                        })
+                      ))}
+                  </Spaces>
+                ) : tab === Tabs.Popular ? (
+                  <PopularSpaces >
+                    <Text >Popular Spaces</Text>
+                    {popularSpaces.apiData &&
+                      handleFilterData(
+                        popularSpaces.apiData as SpaceIFeeds[]
                       ).map((space: SpaceIFeeds) => {
                         return (
                           <SpaceBanner
@@ -304,65 +320,49 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                             }
                           />
                         );
-                      })
-                    ))}
-                </Spaces>
-              ) : tab === Tabs.Popular ? (
-                <PopularSpaces theme={theme}>
-                  <Text theme={theme}>Popular Spaces</Text>
-                  {popularSpaces.apiData &&
-                    handleFilterData(
-                      popularSpaces.apiData as SpaceIFeeds[]
-                    ).map((space: SpaceIFeeds) => {
-                      return (
-                        <SpaceBanner
-                          spaceId={space.spaceId as string}
-                          orientation="maximized"
-                          onBannerClick={
-                            onBannerClickHandler ? handleClick : undefined
-                          }
-                        />
-                      );
-                    })}
-                </PopularSpaces>
-              ) : (
-                <Spaces orientation={orientation} theme={theme}>
-                  {mySpaces.apiData &&
-                    (handleFilterData(
-                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                    ).length === 0 ? (
-                      <NoSpaces theme={theme}>
-                        <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1 theme={theme}>
-                          Create a space
-                        </NoSpacesTextV1>
-                        <NoSpacesTextV2 theme={theme}>
-                          Get started by creating a space
-                        </NoSpacesTextV2>
-                      </NoSpaces>
-                    ) : (
-                      handleFilterData(
+                      })}
+                  </PopularSpaces>
+                ) : (
+                  <Spaces orientation={orientation}>
+                    {mySpaces.apiData &&
+                      (handleFilterData(
                         handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                      ).map((space: SpaceIFeeds) => {
-                        return (
-                          <SpaceBanner
-                            spaceId={space.spaceId as string}
-                            orientation="maximized"
-                            onBannerClick={
-                              onBannerClickHandler ? handleClick : undefined
-                            }
-                          />
-                        );
-                      })
-                    ))}
-                </Spaces>
-              )}
-              {loading && <Spinner size="40" />}
-            </Container>
-          </ScrollContainer>
-        </>
-      )}
-    </div>
+                      ).length === 0 ? (
+                        <NoSpaces>
+                          <SpacesIcon src={spacesIcon} />
+                          <NoSpacesTextV1 >
+                            Create a space
+                          </NoSpacesTextV1>
+                          <NoSpacesTextV2 >
+                            Get started by creating a space
+                          </NoSpacesTextV2>
+                        </NoSpaces>
+                      ) : (
+                        handleFilterData(
+                          handleMySpacesFilter(
+                            mySpaces.apiData as SpaceIFeeds[]
+                          )
+                        ).map((space: SpaceIFeeds) => {
+                          return (
+                            <SpaceBanner
+                              spaceId={space.spaceId as string}
+                              orientation="maximized"
+                              onBannerClick={
+                                onBannerClickHandler ? handleClick : undefined
+                              }
+                            />
+                          );
+                        })
+                      ))}
+                  </Spaces>
+                )}
+                {loading && <Spinner size="40" />}
+              </Container>
+            </ScrollContainer>
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 };
 

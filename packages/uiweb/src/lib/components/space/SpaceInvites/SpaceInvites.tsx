@@ -1,9 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { Modal } from '../reusables/Modal';
 import { Spinner } from '../reusables/Spinner';
 import { ModalHeader } from '../reusables/ModalHeader';
-import { useFeedScroll, useSpaceData, useSpaceRequests, usePushSpaceSocket } from '../../../hooks';
+import {
+  useFeedScroll,
+  useSpaceData,
+  useSpaceRequests,
+  usePushSpaceSocket,
+} from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
 import { ISpacesTheme } from '../theme';
@@ -108,12 +113,8 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const { loading } = useSpaceRequests(account);
   return (
-    <>
-      {!children && (
-        <Button onClick={handleOpenModal} theme={theme}>
-          Space Invites
-        </Button>
-      )}
+    <ThemeProvider theme={theme}>
+      {!children && <Button onClick={handleOpenModal}>Space Invites</Button>}
 
       {children && <div onClick={handleOpenModal}>{children}</div>}
 
@@ -128,12 +129,8 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
             }
             closeCallback={handleCloseModal}
           />
-          <ScrollContainer
-            ref={containerRef}
-            onScroll={onScrollContainer}
-            theme={theme}
-          >
-            <InviteContainer theme={theme}>
+          <ScrollContainer ref={containerRef} onScroll={onScrollContainer}>
+            <InviteContainer>
               {spaceRequests.apiData
                 ? spaceRequests.apiData.map((space: any) => {
                     return (
@@ -151,14 +148,14 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
           </ScrollContainer>
         </Modal>
       )}
-    </>
+    </ThemeProvider>
   );
 };
 
 const Button = styled.button<IThemeProps>`
   padding: 8px 16px;
   background-color: ${(props) => props.theme.btnColorPrimary};
-  color: #fff;
+  color: ${(props) => props.theme.textColorPrimary};
   border: none;
   border-radius: 4px;
   cursor: pointer;
