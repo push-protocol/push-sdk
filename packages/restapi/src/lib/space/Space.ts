@@ -32,6 +32,8 @@ import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/metaTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
+import { onReceiveMetaMessage } from './onReceiveMetaMessage';
+import { onJoinListener } from './onJoinListener';
 
 export const initLiveSpaceData: LiveSpaceData = {
   host: null,
@@ -230,6 +232,12 @@ export class Space extends Video {
   };
 
   public start = start;
+
+  public onReceiveMetaMessage = onReceiveMetaMessage;
+
+  // host will call this function from socket
+  // will fire a meta message if a new listener has joined the space
+  public onJoinListener = onJoinListener;
 
   // to promote a listener to a speaker/co-host
   public inviteToPromote = inviteToPromote;
