@@ -74,7 +74,7 @@ export class Video {
   protected pgpPrivateKey: string;
   protected env: ENV;
   protected callType: VIDEO_CALL_TYPE;
-  protected onReceiveStream: (receivedStream: MediaStream) => void;
+  protected onReceiveStream: (receivedStream: MediaStream, senderAddress: string, audio:boolean | null) => Promise<void>;
 
   // storing the peer instance
   private peerInstances: {
@@ -91,8 +91,8 @@ export class Video {
     env = Constants.ENV.PROD,
     setData,
     callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
-    onReceiveStream = () => {
-      return;
+    onReceiveStream = async () => {
+      return Promise.resolve();
     },
   }: {
     signer: SignerType;
@@ -101,7 +101,7 @@ export class Video {
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
     env?: ENV;
     callType?: VIDEO_CALL_TYPE;
-    onReceiveStream?: (receivedStream: MediaStream) => void;
+    onReceiveStream?: (receivedStream: MediaStream, senderAddress: string, audio:boolean | null) => Promise<void>;
   }) {
     this.signer = signer;
     this.chainId = chainId;
@@ -261,7 +261,11 @@ export class Video {
           const connectedAddresses = getConnectedAddresses({
             incomingPeers: this.data.incoming,
           });
-          console.log("CONNECT EVENT HANDLER IN REQUEST", "connectedAddresses", connectedAddresses);
+          console.log(
+            'CONNECT EVENT HANDLER IN REQUEST',
+            'connectedAddresses',
+            connectedAddresses
+          );
           this.peerInstances[recipientAddress].send(
             JSON.stringify({
               type: 'connectedAddresses',
@@ -380,13 +384,13 @@ export class Video {
           'stream',
           (currentStream: MediaStream) => {
             console.log('received incoming stream', currentStream);
-            this.onReceiveStream(currentStream);
+            const incomingIndex = getIncomingIndexFromAddress(
+              this.data.incoming,
+              recipientAddress
+            );
+            this.onReceiveStream(currentStream, recipientAddress, this.data.incoming[incomingIndex].audio)
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
-                const incomingIndex = getIncomingIndexFromAddress(
-                  oldData.incoming,
-                  recipientAddress
-                );
                 draft.incoming[incomingIndex].stream = currentStream;
               });
             });
@@ -487,6 +491,7 @@ export class Video {
             status: VideoCallStatus.RETRY_INITIALIZED,
             chatId,
             signalData: null,
+            callType: this.callType,
             env: this.env,
           }
         );
@@ -540,7 +545,11 @@ export class Video {
         const connectedAddresses = getConnectedAddresses({
           incomingPeers: this.data.incoming,
         });
-        console.log("CONNECT EVENT HANDLER IN ACCEPT REQUEST", "connectedAddresses", connectedAddresses);
+        console.log(
+          'CONNECT EVENT HANDLER IN ACCEPT REQUEST',
+          'connectedAddresses',
+          connectedAddresses
+        );
         this.peerInstances[recipientAddress].send(
           JSON.stringify({
             type: 'connectedAddresses',
@@ -670,13 +679,13 @@ export class Video {
         'stream',
         (currentStream: MediaStream) => {
           console.log('received incoming stream', currentStream);
-          this.onReceiveStream(currentStream);
+          const incomingIndex = getIncomingIndexFromAddress(
+            this.data.incoming,
+            recipientAddress
+          );
+          this.onReceiveStream(currentStream, recipientAddress, this.data.incoming[incomingIndex].audio);
           this.setData((oldData) => {
             return produce(oldData, (draft) => {
-              const incomingIndex = getIncomingIndexFromAddress(
-                oldData.incoming,
-                recipientAddress
-              );
               draft.incoming[incomingIndex].stream = currentStream;
             });
           });

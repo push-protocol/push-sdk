@@ -1,4 +1,9 @@
-import { EnvOptionsType, SignerType, ChatStatus } from '../types';
+import {
+  EnvOptionsType,
+  SignerType,
+  ChatStatus,
+  LiveSpaceData,
+} from '../types';
 import {
   groupDtoToSpaceDto,
   getSpacesMembersList,
@@ -18,8 +23,10 @@ export interface StartSpaceType extends EnvOptionsType {
 }
 
 import type Space from './Space';
-import { SPACE_REQUEST_TYPE } from '../payloads/constants';
 import { produce } from 'immer';
+import { pCAIP10ToWallet } from '../helpers';
+import { META_ACTION } from '../types/metaTypes';
+import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 
 type StartType = {
   livepeerApiKey: string;
@@ -29,8 +36,6 @@ export async function start(this: Space, options: StartType): Promise<void> {
   const { livepeerApiKey } = options || {};
 
   try {
-    // TODO: Only allow the host to execute this function
-
     // host should have there audio stream
     if (!this.data.local.stream) {
       throw new Error('Local audio stream not found');
@@ -45,6 +50,11 @@ export async function start(this: Space, options: StartType): Promise<void> {
       throw new Error(
         'Unable to start the space as it is not in the pending state'
       );
+    }
+
+    // Only host is allowed to start a space
+    if (this.data.local.address !== pCAIP10ToWallet(space.spaceCreator)) {
+      throw new Error('Only host is allowed to start a space');
     }
 
     const convertedMembers = getSpacesMembersList(
@@ -71,11 +81,32 @@ export async function start(this: Space, options: StartType): Promise<void> {
       status: ChatStatus.ACTIVE,
     });
 
+    const liveSpaceData: LiveSpaceData = {
+      host: {
+        address: this.data.local.address,
+        audio: this.data.local.audio,
+        emojiReactions: null,
+      },
+      coHosts: [],
+      speakers: [],
+      listeners: [],
+    };
+
+    await sendLiveSpaceData({
+      liveSpaceData,
+      action: META_ACTION.CREATE_SPACE,
+      spaceId: this.spaceSpecificData.spaceId,
+      signer: this.signer,
+      pgpPrivateKey: this.pgpPrivateKey,
+      env: this.env,
+    });
+
     // update space data
     this.setSpaceData((oldSpaceData) => {
       return produce(oldSpaceData, (draft) => {
         draft = {
           ...groupDtoToSpaceDto(group),
+          liveSpaceData,
           connectionData: draft.connectionData,
         };
         draft.connectionData.meta.broadcast = {
