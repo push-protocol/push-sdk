@@ -19,7 +19,6 @@ export interface ISpacesTheme {
   statusColorSuccess?: string;
   iconColorPrimary?: string;
   fontFamily?: string;
-  outerBorderColor?: string;
 }
 
 export const lightTheme: ISpacesTheme = {
