@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceData } from './useSpaceData';
 import { ENV } from '../../config';
+import { pCAIP10ToWallet } from '../../helpers';
 
 const NOTIFICATION_SOCKET_TYPE = 'notification';
 
@@ -22,7 +22,7 @@ export const useSpaceNotificationSocket = ({
   acceptSpaceRequest,
   connectSpaceRequest,
   env = ENV.PROD,
-}: SDKSocketHookOptions) => {
+}: SDKSpaceNotificationSocketHookOptions) => {
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
   const [isNotificationSocketConnected, setIsNotificationSocketConnected] =
     useState<boolean>(false);
@@ -125,7 +125,7 @@ export const useSpaceNotificationSocket = ({
       }
       const main = async () => {
         const connectionObject = createSocketConnection({
-          user: account,
+          user: pCAIP10ToWallet(account),
           env,
           socketType: NOTIFICATION_SOCKET_TYPE,
           socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
