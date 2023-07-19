@@ -42,12 +42,12 @@ export const useSpaceNotificationSocket = ({
       console.log(
         'USER FEEDS NOTIFICATION RECEIVED',
         payload?.data?.additionalMeta?.type,
-        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_SPACE}+1`
       );
 
       if (
         payload?.data?.additionalMeta?.type ===
-        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`
+        `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_SPACE}+1`
       ) {
         const receivedSpaceMetaData: PushAPI.video.VideoDataType = JSON.parse(
           payload.data.additionalMeta.data
