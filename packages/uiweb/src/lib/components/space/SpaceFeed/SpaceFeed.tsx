@@ -377,7 +377,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background: ${(props) => props.theme.bgColorPrimary};
-  border: 1px solid ${(props) => props.theme.borderColor};
+  border: 1px solid ${(props) => props.theme.outerBorderColor};
   border-radius: 12px;
   padding: 24px 32px;
 `;

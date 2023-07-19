@@ -139,7 +139,7 @@ interface WidgetContainerProps {
 const Container = styled.div<WidgetContainerProps>`
   font-family: 'Strawford'; // update to fontFamily theme
   border-radius: 12px; // update acc to theme
-  border: 1px solid ${(props) => props.theme.borderColor}; // update acc to theme
+  border: 1px solid ${(props) => props.theme.outerBorderColor}; // update acc to theme
   display: flex;
   flex-direction: column;
   width: ${(props) => (props.width ? `${props.width}px` : 'auto')};
