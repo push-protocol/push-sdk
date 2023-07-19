@@ -97,9 +97,9 @@ const CreateSpaceTest = () => {
       const response = await PushAPI.space.create({
         spaceName,
         spaceDescription,
-        members: members.split(','),
+        listeners: members.split(','),
         spaceImage,
-        admins: admins.split(','),
+        speakers: admins.split(','),
         isPublic: (isPublic === "true"),
         contractAddressNFT,
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,

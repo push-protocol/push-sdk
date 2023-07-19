@@ -45,7 +45,9 @@ export async function join(this: Space) {
       }
     });
 
-    const hostAddress = space.spaceCreator.replace('eip155:', '');
+    console.log("ISSPEAKER", isSpeaker, "isListner", isListner, "isSpeakerPending", isSpeakerPending);
+
+    const hostAddress = getPlainAddress(space.spaceCreator);
     const incomingIndex = getIncomingIndexFromAddress(
       this.data.incoming,
       hostAddress
@@ -60,6 +62,7 @@ export async function join(this: Space) {
 
     // if speaker is pending then approve first or if listner is pending/not found then approve first
     if (!isSpeaker && !isListner) {
+      console.log("CALLING APPROVE");
       await approve({
         signer: this.signer,
         pgpPrivateKey: this.pgpPrivateKey,
@@ -70,6 +73,7 @@ export async function join(this: Space) {
 
     if (isSpeaker || isSpeakerPending) {
       // Call the host and join the mesh connection
+      console.log("CALLING REQUEST");
       await this.request({
         senderAddress: this.data.local.address,
         recipientAddress: hostAddress,
@@ -85,6 +89,7 @@ export async function join(this: Space) {
       spaceId: this.spaceSpecificData.spaceId,
       env: this.env,
     });
+    console.log("UPDATED SPACE", updatedSpace);
     // update space specific data
     this.setSpaceSpecificData(() => updatedSpace);
   } catch (err) {

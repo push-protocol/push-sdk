@@ -1,5 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useContext } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IHostPfpContainerProps {
   name?: string;
@@ -16,7 +17,10 @@ export const HostPfpContainer: React.FC<IHostPfpContainerProps> = ({
   statusTheme,
   imageHeight,
 }: IHostPfpContainerProps) => {
+  const theme = useContext(ThemeContext);
+
   return (
+    <ThemeProvider theme={theme}>
     <ProfileContainer>
       <PfpContainer>
         <Pfp src={imageUrl} alt="host pfp" imageHeight={imageHeight} />
@@ -33,6 +37,7 @@ export const HostPfpContainer: React.FC<IHostPfpContainerProps> = ({
         }
       </HostContainer>
     </ProfileContainer>
+    </ThemeProvider>
   );
 };
 
@@ -77,6 +82,7 @@ const Name = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  color: ${(props) => props.theme.titleTextColor};
 `;
 
 const Host = styled.div<{ statusTheme?: string }>`
@@ -92,14 +98,14 @@ const Host = styled.div<{ statusTheme?: string }>`
     props.statusTheme === 'Live'
       ? 'rgba(255, 255, 255, 0.2);'
       : 'rgba(139, 92, 246, 0.2)'};
-  color: ${(props) => (props.statusTheme === 'Live' ? 'inherit' : '#8B5CF6')};
+  color: ${(props) => props.theme.titleTextColor};
   border-radius: 6px;
   font-weight: 500;
   font-size: 10px;
 `;
 
 const HostHandle = styled.div<{ statusTheme?: string }>`
-  color: ${(props) => (props.statusTheme === 'Live' ? '#F5F5F5E5' : '#71717A')};
+  color: ${(props) => props.theme.textColorSecondary};
   padding: 0;
   font-weight: 450;
   font-size: 14px;

@@ -4,24 +4,28 @@ import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
-import { SpaceCreationWidget } from './SpaceCreationWidget';
+import { ISpaceCreateWidgetProps, SpaceCreationWidget } from './SpaceCreationWidget';
+import { ICustomSearchResult } from './SpaceCreationWidget/SCWInviteModal';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
 import { useSpaceData } from '../../hooks';
 import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
+
 export class SpacesUI {
   public account: string;
   public signer: SignerType;
   public pgpPrivateKey: string;
   public env: ENV;
+  public customSearch: ICustomSearchResult | undefined;
 
   constructor(props: ISpacesUIProps) {
     this.account = props.account;
     this.signer = props.signer;
     this.pgpPrivateKey = props.pgpPrivateKey;
     this.env = props.env;
+    this.customSearch = props.customSearch;
   }
 
   SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {
@@ -36,14 +40,14 @@ export class SpacesUI {
     const { spaceId } = options;
     const { spaceWidgetId } = useSpaceData();
     const [SpaceId, setSpaceId] = useState<string | undefined>(spaceId);
-
+    
     useEffect(() => {
       setSpaceId(spaceId);
     }, [spaceId, setSpaceId]);
     
     useEffect(() => {
-      setSpaceId(spaceWidgetId);
-    }, [spaceWidgetId, setSpaceId]);
+      if (spaceWidgetId) setSpaceId(spaceWidgetId);
+    }, [spaceWidgetId]);
     
     return <SpaceWidget {...options} spaceId={SpaceId} />;
   }
@@ -56,8 +60,8 @@ export class SpacesUI {
     return <SpaceInvites {...options} />;
   };
 
-  SpaceCreationButtonWidget = () => {
-    return <SpaceCreationWidget />
+  SpaceCreationButtonWidget = (options: ISpaceCreateWidgetProps) => {
+    return <SpaceCreationWidget  {...options} />
   }
 
   connectToSockets = () => {

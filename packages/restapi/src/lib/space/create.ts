@@ -7,9 +7,9 @@ export interface ChatCreateSpaceType extends EnvOptionsType {
   signer: SignerType;
   spaceName: string;
   spaceDescription: string;
-  members: Array<string>;
+  listeners: Array<string>;
   spaceImage: string | null;
-  admins: Array<string>;
+  speakers: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
   numberOfNFTs?: number;
@@ -26,9 +26,9 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
     signer,
     spaceName,
     spaceDescription,
-    members,
+    listeners,
     spaceImage,
-    admins,
+    speakers,
     isPublic,
     contractAddressNFT,
     numberOfNFTs,
@@ -46,9 +46,9 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
       signer,
       groupName: spaceName,
       groupDescription: spaceDescription,
-      members: members,
+      members: listeners,
       groupImage: spaceImage,
-      admins: admins,
+      admins: speakers,
       isPublic: isPublic,
       contractAddressNFT: contractAddressNFT,
       numberOfNFTs: numberOfNFTs,

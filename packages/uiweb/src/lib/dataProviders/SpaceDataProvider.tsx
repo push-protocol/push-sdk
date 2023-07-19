@@ -42,7 +42,9 @@ export const SpacesUIProvider = ({
     spaceUI.pgpPrivateKey
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
-  const [chainId, setChainId] = useState<number>(spaceChainId(spaceUI.account, spaceUI.env));
+  const [chainId, setChainId] = useState<number>(
+    spaceChainId(spaceUI.account, spaceUI.env)
+  );
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
@@ -78,7 +80,7 @@ export const SpacesUIProvider = ({
 
   const livepeerClient = createReactClient({
     provider: studioProvider({
-      apiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      apiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
     }),
   });
 
@@ -265,21 +267,21 @@ export const SpacesUIProvider = ({
 
   const isListener = Boolean(
     spaceObjectData?.members?.find((member) => {
-      console.log('member', member);
       const address = member.wallet.replace('eip155:', '');
       return (
         address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
       );
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
-        console.log('pending member', member);
         const address = member.wallet.replace('eip155:', '');
         return (
           address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
         );
-      })
-      || !isSpeaker
+      }) ||
+      !isSpeaker
   );
+
+  const customSearch = undefined;
 
   const value: ISpaceDataContextValues = {
     account,
@@ -316,18 +318,32 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
     acceptSpaceRequest,
     connectSpaceRequest,
+    customSearch,
   };
 
   const resetStates = () => {
     setSpaceWidgetId('');
-    setSpeakerData({});
+    setSpeakerData({} as ISpaceSpeakerData);
     setSpaceObjectData(PushAPI.space.initSpaceData);
-    setSpaceRequests({});
-    setMySpaces({});
-    setPopularSpaces({});
-  }
+    setSpaceRequests({
+      apiData: [] as SpaceIFeeds[],
+      currentPage: 1,
+      lastPage: 2,
+    } as ISpacePaginationData);
+    setMySpaces({
+      apiData: [] as SpaceIFeeds[],
+      currentPage: 1,
+      lastPage: 2,
+    } as ISpacePaginationData);
+    setPopularSpaces({
+      apiData: [] as SpaceIFeeds[],
+      currentPage: 1,
+      lastPage: 2,
+    } as ISpacePaginationData);
+  };
 
   useEffect(() => {
+    resetStates();
     setAccount(spaceUI.account);
     setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
@@ -335,7 +351,6 @@ export const SpacesUIProvider = ({
 
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
-    resetStates();
   }, [spaceUI]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);

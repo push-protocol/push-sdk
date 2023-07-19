@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -21,6 +21,7 @@ export const SearchInput = (props: ISearchInputProps) => {
     };
 
     return (
+      <ThemeProvider theme={theme}>
         <InputContainer>
             <LabelContainer>
                 <label>{props.labelName}</label>
@@ -32,6 +33,7 @@ export const SearchInput = (props: ISearchInputProps) => {
                 </CloseBtn>
             </InputWrapper>
         </InputContainer>
+      </ThemeProvider>
     );
 };
 
@@ -50,6 +52,7 @@ const LabelContainer = styled.div`
     justify-content: space-between;
 
     font-weight: 500;
+    color: ${props => props.theme.textColorPrimary ?? '#000'}
 `;
 
 const Input = styled.input<ISpacesTheme>`
@@ -59,8 +62,7 @@ const Input = styled.input<ISpacesTheme>`
     width: 330px;
 
     background: #FFFFFF;
-    border: 1px solid ${(props => props.theme.btnOutline)};
-    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
+    border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 `;
 

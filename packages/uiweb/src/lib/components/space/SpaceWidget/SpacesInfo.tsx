@@ -1,95 +1,162 @@
-import React, { useContext, MouseEventHandler } from 'react'
+import React, { useContext, MouseEventHandler, useState } from 'react'
 import styled from 'styled-components';
+import * as PushAPI from '@pushprotocol/restapi';
 
 import { Modal } from '../reusables/Modal'
 import { ModalHeader } from '../reusables/ModalHeader'
-import { IThemeProviderProps, ThemeContext } from '../theme/ThemeProvider';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { Button } from '../reusables/Button';
 import { ProfileContainer } from '../reusables/ProfileContainer';
 import Accordion from '../reusables/Accordion';
+import { SCWInviteModal } from '../SpaceCreationWidget/SCWInviteModal';
+
+import { useSpaceData } from '../../../hooks';
 
 export interface ISpacesInfoProps {
     closeSpacesInfo: MouseEventHandler;
     spaceData: any;
 }
 
-interface IThemeProps {
-    theme: IThemeProviderProps;
-}
-
 export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
     const { spaceData } = props;
-    console.log("🚀 ~ file: SpacesInfo.tsx:22 ~ spaceData:", spaceData)
-    const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 
     const theme = useContext(ThemeContext);
 
+    const [isInviteVisible, setIsInviteVisible] = useState(false);
+
+    const [invitedMembersList, setInvitedMembersList] = useState([])
+    const [invitedAddressList, setInvitedAddressList] = useState([])
+
+    const [adminsList, setAdminsList] = useState([])
+    const [adminsAddressList, setAdminsAddressList] = useState([])
+
+    const [isLoading, setLoading] = useState(false);
+
+    const { signer, env } = useSpaceData();
+
     const customStyle = {
-        color: theme.textColorPrimary,
-        background: theme.bgColorPrimary,
-        borderColor: theme.borderColor,
+        color: theme?.textColorPrimary,
+        background: theme?.bgColorPrimary,
+        borderColor: theme?.borderColor,
         fontWeight: '500',
         padding: '14px',
     }
 
-    const adminsArray = spaceData.members.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
+    const showExplicitInvite: React.MouseEventHandler = () => {
+        setIsInviteVisible(!isInviteVisible);
+    }
+
+    const closeInviteModal = () => {
+        setIsInviteVisible(false);
+    }
+
+    const adminsArray = spaceData?.members?.filter((member: { isSpeaker: boolean; }) => member.isSpeaker);
+
+    const updateSpace = async () => {
+        const spaceUpdate = {
+            spaceName: spaceData?.spaceName,
+            spaceDescription: 'Push Space',
+            listeners: invitedAddressList,
+            spaceImage: 'asd',
+            speakers: adminsAddressList,
+            isPublic: true,
+            scheduleAt: new Date(Date.now() + 120000),
+            signer: signer as PushAPI.SignerType,
+            env,
+            spaceId: spaceData?.spaceId,
+            status: spaceData?.status,
+        }
+
+        try {
+            setLoading(true);
+            const response = await PushAPI.space.update(spaceUpdate);
+
+            console.log(response);
+        } catch (e:any) {
+            console.error(e.message);
+        } finally {
+            setLoading(false);
+            closeInviteModal();
+        }
+    };
 
     return (
         <Modal
             width='400px'
         >
-            <SpacesInfoContainer>
+            <SpacesInfoContainer theme={theme}>
             <ModalHeader
                 heading='Spaces Info'
                 closeCallback={props.closeSpacesInfo}
             />
 
             <ProfileContainer
-                imageUrl={spaceData.members[0].image}
-                name={spaceData.members[0].wallet.substring(7)}
-                handle={spaceData.members[0].wallet.substring(7)}
+                imageUrl={spaceData?.members[0]?.image}
+                name={spaceData?.members[0]?.wallet?.substring(7)}
+                handle={spaceData?.members[0]?.wallet?.substring(7)}
                 imageHeight='48px'
                 tag='Host'
             />
 
             <SpacesDetailsContainer>
-                <Title>{spaceData.spaceName}</Title>
-                <Description theme={theme}>{spaceData.spaceDescription}</Description>
+                <Title>{spaceData?.spaceName}</Title>
+                <Description theme={theme}>{spaceData?.spaceDescription}</Description>
             </SpacesDetailsContainer>
 
             <Button
                 customStyle={customStyle}
+                onClick={showExplicitInvite}
             >
                 Invite Members
             </Button>
 
-            <Accordion title='Pending Invites' items={spaceData.pendingMembers.length}>
-                {
+            <Accordion title='Pending Invites' items={spaceData?.pendingMembers?.length}>
+                {spaceData?.pendingMembers &&
                     spaceData.pendingMembers.map((item: any) => {
                         return <ProfileContainer
-                            tag={item.isSpeaker ? 'Co-Host' : undefined}
+                            tag={item?.isSpeaker ? 'Co-Host' : undefined}
                             imageHeight='48px'
-                            handle={item.wallet.substring(7)}
-                            name={item.wallet.substring(7)}
-                            imageUrl={item.image}
+                            handle={item?.wallet?.substring(7)}
+                            name={item?.wallet?.substring(7)}
+                            imageUrl={item?.image}
                         />  
                     })
                 }
             </Accordion>
 
-            {
+            {adminsArray && 
                 adminsArray.slice(1).map((item: any) => {
                     return <ProfileContainer
                         border
                         tag="Co-Host"
                         imageHeight='48px'
-                        handle={item.wallet.substring(7)}
-                        name={item.wallet.substring(7)}
-                        imageUrl={item.image}
+                        handle={item?.wallet?.substring(7)}
+                        name={item?.wallet?.substring(7)}
+                        imageUrl={item?.image}
                     />  
                 })
             }
 
+            {
+                isInviteVisible ?
+                <SCWInviteModal
+                    closeInviteModal={showExplicitInvite}
+                    makeScheduleVisible={showExplicitInvite}
+                    createSpace={updateSpace}
+                    isLoading={isLoading}
+                    invitedMembersList={invitedMembersList}
+                    setInvitedMembersList={setInvitedMembersList}
+                    invitedAddressList={invitedAddressList}
+                    setInvitedAddressList={setInvitedAddressList}
+                    adminsList={adminsList}
+                    setAdminsList={setAdminsList}
+                    adminsAddressList={adminsAddressList}
+                    setAdminsAddressList={setAdminsAddressList}
+                    onClose={showExplicitInvite}
+                    btnString='Update Space'
+                />
+                : null
+            }
             </SpacesInfoContainer>
         </Modal>
     )
@@ -98,8 +165,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
 /** styling */
 const SpacesInfoContainer = styled.div`
-    color: black;
-    width: 400px;
+    color: ${(props => props.theme?.textColorPrimary)};
 `;
 
 const SpacesDetailsContainer = styled.div`
@@ -111,6 +177,6 @@ const Title = styled.div`
     font-weight: 500;
 `;
 
-const Description = styled.div<IThemeProps>`
-    color: ${(props => props.theme.textColorSecondary)};
+const Description = styled.div`
+    color: ${(props => props.theme?.textColorSecondary)};
 `;

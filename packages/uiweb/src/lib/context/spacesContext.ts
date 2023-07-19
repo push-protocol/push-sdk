@@ -18,6 +18,13 @@ export interface ISpacePaginationData {
   lastPage?: number;
 }
 
+export interface ICustomSearchResult {
+  account: string;
+  name?: string;
+  handle?: string;
+  image?: string; // dataURL as string
+}
+
 export interface ISpaceDataContextValues {
   account: string;
   setAccount: React.Dispatch<React.SetStateAction<string>>;
@@ -54,6 +61,7 @@ export interface ISpaceDataContextValues {
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
   acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
   connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  customSearch?: (query: string) => ICustomSearchResult;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -138,6 +146,7 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   connectSpaceRequest: async () => {
     /** */
   },
+  customSearch: undefined,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

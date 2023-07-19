@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceIFeeds } from '@pushprotocol/restapi';
 
@@ -13,21 +13,25 @@ import {
   useMySpaces,
   usePopularSpaces,
   useSpaceRequests,
+  usePushSpaceSocket,
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
   Vertical = 'vertical',
 }
 
-enum Tabs {
+export enum Tabs {
   ForYou = 'For You',
   Popular = 'Popular',
   HostedByYou = 'Hosted by you',
 }
+
+type TabsValues = keyof typeof Tabs;
 
 enum FilterEnums {
   All = 'All',
@@ -38,7 +42,7 @@ export interface ISpaceFeedProps {
   orientation?: 'horizontal' | 'vertical';
   height?: number;
   width?: number;
-  sortingOrder?: string[];
+  sortingOrder?: Array<TabsValues>;
   showTabs?: boolean;
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
   showFilter?: boolean;
@@ -46,15 +50,16 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  orientation = 'veritcal',
+  orientation = OrientationEnums.Vertical,
   height,
   width,
-  sortingOrder = [Tabs.Popular, Tabs.ForYou, Tabs.HostedByYou],
+  sortingOrder = ["Popular", "ForYou", "HostedByYou"],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
   onBannerClickHandler,
 }) => {
+  const theme = useContext(ThemeContext);
   const [tab, setTab] = useState<string>(sortingOrder[0]);
   const [filterTab, setFilterTab] = useState(filter);
 
@@ -66,7 +71,10 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
+    env,
   } = useSpaceData();
+
+  usePushSpaceSocket({ account, env });
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
@@ -181,7 +189,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       {orientation === OrientationEnums.Horizontal ? (
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
@@ -214,13 +222,13 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <>
           <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
             <NavButtonWrapper>
-              {sortingOrder.map((tabName: string) => {
+              {sortingOrder.map((tabName: TabsValues) => {
                 return (
                   <NavButton
                     active={tab === tabName}
                     onClick={() => handleTabChange(tabName)}
                   >
-                    {tabName}
+                    {Tabs[tabName]}
                   </NavButton>
                 );
               })}
@@ -284,8 +292,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 </Spaces>
               ) : tab === Tabs.Popular ? (
                 <PopularSpaces>
-                  <Text>Popular Spaces</Text>
-                  {popularSpaces &&
+                  {popularSpaces.apiData &&
                     handleFilterData(
                       popularSpaces.apiData as SpaceIFeeds[]
                     ).map((space: SpaceIFeeds) => {
@@ -335,7 +342,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
           </ScrollContainer>
         </>
       )}
-    </div>
+    </ThemeProvider>
   );
 };
 
@@ -344,16 +351,16 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
-}`;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   border: 1px solid #dcdcdf;
   border-radius: 12px;
   padding: 24px 32px;
-}`;
+`;
 
 const Navigation = styled.div<{
   showTabs?: boolean;
@@ -367,14 +374,14 @@ const Navigation = styled.div<{
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   border-bottom: 1px solid #DCDCDF;
   margin-bottom: ${(props) => (props.showFilter ? '0' : '27px')};
-}`;
+`;
 
 const NavButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-}`;
+`;
 
 const NavButton = styled.button<{ active?: boolean }>`
   padding: 10px 30px;
@@ -388,7 +395,7 @@ const NavButton = styled.button<{ active?: boolean }>`
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const Spaces = styled.div<{ orientation?: string }>`
   display: flex;
@@ -396,23 +403,23 @@ const Spaces = styled.div<{ orientation?: string }>`
     props.orientation === 'horizontal' ? 'row' : 'column'};
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   width: ${(props) =>
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const PopularSpaces = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
+  background: ${props => props.theme.bgColorPrimary};
   width: 100%;  
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const Text = styled.div`
   width: 100%;
@@ -420,7 +427,7 @@ const Text = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 18px;
-}`;
+`;
 
 const Filter = styled.div<{ showFilter?: boolean }>`
   display: ${(props) => (props.showFilter ? 'flex' : 'none')};
@@ -430,7 +437,7 @@ const Filter = styled.div<{ showFilter?: boolean }>`
   background: #ffffff;
   width: 100%;
   margin: 22px 0;
-}`;
+`;
 
 const FilterButton = styled.button<{ active: boolean }>`
   display: inline-flex;
@@ -448,7 +455,7 @@ const FilterButton = styled.button<{ active: boolean }>`
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const NoSpaces = styled.div`
   display: flex;
@@ -456,23 +463,23 @@ const NoSpaces = styled.div`
   justify-content: center;
   align-items: center;
   margin: 130px 0;
-}`;
+`;
 
 const SpacesIcon = styled.img`
   width: 36px;
   height: 36px;
-}`;
+`;
 
 const NoSpacesTextV1 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 16px;
   color: #000;
-}`;
+`;
 
 const NoSpacesTextV2 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   color: #71717A;
   font-size: 14px;
-}`;
+`;
