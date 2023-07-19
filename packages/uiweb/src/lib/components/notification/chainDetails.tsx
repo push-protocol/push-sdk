@@ -1,28 +1,62 @@
-import EthereumSVG from "../../icons/ethereum.svg";
-import PolygonSVG from "../../icons/polygon.svg";
-import GraphSVG from "../../icons/thegraph.svg";
+
 import Tooltip from "../tooltip";
-import BscSVG from "../../icons/bsc.svg";
-import OptimismSVG from "../../icons/optimism.svg";
-import PolygonZKEVMSvg from "../../icons/polygonzkevm.svg"
-const createSVGIcon = (url: string, chainName: string) => {
+
+import { EthereumSvg } from '../../icons/EthereumSvg';
+import { PolygonSvg } from "../../icons/PolygonSvg";
+import { BSCSvg } from "../../icons/BSCSvg";
+import { OptimismSvg } from "../../icons/OptimismSvg";
+import { PolygonzkevmSvg } from "../../icons/PolygonzkevmSvg";
+import { TheGraphSvg } from "../../icons/TheGraphSvg";
+import { ReactElement } from "react";
+
+const createSVGIcon = (element:any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>
-      <img src={url} alt={chainName.toUpperCase()} />
+      {element}
     </Tooltip>
-  )
-}
+  );
+};
 
 export default {
-    ETH_TEST_GOERLI: { label: "ETHEREUM GOERLI", icon: createSVGIcon(EthereumSVG, "Ethereum Goerli") },
-    ETH_MAINNET: { label: "ETHEREUM MAINNET", icon: createSVGIcon(EthereumSVG, "Ethereum Mainnet") },
-    POLYGON_TEST_MUMBAI: { label: "POLYGON MUMBAI", icon: createSVGIcon(PolygonSVG, "Polygon Mumbai") },
-    POLYGON_MAINNET: { label: "POLYGON MAINNET", icon: createSVGIcon(PolygonSVG, "Polygon Mainnet") },
-    BSC_TESTNET: { label: "BSC TESTNET", icon: createSVGIcon(BscSVG, "Bsc Testnet") },
-    BSC_MAINNET: { label: "BSC MAINNET", icon: createSVGIcon(BscSVG, "Bsc Mainnet") },
-    OPTIMISM_TESTNET: { label: "OPTIMISM TESTNET", icon: createSVGIcon(OptimismSVG, "Optimism Testnet") },
-    OPTIMISM_MAINNET: { label: "OPTIMISM MAINNET", icon: createSVGIcon(OptimismSVG, "Optimism Mainnet") },
-    POLYGON_ZK_EVM_TESTNET: { label: "POLYGON ZK EVM TESTNET", icon: createSVGIcon(PolygonZKEVMSvg, "Polygon ZK EVM Testnet") },
-    POLYGON_ZK_EVM_MAINNET: { label: "POLYGON ZK EVM MAINNET", icon: createSVGIcon(PolygonZKEVMSvg, "Polygon ZK EVM Mainnet") },
-    THE_GRAPH: { label: "THE GRAPH", icon: createSVGIcon(GraphSVG, "The Graph") },
+  ETH_TEST_GOERLI: {
+    label: 'ETHEREUM GOERLI',
+    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Goerli'),
+  },
+  ETH_MAINNET: {
+    label: 'ETHEREUM MAINNET',
+    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Mainnet'),
+  },
+  POLYGON_TEST_MUMBAI: {
+    label: 'POLYGON MUMBAI',
+    icon: createSVGIcon(<PolygonSvg/>, 'Polygon Mumbai'),
+  },
+  POLYGON_MAINNET: {
+    label: 'POLYGON MAINNET',
+    icon: createSVGIcon(<PolygonSvg/>, 'Polygon Mainnet'),
+  },
+  BSC_TESTNET: {
+    label: 'BSC TESTNET',
+    icon: createSVGIcon(<BSCSvg/>, 'Bsc Testnet'),
+  },
+  BSC_MAINNET: {
+    label: 'BSC MAINNET',
+    icon: createSVGIcon(<BSCSvg/>, 'Bsc Mainnet'),
+  },
+  OPTIMISM_TESTNET: {
+    label: 'OPTIMISM TESTNET',
+    icon: createSVGIcon(<OptimismSvg/>, 'Optimism Testnet'),
+  },
+  OPTIMISM_MAINNET: {
+    label: 'OPTIMISM MAINNET',
+    icon: createSVGIcon(<OptimismSvg/>, 'Optimism Mainnet'),
+  },
+  POLYGON_ZK_EVM_TESTNET: {
+    label: 'POLYGON ZK EVM TESTNET',
+    icon: createSVGIcon(<PolygonzkevmSvg/>, 'Polygon ZK EVM Testnet'),
+  },
+  POLYGON_ZK_EVM_MAINNET: {
+    label: 'POLYGON ZK EVM MAINNET',
+    icon: createSVGIcon(<PolygonzkevmSvg/>, 'Polygon ZK EVM Mainnet'),
+  },
+  THE_GRAPH: { label: 'THE GRAPH', icon: createSVGIcon(<TheGraphSvg/>, 'The Graph') },
 };

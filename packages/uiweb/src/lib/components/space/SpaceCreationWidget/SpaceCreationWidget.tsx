@@ -101,7 +101,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             time: Date.now(),
         })
     }
-    
+
     const createSpace = async () => {
         const spaceCreate = {
             spaceName: spaceState.spaceName.length === 0 ? `${account}'s Space` : spaceState.spaceName,
@@ -132,7 +132,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     return (
         <div>
             <SCWContainer>
-                {!children && 
+                {!children &&
                     <SCWButton
                         onCreate={showCreateSpace}
                     />
@@ -190,5 +190,5 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
 }
 
 const SCWContainer = styled.div`
-    font-family: 'Strawford'; // update to fontFamily theme 
+    font-family: 'Strawford'; // update to fontFamily theme
 `;

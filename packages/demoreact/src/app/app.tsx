@@ -64,6 +64,7 @@ import {
 } from './SpaceUITest';
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import * as PushAPI from "@pushprotocol/restapi";
+import { ChatWidgetTest } from './ChatWidgetTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -388,7 +389,8 @@ export function App() {
                     element={<CreateSpaceComponent />}
                   />
                 </Routes>
-                <ChatSupportTest />
+               {/* <ChatWidgetTest/> */}
+               <ChatWidgetTest/>
                 <SpaceWidgetComponent spaceId={spaceId} />
               </SpacesComponentProvider>
               </AccountContext.Provider>

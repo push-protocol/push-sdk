@@ -65,7 +65,7 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
 
     fetchData();
   }, [env, getSpaceInfo, setSpaceInfo, spaceId]);
-  
+
   useEffect(() => {
     if (spaceId && spaceInfo[spaceId]) {
       spaceStatusRef.current = spaceInfo[spaceId].status;
@@ -90,6 +90,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const toggleWidgetVisibility = () => {
     setWidgetHidden(!widgetHidden);
   };
+
+  // console.log('Rendering SpaceWidget');
 
   // Implement the SpaceWidget component
   return (

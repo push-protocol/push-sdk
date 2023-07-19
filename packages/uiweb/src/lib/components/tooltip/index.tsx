@@ -20,7 +20,6 @@ const Tooltip: React.FC<TooltipProps> = ({ children, tooltipContent }) => {
     clearInterval(timeoutId);
     setActive(false);
   };
-
   return (
     <Wrapper onMouseEnter={showTip} onMouseLeave={hideTip}>
       {children} 

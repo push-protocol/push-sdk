@@ -43,9 +43,9 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                 setIsDDOpen(false);
             }
         };
-    
+
         document.addEventListener('mousedown', handleOutsideClick);
-    
+
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };

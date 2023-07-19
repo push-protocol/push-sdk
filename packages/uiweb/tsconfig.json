@@ -8,7 +8,9 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
+    // "importsNotUsedAsValues": "error",
     "noPropertyAccessFromIndexSignature": true,
+    // "isolatedModules": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },

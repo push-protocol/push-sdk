@@ -18,6 +18,7 @@ import { CloseSvg } from '../../../icons/CloseSvg';
 import { HostPfpContainer, ParticipantContainer } from '../reusables';
 import { SpacesInfo } from './SpacesInfo';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { useSpaceData } from '../../../hooks';
 
 import { SpaceStatus } from './WidgetContent';
 
@@ -43,6 +44,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   spaceStatus,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
+  // const { isLive } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';

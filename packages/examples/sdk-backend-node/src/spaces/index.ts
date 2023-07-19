@@ -55,7 +55,6 @@ export const runSpacesUseCases = async (): Promise < void > => {
     ╚════██║██╔═══╝ ██╔══██║██║     ██╔══╝  ╚════██║
     ███████║██║     ██║  ██║╚██████╗███████╗███████║
     ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
-
     `)
 
     console.log('PushAPI.user.create');
@@ -143,9 +142,9 @@ async function PushAPI_space_create(
     const response = await PushAPI.space.create({
         spaceName,
         spaceDescription,
-        listeners: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+        members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
         spaceImage,
-        speakers: [],
+        admins: [],
         isPublic: true,
         signer: signer,
         pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -191,14 +190,14 @@ async function PushAPI_space_update(
         spaceId,
         spaceName,
         spaceDescription,
-        listeners: [
+        members: [
             `eip155:${randomWallet1}`,
             `eip155:${randomWallet2}`,
             `eip155:${randomWallet3}`,
             `eip155:${signer.address}`,
         ],
         spaceImage,
-        speakers: [`eip155:${signer.address}`], // takes signer as admin automatically, add more if you want to
+        admins: [`eip155:${signer.address}`], // takes signer as admin automatically, add more if you want to
         scheduleAt: start,
         scheduleEnd: end,
         status: PushAPI.ChatStatus.PENDING,
@@ -255,9 +254,9 @@ async function PushAPI_space_start_and_stop(
             dictionaries: [adjectives, colors, animals],
         }),
         spaceDescription,
-        listeners: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+        members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
         spaceImage,
-        speakers: [],
+        admins: [],
         isPublic: true,
         signer: signer,
         pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -323,9 +322,9 @@ async function PushAPI_space_approve(
             dictionaries: [adjectives, colors, animals],
         }),
         spaceDescription,
-        listeners: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
+        members: [`eip155:${randomWallet1}`, `eip155:${randomWallet2}`],
         spaceImage,
-        speakers: [],
+        admins: [],
         isPublic: true,
         signer: signer,
         pgpPrivateKey: pgpDecrpyptedPvtKey,
