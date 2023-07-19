@@ -1,9 +1,7 @@
 import {
-  SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_REQUEST_TYPE,
 } from '../payloads/constants';
 import { ChatStatus } from '../types';
-import { VideoDataType } from '../video/helpers/sendVideoCallNotification';
 import { approve } from './approve';
 import { get } from './get';
 import type Space from './Space';

@@ -6,7 +6,7 @@ import { ENV } from '../../config';
 
 const NOTIFICATION_SOCKET_TYPE = 'notification';
 
-export type SDKSocketHookOptions = {
+export type SDKSpaceNotificationSocketHookOptions = {
   account?: string | null;
   env?: ENV;
 };
@@ -14,7 +14,7 @@ export type SDKSocketHookOptions = {
 export const useSpaceNotificationSocket = ({
   account,
   env = ENV.PROD,
-}: SDKSocketHookOptions) => {
+}: SDKSpaceNotificationSocketHookOptions) => {
   const { spacesObjectRef } = useSpaceData();
 
   const [notificationSocket, setNotificationSocket] = useState<any>(null);

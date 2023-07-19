@@ -1,11 +1,3 @@
-import {
-  groupDtoToSpaceDto,
-  getMembersList,
-  getAdminsList,
-} from '../chat/helpers';
-import { updateGroup } from '../chat/updateGroup';
-import { get } from './get';
-
 import type Space from './Space';
 import { SPACE_DISCONNECT_TYPE } from '../payloads/constants';
 

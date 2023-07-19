@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RefObject, useEffect, useRef } from 'react';
+import type { RefObject} from 'react';
+import { useEffect, useRef } from 'react';
 
 const defaultEvents = ['mousedown', 'touchstart'];
 

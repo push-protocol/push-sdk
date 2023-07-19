@@ -63,6 +63,7 @@ import {
   SpaceInvitesComponent
 } from './SpaceUITest';
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
+import { ChatWidgetTest } from './ChatWidgetTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -363,7 +364,8 @@ export function App() {
                     element={<CreateSpaceComponent />}
                   />
                 </Routes>
-                <ChatSupportTest />
+               {/* <ChatWidgetTest/> */}
+               <ChatWidgetTest/>
                 <SpaceWidgetComponent spaceId={spaceId} />
               </SpacesComponentProvider>
             </SocketContext.Provider>
