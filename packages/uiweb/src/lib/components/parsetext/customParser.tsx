@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as PropTypes from "prop-types";
 import HTMLReactParser from 'html-react-parser';
 
-import { ParsedTextProps } from './customParser.types';
+import type { ParsedTextProps } from './customParser.types';
 import TextExtraction from './lib/TextExtraction';
 import { FormatBody } from '../../utilities';
 

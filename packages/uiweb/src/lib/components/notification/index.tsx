@@ -58,6 +58,9 @@ export type NotificationItemProps = {
 
 type ContainerDataType = {
   timestamp?: string;
+}& OffsetWidthType;
+type OffsetWidthType = {
+  offsetWidth: number;
 };
 
 type CustomThemeProps = {
@@ -113,6 +116,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const [imageOverlay, setImageOverlay] = React.useState('');
   const [subscribeLoading, setSubscribeLoading] = React.useState(false);
   const [isSubscribed, setIsSubscribed] = React.useState(true); //use this to confirm if this is s
+  const [divRef, offsetWidth] = useDivOffsetWidth();
 
   const showMetaInfo = isSecret || timeStamp;
   // console.log({
@@ -173,7 +177,6 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   }, [isSubscribedFn, isSpam]);
 
   if (isSubscribed && isSpam) return null;
-
   // render
   return (
     <Container timestamp={timeStamp} themeObject={themeObject!}>
@@ -187,7 +190,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         </HeaderButton>
         {chainName && chainDetails[chainName] ? (
           <BlockchainContainer>
-            <ChainIconSVG>{chainDetails[chainName].icon}</ChainIconSVG>
+            <ChainIconSVG  offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
           </BlockchainContainer>
         ) : null}
       </MobileHeader>
@@ -205,6 +208,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           // if its an image then render this
           (!MediaHelper.isMediaSupportedVideo(notifImage) ? (
             <MobileImage
+            offsetWidth={offsetWidth}
               theme={theme}
               style={{ cursor: 'pointer' }}
               onClick={() => setImageOverlay(notifImage || '')}
@@ -213,7 +217,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : // if its a youtube url, RENDER THIS
           MediaHelper.isMediaYoutube(notifImage) ? (
-            <MobileImage theme={theme}>
+            <MobileImage
+            offsetWidth={offsetWidth} theme={theme}>
               <iframe
                 id="ytplayer"
                 width="640"
@@ -225,7 +230,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : (
             // if its aN MP4 url, RENDER THIS
-            <MobileImage theme={theme}>
+            <MobileImage theme={theme}  offsetWidth={offsetWidth}>
               <video width="360" height="100%" controls>
                 <source src={notifImage} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -365,7 +370,8 @@ const ContentSection = styled.div<CTADataType & CustomThemeProps>`
   }
   @media (max-width: ${SM_BREAKPOINT}) {
     flex-direction: column;
-  }
+
+    `};
 `;
 
 const BlockchainContainer = styled.div`
@@ -375,7 +381,7 @@ const BlockchainContainer = styled.div`
   font-weight: 700;
 `;
 
-const ChainIconSVG = styled.div`
+const ChainIconSVG = styled.div<OffsetWidthType>`
   width: 28px;
   height: 28px;
 
@@ -389,9 +395,11 @@ const ChainIconSVG = styled.div`
     width: 18px;
     height: 18px;
   }
+
 `;
 
-const MobileImage = styled.div`
+const MobileImage = styled.div<OffsetWidthType>`
+  overflow:hidden;
   img,
   iframe,
   video {
@@ -412,20 +420,51 @@ const MobileImage = styled.div`
     height: 200px;
   }
 
-  @media (max-width: ${SM_BREAKPOINT}) {
-    display: block;
-    width: 100%;
-    max-height: 200px;
-    margin-bottom: 12px;
-    border: 0;
 
-    img,
-    iframe,
-    video {
-      border: 0;
-      border-radius: 0;
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (min-width: ${SM_BREAKPOINT}) {
+      border: 1px solid ${props => props.theme === 'light' ? '#ededed' : '#444'};
+      border-radius: 10px;
+      min-width: 220px;
+      width: 220px;
+      height: 200px;
     }
-  }
+    @media (max-width: ${SM_BREAKPOINT}) {
+      display: block;
+      width: 100%;
+      max-height: 200px;
+      margin-bottom: 12px;
+      border: 0;
+
+      img,
+      iframe,
+      video {
+        border: 0;
+        border-radius: 0;
+      }
+    }
+    `};
+
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
+    display: block;
+      width: 100%;
+      max-height: 200px;
+      margin-bottom: 12px;
+      border: 0;
+
+      img,
+      iframe,
+      video {
+        border: 0;
+        border-radius: 0;
+      }
+
+    `};
+
 `;
 
 const ImageContainer = styled.span`
@@ -510,9 +549,25 @@ const ChannelTitle = styled.div<CTADataType & CustomThemeProps>`
     color: ${(props) => props?.themeObject?.color?.notificationTitleText};
   }
 
-  @media (max-width: ${SM_BREAKPOINT}) {
-    margin-bottom: 6px;
+  @media (max-width: ${MD_BREAKPOINT}) {
+    color: ${(props) => props?.themeObject?.color?.notificationTitleText};
   }
+
+  ${(props: any) =>
+    props.offsetWidth>461 &&
+    css`
+    @media (max-width: ${SM_BREAKPOINT}) {
+      margin-bottom: 6px;
+    }
+    `};
+
+  ${(props: any) =>
+    props.offsetWidth<=461 &&
+    css`
+    margin-bottom: 6px;
+
+    `};
+
 `;
 
 const ChannelTitleText = styled.div<CustomThemeProps>`
