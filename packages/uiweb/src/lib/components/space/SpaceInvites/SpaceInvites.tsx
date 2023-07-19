@@ -10,9 +10,6 @@ export interface ISpaceInvitesProps {
   children?: React.ReactNode;
 }
 
-// temp
-let spaceId = "";
-
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
 }: ISpaceInvitesProps) => {
@@ -21,44 +18,9 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
-  const {
-    spacesObjectRef,
-    spaceObjectData,
-    initSpaceObject,
-    setSpaceWidgetId,
-    isSpeaker,
-    isListener,
-    account,
-    env,
-  } = useSpaceData();
+  const { account, env } = useSpaceData();
 
   usePushSpaceSocket({ account, env });
-
-  const handleJoinSpace = async (space: any) => {
-    await initSpaceObject(space?.spaceId as string);
-
-    if (isSpeaker) {
-      spaceId = space?.spaceId;
-    }
-    if (isListener) {
-      handleCloseModal();
-      setSpaceWidgetId(space?.spaceId as string);
-      console.log('modal to join space opened');
-    }
-  };
-
-  useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
-    const joinSpaceAsSpeaker = async () => {
-      console.log('joining as a speaker');
-      await spacesObjectRef?.current?.join();
-      setSpaceWidgetId(spaceId);
-      console.log('space joined');
-      handleCloseModal();
-    };
-    joinSpaceAsSpeaker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceObjectData?.connectionData?.local.stream]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -75,7 +37,6 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
       spaceRequests.lastPage &&
       spaceRequests.currentPage < spaceRequests.lastPage
     ) {
-      console.log('Load More Data');
       setSpaceRequests({
         currentPage: spaceRequests.currentPage + 1,
         lastPage: spaceRequests.lastPage + 1,
@@ -119,7 +80,7 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
                         spaceId={space.spaceId}
                         orientation="maximized"
                         isInvite={true}
-                        onJoin={() => handleJoinSpace(space)}
+                        modalCallback={handleCloseModal}
                       />
                     );
                   })

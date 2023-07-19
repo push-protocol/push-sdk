@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceBannerLoadingSkeleton } from './SpaceBannerLoadingSkeleton';
@@ -19,7 +19,7 @@ export interface ISpaceBannerProps {
   orientation?: 'maximized' | 'minimized' | 'pill';
   isInvite?: boolean;
   onBannerClick?: (arg: string) => void;
-  onJoin?: any;
+  modalCallback?: any;
 }
 
 /**
@@ -38,11 +38,21 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   orientation,
   isInvite,
   onBannerClick,
-  onJoin,
+  modalCallback,
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
-  const { account, env } = useSpaceData();
+
+  const {
+    spacesObjectRef,
+    spaceObjectData,
+    initSpaceObject,
+    setSpaceWidgetId,
+    isSpeaker,
+    isListener,
+    account,
+    env,
+  } = useSpaceData();
 
   const spaceStatus = getSpaceStatus(spaceData?.status);
 
@@ -51,6 +61,28 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       onBannerClick(spaceData?.spaceId || '');
     }
   };
+
+  const handleJoinSpace = async () => {
+    await initSpaceObject(spaceData?.spaceId as string);
+
+    if (isListener) {
+      modalCallback();
+      setSpaceWidgetId(spaceData?.spaceId as string);
+    }
+  };
+
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
+    const joinSpaceAsSpeaker = async () => {
+      console.log('joining as a speaker');
+      await spacesObjectRef?.current?.join();
+      setSpaceWidgetId(spaceId);
+      console.log('space joined');
+      modalCallback();
+    };
+    joinSpaceAsSpeaker();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceObjectData?.connectionData?.local.stream]);
 
   usePushSpaceSocket({ account, env });
 
@@ -120,7 +152,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         />
       </Status>
       {isInvite === true && spaceStatus === 'Live' ? (
-        <InviteButton status="Live" onClick={onJoin}>Join this space</InviteButton>
+        <InviteButton status="Live" onClick={handleJoinSpace}>Join this space</InviteButton>
       ) : isInvite === true &&
         spaceStatus === 'Scheduled' ? (
         <InviteButton status="Scheduled">Remind Me</InviteButton>
