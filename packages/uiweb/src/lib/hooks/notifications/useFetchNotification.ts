@@ -23,7 +23,6 @@ const useFetchNotification = () => {
     async ({ page,limit,spam =false}: fetchNotification) => {
       setLoading(true);
       try {
-        console.log(env)
         const results = await PushAPI.user.getFeeds({
           user: account, // user address in CAIP
           raw: true,
@@ -33,7 +32,6 @@ const useFetchNotification = () => {
           limit: limit
         });
         const parsedResponse = convertReponseToParsedArray(results);
-        console.log(parsedResponse)
         const modifiedNotifObj = Object.fromEntries(
           parsedResponse.map((e: any) => [`notif${e.sid}`, e])
         );
