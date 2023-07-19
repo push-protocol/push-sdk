@@ -40,14 +40,14 @@ export class SpacesUI {
     const { spaceId } = options;
     const { spaceWidgetId } = useSpaceData();
     const [SpaceId, setSpaceId] = useState<string | undefined>(spaceId);
-
+    
     useEffect(() => {
       setSpaceId(spaceId);
     }, [spaceId, setSpaceId]);
     
     useEffect(() => {
-      setSpaceId(spaceWidgetId);
-    }, [spaceWidgetId, setSpaceId]);
+      if (spaceWidgetId) setSpaceId(spaceWidgetId);
+    }, [spaceWidgetId]);
     
     return <SpaceWidget {...options} spaceId={SpaceId} />;
   }

@@ -86,9 +86,7 @@ export const usePushSpaceSocket = ({
           apiData: updatedPopularSpaces as PushAPI.SpaceIFeeds[]
         })
     });
-  }, [
-    pushSpaceSocket
-  ]);
+  }, [pushSpaceSocket]);
 
   const removeSocketEvents = useCallback(() => {
     pushSpaceSocket?.off(EVENTS.CONNECT);

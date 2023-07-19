@@ -13,12 +13,11 @@ import {
   useMySpaces,
   usePopularSpaces,
   useSpaceRequests,
+  usePushSpaceSocket,
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
-
-// import { ISpacesTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 enum OrientationEnums {
@@ -72,7 +71,10 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
+    env,
   } = useSpaceData();
+
+  usePushSpaceSocket({ account, env });
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
@@ -369,7 +371,7 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
-}`;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -378,7 +380,7 @@ const Container = styled.div`
   border: 1px solid ${(props) => props.theme.borderColor};
   border-radius: 12px;
   padding: 24px 32px;
-}`;
+`;
 
 const Navigation = styled.div<{
   showTabs?: boolean;
@@ -400,7 +402,7 @@ const NavButtonWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-}`;
+`;
 
 const NavButton = styled.button<{ active?: boolean }>`
   padding: 10px 30px;
@@ -410,7 +412,7 @@ const NavButton = styled.button<{ active?: boolean }>`
   border-bottom: ${(props) =>
     props.active ? `2px solid ${props.theme.btnColorPrimary}` : 'none'};
   background: none;
-  color : ${(props) =>
+  color: ${(props) =>
     props.active
       ? `${props.theme.textColorPrimary}`
       : `${props.theme.textColorSecondary}`};
@@ -418,7 +420,7 @@ const NavButton = styled.button<{ active?: boolean }>`
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const Spaces = styled.div<{ orientation?: string }>`
   display: flex;
@@ -431,7 +433,7 @@ const Spaces = styled.div<{ orientation?: string }>`
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const PopularSpaces = styled.div`
   display: flex;
@@ -439,10 +441,10 @@ const PopularSpaces = styled.div`
   justify-content: space-between;
   align-items: center;
   background: ${(props) => props.theme.bgColorPrimary};
-  width: 100%;  
+  width: 100%;
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const Text = styled.div`
   width: 100%;
@@ -450,7 +452,7 @@ const Text = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 18px;
-}`;
+`;
 
 const Filter = styled.div<{ showFilter?: boolean }>`
   display: ${(props) => (props.showFilter ? 'flex' : 'none')};
@@ -460,7 +462,7 @@ const Filter = styled.div<{ showFilter?: boolean }>`
   background: ${(props) => props.theme.bgColorPrimary};
   width: 100%;
   margin: 22px 0;
-}`;
+`;
 
 const FilterButton = styled.button<{ active: boolean }>`
   display: inline-flex;
@@ -484,7 +486,7 @@ const FilterButton = styled.button<{ active: boolean }>`
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const NoSpaces = styled.div`
   display: flex;
@@ -492,12 +494,12 @@ const NoSpaces = styled.div`
   justify-content: center;
   align-items: center;
   margin: 130px 0;
-}`;
+`;
 
 const SpacesIcon = styled.img`
   width: 36px;
   height: 36px;
-}`;
+`;
 
 const NoSpacesTextV1 = styled.div`
   font-family: 'Strawford';
@@ -511,4 +513,4 @@ const NoSpacesTextV2 = styled.div`
   font-weight: 450;
   color: ${(props) => props.theme.textColorSecondary}};
   font-size: 14px;
-}`;
+`;

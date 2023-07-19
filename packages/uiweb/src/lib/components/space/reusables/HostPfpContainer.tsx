@@ -1,8 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 import { ISpacesTheme } from '../theme';
-import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IHostPfpContainerProps {
   name?: string;
@@ -27,29 +27,31 @@ export const HostPfpContainer: React.FC<IHostPfpContainerProps> = ({
 }: IHostPfpContainerProps) => {
   const theme = React.useContext(ThemeContext);
   return (
-    <ProfileContainer theme={theme}>
-      <PfpContainer theme={theme}>
-        <Pfp
-          src={imageUrl}
-          alt="host pfp"
-          imageHeight={imageHeight}
-          theme={theme}
-        />
-      </PfpContainer>
-      <HostContainer theme={theme}>
-        <HostName theme={theme}>
-          <Name theme={theme}>{name}</Name>
-          <Host statusTheme={statusTheme} theme={theme}>
-            Host
-          </Host>
-        </HostName>
-        {handle && (
-          <HostHandle statusTheme={statusTheme} theme={theme}>
-            {/* Fetch the handle from Lenster */}@{handle}
-          </HostHandle>
-        )}
-      </HostContainer>
-    </ProfileContainer>
+    <ThemeProvider theme={theme}>
+      <ProfileContainer theme={theme}>
+        <PfpContainer theme={theme}>
+          <Pfp
+            src={imageUrl}
+            alt="host pfp"
+            imageHeight={imageHeight}
+            theme={theme}
+          />
+        </PfpContainer>
+        <HostContainer theme={theme}>
+          <HostName theme={theme}>
+            <Name theme={theme}>{name}</Name>
+            <Host statusTheme={statusTheme} theme={theme}>
+              Host
+            </Host>
+          </HostName>
+          {handle && (
+            <HostHandle statusTheme={statusTheme} theme={theme}>
+              {/* Fetch the handle from Lenster */}@{handle}
+            </HostHandle>
+          )}
+        </HostContainer>
+      </ProfileContainer>
+    </ThemeProvider>
   );
 };
 
@@ -94,6 +96,7 @@ const Name = styled.span<IThemeProps>`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  color: ${(props) => props.theme.titleTextColor};
 `;
 
 const Host = styled.div<IThemeProps>`
