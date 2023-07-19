@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 
@@ -10,6 +10,8 @@ import { ISpaceWidgetProps } from '../exportedTypes';
 import { isHostOfSpace, isMemberOfSpace } from './helpers/utils';
 
 import { usePushSpaceSocket, useSpaceData } from '../../../hooks';
+
+import { ThemeContext } from '../theme/ThemeProvider';
 
 const DEFAULT_OFFSET = 16;
 const DEFAULT_MAXWIDTH = 415;
@@ -36,9 +38,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [spaceData, setSpaceData] = useState<SpaceDTO | undefined>();
 
-  const {
-    getSpaceInfo, setSpaceInfo, account, env, spaceInfo,
-  } = useSpaceData();
+  const { getSpaceInfo, setSpaceInfo, account, env, spaceInfo } =
+    useSpaceData();
 
   usePushSpaceSocket({ account, env });
 
@@ -65,12 +66,12 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
 
     fetchData();
   }, [env, getSpaceInfo, setSpaceInfo, spaceId]);
-  
+
   useEffect(() => {
     if (spaceId && spaceInfo[spaceId]) {
       spaceStatusRef.current = spaceInfo[spaceId].status;
     }
-  }, [spaceId, spaceInfo])
+  }, [spaceId, spaceInfo]);
 
   // To Be Implemented Later via Meta messages.
   // useEffect(() => {
@@ -93,35 +94,37 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
 
   // Implement the SpaceWidget component
   return (
-    <Container
-      bottomOffset={bottomOffset}
-      rightOffset={rightOffset}
-      hidden={widgetHidden}
-      width={width}
-      zIndex={zIndex}
-    >
-      <WidgetHeader
-        onClose={onClose}
-        isMinimized={isMinimized}
-        setIsMinimized={setIsMinimized}
-        toggleWidgetVisibility={toggleWidgetVisibility}
-        isHost={isHost}
-        spaceStatus={spaceStatusRef.current}
-        spaceData={spaceData}
-      />
-      <WidgetContent
-        onClose={onClose}
-        account={account}
-        spaceData={spaceData}
-        share={share}
-        isHost={isHost}
-        spaceStatus={spaceStatusRef.current}
-        isMember={isMember}
-        isTimeToStartSpace={isTimeToStartSpace}
-        isMinimized={isMinimized}
-        toggleWidgetVisibility={toggleWidgetVisibility}
-      />
-    </Container>
+    <ThemeProvider theme={React.useContext(ThemeContext)}>
+      <Container
+        bottomOffset={bottomOffset}
+        rightOffset={rightOffset}
+        hidden={widgetHidden}
+        width={width}
+        zIndex={zIndex}
+      >
+        <WidgetHeader
+          onClose={onClose}
+          isMinimized={isMinimized}
+          setIsMinimized={setIsMinimized}
+          toggleWidgetVisibility={toggleWidgetVisibility}
+          isHost={isHost}
+          spaceStatus={spaceStatusRef.current}
+          spaceData={spaceData}
+        />
+        <WidgetContent
+          onClose={onClose}
+          account={account}
+          spaceData={spaceData}
+          share={share}
+          isHost={isHost}
+          spaceStatus={spaceStatusRef.current}
+          isMember={isMember}
+          isTimeToStartSpace={isTimeToStartSpace}
+          isMinimized={isMinimized}
+          toggleWidgetVisibility={toggleWidgetVisibility}
+        />
+      </Container>
+    </ThemeProvider>
   );
 };
 
@@ -136,14 +139,14 @@ interface WidgetContainerProps {
 const Container = styled.div<WidgetContainerProps>`
   font-family: 'Strawford'; // update to fontFamily theme
   border-radius: 12px; // update acc to theme
-  border: 1px solid #dcdcdf; // update acc to theme
+  border: 1px solid ${(props) => props.theme.borderColor}; // update acc to theme
   display: flex;
   flex-direction: column;
   width: ${(props) => (props.width ? `${props.width}px` : 'auto')};
   max-width: ${(props) =>
     props.width ? `${props.width}px` : `${DEFAULT_MAXWIDTH}px`};
   min-width: 320px;
-  background: white;
+  background: ${(props) => props.theme.bgColorPrimary};
   justify-content: flex-start;
   position: fixed;
   bottom: ${(props) => props.bottomOffset}px;

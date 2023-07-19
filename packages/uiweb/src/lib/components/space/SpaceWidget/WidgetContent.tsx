@@ -44,8 +44,9 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
   onClose,
   toggleWidgetVisibility,
 }: WidgetContentProps) => {
-
-  const [spaceStatusState, setSpaceStatusState] = useState<any>(SpaceStatus.Scheduled);
+  const [spaceStatusState, setSpaceStatusState] = useState<any>(
+    SpaceStatus.Scheduled
+  );
 
   useEffect(() => {
     if (spaceStatus === SpaceStatus.Live) {
@@ -98,7 +99,7 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
 const Container = styled.div<{ height: string; isMinimized: boolean }>`
   display: flex;
   flex-direction: column;
-  border-bottom: ${(props) => props.theme.border};
+  border-bottom: ${(props) => props.theme.borderColor};
 
   height: ${(props) => (props.isMinimized ? '0' : props.height)};
   transition: height 300ms ease-out;
