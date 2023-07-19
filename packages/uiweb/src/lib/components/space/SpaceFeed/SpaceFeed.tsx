@@ -231,7 +231,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               width={width}
               showFilter={showFilter}
             >
-              <NavButtonWrapper >
+              <NavButtonWrapper>
                 {sortingOrder.map((tabName: TabsValues) => {
                   return (
                     <NavButton
@@ -270,18 +270,16 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               ref={listInnerRef}
               onScroll={onScroll}
             >
-              <Container >
+              <Container>
                 {tab === Tabs.ForYou ? (
                   <Spaces orientation={orientation}>
                     {mySpaces.apiData &&
                       (handleFilterData(
                         handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
                       ).length === 0 ? (
-                        <NoSpaces >
+                        <NoSpaces>
                           <SpacesIcon src={spacesIcon} />
-                          <NoSpacesTextV1>
-                            Join a space
-                          </NoSpacesTextV1>
+                          <NoSpacesTextV1>Join a space</NoSpacesTextV1>
                           <NoSpacesTextV2>
                             Get started by joining a space
                           </NoSpacesTextV2>
@@ -305,8 +303,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                       ))}
                   </Spaces>
                 ) : tab === Tabs.Popular ? (
-                  <PopularSpaces >
-                    <Text >Popular Spaces</Text>
+                  <PopularSpaces>
+                    <Text>Popular Spaces</Text>
                     {popularSpaces.apiData &&
                       handleFilterData(
                         popularSpaces.apiData as SpaceIFeeds[]
@@ -330,10 +328,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                       ).length === 0 ? (
                         <NoSpaces>
                           <SpacesIcon src={spacesIcon} />
-                          <NoSpacesTextV1 >
-                            Create a space
-                          </NoSpacesTextV1>
-                          <NoSpacesTextV2 >
+                          <NoSpacesTextV1>Create a space</NoSpacesTextV1>
+                          <NoSpacesTextV2>
                             Get started by creating a space
                           </NoSpacesTextV2>
                         </NoSpaces>
@@ -377,7 +373,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background: ${(props) => props.theme.bgColorPrimary};
-  border: 1px solid ${(props) => props.theme.outerBorderColor};
+  border: 1px solid ${(props) => props.theme.borderColor};
   border-radius: 12px;
   padding: 24px 32px;
 `;
@@ -477,8 +473,8 @@ const FilterButton = styled.button<{ active: boolean }>`
       ? `${props.theme.btnColorPrimary}`
       : `${props.theme.bgColorSecondary}`};
   color: ${(props) =>
-    !props.active
-      ? `${props.theme.btnColorPrimary}`
+    props.active
+      ? `${props.theme.titleTextColor}`
       : `${props.theme.textColorPrimary}`};
   margin-right: 8px;
   font-size: 14px;

@@ -38,7 +38,6 @@ export const lightTheme: ISpacesTheme = {
   statusColorError: '#E93636',
   statusColorSuccess: '#30CC8B',
   iconColorPrimary: '#82828A',
-  outerBorderColor: '#DCDCDF',
 };
 
 export const darkTheme: ISpacesTheme = {
@@ -57,5 +56,4 @@ export const darkTheme: ISpacesTheme = {
   statusColorError: '#E93636',
   statusColorSuccess: '#30CC8B',
   iconColorPrimary: '#71717A',
-  outerBorderColor: '#3F3F46',
 };

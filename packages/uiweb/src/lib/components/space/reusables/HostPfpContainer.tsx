@@ -96,7 +96,10 @@ const Name = styled.span<IThemeProps>`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  color: ${(props) => props.theme.titleTextColor};
+  color:color: ${(props) =>
+    props.statusTheme === 'Live'
+      ? `${props.theme.titleTextColor}`
+      : `${props.theme.textColorPrimary}`};
 `;
 
 const Host = styled.div<IThemeProps>`
@@ -124,7 +127,7 @@ const Host = styled.div<IThemeProps>`
 const HostHandle = styled.div<IThemeProps>`
   color: ${(props) =>
     props.statusTheme === 'Live'
-      ? `${props.theme.textColorPrimary}`
+      ? `${props.theme.titleTextColor}`
       : `${props.theme.textColorSecondary}`};
   padding: 0;
   font-weight: 450;

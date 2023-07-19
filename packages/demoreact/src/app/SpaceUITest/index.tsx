@@ -55,7 +55,7 @@ export const SpacesComponentProvider = ({
   };
 
   return (
-    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
+    <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
       {children}
     </SpacesUIProvider>
   );

@@ -264,6 +264,7 @@ export const SpaceInfoText = styled.span`
   font-size: 18px;
   font-weight: 600;
   text-align: center;
+  color: ${({ theme }) => theme.textColorPrimary};
 `;
 
 const ShareLinkItem = styled.div`

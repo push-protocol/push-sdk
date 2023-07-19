@@ -11,7 +11,7 @@ import { ParticipantContainer } from '../reusables/ParticipantContainer';
 import { HostPfpContainer } from '../reusables';
 
 import live from './../../../icons/live.svg';
-import scheduled from './../../../icons/scheduled.svg';
+import { Scheduled } from '../../../icons/scheduled';
 import {
   useGetSpaceInfo,
   usePushSpaceSocket,
@@ -81,17 +81,10 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
             handle={spaceData?.members[0].wallet.slice(7)}
           />
         )}
-        {orientation === 'maximized' ? null : (
-          <Icon
-            src={
-              spaceStatus === 'Live'
-                ? live
-                : spaceStatus === 'Scheduled'
-                ? scheduled
-                : '' // Ended
-            }
-            alt="status"
-          />
+        {orientation === 'maximized' ? null : spaceStatus === 'Live' ? (
+          <Icon src={live} alt="status" />
+        ) : (
+          <Scheduled color={theme.btnOutline} />
         )}
         <Title orientation={orientation} theme={theme} status={spaceStatus}>
           {orientation === 'pill'
@@ -100,16 +93,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         </Title>
         <Status orientation={orientation} theme={theme}>
           <Time orientation={orientation}>
-            <Icon
-              src={
-                spaceStatus === 'Live'
-                  ? live
-                  : spaceStatus === 'Scheduled'
-                  ? scheduled
-                  : '' // Ended
-              }
-              alt="status"
-            />
+            {spaceStatus === 'Live' ? (
+              <Icon src={live} alt="status" />
+            ) : (
+              <Scheduled color={theme.btnOutline} />
+            )}
             <TimeText status={spaceStatus}>
               {spaceStatus === 'Live'
                 ? 'Live'
