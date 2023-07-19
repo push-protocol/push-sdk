@@ -19,6 +19,7 @@ export interface ISpacesTheme {
   statusColorSuccess?: string;
   iconColorPrimary?: string;
   fontFamily?: string;
+  outerBorderColor?: string;
 }
 
 export const lightTheme: ISpacesTheme = {
@@ -36,7 +37,8 @@ export const lightTheme: ISpacesTheme = {
   containerBorderRadius: '12px',
   statusColorError: '#E93636',
   statusColorSuccess: '#30CC8B',
-  iconColorPrimary: '#82828A'
+  iconColorPrimary: '#82828A',
+  outerBorderColor: '#DCDCDF',
 };
 
 export const darkTheme: ISpacesTheme = {
@@ -54,5 +56,6 @@ export const darkTheme: ISpacesTheme = {
   containerBorderRadius: '12px',
   statusColorError: '#E93636',
   statusColorSuccess: '#30CC8B',
-  iconColorPrimary: '#71717A'
+  iconColorPrimary: '#71717A',
+  outerBorderColor: '#3F3F46',
 };
