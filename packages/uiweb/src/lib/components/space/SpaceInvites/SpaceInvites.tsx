@@ -8,10 +8,14 @@ import { SpaceBanner } from '../SpaceBanner';
 
 export interface ISpaceInvitesProps {
   children?: React.ReactNode;
+  actionCallback?: any;
+  onBannerClickHandler?: (arg: string) => void;
 }
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
+  actionCallback,
+  onBannerClickHandler,
 }: ISpaceInvitesProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { spaceRequests, setSpaceRequests } = useSpaceData();
@@ -28,6 +32,20 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const handleCustomClose = () => {
+    if (actionCallback) {
+      actionCallback();
+    };
+
+    setModalOpen(false);
+  };
+
+  const handleClick = (spaceId: string) => {
+    if (onBannerClickHandler) {
+      return onBannerClickHandler(spaceId || '');
+    }
   };
 
   const loadMoreData = () => {
@@ -80,7 +98,10 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
                         spaceId={space.spaceId}
                         orientation="maximized"
                         isInvite={true}
-                        modalCallback={handleCloseModal}
+                        actionCallback={handleCustomClose}
+                        onBannerClick={
+                          onBannerClickHandler ? handleClick : undefined
+                        }
                       />
                     );
                   })

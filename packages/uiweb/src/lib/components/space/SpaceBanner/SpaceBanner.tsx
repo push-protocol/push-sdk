@@ -19,7 +19,7 @@ export interface ISpaceBannerProps {
   orientation?: 'maximized' | 'minimized' | 'pill';
   isInvite?: boolean;
   onBannerClick?: (arg: string) => void;
-  modalCallback?: any;
+  actionCallback?: any;
 }
 
 /**
@@ -38,7 +38,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   orientation,
   isInvite,
   onBannerClick,
-  modalCallback,
+  actionCallback,
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
@@ -66,7 +66,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
     await initSpaceObject(spaceData?.spaceId as string);
 
     if (isListener) {
-      modalCallback();
+      actionCallback();
       setSpaceWidgetId(spaceData?.spaceId as string);
     }
   };
@@ -78,7 +78,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
       await spacesObjectRef?.current?.join();
       setSpaceWidgetId(spaceId);
       console.log('space joined');
-      modalCallback();
+      actionCallback();
     };
     joinSpaceAsSpeaker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
