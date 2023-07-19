@@ -92,6 +92,8 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
     setWidgetHidden(!widgetHidden);
   };
 
+  // console.log('Rendering SpaceWidget');
+
   // Implement the SpaceWidget component
   return (
     <ThemeProvider theme={React.useContext(ThemeContext)}>

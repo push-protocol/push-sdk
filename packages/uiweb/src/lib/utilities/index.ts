@@ -3,3 +3,4 @@ export * from './media';
 export * from './formatbody';
 export * from './time';
 export * from './ipfs';
+export * from './formatType';

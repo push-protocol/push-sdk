@@ -1,7 +1,7 @@
 /**
  * This file contains the default styles for the patters to be used in the application
 */
-import {CustomParseShape} from "./customParser.types";
+import type {CustomParseShape} from "./customParser.types";
 
 function renderStyles(matchingString:string) {
     // matches => ["[@michel:5455345]", "@michel", "5455345"]

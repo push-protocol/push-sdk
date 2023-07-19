@@ -16,6 +16,8 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface ISpaceInvitesProps {
   children?: React.ReactNode;
+  actionCallback?: any;
+  onBannerClickHandler?: (arg: string) => void;
 }
 
 interface IThemeProps {
@@ -23,10 +25,12 @@ interface IThemeProps {
 }
 
 // temp
-let spaceId = '';
+const spaceId = '';
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
+  actionCallback,
+  onBannerClickHandler,
 }: ISpaceInvitesProps) => {
   const theme = useContext(ThemeContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -34,37 +38,9 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
-  const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const {
-    spacesObjectRef,
-    spaceObjectData,
-    initSpaceObject,
-    setSpaceWidgetId,
-    isSpeaker,
-    isListener,
-    account,
-    env,
-  } = useSpaceData();
+  const { account, env } = useSpaceData();
 
   usePushSpaceSocket({ account, env });
-
-  const handleJoinSpace = async (space: any) => {
-    await initSpaceObject(space?.spaceId as string);
-
-    if (isSpeaker) {
-      // create audio stream
-      await spacesObjectRef.current.createAudioStream();
-      spaceId = space?.spaceId; // temp
-    }
-    if (isListener) {
-      await spacesObjectRef?.current?.join();
-      const playBackUrl = spaceObjectData.spaceDescription;
-      setPlayBackUrl(playBackUrl);
-      handleCloseModal();
-      setSpaceWidgetId(space?.spaceId as string);
-      console.log('space joined');
-    }
-  };
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
@@ -87,6 +63,20 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     setModalOpen(false);
   };
 
+  const handleCustomClose = () => {
+    if (actionCallback) {
+      actionCallback();
+    }
+
+    setModalOpen(false);
+  };
+
+  const handleClick = (spaceId: string) => {
+    if (onBannerClickHandler) {
+      return onBannerClickHandler(spaceId || '');
+    }
+  };
+
   const loadMoreData = () => {
     if (
       loading === false &&
@@ -94,7 +84,6 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
       spaceRequests.lastPage &&
       spaceRequests.currentPage < spaceRequests.lastPage
     ) {
-      console.log('Load More Data');
       setSpaceRequests({
         currentPage: spaceRequests.currentPage + 1,
         lastPage: spaceRequests.lastPage + 1,
@@ -138,7 +127,10 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
                         spaceId={space.spaceId}
                         orientation="maximized"
                         isInvite={true}
-                        onJoin={() => handleJoinSpace(space)}
+                        actionCallback={handleCustomClose}
+                        onBannerClick={
+                          onBannerClickHandler ? handleClick : undefined
+                        }
                       />
                     );
                   })
