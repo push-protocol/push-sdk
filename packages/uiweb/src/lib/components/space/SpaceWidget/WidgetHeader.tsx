@@ -242,7 +242,7 @@ const Button = styled.button<{
   padding: ${(props) => props.padding ?? '0px'};
   color: ${(props) => props.color ?? 'inherit'};
   margin-left: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: ${(props) => props.theme.bgColorSecondary};
   border-radius: 6px;
   border: none;
   cursor: pointer;

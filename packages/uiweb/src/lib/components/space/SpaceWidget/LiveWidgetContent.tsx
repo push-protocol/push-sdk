@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, ThemeProvider } from 'styled-components';
 import { Player } from '@livepeer/react';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
@@ -53,7 +53,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
   } = useSpaceData();
 
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:53 ~ spacesObjectRef:", spacesObjectRef)
+  console.log(
+    '🚀 ~ file: LiveWidgetContent.tsx:53 ~ spacesObjectRef:',
+    spacesObjectRef
+  );
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -159,7 +162,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [spaceObjectData?.spaceDescription]);
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Item
         flex={'1'}
         display={'flex'}
@@ -224,7 +227,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {isJoined ? (
           <Item
             borderRadius={'8px'}
-            background={'#EDE9FE'}
+            background={`${theme.bgColorSecondary}`}
             display={'flex'}
             justifyContent={'space-between'}
             padding={'6px 8px'}
@@ -249,7 +252,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 }
                 alt="Mic Icon"
               />
-              <Text color="#8B5CF6" fontSize={'14px'} fontWeight={600}>
+              <Text
+                color={`${theme.btnOutline}`}
+                fontSize={'14px'}
+                fontWeight={600}
+              >
                 {isHost || isSpeaker
                   ? isMicOn
                     ? 'Speaking'
@@ -274,13 +281,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 alt="Share Icon"
               />
               <Button
-                color="#8B5CF6"
+                color={`${theme.btnColorPrimary}`}
                 fontSize={'14px'}
                 fontWeight={600}
                 width={'100px'}
                 height={'100%'}
                 cursor={'pointer'}
-                border={'1px solid #8B5CF6'}
+                border={`1px solid ${theme.btnOutline}`}
                 borderRadius={'12px'}
                 onClick={isHost ? handleEndSpace : handleLeaveSpace}
               >
@@ -300,13 +307,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             border={'none'}
             borderRadius={'8px'}
             cursor={'pointer'}
-            background={
-              'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%), linear-gradient(87.17deg, #EA4E93 0%, #DB2777 0.01%, #9963F7 100%), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 50.52%, #FFDED3 100%, #FFCFC5 100%), linear-gradient(0deg, #8B5CF6, #8B5CF6), linear-gradient(87.17deg, #B6A0F5 0%, #F46EF7 57.29%, #FF95D5 100%), #FFFFFF'
-            }
+            background={`${theme.titleBg}`}
             onClick={handleJoinSpace}
           >
             <Text
-              color="white"
+              color={`${theme.titleTextColor}`}
               fontSize={'16px'}
               fontWeight={'600'}
               display="flex"
@@ -322,7 +327,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           />
         ) : null}
       </Item>
-    </>
+    </ThemeProvider>
   );
 };
 

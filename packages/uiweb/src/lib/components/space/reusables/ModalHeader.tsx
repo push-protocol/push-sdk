@@ -25,7 +25,9 @@ export const ModalHeader = (props: IModalHeaderProps) => {
 
         <CenterText>
           {props.heading}
-          {props.headingBadgeNumber && <NumberBadge>{props.headingBadgeNumber}</NumberBadge>}
+          {props.headingBadgeNumber && (
+            <NumberBadge theme={theme}>{props.headingBadgeNumber}</NumberBadge>
+          )}
         </CenterText>
 
         {props.closeCallback ? (
@@ -45,7 +47,7 @@ const Header = styled.div`
   width: 100%;
 
   margin-bottom: 24px;
-  color: ${props => props.theme.textColorPrimary}
+  color: ${(props) => props.theme.textColorPrimary};
 `;
 
 const BackBtn = styled.button`
@@ -94,7 +96,7 @@ const NumberBadge = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#8B5CF6;
+    background: ${(props) => props.theme.btnColorPrimary};
     color: #fff;
     border-radius: 8px;
     margin-left: 8px;

@@ -4,9 +4,9 @@ import { useSpaceComponents } from './useSpaceComponents';
 export * from './SpaceUITest';
 export * from './SpaceWidget';
 export * from './SpaceFeed';
-export * from "./SpaceBanner";
-export * from "./CreateSpaceComponent";
-export * from "./SpaceInvites";
+export * from './SpaceBanner';
+export * from './CreateSpaceComponent';
+export * from './SpaceInvites';
 
 export interface ISpacesComponentProps {
   children: React.ReactNode;
@@ -18,13 +18,13 @@ export const SpacesComponentProvider = ({
   const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
-    titleBg: 'linear-gradient(45deg, #E165EC 0.01%, #A483ED 100%)',//not changed
+    titleBg: 'linear-gradient(45deg, #E165EC 0.01%, #A483ED 100%)', //not changed
     titleTextColor: '#FFFFFF',
     bgColorPrimary: '#fff',
     bgColorSecondary: '#F7F1FB',
     textColorPrimary: '#000',
     textColorSecondary: '#657795',
-    textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)',//not changed
+    textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)', //not changed
     btnColorPrimary: '#D53A94',
     btnOutline: '#D53A94',
     borderColor: '#FFFF',
@@ -36,7 +36,8 @@ export const SpacesComponentProvider = ({
   };
 
   const customDarkTheme = {
-    titleBg: 'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
+    titleBg:
+      'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
     titleTextColor: '#fff',
     bgColorPrimary: '#000',
     bgColorSecondary: '#292344',
