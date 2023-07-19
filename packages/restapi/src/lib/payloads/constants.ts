@@ -78,4 +78,11 @@ export enum SPACE_INVITE_ROLES {
   SPEAKER,
 }
 
+export enum SPACE_ROLES {
+  HOST,
+  CO_HOST,
+  SPEAKER,
+  LISTENER
+}
+
 export const DEFAULT_DOMAIN = 'push.org';

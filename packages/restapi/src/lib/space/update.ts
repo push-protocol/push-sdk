@@ -63,7 +63,10 @@ export async function update(
     });
 
     // update space specific data
-    this.setSpaceSpecificData(() => groupDtoToSpaceDto(group));
+    this.setSpaceSpecificData(() => ({
+      ...groupDtoToSpaceDto(group),
+      liveSpaceData: this.spaceSpecificData.liveSpaceData,
+    }));
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${update.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${update.name} -: ${err}`);
