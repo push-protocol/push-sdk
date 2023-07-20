@@ -22,7 +22,7 @@ export const spaceFeed = async (options: {
   const recipientWallet = await getUserDID(recipient, env);
   if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chat/${recipientWallet}`;
+  const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/space/${recipientWallet}`;
   try {
     const response = await axios.get(apiEndpoint);
     // If no chat between users, then returns {}
