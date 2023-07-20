@@ -20,6 +20,7 @@ import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
+import { pCAIP10ToWallet } from '../../../helpers';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -193,8 +194,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             ?.slice(1)
             .map((profile) => (
               <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
+                isHost={
+                  profile?.address ===
+                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                }
+                isSpeaker={
+                  profile?.address !==
+                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                }
                 wallet={profile?.address}
                 image={createBlockie?.(profile?.address)
                   ?.toDataURL()
@@ -209,8 +216,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           spaceObjectData?.members.map((profile) => (
             <div onClick={handleDDState} style={{ position: 'relative' }}>
               <LiveSpaceProfileContainer
-                isHost={isHost}
-                isSpeaker={isSpeaker}
+                isHost={
+                  profile?.wallet ===
+                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                }
+                isSpeaker={
+                  profile?.wallet !==
+                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                }
                 wallet={profile?.wallet}
                 image={profile?.image}
               />
