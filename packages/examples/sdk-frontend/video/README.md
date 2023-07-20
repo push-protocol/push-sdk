@@ -8,11 +8,13 @@ This example is a valuable resource for any developer looking to integrate Push 
 
 The `sdk-frontend/video` project provides a practical demonstration of how to set up and configure the EPNS in a frontend application, including how to handle video notifications and communicate with the blockchain.
 
-## Testing the app
+## Steps to test the app!
 
 This is a step-by-step guide that will walk you through the process of setting up and testing a video call using the Push Video SDK.
 
-Here are the steps you'll need to follow:
+For further reference and a more in-depth tutorial, refer to our [Official Documentation!](https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-video).
+
+Here are the steps in brief you'll need to follow:
 
 ## - Initialization of the Push Video Class
 
@@ -48,24 +50,31 @@ const videoObject = new PushAPI.video.Video({
 
 ## - Fire Video Call Request 
 
-Fire a video call request and trigger the set video call function (`setRequestVideoCall`).
+We are now ready to request/initiate a video call. As the name suggests, this will be done on the initiator's end.
+```javascript
+await videoObject.request({
+  senderAddress: string;
+  recipientAddress: string;
+  chatId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+});
+```
 
 ## - Checking Local Stream and Setting Push Sockets
 
 Check if a local stream is present, then set up Push Sockets for receiving the video call request by using the `usePushSocket` hook.
+In order to receive a video call request, we need to listen for the USER_FEEDS event from @pushprotocol/socket and use the following code inside of the event listener:
+To receive a video call notification, check whether the `additionalMeta` type is `push video call` or not. 
 
-## - Receiving Video Call Notification
-
-To receive a video call notification, check whether the `additionalMeta` type is `push video call` or not.
+[Refer to this link for the code snippet](https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-video/start-a-video-call#receiving-a-request-in-sockets)  
 
 
 
-## - Video Explanation 
+
+## Video Explanation 
 
 For a more in-depth explanation and walkthrough, you can refer to the [video tutorial](INSERT_VIDEO_LINK_HERE) that covers the whole repository in detail.
-
-For further reference and a more in-depth tutorial, refer to our [official documentation](https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-video).
-
 
 
 ## Getting Started
