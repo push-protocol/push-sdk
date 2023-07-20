@@ -55,6 +55,7 @@ export const initVideoCallData: VideoCallData = {
     video: null,
     address: '',
   },
+  // TODO: Remove the default element in incoming array
   incoming: [
     {
       stream: null,
@@ -754,6 +755,8 @@ export class Video {
     const { peerAddress, details } = options || {};
 
     try {
+      console.log("DISCONNECT OPTIONS", options);
+
       const incomingIndex = getIncomingIndexFromAddress(
         this.data.incoming,
         peerAddress

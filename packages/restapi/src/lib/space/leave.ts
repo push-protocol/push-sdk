@@ -10,7 +10,7 @@ export async function leave(this: Space): Promise<void> {
     // handle the case where a listner is leaving
 
     // disconnect with every incoming peer in the mesh connection
-    this.data.incoming.forEach(({ address }) => {
+    this.data.incoming.slice(1).forEach(({ address }) => {
       this.disconnect({
         peerAddress: address,
         details: {
