@@ -1,5 +1,15 @@
-This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](https://github.com/rainbow-me/rainbowkit/tree/main/packages/create-rainbowkit).
+# SDK Frontend Examples
 
+Welcome to the SDK Frontend Examples project, a practical guide showcasing how to harness the potential of the Push Protocol in a frontend environment. This resource is highly beneficial for developers who are keen on incorporating Push Protocol into their frontend services. By exploring the code, you'll gain a profound understanding of how to implement various features of the Push Protocol in a frontend context.
+
+## Overview
+
+The `sdk-frontend-examples` project offers hands-on demonstrations on how to set up and configure the Push Protocol in a frontend application. It also guides you through the management of real-time communications and interfacing with blockchain technologies. This project includes essential examples related to:
+
+- Push Video
+- Push Spaces
+
+Through these examples, you'll comprehend how these features can be effectively implemented and integrated using the Push Protocol. By tinkering with the provided samples, you'll get a solid foundation for developing robust frontend applications powered by the Push Protocol.
 ## Getting Started
 
 First, install the dependencies:
@@ -26,9 +36,3 @@ To learn more about this stack, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - Learn how to build a Next.js application.
 
 You can check out [the RainbowKit GitHub repository](https://github.com/rainbow-me/rainbowkit) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
