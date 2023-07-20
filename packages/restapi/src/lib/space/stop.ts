@@ -59,7 +59,7 @@ export async function stop(this: Space): Promise<void> {
       - disconnect with every incoming peer in the mesh connection
       - other peers should also end their connections as we want to destroy the mesh connection
     */
-    this.data.incoming.forEach(({ address }) => {
+    this.data.incoming.slice(1).forEach(({ address }) => {
       this.disconnect({
         peerAddress: address,
         details: {

@@ -85,6 +85,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     spacesObjectRef.current = null;
     setSpaceObjectData?.(PushAPI.space.initSpaceData);
     setSpaceStatusState?.(SpaceStatus.Ended);
+    setIsLoading(false);
   };
 
   const handleLeaveSpace = async () => {
@@ -99,6 +100,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       spacesObjectRef.current = null;
       setSpaceObjectData?.(PushAPI.space.initSpaceData);
     }
+    setIsLoading(false);
   };
 
   // for listener
