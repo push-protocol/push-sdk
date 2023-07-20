@@ -15,7 +15,6 @@ export interface ISpacesComponentProps {
 export const SpacesComponentProvider = ({
   children,
 }: ISpacesComponentProps) => {
-  const { spaceUI } = useSpaceComponents();
 
   const customtheme = {
     titleBg: 'linear-gradient(45deg, #E165EC 0.01%, #A483ED 100%)', //not changed
@@ -55,8 +54,9 @@ export const SpacesComponentProvider = ({
   };
 
   return (
-    <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
-      {children}
-    </SpacesUIProvider>
+    // <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
+    //   {children}
+    // </SpacesUIProvider>
+    <></>
   );
 };

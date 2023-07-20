@@ -24,6 +24,12 @@ import {
 import { spaceChainId } from '../components/space/helpers/account';
 import { walletToPCAIP10 } from '../helpers';
 
+export enum FeedTabs {
+  ForYou = 'For You',
+  Popular = 'Popular',
+  HostedByYou = 'Hosted by you',
+}
+
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
   theme: ISpacesTheme;
@@ -46,6 +52,7 @@ export const SpacesUIProvider = ({
     spaceChainId(spaceUI.account, spaceUI.env)
   );
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
+  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(FeedTabs['Popular']);
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
@@ -164,7 +171,6 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
@@ -176,7 +182,6 @@ export const SpacesUIProvider = ({
         } else {
           updatedApiData = uniqueSpaces;
         }
-        console.log("Updated Spaces", updatedApiData);
         return {
           ...prevState,
           ...(updatedApiData.length > 0 && {
@@ -201,7 +206,6 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
@@ -213,7 +217,6 @@ export const SpacesUIProvider = ({
         } else {
           updatedApiData = uniqueSpaces;
         }
-        console.log("Updated Spaces", updatedApiData);
         return {
           ...prevState,
           ...(updatedApiData.length > 0 && {
@@ -238,7 +241,6 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
@@ -250,7 +252,6 @@ export const SpacesUIProvider = ({
         } else {
           updatedApiData = uniqueSpaces;
         }
-        console.log("Updated Spaces", updatedApiData);
         return {
           ...prevState,
           ...(updatedApiData.length > 0 && {
@@ -322,6 +323,8 @@ export const SpacesUIProvider = ({
     getSpaceInfo,
     spaceWidgetId,
     setSpaceWidgetId,
+    selectedFeedTab,
+    setSelectedFeedTab,
     mySpaces,
     setMySpaces: setMySpacePaginationInfo,
     popularSpaces,
@@ -356,11 +359,6 @@ export const SpacesUIProvider = ({
       currentPage: 1,
       lastPage: 2,
     } as ISpacePaginationData);
-    setPopularSpaces({
-      apiData: [] as SpaceIFeeds[],
-      currentPage: 1,
-      lastPage: 2,
-    } as ISpacePaginationData);
   };
 
   useEffect(() => {
@@ -372,7 +370,8 @@ export const SpacesUIProvider = ({
 
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
-  }, [spaceUI]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceUI.account, spaceUI.env, spaceUI.pgpPrivateKey, spaceUI.signer]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 

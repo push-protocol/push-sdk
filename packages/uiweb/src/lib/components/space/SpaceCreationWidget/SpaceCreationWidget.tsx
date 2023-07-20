@@ -35,7 +35,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         time: Date.now(),
     })
 
-    const { signer, env, account } = useSpaceData();
+    const { signer, env, account, pgpPrivateKey } = useSpaceData();
 
     usePushSpaceSocket({ account, env });
 
@@ -112,7 +112,8 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
             isPublic: true,
             scheduleAt: spaceState.time > Date.now() ? new Date(spaceState.time) : new Date(Date.now() + 120000),
             signer: signer as PushAPI.SignerType,
-            env
+            env,
+            ...(pgpPrivateKey && pgpPrivateKey !== '' && { pgpPrivateKey }), // Conditionally add pgpPrivateKey
         }
 
         try {

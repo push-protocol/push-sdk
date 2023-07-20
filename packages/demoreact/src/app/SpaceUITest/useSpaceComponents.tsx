@@ -10,7 +10,6 @@ import React, { useContext } from 'react';
 import { AccountContext, EnvContext, Web3Context } from '../context';
 
 export interface IUseSpaceReturnValues {
-  spaceUI: SpacesUI;
   SpaceInvitesComponent: React.FC<ISpaceInvitesProps>;
   SpaceWidgetComponent: React.FC<ISpaceWidgetProps>;
   SpaceFeedComponent: React.FC<ISpaceFeedProps>;
@@ -25,14 +24,13 @@ export const useSpaceComponents = (): IUseSpaceReturnValues => {
   const librarySigner = library?.getSigner();
 
   const spaceUI = new SpacesUI({
-    account: account,
+    account: account as string,
     signer: librarySigner,
     pgpPrivateKey: pgpPrivateKey,
     env: env,
   });
 
   return {
-    spaceUI,
     SpaceInvitesComponent: spaceUI.SpaceInvites,
     SpaceWidgetComponent: spaceUI.SpaceWidget,
     SpaceBannerComponent: spaceUI.SpaceBanner,

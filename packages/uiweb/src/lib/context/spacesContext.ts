@@ -3,6 +3,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 import { SignerType } from '../types';
 import { ENV } from '../config';
+import { FeedTabs } from '../components/space/SpaceFeed';
 
 export interface ISpaceInfo {
   [key: string]: SpaceDTO;
@@ -36,6 +37,8 @@ export interface ISpaceDataContextValues {
   setEnv: React.Dispatch<React.SetStateAction<ENV>>;
   chainId: number;
   setChainId: React.Dispatch<React.SetStateAction<number>>;
+  selectedFeedTab: FeedTabs;
+  setSelectedFeedTab: React.Dispatch<React.SetStateAction<FeedTabs>>;
   trendingListData: any;
   setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
   spaceInfo: ISpaceInfo;
@@ -88,6 +91,10 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   trendingListData: null,
   setTrendingListData: () => {
     /**/
+  },
+  selectedFeedTab: "Popular" as FeedTabs,
+  setSelectedFeedTab: () => {
+    /** */
   },
   spaceInfo: {} as ISpaceInfo,
   setSpaceInfo: () => {

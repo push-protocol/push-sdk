@@ -32,7 +32,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 
     const [isLoading, setLoading] = useState(false);
 
-    const { signer, env } = useSpaceData();
+    const { signer, env, pgpPrivateKey } = useSpaceData();
 
     const customStyle = {
         color: theme?.textColorPrimary,
@@ -65,6 +65,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             env,
             spaceId: spaceData?.spaceId,
             status: spaceData?.status,
+            ...(pgpPrivateKey && pgpPrivateKey !== '' && { pgpPrivateKey }), // Conditionally add pgpPrivateKey
         }
 
         try {

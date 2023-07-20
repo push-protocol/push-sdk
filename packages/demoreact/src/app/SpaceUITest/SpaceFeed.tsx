@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useSpaceComponents } from './useSpaceComponents';
 import { Checkbox } from '../components/Checkbox';
+import { AccountContext } from '../context';
 
 export const SpaceFeed = () => {
   const { SpaceFeedComponent } = useSpaceComponents();
@@ -10,6 +11,7 @@ export const SpaceFeed = () => {
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>(500);
   const [sortingOrder, setSortingOrder] = useState<string[]>([]);
+  const { setSpaceId } = useContext<any>(AccountContext);
 
   const handleShowTab = () => {
     setShowTab(!showTab);
@@ -78,6 +80,7 @@ export const SpaceFeed = () => {
         height={height}
         onBannerClickHandler={(spaceId: string) => {
           console.log('spaceId: ', spaceId);
+          setSpaceId(spaceId);
         }}
       />
     </>

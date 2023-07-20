@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
@@ -55,7 +55,6 @@ import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 import SpaceUITest from './SpaceUITest/SpaceUITest';
 import {
-  SpacesComponentProvider,
   SpaceWidget,
   SpaceBanner,
   SpaceFeed,
@@ -65,6 +64,7 @@ import {
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import * as PushAPI from "@pushprotocol/restapi";
 import { ChatWidgetTest } from './ChatWidgetTest';
+import { SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -148,6 +148,43 @@ const NavMenu = styled.div`
   }
 `;
 
+const customtheme = {
+  titleBg: 'linear-gradient(45deg, #E165EC 0.01%, #A483ED 100%)', //not changed
+  titleTextColor: '#FFFFFF',
+  bgColorPrimary: '#fff',
+  bgColorSecondary: '#F7F1FB',
+  textColorPrimary: '#000',
+  textColorSecondary: '#657795',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)', //not changed
+  btnColorPrimary: '#D53A94',
+  btnOutline: '#D53A94',
+  borderColor: '#FFFF',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#82828A',
+};
+
+const customDarkTheme = {
+  titleBg:
+    'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
+  titleTextColor: '#fff',
+  bgColorPrimary: '#000',
+  bgColorSecondary: '#292344',
+  textColorPrimary: '#fff',
+  textColorSecondary: '#71717A',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)',
+  btnColorPrimary: '#8B5CF6',
+  btnOutline: '#8B5CF6',
+  borderColor: '#3F3F46',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#71717A',
+};
+
 const checkForWeb3Data = ({
   library,
   active,
@@ -160,7 +197,7 @@ const checkForWeb3Data = ({
 export function App() {
   const {account, library, active, chainId} = useWeb3React();
 
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+  const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const { SpaceWidgetComponent } = useSpaceComponents();
@@ -202,6 +239,13 @@ export function App() {
     })();
   }, [account, env, library]);
 
+  const spaceUI = useMemo(() => new SpacesUI({
+    account: account as string,
+    signer: library?.getSigner(),
+    pgpPrivateKey: pgpPrivateKey,
+    env: env,
+  }), [account, library, pgpPrivateKey, env]);
+
   return (
     <StyledApp>
       <Link className="homeLink" to="/">
@@ -238,8 +282,8 @@ export function App() {
         }) ? (
           <Web3Context.Provider value={{account, active, library, chainId}}>
             <SocketContext.Provider value={socketData}>
-              <AccountContext.Provider value={{pgpPrivateKey}}>
-              <SpacesComponentProvider>
+              <AccountContext.Provider value={{pgpPrivateKey, setSpaceId}}>
+              <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                 <Routes>
                   <Route
                     path="/"
@@ -392,7 +436,7 @@ export function App() {
                {/* <ChatWidgetTest/> */}
                <ChatWidgetTest/>
                 <SpaceWidgetComponent spaceId={spaceId} />
-              </SpacesComponentProvider>
+              </SpacesUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>

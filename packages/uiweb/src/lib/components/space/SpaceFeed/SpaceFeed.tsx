@@ -25,13 +25,13 @@ enum OrientationEnums {
   Vertical = 'vertical',
 }
 
-export enum Tabs {
+export enum FeedTabs {
   ForYou = 'For You',
   Popular = 'Popular',
   HostedByYou = 'Hosted by you',
 }
 
-type TabsValues = keyof typeof Tabs;
+type TabsValues = keyof typeof FeedTabs;
 
 enum FilterEnums {
   All = 'All',
@@ -60,8 +60,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   onBannerClickHandler,
 }) => {
   const theme = useContext(ThemeContext);
-  const [tab, setTab] = useState<Tabs>(Tabs[sortingOrder[0]]);
   const [filterTab, setFilterTab] = useState(filter);
+  const { selectedFeedTab, setSelectedFeedTab } = useSpaceData();
 
   const {
     account,
@@ -77,10 +77,6 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   usePushSpaceSocket({ account, env });
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
-
-  const handleTabChange = (tab: Tabs) => {
-    setTab(tab);
-  };
 
   const handleFilterData = (spacesList: SpaceIFeeds[]) => {
     if (filterTab === FilterEnums.All) {
@@ -99,14 +95,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   const handleMySpacesFilter = (spacesList: SpaceIFeeds[]) => {
-    if (tab === Tabs.HostedByYou) {
+    if (selectedFeedTab === FeedTabs.HostedByYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
           space.spaceInformation?.spaceCreator.toUpperCase() ===
           account?.toUpperCase()
       );
     }
-    if (tab === Tabs.ForYou) {
+    if (selectedFeedTab === FeedTabs.ForYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
           space.spaceInformation?.spaceCreator.toUpperCase() !==
@@ -155,18 +151,16 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   const loadMoreData = async () => {
-    if (tab === Tabs.ForYou) {
+    if (selectedFeedTab === FeedTabs.ForYou) {
       incrementSpacePage(mySpaces);
     }
-    if (tab === Tabs.Popular) {
+    if (selectedFeedTab === FeedTabs.Popular) {
       incrementSpacePage(popularSpaces);
     }
-    if (tab === Tabs.HostedByYou) {
+    if (selectedFeedTab === FeedTabs.HostedByYou) {
       incrementSpacePage(spaceRequests);
     }
   };
-
-  console.log(account);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -194,6 +188,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         style={{
           background: theme.bgColorPrimary,
           color: theme.textColorPrimary,
+          padding: "10px",
         }}
       >
       {orientation === OrientationEnums.Horizontal ? (
@@ -231,10 +226,10 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               {sortingOrder.map((tabName: TabsValues) => {
                 return (
                   <NavButton
-                    active={tab === Tabs[tabName]}
-                    onClick={() => handleTabChange(Tabs[tabName])}
+                    active={selectedFeedTab === FeedTabs[tabName]}
+                    onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
                   >
-                    {Tabs[tabName]}
+                    {FeedTabs[tabName]}
                   </NavButton>
                 );
               })}
@@ -267,7 +262,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
               onScroll={onScroll}
             >
               <Container>
-                {tab === Tabs.ForYou ? (
+                {selectedFeedTab === FeedTabs.ForYou ? (
                   <Spaces orientation={orientation}>
                     {mySpaces.apiData &&
                       (handleFilterData(
@@ -298,9 +293,8 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                         })
                       ))}
                   </Spaces>
-                ) : tab === Tabs.Popular ? (
+                ) : selectedFeedTab === FeedTabs.Popular ? (
                   <PopularSpaces>
-                    <Text>Popular Spaces</Text>
                     {popularSpaces.apiData &&
                       handleFilterData(
                         popularSpaces.apiData as SpaceIFeeds[]
