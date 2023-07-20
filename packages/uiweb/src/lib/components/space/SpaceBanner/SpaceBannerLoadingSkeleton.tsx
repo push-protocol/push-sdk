@@ -33,6 +33,7 @@ const SkeletonContainer = styled.div`
   border-radius: 17px;
   border: 1px solid lightgrey;
   position: relative;
+  width: inherit;
 
   &:after {
     content: '';

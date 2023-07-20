@@ -55,7 +55,7 @@ export const runSpacesUseCases = async (): Promise < void > => {
     ╚════██║██╔═══╝ ██╔══██║██║     ██╔══╝  ╚════██║
     ███████║██║     ██║  ██║╚██████╗███████╗███████║
     ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
-                                                    
+
     `)
 
     console.log('PushAPI.user.create');

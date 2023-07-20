@@ -36,7 +36,7 @@ const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) =
 export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
     const theme = useContext(ThemeContext)
     return (
-        <ModalOverlay>
+        <ModalOverlay theme={theme}>
         {clickawayClose ? (
             <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>{children}</ClickawayCloseModal>
         ) : (
@@ -53,7 +53,7 @@ export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
 
 /* styling */
 
-const ModalOverlay = styled.div`
+const ModalOverlay = styled.div<IModalProps>`
     position: fixed;
     top: 0;
     left: 0;
@@ -61,8 +61,10 @@ const ModalOverlay = styled.div`
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
     display: flex;
+    color: ${props => props.theme.textColorPrimary ?? '#000'};
     justify-content: center;
     align-items: center;
+    z-index: 10;
 `;
 
 const ModalParent = styled.div<IModalProps>`

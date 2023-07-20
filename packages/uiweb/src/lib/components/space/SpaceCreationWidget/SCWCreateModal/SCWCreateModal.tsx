@@ -1,5 +1,5 @@
-import React, { MouseEventHandler } from 'react'
-import styled from 'styled-components'
+import React, { MouseEventHandler, useContext } from 'react'
+import styled, { ThemeProvider } from 'styled-components'
 
 import { Modal } from '../../reusables/Modal'
 import { Button } from '../../reusables/Button';
@@ -7,6 +7,7 @@ import { ModalHeader } from '../../reusables/ModalHeader';
 import { TextInputWithCounter } from '../../reusables/TextInput';
 
 import { CalendarPurple } from '../../../../icons/CalendarPurple';
+import { ThemeContext } from '../../theme/ThemeProvider';
 
 export interface ISCWCModalProps { // Space Creation Widget Create Modal Interface
     isInviteVisible?: any;
@@ -21,7 +22,8 @@ export interface ISCWCModalProps { // Space Creation Widget Create Modal Interfa
 }
 
 export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
-    const { 
+    const theme = useContext(ThemeContext);
+    const {
         isInviteVisible, closeCreateModal, handleNameChange,
         handleDescriptionChange, nameValue, descriptionValue,
         isDescriptionEnabled, isScheduleVisible, onClose,
@@ -29,10 +31,11 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
 
     const secBtn = {
         background: 'transparent',
-        borderColor: '#8b5cf6'
+        borderColor: theme.btnOutline
     }
 
     return (
+      <ThemeProvider theme={theme}>
             <Modal
                 clickawayClose={onClose}
             >
@@ -74,11 +77,12 @@ export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
                             customStyle={secBtn}
                             onClick={isScheduleVisible}
                         >
-                            <CalendarPurple height='20' width='20' />
+                            <CalendarPurple height='20' width='20' color={theme.btnColorPrimary} />
                         </Button>
                     </div>
                 </ButtonContainer>
             </Modal>
+          </ThemeProvider>
     )
 }
 

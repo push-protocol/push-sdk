@@ -1,3 +1,5 @@
+export * from './helpers/getPlainAddress';
+
 export * from './spaces';
 export * from './trending';
 export * from './get';

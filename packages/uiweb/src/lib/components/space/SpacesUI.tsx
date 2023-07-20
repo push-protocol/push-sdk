@@ -4,7 +4,8 @@ import { ISpaceBannerProps, SpaceBanner } from './SpaceBanner';
 import { SpaceWidget } from './SpaceWidget';
 import { ISpaceFeedProps, SpaceFeed } from './SpaceFeed';
 import { ISpaceInvitesProps, SpaceInvites } from './SpaceInvites';
-import { SpaceCreationWidget } from './SpaceCreationWidget';
+import { ISpaceCreateWidgetProps, SpaceCreationWidget } from './SpaceCreationWidget';
+import { ICustomSearchResult } from './SpaceCreationWidget/SCWInviteModal';
 
 import { SignerType } from '../../types';
 import { ENV } from '../../config';
@@ -16,12 +17,14 @@ export class SpacesUI {
   public signer: SignerType;
   public pgpPrivateKey: string;
   public env: ENV;
+  public customSearch: ICustomSearchResult | undefined;
 
   constructor(props: ISpacesUIProps) {
     this.account = props.account;
     this.signer = props.signer;
     this.pgpPrivateKey = props.pgpPrivateKey;
     this.env = props.env;
+    this.customSearch = props.customSearch;
   }
 
   SpaceBanner: React.FC<ISpaceBannerProps> = (options: ISpaceBannerProps) => {
@@ -40,11 +43,11 @@ export class SpacesUI {
     useEffect(() => {
       setSpaceId(spaceId);
     }, [spaceId, setSpaceId]);
-    
+
     useEffect(() => {
-      setSpaceId(spaceWidgetId);
-    }, [spaceWidgetId, setSpaceId]);
-    
+      if (spaceWidgetId) setSpaceId(spaceWidgetId);
+    }, [spaceWidgetId]);
+
     return <SpaceWidget {...options} spaceId={SpaceId} />;
   }
 
@@ -56,8 +59,8 @@ export class SpacesUI {
     return <SpaceInvites {...options} />;
   };
 
-  SpaceCreationButtonWidget = () => {
-    return <SpaceCreationWidget />
+  SpaceCreationButtonWidget = (options: ISpaceCreateWidgetProps) => {
+    return <SpaceCreationWidget  {...options} />
   }
 
   connectToSockets = () => {

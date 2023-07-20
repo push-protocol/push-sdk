@@ -1,67 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useEffect, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 import { Modal } from '../reusables/Modal';
 import { Spinner } from '../reusables/Spinner';
 import { ModalHeader } from '../reusables/ModalHeader';
-import { useFeedScroll, useSpaceData, useSpaceRequests } from '../../../hooks';
+import {
+  useFeedScroll,
+  useSpaceData,
+  useSpaceRequests,
+  usePushSpaceSocket,
+} from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
+
+import { ISpacesTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface ISpaceInvitesProps {
   children?: React.ReactNode;
+  actionCallback?: any;
+  onBannerClickHandler?: (arg: string) => void;
 }
 
-// temp
-let spaceId = "";
+interface IThemeProps {
+  theme?: ISpacesTheme;
+}
 
 export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
   children,
+  actionCallback,
+  onBannerClickHandler,
 }: ISpaceInvitesProps) => {
+  const theme = useContext(ThemeContext);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { spaceRequests, setSpaceRequests } = useSpaceData();
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
-  const [playBackUrl, setPlayBackUrl] = useState<string>('');
-  const {
-    spacesObjectRef,
-    spaceObjectData,
-    initSpaceObject,
-    setSpaceWidgetId,
-    isSpeaker,
-    isListener,
-    account,
-  } = useSpaceData();
+  const { account, env } = useSpaceData();
 
-  const handleJoinSpace = async (space: any) => {
-    await initSpaceObject(space?.spaceId as string);
-
-    if (isSpeaker) {
-      // create audio stream
-      await spacesObjectRef.current.createAudioStream();
-      spaceId = space?.spaceId; // temp
-    }
-    if (isListener) {
-      await spacesObjectRef?.current?.join();
-      const playBackUrl = spaceObjectData.spaceDescription;
-      setPlayBackUrl(playBackUrl);
-      handleCloseModal();
-      setSpaceWidgetId(space?.spaceId as string);
-      console.log('space joined');
-    }
-  };
-
-  useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
-    const joinSpaceAsSpeaker = async () => {
-      console.log('joining as a speaker');
-      await spacesObjectRef?.current?.join();
-      setSpaceWidgetId(spaceId);
-      console.log('space joined');
-      handleCloseModal();
-    };
-    joinSpaceAsSpeaker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceObjectData?.connectionData?.local.stream]);
+  usePushSpaceSocket({ account, env });
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -71,6 +47,20 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
     setModalOpen(false);
   };
 
+  const handleCustomClose = () => {
+    if (actionCallback) {
+      actionCallback();
+    }
+
+    setModalOpen(false);
+  };
+
+  const handleClick = (spaceId: string) => {
+    if (onBannerClickHandler) {
+      return onBannerClickHandler(spaceId || '');
+    }
+  };
+
   const loadMoreData = () => {
     if (
       loading === false &&
@@ -78,7 +68,6 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
       spaceRequests.lastPage &&
       spaceRequests.currentPage < spaceRequests.lastPage
     ) {
-      console.log('Load More Data');
       setSpaceRequests({
         currentPage: spaceRequests.currentPage + 1,
         lastPage: spaceRequests.lastPage + 1,
@@ -97,7 +86,7 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const { loading } = useSpaceRequests(account);
   return (
-    <>
+    <ThemeProvider theme={theme}>
       {!children && <Button onClick={handleOpenModal}>Space Invites</Button>}
 
       {children && <div onClick={handleOpenModal}>{children}</div>}
@@ -122,7 +111,10 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
                         spaceId={space.spaceId}
                         orientation="maximized"
                         isInvite={true}
-                        onJoin={() => handleJoinSpace(space)}
+                        actionCallback={handleCustomClose}
+                        onBannerClick={
+                          onBannerClickHandler ? handleClick : undefined
+                        }
                       />
                     );
                   })
@@ -132,20 +124,20 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
           </ScrollContainer>
         </Modal>
       )}
-    </>
+    </ThemeProvider>
   );
 };
 
-const Button = styled.button`
+const Button = styled.button<IThemeProps>`
   padding: 8px 16px;
-  background-color: #8b5cf6;
-  color: #fff;
+  background-color: ${(props) => props.theme.btnColorPrimary};
+  color: ${(props) => props.theme.textColorPrimary};
   border: none;
   border-radius: 4px;
   cursor: pointer;
 `;
 
-const ScrollContainer = styled.div`
+const ScrollContainer = styled.div<IThemeProps>`
   max-height: 400px;
   width: inherit;
   margin-top: 24px;
@@ -161,12 +153,12 @@ const ScrollContainer = styled.div`
     -webkit-appearance: none;
     width: 4px;
     height: auto;
-    background: #8b5cf6;
+    background: ${(props) => props.theme.btnColorPrimary};
     border-radius: 99px;
   }
 `;
 
-const InviteContainer = styled.div`
+const InviteContainer = styled.div<IThemeProps>`
   display: flex;
   flex-direction: column;
   gap: 16px;

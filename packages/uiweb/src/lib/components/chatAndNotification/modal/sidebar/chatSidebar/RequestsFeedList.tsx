@@ -76,7 +76,7 @@ export const RequestsFeedList = () => {
     justifyContent="start"
     width='100%'
     flexDirection="column"
-    
+
   >
     {(!loading || paginateLoading) && Object.keys(requestsFeed || {}).length ? (
       <ChatList chatsFeed={requestsFeed} />

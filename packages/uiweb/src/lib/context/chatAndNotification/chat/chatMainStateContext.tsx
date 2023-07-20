@@ -54,20 +54,20 @@ const [finishedFetchingRequests,setFinishedFetchingRequests] = useState<boolean>
     setChatsFeed(prevChatsFeed => ({
       [id]: newChatFeed ,
         ...prevChatsFeed,
-       
+
     }));
  }
  const setRequestFeed = (id: string,newRequestFeed:IFeeds) => {
     setRequestsFeed(prevRequestsFeed => ({
       [id]: newRequestFeed ,
         ...prevRequestsFeed,
-   
+
     }));
  }
  const setWeb3Name = (id: string,web3Name:string) => {
   setWeb3NameList(prev => ({
       ...prev,
-      [id]: web3Name 
+      [id]: web3Name
   }));
 }
 
@@ -80,7 +80,7 @@ const [finishedFetchingRequests,setFinishedFetchingRequests] = useState<boolean>
 
   return (
 
-    <ChatMainStateContext.Provider value={{ 
+    <ChatMainStateContext.Provider value={{
         chatsFeed,
         requestsFeed,
         setRequestFeed,

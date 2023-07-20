@@ -1,12 +1,35 @@
 import { ethers } from 'ethers';
 import type { Web3Provider } from '@ethersproject/providers';
 
-export const walletToPCAIP10 = (account: string): string => {
-  if (account.includes('eip155:')) {
-    return account;
+/**
+ * 
+ * @param wallet nft:eip155:nftChainId:nftContractAddress:nftTokenId
+ * @returns 
+ */
+export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
+  try {
+    const walletComponent = wallet.split(':');
+    return (
+      (walletComponent.length === 5 || walletComponent.length === 6)&&
+      walletComponent[0].toLowerCase() === 'nft' &&
+      !isNaN(Number(walletComponent[4])) &&
+      Number(walletComponent[4]) > 0 &&
+      !isNaN(Number(walletComponent[2])) &&
+      Number(walletComponent[2]) > 0 &&
+      ethers.utils.isAddress(walletComponent[3]) &&
+      walletComponent[1] === 'eip155'
+    );
+  } catch (err) {
+    return false;
   }
-  return 'eip155:' + account;
 };
+
+export const walletToPCAIP10 = (account:string): string => {
+  if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
+    return account
+  }
+  return 'eip155:' + account
+}
 
 export const pCAIP10ToWallet = (wallet: string): string => {
   if(wallet)

@@ -164,7 +164,7 @@ export const ChatAndNotification = () => {
                 selectedChat = getDefaultFeedObject({ user: result });
               }
             }
-            
+
           }
           setSearchedChats({
             [selectedChat.did.toLowerCase() ?? selectedChat.chatId]: selectedChat,
@@ -189,7 +189,7 @@ export const ChatAndNotification = () => {
     setModalOpen(!modalOpen);
   };
 
- 
+
 
   useEffect(() => {
     const modalElement = modalRef.current;
@@ -213,7 +213,7 @@ export const ChatAndNotification = () => {
       modalElement.removeEventListener('wheel', handleScroll);
     };
   }, []);
-  
+
 
   return (
     <Container
@@ -227,7 +227,7 @@ export const ChatAndNotification = () => {
       className='modal'
       overflow="hidden"
       ref={modalRef}
-    
+
       // onMouseEnter={() => toggleOverflow('hidden')}
       // onMouseLeave={() => toggleOverflow('auto')}
     >
