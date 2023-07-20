@@ -85,7 +85,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     spacesObjectRef.current = null;
     setSpaceObjectData?.(PushAPI.space.initSpaceData);
     setSpaceStatusState?.(SpaceStatus.Ended);
-    window.alert('Space ended');
   };
 
   const handleLeaveSpace = async () => {
@@ -99,7 +98,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     if (isListener) {
       spacesObjectRef.current = null;
       setSpaceObjectData?.(PushAPI.space.initSpaceData);
-      window.alert('Thank you for listening. Bye!');
     }
   };
 

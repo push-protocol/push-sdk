@@ -19,6 +19,7 @@ const getLiveSpaceData = async ({
     await conversationHash({
       account: localAddress,
       conversationId: spaceId,
+      env,
     })
   ).threadHash;
 
