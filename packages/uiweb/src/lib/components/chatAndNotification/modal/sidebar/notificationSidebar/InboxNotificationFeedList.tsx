@@ -28,6 +28,8 @@ export const InboxNotificationFeedList = () => {
     setAllInboxNotifsFeed,
     setSpamNotifsFeed,
     spamNotifsFeed,
+    finishedFetchingInbox,
+    setFinishedFetchingInbox,
   } = useContext<any>(NotificationMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const { account, env } = useContext<any>(ChatAndNotificationPropsContext);
@@ -93,7 +95,7 @@ export const InboxNotificationFeedList = () => {
    
     if (
       !isInViewport1 ||
-      loading 
+      loading || finishedFetchingInbox
       ||
       Object.keys(inboxNotifsFeed).length < notificationLimit
     ) {
@@ -112,7 +114,8 @@ export const InboxNotificationFeedList = () => {
     }
     try {
       setPaginateLoading(true);
-      const feeds = await fetchNotification({ page, limit: notificationLimit });      
+      const feeds = await fetchNotification({ page, limit: notificationLimit });    
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingInbox(true);  
       const newFeed:NotificationFeedsType = {...inboxNotifsFeed,...feeds};
     
       setInboxNotifsFeed(newFeed);
