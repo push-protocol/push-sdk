@@ -15,12 +15,16 @@ export type SDKSpaceNotificationSocketHookOptions = {
   connectSpaceRequest: (
     spaceMetaData: PushAPI.video.VideoDataType
   ) => Promise<void>;
+  broadcastRaisedHand: (
+    spaceMetaData: PushAPI.video.VideoDataType
+  ) => Promise<void>;
 };
 
 export const useSpaceNotificationSocket = ({
   account,
   acceptSpaceRequest,
   connectSpaceRequest,
+  broadcastRaisedHand,
   env = ENV.PROD,
 }: SDKSpaceNotificationSocketHookOptions) => {
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
@@ -74,6 +78,18 @@ export const useSpaceNotificationSocket = ({
           ) {
             acceptSpaceRequest(receivedSpaceMetaData);
           }
+
+          if (
+            callDetails?.type ===
+            PushAPI.payloads.SPACE_REQUEST_TYPE.REQUEST_TO_PROMOTE
+          ) {
+            broadcastRaisedHand(receivedSpaceMetaData);
+
+            // store in context
+            // receivedSpaceMetaData.signalData
+            // receivedSpaceMetaData.senderAddress
+            // receivedSpaceMetaData.chatId
+          }
         }
         if (status === PushAPI.VideoCallStatus.RECEIVED) {
           connectSpaceRequest(receivedSpaceMetaData);
@@ -92,7 +108,7 @@ export const useSpaceNotificationSocket = ({
         }
       }
     });
-  }, [acceptSpaceRequest, connectSpaceRequest, notificationSocket]);
+  }, [acceptSpaceRequest, broadcastRaisedHand, connectSpaceRequest, notificationSocket]);
 
   const removeSocketEvents = useCallback(() => {
     notificationSocket?.off(EVENTS.CONNECT);

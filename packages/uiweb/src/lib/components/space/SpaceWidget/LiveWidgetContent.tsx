@@ -20,6 +20,7 @@ import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
+import { pCAIP10ToWallet } from '../../../helpers';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -64,6 +65,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
+  const handleRequest = async () => {
+    await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+  }
+
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
   };
@@ -78,6 +83,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await initSpaceObject(spaceData?.spaceId as string);
     // useEffects below will handle the rest
   };
+
+  // handleAcceptPromoReq {
+    // btn click on accept
+    // call create audio stream
+    // await spacesObjectRef?.current?.createAudioStream?.();
+
+    // new useEffect to call acceptPromote (join speker like)
+  // }
 
   const handleEndSpace = async () => {
     if (!spacesObjectRef?.current) return;
@@ -215,11 +228,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 image={profile?.image}
               />
 
-              {isDDOpen ? (
+              {/* {isDDOpen ? (
                 <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
                   <DDItem>Invite to Speak</DDItem>
                 </DropDown>
-              ) : null}
+              ) : null} */}
             </div>
           ))}
       </Item>
@@ -238,7 +251,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
+              onClick={() => (isHost || isSpeaker ? handleMicState() : handleRequest())}
             >
               <Image
                 width={'14px'}
@@ -324,6 +337,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {showMembersModal ? (
           <SpaceMembersSectionModal
             onClose={() => setShowMembersModal(false)}
+            spaceData={spaceObjectData}
           />
         ) : null}
       </Item>

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import { Modal } from '../reusables/Modal';
@@ -7,6 +7,9 @@ import { ProfileContainer } from '../reusables/ProfileContainer';
 
 import { Button, Container, Image, Text } from '../../../config';
 import SettingsIcon from '../../../icons/settingsBlack.svg';
+import { SettingsLogo } from '../../../icons/SettingsLogo';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { createBlockie } from '../helpers/blockies';
 
 const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
 const Requests: React.FC = () => {
@@ -28,44 +31,34 @@ const Requests: React.FC = () => {
   )
 }
 
-const Speakers: React.FC = () => {
+const Speakers = (props: any) => {
+  const { members, theme } = props;
+
   return (
-    <Container>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-    </Container>
+    <MembersContainer>
+      {members.map((item: any) => {
+        return <ProfileContainer
+        handle={item.wallet.substring(7)}
+        name={item.wallet.substring(7)}
+        imageUrl={item.image}
+        imageHeight='48px'
+        contBtn={
+          <SettingsCont>
+            <SettingsLogo color={theme.textColorPrimary} />
+          </SettingsCont>
+      }
+      // removeCallback={() => handleDeleteInvitedAdmin(item)}
+      // promoteCallback={() => handlePromoteToAdmin(item)}
+      border
+    />
+      })}
+    </MembersContainer>
   )
 }
 
-const CoHosts: React.FC = () => {
+const CoHosts = (props: any) => {
+  const { members } = props;
+
   return (
     <Container>
       <ProfileWithSettingsContainer>
@@ -141,17 +134,23 @@ const Listeners: React.FC = () => {
 
 interface ISpaceMembersModalProps {
   onClose: () => void;
+  spaceData: any;
 }
 enum MemberTabsEnum {
-  CoHost = 'Co-Host',
+  // CoHost = 'Co-Host',
   Speakers = 'Speakers',
   Requests = 'Requests',
   Listeners = 'Listeners',
 }
 
-export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose }: ISpaceMembersModalProps) => {
+export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData }: ISpaceMembersModalProps) => {
 
-    const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.CoHost);
+    const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.Speakers);
+
+    const theme = useContext(ThemeContext);
+
+    const coHosts = spaceData.members.filter((member: any) => member.isSpeaker) 
+    const listeners = spaceData.pendingMembers.filter((member: any) => !member.isSpeaker) 
 
     const handleTabClick = (index: MemberTabsEnum) => {
       setActiveTab(index);
@@ -178,9 +177,11 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
             <SpacesMembersContainer>
             
             <ProfileContainer
-                imageUrl={tempImageUrl}
-                name={'Arnab Chatterjee'}
-                handle={'arn4b'}
+                imageUrl={createBlockie?.(spaceData.spaceCreator.substring(7))
+                  ?.toDataURL()
+                  ?.toString()}
+                name={spaceData.spaceCreator.substring(7)}
+                handle={spaceData.spaceCreator.substring(7)}
                 imageHeight='48px'
                 tag='Host'
             />
@@ -189,10 +190,10 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
               {renderTabs()}
             </TabContainer>
 
-            {activeTab === MemberTabsEnum.CoHost && <CoHosts />}
-            {activeTab === MemberTabsEnum.Speakers && <Speakers />}
+            {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
+            {activeTab === MemberTabsEnum.Speakers && <Speakers members={coHosts} theme={theme} />}
             {activeTab === MemberTabsEnum.Requests && <Requests />}
-            {activeTab === MemberTabsEnum.Listeners && <Listeners />}
+            {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
             <Button 
               padding={'16px'} 
@@ -214,11 +215,13 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
 }
 
 /* styling */
-// const ButtonContainer = styled.div`
-//     display: flex;
-//     justify-content: space-between;
-//     width: 100%;
-// `;
+const MembersContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+`;
+
 const SpacesMembersContainer = styled.div`
     color: black;
     display: flex;
@@ -253,4 +256,12 @@ const Tab = styled.div<{active: boolean}>`
     props.active ? '1px solid #8B5CF6' : '1px solid #82828A26'};
   cursor: pointer;
   color: ${(props) => (props.active ? '#8B5CF6' : '#82828A')};
+`;
+
+const SettingsCont = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
 `;
