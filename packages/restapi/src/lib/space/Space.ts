@@ -34,6 +34,7 @@ import { META_ACTION } from '../types/metaTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
 import { onReceiveMetaMessage } from './onReceiveMetaMessage';
 import { onJoinListener } from './onJoinListener';
+import { pCAIP10ToWallet } from '../helpers';
 
 export const initLiveSpaceData: LiveSpaceData = {
   host: null,
@@ -210,7 +211,7 @@ export class Space extends Video {
     // set the local address inside video call 'data'
     this.setData((oldVideoCallData) => {
       return produce(oldVideoCallData, (draft) => {
-        draft.local.address = address;
+        draft.local.address = pCAIP10ToWallet(address);
       });
     });
 

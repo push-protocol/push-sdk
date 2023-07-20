@@ -114,7 +114,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       ) {
         console.log('joining as a listener');
         await spacesObjectRef?.current?.join?.();
-        setSpaceWidgetId?.(spaceData?.spaceId as string);
+        // setSpaceWidgetId?.(spaceData?.spaceId as string);
         setIsLoading(!isLoading);
         console.log('space joined');
       }
@@ -147,7 +147,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     const joinSpaceAsSpeaker = async () => {
       console.log('joining as a speaker');
       await spacesObjectRef?.current?.join?.();
-      setSpaceWidgetId?.(spaceData?.spaceId as string);
+      // setSpaceWidgetId?.(spaceData?.spaceId as string);
       setIsLoading(!isLoading);
       console.log('space joined');
     };

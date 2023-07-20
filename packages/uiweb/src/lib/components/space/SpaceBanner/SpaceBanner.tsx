@@ -68,26 +68,10 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 
   const handleJoinSpace = async () => {
     await initSpaceObject(spaceData?.spaceId as string);
-
-    if (isListener) {
-      actionCallback();
-      setSpaceWidgetId(spaceData?.spaceId as string);
-    }
+    actionCallback();
+    setSpaceWidgetId(spaceData?.spaceId as string);
   };
-
-  useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local.stream || !isSpeaker) return;
-    const joinSpaceAsSpeaker = async () => {
-      console.log('joining as a speaker');
-      await spacesObjectRef?.current?.join();
-      setSpaceWidgetId(spaceId);
-      console.log('space joined');
-      actionCallback();
-    };
-    joinSpaceAsSpeaker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceObjectData?.connectionData?.local.stream]);
-
+  
   usePushSpaceSocket({ account, env });
 
   // Check if the spaceData is not available, show the skeleton loading effect

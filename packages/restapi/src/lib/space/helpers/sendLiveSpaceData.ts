@@ -5,7 +5,7 @@ import { META_ACTION } from '../../types/metaTypes';
 
 interface SendLiveSpaceData extends EnvOptionsType {
   liveSpaceData?: LiveSpaceData;
-  action: META_ACTION,
+  action: META_ACTION;
   spaceId: string;
   pgpPrivateKey: string;
   signer: SignerType;
@@ -26,7 +26,7 @@ const sendLiveSpaceData = async ({
     signer,
     messageType: MessageType.META,
     messageObj: {
-      content: '',
+      content: 'PUSH SPACE META MESSAGE',
       meta: {
         action,
         info: {
