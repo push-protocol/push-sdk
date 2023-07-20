@@ -98,14 +98,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     if (selectedFeedTab === FeedTabs.HostedByYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.toUpperCase() ===
+          space.spaceInformation?.spaceCreator?.toUpperCase() ===
           account?.toUpperCase()
       );
     }
     if (selectedFeedTab === FeedTabs.ForYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.toUpperCase() !==
+          space.spaceInformation?.spaceCreator?.toUpperCase() !==
           account?.toUpperCase()
       );
     } else {
