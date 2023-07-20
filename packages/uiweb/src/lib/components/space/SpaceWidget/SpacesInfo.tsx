@@ -120,12 +120,12 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                             handle={item?.wallet?.substring(7)}
                             name={item?.wallet?.substring(7)}
                             imageUrl={item?.image}
-                        />  
+                        />
                     })
                 }
             </Accordion>
 
-            {adminsArray && 
+            {adminsArray &&
                 adminsArray.slice(1).map((item: any) => {
                     return <ProfileContainer
                         border
@@ -134,7 +134,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                         handle={item?.wallet?.substring(7)}
                         name={item?.wallet?.substring(7)}
                         imageUrl={item?.image}
-                    />  
+                    />
                 })
             }
 

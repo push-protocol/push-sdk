@@ -57,7 +57,7 @@ export const usePushSpaceSocket = ({
               }
               return item;
             });
-    
+
             setSpaceRequests({
               apiData: updatedRequests as PushAPI.SpaceIFeeds[]
             })
@@ -89,7 +89,7 @@ export const usePushSpaceSocket = ({
               }
               return item;
             });
-    
+
             setMySpaces({
               apiData: updatedMySpaces as PushAPI.SpaceIFeeds[]
             })

@@ -43,7 +43,7 @@ const InputContainer = styled.div`
 
     margin: 16px 0;
 
-    font-family: 'Strawford'; // update to fontFamily theme 
+    font-family: 'Strawford'; // update to fontFamily theme
 `;
 
 const LabelContainer = styled.div`
@@ -64,7 +64,7 @@ const Input = styled.input<ISpacesTheme>`
     border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 
-    font-family: 'Strawford'; // update to fontFamily theme 
+    font-family: 'Strawford'; // update to fontFamily theme
     font-size: 14px;
 `;
 

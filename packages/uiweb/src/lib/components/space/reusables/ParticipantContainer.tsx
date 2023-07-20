@@ -66,7 +66,7 @@ const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
   padding: 0 4px;
 }`;
 
-const ParticipantsIcon = styled.img<{ imageHeight?: any }>` 
+const ParticipantsIcon = styled.img<{ imageHeight?: any }>`
   height: ${(props) => (props.imageHeight ? props.imageHeight : '31px')};
   border-radius: 50%;
 

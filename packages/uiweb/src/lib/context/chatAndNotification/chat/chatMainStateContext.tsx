@@ -26,6 +26,10 @@ export type ChatMainStateContextType = {
   setConnectedProfile: (connectedProfile: IUser) => void;
   searchedChats: ChatFeedsType | null;
   setSearchedChats: (chats:ChatFeedsType | null) => void;
+  finishedFetchingChats:boolean;
+  finishedFetchingRequests:boolean;
+  setFinishedFetchingChats: (flag: boolean) => void;
+  setFinishedFetchingRequests: (flag: boolean) => void;
 }
 
 export const ChatMainStateContext = createContext<ChatMainStateContextType>({} as ChatMainStateContextType);
@@ -38,6 +42,9 @@ const [requestsFeed,setRequestsFeed] =useState<ChatFeedsType>({} as ChatFeedsTyp
 const [chats,setChats] = useState<Map<string, ChatMessagetype> >(new Map());
 const [selectedChatId,setSelectedChatId] = useState<string|null>(null);
 const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
+const [finishedFetchingChats,setFinishedFetchingChats] = useState<boolean>(false);
+const [finishedFetchingRequests,setFinishedFetchingRequests] = useState<boolean>(false);
+
 
 
 
@@ -47,20 +54,20 @@ const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
     setChatsFeed(prevChatsFeed => ({
       [id]: newChatFeed ,
         ...prevChatsFeed,
-       
+
     }));
  }
  const setRequestFeed = (id: string,newRequestFeed:IFeeds) => {
     setRequestsFeed(prevRequestsFeed => ({
       [id]: newRequestFeed ,
         ...prevRequestsFeed,
-   
+
     }));
  }
  const setWeb3Name = (id: string,web3Name:string) => {
   setWeb3NameList(prev => ({
       ...prev,
-      [id]: web3Name 
+      [id]: web3Name
   }));
 }
 
@@ -73,7 +80,7 @@ const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
 
   return (
 
-    <ChatMainStateContext.Provider value={{ 
+    <ChatMainStateContext.Provider value={{
         chatsFeed,
         requestsFeed,
         setRequestFeed,
@@ -92,6 +99,10 @@ const [searchedChats,setSearchedChats] = useState<ChatFeedsType | null>(null);
         web3NameList,
         setWeb3NameList,
         setWeb3Name,
+        finishedFetchingChats,
+        finishedFetchingRequests,
+        setFinishedFetchingChats,
+        setFinishedFetchingRequests
       }}>
 
       {children}

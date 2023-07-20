@@ -815,7 +815,7 @@ export class Video {
   // functions for enabling/disabling local audio and video
 
   enableVideo(options: EnableVideoInputOptions): void {
-    const { state } = options || {};
+    const { state, peerAddress } = options || {};
 
     if (this.data.local.video !== state) {
       // need to change the video state
@@ -847,7 +847,7 @@ export class Video {
   }
 
   enableAudio(options: EnableAudioInputOptions): void {
-    const { state } = options || {};
+    const { state, peerAddress } = options || {};
 
     if (this.data.local.audio !== state) {
       // need to change the audio state

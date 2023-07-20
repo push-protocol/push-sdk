@@ -26,7 +26,7 @@ const useOnSubscribeToChannel = () => {
 
         if (!address) return;
         console.log(signer)
-        const chainId = await signer.getChainId();
+        const chainId = await signer?.getChainId();
 
         await PushAPI.channels.subscribe({
           signer: signer,

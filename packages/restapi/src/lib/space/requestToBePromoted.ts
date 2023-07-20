@@ -3,7 +3,7 @@ import type Space from './Space';
 
 export interface RequestToBePromotedType {
   role: SPACE_INVITE_ROLES;
-  promotorAddress: string; 
+  promotorAddress: string;
 }
 
 export async function requestToBePromoted(

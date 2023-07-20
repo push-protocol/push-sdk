@@ -30,7 +30,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
 
     const getTime = (hours: number, minutes: number, ampm: string, propsDate: Date) => {
         let totalMinutes = hours * 60 + minutes;
-    
+
         if (ampm === 'PM' && hours !== 12) {
           totalMinutes += 12 * 60;
         } else if (ampm === 'AM' && hours === 12) {
@@ -48,7 +48,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
         const hours = parseInt(selectedHours, 10);
         const minutes = parseInt(selectedMinutes, 10);
         const ampm = selectedAMPM;
-    
+
         const newTimeEpoch = getTime(hours, minutes, ampm, propsDate);
         setTimeHumanReadable(newTimeEpoch);
 

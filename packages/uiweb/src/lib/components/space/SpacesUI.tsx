@@ -12,7 +12,6 @@ import { ENV } from '../../config';
 import { useSpaceData } from '../../hooks';
 import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
-
 export class SpacesUI {
   public account: string;
   public signer: SignerType;
@@ -40,15 +39,15 @@ export class SpacesUI {
     const { spaceId } = options;
     const { spaceWidgetId } = useSpaceData();
     const [SpaceId, setSpaceId] = useState<string | undefined>(spaceId);
-    
+
     useEffect(() => {
       setSpaceId(spaceId);
     }, [spaceId, setSpaceId]);
-    
+
     useEffect(() => {
       if (spaceWidgetId) setSpaceId(spaceWidgetId);
     }, [spaceWidgetId]);
-    
+
     return <SpaceWidget {...options} spaceId={SpaceId} />;
   }
 

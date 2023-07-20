@@ -24,7 +24,7 @@ const defaultProps: ISCWButtonProps = {
 
 export const SCWButton: React.FC<ISCWButtonProps> = (props) => {
     const { btnText, customStyle, onCreate } = props;
-    
+
     const theme = useContext(ThemeContext);
 
     return (

@@ -139,9 +139,9 @@ export const SpaceWidget = () => {
           <label>isTimeToStartSpace</label>
         </SectionItem>
       </Section>
-      <SpaceWidgetComponent 
-        spaceId={spaceId} 
-        width={Number(width)} 
+      <SpaceWidgetComponent
+        spaceId={spaceId}
+        width={Number(width)}
         zIndex={Number(zIndex)}
         share={{
           shareUrl: shareUrl,

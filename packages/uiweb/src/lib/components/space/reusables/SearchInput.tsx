@@ -44,7 +44,7 @@ const InputContainer = styled.div`
 
     margin: 16px 0;
 
-    font-family: 'Strawford'; // update to fontFamily theme 
+    font-family: 'Strawford'; // update to fontFamily theme
 `;
 
 const LabelContainer = styled.div`

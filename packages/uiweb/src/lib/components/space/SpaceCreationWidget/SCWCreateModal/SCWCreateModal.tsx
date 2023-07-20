@@ -23,7 +23,7 @@ export interface ISCWCModalProps { // Space Creation Widget Create Modal Interfa
 
 export const SCWCreateModal: React.FC<ISCWCModalProps> = (props) => {
     const theme = useContext(ThemeContext);
-    const { 
+    const {
         isInviteVisible, closeCreateModal, handleNameChange,
         handleDescriptionChange, nameValue, descriptionValue,
         isDescriptionEnabled, isScheduleVisible, onClose,
