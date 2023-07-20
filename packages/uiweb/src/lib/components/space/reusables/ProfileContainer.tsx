@@ -1,5 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IProfileContainerProps {
@@ -43,15 +43,16 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                 setIsDDOpen(false);
             }
         };
-    
+
         document.addEventListener('mousedown', handleOutsideClick);
-    
+
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
 
     return (
+      <ThemeProvider theme={theme}>
         <ParentContainer
             border={border}
         >
@@ -90,6 +91,7 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                 : null
             }
         </ParentContainer>
+      </ThemeProvider>
     );
 };
 
@@ -104,6 +106,7 @@ const ParentContainer = styled.div<{ border?: boolean }>`
     padding: 8px 16px;
 
     border: ${(props => props.border ? '1px solid #E4E4E7' : 'none')};
+    color: ${props => props.theme.textColorPrimary ?? '#000'};
     border-radius: 16px;
 `;
 
@@ -162,7 +165,7 @@ const Host = styled.div`
     line-height: 18px;
     width: max-content;
     background: rgba(139, 92, 246, 0.2);
-    color: #8B5CF6;
+    color: ${props => props.theme.btnColorPrimary};
     border-radius: 6px;
     font-weight: 500;
     font-size: 12px;

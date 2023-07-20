@@ -14,7 +14,7 @@ interface IAccordionProps {
 const Accordion: React.FC<IAccordionProps> = ({ title, items, children }) => {
     const theme = useContext(ThemeContext)
 
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     const toggleAccordion = () => {
         setIsOpen((prevIsOpen) => !prevIsOpen);

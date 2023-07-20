@@ -93,8 +93,7 @@ const sendVideoCallNotification = async (
         cta: '',
         img: '',
         additionalMeta: {
-          // type: `${callType}+1`,
-          type: `${VIDEO_CALL_TYPE.PUSH_VIDEO}+1`,
+          type: `${callType}+1`,
           data: JSON.stringify(videoData),
         },
       },

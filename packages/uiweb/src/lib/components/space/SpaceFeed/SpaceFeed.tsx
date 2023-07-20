@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { SpaceIFeeds } from '@pushprotocol/restapi';
 
@@ -13,21 +13,25 @@ import {
   useMySpaces,
   usePopularSpaces,
   useSpaceRequests,
+  usePushSpaceSocket,
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
   Vertical = 'vertical',
 }
 
-enum Tabs {
+export enum FeedTabs {
   ForYou = 'For You',
   Popular = 'Popular',
   HostedByYou = 'Hosted by you',
 }
+
+type TabsValues = keyof typeof FeedTabs;
 
 enum FilterEnums {
   All = 'All',
@@ -38,7 +42,7 @@ export interface ISpaceFeedProps {
   orientation?: 'horizontal' | 'vertical';
   height?: number;
   width?: number;
-  sortingOrder?: string[];
+  sortingOrder?: Array<TabsValues>;
   showTabs?: boolean;
   filter?: FilterEnums.All | FilterEnums.Live | FilterEnums.Scheduled;
   showFilter?: boolean;
@@ -46,17 +50,18 @@ export interface ISpaceFeedProps {
 }
 
 export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
-  orientation = 'veritcal',
+  orientation = OrientationEnums.Vertical,
   height,
   width,
-  sortingOrder = [Tabs.Popular, Tabs.ForYou, Tabs.HostedByYou],
+  sortingOrder = ['Popular', 'ForYou', 'HostedByYou'],
   showTabs = true,
   filter = FilterEnums.All,
   showFilter = true,
   onBannerClickHandler,
 }) => {
-  const [tab, setTab] = useState<string>(sortingOrder[0]);
+  const theme = useContext(ThemeContext);
   const [filterTab, setFilterTab] = useState(filter);
+  const { selectedFeedTab, setSelectedFeedTab } = useSpaceData();
 
   const {
     account,
@@ -66,13 +71,12 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
+    env,
   } = useSpaceData();
 
-  const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
+  usePushSpaceSocket({ account, env });
 
-  const handleTabChange = (tab: string) => {
-    setTab(tab);
-  };
+  const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
   const handleFilterData = (spacesList: SpaceIFeeds[]) => {
     if (filterTab === FilterEnums.All) {
@@ -91,17 +95,17 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   const handleMySpacesFilter = (spacesList: SpaceIFeeds[]) => {
-    if (tab === Tabs.HostedByYou) {
+    if (selectedFeedTab === FeedTabs.HostedByYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() ===
+          space.spaceInformation?.spaceCreator?.toUpperCase() ===
           account?.toUpperCase()
       );
     }
-    if (tab === Tabs.ForYou) {
+    if (selectedFeedTab === FeedTabs.ForYou) {
       return spacesList.filter(
         (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator.slice(7).toUpperCase() !==
+          space.spaceInformation?.spaceCreator?.toUpperCase() !==
           account?.toUpperCase()
       );
     } else {
@@ -147,18 +151,16 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   };
 
   const loadMoreData = async () => {
-    if (tab === Tabs.ForYou) {
+    if (selectedFeedTab === FeedTabs.ForYou) {
       incrementSpacePage(mySpaces);
     }
-    if (tab === Tabs.Popular) {
+    if (selectedFeedTab === FeedTabs.Popular) {
       incrementSpacePage(popularSpaces);
     }
-    if (tab === Tabs.HostedByYou) {
+    if (selectedFeedTab === FeedTabs.HostedByYou) {
       incrementSpacePage(spaceRequests);
     }
   };
-
-  console.log(account);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -181,7 +183,14 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     mySpaceLoading || popularSpaceLoading || spaceRequestsLoading;
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
+      <div
+        style={{
+          background: theme.bgColorPrimary,
+          color: theme.textColorPrimary,
+          padding: "10px",
+        }}
+      >
       {orientation === OrientationEnums.Horizontal ? (
         <Spaces orientation={orientation}>
           {orientation === OrientationEnums.Horizontal
@@ -214,61 +223,81 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         <>
           <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
             <NavButtonWrapper>
-              {sortingOrder.map((tabName: string) => {
+              {sortingOrder.map((tabName: TabsValues) => {
                 return (
                   <NavButton
-                    active={tab === tabName}
-                    onClick={() => handleTabChange(tabName)}
+                    active={selectedFeedTab === FeedTabs[tabName]}
+                    onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
                   >
-                    {tabName}
+                    {FeedTabs[tabName]}
                   </NavButton>
                 );
               })}
             </NavButtonWrapper>
           </Navigation>
-          <Filter showFilter={showFilter}>
-            <FilterButton
-              active={filterTab === FilterEnums.All}
-              onClick={() => setFilterTab(FilterEnums.All)}
+            <Filter showFilter={showFilter}>
+              <FilterButton
+                active={filterTab === FilterEnums.All}
+                onClick={() => setFilterTab(FilterEnums.All)}
+              >
+                All
+              </FilterButton>
+              <FilterButton
+                active={filterTab === FilterEnums.Live}
+                onClick={() => setFilterTab(FilterEnums.Live)}
+              >
+                Live
+              </FilterButton>
+              <FilterButton
+                active={filterTab === FilterEnums.Scheduled}
+                onClick={() => setFilterTab(FilterEnums.Scheduled)}
+              >
+                Scheduled
+              </FilterButton>
+            </Filter>
+            <ScrollContainer
+              width={width}
+              height={height}
+              ref={listInnerRef}
+              onScroll={onScroll}
             >
-              All
-            </FilterButton>
-            <FilterButton
-              active={filterTab === FilterEnums.Live}
-              onClick={() => setFilterTab(FilterEnums.Live)}
-            >
-              Live
-            </FilterButton>
-            <FilterButton
-              active={filterTab === FilterEnums.Scheduled}
-              onClick={() => setFilterTab(FilterEnums.Scheduled)}
-            >
-              Scheduled
-            </FilterButton>
-          </Filter>
-          <ScrollContainer
-            width={width}
-            height={height}
-            ref={listInnerRef}
-            onScroll={onScroll}
-          >
-            <Container>
-              {tab === Tabs.ForYou ? (
-                <Spaces orientation={orientation}>
-                  {mySpaces.apiData &&
-                    (handleFilterData(
-                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                    ).length === 0 ? (
-                      <NoSpaces>
-                        <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1>Join a space</NoSpacesTextV1>
-                        <NoSpacesTextV2>
-                          Get started by joining a space
-                        </NoSpacesTextV2>
-                      </NoSpaces>
-                    ) : (
-                      handleFilterData(
+              <Container>
+                {selectedFeedTab === FeedTabs.ForYou ? (
+                  <Spaces orientation={orientation}>
+                    {mySpaces.apiData &&
+                      (handleFilterData(
                         handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
+                      ).length === 0 ? (
+                        <NoSpaces>
+                          <SpacesIcon src={spacesIcon} />
+                          <NoSpacesTextV1>Join a space</NoSpacesTextV1>
+                          <NoSpacesTextV2>
+                            Get started by joining a space
+                          </NoSpacesTextV2>
+                        </NoSpaces>
+                      ) : (
+                        handleFilterData(
+                          handleMySpacesFilter(
+                            mySpaces.apiData as SpaceIFeeds[]
+                          )
+                        ).map((space: SpaceIFeeds) => {
+                          return (
+                            <SpaceBanner
+                              spaceId={space.spaceId as string}
+                              orientation="maximized"
+                              onBannerClick={
+                                onBannerClickHandler ? handleClick : undefined
+                              }
+                            />
+                          );
+                        })
+                      ))}
+                  </Spaces>
+                ) : selectedFeedTab === FeedTabs.Popular ? (
+                  <PopularSpaces>
+                    {popularSpaces.apiData &&
+                      handleFilterData(
+                        popularSpaces.apiData as SpaceIFeeds[]
                       ).map((space: SpaceIFeeds) => {
                         return (
                           <SpaceBanner
@@ -279,63 +308,47 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                             }
                           />
                         );
-                      })
-                    ))}
-                </Spaces>
-              ) : tab === Tabs.Popular ? (
-                <PopularSpaces>
-                  <Text>Popular Spaces</Text>
-                  {popularSpaces &&
-                    handleFilterData(
-                      popularSpaces.apiData as SpaceIFeeds[]
-                    ).map((space: SpaceIFeeds) => {
-                      return (
-                        <SpaceBanner
-                          spaceId={space.spaceId as string}
-                          orientation="maximized"
-                          onBannerClick={
-                            onBannerClickHandler ? handleClick : undefined
-                          }
-                        />
-                      );
-                    })}
-                </PopularSpaces>
-              ) : (
-                <Spaces orientation={orientation}>
-                  {mySpaces.apiData &&
-                    (handleFilterData(
-                      handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                    ).length === 0 ? (
-                      <NoSpaces>
-                        <SpacesIcon src={spacesIcon} />
-                        <NoSpacesTextV1>Create a space</NoSpacesTextV1>
-                        <NoSpacesTextV2>
-                          Get started by creating a space
-                        </NoSpacesTextV2>
-                      </NoSpaces>
-                    ) : (
-                      handleFilterData(
+                      })}
+                  </PopularSpaces>
+                ) : (
+                  <Spaces orientation={orientation}>
+                    {mySpaces.apiData &&
+                      (handleFilterData(
                         handleMySpacesFilter(mySpaces.apiData as SpaceIFeeds[])
-                      ).map((space: SpaceIFeeds) => {
-                        return (
-                          <SpaceBanner
-                            spaceId={space.spaceId as string}
-                            orientation="maximized"
-                            onBannerClick={
-                              onBannerClickHandler ? handleClick : undefined
-                            }
-                          />
-                        );
-                      })
-                    ))}
-                </Spaces>
-              )}
-              {loading && <Spinner size="40" />}
-            </Container>
-          </ScrollContainer>
-        </>
-      )}
-    </div>
+                      ).length === 0 ? (
+                        <NoSpaces>
+                          <SpacesIcon src={spacesIcon} />
+                          <NoSpacesTextV1>Create a space</NoSpacesTextV1>
+                          <NoSpacesTextV2>
+                            Get started by creating a space
+                          </NoSpacesTextV2>
+                        </NoSpaces>
+                      ) : (
+                        handleFilterData(
+                          handleMySpacesFilter(
+                            mySpaces.apiData as SpaceIFeeds[]
+                          )
+                        ).map((space: SpaceIFeeds) => {
+                          return (
+                            <SpaceBanner
+                              spaceId={space.spaceId as string}
+                              orientation="maximized"
+                              onBannerClick={
+                                onBannerClickHandler ? handleClick : undefined
+                              }
+                            />
+                          );
+                        })
+                      ))}
+                  </Spaces>
+                )}
+                {loading && <Spinner size="40" />}
+              </Container>
+            </ScrollContainer>
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 };
 
@@ -344,16 +357,16 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
-}`;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #dcdcdf;
+  background: ${(props) => props.theme.bgColorPrimary};
+  border: 1px solid ${(props) => props.theme.borderColor};
   border-radius: 12px;
   padding: 24px 32px;
-}`;
+`;
 
 const Navigation = styled.div<{
   showTabs?: boolean;
@@ -365,8 +378,9 @@ const Navigation = styled.div<{
   justify-content: space-between;
   align-items: center;
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
-  border-bottom: 1px solid #DCDCDF;
+  border-bottom: 1px solid ${(props) => props.theme.borderColor};
   margin-bottom: ${(props) => (props.showFilter ? '0' : '27px')};
+  background: ${(props) => props.theme.bgColorPrimary};
 }`;
 
 const NavButtonWrapper = styled.div`
@@ -374,21 +388,25 @@ const NavButtonWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-}`;
+`;
 
 const NavButton = styled.button<{ active?: boolean }>`
   padding: 10px 30px;
   font-weight: 450;
   font-size: 14px;
   border: none;
-  border-bottom: ${(props) => (props.active ? '2px solid #8B5CF6' : 'none')};
+  border-bottom: ${(props) =>
+    props.active ? `2px solid ${props.theme.btnColorPrimary}` : 'none'};
   background: none;
-  color : ${(props) => (props.active ? '#000000' : '#71717A')};
+  color: ${(props) =>
+    props.active
+      ? `${props.theme.textColorPrimary}`
+      : `${props.theme.textColorSecondary}`};
 
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const Spaces = styled.div<{ orientation?: string }>`
   display: flex;
@@ -396,23 +414,23 @@ const Spaces = styled.div<{ orientation?: string }>`
     props.orientation === 'horizontal' ? 'row' : 'column'};
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${(props) => props.theme.bgColorPrimary};
   width: ${(props) =>
     props.orientation === 'horizontal' ? 'inherit' : '100%'};
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const PopularSpaces = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  width: 100%;  
+  background: ${(props) => props.theme.bgColorPrimary};
+  width: 100%;
   height: auto;
   gap: 16px;
-}`;
+`;
 
 const Text = styled.div`
   width: 100%;
@@ -420,17 +438,17 @@ const Text = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 18px;
-}`;
+`;
 
 const Filter = styled.div<{ showFilter?: boolean }>`
   display: ${(props) => (props.showFilter ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  background: #ffffff;
+  background: ${(props) => props.theme.bgColorPrimary};
   width: 100%;
   margin: 22px 0;
-}`;
+`;
 
 const FilterButton = styled.button<{ active: boolean }>`
   display: inline-flex;
@@ -439,16 +457,22 @@ const FilterButton = styled.button<{ active: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 99px;
-  border: 1px solid #C4B5FD;
-  background: ${(props) => (props.active ? '#8B5CF6' : '#EDE9FE')};
-  color: ${(props) => (!props.active ? '#8B5CF6' : '#FFF')};
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background: ${(props) =>
+    props.active
+      ? `${props.theme.btnColorPrimary}`
+      : `${props.theme.bgColorSecondary}`};
+  color: ${(props) =>
+    props.active
+      ? `${props.theme.titleTextColor}`
+      : `${props.theme.textColorPrimary}`};
   margin-right: 8px;
   font-size: 14px;
 
   &:hover {
     cursor: pointer;
   }
-}`;
+`;
 
 const NoSpaces = styled.div`
   display: flex;
@@ -456,23 +480,23 @@ const NoSpaces = styled.div`
   justify-content: center;
   align-items: center;
   margin: 130px 0;
-}`;
+`;
 
 const SpacesIcon = styled.img`
   width: 36px;
   height: 36px;
-}`;
+`;
 
 const NoSpacesTextV1 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
   font-size: 16px;
-  color: #000;
+  color: ${(props) => props.theme.textColorPrimary}};
 }`;
 
 const NoSpacesTextV2 = styled.div`
   font-family: 'Strawford';
   font-weight: 450;
-  color: #71717A;
+  color: ${(props) => props.theme.textColorSecondary}};
   font-size: 14px;
-}`;
+`;

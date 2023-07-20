@@ -3,6 +3,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 import { SignerType } from '../types';
 import { ENV } from '../config';
+import { FeedTabs } from '../components/space/SpaceFeed';
 
 export interface ISpaceInfo {
   [key: string]: SpaceDTO;
@@ -18,6 +19,13 @@ export interface ISpacePaginationData {
   lastPage?: number;
 }
 
+export interface ICustomSearchResult {
+  account: string;
+  name?: string;
+  handle?: string;
+  image?: string; // dataURL as string
+}
+
 export interface ISpaceDataContextValues {
   account: string;
   setAccount: React.Dispatch<React.SetStateAction<string>>;
@@ -27,6 +35,10 @@ export interface ISpaceDataContextValues {
   setPgpPrivateKey: React.Dispatch<React.SetStateAction<string>>;
   env: ENV;
   setEnv: React.Dispatch<React.SetStateAction<ENV>>;
+  chainId: number;
+  setChainId: React.Dispatch<React.SetStateAction<number>>;
+  selectedFeedTab: FeedTabs;
+  setSelectedFeedTab: React.Dispatch<React.SetStateAction<FeedTabs>>;
   trendingListData: any;
   setTrendingListData: React.Dispatch<React.SetStateAction<any>>;
   spaceInfo: ISpaceInfo;
@@ -50,6 +62,9 @@ export interface ISpaceDataContextValues {
   isListener: boolean;
   speakerData: ISpaceSpeakerData;
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
+  acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  customSearch?: (query: string) => ICustomSearchResult;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -69,9 +84,17 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setEnv: () => {
     /**/
   },
+  chainId: 1,
+  setChainId: () => {
+    /** */
+  },
   trendingListData: null,
   setTrendingListData: () => {
     /**/
+  },
+  selectedFeedTab: "Popular" as FeedTabs,
+  setSelectedFeedTab: () => {
+    /** */
   },
   spaceInfo: {} as ISpaceInfo,
   setSpaceInfo: () => {
@@ -124,6 +147,13 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setSpeakerData: () => {
     /** */
   },
+  acceptSpaceRequest: async () => {
+    /** */
+  },
+  connectSpaceRequest: async () => {
+    /** */
+  },
+  customSearch: undefined,
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

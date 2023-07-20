@@ -1,3 +1,4 @@
+import getPlainAddress from '../../space/helpers/getPlainAddress';
 import { PeerData, VideoCallStatus } from '../../types';
 
 const getConnectedAddresses = ({
@@ -8,7 +9,7 @@ const getConnectedAddresses = ({
   const connectedAddresses: string[] = [];
   incomingPeers.forEach((incomingPeer) => {
     if (incomingPeer.status === VideoCallStatus.CONNECTED) {
-      connectedAddresses.push(incomingPeer.address);
+      connectedAddresses.push(getPlainAddress(incomingPeer.address));
     }
   });
   return connectedAddresses;

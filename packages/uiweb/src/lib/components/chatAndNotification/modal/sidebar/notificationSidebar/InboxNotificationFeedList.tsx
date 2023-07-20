@@ -38,7 +38,7 @@ export const InboxNotificationFeedList = () => {
   const isInViewport1 = useIsInViewport(pageRef, '1px');
   const { fetchNotification, loading } = useFetchNotification();
 
- 
+
   const fetchSpamNotificationList = async () => {
     const feeds: NotificationFeedsType | undefined = await fetchNotification({
       page: 1,
@@ -92,7 +92,7 @@ export const InboxNotificationFeedList = () => {
   }, [fetchNotification, env, page, account]);
 
   useEffect(() => {
-   
+
     if (
       !isInViewport1 ||
       loading || finishedFetchingInbox
@@ -114,10 +114,10 @@ export const InboxNotificationFeedList = () => {
     }
     try {
       setPaginateLoading(true);
-      const feeds = await fetchNotification({ page, limit: notificationLimit });    
-      if(!Object.keys(feeds || {}).length) setFinishedFetchingInbox(true);  
+      const feeds = await fetchNotification({ page, limit: notificationLimit });
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingInbox(true);
       const newFeed:NotificationFeedsType = {...inboxNotifsFeed,...feeds};
-    
+
       setInboxNotifsFeed(newFeed);
     } catch (error) {
       console.log(error);

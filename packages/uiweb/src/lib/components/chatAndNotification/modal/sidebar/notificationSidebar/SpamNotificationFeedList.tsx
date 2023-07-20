@@ -72,9 +72,9 @@ export const SpamNotificationFeedList = () => {
         limit: notificationLimit,
         spam: true,
       });
-      if(!Object.keys(feeds || {}).length) setFinishedFetchingSpam(true);  
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingSpam(true);
       const newFeed: NotificationFeedsType = { ...spamNotifsFeed, ...feeds };
-    
+
 
       setSpamNotifsFeed(newFeed);
     } catch (error) {
@@ -91,7 +91,7 @@ export const SpamNotificationFeedList = () => {
       justifyContent="start"
       flexDirection="column"
       width="100%"
-     
+
       padding="0 3px"
     >
       {(!loading || paginateLoading) &&

@@ -111,7 +111,7 @@ const NotificationsTest = () => {
       });
 
       setSpams(spams);
-  
+
     } catch (e) {
       console.error(e);
     } finally {
@@ -146,12 +146,12 @@ const NotificationsTest = () => {
           <h2>Notifications Test page</h2>
 
           {/* <TestModal /> */}
-          
+
           <ThemeSelector>
             {theme === 'dark' ? <DarkIcon title="Dark" onClick={toggleTheme}/> : <LightIcon title="Light" onClick={toggleTheme}/>}
           </ThemeSelector>
         </Header>
-                
+
         <TabButtons>
           <SectionButton onClick={() => { setViewType('notif') }}>Notifications</SectionButton>
           <SectionButton onClick={() => { setViewType('spam') }}>Spam</SectionButton>
@@ -170,8 +170,8 @@ const NotificationsTest = () => {
               {notifs ? (
                 <NotificationListContainer>
                   {notifs.map((oneNotification, i) => {
-  
-                  const { 
+
+                  const {
                     cta,
                     title,
                     message,
@@ -215,7 +215,7 @@ const NotificationsTest = () => {
               {spams ? (
                 <NotificationListContainer>
                   {spams.map((oneNotification, i) => {
-                  const { 
+                  const {
                     cta,
                     title,
                     message,

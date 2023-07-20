@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import ConnectButton from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
-import { Web3Context, EnvContext, SocketContext } from './context';
+import { Web3Context, EnvContext, SocketContext, AccountContext } from './context';
 import { useSDKSocket } from './hooks';
 import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
 import NotificationsTest from './NotificationsTest';
@@ -55,7 +55,6 @@ import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 import SpaceUITest from './SpaceUITest/SpaceUITest';
 import {
-  SpacesComponentProvider,
   SpaceWidget,
   SpaceBanner,
   SpaceFeed,
@@ -63,7 +62,9 @@ import {
   SpaceInvitesComponent
 } from './SpaceUITest';
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
+import * as PushAPI from "@pushprotocol/restapi";
 import { ChatWidgetTest } from './ChatWidgetTest';
+import { SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -147,6 +148,43 @@ const NavMenu = styled.div`
   }
 `;
 
+const customtheme = {
+  titleBg: 'linear-gradient(45deg, #E165EC 0.01%, #A483ED 100%)', //not changed
+  titleTextColor: '#FFFFFF',
+  bgColorPrimary: '#fff',
+  bgColorSecondary: '#F7F1FB',
+  textColorPrimary: '#000',
+  textColorSecondary: '#657795',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)', //not changed
+  btnColorPrimary: '#D53A94',
+  btnOutline: '#D53A94',
+  borderColor: '#FFFF',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#82828A',
+};
+
+const customDarkTheme = {
+  titleBg:
+    'linear-gradient(87.17deg, #EA4EE4 0%, #D23CDF 0.01%, #8B5CF6 100%)',
+  titleTextColor: '#fff',
+  bgColorPrimary: '#000',
+  bgColorSecondary: '#292344',
+  textColorPrimary: '#fff',
+  textColorSecondary: '#71717A',
+  textGradient: 'linear-gradient(45deg, #B6A0F5, #F46EF6, #FFDED3, #FFCFC5)',
+  btnColorPrimary: '#8B5CF6',
+  btnOutline: '#8B5CF6',
+  borderColor: '#3F3F46',
+  borderRadius: '17px',
+  containerBorderRadius: '12px',
+  statusColorError: '#E93636',
+  statusColorSuccess: '#30CC8B',
+  iconColorPrimary: '#71717A',
+};
+
 const checkForWeb3Data = ({
   library,
   active,
@@ -157,17 +195,18 @@ const checkForWeb3Data = ({
 };
 
 export function App() {
-  const web3Data: Web3ReactState = useWeb3React();
+  const {account, library, active, chainId} = useWeb3React();
 
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+  const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
 
   const socketData = useSDKSocket({
-    account: web3Data.account,
-    chainId: web3Data.chainId,
+    account: account,
+    chainId: chainId,
     env,
     isCAIP,
   });
@@ -179,6 +218,33 @@ export function App() {
   const onChangeCAIP = () => {
     setIsCAIP(!isCAIP);
   };
+
+  useEffect(() => {
+    (async () => {
+      if (!account || !env || !library) return;
+
+      const user = await PushAPI.user.get({ account: account, env });
+      let pgpPrivateKey;
+      const librarySigner = await library.getSigner(account);
+      if (user?.encryptedPrivateKey) {
+        pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account: account,
+          signer: librarySigner,
+          env,
+        });
+      }
+
+      setPgpPrivateKey(pgpPrivateKey);
+    })();
+  }, [account, env, library]);
+
+  const spaceUI = useMemo(() => new SpacesUI({
+    account: account as string,
+    signer: library?.getSigner(),
+    pgpPrivateKey: pgpPrivateKey,
+    env: env,
+  }), [account, library, pgpPrivateKey, env]);
 
   return (
     <StyledApp>
@@ -211,10 +277,13 @@ export function App() {
 
       <hr />
       <EnvContext.Provider value={{ env, isCAIP }}>
-        {checkForWeb3Data(web3Data) ? (
-          <Web3Context.Provider value={web3Data}>
+        {checkForWeb3Data({
+          active, account, library, chainId
+        }) ? (
+          <Web3Context.Provider value={{account, active, library, chainId}}>
             <SocketContext.Provider value={socketData}>
-              <SpacesComponentProvider>
+              <AccountContext.Provider value={{pgpPrivateKey, setSpaceId}}>
+              <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                 <Routes>
                   <Route
                     path="/"
@@ -367,7 +436,8 @@ export function App() {
                {/* <ChatWidgetTest/> */}
                <ChatWidgetTest/>
                 <SpaceWidgetComponent spaceId={spaceId} />
-              </SpacesComponentProvider>
+              </SpacesUIProvider>
+              </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>
         ) : null}

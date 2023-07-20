@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import React, { useState, MouseEventHandler, useContext, useEffect } from 'react'
-import styled from 'styled-components'
+import React, { useState, MouseEventHandler, useContext } from 'react'
+import styled, { ThemeProvider } from 'styled-components'
 import * as PushAPI from '@pushprotocol/restapi';
 
 import { ModalHeader } from '../../reusables/ModalHeader';
@@ -10,14 +10,22 @@ import { SearchInput } from '../../reusables/SearchInput';
 import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
 import { Spinner } from '../../reusables/Spinner';
+import { createIcon } from '../../helpers/blockies';
 
 import CircularProgressSpinner from '../../../loader/loader';
 
 import { useSpaceData } from '../../../../hooks';
 import SettingsIcon from '../../../../icons/settingsBlack.svg';
+import { SettingsLogo } from '../../../../icons/SettingsLogo';
 import { Image } from '../../../../config';
 
-import { createIcon } from '../../helpers/blockies';
+
+export interface ICustomSearchResult {
+    account: string;
+    name?: string;
+    handle?: string;
+    image?: string; // dataURL as string
+}
 
 export interface ISCWIModalProps { // Space Creation Widget Create Modal Interface
     closeInviteModal?: MouseEventHandler;
@@ -32,12 +40,8 @@ export interface ISCWIModalProps { // Space Creation Widget Create Modal Interfa
     setAdminsList?: any;
     adminsAddressList?: any;
     setAdminsAddressList?: any;
-    onClose: () => void;
-}
-
-interface User {
-    handle: string;
-    name: string;
+    onClose: any;
+    btnString?: string;
 }
 
 export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
@@ -51,17 +55,18 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
         setAdminsList,
         adminsAddressList,
         setAdminsAddressList,
-        onClose
+        onClose,
+        btnString,
     } = props;
     const theme = useContext(ThemeContext);
 
-    const { env, account } = useSpaceData();
+    const { env, account, customSearch } = useSpaceData();
 
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
 
     const [searchedUser, setSearchedUser]= useState<any>({});
-    const [errorMsg, setErrorMsg] = useState<any>('');
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const searchMember = async (event: any) => {
         setInvitedMember(event.target.value)
@@ -70,7 +75,36 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             handleError('Cannot add Host to members');
             return;
         }
-        
+
+        if (customSearch) {
+            const customUserResponse = customSearch(event.target.value);
+
+            const hasAccount = (obj: any, uniqueKey: string) => {
+                const keys = Object.keys(obj);
+                return keys.length < 4 && keys[0] === uniqueKey;
+            }
+
+            if(hasAccount(customUserResponse, 'account')) {
+                const icon = createIcon({
+                    seed: customUserResponse.account,
+                    size: 10,
+                    scale: 3,
+                });
+
+                const searchedUser = {
+                    handle: customUserResponse.account,
+                    name: customUserResponse.account,
+                    image: icon.toDataURL(),
+                };
+
+                setSearchedUser(searchedUser)
+            } else {
+                setSearchedUser(customUserResponse);
+            }
+
+            return;
+        }
+
         try {
             setLoadingAccount(true);
             const response = await PushAPI.user.get({
@@ -86,7 +120,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 });
 
                 const nullUser = {
-                    walletAddress: event.target.value,
+                    handle: event.target.value,
                     name: event.target.value,
                     image: icon.toDataURL(),
                 };
@@ -131,7 +165,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             setInvitedAddressList([...invitedAddressList, user.did.substring(7)])
             setInvitedMembersList([...invitedMembersList, user]);
         } else {
-            setInvitedAddressList([...invitedAddressList, user.walletAddress])
+            setInvitedAddressList([...invitedAddressList, user.handle])
             setInvitedMembersList([...invitedMembersList, user]);
         }
 
@@ -144,7 +178,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             setAdminsAddressList([...adminsAddressList, user.did.substring(7)]);
         } else {
             setAdminsList([...adminsList, user])
-            setAdminsAddressList([...adminsAddressList, user.walletAddress]);
+            setAdminsAddressList([...adminsAddressList, user.handle]);
         }
 
         const updatedArray = invitedMembersList.filter((item: any) => item !== user)
@@ -154,7 +188,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
             setInvitedAddressList(updateAddressArray);
         } else {
-            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.handle)
             setInvitedAddressList(updateAddressArray);
         }
 
@@ -169,7 +203,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.did.substring(7))
             setInvitedAddressList(updateAddressArray);
         } else {
-            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = invitedAddressList.filter((item: string) => item !== user.handle)
             setInvitedAddressList(updateAddressArray);
         }
     };
@@ -182,15 +216,13 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
             const updateAdminAddressArray = adminsAddressList.filter((item: string) => item !== user.did.substring(7))
             setAdminsAddressList(updateAdminAddressArray);
         } else {
-            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.walletAddress)
+            const updateAddressArray = adminsAddressList.filter((item: string) => item !== user.handle)
             setAdminsAddressList(updateAddressArray);
         }
     };
 
-    const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
-
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <Modal
                 clickawayClose={onClose}
             >
@@ -214,11 +246,10 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {
                         Object.keys(searchedUser).length === 0 ?
                         null
-                        : searchedUser.hasOwnProperty('walletAddress') ?
+                        : searchedUser.hasOwnProperty('handle') ?
                         <ProfileContainer
                             imageHeight='48px'
-                            handle={searchedUser.walletAddress}
-                            // handle='test'
+                            handle={searchedUser.handle}
                             name={searchedUser.name}
                             imageUrl={searchedUser.image}
                             contBtn={<ContBtn>Add +</ContBtn>}
@@ -228,7 +259,6 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         : <ProfileContainer
                             imageHeight='48px'
                             handle={searchedUser.did.substring(7)}
-                            // handle='test'
                             name={searchedUser.profile.name ?? searchedUser.did.substring(7)}
                             imageUrl={searchedUser.profile.picture}
                             contBtn={<ContBtn>Add +</ContBtn>}
@@ -244,22 +274,17 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
                         {
                             invitedMembersList.map((item: any) => {
-                                if (item.hasOwnProperty('walletAddress')) {
+                                if (item.hasOwnProperty('handle')) {
                                     return <ProfileContainer
                                         imageHeight='48px'
-                                        handle={item.walletAddress}
+                                        handle={item.handle}
                                         name={item.name}
                                         imageUrl={item.image}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedUser(item)}
                                         promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -272,14 +297,9 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.profile.picture}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedUser(item)}
                                         promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -297,22 +317,17 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                         <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
                         {
                             adminsList.map((item: any) => {
-                                if (item.hasOwnProperty('walletAddress')) {
+                                if (item.hasOwnProperty('handle')) {
                                     return <ProfileContainer
                                         imageHeight='48px'
-                                        handle={item.walletAddress}
+                                        handle={item.handle}
                                         name={item.name}
                                         imageUrl={item.image}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -325,14 +340,9 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                                         imageUrl={item.profile.picture}
                                         contBtn={
                                             <SettingsCont>
-                                                <Image
-                                                    alt="Settings icon"
-                                                    height={'40px'}
-                                                    src={SettingsIcon}
-                                                />
+                                              <SettingsLogo color={theme.textColorPrimary} />
                                             </SettingsCont>
                                         }
-                                        // btnCallback={() => handleDeleteInvitedUser(item)}
                                         removeCallback={() => handleDeleteInvitedAdmin(item)}
                                         // promoteCallback={() => handlePromoteToAdmin(item)}
                                         border
@@ -351,11 +361,11 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {
                         isLoading ?
                         <CircularProgressSpinner />
-                        : 'Create Space'
+                        : btnString ?? 'Create Space'
                     }
                 </Button>
             </Modal>
-        </div>
+        </ThemeProvider>
     )
 }
 
@@ -406,13 +416,13 @@ const ContBtn = styled.button`
     line-height: 18px;
     width: max-content;
     background: transparent;
-    color: #8B5CF6;
+    color: ${props => props.theme.btnColorPrimary};
     border-radius: 6px;
     font-weight: 500;
     font-size: 12px;
     padding: 4px 8px;
     border-radius: 8px;
-    border: 1px solid #8B5CF6;
+    border: 1px solid ${props => props.theme.btnOutline};
     cursor: pointer;
 `;
 

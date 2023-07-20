@@ -16,15 +16,7 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 ### Bug Fixes
 
-* add tc fix null meta ([#502](https://github.com/ethereum-push-notification-service/push-sdk/issues/502)) ([6e48314](https://github.com/ethereum-push-notification-service/push-sdk/commit/6e48314c0e58989849f66a4ffe387d906623ef69))
-* added messageObj and Meta Messages support ([#485](https://github.com/ethereum-push-notification-service/push-sdk/issues/485)) ([2769aa6](https://github.com/ethereum-push-notification-service/push-sdk/commit/2769aa6bb0da6e7a4d28fca6b481db6cc2958d47))
-* added silent notifications ([#467](https://github.com/ethereum-push-notification-service/push-sdk/issues/467)) ([88bafe4](https://github.com/ethereum-push-notification-service/push-sdk/commit/88bafe49d489cfe399efa7166407a50574995b16))
-* fix unable to decrypt case ([#527](https://github.com/ethereum-push-notification-service/push-sdk/issues/527)) ([ccdf532](https://github.com/ethereum-push-notification-service/push-sdk/commit/ccdf532517e50e40ae0d0645c6c836360152813f))
-
-
-### Features
-
-* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+* rename chats to spaces ([899eb21](https://github.com/ethereum-push-notification-service/push-sdk/commit/899eb212af29e3a65541686d98927e37b97927c5))
 
 
 
