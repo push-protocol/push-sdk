@@ -112,7 +112,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
               alignSelf={'flex-start'}
               alignItems={'center'}
             >
-              {isHost && <Button padding="6.5px 16.5px">Edit space</Button>}
+              {isHost && <Button padding="6.5px 16.5px" color="#fff">Edit space</Button>}
               <Item
                 marginLeft={'8px'}
                 display={'flex'}
@@ -242,7 +242,7 @@ const Button = styled.button<{
   padding: ${(props) => props.padding ?? '0px'};
   color: ${(props) => props.color ?? 'inherit'};
   margin-left: 10px;
-  background: ${(props) => props.theme.bgColorSecondary};
+  background: ${(props) => props.theme.btnColorPrimary}};
   border-radius: 6px;
   border: none;
   cursor: pointer;
