@@ -83,7 +83,6 @@ export const useSpaceNotificationSocket = ({
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.REQUEST_TO_PROMOTE
           ) {
-            console.log("🚀 ~ file: useSpaceNotificationSocket.ts:87 ~ notificationSocket?.on ~ broadcastRaisedHand:", broadcastRaisedHand)
             broadcastRaisedHand(receivedSpaceMetaData);
           }
         }

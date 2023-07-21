@@ -164,11 +164,7 @@ export const SpacesUIProvider = ({
     });
   };
 
-  const broadcastRaisedHand = async ({
-    senderAddress,
-  }: PushAPI.video.VideoDataType) => {
-
-    console.log("🚀 ~ file: SpaceDataProvider.tsx:168 ~ broadcastRaisedHand:")
+  const broadcastRaisedHand = async (receivedSpaceMetaData: PushAPI.video.VideoDataType) => {
     await spacesObjectRef.current.broadcastRaisedHand({
       promoteeAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
     });

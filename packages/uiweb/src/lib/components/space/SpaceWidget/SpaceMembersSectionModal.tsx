@@ -148,7 +148,7 @@ interface ISpaceMembersModalProps {
 enum MemberTabsEnum {
   // CoHost = 'Co-Host',
   Speakers = 'Speakers',
-  // Requests = 'Requests',
+  Requests = 'Requests',
   Listeners = 'Listeners',
 }
 
@@ -201,7 +201,7 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
 
             {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
             {activeTab === MemberTabsEnum.Speakers && <Speakers members={coHosts} theme={theme} />}
-            {/* {activeTab === MemberTabsEnum.Requests && <Requests />} */}
+            {activeTab === MemberTabsEnum.Requests && <Requests theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
             {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
             {/* <Button 
