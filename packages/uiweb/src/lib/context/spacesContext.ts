@@ -68,6 +68,7 @@ export interface ISpaceDataContextValues {
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
   acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
   connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  broadcastRaisedHand: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
   customSearch?: (query: string) => ICustomSearchResult;
 }
 
@@ -163,6 +164,9 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
     /** */
   },
   connectSpaceRequest: async () => {
+    /** */
+  },
+  broadcastRaisedHand: async () => {
     /** */
   },
   customSearch: undefined,

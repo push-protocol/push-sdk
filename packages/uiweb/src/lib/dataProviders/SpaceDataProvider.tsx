@@ -22,7 +22,7 @@ import {
   studioProvider,
 } from '@livepeer/react';
 import { spaceChainId } from '../components/space/helpers/account';
-import { walletToPCAIP10 } from '../helpers';
+import { walletToPCAIP10, pCAIP10ToWallet } from '../helpers';
 
 export enum FeedTabs {
   ForYou = 'For You',
@@ -161,6 +161,15 @@ export const SpacesUIProvider = ({
       signalData,
     });
   };
+
+  const broadcastRaisedHand = async ({
+    senderAddress,
+  }: PushAPI.video.VideoDataType) => {
+
+    await spacesObjectRef.current.broadcastRaisedHand({
+      promoteeAddress: pCAIP10ToWallet(senderAddress),
+    });
+  }
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
@@ -350,6 +359,7 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
     acceptSpaceRequest,
     connectSpaceRequest,
+    broadcastRaisedHand,
     customSearch,
   };
 
@@ -389,6 +399,7 @@ export const SpacesUIProvider = ({
     env,
     acceptSpaceRequest,
     connectSpaceRequest,
+    broadcastRaisedHand,
   });
   // usePushSpaceSocket({ account, env });
   // console.log("isPushSDKSocketConnected", isPushSDKSocketConnected);

@@ -65,6 +65,18 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
+  const handleRequest = async () => {
+    await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+  }
+
+    // handleAcceptPromoReq {
+    // btn click on accept
+    // call create audio stream
+    // await spacesObjectRef?.current?.createAudioStream?.();
+
+    // new useEffect to call acceptPromote (join speker like)
+  // }
+
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
   };
@@ -228,11 +240,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 image={profile?.image}
               />
 
-              {isDDOpen ? (
+              {/* {isDDOpen ? (
                 <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
                   <DDItem>Invite to Speak</DDItem>
                 </DropDown>
-              ) : null}
+              ) : null} */}
             </div>
           ))}
       </Item>
@@ -251,7 +263,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
+              onClick={() => (isHost || isSpeaker ? handleMicState() : handleRequest())}
             >
               <Image
                 width={'14px'}
@@ -337,6 +349,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {showMembersModal ? (
           <SpaceMembersSectionModal
             onClose={() => setShowMembersModal(false)}
+            spaceData={spaceObjectData}
           />
         ) : null}
       </Item>
