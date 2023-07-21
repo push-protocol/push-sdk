@@ -39,6 +39,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDDOpen, setIsDDOpen] = useState(false);
 
+  const [isRequestedForMic, setIsRequestedForMic] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const theme = useContext(ThemeContext);
@@ -65,7 +67,25 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
+  useEffect(() => {
+    if (
+      !spaceObjectData?.connectionData?.local?.stream ||
+      !isRequestedForMic
+    )
+      return;
+
+    const requestedForMicFromEffect = async () => {
+      await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+    };
+    requestedForMicFromEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRequestedForMic]);
+
   const handleRequest = async () => {
+    await spacesObjectRef?.current?.createAudioStream?.();
+
+    setIsRequestedForMic(true)
+
     await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
   }
 
