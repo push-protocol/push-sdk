@@ -139,7 +139,7 @@ interface ISpaceMembersModalProps {
 enum MemberTabsEnum {
   // CoHost = 'Co-Host',
   Speakers = 'Speakers',
-  Requests = 'Requests',
+  // Requests = 'Requests',
   Listeners = 'Listeners',
 }
 
@@ -192,10 +192,10 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
 
             {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
             {activeTab === MemberTabsEnum.Speakers && <Speakers members={coHosts} theme={theme} />}
-            {activeTab === MemberTabsEnum.Requests && <Requests />}
+            {/* {activeTab === MemberTabsEnum.Requests && <Requests />} */}
             {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
-            <Button 
+            {/* <Button 
               padding={'16px'} 
               borderRadius={'8px'} 
               background={'#8B5CF6'} 
@@ -207,7 +207,7 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
               <Text fontSize="14px" fontWeight={600} color="#fff">
                 Update Members
               </Text>
-            </Button>
+            </Button> */}
 
             </SpacesMembersContainer>
         </Modal>
