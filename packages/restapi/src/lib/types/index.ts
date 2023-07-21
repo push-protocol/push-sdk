@@ -306,7 +306,7 @@ export interface Member {
 export enum ChatStatus {
   ACTIVE = 'ACTIVE',
   PENDING = 'PENDING',
-  ENDED = 'ENDED'
+  ENDED = 'ENDED',
 }
 export interface GroupDTO {
   members: {
@@ -368,7 +368,34 @@ export interface SpaceDTO {
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
 }
 
-export interface SpaceData extends SpaceDTO {
+export interface Peer {
+  address: string;
+  emojiReactions: {
+    emoji: string;
+    expiresIn: string;
+  } | null;
+}
+
+export interface ListenerPeer extends Peer {
+  handRaised: boolean;
+}
+
+export interface AdminPeer extends Peer {
+  audio: boolean | null;
+}
+
+export interface LiveSpaceData {
+  host: AdminPeer | null;
+  coHosts: AdminPeer[];
+  speakers: AdminPeer[];
+  listeners: ListenerPeer[];
+}
+
+export interface SpaceSpecificData extends SpaceDTO {
+  liveSpaceData: LiveSpaceData;
+}
+
+export interface SpaceData extends SpaceSpecificData {
   connectionData: VideoCallData;
 }
 

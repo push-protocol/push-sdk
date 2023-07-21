@@ -1,8 +1,9 @@
-import { MouseEventHandler } from 'react';
-import styled from 'styled-components';
+import { MouseEventHandler, useContext } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { CloseSvg } from '../../../icons/CloseSvg';
 import { ArrowLeft } from '../../../icons/ArrowLeft';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export interface IModalHeaderProps {
   heading: string;
@@ -12,8 +13,9 @@ export interface IModalHeaderProps {
 }
 
 export const ModalHeader = (props: IModalHeaderProps) => {
+  const theme = useContext(ThemeContext);
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <Header>
         {props.backCallback ? (
           <BackBtn onClick={props.backCallback}>
@@ -23,7 +25,9 @@ export const ModalHeader = (props: IModalHeaderProps) => {
 
         <CenterText>
           {props.heading}
-          {props.headingBadgeNumber && <NumberBadge>{props.headingBadgeNumber}</NumberBadge>}
+          {props.headingBadgeNumber && (
+            <NumberBadge theme={theme}>{props.headingBadgeNumber}</NumberBadge>
+          )}
         </CenterText>
 
         {props.closeCallback ? (
@@ -32,7 +36,7 @@ export const ModalHeader = (props: IModalHeaderProps) => {
           </CloseBtn>
         ) : null}
       </Header>
-    </div>
+    </ThemeProvider>
   );
 };
 
@@ -43,6 +47,7 @@ const Header = styled.div`
   width: 100%;
 
   margin-bottom: 24px;
+  color: ${(props) => props.theme.textColorPrimary};
 `;
 
 const BackBtn = styled.button`
@@ -91,7 +96,7 @@ const NumberBadge = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#8B5CF6;
+    background: ${(props) => props.theme.btnColorPrimary};
     color: #fff;
     border-radius: 8px;
     margin-left: 8px;

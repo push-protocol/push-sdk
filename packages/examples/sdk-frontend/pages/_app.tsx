@@ -12,7 +12,9 @@ import { publicProvider } from 'wagmi/providers/public';
 import '@rainbow-me/rainbowkit/styles.css';
 import '../styles/globals.css';
 import { useEffect, useState } from 'react';
-import { SpacesComponentProvider } from './spaces';
+import { SpacesUIProvider } from '@pushprotocol/uiweb';
+import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
+import { AccountContext } from '../contexts';
 
 const { chains, provider } = configureChains([goerli], [publicProvider()]);
 
@@ -28,8 +30,27 @@ const wagmiClient = createClient({
   provider,
 });
 
+export interface ISpacesComponentProps {
+  children: React.ReactNode;
+}
+
+const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
+  const { spaceUI } = useSpaceComponents();
+
+  const customtheme = {
+    statusColorError: 'red',
+  };
+
+  return (
+    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
+      {children}
+    </SpacesUIProvider>
+  );
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [loadWagmi, setLoadWagmi] = useState(false);
+  const [pgpPrivateKey, setPgpPrivateKey] = useState<string>('');
 
   useEffect(() => {
     setLoadWagmi(true);
@@ -41,9 +62,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       {loadWagmi ? (
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider theme={darkTheme()} chains={chains}>
-            <SpacesComponentProvider>
-              <Component {...pageProps} />
-            </SpacesComponentProvider>
+          <AccountContext.Provider value={{ pgpPrivateKey, setPgpPrivateKey }}>
+              <SpacesComponentProvider>
+                <Component {...pageProps} />
+              </SpacesComponentProvider>
+          </AccountContext.Provider>
           </RainbowKitProvider>
         </WagmiConfig>
       ) : null}

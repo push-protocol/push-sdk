@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
@@ -45,9 +45,11 @@ export const ChatAndNotification = () => {
     requestsFeed,
     chatsFeed,
     selectedChatId,
+    setFinishedFetchingChats,
+    setFinishedFetchingRequests,
     setChats
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
-  const { setInboxNotifsFeed, setSpamNotifsFeed } = useContext<any>(
+  const { setInboxNotifsFeed, setSpamNotifsFeed,setFinishedFetchingInbox,setFinishedFetchingSpam } = useContext<any>(
     NotificationMainStateContext
   );
   const {
@@ -63,6 +65,7 @@ export const ChatAndNotification = () => {
   const { fetchRequests } = useFetchRequests();
   const { fetchChats } = useFetchChats();
   const { fetchChat } = useFetchChat();
+  const modalRef = useRef<HTMLDivElement>(null);
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
   useChatNotificationSocket({});
 
@@ -73,6 +76,10 @@ export const ChatAndNotification = () => {
     setRequestsFeed({});
     setInboxNotifsFeed({});
     setSpamNotifsFeed({});
+    setFinishedFetchingInbox(false);
+    setFinishedFetchingSpam(false);
+    setFinishedFetchingChats(false);
+    setFinishedFetchingRequests(false);
     // set active tab if present
     if (activeChosenTab) {
       setActiveTab(activeChosenTab);
@@ -157,7 +164,7 @@ export const ChatAndNotification = () => {
                 selectedChat = getDefaultFeedObject({ user: result });
               }
             }
-            
+
           }
           setSearchedChats({
             [selectedChat.did.toLowerCase() ?? selectedChat.chatId]: selectedChat,
@@ -182,13 +189,31 @@ export const ChatAndNotification = () => {
     setModalOpen(!modalOpen);
   };
 
-  const toggleOverflow = (val: string) => {
-    if (typeof window != 'undefined' && window.document) {
-      document.body.style.overflowY = val;
-    }
-  };
 
-  
+
+  useEffect(() => {
+    const modalElement = modalRef.current;
+    if (!modalElement) return;
+
+    const handleScroll = (event: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = modalElement;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+
+      // If scrolled to the bottom of the modal, prevent further scrolling
+      if (isScrolledToBottom && event.deltaY > 0) {
+        // event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    modalElement.addEventListener('wheel', handleScroll);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      modalElement.removeEventListener('wheel', handleScroll);
+    };
+  }, []);
+
 
   return (
     <Container
@@ -199,8 +224,10 @@ export const ChatAndNotification = () => {
       background="#fff"
       right="12px"
       bottom="18px"
+      className='modal'
       overflow="hidden"
-    
+      ref={modalRef}
+
       // onMouseEnter={() => toggleOverflow('hidden')}
       // onMouseLeave={() => toggleOverflow('auto')}
     >

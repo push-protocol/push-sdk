@@ -30,7 +30,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
 
     const getTime = (hours: number, minutes: number, ampm: string, propsDate: Date) => {
         let totalMinutes = hours * 60 + minutes;
-    
+
         if (ampm === 'PM' && hours !== 12) {
           totalMinutes += 12 * 60;
         } else if (ampm === 'AM' && hours === 12) {
@@ -48,7 +48,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
         const hours = parseInt(selectedHours, 10);
         const minutes = parseInt(selectedMinutes, 10);
         const ampm = selectedAMPM;
-    
+
         const newTimeEpoch = getTime(hours, minutes, ampm, propsDate);
         setTimeHumanReadable(newTimeEpoch);
 
@@ -118,8 +118,7 @@ const Input = styled.input`
     width: 330px;
 
     background: #FFFFFF;
-    border: 1px solid ${(props => props.theme.btnOutline)};
-    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
+    border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 
     font-size: 16px;
@@ -137,8 +136,7 @@ const Select = styled.select<{ width?: string }>`
     margin-top: 12px;
 
     background: #FFFFFF;
-    border: 1px solid ${(props => props.theme.btnOutline)};
-    box-shadow: -1px -1px 2px ${(props => props.theme.btnOutline)}, 1px 1px 2px ${(props => props.theme.btnOutline)};
+    border: 2px solid ${(props => props.theme.btnOutline)};
     border-radius: 12px;
 
     font-size: 16px;

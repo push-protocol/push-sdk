@@ -17,7 +17,7 @@ import { SidebarPlaceholder } from '../SidebarPlaceholder';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const ChatsFeedList = () => {
-  const { chatsFeed, setChatsFeed } =
+  const { chatsFeed, setChatsFeed,finishedFetchingChats,setFinishedFetchingChats } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
@@ -46,7 +46,7 @@ export const ChatsFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading 
+      loading || finishedFetchingChats
       // ||
       // Object.keys(chatsFeed).length < chatLimit
     ) {
@@ -66,6 +66,7 @@ export const ChatsFeedList = () => {
     try {
       setPaginateLoading(true);
       const feeds = await fetchChats({ page, chatLimit });
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingChats(true);
       const newFeed: ChatFeedsType = { ...chatsFeed, ...feeds };
       setChatsFeed(newFeed);
     } catch (error) {

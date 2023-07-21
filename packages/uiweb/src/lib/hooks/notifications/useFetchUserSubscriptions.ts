@@ -19,7 +19,7 @@ const useFetchUserSubscriptions = () => {
   const fetchUserSubscriptions = useCallback(async () => {
     setLoading(true);
     try {
-      const chainId = await signer.getChainId();
+      const chainId = await signer?.getChainId();
       const results = await PushAPI.user.getSubscriptions({
         user: convertAddressToAddrCaip(account, chainId), // user address in CAIP
         env,

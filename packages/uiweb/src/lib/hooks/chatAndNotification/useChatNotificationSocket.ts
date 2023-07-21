@@ -243,7 +243,7 @@ const useChatNotificationSocket = ({
       }
       let chainId = 1;
       (async () => {
-        chainId = await signer.getChainId();
+        chainId = await signer?.getChainId();
       })();
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({
