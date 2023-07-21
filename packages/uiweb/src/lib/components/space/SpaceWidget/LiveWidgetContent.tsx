@@ -54,6 +54,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setSpaceWidgetId,
     isJoined,
     initSpaceObject,
+    raisedHandInfo,
   } = useSpaceData();
 
   console.log(
@@ -87,6 +88,21 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setIsRequestedForMic(true)
 
     await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+  }
+
+  const handleAcceptPromotion = async (requesterAddress: any) => {
+    const options = {
+      signalData: raisedHandInfo[requesterAddress].signalData,
+      promoteeAddress: pCAIP10ToWallet(raisedHandInfo[requesterAddress].senderAddress),
+      spaceId: raisedHandInfo[requesterAddress].chatId,
+      role: 'SPEAKER',
+    }
+
+    await spacesObjectRef?.current?.acceptPromotionRequest?.(options)
+  }
+
+  const handleRejectPromotion = async (requesterAddress: any) => {
+    await spacesObjectRef?.current?.acceptPromotionRequest?.({ promoteeAddress: pCAIP10ToWallet(requesterAddress) })
   }
 
     // handleAcceptPromoReq {
@@ -370,6 +386,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           <SpaceMembersSectionModal
             onClose={() => setShowMembersModal(false)}
             spaceData={spaceObjectData}
+            acceptCallback={handleAcceptPromotion}
+            rejectCallback={handleRejectPromotion}
           />
         ) : null}
       </Item>

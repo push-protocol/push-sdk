@@ -10,25 +10,34 @@ import { createBlockie } from '../helpers/blockies';
 import { Button, Container, Image, Text } from '../../../config';
 import SettingsIcon from '../../../icons/settingsBlack.svg';
 import { SettingsLogo } from '../../../icons/SettingsLogo';
+import { AcceptRequest } from '../../../icons/Accept';
+import { RejectRequest } from '../../../icons/Reject';
 
 
 const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
-const Requests: React.FC = () => {
+
+const Requests = (props: any) => {
+  const { members, acceptCallback, rejectCallback } = props;
+
   return (
-    <Container>
-      <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
+    <MembersContainer>
+      {members.map((item: any) => {
+          return <ProfileContainer
+          handle={item.wallet.substring(7)}
+          name={item.wallet.substring(7)}
+          imageUrl={item.image}
           imageHeight='48px'
+          contBtn={
+            <SettingsCont>
+              {/* these will change according to data recieved */}
+              <div onClick={rejectCallback(item.wallet)}><RejectRequest /></div>
+              <div onClick={acceptCallback(item.wallet)}><AcceptRequest /></div>
+            </SettingsCont>
+          }
+        border
       />
-      <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-      />
-    </Container>
+      })}
+    </MembersContainer>
   )
 }
 
@@ -133,15 +142,17 @@ const Listeners: React.FC = () => {
 interface ISpaceMembersModalProps {
   onClose: () => void;
   spaceData: any;
+  acceptCallback?: any;
+  rejectCallback?: any;
 }
 enum MemberTabsEnum {
   // CoHost = 'Co-Host',
   Speakers = 'Speakers',
-  // Requests = 'Requests',
+  Requests = 'Requests',
   Listeners = 'Listeners',
 }
 
-export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData }: ISpaceMembersModalProps) => {
+export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData, acceptCallback, rejectCallback }: ISpaceMembersModalProps) => {
 
   const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.Speakers);
 
@@ -190,7 +201,7 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
 
             {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
             {activeTab === MemberTabsEnum.Speakers && <Speakers members={coHosts} theme={theme} />}
-            {/* {activeTab === MemberTabsEnum.Requests && <Requests />} */}
+            {activeTab === MemberTabsEnum.Requests && <Requests theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
             {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
             {/* <Button 

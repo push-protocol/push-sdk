@@ -62,6 +62,8 @@ export const SpacesUIProvider = ({
     PushAPI.space.initSpaceData
   );
 
+  const [raisedHandInfo, setRaisedHandInfo] = useState<Record<string, PushAPI.video.VideoDataType>>({});
+
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
     currentPage: 1,
@@ -162,14 +164,12 @@ export const SpacesUIProvider = ({
     });
   };
 
-  const broadcastRaisedHand = async ({
-    senderAddress,
-  }: PushAPI.video.VideoDataType) => {
-
-    console.log("🚀 ~ file: SpaceDataProvider.tsx:168 ~ broadcastRaisedHand:")
+  const broadcastRaisedHand = async (receivedSpaceMetaData: PushAPI.video.VideoDataType) => {
     await spacesObjectRef.current.broadcastRaisedHand({
-      promoteeAddress: pCAIP10ToWallet(senderAddress),
+      promoteeAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
     });
+
+    setRaisedHandInfo(prevMap => ({ ...prevMap, [receivedSpaceMetaData.senderAddress]: receivedSpaceMetaData }));
   }
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
@@ -362,6 +362,7 @@ export const SpacesUIProvider = ({
     connectSpaceRequest,
     broadcastRaisedHand,
     customSearch,
+    raisedHandInfo,
   };
 
   const resetStates = () => {

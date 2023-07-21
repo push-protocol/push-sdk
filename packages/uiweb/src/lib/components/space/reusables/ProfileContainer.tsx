@@ -52,7 +52,7 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
     }, []);
 
     return (
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
         <ParentContainer
             border={border}
         >
@@ -75,11 +75,15 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
             </HostContainer>
 
             {
-                isDDOpen ?
+                isDDOpen && (removeCallback || promoteCallback) ?
                 <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-                    <DDItem onClick={removeCallback}>
-                        Remove
-                    </DDItem>
+                    {
+                        removeCallback ?
+                        <DDItem onClick={removeCallback}>
+                            Remove
+                        </DDItem>
+                        : null
+                    }
                     {
                         promoteCallback ?
                         <DDItem onClick={promoteCallback}>
@@ -91,7 +95,7 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
                 : null
             }
         </ParentContainer>
-      </ThemeProvider>
+    </ThemeProvider>
     );
 };
 
