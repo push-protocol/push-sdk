@@ -40,6 +40,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const theme = useContext(ThemeContext);
 
   const {
