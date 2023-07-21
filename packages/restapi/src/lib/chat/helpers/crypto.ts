@@ -16,6 +16,8 @@ import {
   decryptWithWalletRPCMethod,
   isValidETHAddress,
   walletToPCAIP10,
+  signTypedData,
+  signMessage,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
@@ -289,7 +291,8 @@ export const getEip191Signature = async (
   }
   const _signer = wallet?.signer;
   // EIP191 signature
-  const signature = await _signer?.signMessage(message);
+
+  const signature = await signMessage(_signer, message);
   const sigType = version === 'v1' ? 'eip191' : 'eip191v2';
   return { verificationProof: `${sigType}:${signature}` };
 };
@@ -316,7 +319,8 @@ export const getEip712Signature = async (
   const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  const signedMessage = await _signer?._signTypedData!(
+  const signedMessage = await signTypedData(
+    _signer,
     isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash }
