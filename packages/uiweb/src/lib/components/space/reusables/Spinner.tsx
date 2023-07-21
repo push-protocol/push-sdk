@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, ThemeProvider } from 'styled-components';
 import { SpinnerSvg } from '../../../icons/SpinnerSvg';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 type SpinnerPropType = {
   size?: string;
@@ -11,10 +12,13 @@ type SpinLoaderPropType = {
 };
 
 export const Spinner: React.FC<SpinnerPropType> = ({ size = 42 }) => {
+  const theme = useContext(ThemeContext);
   return (
-    <SpinLoader width={`${size}px`}>
-      <SpinnerSvg color={'#8B5CF6'} />
-    </SpinLoader>
+    <ThemeProvider theme={theme}>
+      <SpinLoader width={`${size}px`}>
+        <SpinnerSvg color={`${theme.btnOutline}`} />
+      </SpinLoader>
+    </ThemeProvider>
   );
 };
 

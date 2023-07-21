@@ -16,7 +16,7 @@ import type { NotificationFeedsType } from '../../../../../types';
 import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
 
 export const SpamNotificationFeedList = () => {
-  const { spamNotifsFeed, setSpamNotifsFeed } = useContext<any>(
+  const { spamNotifsFeed, setSpamNotifsFeed,finishedFetchingSpam,setFinishedFetchingSpam } = useContext<any>(
     NotificationMainStateContext
   );
   const pageRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ export const SpamNotificationFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading ||
+      loading || finishedFetchingSpam||
       Object.keys(spamNotifsFeed).length < notificationLimit
     ) {
       return;
@@ -72,8 +72,9 @@ export const SpamNotificationFeedList = () => {
         limit: notificationLimit,
         spam: true,
       });
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingSpam(true);
       const newFeed: NotificationFeedsType = { ...spamNotifsFeed, ...feeds };
-    
+
 
       setSpamNotifsFeed(newFeed);
     } catch (error) {
@@ -90,7 +91,7 @@ export const SpamNotificationFeedList = () => {
       justifyContent="start"
       flexDirection="column"
       width="100%"
-     
+
       padding="0 3px"
     >
       {(!loading || paginateLoading) &&

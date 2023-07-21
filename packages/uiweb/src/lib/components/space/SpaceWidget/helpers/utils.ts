@@ -3,13 +3,13 @@ import { getSpaceStatus } from '../../helpers/space';
 
 export const isHostOfSpace = (account: string, spaceData: SpaceDTO) => {
   return (
-    account.toUpperCase() === spaceData?.spaceCreator.slice(7).toUpperCase()
+    account.toUpperCase() === spaceData?.spaceCreator.toUpperCase()
   );
 };
 
 export const isMemberOfSpace = (account: string, spaceData: SpaceDTO) => {
   const isMemberArr = spaceData?.members.filter(
-    (member) => member.wallet.slice(7).toUpperCase() === account.toUpperCase()
+    (member) => member.wallet.toUpperCase() === account.toUpperCase()
   );
   return isMemberArr?.length > 0;
 };

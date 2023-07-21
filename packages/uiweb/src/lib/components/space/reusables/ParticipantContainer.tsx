@@ -66,7 +66,7 @@ const ParticipantsIconContainer = styled.div<{ orientation?: string }>`
   padding: 0 4px;
 }`;
 
-const ParticipantsIcon = styled.img<{ imageHeight?: any }>` 
+const ParticipantsIcon = styled.img<{ imageHeight?: any }>`
   height: ${(props) => (props.imageHeight ? props.imageHeight : '31px')};
   border-radius: 50%;
 
@@ -74,19 +74,19 @@ const ParticipantsIcon = styled.img<{ imageHeight?: any }>`
     position: relative;
     top: 0;
     left: 0;
-    z-index: 3;
+    // z-index: 3;
   }
   &.index1 {
     position: relative;
     top: 0;
     left: -50%;
-    z-index: 2;
+    // z-index: 2;
   }
   &.index2 {
     position: relative;
     top: 0;
     left: -100%;
-    z-index: 1;
+    // z-index: 1;
   }
 }`;
 

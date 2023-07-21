@@ -14,14 +14,21 @@ import {
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { usePushSpaceSocket, useSpaceNotificationSocket } from '../hooks';
+import { useSpaceNotificationSocket } from '../hooks';
 
 import {
   LivepeerConfig,
-  Player,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
+import { spaceChainId } from '../components/space/helpers/account';
+import { walletToPCAIP10 } from '../helpers';
+
+export enum FeedTabs {
+  ForYou = 'For You',
+  Popular = 'Popular',
+  HostedByYou = 'Hosted by you',
+}
 
 export interface ISpacesUIProviderProps {
   spaceUI: SpacesUI;
@@ -35,13 +42,17 @@ export const SpacesUIProvider = ({
   children,
 }: ISpacesUIProviderProps) => {
   const spacesObjectRef = useRef({} as PushAPI.space.Space);
-  const [account, setAccount] = useState<string>(spaceUI.account);
+  const [account, setAccount] = useState<string>(walletToPCAIP10(spaceUI.account));
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
   );
   const [env, setEnv] = useState<ENV>(spaceUI.env);
+  const [chainId, setChainId] = useState<number>(
+    spaceChainId(spaceUI.account, spaceUI.env)
+  );
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
+  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(FeedTabs['Popular']);
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
@@ -76,7 +87,7 @@ export const SpacesUIProvider = ({
 
   const livepeerClient = createReactClient({
     provider: studioProvider({
-      apiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      apiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
     }),
   });
 
@@ -104,11 +115,47 @@ export const SpacesUIProvider = ({
       signer,
       pgpPrivateKey,
       address: account,
-      chainId: 5, // TODO: Make this dynamic
+      chainId: chainId,
       env,
       setSpaceData: setSpaceObjectData,
     });
     await spacesObjectRef.current.initialize({ spaceId });
+  };
+
+  const acceptSpaceRequest = async ({
+    senderAddress,
+    recipientAddress,
+    chatId,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER ACCEPT REQUEST',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current?.acceptRequest({
+      recipientAddress: senderAddress,
+      senderAddress: recipientAddress,
+      chatId,
+      signalData,
+    });
+  };
+
+  const connectSpaceRequest = async ({
+    senderAddress,
+    signalData,
+  }: PushAPI.video.VideoDataType) => {
+    console.log(
+      'INSIDE WRAPPER CONNECT',
+      'spacesObjectRef?.current',
+      spacesObjectRef?.current
+    );
+
+    await spacesObjectRef.current.connect({
+      peerAddress: senderAddress,
+      signalData,
+    });
   };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
@@ -124,17 +171,22 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
-        console.log('Unique Spaces', uniqueSpaces);
+
+        let updatedApiData: SpaceIFeeds[] = [];
+        if (prevState.apiData) {
+          updatedApiData = [...prevState.apiData, ...uniqueSpaces];
+          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+        } else {
+          updatedApiData = uniqueSpaces;
+        }
         return {
           ...prevState,
-          ...(uniqueSpaces &&
-            prevState.apiData && {
-              apiData: [...prevState.apiData, ...uniqueSpaces],
-            }),
+          ...(updatedApiData.length > 0 && {
+            apiData: updatedApiData,
+          }),
         };
       }
       return {
@@ -154,17 +206,22 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
-        console.log('Unique Spaces', uniqueSpaces);
+
+        let updatedApiData: SpaceIFeeds[] = [];
+        if (prevState.apiData) {
+          updatedApiData = [...prevState.apiData, ...uniqueSpaces];
+          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+        } else {
+          updatedApiData = uniqueSpaces;
+        }
         return {
           ...prevState,
-          ...(uniqueSpaces &&
-            prevState.apiData && {
-              apiData: [...prevState.apiData, ...uniqueSpaces],
-            }),
+          ...(updatedApiData.length > 0 && {
+            apiData: updatedApiData,
+          }),
         };
       }
       return {
@@ -184,17 +241,22 @@ export const SpacesUIProvider = ({
         const existingIds = new Set(
           prevState.apiData?.map((space: SpaceIFeeds) => space.spaceId)
         );
-        console.log('Existing ID', existingIds);
         const uniqueSpaces = apiData?.filter(
           (space) => !existingIds.has(space.spaceId)
         );
-        console.log('Unique Spaces', uniqueSpaces);
+
+        let updatedApiData: SpaceIFeeds[] = [];
+        if (prevState.apiData) {
+          updatedApiData = [...prevState.apiData, ...uniqueSpaces];
+          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+        } else {
+          updatedApiData = uniqueSpaces;
+        }
         return {
           ...prevState,
-          ...(uniqueSpaces &&
-            prevState.apiData && {
-              apiData: [...prevState.apiData, ...uniqueSpaces],
-            }),
+          ...(updatedApiData.length > 0 && {
+            apiData: updatedApiData,
+          }),
         };
       }
       return {
@@ -209,16 +271,16 @@ export const SpacesUIProvider = ({
     spaceObjectData?.members?.find((member) => {
       if (
         account?.toUpperCase() ===
-        spaceObjectData.spaceCreator.replace('eip155:', '').toUpperCase()
+        spaceObjectData.spaceCreator.toUpperCase()
       )
         return false;
-      const address = member.wallet.replace('eip155:', '');
+      const address = member.wallet;
       return (
         address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
       );
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
-        const address = member.wallet.replace('eip155:', '');
+        const address = member.wallet;
         return (
           address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
         );
@@ -227,20 +289,21 @@ export const SpacesUIProvider = ({
 
   const isListener = Boolean(
     spaceObjectData?.members?.find((member) => {
-      console.log('member', member);
-      const address = member.wallet.replace('eip155:', '');
+      const address = member.wallet;
       return (
         address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
       );
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
-        console.log('pending member', member);
-        const address = member.wallet.replace('eip155:', '');
+        const address = member.wallet;
         return (
           address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
         );
-      })
+      }) ||
+      !isSpeaker
   );
+
+  const customSearch = undefined;
 
   const value: ISpaceDataContextValues = {
     account,
@@ -251,6 +314,8 @@ export const SpacesUIProvider = ({
     setPgpPrivateKey,
     env,
     setEnv,
+    chainId,
+    setChainId,
     trendingListData,
     setTrendingListData,
     spaceInfo,
@@ -258,6 +323,8 @@ export const SpacesUIProvider = ({
     getSpaceInfo,
     spaceWidgetId,
     setSpaceWidgetId,
+    selectedFeedTab,
+    setSelectedFeedTab,
     mySpaces,
     setMySpaces: setMySpacePaginationInfo,
     popularSpaces,
@@ -273,20 +340,49 @@ export const SpacesUIProvider = ({
     isListener,
     speakerData,
     setSpeakerData: setSpeakerDataItem,
+    acceptSpaceRequest,
+    connectSpaceRequest,
+    customSearch,
+  };
+
+  const resetStates = () => {
+    setSpaceWidgetId('');
+    setSpeakerData({} as ISpaceSpeakerData);
+    setSpaceObjectData(PushAPI.space.initSpaceData);
+    setSpaceRequests({
+      apiData: [] as SpaceIFeeds[],
+      currentPage: 1,
+      lastPage: 2,
+    } as ISpacePaginationData);
+    setMySpaces({
+      apiData: [] as SpaceIFeeds[],
+      currentPage: 1,
+      lastPage: 2,
+    } as ISpacePaginationData);
   };
 
   useEffect(() => {
-    setAccount(spaceUI.account);
+    resetStates();
+    setAccount(walletToPCAIP10(spaceUI.account));
     setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
     setPgpPrivateKey(spaceUI.pgpPrivateKey);
-  }, [spaceUI]);
+
+    // reset
+    setChainId(spaceChainId(spaceUI.account, spaceUI.env));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceUI.account, spaceUI.env, spaceUI.pgpPrivateKey, spaceUI.signer]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
-  useSpaceNotificationSocket({ account, env });
-  usePushSpaceSocket({ account, env });
+  useSpaceNotificationSocket({
+    account,
+    env,
+    acceptSpaceRequest,
+    connectSpaceRequest,
+  });
+  // usePushSpaceSocket({ account, env });
 
   return (
     <LivepeerConfig client={livepeerClient}>

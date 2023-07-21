@@ -11,7 +11,7 @@ import { useIsInViewport } from '../../../../../hooks';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
 
 export const RequestsFeedList = () => {
-  const { requestsFeed, setRequestsFeed } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+  const { requestsFeed, setRequestsFeed,finishedFetchingRequests,setFinishedFetchingRequests } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const pageRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(1);
   const [paginateLoading, setPaginateLoading] = useState<boolean>(false);
@@ -38,7 +38,7 @@ export const RequestsFeedList = () => {
   useEffect(() => {
     if (
       !isInViewport1 ||
-      loading 
+      loading || finishedFetchingRequests
       // ||
       // Object.keys(requestsFeed).length < requestLimit
     ) {
@@ -58,6 +58,7 @@ export const RequestsFeedList = () => {
     try {
       setPaginateLoading(true);
       const feeds = await fetchRequests({ page, requestLimit });
+      if(!Object.keys(feeds || {}).length) setFinishedFetchingRequests(true);
       const newFeed: ChatFeedsType = { ...requestsFeed, ...feeds };
       setRequestsFeed(newFeed);
     } catch (error) {
@@ -75,7 +76,7 @@ export const RequestsFeedList = () => {
     justifyContent="start"
     width='100%'
     flexDirection="column"
-    
+
   >
     {(!loading || paginateLoading) && Object.keys(requestsFeed || {}).length ? (
       <ChatList chatsFeed={requestsFeed} />

@@ -2,7 +2,7 @@
  * This file defines the type for meta property for a Push Chat message
  */
 
-const enum META_ACTION {
+export const enum META_ACTION {
   /**
    * DEFAULT GROUP ACTIONS
    */

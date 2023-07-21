@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
-import { IFeeds } from '../types';
-import { addDeprecatedInfo, getSpaceInboxLists, getUserDID } from './../chat/helpers';
+import { SpaceIFeeds } from '../types';
+import {  getSpaceInboxLists, getUserDID } from './../chat/helpers';
 
 export const spaceFeed = async (options: {
   account: string;
@@ -10,7 +10,7 @@ export const spaceFeed = async (options: {
   toDecrypt?: boolean;
   env?: ENV;
   recipient: string;
-}): Promise<IFeeds> => {
+}): Promise<SpaceIFeeds> => {
   const {
     account,
     pgpPrivateKey,
@@ -22,13 +22,13 @@ export const spaceFeed = async (options: {
   const recipientWallet = await getUserDID(recipient, env);
   if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chat/${recipientWallet}`;
+  const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/space/${recipientWallet}`;
   try {
     const response = await axios.get(apiEndpoint);
     // If no chat between users, then returns {}
-    const space: IFeeds = response.data;
+    const space: SpaceIFeeds = response.data;
     if (Object.keys(space).length !== 0) {
-      const [feed]: IFeeds[] = await getSpaceInboxLists({
+      const [feed]: SpaceIFeeds[] = await getSpaceInboxLists({
         lists: [space],
         user,
         toDecrypt,
