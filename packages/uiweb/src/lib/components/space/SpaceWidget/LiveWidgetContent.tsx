@@ -65,9 +65,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
-  const handleRequest = async () => {
-    await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
-  }
+  // const handleRequest = async () => {
+  //   await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+  // }
 
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
@@ -251,7 +251,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : handleRequest())}
+              // onClick={() => (isHost || isSpeaker ? handleMicState() : handleRequest())}
+              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
             >
               <Image
                 width={'14px'}
