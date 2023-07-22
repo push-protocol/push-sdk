@@ -9,7 +9,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
   - [Import SDK](#import-sdk)
-  - [**About generating the "signer" object for different platforms**](#about-generating-the-signer-object-for-different-platforms)
+  - [About generating the "signer" object for different platforms](#about-generating-the-signer-object-for-different-platforms)
     - [When using in SERVER-SIDE code:](#when-using-in-server-side-code)
     - [When using in FRONT-END code:](#when-using-in-front-end-code)
   - [**About blockchain agnostic address format**](#about-blockchain-agnostic-address-format)
