@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.27](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.26...restapi-0.0.1-alpha.27) (2023-07-24)
+
+
+### Bug Fixes
+
+* merge alpha ([16a55af](https://github.com/ethereum-push-notification-service/push-sdk/commit/16a55af713da0394ab9d82e13fed6d64190b247d))
+* Merge branch 'alpha' into alpha-deployment ([6ea669a](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ea669a5aa3cebe693de259c1ea28787c0407d2a))
+* signer compatibility with viem ([3df201c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3df201c7474b88d270d6e868bc516f223539e74c))
+* signer compatibility with viem and ethers ([1edea43](https://github.com/ethereum-push-notification-service/push-sdk/commit/1edea431ccf7f19cc0430deb2ce7a5c61390d99f))
+* signer compatibility with viem and ethers ([#567](https://github.com/ethereum-push-notification-service/push-sdk/issues/567)) ([c07c3fa](https://github.com/ethereum-push-notification-service/push-sdk/commit/c07c3fab76a095998b1eac830c941116ad1e9b4f))
+
+
+
 ## [1.4.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.2...restapi-1.4.3) (2023-07-22)
 
 ## [1.4.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.1...restapi-1.4.2) (2023-07-20)
