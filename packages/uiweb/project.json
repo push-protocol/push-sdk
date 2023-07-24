@@ -22,10 +22,7 @@
             "output": "."
           }
         ],
-        "format": [
-          "esm",
-          "cjs"
-        ]
+        "format": ["esm", "cjs"]
       }
     },
     "lint": {

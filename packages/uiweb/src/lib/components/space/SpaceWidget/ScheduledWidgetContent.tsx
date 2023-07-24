@@ -1,52 +1,70 @@
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
 import { Button, Container, Image, Item, Text } from '../../../config';
 import { formatDate } from '../../../helpers';
+import CircularProgressSpinner from '../../loader/loader';
 
 import SpacesIcon from '../../../icons/Spaces.svg';
 import TwitterIcon from '../../../icons/twitterVector.svg';
 import CopyIcon from '../../../icons/copyVector.svg';
-import AtIcon from '../../../icons/atVector.svg';
+import LensterIcon from '../../../icons/lensterVector.svg';
 import { SpaceDTO } from '@pushprotocol/restapi';
 import { useSpaceData } from '../../../hooks';
-import { useEffect, useState } from 'react';
+import { generateLensterShareURL } from '../helpers/share';
+import { ShareConfig } from '../exportedTypes';
+import { SpaceStatus } from './WidgetContent';
+
+import { ThemeContext } from '../theme/ThemeProvider';
+
+enum ShareOptions {
+  Twitter = 'Twitter',
+  Lenster = 'Lenster',
+  CopyShareUrl = 'Copy Link',
+}
+
+export type ShareOptionsValues = keyof typeof ShareOptions;
 
 interface ScheduledWidgetContentProps {
-  account?: string;
   spaceData?: SpaceDTO;
-  shareUrl?: string;
+  share?: ShareConfig;
 
   // temp props only for testing demo purpose for now
   isHost?: boolean;
   isTimeToStartSpace?: boolean;
   isMember?: boolean;
-  isSpaceLive: boolean;
-  setIsSpaceLive: React.Dispatch<React.SetStateAction<boolean>>;
+  spaceStatusState: any;
+  setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
 }
 export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
-  account,
   spaceData,
-  shareUrl,
+  share,
   isHost,
   isMember,
-  isSpaceLive,
-  setIsSpaceLive,
+  spaceStatusState,
+  setSpaceStatusState,
 }: ScheduledWidgetContentProps) => {
+  const theme = React.useContext(ThemeContext);
+  const { spacesObjectRef, initSpaceObject, spaceObjectData } = useSpaceData();
+
   const isTimeToStartSpace = true;
-  const {
-    spacesObjectRef,
-    initSpaceObject,
-    spaceObjectData,
-  } = useSpaceData();
+
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { shareUrl, shareOptions = ['Twitter', 'Lenster', 'CopyShareUrl'] } =
+    share || {};
 
   const handleStartSpace = async () => {
+    setIsLoading(!isLoading);
+
     console.log('initializing space object');
-    await initSpaceObject(spaceData?.spaceId as string);
+    await initSpaceObject?.(spaceData?.spaceId as string);
 
     console.log('creating audio stream');
-    await spacesObjectRef.current.createAudioStream();
+    await spacesObjectRef?.current?.createAudioStream?.();
 
+    setIsLoading(!isLoading);
     setIsStarted(true);
     console.log('Space Started');
   };
@@ -63,6 +81,19 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     window.open(tweetUrl, '_blank');
   };
 
+  const handleShareLenster = () => {
+    if (!shareUrl) return;
+    const url = shareUrl;
+    const lensterShareText = 'Join this space';
+
+    const lensterShareUrl = generateLensterShareURL({
+      text: lensterShareText,
+      url,
+    });
+
+    window.open(lensterShareUrl, '_blank');
+  };
+
   const handleCopyLink = async () => {
     try {
       if (!shareUrl) return;
@@ -75,144 +106,165 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     }
   };
 
+  const handleShareAction = (shareOption: ShareOptionsValues) => {
+    switch (shareOption) {
+      case ShareOptions.Twitter:
+        handleShareTweet();
+        break;
+      case ShareOptions.Lenster:
+        handleShareLenster();
+        break;
+      default:
+        handleCopyLink();
+        break;
+    }
+  };
+
+  const getShareOptionDetails = (shareOption: ShareOptionsValues) => {
+    let icon = '';
+    let alt = '';
+
+    switch (shareOption) {
+      case ShareOptions.Twitter:
+        icon = TwitterIcon;
+        alt = 'Twitter Icon';
+        break;
+      case ShareOptions.Lenster:
+        icon = LensterIcon;
+        alt = 'Lenster Icon';
+        break;
+      default:
+        icon = CopyIcon;
+        alt = 'Copy Icon';
+        break;
+    }
+
+    return { icon, alt };
+  };
+
   useEffect(() => {
     async function startSpace() {
-      if(isSpaceLive) return;
-      if (!spaceObjectData?.connectionData?.local.stream || !isStarted) return;
-      await spacesObjectRef.current.start({
-        livepeerApiKey: '2638ace1-0a3a-4853-b600-016e6125b9bc',
+      if (spaceStatusState === SpaceStatus.Live) return;
+      if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
+      await spacesObjectRef?.current?.start?.({
+        livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
       });
       setIsStarted(false);
-      setIsSpaceLive && setIsSpaceLive(true);
+      setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
     }
     startSpace();
   }, [isStarted]);
 
-  console.log('Rendering ScheduledWidgetContent');
-  console.log('isStarted?', isStarted);
-
   return (
-    <Container
-      display={'flex'}
-      height={'100%'}
-      alignItems={'center'}
-      flexDirection={'column'}
-      justifyContent={'center'}
-      gap={'15px'}
-      padding={'0 24px'}
-    >
-      <Image
-        width={'41px'}
-        height={'41px'}
-        src={SpacesIcon}
-        alt="Spaces Icon"
-      />
-      {isHost ? (
-        isTimeToStartSpace ? (
-          <SpaceInfoText>It’s time to start your space</SpaceInfoText>
+    <ThemeProvider theme={theme}>
+      <Container
+        display={'flex'}
+        height={'100%'}
+        alignItems={'center'}
+        flexDirection={'column'}
+        justifyContent={'center'}
+        gap={'15px'}
+        padding={'0 24px'}
+      >
+        <Image
+          width={'41px'}
+          height={'41px'}
+          src={SpacesIcon}
+          alt="Spaces Icon"
+        />
+        {isHost ? (
+          isTimeToStartSpace ? (
+            <SpaceInfoText>It’s time to start your space</SpaceInfoText>
+          ) : (
+            <SpaceInfoText>
+              Your space is scheduled. <br /> Share and let people know when to
+              join!
+            </SpaceInfoText>
+          )
         ) : (
           <SpaceInfoText>
-            Your space is scheduled. <br /> Share and let people know when to
-            join!
+            This space will go live on{' '}
+            {formatDate((spaceData?.scheduleAt as any) || new Date())}
           </SpaceInfoText>
-        )
-      ) : (
-        <SpaceInfoText>
-          This space will go live on{' '}
-          {formatDate((spaceData?.scheduleAt as any) || new Date())}
-        </SpaceInfoText>
-      )}
-      {isHost && isTimeToStartSpace && (
-        <Button
-          padding={'9px 34px'}
-          borderRadius={'8px'}
-          background={'#8B5CF6'}
-          border={'1px solid #703BEB'}
-          cursor={'pointer'}
-          onClick={handleStartSpace}
-        >
-          <Text fontSize="14px" fontWeight={600} color="#fff">
-            Start this space
-          </Text>
-        </Button>
-      )}
-      {!isHost && !isMember && (
-        <Button
-          padding={'9px 34px'}
-          borderRadius={'8px'}
-          background={'#8B5CF6'}
-          border={'1px solid #703BEB'}
-          cursor={'pointer'}
-        >
-          <Text fontSize="14px" fontWeight={600} color="#fff">
-            Remind Me
-          </Text>
-        </Button>
-      )}
-      {!isHost && isMember && (
-        <Button
-          padding={'9px 12px'}
-          borderRadius={'8px'}
-          background={'#fff'}
-          border={'1px solid #D4D4D8'}
-          cursor={'pointer'}
-        >
-          <Text fontSize="14px" fontWeight={600} color="#333333">
-            Remove Reminder
-          </Text>
-        </Button>
-      )}
-      {(!isHost || (isHost && !isTimeToStartSpace)) && shareUrl && (
-        <Item display={'flex'} gap={'13px'}>
-          <ShareLinkItem>
-            <ShareLinkButton onClick={handleShareTweet}>
-              <Image
-                src={TwitterIcon}
-                alt="Twitter Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Twitter
+        )}
+        {isHost && isTimeToStartSpace && (
+          <Button
+            padding={'9px 34px'}
+            borderRadius={'8px'}
+            background={`${theme.btnColorPrimary}`}
+            border={`1px solid ${theme.btnOutline}`}
+            cursor={'pointer'}
+            onClick={handleStartSpace}
+          >
+            <Text fontSize="14px" fontWeight={600} color="#fff">
+              {isLoading ? <CircularProgressSpinner /> : 'Start this Space'}
             </Text>
-          </ShareLinkItem>
-          <ShareLinkItem>
-            <ShareLinkButton onClick={handleCopyLink}>
-              <Image
-                src={CopyIcon}
-                alt="Copy Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Copy Link
+          </Button>
+        )}
+        {!isHost && !isMember && (
+          <Button
+            padding={'9px 34px'}
+            borderRadius={'8px'}
+            background={`${theme.btnColorPrimary}`}
+            border={`1px solid ${theme.btnOutline}`}
+            cursor={'pointer'}
+          >
+            <Text fontSize="14px" fontWeight={600} color="#fff">
+              Remind Me
             </Text>
-          </ShareLinkItem>
-          <ShareLinkItem>
-            <ShareLinkButton>
-              <Image
-                src={AtIcon}
-                alt="At Icon"
-                width={'25px'}
-                height={'22px'}
-              />
-            </ShareLinkButton>
-            <Text fontSize={'12px'} fontWeight={600}>
-              Email
+          </Button>
+        )}
+        {!isHost && isMember && (
+          <Button
+            padding={'9px 12px'}
+            borderRadius={'8px'}
+            background={`${theme.bgColorPrimary}`}
+            border={`1px solid ${theme.borderColor}`}
+            cursor={'pointer'}
+          >
+            <Text
+              fontSize="14px"
+              fontWeight={600}
+              color={`${theme.textColorPrimary}`}
+            >
+              Remove Reminder
             </Text>
-          </ShareLinkItem>
-        </Item>
-      )}
-    </Container>
+          </Button>
+        )}
+        {(!isHost || (isHost && !isTimeToStartSpace)) && shareUrl && (
+          <Item display={'flex'} gap={'13px'}>
+            {shareOptions.map((shareOption) => {
+              const { icon, alt } = getShareOptionDetails(shareOption);
+              return (
+                <ShareLinkItem key={shareOption}>
+                  <ShareLinkButton
+                    onClick={() => handleShareAction(shareOption)}
+                  >
+                    <Image
+                      src={icon}
+                      alt={alt}
+                      width={'25px'}
+                      height={'22px'}
+                    />
+                  </ShareLinkButton>
+                  <Text fontSize={'12px'} fontWeight={600}>
+                    {ShareOptions[shareOption]}
+                  </Text>
+                </ShareLinkItem>
+              );
+            })}
+          </Item>
+        )}
+      </Container>
+    </ThemeProvider>
   );
 };
 
-const SpaceInfoText = styled.span`
+export const SpaceInfoText = styled.span`
   font-size: 18px;
   font-weight: 600;
   text-align: center;
+  color: ${({ theme }) => theme.textColorPrimary};
 `;
 
 const ShareLinkItem = styled.div`
@@ -223,7 +275,7 @@ const ShareLinkItem = styled.div`
 `;
 
 const ShareLinkButton = styled.button`
-  background: #e4e4e7;
+  background: ${({ theme }) => theme.bgColorSecondary};
   border-radius: 14px;
   padding: 16px;
   border: none;

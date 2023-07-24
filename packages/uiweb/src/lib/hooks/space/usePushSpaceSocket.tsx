@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
 import { useSpaceData } from './useSpaceData';
 import * as PushAPI from "@pushprotocol/restapi";
-import { SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
+import { SpaceDTO } from '@pushprotocol/restapi';
 
 const SPACE_SOCKET_TYPE = 'chat';
 
@@ -16,7 +16,7 @@ export const usePushSpaceSocket = ({
   account,
   env = ENV.PROD,
 }: PushSDKSocketHookOptions) => {
-  const { spaceRequests, setSpaceRequests } = useSpaceData();
+  const { spaceRequests, setSpaceRequests, popularSpaces, setPopularSpaces, mySpaces, setMySpaces, setSpaceInfo } = useSpaceData();
   const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
   const [isPushSDKSocketConnected, setIsPushSDKSocketConnected] =
     useState<boolean>(false);
@@ -37,26 +37,95 @@ export const usePushSpaceSocket = ({
       }
     );
 
-    pushSpaceSocket?.on('SPACES', (spaceInfo: SpaceDTO) => {
-      console.log(spaceInfo);
+    pushSpaceSocket?.on('SPACES', async (spaceInfo: SpaceDTO) => {
+      console.log(spaceInfo, spaceRequests, popularSpaces, mySpaces);
 
-      const updatedData = spaceRequests?.apiData?.map(item => {
-        if (item.spaceId === spaceInfo.spaceId) {
-          return {
-            ...item,
-            spaceInformation: spaceInfo
-          };
+      /* TODO: In future, store all space info in SpaceInfo state itself, and mySpaces, popularSpaces, requests only store spaceId
+        so as to only update spaceInfo once and it should reflect at every place*/
+        setSpaceInfo(spaceInfo.spaceId, spaceInfo);
+
+        const isSpaceInvite: boolean = spaceInfo?.pendingMembers?.some(member => member.wallet === account);
+        if(isSpaceInvite) {
+          const isInInvites: boolean = spaceRequests?.apiData?.some(invite => invite.spaceId === spaceInfo.spaceId) ?? false;
+          if (isInInvites) {
+            const updatedRequests = spaceRequests?.apiData?.map(item => {
+              if (item.spaceId === spaceInfo.spaceId) {
+                return {
+                  ...item,
+                  spaceInformation: spaceInfo
+                };
+              }
+              return item;
+            });
+
+            setSpaceRequests({
+              apiData: updatedRequests as PushAPI.SpaceIFeeds[]
+            })
+          } else {
+            const spaceFeed: PushAPI.SpaceIFeeds = await PushAPI.space.space({
+              account: account as string,
+              env,
+              recipient: spaceInfo.spaceId,
+              toDecrypt: false
+            })
+            const updatedRequests: PushAPI.SpaceIFeeds[] = [
+              spaceFeed,
+              ...(spaceRequests?.apiData || []),
+            ];
+
+            setSpaceRequests({
+              apiData: updatedRequests as PushAPI.SpaceIFeeds[]
+            })
+          }
+        } else {
+          const isInMySpaces: boolean = mySpaces?.apiData?.some(invite => invite.spaceId === spaceInfo.spaceId) ?? false;
+          if (isInMySpaces) {
+            const updatedMySpaces = mySpaces?.apiData?.map(item => {
+              if (item.spaceId === spaceInfo.spaceId) {
+                return {
+                  ...item,
+                  spaceInformation: spaceInfo
+                };
+              }
+              return item;
+            });
+
+            setMySpaces({
+              apiData: updatedMySpaces as PushAPI.SpaceIFeeds[]
+            })
+          } else {
+            const spaceFeed: PushAPI.SpaceIFeeds = await PushAPI.space.space({
+              account: account as string,
+              env,
+              recipient: spaceInfo.spaceId,
+              toDecrypt: false
+            })
+            const updatedMySpaces: PushAPI.SpaceIFeeds[] = [
+              spaceFeed,
+              ...(mySpaces?.apiData || []),
+            ];
+
+            setMySpaces({
+              apiData: updatedMySpaces as PushAPI.SpaceIFeeds[]
+            })
+          }
         }
-        return item;
-      });
-      
-      setSpaceRequests({ 
-        apiData: updatedData as PushAPI.SpaceIFeeds[]
-      })
+
+        const updatedPopularSpaces = popularSpaces?.apiData?.map(item => {
+          if (item.spaceId === spaceInfo.spaceId) {
+            return {
+              ...item,
+              spaceInformation: spaceInfo
+            };
+          }
+          return item;
+        });
+
+        setPopularSpaces({
+          apiData: updatedPopularSpaces as PushAPI.SpaceIFeeds[]
+        })
     });
-  }, [
-    pushSpaceSocket
-  ]);
+  }, [account, mySpaces, popularSpaces, pushSpaceSocket, setMySpaces, setPopularSpaces, setSpaceInfo, setSpaceRequests, spaceRequests, env]);
 
   const removeSocketEvents = useCallback(() => {
     pushSpaceSocket?.off(EVENTS.CONNECT);

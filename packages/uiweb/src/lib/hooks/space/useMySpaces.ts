@@ -17,6 +17,7 @@ export const useMySpaces = (account?: string) => {
         account: account,
         page: mySpaces.currentPage,
         limit: LIMIT,
+        toDecrypt: false,
         env,
       });
 

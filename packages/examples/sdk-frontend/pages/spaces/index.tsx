@@ -3,34 +3,45 @@ import styled from 'styled-components';
 import { Button, Container } from '..';
 import Link from 'next/link';
 
-import { SpacesUIProvider } from '@pushprotocol/uiweb';
 import { useSpaceComponents } from './../../components/Spaces/useSpaceComponent';
-
-
-export interface ISpacesComponentProps {
-  children: React.ReactNode;
-}
-
-export const SpacesComponentProvider = ({
-  children,
-}: ISpacesComponentProps) => {
-  const { spaceUI } = useSpaceComponents();
-
-  const customtheme = {
-    statusColorError: 'red',
-  };
-
-  return (
-    <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
-      {children}
-    </SpacesUIProvider>
-  );
-};
+import { useContext, useEffect, useState } from 'react';
+import { useAccount, useSigner } from 'wagmi';
+import * as PushAPI from '@pushprotocol/restapi';
+import { ENV } from '@pushprotocol/restapi/src/lib/constants';
+import { AccountContext } from '../../contexts';
 
 const Spaces: NextPage = () => {
+  const { address } = useAccount();
+  const { data: signer } = useSigner();
+
+  const { pgpPrivateKey, setPgpPrivateKey } = useContext<any>(AccountContext);
   const { SpaceWidgetComponent } = useSpaceComponents();
+  const env = ENV.DEV;
+
+  useEffect(() => {
+    (async () => {
+      if (!signer || !address || pgpPrivateKey) return;
+
+      const user = await PushAPI.user.get({
+        account: address,
+        env,
+      });
+      let PgpPrivateKey = null;
+      if (user?.encryptedPrivateKey) {
+        PgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+          account: address,
+          signer,
+          env,
+        });
+      }
+
+      setPgpPrivateKey(PgpPrivateKey);
+    })();
+  }, [address, env, signer]);
+
   return (
-    <SpacesComponentProvider>
+    <AccountContext.Provider value={{ pgpPrivateKey }}>
       <Container>
         <h1>Spaces UI Test</h1>
         <Section>
@@ -52,17 +63,17 @@ const Spaces: NextPage = () => {
         </Section>
         <SpaceWidgetComponent />
       </Container>
-    </SpacesComponentProvider>
+    </AccountContext.Provider>
   );
 };
 
 export default Spaces;
 
 const Section = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    wrap: wrap;
-}`;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+`;
