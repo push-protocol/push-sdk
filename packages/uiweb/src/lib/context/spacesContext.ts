@@ -52,6 +52,10 @@ export interface ISpaceDataContextValues {
   setPopularSpaces: (paginationData: ISpacePaginationData) => void;
   spaceRequests: ISpacePaginationData;
   setSpaceRequests: (paginationData: ISpacePaginationData) => void;
+  pushSpaceSocket: any;
+  setPushSpaceSocket: React.Dispatch<React.SetStateAction<any>>;
+  isPushSDKSocketConnected: boolean;
+  setIsPushSDKSocketConnected: React.Dispatch<React.SetStateAction<boolean>>;
   spaceObjectData: PushAPI.SpaceData;
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => Promise<void>;
@@ -128,6 +132,14 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   } as ISpacePaginationData,
   setSpaceRequests: () => {
     /**/
+  },
+  pushSpaceSocket: null,
+  setPushSpaceSocket: () => {
+    /** */
+  },
+  isPushSDKSocketConnected: false,
+  setIsPushSDKSocketConnected: () => {
+    /** */
   },
   spaceObjectData: {} as PushAPI.SpaceData,
   setSpaceObjectData: () => {

@@ -278,7 +278,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
-              <Image
+              {/* <Image
                 width={'21px'}
                 height={'24px'}
                 src={MembersIcon}
@@ -292,7 +292,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 src={ShareIcon}
                 cursor={'pointer'}
                 alt="Share Icon"
-              />
+              /> */}
               <Button
                 color={`${theme.btnColorPrimary}`}
                 fontSize={'14px'}

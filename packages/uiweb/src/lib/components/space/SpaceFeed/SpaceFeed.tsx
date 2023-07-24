@@ -12,8 +12,7 @@ import {
   useFeedScroll,
   useMySpaces,
   usePopularSpaces,
-  useSpaceRequests,
-  usePushSpaceSocket,
+  useSpaceRequests
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
@@ -71,10 +70,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
-    env,
   } = useSpaceData();
-
-  usePushSpaceSocket({ account, env });
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 

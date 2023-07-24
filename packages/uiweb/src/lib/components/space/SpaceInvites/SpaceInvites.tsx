@@ -7,7 +7,6 @@ import {
   useFeedScroll,
   useSpaceData,
   useSpaceRequests,
-  usePushSpaceSocket,
 } from '../../../hooks';
 import { SpaceBanner } from '../SpaceBanner';
 
@@ -35,9 +34,7 @@ export const SpaceInvites: React.FC<ISpaceInvitesProps> = ({
 
   const containerRef = useFeedScroll(spaceRequests.apiData?.length);
 
-  const { account, env } = useSpaceData();
-
-  usePushSpaceSocket({ account, env });
+  const { account } = useSpaceData();
 
   const handleOpenModal = () => {
     setModalOpen(true);

@@ -16,17 +16,27 @@ export const usePushSpaceSocket = ({
   account,
   env = ENV.PROD,
 }: PushSDKSocketHookOptions) => {
-  const { spaceRequests, setSpaceRequests, popularSpaces, setPopularSpaces, mySpaces, setMySpaces, setSpaceInfo } = useSpaceData();
-  const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
-  const [isPushSDKSocketConnected, setIsPushSDKSocketConnected] =
-    useState<boolean>(false);
+  const { 
+    spaceRequests, 
+    setSpaceRequests, 
+    popularSpaces, 
+    setPopularSpaces, 
+    mySpaces, 
+    setMySpaces, 
+    setSpaceInfo,
+    pushSpaceSocket,
+    setPushSpaceSocket,
+    isPushSDKSocketConnected,
+    setIsPushSDKSocketConnected
+  } = useSpaceData();
 
   const addSocketEvents = useCallback(() => {
     pushSpaceSocket?.on(EVENTS.CONNECT, () => {
       setIsPushSDKSocketConnected(true);
     });
 
-    pushSpaceSocket?.on(EVENTS.DISCONNECT, () => {
+    pushSpaceSocket?.on(EVENTS.DISCONNECT, (reason: string) => {
+      // console.log("space socket disconnected", reason);
       setIsPushSDKSocketConnected(false);
     });
 
