@@ -3,6 +3,7 @@ import {
   getCAIPAddress,
   getConfig,
   getCAIPDetails,
+  signTypedData
 } from '../helpers';
 import {
   getTypeInformation,
@@ -10,14 +11,7 @@ import {
   getSubscriptionMessage
 } from './signature.helpers';
 import Constants, {ENV} from '../constants';
-
-type SignerType = {
-  _signTypedData: (
-    domain: any,
-    types: any,
-    value: any
-  ) => Promise<string>
-}
+import { SignerType } from "../types";
  
 export type UnSubscribeOptionsType = {
   signer: SignerType;
@@ -76,11 +70,7 @@ export const unsubscribe = async (
     );
 
     // sign a message using EIP712
-    const signature = await signer._signTypedData(
-      domainInformation,
-      typeInformation,
-      messageInformation
-    );
+    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation);
 
     const verificationProof = signature; // might change
 
