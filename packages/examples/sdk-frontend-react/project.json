@@ -1,0 +1,85 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/examples/sdk-frontend-react/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/packages/examples/sdk-frontend-react",
+        "index": "packages/examples/sdk-frontend-react/src/index.html",
+        "baseHref": "/",
+        "main": "packages/examples/sdk-frontend-react/src/main.tsx",
+        "polyfills": "packages/examples/sdk-frontend-react/src/polyfills.ts",
+        "tsConfig": "packages/examples/sdk-frontend-react/tsconfig.app.json",
+        "assets": [
+          "packages/examples/sdk-frontend-react/src/favicon.ico",
+          "packages/examples/sdk-frontend-react/src/assets"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "packages/examples/sdk-frontend-react/src/environments/environment.ts",
+              "with": "packages/examples/sdk-frontend-react/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "examples-sdk-frontend-react:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "examples-sdk-frontend-react:build:development"
+        },
+        "production": {
+          "buildTarget": "examples-sdk-frontend-react:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/examples/sdk-frontend-react/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/examples/sdk-frontend-react"],
+      "options": {
+        "jestConfig": "packages/examples/sdk-frontend-react/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
