@@ -16,6 +16,7 @@ export type ChatAndNotificationProps = {
   decryptedPgpPvtKey: string; //have to make it optional for new users
   activeTab?: PushTabs,
   activeChat?: string,
+  chatSocket?:any,
   onClose?: () => void,
   signer?: WithRequiredProperty<SignerType, '_signTypedData'>
   env?: Env;
@@ -29,6 +30,7 @@ export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
   activeChat = null,
   onClose = null,
   signer = null,
+  chatSocket =null,
   env = Constants.ENV.PROD,
 }) => {
 
@@ -37,6 +39,7 @@ export const ChatAndNotificationWidget: React.FC<ChatAndNotificationProps> = ({
     decryptedPgpPvtKey,
     activeChosenTab: activeTab,
     activeChat: activeChat,
+    chatSocket:chatSocket,
     onClose,
     signer,
     env,

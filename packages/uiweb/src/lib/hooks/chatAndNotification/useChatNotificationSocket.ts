@@ -66,7 +66,7 @@ const useChatNotificationSocket = ({
     setNotificationFeedSinceLastConnection,
   ] = useState<any>('');
   const { fetchChat } = useFetchChat();
-  const { account, env, decryptedPgpPvtKey, signer } = useContext<any>(
+  const { account, env, decryptedPgpPvtKey, signer,chatSocket } = useContext<any>(
     ChatAndNotificationPropsContext
   );
   const {
@@ -116,6 +116,7 @@ const useChatNotificationSocket = ({
         if (!connectedProfile || !decryptedPgpPvtKey) {
           return;
         }
+        
         const chatId = getChatId({ msg: chat, account }).toLowerCase();
         if (!isPCAIP(chatId)) return;
         if (
@@ -173,15 +174,12 @@ const useChatNotificationSocket = ({
             const fetchedChat: IFeeds = (await fetchChat({
               recipientAddress: chatId,
             })) as IFeeds;
-            console.log(chatId);
             if (
               Object.keys(fetchedChat || {}).length &&
               checkIfIntent({ chat: fetchedChat, account })
             )
               setRequestFeed(chatId, fetchedChat);
             else setChatFeed(chatId, fetchedChat);
-            console.log('in here');
-            console.log(msg);
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]
@@ -238,7 +236,7 @@ const useChatNotificationSocket = ({
    */
   useEffect(() => {
     if (decryptedPgpPvtKey) {
-      if (pushChatNotificationSocket) {
+      if (pushChatNotificationSocket && pushChatNotificationSocket?.connected) {
         pushChatNotificationSocket?.disconnect();
       }
       let chainId = 1;
@@ -246,15 +244,25 @@ const useChatNotificationSocket = ({
         chainId = await signer?.getChainId();
       })();
       // this is auto-connect on instantiation
-      const connectionObject = createSocketConnection({
-        user:
-          socketType === CHAT_SOCKET_TYPE.CHAT
-            ? account
-            : convertAddressToAddrCaip(account, chainId),
-        socketType,
-        env: env,
-      });
-      setPushChatNotificationSocket(connectionObject);
+      if(chatSocket && socketType === CHAT_SOCKET_TYPE.CHAT)
+      {
+        setPushChatNotificationSocket(chatSocket);
+      }
+      else
+      {
+        if (!pushChatNotificationSocket ||(pushChatNotificationSocket && !pushChatNotificationSocket?.connected)) {
+          const connectionObject = createSocketConnection({
+            user:
+              socketType === CHAT_SOCKET_TYPE.CHAT
+                ? account
+                : convertAddressToAddrCaip(account, chainId),
+            socketType,
+            env: env,
+          });
+          setPushChatNotificationSocket(connectionObject);
+         }
+      }
+     
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decryptedPgpPvtKey, env]);

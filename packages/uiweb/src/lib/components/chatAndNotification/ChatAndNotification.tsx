@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
-import type { ChatFeedsType} from '../../types';
+import type { ChatFeedsType } from '../../types';
 import { PUSH_TABS } from '../../types';
 import { CHAT_SOCKET_TYPE } from '../../types';
 import {
@@ -47,11 +47,14 @@ export const ChatAndNotification = () => {
     selectedChatId,
     setFinishedFetchingChats,
     setFinishedFetchingRequests,
-    setChats
+    setChats,
   } = useContext<ChatMainStateContextType>(ChatMainStateContext);
-  const { setInboxNotifsFeed, setSpamNotifsFeed,setFinishedFetchingInbox,setFinishedFetchingSpam } = useContext<any>(
-    NotificationMainStateContext
-  );
+  const {
+    setInboxNotifsFeed,
+    setSpamNotifsFeed,
+    setFinishedFetchingInbox,
+    setFinishedFetchingSpam,
+  } = useContext<any>(NotificationMainStateContext);
   const {
     decryptedPgpPvtKey,
     account,
@@ -67,10 +70,11 @@ export const ChatAndNotification = () => {
   const { fetchChat } = useFetchChat();
   const modalRef = useRef<HTMLDivElement>(null);
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
+
   useChatNotificationSocket({});
 
   useChatNotificationSocket({ socketType: CHAT_SOCKET_TYPE.CHAT });
-
+  
   useEffect(() => {
     setChatsFeed({});
     setRequestsFeed({});
@@ -84,8 +88,7 @@ export const ChatAndNotification = () => {
     if (activeChosenTab) {
       setActiveTab(activeChosenTab);
       setModalOpen(true);
-    }
-    else{
+    } else {
       setActiveTab(PUSH_TABS.CHATS);
     }
     setActiveSubTab(null);
@@ -148,12 +151,14 @@ export const ChatAndNotification = () => {
         if (address) {
           setModalOpen(true);
           setSelectedChatId(walletToPCAIP10(address).toLowerCase());
-          let selectedChat = chatsFeed[walletToPCAIP10(address).toLowerCase()] || requestsFeed[walletToPCAIP10(address).toLowerCase()];
+          let selectedChat =
+            chatsFeed[walletToPCAIP10(address).toLowerCase()] ||
+            requestsFeed[walletToPCAIP10(address).toLowerCase()];
           if (!selectedChat) {
             selectedChat = (await fetchChat({
               recipientAddress: walletToPCAIP10(address),
             })) as IFeeds;
-            if (!Object.keys(selectedChat|| {}).length) {
+            if (!Object.keys(selectedChat || {}).length) {
               const result = await getNewChatUser({
                 searchText: address,
                 fetchChatProfile,
@@ -164,32 +169,26 @@ export const ChatAndNotification = () => {
                 selectedChat = getDefaultFeedObject({ user: result });
               }
             }
-
           }
           setSearchedChats({
-            [selectedChat.did.toLowerCase() ?? selectedChat.chatId]: selectedChat,
+            [selectedChat.did.toLowerCase() ?? selectedChat.chatId]:
+              selectedChat,
           });
-
-        }
-        else{
+        } else {
           setSearchedChats(null);
           setSelectedChatId(null);
         }
       } else {
-
         setSelectedChatId(null);
         setSearchedChats(null);
       }
       // setChats(new Map())
     })();
-  }, [activeChat,env,account]);
-
+  }, [activeChat, env, account]);
 
   const onMaximizeMinimizeToggle = () => {
     setModalOpen(!modalOpen);
   };
-
-
 
   useEffect(() => {
     const modalElement = modalRef.current;
@@ -214,7 +213,6 @@ export const ChatAndNotification = () => {
     };
   }, []);
 
-
   return (
     <Container
       width="470px"
@@ -224,7 +222,7 @@ export const ChatAndNotification = () => {
       background="#fff"
       right="12px"
       bottom="18px"
-      className='modal'
+      className="modal"
       overflow="hidden"
       ref={modalRef}
 
@@ -244,7 +242,7 @@ export const ChatAndNotification = () => {
 
 const Container = styled(Section)`
   border: 1px solid #dddddf;
-  padding:0 20px 0 21px;
+  padding: 0 20px 0 21px;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.08), 0px 0px 96px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(5px);
   /* Note: backdrop-filter has minimal browser support */

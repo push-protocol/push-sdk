@@ -176,9 +176,12 @@ export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
 } 
 
 export const checkIfUnread = (chatId:string,chat:IFeeds):boolean => {
+  if(chat){
   const tempChat = getData(chatId);
-  if(tempChat && tempChat?.msg && (tempChat.msg.timestamp!) < (chat.msg.timestamp!))
+  if(tempChat && tempChat?.msg && chat?.msg && (tempChat.msg.timestamp!) < (chat.msg.timestamp!))
    return true;
+  return false;
+  }
   return false;
 }
 
