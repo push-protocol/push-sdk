@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
+import { SpaceComponentWrapper } from './SpaceComponentsWrapper';
 import { SpacesUI } from '../components';
 import { ThemeContext } from '../components/space/theme/ThemeProvider';
 import { ISpacesTheme, lightTheme } from '../components/space/theme';
@@ -396,21 +397,14 @@ export const SpacesUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
-  useSpaceNotificationSocket({
-    account,
-    env,
-    acceptSpaceRequest,
-    connectSpaceRequest,
-    broadcastRaisedHand,
-  });
-  // usePushSpaceSocket({ account, env });
-  // console.log("isPushSDKSocketConnected", isPushSDKSocketConnected);
 
   return (
     <LivepeerConfig client={livepeerClient}>
       <ThemeContext.Provider value={PROVIDER_THEME}>
         <SpaceDataContext.Provider value={value}>
-          {children}
+          <SpaceComponentWrapper>
+            {children}
+          </SpaceComponentWrapper>  
         </SpaceDataContext.Provider>
       </ThemeContext.Provider>
     </LivepeerConfig>

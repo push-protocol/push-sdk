@@ -72,8 +72,6 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
     setSpaceWidgetId(spaceData?.spaceId as string);
   };
 
-  usePushSpaceSocket({ account, env });
-
   // Check if the spaceData is not available, show the skeleton loading effect
   if (!spaceData) {
     return <SpaceBannerLoadingSkeleton />;

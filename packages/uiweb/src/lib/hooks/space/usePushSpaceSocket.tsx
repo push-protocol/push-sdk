@@ -52,7 +52,6 @@ export const usePushSpaceSocket = ({
     });
 
     pushSpaceSocket?.on('SPACES', async (spaceInfo: SpaceDTO) => {
-      console.log(spaceInfo, spaceRequests, popularSpaces, mySpaces);
 
       /* TODO: In future, store all space info in SpaceInfo state itself, and mySpaces, popularSpaces, requests only store spaceId
         so as to only update spaceInfo once and it should reflect at every place*/
