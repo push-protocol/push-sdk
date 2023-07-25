@@ -80,6 +80,10 @@ export const SpacesUIProvider = ({
     lastPage: 2,
   } as ISpacePaginationData);
 
+  const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
+  const [isPushSDKSocketConnected, setIsPushSDKSocketConnected] =
+    useState<boolean>(false);
+
   const isJoined = Boolean(
     spaceObjectData?.connectionData?.meta?.broadcast?.livepeerInfo ||
       spaceObjectData?.spaceDescription
@@ -331,6 +335,10 @@ export const SpacesUIProvider = ({
     setPopularSpaces: setPopularSpacePaginationInfo,
     spaceRequests,
     setSpaceRequests: setSpacesRequestPaginationInfo,
+    pushSpaceSocket,
+    setPushSpaceSocket,
+    isPushSDKSocketConnected,
+    setIsPushSDKSocketConnected,
     spaceObjectData,
     setSpaceObjectData,
     initSpaceObject,
@@ -383,6 +391,7 @@ export const SpacesUIProvider = ({
     connectSpaceRequest,
   });
   // usePushSpaceSocket({ account, env });
+  // console.log("isPushSDKSocketConnected", isPushSDKSocketConnected);
 
   return (
     <LivepeerConfig client={livepeerClient}>
