@@ -37,11 +37,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDDOpen, setIsDDOpen] = useState(false);
 
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
-
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const theme = useContext(ThemeContext);
 
@@ -112,10 +109,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
     // new useEffect to call acceptPromote (join speker like)
   // }
-
-  const handleDDState = () => {
-    setIsDDOpen(!isDDOpen);
-  };
 
   const handleJoinSpace = async () => {
     if (!spaceData) {
@@ -262,7 +255,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {isListener &&
           !isHost &&
           spaceObjectData?.members.map((profile) => (
-            <div onClick={handleDDState} style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }}>
               <LiveSpaceProfileContainer
                 isHost={
                   profile?.wallet ===
@@ -275,12 +268,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 wallet={profile?.wallet}
                 image={profile?.image}
               />
-
-              {/* {isDDOpen ? (
-                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-                  <DDItem>Invite to Speak</DDItem>
-                </DropDown>
-              ) : null} */}
             </div>
           ))}
       </Item>
@@ -394,31 +381,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     </ThemeProvider>
   );
 };
-
-const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
-  position: absolute;
-  top: 0px;
-  right: 0px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  justify-content: center;
-  align-items: start;
-
-  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
-  padding: 16px;
-  background: ${(props) => props.theme.bgColorPrimary};
-  color: ${(props) => props.theme.textColorPrimary};
-  border-radius: 16px;
-
-  border: 1px solid ${(props) => props.theme.borderColor};
-`;
-
-const DDItem = styled.div`
-  cursor: pointer;
-`;
 
 const fadeIn = keyframes`
     from {
