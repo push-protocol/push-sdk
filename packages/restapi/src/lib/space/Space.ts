@@ -127,6 +127,12 @@ export class Space extends Video {
             spaceId: this.spaceSpecificData.spaceId,
           });
           const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
+            // check if the address was a listener
+            const listnerIndex = draft.listeners.findIndex(
+              (listner) => listner.address === senderAddress
+            );
+            if (listnerIndex > -1) draft.listeners.splice(listnerIndex, 1);
+
             // TODO: Create distinction between speakers and co hosts
             draft.speakers.push({
               address: senderAddress,

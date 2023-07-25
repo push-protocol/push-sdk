@@ -58,6 +58,11 @@ export async function onJoinListener(this: Space, options: OnJoinListenerType) {
     );
   }
 
+  console.log('LIVESPACEDATA OUTSIDE', {
+    ...fetchedLiveSpaceData,
+    listeners: updatedListeners,
+  });
+
   if (areListenersChanged) {
     sendLiveSpaceData({
       spaceId: this.spaceSpecificData.spaceId,

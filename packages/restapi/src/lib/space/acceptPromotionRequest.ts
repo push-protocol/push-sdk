@@ -3,6 +3,7 @@ import {
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
 import type Space from './Space';
+import { addSpeakers } from './addSpeakers';
 
 export interface AcceptPromotionRequestType {
   signalData: any;
@@ -17,7 +18,12 @@ export async function acceptPromotionRequest(
 ) {
   const { signalData, promoteeAddress, spaceId, role } = options || {};
 
-  // TODO: change the role of promoteeAddress from listner to 'role'
+  await addSpeakers({
+    spaceId: this.spaceSpecificData.spaceId,
+    signer: this.signer,
+    pgpPrivateKey: this.pgpPrivateKey,
+    speakers: [promoteeAddress],
+  });
 
   // accept the promotion request
   this.acceptRequest({
