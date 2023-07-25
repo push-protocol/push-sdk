@@ -66,14 +66,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (
-      !spaceObjectData?.connectionData?.local?.stream ||
-      !isRequestedForMic
-    )
+    if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
       return;
 
     const requestedForMicFromEffect = async () => {
-      await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
+      await spacesObjectRef?.current?.requestToBePromoted?.({
+        role: 'SPEAKER',
+        promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator),
+      });
     };
     requestedForMicFromEffect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,33 +81,34 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const handleRequest = async () => {
     await spacesObjectRef?.current?.createAudioStream?.();
-
-    setIsRequestedForMic(true)
-
-    await spacesObjectRef?.current?.requestToBePromoted?.({ role: 'SPEAKER', promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator) })
-  }
+    setIsRequestedForMic(true);
+  };
 
   const handleAcceptPromotion = async (requesterAddress: any) => {
     const options = {
       signalData: raisedHandInfo[requesterAddress].signalData,
-      promoteeAddress: pCAIP10ToWallet(raisedHandInfo[requesterAddress].senderAddress),
+      promoteeAddress: pCAIP10ToWallet(
+        raisedHandInfo[requesterAddress].senderAddress
+      ),
       spaceId: raisedHandInfo[requesterAddress].chatId,
       role: 'SPEAKER',
-    }
+    };
 
-    await spacesObjectRef?.current?.acceptPromotionRequest?.(options)
-  }
+    await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
+  };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
-    await spacesObjectRef?.current?.acceptPromotionRequest?.({ promoteeAddress: pCAIP10ToWallet(requesterAddress) })
-  }
+    await spacesObjectRef?.current?.acceptPromotionRequest?.({
+      promoteeAddress: pCAIP10ToWallet(requesterAddress),
+    });
+  };
 
-    // handleAcceptPromoReq {
-    // btn click on accept
-    // call create audio stream
-    // await spacesObjectRef?.current?.createAudioStream?.();
+  // handleAcceptPromoReq {
+  // btn click on accept
+  // call create audio stream
+  // await spacesObjectRef?.current?.createAudioStream?.();
 
-    // new useEffect to call acceptPromote (join speker like)
+  // new useEffect to call acceptPromote (join speker like)
   // }
 
   const handleJoinSpace = async () => {
@@ -286,7 +287,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : handleRequest())}
+              onClick={() =>
+                isHost || isSpeaker ? handleMicState() : handleRequest()
+              }
             >
               <Image
                 width={'14px'}

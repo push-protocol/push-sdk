@@ -27,7 +27,8 @@ export const usePushSpaceSocket = ({
     pushSpaceSocket,
     setPushSpaceSocket,
     isPushSDKSocketConnected,
-    setIsPushSDKSocketConnected
+    setIsPushSDKSocketConnected,
+    spacesObjectRef,
   } = useSpaceData();
 
   const addSocketEvents = useCallback(() => {
@@ -44,7 +45,7 @@ export const usePushSpaceSocket = ({
       console.log('MESSAGE RECIEVED', message);
       if (message?.messageType === 'META') {
         // this is to update the liveSpaceData state
-        await spacesObjectRef?.current?.onReceiveMetaMessage({
+        await spacesObjectRef?.current?.onReceiveMetaMessage?.({
           recievedMetaMessage: message,
         });
       }
@@ -136,7 +137,7 @@ export const usePushSpaceSocket = ({
           - Will be executed on host's end of a live space
           - When a listener joins this fires a meta message telling everyone the same
         */
-      await spacesObjectRef?.current?.onJoinListener();
+      await spacesObjectRef?.current?.onJoinListener?.();
 
       const updatedPopularSpaces = popularSpaces?.apiData?.map((item) => {
         if (item.spaceId === spaceInfo.spaceId) {
@@ -165,6 +166,7 @@ export const usePushSpaceSocket = ({
     setSpaceRequests,
     env,
     setMySpaces,
+    spacesObjectRef,
   ]);
 
   const removeSocketEvents = useCallback(() => {
