@@ -22,8 +22,10 @@ export async function broadcastRaisedHand(
     spaceId: this.spaceSpecificData.spaceId,
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = true;
+    const listenerIndex = draft.listeners.findIndex(
+      (listner) => listner.address === promoteeAddress
+    );
+    if (listenerIndex !== -1) draft.listeners[listenerIndex].handRaised = true;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,
