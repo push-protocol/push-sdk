@@ -23,7 +23,7 @@ const Requests = (props: any) => {
         };
 
         const accept = () => {
-          rejectCallback(item.address)
+          acceptCallback(item.address)
         };
 
         return <ProfileContainer
@@ -145,10 +145,10 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
         {activeTab === MemberTabsEnum.Requests && <Requests members={requests} theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
         {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
-        {/* <Button 
-              padding={'16px'} 
-              borderRadius={'8px'} 
-              background={'#8B5CF6'} 
+        {/* <Button
+              padding={'16px'}
+              borderRadius={'8px'}
+              background={'#8B5CF6'}
               border={'1px solid #703BEB'}
               cursor={'pointer'}
               alignSelf={'center'}
