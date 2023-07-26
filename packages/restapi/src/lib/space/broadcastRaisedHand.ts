@@ -14,6 +14,8 @@ export async function broadcastRaisedHand(
 ) {
   const { promoteeAddress } = options || {};
 
+  console.log("BROADCAST RAISE HAND", promoteeAddress);
+
   // update live space info
   const oldLiveSpaceData = await getLiveSpaceData({
     localAddress: this.data.local.address,
@@ -22,8 +24,10 @@ export async function broadcastRaisedHand(
     spaceId: this.spaceSpecificData.spaceId,
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = true;
+    const listenerIndex = draft.listeners.findIndex(
+      (listner) => listner.address === promoteeAddress
+    );
+    if (listenerIndex !== -1) draft.listeners[listenerIndex].handRaised = true;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,

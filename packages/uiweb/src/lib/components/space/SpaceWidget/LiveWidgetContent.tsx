@@ -37,9 +37,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDDOpen, setIsDDOpen] = useState(false);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
   const theme = useContext(ThemeContext);
 
@@ -52,12 +51,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setSpaceWidgetId,
     isJoined,
     initSpaceObject,
+    raisedHandInfo,
   } = useSpaceData();
-
-  console.log(
-    '🚀 ~ file: LiveWidgetContent.tsx:53 ~ spacesObjectRef:',
-    spacesObjectRef
-  );
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -65,8 +60,42 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
-  const handleDDState = () => {
-    setIsDDOpen(!isDDOpen);
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
+      return;
+
+    const requestedForMicFromEffect = async () => {
+      await spacesObjectRef?.current?.requestToBePromoted?.({
+        role: 'SPEAKER',
+        promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator),
+      });
+    };
+    requestedForMicFromEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRequestedForMic]);
+
+  const handleRequest = async () => {
+    await spacesObjectRef?.current?.createAudioStream?.();
+    setIsRequestedForMic(true);
+  };
+
+  const handleAcceptPromotion = async (requesterAddress: any) => {
+    const options = {
+      signalData: raisedHandInfo[requesterAddress].signalData,
+      promoteeAddress: pCAIP10ToWallet(
+        raisedHandInfo[requesterAddress].senderAddress
+      ),
+      spaceId: raisedHandInfo[requesterAddress].chatId,
+      role: 'SPEAKER',
+    };
+
+    await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
+  };
+
+  const handleRejectPromotion = async (requesterAddress: any) => {
+    await spacesObjectRef?.current?.acceptPromotionRequest?.({
+      promoteeAddress: pCAIP10ToWallet(requesterAddress),
+    });
   };
 
   const handleJoinSpace = async () => {
@@ -188,7 +217,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           />
         )}
 
-        {/* remote peer details if speaker or host */}
+        {/* details of peer connected via webRTC if speaker or host */}
         {(isSpeaker || isHost) &&
           spaceObjectData?.connectionData?.incoming
             ?.slice(1)
@@ -210,31 +239,49 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               />
             ))}
 
-        {/* details of everyone in the space if a listner */}
+        {/* details of host in the space if listener */}
+        {isListener && !isHost && (
+          <div style={{ position: 'relative' }}>
+            <LiveSpaceProfileContainer
+              isHost={true}
+              isSpeaker={false}
+              wallet={spaceObjectData?.liveSpaceData.host?.address}
+              image={createBlockie?.(
+                spaceObjectData?.liveSpaceData?.host?.address
+              )
+                ?.toDataURL()
+                ?.toString()}
+            />
+          </div>
+        )}
+
+        {/* details of speakers in the space if listener */}
         {isListener &&
           !isHost &&
-          spaceObjectData?.members.map((profile) => (
-            <div onClick={handleDDState} style={{ position: 'relative' }}>
+          spaceObjectData?.liveSpaceData.speakers.map((profile) => (
+            <div style={{ position: 'relative' }}>
               <LiveSpaceProfileContainer
-                isHost={
-                  profile?.wallet ===
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                isSpeaker={
-                  profile?.wallet !==
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                wallet={profile?.wallet}
-                image={profile?.image}
+                isHost={false}
+                isSpeaker={true}
+                wallet={profile?.address}
+                image={createBlockie?.(profile?.address)
+                  ?.toDataURL()
+                  ?.toString()}
               />
-
-              {isDDOpen ? (
-                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-                  <DDItem>Invite to Speak</DDItem>
-                </DropDown>
-              ) : null}
             </div>
           ))}
+
+        {/* details of listeners */}
+        {spaceObjectData?.liveSpaceData.listeners.map((profile) => (
+          <div style={{ position: 'relative' }}>
+            <LiveSpaceProfileContainer
+              isHost={false}
+              isSpeaker={false}
+              wallet={profile?.address}
+              image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+            />
+          </div>
+        ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
@@ -251,7 +298,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
+              onClick={() =>
+                isHost || isSpeaker ? handleMicState() : handleRequest()
+              }
             >
               <Image
                 width={'14px'}
@@ -337,37 +386,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {showMembersModal ? (
           <SpaceMembersSectionModal
             onClose={() => setShowMembersModal(false)}
+            spaceData={spaceObjectData}
+            acceptCallback={handleAcceptPromotion}
+            rejectCallback={handleRejectPromotion}
           />
         ) : null}
       </Item>
     </ThemeProvider>
   );
 };
-
-const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
-  position: absolute;
-  top: 0px;
-  right: 0px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  justify-content: center;
-  align-items: start;
-
-  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
-  padding: 16px;
-  background: ${(props) => props.theme.bgColorPrimary};
-  color: ${(props) => props.theme.textColorPrimary};
-  border-radius: 16px;
-
-  border: 1px solid ${(props) => props.theme.borderColor};
-`;
-
-const DDItem = styled.div`
-  cursor: pointer;
-`;
 
 const fadeIn = keyframes`
     from {

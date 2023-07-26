@@ -15,7 +15,6 @@ import {
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceNotificationSocket } from '../hooks';
 
 import {
   LivepeerConfig,
@@ -23,7 +22,7 @@ import {
   studioProvider,
 } from '@livepeer/react';
 import { spaceChainId } from '../components/space/helpers/account';
-import { walletToPCAIP10 } from '../helpers';
+import { walletToPCAIP10, pCAIP10ToWallet } from '../helpers';
 
 export enum FeedTabs {
   ForYou = 'For You',
@@ -62,6 +61,8 @@ export const SpacesUIProvider = ({
   const [spaceObjectData, setSpaceObjectData] = useState<PushAPI.SpaceData>(
     PushAPI.space.initSpaceData
   );
+
+  const [raisedHandInfo, setRaisedHandInfo] = useState<Record<string, PushAPI.video.VideoDataType>>({});
 
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
@@ -162,6 +163,14 @@ export const SpacesUIProvider = ({
       signalData,
     });
   };
+
+  const broadcastRaisedHand = async (receivedSpaceMetaData: PushAPI.video.VideoDataType) => {
+    await spacesObjectRef.current.broadcastRaisedHand({
+      promoteeAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
+    });
+
+    setRaisedHandInfo(prevMap => ({ ...prevMap, [receivedSpaceMetaData.senderAddress]: receivedSpaceMetaData }));
+  }
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
@@ -351,7 +360,9 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
     acceptSpaceRequest,
     connectSpaceRequest,
+    broadcastRaisedHand,
     customSearch,
+    raisedHandInfo,
   };
 
   const resetStates = () => {
@@ -392,7 +403,7 @@ export const SpacesUIProvider = ({
         <SpaceDataContext.Provider value={value}>
           <SpaceComponentWrapper>
             {children}
-          </SpaceComponentWrapper>  
+          </SpaceComponentWrapper>
         </SpaceDataContext.Provider>
       </ThemeContext.Provider>
     </LivepeerConfig>

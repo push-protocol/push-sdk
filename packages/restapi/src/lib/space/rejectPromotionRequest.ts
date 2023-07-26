@@ -27,8 +27,10 @@ export async function rejectPromotionRequest(
     spaceId: this.spaceSpecificData.spaceId,
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = false;
+    const listnerIndex = draft.listeners.findIndex(
+      (listner) => listner.address === promoteeAddress
+    );
+    if (listnerIndex > -1) draft.listeners[listnerIndex].handRaised = false;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,
