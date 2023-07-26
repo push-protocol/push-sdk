@@ -12,7 +12,7 @@ import { AcceptRequest } from '../../../icons/Accept';
 import { RejectRequest } from '../../../icons/Reject';
 
 const Requests = (props: any) => {
-  const { members, acceptCallback, rejectCallback } = props;
+  const { members, acceptCallback, rejectCallback, isHost } = props;
 
   return (
     <MembersContainer>
@@ -23,7 +23,7 @@ const Requests = (props: any) => {
         };
 
         const accept = () => {
-          rejectCallback(item.address)
+          acceptCallback(item.address)
         };
 
         return <ProfileContainer
@@ -34,11 +34,12 @@ const Requests = (props: any) => {
             ?.toString()}
           imageHeight='48px'
           contBtn={
-            <SettingsCont>
-              {/* these will change according to data recieved */}
-              <SettingsCont onClick={reject}><RejectRequest /></SettingsCont>
-              <SettingsCont onClick={accept}><AcceptRequest /></SettingsCont>
-            </SettingsCont>
+            isHost ?
+              <SettingsCont>
+                <SettingsCont onClick={reject}><RejectRequest /></SettingsCont>
+                <SettingsCont onClick={accept}><AcceptRequest /></SettingsCont>
+              </SettingsCont>
+              : null
           }
           border
         />
@@ -78,7 +79,9 @@ interface ISpaceMembersModalProps {
   spaceData: any;
   acceptCallback?: any;
   rejectCallback?: any;
+  isHost?: boolean;
 }
+
 enum MemberTabsEnum {
   // CoHost = 'Co-Host',
   Speakers = 'Speakers',
@@ -86,21 +89,16 @@ enum MemberTabsEnum {
   Listeners = 'Listeners',
 }
 
-export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData, acceptCallback, rejectCallback }: ISpaceMembersModalProps) => {
+export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData, acceptCallback, rejectCallback, isHost }: ISpaceMembersModalProps) => {
 
   const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.Speakers);
 
   const theme = useContext(ThemeContext);
 
-  // const speakers = spaceData.members.filter((member: any) => member.isSpeaker)
-  // const listeners = spaceData.members.filter((member: any) => !member.isSpeaker)
-
   const host = spaceData.liveSpaceData.host;
   const speakers = spaceData.liveSpaceData.speakers;
   const listeners = spaceData.liveSpaceData.listeners;
-
   const requests = spaceData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised);
-  console.log("🚀 ~ file: SpaceMembersSectionModal.tsx:95 ~ requests:", requests)
 
   const handleTabClick = (index: MemberTabsEnum) => {
     setActiveTab(index);
@@ -142,7 +140,7 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
 
         {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
         {activeTab === MemberTabsEnum.Speakers && <Speakers members={speakers} theme={theme} />}
-        {activeTab === MemberTabsEnum.Requests && <Requests members={requests} theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
+        {activeTab === MemberTabsEnum.Requests && <Requests isHost={isHost} members={requests} theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
         {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
 
         {/* <Button 

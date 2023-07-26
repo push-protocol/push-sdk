@@ -55,11 +55,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ spaceObjectData:", spaceObjectData)
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isSpeaker:", isSpeaker)
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isListener:", isListener)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
+
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -344,14 +343,23 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
-              <Image
-                width={'21px'}
-                height={'24px'}
-                src={MembersIcon}
-                cursor={'pointer'}
-                onClick={() => setShowMembersModal(true)}
-                alt="Members Icon"
-              />
+              <MembersContainer>
+                {
+                  isHost && numberOfRequests ?
+                  <RequestsCount>
+                    { numberOfRequests }
+                  </RequestsCount>
+                  : null
+                }
+                <Image
+                  width={'21px'}
+                  height={'24px'}
+                  src={MembersIcon}
+                  cursor={'pointer'}
+                  onClick={() => setShowMembersModal(true)}
+                  alt="Members Icon"
+                />
+              </MembersContainer>
               {/* <Image
                 width={'24px'}
                 height={'24px'}
@@ -406,6 +414,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             spaceData={spaceObjectData}
             acceptCallback={handleAcceptPromotion}
             rejectCallback={handleRejectPromotion}
+            isHost={isHost}
           />
         ) : null}
       </Item>
@@ -413,27 +422,27 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   );
 };
 
-const fadeIn = keyframes`
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-`;
-
-const fadeOut = keyframes`
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
-`;
-
 const PeerPlayerDiv = styled.div`
   visibility: hidden;
   position: absolute;
   border: 5px solid red;
+`;
+
+const MembersContainer = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RequestsCount = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -6px;
+
+  background-color: ${(props) => props.theme.btnColorPrimary};
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
 `;
