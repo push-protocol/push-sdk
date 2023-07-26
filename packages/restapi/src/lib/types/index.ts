@@ -385,7 +385,7 @@ export interface AdminPeer extends Peer {
 }
 
 export interface LiveSpaceData {
-  host: AdminPeer | null;
+  host: AdminPeer;
   coHosts: AdminPeer[];
   speakers: AdminPeer[];
   listeners: ListenerPeer[];

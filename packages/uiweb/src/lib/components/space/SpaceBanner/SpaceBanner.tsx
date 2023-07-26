@@ -14,7 +14,6 @@ import live from './../../../icons/live.svg';
 import { Scheduled } from '../../../icons/scheduled';
 import {
   useGetSpaceInfo,
-  usePushSpaceSocket,
   useSpaceData,
 } from './../../../hooks';
 

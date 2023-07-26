@@ -1,5 +1,9 @@
 import React from 'react';
-import { usePushSpaceSocket, useSpaceData, useSpaceNotificationSocket } from '../hooks';
+import {
+  usePushSpaceSocket,
+  useSpaceData,
+  useSpaceNotificationSocket,
+} from '../hooks';
 
 export interface ISpacesComponentsWrapperProps {
   children: React.ReactNode;
@@ -15,7 +19,7 @@ export const SpaceComponentWrapper = ({
     connectSpaceRequest,
     broadcastRaisedHand,
   } = useSpaceData();
-  
+
   useSpaceNotificationSocket({
     account,
     env,
@@ -26,9 +30,5 @@ export const SpaceComponentWrapper = ({
 
   usePushSpaceSocket({ account, env });
 
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 };

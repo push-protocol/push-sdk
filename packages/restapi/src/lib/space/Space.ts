@@ -37,7 +37,11 @@ import { onJoinListener } from './onJoinListener';
 import { pCAIP10ToWallet } from '../helpers';
 
 export const initLiveSpaceData: LiveSpaceData = {
-  host: null,
+  host: {
+    address: '',
+    audio: null,
+    emojiReactions: null,
+  },
   coHosts: [],
   speakers: [],
   listeners: [],

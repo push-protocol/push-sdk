@@ -6,11 +6,13 @@ export interface OnReceiveMetaMessageType {
   receivedMetaMessage: IMessageIPFS;
 }
 
-export async function onReceiveMetaMessage(
+export function onReceiveMetaMessage(
   this: Space,
   options: OnReceiveMetaMessageType
 ) {
   const { receivedMetaMessage } = options || {};
+
+  console.log('ONRECEIVEMETAMESSAGE', receivedMetaMessage);
 
   if (
     receivedMetaMessage.messageType !== MessageType.META ||

@@ -15,7 +15,6 @@ import {
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceNotificationSocket } from '../hooks';
 
 import {
   LivepeerConfig,
@@ -404,7 +403,7 @@ export const SpacesUIProvider = ({
         <SpaceDataContext.Provider value={value}>
           <SpaceComponentWrapper>
             {children}
-          </SpaceComponentWrapper>  
+          </SpaceComponentWrapper>
         </SpaceDataContext.Provider>
       </ThemeContext.Provider>
     </LivepeerConfig>

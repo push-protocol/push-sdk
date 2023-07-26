@@ -32,6 +32,7 @@ export const usePushSpaceSocket = ({
   } = useSpaceData();
 
   const addSocketEvents = useCallback(() => {
+    console.log('addSocketEvents');
     pushSpaceSocket?.on(EVENTS.CONNECT, () => {
       setIsPushSDKSocketConnected(true);
     });
@@ -41,17 +42,40 @@ export const usePushSpaceSocket = ({
       setIsPushSDKSocketConnected(false);
     });
 
-    pushSpaceSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (message: any) => {
-      console.log('MESSAGE RECIEVED', message);
-      if (message?.messageType === 'META') {
+    // pushSpaceSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (message: any) => {
+    //   console.log('MESSAGE RECIEVED', message);
+    //   if (message?.messageType === 'META') {
+    //     // this is to update the liveSpaceData state
+    //     await spacesObjectRef?.current?.onReceiveMetaMessage?.({
+    //       recievedMetaMessage: message,
+    //     });
+    //   }
+    // });
+
+    pushSpaceSocket?.on('SPACES_MESSAGES', async (message: any) => {
+      console.log('SPACES_MESSAGES RECEIVED', message);
+      if (message?.messageCategory === 'Request') {
+        /*
+          - Will be executed on host's end of a live space
+          - When a listener joins this fires a meta message telling everyone the same
+          */
+        await spacesObjectRef?.current?.onJoinListener?.({
+          receivedAddress: message?.fromCAIP10,
+        });
+      }
+      if (
+        message?.messageCategory === 'Chat' &&
+        message?.messageType === 'Meta'
+      ) {
         // this is to update the liveSpaceData state
-        await spacesObjectRef?.current?.onReceiveMetaMessage?.({
-          recievedMetaMessage: message,
+        spacesObjectRef?.current?.onReceiveMetaMessage?.({
+          receivedMetaMessage: message,
         });
       }
     });
 
     pushSpaceSocket?.on('SPACES', async (spaceInfo: SpaceDTO) => {
+      console.log('SPACES EVENT RECEIVED', spaceInfo);
 
       /* TODO: In future, store all space info in SpaceInfo state itself, and mySpaces, popularSpaces, requests only store spaceId
         so as to only update spaceInfo once and it should reflect at every place*/
@@ -132,14 +156,6 @@ export const usePushSpaceSocket = ({
         }
       }
 
-      /*
-          - Will be executed on host's end of a live space
-          - When a listener joins this fires a meta message telling everyone the same
-        */
-      await spacesObjectRef?.current?.onJoinListener?.({
-        receivedSpaceData: spaceInfo,
-      });
-
       const updatedPopularSpaces = popularSpaces?.apiData?.map((item) => {
         if (item.spaceId === spaceInfo.spaceId) {
           return {
@@ -167,7 +183,6 @@ export const usePushSpaceSocket = ({
     setSpaceRequests,
     env,
     setMySpaces,
-    spacesObjectRef,
   ]);
 
   const removeSocketEvents = useCallback(() => {
