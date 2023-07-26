@@ -136,7 +136,9 @@ export const usePushSpaceSocket = ({
           - Will be executed on host's end of a live space
           - When a listener joins this fires a meta message telling everyone the same
         */
-      await spacesObjectRef?.current?.onJoinListener?.();
+      await spacesObjectRef?.current?.onJoinListener?.({
+        receivedSpaceData: spaceInfo,
+      });
 
       const updatedPopularSpaces = popularSpaces?.apiData?.map((item) => {
         if (item.spaceId === spaceInfo.spaceId) {
@@ -185,7 +187,7 @@ export const usePushSpaceSocket = ({
         removeSocketEvents();
       }
     };
-  }, [addSocketEvents, pushSpaceSocket, removeSocketEvents]);
+  }, [pushSpaceSocket]);
 
   /**
    * Whenever the required params to create a connection object change

@@ -3,8 +3,6 @@ import { SPACE_DISCONNECT_TYPE } from '../payloads/constants';
 
 export async function leave(this: Space): Promise<void> {
   try {
-    // should be only called by the host or the speakers
-
     // if the host is leaving then we need to make someone else the host
 
     // handle the case where a listner is leaving

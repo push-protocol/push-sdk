@@ -12,7 +12,8 @@ export const SpaceComponentWrapper = ({
     account,
     env,
     acceptSpaceRequest,
-    connectSpaceRequest
+    connectSpaceRequest,
+    broadcastRaisedHand,
   } = useSpaceData();
   
   useSpaceNotificationSocket({
@@ -20,6 +21,7 @@ export const SpaceComponentWrapper = ({
     env,
     acceptSpaceRequest,
     connectSpaceRequest,
+    broadcastRaisedHand,
   });
 
   usePushSpaceSocket({ account, env });
