@@ -53,6 +53,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
+    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ spaceObjectData:", spaceObjectData)
+    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isSpeaker:", isSpeaker)
+    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isListener:", isListener)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -89,11 +92,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       role: 'SPEAKER',
     };
 
+    await spacesObjectRef?.current?.createAudioStream?.();
+
     await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
-    await spacesObjectRef?.current?.acceptPromotionRequest?.({
+    await spacesObjectRef?.current?.rejectPromotionRequest?.({
       promoteeAddress: pCAIP10ToWallet(requesterAddress),
     });
   };
@@ -277,6 +282,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             <LiveSpaceProfileContainer
               isHost={false}
               isSpeaker={false}
+              requested={profile.handRaised}
               wallet={profile?.address}
               image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
             />
@@ -327,7 +333,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
-              {/* <Image
+              <Image
                 width={'21px'}
                 height={'24px'}
                 src={MembersIcon}
@@ -335,7 +341,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 onClick={() => setShowMembersModal(true)}
                 alt="Members Icon"
               />
-              <Image
+              {/* <Image
                 width={'24px'}
                 height={'24px'}
                 src={ShareIcon}
