@@ -40,6 +40,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
+  const [promotedListener, setPromotedListener] = useState('');
+
   const theme = useContext(ThemeContext);
 
   const {
@@ -53,9 +55,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
-    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ spaceObjectData:", spaceObjectData)
-    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isSpeaker:", isSpeaker)
-    console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isListener:", isListener)
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ spaceObjectData:", spaceObjectData)
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isSpeaker:", isSpeaker)
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:56 ~ isListener:", isListener)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -82,19 +84,28 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setIsRequestedForMic(true);
   };
 
-  const handleAcceptPromotion = async (requesterAddress: any) => {
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+      return;
+
     const options = {
-      signalData: raisedHandInfo[requesterAddress].signalData,
+      signalData: raisedHandInfo[promotedListener].signalData,
       promoteeAddress: pCAIP10ToWallet(
-        raisedHandInfo[requesterAddress].senderAddress
+        raisedHandInfo[promotedListener].senderAddress
       ),
-      spaceId: raisedHandInfo[requesterAddress].chatId,
+      spaceId: raisedHandInfo[promotedListener].chatId,
       role: 'SPEAKER',
     };
 
-    await spacesObjectRef?.current?.createAudioStream?.();
+    const promoteListenerFromEffect = async () => {
+      await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
+    };
+    promoteListenerFromEffect();
+  }, [promotedListener]);
 
-    await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
+  const handleAcceptPromotion = async (requesterAddress: any) => {
+    await spacesObjectRef?.current?.createAudioStream?.();
+    setPromotedListener(requesterAddress);
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
