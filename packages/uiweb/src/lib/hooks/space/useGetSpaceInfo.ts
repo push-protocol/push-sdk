@@ -5,10 +5,9 @@ import {
   SpaceDataContext,
 } from '../../context/spacesContext';
 import { SpaceDTO } from '@pushprotocol/restapi';
-import { ENV } from '../../config';
 
 export const useGetSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
-  const { getSpaceInfo, setSpaceInfo, env, spaceInfo }: ISpaceDataContextValues =
+  const { getSpaceInfo, setSpaceInfo, env }: ISpaceDataContextValues =
     useContext(SpaceDataContext);
   const [spaceData, setSpaceDataState] = useState<SpaceDTO | undefined>(
     getSpaceInfo(spaceId)
@@ -23,18 +22,16 @@ export const useGetSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
       return;
     }
     const fetchData = async () => {
-      if (!spaceData) {
-        try {
-          const response = await PushAPI.space.get({ spaceId, env });
-          setSpaceInfo(spaceId, response);
-          setSpaceDataState(response);
-        } catch (error) {
-          console.error(error);
-        }
+      try {
+        const response = await PushAPI.space.get({ spaceId, env });
+        setSpaceInfo(spaceId, response);
+        setSpaceDataState(response);
+      } catch (error) {
+        console.error(error);
       }
     };
     fetchData();
-  }, [spaceId, spaceData, getSpaceInfo, setSpaceInfo, spaceInfo, env]);
+  }, [spaceId]);
 
   return spaceData;
 };
