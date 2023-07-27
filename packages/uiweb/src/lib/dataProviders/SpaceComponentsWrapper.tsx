@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import {
   usePushSpaceSocket,
@@ -31,5 +30,6 @@ export const SpaceComponentWrapper = ({
 
   usePushSpaceSocket({ account, env });
 
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 };
