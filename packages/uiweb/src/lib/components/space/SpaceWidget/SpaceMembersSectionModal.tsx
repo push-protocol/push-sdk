@@ -48,7 +48,7 @@ const Requests = (props: any) => {
   )
 }
 
-const Speakers = (props: any) => {
+const Members = (props: any) => {
   const { members, theme } = props;
   return (
     <MembersContainer>
@@ -60,11 +60,11 @@ const Speakers = (props: any) => {
             ?.toDataURL()
             ?.toString()}
           imageHeight='48px'
-          contBtn={
-            <SettingsCont>
-              <SettingsLogo color={theme.textColorPrimary} />
-            </SettingsCont>
-          }
+          // contBtn={
+          //   <SettingsCont>
+          //     <SettingsLogo color={theme.textColorPrimary} />
+          //   </SettingsCont>
+          // }
           // removeCallback={() => handleDeleteInvitedAdmin(item)}
           // promoteCallback={() => handlePromoteToAdmin(item)}
           border
@@ -139,9 +139,9 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
         </TabContainer>
 
         {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
-        {activeTab === MemberTabsEnum.Speakers && <Speakers members={speakers} theme={theme} />}
+        {activeTab === MemberTabsEnum.Speakers && <Members members={speakers} theme={theme} />}
         {activeTab === MemberTabsEnum.Requests && <Requests isHost={isHost} members={requests} theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
-        {activeTab === MemberTabsEnum.Listeners && <Speakers members={listeners} theme={theme} />}
+        {activeTab === MemberTabsEnum.Listeners && <Members members={listeners} theme={theme} />}
 
         {/* <Button
               padding={'16px'}

@@ -127,13 +127,13 @@ export const LiveSpaceProfileContainer = (
         )}
       </Item>
 
-      {isDDOpen ? (
+      {/* {isDDOpen ? (
         <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
           <DDItem onClick={inviteListener}>Invite to Speak</DDItem>
           <DDItem>Kick Listener</DDItem>
           <DDItem>Mute</DDItem>
         </DropDown>
-      ) : null}
+      ) : null} */}
     </ThemeProvider>
   );
 };
