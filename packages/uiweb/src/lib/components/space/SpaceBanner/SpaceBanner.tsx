@@ -14,7 +14,6 @@ import live from './../../../icons/live.svg';
 import { Scheduled } from '../../../icons/scheduled';
 import {
   useGetSpaceInfo,
-  usePushSpaceSocket,
   useSpaceData,
 } from './../../../hooks';
 
@@ -71,8 +70,6 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
     actionCallback();
     setSpaceWidgetId(spaceData?.spaceId as string);
   };
-
-  usePushSpaceSocket({ account, env });
 
   // Check if the spaceData is not available, show the skeleton loading effect
   if (!spaceData) {

@@ -1,203 +1,152 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import { Modal } from '../reusables/Modal';
 import { ModalHeader } from '../reusables/ModalHeader';
 import { ProfileContainer } from '../reusables/ProfileContainer';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { createBlockie } from '../helpers/blockies';
 
-import { Button, Container, Image, Text } from '../../../config';
-import SettingsIcon from '../../../icons/settingsBlack.svg';
+import { SettingsLogo } from '../../../icons/SettingsLogo';
+import { AcceptRequest } from '../../../icons/Accept';
+import { RejectRequest } from '../../../icons/Reject';
 
-const tempImageUrl = "https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg";
-const Requests: React.FC = () => {
+const Requests = (props: any) => {
+  const { members, acceptCallback, rejectCallback, isHost } = props;
+
   return (
-    <Container>
-      <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
+    <MembersContainer>
+      {members.map((item: any) => {
+
+        const reject = () => {
+          rejectCallback(item.address)
+        };
+
+        const accept = () => {
+          acceptCallback(item.address)
+        };
+
+        return <ProfileContainer
+          handle={item.address}
+          name={item.address}
+          imageUrl={createBlockie?.(item.address)
+            ?.toDataURL()
+            ?.toString()}
           imageHeight='48px'
-      />
-      <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-      />
-    </Container>
+          contBtn={
+            isHost ?
+              <SettingsCont>
+                <SettingsCont onClick={reject}><RejectRequest /></SettingsCont>
+                <SettingsCont onClick={accept}><AcceptRequest /></SettingsCont>
+              </SettingsCont>
+              : null
+          }
+          border
+        />
+      })}
+    </MembersContainer>
   )
 }
 
-const Speakers: React.FC = () => {
+const Members = (props: any) => {
+  const { members, theme } = props;
   return (
-    <Container>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
+    <MembersContainer>
+      {members.map((item: any) => {
+        return <ProfileContainer
+          handle={item.address}
+          name={item.address}
+          imageUrl={createBlockie?.(item.address)
+            ?.toDataURL()
+            ?.toString()}
           imageHeight='48px'
+          // contBtn={
+          //   <SettingsCont>
+          //     <SettingsLogo color={theme.textColorPrimary} />
+          //   </SettingsCont>
+          // }
+          // removeCallback={() => handleDeleteInvitedAdmin(item)}
+          // promoteCallback={() => handlePromoteToAdmin(item)}
+          border
         />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-    </Container>
-  )
-}
-
-const CoHosts: React.FC = () => {
-  return (
-    <Container>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-    </Container>
-  )
-}
-
-const Listeners: React.FC = () => {
-  return (
-    <Container>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Dan'}
-          handle={'red'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-      <ProfileWithSettingsContainer>
-        <ProfileContainer
-          imageUrl={tempImageUrl}
-          name={'Abramov'}
-          handle={'ux'}
-          imageHeight='48px'
-        />
-        <SettingsIconContainer>
-          <Image
-            alt="Settings icon"
-            height={'40px'}
-            src={SettingsIcon}
-          />
-        </SettingsIconContainer>
-      </ProfileWithSettingsContainer>
-    </Container>
+      })}
+    </MembersContainer>
   )
 }
 
 interface ISpaceMembersModalProps {
   onClose: () => void;
+  spaceData: any;
+  acceptCallback?: any;
+  rejectCallback?: any;
+  isHost?: boolean;
 }
+
 enum MemberTabsEnum {
-  CoHost = 'Co-Host',
+  // CoHost = 'Co-Host',
   Speakers = 'Speakers',
   Requests = 'Requests',
   Listeners = 'Listeners',
 }
 
-export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose }: ISpaceMembersModalProps) => {
+export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ onClose, spaceData, acceptCallback, rejectCallback, isHost }: ISpaceMembersModalProps) => {
 
-    const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.CoHost);
+  const [activeTab, setActiveTab] = useState<MemberTabsEnum>(MemberTabsEnum.Speakers);
 
-    const handleTabClick = (index: MemberTabsEnum) => {
-      setActiveTab(index);
-    };
+  const theme = useContext(ThemeContext);
 
-    const renderTabs = (): ReactNode => {
-      return Object.values(MemberTabsEnum).map((tab) => (
-        <Tab
-          key={tab}
-          active={activeTab === tab}
-          onClick={() => handleTabClick(tab)}
-        >
-          {tab}
-        </Tab>
-      ));
-    };
+  const host = spaceData.liveSpaceData.host;
+  const speakers = spaceData.liveSpaceData.speakers;
+  const listeners = spaceData.liveSpaceData.listeners;
+  const requests = spaceData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised);
 
-    return (
-      <Modal clickawayClose={onClose} width='380px'>
-        <ModalHeader
-                heading='Members'
-                closeCallback={onClose}
-            />
-            <SpacesMembersContainer>
-            
-            <ProfileContainer
-                imageUrl={tempImageUrl}
-                name={'Arnab Chatterjee'}
-                handle={'arn4b'}
-                imageHeight='48px'
-                tag='Host'
-            />
+  const handleTabClick = (index: MemberTabsEnum) => {
+    setActiveTab(index);
+  };
 
-            <TabContainer>
-              {renderTabs()}
-            </TabContainer>
+  const renderTabs = (): ReactNode => {
+    return Object.values(MemberTabsEnum).map((tab) => (
+      <Tab
+        key={tab}
+        active={activeTab === tab}
+        onClick={() => handleTabClick(tab)}
+      >
+        {tab}
+      </Tab>
+    ));
+  };
 
-            {activeTab === MemberTabsEnum.CoHost && <CoHosts />}
-            {activeTab === MemberTabsEnum.Speakers && <Speakers />}
-            {activeTab === MemberTabsEnum.Requests && <Requests />}
-            {activeTab === MemberTabsEnum.Listeners && <Listeners />}
+  return (
+    <Modal clickawayClose={onClose} width='380px'>
+      <ModalHeader
+        heading='Members'
+        closeCallback={onClose}
+      />
+      <SpacesMembersContainer>
 
-            <Button 
-              padding={'16px'} 
-              borderRadius={'8px'} 
-              background={'#8B5CF6'} 
+        <ProfileContainer
+          imageUrl={createBlockie?.(host.address)
+            ?.toDataURL()
+            ?.toString()}
+          name={host.address}
+          handle={host.address}
+          imageHeight='48px'
+          tag='Host'
+        />
+
+        <TabContainer>
+          {renderTabs()}
+        </TabContainer>
+
+        {/* {activeTab === MemberTabsEnum.CoHost && <CoHosts members={coHosts} />} */}
+        {activeTab === MemberTabsEnum.Speakers && <Members members={speakers} theme={theme} />}
+        {activeTab === MemberTabsEnum.Requests && <Requests isHost={isHost} members={requests} theme={theme} acceptCallback={acceptCallback} rejectCallback={rejectCallback} />}
+        {activeTab === MemberTabsEnum.Listeners && <Members members={listeners} theme={theme} />}
+
+        {/* <Button
+              padding={'16px'}
+              borderRadius={'8px'}
+              background={'#8B5CF6'}
               border={'1px solid #703BEB'}
               cursor={'pointer'}
               alignSelf={'center'}
@@ -206,19 +155,20 @@ export const SpaceMembersSectionModal: React.FC<ISpaceMembersModalProps> = ({ on
               <Text fontSize="14px" fontWeight={600} color="#fff">
                 Update Members
               </Text>
-            </Button>
+            </Button> */}
 
-            </SpacesMembersContainer>
-        </Modal>
-    )
+      </SpacesMembersContainer>
+    </Modal>
+  )
 }
 
 /* styling */
-// const ButtonContainer = styled.div`
-//     display: flex;
-//     justify-content: space-between;
-//     width: 100%;
-// `;
+const MembersContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`;
+
 const SpacesMembersContainer = styled.div`
     color: black;
     display: flex;
@@ -245,7 +195,7 @@ const TabContainer = styled.div`
   padding: 0px 10px;
 `;
 
-const Tab = styled.div<{active: boolean}>`
+const Tab = styled.div<{ active: boolean }>`
   flex: 1;
   padding: 10px;
   text-align: center;
@@ -253,4 +203,11 @@ const Tab = styled.div<{active: boolean}>`
     props.active ? '1px solid #8B5CF6' : '1px solid #82828A26'};
   cursor: pointer;
   color: ${(props) => (props.active ? '#8B5CF6' : '#82828A')};
+`;
+
+const SettingsCont = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 `;

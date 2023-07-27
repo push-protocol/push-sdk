@@ -7,7 +7,7 @@ import { SCWScheduleModal } from './SCWScheduleModal/SCWScheduleModal';
 import { SCWInviteModal } from './SCWInviteModal/SCWInviteModal';
 import { SCWButton } from './SCWButton';
 
-import { useSpaceData, usePushSpaceSocket } from '../../../hooks';
+import { useSpaceData } from '../../../hooks';
 
 export interface ISpaceCreateWidgetProps {
     children?: React.ReactNode;
@@ -36,8 +36,6 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
     })
 
     const { signer, env, account, pgpPrivateKey } = useSpaceData();
-
-    usePushSpaceSocket({ account, env });
 
     const handleNameChange = (event: any) => {
         setSpaceState((prevState) => ({...prevState, spaceName: event.target.value}))
