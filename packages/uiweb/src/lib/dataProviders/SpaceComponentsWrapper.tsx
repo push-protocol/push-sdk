@@ -30,5 +30,6 @@ export const SpaceComponentWrapper = ({
 
   usePushSpaceSocket({ account, env });
 
-  return <div>{children}</div>;
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{children}</>;
 };
