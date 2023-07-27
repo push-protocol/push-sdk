@@ -42,7 +42,9 @@ export const SpacesUIProvider = ({
   children,
 }: ISpacesUIProviderProps) => {
   const spacesObjectRef = useRef({} as PushAPI.space.Space);
-  const [account, setAccount] = useState<string>(walletToPCAIP10(spaceUI.account));
+  const [account, setAccount] = useState<string>(
+    walletToPCAIP10(spaceUI.account)
+  );
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
@@ -52,7 +54,9 @@ export const SpacesUIProvider = ({
     spaceChainId(spaceUI.account, spaceUI.env)
   );
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
-  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(FeedTabs['Popular']);
+  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(
+    FeedTabs['Popular']
+  );
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
@@ -62,7 +66,9 @@ export const SpacesUIProvider = ({
     PushAPI.space.initSpaceData
   );
 
-  const [raisedHandInfo, setRaisedHandInfo] = useState<Record<string, PushAPI.video.VideoDataType>>({});
+  const [raisedHandInfo, setRaisedHandInfo] = useState<
+    Record<string, PushAPI.video.VideoDataType>
+  >({});
 
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
@@ -164,13 +170,18 @@ export const SpacesUIProvider = ({
     });
   };
 
-  const broadcastRaisedHand = async (receivedSpaceMetaData: PushAPI.video.VideoDataType) => {
+  const broadcastRaisedHand = async (
+    receivedSpaceMetaData: PushAPI.video.VideoDataType
+  ) => {
     await spacesObjectRef.current.broadcastRaisedHand({
       promoteeAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
     });
 
-    setRaisedHandInfo(prevMap => ({ ...prevMap, [receivedSpaceMetaData.senderAddress]: receivedSpaceMetaData }));
-  }
+    setRaisedHandInfo((prevMap) => ({
+      ...prevMap,
+      [receivedSpaceMetaData.senderAddress]: receivedSpaceMetaData,
+    }));
+  };
 
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
@@ -192,7 +203,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -227,7 +242,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -262,7 +281,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -282,11 +305,9 @@ export const SpacesUIProvider = ({
   };
 
   const isSpeaker = Boolean(
+    // for the case when space isnt live
     spaceObjectData?.members?.find((member) => {
-      if (
-        account?.toUpperCase() ===
-        spaceObjectData.spaceCreator.toUpperCase()
-      )
+      if (account?.toUpperCase() === spaceObjectData.spaceCreator.toUpperCase())
         return false;
       const address = member.wallet;
       return (
@@ -298,24 +319,15 @@ export const SpacesUIProvider = ({
         return (
           address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
         );
+      }) ||
+      // for the case when the space is live
+      spaceObjectData?.liveSpaceData?.speakers?.find((member) => {
+        const address = member.address;
+        return address === pCAIP10ToWallet(account);
       })
   );
 
-  const isListener = Boolean(
-    spaceObjectData?.members?.find((member) => {
-      const address = member.wallet;
-      return (
-        address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
-      );
-    }) ||
-      spaceObjectData?.pendingMembers?.find((member) => {
-        const address = member.wallet;
-        return (
-          address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
-        );
-      }) ||
-      !isSpeaker
-  );
+  const isListener = !isSpeaker;
 
   const customSearch = undefined;
 
@@ -390,7 +402,7 @@ export const SpacesUIProvider = ({
 
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spaceUI.account, spaceUI.env, spaceUI.pgpPrivateKey, spaceUI.signer]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
@@ -401,9 +413,7 @@ export const SpacesUIProvider = ({
     <LivepeerConfig client={livepeerClient}>
       <ThemeContext.Provider value={PROVIDER_THEME}>
         <SpaceDataContext.Provider value={value}>
-          <SpaceComponentWrapper>
-            {children}
-          </SpaceComponentWrapper>
+          <SpaceComponentWrapper>{children}</SpaceComponentWrapper>
         </SpaceDataContext.Provider>
       </ThemeContext.Provider>
     </LivepeerConfig>
