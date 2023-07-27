@@ -30,5 +30,5 @@ export const SpaceComponentWrapper = ({
 
   usePushSpaceSocket({ account, env });
 
-  return <div>{children}</div>;
+  return <>{children}</>;
 };
