@@ -66,7 +66,6 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
     setIsLoading(!isLoading);
     setIsStarted(true);
-    console.log('Space Started');
   };
 
   const handleShareTweet = () => {
@@ -146,9 +145,11 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     async function startSpace() {
       if (spaceStatusState === SpaceStatus.Live) return;
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
+      console.log('SPACE STARTING');
       await spacesObjectRef?.current?.start?.({
         livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
       });
+      console.log('SPACE STARTED');
       setIsStarted(false);
       setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
     }

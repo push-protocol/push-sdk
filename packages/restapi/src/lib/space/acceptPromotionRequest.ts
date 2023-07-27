@@ -1,8 +1,10 @@
+import { pCAIP10ToWallet } from '../helpers';
 import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
 import type Space from './Space';
+import { addSpeakers } from './addSpeakers';
 
 export interface AcceptPromotionRequestType {
   signalData: any;
@@ -17,13 +19,26 @@ export async function acceptPromotionRequest(
 ) {
   const { signalData, promoteeAddress, spaceId, role } = options || {};
 
-  // TODO: change the role of promoteeAddress from listner to 'role'
+  console.log(
+    'acceptPromotionRequest options',
+    options,
+    'local stream',
+    this.data.local.stream
+  );
+
+  await addSpeakers({
+    spaceId: this.spaceSpecificData.spaceId,
+    signer: this.signer,
+    pgpPrivateKey: this.pgpPrivateKey,
+    speakers: [pCAIP10ToWallet(promoteeAddress)],
+    env: this.env
+  });
 
   // accept the promotion request
   this.acceptRequest({
     signalData,
     senderAddress: this.data.local.address,
-    recipientAddress: promoteeAddress,
+    recipientAddress: pCAIP10ToWallet(promoteeAddress),
     chatId: spaceId,
     details: {
       type: SPACE_ACCEPT_REQUEST_TYPE.ACCEPT_PROMOTION,

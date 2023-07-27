@@ -385,7 +385,7 @@ export interface AdminPeer extends Peer {
 }
 
 export interface LiveSpaceData {
-  host: AdminPeer | null;
+  host: AdminPeer;
   coHosts: AdminPeer[];
   speakers: AdminPeer[];
   listeners: ListenerPeer[];
@@ -634,10 +634,8 @@ export type VideoDisconnectOptions = {
 
 export type EnableVideoInputOptions = {
   state: boolean;
-  peerAddress: string;
 };
 
 export type EnableAudioInputOptions = {
   state: boolean;
-  peerAddress: string;
 };
