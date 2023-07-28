@@ -99,7 +99,7 @@ export const SpacesUIProvider = ({
 
   const livepeerClient = createReactClient({
     provider: studioProvider({
-      apiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
+      apiKey: 'ac9d3e33-56c2-4a22-a328-a08a46fd9356',
     }),
   });
 
