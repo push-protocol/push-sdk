@@ -147,7 +147,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
       console.log('SPACE STARTING');
       await spacesObjectRef?.current?.start?.({
-        livepeerApiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
+        livepeerApiKey: 'ac9d3e33-56c2-4a22-a328-a08a46fd9356',
       });
       console.log('SPACE STARTED');
       setIsStarted(false);
