@@ -21,7 +21,7 @@ import {
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
-import { spaceChainId } from '../components/space/helpers/account';
+import { isAccountsEqual, spaceChainId } from '../components/space/helpers/account';
 import { walletToPCAIP10, pCAIP10ToWallet } from '../helpers';
 
 export enum FeedTabs {
@@ -307,18 +307,14 @@ export const SpacesUIProvider = ({
   const isSpeaker = Boolean(
     // for the case when space isnt live
     spaceObjectData?.members?.find((member) => {
-      if (account?.toUpperCase() === spaceObjectData.spaceCreator.toUpperCase())
+      if (isAccountsEqual(account, spaceObjectData?.spaceCreator))
         return false;
       const address = member.wallet;
-      return (
-        address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
-      );
+      return (isAccountsEqual(account, address) && member.isSpeaker);
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
         const address = member.wallet;
-        return (
-          address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
-        );
+        return (isAccountsEqual(account, address) && member.isSpeaker);
       }) ||
       // for the case when the space is live
       spaceObjectData?.liveSpaceData?.speakers?.find((member) => {
@@ -378,7 +374,6 @@ export const SpacesUIProvider = ({
   };
 
   const resetStates = () => {
-    setSpaceWidgetId('');
     setSpeakerData({} as ISpaceSpeakerData);
     setSpaceObjectData(PushAPI.space.initSpaceData);
     setSpaceRequests({
@@ -396,14 +391,18 @@ export const SpacesUIProvider = ({
   useEffect(() => {
     resetStates();
     setAccount(walletToPCAIP10(spaceUI.account));
-    setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
-    setPgpPrivateKey(spaceUI.pgpPrivateKey);
 
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceUI.account, spaceUI.env, spaceUI.pgpPrivateKey, spaceUI.signer]);
+  }, [spaceUI.account, spaceUI.env]);
+
+  useEffect(() => {
+    setSigner(spaceUI.signer);
+    setPgpPrivateKey(spaceUI.pgpPrivateKey);
+
+  }, [spaceUI.pgpPrivateKey, spaceUI.signer]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
