@@ -323,7 +323,7 @@ export const SpacesUIProvider = ({
       })
   );
 
-  const isListener = !isSpeaker;
+  const isListener = spaceObjectData.spaceId ? !isSpeaker : false;
 
   const customSearch = undefined;
 
