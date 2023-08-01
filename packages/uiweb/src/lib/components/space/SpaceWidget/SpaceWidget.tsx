@@ -9,7 +9,7 @@ import { WidgetHeader } from './WidgetHeader';
 import { ISpaceWidgetProps } from '../exportedTypes';
 import { isHostOfSpace, isMemberOfSpace } from './helpers/utils';
 
-import { usePushSpaceSocket, useSpaceData } from '../../../hooks';
+import { useSpaceData } from '../../../hooks';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -40,8 +40,6 @@ export const SpaceWidget: React.FC<ISpaceWidgetProps> = (
 
   const { getSpaceInfo, setSpaceInfo, account, env, spaceInfo } =
     useSpaceData();
-
-  usePushSpaceSocket({ account, env });
 
   useEffect(() => {
     if (!spaceId) {

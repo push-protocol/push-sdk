@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
+import { SpaceComponentWrapper } from './SpaceComponentsWrapper';
 import { SpacesUI } from '../components';
 import { ThemeContext } from '../components/space/theme/ThemeProvider';
 import { ISpacesTheme, lightTheme } from '../components/space/theme';
@@ -14,15 +15,14 @@ import {
 import { ENV } from '../config';
 
 import * as PushAPI from '@pushprotocol/restapi';
-import { useSpaceNotificationSocket } from '../hooks';
 
 import {
   LivepeerConfig,
   createReactClient,
   studioProvider,
 } from '@livepeer/react';
-import { spaceChainId } from '../components/space/helpers/account';
-import { walletToPCAIP10 } from '../helpers';
+import { isAccountsEqual, spaceChainId } from '../components/space/helpers/account';
+import { walletToPCAIP10, pCAIP10ToWallet } from '../helpers';
 
 export enum FeedTabs {
   ForYou = 'For You',
@@ -42,7 +42,9 @@ export const SpacesUIProvider = ({
   children,
 }: ISpacesUIProviderProps) => {
   const spacesObjectRef = useRef({} as PushAPI.space.Space);
-  const [account, setAccount] = useState<string>(walletToPCAIP10(spaceUI.account));
+  const [account, setAccount] = useState<string>(
+    walletToPCAIP10(spaceUI.account)
+  );
   const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
@@ -52,7 +54,9 @@ export const SpacesUIProvider = ({
     spaceChainId(spaceUI.account, spaceUI.env)
   );
   const [spaceWidgetId, setSpaceWidgetId] = useState<string>('');
-  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(FeedTabs['Popular']);
+  const [selectedFeedTab, setSelectedFeedTab] = useState<FeedTabs>(
+    FeedTabs['Popular']
+  );
 
   const [speakerData, setSpeakerData] = useState({} as ISpaceSpeakerData);
 
@@ -61,6 +65,10 @@ export const SpacesUIProvider = ({
   const [spaceObjectData, setSpaceObjectData] = useState<PushAPI.SpaceData>(
     PushAPI.space.initSpaceData
   );
+
+  const [raisedHandInfo, setRaisedHandInfo] = useState<
+    Record<string, PushAPI.video.VideoDataType>
+  >({});
 
   const [mySpaces, setMySpaces] = useState({
     apiData: [] as SpaceIFeeds[],
@@ -80,6 +88,10 @@ export const SpacesUIProvider = ({
     lastPage: 2,
   } as ISpacePaginationData);
 
+  const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
+  const [isPushSDKSocketConnected, setIsPushSDKSocketConnected] =
+    useState<boolean>(false);
+
   const isJoined = Boolean(
     spaceObjectData?.connectionData?.meta?.broadcast?.livepeerInfo ||
       spaceObjectData?.spaceDescription
@@ -87,7 +99,7 @@ export const SpacesUIProvider = ({
 
   const livepeerClient = createReactClient({
     provider: studioProvider({
-      apiKey: '6d29b32d-78d4-4a5c-9848-a4a0669eb530',
+      apiKey: 'ac9d3e33-56c2-4a22-a328-a08a46fd9356',
     }),
   });
 
@@ -158,6 +170,19 @@ export const SpacesUIProvider = ({
     });
   };
 
+  const broadcastRaisedHand = async (
+    receivedSpaceMetaData: PushAPI.video.VideoDataType
+  ) => {
+    await spacesObjectRef.current.broadcastRaisedHand({
+      promoteeAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
+    });
+
+    setRaisedHandInfo((prevMap) => ({
+      ...prevMap,
+      [receivedSpaceMetaData.senderAddress]: receivedSpaceMetaData,
+    }));
+  };
+
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
   };
@@ -178,7 +203,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -213,7 +242,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -248,7 +281,11 @@ export const SpacesUIProvider = ({
         let updatedApiData: SpaceIFeeds[] = [];
         if (prevState.apiData) {
           updatedApiData = [...prevState.apiData, ...uniqueSpaces];
-          updatedApiData.sort((a, b) => new Date(b.intentTimestamp).getTime() - new Date(a.intentTimestamp).getTime());
+          updatedApiData.sort(
+            (a, b) =>
+              new Date(b.intentTimestamp).getTime() -
+              new Date(a.intentTimestamp).getTime()
+          );
         } else {
           updatedApiData = uniqueSpaces;
         }
@@ -268,40 +305,25 @@ export const SpacesUIProvider = ({
   };
 
   const isSpeaker = Boolean(
+    // for the case when space isnt live
     spaceObjectData?.members?.find((member) => {
-      if (
-        account?.toUpperCase() ===
-        spaceObjectData.spaceCreator.toUpperCase()
-      )
+      if (isAccountsEqual(account, spaceObjectData?.spaceCreator))
         return false;
       const address = member.wallet;
-      return (
-        address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
-      );
+      return (isAccountsEqual(account, address) && member.isSpeaker);
     }) ||
       spaceObjectData?.pendingMembers?.find((member) => {
         const address = member.wallet;
-        return (
-          address?.toUpperCase() === account?.toUpperCase() && member.isSpeaker
-        );
+        return (isAccountsEqual(account, address) && member.isSpeaker);
+      }) ||
+      // for the case when the space is live
+      spaceObjectData?.liveSpaceData?.speakers?.find((member) => {
+        const address = member.address;
+        return address === pCAIP10ToWallet(account);
       })
   );
 
-  const isListener = Boolean(
-    spaceObjectData?.members?.find((member) => {
-      const address = member.wallet;
-      return (
-        address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
-      );
-    }) ||
-      spaceObjectData?.pendingMembers?.find((member) => {
-        const address = member.wallet;
-        return (
-          address.toUpperCase() === account.toUpperCase() && !member.isSpeaker
-        );
-      }) ||
-      !isSpeaker
-  );
+  const isListener = spaceObjectData.spaceId ? !isSpeaker : false;
 
   const customSearch = undefined;
 
@@ -331,6 +353,10 @@ export const SpacesUIProvider = ({
     setPopularSpaces: setPopularSpacePaginationInfo,
     spaceRequests,
     setSpaceRequests: setSpacesRequestPaginationInfo,
+    pushSpaceSocket,
+    setPushSpaceSocket,
+    isPushSDKSocketConnected,
+    setIsPushSDKSocketConnected,
     spaceObjectData,
     setSpaceObjectData,
     initSpaceObject,
@@ -342,11 +368,12 @@ export const SpacesUIProvider = ({
     setSpeakerData: setSpeakerDataItem,
     acceptSpaceRequest,
     connectSpaceRequest,
+    broadcastRaisedHand,
     customSearch,
+    raisedHandInfo,
   };
 
   const resetStates = () => {
-    setSpaceWidgetId('');
     setSpeakerData({} as ISpaceSpeakerData);
     setSpaceObjectData(PushAPI.space.initSpaceData);
     setSpaceRequests({
@@ -364,31 +391,28 @@ export const SpacesUIProvider = ({
   useEffect(() => {
     resetStates();
     setAccount(walletToPCAIP10(spaceUI.account));
-    setSigner(spaceUI.signer);
     setEnv(spaceUI.env);
-    setPgpPrivateKey(spaceUI.pgpPrivateKey);
 
     // reset
     setChainId(spaceChainId(spaceUI.account, spaceUI.env));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceUI.account, spaceUI.env, spaceUI.pgpPrivateKey, spaceUI.signer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceUI.account, spaceUI.env]);
+
+  useEffect(() => {
+    setSigner(spaceUI.signer);
+    setPgpPrivateKey(spaceUI.pgpPrivateKey);
+
+  }, [spaceUI.pgpPrivateKey, spaceUI.signer]);
 
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
   spaceUI.init();
-  useSpaceNotificationSocket({
-    account,
-    env,
-    acceptSpaceRequest,
-    connectSpaceRequest,
-  });
-  // usePushSpaceSocket({ account, env });
 
   return (
     <LivepeerConfig client={livepeerClient}>
       <ThemeContext.Provider value={PROVIDER_THEME}>
         <SpaceDataContext.Provider value={value}>
-          {children}
+          <SpaceComponentWrapper>{children}</SpaceComponentWrapper>
         </SpaceDataContext.Provider>
       </ThemeContext.Provider>
     </LivepeerConfig>

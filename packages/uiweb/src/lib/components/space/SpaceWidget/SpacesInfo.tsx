@@ -167,6 +167,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
 /** styling */
 const SpacesInfoContainer = styled.div`
     color: ${(props => props.theme?.textColorPrimary)};
+    width: 100%;
 `;
 
 const SpacesDetailsContainer = styled.div`

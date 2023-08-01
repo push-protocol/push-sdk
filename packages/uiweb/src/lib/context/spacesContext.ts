@@ -52,6 +52,10 @@ export interface ISpaceDataContextValues {
   setPopularSpaces: (paginationData: ISpacePaginationData) => void;
   spaceRequests: ISpacePaginationData;
   setSpaceRequests: (paginationData: ISpacePaginationData) => void;
+  pushSpaceSocket: any;
+  setPushSpaceSocket: React.Dispatch<React.SetStateAction<any>>;
+  isPushSDKSocketConnected: boolean;
+  setIsPushSDKSocketConnected: React.Dispatch<React.SetStateAction<boolean>>;
   spaceObjectData: PushAPI.SpaceData;
   setSpaceObjectData: (data: any) => void;
   initSpaceObject: (data: any) => Promise<void>;
@@ -64,7 +68,9 @@ export interface ISpaceDataContextValues {
   setSpeakerData: (key: string, value: PushAPI.video.VideoDataType) => void;
   acceptSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
   connectSpaceRequest: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
+  broadcastRaisedHand: (spaceMetaData: PushAPI.video.VideoDataType) => Promise<void>;
   customSearch?: (query: string) => ICustomSearchResult;
+  raisedHandInfo: Record<string, PushAPI.video.VideoDataType>;
 }
 
 export const initialSpaceDataContextValues: ISpaceDataContextValues = {
@@ -129,6 +135,14 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   setSpaceRequests: () => {
     /**/
   },
+  pushSpaceSocket: null,
+  setPushSpaceSocket: () => {
+    /** */
+  },
+  isPushSDKSocketConnected: false,
+  setIsPushSDKSocketConnected: () => {
+    /** */
+  },
   spaceObjectData: {} as PushAPI.SpaceData,
   setSpaceObjectData: () => {
     /**/
@@ -153,7 +167,11 @@ export const initialSpaceDataContextValues: ISpaceDataContextValues = {
   connectSpaceRequest: async () => {
     /** */
   },
+  broadcastRaisedHand: async () => {
+    /** */
+  },
   customSearch: undefined,
+  raisedHandInfo: {},
 };
 
 export const SpaceDataContext = createContext<ISpaceDataContextValues>(

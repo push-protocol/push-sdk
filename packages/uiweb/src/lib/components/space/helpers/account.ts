@@ -14,3 +14,15 @@ export const spaceChainId = (account: string, env: ENV): number => {
     return Number(account.split(':')[2]);
   return env === ENV.PROD ? 1: 5; // Ethereum Mainnet Id
 }
+
+export const isAccountsEqual = (account: string | undefined | null, userProfileWallet: string | undefined | null): boolean => {
+  if (!account || !userProfileWallet) {
+    return false;
+  }
+  
+  if (isNftProfile(userProfileWallet)) {
+    return userProfileWallet.toUpperCase().includes(account.toUpperCase());
+  }
+
+  return account.toUpperCase() === userProfileWallet.toUpperCase();
+};

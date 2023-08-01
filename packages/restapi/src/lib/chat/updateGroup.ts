@@ -11,7 +11,6 @@ import {
   getUserDID,
   getConnectedUserV2,
   updateGroupRequestValidator,
-  validateScheduleDates,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -71,7 +70,6 @@ export const updateGroup = async (
       admins,
       address
     );
-    validateScheduleDates(scheduleAt, scheduleEnd);
 
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const convertedMembersPromise = members.map(async (each) => {
