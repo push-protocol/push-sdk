@@ -12,13 +12,13 @@ import {
   useFeedScroll,
   useMySpaces,
   usePopularSpaces,
-  useSpaceRequests,
-  usePushSpaceSocket,
+  useSpaceRequests
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
 import spacesIcon from '../../../icons/Spaces.svg';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { isAccountsEqual } from '../helpers/account';
 
 enum OrientationEnums {
   Horizontal = 'horizontal',
@@ -71,10 +71,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     setPopularSpaces,
     spaceRequests,
     setSpaceRequests,
-    env,
   } = useSpaceData();
-
-  usePushSpaceSocket({ account, env });
 
   const listInnerRef = useFeedScroll(mySpaces.apiData?.length);
 
@@ -97,17 +94,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
   const handleMySpacesFilter = (spacesList: SpaceIFeeds[]) => {
     if (selectedFeedTab === FeedTabs.HostedByYou) {
       return spacesList.filter(
-        (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator?.toUpperCase() ===
-          account?.toUpperCase()
-      );
+        (space: SpaceIFeeds) => isAccountsEqual(account, space.spaceInformation?.spaceCreator));
     }
     if (selectedFeedTab === FeedTabs.ForYou) {
       return spacesList.filter(
-        (space: SpaceIFeeds) =>
-          space.spaceInformation?.spaceCreator?.toUpperCase() !==
-          account?.toUpperCase()
-      );
+        (space: SpaceIFeeds) => !isAccountsEqual(account, space.spaceInformation?.spaceCreator));
     } else {
       return handleFilterData(spacesList);
     }

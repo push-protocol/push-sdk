@@ -37,9 +37,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDDOpen, setIsDDOpen] = useState(false);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isRequestedForMic, setIsRequestedForMic] = useState(false);
+
+  const [promotedListener, setPromotedListener] = useState('');
 
   const theme = useContext(ThemeContext);
 
@@ -52,21 +53,64 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setSpaceWidgetId,
     isJoined,
     initSpaceObject,
+    raisedHandInfo,
   } = useSpaceData();
 
-  console.log(
-    '🚀 ~ file: LiveWidgetContent.tsx:53 ~ spacesObjectRef:',
-    spacesObjectRef
-  );
-
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
+
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
 
-  const handleDDState = () => {
-    setIsDDOpen(!isDDOpen);
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
+      return;
+
+    const requestedForMicFromEffect = async () => {
+      await spacesObjectRef?.current?.requestToBePromoted?.({
+        role: 'SPEAKER',
+        promotorAddress: pCAIP10ToWallet(spaceObjectData?.spaceCreator),
+      });
+    };
+    requestedForMicFromEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRequestedForMic]);
+
+  const handleRequest = async () => {
+    await spacesObjectRef?.current?.createAudioStream?.();
+    setIsRequestedForMic(true);
+  };
+
+  useEffect(() => {
+    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+      return;
+
+    const options = {
+      signalData: raisedHandInfo[promotedListener].signalData,
+      promoteeAddress: pCAIP10ToWallet(
+        raisedHandInfo[promotedListener].senderAddress
+      ),
+      spaceId: raisedHandInfo[promotedListener].chatId,
+      role: 'SPEAKER',
+    };
+
+    const promoteListenerFromEffect = async () => {
+      await spacesObjectRef?.current?.acceptPromotionRequest?.(options);
+    };
+    promoteListenerFromEffect();
+  }, [promotedListener]);
+
+  const handleAcceptPromotion = async (requesterAddress: any) => {
+    await spacesObjectRef?.current?.createAudioStream?.();
+    setPromotedListener(requesterAddress);
+  };
+
+  const handleRejectPromotion = async (requesterAddress: any) => {
+    await spacesObjectRef?.current?.rejectPromotionRequest?.({
+      promoteeAddress: pCAIP10ToWallet(requesterAddress),
+    });
   };
 
   const handleJoinSpace = async () => {
@@ -188,7 +232,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           />
         )}
 
-        {/* remote peer details if speaker or host */}
+        {/* details of peer connected via webRTC if speaker or host */}
         {(isSpeaker || isHost) &&
           spaceObjectData?.connectionData?.incoming
             ?.slice(1)
@@ -210,31 +254,50 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               />
             ))}
 
-        {/* details of everyone in the space if a listner */}
+        {/* details of host in the space if listener */}
+        {isListener && !isHost && (
+          <div style={{ position: 'relative' }}>
+            <LiveSpaceProfileContainer
+              isHost={true}
+              isSpeaker={false}
+              wallet={spaceObjectData?.liveSpaceData.host?.address}
+              image={createBlockie?.(
+                spaceObjectData?.liveSpaceData?.host?.address
+              )
+                ?.toDataURL()
+                ?.toString()}
+            />
+          </div>
+        )}
+
+        {/* details of speakers in the space if listener */}
         {isListener &&
           !isHost &&
-          spaceObjectData?.members.map((profile) => (
-            <div onClick={handleDDState} style={{ position: 'relative' }}>
+          spaceObjectData?.liveSpaceData.speakers.map((profile) => (
+            <div style={{ position: 'relative' }}>
               <LiveSpaceProfileContainer
-                isHost={
-                  profile?.wallet ===
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                isSpeaker={
-                  profile?.wallet !==
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                wallet={profile?.wallet}
-                image={profile?.image}
+                isHost={false}
+                isSpeaker={true}
+                wallet={profile?.address}
+                image={createBlockie?.(profile?.address)
+                  ?.toDataURL()
+                  ?.toString()}
               />
-
-              {isDDOpen ? (
-                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-                  <DDItem>Invite to Speak</DDItem>
-                </DropDown>
-              ) : null}
             </div>
           ))}
+
+        {/* details of listeners */}
+        {spaceObjectData?.liveSpaceData.listeners.map((profile) => (
+          <div style={{ position: 'relative' }}>
+            <LiveSpaceProfileContainer
+              isHost={false}
+              isSpeaker={false}
+              requested={profile.handRaised}
+              wallet={profile?.address}
+              image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+            />
+          </div>
+        ))}
       </Item>
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
@@ -251,7 +314,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               alignItems={'center'}
               gap={'8px'}
               padding={'10px'}
-              onClick={() => (isHost || isSpeaker ? handleMicState() : null)}
+              onClick={() =>
+                isHost || isSpeaker ? handleMicState() : handleRequest()
+              }
             >
               <Image
                 width={'14px'}
@@ -278,21 +343,30 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
-              <Image
-                width={'21px'}
-                height={'24px'}
-                src={MembersIcon}
-                cursor={'pointer'}
-                onClick={() => setShowMembersModal(true)}
-                alt="Members Icon"
-              />
-              <Image
+              <MembersContainer>
+                {
+                  isHost && numberOfRequests ?
+                  <RequestsCount>
+                    { numberOfRequests }
+                  </RequestsCount>
+                  : null
+                }
+                <Image
+                  width={'21px'}
+                  height={'24px'}
+                  src={MembersIcon}
+                  cursor={'pointer'}
+                  onClick={() => setShowMembersModal(true)}
+                  alt="Members Icon"
+                />
+              </MembersContainer>
+              {/* <Image
                 width={'24px'}
                 height={'24px'}
                 src={ShareIcon}
                 cursor={'pointer'}
                 alt="Share Icon"
-              />
+              /> */}
               <Button
                 color={`${theme.btnColorPrimary}`}
                 fontSize={'14px'}
@@ -337,6 +411,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         {showMembersModal ? (
           <SpaceMembersSectionModal
             onClose={() => setShowMembersModal(false)}
+            spaceData={spaceObjectData}
+            acceptCallback={handleAcceptPromotion}
+            rejectCallback={handleRejectPromotion}
+            isHost={isHost}
           />
         ) : null}
       </Item>
@@ -344,52 +422,27 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   );
 };
 
-const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
-  position: absolute;
-  top: 0px;
-  right: 0px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  justify-content: center;
-  align-items: start;
-
-  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
-  padding: 16px;
-  background: ${(props) => props.theme.bgColorPrimary};
-  color: ${(props) => props.theme.textColorPrimary};
-  border-radius: 16px;
-
-  border: 1px solid ${(props) => props.theme.borderColor};
-`;
-
-const DDItem = styled.div`
-  cursor: pointer;
-`;
-
-const fadeIn = keyframes`
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-`;
-
-const fadeOut = keyframes`
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
-`;
-
 const PeerPlayerDiv = styled.div`
   visibility: hidden;
   position: absolute;
   border: 5px solid red;
+`;
+
+const MembersContainer = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RequestsCount = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -6px;
+
+  background-color: ${(props) => props.theme.btnColorPrimary};
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
 `;

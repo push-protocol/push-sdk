@@ -1,15 +1,14 @@
 import { SpaceDTO } from '@pushprotocol/restapi';
+import { isAccountsEqual } from '../../helpers/account';
 import { getSpaceStatus } from '../../helpers/space';
 
 export const isHostOfSpace = (account: string, spaceData: SpaceDTO) => {
-  return (
-    account.toUpperCase() === spaceData?.spaceCreator.toUpperCase()
-  );
+  return isAccountsEqual(account, spaceData?.spaceCreator);
 };
 
 export const isMemberOfSpace = (account: string, spaceData: SpaceDTO) => {
   const isMemberArr = spaceData?.members.filter(
-    (member) => member.wallet.toUpperCase() === account.toUpperCase()
+    (member) => isAccountsEqual(account, member.wallet)
   );
   return isMemberArr?.length > 0;
 };

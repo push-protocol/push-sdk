@@ -130,6 +130,8 @@ export class Video {
   async create(options: VideoCreateInputOptions): Promise<void> {
     const { audio = true, video = true, stream = null } = options || {};
 
+    console.log("CREATING MEDIA STREAM");
+
     try {
       const localStream =
         stream !== null
@@ -764,8 +766,10 @@ export class Video {
 
       console.log(
         'disconnect',
+        'options',
+        options,
         'status',
-        this.data.incoming[incomingIndex].status
+        this.data.incoming[incomingIndex]?.status
       );
       if (
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
@@ -815,7 +819,7 @@ export class Video {
   // functions for enabling/disabling local audio and video
 
   enableVideo(options: EnableVideoInputOptions): void {
-    const { state, peerAddress } = options || {};
+    const { state } = options || {};
 
     if (this.data.local.video !== state) {
       // need to change the video state
@@ -847,7 +851,7 @@ export class Video {
   }
 
   enableAudio(options: EnableAudioInputOptions): void {
-    const { state, peerAddress } = options || {};
+    const { state } = options || {};
 
     if (this.data.local.audio !== state) {
       // need to change the audio state

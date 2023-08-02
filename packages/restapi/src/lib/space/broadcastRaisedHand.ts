@@ -3,6 +3,7 @@ import type Space from './Space';
 import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/metaTypes';
+import { pCAIP10ToWallet } from '../helpers';
 
 export interface BroadcastRaisedHandType {
   promoteeAddress: string;
@@ -14,6 +15,8 @@ export async function broadcastRaisedHand(
 ) {
   const { promoteeAddress } = options || {};
 
+  console.log('BROADCAST RAISE HAND', promoteeAddress);
+
   // update live space info
   const oldLiveSpaceData = await getLiveSpaceData({
     localAddress: this.data.local.address,
@@ -22,8 +25,11 @@ export async function broadcastRaisedHand(
     spaceId: this.spaceSpecificData.spaceId,
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = true;
+    const listenerIndex = draft.listeners.findIndex(
+      (listner) =>
+        pCAIP10ToWallet(listner.address) === pCAIP10ToWallet(promoteeAddress)
+    );
+    if (listenerIndex !== -1) draft.listeners[listenerIndex].handRaised = true;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,

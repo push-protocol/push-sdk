@@ -3,6 +3,7 @@ import type Space from './Space';
 import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/metaTypes';
+import { pCAIP10ToWallet } from '../helpers';
 
 export interface RejectPromotionRequestType {
   promoteeAddress: string;
@@ -16,7 +17,7 @@ export async function rejectPromotionRequest(
 
   // reject the promotion request
   this.disconnect({
-    peerAddress: promoteeAddress,
+    peerAddress: pCAIP10ToWallet(promoteeAddress),
   });
 
   // update live space info
@@ -27,8 +28,10 @@ export async function rejectPromotionRequest(
     spaceId: this.spaceSpecificData.spaceId,
   });
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex(listner => listner.address === promoteeAddress);
-    draft.listeners[listnerIndex].handRaised = false;
+    const listnerIndex = draft.listeners.findIndex(
+      (listner) => listner.address === pCAIP10ToWallet(promoteeAddress)
+    );
+    if (listnerIndex > -1) draft.listeners[listnerIndex].handRaised = false;
   });
   await sendLiveSpaceData({
     liveSpaceData: updatedLiveSpaceData,

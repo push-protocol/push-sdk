@@ -112,7 +112,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
               alignSelf={'flex-start'}
               alignItems={'center'}
             >
-              {isHost && <Button padding="6.5px 16.5px" color="#fff">Edit space</Button>}
+              {/* {isHost && <Button padding="6.5px 16.5px" color="#fff">Edit space</Button>} */}
               <Item
                 marginLeft={'8px'}
                 display={'flex'}

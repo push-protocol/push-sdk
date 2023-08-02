@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import type Space from './Space';
-
+import { addSpeakers } from './addSpeakers';
 export interface ConnectInviteeType {
   signalData: any;
   inviteeAddress: string;
@@ -23,7 +23,13 @@ export async function connectInvitee(this: Space, options: ConnectInviteeType) {
       if (draft.inviteeDetails) delete draft.inviteeDetails[inviteeAddress];
     });
   });
-  // TODO: On backend change the role of inviteeAddress
+
+  await addSpeakers({
+    spaceId: this.spaceSpecificData.spaceId,
+    signer: this.signer,
+    pgpPrivateKey: this.pgpPrivateKey,
+    speakers: [inviteeAddress],
+  });
 
   // complete the webRTC connection
   this.connect({ signalData, peerAddress: inviteeAddress });
