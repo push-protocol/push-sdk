@@ -478,11 +478,11 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = (
+export const verifyPGPPublicKey = async (
   encryptedPrivateKey: string,
   publicKey: string,
   did: string
-): string => {
+): Promise<string> => {
   try {
     if (publicKey !== '' && publicKey.includes('signature')) {
       const { key, signature: verificationProof } = JSON.parse(publicKey);
@@ -492,7 +492,7 @@ export const verifyPGPPublicKey = (
         signedData = 'Create Push Chat Profile \n' + generateHash(key);
       else signedData = 'Create Push Profile \n' + generateHash(key);
       if (
-        verifyProfileSignature(
+        await verifyProfileSignature(
           verificationProof,
           signedData,
           isValidCAIP10NFTAddress(did)
