@@ -69,7 +69,8 @@ import {
 import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatWidgetTest } from './ChatWidgetTest';
-import { SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
+import { ChatUIProvider, SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
+import ChatUITest from './ChatUITest/ChatUITest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -294,6 +295,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
+                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={env} >
                 <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                   <Routes>
                     <Route
@@ -327,6 +329,9 @@ export function App() {
                           <Link to="/chat" className="nav-button">
                             CHAT
                           </Link>
+                          <Link to="/chatUI" className="nav-button">
+                            CHAT UI
+                          </Link>
                           <Link to="/space" className="nav-button">
                             SPACE
                           </Link>
@@ -359,7 +364,7 @@ export function App() {
 
                     <Route path="/chat" element={<ChatTest />} />
                     <Route path="/space" element={<SpaceTest />} />
-
+                    <Route path="/chatUI" element={<ChatUITest />} />
                     <Route path="/spaceUI" element={<SpaceUITest />} />
 
                     {/* chat method  routes */}
@@ -460,6 +465,7 @@ export function App() {
                   <ChatWidgetTest />
                   <SpaceWidgetComponent spaceId={spaceId} />
                 </SpacesUIProvider>
+                </ChatUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>
