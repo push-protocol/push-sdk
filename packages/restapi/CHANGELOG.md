@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.28](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.27...restapi-0.0.1-alpha.28) (2023-08-02)
+
+
+### Bug Fixes
+
+* add: scw sig verification ([#593](https://github.com/ethereum-push-notification-service/push-sdk/issues/593)) ([6768065](https://github.com/ethereum-push-notification-service/push-sdk/commit/67680657981a847e23a4dbad6d2fd6a7bc127743))
+* Merge branch 'alpha' into alpha-deployment ([6c19940](https://github.com/ethereum-push-notification-service/push-sdk/commit/6c19940b4d72d9443b8afd06ddc2a6f9e29582a7))
+* merged main ([c5533f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c5533f8dce7b88cb1f14aa72f83579a8e01dcf36))
+
+
+
 ## [0.0.1-alpha.27](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.26...restapi-0.0.1-alpha.27) (2023-07-24)
 
 
