@@ -17,10 +17,19 @@ import MicOnIcon from '../../../icons/micon.svg';
 import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
 import ShareIcon from '../../../icons/Share.svg';
+import { Emote } from '../../../icons/Emote';
+import Joy from '../../../icons/joy.svg';
+import Clap from '../../../icons/clap.svg';
+import Fire from '../../../icons/fire.svg';
+import Heart from '../../../icons/sparkling_heart.svg';
+import E100 from '../../../icons/100.svg';
+import Tada from '../../../icons/tada.svg';
+import RaiseHand from '../../../icons/raisehand.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
 import { pCAIP10ToWallet } from '../../../helpers';
+import { set } from 'date-fns';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -41,6 +50,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
   const [promotedListener, setPromotedListener] = useState('');
+  const [showEmojiContainer, setShowEmojiContainer] = useState(false);
 
   const theme = useContext(ThemeContext);
 
@@ -58,10 +68,21 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter(
+    (listener: any) => listener.handRaised
+  ).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
+  };
+
+  const handleShowEmojiContainer = () => {
+    setShowEmojiContainer(!showEmojiContainer);
+  };
+
+  const handleOnClickEmoji = (emoji: any) => {
+    console.log(`${emoji} clicked`);
+    setShowEmojiContainer(!showEmojiContainer);
   };
 
   useEffect(() => {
@@ -84,7 +105,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    if (
+      !spaceObjectData?.connectionData?.local?.stream ||
+      promotedListener.length === 0
+    )
       return;
 
     const options = {
@@ -229,30 +253,34 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             )
               ?.toDataURL()
               ?.toString()}
-          />
+          >
+            <PfpEmojiContainer>
+              <Image src={RaiseHand} />
+            </PfpEmojiContainer>
+          </LiveSpaceProfileContainer>
         )}
 
         {/* details of peer connected via webRTC if speaker or host */}
         {(isSpeaker || isHost) &&
-          spaceObjectData?.connectionData?.incoming
-            ?.slice(1)
-            .map((profile) => (
-              <LiveSpaceProfileContainer
-                isHost={
-                  profile?.address ===
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                isSpeaker={
-                  profile?.address !==
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                wallet={profile?.address}
-                image={createBlockie?.(profile?.address)
-                  ?.toDataURL()
-                  ?.toString()}
-                stream={profile?.stream}
-              />
-            ))}
+          spaceObjectData?.connectionData?.incoming?.slice(1).map((profile) => (
+            <LiveSpaceProfileContainer
+              isHost={
+                profile?.address ===
+                pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+              }
+              isSpeaker={
+                profile?.address !==
+                pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+              }
+              wallet={profile?.address}
+              image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+              stream={profile?.stream}
+            >
+              <PfpEmojiContainer>
+                <Image src={RaiseHand} />
+              </PfpEmojiContainer>
+            </LiveSpaceProfileContainer>
+          ))}
 
         {/* details of host in the space if listener */}
         {isListener && !isHost && (
@@ -266,7 +294,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               )
                 ?.toDataURL()
                 ?.toString()}
-            />
+            >
+              <PfpEmojiContainer>
+                <Image src={RaiseHand} />
+              </PfpEmojiContainer>
+            </LiveSpaceProfileContainer>
           </div>
         )}
 
@@ -282,7 +314,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 image={createBlockie?.(profile?.address)
                   ?.toDataURL()
                   ?.toString()}
-              />
+              >
+                <PfpEmojiContainer>
+                  <Image src={RaiseHand} />
+                </PfpEmojiContainer>
+              </LiveSpaceProfileContainer>
             </div>
           ))}
 
@@ -295,10 +331,36 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               requested={profile.handRaised}
               wallet={profile?.address}
               image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
-            />
+            >
+              <PfpEmojiContainer>
+                <Image src={RaiseHand} />
+              </PfpEmojiContainer>
+            </LiveSpaceProfileContainer>
           </div>
         ))}
       </Item>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '8px',
+        }}
+      >
+        <EmojiContainer showEmojiContainer={showEmojiContainer}>
+          <Image src={Joy} onClick={() => handleOnClickEmoji('Joy')} />
+          <Image src={Clap} onClick={() => handleOnClickEmoji('Clap')} />
+          <Image src={Fire} onClick={() => handleOnClickEmoji('Fire')} />
+          <Image src={Heart} onClick={() => handleOnClickEmoji('Heart')} />
+          <Image src={E100} onClick={() => handleOnClickEmoji('100')} />
+          <Image src={Tada} onClick={() => handleOnClickEmoji('Tada')} />
+        </EmojiContainer>
+        {isSpeaker ? (
+          <SpeakerEmojiContainer showEmojiContainer={showEmojiContainer}>
+            <Image src={RaiseHand} />
+          </SpeakerEmojiContainer>
+        ) : null}
+      </div>
+
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
           <Item
@@ -343,14 +405,18 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
+              <Item
+                width={'21px'}
+                height={'24px'}
+                cursor={'pointer'}
+                onClick={() => handleShowEmojiContainer()}
+              >
+                <Emote />
+              </Item>
               <MembersContainer>
-                {
-                  isHost && numberOfRequests ?
-                  <RequestsCount>
-                    { numberOfRequests }
-                  </RequestsCount>
-                  : null
-                }
+                {isHost && numberOfRequests ? (
+                  <RequestsCount>{numberOfRequests}</RequestsCount>
+                ) : null}
                 <Image
                   width={'21px'}
                   height={'24px'}
@@ -444,5 +510,47 @@ const RequestsCount = styled.div`
   background-color: ${(props) => props.theme.btnColorPrimary};
   padding: 2px 4px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 12px;<EmojiContainer />
+`;
+
+const EmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
+  position: relative;
+  bottom: -20px;
+  width: 220px;
+  height: 40px;
+  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 99px;
+  border: 1px solid #e5e8f6;
+  background: #fff;
+`;
+
+const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
+  position: relative;
+  bottom: -20px;
+  width: 40px;
+  height: 40px;
+  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 99px;
+  border: 1px solid #e5e8f6;
+  background: #fff;
+`;
+
+const PfpEmojiContainer = styled.div`
+  position: relative;
+  bottom: 32px;
+  right: -24px;
+  height: 32px;
+  width: 32px;
+  border-radius: 99px;
+  border: 1px solid #e5e8f6;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

@@ -19,6 +19,7 @@ export interface ILiveSpaceProfileContainerProps {
   requested?: boolean;
   mic?: boolean;
   stream?: IMediaStream;
+  children?: JSX.Element[] | JSX.Element | string | null;
 }
 
 export const LiveSpaceProfileContainer = (
@@ -33,37 +34,39 @@ export const LiveSpaceProfileContainer = (
     requested = false,
     mic = true,
     stream,
+    children,
   } = options || {};
 
   const [isDDOpen, setIsDDOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const {
-    spacesObjectRef,
-} = useSpaceData();
+  const { spacesObjectRef } = useSpaceData();
 
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
   };
 
   const inviteListener = async () => {
-    await spacesObjectRef?.current?.inviteToPromote?.({ role: 'SPEAKER', inviteeAddress: pCAIP10ToWallet(wallet) })
-}
+    await spacesObjectRef?.current?.inviteToPromote?.({
+      role: 'SPEAKER',
+      inviteeAddress: pCAIP10ToWallet(wallet),
+    });
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: any) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setIsDDOpen(false);
-        }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDDOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-        document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-}, []);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,10 +82,16 @@ export const LiveSpaceProfileContainer = (
           height={'56px'}
           width={'56px'}
           borderRadius={'50%'}
-          cursor='pointer'
+          cursor="pointer"
           onClick={handleDDState}
         />
-        <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600}  color={`${theme.textColorPrimary}`}>
+        {children}
+        <Text
+          fontSize={'16px'}
+          marginTop={'-20px'}
+          fontWeight={600}
+          color={`${theme.textColorPrimary}`}
+        >
           {wallet.replace('eip155:', '').slice(0, -36) + '...'}
           {stream && <VideoPlayer videoCallData={stream} />}
         </Text>
