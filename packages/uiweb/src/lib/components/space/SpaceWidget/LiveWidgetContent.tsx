@@ -17,6 +17,14 @@ import MicOnIcon from '../../../icons/micon.svg';
 import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
 import ShareIcon from '../../../icons/Share.svg';
+import EmoteIcon from '../../../icons/emote.svg';
+import Joy from '../../../icons/joy.svg';
+import Clap from '../../../icons/clap.svg';
+import Fire from '../../../icons/fire.svg';
+import Heart from '../../../icons/sparkling_heart.svg';
+import E100 from '../../../icons/100.svg';
+import Tada from '../../../icons/tada.svg';
+import RaiseHand from '../../../icons/raisehand.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
@@ -41,6 +49,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
   const [promotedListener, setPromotedListener] = useState('');
+  const [showEmojiContainer, setShowEmojiContainer] = useState(false);
 
   const theme = useContext(ThemeContext);
 
@@ -58,10 +67,16 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter(
+    (listener: any) => listener.handRaised
+  ).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
+  };
+
+  const handleShowEmojiContainer = () => {
+    setShowEmojiContainer(!showEmojiContainer);
   };
 
   useEffect(() => {
@@ -84,7 +99,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    if (
+      !spaceObjectData?.connectionData?.local?.stream ||
+      promotedListener.length === 0
+    )
       return;
 
     const options = {
@@ -299,6 +317,26 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           </div>
         ))}
       </Item>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '8px',
+        }}
+      >
+        <EmojiContainer showEmojiContainer={showEmojiContainer}>
+          <Image src={Joy} />
+          <Image src={Clap} />
+          <Image src={Fire} />
+          <Image src={Heart} />
+          <Image src={E100} />
+          <Image src={Tada} />
+        </EmojiContainer>
+        <SpeakerEmojiContainer showEmojiContainer={showEmojiContainer}>
+          <Image src={RaiseHand} />
+        </SpeakerEmojiContainer>
+      </div>
+
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
           <Item
@@ -343,14 +381,18 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
+              <Image
+                width={'21px'}
+                height={'24px'}
+                src={EmoteIcon}
+                cursor={'pointer'}
+                alt="Emote Icon"
+                onClick={() => handleShowEmojiContainer()}
+              />
               <MembersContainer>
-                {
-                  isHost && numberOfRequests ?
-                  <RequestsCount>
-                    { numberOfRequests }
-                  </RequestsCount>
-                  : null
-                }
+                {isHost && numberOfRequests ? (
+                  <RequestsCount>{numberOfRequests}</RequestsCount>
+                ) : null}
                 <Image
                   width={'21px'}
                   height={'24px'}
@@ -444,5 +486,33 @@ const RequestsCount = styled.div`
   background-color: ${(props) => props.theme.btnColorPrimary};
   padding: 2px 4px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 12px;<EmojiContainer />
+`;
+
+const EmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
+  position: relative;
+  bottom: -20px;
+  width: 220px;
+  height: 40px;
+  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 99px;
+  border: 1px solid #e5e8f6;
+  background: #fff;
+`;
+
+const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
+  position: relative;
+  bottom: -20px;
+  width: 40px;
+  height: 40px;
+  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 99px;
+  border: 1px solid #e5e8f6;
+  background: #fff;
 `;
