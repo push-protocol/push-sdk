@@ -3,25 +3,25 @@ import { Constants } from "../config";
 import { createContext } from "react";
 
 export interface IChatDataContextValues {
-    accountVal: string;
-    setAccountVal: React.Dispatch<React.SetStateAction<string>>;
-    pgpPrivateKeyVal: string;
-    setPgpPrivateKeyVal: React.Dispatch<React.SetStateAction<string>>;
-    envVal: Env;
-    setEnvVal: React.Dispatch<React.SetStateAction<Env>>;
+    account: string;
+    setAccount: React.Dispatch<React.SetStateAction<string>>;
+    pgpPrivateKey: string;
+    setPgpPrivateKey: React.Dispatch<React.SetStateAction<string>>;
+    env: Env;
+    setEnv: React.Dispatch<React.SetStateAction<Env>>;
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {
-    accountVal: '',
-    setAccountVal: () => {
+    account: '',
+    setAccount: () => {
       /**/
     },
-    pgpPrivateKeyVal: '',
-    setPgpPrivateKeyVal: () => {
+    pgpPrivateKey: '',
+    setPgpPrivateKey: () => {
       /**/
     },
-    envVal: Constants.ENV.DEV,
-    setEnvVal: () => {
+    env: Constants.ENV.DEV,
+    setEnv: () => {
       /**/
     }
 }

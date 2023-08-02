@@ -17,12 +17,12 @@ export const ChatUIProvider = ({ children, account, pgpPrivateKey, env }: IChatU
     const [envVal, setEnvVal] = useState<ENV>(env);
 
     const value: IChatDataContextValues = {
-        accountVal,
-        setAccountVal,
-        pgpPrivateKeyVal,
-        setPgpPrivateKeyVal,
-        envVal,
-        setEnvVal,
+        account: accountVal,
+        setAccount: setAccountVal,
+        pgpPrivateKey: pgpPrivateKeyVal,
+        setPgpPrivateKey: setPgpPrivateKeyVal,
+        env: envVal,
+        setEnv: setEnvVal,
     };
 
     return (
