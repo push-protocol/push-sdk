@@ -1,24 +1,28 @@
-import React, {useState} from "react";
+import { useState, ReactNode } from "react";
 import { ENV } from "../config";
 import { ChatDataContext, IChatDataContextValues } from "../context/chatContext";
 
 export interface IChatUIProviderProps {
-    children: React.ReactNode;
+    children: ReactNode;
+    // theme: IChatTheme
+    account: string;
+    pgpPrivateKey: string;
+    env: ENV;
 }
 
-export const ChatUIProvider = ({ children }: IChatUIProviderProps) => {
+export const ChatUIProvider = ({ children, account, pgpPrivateKey, env }: IChatUIProviderProps) => {
     // will replace the default values with the ChatUI
-    const [account, setAccount] = useState<string>("");
-    const [pgpPrivateKey, setPgpPrivateKey] = useState<string>("");
-    const [env, setEnv] = useState<ENV>(ENV.DEV);
+    const [accountVal, setAccountVal] = useState<string>(account);
+    const [pgpPrivateKeyVal, setPgpPrivateKeyVal] = useState<string>(pgpPrivateKey);
+    const [envVal, setEnvVal] = useState<ENV>(env);
 
     const value: IChatDataContextValues = {
-        account,
-        setAccount,
-        pgpPrivateKey,
-        setPgpPrivateKey,
-        env,
-        setEnv,
+        accountVal,
+        setAccountVal,
+        pgpPrivateKeyVal,
+        setPgpPrivateKeyVal,
+        envVal,
+        setEnvVal,
     };
 
     return (
