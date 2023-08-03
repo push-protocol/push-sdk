@@ -1,33 +1,48 @@
-import { useState, ReactNode } from "react";
-import { ENV } from "../config";
-import { ChatDataContext, IChatDataContextValues } from "../context/chatContext";
+import { useState, ReactNode } from 'react';
+import { Constants, ENV } from '../config';
+import {
+  ChatDataContext,
+  IChatDataContextValues,
+} from '../context/chatContext';
+import { ThemeContext } from '../components/chat/theme/ThemeProvider';
+import { IChatTheme, lightTheme } from '../components/chat/theme';
 
 export interface IChatUIProviderProps {
-    children: ReactNode;
-    // theme: IChatTheme
-    account: string;
-    pgpPrivateKey: string;
-    env: ENV;
+  children: ReactNode;
+  theme?: IChatTheme;
+  customeTheme?: IChatTheme;
+  account?: string | null;
+  decryptedPgpPvtKey?: string | null;
+  env?: ENV;
 }
 
-export const ChatUIProvider = ({ children, account, pgpPrivateKey, env }: IChatUIProviderProps) => {
-    // will replace the default values with the ChatUI
-    const [accountVal, setAccountVal] = useState<string>(account);
-    const [pgpPrivateKeyVal, setPgpPrivateKeyVal] = useState<string>(pgpPrivateKey);
-    const [envVal, setEnvVal] = useState<ENV>(env);
+export const ChatUIProvider = ({
+  children,
+  account = null,
+  theme,
+  decryptedPgpPvtKey = null,
+  env = Constants.ENV.PROD,
+}: IChatUIProviderProps) => {
+  const [accountVal, setAccountVal] = useState<string | null>(account);
+  const [decryptedPgpPvtKeyVal, setDecryptedPgpPvtKeyVal] =
+    useState<string | null>(decryptedPgpPvtKey);
+  const [envVal, setEnvVal] = useState<ENV>(env);
 
-    const value: IChatDataContextValues = {
-        account: accountVal,
-        setAccount: setAccountVal,
-        pgpPrivateKey: pgpPrivateKeyVal,
-        setPgpPrivateKey: setPgpPrivateKeyVal,
-        env: envVal,
-        setEnv: setEnvVal,
-    };
+  const value: IChatDataContextValues = {
+    account: accountVal,
+    setAccount: setAccountVal,
+    decryptedPgpPvtKey: decryptedPgpPvtKeyVal,
+    setDecryptedPgpPvtKey: setDecryptedPgpPvtKeyVal,
+    env: envVal,
+    setEnv: setEnvVal,
+  };
+  const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
 
-    return (
-        <ChatDataContext.Provider value={value}>
-            {children}
-        </ChatDataContext.Provider>
-    )
-}
+  return (
+    <ThemeContext.Provider value={PROVIDER_THEME}>
+      <ChatDataContext.Provider value={value}>
+        {children}
+      </ChatDataContext.Provider>
+    </ThemeContext.Provider>
+  );
+};
