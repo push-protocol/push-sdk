@@ -41,7 +41,7 @@ export const LiveSpaceProfileContainer = (
 
   const {
     spacesObjectRef,
-} = useSpaceData();
+  } = useSpaceData();
 
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
@@ -49,21 +49,21 @@ export const LiveSpaceProfileContainer = (
 
   const inviteListener = async () => {
     await spacesObjectRef?.current?.inviteToPromote?.({ role: 'SPEAKER', inviteeAddress: pCAIP10ToWallet(wallet) })
-}
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event: any) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setIsDDOpen(false);
-        }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDDOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-        document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-}, []);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -82,7 +82,7 @@ export const LiveSpaceProfileContainer = (
           cursor='pointer'
           onClick={handleDDState}
         />
-        <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600}  color={`${theme.textColorPrimary}`}>
+        <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600} color={`${theme.textColorPrimary}`}>
           {wallet.replace('eip155:', '').slice(0, -36) + '...'}
           {stream && <VideoPlayer videoCallData={stream} />}
         </Text>
@@ -127,13 +127,13 @@ export const LiveSpaceProfileContainer = (
         )}
       </Item>
 
-      {/* {isDDOpen ? (
+      {isDDOpen ? (
         <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
           <DDItem onClick={inviteListener}>Invite to Speak</DDItem>
-          <DDItem>Kick Listener</DDItem>
-          <DDItem>Mute</DDItem>
+          {/* <DDItem>Mute</DDItem>
+          <DDItem>Kick Listener</DDItem> */}
         </DropDown>
-      ) : null} */}
+      ) : null}
     </ThemeProvider>
   );
 };
