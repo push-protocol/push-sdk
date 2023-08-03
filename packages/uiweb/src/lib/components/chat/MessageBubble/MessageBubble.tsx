@@ -28,6 +28,7 @@ const MessageCard = ({
             maxWidth="80%"
             minWidth="71px"
             position="relative"
+            width="fit-content"
         >
             {' '}
             <Section flexDirection="column" padding="5px 0 15px 0">

@@ -37,7 +37,7 @@ export const ChatWidgetTest = () => {
     "fromDID": "eip155:0x45F5EDf14EF0C42FC99164c236afc571a6dcB81C",
     "toDID": "eip155:0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5",
     // "messageObj": "U2FsdGVkX1/JsBNKCHHStEj2Z2EsUD8ApyQipFcWsqDnaivZg0gEepbc2Bvf6eXT",
-    "messageContent": "Yooo Boi",
+    "messageContent": "Hi",
     "messageType": "Text",
     "timestamp": 1690871453962,
     "encType": "pgp",
