@@ -1,5 +1,6 @@
 
 import { SpaceDataContext } from "./spacesContext";
+import { ChatDataContext } from "./chatContext";
 import SupportChatPropsContext from "./supportChat/supportChatPropsContext";
 import SupportChatMainStateContext from "./supportChat/supportChatMainStateContext";
 import ChatMainStateContextProvider, { ChatMainStateContext } from "./chatAndNotification/chat/chatMainStateContext";
@@ -10,6 +11,7 @@ import ChatAndNotificationMainContextProvider, { ChatAndNotificationMainContext 
 export {
   SupportChatPropsContext,
   SpaceDataContext,
+  ChatDataContext,
   SupportChatMainStateContext,
   ChatMainStateContextProvider,
   ChatAndNotificationPropsContext,

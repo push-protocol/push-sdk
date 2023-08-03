@@ -50,6 +50,7 @@ export const ChatWidgetTest = () => {
   }
 
   return (
+
     <>
       <MessageBubble account={account} chat={ImsgObject} />
       <ChatAndNotificationWidget
@@ -61,5 +62,6 @@ export const ChatWidgetTest = () => {
         activeChat="0x3Cf13f6d91F50dca6eAD7356b78482c54CDd95ff"
       />
     </>
+
   );
 };
