@@ -57,18 +57,21 @@ export const profileUpdate = async (
       throw new Error('User not Found!');
     }
     let blockedUsersList = null;
-    if(profile.blockedUsersList ){
-
-      for (const element of profile.blockedUsersList ) {
+    if (profile.blockedUsersList) {
+      for (const element of profile.blockedUsersList) {
         // Check if the element is a valid CAIP-10 address
         if (!isValidETHAddress(element)) {
-          throw new Error('Invalid address in the blockedUsersList: ' + element);
+          throw new Error(
+            'Invalid address in the blockedUsersList: ' + element
+          );
         }
       }
 
-      const convertedBlockedListUsersPromise = profile.blockedUsersList.map(async (each) => {
-        return getUserDID(each, env);
-      });
+      const convertedBlockedListUsersPromise = profile.blockedUsersList.map(
+        async (each) => {
+          return getUserDID(each, env);
+        }
+      );
       blockedUsersList = await Promise.all(convertedBlockedListUsersPromise);
     }
 
@@ -77,7 +80,7 @@ export const profileUpdate = async (
       desc: profile.desc ? profile.desc : user.profile.desc,
       picture: profile.picture ? profile.picture : user.profile.picture,
       // If profile.blockedUsersList is empty no users in block list
-      blockedUsersList: profile.blockedUsersList ? blockedUsersList : [] 
+      blockedUsersList: profile.blockedUsersList ? blockedUsersList : [],
     };
     const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
     const signature = await sign({
@@ -96,7 +99,7 @@ export const profileUpdate = async (
     progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-01'] as ProgressHookType);
     const response = await axios.put(apiEndpoint, body);
     if (response.data)
-      response.data.publicKey = verifyPGPPublicKey(
+      response.data.publicKey = await verifyPGPPublicKey(
         response.data.encryptedPrivateKey,
         response.data.publicKey,
         response.data.did

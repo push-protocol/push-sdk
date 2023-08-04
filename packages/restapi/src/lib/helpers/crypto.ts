@@ -32,6 +32,7 @@ import {
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
+import { getAddress } from './signer';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -51,7 +52,8 @@ if (typeof window !== 'undefined' && window.crypto) {
 /** DEPRECATED */
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
-  const address: string = account || (await signer?.getAddress()) || '';
+  const address: string =
+    account || (await getAddress(signer as SignerType)) || '';
   const metamaskProvider = new ethers.providers.Web3Provider(
     (window as any).ethereum
   );
@@ -478,11 +480,11 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = (
+export const verifyPGPPublicKey = async (
   encryptedPrivateKey: string,
   publicKey: string,
   did: string
-): string => {
+): Promise<string> => {
   try {
     if (publicKey !== '' && publicKey.includes('signature')) {
       const { key, signature: verificationProof } = JSON.parse(publicKey);
@@ -492,7 +494,7 @@ export const verifyPGPPublicKey = (
         signedData = 'Create Push Chat Profile \n' + generateHash(key);
       else signedData = 'Create Push Profile \n' + generateHash(key);
       if (
-        verifyProfileSignature(
+        await verifyProfileSignature(
           verificationProof,
           signedData,
           isValidCAIP10NFTAddress(did)

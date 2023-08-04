@@ -17,7 +17,7 @@ export type ChatAndNotificationProps = {
   activeTab?: PushTabs,
   activeChat?: string,
   onClose?: () => void,
-  signer?: WithRequiredProperty<SignerType, '_signTypedData'>
+  signer?: SignerType
   env?: Env;
 };
 
