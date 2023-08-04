@@ -69,7 +69,7 @@ export const subscribe = async (
     );
 
     // sign a message using EIP712
-    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation);
+    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation, "Subscribe");
 
     const verificationProof = signature; // might change
 

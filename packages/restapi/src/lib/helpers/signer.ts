@@ -28,7 +28,8 @@ export const signTypedData = async (
   signer: SignerType,
   domain: any,
   types: any,
-  value: any
+  value: any,
+  primaryType: string
 ): Promise<string> => {
   // Check the signer type using type guards
   if ('_signTypedData' in signer) {
@@ -41,7 +42,7 @@ export const signTypedData = async (
       account: signer.account,
       domain,
       types,
-      primaryType: 'Data',
+      primaryType: primaryType,
       message: value,
     });
     return signature;
