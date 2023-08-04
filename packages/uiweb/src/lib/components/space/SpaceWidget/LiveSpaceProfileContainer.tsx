@@ -88,7 +88,7 @@ export const LiveSpaceProfileContainer = (
         {children}
         <Text
           fontSize={'16px'}
-          marginTop={'-20px'}
+          marginTop={children ? '-20px' : '12px'}
           fontWeight={600}
           color={`${theme.textColorPrimary}`}
         >

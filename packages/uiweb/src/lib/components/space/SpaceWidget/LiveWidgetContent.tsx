@@ -77,6 +77,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const [promotedListener, setPromotedListener] = useState('');
   const [showEmojiContainer, setShowEmojiContainer] = useState(false);
+  const [clickedEmoji, setClickedEmoji] = useState('');
 
   const theme = useContext(ThemeContext);
 
@@ -108,6 +109,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const handleOnClickEmoji = (emoji: any) => {
     console.log(`${emoji} clicked`);
+    setClickedEmoji(emoji);
     setShowEmojiContainer(!showEmojiContainer);
   };
 
@@ -280,9 +282,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               ?.toDataURL()
               ?.toString()}
           >
-            <PfpEmojiContainer>
-              <Image src={RaiseHand} />
-            </PfpEmojiContainer>
+            {clickedEmoji.length > 0 ? (
+              <PfpEmojiContainer>
+                <Image
+                  src={
+                    EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0].src
+                  }
+                />
+              </PfpEmojiContainer>
+            ) : null}
           </LiveSpaceProfileContainer>
         )}
 
