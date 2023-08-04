@@ -35,8 +35,8 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   return axios
     .post(requestUrl, requestBody)
     .then((response) => {
-      response.data.users.forEach((user: any, index: number) => {
-        response.data.users[index].publicKey = verifyPGPPublicKey(
+      response.data.users.forEach(async (user: any, index: number) => {
+        response.data.users[index].publicKey = await verifyPGPPublicKey(
           user.encryptedPrivateKey,
           user.publicKey,
           user.did
