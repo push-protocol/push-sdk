@@ -26,6 +26,15 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 - rename chats to spaces ([899eb21](https://github.com/ethereum-push-notification-service/push-sdk/commit/899eb212af29e3a65541686d98927e37b97927c5))
 
+## [0.0.1-alpha.24](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.23...restapi-0.0.1-alpha.24) (2023-07-14)
+
+
+### Bug Fixes
+
+* rename chats to spaces ([899eb21](https://github.com/ethereum-push-notification-service/push-sdk/commit/899eb212af29e3a65541686d98927e37b97927c5))
+
+
+
 ## [0.0.1-alpha.23](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.22...restapi-0.0.1-alpha.23) (2023-07-12)
 
 ### Bug Fixes
