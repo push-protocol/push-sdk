@@ -13,21 +13,21 @@ import {
   ChatAndNotificationMainContext,
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
-import useGetChatProfile from '../../hooks/chat/useGetChatProfile';
+import useGetChatProfile from '../../hooks/chatAndNotification/chat/useGetChatProfile';
 import { chatLimit, device, requestLimit } from '../../config';
-import useFetchRequests from '../../hooks/chat/useFetchRequests';
-import useFetchChats from '../../hooks/chat/useFetchChats';
+import useFetchRequests from '../../hooks/chatAndNotification/chat/useFetchRequests';
+import useFetchChats from '../../hooks/chatAndNotification/chat/useFetchChats';
 import {
   getAddress,
   getDefaultFeedObject,
   getNewChatUser,
   walletToPCAIP10,
 } from '../../helpers';
-import useFetchUserSubscriptions from '../../hooks/notifications/useFetchUserSubscriptions';
+import useFetchUserSubscriptions from '../../hooks/chatAndNotification/notifications/useFetchUserSubscriptions';
 import useChatNotificationSocket from '../../hooks/chatAndNotification/useChatNotificationSocket';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import type { IFeeds } from '@pushprotocol/restapi';
-import useFetchChat from '../../hooks/chat/useFetchChat';
+import useFetchChat from '../../hooks/chatAndNotification/chat/useFetchChat';
 
 //make changes for users who dont have decryptedPgpPvtKey
 

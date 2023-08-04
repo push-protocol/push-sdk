@@ -16,7 +16,7 @@ import {
   NotificationMainStateContext,
   ChatAndNotificationMainContext,
 } from '../../../../context';
-import useFetchChats from '../../../../hooks/chat/useFetchChats';
+import useFetchChats from '../../../../hooks/chatAndNotification/chat/useFetchChats';
 import { Section, Span, Div } from '../../../reusables/sharedStyling';
 import { ChatsFeedList } from './chatSidebar/ChatsFeedList';
 import type { ChatMainStateContextType } from '../../../../context/chatAndNotification/chat/chatMainStateContext';
@@ -33,11 +33,11 @@ import {
 } from '../../../../helpers';
 import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
-import useGetChatProfile from '../../../../hooks/chat/useGetChatProfile';
+import useGetChatProfile from '../../../../hooks/chatAndNotification/chat/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
 import { SidebarPlaceholder } from './SidebarPlaceholder';
 import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';
-import useFetchChat from '../../../../hooks/chat/useFetchChat';
+import useFetchChat from '../../../../hooks/chatAndNotification/chat/useFetchChat';
 import type { IFeeds } from '@pushprotocol/restapi';
 
 export type TabPropType = {

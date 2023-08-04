@@ -6,12 +6,12 @@ import { EmojiIcon } from '../../../../../icons/Emoji';
 import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
-import usePushSendMessage from '../../../../../hooks/chat/usePushSendMessage';
+import usePushSendMessage from '../../../../../hooks/chatAndNotification/chat/usePushSendMessage';
 import {
   ChatAndNotificationMainContext,
   ChatMainStateContext,
 } from '../../../../../context';
-import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
+import useFetchRequests from '../../../../../hooks/chatAndNotification/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
 import EmojiPicker from 'emoji-picker-react';

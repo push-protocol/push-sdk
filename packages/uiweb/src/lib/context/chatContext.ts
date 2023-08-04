@@ -1,6 +1,8 @@
-import { Env } from "@pushprotocol/restapi";
+import { Env,IMessageIPFS } from "@pushprotocol/restapi";
 import { Constants } from "../config";
 import { createContext } from "react";
+
+export type ChatMessagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
 export interface IChatDataContextValues {
     account: string | null;
@@ -12,18 +14,19 @@ export interface IChatDataContextValues {
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {
-    account: '',
+    account: null,
     setAccount: () => {
       /**/
     },
-    decryptedPgpPvtKey: '',
+    decryptedPgpPvtKey: null,
     setDecryptedPgpPvtKey: () => {
       /**/
     },
     env: Constants.ENV.DEV,
     setEnv: () => {
       /**/
-    }
+    },
+
 }
 
 

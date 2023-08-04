@@ -1,6 +1,6 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext } from '../../../context';
 
 interface ApproveChatParams {
   senderAddress: string;

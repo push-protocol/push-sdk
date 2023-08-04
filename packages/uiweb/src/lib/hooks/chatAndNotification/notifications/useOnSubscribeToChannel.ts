@@ -1,8 +1,8 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatAndNotificationPropsContext, NotificationMainStateContext } from '../../context';
+import { ChatAndNotificationPropsContext, NotificationMainStateContext } from '../../../context';
 
-import { convertAddressToAddrCaip } from '../../helpers/notification';
+import { convertAddressToAddrCaip } from '../../../helpers/notification';
 
 interface onSubscribeToChannel {
   channelAddress: string;

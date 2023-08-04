@@ -22,8 +22,8 @@ import {
 import type { ChatSocketType } from '../../types';
 import { CHAT_SOCKET_TYPE } from '../../types';
 
-import useFetchChat from '../chat/useFetchChat';
-import useGetChatProfile from '../chat/useGetChatProfile';
+import useFetchChat from './chat/useFetchChat';
+import useGetChatProfile from './chat/useGetChatProfile';
 
 interface PushChatNotificationSocket {
   pushChatNotificationSocket: any;

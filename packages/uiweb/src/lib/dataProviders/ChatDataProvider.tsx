@@ -1,7 +1,8 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { Constants, ENV } from '../config';
 import {
   ChatDataContext,
+  ChatMessagetype,
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
@@ -28,6 +29,11 @@ export const ChatUIProvider = ({
     useState<string | null>(decryptedPgpPvtKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
 
+useEffect(()=>{
+    setAccountVal(account)
+    setDecryptedPgpPvtKeyVal(decryptedPgpPvtKey)
+},[decryptedPgpPvtKey])
+
   const value: IChatDataContextValues = {
     account: accountVal,
     setAccount: setAccountVal,
@@ -37,7 +43,6 @@ export const ChatUIProvider = ({
     setEnv: setEnvVal,
   };
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
-
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
       <ChatDataContext.Provider value={value}>

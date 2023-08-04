@@ -52,7 +52,6 @@ export const ChatWidgetTest = () => {
   return (
 
     <>
-      <MessageBubble account={account} chat={ImsgObject} />
       <ChatAndNotificationWidget
         account={account}
         env={env}

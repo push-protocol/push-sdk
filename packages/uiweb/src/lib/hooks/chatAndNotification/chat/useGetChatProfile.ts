@@ -1,6 +1,6 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext } from 'react';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { ChatAndNotificationPropsContext } from '../../../context';
 
 export interface GetProfileParams {
   profileId: string;

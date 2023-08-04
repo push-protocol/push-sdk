@@ -6,6 +6,7 @@ import { chat, type IMessageIPFS } from "@pushprotocol/restapi";
 import { FileMessageContent } from "../../../types";
 import { FILE_ICON } from "../../../config";
 import { formatFileSize, pCAIP10ToWallet, shortenText } from "../../../helpers";
+import { ChatDataContext } from "../../../context";
 
 
 const MessageCard = ({
@@ -155,8 +156,9 @@ const GIFCard = ({
     );
 };
 
-export const MessageBubble = ({ chat, account }: { chat: IMessageIPFS, account: any }) => {
-    const position = pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account.toLowerCase() ? 0 : 1;
+export const MessageBubble = ({ chat}: { chat: IMessageIPFS }) => {
+  const {account} = useContext(ChatDataContext);
+    const position = pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase() ? 0 : 1;
 
     if (chat.messageType === 'GIF') {
         return <GIFCard chat={chat} position={position} />;
