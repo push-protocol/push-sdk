@@ -94,7 +94,7 @@ export const SpacesUIProvider = ({
 
   const isJoined = Boolean(
     spaceObjectData?.connectionData?.meta?.broadcast?.livepeerInfo ||
-      spaceObjectData?.spaceDescription
+    spaceObjectData?.spaceDescription
   );
 
   const livepeerClient = createReactClient({
@@ -312,15 +312,15 @@ export const SpacesUIProvider = ({
       const address = member.wallet;
       return (isAccountsEqual(account, address) && member.isSpeaker);
     }) ||
-      spaceObjectData?.pendingMembers?.find((member) => {
-        const address = member.wallet;
-        return (isAccountsEqual(account, address) && member.isSpeaker);
-      }) ||
-      // for the case when the space is live
-      spaceObjectData?.liveSpaceData?.speakers?.find((member) => {
-        const address = member.address;
-        return address === pCAIP10ToWallet(account);
-      })
+    spaceObjectData?.pendingMembers?.find((member) => {
+      const address = member.wallet;
+      return (isAccountsEqual(account, address) && member.isSpeaker);
+    }) ||
+    // for the case when the space is live
+    spaceObjectData?.liveSpaceData?.speakers?.find((member) => {
+      const address = member.address;
+      return address === pCAIP10ToWallet(account);
+    })
   );
 
   const isListener = spaceObjectData.spaceId ? !isSpeaker : false;

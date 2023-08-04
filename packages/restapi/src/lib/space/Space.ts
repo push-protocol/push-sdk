@@ -32,6 +32,7 @@ import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/metaTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
+import { broadcastEmoji } from './broadcastEmoji';
 import { onReceiveMetaMessage } from './onReceiveMetaMessage';
 import { onJoinListener } from './onJoinListener';
 import { pCAIP10ToWallet } from '../helpers';
@@ -262,6 +263,8 @@ export class Space extends Video {
   public acceptPromotionRequest = acceptPromotionRequest;
   public connectPromotor = connectPromotor;
   public rejectPromotionRequest = rejectPromotionRequest;
+
+  public broadcastEmoji = broadcastEmoji;
 
   /*
     - add/remove co-host to the space group as admins
