@@ -43,6 +43,32 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   isHost,
   setSpaceStatusState,
 }) => {
+  const EMOJI = [
+    {
+      name: 'Joy',
+      src: Joy,
+    },
+    {
+      name: 'Clap',
+      src: Clap,
+    },
+    {
+      name: 'Fire',
+      src: Fire,
+    },
+    {
+      name: 'Heart',
+      src: Heart,
+    },
+    {
+      name: '100',
+      src: E100,
+    },
+    {
+      name: 'Tada',
+      src: Tada,
+    },
+  ];
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -344,17 +370,21 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           display: 'flex',
           flexDirection: 'row',
           gap: '8px',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <EmojiContainer showEmojiContainer={showEmojiContainer}>
-          <Image src={Joy} onClick={() => handleOnClickEmoji('Joy')} />
-          <Image src={Clap} onClick={() => handleOnClickEmoji('Clap')} />
-          <Image src={Fire} onClick={() => handleOnClickEmoji('Fire')} />
-          <Image src={Heart} onClick={() => handleOnClickEmoji('Heart')} />
-          <Image src={E100} onClick={() => handleOnClickEmoji('100')} />
-          <Image src={Tada} onClick={() => handleOnClickEmoji('Tada')} />
+          {EMOJI.map((emoji) => {
+            return (
+              <Image
+                src={emoji.src}
+                onClick={() => handleOnClickEmoji(emoji.name)}
+              />
+            );
+          })}
         </EmojiContainer>
-        {isSpeaker ? (
+        {!isSpeaker ? (
           <SpeakerEmojiContainer showEmojiContainer={showEmojiContainer}>
             <Image src={RaiseHand} />
           </SpeakerEmojiContainer>
@@ -510,7 +540,7 @@ const RequestsCount = styled.div`
   background-color: ${(props) => props.theme.btnColorPrimary};
   padding: 2px 4px;
   border-radius: 4px;
-  font-size: 12px;<EmojiContainer />
+  font-size: 12px;
 `;
 
 const EmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
@@ -523,8 +553,8 @@ const EmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
   justify-content: center;
   gap: 12px;
   border-radius: 99px;
-  border: 1px solid #e5e8f6;
-  background: #fff;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background: ${(props) => props.theme.bgColorSecondary};
 `;
 
 const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
@@ -537,8 +567,8 @@ const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
   justify-content: center;
   gap: 12px;
   border-radius: 99px;
-  border: 1px solid #e5e8f6;
-  background: #fff;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background: ${(props) => props.theme.bgColorSecondary};
 `;
 
 const PfpEmojiContainer = styled.div`
@@ -548,9 +578,10 @@ const PfpEmojiContainer = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 99px;
-  border: 1px solid #e5e8f6;
-  background: #fff;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background: ${(props) => props.theme.bgColorSecondary};
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
