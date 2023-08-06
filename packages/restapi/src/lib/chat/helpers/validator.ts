@@ -22,18 +22,10 @@ export const createGroupRequestValidator = (
         throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
-    if (members == null) {
-        throw new Error(`members cannot be null`);
-    }
-
     for (let i = 0; i < members.length; i++) {
         if (members[i] && !isValidETHAddress(members[i])) {
             throw new Error(`Invalid member address!`);
         }
-    }
-
-    if (admins == null) {
-        throw new Error(`admins cannot be null`);
     }
 
     for (let i = 0; i < admins.length; i++) {
