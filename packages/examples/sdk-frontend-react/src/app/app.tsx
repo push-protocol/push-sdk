@@ -71,6 +71,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { ChatWidgetTest } from './ChatWidgetTest';
 import { ChatUIProvider, SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
+import { MessageBubbles } from './ChatUITest/MessageBubbles';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -295,7 +296,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} decryptedPgpPvtKey={pgpPrivateKey} env={env}  >
+                <ChatUIProvider account={account!} decryptedPgpPvtKey={pgpPrivateKey} env={env} >
                 <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                   <Routes>
                     <Route
@@ -460,6 +461,10 @@ export function App() {
                       path="createSpaceUI"
                       element={<CreateSpaceComponent />}
                     />
+                    <Route
+                      path="messageBubble"
+                      element={<MessageBubbles />}
+                      />
                   </Routes>
                   {/* <ChatWidgetTest/> */}
                   <ChatWidgetTest />

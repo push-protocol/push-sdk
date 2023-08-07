@@ -26,7 +26,7 @@ const ChatUITest = () => {
 
       <Section>
         <NavMenu>
-          <Link to="/chatBubble" className="nav-button">
+          <Link to="/messageBubble" className="nav-button">
             CHAT BUBBLE
           </Link>
       
