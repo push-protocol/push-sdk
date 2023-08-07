@@ -8,6 +8,7 @@ export * from './getDelegations';
 export * from './getUsersBatch';
 export * from './upgradeUser';
 export * from './decryptAuth';
+export * from './createUserWithProfile';
 export const auth = {
   update: authUpdate,
 };
