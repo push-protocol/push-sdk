@@ -1,5 +1,4 @@
 import { MessageBubble } from "@pushprotocol/uiweb";
-import { IMessageIPFS } from "@pushprotocol/uiweb";
 import { useEffect, useContext, useState } from "react";
 import { Web3Context } from "../context";
 import * as PUSHAPI from "@pushprotocol/restapi"
@@ -36,7 +35,6 @@ export const MessageBubbles = () => {
             pgpPrivateKey: pgpDecryptedPvtKey ? pgpDecryptedPvtKey : undefined,
             env: ENV.STAGING
         })
-        console.log(chatHistory)
         setMessage(chatHistory)
     }
 
