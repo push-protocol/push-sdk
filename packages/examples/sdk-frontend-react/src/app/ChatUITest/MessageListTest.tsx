@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import * as PUSHAPI from '@pushprotocol/restapi';
 import { Link } from 'react-router-dom';
 import { Section } from '../components/StyledComponents';
-import Loader from '../components/Loader';
 import { MessageList } from '@pushprotocol/uiweb';
 import { EnvContext } from '../context';
 

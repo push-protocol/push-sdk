@@ -487,7 +487,7 @@ export function App() {
                         element={<MessageListTest />}
                       />
                     </Routes>
-                    {/* <ChatWidgetTest/> */}
+                    <ChatWidgetTest/>
                     {/* <ChatWidgetTest /> */}
                     <SpaceWidgetComponent spaceId={spaceId} />
                   </SpacesUIProvider>
