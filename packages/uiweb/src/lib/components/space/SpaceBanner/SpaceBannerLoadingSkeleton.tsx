@@ -47,7 +47,7 @@ const SkeletonContainer = styled.div`
     right: 0;
     bottom: 0;
     border-radius: 17px;
-    background-color: ${(props) => props.theme.bgColorPrimary};;
+    background-color: ${(props) => props.theme.bgColorPrimary};
     opacity: 0.5;
     transition: opacity 0.8s ease-in-out infinite alternate;
   }
@@ -67,7 +67,7 @@ const SkeletonProfilePic = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid ${(props) => props.theme.borderColor};;
+  border: 1px solid ${(props) => props.theme.borderColor};
   background-color: ${(props) => props.theme.iconColorPrimary};
   transition: opacity 0.8s ease-in-out infinite alternate;
 
@@ -86,9 +86,9 @@ const SkeletonProfileInfo = styled.div`
 const SkeletonText = styled.div`
   width: 100%;
   height: 18px;
-  background-color: ${(props) => props.theme.iconColorPrimary};;
+  background-color: ${(props) => props.theme.iconColorPrimary};
   border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.borderColor};;
+  border: 1px solid ${(props) => props.theme.borderColor};
   transition: opacity 0.8s ease-in-out infinite alternate;
 
   &:hover {
