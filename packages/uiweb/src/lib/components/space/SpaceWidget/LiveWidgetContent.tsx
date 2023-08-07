@@ -107,10 +107,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setShowEmojiContainer(!showEmojiContainer);
   };
 
-  const handleOnClickEmoji = (emoji: any) => {
+  const handleOnClickEmoji = async (emoji: any) => {
     console.log(`${emoji} clicked`);
     setClickedEmoji(emoji);
     setShowEmojiContainer(!showEmojiContainer);
+
+    await spacesObjectRef?.current?.reactWithEmoji?.({
+      hostAddress: '0x2A7CFA3017DF1ED93A23DA2896466FE1D6A7FCAE',
+      emoji: emoji,
+    })
   };
 
   useEffect(() => {
@@ -288,6 +293,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                   src={
                     EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0].src
                   }
+                  onClick={handleOnClickEmoji}
                 />
               </PfpEmojiContainer>
             ) : null}

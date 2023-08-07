@@ -183,6 +183,15 @@ export const SpacesUIProvider = ({
     }));
   };
 
+  const broadcastEmoji = async (
+    receivedSpaceMetaData: PushAPI.video.VideoDataType
+  ) => {
+    await spacesObjectRef.current.broadcastEmoji({
+      reactorAddress: pCAIP10ToWallet(receivedSpaceMetaData.senderAddress),
+      emoji: 'HAPPY',
+    });
+  };
+
   const getSpaceInfo = (spaceId: string): SpaceDTO | undefined => {
     return spaceInfo[spaceId];
   };
@@ -369,6 +378,7 @@ export const SpacesUIProvider = ({
     acceptSpaceRequest,
     connectSpaceRequest,
     broadcastRaisedHand,
+    broadcastEmoji,
     customSearch,
     raisedHandInfo,
   };

@@ -19,6 +19,8 @@ export async function broadcastEmoji(
     console.log('BROADCAST EMOJI REACTION', reactorAddress);
 
     // update live space infoA
+
+    // REFACTOR -> ADD FUNCTIONALITY FOR HOST AS WELL
     const oldLiveSpaceData = await getLiveSpaceData({
         localAddress: this.data.local.address,
         pgpPrivateKey: this.pgpPrivateKey,

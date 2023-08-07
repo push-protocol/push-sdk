@@ -18,6 +18,9 @@ export type SDKSpaceNotificationSocketHookOptions = {
   broadcastRaisedHand: (
     spaceMetaData: PushAPI.video.VideoDataType
   ) => Promise<void>;
+  broadcastEmoji: (
+    spaceMetaData: PushAPI.video.VideoDataType
+  ) => Promise<void>;
 };
 
 export const useSpaceNotificationSocket = ({
@@ -25,6 +28,7 @@ export const useSpaceNotificationSocket = ({
   acceptSpaceRequest,
   connectSpaceRequest,
   broadcastRaisedHand,
+  broadcastEmoji,
   env = ENV.PROD,
 }: SDKSpaceNotificationSocketHookOptions) => {
   const [notificationSocket, setNotificationSocket] = useState<any>(null);
@@ -84,6 +88,13 @@ export const useSpaceNotificationSocket = ({
             PushAPI.payloads.SPACE_REQUEST_TYPE.REQUEST_TO_PROMOTE
           ) {
             broadcastRaisedHand(receivedSpaceMetaData);
+          }
+
+          if (
+            callDetails?.type ===
+            PushAPI.payloads.SPACE_REQUEST_TYPE.BROADCAST_EMOJI
+          ) {
+            broadcastEmoji(receivedSpaceMetaData);
           }
         }
         if (status === PushAPI.VideoCallStatus.RECEIVED) {
