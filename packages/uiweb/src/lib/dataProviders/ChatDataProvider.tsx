@@ -25,6 +25,7 @@ export const ChatUIProvider = ({
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(account);
+  const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
   const [decryptedPgpPvtKeyVal, setDecryptedPgpPvtKeyVal] =
     useState<string | null>(decryptedPgpPvtKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
@@ -41,6 +42,8 @@ useEffect(()=>{
     setDecryptedPgpPvtKey: setDecryptedPgpPvtKeyVal,
     env: envVal,
     setEnv: setEnvVal,
+    pushSpaceSocket,
+    setPushSpaceSocket,
   };
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
   return (

@@ -11,6 +11,8 @@ export interface IChatDataContextValues {
     setDecryptedPgpPvtKey: React.Dispatch<React.SetStateAction<string | null>>;
     env: Env;
     setEnv: React.Dispatch<React.SetStateAction<Env>>;
+    pushSpaceSocket: any;
+    setPushSpaceSocket: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {
@@ -25,6 +27,10 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     env: Constants.ENV.DEV,
     setEnv: () => {
       /**/
+    },
+    pushSpaceSocket: null,
+    setPushSpaceSocket: () => {
+      /** */
     },
 
 }

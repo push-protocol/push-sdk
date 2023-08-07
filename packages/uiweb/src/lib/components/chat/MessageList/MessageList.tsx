@@ -9,6 +9,7 @@ import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
 import { dateToFromNowDaily } from '../../../helpers';
+import { useChatData } from '../../../hooks';
 
 type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
@@ -16,7 +17,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
   const { conversationHash, limit = chatLimit } = options || {};
-  const { decryptedPgpPvtKey, account } = useContext(ChatDataContext);
+  const { decryptedPgpPvtKey, account } = useChatData();
   const [messages, setMessages] = useState<Messagetype>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
