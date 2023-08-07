@@ -8,14 +8,14 @@ import { IMessagePayload } from "@pushprotocol/uiweb";
 
 export const MessageBubbles = () => {
 
-    const { library } = useContext<any>(Web3Context)
+    const { library, account } = useContext<any>(Web3Context)
     const [message, setMessage] = useState<IMessagePayload[]>([])
 
     const librarySigner = library.getSigner()
 
     const fetchMessage = async () => {
         const user = await PUSHAPI.user.get({
-            account: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2'
+            account: account
         })
         const pgpDecryptedPvtKey = await PUSHAPI.chat.decryptPGPKey({
             encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -24,13 +24,13 @@ export const MessageBubbles = () => {
         })
 
         const ConversationHash = await PUSHAPI.chat.conversationHash({
-            account: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
+            account: account,
             conversationId: '24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac',
             env: ENV.STAGING
         });
         const chatHistory = await PUSHAPI.chat.history({
             threadhash: ConversationHash.threadHash,
-            account: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
+            account: account,
             limit: 10,
             toDecrypt: true,
             pgpPrivateKey: pgpDecryptedPvtKey ? pgpDecryptedPvtKey : undefined,

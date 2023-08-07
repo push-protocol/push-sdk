@@ -71,7 +71,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { ChatWidgetTest } from './ChatWidgetTest';
 import { ChatUIProvider, SpacesUI, SpacesUIProvider } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
-import { MessageBubbles } from './ChatUITest/MessageBubble';
+import { MessageBubbles } from './ChatUITest/MessageBubbles';
 
 window.Buffer = window.Buffer || Buffer;
 
