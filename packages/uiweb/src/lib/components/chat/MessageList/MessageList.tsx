@@ -5,7 +5,7 @@ import { chatLimit } from '../../../config';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
 import styled from 'styled-components';
-import { Section, Span } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
 import { dateToFromNowDaily } from '../../../helpers';
@@ -16,26 +16,22 @@ export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
   const { conversationHash, limit = chatLimit } = options || {};
-  const {decryptedPgpPvtKey,account} = useContext(ChatDataContext);
+  const { decryptedPgpPvtKey, account } = useContext(ChatDataContext);
   const [messages, setMessages] = useState<Messagetype>();
-  const { historyMessages } = useFetchHistoryMessages();
+  const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
-
 
   const dates = new Set();
 
-
   useEffect(() => {
-
     if (conversationHash) {
       (async function () {
         await getMessagesCall();
       })();
     }
-  }, [conversationHash,decryptedPgpPvtKey,account]);
+  }, [conversationHash, decryptedPgpPvtKey, account]);
 
   const onScroll = async () => {
-    console.log(listInnerRef)
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
@@ -60,7 +56,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     }
     if (threadHash) {
       const chatHistory = await historyMessages({
-        limit: limit,
+        limit: 5,
         threadHash,
       });
       if (chatHistory?.length) {
@@ -111,52 +107,46 @@ export const MessageList: React.FC<IMessageListProps> = (
       </Span>
     );
   };
-  
+
   return (
-    // <Section
-//   height='inherit'
-//   maxHeight='inherit'
-//   flexDirection="column"
-//   justifyContent="start"
-//     overflow="hidden scroll"
-    
-   
-   
-//   >
-    <MessageListCard
-    height='100%'
-    maxHeight='inherit'
-    flexDirection="column"
-    justifyContent="start"
-    ref={listInnerRef}
-    onScroll={onScroll}
-    // width="100%"
-    // padding="0 2px 15px 2px"
-  >
-    {messages?.messages.map(
-      (chat: IMessageIPFS, index: number) => {
-        const dateNum = moment(chat.timestamp).format('L');
-        return (
-          <>
-            {dates.has(dateNum)
-              ? null
-              : renderDate({ chat, dateNum })}
-            <MessageBubble chat={chat} key={index} />
-          </>
-        );
-      }
-    )}
-    </MessageListCard>
-    //  </Section>
+    <Section
+      height="inherit"
+      maxHeight="inherit"
+      overflow="hidden scroll"
+      flexDirection='column'
+      ref={listInnerRef}
+      justifyContent="start"
+      onScroll={() => onScroll()}
+    >
+      {!loading ? (
+          <Spinner />
+      ) : (
+        ''
+      )}
+
+      <MessageListCard
+        flexDirection="column"
+        justifyContent="start"
+        // overflow='hidden auto'
+        // width="100%"
+        // padding="0 2px 15px 2px"
+      >
+        {messages?.messages.map((chat: IMessageIPFS, index: number) => {
+          const dateNum = moment(chat.timestamp).format('L');
+          return (
+            <>
+              {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
+              <MessageBubble chat={chat} key={index} />
+            </>
+          );
+        })}
+      </MessageListCard>
+    </Section>
   );
 };
 
-
 //styles
-const MessageListCard = styled(Section)`
-
-`;
-
+const MessageListCard = styled(Section)``;
 
 //add loaders
 //pagination
