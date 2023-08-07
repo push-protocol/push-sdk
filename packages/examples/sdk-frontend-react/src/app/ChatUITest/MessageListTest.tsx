@@ -30,7 +30,7 @@ console.log(conversationHash)
 
       {/* <Loader show={isLoading} /> */}
 
-      <MessageListCard    onScroll={()=>console.log('in heere)')}>
+      <MessageListCard    >
         
       <MessageList conversationHash='bafyreidv2bh6xzynx2fbkx4cqd7v4zq67l73najg67g7juruqr2hrcmngm' limit={10}/>
    

@@ -113,18 +113,23 @@ export const MessageList: React.FC<IMessageListProps> = (
   };
   
   return (
-    <Section
-  height='inherit'
-  maxHeight='inherit'
-    overflow="hidden scroll"
-    ref={listInnerRef}
-    onScroll={()=>console.log('in heere)')}
+    // <Section
+//   height='inherit'
+//   maxHeight='inherit'
+//   flexDirection="column"
+//   justifyContent="start"
+//     overflow="hidden scroll"
+    
    
-  >
+   
+//   >
     <MessageListCard
+    height='100%'
+    maxHeight='inherit'
     flexDirection="column"
     justifyContent="start"
-    overflow='hidden auto'
+    ref={listInnerRef}
+    onScroll={onScroll}
     // width="100%"
     // padding="0 2px 15px 2px"
   >
@@ -142,7 +147,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       }
     )}
     </MessageListCard>
-    </Section>
+    //  </Section>
   );
 };
 
