@@ -20,6 +20,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   const [messages, setMessages] = useState<Messagetype>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const dates = new Set();
 
@@ -30,6 +31,28 @@ export const MessageList: React.FC<IMessageListProps> = (
       })();
     }
   }, [conversationHash, decryptedPgpPvtKey, account]);
+
+  useEffect(() => {
+    scrollToBottom(null);
+  }, [conversationHash]);
+
+  useEffect(() => {
+    if (
+      conversationHash &&
+      Object.keys(messages || {}).length &&
+      messages?.messages.length
+      // selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
+    ) {
+      console.log('in scroll to bottom');
+      scrollToBottom(null);
+    }
+  }, [messages]);
+
+  const scrollToBottom = (behavior?: string | null) => {
+    bottomRef?.current?.scrollIntoView(
+      !behavior ? true : { behavior: 'smooth' }
+    );
+  };
 
   const onScroll = async () => {
     if (listInnerRef.current) {
@@ -113,16 +136,12 @@ export const MessageList: React.FC<IMessageListProps> = (
       height="inherit"
       maxHeight="inherit"
       overflow="hidden scroll"
-      flexDirection='column'
+      flexDirection="column"
       ref={listInnerRef}
       justifyContent="start"
       onScroll={() => onScroll()}
     >
-      {!loading ? (
-          <Spinner />
-      ) : (
-        ''
-      )}
+      {loading ? <Spinner /> : ''}
 
       <MessageListCard
         flexDirection="column"
@@ -140,6 +159,7 @@ export const MessageList: React.FC<IMessageListProps> = (
             </>
           );
         })}
+        <div ref={bottomRef} />
       </MessageListCard>
     </Section>
   );
@@ -148,8 +168,5 @@ export const MessageList: React.FC<IMessageListProps> = (
 //styles
 const MessageListCard = styled(Section)``;
 
-//add loaders
-//pagination
+//pagination scroll issue left
 //socket
-
-//scroll
