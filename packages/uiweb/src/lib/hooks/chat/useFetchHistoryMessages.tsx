@@ -43,7 +43,7 @@ const useFetchHistoryMessages
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [decryptedPgpPvtKey,account,env]);
 
   return { historyMessages, error, loading };
 };

@@ -16,7 +16,7 @@ const MessageListTest = () => {
   const fetchConversationHash = async() =>{
     const ConversationHash = await PUSHAPI.chat.conversationHash({
       account: `eip155:${account}`,
-      conversationId: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
+      conversationId: 'eip155:0xBd6ba192D34A8e6B40e2DAe674925997079f7663',
       env: env
   });
   setConversationHash(ConversationHash.threadHash);

@@ -8,10 +8,12 @@ import styled from 'styled-components';
 import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
-import { dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
+import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
+import { Messagetype } from '../../../types';
 
-type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
+
+
 
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
@@ -35,11 +37,12 @@ export const MessageList: React.FC<IMessageListProps> = (
           lastThreadHash: messages!.lastThreadHash,
         });
       } else {
-        setMessages((prevMessages) => {
-          return {
-            messages: [...prevMessages!.messages, messagesSinceLastConnection],
-            lastThreadHash: prevMessages!.lastThreadHash,
-          };
+        const newMessageList = appendUniqueMessages(messages as Messagetype,[messagesSinceLastConnection],false);
+        setMessages( {
+      
+            messages: newMessageList,
+            lastThreadHash: messages!.lastThreadHash,
+        
         });
       }
     }
@@ -61,8 +64,8 @@ export const MessageList: React.FC<IMessageListProps> = (
     if (
       conversationHash &&
       Object.keys(messages || {}).length &&
-      messages?.messages.length
-      // selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
+      messages?.messages.length &&
+      messages?.messages.length <= limit
     ) {
       scrollToBottom(null);
     }
@@ -104,18 +107,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       });
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
-          const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
-          const newMessageList = Object.values(
-            [...chatHistory, ...messages.messages].reduce(
-              (uniqueMap, message) => {
-                if (message.timestamp && !uniqueMap[message.timestamp]) {
-                  uniqueMap[message.timestamp] = message;
-                }
-                return uniqueMap;
-              },
-              uniqueMap
-            )
-          );
+          const newMessageList = appendUniqueMessages(messages,chatHistory,true);
           setMessages({
             messages: newMessageList,
             lastThreadHash: chatHistory[0].link,
@@ -129,6 +121,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       }
     }
   };
+
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -164,9 +157,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       <MessageListCard
         flexDirection="column"
         justifyContent="start"
-        // overflow='hidden auto'
         width="100%"
-        // padding="0 2px 15px 2px"
       >
         {messages?.messages.map((chat: IMessageIPFS, index: number) => {
           const dateNum = moment(chat.timestamp).format('L');

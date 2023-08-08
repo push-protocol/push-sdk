@@ -42,7 +42,6 @@ export const usePushChatSocket = () => {
     pushChatSocket?.on(
         EVENTS.CHAT_RECEIVED_MESSAGE,
         async (chat: any) => {
-         console.log(chat)
          if (!connectedProfile || !decryptedPgpPvtKey) {
             return;
           }
@@ -72,6 +71,7 @@ export const usePushChatSocket = () => {
   }, [
     pushChatSocket,
     account,
+    decryptedPgpPvtKey,
     messagesSinceLastConnection,
     env,
 
@@ -128,7 +128,6 @@ export const usePushChatSocket = () => {
   }, [account, env]);
 
   useEffect(() => {
-    console.log('isPushChatSocketConnected', isPushChatSocketConnected);
   }, [isPushChatSocketConnected]);
 
   return {
