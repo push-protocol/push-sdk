@@ -4,6 +4,7 @@ import { ENV } from '../../config';
 import { useSpaceData } from './useSpaceData';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
+import { isAccountsEqual } from '../../components/space/helpers/account';
 
 const SPACE_SOCKET_TYPE = 'chat';
 
@@ -82,7 +83,7 @@ export const usePushSpaceSocket = ({
       setSpaceInfo(spaceInfo.spaceId, spaceInfo);
 
       const isSpaceInvite: boolean = spaceInfo?.pendingMembers?.some(
-        (member) => member.wallet === account
+        (member) => isAccountsEqual(account, member.wallet)
       );
       if (isSpaceInvite) {
         const isInInvites: boolean =
