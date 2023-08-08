@@ -5,14 +5,14 @@ import {
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import { IChatTheme, lightTheme } from '../components/chat/theme';
+import { CHAT_THEME_OPTIONS, ChatThemeOptions, IChatThemeOverride, lightTheme } from '../components/chat/theme';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
-  theme?: IChatTheme;
-  customeTheme?: IChatTheme;
+  theme?: ChatThemeOptions;
+  themeOverride?: Partial<IChatThemeOverride>;
   account?: string | null;
-  decryptedPgpPvtKey?: string | null;
+  pgpPrivateKey?: string | null;
   env?: ENV;
 }
 
@@ -20,23 +20,26 @@ export const ChatUIProvider = ({
   children,
   account = null,
   theme,
-  decryptedPgpPvtKey = null,
+  pgpPrivateKey = null,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(account);
-  const [decryptedPgpPvtKeyVal, setDecryptedPgpPvtKeyVal] =
-    useState<string | null>(decryptedPgpPvtKey);
+  const [pgpPrivateKeyVal, setPgpPrivateKeyVal] =
+    useState<string | null>(pgpPrivateKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
 
   const value: IChatDataContextValues = {
     account: accountVal,
     setAccount: setAccountVal,
-    decryptedPgpPvtKey: decryptedPgpPvtKeyVal,
-    setDecryptedPgpPvtKey: setDecryptedPgpPvtKeyVal,
+    pgpPrivateKey: pgpPrivateKeyVal,
+    setPgpPrivateKey: setPgpPrivateKeyVal,
     env: envVal,
     setEnv: setEnvVal,
   };
-  const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
+  const PROVIDER_THEME = {
+    theme:theme || CHAT_THEME_OPTIONS.LIGHT,
+    // themeOverride:Object.assign({}, lightTheme, theme)
+};
 
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
