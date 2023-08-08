@@ -54,10 +54,7 @@ export const usePushChatSocket = () => {
           ) {
             return;
           }
-console.log(connectedProfile)
-console.log(chat)
-console.log(env)
-console.log(decryptedPgpPvtKey)
+
           const response = await PushAPI.chat.decryptConversation({
             messages: [chat],
             connectedUser: connectedProfile,
@@ -65,7 +62,7 @@ console.log(decryptedPgpPvtKey)
             env: env,
           });
           if (response && response.length) {
-            setMessagesSinceLastConnection(chat);
+            setMessagesSinceLastConnection(response[0]);
           }
         }
       );
