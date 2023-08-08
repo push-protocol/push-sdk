@@ -34,6 +34,7 @@ const useFetchHistoryMessages
             env: env
           });
           chatHistory.reverse();
+          console.log(chatHistory)
        return chatHistory;
     } catch (error: Error | any) {
       setLoading(false);

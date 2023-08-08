@@ -4,16 +4,19 @@ import * as PUSHAPI from '@pushprotocol/restapi';
 import { Link } from 'react-router-dom';
 import { Section } from '../components/StyledComponents';
 import { MessageList } from '@pushprotocol/uiweb';
-import { EnvContext } from '../context';
+import { EnvContext, Web3Context } from '../context';
+import { usePushChatSocket } from '@pushprotocol/uiweb';
 
 const MessageListTest = () => {
+  const { account } = useContext<any>(Web3Context)
+
   const { env } = useContext<any>(EnvContext);
-  const [ conversationHash , setConversationHash] = useState<string>();
+  const [ conversationHash , setConversationHash] = useState<string>('');
 
   const fetchConversationHash = async() =>{
     const ConversationHash = await PUSHAPI.chat.conversationHash({
-      account: 'eip155:0x0bc5DcB04B71E99CC73CAE772D8aec89E641f983',
-      conversationId: 'eip155:0xCD0DAdAb45bAF9a06ce1279D1342EcC3F44845af',
+      account: `eip155:${account}`,
+      conversationId: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
       env: env
   });
   setConversationHash(ConversationHash.threadHash);
@@ -23,6 +26,7 @@ console.log(conversationHash)
   fetchConversationHash();
  })
 
+ usePushChatSocket();
   return (
     <div>
       <h2>Chat UI Test page</h2>
@@ -31,7 +35,7 @@ console.log(conversationHash)
 
       <MessageListCard    >
         
-      <MessageList conversationHash='bafyreidv2bh6xzynx2fbkx4cqd7v4zq67l73najg67g7juruqr2hrcmngm' limit={10}/>
+      <MessageList conversationHash={conversationHash} limit={10}/>
    
       </MessageListCard>
     </div>

@@ -76,6 +76,7 @@ import {
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';
+import { MessageBubbles } from './ChatUITest/MessageBubbles';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -300,64 +301,60 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider
-                  account={account!}
-                  decryptedPgpPvtKey={pgpPrivateKey}
-                  env={ENV.STAGING}
-                >
-                  <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
-                    <Routes>
-                      <Route
-                        path="/"
-                        element={
-                          <NavMenu>
-                            <Link to="/notifications" className="nav-button">
-                              NOTIFICATIONS
-                            </Link>
-                            <Link to="/secret" className="nav-button">
-                              SECRET NOTIFICATION
-                            </Link>
-                            <Link to="/channels" className="nav-button">
-                              CHANNELS
-                            </Link>
-                            <Link to="/alias" className="nav-button">
-                              ALIAS
-                            </Link>
-                            <Link to="/delegations" className="nav-button">
-                              DELEGATIONS
-                            </Link>
-                            <Link to="/payloads" className="nav-button">
-                              PAYLOADS
-                            </Link>
-                            <Link to="/socket" className="nav-button">
-                              SOCKET
-                            </Link>
-                            <Link to="/embed" className="nav-button">
-                              EMBED
-                            </Link>
-                            <Link to="/chat" className="nav-button">
-                              CHAT
-                            </Link>
-                            <Link to="/chatUI" className="nav-button">
-                              CHAT UI
-                            </Link>
-                            <Link to="/space" className="nav-button">
-                              SPACE
-                            </Link>
-                            <Link to="/spaceUI" className="nav-button">
-                              SPACE UI
-                            </Link>
-                          </NavMenu>
-                        }
-                      />
-                      <Route
-                        path="/notifications"
-                        element={<NotificationsTest />}
-                      />
-                      <Route
-                        path="/secret"
-                        element={<SecretNotificationsTest />}
-                      />
+                <ChatUIProvider account={account!} decryptedPgpPvtKey={pgpPrivateKey} env={env} >
+                <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <NavMenu>
+                          <Link to="/notifications" className="nav-button">
+                            NOTIFICATIONS
+                          </Link>
+                          <Link to="/secret" className="nav-button">
+                            SECRET NOTIFICATION
+                          </Link>
+                          <Link to="/channels" className="nav-button">
+                            CHANNELS
+                          </Link>
+                          <Link to="/alias" className="nav-button">
+                            ALIAS
+                          </Link>
+                          <Link to="/delegations" className="nav-button">
+                            DELEGATIONS
+                          </Link>
+                          <Link to="/payloads" className="nav-button">
+                            PAYLOADS
+                          </Link>
+                          <Link to="/socket" className="nav-button">
+                            SOCKET
+                          </Link>
+                          <Link to="/embed" className="nav-button">
+                            EMBED
+                          </Link>
+                          <Link to="/chat" className="nav-button">
+                            CHAT
+                          </Link>
+                          <Link to="/chatUI" className="nav-button">
+                            CHAT UI
+                          </Link>
+                          <Link to="/space" className="nav-button">
+                            SPACE
+                          </Link>
+                          <Link to="/spaceUI" className="nav-button">
+                            SPACE UI
+                          </Link>
+                        </NavMenu>
+                      }
+                    />
+                    <Route
+                      path="/notifications"
+                      element={<NotificationsTest />}
+                    />
+                    <Route
+                      path="/secret"
+                      element={<SecretNotificationsTest />}
+                    />
 
                       <Route path="/channels" element={<ChannelsTest />} />
 
@@ -469,28 +466,33 @@ export function App() {
                         element={<GetSpacesTrendingTest />}
                       />
 
-                      {/* spaces ui components routes */}
-                      <Route path="spaceWidget" element={<SpaceWidget />} />
-                      <Route path="spaceFeed" element={<SpaceFeed />} />
-                      <Route path="spaceBanner" element={<SpaceBanner />} />
-                      <Route
-                        path="spaceInvites"
-                        element={<SpaceInvitesComponent />}
-                      />
-                      <Route
-                        path="createSpaceUI"
-                        element={<CreateSpaceComponent />}
-                      />
+                    {/* spaces ui components routes */}
+                    <Route path="spaceWidget" element={<SpaceWidget />} />
+                    <Route path="spaceFeed" element={<SpaceFeed />} />
+                    <Route path="spaceBanner" element={<SpaceBanner />} />
+                    <Route
+                      path="spaceInvites"
+                      element={<SpaceInvitesComponent />}
+                    />
+                    <Route
+                      path="createSpaceUI"
+                      element={<CreateSpaceComponent />}
+                    />
 
-                      <Route
+                    {/* chat ui components routes */}
+                    <Route
+                      path="messageBubble"
+                      element={<MessageBubbles />}
+                      />
+                       <Route
                         path="messageList"
                         element={<MessageListTest />}
                       />
-                    </Routes>
-                    <ChatWidgetTest/>
-                    {/* <ChatWidgetTest /> */}
-                    <SpaceWidgetComponent spaceId={spaceId} />
-                  </SpacesUIProvider>
+                  </Routes>
+                  {/* <ChatWidgetTest/> */}
+                  {/* <ChatWidgetTest /> */}
+                  <SpaceWidgetComponent spaceId={spaceId} />
+                </SpacesUIProvider>
                 </ChatUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>

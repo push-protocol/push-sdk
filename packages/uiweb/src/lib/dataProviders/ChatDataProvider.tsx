@@ -2,11 +2,12 @@ import { useState, ReactNode, useEffect } from 'react';
 import { Constants, ENV } from '../config';
 import {
   ChatDataContext,
-  ChatMessagetype,
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import { IChatTheme, lightTheme } from '../components/chat/theme';
+import useGetChatProfile from '../hooks/useGetChatProfile';
+import { IUser } from '@pushprotocol/restapi';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -25,15 +26,31 @@ export const ChatUIProvider = ({
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(account);
-  const [pushSpaceSocket, setPushSpaceSocket] = useState<any>(null);
+  const [pushChatSocket, setPushChatSocket] = useState<any>(null);
   const [decryptedPgpPvtKeyVal, setDecryptedPgpPvtKeyVal] =
     useState<string | null>(decryptedPgpPvtKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
+  const {fetchChatProfile} = useGetChatProfile();
+  const [connectedProfile,setConnectedProfile]=useState<IUser | undefined>(undefined);
+
+  const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
+  useState<boolean>(false);
 
 useEffect(()=>{
     setAccountVal(account)
     setDecryptedPgpPvtKeyVal(decryptedPgpPvtKey)
 },[decryptedPgpPvtKey])
+
+useEffect(() => {
+    (async () => {
+      let user;
+      if (account) {
+        user = await fetchChatProfile({ profileId: account });
+
+        if (user) setConnectedProfile(user);
+      }
+    })();
+  }, [account]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
@@ -42,8 +59,12 @@ useEffect(()=>{
     setDecryptedPgpPvtKey: setDecryptedPgpPvtKeyVal,
     env: envVal,
     setEnv: setEnvVal,
-    pushSpaceSocket,
-    setPushSpaceSocket,
+    pushChatSocket,
+    setPushChatSocket,
+    isPushChatSocketConnected,
+    setIsPushChatSocketConnected,
+    connectedProfile,
+    setConnectedProfile
   };
   const PROVIDER_THEME = Object.assign({}, lightTheme, theme);
   return (

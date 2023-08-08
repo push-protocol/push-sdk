@@ -33,7 +33,7 @@ import {
 } from '../../../../helpers';
 import { SpamIconSvg } from '../../../../icons/Spam';
 import { InboxNotificationFeedList } from './notificationSidebar/InboxNotificationFeedList';
-import useGetChatProfile from '../../../../hooks/chatAndNotification/chat/useGetChatProfile';
+import useGetChatProfile from '../../../../hooks/useGetChatProfile';
 import { NotificationFeedList } from './notificationSidebar/NotificationFeedList';
 import { SidebarPlaceholder } from './SidebarPlaceholder';
 import type { ChatAndNotificationMainContextType } from '../../../../context/chatAndNotification/chatAndNotificationMainContext';

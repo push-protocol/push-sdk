@@ -5,7 +5,7 @@ import { MinimisedModalHeader } from './MinimisedModalHeader';
 import { Modal } from './modal';
 import type { ChatFeedsType} from '../../types';
 import { PUSH_TABS } from '../../types';
-import { CHAT_SOCKET_TYPE } from '../../types';
+import { SOCKET_TYPE } from '../../types';
 import {
   ChatMainStateContext,
   ChatAndNotificationPropsContext,
@@ -13,7 +13,7 @@ import {
   ChatAndNotificationMainContext,
 } from '../../context';
 import { Section } from '../reusables/sharedStyling';
-import useGetChatProfile from '../../hooks/chatAndNotification/chat/useGetChatProfile';
+import useGetChatProfile from '../../hooks/useGetChatProfile';
 import { chatLimit, device, requestLimit } from '../../config';
 import useFetchRequests from '../../hooks/chatAndNotification/chat/useFetchRequests';
 import useFetchChats from '../../hooks/chatAndNotification/chat/useFetchChats';
@@ -69,7 +69,7 @@ export const ChatAndNotification = () => {
   const { fetchUserSubscriptions } = useFetchUserSubscriptions();
   useChatNotificationSocket({});
 
-  useChatNotificationSocket({ socketType: CHAT_SOCKET_TYPE.CHAT });
+  useChatNotificationSocket({ socketType: SOCKET_TYPE.CHAT });
 
   useEffect(() => {
     setChatsFeed({});

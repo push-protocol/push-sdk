@@ -8,8 +8,8 @@ import styled from 'styled-components';
 import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
-import { dateToFromNowDaily } from '../../../helpers';
-import { useChatData } from '../../../hooks';
+import { dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
+import { useChatData, usePushChatSocket } from '../../../hooks';
 
 type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
@@ -22,8 +22,28 @@ export const MessageList: React.FC<IMessageListProps> = (
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-
+  const { messagesSinceLastConnection } = usePushChatSocket();
   const dates = new Set();
+
+  useEffect(() => {
+    if (
+      Object.keys(messagesSinceLastConnection || {}).length 
+    ) {
+      if (!Object.keys(messages || {}).length) {
+        setMessages({
+          messages: messagesSinceLastConnection,
+          lastThreadHash: messages!.lastThreadHash,
+        });
+      } else {
+        setMessages((prevMessages) => {
+          return {
+            messages: [...prevMessages!.messages, messagesSinceLastConnection],
+            lastThreadHash: prevMessages!.lastThreadHash,
+          };
+        });
+      }
+    }
+  }, [messagesSinceLastConnection]);
 
   useEffect(() => {
     if (conversationHash) {
@@ -44,7 +64,6 @@ export const MessageList: React.FC<IMessageListProps> = (
       messages?.messages.length
       // selectedMessages?.messages.length <= CHATS_FETCH_LIMIT
     ) {
-      console.log('in scroll to bottom');
       scrollToBottom(null);
     }
   }, [messages]);
@@ -80,7 +99,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     }
     if (threadHash) {
       const chatHistory = await historyMessages({
-        limit: 5,
+        limit: limit,
         threadHash,
       });
       if (chatHistory?.length) {
@@ -134,8 +153,6 @@ export const MessageList: React.FC<IMessageListProps> = (
 
   return (
     <Section
-      height="inherit"
-      maxHeight="inherit"
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
@@ -148,15 +165,22 @@ export const MessageList: React.FC<IMessageListProps> = (
         flexDirection="column"
         justifyContent="start"
         // overflow='hidden auto'
-        // width="100%"
+        width="100%"
         // padding="0 2px 15px 2px"
       >
         {messages?.messages.map((chat: IMessageIPFS, index: number) => {
           const dateNum = moment(chat.timestamp).format('L');
+          const position =
+            pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
+            account?.toLowerCase()
+              ? 0
+              : 1;
           return (
             <>
               {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
-              <MessageBubble chat={chat} key={index} />
+              <Section justifyContent={position ? 'end' : 'start'}>
+                <MessageBubble chat={chat} key={index} />
+              </Section>
             </>
           );
         })}
