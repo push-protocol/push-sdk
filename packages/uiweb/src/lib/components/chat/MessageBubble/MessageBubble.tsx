@@ -3,15 +3,20 @@ import { Section, Span, Image } from "../../reusables";
 import moment from "moment";
 import styled from "styled-components";
 import { FileMessageContent } from "../../../types";
-import { FILE_ICON } from "../../../config";
-import { formatFileSize, pCAIP10ToWallet, shortenText } from "../../../helpers";
+import { ENV, FILE_ICON } from "../../../config";
+import { formatFileSize, getPfp, pCAIP10ToWallet, setPfp, shortenText } from "../../../helpers";
 import { checkTwitterUrl } from "../helpers/twitter";
 import { IMessagePayload, TwitterFeedReturnType } from "../exportedTypes";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import { ChatDataContext } from "../../../context";
+import { usePushGetPfp } from "../../../helpers/chat/usePushGetPfp";
+import { env } from "process";
 
 const MessageAddress = ({ chat }: { chat: IMessagePayload }) => {
     const { account } = useContext(ChatDataContext)
+    useEffect(() => {
+        getPfp({account: chat.fromCAIP10.split(":")[1], env: ENV.STAGING})
+    }, [account, chat.fromCAIP10])
     return (
         <>
             {chat.fromCAIP10.split(":")[1] !== account && (
