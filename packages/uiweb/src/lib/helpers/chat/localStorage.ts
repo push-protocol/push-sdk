@@ -46,11 +46,8 @@ export const getPfp = async ({
   const pfp = localStorage.getItem(account);
 
   if (pfp === null) {
-    console.log('pfp not found in local storage');
     return fetchData();
   } else {
-    // If pfp is found in local storage, return the stored value
-    console.log('pfp', pfp);
     return pfp;
   }
 };
