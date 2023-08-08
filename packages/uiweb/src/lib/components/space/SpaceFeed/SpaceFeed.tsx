@@ -77,7 +77,11 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 
   const handleFilterData = (spacesList: SpaceIFeeds[]) => {
     if (filterTab === FilterEnums.All) {
-      return spacesList;
+      return spacesList.filter(
+        (space: SpaceIFeeds) =>
+          space.spaceInformation?.status === 'ACTIVE' ||
+          space.spaceInformation?.status === 'PENDING'
+      );
     } else if (filterTab === FilterEnums.Live) {
       return spacesList.filter(
         (space: SpaceIFeeds) => space.spaceInformation?.status === 'ACTIVE'

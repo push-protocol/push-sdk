@@ -191,7 +191,7 @@ const Title = styled.div<IThemeProps>`
   align-items: center;
   font-family: Strawford;
   font-weight: ${(props) =>
-    props.orientation === 'maximized' ? '700' : '500'};
+    props.orientation === 'maximized' ? '600' : '500'};
   font-size: ${(props) =>
     props.orientation === 'maximized'
       ? '20px'
