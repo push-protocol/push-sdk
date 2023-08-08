@@ -219,44 +219,46 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
           </Spaces>
         ) : (
           <>
-            <Navigation
-              showTabs={showTabs}
-              width={width}
-              showFilter={showFilter}
-            >
-              <NavButtonWrapper>
-                {sortingOrder.map((tabName: TabsValues) => {
-                  return (
-                    <NavButton
-                      active={selectedFeedTab === FeedTabs[tabName]}
-                      onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
-                    >
-                      {FeedTabs[tabName]}
-                    </NavButton>
-                  );
-                })}
-              </NavButtonWrapper>
-            </Navigation>
-            <Filter showFilter={showFilter}>
-              <FilterButton
-                active={filterTab === FilterEnums.All}
-                onClick={() => setFilterTab(FilterEnums.All)}
+            <StickyContainer>
+              <Navigation
+                showTabs={showTabs}
+                width={width}
+                showFilter={showFilter}
               >
-                All
-              </FilterButton>
-              <FilterButton
-                active={filterTab === FilterEnums.Live}
-                onClick={() => setFilterTab(FilterEnums.Live)}
-              >
-                Live
-              </FilterButton>
-              <FilterButton
-                active={filterTab === FilterEnums.Scheduled}
-                onClick={() => setFilterTab(FilterEnums.Scheduled)}
-              >
-                Scheduled
-              </FilterButton>
-            </Filter>
+                <NavButtonWrapper>
+                  {sortingOrder.map((tabName: TabsValues) => {
+                    return (
+                      <NavButton
+                        active={selectedFeedTab === FeedTabs[tabName]}
+                        onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
+                      >
+                        {FeedTabs[tabName]}
+                      </NavButton>
+                    );
+                  })}
+                </NavButtonWrapper>
+              </Navigation>
+              <Filter showFilter={showFilter}>
+                <FilterButton
+                  active={filterTab === FilterEnums.All}
+                  onClick={() => setFilterTab(FilterEnums.All)}
+                >
+                  All
+                </FilterButton>
+                <FilterButton
+                  active={filterTab === FilterEnums.Live}
+                  onClick={() => setFilterTab(FilterEnums.Live)}
+                >
+                  Live
+                </FilterButton>
+                <FilterButton
+                  active={filterTab === FilterEnums.Scheduled}
+                  onClick={() => setFilterTab(FilterEnums.Scheduled)}
+                >
+                  Scheduled
+                </FilterButton>
+              </Filter>
+            </StickyContainer>
             <ScrollContainer
               width={width}
               height={height}
@@ -397,6 +399,11 @@ const Container = styled.div`
   padding: 24px 32px;
 `;
 
+const StickyContainer = styled.div`
+  position: sticky;
+  top: 0;
+`;
+
 const Navigation = styled.div<{
   showTabs?: boolean;
   showFilter?: boolean;
@@ -476,7 +483,7 @@ const Filter = styled.div<{ showFilter?: boolean }>`
   align-items: center;
   background: ${(props) => props.theme.bgColorPrimary};
   width: 100%;
-  margin: 22px 0;
+  padding: 22px 0;
 `;
 
 const FilterButton = styled.button<{ active: boolean }>`
