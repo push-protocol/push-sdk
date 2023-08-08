@@ -36,6 +36,7 @@ export const MessageBubbles = () => {
             env: ENV.STAGING
         })
         setMessage(chatHistory)
+        console.log(chatHistory)
     }
 
     useEffect(() => {
