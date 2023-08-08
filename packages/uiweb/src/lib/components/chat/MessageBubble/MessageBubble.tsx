@@ -23,7 +23,7 @@ const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
     )
 }
 
-const SenderMessageProfile = ({ chat }: { chat: IMessagePayload }) => {
+const SenderMessafeProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
     const { account, env } = useContext(ChatDataContext)
     const [pfp, setPfp] = useState<string>("")
     const getUserPfp = async () => {
@@ -59,7 +59,7 @@ const MessageCard = ({
     return (
         <Section flexDirection="row" justifyContent="start" gap="6px">
             {isGroup &&
-                <SenderMessageProfile chat={chat} />
+                <SenderMessafeProfilePicture chat={chat} />
             }
             <Section justifyContent="start" flexDirection="column"
             >
@@ -70,7 +70,7 @@ const MessageCard = ({
                     gap="5px"
                     background={position ? '#0D67FE' : '#EDEDEE'}
                     padding="8px 12px"
-                    borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
+                    borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     margin="5px 0"
                     alignSelf='start'
                     justifyContent="start"
@@ -127,7 +127,7 @@ const FileCard = ({
     return (
         <Section flexDirection="row" justifyContent="start" gap="6px">
             {isGroup &&
-                <SenderMessageProfile chat={chat} />
+                <SenderMessafeProfilePicture chat={chat} />
             }
             <Section flexDirection="column">
                 {isGroup &&
@@ -185,7 +185,7 @@ const ImageCard = ({
     return (
         <Section flexDirection="row" justifyContent="start" gap="6px">
             {isGroup &&
-                <SenderMessageProfile chat={chat} />
+                <SenderMessafeProfilePicture chat={chat} />
             }
             <Section justifyContent="start" flexDirection="column">
                 {isGroup && (
@@ -201,7 +201,7 @@ const ImageCard = ({
                         src={JSON.parse(chat.messageContent).content}
                         alt=""
                         width="100%"
-                        borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
+                        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     />
                 </Section>
             </Section>
@@ -221,7 +221,7 @@ const GIFCard = ({
     return (
         <Section flexDirection="row" justifyContent="start" gap="6px">
             {isGroup &&
-                <SenderMessageProfile chat={chat} />
+                <SenderMessafeProfilePicture chat={chat} />
             }
             <Section justifyContent="start" flexDirection="column">
                 {isGroup &&
@@ -237,7 +237,7 @@ const GIFCard = ({
                         src={chat.messageContent}
                         alt=""
                         width="100%"
-                        borderRadius={position ? '12px 12px 0px 12px' : '12px 12px 12px 0px'}
+                        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     />
                 </Section>
             </Section>
@@ -249,7 +249,7 @@ const TwitterCard = ({ chat, tweetId, isGroup }: { chat: IMessagePayload, tweetI
     return (
         <Section flexDirection="row" justifyContent="start" gap="6px">
             {isGroup &&
-                <SenderMessageProfile chat={chat} />
+                <SenderMessafeProfilePicture chat={chat} />
             }
             <Section justifyContent="start" flexDirection="column">
                 {isGroup &&
