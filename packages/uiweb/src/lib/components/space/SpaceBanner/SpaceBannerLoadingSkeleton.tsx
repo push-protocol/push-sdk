@@ -140,6 +140,3 @@ const SkeletonOverlapProfilePic = styled(SkeletonProfilePic)`
     margin-left: -24px;
   }
 `;
-
-//bgcolorprimary for bg
-//grey: text2 or iconcolorprimary or bordercolor
