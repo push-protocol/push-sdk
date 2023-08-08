@@ -6,8 +6,8 @@ import { createContext } from "react";
 export interface IChatDataContextValues {
     account: string | null;
     setAccount: React.Dispatch<React.SetStateAction<string| null>>;
-    decryptedPgpPvtKey: string | null;
-    setDecryptedPgpPvtKey: React.Dispatch<React.SetStateAction<string | null>>;
+    pgpPrivateKey: string | null;
+    setPgpPrivateKey: React.Dispatch<React.SetStateAction<string | null>>;
     env: Env;
     setEnv: React.Dispatch<React.SetStateAction<Env>>;
     pushChatSocket: any;
@@ -23,8 +23,8 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     setAccount: () => {
       /**/
     },
-    decryptedPgpPvtKey: null,
-    setDecryptedPgpPvtKey: () => {
+    pgpPrivateKey: '',
+    setPgpPrivateKey: () => {
       /**/
     },
     env: Constants.ENV.DEV,

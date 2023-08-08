@@ -77,6 +77,7 @@ import {
 import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';
 import { MessageBubbles } from './ChatUITest/MessageBubbles';
+import { CHAT_THEME_OPTIONS } from 'packages/uiweb/src/lib/components/chat/theme';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -301,7 +302,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} decryptedPgpPvtKey={pgpPrivateKey} env={env} >
+                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={env} theme={CHAT_THEME_OPTIONS.DARK}>
                 <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                   <Routes>
                     <Route

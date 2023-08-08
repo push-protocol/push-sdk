@@ -18,7 +18,7 @@ const useFetchHistoryMessages
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { account, env,decryptedPgpPvtKey } =
+  const { account, env,pgpPrivateKey } =
   useContext<any>(ChatDataContext);
 
   const historyMessages = useCallback(async ({threadHash,limit = 10,}:HistoryMessagesParams) => {
@@ -28,8 +28,8 @@ const useFetchHistoryMessages
         const chatHistory:IMessageIPFS[] = await PushAPI.chat.history({
             threadhash: threadHash,
             account: account,
-            toDecrypt: decryptedPgpPvtKey ? true : false,
-            pgpPrivateKey: String(decryptedPgpPvtKey),
+            toDecrypt: pgpPrivateKey ? true : false,
+            pgpPrivateKey: String(pgpPrivateKey),
             limit: limit,
             env: env
           });
@@ -43,7 +43,7 @@ const useFetchHistoryMessages
     } finally {
       setLoading(false);
     }
-  }, [decryptedPgpPvtKey,account,env]);
+  }, [pgpPrivateKey,account,env]);
 
   return { historyMessages, error, loading };
 };

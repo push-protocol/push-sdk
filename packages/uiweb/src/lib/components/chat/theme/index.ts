@@ -2,14 +2,18 @@
  * @file theme file: all the predefined themes are defined here
  */
 
-
+export const CHAT_THEME_OPTIONS = {
+    LIGHT: 'light',
+    DARK: 'dark',
+  
+  } as const;
+  
+  export type ChatThemeOptions = (typeof CHAT_THEME_OPTIONS)[keyof typeof CHAT_THEME_OPTIONS];
 export interface IChatTheme {
     bgColorPrimary?: string;
     bgColorSecondary?: string;
     textColorPrimary?: string;
     textColorSecondary?: string;
-    //what should name of gray color
-    //name of search bar color
     accentBgColor?:string;
     accentTextColor?:string;
     btnColorPrimary?: string;
@@ -19,7 +23,7 @@ export interface IChatTheme {
     fontFamily?: string;
   }
   
-  export const lightTheme: IChatTheme = {
+  export const lightTheme: IChatTheme  = {
     bgColorPrimary:'#fff',
     bgColorSecondary:'linear-gradient(179.97deg, #EEF5FF 0.02%, #ECE9FA 123.25%)',
     textColorPrimary:'#000',
@@ -45,3 +49,9 @@ export interface IChatTheme {
     iconColorPrimary:'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)'
   };
   
+
+  //function to return final theme object
+export const getCustomChatTheme = (theme:string | undefined) => {
+    // return Object.assign({}, theme===CHAT_THEME_OPTIONS.DARK?darkTheme:lightTheme, themeOverride);
+    return theme===CHAT_THEME_OPTIONS.DARK?darkTheme:lightTheme;
+  }

@@ -17,7 +17,7 @@ export type PushChatSocketHookOptions = {
 export const usePushChatSocket = () => {
   const {
     account,
-    decryptedPgpPvtKey,
+    pgpPrivateKey,
     pushChatSocket,
     setPushChatSocket,
     setIsPushChatSocketConnected,
@@ -34,7 +34,6 @@ export const usePushChatSocket = () => {
     });
 
     pushChatSocket?.on(EVENTS.DISCONNECT, (reason: string) => {
-      // console.log("space socket disconnected", reason);
       setIsPushChatSocketConnected(false);
     });
 
@@ -42,7 +41,7 @@ export const usePushChatSocket = () => {
     pushChatSocket?.on(
         EVENTS.CHAT_RECEIVED_MESSAGE,
         async (chat: any) => {
-         if (!connectedProfile || !decryptedPgpPvtKey) {
+         if (!connectedProfile || !pgpPrivateKey) {
             return;
           }
         //   const chatId = getChatId({ msg: chat, account:account! }).toLowerCase();
@@ -57,7 +56,7 @@ export const usePushChatSocket = () => {
           const response = await PushAPI.chat.decryptConversation({
             messages: [chat],
             connectedUser: connectedProfile,
-            pgpPrivateKey: decryptedPgpPvtKey,
+            pgpPrivateKey: pgpPrivateKey,
             env: env,
           });
           if (response && response.length) {
@@ -71,7 +70,7 @@ export const usePushChatSocket = () => {
   }, [
     pushChatSocket,
     account,
-    decryptedPgpPvtKey,
+    pgpPrivateKey,
     messagesSinceLastConnection,
     env,
 

@@ -11,6 +11,7 @@ import { MessageBubble } from '../MessageBubble';
 import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 
 
@@ -19,12 +20,13 @@ export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
   const { conversationHash, limit = chatLimit } = options || {};
-  const { decryptedPgpPvtKey, account } = useChatData();
+  const { pgpPrivateKey, account } = useChatData();
   const [messages, setMessages] = useState<Messagetype>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { messagesSinceLastConnection } = usePushChatSocket();
+  const theme = useContext(ThemeContext);
   const dates = new Set();
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export const MessageList: React.FC<IMessageListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, decryptedPgpPvtKey, account]);
+  }, [conversationHash, pgpPrivateKey, account]);
 
   useEffect(() => {
     scrollToBottom(null);
@@ -136,7 +138,7 @@ export const MessageList: React.FC<IMessageListProps> = (
         margin="15px 0"
         fontSize="14px"
         fontWeight="600"
-        color="#AFAFB6"
+        color={theme.textColorSecondary}
         textAlign="center"
       >
         {timestampDate}
