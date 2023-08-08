@@ -127,13 +127,14 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
                     alt="Maximize/Minimize icon"
                   />
                 </Item>
-                <Item
+                {/* COMMENTED FOR FUTURE IMPLEMENTATION */}
+                {/* <Item
                   marginLeft={'8px'}
                   display={'flex'}
                   onClick={handleCloseWidget}
                 >
                   <CloseSvg stroke="white" height="15" width="15" />
-                </Item>
+                </Item> */}
               </Item>
             </Section>
           )}
@@ -162,13 +163,13 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
                   alt="Maximize/Minimize icon"
                 />
               </Item>
-              <Item
+              {/* <Item
                 marginLeft={'8px'}
                 display={'flex'}
                 onClick={handleCloseWidget}
               >
                 <CloseSvg stroke="white" height="15" width="15" />
-              </Item>
+              </Item> */}
             </Item>
           )}
         </Section>

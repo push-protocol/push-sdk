@@ -213,9 +213,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     <ThemeProvider theme={theme}>
       <Item
         flex={'1'}
-        display={'grid'}
-        gridTemplateColumns={'repeat(3, 1fr)'}
+        display={'flex'}
         padding={'16px 10px'}
+        margin={'0 auto'}
         flexWrap={'wrap'}
         justifyContent={'flex-start'}
         gap={'24px 12px'}
