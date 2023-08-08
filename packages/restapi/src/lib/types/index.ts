@@ -649,7 +649,7 @@ export type VideoAcceptRequestInputOptions = {
 
 export type VideoConnectInputOptions = {
   signalData: any;
-  peerAddress: string;
+  peerAddress?: string;
 };
 
 export type VideoDisconnectOptions = {
@@ -658,7 +658,7 @@ export type VideoDisconnectOptions = {
     type: SPACE_DISCONNECT_TYPE;
     data: Record<string, unknown>;
   };
-};
+} | null;
 
 export type EnableVideoInputOptions = {
   state: boolean;
