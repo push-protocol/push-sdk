@@ -40,6 +40,7 @@ export const MessageBubbles = () => {
             env: env
         })
         setMessage(chatHistory)
+        console.log(chatHistory)
     }
     }
 
