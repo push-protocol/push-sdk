@@ -5,12 +5,12 @@ import {
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import { CHAT_THEME_OPTIONS, ChatThemeOptions, IChatThemeOverride, lightTheme } from '../components/chat/theme';
+import { CHAT_THEME_OPTIONS, ChatThemeOptions, IChatTheme, getCustomChatTheme } from '../components/chat/theme';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
   theme?: ChatThemeOptions;
-  themeOverride?: Partial<IChatThemeOverride>;
+  themeOverride?: Partial<IChatTheme>;
   account?: string | null;
   pgpPrivateKey?: string | null;
   env?: ENV;
@@ -36,10 +36,9 @@ export const ChatUIProvider = ({
     env: envVal,
     setEnv: setEnvVal,
   };
-  const PROVIDER_THEME = {
-    theme:theme || CHAT_THEME_OPTIONS.LIGHT,
-    // themeOverride:Object.assign({}, lightTheme, theme)
-};
+
+
+   const PROVIDER_THEME = getCustomChatTheme(theme);
 
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>

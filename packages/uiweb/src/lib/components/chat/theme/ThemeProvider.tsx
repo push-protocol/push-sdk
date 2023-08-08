@@ -3,7 +3,7 @@
  */
 import { createContext } from 'react';
 
-import { CHAT_THEME_OPTIONS, ChatThemeOptions, IChatThemeOverride, lightTheme } from './index';
+import {  IChatTheme, lightTheme } from './index';
 
 /**
  * @param theme optional: light or dark theme. defaults to light
@@ -16,12 +16,5 @@ export interface IThemeProviderProps {
     children: any;
 }
 
-export interface IChatTheme {
-    theme?:ChatThemeOptions,
-// themeOverride?: Partial<IChatThemeOverride>;
-}
-const default_theme = {
-    theme:CHAT_THEME_OPTIONS.LIGHT,
-    // themeOverride:lightTheme
-}
-export const ThemeContext = createContext<IChatTheme>(default_theme);
+
+export const ThemeContext = createContext<IChatTheme>(lightTheme);

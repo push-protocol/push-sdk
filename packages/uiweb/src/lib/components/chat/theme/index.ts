@@ -9,7 +9,7 @@ export const CHAT_THEME_OPTIONS = {
   } as const;
   
   export type ChatThemeOptions = (typeof CHAT_THEME_OPTIONS)[keyof typeof CHAT_THEME_OPTIONS];
-export interface IChatThemeOverride {
+export interface IChatTheme {
     bgColorPrimary?: string;
     bgColorSecondary?: string;
     textColorPrimary?: string;
@@ -23,7 +23,7 @@ export interface IChatThemeOverride {
     fontFamily?: string;
   }
   
-  export const lightTheme: IChatThemeOverride  = {
+  export const lightTheme: IChatTheme  = {
     bgColorPrimary:'#fff',
     bgColorSecondary:'linear-gradient(179.97deg, #EEF5FF 0.02%, #ECE9FA 123.25%)',
     textColorPrimary:'#000',
@@ -36,7 +36,7 @@ export interface IChatThemeOverride {
     iconColorPrimary:'none'
   };
   
-  export const darkTheme: IChatThemeOverride = {
+  export const darkTheme: IChatTheme = {
     bgColorPrimary:'rgb(47, 49, 55)',
     bgColorSecondary:'rgb(40, 42, 46)',
     textColorPrimary:'#fff',
@@ -49,3 +49,9 @@ export interface IChatThemeOverride {
     iconColorPrimary:'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)'
   };
   
+
+  //function to return final theme object
+export const getCustomChatTheme = (theme:string | undefined) => {
+    // return Object.assign({}, theme===CHAT_THEME_OPTIONS.DARK?darkTheme:lightTheme, themeOverride);
+    return theme===CHAT_THEME_OPTIONS.DARK?darkTheme:lightTheme;
+  }
