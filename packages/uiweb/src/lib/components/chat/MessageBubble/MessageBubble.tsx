@@ -14,15 +14,25 @@ import { env } from "process";
 
 const MessageAddress = ({ chat }: { chat: IMessagePayload }) => {
     const { account } = useContext(ChatDataContext)
+    const [pfp, setPfp] = useState<string>("")
+    const getUserPfp = async () => {
+        const pfp = await getPfp({ account: chat.fromCAIP10.split(":")[1], env: ENV.STAGING })
+        if (pfp) {
+            setPfp(pfp)
+        }
+    }
     useEffect(() => {
-        getPfp({account: chat.fromCAIP10.split(":")[1], env: ENV.STAGING})
+        getUserPfp()
     }, [account, chat.fromCAIP10])
     return (
         <>
             {chat.fromCAIP10.split(":")[1] !== account && (
-                <Span alignSelf="start"
-                    textAlign="left">{chat.fromDID.split(":")[1].slice(0, 6)}...
-                    {chat.fromDID.split(":")[1].slice(-6)}</Span>
+                <Section alignSelf="start" flexDirection="row" gap="8px" alignItems="center">
+                    {pfp && <Image src={pfp} alt="profile picture" width="30px" height="30px" borderRadius="50%" />}
+                    <Span alignSelf="center"
+                        textAlign="left">{chat.fromDID.split(":")[1].slice(0, 6)}...
+                        {chat.fromDID.split(":")[1].slice(-6)}</Span>
+                </Section>
             )}
         </>
     )
