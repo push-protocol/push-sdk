@@ -9,6 +9,7 @@ import { checkTwitterUrl } from "../helpers/twitter";
 import { IMessagePayload, TwitterFeedReturnType } from "../exportedTypes";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import { ChatDataContext } from "../../../context";
+import { useChatData } from "../../../hooks";
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
     const { account } = useContext(ChatDataContext)
@@ -57,7 +58,7 @@ const MessageCard = ({
 }) => {
     const time = moment(chat.timestamp).format('hh:mm a');
     return (
-        <Section flexDirection="row" justifyContent="start" gap="6px">
+        <Section flexDirection="row" justifyContent="start" gap="6px"   width="fit-content">
             {isGroup &&
                 <SenderMessafeProfilePicture chat={chat} />
             }
@@ -72,7 +73,7 @@ const MessageCard = ({
                     padding="8px 12px"
                     borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     margin="5px 0"
-                    alignSelf='start'
+                    alignSelf={position ? 'end' : 'start'}
                     justifyContent="start"
                     maxWidth="80%"
                     minWidth="71px"
@@ -125,7 +126,7 @@ const FileCard = ({
     const size = fileContent.size;
 
     return (
-        <Section flexDirection="row" justifyContent="start" gap="6px">
+        <Section flexDirection="row" justifyContent="start" gap="6px" width="fit-content">
             {isGroup &&
                 <SenderMessafeProfilePicture chat={chat} />
             }
@@ -192,7 +193,7 @@ const ImageCard = ({
                     <SenderMessageAddress chat={chat} />
                 )}
                 <Section
-                    alignSelf={'start'}
+                    alignSelf={position ? 'end' : 'start'}
                     maxWidth="65%"
                     width="fit-content"
                     margin="5px 0"
@@ -219,7 +220,7 @@ const GIFCard = ({
     isGroup: boolean;
 }) => {
     return (
-        <Section flexDirection="row" justifyContent="start" gap="6px">
+        <Section flexDirection="row" justifyContent="start" gap="6px" width="fit-content">
             {isGroup &&
                 <SenderMessafeProfilePicture chat={chat} />
             }
@@ -228,7 +229,7 @@ const GIFCard = ({
                     <SenderMessageAddress chat={chat} />
                 }
                 <Section
-                    alignSelf='start'
+                     alignSelf={position ? 'end' : 'start'}
                     maxWidth="65%"
                     margin="5px 0"
                     width="fit-content"
@@ -245,9 +246,9 @@ const GIFCard = ({
     );
 };
 
-const TwitterCard = ({ chat, tweetId, isGroup }: { chat: IMessagePayload, tweetId: string, isGroup: boolean }) => {
+const TwitterCard = ({ chat, tweetId, isGroup, position }: { chat: IMessagePayload, tweetId: string, isGroup: boolean , position: number}) => {
     return (
-        <Section flexDirection="row" justifyContent="start" gap="6px">
+        <Section flexDirection="row" justifyContent="start" gap="6px" width="fit-content">
             {isGroup &&
                 <SenderMessafeProfilePicture chat={chat} />
             }
@@ -256,7 +257,7 @@ const TwitterCard = ({ chat, tweetId, isGroup }: { chat: IMessagePayload, tweetI
                     <SenderMessageAddress chat={chat} />
                 }
                 <Section
-                    alignSelf={'start'}
+                   alignSelf={position ? 'end' : 'start'}
                     maxWidth="100%"
                     width="fit-content"
                     margin="5px 0"
@@ -269,7 +270,7 @@ const TwitterCard = ({ chat, tweetId, isGroup }: { chat: IMessagePayload, tweetI
 }
 
 export const MessageBubble = ({ chat }: { chat: IMessagePayload }) => {
-    const { account } = useContext(ChatDataContext)
+    const { account } = useChatData();
     const position = pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase() ? 0 : 1;
     const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({ message: chat?.messageContent });
     const [isGroup, setIsGroup] = useState<boolean>(false);
@@ -299,7 +300,7 @@ export const MessageBubble = ({ chat }: { chat: IMessagePayload }) => {
         return <FileCard isGroup={isGroup} chat={chat} position={position} />;
     }
     if (chat.messageType === 'TwitterFeedLink') {
-        return <TwitterCard tweetId={tweetId} isGroup={isGroup} chat={chat} />;
+        return <TwitterCard tweetId={tweetId} isGroup={isGroup} chat={chat} position={position}/>;
     }
     return <MessageCard isGroup={isGroup} chat={chat} position={position} />;
 }

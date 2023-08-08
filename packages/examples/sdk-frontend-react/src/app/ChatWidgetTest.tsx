@@ -32,13 +32,17 @@ export const ChatWidgetTest = () => {
 
 
   return (
-    <ChatAndNotificationWidget
-      account={account}
-      env={env}
-      decryptedPgpPvtKey={pvtKey}
-      signer={librarySigner}
-      // activeTab={PUSH_TABS.APP_NOTIFICATIONS}
-      activeChat="0x3Cf13f6d91F50dca6eAD7356b78482c54CDd95ff"
-    />
+
+    <>
+      <ChatAndNotificationWidget
+        account={account}
+        env={env}
+        decryptedPgpPvtKey={pvtKey}
+        signer={librarySigner}
+        // activeTab={PUSH_TABS.APP_NOTIFICATIONS}
+        activeChat="0x3Cf13f6d91F50dca6eAD7356b78482c54CDd95ff"
+      />
+    </>
+
   );
 };

@@ -1,14 +1,16 @@
 import { MessageBubble } from "@pushprotocol/uiweb";
 import { useEffect, useContext, useState } from "react";
-import { Web3Context } from "../context";
+import { EnvContext, Web3Context } from "../context";
 import * as PUSHAPI from "@pushprotocol/restapi"
 import { ENV } from "@pushprotocol/uiweb";
 import { IMessagePayload } from "@pushprotocol/uiweb";
 
 export const MessageBubbles = () => {
+    const { env } = useContext<any>(EnvContext);
 
     const { library, account } = useContext<any>(Web3Context)
     const [message, setMessage] = useState<IMessagePayload[]>([])
+    const [ conversationHash , setConversationHash] = useState<string>('');
 
     const librarySigner = library.getSigner()
 
@@ -19,24 +21,27 @@ export const MessageBubbles = () => {
         const pgpDecryptedPvtKey = await PUSHAPI.chat.decryptPGPKey({
             encryptedPGPPrivateKey: user.encryptedPrivateKey,
             signer: librarySigner,
-            env: ENV.STAGING
+            env: env
         })
 
         const ConversationHash = await PUSHAPI.chat.conversationHash({
-            account: account,
-            conversationId: '24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac',
-            env: ENV.STAGING
+            account: `eip155:${account}`,
+            conversationId: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
+            env: env
         });
+        setConversationHash(ConversationHash.threadHash);
+        if(ConversationHash?.threadHash){
         const chatHistory = await PUSHAPI.chat.history({
-            threadhash: ConversationHash.threadHash,
+            threadhash: conversationHash,
             account: account,
             limit: 10,
             toDecrypt: true,
             pgpPrivateKey: pgpDecryptedPvtKey ? pgpDecryptedPvtKey : undefined,
-            env: ENV.STAGING
+            env: env
         })
         setMessage(chatHistory)
         console.log(chatHistory)
+    }
     }
 
     useEffect(() => {

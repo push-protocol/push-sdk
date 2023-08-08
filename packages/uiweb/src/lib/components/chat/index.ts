@@ -1,2 +1,3 @@
 export { MessageBubble } from './MessageBubble';
-export { IMessagePayload } from './exportedTypes';
+export * from './MessageList';
+export * from './exportedTypes';
