@@ -44,7 +44,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   spaceStatus,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
-  // const { isLive } = useSpaceData();
+  const { isJoined } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
@@ -128,13 +128,15 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
                   />
                 </Item>
                 {/* COMMENTED FOR FUTURE IMPLEMENTATION */}
-                {/* <Item
-                  marginLeft={'8px'}
-                  display={'flex'}
-                  onClick={handleCloseWidget}
-                >
-                  <CloseSvg stroke="white" height="15" width="15" />
-                </Item> */}
+                {!isJoined && 
+                  <Item
+                    marginLeft={'8px'}
+                    display={'flex'}
+                    onClick={handleCloseWidget}
+                  >
+                    <CloseSvg stroke="white" height="15" width="15" />
+                  </Item>
+                }
               </Item>
             </Section>
           )}
@@ -163,13 +165,15 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
                   alt="Maximize/Minimize icon"
                 />
               </Item>
-              {/* <Item
-                marginLeft={'8px'}
-                display={'flex'}
-                onClick={handleCloseWidget}
-              >
-                <CloseSvg stroke="white" height="15" width="15" />
-              </Item> */}
+              {!isJoined &&
+                <Item
+                  marginLeft={'8px'}
+                  display={'flex'}
+                  onClick={handleCloseWidget}
+                >
+                  <CloseSvg stroke="white" height="15" width="15" />
+                </Item>
+              }
             </Item>
           )}
         </Section>
