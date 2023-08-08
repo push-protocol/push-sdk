@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import styled, { keyframes, ThemeProvider } from 'styled-components';
+import styled, { keyframes, ThemeProvider, css } from 'styled-components';
 import { Player } from '@livepeer/react';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
@@ -77,6 +77,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const [promotedListener, setPromotedListener] = useState('');
   const [showEmojiContainer, setShowEmojiContainer] = useState(false);
+  const [showPfpEmojiContainer, setShowPfpEmojiContainer] = useState(false);
   const [clickedEmoji, setClickedEmoji] = useState('');
 
   const theme = useContext(ThemeContext);
@@ -104,13 +105,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   const handleShowEmojiContainer = () => {
-    setShowEmojiContainer(!showEmojiContainer);
+    setShowEmojiContainer((prev) => !prev);
   };
 
   const handleOnClickEmoji = (emoji: any) => {
     console.log(`${emoji} clicked`);
     setClickedEmoji(emoji);
-    setShowEmojiContainer(!showEmojiContainer);
+    setShowPfpEmojiContainer(true);
+    setShowEmojiContainer((prev) => !prev);
   };
 
   useEffect(() => {
@@ -258,6 +260,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setPlayBackUrl(playBackUrl);
   }, [spaceObjectData?.spaceDescription]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setClickedEmoji('');
+      setShowPfpEmojiContainer(false);
+    }, 3000);
+  }, [clickedEmoji]);
+
   return (
     <ThemeProvider theme={theme}>
       <Item
@@ -282,15 +291,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               ?.toDataURL()
               ?.toString()}
           >
-            {clickedEmoji.length > 0 ? (
-              <PfpEmojiContainer>
+            <PfpEmojiContainer showPfpEmojiContainer={showPfpEmojiContainer}>
+              {clickedEmoji.length > 0 ? (
                 <Image
                   src={
                     EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0].src
                   }
+                  height={'20px'}
+                  width={'20px'}
                 />
-              </PfpEmojiContainer>
-            ) : null}
+              ) : null}
+            </PfpEmojiContainer>
           </LiveSpaceProfileContainer>
         )}
 
@@ -310,8 +321,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
               stream={profile?.stream}
             >
-              <PfpEmojiContainer>
-                <Image src={RaiseHand} />
+              <PfpEmojiContainer showPfpEmojiContainer={showPfpEmojiContainer}>
+                {clickedEmoji.length > 0 ? (
+                  <Image
+                    src={
+                      EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0]
+                        .src
+                    }
+                    height={'20px'}
+                    width={'20px'}
+                  />
+                ) : null}
               </PfpEmojiContainer>
             </LiveSpaceProfileContainer>
           ))}
@@ -329,8 +349,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 ?.toDataURL()
                 ?.toString()}
             >
-              <PfpEmojiContainer>
-                <Image src={RaiseHand} />
+              <PfpEmojiContainer showPfpEmojiContainer={showPfpEmojiContainer}>
+                {clickedEmoji.length > 0 ? (
+                  <Image
+                    src={
+                      EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0]
+                        .src
+                    }
+                    height={'20px'}
+                    width={'20px'}
+                  />
+                ) : null}
               </PfpEmojiContainer>
             </LiveSpaceProfileContainer>
           </div>
@@ -349,8 +378,19 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                   ?.toDataURL()
                   ?.toString()}
               >
-                <PfpEmojiContainer>
-                  <Image src={RaiseHand} />
+                <PfpEmojiContainer
+                  showPfpEmojiContainer={showPfpEmojiContainer}
+                >
+                  {clickedEmoji.length > 0 ? (
+                    <Image
+                      src={
+                        EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0]
+                          .src
+                      }
+                      height={'20px'}
+                      width={'20px'}
+                    />
+                  ) : null}
                 </PfpEmojiContainer>
               </LiveSpaceProfileContainer>
             </div>
@@ -366,8 +406,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               wallet={profile?.address}
               image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
             >
-              <PfpEmojiContainer>
-                <Image src={RaiseHand} />
+              <PfpEmojiContainer showPfpEmojiContainer={showPfpEmojiContainer}>
+                {clickedEmoji.length > 0 ? (
+                  <Image
+                    src={
+                      EMOJI.filter((emoji) => emoji.name === clickedEmoji)[0]
+                        .src
+                    }
+                    height={'20px'}
+                    width={'20px'}
+                  />
+                ) : null}
               </PfpEmojiContainer>
             </LiveSpaceProfileContainer>
           </div>
@@ -551,18 +600,62 @@ const RequestsCount = styled.div`
   font-size: 12px;
 `;
 
-const EmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
+const fadeOutAnimation = css<{
+  showEmojiContainer?: boolean;
+  showPfpEmojiContainer?: boolean;
+}>`
+  animation: ${keyframes`
+    from {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(50%);
+    }
+  `} 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+`;
+
+const EmojiContainer = styled.div<{
+  showEmojiContainer: boolean;
+}>`
   position: relative;
   bottom: -20px;
   width: 220px;
   height: 40px;
-  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   border-radius: 99px;
   border: 1px solid ${(props) => props.theme.borderColor};
   background: ${(props) => props.theme.bgColorSecondary};
+
+  animation: ${keyframes`
+    from {
+      opacity: 0;
+      transform: translateY(50%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  `} 0.3s ease-in-out;
+
+  ${(props) => (!props.showEmojiContainer ? fadeOutAnimation : '')}
+
+  & > img {
+    cursor: pointer;
+  }
+
+  & > img:hover {
+    transform: scale(1.2);
+  }
+
+  & > img:active {
+    transform: scale(1.1);
+  }
 `;
 
 const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
@@ -570,26 +663,72 @@ const SpeakerEmojiContainer = styled.div<{ showEmojiContainer: boolean }>`
   bottom: -20px;
   width: 40px;
   height: 40px;
-  display: ${(props) => (props.showEmojiContainer ? 'flex' : 'none')};
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   border-radius: 99px;
   border: 1px solid ${(props) => props.theme.borderColor};
   background: ${(props) => props.theme.bgColorSecondary};
+
+  animation: ${keyframes`
+    from {
+      opacity: 0;
+      transform: translateY(50%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  `} 0.3s ease-in-out;
+
+  ${(props) => (!props.showEmojiContainer ? fadeOutAnimation : '')}
+
+  & > img {
+    cursor: pointer;
+  }
+
+  & > img:hover {
+    transform: scale(1.2);
+  }
+
+  & > img:active {
+    transform: scale(1.1);
+  }
 `;
 
-const PfpEmojiContainer = styled.div`
+const PfpEmojiContainer = styled.div<{ showPfpEmojiContainer: boolean }>`
   position: relative;
   bottom: 32px;
   right: -24px;
   height: 32px;
   width: 32px;
+  padding: 2px;
   border-radius: 99px;
   border: 1px solid ${(props) => props.theme.borderColor};
   background: ${(props) => props.theme.bgColorSecondary};
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
+  & > img {
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+
+    &:active {
+      transform: scale(1.1);
+    }
+    animation: ${keyframes`
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    `} 0.3s ease-in-out;
+  }
+  ${(props) => (!props.showPfpEmojiContainer ? fadeOutAnimation : '')}
 `;
