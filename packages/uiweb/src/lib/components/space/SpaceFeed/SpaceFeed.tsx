@@ -12,7 +12,7 @@ import {
   useFeedScroll,
   useMySpaces,
   usePopularSpaces,
-  useSpaceRequests
+  useSpaceRequests,
 } from '../../../hooks';
 
 import { ISpacePaginationData } from '../../../context/spacesContext';
@@ -93,12 +93,15 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
 
   const handleMySpacesFilter = (spacesList: SpaceIFeeds[]) => {
     if (selectedFeedTab === FeedTabs.HostedByYou) {
-      return spacesList.filter(
-        (space: SpaceIFeeds) => isAccountsEqual(account, space.spaceInformation?.spaceCreator));
+      return spacesList.filter((space: SpaceIFeeds) =>
+        isAccountsEqual(account, space.spaceInformation?.spaceCreator)
+      );
     }
     if (selectedFeedTab === FeedTabs.ForYou) {
       return spacesList.filter(
-        (space: SpaceIFeeds) => !isAccountsEqual(account, space.spaceInformation?.spaceCreator));
+        (space: SpaceIFeeds) =>
+          !isAccountsEqual(account, space.spaceInformation?.spaceCreator)
+      );
     } else {
       return handleFilterData(spacesList);
     }
@@ -179,53 +182,57 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
         style={{
           background: theme.bgColorPrimary,
           color: theme.textColorPrimary,
-          padding: "10px",
+          padding: '10px',
         }}
       >
-      {orientation === OrientationEnums.Horizontal ? (
-        <Spaces orientation={orientation}>
-          {orientation === OrientationEnums.Horizontal
-            ? mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="pill"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })
-            : mySpaces &&
-              mySpaces.apiData?.map((space: SpaceIFeeds) => {
-                return (
-                  <SpaceBanner
-                    spaceId={space.spaceId as string}
-                    orientation="maximized"
-                    onBannerClick={
-                      onBannerClickHandler ? handleClick : undefined
-                    }
-                  />
-                );
-              })}
-        </Spaces>
-      ) : (
-        <>
-          <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
-            <NavButtonWrapper>
-              {sortingOrder.map((tabName: TabsValues) => {
-                return (
-                  <NavButton
-                    active={selectedFeedTab === FeedTabs[tabName]}
-                    onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
-                  >
-                    {FeedTabs[tabName]}
-                  </NavButton>
-                );
-              })}
-            </NavButtonWrapper>
-          </Navigation>
+        {orientation === OrientationEnums.Horizontal ? (
+          <Spaces orientation={orientation}>
+            {orientation === OrientationEnums.Horizontal
+              ? mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="pill"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })
+              : mySpaces &&
+                mySpaces.apiData?.map((space: SpaceIFeeds) => {
+                  return (
+                    <SpaceBanner
+                      spaceId={space.spaceId as string}
+                      orientation="maximized"
+                      onBannerClick={
+                        onBannerClickHandler ? handleClick : undefined
+                      }
+                    />
+                  );
+                })}
+          </Spaces>
+        ) : (
+          <>
+            <Navigation
+              showTabs={showTabs}
+              width={width}
+              showFilter={showFilter}
+            >
+              <NavButtonWrapper>
+                {sortingOrder.map((tabName: TabsValues) => {
+                  return (
+                    <NavButton
+                      active={selectedFeedTab === FeedTabs[tabName]}
+                      onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
+                    >
+                      {FeedTabs[tabName]}
+                    </NavButton>
+                  );
+                })}
+              </NavButtonWrapper>
+            </Navigation>
             <Filter showFilter={showFilter}>
               <FilterButton
                 active={filterTab === FilterEnums.All}
@@ -287,19 +294,32 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                 ) : selectedFeedTab === FeedTabs.Popular ? (
                   <PopularSpaces>
                     {popularSpaces.apiData &&
-                      handleFilterData(
-                        popularSpaces.apiData as SpaceIFeeds[]
-                      ).map((space: SpaceIFeeds) => {
-                        return (
-                          <SpaceBanner
-                            spaceId={space.spaceId as string}
-                            orientation="maximized"
-                            onBannerClick={
-                              onBannerClickHandler ? handleClick : undefined
-                            }
-                          />
-                        );
-                      })}
+                      (handleFilterData(popularSpaces.apiData as SpaceIFeeds[])
+                        .length === 0 ? (
+                        <NoSpaces>
+                          <SpacesIcon src={spacesIcon} />
+                          <NoSpacesTextV1>
+                            Step into uncharted spaces!
+                          </NoSpacesTextV1>
+                          <NoSpacesTextV2>
+                            Start a Space and let your voice be heard.
+                          </NoSpacesTextV2>
+                        </NoSpaces>
+                      ) : (
+                        handleFilterData(
+                          popularSpaces.apiData as SpaceIFeeds[]
+                        ).map((space: SpaceIFeeds) => {
+                          return (
+                            <SpaceBanner
+                              spaceId={space.spaceId as string}
+                              orientation="maximized"
+                              onBannerClick={
+                                onBannerClickHandler ? handleClick : undefined
+                              }
+                            />
+                          );
+                        })
+                      ))}
                   </PopularSpaces>
                 ) : (
                   <Spaces orientation={orientation}>
@@ -348,11 +368,25 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
   width: ${(props) => (props.width ? `${props.width}px` : 'inherit')};
   height: ${(props) => (props.height ? `${props.height}px` : 'auto')};
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    -webkit-appearance: none;
+    width: 4px;
+    height: auto;
+    background: ${(props) => props.theme.btnColorPrimary};
+    border-radius: 99px;
+  }
 `;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-right: 10px;
   background: ${(props) => props.theme.bgColorPrimary};
   border: 1px solid ${(props) => props.theme.borderColor};
   border-radius: 12px;
