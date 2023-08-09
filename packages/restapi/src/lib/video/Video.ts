@@ -75,7 +75,11 @@ export class Video {
   protected pgpPrivateKey: string;
   protected env: ENV;
   protected callType: VIDEO_CALL_TYPE;
-  protected onReceiveStream: (receivedStream: MediaStream, senderAddress: string, audio:boolean | null) => Promise<void>;
+  protected onReceiveStream: (
+    receivedStream: MediaStream,
+    senderAddress: string,
+    audio: boolean | null
+  ) => Promise<void>;
 
   // storing the peer instance
   private peerInstances: {
@@ -102,7 +106,11 @@ export class Video {
     setData: (fn: (data: VideoCallData) => VideoCallData) => void;
     env?: ENV;
     callType?: VIDEO_CALL_TYPE;
-    onReceiveStream?: (receivedStream: MediaStream, senderAddress: string, audio:boolean | null) => Promise<void>;
+    onReceiveStream?: (
+      receivedStream: MediaStream,
+      senderAddress: string,
+      audio: boolean | null
+    ) => Promise<void>;
   }) {
     this.signer = signer;
     this.chainId = chainId;
@@ -129,8 +137,6 @@ export class Video {
 
   async create(options: VideoCreateInputOptions): Promise<void> {
     const { audio = true, video = true, stream = null } = options || {};
-
-    console.log("CREATING MEDIA STREAM");
 
     try {
       const localStream =
@@ -395,7 +401,11 @@ export class Video {
               this.data.incoming,
               recipientAddress
             );
-            this.onReceiveStream(currentStream, recipientAddress, this.data.incoming[incomingIndex].audio)
+            this.onReceiveStream(
+              currentStream,
+              recipientAddress,
+              this.data.incoming[incomingIndex].audio
+            );
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 draft.incoming[incomingIndex].stream = currentStream;
@@ -694,7 +704,11 @@ export class Video {
             this.data.incoming,
             recipientAddress
           );
-          this.onReceiveStream(currentStream, recipientAddress, this.data.incoming[incomingIndex].audio);
+          this.onReceiveStream(
+            currentStream,
+            recipientAddress,
+            this.data.incoming[incomingIndex].audio
+          );
           this.setData((oldData) => {
             return produce(oldData, (draft) => {
               draft.incoming[incomingIndex].stream = currentStream;
@@ -708,23 +722,38 @@ export class Video {
   }
 
   connect(options: VideoConnectInputOptions): void {
-    const { signalData, peerAddress } = options || {};
+    const { peerAddress, signalData } = options || {};
 
     try {
-      console.log('connect', 'options', options);
+      console.log(
+        'connect',
+        'options',
+        options,
+        'default',
+        this.data.incoming[0].address
+      );
+
+      if (!peerAddress) {
+        console.warn('disconnect requires a peer address');
+      }
 
       // setup error handler
-      this.peerInstances[peerAddress].on('error', (err: any) => {
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[0].address
+      ].on('error', (err: any) => {
         console.log('error in connect', err);
 
-        const incomingIndex = getIncomingIndexFromAddress(
-          this.data.incoming,
-          peerAddress
-        );
+        const incomingIndex = peerAddress
+          ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
+          : 0;
 
         if (this.data.incoming[incomingIndex].retryCount >= 5) {
           console.log('Max retries exceeded, please try again.');
-          this.disconnect({ peerAddress });
+          this.disconnect({
+            peerAddress: peerAddress
+              ? peerAddress
+              : this.data.incoming[0].address,
+          });
         }
 
         // retrying in case of connection error
@@ -736,15 +765,16 @@ export class Video {
         });
       });
 
-      this.peerInstances[peerAddress]?.signal(signalData);
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[0].address
+      ]?.signal(signalData);
 
       // set videoCallInfo state with status connected for the caller's end
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
-          const incomingIndex = getIncomingIndexFromAddress(
-            oldData.incoming,
-            peerAddress
-          );
+          const incomingIndex = peerAddress
+            ? getIncomingIndexFromAddress(oldData.incoming, peerAddress)
+            : 0;
           draft.incoming[incomingIndex].status = VideoCallStatus.CONNECTED;
         });
       });
@@ -757,12 +787,20 @@ export class Video {
     const { peerAddress, details } = options || {};
 
     try {
-      console.log("DISCONNECT OPTIONS", options);
-
-      const incomingIndex = getIncomingIndexFromAddress(
-        this.data.incoming,
-        peerAddress
+      console.log(
+        'DISCONNECT OPTIONS',
+        options,
+        'default',
+        this.data.incoming[0].address
       );
+
+      if (!options?.peerAddress) {
+        console.warn('disconnect requires a peer address');
+      }
+
+      const incomingIndex = peerAddress
+        ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
+        : 0;
 
       console.log(
         'disconnect',
@@ -774,10 +812,12 @@ export class Video {
       if (
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
       ) {
-        this.peerInstances[peerAddress]?.send(
-          JSON.stringify({ type: 'endCall', value: true, details })
-        );
-        this.peerInstances[peerAddress]?.destroy();
+        this.peerInstances[
+          peerAddress ? peerAddress : this.data.incoming[0].address
+        ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
+        this.peerInstances[
+          peerAddress ? peerAddress : this.data.incoming[0].address
+        ]?.destroy();
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
@@ -801,8 +841,12 @@ export class Video {
       }
 
       // destroy the peerInstance
-      this.peerInstances[peerAddress]?.destroy();
-      this.peerInstances[peerAddress] = null;
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[0].address
+      ]?.destroy();
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[0].address
+      ] = null;
 
       // destroy the local stream
       if (this.data.local.stream) {
