@@ -5,6 +5,11 @@ import {
 } from '../payloads/constants';
 import type Space from './Space';
 import { addSpeakers } from './addSpeakers';
+import { produce } from 'immer';
+import { META_ACTION } from '../types/metaTypes';
+import getLiveSpaceData from './helpers/getLiveSpaceData';
+import sendLiveSpaceData from './helpers/sendLiveSpaceData';
+import { AdminPeer, ListenerPeer } from '../types';
 
 export interface AcceptPromotionRequestType {
   signalData: any;
@@ -32,6 +37,37 @@ export async function acceptPromotionRequest(
     pgpPrivateKey: this.pgpPrivateKey,
     speakers: [pCAIP10ToWallet(promoteeAddress)],
     env: this.env
+  });
+
+  const oldLiveSpaceData = await getLiveSpaceData({
+    localAddress: this.data.local.address,
+    pgpPrivateKey: this.pgpPrivateKey,
+    env: this.env,
+    spaceId: this.spaceSpecificData.spaceId,
+  });
+
+  const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
+    const listnerIndex = draft.listeners.findIndex((listner) => listner.address === pCAIP10ToWallet(promoteeAddress));
+    if (listnerIndex > -1) draft.listeners[listnerIndex].handRaised = false;
+
+    draft.listeners.splice(listnerIndex, 1);
+
+    const promotedListener: AdminPeer = {
+      address: draft.listeners[listnerIndex].address,
+      emojiReactions: draft.listeners[listnerIndex].emojiReactions,
+      audio: true,
+    }
+
+    draft.speakers.push(promotedListener);
+  });
+
+  await sendLiveSpaceData({
+    liveSpaceData: updatedLiveSpaceData,
+    pgpPrivateKey: this.pgpPrivateKey,
+    env: this.env,
+    spaceId: this.spaceSpecificData.spaceId,
+    signer: this.signer,
+    action: META_ACTION.USER_INTERACTION,
   });
 
   // accept the promotion request
