@@ -126,9 +126,6 @@ export const usePushChatSocket = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, env]);
 
-  useEffect(() => {
-  }, [isPushChatSocketConnected]);
-
   return {
     pushChatSocket,
     isPushChatSocketConnected,

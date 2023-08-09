@@ -11,3 +11,11 @@ export interface TwitterFeedReturnType {
 }
 
 export type IMessagePayload = IMessageIPFS;
+
+export const CHAT_THEME_OPTIONS = {
+  LIGHT: 'light',
+  DARK: 'dark',
+
+} as const;
+
+export type ChatThemeOptions = (typeof CHAT_THEME_OPTIONS)[keyof typeof CHAT_THEME_OPTIONS];
