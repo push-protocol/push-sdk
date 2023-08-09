@@ -2,17 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { IMessageContainerProps } from '../exportedTypes';
 
 import styled from 'styled-components';
-import { Section, Span } from '../../reusables';
+import { Div, Section, Span, Spinner } from '../../reusables';
 import { MessageList } from '../MessageList';
 import { chatLimit } from '../../../config';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import { IFeeds } from '@pushprotocol/restapi';
+import { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { EncryptionIcon } from '../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../icons/NoEncryption';
 import { checkIfIntent } from '../../../helpers';
+import { TickSvg } from '../../../icons/Tick';
+import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 
 const EncryptionMessageContent = {
   ENCRYPTED: {
@@ -62,10 +64,12 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
   } = options || {};
 
   const { account, pgpPrivateKey } = useChatData();
-  const [chatFeed, setChatFeed] = useState<IFeeds>();
+  const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [conversationHash, setConversationHash] = useState<string>();
   const { fetchChat } = useFetchChat();
   const { fetchConversationHash } = useFetchConversationHash();
+  const { approveChatRequest, loading: approveLoading } =
+    useApproveChatRequest();
   const theme = useContext(ThemeContext);
 
   useEffect(() => {
@@ -74,11 +78,34 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       const chat = await fetchChat({ chatId });
       const hash = await fetchConversationHash({ conversationId: chatId });
       setConversationHash(hash?.threadHash);
+      if(chat)
       setChatFeed(chat);
     })();
   }, [chatId, pgpPrivateKey, account]);
   console.log(chatFeed);
   console.log(checkIfIntent({ chat: chatFeed as IFeeds, account: account! }));
+
+  const handleApproveChatRequest = async () => {
+    try {
+      if (!pgpPrivateKey) {
+        return;
+      }
+      const response = await approveChatRequest({
+        chatId,
+      });
+      if (response) {
+        console.log(response);
+          let updatedChatFeed = { ...chatFeed as IFeeds};
+          updatedChatFeed.intent = response;
+     
+          setChatFeed(updatedChatFeed);
+  
+      }
+    } catch (error_: Error | any) {
+      console.log(error_.message);
+    }
+  };
+
   return (
     <Section
       width="100%"
@@ -106,16 +133,15 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
           )}
           <Section
             flex="1 1 auto"
-            overflow="auto"
+            overflow="hidden"
             margin="0 0px 10px 0px"
             flexDirection="column"
           >
             <MessageList limit={limit} conversationHash={conversationHash} />
             {checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
               <Section
-             
-              color={theme.textColorPrimary}
-                gap="5px"
+                color={theme.textColorPrimary}
+                gap="20px"
                 background={theme.receiverBgColor}
                 padding="8px 12px"
                 margin="7px 0"
@@ -125,7 +151,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
                 maxWidth="68%"
                 minWidth="15%"
                 position="relative"
-                flexDirection="column"
+                flexDirection="row"
               >
                 <Span
                   alignSelf="center"
@@ -135,9 +161,17 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
                   color="#000"
                   lineHeight="24px"
                 >
-                 Please accept to enable push chat from this wallet
+                  Please accept to enable push chat from this wallet
                 </Span>
-               
+                <Div
+                width='auto'
+                cursor='pointer'
+                  onClick={() =>
+                    !approveLoading ? handleApproveChatRequest() : null
+                  }
+                >
+                  {approveLoading ? <Spinner /> : <TickSvg />}
+                </Div>
               </Section>
             )}
           </Section>
