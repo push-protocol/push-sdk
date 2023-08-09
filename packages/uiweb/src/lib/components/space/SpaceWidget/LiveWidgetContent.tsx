@@ -58,7 +58,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter(
+    (listener: any) => listener.handRaised
+  ).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -84,7 +86,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    if (
+      !spaceObjectData?.connectionData?.local?.stream ||
+      promotedListener.length === 0
+    )
       return;
 
     const options = {
@@ -344,13 +349,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {
-                  isHost && numberOfRequests ?
-                  <RequestsCount>
-                    { numberOfRequests }
-                  </RequestsCount>
-                  : null
-                }
+                {isHost && numberOfRequests ? (
+                  <RequestsCount>{numberOfRequests}</RequestsCount>
+                ) : null}
                 <Image
                   width={'21px'}
                   height={'24px'}
@@ -378,7 +379,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 borderRadius={'12px'}
                 onClick={isHost ? handleEndSpace : handleLeaveSpace}
               >
-                {!isHost ? 'Leave' : 'End space'}
+                {isLoading ? (
+                  <CircularProgressSpinner />
+                ) : !isHost ? (
+                  'Leave'
+                ) : (
+                  'End space'
+                )}
               </Button>
             </Item>
             {isListener && !isHost && playBackUrl.length > 0 && (

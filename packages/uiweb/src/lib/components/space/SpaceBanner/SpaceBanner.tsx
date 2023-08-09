@@ -9,13 +9,11 @@ import { getDateAndTime } from '../helpers/date';
 import { getSpaceStatus } from '../helpers/space';
 import { ParticipantContainer } from '../reusables/ParticipantContainer';
 import { HostPfpContainer } from '../reusables';
+import CircularProgressSpinner from '../../loader/loader';
 
 import live from './../../../icons/live.svg';
 import { Scheduled } from '../../../icons/scheduled';
-import {
-  useGetSpaceInfo,
-  useSpaceData,
-} from './../../../hooks';
+import { useGetSpaceInfo, useSpaceData } from './../../../hooks';
 
 export interface ISpaceBannerProps {
   spaceId: string;
@@ -45,6 +43,7 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
 }) => {
   const theme = React.useContext(ThemeContext);
   const spaceData = useGetSpaceInfo(spaceId);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const {
     spacesObjectRef,
@@ -66,9 +65,11 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
   };
 
   const handleJoinSpace = async () => {
+    setIsLoading(true);
     await initSpaceObject(spaceData?.spaceId as string);
     actionCallback();
     setSpaceWidgetId(spaceData?.spaceId as string);
+    setIsLoading(false);
   };
 
   // Check if the spaceData is not available, show the skeleton loading effect
@@ -126,10 +127,12 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
         </Status>
         {isInvite === true && spaceStatus === 'Live' ? (
           <InviteButton status="Live" onClick={handleJoinSpace}>
-            Join this space
+            {isLoading ? <CircularProgressSpinner /> : 'Join this Space'}
           </InviteButton>
         ) : isInvite === true && spaceStatus === 'Scheduled' ? (
-          <InviteButton status="Scheduled">Remind Me</InviteButton>
+          <InviteButton status="Scheduled">
+            {isLoading ? <CircularProgressSpinner /> : 'Remind Me'}
+          </InviteButton>
         ) : null}
       </Container>
     </ThemeProvider>

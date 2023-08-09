@@ -382,7 +382,7 @@ const ScrollContainer = styled.div<{ height?: number; width?: number }>`
 
   &::-webkit-scrollbar-thumb {
     -webkit-appearance: none;
-    width: 4px;
+    width: 8px;
     height: auto;
     background: ${(props) => props.theme.btnColorPrimary};
     border-radius: 99px;
