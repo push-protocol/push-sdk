@@ -202,7 +202,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
             </Text>
           </Button>
         )}
-        {!isHost && !isMember && (
+        {/* {!isHost && !isMember && (
           <Button
             padding={'9px 34px'}
             borderRadius={'8px'}
@@ -214,7 +214,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
               Remind Me
             </Text>
           </Button>
-        )}
+        )} */}
         {!isHost && isMember && (
           <Button
             padding={'9px 12px'}
