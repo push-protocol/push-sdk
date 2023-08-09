@@ -11,6 +11,7 @@ export interface IChatTheme {
   accentBgColor?: string;
   accentTextColor?: string;
   btnColorPrimary?: string;
+  chatBubbleAccentBgColor?:string;
   border?: string;
   borderRadius?: string;
   iconColorPrimary?: string;
@@ -25,6 +26,7 @@ export const lightChatTheme: IChatTheme = {
     'linear-gradient(179.97deg, #EEF5FF 0.02%, #ECE9FA 123.25%)',
   textColorPrimary: '#000',
   textColorSecondary: 'rgb(101, 119, 149)',
+  chatBubbleAccentBgColor: 'rgb(202, 89, 155)',
   accentBgColor: 'rgb(202, 89, 155)',
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
@@ -39,6 +41,7 @@ export const darkChatTheme: IChatTheme = {
   bgColorSecondary: 'rgb(40, 42, 46)',
   textColorPrimary: '#fff',
   textColorSecondary: 'rgb(182, 188, 214)',
+  chatBubbleAccentBgColor: 'rgb(202, 89, 155)',
   accentBgColor: 'rgb(202, 89, 155)',
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
