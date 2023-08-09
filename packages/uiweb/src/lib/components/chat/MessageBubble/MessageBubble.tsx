@@ -72,7 +72,7 @@ const MessageCard = ({
                 }
                 <Section
                     gap="5px"
-                    background={position ? `${theme.accentBgColor}` : `${theme.receiverBgColor}`}
+                    background={position ? `${theme.accentBgColor}` : `${theme.chatBubblePrimaryBgColor}`}
                     padding="8px 12px"
                     borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     margin="5px 0"
