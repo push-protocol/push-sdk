@@ -323,7 +323,8 @@ export const getEip712Signature = async (
     _signer,
     isDomainEmpty ? {} : domain,
     typeInformation,
-    { data: hash }
+    { data: hash },
+    'Data'
   );
   const verificationProof = isDomainEmpty
     ? `${SIG_TYPE_V2}:${signedMessage}`

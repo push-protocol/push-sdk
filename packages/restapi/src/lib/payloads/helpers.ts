@@ -252,7 +252,13 @@ export async function getVerificationProof({
         chainId: chainId,
         verifyingContract: verifyingContract,
       };
-      const signature = await signTypedData(signer, domain, type, message);
+      const signature = await signTypedData(
+        signer,
+        domain,
+        type,
+        message,
+        'Data'
+      );
       verificationProof = `eip712v2:${signature}::uid::${uuid}`;
       break;
     }

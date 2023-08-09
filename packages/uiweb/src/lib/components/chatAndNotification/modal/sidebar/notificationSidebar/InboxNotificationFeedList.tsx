@@ -11,7 +11,7 @@ import { Spinner } from '../../../../reusables/Spinner';
 
 import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
-import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
+import useFetchNotification from '../../../../../hooks/chatAndNotification/notifications/useFetchNotification';
 import type {
   NotificationFeedsType, ParsedNotificationType} from '../../../../../types';
 import {

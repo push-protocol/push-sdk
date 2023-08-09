@@ -2,10 +2,10 @@
 import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import type { ChatFeedsType} from '../..';
-import { Constants } from '../..';
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
-import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
+import type { ChatFeedsType} from '../../../';
+import { Constants } from '../../../';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../context';
+import type { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
 
 
 interface fetchRequests {

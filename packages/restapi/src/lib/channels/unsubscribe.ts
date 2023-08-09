@@ -70,7 +70,7 @@ export const unsubscribe = async (
     );
 
     // sign a message using EIP712
-    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation);
+    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation, "Unsubscribe");
 
     const verificationProof = signature; // might change
 
