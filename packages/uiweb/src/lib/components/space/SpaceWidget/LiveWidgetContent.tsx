@@ -235,6 +235,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                     isHost={isHost}
                     isSpeaker={isSpeaker}
                     wallet={spaceObjectData?.connectionData?.local?.address}
+                    mic={spaceObjectData?.connectionData?.local?.audio}
                     image={createBlockie?.(
                       spaceObjectData?.connectionData?.local?.address
                     )
@@ -259,6 +260,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                           profile?.address !==
                           pCAIP10ToWallet(spaceObjectData?.spaceCreator)
                         }
+                        mic={profile?.audio}
                         wallet={profile?.address}
                         image={createBlockie?.(profile?.address)
                           ?.toDataURL()
@@ -275,6 +277,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                     isHost={true}
                     isSpeaker={false}
                     wallet={spaceObjectData?.liveSpaceData.host?.address}
+                    mic={spaceObjectData?.liveSpaceData.host?.audio}
                     image={createBlockie?.(
                       spaceObjectData?.liveSpaceData?.host?.address
                     )
@@ -293,6 +296,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                       isHost={false}
                       isSpeaker={true}
                       wallet={profile?.address}
+                      mic={profile?.audio}
                       image={createBlockie?.(profile?.address)
                         ?.toDataURL()
                         ?.toString()}

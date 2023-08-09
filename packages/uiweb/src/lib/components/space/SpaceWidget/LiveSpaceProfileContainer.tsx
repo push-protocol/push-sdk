@@ -4,6 +4,7 @@ import { Image, Item, Text } from '../../../config';
 
 import HandIcon from '../../../icons/hand.svg';
 import MicOffIcon from '../../../icons/micoff.svg';
+import MicOnIcon from '../../../icons/micon.svg';
 import { VideoPlayer } from './VideoPlayer';
 
 import styled, { ThemeProvider, keyframes } from 'styled-components';
@@ -17,7 +18,7 @@ export interface ILiveSpaceProfileContainerProps {
   isSpeaker?: boolean;
   image: string;
   requested?: boolean;
-  mic?: boolean;
+  mic?: boolean | null;
   stream?: IMediaStream;
 }
 
@@ -31,7 +32,7 @@ export const LiveSpaceProfileContainer = (
     isSpeaker,
     image,
     requested = false,
-    mic = true,
+    mic = null,
     stream,
   } = options || {};
 
@@ -115,10 +116,18 @@ export const LiveSpaceProfileContainer = (
             <Text fontSize={'14px'} color={`${theme.textColorSecondary}`}>
               {isHost ? 'Host' : isSpeaker ? 'Speaker' : 'Listener'}
             </Text>
-            {!mic && (
+            {mic === false && (
               <Image
                 src={MicOffIcon}
                 alt="Mic Off Icon"
+                height={'15px'}
+                width={'15px'}
+              />
+            )}
+            {mic && (
+              <Image
+                src={MicOnIcon}
+                alt="Mic On Icon"
                 height={'15px'}
                 width={'15px'}
               />
