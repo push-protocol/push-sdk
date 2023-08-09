@@ -70,6 +70,7 @@ import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ChatWidgetTest } from './ChatWidgetTest';
 import {
+  CHAT_THEME_OPTIONS,
   ChatUIProvider,
   SpacesUI,
   SpacesUIProvider,
@@ -302,7 +303,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={ENV.STAGING} theme={CHAT_THEME_OPTIONS.LIGHT}>
+                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={ENV.STAGING} theme={CHAT_THEME_OPTIONS.DARK}>
                 <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                   <Routes>
                     <Route
