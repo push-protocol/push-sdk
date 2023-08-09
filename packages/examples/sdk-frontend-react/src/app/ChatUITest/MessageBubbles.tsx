@@ -18,7 +18,7 @@ export const MessageBubbles = () => {
         const user = await PUSHAPI.user.get({
             account: account
         })
-        const pgpDecryptedPvtKey = await PUSHAPI.chat.decryptPGPKey({
+        const pgpPrivateKey = await PUSHAPI.chat.decryptPGPKey({
             encryptedPGPPrivateKey: user.encryptedPrivateKey,
             signer: librarySigner,
             env: env
@@ -26,7 +26,7 @@ export const MessageBubbles = () => {
 
         const ConversationHash = await PUSHAPI.chat.conversationHash({
             account: `eip155:${account}`,
-            conversationId: 'eip155:0xEDF59F183584107B20e2c95189A4423224bba8F2',
+            conversationId: '24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac',
             env: env
         });
         setConversationHash(ConversationHash.threadHash);
@@ -36,7 +36,7 @@ export const MessageBubbles = () => {
             account: account,
             limit: 10,
             toDecrypt: true,
-            pgpPrivateKey: pgpDecryptedPvtKey ? pgpDecryptedPvtKey : undefined,
+            pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
             env: env
         })
         setMessage(chatHistory)
