@@ -12,9 +12,18 @@ import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet } from '../..
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { IChatTheme } from '../theme';
 
 
 
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
+    theme?: IChatTheme;
+    
+  }
 
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
@@ -36,7 +45,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       if (!Object.keys(messages || {}).length) {
         setMessages({
           messages: messagesSinceLastConnection,
-          lastThreadHash: messages!.lastThreadHash,
+          lastThreadHash: messagesSinceLastConnection.lastThreadHash,
         });
       } else {
         const newMessageList = appendUniqueMessages(messages as Messagetype,[messagesSinceLastConnection],false);
@@ -47,6 +56,7 @@ export const MessageList: React.FC<IMessageListProps> = (
         
         });
       }
+      scrollToBottom(null);
     }
   }, [messagesSinceLastConnection]);
 
@@ -145,18 +155,21 @@ export const MessageList: React.FC<IMessageListProps> = (
       </Span>
     );
   };
-
   return (
-    <Section
+    <MessageListCard
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
+      width='100%'
       justifyContent="start"
+      padding='0 2px'
+      theme={theme}
+    //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
       {loading ? <Spinner /> : ''}
 
-      <MessageListCard
+      <Section
         flexDirection="column"
         justifyContent="start"
         width="100%"
@@ -178,13 +191,22 @@ export const MessageList: React.FC<IMessageListProps> = (
           );
         })}
         <div ref={bottomRef} />
-      </MessageListCard>
-    </Section>
+      </Section>
+    </MessageListCard>
   );
 };
 
 //styles
-const MessageListCard = styled(Section)``;
+const MessageListCard = styled(Section)<IThemeProps>`
+&::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.accentBgColor};
+    border-radius: 10px;
+  }
 
-//pagination scroll issue left
-//socket
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+`;
+
+

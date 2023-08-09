@@ -5,6 +5,14 @@ export interface IMessageListProps {
     limit?: number;
   }
 
+  export interface IMessageContainerProps {
+    typebar?: boolean;
+    messageList?: boolean;
+    profile?: boolean; //name needs to change
+    chatId:string; //need confirmation on this
+    limit?:number;
+  }
+
 export interface TwitterFeedReturnType {
     tweetId: string;
     messageType: string;

@@ -79,6 +79,7 @@ import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';
 import { MessageBubbles } from './ChatUITest/MessageBubbles';
 import { ChatThemeOptions } from '@pushprotocol/uiweb';
+import MessageContainerTest from './ChatUITest/MessageContainer';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -209,7 +210,6 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-
   const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [isCAIP, setIsCAIP] = useState(false);
 
@@ -303,7 +303,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={ENV.STAGING} theme={CHAT_THEME_OPTIONS.DARK}>
+                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={env} theme={CHAT_THEME_OPTIONS.LIGHT}>
                 <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                   <Routes>
                     <Route
@@ -489,6 +489,10 @@ export function App() {
                        <Route
                         path="messageList"
                         element={<MessageListTest />}
+                      />
+                       <Route
+                        path="messageContainer"
+                        element={<MessageContainerTest />}
                       />
                   </Routes>
                   {/* <ChatWidgetTest/> */}

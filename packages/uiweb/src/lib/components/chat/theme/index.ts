@@ -17,6 +17,7 @@ export interface IChatTheme {
     fontFamily?: string;
     receiverBgColor?: string;
   }
+  //chatBubblePrimaryBgColor
   
   export const lightTheme: IChatTheme  = {
     bgColorPrimary:'#fff',
