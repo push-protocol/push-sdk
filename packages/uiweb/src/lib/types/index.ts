@@ -84,7 +84,7 @@ export const PUSH_TABS = {
   APP_NOTIFICATIONS: 'APP_NOTIFICATIONS'
 } as const;
 
-export const CHAT_SOCKET_TYPE = {
+export const SOCKET_TYPE = {
   CHAT: 'chat',
   NOTIFICATION: 'notification'
 } as const;
@@ -110,7 +110,7 @@ export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typ
 export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
 export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
 export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
-export type ChatSocketType = (typeof CHAT_SOCKET_TYPE)[keyof typeof CHAT_SOCKET_TYPE];
+export type SocketType = (typeof SOCKET_TYPE)[keyof typeof SOCKET_TYPE];
 
 export interface FileMessageContent {
   content: string
@@ -118,3 +118,4 @@ export interface FileMessageContent {
   type: string
   size: number
 }
+export type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };

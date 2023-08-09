@@ -1,8 +1,8 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { Constants } from '../../config';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { Constants } from '../../../config';
+import { ChatAndNotificationPropsContext } from '../../../context';
 
 
 interface fetchChat {

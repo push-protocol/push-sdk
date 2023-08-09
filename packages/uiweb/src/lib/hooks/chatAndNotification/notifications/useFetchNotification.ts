@@ -1,9 +1,9 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import type { ParsedResponseType} from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatAndNotificationPropsContext } from '../../context';
-import { ParsedNotificationType } from '../../types';
-import { convertReponseToParsedArray } from '../../helpers/notification';
+import { ChatAndNotificationPropsContext } from '../../../context';
+import { ParsedNotificationType } from '../../../types';
+import { convertReponseToParsedArray } from '../../../helpers/notification';
 
 
 interface fetchNotification {

@@ -1,10 +1,10 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import type { ENV } from '../../config';
 import { Constants } from '../../config';
-import type { AccountEnvOptionsType, IMessageIPFS } from '../../types';
+import type { AccountEnvOptionsType, IMessageIPFS, Messagetype } from '../../types';
 import { ChatFeedsType } from '../../types';
 import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
-import { walletToPCAIP10 } from '../address';
+import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getData } from './localStorage';
 
 type HandleOnChatIconClickProps = {
@@ -182,3 +182,33 @@ export const checkIfUnread = (chatId:string,chat:IFeeds):boolean => {
   return false;
 }
 
+
+export const getChatId = ({
+  msg,
+  account,
+}: {
+  msg: IMessageIPFS;
+  account: string;
+}) => {
+  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
+    return msg.toDID;
+  }
+  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+};
+
+export const appendUniqueMessages = (parentList:Messagetype,newlist:IMessageIPFS[],infront:boolean) =>{
+  const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
+  const appendedArray = infront?[...newlist, ...parentList.messages]:[ ...parentList.messages,...newlist];
+  const newMessageList = Object.values(
+    appendedArray.reduce(
+      (uniqueMap, message) => {
+        if (message.timestamp && !uniqueMap[message.timestamp]) {
+          uniqueMap[message.timestamp] = message;
+        }
+        return uniqueMap;
+      },
+      uniqueMap
+    )
+  );
+  return newMessageList
+}
