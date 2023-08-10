@@ -26,7 +26,7 @@ describe('Create Push Profile with Profile update', () => {
   });
 
  
-  it.only('Push Profile V3', async () => {
+  it('Push Profile V3', async () => {
     const name = 'John';
     const desc = 'He is web3 dev'
     const picture =  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvUlEQVR4AcXBsa3CMBiF0Y+rFNarM0Jqi1EoU2QIj+IxPACTuGYEBnAH7Q+FI/SKe87lflxfGAkzYSbMFr7kMoh6TUTb2ph5PHeiXAZRr4lImAkzYbbkMoh6TUTb2vjFtjaiXneiXAaRMBNmwmzhxN9xI+o1MZPL4ENNzAgzYSbMFk70mohyGcz0mviFMBNmwmzhxLY2Pt2Y2dZG9HjuzAgzYSbMLvfj+mIil8F/9JqYEWbCTJgJM2EmzITZG0wkJb/EapQdAAAAAElFTkSuQmCC',

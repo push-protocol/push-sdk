@@ -37,16 +37,12 @@ export const createUserWithProfile = async (
         signer: userOptions.signer,
       });
 
-      const progressInfo: ProgressHookType[] = [];
-      const updateProgressInfo = (info: ProgressHookType) => {
-        progressInfo.push(info);
-      };
+
       user = await profileUpdate({
         account: user.did,
         env: userOptions.env,
         pgpPrivateKey: pk,
-        profile: userOptions.profile,
-        progressHook: updateProgressInfo,
+        profile: userOptions.profile
       });
     }
     return user;
