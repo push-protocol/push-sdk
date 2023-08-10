@@ -2,7 +2,7 @@ import { useClickAway, useDeviceWidthCheck } from "../../../hooks";
 import type { FileMessageContent } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import { GIFType, TypeBarProps } from "../exportedTypes";
+import { GIFType, IChatTheme, TypeBarProps } from "../exportedTypes";
 import styled from "styled-components";
 import { PUBLIC_GOOGLE_TOKEN, device } from "../../../config";
 import { Section, Div } from "../../reusables";
@@ -13,9 +13,19 @@ import { GifIcon } from "../../../icons/Gif";
 import GifPicker from "gif-picker-react";
 import { AttachmentIcon } from "../../../icons/Attachment";
 import usePushSendMessage from "./usePushSendMessage";
-import { SendIcon } from "../../../icons/Send";
+import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
+
+
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
+    theme?: IChatTheme;
+
+}
 
 export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, GIF = true, File = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
@@ -126,7 +136,6 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
         setGifOpen(false);
     }
 
-
     return (
         <Container theme={theme}>
             <TypebarSection
@@ -135,7 +144,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                 borderWidth="1px"
                 borderRadius="8px"
                 padding="12px 17px 15px 17px"
-                background="#fff"
+                background={`${theme.bgColorPrimary}`}
                 alignItems="center"
                 justifyContent="space-between"
             >
@@ -165,6 +174,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                         </Section>
                     )}
                     <MultiLineInput
+                        theme={theme}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter' && !event.shiftKey) {
                                 event.preventDefault();
@@ -230,13 +240,13 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             height="24px"
                             onClick={() => sendTextMsg()}
                         >
-                            <SendIcon />
+                            <SendCompIcon color={theme.accentBgColor} />
                         </Section>
                     )}
 
                     {(loading || fileUploading) && (
                         <Section alignSelf="end" height="24px">
-                            <Spinner size="22" />
+                            <Spinner color={theme.accentBgColor} size="22" />
                         </Section>
                     )}
                 </SendSection>
@@ -263,7 +273,7 @@ const SendSection = styled(Section)`
     gap: 7.5px;
   }
 `;
-const MultiLineInput = styled.textarea`
+const MultiLineInput = styled.textarea<IThemeProps>`
   font-family: inherit;
   font-weight: 400;
   transform: translateY(3px);
@@ -272,7 +282,7 @@ const MultiLineInput = styled.textarea`
   overflow-y: auto;
   box-sizing: border-box;
   border: none;
-  color: #000;
+  color: ${(props) => props.theme.textColorPrimary};
   resize: none;
   flex: 1;
   padding-right: 5px;
