@@ -9,18 +9,49 @@ import {
 } from 'unique-names-generator';
 import { ENV } from '../types';
 import { config } from '../config';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { createWalletClient, http } from 'viem';
+import { goerli } from 'viem/chains';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
 
+/***************** SAMPLE SIGNER GENERATION *********************/
+/**
+ * USING VIEM
+ */
 // Random Wallet Signers
-const signer = ethers.Wallet.createRandom();
-const signerSecondAccount = ethers.Wallet.createRandom();
-
+const signer = createWalletClient({
+  account: privateKeyToAccount(generatePrivateKey()),
+  chain: goerli,
+  transport: http(),
+});
+const signerAddress = signer.account.address;
+const secondSigner = createWalletClient({
+  account: privateKeyToAccount(generatePrivateKey()),
+  chain: goerli,
+  transport: http(),
+});
+const secondSignerAddress = secondSigner.account.address;
 // Dummy Wallet Addresses
-const randomWallet1 = ethers.Wallet.createRandom().address;
-const randomWallet2 = ethers.Wallet.createRandom().address;
-const randomWallet3 = ethers.Wallet.createRandom().address;
+const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
+const randomWallet2 = privateKeyToAccount(generatePrivateKey()).address;
+const randomWallet3 = privateKeyToAccount(generatePrivateKey()).address;
+
+/**
+ * USING ETHERS
+ */
+// // Random Wallet Signers
+// const signer = ethers.Wallet.createRandom();
+// const signerAddress = signer.address;
+// const secondSigner = ethers.Wallet.createRandom();
+// const secondSignerAddress = secondSigner.address;
+// // Dummy Wallet Addresses
+// const randomWallet1 = ethers.Wallet.createRandom().address;
+// const randomWallet2 = ethers.Wallet.createRandom().address;
+// const randomWallet3 = ethers.Wallet.createRandom().address;
+
+/************************************************************* */
 
 // Group Chat Data
 const groupName = uniqueNamesGenerator({
@@ -101,7 +132,7 @@ async function PushAPI_user_create(silent = !showAPIResponse) {
   });
 
   const user_2 = await PushAPI.user.create({
-    signer: signerSecondAccount,
+    signer: secondSigner,
     env: env as ENV,
   });
 
@@ -117,7 +148,7 @@ async function PushAPI_user_create(silent = !showAPIResponse) {
 // Push Chat - PushAPI.user.get
 async function PushAPI_user_get(silent = !showAPIResponse) {
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -132,7 +163,7 @@ async function PushAPI_user_get(silent = !showAPIResponse) {
 async function PushAPI_chat_decryptPGPKey(silent = !showAPIResponse) {
   // get user and derive encrypted PGP key
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -153,7 +184,7 @@ async function PushAPI_chat_decryptPGPKey(silent = !showAPIResponse) {
 async function PushAPI_chat_chats(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -166,7 +197,7 @@ async function PushAPI_chat_chats(silent = !showAPIResponse) {
 
   // Actual api
   const response = await PushAPI.chat.chats({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     toDecrypt: true,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
     env: env as ENV,
@@ -182,7 +213,7 @@ async function PushAPI_chat_chats(silent = !showAPIResponse) {
 async function PushAPI_chat_requests(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -195,7 +226,7 @@ async function PushAPI_chat_requests(silent = !showAPIResponse) {
 
   // Actual api
   const response = await PushAPI.chat.requests({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     toDecrypt: true,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
     env: env as ENV,
@@ -211,8 +242,8 @@ async function PushAPI_chat_requests(silent = !showAPIResponse) {
 async function PushAPI_chat_conversationHash(silent = !showAPIResponse) {
   // conversation hash are also called link inside chat messages
   const conversationHash = await PushAPI.chat.conversationHash({
-    account: `eip155:${signer.address}`,
-    conversationId: `eip155:${signerSecondAccount.address}`, // 2nd address
+    account: `eip155:${signerAddress}`,
+    conversationId: `eip155:${secondSignerAddress}`, // 2nd address
     env: env as ENV,
   });
 
@@ -226,7 +257,7 @@ async function PushAPI_chat_conversationHash(silent = !showAPIResponse) {
 async function PushAPI_chat_latest(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -240,15 +271,15 @@ async function PushAPI_chat_latest(silent = !showAPIResponse) {
   // Fetch conversation hash
   // conversation hash are also called link inside chat messages
   const conversationHash = await PushAPI.chat.conversationHash({
-    account: `eip155:${signer.address}`,
-    conversationId: `eip155:${signerSecondAccount.address}`, // 2nd address
+    account: `eip155:${signerAddress}`,
+    conversationId: `eip155:${secondSignerAddress}`, // 2nd address
     env: env as ENV,
   });
 
   // Actual API
   const response = await PushAPI.chat.latest({
     threadhash: conversationHash.threadHash, // get conversation hash from conversationHash function and send the response threadhash here
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     toDecrypt: true,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
     env: env as ENV,
@@ -264,7 +295,7 @@ async function PushAPI_chat_latest(silent = !showAPIResponse) {
 async function PushAPI_chat_history(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -278,15 +309,15 @@ async function PushAPI_chat_history(silent = !showAPIResponse) {
   // Fetch conversation hash
   // conversation hash are also called link inside chat messages
   const conversationHash = await PushAPI.chat.conversationHash({
-    account: `eip155:${signer.address}`,
-    conversationId: `eip155:${signerSecondAccount.address}`, // 2nd address
+    account: `eip155:${signerAddress}`,
+    conversationId: `eip155:${secondSignerAddress}`, // 2nd address
     env: env as ENV,
   });
 
   // Actual API
   const response = await PushAPI.chat.history({
     threadhash: conversationHash.threadHash, // get conversation hash from conversationHash function and send the response threadhash here
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     limit: 5,
     toDecrypt: true,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -304,7 +335,7 @@ async function PushAPI_chat_history(silent = !showAPIResponse) {
 async function PushAPI_chat_send(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -321,7 +352,7 @@ async function PushAPI_chat_send(silent = !showAPIResponse) {
       content: "Gm gm! It's me... Mario",
     },
     messageType: 'Text', // can be "Text" | "Image" | "File" | "GIF"
-    receiverAddress: signerSecondAccount.address,
+    receiverAddress: secondSignerAddress,
 
     signer: signer,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -339,7 +370,7 @@ async function PushAPI_chat_send(silent = !showAPIResponse) {
 async function PushAPI_chat_approve(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signerSecondAccount.address}`,
+    account: `eip155:${secondSignerAddress}`,
     env: env as ENV,
   });
 
@@ -347,15 +378,15 @@ async function PushAPI_chat_approve(silent = !showAPIResponse) {
   const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
 
-    signer: signerSecondAccount,
+    signer: secondSigner,
   });
 
   // Actual api
   const approve = await PushAPI.chat.approve({
     status: 'Approved',
-    senderAddress: signer.address, // receiver's address or chatId of a group
+    senderAddress: signerAddress, // receiver's address or chatId of a group
 
-    signer: signerSecondAccount,
+    signer: secondSigner,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
     env: env as ENV,
   });
@@ -372,7 +403,7 @@ async function PushAPI_chat_createGroup(
 ): Promise<string> {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -412,7 +443,7 @@ async function PushAPI_chat_updateGroup(
 ) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -435,10 +466,10 @@ async function PushAPI_chat_updateGroup(
       `eip155:${randomWallet1}`,
       `eip155:${randomWallet2}`,
       `eip155:${randomWallet3}`,
-      `eip155:${signer.address}`,
+      `eip155:${signerAddress}`,
     ],
     groupImage,
-    admins: [`eip155:${signer.address}`], // takes signer as admin automatically, add more if you want to
+    admins: [`eip155:${signerAddress}`], // takes signer as admin automatically, add more if you want to
 
     signer: signer,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -484,7 +515,7 @@ async function PushAPI_chat_getGroup(
 async function PushAPI_chat_decryptConversation(silent = !showAPIResponse) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     env: env as ENV,
   });
 
@@ -498,15 +529,15 @@ async function PushAPI_chat_decryptConversation(silent = !showAPIResponse) {
   // Fetch conversation hash
   // conversation hash are also called link inside chat messages
   const conversationHash = await PushAPI.chat.conversationHash({
-    account: `eip155:${signer.address}`,
-    conversationId: `eip155:${signerSecondAccount.address}`, // 2nd address
+    account: `eip155:${signerAddress}`,
+    conversationId: `eip155:${secondSignerAddress}`, // 2nd address
     env: env as ENV,
   });
 
   // Chat History
   const encryptedChats = await PushAPI.chat.history({
     threadhash: conversationHash.threadHash, // get conversation hash from conversationHash function and send the response threadhash here
-    account: `eip155:${signer.address}`,
+    account: `eip155:${signerAddress}`,
     limit: 5,
     toDecrypt: false,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
@@ -530,7 +561,7 @@ async function PushAPI_chat_decryptConversation(silent = !showAPIResponse) {
 // Push Chat - Socket Connection
 async function PushChatSDKSocket(silent = !showAPIResponse) {
   const pushSDKSocket = createSocketConnection({
-    user: `eip155:${signer.address}`,
+    user: `eip155:${signerAddress}`,
     socketType: 'chat',
     socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
     env: env as ENV,
@@ -546,7 +577,7 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
     // send a chat from other wallet to this one to see the result
     // Fetch user
     const user = await PushAPI.user.get({
-      account: `eip155:${signerSecondAccount.address}`,
+      account: `eip155:${secondSignerAddress}`,
       env: env as ENV,
     });
 
@@ -554,16 +585,16 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
     const pgpDecrpyptedPvtKey = await PushAPI.chat.decryptPGPKey({
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
 
-      signer: signerSecondAccount,
+      signer: secondSigner,
     });
 
     // Actual api
     const response = await PushAPI.chat.send({
       messageContent: "Gm gm! It's me... Mario",
       messageType: 'Text',
-      receiverAddress: `eip155:${signer.address}`,
+      receiverAddress: `eip155:${signerAddress}`,
 
-      signer: signerSecondAccount,
+      signer: secondSigner,
       pgpPrivateKey: pgpDecrpyptedPvtKey,
       env: env as ENV,
     });
@@ -596,7 +627,7 @@ async function PushAPI_chat_video_call_notification(
 ) {
   // Fetch user
   const user = await PushAPI.user.get({
-    account: signer.address,
+    account: signerAddress,
     env: env as ENV,
   });
 
@@ -628,8 +659,8 @@ async function PushAPI_chat_video_call_notification(
         domain: 'push.org',
       },
     },
-    recipients: signerSecondAccount.address, // recipient address
-    channel: signer.address, // your channel address
+    recipients: secondSignerAddress, // recipient address
+    channel: signerAddress, // your channel address
     env: env as ENV,
   });
 

@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -469,10 +469,38 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = ethers.Signer & {
-  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
+type ethersV5SignerType = {
+  _signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getChainId: () => Promise<number>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Bytes | string) => Promise<string>;
   privateKey?: string;
+  provider?: providers.Provider;
 };
+type viemSignerType = {
+  signTypedData: (args: {
+    account: any;
+    domain: any;
+    types: any;
+    primaryType: any;
+    message: any;
+  }) => Promise<`0x${string}`>;
+  getChainId: () => Promise<number>;
+  signMessage: (args: {
+    message: any;
+    account: any;
+    [key: string]: any;
+  }) => Promise<`0x${string}`>;
+  account: { [key: string]: any };
+  privateKey?: string;
+  provider?: providers.Provider;
+};
+
+export type SignerType = ethersV5SignerType | viemSignerType;
 
 export type EnvOptionsType = {
   env?: ENV;
@@ -621,7 +649,7 @@ export type VideoAcceptRequestInputOptions = {
 
 export type VideoConnectInputOptions = {
   signalData: any;
-  peerAddress: string;
+  peerAddress?: string;
 };
 
 export type VideoDisconnectOptions = {
@@ -630,7 +658,7 @@ export type VideoDisconnectOptions = {
     type: SPACE_DISCONNECT_TYPE;
     data: Record<string, unknown>;
   };
-};
+} | null;
 
 export type EnableVideoInputOptions = {
   state: boolean;

@@ -2024,26 +2024,27 @@ export interface IUser {
 }
 ```
 
-| Parameter | Description |
-| --- | --- |
-| `did` | user decentralized identity |
-| `wallets` | all wallets associated to the did |
-| `profilePicture` | user chat profile picture. As of now i cannot be changed |
-| `publicKey` | PGP public key |
-| `encryptedPrivateKey` | encrypted private PGP key |
-| `encryptionType` | encryption type used to encrypt the private key |
-| `signature` | user payload signature used when creating a user |
-| `sigType` | signature type used when creating a user |
-| `about` | short user description |
-| `name` | user name |
-| `encryptedPassword` | encrypted password used to encrypt the private key for NFT chat |
-| `nftOwner` | NFT owner address |
-| `numMsg` | number of messages sent by the user |
-| `allowedNumMsg` | number of messages allowed to be sent by the user |
-| `linkedListHash` | cid from all messages this user has sent |
-| `nfts` | array of NFTs owned by the user |
+| Parameter             | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `did`                 | user decentralized identity                                     |
+| `wallets`             | all wallets associated to the did                               |
+| `profilePicture`      | user chat profile picture. As of now i cannot be changed        |
+| `publicKey`           | PGP public key                                                  |
+| `encryptedPrivateKey` | encrypted private PGP key                                       |
+| `encryptionType`      | encryption type used to encrypt the private key                 |
+| `signature`           | user payload signature used when creating a user                |
+| `sigType`             | signature type used when creating a user                        |
+| `about`               | short user description                                          |
+| `name`                | user name                                                       |
+| `encryptedPassword`   | encrypted password used to encrypt the private key for NFT chat |
+| `nftOwner`            | NFT owner address                                               |
+| `numMsg`              | number of messages sent by the user                             |
+| `allowedNumMsg`       | number of messages allowed to be sent by the user               |
+| `linkedListHash`      | cid from all messages this user has sent                        |
+| `nfts`                | array of NFTs owned by the user                                 |
 
 Example response:
+
 ```typescript
 // PushAPI_user_get | Response - 200 OK
 {
@@ -4138,6 +4139,7 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress?: string;
 };
 
 connect(options: VideoConnectInputOptions): void {}
@@ -4147,6 +4149,7 @@ Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | signalData_ | any | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
+| peerAddress | string | data.incoming[0].address | Address of the receiver peer, received via push notification upon call acceptRequest |
 
 ---
 
@@ -4156,13 +4159,17 @@ Allowed Options (params with _ are mandatory)
 - Can be triggered on the initiator as well as receivers end.
 
 ```typescript
-disconnect(): void {}
+export type VideoDisconnectOptions = {
+  peerAddress: string;
+} | null;
+
+disconnect(options: VideoDisconnectOptions): void {}
 ```
 
 Allowed Options (params with \* are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| - | - | - | - |
+| peerAddress | string | data.incoming[0].address | Address of the peer to be disconnected from |
 
 ---
 
@@ -4569,6 +4576,7 @@ Allowed Options (params with _ are mandatory)
 ---
 
 ### **To get space details by spaceId**
+
 ```typescript
 const response = await PushAPI.space.get({
   spaceId:
@@ -4934,21 +4942,19 @@ Allowed Options (params with _ are mandatory)
 
 ---
 
-
 ### **To add listeners to space**
 
 ```typescript
 const response = await PushAPI.space.addListeners({
-      spaceId,
-      listeners: [
-        `eip155:0x65585D8D2475194A26C0B187e6bED494E5D68d5F`,
-        `eip155:0xE99F29C1b2A658a478E7766D5A2bB28322326C45`,
-      ],   
-      signer: signer,
-      pgpPrivateKey: pgpDecrpyptedPvtKey,
-      env: env as ENV,
-    });
-
+  spaceId,
+  listeners: [
+    `eip155:0x65585D8D2475194A26C0B187e6bED494E5D68d5F`,
+    `eip155:0xE99F29C1b2A658a478E7766D5A2bB28322326C45`,
+  ],
+  signer: signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
 ```
 
 Allowed Options (params with _ are mandatory)
@@ -5091,16 +5097,15 @@ Allowed Options (params with _ are mandatory)
 
 ```typescript
 const response = await PushAPI.space.removeListeners({
-      spaceId,
-      listeners: [
-        `eip155:0xB12869BD3a0F9109222D67ba71e8b109B46908f9`,
-        `eip155:0x2E3af36E1aC6EEEA2C0d59E43Be1926aBB9eE0BD`,
-      ],   
-      signer: signer,
-      pgpPrivateKey: pgpDecrpyptedPvtKey,
-      env: env as ENV,
-    });
-
+  spaceId,
+  listeners: [
+    `eip155:0xB12869BD3a0F9109222D67ba71e8b109B46908f9`,
+    `eip155:0x2E3af36E1aC6EEEA2C0d59E43Be1926aBB9eE0BD`,
+  ],
+  signer: signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
 ```
 
 Allowed Options (params with _ are mandatory)
@@ -5221,21 +5226,19 @@ Allowed Options (params with _ are mandatory)
 
 ---
 
-
 ### **To add speakers to space**
 
 ```typescript
 const response = await PushAPI.space.addSpeakers({
-      spaceId,
-      listeners: [
-        `eip155:0x65585D8D2475194A26C0B187e6bED494E5D68d5F`,
-        `eip155:0xE99F29C1b2A658a478E7766D5A2bB28322326C45`,
-      ],   
-      signer: signer,
-      pgpPrivateKey: pgpDecrpyptedPvtKey,
-      env: env as ENV,
-    });
-
+  spaceId,
+  listeners: [
+    `eip155:0x65585D8D2475194A26C0B187e6bED494E5D68d5F`,
+    `eip155:0xE99F29C1b2A658a478E7766D5A2bB28322326C45`,
+  ],
+  signer: signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
 ```
 
 Allowed Options (params with _ are mandatory)
@@ -5374,21 +5377,19 @@ Allowed Options (params with _ are mandatory)
 
 ---
 
-
 ### **To remove speakers from space**
 
 ```typescript
 const response = await PushAPI.space.removeSpeakers({
-      spaceId,
-      speakers: [
-        `eip155:0xB12869BD3a0F9109222D67ba71e8b109B46908f9`,
-        `eip155:0x2E3af36E1aC6EEEA2C0d59E43Be1926aBB9eE0BD`,
-      ],   
-      signer: signer,
-      pgpPrivateKey: pgpDecrpyptedPvtKey,
-      env: env as ENV,
-    });
-
+  spaceId,
+  speakers: [
+    `eip155:0xB12869BD3a0F9109222D67ba71e8b109B46908f9`,
+    `eip155:0x2E3af36E1aC6EEEA2C0d59E43Be1926aBB9eE0BD`,
+  ],
+  signer: signer,
+  pgpPrivateKey: pgpDecrpyptedPvtKey,
+  env: env as ENV,
+});
 ```
 
 Allowed Options (params with _ are mandatory)
@@ -5586,19 +5587,21 @@ const spaces = await PushAPI.space.spaces({
 // PushAPI_space_spaces | Response - 200 OK
 // Array of spaces
 [
-  
   {
-    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    spaceId:
+      'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
     about: null,
     did: null,
-    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intent:
+      'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
     intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     intentTimestamp: '2023-07-12T01:11:32.000Z',
     publicKey: null,
     profilePicture: null,
     threadhash: null,
     wallets: null,
-    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    combinedDID:
+      'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     name: null,
     spaceInformation: {
       members: [Array],
@@ -5607,7 +5610,8 @@ const spaces = await PushAPI.space.spaces({
       numberOfERC20: 0,
       contractAddressNFT: null,
       numberOfNFTTokens: 0,
-      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+      verificationProof:
+        'pgp:-----BEGIN PGP SIGNATURE-----\n' +
         '\n' +
         'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
         'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
@@ -5618,15 +5622,17 @@ const spaces = await PushAPI.space.spaces({
         'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
         '=sLLC\n' +
         '-----END PGP SIGNATURE-----\n',
-      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceImage:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
       spaceName: 'statutory_amber_roadrunner',
       isPublic: true,
       spaceDescription: 'continued_bronze_pigeon',
       spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
-      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      spaceId:
+        'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
       scheduleAt: '2023-07-12T06:51:32.000Z',
       scheduleEnd: '2023-07-12T07:41:32.000Z',
-      status: 'PENDING'
+      status: 'PENDING',
     },
     msg: {
       fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
@@ -5670,33 +5676,31 @@ const spaces = await PushAPI.space.spaces({
         '=kzUH\n' +
         '-----END PGP MESSAGE-----\n',
       link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
-    }
-  }
- 
-]
+    },
+  },
+];
 ```
 
-| Parameter        | Type           | Description                                                                                                                     |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| msg              | `IMessageIPFS` | message object                                                                                                                  |
-| did              | `string`       | user DID                                                                                                                        |
-| wallets          | `string`       | user wallets                                                                                                                    |
-| profilePicture   | `string`       | user profile picture                                                                                                            |
-| publicKey        | `string`       | user public key                                                                                                                 |
-| about            | `string`       | user description                                                                                                                |
-| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
-| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
-| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
-| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
-| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
-| cid              | `string`       | content identifier on IPFS                                                                                                      |
-| spaceId          | `string`       | space identifier                                                                                                                |
-| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
+| Parameter        | Type           | Description                                                        |
+| ---------------- | -------------- | ------------------------------------------------------------------ |
+| msg              | `IMessageIPFS` | message object                                                     |
+| did              | `string`       | user DID                                                           |
+| wallets          | `string`       | user wallets                                                       |
+| profilePicture   | `string`       | user profile picture                                               |
+| publicKey        | `string`       | user public key                                                    |
+| about            | `string`       | user description                                                   |
+| threadhash       | `string`       | cid from the latest message sent on this conversation              |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent |
+| intentSentBy     | `string`       | address of the user who sent the intent                            |
+| intentTimestamp  | `number`       | timestamp of the intent                                            |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                |
+| cid              | `string`       | content identifier on IPFS                                         |
+| spaceId          | `string`       | space identifier                                                   |
+| spaceInformation | `SpaceDTO`     | all space information                                              |
 
 </details>
 
 ---
-
 
 ### **Fetching list of user space requests**
 
@@ -5775,19 +5779,21 @@ const spaces = await PushAPI.space.requests({
 // PushAPI_space_requests | Response - 200 OK
 // Array of spaces
 [
-  
   {
-    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    spaceId:
+      'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
     about: null,
     did: null,
-    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intent:
+      'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
     intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     intentTimestamp: '2023-07-12T01:11:32.000Z',
     publicKey: null,
     profilePicture: null,
     threadhash: null,
     wallets: null,
-    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    combinedDID:
+      'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     name: null,
     spaceInformation: {
       members: [Array],
@@ -5796,7 +5802,8 @@ const spaces = await PushAPI.space.requests({
       numberOfERC20: 0,
       contractAddressNFT: null,
       numberOfNFTTokens: 0,
-      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+      verificationProof:
+        'pgp:-----BEGIN PGP SIGNATURE-----\n' +
         '\n' +
         'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
         'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
@@ -5807,15 +5814,17 @@ const spaces = await PushAPI.space.requests({
         'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
         '=sLLC\n' +
         '-----END PGP SIGNATURE-----\n',
-      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceImage:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
       spaceName: 'statutory_amber_roadrunner',
       isPublic: true,
       spaceDescription: 'continued_bronze_pigeon',
       spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
-      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      spaceId:
+        'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
       scheduleAt: '2023-07-12T06:51:32.000Z',
       scheduleEnd: '2023-07-12T07:41:32.000Z',
-      status: 'PENDING'
+      status: 'PENDING',
     },
     msg: {
       fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
@@ -5859,28 +5868,27 @@ const spaces = await PushAPI.space.requests({
         '=kzUH\n' +
         '-----END PGP MESSAGE-----\n',
       link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
-    }
-  }
- 
-]
+    },
+  },
+];
 ```
 
-| Parameter        | Type           | Description                                                                                                                     |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| msg              | `IMessageIPFS` | message object                                                                                                                  |
-| did              | `string`       | user DID                                                                                                                        |
-| wallets          | `string`       | user wallets                                                                                                                    |
-| profilePicture   | `string`       | user profile picture                                                                                                            |
-| publicKey        | `string`       | user public key                                                                                                                 |
-| about            | `string`       | user description                                                                                                                |
-| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
-| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
-| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
-| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
-| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
-| cid              | `string`       | content identifier on IPFS                                                                                                      |
-| spaceId          | `string`       | space identifier                                                                                                                |
-| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
+| Parameter        | Type           | Description                                                        |
+| ---------------- | -------------- | ------------------------------------------------------------------ |
+| msg              | `IMessageIPFS` | message object                                                     |
+| did              | `string`       | user DID                                                           |
+| wallets          | `string`       | user wallets                                                       |
+| profilePicture   | `string`       | user profile picture                                               |
+| publicKey        | `string`       | user public key                                                    |
+| about            | `string`       | user description                                                   |
+| threadhash       | `string`       | cid from the latest message sent on this conversation              |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent |
+| intentSentBy     | `string`       | address of the user who sent the intent                            |
+| intentTimestamp  | `number`       | timestamp of the intent                                            |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                |
+| cid              | `string`       | content identifier on IPFS                                         |
+| spaceId          | `string`       | space identifier                                                   |
+| spaceInformation | `SpaceDTO`     | all space information                                              |
 
 </details>
 
@@ -5894,12 +5902,11 @@ const spaces = await PushAPI.space.trending({
 });
 ```
 
-| Param         | Type    | Default | Remarks                                                                |
-| ------------- | ------- | ------- | ---------------------------------------------------------------------- |
-| env           | string  | 'prod'  | API env - 'prod', 'staging', 'dev'                                     |
-| page | number | 1 | page index of the results |
-| limit | number | 10 | number of items in 1 page |
-
+| Param | Type   | Default | Remarks                            |
+| ----- | ------ | ------- | ---------------------------------- |
+| env   | string | 'prod'  | API env - 'prod', 'staging', 'dev' |
+| page  | number | 1       | page index of the results          |
+| limit | number | 10      | number of items in 1 page          |
 
 <details>
 
@@ -5909,19 +5916,21 @@ const spaces = await PushAPI.space.trending({
 // PushAPI_space_trending | Response - 200 OK
 // Array of spaces
 [
-  
   {
-    spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+    spaceId:
+      'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
     about: null,
     did: null,
-    intent: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
+    intent:
+      'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A+eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868',
     intentSentBy: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     intentTimestamp: '2023-07-12T01:11:32.000Z',
     publicKey: null,
     profilePicture: null,
     threadhash: null,
     wallets: null,
-    combinedDID: 'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
+    combinedDID:
+      'eip155:0x12E429E3672a02E385F9f5F75E932cC1D566EEea_eip155:0x49D407CC9D0e966CD9B22BA40685083B49bd2315_eip155:0xF8aBe92d1d0706bF60509F8E9A64Ed6b8520E868_eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
     name: null,
     spaceInformation: {
       members: [Array],
@@ -5930,7 +5939,8 @@ const spaces = await PushAPI.space.trending({
       numberOfERC20: 0,
       contractAddressNFT: null,
       numberOfNFTTokens: 0,
-      verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+      verificationProof:
+        'pgp:-----BEGIN PGP SIGNATURE-----\n' +
         '\n' +
         'wsBzBAEBCAAnBYJkrksbCZA3GHnYNke0AhYhBNp+D95LDfs4yU03LzcYedg2\n' +
         'R7QCAACRdAf9ELAnCLXfBiAVdbgwj81xr+w9Yzw2wXLLrPLfYY7EXfyChLzQ\n' +
@@ -5941,15 +5951,17 @@ const spaces = await PushAPI.space.trending({
         'fUKhUejvOjNFxf0QuR+E4xs+Q3zvR1+fXdJBxbH2Fp3kOTN1N9/LEw==\n' +
         '=sLLC\n' +
         '-----END PGP SIGNATURE-----\n',
-      spaceImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      spaceImage:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
       spaceName: 'statutory_amber_roadrunner',
       isPublic: true,
       spaceDescription: 'continued_bronze_pigeon',
       spaceCreator: 'eip155:0xf4c946D6bd5cF09713D27364bbEd42712Bdffa8A',
-      spaceId: 'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
+      spaceId:
+        'spaces:3aa43087b8c55ed9c534dd1d0a086a3340b0d829cda0a13592651cb59f284838',
       scheduleAt: '2023-07-12T06:51:32.000Z',
       scheduleEnd: '2023-07-12T07:41:32.000Z',
-      status: 'PENDING'
+      status: 'PENDING',
     },
     msg: {
       fromCAIP10: 'eip155:0x1615d2D9ae82D5F0eE79298899962b237386feB7',
@@ -5993,28 +6005,27 @@ const spaces = await PushAPI.space.trending({
         '=kzUH\n' +
         '-----END PGP MESSAGE-----\n',
       link: 'bafyreib34jgnpp573rwquejcq5avxvydis7fbykat6dd5z7uazobucoumm',
-    }
-  }
- 
-]
+    },
+  },
+];
 ```
 
-| Parameter        | Type           | Description                                                                                                                     |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| msg              | `IMessageIPFS` | message object                                                                                                                  |
-| did              | `string`       | user DID                                                                                                                        |
-| wallets          | `string`       | user wallets                                                                                                                    |
-| profilePicture   | `string`       | user profile picture                                                                                                            |
-| publicKey        | `string`       | user public key                                                                                                                 |
-| about            | `string`       | user description                                                                                                                |
-| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
-| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
-| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
-| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
-| combinedDID      | `string`       | concatenated addresses of the members of this space                                                                             |
-| cid              | `string`       | content identifier on IPFS                                                                                                      |
-| spaceId          | `string`       | space identifier                                                                                                               |
-| spaceInformation | `SpaceDTO`     | all space information                                                                                                           |
+| Parameter        | Type           | Description                                                        |
+| ---------------- | -------------- | ------------------------------------------------------------------ |
+| msg              | `IMessageIPFS` | message object                                                     |
+| did              | `string`       | user DID                                                           |
+| wallets          | `string`       | user wallets                                                       |
+| profilePicture   | `string`       | user profile picture                                               |
+| publicKey        | `string`       | user public key                                                    |
+| about            | `string`       | user description                                                   |
+| threadhash       | `string`       | cid from the latest message sent on this conversation              |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent |
+| intentSentBy     | `string`       | address of the user who sent the intent                            |
+| intentTimestamp  | `number`       | timestamp of the intent                                            |
+| combinedDID      | `string`       | concatenated addresses of the members of this space                |
+| cid              | `string`       | content identifier on IPFS                                         |
+| spaceId          | `string`       | space identifier                                                   |
+| spaceInformation | `SpaceDTO`     | all space information                                              |
 
 </details>
 
