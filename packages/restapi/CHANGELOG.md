@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.6...restapi-1.4.7) (2023-08-10)
+
+
+### Bug Fixes
+
+* allow to create empty groups just with group creator. ([#607](https://github.com/ethereum-push-notification-service/push-sdk/issues/607)) ([7d14e24](https://github.com/ethereum-push-notification-service/push-sdk/commit/7d14e248626422cf079e4b99dbdfa3ce6cd796da))
+* CreateUserPropsWithProfile ([#612](https://github.com/ethereum-push-notification-service/push-sdk/issues/612)) ([32125b5](https://github.com/ethereum-push-notification-service/push-sdk/commit/32125b5408b45e8a51ba9a16acc1250fc56decae))
+* deprecation notice ([#581](https://github.com/ethereum-push-notification-service/push-sdk/issues/581)) ([6cd4b1e](https://github.com/ethereum-push-notification-service/push-sdk/commit/6cd4b1ea8626849a5f78588a21ac66db2bd293df))
+
+
+
 ## [1.4.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.5...restapi-1.4.6) (2023-08-09)
 
 
