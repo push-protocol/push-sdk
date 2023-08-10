@@ -1,15 +1,17 @@
+import { produce } from 'immer';
+
+import type Space from './Space';
+import { addSpeakers } from './addSpeakers';
+import getLiveSpaceData from './helpers/getLiveSpaceData';
+import sendLiveSpaceData from './helpers/sendLiveSpaceData';
+
 import { pCAIP10ToWallet } from '../helpers';
 import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
-import type Space from './Space';
-import { addSpeakers } from './addSpeakers';
-import { produce } from 'immer';
 import { META_ACTION } from '../types/metaTypes';
-import getLiveSpaceData from './helpers/getLiveSpaceData';
-import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { AdminPeer, ListenerPeer } from '../types';
+import { AdminPeer } from '../types';
 
 export interface AcceptPromotionRequestType {
   signalData: any;
@@ -39,6 +41,7 @@ export async function acceptPromotionRequest(
     env: this.env
   });
 
+  // get old live space data
   const oldLiveSpaceData = await getLiveSpaceData({
     localAddress: this.data.local.address,
     pgpPrivateKey: this.pgpPrivateKey,
@@ -46,18 +49,22 @@ export async function acceptPromotionRequest(
     spaceId: this.spaceSpecificData.spaceId,
   });
 
+  // update the metamessage
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
     const listnerIndex = draft.listeners.findIndex((listner) => listner.address === pCAIP10ToWallet(promoteeAddress));
     if (listnerIndex >   -1) draft.listeners[listnerIndex].handRaised = false;
 
+    // convert listener to speaker type (ListenerPeer -> AdminPeer)
     const promotedListener: AdminPeer = {
       address: draft.listeners[listnerIndex].address,
       emojiReactions: draft.listeners[listnerIndex].emojiReactions,
       audio: true,
     }
 
+    // remove listener from speaker array
     draft.listeners.splice(listnerIndex, 1);
 
+    // add listener to speaker array
     draft.speakers.push(promotedListener);
   });
 

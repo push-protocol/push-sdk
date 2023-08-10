@@ -35,7 +35,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   isHost,
   setSpaceStatusState,
 }) => {
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:37 ~ spaceData:", spaceData)
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,7 +56,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:59 ~ spaceObjectData:", spaceObjectData)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
