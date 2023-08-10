@@ -2,27 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-## [0.0.1-alpha.28](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.27...restapi-0.0.1-alpha.28) (2023-08-02)
+## [1.4.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.5...restapi-1.4.6) (2023-08-09)
 
 
 ### Bug Fixes
 
-* add: scw sig verification ([#593](https://github.com/ethereum-push-notification-service/push-sdk/issues/593)) ([6768065](https://github.com/ethereum-push-notification-service/push-sdk/commit/67680657981a847e23a4dbad6d2fd6a7bc127743))
-* Merge branch 'alpha' into alpha-deployment ([6c19940](https://github.com/ethereum-push-notification-service/push-sdk/commit/6c19940b4d72d9443b8afd06ddc2a6f9e29582a7))
-* merged main ([c5533f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c5533f8dce7b88cb1f14aa72f83579a8e01dcf36))
+* Merge branch 'main' into deployment ([75fbda5](https://github.com/ethereum-push-notification-service/push-sdk/commit/75fbda5fdaf152f40758cb62ebc2dca4890f0340))
+* **sdk-frontend:** comment out spaces UI to remove build issues ([#618](https://github.com/ethereum-push-notification-service/push-sdk/issues/618)) ([769c20d](https://github.com/ethereum-push-notification-service/push-sdk/commit/769c20d5eb42b758277e57699793b8e76deeab94))
 
 
 
-## [0.0.1-alpha.27](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.26...restapi-0.0.1-alpha.27) (2023-07-24)
+## [1.4.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.4...restapi-1.4.5) (2023-08-04)
 
 
 ### Bug Fixes
 
-* merge alpha ([16a55af](https://github.com/ethereum-push-notification-service/push-sdk/commit/16a55af713da0394ab9d82e13fed6d64190b247d))
-* Merge branch 'alpha' into alpha-deployment ([6ea669a](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ea669a5aa3cebe693de259c1ea28787c0407d2a))
-* signer compatibility with viem ([3df201c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3df201c7474b88d270d6e868bc516f223539e74c))
-* signer compatibility with viem and ethers ([1edea43](https://github.com/ethereum-push-notification-service/push-sdk/commit/1edea431ccf7f19cc0430deb2ce7a5c61390d99f))
-* signer compatibility with viem and ethers ([#567](https://github.com/ethereum-push-notification-service/push-sdk/issues/567)) ([c07c3fa](https://github.com/ethereum-push-notification-service/push-sdk/commit/c07c3fab76a095998b1eac830c941116ad1e9b4f))
+* merge main ([b9e4440](https://github.com/ethereum-push-notification-service/push-sdk/commit/b9e44408fa4c97720b12217486e8d13ef3caeb00))
+
+
+
+## [1.4.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.3...restapi-1.4.4) (2023-07-27)
 
 
 
