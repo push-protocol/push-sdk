@@ -1,8 +1,8 @@
 import { useClickAway, useDeviceWidthCheck } from "../../../hooks";
 import type { FileMessageContent } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { TypeBarProps } from "../exportedTypes";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import { GIFType, TypeBarProps } from "../exportedTypes";
 import styled from "styled-components";
 import { PUBLIC_GOOGLE_TOKEN, device } from "../../../config";
 import { Section, Div } from "../../reusables";
@@ -12,6 +12,10 @@ import * as PUSHAPI from "@pushprotocol/restapi";
 import { GifIcon } from "../../../icons/Gif";
 import GifPicker from "gif-picker-react";
 import { AttachmentIcon } from "../../../icons/Attachment";
+import usePushSendMessage from "./usePushSendMessage";
+import { SendIcon } from "../../../icons/Send";
+import { Spinner } from "../../reusables";
+import { ThemeContext } from "../theme/ThemeProvider";
 
 export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, GIF = true, File = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
@@ -24,7 +28,9 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
     const onChangeTypedMessage = (val: string) => {
         if (val.trim() !== '') setTypedMessage(val);
     };
+    const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
+    const { sendMessage, loading } = usePushSendMessage();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -85,7 +91,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             size: file.size,
                         };
 
-                        // sendPushMessage(JSON.stringify(fileMessageContent), messageType);
+                        sendPushMessage(JSON.stringify(fileMessageContent), messageType);
                     };
                 } catch (err) {
                     console.log(err);
@@ -96,9 +102,33 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
         }
     };
 
+    const sendPushMessage = async (content: string, type: string) => {
+        try {
+            await sendMessage({
+                message: content,
+                receiver: conversationId,
+                messageType: type as any,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const sendTextMsg = async () => {
+        if (typedMessage.trim() !== '') {
+            await sendPushMessage(typedMessage as string, 'Text');
+            setTypedMessage('');
+        }
+    }
+
+    const sendGIF = async (emojiObject: GIFType) => {
+        sendPushMessage(emojiObject.url as string, 'GIF');
+        setGifOpen(false);
+    }
+
 
     return (
-        <Container>
+        <Container theme={theme}>
             <TypebarSection
                 borderColor="#DDDDDF"
                 borderStyle="solid"
@@ -138,7 +168,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                         onKeyDown={(event) => {
                             if (event.key === 'Enter' && !event.shiftKey) {
                                 event.preventDefault();
-                                console.log('enter pressed');
+                                sendTextMsg();
                             }
                         }}
                         placeholder="Type your message..."
@@ -166,7 +196,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             right={isMobile ? '5rem' : '8rem'}
                             ref={modalRef}>
                             <GifPicker
-                                onGifClick={() => console.log("Yoo booi")}
+                                onGifClick={sendGIF}
                                 width={isMobile ? 260 : 320}
                                 height={370}
                                 tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
@@ -193,6 +223,22 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             </>
                         )}
                     </Section>
+                    {!(loading || fileUploading) && (
+                        <Section
+                            cursor="pointer"
+                            alignSelf="end"
+                            height="24px"
+                            onClick={() => sendTextMsg()}
+                        >
+                            <SendIcon />
+                        </Section>
+                    )}
+
+                    {(loading || fileUploading) && (
+                        <Section alignSelf="end" height="24px">
+                            <Spinner size="22" />
+                        </Section>
+                    )}
                 </SendSection>
             </TypebarSection>
         </Container>
