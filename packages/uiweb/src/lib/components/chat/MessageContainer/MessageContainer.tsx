@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Div, Section, Span, Spinner } from '../../reusables';
 import { MessageList } from '../MessageList';
 import { chatLimit } from '../../../config';
-import { useChatData, usePushChatSocket } from '../../../hooks';
+import { useDeviceWidthCheck, usePushChatSocket } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
@@ -15,6 +15,9 @@ import { NoEncryptionIcon } from '../../../icons/NoEncryption';
 import { checkIfIntent } from '../../../helpers';
 import { TickSvg } from '../../../icons/Tick';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
+import { useChatData } from '../../../hooks/chat/useChatData';
+
+
 
 const EncryptionMessageContent = {
   ENCRYPTED: {
@@ -28,6 +31,7 @@ const EncryptionMessageContent = {
 };
 const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
   const theme = useContext(ThemeContext);
+  const isMobile = useDeviceWidthCheck(771);
   return (
     <Section
       padding="10px"
@@ -36,7 +40,7 @@ const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
       borderRadius="12px"
       background={theme.bgColorPrimary}
       margin="10px 10px 0px"
-      width="fit-content"
+      width={isMobile?'80%':'70%'}
     >
       {EncryptionMessageContent[id].IconComponent}
 
@@ -68,9 +72,15 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
   const [conversationHash, setConversationHash] = useState<string>();
   const { fetchChat } = useFetchChat();
   const { fetchConversationHash } = useFetchConversationHash();
+
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
   const theme = useContext(ThemeContext);
+  const { groupInformationSinceLastConnection } = usePushChatSocket();
+  const ApproveRequestText = {
+    GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,
+    W2W: ` Please accept to enable push chat from this wallet`
+  }
 
   useEffect(() => {
     (async () => {
@@ -80,10 +90,26 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       setConversationHash(hash?.threadHash);
       if(chat)
       setChatFeed(chat);
+      // else{
+       
+      // }
     })();
   }, [chatId, pgpPrivateKey, account]);
-  console.log(chatFeed);
-  console.log(checkIfIntent({ chat: chatFeed as IFeeds, account: account! }));
+ 
+
+ 
+  useEffect(() => {
+    if (
+      Object.keys(groupInformationSinceLastConnection || {}).length 
+    )
+    {
+      if(chatFeed?.groupInformation?.chatId === groupInformationSinceLastConnection.chatId){
+        const updateChatFeed = chatFeed;
+        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
+        setChatFeed(updateChatFeed);
+      }
+    }
+  }, [groupInformationSinceLastConnection]);
 
   const handleApproveChatRequest = async () => {
     try {
@@ -95,7 +121,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       });
       if (response) {
         console.log(response);
-          let updatedChatFeed = { ...chatFeed as IFeeds};
+          const updatedChatFeed = { ...chatFeed as IFeeds};
           updatedChatFeed.intent = response;
      
           setChatFeed(updatedChatFeed);
@@ -105,6 +131,8 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       console.log(error_.message);
     }
   };
+
+ 
 
   return (
     <Section
@@ -124,25 +152,28 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       >
         Profile
       </Section>
-      {conversationHash && (
-        <>
+      <Section
+            flex="1 1 auto"
+            overflow="hidden scroll"
+            padding="0 20px"
+            margin="0 0px 10px 0px"
+            flexDirection="column"
+            justifyContent='start'
+          >
+   
           {chatFeed && !chatFeed.publicKey ? (
             <EncryptionMessage id={'NO_ENCRYPTED'} />
           ) : (
             <EncryptionMessage id={'ENCRYPTED'} />
           )}
-          <Section
-            flex="1 1 auto"
-            overflow="hidden"
-            margin="0 0px 10px 0px"
-            flexDirection="column"
-          >
-            <MessageList limit={limit} conversationHash={conversationHash} />
-            {checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
+       
+     
+           {conversationHash && (  <MessageList limit={limit} conversationHash={conversationHash} />  )}
+            {!checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
               <Section
                 color={theme.textColorPrimary}
                 gap="20px"
-                background={theme.receiverBgColor}
+                background={theme.chatBubblePrimaryBgColor}
                 padding="8px 12px"
                 margin="7px 0"
                 borderRadius=" 0px 12px 12px 12px"
@@ -161,7 +192,9 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
                   color="#000"
                   lineHeight="24px"
                 >
-                  Please accept to enable push chat from this wallet
+                 {chatFeed?.groupInformation?
+                 ApproveRequestText.GROUP:ApproveRequestText.W2W
+                 }
                 </Span>
                 <Div
                 width='auto'
@@ -175,8 +208,8 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
               </Section>
             )}
           </Section>
-        </>
-      )}
+      
+      {/* )} */}
 
       <Section
         borderRadius={theme.borderRadius}
@@ -197,8 +230,6 @@ const MessageContainerCard = styled(Section)``;
 //css
 //message encrypted flag(done in ui but do it in socket too)
 //typebar and profile
-//aprrove intent for group and w2w
-//approve text will change for groups
 //check for group private public
 //socket (w2w working)
 

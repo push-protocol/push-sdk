@@ -16,7 +16,7 @@ const MessageListTest = () => {
   const fetchConversationHash = async() =>{
     const ConversationHash = await PUSHAPI.chat.conversationHash({
       account: `eip155:${account}`,
-      conversationId: '24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac',
+      conversationId: '0xBd6ba192D34A8e6B40e2DAe674925997079f7663',
       env: env
   });
   setConversationHash(ConversationHash.threadHash);
@@ -47,4 +47,5 @@ export default MessageListTest;
 
 const MessageListCard = styled(Section)`
 height:40vh;
+background:black;
 `;

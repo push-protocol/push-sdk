@@ -69,7 +69,7 @@ useEffect(() => {
 
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
-
+console.log(PROVIDER_THEME)
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
       <ChatDataContext.Provider value={value}>

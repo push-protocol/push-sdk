@@ -18,7 +18,7 @@ const MessageContainerTest = () => {
       {/* <Loader show={isLoading} /> */}
     <MessageContainerCard>
         
-      <MessageContainer chatId='0x5F17064F559f6fC2563F9830B2EafB8D1e070a11' limit={10}/>
+      <MessageContainer chatId='0xBd6ba192D34A8e6B40e2DAe674925997079f7663' limit={10}/>
       </MessageContainerCard>
     </div>
   );
@@ -28,5 +28,5 @@ export default MessageContainerTest;
 
 
 const MessageContainerCard = styled(Section)`
-height:40vh;
+height:60vh;
 `;

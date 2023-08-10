@@ -74,6 +74,7 @@ import {
   ChatUIProvider,
   SpacesUI,
   SpacesUIProvider,
+  darkChatTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';

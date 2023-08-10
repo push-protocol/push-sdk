@@ -36,7 +36,7 @@ export const lightChatTheme: IChatTheme = {
 };
 
 export const darkChatTheme: IChatTheme = {
-  chatBubblePrimaryBgColor: 'fff',
+  chatBubblePrimaryBgColor: '#fff',
   bgColorPrimary: 'rgb(47, 49, 55)',
   bgColorSecondary: 'rgb(40, 42, 46)',
   textColorPrimary: '#fff',

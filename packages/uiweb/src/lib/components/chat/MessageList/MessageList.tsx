@@ -41,6 +41,9 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     if (
       Object.keys(messagesSinceLastConnection || {}).length 
+    //   &&
+    //  (currentChat.did?.toLowerCase() === chat.fromCAIP10?.toLowerCase()) || currentChat?.groupInformation?.chatId === chat.toCAIP10)
+
     ) {
       if (!Object.keys(messages || {}).length) {
         setMessages({
