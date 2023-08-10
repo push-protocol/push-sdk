@@ -1,8 +1,7 @@
 import type { ReactElement } from 'react';
-import React from 'react';
 import type { ENV } from '../config';
-import type { ethers } from 'ethers';
 import type { ParsedResponseType, IFeeds, } from '@pushprotocol/restapi';
+import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
   fromCAIP10: string;
@@ -38,10 +37,38 @@ export interface ITheme {
   moduleColor?: string;
 }
 
-export type SignerType = ethers.Signer & {
-  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
+type ethersV5SignerType = {
+  _signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getChainId: () => Promise<number>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Bytes | string) => Promise<string>;
   privateKey?: string;
+  provider?: providers.Provider;
 };
+type viemSignerType = {
+  signTypedData: (args: {
+    account: any;
+    domain: any;
+    types: any;
+    primaryType: any;
+    message: any;
+  }) => Promise<`0x${string}`>;
+  getChainId: () => Promise<number>;
+  signMessage: (args: {
+    message: any;
+    account: any;
+    [key: string]: any;
+  }) => Promise<`0x${string}`>;
+  account: { [key: string]: any };
+  privateKey?: string;
+  provider?: providers.Provider;
+};
+
+export type SignerType = ethersV5SignerType | viemSignerType;
 
 export type ParsedNotificationType = ParsedResponseType & {
   channel:string;

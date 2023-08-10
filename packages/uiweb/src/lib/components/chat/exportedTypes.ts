@@ -17,8 +17,6 @@ export const CHAT_THEME_OPTIONS = {
   DARK: 'dark',
 } as const;
 
-export type ChatThemeOptions =
-  typeof CHAT_THEME_OPTIONS[keyof typeof CHAT_THEME_OPTIONS];
 
 export type GIFType = {
   url: string;
@@ -39,3 +37,4 @@ export interface SendMessageParams {
   receiver: string;
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
+export {IChatTheme} from './theme';

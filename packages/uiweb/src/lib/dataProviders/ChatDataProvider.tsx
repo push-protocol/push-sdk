@@ -7,13 +7,12 @@ import {
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser } from '@pushprotocol/restapi';
-import { IChatTheme, getCustomChatTheme } from '../components/chat/theme';
+import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { ChatThemeOptions } from '../components';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
-  theme?: ChatThemeOptions;
-  themeOverride?: Partial<IChatTheme>;
+  theme?: IChatTheme;
   account?: string | null;
   pgpPrivateKey?: string | null;
   env?: ENV;
@@ -69,7 +68,7 @@ useEffect(() => {
   };
 
 
-   const PROVIDER_THEME = getCustomChatTheme(theme);
+  const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
 
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
