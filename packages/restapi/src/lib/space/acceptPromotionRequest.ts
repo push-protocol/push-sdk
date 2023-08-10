@@ -48,15 +48,15 @@ export async function acceptPromotionRequest(
 
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
     const listnerIndex = draft.listeners.findIndex((listner) => listner.address === pCAIP10ToWallet(promoteeAddress));
-    if (listnerIndex > -1) draft.listeners[listnerIndex].handRaised = false;
-
-    draft.listeners.splice(listnerIndex, 1);
+    if (listnerIndex >   -1) draft.listeners[listnerIndex].handRaised = false;
 
     const promotedListener: AdminPeer = {
       address: draft.listeners[listnerIndex].address,
       emojiReactions: draft.listeners[listnerIndex].emojiReactions,
       audio: true,
     }
+
+    draft.listeners.splice(listnerIndex, 1);
 
     draft.speakers.push(promotedListener);
   });
@@ -67,7 +67,7 @@ export async function acceptPromotionRequest(
     env: this.env,
     spaceId: this.spaceSpecificData.spaceId,
     signer: this.signer,
-    action: META_ACTION.USER_INTERACTION,
+    action: META_ACTION.PROMOTE_TO_SPEAKER,
   });
 
   // accept the promotion request
