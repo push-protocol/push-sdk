@@ -2,6 +2,27 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-0.0.1-alpha.0) (2023-08-09)
+
+
+### Bug Fixes
+
+* add alpha support to UI web ([8ecf5d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ecf5d92cc1b5c25562ba0d6d1ae1137877a5be7))
+* fixed bugs ([#566](https://github.com/ethereum-push-notification-service/push-sdk/issues/566)) ([481d8fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/481d8fcd7c40325654ba490640daabc38ee2f96e))
+* fixed build issues ([#550](https://github.com/ethereum-push-notification-service/push-sdk/issues/550)) ([0ce6e18](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ce6e18a82901478fe3157788c716e5224f14bdb))
+* fixed issue with build uiweb ([#541](https://github.com/ethereum-push-notification-service/push-sdk/issues/541)) ([3e00f81](https://github.com/ethereum-push-notification-service/push-sdk/commit/3e00f81af99de5bee468c3320062aec243708798))
+* merged main ([c5533f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c5533f8dce7b88cb1f14aa72f83579a8e01dcf36))
+* signer compatibility with viem ([3df201c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3df201c7474b88d270d6e868bc516f223539e74c))
+* signer compatibility with viem and ethers ([1edea43](https://github.com/ethereum-push-notification-service/push-sdk/commit/1edea431ccf7f19cc0430deb2ce7a5c61390d99f))
+
+
+### Features
+
+* add video sdk methods ([#395](https://github.com/ethereum-push-notification-service/push-sdk/issues/395)) ([4b9dd69](https://github.com/ethereum-push-notification-service/push-sdk/commit/4b9dd691ac1fde6a91be0478b20780f6755fbb4f)), closes [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295) [#309](https://github.com/ethereum-push-notification-service/push-sdk/issues/309) [#357](https://github.com/ethereum-push-notification-service/push-sdk/issues/357) [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)
+* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+
+
+
 ## [1.1.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.3...uiweb-1.1.4) (2023-07-20)
 
 

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
-import { getCAIPAddress } from '../helpers';
+import { getCAIPAddress, signTypedData } from '../helpers';
 import * as CryptoJS from 'crypto-js';
 
 import {
@@ -252,7 +252,13 @@ export async function getVerificationProof({
         chainId: chainId,
         verifyingContract: verifyingContract,
       };
-      const signature = await signer._signTypedData(domain, type, message);
+      const signature = await signTypedData(
+        signer,
+        domain,
+        type,
+        message,
+        'Data'
+      );
       verificationProof = `eip712v2:${signature}::uid::${uuid}`;
       break;
     }
