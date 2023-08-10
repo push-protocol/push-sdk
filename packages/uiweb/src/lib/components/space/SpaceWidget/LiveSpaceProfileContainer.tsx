@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IMediaStream } from '@pushprotocol/restapi';
-import { Image, Item, Text } from '../../../config';
+import { ThemeProvider } from 'styled-components';
 
-import HandIcon from '../../../icons/hand.svg';
-import MicOffIcon from '../../../icons/micoff.svg';
 import { VideoPlayer } from './VideoPlayer';
 
-import styled, { ThemeProvider, keyframes } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { useSpaceData } from '../../../hooks';
-import { pCAIP10ToWallet } from '../../../helpers';
+
+import { Image, Item, Text } from '../../../config';
+import HandIcon from '../../../icons/hand.svg';
+import MicOffIcon from '../../../icons/micoff.svg';
+import MicOnIcon from '../../../icons/micon.svg';
 
 export interface ILiveSpaceProfileContainerProps {
   wallet: string;
@@ -17,7 +17,7 @@ export interface ILiveSpaceProfileContainerProps {
   isSpeaker?: boolean;
   image: string;
   requested?: boolean;
-  mic?: boolean;
+  mic?: boolean | null;
   stream?: IMediaStream;
 }
 
@@ -31,7 +31,7 @@ export const LiveSpaceProfileContainer = (
     isSpeaker,
     image,
     requested = false,
-    mic = true,
+    mic = null,
     stream,
   } = options || {};
 
@@ -39,31 +39,23 @@ export const LiveSpaceProfileContainer = (
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const {
-    spacesObjectRef,
-} = useSpaceData();
-
   const handleDDState = () => {
     setIsDDOpen(!isDDOpen);
   };
 
-  const inviteListener = async () => {
-    await spacesObjectRef?.current?.inviteToPromote?.({ role: 'SPEAKER', inviteeAddress: pCAIP10ToWallet(wallet) })
-}
-
   useEffect(() => {
     const handleOutsideClick = (event: any) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setIsDDOpen(false);
-        }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDDOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-        document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-}, []);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -82,7 +74,7 @@ export const LiveSpaceProfileContainer = (
           cursor='pointer'
           onClick={handleDDState}
         />
-        <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600}  color={`${theme.textColorPrimary}`}>
+        <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600} color={`${theme.textColorPrimary}`}>
           {wallet.replace('eip155:', '').slice(0, -36) + '...'}
           {stream && <VideoPlayer videoCallData={stream} />}
         </Text>
@@ -115,7 +107,7 @@ export const LiveSpaceProfileContainer = (
             <Text fontSize={'14px'} color={`${theme.textColorSecondary}`}>
               {isHost ? 'Host' : isSpeaker ? 'Speaker' : 'Listener'}
             </Text>
-            {!mic && (
+            {mic === false && (
               <Image
                 src={MicOffIcon}
                 alt="Mic Off Icon"
@@ -123,72 +115,17 @@ export const LiveSpaceProfileContainer = (
                 width={'15px'}
               />
             )}
+            {mic && (
+              <Image
+                src={MicOnIcon}
+                alt="Mic On Icon"
+                height={'15px'}
+                width={'15px'}
+              />
+            )}
           </Item>
         )}
       </Item>
-
-      {/* {isDDOpen ? (
-        <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-          <DDItem onClick={inviteListener}>Invite to Speak</DDItem>
-          <DDItem>Kick Listener</DDItem>
-          <DDItem>Mute</DDItem>
-        </DropDown>
-      ) : null} */}
     </ThemeProvider>
   );
 };
-
-const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
-  position: absolute;
-  top: 48px;
-  right: 5px;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: start;
-
-  padding: 12px 6px;
-
-  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
-  background: ${(props) => props.theme.bgColorPrimary};
-  color: ${(props) => props.theme.textColorPrimary};
-  border-radius: 16px;
-
-  border: 1px solid ${(props) => props.theme.borderColor};
-`;
-
-const DDItem = styled.div`
-  cursor: pointer;
-
-  font-size: 12px;
-  padding: 6px;
-
-  border-radius: 4px;
-  transition: 200ms ease;
-
-  &:hover {
-    background-color: ${(props) => props.theme.borderColor};
-    transition: 200ms ease;
-  }
-`;
-
-const fadeIn = keyframes`
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-`;
-
-const fadeOut = keyframes`
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
-`;
