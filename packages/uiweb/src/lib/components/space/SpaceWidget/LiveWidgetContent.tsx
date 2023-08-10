@@ -16,6 +16,7 @@ import { Button, Image, Item, Text } from '../../../config';
 import MicOnIcon from '../../../icons/micon.svg';
 import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
+import HandIcon from '../../../icons/hand.svg';
 import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
@@ -212,93 +213,123 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
         flex={'1'}
         display={'flex'}
         padding={'16px 10px'}
+        margin={'0 auto'}
         flexWrap={'wrap'}
         justifyContent={'flex-start'}
         gap={'24px 12px'}
         overflowY={'auto'}
+        overflowX={'hidden'}
         alignContent={'flex-start'}
       >
-        {/* local peer details if speaker or host */}
-        {(isSpeaker || isHost) && (
-          <LiveSpaceProfileContainer
-            isHost={isHost}
-            isSpeaker={isSpeaker}
-            wallet={spaceObjectData?.connectionData?.local?.address}
-            image={createBlockie?.(
-              spaceObjectData?.connectionData?.local?.address
-            )
-              ?.toDataURL()
-              ?.toString()}
-          />
-        )}
 
-        {/* details of peer connected via webRTC if speaker or host */}
-        {(isSpeaker || isHost) &&
-          spaceObjectData?.connectionData?.incoming
-            ?.slice(1)
-            .map((profile) => (
-              <LiveSpaceProfileContainer
-                isHost={
-                  profile?.address ===
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                isSpeaker={
-                  profile?.address !==
-                  pCAIP10ToWallet(spaceObjectData?.spaceCreator)
-                }
-                wallet={profile?.address}
-                image={createBlockie?.(profile?.address)
-                  ?.toDataURL()
-                  ?.toString()}
-                stream={profile?.stream}
-              />
-            ))}
+        {
+          isJoined
+            ?
+            <>
+              {/* local peer details if speaker or host */}
+              {(isSpeaker || isHost) && (
+                <div style={{ position: 'relative' }}>
+                  <LiveSpaceProfileContainer
+                    isHost={isHost}
+                    isSpeaker={isSpeaker}
+                    wallet={spaceObjectData?.connectionData?.local?.address}
+                    mic={spaceObjectData?.connectionData?.local?.audio}
+                    image={createBlockie?.(
+                      spaceObjectData?.connectionData?.local?.address
+                    )
+                      ?.toDataURL()
+                      ?.toString()}
+                  />
+                </div>
+              )}
 
-        {/* details of host in the space if listener */}
-        {isListener && !isHost && (
-          <div style={{ position: 'relative' }}>
-            <LiveSpaceProfileContainer
-              isHost={true}
-              isSpeaker={false}
-              wallet={spaceObjectData?.liveSpaceData.host?.address}
-              image={createBlockie?.(
-                spaceObjectData?.liveSpaceData?.host?.address
-              )
-                ?.toDataURL()
-                ?.toString()}
-            />
-          </div>
-        )}
+              {/* details of peer connected via webRTC if speaker or host */}
+              {(isSpeaker || isHost) &&
+                spaceObjectData?.connectionData?.incoming
+                  ?.slice(1)
+                  .map((profile) => (
+                    <div style={{ position: 'relative' }}>
+                      <LiveSpaceProfileContainer
+                        isHost={
+                          profile?.address ===
+                          pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                        }
+                        isSpeaker={
+                          profile?.address !==
+                          pCAIP10ToWallet(spaceObjectData?.spaceCreator)
+                        }
+                        mic={profile?.audio}
+                        wallet={profile?.address}
+                        image={createBlockie?.(profile?.address)
+                          ?.toDataURL()
+                          ?.toString()}
+                        stream={profile?.stream}
+                      />
+                    </div>
+                  ))}
 
-        {/* details of speakers in the space if listener */}
-        {isListener &&
-          !isHost &&
-          spaceObjectData?.liveSpaceData.speakers.map((profile) => (
-            <div style={{ position: 'relative' }}>
-              <LiveSpaceProfileContainer
-                isHost={false}
-                isSpeaker={true}
-                wallet={profile?.address}
-                image={createBlockie?.(profile?.address)
-                  ?.toDataURL()
-                  ?.toString()}
-              />
-            </div>
-          ))}
+              {/* details of host in the space if listener */}
+              {isListener && !isHost && (
+                <div style={{ position: 'relative' }}>
+                  <LiveSpaceProfileContainer
+                    isHost={true}
+                    isSpeaker={false}
+                    wallet={spaceObjectData?.liveSpaceData.host?.address}
+                    mic={spaceObjectData?.liveSpaceData.host?.audio}
+                    image={createBlockie?.(
+                      spaceObjectData?.liveSpaceData?.host?.address
+                    )
+                      ?.toDataURL()
+                      ?.toString()}
+                  />
+                </div>
+              )}
 
-        {/* details of listeners */}
-        {spaceObjectData?.liveSpaceData.listeners.map((profile) => (
-          <div style={{ position: 'relative' }}>
-            <LiveSpaceProfileContainer
-              isHost={false}
-              isSpeaker={false}
-              requested={profile.handRaised}
-              wallet={profile?.address}
-              image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
-            />
-          </div>
-        ))}
+              {/* details of speakers in the space if listener */}
+              {isListener &&
+                !isHost &&
+                spaceObjectData?.liveSpaceData.speakers.map((profile) => (
+                  <div style={{ position: 'relative' }}>
+                    <LiveSpaceProfileContainer
+                      isHost={false}
+                      isSpeaker={true}
+                      wallet={profile?.address}
+                      mic={profile?.audio}
+                      image={createBlockie?.(profile?.address)
+                        ?.toDataURL()
+                        ?.toString()}
+                    />
+                  </div>
+                ))}
+
+              {/* details of listeners */}
+              {spaceObjectData?.liveSpaceData.listeners.map((profile) => (
+                <div style={{ position: 'relative' }}>
+                  <LiveSpaceProfileContainer
+                    isHost={false}
+                    isSpeaker={false}
+                    requested={profile.handRaised}
+                    wallet={profile?.address}
+                    image={createBlockie?.(profile?.address)?.toDataURL()?.toString()}
+                  />
+                </div>
+              ))}
+            </>
+            :
+            spaceData?.members
+              .map((profile) => (
+                <div style={{ position: 'relative' }}>
+                  <LiveSpaceProfileContainer
+                    wallet={profile?.wallet}
+                    image={createBlockie?.(profile?.wallet)
+                      ?.toDataURL()
+                      ?.toString()}
+                  />
+                </div>
+              ))
+        }
       </Item>
+
       <Item padding={'28px 10px'} width={'90%'}>
         {isJoined ? (
           <Item
@@ -326,7 +357,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                     ? isMicOn
                       ? MicEngagedIcon
                       : MuteIcon
-                    : MicOnIcon
+                    : isRequestedForMic
+                      ? HandIcon
+                      : MicOnIcon
                 }
                 alt="Mic Icon"
               />
@@ -339,17 +372,20 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                   ? isMicOn
                     ? 'Speaking'
                     : 'Muted'
-                  : 'Request'}
+                  : isRequestedForMic
+                    ? 'Requested'
+                    : 'Request'
+                }
               </Text>
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
                 {
                   isHost && numberOfRequests ?
-                  <RequestsCount>
-                    { numberOfRequests }
-                  </RequestsCount>
-                  : null
+                    <RequestsCount>
+                      {numberOfRequests}
+                    </RequestsCount>
+                    : null
                 }
                 <Image
                   width={'21px'}

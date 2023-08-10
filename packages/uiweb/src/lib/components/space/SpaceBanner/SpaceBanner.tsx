@@ -129,7 +129,8 @@ export const SpaceBanner: React.FC<ISpaceBannerProps> = ({
             Join this space
           </InviteButton>
         ) : isInvite === true && spaceStatus === 'Scheduled' ? (
-          <InviteButton status="Scheduled">Remind Me</InviteButton>
+          // <InviteButton status="Scheduled">Remind Me</InviteButton> 
+          <></>
         ) : null}
       </Container>
     </ThemeProvider>
