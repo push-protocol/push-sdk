@@ -72,7 +72,7 @@ const MessageCard = ({
                 }
                 <Section
                     gap="5px"
-                    background={position ? `${theme.accentBgColor}` : `${theme.receiverBgColor}`}
+                    background={position ? `${theme.chatBubbleAccentBgColor}` : `${theme.chatBubblePrimaryBgColor}`}
                     padding="8px 12px"
                     borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     margin="5px 0"
@@ -82,7 +82,7 @@ const MessageCard = ({
                     minWidth="71px"
                     position="relative"
                     width="fit-content"
-                    color={position ? `${theme.accentBgColor}` : `${theme.textColorPrimary}`}
+                    color={position ? `${theme.accentTextColor}` : `${theme.textColorPrimary}`}
                 >
                     {' '}
                     <Section flexDirection="column" padding="5px 0 15px 0">

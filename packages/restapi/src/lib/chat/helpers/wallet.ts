@@ -1,4 +1,4 @@
-import { pCAIP10ToWallet } from "../../helpers";
+import { pCAIP10ToWallet, getAddress } from "../../helpers";
 import { SignerType, walletType } from "../../types";
 
 export const getWallet = (options: walletType): {
@@ -22,5 +22,5 @@ export const getAccountAddress = async (options: walletType): Promise<string> =>
     signer
   } = options || {};
 
-  return account || (await signer?.getAddress()) || ''
+  return account || (await getAddress(signer as SignerType)) || ''
 }

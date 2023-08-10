@@ -27,3 +27,4 @@ export const CHAT_THEME_OPTIONS = {
 } as const;
 
 export type ChatThemeOptions = (typeof CHAT_THEME_OPTIONS)[keyof typeof CHAT_THEME_OPTIONS];
+export {IChatTheme} from './theme';

@@ -208,5 +208,3 @@ const MessageListCard = styled(Section)<IThemeProps>`
   }
 
 `;
-
-
