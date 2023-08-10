@@ -13,7 +13,7 @@ import {
 import { META_ACTION } from '../types/metaTypes';
 import { AdminPeer } from '../types';
 
-export interface AcceptPromotionRequestType {
+export interface IAcceptPromotionRequestType {
   signalData: any;
   promoteeAddress: string;
   role: SPACE_INVITE_ROLES;
@@ -22,7 +22,7 @@ export interface AcceptPromotionRequestType {
 
 export async function acceptPromotionRequest(
   this: Space,
-  options: AcceptPromotionRequestType
+  options: IAcceptPromotionRequestType
 ) {
   const { signalData, promoteeAddress, spaceId, role } = options || {};
 
