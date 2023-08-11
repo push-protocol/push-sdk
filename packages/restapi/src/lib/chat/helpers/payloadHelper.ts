@@ -1,9 +1,9 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { ENV } from '../../constants';
+import { ENV, MessageType } from '../../constants';
 import * as AES from './aes';
-import { META_MESSAGE_META } from '../../types/metaTypes';
+import { MessageTypeSpecificMeta } from '../../types/metaTypes';
 import { sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
@@ -14,7 +14,7 @@ export interface ISendMessagePayload {
   messageObj:
     | {
         content: string;
-        meta?: META_MESSAGE_META;
+        meta?: MessageTypeSpecificMeta[MessageType];
       }
     | string;
   messageType: string;
@@ -74,7 +74,7 @@ export const sendMessagePayload = async (
   senderCreatedUser: IConnectedUser,
   messageObj: {
     content: string;
-    meta?: META_MESSAGE_META;
+    meta?: MessageTypeSpecificMeta[MessageType];
   },
   messageContent: string,
   messageType: string,
