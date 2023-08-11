@@ -12,7 +12,7 @@ import * as PUSHAPI from "@pushprotocol/restapi";
 import { GifIcon } from "../../../icons/Gif";
 import GifPicker from "gif-picker-react";
 import { AttachmentIcon } from "../../../icons/Attachment";
-import usePushSendMessage from "./usePushSendMessage";
+import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
@@ -27,7 +27,7 @@ interface IThemeProps {
 
 }
 
-export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, GIF = true, File = true }) => {
+export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = true, File = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
     const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [gifOpen, setGifOpen] = useState<boolean>(false);
@@ -36,7 +36,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-        if (val.trim() !== '') setTypedMessage(val);
+      setTypedMessage(val.trim());
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
@@ -116,7 +116,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
         try {
             await sendMessage({
                 message: content,
-                receiver: conversationId,
+                chatId,
                 messageType: type as any,
             });
         } catch (error) {
@@ -139,11 +139,8 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
     return (
         <Container theme={theme}>
             <TypebarSection
-                borderColor="#DDDDDF"
-                borderStyle="solid"
-                borderWidth="1px"
-                borderRadius="8px"
-                padding="12px 17px 15px 17px"
+                borderRadius="13px"
+                padding="13px 16px"
                 background={`${theme.bgColorPrimary}`}
                 alignItems="center"
                 justifyContent="space-between"
@@ -165,7 +162,8 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             ref={modalRef}
                             position="absolute"
                             bottom="3.5rem"
-                            left="3.5rem"
+                            left="2.7rem"
+                            zIndex="1"
                         ><EmojiPicker
                                 width={isMobile ? 260 : 320}
                                 height={370}
@@ -174,6 +172,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                         </Section>
                     )}
                     <MultiLineInput
+                    
                         theme={theme}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter' && !event.shiftKey) {
@@ -182,7 +181,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                             }
                         }}
                         placeholder="Type your message..."
-                        onChange={(e) => setTypedMessage(e.target.value)}
+                        onChange={(e) => onChangeTypedMessage(e.target.value)}
                         value={typedMessage}
                         ref={textAreaRef}
                         rows={1}
@@ -203,6 +202,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ conversationId, Emoji = true, 
                         <Section
                             position="absolute"
                             bottom="3.5rem"
+                            zIndex="1"
                             right={isMobile ? '5rem' : '8rem'}
                             ref={modalRef}>
                             <GifPicker
@@ -281,6 +281,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
+  background:${(props) => props.theme.bgColorPrimary};
   border: none;
   color: ${(props) => props.theme.textColorPrimary};
   resize: none;
@@ -300,7 +301,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
     height: 50px;
   }
   ::placeholder {
-    color: #000;
+    color: ${(props) => props.theme.textColorSecondary};
     transform: translateY(1px);
     @media ${device.mobileL} {
       font-size: 14px;

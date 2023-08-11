@@ -25,16 +25,12 @@ export type GIFType = {
 };
 
 export interface TypeBarProps {
-  conversationId: string;
+  chatId: string;
   Emoji?: boolean;
   GIF?: boolean;
   File?: boolean;
   Image?: boolean;
 }
 
-export interface SendMessageParams {
-  message: string;
-  receiver: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
-}
+
 export {IChatTheme} from './theme';
