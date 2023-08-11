@@ -10,7 +10,7 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META } from './metaTypes';
+import { META_MESSAGE_META, MessageTypeSpecificMeta } from './metaTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -440,7 +440,7 @@ export interface ChatSendOptionsType {
   messageType?: `${MessageType}`;
   messageObj?: {
     content: string;
-    meta?: META_MESSAGE_META;
+    meta?: MessageTypeSpecificMeta[MessageType];
   };
   /**
    * @deprecated - Use messageObj.content instead
