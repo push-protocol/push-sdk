@@ -41,9 +41,11 @@ export const usePushChatSocket = () => {
     pushChatSocket?.on(
         EVENTS.CHAT_RECEIVED_MESSAGE,
         async (chat: any) => {
+            console.log(chat)
          if (!connectedProfile || !pgpPrivateKey) {
             return;
           }
+          console.log(chat)
         //   const chatId = getChatId({ msg: chat, account:account! }).toLowerCase();
           if (
             chat.messageCategory === 'Request' &&
@@ -52,7 +54,9 @@ export const usePushChatSocket = () => {
           ) {
             return;
           }
-
+console.log(chat)
+console.log(connectedProfile)
+console.log(pgpPrivateKey)
           const response = await PushAPI.chat.decryptConversation({
             messages: [chat],
             connectedUser: connectedProfile,

@@ -39,6 +39,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   const dates = new Set();
 
   useEffect(() => {
+    console.log(messagesSinceLastConnection)
     if (
       Object.keys(messagesSinceLastConnection || {}).length 
     ) {
@@ -48,6 +49,7 @@ export const MessageList: React.FC<IMessageListProps> = (
           lastThreadHash: messagesSinceLastConnection.lastThreadHash,
         });
       } else {
+        console.log(messagesSinceLastConnection)
         const newMessageList = appendUniqueMessages(messages as Messagetype,[messagesSinceLastConnection],false);
         setMessages( {
       
