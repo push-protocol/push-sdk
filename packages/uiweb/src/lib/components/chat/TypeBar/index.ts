@@ -1,0 +1,1 @@
+export { TypeBar } from './TypeBar';

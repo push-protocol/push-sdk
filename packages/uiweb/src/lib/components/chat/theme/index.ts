@@ -31,7 +31,7 @@ export const lightChatTheme: IChatTheme = {
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
   border: 'none',
-  borderRadius: '32px',
+  borderRadius: '24px',
   iconColorPrimary: 'none',
 };
 
@@ -46,7 +46,7 @@ export const darkChatTheme: IChatTheme = {
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
   border: 'none',
-  borderRadius: '32px',
+  borderRadius: '24px',
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
 };

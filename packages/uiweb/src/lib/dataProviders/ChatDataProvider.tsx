@@ -8,7 +8,6 @@ import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
-import { ChatThemeOptions } from '../components';
 
 export interface IChatUIProviderProps {
   children: ReactNode;

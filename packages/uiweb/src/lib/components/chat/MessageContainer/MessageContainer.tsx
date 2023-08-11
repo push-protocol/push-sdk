@@ -12,21 +12,31 @@ import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHa
 import { ThemeContext } from '../theme/ThemeProvider';
 import { EncryptionIcon } from '../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../icons/NoEncryption';
-import { checkIfIntent } from '../../../helpers';
+import {
+  checkIfIntent,
+  getDefaultFeedObject,
+  getNewChatUser,
+} from '../../../helpers';
 import { TickSvg } from '../../../icons/Tick';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import { useChatData } from '../../../hooks/chat/useChatData';
+import { TypeBar } from '../TypeBar';
+import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import { ethers } from 'ethers';
+import useGetGroup from '../../../hooks/chat/useGetGroup';
 
-
-
+const ChatStatus = {
+  FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
+  INVALID_CHAT: 'Invalid chatId',
+};
 const EncryptionMessageContent = {
   ENCRYPTED: {
     IconComponent: <EncryptionIcon size="15" />,
-    text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them.',
+    text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them. Click to learn more.',
   },
   NO_ENCRYPTED: {
     IconComponent: <NoEncryptionIcon size="15" />,
-    text: 'Messages are not encrypted until chat request is accepted.',
+    text: `Messages are not encrypted`,
   },
 };
 const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
@@ -35,23 +45,25 @@ const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
   return (
     <Section
       padding="10px"
-      gap="3px"
       alignSelf="center"
       borderRadius="12px"
       background={theme.bgColorPrimary}
       margin="10px 10px 0px"
-      width={isMobile?'80%':'70%'}
+      width={isMobile ? '80%' : 'fit-content'}
     >
-      {EncryptionMessageContent[id].IconComponent}
+      <EncryptionMessageDiv textAlign="center">
+        {EncryptionMessageContent[id].IconComponent}
 
-      <Span
-        fontSize="13px"
-        color={theme.textColorSecondary}
-        fontWeight="400"
-        textAlign="left"
-      >
-        {EncryptionMessageContent[id].text}
-      </Span>
+        <Span
+          fontSize="13px"
+          margin="0 0 0 5px"
+          color={theme.textColorSecondary}
+          fontWeight="400"
+          textAlign="left"
+        >
+          {EncryptionMessageContent[id].text}
+        </Span>
+      </EncryptionMessageDiv>
     </Section>
   );
 };
@@ -65,51 +77,98 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
     messageList = true,
     profile = true,
     limit = chatLimit,
+    emoji = true,
+    file = true,
+    gif = true,
   } = options || {};
 
-  const { account, pgpPrivateKey } = useChatData();
+  const { account, pgpPrivateKey, env } = useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
-  const [conversationHash, setConversationHash] = useState<string>();
+  const [chatStatusText, setChatStatusText] = useState<string>('');
+  // const [conversationHash, setConversationHash] = useState<string>();
   const { fetchChat } = useFetchChat();
-  const { fetchConversationHash } = useFetchConversationHash();
+  const { fetchChatProfile } = useGetChatProfile();
+  // const { fetchConversationHash } = useFetchConversationHash();
+  const { getGroup } = useGetGroup();
 
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
   const theme = useContext(ThemeContext);
-  const { groupInformationSinceLastConnection } = usePushChatSocket();
+  const { groupInformationSinceLastConnection, messagesSinceLastConnection } =
+    usePushChatSocket();
   const ApproveRequestText = {
     GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,
-    W2W: ` Please accept to enable push chat from this wallet`
-  }
+    W2W: ` Please accept to enable push chat from this wallet`,
+  };
 
   useEffect(() => {
     (async () => {
       console.log(chatId);
       const chat = await fetchChat({ chatId });
-      const hash = await fetchConversationHash({ conversationId: chatId });
-      setConversationHash(hash?.threadHash);
-      if(chat)
-      setChatFeed(chat);
-      // else{
-       
-      // }
+      // const hash = await fetchConversationHash({ conversationId: chatId });
+      // setConversationHash(hash?.threadHash);
+      if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
+      else {
+        let newChatFeed;
+        let group;
+        const result = await getNewChatUser({
+          searchText: chatId,
+          fetchChatProfile,
+          env,
+        });
+        console.log(result);
+        if (result) {
+          newChatFeed = getDefaultFeedObject({ user: result });
+        } else {
+          group = await getGroup({ searchText: chatId });
+          if (group) {
+            newChatFeed = getDefaultFeedObject({ groupInformation: group });
+          }
+        }
+        if (newChatFeed) {
+          if (!newChatFeed?.groupInformation) {
+            setChatStatusText(ChatStatus.FIRST_CHAT);
+          }
+          setChatFeed(newChatFeed);
+        } else {
+          setChatStatusText(ChatStatus.INVALID_CHAT);
+        }
+      }
     })();
   }, [chatId, pgpPrivateKey, account]);
- 
 
- 
   useEffect(() => {
-    if (
-      Object.keys(groupInformationSinceLastConnection || {}).length 
-    )
-    {
-      if(chatFeed?.groupInformation?.chatId === groupInformationSinceLastConnection.chatId){
+    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
+      if (
+        chatFeed?.groupInformation?.chatId ===
+        groupInformationSinceLastConnection.chatId
+      ) {
         const updateChatFeed = chatFeed;
         updateChatFeed.groupInformation = groupInformationSinceLastConnection;
         setChatFeed(updateChatFeed);
       }
     }
   }, [groupInformationSinceLastConnection]);
+  console.log(Object.keys(chatFeed || {}).length);
+  console.log(chatFeed);
+  useEffect(() => {
+    if (
+      Object.keys(messagesSinceLastConnection || {}).length &&
+      Object.keys(chatFeed || {}).length &&
+      (chatFeed.did?.toLowerCase() ===
+        messagesSinceLastConnection.fromCAIP10?.toLowerCase() ||
+        chatFeed?.groupInformation?.chatId ===
+          messagesSinceLastConnection.toCAIP10)
+    ) {
+      const updatedChatFeed = chatFeed;
+      console.log(updatedChatFeed);
+      updatedChatFeed.msg = messagesSinceLastConnection;
+      if (chatStatusText) {
+        setChatStatusText('');
+      }
+      setChatFeed(updatedChatFeed);
+    }
+  }, [messagesSinceLastConnection]);
 
   const handleApproveChatRequest = async () => {
     try {
@@ -121,19 +180,17 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       });
       if (response) {
         console.log(response);
-          const updatedChatFeed = { ...chatFeed as IFeeds};
-          updatedChatFeed.intent = response;
-     
-          setChatFeed(updatedChatFeed);
-  
+        const updatedChatFeed = { ...(chatFeed as IFeeds) };
+        updatedChatFeed.intent = response;
+
+        setChatFeed(updatedChatFeed);
       }
     } catch (error_: Error | any) {
       console.log(error_.message);
     }
   };
-
- 
-
+  console.log(chatFeed);
+  console.log(chatStatusText);
   return (
     <Section
       width="100%"
@@ -143,88 +200,104 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       overflow="hidden"
       background={theme.bgColorSecondary}
       borderRadius={theme.borderRadius}
-      padding="10px"
+      padding="13px"
     >
+      {profile && (
+        <Section
+          borderRadius={theme.borderRadius}
+          flex="0 1 auto"
+          background="grey"
+        >
+          Profile
+        </Section>
+      )}
       <Section
-        borderRadius={theme.borderRadius}
-        flex="0 1 auto"
-        background="grey"
+        flex="1 1 auto"
+        overflow="hidden scroll"
+        padding="0 20px"
+        margin="0 0px 10px 0px"
+        flexDirection="column"
+        // height='80%'
+        justifyContent="start"
       >
-        Profile
-      </Section>
-      <Section
-            flex="1 1 auto"
-            overflow="hidden scroll"
-            padding="0 20px"
-            margin="0 0px 10px 0px"
-            flexDirection="column"
-            justifyContent='start'
-          >
-   
-          {chatFeed && !chatFeed.publicKey ? (
-            <EncryptionMessage id={'NO_ENCRYPTED'} />
-          ) : (
-            <EncryptionMessage id={'ENCRYPTED'} />
-          )}
-       
-     
-           {conversationHash && (  <MessageList limit={limit} conversationHash={conversationHash} />  )}
-            {!checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
-              <Section
-                color={theme.textColorPrimary}
-                gap="20px"
-                background={theme.chatBubblePrimaryBgColor}
-                padding="8px 12px"
-                margin="7px 0"
-                borderRadius=" 0px 12px 12px 12px"
-                alignSelf="start"
-                justifyContent="start"
-                maxWidth="68%"
-                minWidth="15%"
-                position="relative"
-                flexDirection="row"
-              >
-                <Span
-                  alignSelf="center"
-                  textAlign="left"
-                  fontSize="16px"
-                  fontWeight="400"
-                  color="#000"
-                  lineHeight="24px"
-                >
-                 {chatFeed?.groupInformation?
-                 ApproveRequestText.GROUP:ApproveRequestText.W2W
-                 }
-                </Span>
-                <Div
-                width='auto'
-                cursor='pointer'
-                  onClick={() =>
-                    !approveLoading ? handleApproveChatRequest() : null
-                  }
-                >
-                  {approveLoading ? <Spinner /> : <TickSvg />}
-                </Div>
-              </Section>
-            )}
+        {chatFeed && !chatFeed.publicKey ? (
+          <EncryptionMessage id={'NO_ENCRYPTED'} />
+        ) : (
+          <EncryptionMessage id={'ENCRYPTED'} />
+        )}
+        {chatStatusText && (
+          <Section margin="20px 0 0 0">
+            <Span
+              fontSize="13px"
+              color={theme.textColorSecondary}
+              fontWeight="400"
+            >
+              {chatStatusText}
+            </Span>
           </Section>
-      
+        )}
+        {chatId && messageList && (
+          <MessageList limit={limit} chatId={chatId} />
+        )}
+        {checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
+          <Section
+            color={theme.textColorPrimary}
+            gap="20px"
+            background={theme.chatBubblePrimaryBgColor}
+            padding="8px 12px"
+            margin="7px 0"
+            borderRadius=" 0px 12px 12px 12px"
+            alignSelf="start"
+            justifyContent="start"
+            maxWidth="68%"
+            minWidth="15%"
+            position="relative"
+            flexDirection="row"
+          >
+            <Span
+              alignSelf="center"
+              textAlign="left"
+              fontSize="16px"
+              fontWeight="400"
+              color="#000"
+              lineHeight="24px"
+            >
+              {chatFeed?.groupInformation
+                ? ApproveRequestText.GROUP
+                : ApproveRequestText.W2W}
+            </Span>
+            <Div
+              width="auto"
+              cursor="pointer"
+              onClick={() =>
+                !approveLoading ? handleApproveChatRequest() : null
+              }
+            >
+              {approveLoading ? <Spinner /> : <TickSvg />}
+            </Div>
+          </Section>
+        )}
+      </Section>
+
       {/* )} */}
 
-      <Section
-        borderRadius={theme.borderRadius}
-        flex="0 1 auto"
-        background="grey"
-      >
-        Typebar
-      </Section>
+      {typebar && (
+        <Section flex="0 1 auto">
+          <TypeBar chatId={chatId} file={file} emoji={emoji} gif={gif} />
+        </Section>
+      )}
     </Section>
   );
 };
 
 //styles
-const MessageContainerCard = styled(Section)``;
 
+const EncryptionMessageDiv = styled(Div)`
+  text-align: center;
+  svg {
+    vertical-align: middle;
+  }
+`;
 //change theme colours(done)
 //check height(done)
 //css
@@ -233,4 +306,4 @@ const MessageContainerCard = styled(Section)``;
 //check for group private public
 //socket (w2w working)
 
-//newChat window when not chat is there
+//newChat window when not chat is there(done)

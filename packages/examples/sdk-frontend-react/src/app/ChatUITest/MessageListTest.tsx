@@ -6,6 +6,7 @@ import { Section } from '../components/StyledComponents';
 import { MessageList } from '@pushprotocol/uiweb';
 import { EnvContext, Web3Context } from '../context';
 import { usePushChatSocket } from '@pushprotocol/uiweb';
+import { TypeBar } from '@pushprotocol/uiweb';
 
 const MessageListTest = () => {
   const { account } = useContext<any>(Web3Context)
@@ -16,7 +17,7 @@ const MessageListTest = () => {
   const fetchConversationHash = async() =>{
     const ConversationHash = await PUSHAPI.chat.conversationHash({
       account: `eip155:${account}`,
-      conversationId: '0xBd6ba192D34A8e6B40e2DAe674925997079f7663',
+      conversationId: '0xe19c4b204a76db09697ea54c9182eba2195542aD',
       env: env
   });
   setConversationHash(ConversationHash.threadHash);
@@ -35,9 +36,10 @@ console.log(conversationHash)
 
       <MessageListCard    >
         
-      <MessageList conversationHash={conversationHash} limit={10}/>
+      <MessageList chatId='0xBd6ba192D34A8e6B40e2DAe674925997079f7663' limit={10}/>
    
       </MessageListCard>
+      <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD'  />
     </div>
   );
 };
