@@ -36,7 +36,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-      setTypedMessage(val.trim());
+      setTypedMessage(val);
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);

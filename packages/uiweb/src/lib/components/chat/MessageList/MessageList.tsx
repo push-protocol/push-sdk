@@ -46,10 +46,10 @@ export const MessageList: React.FC<IMessageListProps> = (
     console.log(messagesSinceLastConnection);
     if 
       (Object.keys(messagesSinceLastConnection || {}).length &&
-       (( chatId === messagesSinceLastConnection.fromCAIP10?.toLowerCase() &&
-        account === messagesSinceLastConnection.toCAIP10?.toLowerCase()) ||
-        ( chatId === messagesSinceLastConnection.toCAIP10?.toLowerCase() &&
-        account === messagesSinceLastConnection.fromCAIP10?.toLowerCase()) )
+       (( chatId.toLowerCase() === messagesSinceLastConnection.fromCAIP10?.toLowerCase() &&
+        account!.toLowerCase() === messagesSinceLastConnection.toCAIP10?.toLowerCase()) ||
+        ( chatId.toLowerCase() === messagesSinceLastConnection.toCAIP10?.toLowerCase() &&
+        account!.toLowerCase() === messagesSinceLastConnection.fromCAIP10?.toLowerCase()) )
     ) {
       if (!Object.keys(messages || {}).length) {
         setMessages({

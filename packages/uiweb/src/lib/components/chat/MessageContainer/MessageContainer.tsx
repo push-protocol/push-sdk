@@ -140,8 +140,8 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
       if (
-        chatFeed?.groupInformation?.chatId ===
-        groupInformationSinceLastConnection.chatId
+        chatFeed?.groupInformation?.chatId.toLowerCase() ===
+        groupInformationSinceLastConnection.chatId.toLowerCase()
       ) {
         const updateChatFeed = chatFeed;
         updateChatFeed.groupInformation = groupInformationSinceLastConnection;
@@ -157,8 +157,8 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       Object.keys(chatFeed || {}).length &&
       (chatFeed.did?.toLowerCase() ===
         messagesSinceLastConnection.fromCAIP10?.toLowerCase() ||
-        chatFeed?.groupInformation?.chatId ===
-          messagesSinceLastConnection.toCAIP10)
+        chatFeed?.groupInformation?.chatId.toLowerCase() ===
+          messagesSinceLastConnection.toCAIP10.toLowerCase())
     ) {
       const updatedChatFeed = chatFeed;
       console.log(updatedChatFeed);
