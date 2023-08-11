@@ -448,26 +448,24 @@ export const preparePGPPublicKey = async (
       chatPublicKey = publicKey;
       break;
     }
-    case Constants.ENC_TYPE_V3: {
-      const createProfileMessage =
-        'Create Push Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getEip191Signature(
-        wallet,
-        createProfileMessage
-      );
-      chatPublicKey = JSON.stringify({
-        key: publicKey,
-        signature: verificationProof,
-      });
-      break;
-    }
+    case Constants.ENC_TYPE_V3:
     case Constants.ENC_TYPE_V4: {
-      const createProfileMessage =
-        'Create Push Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getEip191Signature(
-        wallet,
-        createProfileMessage
-      );
+      const verificationProof = 'DEPRECATED';
+
+      /**
+       * @deprecated
+       * PUSH CHAT PROFILE CREATION DOES NOT SIGN PGP PUBLIC KEY
+       * VERIFICATION PROOF SIGNATURE SHOULD BE USED FOR VERIFICATION OF PUSH PROFILE KEYS
+       */
+
+      // const createProfileMessage =
+      //   'Create Push Profile \n' + generateHash(publicKey);
+      // const { verificationProof } = await getEip191Signature(
+      //   wallet,
+      //   createProfileMessage
+      // );
+
+      // TODO - Change JSON Structure to string ie equivalent to ENC_TYPE_V1 ( would be done after PUSH Node changes )
       chatPublicKey = JSON.stringify({
         key: publicKey,
         signature: verificationProof,
@@ -480,35 +478,69 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = async (
+/**
+ * Checks the Push Profile keys using verificationProof
+ * @param encryptedPrivateKey
+ * @param publicKey
+ * @param did
+ * @param caip10
+ * @param verificationProof
+ * @returns PGP Public Key
+ */
+export const verifyProfileKeys = async (
   encryptedPrivateKey: string,
   publicKey: string,
-  did: string
+  did: string,
+  caip10: string,
+  verificationProof: string
 ): Promise<string> => {
+  let parsedPublicKey: string;
   try {
-    if (publicKey !== '' && publicKey.includes('signature')) {
-      const { key, signature: verificationProof } = JSON.parse(publicKey);
-      publicKey = key;
-      let signedData: string;
-      if (verificationProof.includes('eip712'))
-        signedData = 'Create Push Chat Profile \n' + generateHash(key);
-      else signedData = 'Create Push Profile \n' + generateHash(key);
-      if (
-        await verifyProfileSignature(
-          verificationProof,
-          signedData,
-          isValidCAIP10NFTAddress(did)
-            ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
-            : pCAIP10ToWallet(did)
-        )
-      )
-        return publicKey;
-      else throw new Error('Cannot Verify this publicKey Owner!!!');
+    parsedPublicKey = JSON.parse(publicKey).key;
+    if (parsedPublicKey === undefined) {
+      throw new Error('Invalid Public Key');
     }
-    return publicKey;
   } catch (err) {
-    console.warn('Cannot Verify this publicKey Owner!!!');
-    return publicKey;
+    parsedPublicKey = publicKey;
+  }
+
+  try {
+    if (publicKey && publicKey.length > 0 && verificationProof) {
+      const data = {
+        caip10,
+        did,
+        publicKey,
+        encryptedPrivateKey,
+      };
+
+      if (isValidCAIP10NFTAddress(did)) {
+        const keyToRemove = 'owner';
+        const parsedEncryptedPrivateKey = JSON.parse(encryptedPrivateKey);
+        if (keyToRemove in parsedEncryptedPrivateKey) {
+          delete parsedEncryptedPrivateKey[keyToRemove];
+        }
+        data.encryptedPrivateKey = JSON.stringify(parsedEncryptedPrivateKey);
+      }
+
+      const signedData = generateHash(data);
+
+      const isValidSig: boolean = await verifyProfileSignature(
+        verificationProof,
+        signedData,
+        isValidCAIP10NFTAddress(did)
+          ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
+          : pCAIP10ToWallet(did)
+      );
+      if (isValidSig) {
+        return parsedPublicKey;
+      } else {
+        throw new Error('Invalid Signature');
+      }
+    }
+    return parsedPublicKey;
+  } catch (err) {
+    console.warn(`Cannot Verify keys for DID : ${did} !!!`);
+    return parsedPublicKey;
   }
 };
 
