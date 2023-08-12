@@ -12,11 +12,11 @@ export const ProfileHeaderTest = () => {
     const [chatInfo, setChatInfo] = useState<any>();
     // const [ conversationHash , setConversationHash] = useState<string>('');
 
-    const librarySigner = library.getSigner()
+    // const librarySigner = library.getSigner()
 
-     const fetchGroupInfo = async () => {
-        const conversationId = '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc';
-        // const conversationId = 'eip155:0x4669279b5B8f8CDe9E7428f43d4BE713Bac92c3B'
+     const fetchChatInfo = async () => {
+        // const conversationId = '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc';
+        const conversationId = 'eip155:0x2249F031607353b949B40167ce076718AD4D813a'
         if(conversationId?.split(':')[0] === 'eip155') {
             const user = await PUSHAPI.user.get({
                 account: conversationId,
@@ -34,13 +34,11 @@ export const ProfileHeaderTest = () => {
 }
 
     useEffect(()=> {
-      fetchGroupInfo();
-    //   fetchUserInfo()
+      fetchChatInfo();
     },[])
 
     return (
         <div>
-        {/* <div style={{ height: "300px", width: "500px" }}> */}
             <ProfileHeader chatInfo={chatInfo} />
         </div>
     )

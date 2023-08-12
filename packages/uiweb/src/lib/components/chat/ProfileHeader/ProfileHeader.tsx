@@ -9,6 +9,7 @@ import * as PUSHAPI from "@pushprotocol/restapi"
 import { useClickAway } from "../../../hooks";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { IChatTheme } from "../theme";
+import { shortenText } from "../../../helpers";
 
 const Options = ({ options, setOptions, isGroup, chatInfo, theme }:{options: boolean, setOptions: React.Dispatch<React.SetStateAction<boolean>>, isGroup: boolean, chatInfo: any, theme: IChatTheme }) => {
     const DropdownRef = useRef(null);
@@ -55,6 +56,7 @@ export const ProfileHeader = ({ chatInfo }: {chatInfo: any}) => {
         } 
 
         console.log(chatInfo);
+
     },[chatInfo])
 
  const [options, setOptions] = useState(false); 
@@ -62,12 +64,12 @@ export const ProfileHeader = ({ chatInfo }: {chatInfo: any}) => {
  if(chatInfo) {
  return (
     <Container theme={theme}>
-        {chatInfo ? (
+        {chatInfo?.groupImage || chatInfo?.profilePicture ? (
             <Image src={isGroup ? chatInfo?.groupImage : chatInfo?.profilePicture} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />
         ) : <DummyImage />}
         
 
-        <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? chatInfo?.groupName : chatInfo?.did?.split(':')[1]}</Span>
+        <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? chatInfo?.groupName : shortenText(chatInfo?.did?.split(':')[1], 6, true)}</Span>
 
         <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} theme={theme} />
     </Container>
@@ -100,6 +102,7 @@ const DummyImage = styled.div`
     height: 48px;
     width: 48px;
     border-radius: 100%;
+    background: #ccc;
 `;
 
 const DropDownBar = styled.div`
