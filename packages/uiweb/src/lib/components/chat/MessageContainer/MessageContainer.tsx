@@ -202,7 +202,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       borderRadius={theme.borderRadius}
       padding="13px"
     >
-      {profile && (
+      {/* {profile && (
         <Section
           borderRadius={theme.borderRadius}
           flex="0 1 auto"
@@ -210,7 +210,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
         >
           Profile
         </Section>
-      )}
+      )} */}
       <Section
         flex="1 1 auto"
         overflow="hidden scroll"

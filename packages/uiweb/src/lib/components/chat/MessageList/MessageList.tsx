@@ -187,7 +187,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
-      {loading ? <Spinner /> : ''}
+      {loading ? <Spinner color={theme.accentBgColor}/> : ''}
 
       <Section flexDirection="column" justifyContent="start" width="100%">
         {messages?.messages.map((chat: IMessageIPFS, index: number) => {
