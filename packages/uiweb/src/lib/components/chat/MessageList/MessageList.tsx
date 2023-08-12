@@ -10,8 +10,10 @@ import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
 import {
   appendUniqueMessages,
+  checkIfSameChat,
   dateToFromNowDaily,
   pCAIP10ToWallet,
+  walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
@@ -27,6 +29,8 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
+
+
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
@@ -41,23 +45,15 @@ export const MessageList: React.FC<IMessageListProps> = (
   const { fetchConversationHash } = useFetchConversationHash();
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  console.log(conversationHash);
   useEffect(() => {
-    console.log(messagesSinceLastConnection);
-    if 
-      (Object.keys(messagesSinceLastConnection || {}).length &&
-       (( chatId.toLowerCase() === messagesSinceLastConnection.fromCAIP10?.toLowerCase() &&
-        account!.toLowerCase() === messagesSinceLastConnection.toCAIP10?.toLowerCase()) ||
-        ( chatId.toLowerCase() === messagesSinceLastConnection.toCAIP10?.toLowerCase() &&
-        account!.toLowerCase() === messagesSinceLastConnection.fromCAIP10?.toLowerCase()) )
-    ) {
+   
+    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       if (!Object.keys(messages || {}).length) {
         setMessages({
           messages: messagesSinceLastConnection,
           lastThreadHash: messagesSinceLastConnection.cid,
         });
       } else {
-        console.log(messagesSinceLastConnection);
         const newMessageList = appendUniqueMessages(
           messages as Messagetype,
           [messagesSinceLastConnection],
@@ -180,7 +176,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   };
   console.log(conversationHash);
   return (
-   <MessageListCard
+    <MessageListCard
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}

@@ -44,7 +44,7 @@ useEffect(() => {
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account });
+        user = await fetchChatProfile({ profileId: account,env });
 
         if (user) setConnectedProfile(user);
       }
