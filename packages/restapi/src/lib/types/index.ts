@@ -318,23 +318,30 @@ export type Data = {
   address?: string;
   comparison?: string;
   amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
 };
 
-export type Condition = {
+export type ConditionBase = {
   type: ConditionType;
-  category: string;
-  subcategory: string;
+  category?: string;
+  subcategory?: string;
   data: Data;
-  any?: Condition[];
-  all?: Condition[];
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
 };
 
 export interface Rules {
   groupAccess?: {
-    conditions: Condition[];
+    conditions: Array<Condition | ConditionBase>;
   };
   chattingAccess?: {
-    conditions: Condition[];
+    conditions: Array<Condition | ConditionBase>;
   };
 }
 

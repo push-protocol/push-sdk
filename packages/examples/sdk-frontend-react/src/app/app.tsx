@@ -20,7 +20,6 @@ import AliasTest from './AliasTest';
 import EmbedTest from './EmbedTest';
 import PayloadsTest from './PayloadsTest';
 import SocketTest from './SocketTest';
-import { ChatSupportTest } from './ChatSupportTest';
 import ChatTest from './ChatTest/ChatTest';
 import GetUserTest from './ChatTest/GetUser';
 import CreateUserTest from './ChatTest/CreateUser';
@@ -41,6 +40,7 @@ import GetSpaceInfoTest from './SpaceTest/GetSpaceInfoTest';
 import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import GetGroupTest from './ChatTest/GetGroupTest';
+import GetGroupAccessTest from './ChatTest/GetGroupAccessTest';
 import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
 import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
 import UpdateUserProfile from './ChatTest/UpdateUserProfile';
@@ -385,6 +385,7 @@ export function App() {
                     <Route path="/requests" element={<GetRequestsTest />} />
                     <Route path="/createGroup" element={<CreateGroupTest />} />
                     <Route path="/getGroup" element={<GetGroupTest />} />
+                    <Route path="/getGroupAccess" element={<GetGroupAccessTest />} />
                     <Route
                       path="/addMembersToGroup"
                       element={<AddMembersToGroupTest />}
