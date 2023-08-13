@@ -5,6 +5,7 @@ import { Image, Section, Span } from "../../reusables";
 import styled from "styled-components";
 import TokenGatedIcon from '../../../icons/Token-Gated.svg';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
+import VideoChatIcon from '../../../icons/VideoCallIcon.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import type { IUser } from '@pushprotocol/restapi';
 import { useChatData, useClickAway } from "../../../hooks";
@@ -39,9 +40,9 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, theme }:{o
                     <Image src={VerticalEllipsisIcon} height="21px" maxHeight="32px" width={'auto'} cursor="pointer"  />
                 
                 {options && 
-                    <DropDownBar theme={theme} ref={DropdownRef}>
+                    (<DropDownBar theme={theme} ref={DropdownRef}>
                         <Span>Group Info</Span>
-                    </DropDownBar>}
+                    </DropDownBar>)}
                 
                 </ImageItem>
             </Section>
@@ -95,6 +96,13 @@ export const ProfileHeader = ({ chatId }: {chatId: any}) => {
                 <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
 
                 <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} groupInfo={groupInfo ?? null} theme={theme} />
+
+                {!isGroup && 
+                    <VideoChatSection>
+                        <Image src={VideoChatIcon} height="18px" maxHeight="18px" width={'auto'} />
+                    </VideoChatSection>
+                    }
+
             </Container>
         )
     } else {
@@ -139,4 +147,8 @@ const DropDownBar = styled.div`
     padding: 12px 16px;
     z-index: 10;
     border-radius: 4px;
+`;
+
+const VideoChatSection = styled.div`
+    margin: 0 25px 0 auto; 
 `;
