@@ -17,7 +17,7 @@ const MessageListTest = () => {
   const fetchConversationHash = async() =>{
     const ConversationHash = await PUSHAPI.chat.conversationHash({
       account: `eip155:${account}`,
-      conversationId: '0xe19c4b204a76db09697ea54c9182eba2195542aD',
+      conversationId: '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc',
       env: env
   });
   setConversationHash(ConversationHash.threadHash);
@@ -36,10 +36,10 @@ console.log(conversationHash)
 
       <MessageListCard    >
         
-      <MessageList conversationHash={conversationHash} limit={10}/>
+      <MessageList conversationHash={conversationHash} limit={10} isConnected={false}/>
    
       </MessageListCard>
-      <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD'  />
+      <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' isConnected={true} />
     </div>
   );
 };

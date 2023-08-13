@@ -16,6 +16,7 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
+import { ConnectButton } from "../ConnectButton";
 
 
 /**
@@ -24,10 +25,9 @@ import { ThemeContext } from "../theme/ThemeProvider";
  */
 interface IThemeProps {
     theme?: IChatTheme;
-
 }
 
-export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = true, File = true }) => {
+export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
     const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [gifOpen, setGifOpen] = useState<boolean>(false);
@@ -36,7 +36,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-      setTypedMessage(val.trim());
+        setTypedMessage(val.trim());
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
@@ -138,6 +138,9 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
 
     return (
         <Container theme={theme}>
+            {isConnected && (
+                <ConnectButton />
+            )}
             <TypebarSection
                 borderRadius="13px"
                 padding="13px 16px"
@@ -172,7 +175,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
                         </Section>
                     )}
                     <MultiLineInput
-                    
+
                         theme={theme}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter' && !event.shiftKey) {

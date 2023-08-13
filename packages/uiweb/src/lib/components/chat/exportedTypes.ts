@@ -3,6 +3,7 @@ import type { IMessageIPFS } from '@pushprotocol/restapi';
 export interface IMessageListProps {
   conversationHash: string;
   limit?: number;
+  isConnected?: boolean;
 }
 
 export interface TwitterFeedReturnType {
@@ -17,7 +18,6 @@ export const CHAT_THEME_OPTIONS = {
   DARK: 'dark',
 } as const;
 
-
 export type GIFType = {
   url: string;
   width: number;
@@ -30,7 +30,7 @@ export interface TypeBarProps {
   GIF?: boolean;
   File?: boolean;
   Image?: boolean;
+  isConnected?: boolean;
 }
 
-
-export {IChatTheme} from './theme';
+export { IChatTheme } from './theme';
