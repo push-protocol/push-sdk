@@ -20,7 +20,6 @@ const useGetGroupByID = () => {
       try {
         group = await PushAPI.chat.getGroup({
           chatId: groupId,
-          // hardcoded this as env is only returning dev
           env: 'staging' as any,
         });
       } catch (error) {

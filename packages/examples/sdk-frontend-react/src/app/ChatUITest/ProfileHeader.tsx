@@ -4,7 +4,7 @@ export const ProfileHeaderTest = () => {
 
     return (
         <div>
-            <ProfileHeader chatId="0x4669279b5B8f8CDe9E7428f43d4BE713Bac92c3B" />
+            <ProfileHeader chatId="831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc" />
         </div>
     )
 }
