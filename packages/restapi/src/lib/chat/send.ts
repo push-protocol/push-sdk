@@ -11,6 +11,7 @@ import {
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 import { getGroup } from './getGroup';
+import { REACTION_SYMBOL, REACTION_TYPE } from '../types/metaTypes';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -25,7 +26,6 @@ export const send = async (
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
-
   } = options || {};
 
   try {
@@ -44,6 +44,13 @@ export const send = async (
       : null;
 
     let messageObj = options.messageObj;
+
+    // OVERRIDE CONTENT FOR REACTION MESSAGE
+    if (messageType === MessageType.REACTION && messageObj) {
+      messageObj.content =
+        REACTION_SYMBOL[messageObj?.meta?.action as REACTION_TYPE];
+    }
+
     // possible for initial types 'Text', 'Image', 'File', 'GIF', 'MediaEmbed'
     if (!messageObj) {
       messageObj = {
@@ -126,6 +133,20 @@ const validateOptions = async (options: ChatSendOptionsType) => {
     }
   }
 
+  if (
+    (messageType === MessageType.TEXT ||
+      messageType === MessageType.IMAGE ||
+      messageType === MessageType.FILE ||
+      messageType === MessageType.MEDIA_EMBED ||
+      messageType === MessageType.GIF) &&
+    messageObj &&
+    messageObj.meta
+  ) {
+    throw new Error(
+      `Unable to parse this messageType. Meta is not allowed for this messageType.`
+    );
+  }
+
   if (messageType === MessageType.META) {
     if (
       !(messageObj instanceof Object) ||
@@ -138,10 +159,14 @@ const validateOptions = async (options: ChatSendOptionsType) => {
         `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );
     }
-  } else {
-    if (messageObj && messageObj.meta) {
+  } else if (messageType === MessageType.REACTION) {
+    if (
+      !(messageObj instanceof Object) ||
+      !(messageObj.meta instanceof Object) ||
+      !('action' in messageObj.meta)
+    ) {
       throw new Error(
-        `Unable to parse this messageType. Meta is not allowed for this messageType.`
+        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );
     }
   }
