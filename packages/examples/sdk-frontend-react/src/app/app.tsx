@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';

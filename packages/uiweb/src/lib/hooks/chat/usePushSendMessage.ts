@@ -2,8 +2,9 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 
 import { useChatData } from '..';
+import { ENV } from '../../config';
 
- interface SendMessageParams {
+interface SendMessageParams {
   message: string;
   chatId: string;
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
@@ -17,6 +18,7 @@ const usePushSendMessage = () => {
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
+      console.log('sendMessage', env);
       const { chatId, message, messageType } = options || {};
       setLoading(true);
       try {
@@ -26,7 +28,7 @@ const usePushSendMessage = () => {
           receiverAddress: chatId,
           account: account ? account : undefined,
           pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
-          env: env,
+          env: "staging" as ENV,
         });
         setLoading(false);
         if (!response) {
@@ -40,7 +42,7 @@ const usePushSendMessage = () => {
         return;
       }
     },
-    [pgpPrivateKey,account]
+    [pgpPrivateKey, account]
   );
 
   return { sendMessage, error, loading };

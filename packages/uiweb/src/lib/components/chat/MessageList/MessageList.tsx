@@ -45,9 +45,11 @@ export const MessageList: React.FC<IMessageListProps> = (
   const { fetchConversationHash } = useFetchConversationHash();
   const theme = useContext(ThemeContext);
   const dates = new Set();
+  const {env} = useChatData();
   useEffect(() => {
    
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
+      console.log(messagesSinceLastConnection, "messagesSinceLastConnection");
       if (!Object.keys(messages || {}).length) {
         setMessages({
           messages: messagesSinceLastConnection,
@@ -71,13 +73,14 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     (async function () {
       const hash = await fetchConversationHash({ conversationId: chatId });
-      console.log(hash);
+      console.log(hash, "hash");
       setConversationHash(hash?.threadHash);
     })();
-  }, [chatId, pgpPrivateKey, account]);
+  }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
     if (conversationHash) {
+      console.log(conversationHash,  "conversationhash");
       (async function () {
         await getMessagesCall();
       })();

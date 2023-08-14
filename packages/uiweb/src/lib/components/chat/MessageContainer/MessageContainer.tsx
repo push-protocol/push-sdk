@@ -111,6 +111,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       else {
         let newChatFeed;
         let group;
+        console.log(env, "envv");
         const result = await getNewChatUser({
           searchText: chatId,
           fetchChatProfile,
@@ -152,6 +153,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
   console.log(Object.keys(chatFeed || {}).length);
   console.log(chatFeed);
   useEffect(() => {
+    console.log(messagesSinceLastConnection, "messagesSinceLastConnection");
     if (
       Object.keys(messagesSinceLastConnection || {}).length &&
       Object.keys(chatFeed || {}).length &&
@@ -161,7 +163,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
           messagesSinceLastConnection.toCAIP10.toLowerCase())
     ) {
       const updatedChatFeed = chatFeed;
-      console.log(updatedChatFeed);
+      console.log(updatedChatFeed, "updatedChatFeed");
       updatedChatFeed.msg = messagesSinceLastConnection;
       if (chatStatusText) {
         setChatStatusText('');

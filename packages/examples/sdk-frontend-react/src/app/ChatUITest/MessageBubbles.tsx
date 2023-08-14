@@ -49,7 +49,7 @@ export const MessageBubbles = () => {
     }, [])
 
     return (
-        <div style={{ height: "300px", width: "500px" }}>
+        <div style={{ height: "350px", width: "500px" }}>
             {message.map((msg) => (
                 <MessageBubble chat={msg} />
             ))}

@@ -4,13 +4,13 @@ import { useCallback, useContext, useState } from 'react';
 import { useChatData } from './useChatData';
 
 interface conversationHashParams {
-    conversationId: string;
+  conversationId: string;
 }
 
 const useFetchConversationHash = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env } =useChatData();
+  const { account, env } = useChatData();
 
   const fetchConversationHash = useCallback(
     async ({ conversationId }: conversationHashParams) => {
@@ -19,7 +19,7 @@ const useFetchConversationHash = () => {
         const response = await PushAPI.chat.conversationHash({
           conversationId,
           account: account!,
-          env: env
+          env: env,
         });
         setLoading(false);
         return response;
@@ -30,7 +30,7 @@ const useFetchConversationHash = () => {
         return;
       }
     },
-    []
+    [env, account]
   );
   return { fetchConversationHash, error, loading };
 };
