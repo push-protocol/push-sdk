@@ -148,13 +148,13 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
                 <Section gap="8px" flex="1">
                     {emoji &&
                         <Div
-                            width="20px"
+                            width="25px"
                             cursor="pointer"
-                            height="20px"
-                            alignSelf="end"
+                            height="25px"
+                            alignSelf="center"
                             onClick={() => setShowEmojis(!showEmojis)}
                         >
-                            <EmojiIcon />
+                            <EmojiIcon color={theme.textColorSecondary} />
                         </Div>
                     }
                     {showEmojis && (
@@ -223,7 +223,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
                                     alignSelf="end"
                                     onClick={() => setNewChat(true)}
                                 >
-                                    <AttachmentIcon />
+                                    <AttachmentIcon color={theme.textColorSecondary} />
                                 </Section>
                                 <FileInput
                                     type="file"
@@ -281,7 +281,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   box-sizing: border-box;
   background:${(props) => props.theme.bgColorPrimary};
   border: none;
-  color: ${(props) => props.theme.textColorPrimary};
+  color: ${(props) => props.theme.textColorSecondary};
   resize: none;
   flex: 1;
   padding-right: 5px;
