@@ -97,7 +97,7 @@ export const runChatUseCases = async (): Promise<void> => {
   await PushAPI_chat_video_call_notification(TargetChatId);
 
   console.log('PushAPI.chat.createGroup');
-  const chatId = await PushAPI_chat_createGroup();
+  const { chatId, name } = await PushAPI_chat_createGroup();
 
   console.log('PushAPI.chat.conversationHash');
   await PushAPI_chat_conversationHash();
@@ -112,7 +112,7 @@ export const runChatUseCases = async (): Promise<void> => {
   await PushAPI_chat_updateGroup(chatId);
 
   console.log('PushAPI.chat.getGroupByName');
-  await PushAPI_chat_getGroupByName();
+  await PushAPI_chat_getGroupByName(name);
 
   console.log('PushAPI.chat.getGroup');
   await PushAPI_chat_getGroup(chatId);
@@ -400,7 +400,7 @@ async function PushAPI_chat_approve(silent = !showAPIResponse) {
 // Push Chat - PushAPI.chat.createGroup
 async function PushAPI_chat_createGroup(
   silent = !showAPIResponse
-): Promise<string> {
+): Promise<{ chatId: string; name: string }> {
   // Fetch user
   const user = await PushAPI.user.get({
     account: `eip155:${signerAddress}`,
@@ -433,7 +433,7 @@ async function PushAPI_chat_createGroup(
   if (!silent) {
     console.log(response);
   }
-  return response.chatId;
+  return { chatId: response.chatId, name: response.groupName };
 }
 
 // Push Chat - PushAPI.chat.updateGroup
@@ -483,9 +483,12 @@ async function PushAPI_chat_updateGroup(
 }
 
 // Push Chat - PushAPI.chat.getGroupByName
-async function PushAPI_chat_getGroupByName(silent = !showAPIResponse) {
+async function PushAPI_chat_getGroupByName(
+  name: string,
+  silent = !showAPIResponse
+) {
   const response = await PushAPI.chat.getGroupByName({
-    groupName: 'Push Group Chat 3',
+    groupName: name,
     env: env as ENV,
   });
 
