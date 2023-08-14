@@ -400,7 +400,8 @@ export const encryptPGPKey = async (
       );
       break;
     }
-    case Constants.ENC_TYPE_V3: {
+    case Constants.ENC_TYPE_V3:
+    case Constants.ENC_TYPE_V5: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
       const enableProfileMessage = 'Enable Push Profile \n' + input;
       const { verificationProof: secret } = await getEip191Signature(
@@ -413,7 +414,7 @@ export const encryptPGPKey = async (
         encodedPrivateKey,
         hexToBytes(secret || '')
       );
-      encryptedPrivateKey.version = Constants.ENC_TYPE_V3;
+      encryptedPrivateKey.version = encryptionType;
       encryptedPrivateKey.preKey = input;
       break;
     }
@@ -448,20 +449,9 @@ export const preparePGPPublicKey = async (
       chatPublicKey = publicKey;
       break;
     }
-    case Constants.ENC_TYPE_V3: {
-      const createProfileMessage =
-        'Create Push Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getEip191Signature(
-        wallet,
-        createProfileMessage
-      );
-      chatPublicKey = JSON.stringify({
-        key: publicKey,
-        signature: verificationProof,
-      });
-      break;
-    }
-    case Constants.ENC_TYPE_V4: {
+    case Constants.ENC_TYPE_V3:
+    case Constants.ENC_TYPE_V4:
+    case Constants.ENC_TYPE_V5: {
       const createProfileMessage =
         'Create Push Profile \n' + generateHash(publicKey);
       const { verificationProof } = await getEip191Signature(

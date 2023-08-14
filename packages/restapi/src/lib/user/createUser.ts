@@ -5,7 +5,7 @@ import {
   getAccountAddress,
   getWallet,
 } from '../chat/helpers';
-import Constants, { ENV } from '../constants';
+import { ENCRYPTION_TYPE, ENV } from '../constants';
 import {
   isValidETHAddress,
   walletToPCAIP10,
@@ -25,82 +25,101 @@ import {
 import PROGRESSHOOK from '../progressHook';
 
 export type CreateUserProps = {
-  env?: ENV;
   account?: string;
   signer?: SignerType;
-  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
+  version?: `${ENCRYPTION_TYPE}`;
   additionalMeta?: {
     NFTPGP_V1?: {
       password: string;
     };
   };
+  env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
 };
 
 export const create = async (options: CreateUserProps): Promise<IUser> => {
-  const passPrefix = '$0Pc'; //password prefix to ensure password validation
   const {
-    env = Constants.ENV.PROD,
     account = null,
     signer = null,
-    version = Constants.ENC_TYPE_V3,
+    version = null,
     additionalMeta = {
       NFTPGP_V1: {
-        password: passPrefix + generateRandomSecret(10),
+        password: '$0Pc' + generateRandomSecret(10), // default password
       },
     },
+    env = ENV.PROD,
     progressHook,
   } = options || {};
 
   try {
-    if (account == null && signer == null) {
-      throw new Error(`At least one from account or signer is necessary!`);
-    }
+    /**
+     * 0. PREPRATION
+     * This includes
+     * - Input Validation
+     * - Choosing encryption version if no provided by user
+     * - Downgrading encryption version when signer is not provided
+     * - Converting NFT-DID To Wallet-DID For 6551 Based Encryption ( NFTPGP_V2 )
+     */
+
+    await validateOptions(options);
 
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
-
-    if (!isValidETHAddress(address)) {
-      throw new Error(`Invalid address!`);
-    }
-    if (additionalMeta?.NFTPGP_V1?.password) {
-      validatePssword(additionalMeta.NFTPGP_V1.password);
-    }
-
-    const caip10: string = walletToPCAIP10(address);
     let encryptionType = version;
 
-    if (isValidCAIP10NFTAddress(caip10)) {
-      // upgrade to v4 (nft encryption)
-      encryptionType = Constants.ENC_TYPE_V4;
-    } else {
-      // downgrade to v1
-      if (!signer) encryptionType = Constants.ENC_TYPE_V1;
+    // Define encryption version
+    if (!version) {
+      if (isValidCAIP10NFTAddress(walletToPCAIP10(address))) {
+        encryptionType = ENCRYPTION_TYPE.NFTPGP_V1;
+      } else {
+        if (!signer) encryptionType = ENCRYPTION_TYPE.PGP_V1;
+        else encryptionType = ENCRYPTION_TYPE.PGP_V3;
+      }
     }
 
-    // Report Progress
+    // Downgrade Encryption Version ( NULL Signer is only allowed in W2W Chat )
+    if (!signer) {
+      encryptionType = ENCRYPTION_TYPE.PGP_V1;
+    }
+
+    // Convert NFT-DID To Wallet-DID For 6551 Based Encryption ( NFTPGP_V2 )
+    if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V2) {
+      // TODO
+      // Compute scw address from NFT-DID
+      // update wallet.account and address
+    }
+
+    /**
+     * 1. GENERATE ENCRYPTION KEY PAIR
+     */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
     const keyPairs = await generateKeyPair();
 
-    // Report Progress
+    /**
+     * 2. PREPARE PUBLIC KEY
+     * Note - Previously this step use to sign PGP Public Key with ETH Private Key but now it is deprecated with coming of the verificationProof
+     */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
     const publicKey: string = await preparePGPPublicKey(
-      encryptionType,
+      encryptionType as string,
       keyPairs.publicKeyArmored,
       wallet
     );
 
-    // Report Progress
+    /**
+     * 3. ENCRYPT PGP PRIVATE KEY
+     * Note - For Encryption NFTPGP_V1, password is also encrypted
+     */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-03'] as ProgressHookType);
     const encryptedPrivateKey: encryptedPrivateKeyType = await encryptPGPKey(
-      encryptionType,
+      encryptionType as string,
       keyPairs.privateKeyArmored,
       wallet,
       additionalMeta
     );
-    if (encryptionType === Constants.ENC_TYPE_V4) {
+    if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V1) {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
-        Constants.ENC_TYPE_V3,
+        ENCRYPTION_TYPE.PGP_V3,
         additionalMeta.NFTPGP_V1?.password as string,
         wallet,
         additionalMeta
@@ -108,10 +127,12 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       encryptedPrivateKey.encryptedPassword = encryptedPassword;
     }
 
-    // Report Progress
+    /**
+     * 4. VERIFICATION PROOF GENERATION & PUSH NODES SYNCING
+     */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
     const body = {
-      user: caip10,
+      user: walletToPCAIP10(address),
       wallet,
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
@@ -119,15 +140,98 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
     };
     const createdUser = await createUserService(body);
 
-    // Report Progress
+    /**
+     * 5. SUCCESSFUL USER CREATION
+     */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-05'] as ProgressHookType);
     return createdUser;
   } catch (err) {
-    // Report Progress
+    /**
+     * REPORT ERROR
+     */
     const errorProgressHook = PROGRESSHOOK[
       'PUSH-ERROR-00'
     ] as ProgressHookTypeFunction;
     progressHook?.(errorProgressHook(create.name, err));
     throw Error(`[Push SDK] - API - Error - API ${create.name} -: ${err}`);
+  }
+};
+
+const validateOptions = async (options: CreateUserProps): Promise<void> => {
+  const {
+    account = null,
+    signer = null,
+    version,
+    additionalMeta = {
+      NFTPGP_V1: {
+        password: '$0Pc' + generateRandomSecret(10), // default password
+      },
+    },
+  } = options || {};
+
+  /**
+   * 1. Account Validation
+   * Note - Account is required for NFT CHAT
+   */
+  if (account == null && signer == null) {
+    throw new Error(`At least one from account or signer is necessary!`);
+  }
+
+  const wallet = getWallet({ account, signer });
+  const address = await getAccountAddress(wallet);
+
+  if (!isValidETHAddress(address)) {
+    throw new Error(`Invalid address!`);
+  }
+
+  if (
+    version &&
+    (version === ENCRYPTION_TYPE.NFTPGP_V1 ||
+      version === ENCRYPTION_TYPE.NFTPGP_V2)
+  ) {
+    if (!isValidCAIP10NFTAddress(account as string)) {
+      throw new Error(`Account is not a valid NFT-DID`);
+    }
+  }
+
+  /**
+   * 2. Signer Validation
+   * Note - Signer is required for NFT CHAT
+   */
+  if (isValidCAIP10NFTAddress(walletToPCAIP10(address)) && signer === null) {
+    throw new Error(`Signer is not required for NFT Encryption!`);
+  }
+
+  /**
+   * 3. Encryption Version Validation
+   * Note - If verson not passed then sdk chooses the default itself
+   */
+  if (version) {
+    // NFT CHAT
+    if (isValidCAIP10NFTAddress(walletToPCAIP10(address))) {
+      if (
+        version !== ENCRYPTION_TYPE.NFTPGP_V1 &&
+        version !== ENCRYPTION_TYPE.NFTPGP_V2
+      ) {
+        throw new Error(`Invalid encryption version!`);
+      }
+    }
+    // W2W CHAT
+    else {
+      if (
+        version !== ENCRYPTION_TYPE.PGP_V1 &&
+        version !== ENCRYPTION_TYPE.PGP_V2 &&
+        version !== ENCRYPTION_TYPE.PGP_V3
+      ) {
+        throw new Error(`Invalid encryption version!`);
+      }
+    }
+  }
+
+  /**
+   * 4. AddtionalMeta Validation
+   */
+  if (additionalMeta?.NFTPGP_V1?.password) {
+    validatePssword(additionalMeta.NFTPGP_V1.password);
   }
 };
