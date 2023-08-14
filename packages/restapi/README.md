@@ -3287,10 +3287,58 @@ const response = await PushAPI.chat.createGroup({
   members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   groupImage: &lt;group image link&gt; ,
   admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-  numberOfERC20: 20,
-  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-  numberOfNFTTokens: 2,
+  'rules': {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
@@ -3308,12 +3356,53 @@ Allowed Options (params with _ are mandatory)
 | members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
 | isPublic* | boolean | - | true for public group, false for private group |
-| contractAddressERC20 | string | null | ERC20 Contract Address |
-| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
-| contractAddressNFT | string | null | NFT Contract Address |
-| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
+| contractAddressERC20 (deprecated) | string | null | ERC20 Contract Address |
+| numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT (deprecated) | string | null | NFT Contract Address |
+| numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
+| rules | Rules | - | conditions for group and chatting access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+## **Rules format**
+```typescript
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  comparison?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chattingAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+```
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
