@@ -73,7 +73,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             const response = await PushAPI.space.update(spaceUpdate);
 
             console.log(response);
-        } catch (e:any) {
+        } catch (e: any) {
             console.error(e.message);
         } finally {
             setLoading(false);
@@ -86,78 +86,84 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             width='400px'
         >
             <SpacesInfoContainer theme={theme}>
-            <ModalHeader
-                heading='Spaces Info'
-                closeCallback={props.closeSpacesInfo}
-            />
-
-            <ProfileContainer
-                imageUrl={spaceData?.members[0]?.image}
-                name={spaceData?.members[0]?.wallet?.substring(7)}
-                handle={spaceData?.members[0]?.wallet?.substring(7)}
-                imageHeight='48px'
-                tag='Host'
-            />
-
-            <SpacesDetailsContainer>
-                <Title>{spaceData?.spaceName}</Title>
-                <Description theme={theme}>{spaceData?.spaceDescription}</Description>
-            </SpacesDetailsContainer>
-
-            <Button
-                customStyle={customStyle}
-                onClick={showExplicitInvite}
-            >
-                Invite Members
-            </Button>
-
-            <Accordion title='Pending Invites' items={spaceData?.pendingMembers?.length}>
-                {spaceData?.pendingMembers &&
-                    spaceData.pendingMembers.map((item: any) => {
-                        return <ProfileContainer
-                            tag={item?.isSpeaker ? 'Co-Host' : undefined}
-                            imageHeight='48px'
-                            handle={item?.wallet?.substring(7)}
-                            name={item?.wallet?.substring(7)}
-                            imageUrl={item?.image}
-                        />
-                    })
-                }
-            </Accordion>
-
-            {adminsArray &&
-                adminsArray.slice(1).map((item: any) => {
-                    return <ProfileContainer
-                        border
-                        tag="Co-Host"
-                        imageHeight='48px'
-                        handle={item?.wallet?.substring(7)}
-                        name={item?.wallet?.substring(7)}
-                        imageUrl={item?.image}
-                    />
-                })
-            }
-
-            {
-                isInviteVisible ?
-                <SCWInviteModal
-                    closeInviteModal={showExplicitInvite}
-                    makeScheduleVisible={showExplicitInvite}
-                    createSpace={updateSpace}
-                    isLoading={isLoading}
-                    invitedMembersList={invitedMembersList}
-                    setInvitedMembersList={setInvitedMembersList}
-                    invitedAddressList={invitedAddressList}
-                    setInvitedAddressList={setInvitedAddressList}
-                    adminsList={adminsList}
-                    setAdminsList={setAdminsList}
-                    adminsAddressList={adminsAddressList}
-                    setAdminsAddressList={setAdminsAddressList}
-                    onClose={showExplicitInvite}
-                    btnString='Update Space'
+                <ModalHeader
+                    heading='Spaces Info'
+                    closeCallback={props.closeSpacesInfo}
                 />
-                : null
-            }
+
+                <ProfileContainer
+                    imageUrl={spaceData?.members[0]?.image}
+                    name={spaceData?.members[0]?.wallet?.substring(7)}
+                    handle={spaceData?.members[0]?.wallet?.substring(7)}
+                    imageHeight='48px'
+                    tag='Host'
+                />
+
+                <SpacesDetailsContainer>
+                    <Title>{spaceData?.spaceName}</Title>
+                    <Description theme={theme}>{spaceData?.spaceDescription}</Description>
+                </SpacesDetailsContainer>
+
+                <Button
+                    customStyle={customStyle}
+                    onClick={showExplicitInvite}
+                >
+                    Invite Members
+                </Button>
+
+                {
+                    spaceData?.pendingMembers?.length ?
+                        <Accordion title='Pending Invites' items={spaceData?.pendingMembers?.length}>
+                            {spaceData?.pendingMembers &&
+                                spaceData.pendingMembers.map((item: any) => {
+                                    return <ProfileContainer
+                                        tag={item?.isSpeaker ? 'Co-Host' : undefined}
+                                        imageHeight='48px'
+                                        handle={item?.wallet?.substring(7)}
+                                        name={item?.wallet?.substring(7)}
+                                        imageUrl={item?.image}
+                                    />
+                                })
+                            }
+                        </Accordion>
+                        : null
+                }
+
+                <AdminsList>
+                    {adminsArray &&
+                        adminsArray.slice(1).map((item: any) => {
+                            return <ProfileContainer
+                                border
+                                tag="Co-Host"
+                                imageHeight='48px'
+                                handle={item?.wallet?.substring(7)}
+                                name={item?.wallet?.substring(7)}
+                                imageUrl={item?.image}
+                            />
+                        })
+                    }
+                </AdminsList>
+
+                {
+                    isInviteVisible ?
+                        <SCWInviteModal
+                            closeInviteModal={showExplicitInvite}
+                            makeScheduleVisible={showExplicitInvite}
+                            createSpace={updateSpace}
+                            isLoading={isLoading}
+                            invitedMembersList={invitedMembersList}
+                            setInvitedMembersList={setInvitedMembersList}
+                            invitedAddressList={invitedAddressList}
+                            setInvitedAddressList={setInvitedAddressList}
+                            adminsList={adminsList}
+                            setAdminsList={setAdminsList}
+                            adminsAddressList={adminsAddressList}
+                            setAdminsAddressList={setAdminsAddressList}
+                            onClose={showExplicitInvite}
+                            btnString='Update Space'
+                        />
+                        : null
+                }
             </SpacesInfoContainer>
         </Modal>
     )
@@ -181,4 +187,11 @@ const Title = styled.div`
 
 const Description = styled.div`
     color: ${(props => props.theme?.textColorSecondary)};
+`;
+
+const AdminsList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
 `;

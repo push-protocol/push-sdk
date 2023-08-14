@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.5.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.5.1...socket-0.5.2) (2023-08-03)
+
+
+### Bug Fixes
+
+* socket options ([#601](https://github.com/ethereum-push-notification-service/push-sdk/issues/601)) ([d821535](https://github.com/ethereum-push-notification-service/push-sdk/commit/d821535d3e800c8821206fc387b346c990c02b5a))
+
+
+
 ## [0.5.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.5.0...socket-0.5.1) (2023-05-22)
 
 
