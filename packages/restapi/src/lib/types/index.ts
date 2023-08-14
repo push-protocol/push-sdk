@@ -316,7 +316,6 @@ export enum ConditionType {
 
 export type Data = {
   address?: string;
-  comparison?: string;
   amount?: number;
   decimals?: number;
   guildId?: string;
