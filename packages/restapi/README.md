@@ -3645,10 +3645,58 @@ const response = await PushAPI.chat.updateGroup({
     members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     groupImage: &lt;group image link&gt; ,
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-    contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-    numberOfERC20: 20,
-    contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-    numberOfNFTTokens: 2,
+    rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+   },
     account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
     env: 'staging',
     pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
@@ -3796,7 +3844,59 @@ Allowed Options (params with _ are mandatory)
   groupDescription: 'This is the oficial group for Push Protocol',
   isPublic: true,
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c'
+  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 
 ```
@@ -4521,7 +4621,7 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
-| rules | Rules | - | conditions for group and chatting access (see format above) |
+| rules | Rules | - | conditions for space and chatting access (see format above) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
