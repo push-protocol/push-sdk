@@ -39,6 +39,7 @@ export interface TypeBarProps {
   emoji?: boolean;
   gif?: boolean;
   file?: boolean;
+  isConnected?: boolean;
 }
 
 export { IChatTheme } from './theme';

@@ -17,6 +17,7 @@ export interface IChatTheme {
   iconColorPrimary?: string;
   fontFamily?: string;
   chatBubblePrimaryBgColor?: string;
+  fileIconColor?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -33,6 +34,7 @@ export const lightChatTheme: IChatTheme = {
   border: 'none',
   borderRadius: '24px',
   iconColorPrimary: 'none',
+  fileIconColor: '#000',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -49,5 +51,5 @@ export const darkChatTheme: IChatTheme = {
   borderRadius: '24px',
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
+  fileIconColor: '#fff',
 };
-
