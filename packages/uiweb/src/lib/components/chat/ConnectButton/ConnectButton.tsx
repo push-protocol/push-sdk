@@ -109,7 +109,7 @@ export const ConnectButton = () => {
 
             connectBtn();
         }
-    }, [active, account, env, library, pgpPrivateKey, setPgpPrivateKey]);
+    }, [active, account, env, library]);
 
     const createProfile = async () => {
         if (!account || !env || !library) return;
@@ -145,18 +145,18 @@ export const ConnectButton = () => {
     }
 
     const connectWalletOnPageLoad = async () => {
-        try {
-            await activate(injected);
-        } catch (ex) {
-            console.log(ex);
+        if (!pgpPrivateKey && !account) {
+            try {
+                await activate(injected);
+            } catch (ex) {
+                console.log(ex);
+            }
         }
     };
 
     useEffect(() => {
-        if (!pgpPrivateKey && !account) {
-            connectWalletOnPageLoad();
-        }
-    }, [pgpPrivateKey, account, activate, env]);
+        connectWalletOnPageLoad();
+    }, [activate]);
 
     return (
         <ConnectWrapper>
