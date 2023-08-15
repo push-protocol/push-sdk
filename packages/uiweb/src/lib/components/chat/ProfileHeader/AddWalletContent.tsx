@@ -371,4 +371,5 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
     display: flex;
     align-items: center;
     justify-content: ${(props) => props.isLoading ? 'space-between' : 'center'};
+    box-shadow: none;
 `;

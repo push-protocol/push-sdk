@@ -10,7 +10,6 @@ import { DropdownValueType } from "./DropDown";
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import { Modal } from "../../space/reusables/Modal";
 import { Section, Span, Image } from "../../reusables/sharedStyling";
 import CloseIcon from '../../../icons/close.svg';
 import { ProfileCard } from "./ProfileCard";
@@ -20,6 +19,7 @@ import LockIcon from '../../../icons/Lock.png'
 import LockSlashIcon from '../../../icons/LockSlash.png'
 import { AddWalletContent } from './AddWalletContent'
 import ArrowIcon from '../../../icons/CaretDown.svg'
+import { Modal } from "../helpers/Modal";
 
 
 
