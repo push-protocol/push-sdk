@@ -64,9 +64,10 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   });
 };
 
-export const resolveNewEns = (address: string, provider: InfuraProvider) => {
+export const resolveNewEns = async (address: string, provider: InfuraProvider) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
+  let result;
   // let provider = ethers.getDefaultProvider('mainnet');
   // if (
   //   window.location.hostname == 'app.push.org' ||
@@ -81,13 +82,16 @@ export const resolveNewEns = (address: string, provider: InfuraProvider) => {
   //   );
   // }
 
-  provider.lookupAddress(checksumWallet).then((ens) => {
+  await provider.lookupAddress(checksumWallet).then((ens) => {
     if (ens) {
+      result = ens;
       return ens;
     } else {
+      result = null;
       return null;
     }
   });
+  return result;
 };
 
 export const isPCAIP = (id: string) => {

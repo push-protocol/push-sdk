@@ -19,7 +19,6 @@ import { IGroup } from "../../../types";
 import { GroupInfoModal } from "./GroupInfoModal";
 import { isValidETHAddress } from "../helpers/helper";
 import { ethers } from "ethers";
-import { ChatMainStateContext, ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { IProfileHeader } from "../exportedTypes";
 import { InfuraAPIKey, allowedNetworks } from "../../../config";
 import { resolve } from "path";
@@ -78,15 +77,16 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
     const [options, setOptions] = useState(false); 
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
-    const { web3NameList  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
+    const [ensName, setEnsName ] = useState<string | undefined>('');
     const isMobile = useDeviceWidthCheck(425);
     const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
-    const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey)
+    const provider = new ethers.providers.InfuraProvider(1, InfuraAPIKey)
 
 
     const fetchProfileData = async () => {
         if(isValidETHAddress(chatId)){
             const ChatProfile = await fetchUserChatProfile({ profileId: chatId });
+            // console.log(ChatProfile,'status')
             setChatInfo(ChatProfile);
             setGroupInfo(null);
             setIsGroup(false);
@@ -98,18 +98,23 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
         }
     }
 
+    const getName = async (chatId: string) => {
+      if(isValidETHAddress(chatId)){
+        const result = await resolveNewEns(chatId, provider);
+        // if(result) 
+        setEnsName(result);
+      }
+    }
+
 
     useEffect(()=> {
         if(!chatId) return;
         fetchProfileData();
-
-        if(isValidETHAddress(chatId)){
-          const result = resolveNewEns(chatId, provider);
-          console.log(chatId, provider,l1ChainId,result);
-        }
+        getName(chatId);
         
-    },[chatId, account, env])
+    },[chatId])
 
+    // console.log(chatInfo, groupInfo, isGroup);
 
  
     if (chatId && (chatInfo || groupInfo)) {
@@ -120,7 +125,7 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                 ) : <DummyImage />}
                 
 
-                <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
+                <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : ensName ? `${ensName}(${chatId})`: shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
 
                 <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} groupInfo={groupInfo} setGroupInfo={setGroupInfo} theme={theme} />
 
