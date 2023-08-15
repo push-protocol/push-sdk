@@ -18,6 +18,19 @@ export interface IChatTheme {
   fontFamily?: string;
   chatBubblePrimaryBgColor?: string;
   dropdownBorderColor?: string;
+  modalPrimaryTextColor?: string;
+  modalSearchBarBorderColor?: string;
+  modalSearchBarBackground?: string;
+  snapFocusBg?: string;
+  groupButtonBackgroundColor?: string;
+  groupButtonTextColor?: string;
+  modalConfirmButtonBorder?: string;
+  groupSearchProfilBackground?: string,
+  modalInputBorderColor?: string,
+  snackbarBorderText?: string,
+  snackbarBorderIcon?: string,
+  modalContentBackground?: string,
+  modalProfileTextColor?: string,
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -34,7 +47,20 @@ export const lightChatTheme: IChatTheme = {
   border: 'none',
   borderRadius: '32px',
   iconColorPrimary: 'none',
-  dropdownBorderColor: '1px solid rgb(229, 232, 246)'
+  dropdownBorderColor: '1px solid rgb(229, 232, 246)',
+  modalPrimaryTextColor: '#1E1E1E',
+  modalSearchBarBorderColor: '#BAC4D6',
+  modalSearchBarBackground: '#FFF',
+  snapFocusBg: '#F4F5FA',
+  groupButtonBackgroundColor: '#ADB0BE',
+  groupButtonTextColor: '#FFF',
+  modalConfirmButtonBorder: '#F4DCEA',
+  groupSearchProfilBackground: '#F4F5FA',
+  modalInputBorderColor: '#C2CBDB',
+  snackbarBorderText: '#000',
+  snackbarBorderIcon: 'none',
+  modalContentBackground: '#FFFFFF',
+  modalProfileTextColor: '#1E1E1E',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -51,6 +77,20 @@ export const darkChatTheme: IChatTheme = {
   borderRadius: '32px',
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
-    dropdownBorderColor: '1px solid rgb(74, 79, 103)'
+    dropdownBorderColor: '1px solid rgb(74, 79, 103)',
+  modalPrimaryTextColor: '#B6BCD6',
+  modalSearchBarBorderColor: '#4A4F67',
+  modalSearchBarBackground: '#282A2E',
+  snapFocusBg: '#404650',
+  groupButtonBackgroundColor: '#2F3137',
+  groupButtonTextColor: '#787E99',
+  modalConfirmButtonBorder: '#787E99',
+  groupSearchProfilBackground: '#404650',
+  modalInputBorderColor: '#4A4F67',
+  snackbarBorderText: '#B6BCD6',
+  snackbarBorderIcon:
+  'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
+  modalContentBackground: '#2F3137',
+  modalProfileTextColor: '#B6BCD6',
 };
 
