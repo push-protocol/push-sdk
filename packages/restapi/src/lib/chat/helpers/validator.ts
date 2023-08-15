@@ -33,7 +33,7 @@ export const createGroupRequestValidator = (
     }
 
     if (admins == null) {
-        throw new Error(`admins cannot be null`);
+         throw new Error(`admins cannot be null`);
     }
 
     for (let i = 0; i < admins.length; i++) {

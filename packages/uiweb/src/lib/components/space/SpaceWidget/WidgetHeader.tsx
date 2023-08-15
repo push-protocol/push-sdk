@@ -44,7 +44,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
   spaceStatus,
 }: IWidgetHeaderProps) => {
   const theme = useContext(ThemeContext);
-  // const { isLive } = useSpaceData();
+  const { isJoined } = useSpaceData();
 
   const tempImageUrl =
     'https://imgv3.fotor.com/images/blog-richtext-image/10-profile-picture-ideas-to-make-you-stand-out.jpg';
@@ -88,55 +88,58 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
       <Container theme={theme}>
         {(isSpaceLive === SpaceStatus.Scheduled ||
           isSpaceLive === SpaceStatus.Ended) && (
-          <Section>
-            <Item marginBottom={'12px'}>
-              <HostPfpContainer
-                statusTheme="Live"
-                imageUrl={spaceData?.members[0]?.image || tempImageUrl}
-                name={
-                  `${spaceData?.spaceCreator?.slice(
-                    7,
-                    12
-                  )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
-                }
-                handle={
-                  `${spaceData?.spaceCreator?.slice(
-                    7,
-                    12
-                  )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
-                }
-              />
-            </Item>
-            <Item
-              display={'flex'}
-              alignSelf={'flex-start'}
-              alignItems={'center'}
-            >
-              {/* {isHost && <Button padding="6.5px 16.5px" color="#fff">Edit space</Button>} */}
-              <Item
-                marginLeft={'8px'}
-                display={'flex'}
-                onClick={showSpacesInfo}
-              >
-                <Image alt="Settings icon" src={SettingsIcon} />
-              </Item>
-              <Item marginLeft={'8px'} display={'flex'}>
-                <Image
-                  onClick={() => setIsMinimized(!isMinimized)}
-                  src={isMinimized ? CaretUpIcon : CaretDownIcon}
-                  alt="Maximize/Minimize icon"
+            <Section>
+              <Item marginBottom={'12px'}>
+                <HostPfpContainer
+                  statusTheme="Live"
+                  imageUrl={spaceData?.members[0]?.image || tempImageUrl}
+                  name={
+                    `${spaceData?.spaceCreator?.slice(
+                      7,
+                      12
+                    )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+                  }
+                  handle={
+                    `${spaceData?.spaceCreator?.slice(
+                      7,
+                      12
+                    )}...${spaceData?.spaceCreator?.slice(-6, -1)}` || 'Host'
+                  }
                 />
               </Item>
               <Item
-                marginLeft={'8px'}
                 display={'flex'}
-                onClick={handleCloseWidget}
+                alignSelf={'flex-start'}
+                alignItems={'center'}
               >
-                <CloseSvg stroke="white" height="15" width="15" />
+                {/* {isHost && <Button padding="6.5px 16.5px" color="#fff">Edit space</Button>} */}
+                <Item
+                  marginLeft={'8px'}
+                  display={'flex'}
+                  onClick={showSpacesInfo}
+                >
+                  <Image alt="Settings icon" src={SettingsIcon} />
+                </Item>
+                <Item marginLeft={'8px'} display={'flex'}>
+                  <Image
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    src={isMinimized ? CaretUpIcon : CaretDownIcon}
+                    alt="Maximize/Minimize icon"
+                  />
+                </Item>
+                {/* COMMENTED FOR FUTURE IMPLEMENTATION */}
+                {!isJoined && 
+                  <Item
+                    marginLeft={'8px'}
+                    display={'flex'}
+                    onClick={handleCloseWidget}
+                  >
+                    <CloseSvg stroke="white" height="15" width="15" />
+                  </Item>
+                }
               </Item>
-            </Item>
-          </Section>
-        )}
+            </Section>
+          )}
         <Section>
           <Text fontSize={'16px'} fontWeight={700}>
             {spaceData?.spaceName || 'Test Space'}
@@ -162,13 +165,15 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
                   alt="Maximize/Minimize icon"
                 />
               </Item>
-              <Item
-                marginLeft={'8px'}
-                display={'flex'}
-                onClick={handleCloseWidget}
-              >
-                <CloseSvg stroke="white" height="15" width="15" />
-              </Item>
+              {!isJoined &&
+                <Item
+                  marginLeft={'8px'}
+                  display={'flex'}
+                  onClick={handleCloseWidget}
+                >
+                  <CloseSvg stroke="white" height="15" width="15" />
+                </Item>
+              }
             </Item>
           )}
         </Section>
@@ -233,17 +238,4 @@ const Section = styled.div<{ marginTop?: string }>`
   display: flex;
   justify-content: space-between;
   margin-top: ${(props) => props.marginTop};
-`;
-
-const Button = styled.button<{
-  padding?: string;
-  color?: string;
-}>`
-  padding: ${(props) => props.padding ?? '0px'};
-  color: ${(props) => props.color ?? 'inherit'};
-  margin-left: 10px;
-  background: ${(props) => props.theme.btnColorPrimary}};
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
 `;

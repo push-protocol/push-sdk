@@ -10,7 +10,7 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META } from './metaTypes';
+import { META_MESSAGE_META, MessageTypeSpecificMeta } from './metaTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -308,6 +308,42 @@ export enum ChatStatus {
   PENDING = 'PENDING',
   ENDED = 'ENDED',
 }
+
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chattingAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -336,6 +372,7 @@ export interface GroupDTO {
   scheduleEnd?: Date | null;
   groupType?: string;
   status?: ChatStatus | null;
+  rules?: Rules | null;
 }
 
 export interface SpaceDTO {
@@ -366,6 +403,7 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  rules?: Rules | null;
 }
 
 export interface Peer {
@@ -440,7 +478,7 @@ export interface ChatSendOptionsType {
   messageType?: `${MessageType}`;
   messageObj?: {
     content: string;
-    meta?: META_MESSAGE_META;
+    meta?: MessageTypeSpecificMeta[MessageType];
   };
   /**
    * @deprecated - Use messageObj.content instead
@@ -649,7 +687,7 @@ export type VideoAcceptRequestInputOptions = {
 
 export type VideoConnectInputOptions = {
   signalData: any;
-  peerAddress: string;
+  peerAddress?: string;
 };
 
 export type VideoDisconnectOptions = {
@@ -658,7 +696,7 @@ export type VideoDisconnectOptions = {
     type: SPACE_DISCONNECT_TYPE;
     data: Record<string, unknown>;
   };
-};
+} | null;
 
 export type EnableVideoInputOptions = {
   state: boolean;

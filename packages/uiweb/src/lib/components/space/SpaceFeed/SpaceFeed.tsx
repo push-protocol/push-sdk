@@ -182,10 +182,10 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
           padding: "10px",
         }}
       >
-      {orientation === OrientationEnums.Horizontal ? (
-        <Spaces orientation={orientation}>
-          {orientation === OrientationEnums.Horizontal
-            ? mySpaces &&
+        {orientation === OrientationEnums.Horizontal ? (
+          <Spaces orientation={orientation}>
+            {orientation === OrientationEnums.Horizontal
+              ? mySpaces &&
               mySpaces.apiData?.map((space: SpaceIFeeds) => {
                 return (
                   <SpaceBanner
@@ -197,7 +197,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   />
                 );
               })
-            : mySpaces &&
+              : mySpaces &&
               mySpaces.apiData?.map((space: SpaceIFeeds) => {
                 return (
                   <SpaceBanner
@@ -209,23 +209,23 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   />
                 );
               })}
-        </Spaces>
-      ) : (
-        <>
-          <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
-            <NavButtonWrapper>
-              {sortingOrder.map((tabName: TabsValues) => {
-                return (
-                  <NavButton
-                    active={selectedFeedTab === FeedTabs[tabName]}
-                    onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
-                  >
-                    {FeedTabs[tabName]}
-                  </NavButton>
-                );
-              })}
-            </NavButtonWrapper>
-          </Navigation>
+          </Spaces>
+        ) : (
+          <>
+            <Navigation showTabs={showTabs} width={width} showFilter={showFilter}>
+              <NavButtonWrapper>
+                {sortingOrder.map((tabName: TabsValues) => {
+                  return (
+                    <NavButton
+                      active={selectedFeedTab === FeedTabs[tabName]}
+                      onClick={() => setSelectedFeedTab(FeedTabs[tabName])}
+                    >
+                      {FeedTabs[tabName]}
+                    </NavButton>
+                  );
+                })}
+              </NavButtonWrapper>
+            </Navigation>
             <Filter showFilter={showFilter}>
               <FilterButton
                 active={filterTab === FilterEnums.All}
@@ -334,6 +334,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
                   </Spaces>
                 )}
                 {loading && <Spinner size="40" />}
+
               </Container>
             </ScrollContainer>
           </>

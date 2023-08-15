@@ -1,9 +1,9 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules } from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { ENV } from '../../constants';
+import { ENV, MessageType } from '../../constants';
 import * as AES from './aes';
-import { META_MESSAGE_META } from '../../types/metaTypes';
+import { MessageTypeSpecificMeta } from '../../types/metaTypes';
 import { sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
@@ -14,7 +14,7 @@ export interface ISendMessagePayload {
   messageObj:
     | {
         content: string;
-        meta?: META_MESSAGE_META;
+        meta?: MessageTypeSpecificMeta[MessageType];
       }
     | string;
   messageType: string;
@@ -58,6 +58,7 @@ export interface ICreateGroupRequestPayload {
   groupCreator: string;
   verificationProof: string;
   meta?: string;
+  rules?: Rules | null;
 }
 
 export interface IUpdateGroupRequestPayload {
@@ -74,7 +75,7 @@ export const sendMessagePayload = async (
   senderCreatedUser: IConnectedUser,
   messageObj: {
     content: string;
-    meta?: META_MESSAGE_META;
+    meta?: MessageTypeSpecificMeta[MessageType];
   },
   messageContent: string,
   messageType: string,
@@ -178,7 +179,8 @@ export const createGroupPayload = (
   meta?: string,
   groupType?: string | null,
   scheduleAt?: Date | null,
-  scheduleEnd?: Date | null
+  scheduleEnd?: Date | null,
+  rules?: Rules | null,
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -197,6 +199,7 @@ export const createGroupPayload = (
     groupType: groupType,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
+    rules: rules
   };
   return body;
 };
@@ -244,7 +247,8 @@ export const updateGroupPayload = (
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
-  meta?: string | null
+  meta?: string | null,
+  rules? : Rules | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -258,6 +262,7 @@ export const updateGroupPayload = (
     scheduleEnd: scheduleEnd,
     status: status,
     ...(meta !== undefined && { meta: meta }),
+    ...(rules !== undefined && { rules: rules }),
   };
   return body;
 };
