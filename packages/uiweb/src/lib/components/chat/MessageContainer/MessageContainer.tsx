@@ -84,6 +84,8 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
   } = options || {};
 
   const { account, pgpPrivateKey, env } = useChatData();
+
+  console.log(env);
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   // const [conversationHash, setConversationHash] = useState<string>();
@@ -137,7 +139,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
         }
       }
     })();
-  }, [chatId, pgpPrivateKey, account]);
+  }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -240,7 +242,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
           </Section>
         )}
         {chatId && messageList && (
-          <MessageList limit={limit} chatId={chatId} />
+          <MessageList limit={limit} conversationHash={chatId} />
         )}
         {checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
           <Section
@@ -286,7 +288,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
 
       {typebar && (
         <Section flex="0 1 auto">
-          <TypeBar chatId={chatId} file={file} emoji={emoji} gif={gif} isConnected={isConnected} />
+          <TypeBar chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
         </Section>
       )}
     </Section>

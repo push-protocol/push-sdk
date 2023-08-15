@@ -8,18 +8,11 @@ import styled from 'styled-components';
 import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
-import {
-  appendUniqueMessages,
-  checkIfSameChat,
-  dateToFromNowDaily,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
+import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
-import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 import { ConnectButton } from '../ConnectButton';
 
 /**
@@ -33,18 +26,16 @@ interface IThemeProps {
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
-  const { conversationHash, limit = chatLimit, isConnected = false } = options || {};
+  const { conversationHash, limit = chatLimit } = options || {};
   const { pgpPrivateKey, account } = useChatData();
-  const [conversationHash, setConversationHash] = useState<string>();
   const [messages, setMessages] = useState<Messagetype>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { messagesSinceLastConnection } = usePushChatSocket();
-  const { fetchConversationHash } = useFetchConversationHash();
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  const {env} = useChatData();
+
   useEffect(() => {
     console.log(messagesSinceLastConnection)
     if (
@@ -53,14 +44,16 @@ export const MessageList: React.FC<IMessageListProps> = (
       if (!Object.keys(messages || {}).length) {
         setMessages({
           messages: messagesSinceLastConnection,
-          lastThreadHash: messagesSinceLastConnection.cid,
+          lastThreadHash: messagesSinceLastConnection.lastThreadHash,
         });
       } else {
         console.log(messagesSinceLastConnection)
         const newMessageList = appendUniqueMessages(messages as Messagetype, [messagesSinceLastConnection], false);
         setMessages({
+
           messages: newMessageList,
           lastThreadHash: messages!.lastThreadHash,
+
         });
       }
       scrollToBottom(null);
@@ -68,19 +61,12 @@ export const MessageList: React.FC<IMessageListProps> = (
   }, [messagesSinceLastConnection]);
 
   useEffect(() => {
-    (async function () {
-      const hash = await fetchConversationHash({ conversationId: chatId });
-      setConversationHash(hash?.threadHash);
-    })();
-  }, [chatId, pgpPrivateKey, account, env]);
-
-  useEffect(() => {
     if (conversationHash) {
       (async function () {
         await getMessagesCall();
       })();
     }
-  }, [conversationHash]);
+  }, [conversationHash, pgpPrivateKey, account]);
 
   useEffect(() => {
     scrollToBottom(null);
@@ -148,6 +134,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     }
   };
 
+
   type RenderDataType = {
     chat: IMessageIPFS;
     dateNum: string;
@@ -173,19 +160,23 @@ export const MessageList: React.FC<IMessageListProps> = (
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
-      width="100%"
+      width='100%'
       justifyContent="start"
-      padding="0 2px"
+      padding='0 2px'
       theme={theme}
       //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
-      {isConnected && (
+      {/* {isConnected && (
         <ConnectButton />
-      )}
+      )} */}
       {loading ? <Spinner /> : ''}
 
-      <Section flexDirection="column" justifyContent="start" width="100%">
+      <Section
+        flexDirection="column"
+        justifyContent="start"
+        width="100%"
+      >
         {messages?.messages.map((chat: IMessageIPFS, index: number) => {
           const dateNum = moment(chat.timestamp).format('L');
           const position =
@@ -218,4 +209,5 @@ const MessageListCard = styled(Section) <IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
+
 `;

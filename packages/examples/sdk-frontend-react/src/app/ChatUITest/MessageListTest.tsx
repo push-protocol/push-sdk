@@ -37,7 +37,7 @@ const MessageListTest = () => {
       {/* <Loader show={isLoading} /> */}
 
       <MessageListCard    >
-        <MessageList conversationHash={conversationHash} limit={10} isConnected={false} />
+        <MessageList conversationHash={conversationHash} limit={10} />
 
       </MessageListCard>
       <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' isConnected={true} />

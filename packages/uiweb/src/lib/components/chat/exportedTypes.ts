@@ -1,7 +1,7 @@
 import type { IMessageIPFS } from '@pushprotocol/restapi';
 
 export interface IMessageListProps {
-  chatId: string;
+  conversationHash: string;
   limit?: number;
 }
 
