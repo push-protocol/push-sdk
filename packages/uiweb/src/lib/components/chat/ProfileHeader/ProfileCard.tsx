@@ -84,7 +84,7 @@ export const ProfileCard = ({
         {pCAIP10ToWallet(member?.wallet)?.toLowerCase() !== account?.toLowerCase() && dropdownValues.length > 0 && (
           <Section
             maxWidth="fit-content"
-            padding="0 20px 0 0"
+            padding="0 0px 0 0"
             onClick={() => {
               handleHeight(member.wallet);
               setSelectedMemberAddress(member?.wallet)
@@ -97,7 +97,7 @@ export const ProfileCard = ({
       </Section>
       {selectedMemberAddress?.toLowerCase() == member?.wallet?.toLowerCase() && (
         <DropdownContainer
-          style={{ top: dropdownHeight! > 570 ? '50%' : '40%' }}
+          style={{ top: dropdownHeight! > 570 ? '30%' : '40%' }}
           theme={theme}
           ref={dropdownRef}>
           <Dropdown
@@ -119,6 +119,7 @@ const ProfileCardItem = styled(Section)`
   width: 100%;
   flex: 1;
   // background-color: ${(props) => props.theme.snapFocusBg};
+  background-color: #808080;
   margin-bottom: 8px;
   max-height: 64px;
   @media (max-width: 480px) {
