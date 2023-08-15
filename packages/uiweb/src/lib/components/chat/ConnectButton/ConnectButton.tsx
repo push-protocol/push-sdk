@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { useWeb3React } from "@web3-react/core";
 import { useChatData } from "../../../hooks";
 import * as PUSHAPI from "@pushprotocol/restapi"
+import { Spinner } from "../../reusables";
+import { ThemeContext } from "../theme/ThemeProvider";
 
 interface NwMappingType {
     [key: number]: string;
@@ -51,126 +53,121 @@ const ConnectWrapper = styled.div`
 const StyledButton = styled.button`
     border: 0px;
     outline: 0px;
-    padding: 8px 15px;
+    padding: 24px 9px;
+    font-weight: 500;
     margin: 10px;
-    border-radius: 20px;
-    font-size: 14px;
+    border-radius: 12px;
+    font-size: 17px;
     cursor: pointer;
+    width: 165px;
+    height: 44px;
+    text-align: start;
+    align-items: center;
+    display: flex;
+    justify-content: center;
   `;
 
 const Connect = styled(StyledButton)`
     color: rgb(255, 255, 255);
-    background: rgb(103, 76, 159);
+    background: #D53A94;
   `;
 
 const Disconnect = styled(StyledButton)`
-    color: rgb(255, 255, 255);
-    background: rgb(226, 8, 128);
+display: flex;
+padding: 9px 24px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+background: var(--general-use-creamy-pink, #D53A94);
+color: var(--general-use-white, #ffffff);
   `;
 
-// interface ConnectButtonProps {
-//     account?: string;
-//     pgpPrivateKey?: string;
-// }
-
 export const ConnectButton = () => {
-    const { active, activate, deactivate, chainId, library } = useWeb3React();
+    const { active, activate, library } = useWeb3React();
     const { pgpPrivateKey, account, env, setPgpPrivateKey } = useChatData();
-    const librarySigner = library.getSigner()
-
-    const connectBtn = async () => {
-        if (!account || !env || !library) return;
-
-        const user = await PUSHAPI.user.get({ account: account, env: env });
-        if (user == null) {
-            console.log("createProfile")
-            createProfile()
-        }
-        console.log(user, "user")
-        console.log(pgpPrivateKey, "pgpPrivateKey")
-        if (user?.encryptedPrivateKey && !pgpPrivateKey) {
-            const decryptPgpKey = await PUSHAPI.chat.decryptPGPKey({
-                encryptedPGPPrivateKey: user.encryptedPrivateKey,
-                account: account,
-                signer: librarySigner,
-                env: env,
-            });
-            console.log(decryptPgpKey, "decryptPgpKey")
-            setPgpPrivateKey(decryptPgpKey);
-        }
-    }
+    const theme = useContext(ThemeContext);
 
     useEffect(() => {
-        connectBtn()
-    }, [account, env])
+        if (active && account && env && library) {
+            const librarySigner = library.getSigner();
+
+            const connectBtn = async () => {
+                const user = await PUSHAPI.user.get({ account: account, env: env });
+                if (!user) {
+                    await createProfile();
+                }
+                if (user?.encryptedPrivateKey && !pgpPrivateKey) {
+                    const decryptPgpKey = await PUSHAPI.chat.decryptPGPKey({
+                        encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                        account: account,
+                        signer: librarySigner,
+                        env: env,
+                    });
+                    setPgpPrivateKey(decryptPgpKey);
+                }
+            };
+
+            connectBtn();
+        }
+    }, [active, account, env, library, pgpPrivateKey, setPgpPrivateKey]);
 
     const createProfile = async () => {
+        if (!account || !env || !library) return;
+
+        const librarySigner = library.getSigner();
+
         const user = await PUSHAPI.user.create({
             signer: librarySigner,
-            env: env
-        })
-        const createdUser = await PUSHAPI.user.get({
-            account: account ? account : "",
-            env: env
+            env: env,
         });
-        console.log(createdUser, "createdUser")
+
+        const createdUser = await PUSHAPI.user.get({
+            account: account,
+            env: env,
+        });
+
         const pvtKey = await PUSHAPI.chat.decryptPGPKey({
             encryptedPGPPrivateKey: createdUser.encryptedPrivateKey ? createdUser.encryptedPrivateKey : "",
             signer: librarySigner,
             env: env,
             toUpgrade: true,
-        })
-        setPgpPrivateKey(pvtKey)
-        console.log(pvtKey, "pvtKey")
-    }
+        });
+
+        setPgpPrivateKey(pvtKey);
+    };
 
     async function connect() {
         try {
             await activate(injected);
-            localStorage.setItem('isWalletConnected', 'true');
         } catch (ex) {
             console.log(ex);
         }
     }
 
-    async function disconnect() {
+    const connectWalletOnPageLoad = async () => {
         try {
-            deactivate();
-            localStorage.setItem('isWalletConnected', 'false');
+            await activate(injected);
         } catch (ex) {
             console.log(ex);
         }
-    }
+    };
 
     useEffect(() => {
-
-        const connectWalletOnPageLoad = async () => {
-            if (localStorage?.getItem('isWalletConnected') === 'true') {
-                try {
-                    await activate(injected);
-                    localStorage.setItem('isWalletConnected', 'true');
-                } catch (ex) {
-                    console.log(ex);
-                }
-            }
-        };
-        connectWalletOnPageLoad();
-    }, [activate]);
+        if (!pgpPrivateKey && !account) {
+            connectWalletOnPageLoad();
+        }
+    }, [pgpPrivateKey, account, activate, env]);
 
     return (
         <ConnectWrapper>
             {active ? (
                 <>
-                    <p>
-                        Connected with <span className="account">{account}</span>
-                    </p>
-                    {chainId ? (
-                        <p className="network">{NETWORK_MAPPING[chainId]}</p>
-                    ) : null}
-                    <Disconnect onClick={disconnect}>Disconnect Metamask</Disconnect>
+                    <Connect theme={theme}>
+                        <Spinner color={'white'} size="22" />
+                    </Connect>
                 </>
             ) : (
-                <Connect onClick={connect}>Connect to MetaMask</Connect>
+                <Connect onClick={connect}>Connect Wallet</Connect>
             )}
         </ConnectWrapper>
     );

@@ -9,25 +9,27 @@ import { usePushChatSocket } from '@pushprotocol/uiweb';
 import { TypeBar } from '@pushprotocol/uiweb';
 
 const MessageListTest = () => {
-  const { account } = useContext<any>(Web3Context)
+  const { account, pgpPrivateKey } = useContext<any>(Web3Context)
 
   const { env } = useContext<any>(EnvContext);
-  const [ conversationHash , setConversationHash] = useState<string>('');
+  const [conversationHash, setConversationHash] = useState<string>('');
 
-  const fetchConversationHash = async() =>{
+  const fetchConversationHash = async () => {
     const ConversationHash = await PUSHAPI.chat.conversationHash({
       account: `eip155:${account}`,
       conversationId: '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc',
       env: env
-  });
-  setConversationHash(ConversationHash.threadHash);
+    });
+    setConversationHash(ConversationHash.threadHash);
   }
-console.log(conversationHash)
- useEffect(()=>{
-  fetchConversationHash();
- })
+  console.log(conversationHash)
+  useEffect(() => {
+    if (pgpPrivateKey) {
+      fetchConversationHash();
+    }
+  })
 
- usePushChatSocket();
+  usePushChatSocket();
   return (
     <div>
       <h2>Chat UI Test page</h2>
@@ -35,9 +37,9 @@ console.log(conversationHash)
       {/* <Loader show={isLoading} /> */}
 
       <MessageListCard    >
-        
-      <MessageList conversationHash={conversationHash} limit={10} isConnected={false}/>
-   
+
+        <MessageList conversationHash={conversationHash} limit={10} isConnected={false} />
+
       </MessageListCard>
       <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' isConnected={true} />
     </div>

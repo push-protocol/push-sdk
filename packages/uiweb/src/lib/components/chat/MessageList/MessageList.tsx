@@ -115,7 +115,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash) {
+    if (threadHash && pgpPrivateKey && account) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
