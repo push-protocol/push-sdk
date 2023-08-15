@@ -14,6 +14,7 @@ export interface IMessageContainerProps {
   emoji?: boolean;
   gif?: boolean;
   file?: boolean;
+  isConnected?: boolean;
 }
 
 export interface TwitterFeedReturnType {

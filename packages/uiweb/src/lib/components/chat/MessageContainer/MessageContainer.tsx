@@ -80,6 +80,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
     emoji = true,
     file = true,
     gif = true,
+    isConnected = true,
   } = options || {};
 
   const { account, pgpPrivateKey, env } = useChatData();
@@ -285,7 +286,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
 
       {typebar && (
         <Section flex="0 1 auto">
-          <TypeBar chatId={chatId} file={file} emoji={emoji} gif={gif} />
+          <TypeBar chatId={chatId} file={file} emoji={emoji} gif={gif} isConnected={isConnected} />
         </Section>
       )}
     </Section>
@@ -300,12 +301,3 @@ const EncryptionMessageDiv = styled(Div)`
     vertical-align: middle;
   }
 `;
-//change theme colours(done)
-//check height(done)
-//css
-//message encrypted flag(done in ui but do it in socket too)
-//typebar and profile
-//check for group private public
-//socket (w2w working)
-
-//newChat window when not chat is there(done)
