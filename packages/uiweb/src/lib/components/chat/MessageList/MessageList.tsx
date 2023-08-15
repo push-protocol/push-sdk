@@ -49,7 +49,6 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
    
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
-      console.log(messagesSinceLastConnection, "messagesSinceLastConnection");
       if (!Object.keys(messages || {}).length) {
         setMessages({
           messages: messagesSinceLastConnection,
@@ -73,14 +72,12 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     (async function () {
       const hash = await fetchConversationHash({ conversationId: chatId });
-      console.log(hash, "hash");
       setConversationHash(hash?.threadHash);
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
     if (conversationHash) {
-      console.log(conversationHash,  "conversationhash");
       (async function () {
         await getMessagesCall();
       })();
@@ -177,7 +174,6 @@ export const MessageList: React.FC<IMessageListProps> = (
       </Span>
     );
   };
-  console.log(conversationHash);
   return (
     <MessageListCard
       overflow="hidden scroll"

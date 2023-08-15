@@ -18,7 +18,6 @@ const usePushSendMessage = () => {
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
-      console.log('sendMessage', env);
       const { chatId, message, messageType } = options || {};
       setLoading(true);
       try {
@@ -28,7 +27,7 @@ const usePushSendMessage = () => {
           receiverAddress: chatId,
           account: account ? account : undefined,
           pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
-          env: "staging" as ENV,
+          env: env,
         });
         setLoading(false);
         if (!response) {

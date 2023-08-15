@@ -34,10 +34,6 @@ export const ChatUIProvider = ({
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
   useState<boolean>(false);
-  useEffect(() => {
-    console.log(envVal,  "envv");
-
-  }, [envVal])
 
   useEffect(() => {
     setEnvVal(env)

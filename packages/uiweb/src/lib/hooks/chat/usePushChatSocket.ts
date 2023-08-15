@@ -32,6 +32,11 @@ export const usePushChatSocket = () => {
     setGroupInformationSinceLastConnection,
   ] = useState<any>({});
 
+  // useEffect(() => {
+  //   // console.log(pgpPrivateKey, "pgppppppppp")
+  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
+  // }, [pgpPrivateKey, connectedProfile])
+
   const addSocketEvents = useCallback(() => {
     console.log('addSocketEvents');
     pushChatSocket?.on(EVENTS.CONNECT, () => {
@@ -53,9 +58,6 @@ export const usePushChatSocket = () => {
       ) {
         return;
       }
-console.log(chat)
-console.log(connectedProfile);
-console.log(pgpPrivateKey)
       const response = await PushAPI.chat.decryptConversation({
         messages: [chat],
         connectedUser: connectedProfile,
@@ -81,6 +83,7 @@ console.log(pgpPrivateKey)
     pgpPrivateKey,
     messagesSinceLastConnection,
     env,
+    connectedProfile,
   ]);
 
   const removeSocketEvents = useCallback(() => {
@@ -100,7 +103,7 @@ console.log(pgpPrivateKey)
         removeSocketEvents();
       }
     };
-  }, [pushChatSocket]);
+  }, [pushChatSocket, pgpPrivateKey, connectedProfile]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -110,7 +113,6 @@ console.log(pgpPrivateKey)
   useEffect(() => {
     if (account) {
       if (pushChatSocket && pushChatSocket.connected) {
-        // console.log('=================>>> disconnection in the hook');
         // pushChatSocket?.disconnect();
       } else {
         const main = async () => {
@@ -135,6 +137,6 @@ console.log(pgpPrivateKey)
     pushChatSocket,
     isPushChatSocketConnected,
     messagesSinceLastConnection,
-    groupInformationSinceLastConnection
+    groupInformationSinceLastConnection,
   };
 };
