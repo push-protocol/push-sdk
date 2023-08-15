@@ -274,7 +274,7 @@ const TwitterCard = ({ chat, tweetId, isGroup, position }: { chat: IMessagePaylo
 }
 
 export const MessageBubble = ({ chat }: { chat: IMessagePayload }) => {
-    const { account } = useChatData();
+    const { account, setAccount, pgpPrivateKey, setPgpPrivateKey, env, setEnv } = useChatData();
     const position = pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase() ? 0 : 1;
     const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({ message: chat?.messageContent });
     const [isGroup, setIsGroup] = useState<boolean>(false);
@@ -289,6 +289,12 @@ export const MessageBubble = ({ chat }: { chat: IMessagePayload }) => {
             }
         }
     }, [chat.toDID, isGroup])
+
+    // useEffect(() => {
+    //     setAccount("");
+    //     setPgpPrivateKey("");
+    //     setEnv(env);
+    // }, [account, env, pgpPrivateKey])
 
     if (messageType === 'TwitterFeedLink') {
         chat.messageType = 'TwitterFeedLink';

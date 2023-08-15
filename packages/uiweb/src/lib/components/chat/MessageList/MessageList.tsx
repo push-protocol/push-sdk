@@ -13,6 +13,7 @@ import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
+import { ConnectButton } from '../ConnectButton';
 
 
 
@@ -21,14 +22,14 @@ import { IChatTheme } from '../theme';
  * this interface is used for defining the props for styled components
  */
 interface IThemeProps {
-    theme?: IChatTheme;
-    
-  }
+  theme?: IChatTheme;
+
+}
 
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
-  const { conversationHash, limit = chatLimit } = options || {};
+  const { conversationHash, limit = chatLimit, isConnected = false } = options || {};
   const { pgpPrivateKey, account } = useChatData();
   const [messages, setMessages] = useState<Messagetype>();
   const { historyMessages, loading } = useFetchHistoryMessages();
@@ -41,7 +42,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     console.log(messagesSinceLastConnection)
     if (
-      Object.keys(messagesSinceLastConnection || {}).length 
+      Object.keys(messagesSinceLastConnection || {}).length
     ) {
       if (!Object.keys(messages || {}).length) {
         setMessages({
@@ -50,12 +51,12 @@ export const MessageList: React.FC<IMessageListProps> = (
         });
       } else {
         console.log(messagesSinceLastConnection)
-        const newMessageList = appendUniqueMessages(messages as Messagetype,[messagesSinceLastConnection],false);
-        setMessages( {
-      
-            messages: newMessageList,
-            lastThreadHash: messages!.lastThreadHash,
-        
+        const newMessageList = appendUniqueMessages(messages as Messagetype, [messagesSinceLastConnection], false);
+        setMessages({
+
+          messages: newMessageList,
+          lastThreadHash: messages!.lastThreadHash,
+
         });
       }
       scrollToBottom(null);
@@ -114,14 +115,14 @@ export const MessageList: React.FC<IMessageListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash) {
+    if (threadHash && pgpPrivateKey && account) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
       });
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
-          const newMessageList = appendUniqueMessages(messages,chatHistory,true);
+          const newMessageList = appendUniqueMessages(messages, chatHistory, true);
           setMessages({
             messages: newMessageList,
             lastThreadHash: chatHistory[0].link,
@@ -166,9 +167,12 @@ export const MessageList: React.FC<IMessageListProps> = (
       justifyContent="start"
       padding='0 2px'
       theme={theme}
-    //   background={theme.bgColorSecondary}
+      //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
+      {isConnected && (
+        <ConnectButton />
+      )}
       {loading ? <Spinner /> : ''}
 
       <Section
@@ -180,7 +184,7 @@ export const MessageList: React.FC<IMessageListProps> = (
           const dateNum = moment(chat.timestamp).format('L');
           const position =
             pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-            account?.toLowerCase()
+              account?.toLowerCase()
               ? 0
               : 1;
           return (
@@ -199,7 +203,7 @@ export const MessageList: React.FC<IMessageListProps> = (
 };
 
 //styles
-const MessageListCard = styled(Section)<IThemeProps>`
+const MessageListCard = styled(Section) <IThemeProps>`
 &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.accentBgColor};
     border-radius: 10px;
