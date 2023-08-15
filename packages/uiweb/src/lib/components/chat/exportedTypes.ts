@@ -37,9 +37,10 @@ export type GIFType = {
 
 export interface TypeBarProps {
   chatId: string;
-  emoji?: boolean;
-  gif?: boolean;
-  file?: boolean;
+  Emoji?: boolean;
+  GIF?: boolean;
+  File?: boolean;
+  Image?: boolean;
   isConnected?: boolean;
 }
 

@@ -10,7 +10,7 @@ export const MessageBubbles = () => {
 
     const { library, account } = useContext<any>(Web3Context)
     const [message, setMessage] = useState<IMessagePayload[]>([])
-    const [ conversationHash , setConversationHash] = useState<string>('');
+    const [conversationHash, setConversationHash] = useState<string>('');
 
     const librarySigner = library.getSigner()
 
@@ -26,22 +26,22 @@ export const MessageBubbles = () => {
 
         const ConversationHash = await PUSHAPI.chat.conversationHash({
             account: `eip155:${account}`,
-            conversationId: '24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac',
+            conversationId: '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc',
             env: env
         });
         setConversationHash(ConversationHash.threadHash);
-        if(ConversationHash?.threadHash){
-        const chatHistory = await PUSHAPI.chat.history({
-            threadhash: conversationHash,
-            account: account,
-            limit: 10,
-            toDecrypt: true,
-            pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
-            env: env
-        })
-        setMessage(chatHistory)
-        console.log(chatHistory)
-    }
+        if (ConversationHash?.threadHash) {
+            const chatHistory = await PUSHAPI.chat.history({
+                threadhash: conversationHash,
+                account: account,
+                limit: 10,
+                toDecrypt: true,
+                pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
+                env: env
+            })
+            setMessage(chatHistory)
+            console.log(chatHistory)
+        }
     }
 
     useEffect(() => {
