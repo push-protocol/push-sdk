@@ -199,7 +199,7 @@ export const MessageList: React.FC<IMessageListProps> = (
           return (
             <>
               {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
-              <Section justifyContent={position ? 'end' : 'start'}>
+              <Section padding='20px' justifyContent={position ? 'end' : 'start'}>
                 <MessageBubble chat={chat} key={index} />
               </Section>
             </>
