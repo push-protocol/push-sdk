@@ -3287,10 +3287,58 @@ const response = await PushAPI.chat.createGroup({
   members: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   groupImage: &lt;group image link&gt; ,
   admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-  numberOfERC20: 20,
-  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-  numberOfNFTTokens: 2,
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
@@ -3308,12 +3356,78 @@ Allowed Options (params with _ are mandatory)
 | members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
 | isPublic* | boolean | - | true for public group, false for private group |
-| contractAddressERC20 | string | null | ERC20 Contract Address |
-| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
-| contractAddressNFT | string | null | NFT Contract Address |
-| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
+| contractAddressERC20 (deprecated) | string | null | ERC20 Contract Address |
+| numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT (deprecated) | string | null | NFT Contract Address |
+| numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
+| rules | Rules | - | conditions for group and chatting access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+## **Rules format**
+```typescript
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  comparison?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chattingAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+```
+
+## Rules Object Description
+
+The rules object consists of two main sections: `groupAccess` and `chattingAccess`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
+
+### Conditions
+
+Conditions can be either an "any" or "all" logic structure. If a condition has an "any" property, it means that only one of the nested conditions needs to be met. If a condition has an "all" property, it means that all the nested conditions must be satisfied.
+
+### Types
+
+There are two main types of conditions: `PUSH` and `GUILD`.
+
+#### PUSH Conditions
+
+PUSH conditions may relate to:
+
+- **ERC721**: Needs an address and an amount, and can only have the `nft_owner` subcategory.
+- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `token_holder` subcategory.
+
+#### GUILD Conditions
+
+GUILD conditions require both guild ID and role ID.
+
+
+
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
@@ -3423,7 +3537,59 @@ Allowed Options (params with _ are mandatory)
   groupDescription: 'This is the oficial group for Push Protocol',
   isPublic: true,
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-  chatId: '0364908cbaef95a5a3124c394ada868177c158a4d677cedd6fd1e42db1852386'
+  chatId: '0364908cbaef95a5a3124c394ada868177c158a4d677cedd6fd1e42db1852386',
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 
 
@@ -3479,10 +3645,58 @@ const response = await PushAPI.chat.updateGroup({
     members: ['0x2e60c47edF21fa5e5A333347680B3971F1FfD456','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     groupImage: &lt;group image link&gt; ,
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-    contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-    numberOfERC20: 20,
-    contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-    numberOfNFTTokens: 2,
+    rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+   },
     account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
     env: 'staging',
     pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
@@ -3499,10 +3713,11 @@ Allowed Options (params with _ are mandatory)
 | groupImage* | string | - | group image link |
 | members* | Array<string> | - | wallet addresses of all members except admins and groupCreator |
 | admins* | Array<string> | - | wallet addresses of all admins except members and groupCreator |
-| contractAddressERC20 | string | null | ERC20 Contract Address |
-| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
-| contractAddressNFT | string | null | NFT Contract Address |
-| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
+| contractAddressERC20 (deprecated) | string | null | ERC20 Contract Address |
+| numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT (deprecated) | string | null | NFT Contract Address |
+| numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
+| rules | Rules | - | conditions for group and chatting access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -3629,7 +3844,59 @@ Allowed Options (params with _ are mandatory)
   groupDescription: 'This is the oficial group for Push Protocol',
   isPublic: true,
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
-  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c'
+  chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 
 ```
@@ -4277,10 +4544,58 @@ const response = await PushAPI.space.create({
   listeners: ['0x9e60c47edF21fa5e5Af33347680B3971F2FfD464','0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   spaceImage: &lt;space image link&gt; ,
   speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
-  contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-  numberOfERC20: 20,
-  contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-  numberOfNFTTokens: 2,
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
   isPublic: true,
   account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
   env: 'staging',
@@ -4302,10 +4617,11 @@ Allowed Options (params with _ are mandatory)
 | isPublic* | boolean | - | true for public space, false for private space |
 | scheduleAt\* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
-| contractAddressERC20 | string | null | ERC20 Contract Address |
-| numberOfERC20 | int | 0 | Minimum number of tokens required to join the space |
-| contractAddressNFT | string | null | NFT Contract Address |
-| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the space |
+| contractAddressERC20 (deprecated) | string | null | ERC20 Contract Address |
+| numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
+| contractAddressNFT (deprecated) | string | null | NFT Contract Address |
+| numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
+| rules | Rules | - | conditions for space and chatting access (see format above) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -4387,7 +4703,59 @@ Allowed Options (params with _ are mandatory)
 	spaceId: 'spaces:e0553610da88dacac70b406d1222a6881c0bde2c5129e58b526b5ae729d82116',
 	scheduleAt: '2023-07-15T14:48:00.000Z',
 	scheduleEnd: '2023-07-15T15:48:00.000Z',
-	status: 'PENDING'
+	status: 'PENDING',
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
 }
 
 
@@ -4449,10 +4817,58 @@ const response = await PushAPI.space.update({
 	  scheduleAt: '2023-07-15T14:48:00.000Z',
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
-    contractAddressERC20: "0x8Afa8FDf9fB545C8412499E8532C958086608b30",
-    numberOfERC20: 20,
-    contractAddressNFT: "0x42af3147f17239341477113484752D5D3dda997B",
-    numberOfNFTTokens: 2,
+    rules: {
+      'groupAccess': {
+        'conditions': [
+          {
+            'any': [
+              {
+                'type': 'PUSH',
+                'category': 'ERC20',
+                'subcategory': 'token_holder',
+                'data': {
+                  'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                  'amount': 1000,
+                  'decimals': 18
+                }
+              },
+              {
+                'type': 'GUILD',
+                'data': {
+                  'guildId': '13468',
+                  'roleId': '19924'
+                }
+              }
+            ]
+          }
+        ]
+      },
+      'chattingAccess': {
+        'conditions': [
+          {
+            'all': [
+              {
+                'type': 'PUSH',
+                'category': 'ERC20',
+                'subcategory': 'token_holder',
+                'data': {
+                  'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                  'amount': 1000,
+                  'decimals': 18
+                }
+              },
+              {
+                'type': 'GUILD',
+                'data': {
+                  'guildId': '13468',
+                  'roleId': '19924'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     account: '0xD993eb61B8843439A23741C0A3b5138763aE11a4',
     env: 'staging',
     pgpPrivateKey: pgpDecryptedPvtKey, //decrypted private key
@@ -4472,10 +4888,11 @@ Allowed Options (params with _ are mandatory)
 | speakers* | Array<string> | - | wallet addresses of all speakers except listeners and spaceCreator |
 | scheduleAt* | Date | - | Date time when the space is scheduled to start |
 | scheduleEnd | Date | - | Date time when the space is scheduled to end |
-| contractAddressERC20 | string | null | ERC20 Contract Address |
-| numberOfERC20 | int | 0 | Minimum number of tokens required to join the group |
-| contractAddressNFT | string | null | NFT Contract Address |
-| numberOfNFTTokens | int | 0 | Minimum number of nfts required to join the group |
+| contractAddressERC20 (deprecated) | string | null | ERC20 Contract Address |
+| numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the space |
+| contractAddressNFT (deprecated) | string | null | NFT Contract Address |
+| numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the space |
+| rules | Rules | - | conditions for space and chatting access (see format above) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -4567,7 +4984,59 @@ Allowed Options (params with _ are mandatory)
   spaceId: 'spaces:108f766a5053e2b985d0843e806f741da5ad754d128aff0710e526eebc127afc',
   scheduleAt: '2023-07-15T14:48:00.000Z',
   scheduleEnd: '2023-07-15T15:48:00.000Z',
-  status: 'PENDING'
+  status: 'PENDING',
+  rules: {
+    'groupAccess': {
+      'conditions': [
+        {
+          'any': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    'chattingAccess': {
+      'conditions': [
+        {
+          'all': [
+            {
+              'type': 'PUSH',
+              'category': 'ERC20',
+              'subcategory': 'token_holder',
+              'data': {
+                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'amount': 1000,
+                'decimals': 18
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'roleId': '19924'
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 ```
 

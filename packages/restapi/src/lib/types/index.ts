@@ -308,6 +308,42 @@ export enum ChatStatus {
   PENDING = 'PENDING',
   ENDED = 'ENDED',
 }
+
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chattingAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -336,6 +372,7 @@ export interface GroupDTO {
   scheduleEnd?: Date | null;
   groupType?: string;
   status?: ChatStatus | null;
+  rules?: Rules | null;
 }
 
 export interface SpaceDTO {
@@ -366,6 +403,7 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  rules?: Rules | null;
 }
 
 export interface Peer {
