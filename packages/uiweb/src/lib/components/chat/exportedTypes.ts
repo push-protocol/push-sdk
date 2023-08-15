@@ -7,6 +7,10 @@ export interface IMessageListProps {
   limit?: number;
 }
 
+export interface IProfileHeader {
+  chatId: string;
+}
+
 export interface TwitterFeedReturnType {
   tweetId: string;
   messageType: string;

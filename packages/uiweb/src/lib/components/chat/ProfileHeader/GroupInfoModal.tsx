@@ -23,7 +23,7 @@ import { Modal } from "../helpers/Modal";
 
 
 
-const PendingMembers = ({ groupInfo , setShowPendingRequests, showPendingRequests, theme }: {groupInfo?: IGroup | null, setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>, showPendingRequests: boolean, theme: IChatTheme }) => {
+const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests, theme }: {groupInfo?: IGroup | null, setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>, showPendingRequests: boolean, theme: IChatTheme }) => {
     if(groupInfo){
     return (
         <PendingRequestWrapper
@@ -57,7 +57,7 @@ const PendingMembers = ({ groupInfo , setShowPendingRequests, showPendingRequest
 }
 
 
-export const GroupInfoModal = ({theme, modal, setModal, groupInfo}: {theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup }) => {
+export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}: {theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup, setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>> }) => {
     const { account, env, pgpPrivateKey } = useChatData();
     const [showAddMoreWalletModal, setShowAddMoreWalletModal] = useState<boolean>(false);
     const [showPendingRequests, setShowPendingRequests] = useState<boolean>(false);
@@ -124,6 +124,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo}: {theme: ICha
     
             if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
+            setGroupInfo(updateResponse);
             // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
             // groupInfoToast.showMessageToast({
@@ -189,6 +190,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo}: {theme: ICha
           });
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
+            setGroupInfo(updateResponse);
             // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
             // groupInfoToast.showMessageToast({
@@ -239,6 +241,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo}: {theme: ICha
           });
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
+            setGroupInfo(updateResponse);
             // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
             // groupInfoToast.showMessageToast({
@@ -287,6 +290,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo}: {theme: ICha
     
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
+            setGroupInfo(updateResponse);
             // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
             // groupInfoToast.showMessageToast({

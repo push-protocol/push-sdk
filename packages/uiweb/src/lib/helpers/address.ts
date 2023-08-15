@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import type { Web3Provider } from '@ethersproject/providers';
+import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
 
 /**
  * 
@@ -54,6 +54,32 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   //   );
   // }
 
+
+  provider.lookupAddress(checksumWallet).then((ens) => {
+    if (ens) {
+      return ens;
+    } else {
+      return null;
+    }
+  });
+};
+
+export const resolveNewEns = (address: string, provider: InfuraProvider) => {
+  const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
+  const checksumWallet = ethers.utils.getAddress(walletLowercase);
+  // let provider = ethers.getDefaultProvider('mainnet');
+  // if (
+  //   window.location.hostname == 'app.push.org' ||
+  //   window.location.hostname == 'staging.push.org' ||
+  //   window.location.hostname == 'dev.push.org' ||
+  //   window.location.hostname == 'alpha.push.org' ||
+  //   window.location.hostname == 'w2w.push.org'
+  // ) {
+  //   provider = new ethers.providers.InfuraProvider(
+  //     'mainnet',
+  //     appConfig.infuraAPIKey
+  //   );
+  // }
 
   provider.lookupAddress(checksumWallet).then((ens) => {
     if (ens) {

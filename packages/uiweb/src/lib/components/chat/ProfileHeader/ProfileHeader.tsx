@@ -6,20 +6,26 @@ import styled from "styled-components";
 import TokenGatedIcon from '../../../icons/Token-Gated.svg';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import VideoChatIcon from '../../../icons/VideoCallIcon.svg';
+import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import type { IUser } from '@pushprotocol/restapi';
-import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
+import { useChatData, useClickAway, useDeviceWidthCheck, useResolveWeb3Name } from "../../../hooks";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { IChatTheme } from "../theme";
-import { shortenText } from "../../../helpers";
+import { pCAIP10ToWallet, resolveEns, resolveNewEns, shortenText } from "../../../helpers";
 import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
 import useChatProfile from "../../../hooks/chat/useChatProfile";
 import { IGroup } from "../../../types";
 import { GroupInfoModal } from "./GroupInfoModal";
 import { isValidETHAddress } from "../helpers/helper";
+import { ethers } from "ethers";
+import { ChatMainStateContext, ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
+import { IProfileHeader } from "../exportedTypes";
+import { InfuraAPIKey, allowedNetworks } from "../../../config";
+import { resolve } from "path";
 
 
-const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, theme }:{options: boolean, setOptions: React.Dispatch<React.SetStateAction<boolean>>, isGroup: boolean, chatInfo: any, groupInfo?: IGroup | null , theme: IChatTheme }) => {
+const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme }:{options: boolean, setOptions: React.Dispatch<React.SetStateAction<boolean>>, isGroup: boolean, chatInfo: any, groupInfo: IGroup | null | undefined , setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>> , theme: IChatTheme }) => {
     const DropdownRef = useRef(null);
     const [modal, setModal] = useState(false);
    
@@ -44,10 +50,13 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, theme }:{o
                 
                 {options && 
                     (<DropDownBar theme={theme} ref={DropdownRef}>
-                        <Span cursor='pointer' onClick={ShowModal}>Group Info</Span>
+                        <DropDownItem cursor='pointer' onClick={ShowModal}>
+                           <Image src={InfoIcon} height="21px" maxHeight="21px" width={'auto'} cursor="pointer"  />
+
+                          Group Info</DropDownItem>
                     </DropDownBar>)}
                 
-                    {modal && (<GroupInfoModal theme={theme} modal={modal} setModal={setModal} groupInfo={groupInfo} />)}
+                    {modal && (<GroupInfoModal theme={theme} modal={modal} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />)}
                 </ImageItem>
             </Section>
         )
@@ -59,7 +68,7 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, theme }:{o
 
 
 
-export const ProfileHeader = ({ chatId }: {chatId: any}) => {
+export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: string}) => {
     const theme = useContext(ThemeContext);
     const { account, env } = useChatData();
     const { getGroupByID } = useGetGroupByID();
@@ -69,7 +78,10 @@ export const ProfileHeader = ({ chatId }: {chatId: any}) => {
     const [options, setOptions] = useState(false); 
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
+    const { web3NameList  } = useContext<ChatMainStateContextType>(ChatMainStateContext);
     const isMobile = useDeviceWidthCheck(425);
+    const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
+    const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey)
 
 
     const fetchProfileData = async () => {
@@ -90,9 +102,14 @@ export const ProfileHeader = ({ chatId }: {chatId: any}) => {
     useEffect(()=> {
         if(!chatId) return;
         fetchProfileData();
-    },[chatId])
 
-    // console.log(groupInfo);
+        if(isValidETHAddress(chatId)){
+          const result = resolveNewEns(chatId, provider);
+          console.log(chatId, provider,l1ChainId,result);
+        }
+        
+    },[chatId, account, env])
+
 
  
     if (chatId && (chatInfo || groupInfo)) {
@@ -105,7 +122,7 @@ export const ProfileHeader = ({ chatId }: {chatId: any}) => {
 
                 <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
 
-                <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} groupInfo={groupInfo} theme={theme} />
+                <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} groupInfo={groupInfo} setGroupInfo={setGroupInfo} theme={theme} />
 
                 {!isGroup && 
                     <VideoChatSection>
@@ -147,20 +164,29 @@ const DummyImage = styled.div`
 const DropDownBar = styled.div`
     position: absolute;
     top: 30px;
-    left: -110px;
+    left: -120px;
     display: block;
-    min-width: 100px;
+    min-width: 110px;
     color: rgb(101, 119, 149);
     border: 1px solid rgb(74, 79, 103);
     border: ${(props) => props.theme.dropdownBorderColor};
     background: ${(props) => props.theme.bgColorPrimary};
-    padding: 12px 16px;
     z-index: 10;
-    border-radius: 4px;
+    border-radius: 16px;
 `;
 
 const VideoChatSection = styled.div`
     margin: 0 25px 0 auto; 
+`;
+
+const DropDownItem = styled(Span)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 16px;
 `;
 
 
