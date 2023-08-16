@@ -209,7 +209,6 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
               message: 'Admin Successfully removed',
               status: 'success'
             })
-            setShowToast(true)
           } else {
             setToastInfo({
               message: updateResponse,
@@ -272,7 +271,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
         function: () => dismissGroupAdmin(),
       };
       const addAdminDropdown: DropdownValueType = {
-        id: 'dismiss_admin',
+        id: 'add_admin',
         title: 'Make group admin',
         icon: AddAdmin,
         function: () => makeGroupAdmin(),
@@ -399,6 +398,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
         title={'Add More Wallets'}
         groupMembers={groupMembers}
         isLoading={isLoading}
+        setToastInfo={setToastInfo}
     />
  )}
     </Modal>

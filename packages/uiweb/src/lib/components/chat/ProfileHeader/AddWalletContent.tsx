@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { useChatData } from "../../../hooks";
 import { displayDefaultUser, getAddress, walletToPCAIP10 } from "../../../helpers";
-import { ModalButtonProps, User } from "../exportedTypes";
+import { IToast, ModalButtonProps, User } from "../exportedTypes";
 import * as PushAPI from '@pushprotocol/restapi';
 import { ethers } from "ethers";
 import { addWalletValidation } from "../helpers/helper";
@@ -20,7 +20,7 @@ import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
 
-export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean }) => {
+export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
     const theme = useContext(ThemeContext);
 
     const [searchedUser, setSearchedUser] = useState<string>('');
@@ -32,18 +32,10 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
 
     useEffect(() => {
         if (isInValidAddress) {
-        //   searchFeedToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: 'Invalid Address',
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
-        alert('Invalid Address')
+          setToastInfo({
+            message: 'Invalid Address',
+            status: 'error'
+          })
         }
       }, [isInValidAddress]);
     
@@ -81,19 +73,10 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         setIsLoadingSearch(false);
         }
         catch(error){
-            alert('Unsuccessful search')
-        //   searchFeedToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: 'Unsuccesful search, Try again',
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
-        //   setIsLoadingSearch(false);
+            setToastInfo({
+              message: 'Unsuccessful search, Try again',
+              status: 'error'
+            })
         }
       };
 
@@ -139,19 +122,10 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     errorMessage = addWalletValidation(member, memberList, groupMembers, account);
 
     if (errorMessage) {
-
-        // searchFeedToast.showMessageToast({
-        //   toastTitle: 'Error',
-        //   toastMessage: `${errorMessage}`,
-        //   toastType: 'ERROR',
-        //   getToastIcon: (size) => (
-        //     <MdError
-        //       size={size}
-        //       color="red"
-        //     />
-        //   ),
-        // });
-        alert(errorMessage);
+        setToastInfo({
+          message: `${errorMessage}`,
+          status: 'error'
+        })
       } else {
         handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
       }
