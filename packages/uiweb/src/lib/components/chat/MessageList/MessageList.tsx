@@ -43,7 +43,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     setMessages(undefined);
     setConversationHash(undefined);
-  }, [chatId,account,pgpPrivateKey]);
+  }, [chatId,account,pgpPrivateKey,env]);
 
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {

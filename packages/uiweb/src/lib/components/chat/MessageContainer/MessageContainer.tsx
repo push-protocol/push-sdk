@@ -107,7 +107,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
 
   useEffect(() => {
     setChatStatusText('');
-  }, [chatId]);
+  }, [chatId,account,env]);
 
   useEffect(() => {
     (async () => {
