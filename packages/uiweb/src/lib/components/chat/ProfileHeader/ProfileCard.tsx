@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 
 // Internal Components
-import { ReactComponent as MoreLight } from '../../../icons/more.svg';
-import { ReactComponent as MoreDark } from '../../../icons/moredark.svg';
+import { MoreLightIcon }  from '../../../icons/more';
+import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { shortenText } from "../../../helpers";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { useChatData, useClickAway} from "../../../hooks";
@@ -90,7 +90,7 @@ export const ProfileCard = ({
             }}
             style={{ cursor: 'pointer' }}
           >
-            {theme ? <MoreLight /> : <MoreDark />}
+            {theme ? <MoreLightIcon /> : <MoreDarkIcon />}
           </Section>
         )}
       </Section>
