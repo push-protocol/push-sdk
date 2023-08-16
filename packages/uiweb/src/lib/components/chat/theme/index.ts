@@ -18,6 +18,25 @@ export interface IChatTheme {
   fontFamily?: string;
   chatBubblePrimaryBgColor?: string;
   fileIconColor?: string;
+  dropdownBorderColor?: string;
+  modalPrimaryTextColor?: string;
+  modalSearchBarBorderColor?: string;
+  modalSearchBarBackground?: string;
+  snapFocusBg?: string;
+  groupButtonBackgroundColor?: string;
+  groupButtonTextColor?: string;
+  modalConfirmButtonBorder?: string;
+  groupSearchProfilBackground?: string,
+  modalInputBorderColor?: string,
+  snackbarBorderText?: string,
+  snackbarBorderIcon?: string,
+  modalContentBackground?: string,
+  modalProfileTextColor?: string,
+  toastSuccessBackground?: string;
+  toastErrorBackground?: string;
+  toastShadowColor?: string;
+  toastBorderColor?: string;
+  mainBg?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -35,6 +54,25 @@ export const lightChatTheme: IChatTheme = {
   borderRadius: '24px',
   iconColorPrimary: 'none',
   fileIconColor: '#000',
+  dropdownBorderColor: '1px solid rgb(229, 232, 246)',
+  modalPrimaryTextColor: '#1E1E1E',
+  modalSearchBarBorderColor: '#BAC4D6',
+  modalSearchBarBackground: '#FFF',
+  snapFocusBg: '#F4F5FA',
+  groupButtonBackgroundColor: '#ADB0BE',
+  groupButtonTextColor: '#FFF',
+  modalConfirmButtonBorder: '1px solid #F4DCEA',
+  groupSearchProfilBackground: '#F4F5FA',
+  modalInputBorderColor: '#C2CBDB',
+  snackbarBorderText: '#000',
+  snackbarBorderIcon: 'none',
+  modalContentBackground: '#FFFFFF',
+  modalProfileTextColor: '#1E1E1E',
+  toastSuccessBackground: 'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #F3FFF9 42.81%)',
+  toastErrorBackground: 'linear-gradient(90.15deg, #FF2070 -125.65%, #FF2D79 -125.63%, #FFF9FB 42.81%)',
+  toastShadowColor: '#ccc',
+  toastBorderColor: '#F4F3FF',
+  mainBg: '#fff',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -52,4 +90,25 @@ export const darkChatTheme: IChatTheme = {
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
   fileIconColor: '#fff',
+  dropdownBorderColor: '1px solid rgb(74, 79, 103)',
+  modalPrimaryTextColor: '#B6BCD6',
+  modalSearchBarBorderColor: '#4A4F67',
+  modalSearchBarBackground: '#282A2E',
+  snapFocusBg: '#404650',
+  groupButtonBackgroundColor: '#2F3137',
+  groupButtonTextColor: '#787E99',
+  modalConfirmButtonBorder: '1px solid 787E99',
+  groupSearchProfilBackground: '#404650',
+  modalInputBorderColor: '#4A4F67',
+  snackbarBorderText: '#B6BCD6',
+  snackbarBorderIcon:
+  'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
+  modalContentBackground: '#2F3137',
+  modalProfileTextColor: '#B6BCD6',
+  toastSuccessBackground: 'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #2F3137 42.81%)',
+  toastErrorBackground: 'linear-gradient(89.96deg, #FF2070 -101.85%, #2F3137 51.33%)',
+  toastShadowColor: '#00000010',
+  toastBorderColor: '#4A4F67',
+  mainBg: '#000',
 };
+
