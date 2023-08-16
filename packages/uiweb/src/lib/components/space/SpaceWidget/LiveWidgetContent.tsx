@@ -321,7 +321,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 <div style={{ position: 'relative' }}>
                   <LiveSpaceProfileContainer
                     wallet={profile?.wallet}
-                    image={profile?.image}
+                    image={profile?.image || createBlockie?.(profile?.wallet)
+                      ?.toDataURL()
+                      ?.toString()}
                   />
                 </div>
               ))
