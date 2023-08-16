@@ -3313,7 +3313,7 @@ const response = await PushAPI.chat.createGroup({
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -3360,7 +3360,7 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
-| rules | Rules | - | conditions for group and chatting access (see format below) |
+| rules | Rules | - | conditions for group and chat access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -3397,7 +3397,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chattingAccess?: {
+  chatAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -3405,7 +3405,7 @@ export interface Rules {
 
 ## Rules Object Description
 
-The rules object consists of two main sections: `groupAccess` and `chattingAccess`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
+The rules object consists of two main sections: `groupAccess` and `chatAccess`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
 
 ### Conditions
 
@@ -3564,7 +3564,7 @@ GUILD conditions require both guild ID and role ID.
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -3671,7 +3671,7 @@ const response = await PushAPI.chat.updateGroup({
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -3717,7 +3717,7 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
-| rules | Rules | - | conditions for group and chatting access (see format below) |
+| rules | Rules | - | conditions for group and chat access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -3871,7 +3871,7 @@ Allowed Options (params with _ are mandatory)
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -4570,7 +4570,7 @@ const response = await PushAPI.space.create({
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -4621,7 +4621,7 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
-| rules | Rules | - | conditions for space and chatting access (see format above) |
+| rules | Rules | - | conditions for space and chat access (see format above) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -4730,7 +4730,7 @@ Allowed Options (params with _ are mandatory)
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
@@ -4843,7 +4843,7 @@ const response = await PushAPI.space.update({
           }
         ]
       },
-      'chattingAccess': {
+      'chatAccess': {
         'conditions': [
           {
             'all': [
@@ -4892,7 +4892,7 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the space |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the space |
-| rules | Rules | - | conditions for space and chatting access (see format above) |
+| rules | Rules | - | conditions for space and chat access (see format above) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
@@ -5006,12 +5006,21 @@ Allowed Options (params with _ are mandatory)
                 'guildId': '13468',
                 'roleId': '19924'
               }
+            },
+            {
+              'type': 'PUSH',
+              'category': 'ERC721',
+              'subcategory': 'nft_owner',
+              'data': {
+                  'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                  'amount': 1
+              }
             }
           ]
         }
       ]
     },
-    'chattingAccess': {
+    'chatAccess': {
       'conditions': [
         {
           'all': [
