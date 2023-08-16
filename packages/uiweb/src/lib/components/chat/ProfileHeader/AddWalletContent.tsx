@@ -7,7 +7,6 @@ import { IToast, ModalButtonProps, User } from "../exportedTypes";
 import * as PushAPI from '@pushprotocol/restapi';
 import { ethers } from "ethers";
 import { addWalletValidation } from "../helpers/helper";
-import ArrowGreyIcon from '../../../icons/CaretDownGrey.svg'
 // import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
 import CloseIcon from '../../../icons/close.svg';
 import { Spinner } from "../../supportChat/spinner/Spinner";
@@ -15,110 +14,109 @@ import { MoreLightIcon }  from '../../../icons/more';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { SearchIcon } from '../../../icons/SearchIcon';
 import { Section, Span, Image } from "../../reusables/sharedStyling";
-import { ReactComponent as AddUserLightIcon } from '../../../icons/addlight.svg';
-import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
+import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
 import useMediaQuery from "../helpers/useMediaQuery";
 
-export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
-    const theme = useContext(ThemeContext);
+export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: { onSubmit: () => void, onClose: () => void, handlePrevious: () => void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>> }) => {
+  const theme = useContext(ThemeContext);
 
-    const [searchedUser, setSearchedUser] = useState<string>('');
-    const [filteredUserData, setFilteredUserData] = useState<any>(null);
-    const [isInValidAddress, setIsInvalidAddress] = useState<boolean>(false);
-    const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
-    const { account, env } = useChatData();
-    const isMobile = useMediaQuery(device.mobileL);
+  const [searchedUser, setSearchedUser] = useState<string>('');
+  const [filteredUserData, setFilteredUserData] = useState<any>(null);
+  const [isInValidAddress, setIsInvalidAddress] = useState<boolean>(false);
+  const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
+  const { account, env } = useChatData();
+  const isMobile = useMediaQuery(device.mobileL);
 
 
 
-    useEffect(() => {
-        if (isInValidAddress) {
-          console.log('here we go');
-          setToastInfo({
-            message: 'Invalid Address',
-            status: 'error'
-          })
+  useEffect(() => {
+    if (isInValidAddress) {
+      console.log('here we go');
+      setToastInfo({
+        message: 'Invalid Address',
+        status: 'error'
+      })
+    }
+  }, [isInValidAddress]);
+
+  const onChangeSearchBox = (e: any) => {
+    setSearchedUser(e.target.value);
+  };
+
+  const handleUserSearch = async (userSearchData: string): Promise<void> => {
+    try {
+      const caip10 = walletToPCAIP10(userSearchData);
+      let filteredData: User;
+
+      if (userSearchData.length) {
+        filteredData = await PushAPI.user.get({
+          account: caip10,
+          env: env
+        });
+
+        if (filteredData !== null) {
+          setFilteredUserData(filteredData);
         }
-      }, [isInValidAddress]);
-    
-      const onChangeSearchBox = (e: any) => {
-        setSearchedUser(e.target.value);
-      };
-
-      const handleUserSearch = async (userSearchData: string): Promise<void> => {
-        try{
-          const caip10 = walletToPCAIP10(userSearchData);
-          let filteredData: User;
-    
-        if (userSearchData.length) {
-          filteredData = await PushAPI.user.get({ 
-            account: caip10,
-            env: env
-          });
-    
-          if (filteredData !== null) {  
-            setFilteredUserData(filteredData);
-          }
-          // User is not in the protocol. Create new user
-          else {
-            if (ethers.utils.isAddress(userSearchData)) {
-              const displayUser = displayDefaultUser({ caip10 });
-              setFilteredUserData(displayUser);
-            } else {
-              setIsInvalidAddress(true);
-              setFilteredUserData(null);
-            }
-          }
-        } else {
-          setFilteredUserData(null);
-        }
-        setIsLoadingSearch(false);
-        }
-        catch(error){
-            setToastInfo({
-              message: 'Unsuccessful search, Try again',
-              status: 'error'
-            })
-        }
-      };
-
-      const handleSearch = async (e: any): Promise<void> => {
-        setIsLoadingSearch(true);
-        setIsInvalidAddress(false);
-        e.preventDefault();
-        if (!ethers.utils.isAddress(searchedUser)) {
-          let address: string;
-          try {
-            address = await getAddress(searchedUser, env) as string;
-            // if (!address) {
-            //   address = await library.resolveName(searchedUser);
-            // }
-            // this ensures address are checksummed
-            address = ethers.utils.getAddress(address?.toLowerCase());
-            if (address) {
-              handleUserSearch(address);
-            } else {
-              setIsInvalidAddress(true);
-              setFilteredUserData(null);
-            }
-          } catch (err) {
+        // User is not in the protocol. Create new user
+        else {
+          if (ethers.utils.isAddress(userSearchData)) {
+            const displayUser = displayDefaultUser({ caip10 });
+            setFilteredUserData(displayUser);
+          } else {
             setIsInvalidAddress(true);
             setFilteredUserData(null);
-          } finally {
-            setIsLoadingSearch(false);
           }
-        } else {
-          handleUserSearch(searchedUser);
         }
-      };
-
-    const clearInput = () => {
-        setSearchedUser('');
+      } else {
         setFilteredUserData(null);
+      }
+      setIsLoadingSearch(false);
+    }
+    catch (error) {
+      setToastInfo({
+        message: 'Unsuccessful search, Try again',
+        status: 'error'
+      })
+    }
+  };
+
+  const handleSearch = async (e: any): Promise<void> => {
+    setIsLoadingSearch(true);
+    setIsInvalidAddress(false);
+    e.preventDefault();
+    if (!ethers.utils.isAddress(searchedUser)) {
+      let address: string;
+      try {
+        address = await getAddress(searchedUser, env) as string;
+        // if (!address) {
+        //   address = await library.resolveName(searchedUser);
+        // }
+        // this ensures address are checksummed
+        address = ethers.utils.getAddress(address?.toLowerCase());
+        if (address) {
+          handleUserSearch(address);
+        } else {
+          setIsInvalidAddress(true);
+          setFilteredUserData(null);
+        }
+      } catch (err) {
+        setIsInvalidAddress(true);
+        setFilteredUserData(null);
+      } finally {
         setIsLoadingSearch(false);
-      };
+      }
+    } else {
+      handleUserSearch(searchedUser);
+    }
+  };
+
+  const clearInput = () => {
+    setSearchedUser('');
+    setFilteredUserData(null);
+    setIsLoadingSearch(false);
+  };
 
   const addMemberToList = (member: User) => {
     let errorMessage = '';
@@ -126,86 +124,86 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     errorMessage = addWalletValidation(member, memberList, groupMembers, account);
 
     if (errorMessage) {
-        setToastInfo({
-          message: `Error`,
-          status: 'error'
-        })
-      } else {
-        handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
-      }
-  
-      setFilteredUserData('');
-      clearInput();
-    };
+      setToastInfo({
+        message: `Error`,
+        status: 'error'
+      })
+    } else {
+      handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
+    }
 
-    const removeMemberFromList = (member: User) => {
-        const filteredMembers = memberList?.filter((user: any) => user.wallets !== member.wallets);
-        handleMemberList(filteredMembers);
-      };
-  
-    return (
-        <Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
-            <Section flex='1' flexDirection='row' justifyContent='space-between'>
+    setFilteredUserData('');
+    clearInput();
+  };
 
-                 {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
+  const removeMemberFromList = (member: User) => {
+    const filteredMembers = memberList?.filter((user: any) => user.wallets !== member.wallets);
+    handleMemberList(filteredMembers);
+  };
 
-                 <Span textAlign='center' fontSize='20px'>Add Wallets</Span>
+  return (
+    <Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' : '0px 10px'}>
+      <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
-                 <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
-            </Section>
+        {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
 
-            <Section margin='50px 0 10px 0' flex='1' flexDirection='row' justifyContent='space-between'>
-                <Span fontSize='18px'>Add Wallets</Span>
+        <Span textAlign='center' fontSize='20px'>Add Wallets</Span>
 
-                <Span fontSize='14px'>
-                    {groupMembers
-                    ? `0${memberList?.length + groupMembers?.length} / 09 Members`
-                  : `0${memberList?.length} / 09 Members`}
-                </Span>
-            </Section>
+        <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'} onClick={() => onClose()} cursor='pointer' />
+      </Section>
 
-            <Section flex='1'>
-                <SearchBarContent onSubmit={handleSearch}>
-                    <Input
-                        type="text"
-                        value={searchedUser}
-                        onChange={onChangeSearchBox}
-                        placeholder="Search Web3 domain or 0x123..."
-                        color={theme.modalPrimaryTextColor}
-                        theme={theme}
-                    />
-                    <Section
-                        position="absolute"
-                        alignItems="flex-end"
-                        width="40px"
-                        height="24px"
-                        top="22px"
-                        right="16px"
-                    >
-                        {searchedUser.length > 0 && (
-                            <Image src={CloseIcon} height="20px" maxHeight="20px" width={'auto'}  onClick={()=>clearInput()} cursor='pointer' />
-                        )}
-                        {searchedUser.length == 0 && !filteredUserData && <SearchIcon style={{ cursor: 'pointer' }} />}
-                    </Section>
-                </SearchBarContent>
-            </Section>
+      <Section margin='50px 0 10px 0' flex='1' flexDirection='row' justifyContent='space-between'>
+        <Span fontSize='18px'>Add Wallets</Span>
 
-            {filteredUserData ? (
-            <MemberList>
-                <MemberListContainer
-                memberData={filteredUserData}
-                handleMemberList={addMemberToList}
-                lightIcon={<AddUserDarkIcon />}
-                darkIcon={<AddUserDarkIcon />}
-                />
-            </MemberList>
-            ) : isLoadingSearch ? (
-            <Section margin="10px 0px 34px 0px">
-                <Spinner size={'35'} color='#cf1c84' />
-            </Section>
-            ) : null}
+        <Span fontSize='14px'>
+          {groupMembers
+            ? `0${memberList?.length + groupMembers?.length} / 09 Members`
+            : `0${memberList?.length} / 09 Members`}
+        </Span>
+      </Section>
 
-            <MultipleMemberList>
+      <Section flex='1'>
+        <SearchBarContent onSubmit={handleSearch}>
+          <Input
+            type="text"
+            value={searchedUser}
+            onChange={onChangeSearchBox}
+            placeholder="Search Web3 domain or 0x123..."
+            color={theme.modalPrimaryTextColor}
+            theme={theme}
+          />
+          <Section
+            position="absolute"
+            alignItems="flex-end"
+            width="40px"
+            height="24px"
+            top="22px"
+            right="16px"
+          >
+            {searchedUser.length > 0 && (
+              <Image src={CloseIcon} height="20px" maxHeight="20px" width={'auto'} onClick={() => clearInput()} cursor='pointer' />
+            )}
+            {searchedUser.length == 0 && !filteredUserData && <SearchIcon style={{ cursor: 'pointer' }} />}
+          </Section>
+        </SearchBarContent>
+      </Section>
+
+      {filteredUserData ? (
+        <MemberList>
+          <MemberListContainer
+            memberData={filteredUserData}
+            handleMemberList={addMemberToList}
+            lightIcon={<AddUserDarkIcon />}
+            darkIcon={<AddUserDarkIcon />}
+          />
+        </MemberList>
+      ) : isLoadingSearch ? (
+        <Section margin="10px 0px 34px 0px">
+          <Spinner size={'35'} color='#cf1c84' />
+        </Section>
+      ) : null}
+
+<MultipleMemberList>
             {memberList?.map((member: any, index: any) => (
                 <MemberListContainer
                 key={index}
@@ -231,9 +229,9 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                   {isLoading && <Spinner size='30' color='#fff' /> }
                 </ ModalConfirmButton>
             </Section>
-
-        </Section>
-    )
+            
+    </Section>
+  )
 }
 
 const SearchBarContent = styled.form`

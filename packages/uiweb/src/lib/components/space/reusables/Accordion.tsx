@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
-import CaretDownIcon from '../../../icons/CaretDownGrey.svg';
+import CaretDownIcon from '../../../icons/CaretDownGrey.tsx';
 import CaretUpIcon from '../../../icons/CaretUpGrey.svg';
 import { ThemeContext } from '../theme/ThemeProvider';
 
