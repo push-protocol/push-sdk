@@ -26,6 +26,9 @@ const ChatUITest = () => {
 
       <Section>
         <NavMenu>
+        <Link to="/profileHeader" className="nav-button">
+            PROFILE HEADER
+          </Link>
           <Link to="/messageBubble" className="nav-button">
             CHAT BUBBLE
           </Link>
