@@ -19,8 +19,9 @@ export interface IMessageContainerProps {
   isConnected?: boolean;
 }
 
-export interface IProfileHeader {
+export interface IChatProfile {
   chatId: string;
+  style?: string;
 }
 
 export interface TwitterFeedReturnType {

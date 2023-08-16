@@ -80,7 +80,7 @@ import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';
 import { MessageBubbles } from './ChatUITest/MessageBubbles';
 import MessageContainerTest from './ChatUITest/MessageContainer';
-import { ProfileHeaderTest } from './ChatUITest/ProfileHeader';
+import { ChatProfileTest } from './ChatUITest/ChatProfile';
 import { lightChatTheme } from '@pushprotocol/uiweb';
 
 window.Buffer = window.Buffer || Buffer;
@@ -498,8 +498,8 @@ export function App() {
                         element={<MessageContainerTest />}
                         />
                       <Route
-                        path="profileHeader"
-                        element={<ProfileHeaderTest />}
+                        path="ChatProfile"
+                        element={<ChatProfileTest />}
                       />
                   </Routes>
                   {/* <ChatWidgetTest/> */}

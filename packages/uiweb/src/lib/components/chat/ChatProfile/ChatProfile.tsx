@@ -20,7 +20,7 @@ import { IGroup } from "../../../types";
 import { GroupInfoModal } from "./GroupInfoModal";
 import { isValidETHAddress } from "../helpers/helper";
 import { ethers } from "ethers";
-import { IProfileHeader, IToast, OptionProps } from "../exportedTypes";
+import { IChatProfile, IToast, OptionProps } from "../exportedTypes";
 import { InfuraAPIKey, allowedNetworks, device } from "../../../config";
 import Toast from "../helpers/Toast";
 import useMediaQuery from "../helpers/useMediaQuery";
@@ -81,7 +81,7 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
 
 
 
-export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: string}) => {
+export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: string, style?: string}) => {
     const theme = useContext(ThemeContext);
     const { account, env } = useChatData();
     const { getGroupByID } = useGetGroupByID();
@@ -128,7 +128,7 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
         getName(chatId);
     },[chatId])
 
-    if (chatId) {
+    if (chatId && style === 'Info') {
         return (
             <Container theme={theme}>
                 {chatInfo || groupInfo ? (

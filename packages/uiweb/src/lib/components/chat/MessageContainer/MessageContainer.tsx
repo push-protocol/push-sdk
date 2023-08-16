@@ -25,7 +25,7 @@ import { TypeBar } from '../TypeBar';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { ethers } from 'ethers';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
-import { ProfileHeader } from '../ProfileHeader';
+import { ChatProfile } from '../ChatProfile';
 
 const ChatStatus = {
   FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
@@ -214,7 +214,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
           Profile
         </Section>
       )} */}
-      <ProfileHeader chatId={chatId} />
+      <ChatProfile chatId={chatId} style="Info" />
       <Section
         flex="1 1 auto"
         overflow="hidden scroll"
