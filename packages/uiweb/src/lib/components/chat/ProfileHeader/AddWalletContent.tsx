@@ -19,6 +19,7 @@ import { ReactComponent as AddUserLightIcon } from '../../../icons/addlight.svg'
 import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
+import useMediaQuery from "../helpers/useMediaQuery";
 
 export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
     const theme = useContext(ThemeContext);
@@ -28,6 +29,8 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     const [isInValidAddress, setIsInvalidAddress] = useState<boolean>(false);
     const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
     const { account, env } = useChatData();
+    const isMobile = useMediaQuery(device.mobileL);
+
 
 
     useEffect(() => {
@@ -141,7 +144,7 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
       };
   
     return (
-        <Section width='410px' flexDirection='column' padding='0px 10px'>
+        <Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
             <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
                  <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' />
@@ -273,7 +276,7 @@ const Input = styled.input`
     color: #657795;
   }
   @media ${device.mobileL} {
-    min-width: 300px;
+    min-width: 100%;
   }
 `;
 

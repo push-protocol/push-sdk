@@ -84,4 +84,9 @@ const ModalParent = styled.div<IModalProps>`
     border-radius: 12px;
 
     width: ${(props => props.width ? props.width : 'auto')};
+
+    @media (max-width: 425px) {
+        min-width: 300px;
+        max-width: 300px;
+      }
 `;

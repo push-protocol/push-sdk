@@ -101,8 +101,7 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
     const [ensName, setEnsName ] = useState<string | undefined>('');
-    // const isMobile = useDeviceWidthCheck(425);
-    const isMobile = useMediaQuery(device.tablet)
+    const isMobile = useMediaQuery(device.tablet);
     const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
     const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
 

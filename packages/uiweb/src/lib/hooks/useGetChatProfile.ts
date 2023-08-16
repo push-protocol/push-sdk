@@ -14,7 +14,7 @@ const useGetChatProfile = () => {
     }: GetProfileParams): Promise<PushAPI.IUser | undefined> => {
       try {
         const profile = await PushAPI.user.get({
-          env: 'staging' as any,
+          env: env,
           account: profileId,
         });
         return profile;

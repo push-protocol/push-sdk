@@ -20,6 +20,8 @@ import LockSlashIcon from '../../../icons/LockSlash.png'
 import { AddWalletContent } from './AddWalletContent'
 import ArrowIcon from '../../../icons/CaretDown.svg'
 import { Modal } from "../helpers/Modal";
+import { device } from "../../../config";
+import useMediaQuery from "../helpers/useMediaQuery";
 
 
 
@@ -301,10 +303,12 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
     const onClose = () => {
         setModal(false);
     }
+
+    const isMobile = useMediaQuery(device.mobileL);
     if(groupInfo){
     return(
     <Modal clickawayClose={onClose}>
-     {!showAddMoreWalletModal && (<Section width='410px' flexDirection='column' padding='0px 10px'>
+     {!showAddMoreWalletModal && (<Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
         <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
         <div></div>

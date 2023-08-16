@@ -119,17 +119,15 @@ const ProfileCardItem = styled(Section)`
   width: 100%;
   flex: 1;
   background-color: ${(props) => props.theme.snapFocusBg};
-  // background-color: #808080;
   margin-bottom: 8px;
   max-height: 64px;
   @media (max-width: 480px) {
-    max-width: 300px;
+    max-width: 100%;
   }
 `;
 
 const DropdownContainer = styled.div`
   position: absolute;
-  // left: 85.5%;
   left:48%;
   top: 69%;
   border-radius: 16px;
