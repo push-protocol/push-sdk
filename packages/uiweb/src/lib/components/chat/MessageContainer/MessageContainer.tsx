@@ -215,7 +215,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       )} */}
       <Section
         flex="1 1 auto"
-        overflow="hidden scroll"
+        overflow="hidden auto"
         padding="0 20px"
         margin="0 0px 10px 0px"
         flexDirection="column"
