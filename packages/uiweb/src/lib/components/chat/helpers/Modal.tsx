@@ -59,6 +59,8 @@ const ModalOverlay = styled.div<IModalProps>`
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
@@ -67,13 +69,17 @@ const ModalOverlay = styled.div<IModalProps>`
     justify-content: center;
     align-items: center;
     z-index: 10;
+
+    max-height: 100vh;
+    overflow-y: auto;
+    margin: auto !important;
 `;
 
 const ModalParent = styled.div<IModalProps>`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    // position: absolute;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
 
     display: flex;
     flex-direction: column;
@@ -84,6 +90,8 @@ const ModalParent = styled.div<IModalProps>`
     border-radius: 12px;
 
     width: ${(props => props.width ? props.width : 'auto')};
+    overflow: hidden;
+    margin: auto !important;
 
     @media (max-width: 425px) {
         min-width: 300px;

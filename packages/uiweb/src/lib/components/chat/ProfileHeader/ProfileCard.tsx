@@ -41,7 +41,6 @@ export const ProfileCard = ({
 
   const handleHeight = (id: any) => {
     const containerHeight = document.getElementById(id)?.getBoundingClientRect();
-    console.log("height", containerHeight);
     setDropdownHeight(containerHeight?.top);
   };
 
@@ -134,7 +133,7 @@ const DropdownContainer = styled.div`
   padding: 14px 8px;
   background: ${(props) => props.theme.modalContentBackground};
   border:1px solid ${(props) => props.theme.modalBorderColor};
-  z-index: 11;
+  z-index: 52;
   @media ${device.mobileL} {
     left: 27%;
   }
