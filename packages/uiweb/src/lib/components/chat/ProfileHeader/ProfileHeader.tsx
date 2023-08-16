@@ -6,6 +6,7 @@ import styled from "styled-components";
 import TokenGatedIcon from '../../../icons/Token-Gated.svg';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import VideoChatIcon from '../../../icons/VideoCallIcon.svg';
+import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import type { IUser } from '@pushprotocol/restapi';
@@ -20,8 +21,14 @@ import { GroupInfoModal } from "./GroupInfoModal";
 import { isValidETHAddress } from "../helpers/helper";
 import { ethers } from "ethers";
 import { IProfileHeader, IToast, OptionProps } from "../exportedTypes";
-import { InfuraAPIKey, allowedNetworks } from "../../../config";
+import { InfuraAPIKey, allowedNetworks, device } from "../../../config";
 import Toast from "../helpers/Toast";
+import useMediaQuery from "../helpers/useMediaQuery";
+import { createBlockie } from "../../space/helpers/blockies";
+// import { NewToast } from "../helpers/NewToast";
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.min.css';
+
 
 
 const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme, showToast, setShowToast, toastInfo, setToastInfo }: OptionProps) => {
@@ -94,9 +101,10 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
     const [ensName, setEnsName ] = useState<string | undefined>('');
-    const isMobile = useDeviceWidthCheck(425);
+    // const isMobile = useDeviceWidthCheck(425);
+    const isMobile = useMediaQuery(device.tablet)
     const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
-    const provider = new ethers.providers.InfuraProvider(1, InfuraAPIKey);
+    const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
 
 
 
@@ -118,6 +126,7 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
       if(isValidETHAddress(chatId)){
         const result = await resolveNewEns(chatId, provider);
         // if(result) 
+        console.log(result);
         setEnsName(result);
       }
     }
@@ -127,21 +136,24 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
         if(!chatId) return;
         fetchProfileData();
         getName(chatId);
-        
     },[chatId])
 
-    // console.log(chatInfo, groupInfo, isGroup);
-
+    // const notify = () => toast("Wow so easy!");
  
-    if (chatId && (chatInfo || groupInfo)) {
+    if (chatId) {
         return (
             <Container theme={theme}>
                 {chatInfo || groupInfo ? (
-                    <Image src={isGroup ? groupInfo?.groupImage ?? '' : chatInfo?.profile?.picture ?? ''} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />
-                ) : <DummyImage />}
+                    <Image src={isGroup ? groupInfo?.groupImage ?? GreyImage : chatInfo?.profile?.picture ?? createBlockie?.(chatId)?.toDataURL()
+            ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />
+                ) : (<Image src={createBlockie?.(chatId)?.toDataURL()
+                    ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />)}
                 
 
-                <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : ensName ? `${ensName}(${chatId})`: shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
+                <Span color="#fff" fontSize="17px" margin="0 0 0 10px">
+                    {isGroup ? groupInfo?.groupName : ensName ? `${ensName} (${isMobile ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true) : chatId})`: chatInfo ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true) : shortenText(chatId,6, true)}
+                
+                </Span>
 
                 <Options 
                     options={options} 
@@ -157,19 +169,20 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                     setToastInfo={setToastInfo}
                     />
 
-                {!isGroup && 
+                {/* {!isGroup && 
                     <VideoChatSection>
                         <Image src={VideoChatIcon} height="18px" maxHeight="18px" width={'auto'} />
                     </VideoChatSection>
-                    }
+                    } */}
 
-                {/* {showToast && ( */}
                     <Toast 
                         toastMessage={toastInfo.message}
                         position={'top-right'}
                         status={toastInfo.status}
                     /> 
-                {/* )} */}
+
+                    {/* <NewToast /> */}
+                    {/* <ToastContainer /> */}
 
        
      </Container>
