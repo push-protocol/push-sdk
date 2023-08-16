@@ -41,10 +41,6 @@ export type OptionProps = {
   groupInfo: IGroup | null | undefined , 
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   theme: IChatTheme;
-  showToast: boolean; 
-  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
-  toastInfo: IToast;
-  setToastInfo: React.Dispatch<React.SetStateAction<IToast>> 
 }
 export type IMessagePayload = IMessageIPFS;
 

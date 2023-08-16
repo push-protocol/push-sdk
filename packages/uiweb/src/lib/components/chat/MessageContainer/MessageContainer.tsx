@@ -214,7 +214,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
           Profile
         </Section>
       )} */}
-      <ProfileHeader chatId={chatId}/>
+      <ProfileHeader chatId={chatId} />
       <Section
         flex="1 1 auto"
         overflow="hidden scroll"

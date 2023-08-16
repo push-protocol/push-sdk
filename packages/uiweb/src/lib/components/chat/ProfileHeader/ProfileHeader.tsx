@@ -31,7 +31,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 
 
-const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme, showToast, setShowToast, toastInfo, setToastInfo }: OptionProps) => {
+const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme }: OptionProps) => {
     const DropdownRef = useRef(null);
     const [modal, setModal] = useState(false);
    
@@ -45,7 +45,7 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
 
     if (groupInfo && isGroup){
         return (
-            <Section flexDirection="row" gap="10px" margin="0 20px 0 auto">
+            <Section zIndex="300" flexDirection="row" gap="10px" margin="0 20px 0 auto">
                 <Image src={TokenGatedIcon} height="28px" maxHeight="32px" width={'auto'} />
 
                 {groupInfo?.isPublic && 
@@ -69,10 +69,6 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
                         setModal={setModal} 
                         groupInfo={groupInfo} 
                         setGroupInfo={setGroupInfo}
-                        showToast={showToast}
-                        setShowToast={setShowToast}
-                        toastInfo={toastInfo}
-                        setToastInfo={setToastInfo}
                      />)}
                 </ImageItem>
             </Section>
@@ -93,11 +89,6 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
 
     const [isGroup, setIsGroup] = useState<boolean>(false);
     const [options, setOptions] = useState(false); 
-    const [showToast, setShowToast] = useState<boolean>(false); 
-    const [ toastInfo, setToastInfo ] = useState<IToast>({
-        message: '',
-        status: ''
-    })
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
     const [ensName, setEnsName ] = useState<string | undefined>('');
@@ -160,10 +151,6 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                     groupInfo={groupInfo} 
                     setGroupInfo={setGroupInfo} 
                     theme={theme} 
-                    showToast={showToast}
-                    setShowToast={setShowToast}
-                    toastInfo={toastInfo}
-                    setToastInfo={setToastInfo}
                     />
 
                 {/* {!isGroup && 
@@ -172,13 +159,6 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                     </VideoChatSection>
                     } */}
 
-                    <Toast 
-                        toastMessage={toastInfo.message}
-                        position={'top-right'}
-                        status={toastInfo.status}
-                    /> 
-
-                    {/* <NewToast /> */}
                     <ToastContainer />
 
        
@@ -239,6 +219,7 @@ const DropDownItem = styled(Span)`
   gap: 8px;
   padding: 10px 16px;
   border-radius: 16px;
+  z-index: 3000000;
 `;
 
 

@@ -22,10 +22,11 @@ import { MemberListContainer } from "./MemberListContainer";
 import useMediaQuery from "../helpers/useMediaQuery";
 import useToast from "../helpers/NewToast";
 import { MdCheckCircle, MdError } from "react-icons/md";
+import { Modal } from "../helpers/Modal";
 
 
 
-export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
+export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean  }) => {
     const theme = useContext(ThemeContext);
 
     const [searchedUser, setSearchedUser] = useState<string>('');
@@ -43,7 +44,7 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         if (isInValidAddress) {
           groupInfoToast.showMessageToast({
             toastTitle: 'Error',
-            toastMessage: 'Please, try again',
+            toastMessage: 'Invalid Address',
             toastType: 'ERROR',
             getToastIcon: (size) => (
               <MdError
@@ -175,15 +176,15 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
 
                  <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' />
 
-                 <Span textAlign='center' fontSize='20px'>Add Wallets</Span>
+                 <Span textAlign='center' fontSize='20px' color={theme.modalHeadingColor}>Add Wallets</Span>
 
                  <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
             </Section>
 
             <Section margin='50px 0 10px 0' flex='1' flexDirection='row' justifyContent='space-between'>
-                <Span fontSize='18px'>Add Wallets</Span>
+                <Span fontSize='18px' color={theme.modalIconColor}>Add Wallets</Span>
 
-                <Span fontSize='14px'>
+                <Span fontSize='14px' color={theme.modalPrimaryTextColor}>
                     {groupMembers
                     ? `0${memberList?.length + groupMembers?.length} / 09 Members`
                   : `0${memberList?.length} / 09 Members`}

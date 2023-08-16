@@ -6,8 +6,8 @@ export const ProfileHeaderTest = () => {
         <div>
             <ProfileHeader 
                 // chatId='0x455E5AA18469bC6ccEF49594645666C587A3a71B'
+            // chatId='24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac'
             chatId='36baf37e441fdd94e23406c6c716fc4e91a93a9ee68e070cd5b054534dbe09a6'
-            // chatId="831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc"
              />
         </div>
     )

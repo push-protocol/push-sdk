@@ -38,6 +38,10 @@ export interface IChatTheme {
   toastBorderColor?: string;
   mainBg?: string;
   modalBorderColor?: string;
+  modalDescriptionTextColor?: string;
+  modalIconColor?: string;
+  pendingCardBackground?: string,
+  modalHeadingColor?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -75,6 +79,10 @@ export const lightChatTheme: IChatTheme = {
   toastBorderColor: '#F4F3FF',
   mainBg: '#fff',
   modalBorderColor: '#E5E8F6',
+  modalDescriptionTextColor: '#575D73',
+  modalIconColor: '#657795',
+  pendingCardBackground: 'rgba(173, 176, 190, 0.12)',
+  modalHeadingColor: '#333333',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -113,5 +121,9 @@ export const darkChatTheme: IChatTheme = {
   toastBorderColor: '#4A4F67',
   mainBg: '#000',
   modalBorderColor: '#4A4F67',
+  modalDescriptionTextColor: '#787E99',
+  modalIconColor: '#787E99',
+  pendingCardBackground: 'rgba(173, 176, 190, 0.08)',
+  modalHeadingColor: '#B6BCD6',
 };
 

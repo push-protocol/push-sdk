@@ -117,7 +117,7 @@ const ProfileCardItem = styled(Section)`
   box-sizing: border-box;
   width: 100%;
   flex: 1;
-  background-color: ${(props) => props.theme.snapFocusBg};
+  // background-color: ${(props) => props.theme.snapFocusBg};
   margin-bottom: 8px;
   max-height: 64px;
   @media (max-width: 480px) {
