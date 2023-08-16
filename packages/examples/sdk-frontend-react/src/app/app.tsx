@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
@@ -79,6 +79,7 @@ import {
 import ChatUITest from './ChatUITest/ChatUITest';
 import MessageListTest from './ChatUITest/MessageListTest';
 import { MessageBubbles } from './ChatUITest/MessageBubbles';
+import MessageContainerTest from './ChatUITest/MessageContainer';
 import { ProfileHeaderTest } from './ChatUITest/ProfileHeader';
 import { lightChatTheme } from '@pushprotocol/uiweb';
 
@@ -211,8 +212,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-
-  const [env, setEnv] = useState<ENV>(ENV.DEV);
+  const [env, setEnv] = useState<ENV>(ENV.STAGING);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const { SpaceWidgetComponent } = useSpaceComponents();
@@ -492,7 +492,11 @@ export function App() {
                         path="messageList"
                         element={<MessageListTest />}
                       />
-                       <Route
+                      <Route
+                        path="messageContainer"
+                        element={<MessageContainerTest />}
+                        />
+                      <Route
                         path="profileHeader"
                         element={<ProfileHeaderTest />}
                       />
@@ -501,7 +505,6 @@ export function App() {
                   {/* <ChatWidgetTest /> */}
                   <SpaceWidgetComponent spaceId={spaceId} />
                 </SpacesUIProvider>
-
                 </ChatUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>

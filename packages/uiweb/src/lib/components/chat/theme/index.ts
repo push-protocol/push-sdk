@@ -17,6 +17,7 @@ export interface IChatTheme {
   iconColorPrimary?: string;
   fontFamily?: string;
   chatBubblePrimaryBgColor?: string;
+  fileIconColor?: string;
   dropdownBorderColor?: string;
   modalPrimaryTextColor?: string;
   modalSearchBarBorderColor?: string;
@@ -50,8 +51,9 @@ export const lightChatTheme: IChatTheme = {
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
   border: 'none',
-  borderRadius: '32px',
+  borderRadius: '24px',
   iconColorPrimary: 'none',
+  fileIconColor: '#000',
   dropdownBorderColor: '1px solid rgb(229, 232, 246)',
   modalPrimaryTextColor: '#1E1E1E',
   modalSearchBarBorderColor: '#BAC4D6',
@@ -74,7 +76,7 @@ export const lightChatTheme: IChatTheme = {
 };
 
 export const darkChatTheme: IChatTheme = {
-  chatBubblePrimaryBgColor: 'fff',
+  chatBubblePrimaryBgColor: '#fff',
   bgColorPrimary: 'rgb(47, 49, 55)',
   bgColorSecondary: 'rgb(40, 42, 46)',
   textColorPrimary: '#fff',
@@ -84,10 +86,11 @@ export const darkChatTheme: IChatTheme = {
   accentTextColor: '#fff',
   btnColorPrimary: 'rgb(202, 89, 155)',
   border: 'none',
-  borderRadius: '32px',
+  borderRadius: '24px',
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
-    dropdownBorderColor: '1px solid rgb(74, 79, 103)',
+  fileIconColor: '#fff',
+  dropdownBorderColor: '1px solid rgb(74, 79, 103)',
   modalPrimaryTextColor: '#B6BCD6',
   modalSearchBarBorderColor: '#4A4F67',
   modalSearchBarBackground: '#282A2E',

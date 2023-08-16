@@ -155,6 +155,7 @@ type DivStyleProps = {
   cursor?: string;
   alignSelf?:string;
   margin?:string;
+  textAlign?:string;
 };
 export const Div = styled.div<DivStyleProps>`
   height: ${(props) => props.height || 'auto'};
@@ -162,4 +163,5 @@ export const Div = styled.div<DivStyleProps>`
    margin: ${(props) => props.margin || '0px'};
   cursor: ${(props) => props.cursor || 'default'};
   align-self: ${(props) => props.alignSelf || 'center'};
+  text-align: ${(props) => props.textAlign || 'default'};
 `;

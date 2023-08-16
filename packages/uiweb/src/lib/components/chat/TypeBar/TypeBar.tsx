@@ -147,6 +147,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
                 <ConnectButton />
             )} */}
             <TypebarSection
+            // zIndex="1"
                 borderRadius="13px"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
@@ -281,9 +282,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
 
 const Container = styled.div`
   width: 100%;
-  border-top: 1px solid #dddddf;
   overflow: hidden;
-  padding: 15px 0px;
 `;
 const TypebarSection = styled(Section)`
   gap: 10px;
@@ -307,7 +306,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   box-sizing: border-box;
   background:${(props) => props.theme.bgColorPrimary};
   border: none;
-  color: ${(props) => props.theme.textColorPrimary};
+  color: ${(props) => props.theme.textColorSecondary};
   resize: none;
   flex: 1;
   padding-right: 5px;

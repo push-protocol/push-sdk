@@ -8,14 +8,13 @@ import styled from 'styled-components';
 import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
-import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
+import { appendUniqueMessages, checkIfSameChat, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import { ConnectButton } from '../ConnectButton';
-
-
+import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 
 /**
  * @interface IThemeProps
@@ -23,34 +22,38 @@ import { ConnectButton } from '../ConnectButton';
  */
 interface IThemeProps {
   theme?: IChatTheme;
-
 }
 
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
-  const { conversationHash, limit = chatLimit, isConnected = false } = options || {};
+  const { chatId, limit = chatLimit } = options || {};
   const { pgpPrivateKey, account } = useChatData();
   const [messages, setMessages] = useState<Messagetype>();
+  const [conversationHash, setConversationHash] = useState<string>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { messagesSinceLastConnection } = usePushChatSocket();
+  const { fetchConversationHash } = useFetchConversationHash();
   const theme = useContext(ThemeContext);
   const dates = new Set();
+  const {env} = useChatData();
 
   useEffect(() => {
-    console.log(messagesSinceLastConnection)
-    if (
-      Object.keys(messagesSinceLastConnection || {}).length
-    ) {
+    setMessages(undefined);
+    setConversationHash(undefined);
+  }, [chatId,account,pgpPrivateKey,env]);
+
+  useEffect(() => {
+    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       if (!Object.keys(messages || {}).length) {
         setMessages({
-          messages: messagesSinceLastConnection,
-          lastThreadHash: messagesSinceLastConnection.lastThreadHash,
+          messages: [messagesSinceLastConnection],
+          lastThreadHash: messagesSinceLastConnection.cid,
         });
+        setConversationHash(messagesSinceLastConnection.cid)
       } else {
-        console.log(messagesSinceLastConnection)
         const newMessageList = appendUniqueMessages(messages as Messagetype, [messagesSinceLastConnection], false);
         setMessages({
 
@@ -64,12 +67,21 @@ export const MessageList: React.FC<IMessageListProps> = (
   }, [messagesSinceLastConnection]);
 
   useEffect(() => {
+    (async function () {
+      const hash = await fetchConversationHash({ conversationId: chatId });
+      setConversationHash(hash?.threadHash);
+    })();
+  }, [chatId, account, env,pgpPrivateKey]);
+
+  useEffect(() => {
     if (conversationHash) {
       (async function () {
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account]);
+  }, [conversationHash, pgpPrivateKey, account,env]);
+
+  
 
   useEffect(() => {
     scrollToBottom(null);
@@ -115,7 +127,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash && pgpPrivateKey && account) {
+    if (threadHash && account) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
@@ -170,17 +182,13 @@ export const MessageList: React.FC<IMessageListProps> = (
       //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
-      {isConnected && (
+      {/* {isConnected && (
         <ConnectButton />
-      )}
-      {loading ? <Spinner /> : ''}
+      )} */}
+      {loading ? <Spinner color={theme.accentBgColor}/> : ''}
 
-      <Section
-        flexDirection="column"
-        justifyContent="start"
-        width="100%"
-      >
-        {messages?.messages.map((chat: IMessageIPFS, index: number) => {
+      <Section flexDirection="column" justifyContent="start" width="100%">
+        {messages?.messages && messages?.messages?.map((chat: IMessageIPFS, index: number) => {
           const dateNum = moment(chat.timestamp).format('L');
           const position =
             pCAIP10ToWallet(chat.fromDID).toLowerCase() !==

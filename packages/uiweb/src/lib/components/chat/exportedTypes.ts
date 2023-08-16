@@ -3,8 +3,19 @@ import { IChatTheme } from "./theme";
 import { IGroup } from '../../types'
 
 export interface IMessageListProps {
-  conversationHash: string;
+  chatId: string;
   limit?: number;
+}
+
+export interface IMessageContainerProps {
+  typebar?: boolean;
+  messageList?: boolean;
+  profile?: boolean; //name needs to change
+  chatId: string; //need confirmation on this
+  limit?: number;
+  emoji?: boolean;
+  gif?: boolean;
+  file?: boolean;
   isConnected?: boolean;
 }
 
