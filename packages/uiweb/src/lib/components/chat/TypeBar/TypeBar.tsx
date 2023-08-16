@@ -1,11 +1,11 @@
-import { useClickAway, useDeviceWidthCheck } from "../../../hooks";
+import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
 import type { FileMessageContent } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import { GIFType, IChatTheme, TypeBarProps } from "../exportedTypes";
 import styled from "styled-components";
 import { PUBLIC_GOOGLE_TOKEN, device } from "../../../config";
-import { Section, Div } from "../../reusables";
+import { Section, Div, Span } from "../../reusables";
 import { EmojiIcon } from "../../../icons/Emoji";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import * as PUSHAPI from "@pushprotocol/restapi";
@@ -16,6 +16,7 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
+import { ConnectButton } from "../ConnectButton";
 
 
 /**
@@ -24,10 +25,9 @@ import { ThemeContext } from "../theme/ThemeProvider";
  */
 interface IThemeProps {
     theme?: IChatTheme;
-
 }
 
-export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = true, file = true }) => {
+export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
     const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [gifOpen, setGifOpen] = useState<boolean>(false);
@@ -36,11 +36,12 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-      setTypedMessage(val);
+        setTypedMessage(val.trim());
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
+    const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -131,6 +132,10 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
         }
     }
 
+    // useEffect(() => {
+    //     setPgpPrivateKey
+    // }, [pgpPrivateKey])
+
     const sendGIF = async (emojiObject: GIFType) => {
         sendPushMessage(emojiObject.url as string, 'GIF');
         setGifOpen(false);
@@ -138,118 +143,137 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, emoji = true, gif = tr
 
     return (
         <Container theme={theme}>
+            {/* {isConnected && (
+                <ConnectButton />
+            )} */}
             <TypebarSection
                 borderRadius="13px"
-                padding="13px 16px"
+                padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Section gap="8px" flex="1">
-                    {emoji &&
-                        <Div
-                            width="20px"
-                            cursor="pointer"
-                            height="20px"
-                            alignSelf="end"
-                            onClick={() => setShowEmojis(!showEmojis)}
-                        >
-                            <EmojiIcon />
-                        </Div>
-                    }
-                    {showEmojis && (
-                        <Section
-                            ref={modalRef}
-                            position="absolute"
-                            bottom="3.5rem"
-                            left="2.7rem"
-                            zIndex="1"
-                        ><EmojiPicker
-                                width={isMobile ? 260 : 320}
-                                height={370}
-                                onEmojiClick={addEmoji}
-                            />
-                        </Section>
-                    )}
-                    <MultiLineInput
-                    
-                        theme={theme}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter' && !event.shiftKey) {
-                                event.preventDefault();
-                                sendTextMsg();
+                {!pgpPrivateKey && isConnected && (
+                    // align this button in right corner
+
+                    <Section width="100%" justifyContent="space-between" alignItems="center"
+                    >
+                        <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                            You need to connect your wallet to get started
+                        </Span>
+                        <ConnectButton />
+                    </Section>
+                )
+                }
+                {pgpPrivateKey &&
+                    <>
+                        <Section gap="8px" flex="1">
+                            {Emoji &&
+                                <Div
+                                    width="20px"
+                                    cursor="pointer"
+                                    height="20px"
+                                    alignSelf="end"
+                                    onClick={() => setShowEmojis(!showEmojis)}
+                                >
+                                    <EmojiIcon />
+                                </Div>
                             }
-                        }}
-                        placeholder="Type your message..."
-                        onChange={(e) => onChangeTypedMessage(e.target.value)}
-                        value={typedMessage}
-                        ref={textAreaRef}
-                        rows={1}
-                    />
-                </Section>
-                <SendSection>
-                    {gif &&
-                        <Section
-                            width="34px"
-                            height="24px"
-                            cursor="pointer"
-                            alignSelf="end"
-                            onClick={() => setGifOpen(!gifOpen)}>
-                            <GifIcon />
-                        </Section>
-                    }
-                    {gifOpen && (
-                        <Section
-                            position="absolute"
-                            bottom="3.5rem"
-                            zIndex="1"
-                            right={isMobile ? '5rem' : '8rem'}
-                            ref={modalRef}>
-                            <GifPicker
-                                onGifClick={sendGIF}
-                                width={isMobile ? 260 : 320}
-                                height={370}
-                                tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                            {showEmojis && (
+                                <Section
+                                    ref={modalRef}
+                                    position="absolute"
+                                    bottom="3.5rem"
+                                    left="2.7rem"
+                                    zIndex="1"
+                                ><EmojiPicker
+                                        width={isMobile ? 260 : 320}
+                                        height={370}
+                                        onEmojiClick={addEmoji}
+                                    />
+                                </Section>
+                            )}
+                            <MultiLineInput
+
+                                theme={theme}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' && !event.shiftKey) {
+                                        event.preventDefault();
+                                        sendTextMsg();
+                                    }
+                                }}
+                                placeholder="Type your message..."
+                                onChange={(e) => onChangeTypedMessage(e.target.value)}
+                                value={typedMessage}
+                                ref={textAreaRef}
+                                rows={1}
                             />
                         </Section>
-                    )}
-                    <Section onClick={handleUploadFile}>
-                        {!fileUploading && file && (
-                            <>
+                        <SendSection>
+                            {GIF &&
                                 <Section
-                                    width="17"
+                                    width="34px"
                                     height="24px"
                                     cursor="pointer"
                                     alignSelf="end"
-                                    onClick={() => setNewChat(true)}
-                                >
-                                    <AttachmentIcon />
+                                    onClick={() => setGifOpen(!gifOpen)}>
+                                    <GifIcon />
                                 </Section>
-                                <FileInput
-                                    type="file"
-                                    ref={fileUploadInputRef}
-                                    onChange={(e) => uploadFile(e)}
-                                />
-                            </>
-                        )}
-                    </Section>
-                    {!(loading || fileUploading) && (
-                        <Section
-                            cursor="pointer"
-                            alignSelf="end"
-                            height="24px"
-                            onClick={() => sendTextMsg()}
-                        >
-                            <SendCompIcon color={theme.accentBgColor} />
-                        </Section>
-                    )}
+                            }
+                            {gifOpen && (
+                                <Section
+                                    position="absolute"
+                                    bottom="3.5rem"
+                                    zIndex="1"
+                                    right={isMobile ? '5rem' : '8rem'}
+                                    ref={modalRef}>
+                                    <GifPicker
+                                        onGifClick={sendGIF}
+                                        width={isMobile ? 260 : 320}
+                                        height={370}
+                                        tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                                    />
+                                </Section>
+                            )}
+                            <Section onClick={handleUploadFile}>
+                                {!fileUploading && File && (
+                                    <>
+                                        <Section
+                                            width="17"
+                                            height="24px"
+                                            cursor="pointer"
+                                            alignSelf="end"
+                                            onClick={() => setNewChat(true)}
+                                        >
+                                            <AttachmentIcon />
+                                        </Section>
+                                        <FileInput
+                                            type="file"
+                                            ref={fileUploadInputRef}
+                                            onChange={(e) => uploadFile(e)}
+                                        />
+                                    </>
+                                )}
+                            </Section>
+                            {!(loading || fileUploading) && (
+                                <Section
+                                    cursor="pointer"
+                                    alignSelf="end"
+                                    height="24px"
+                                    onClick={() => sendTextMsg()}
+                                >
+                                    <SendCompIcon color={theme.accentBgColor} />
+                                </Section>
+                            )}
 
-                    {(loading || fileUploading) && (
-                        <Section alignSelf="end" height="24px">
-                            <Spinner color={theme.accentBgColor} size="22" />
-                        </Section>
-                    )}
-                </SendSection>
+                            {(loading || fileUploading) && (
+                                <Section alignSelf="end" height="24px">
+                                    <Spinner color={theme.accentBgColor} size="22" />
+                                </Section>
+                            )}
+                        </SendSection>
+                    </>
+                }
             </TypebarSection>
         </Container>
     )
@@ -281,7 +305,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   box-sizing: border-box;
   background:${(props) => props.theme.bgColorPrimary};
   border: none;
-  color: ${(props) => props.theme.textColorPrimary};
+  color: ${(props) => props.theme.textColorSecondary};
   resize: none;
   flex: 1;
   padding-right: 5px;

@@ -81,9 +81,12 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
     emoji = true,
     file = true,
     gif = true,
+    isConnected = true,
   } = options || {};
 
   const { account, pgpPrivateKey, env } = useChatData();
+
+  console.log(env);
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   // const [conversationHash, setConversationHash] = useState<string>();
@@ -102,15 +105,13 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
     W2W: ` Please accept to enable push chat from this wallet`,
   };
 
-  // useEffect(() => {
-  //   setChatStatusText('');
-  // }, [chatId]);
+  useEffect(() => {
+    setChatStatusText('');
+  }, [chatId]);
 
   useEffect(() => {
     (async () => {
       const chat = await fetchChat({ chatId });
-      // const hash = await fetchConversationHash({ conversationId: chatId });
-      // setConversationHash(hash?.threadHash);
       if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
       else {
         let newChatFeed;
@@ -138,7 +139,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
         }
       }
     })();
-  }, [chatId, pgpPrivateKey, account]);
+  }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -282,7 +283,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
 
       {typebar && (
         <Section flex="0 1 auto">
-          <TypeBar chatId={chatId} file={file} emoji={emoji} gif={gif} />
+          <TypeBar chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
         </Section>
       )}
     </Section>
@@ -297,12 +298,3 @@ const EncryptionMessageDiv = styled(Div)`
     vertical-align: middle;
   }
 `;
-//change theme colours(done)
-//check height(done)
-//css
-//message encrypted flag(done in ui but do it in socket too)
-//typebar and profile
-//check for group private public
-//socket (w2w working)
-
-//newChat window when not chat is there(done)

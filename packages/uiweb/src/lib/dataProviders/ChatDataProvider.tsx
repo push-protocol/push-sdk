@@ -52,7 +52,6 @@ export const ChatUIProvider = ({
 const resetStates = () => {
   setPushChatSocket(null);
   setIsPushChatSocketConnected(false);
-  setConnectedProfile(undefined);
   
 };
 

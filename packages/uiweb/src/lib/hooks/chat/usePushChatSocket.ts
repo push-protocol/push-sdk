@@ -32,6 +32,11 @@ export const usePushChatSocket = () => {
     setGroupInformationSinceLastConnection,
   ] = useState<any>({});
 
+  // useEffect(() => {
+  //   // console.log(pgpPrivateKey, "pgppppppppp")
+  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
+  // }, [pgpPrivateKey, connectedProfile])
+
   const addSocketEvents = useCallback(() => {
     console.log('addSocketEvents');
     pushChatSocket?.on(EVENTS.CONNECT, () => {
@@ -43,11 +48,13 @@ export const usePushChatSocket = () => {
     });
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
-     
-
+      console.log(chat)
+      console.log(connectedProfile)
+      console.log(pgpPrivateKey)
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
+      console.log(chat)
       if (
        ( chat.messageCategory === 'Request') &&
         (chat.messageContent === null) &&
@@ -55,13 +62,15 @@ export const usePushChatSocket = () => {
       ) {
         return;
       }
-
+      console.log(chat)
       const response = await PushAPI.chat.decryptConversation({
         messages: [chat],
         connectedUser: connectedProfile,
         pgpPrivateKey: pgpPrivateKey,
         env: env,
       });
+      console.log(chat)
+
       if (response && response.length) {
         setMessagesSinceLastConnection(response[0]);
       }
@@ -80,6 +89,7 @@ export const usePushChatSocket = () => {
     pgpPrivateKey,
     messagesSinceLastConnection,
     env,
+    connectedProfile,
   ]);
 
   const removeSocketEvents = useCallback(() => {
@@ -99,7 +109,7 @@ export const usePushChatSocket = () => {
         removeSocketEvents();
       }
     };
-  }, [pushChatSocket]);
+  }, [pushChatSocket, pgpPrivateKey, connectedProfile]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -109,7 +119,6 @@ export const usePushChatSocket = () => {
   useEffect(() => {
     if (account) {
       if (pushChatSocket && pushChatSocket.connected) {
-        // console.log('=================>>> disconnection in the hook');
         // pushChatSocket?.disconnect();
       } else {
         const main = async () => {
@@ -134,6 +143,6 @@ export const usePushChatSocket = () => {
     pushChatSocket,
     isPushChatSocketConnected,
     messagesSinceLastConnection,
-    groupInformationSinceLastConnection
+    groupInformationSinceLastConnection,
   };
 };

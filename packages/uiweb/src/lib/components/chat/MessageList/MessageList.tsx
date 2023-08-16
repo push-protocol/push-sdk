@@ -8,17 +8,12 @@ import styled from 'styled-components';
 import { Section, Span, Spinner } from '../../reusables';
 import moment from 'moment';
 import { MessageBubble } from '../MessageBubble';
-import {
-  appendUniqueMessages,
-  checkIfSameChat,
-  dateToFromNowDaily,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
+import { appendUniqueMessages, checkIfSameChat, dateToFromNowDaily, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
+import { ConnectButton } from '../ConnectButton';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 
 /**
@@ -29,15 +24,13 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-
-
 export const MessageList: React.FC<IMessageListProps> = (
   options: IMessageListProps
 ) => {
   const { chatId, limit = chatLimit } = options || {};
   const { pgpPrivateKey, account } = useChatData();
-  const [conversationHash, setConversationHash] = useState<string>();
   const [messages, setMessages] = useState<Messagetype>();
+  const [conversationHash, setConversationHash] = useState<string>();
   const { historyMessages, loading } = useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -61,14 +54,13 @@ export const MessageList: React.FC<IMessageListProps> = (
         });
         setConversationHash(messagesSinceLastConnection.cid)
       } else {
-        const newMessageList = appendUniqueMessages(
-          messages as Messagetype,
-          [messagesSinceLastConnection],
-          false
-        );
+        console.log(messagesSinceLastConnection)
+        const newMessageList = appendUniqueMessages(messages as Messagetype, [messagesSinceLastConnection], false);
         setMessages({
+
           messages: newMessageList,
           lastThreadHash: messages!.lastThreadHash,
+
         });
       }
       scrollToBottom(null);
@@ -88,7 +80,7 @@ export const MessageList: React.FC<IMessageListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash]);
+  }, [conversationHash, pgpPrivateKey, account]);
 
   useEffect(() => {
     scrollToBottom(null);
@@ -134,18 +126,14 @@ export const MessageList: React.FC<IMessageListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash) {
+    if (threadHash && pgpPrivateKey && account) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
       });
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
-          const newMessageList = appendUniqueMessages(
-            messages,
-            chatHistory,
-            true
-          );
+          const newMessageList = appendUniqueMessages(messages, chatHistory, true);
           setMessages({
             messages: newMessageList,
             lastThreadHash: chatHistory[0].link,
@@ -159,6 +147,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       }
     }
   };
+
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -180,19 +169,21 @@ export const MessageList: React.FC<IMessageListProps> = (
       </Span>
     );
   };
-
   return (
     <MessageListCard
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
-      width="100%"
+      width='100%'
       justifyContent="start"
-      padding="0 2px"
+      padding='0 2px'
       theme={theme}
       //   background={theme.bgColorSecondary}
       onScroll={() => onScroll()}
     >
+      {/* {isConnected && (
+        <ConnectButton />
+      )} */}
       {loading ? <Spinner color={theme.accentBgColor}/> : ''}
 
       <Section flexDirection="column" justifyContent="start" width="100%">
@@ -200,7 +191,7 @@ export const MessageList: React.FC<IMessageListProps> = (
           const dateNum = moment(chat.timestamp).format('L');
           const position =
             pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-            account?.toLowerCase()
+              account?.toLowerCase()
               ? 0
               : 1;
           return (
@@ -219,8 +210,8 @@ export const MessageList: React.FC<IMessageListProps> = (
 };
 
 //styles
-const MessageListCard = styled(Section)<IThemeProps>`
-  &::-webkit-scrollbar-thumb {
+const MessageListCard = styled(Section) <IThemeProps>`
+&::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.accentBgColor};
     border-radius: 10px;
   }
@@ -228,4 +219,5 @@ const MessageListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
+
 `;
