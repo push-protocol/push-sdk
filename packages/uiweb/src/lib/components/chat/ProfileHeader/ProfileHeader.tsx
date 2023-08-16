@@ -9,7 +9,7 @@ import VideoChatIcon from '../../../icons/VideoCallIcon.svg';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import type { IUser } from '@pushprotocol/restapi';
-import { useChatData, useClickAway, useDeviceWidthCheck, useResolveWeb3Name } from "../../../hooks";
+import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { IChatTheme } from "../theme";
 import { pCAIP10ToWallet, resolveEns, resolveNewEns, shortenText } from "../../../helpers";
@@ -19,12 +19,12 @@ import { IGroup } from "../../../types";
 import { GroupInfoModal } from "./GroupInfoModal";
 import { isValidETHAddress } from "../helpers/helper";
 import { ethers } from "ethers";
-import { IProfileHeader } from "../exportedTypes";
+import { IProfileHeader, IToast, OptionProps } from "../exportedTypes";
 import { InfuraAPIKey, allowedNetworks } from "../../../config";
-import { resolve } from "path";
+import Toast from "../helpers/Toast";
 
 
-const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme }:{options: boolean, setOptions: React.Dispatch<React.SetStateAction<boolean>>, isGroup: boolean, chatInfo: any, groupInfo: IGroup | null | undefined , setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>> , theme: IChatTheme }) => {
+const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupInfo,theme, showToast, setShowToast, toastInfo, setToastInfo }: OptionProps) => {
     const DropdownRef = useRef(null);
     const [modal, setModal] = useState(false);
    
@@ -55,7 +55,18 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
                           Group Info</DropDownItem>
                     </DropDownBar>)}
                 
-                    {modal && (<GroupInfoModal theme={theme} modal={modal} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />)}
+                    {modal && 
+                    (<GroupInfoModal 
+                        theme={theme}
+                        modal={modal} 
+                        setModal={setModal} 
+                        groupInfo={groupInfo} 
+                        setGroupInfo={setGroupInfo}
+                        showToast={showToast}
+                        setShowToast={setShowToast}
+                        toastInfo={toastInfo}
+                        setToastInfo={setToastInfo}
+                     />)}
                 </ImageItem>
             </Section>
         )
@@ -75,18 +86,23 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
 
     const [isGroup, setIsGroup] = useState<boolean>(false);
     const [options, setOptions] = useState(false); 
+    const [showToast, setShowToast] = useState<boolean>(false); 
+    const [ toastInfo, setToastInfo ] = useState<IToast>({
+        message: '',
+        status: ''
+    })
     const [chatInfo, setChatInfo ] = useState<IUser | null>();
     const [groupInfo, setGroupInfo ] = useState<IGroup | null>();
     const [ensName, setEnsName ] = useState<string | undefined>('');
     const isMobile = useDeviceWidthCheck(425);
     const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
-    const provider = new ethers.providers.InfuraProvider(1, InfuraAPIKey)
+    const provider = new ethers.providers.InfuraProvider(1, InfuraAPIKey);
+
 
 
     const fetchProfileData = async () => {
         if(isValidETHAddress(chatId)){
             const ChatProfile = await fetchUserChatProfile({ profileId: chatId });
-            // console.log(ChatProfile,'status')
             setChatInfo(ChatProfile);
             setGroupInfo(null);
             setIsGroup(false);
@@ -127,7 +143,19 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
 
                 <Span color="#fff" fontSize="17px" margin="0 0 0 10px">{isGroup ? groupInfo?.groupName : ensName ? `${ensName}(${chatId})`: shortenText(chatInfo?.did?.split(':')[1] ?? '', 6, true)}</Span>
 
-                <Options options={options} setOptions={setOptions} isGroup={isGroup} chatInfo={chatInfo} groupInfo={groupInfo} setGroupInfo={setGroupInfo} theme={theme} />
+                <Options 
+                    options={options} 
+                    setOptions={setOptions} 
+                    isGroup={isGroup} 
+                    chatInfo={chatInfo} 
+                    groupInfo={groupInfo} 
+                    setGroupInfo={setGroupInfo} 
+                    theme={theme} 
+                    showToast={showToast}
+                    setShowToast={setShowToast}
+                    toastInfo={toastInfo}
+                    setToastInfo={setToastInfo}
+                    />
 
                 {!isGroup && 
                     <VideoChatSection>
@@ -135,7 +163,16 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                     </VideoChatSection>
                     }
 
-            </Container>
+                {/* {showToast && ( */}
+                    <Toast 
+                        toastMessage={toastInfo.message}
+                        position={'top-right'}
+                        status={toastInfo.status}
+                    /> 
+                {/* )} */}
+
+       
+     </Container>
         )
     } else {
         return null;

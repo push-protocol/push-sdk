@@ -4,7 +4,7 @@ import { useChatData, useClickAway } from "../../../hooks";
 import { IGroup } from "../../../types";
 import { IChatTheme } from "../theme";
 import * as PushAPI from '@pushprotocol/restapi';
-import { ShadowedProps, UpdateGroupType } from "../exportedTypes";
+import { IToast, ShadowedProps, UpdateGroupType } from "../exportedTypes";
 import { convertToWalletAddressList, getAdminList, getUpdatedAdminList, getUpdatedMemberList } from "../helpers/helper";
 import { DropdownValueType } from "./DropDown";
 import DismissAdmin from '../../../icons/dismissadmin.svg';
@@ -57,7 +57,7 @@ const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests
 }
 
 
-export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}: {theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup, setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>> }) => {
+export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo, showToast, setShowToast, toastInfo, setToastInfo}: {theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup, setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>, showToast: boolean, setShowToast: React.Dispatch<React.SetStateAction<boolean>>, toastInfo: IToast, setToastInfo: React.Dispatch<React.SetStateAction<IToast>> }) => {
     const { account, env, pgpPrivateKey } = useChatData();
     const [showAddMoreWalletModal, setShowAddMoreWalletModal] = useState<boolean>(false);
     const [showPendingRequests, setShowPendingRequests] = useState<boolean>(false);
@@ -68,6 +68,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
     const handleClose = () => onClose();
     const dropdownRef = useRef<any>(null);
      useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
+    // const groupInfoToast = useToast();
 
 
     const groupCreator = groupInfo?.groupCreator;
@@ -125,51 +126,26 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
             if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
-            // groupInfoToast.showMessageToast({
-            //   toastTitle: 'Error',
-            //   toastMessage: updateResponse,
-            //   toastType: 'ERROR',
-            //   getToastIcon: (size) => (
-            //     <MdError
-            //       size={size}
-            //       color="red"
-            //     />
-            //   ),
-            // });
-            alert(updateResponse);
+            setToastInfo({
+              message: updateResponse,
+              status: 'error'
+            })
             setSelectedMemberAddress(null);
           }
           setIsLoading(false);
-        //   groupInfoToast.showMessageToast({
-        //     toastTitle: 'Success',
-        //     toastMessage: 'Group Invitation sent',
-        //     toastType: 'SUCCESS',
-        //     getToastIcon: (size) => (
-        //       <MdCheckCircle
-        //         size={size}
-        //         color="green"
-        //       />
-        //     ),
-        //   });
-        alert('Group Invitation sent')
+          setToastInfo({
+            message: 'Group Invitation sent!',
+            status: 'success'
+          })
           handleClose();
         } catch (error) {
           setIsLoading(false);
           console.log('Error', error);
-          alert(error);
-        //   groupInfoToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: error.message,
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
+          setToastInfo({
+            message: 'Error',
+            status: 'error'
+          })
         }
       };
     
@@ -191,36 +167,23 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            // if (updatedCurrentChat) setChat(updatedCurrentChat);
+            setToastInfo({
+              message: 'Admin Added Successfully',
+              status: 'success'
+            })
           } else {
-            // groupInfoToast.showMessageToast({
-            //   toastTitle: 'Error',
-            //   toastMessage: updateResponse,
-            //   toastType: 'ERROR',
-            //   getToastIcon: (size) => (
-            //     <MdError
-            //       size={size}
-            //       color="red"
-            //     />
-            //   ),
-            // });
-            alert(updateResponse);
+            setToastInfo({
+              message: updateResponse,
+              status: 'error'
+            })
             setSelectedMemberAddress(null);
           }
         } catch (e) {
           console.error('Error while adding admin', e);
-        //   groupInfoToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: e.message,
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
-         alert(e);
+          setToastInfo({
+            message: 'Error',
+            status: 'error'
+          })
         }
         setSelectedMemberAddress(null);
       };
@@ -242,36 +205,24 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            // if (updatedCurrentChat) setChat(updatedCurrentChat);
+            setToastInfo({
+              message: 'Admin Successfully removed',
+              status: 'success'
+            })
+            setShowToast(true)
           } else {
-            // groupInfoToast.showMessageToast({
-            //   toastTitle: 'Error',
-            //   toastMessage: updateResponse,
-            //   toastType: 'ERROR',
-            //   getToastIcon: (size) => (
-            //     <MdError
-            //       size={size}
-            //       color="red"
-            //     />
-            //   ),
-            // });
-            alert(updateResponse);
+            setToastInfo({
+              message: updateResponse,
+              status: 'error'
+            })
             setSelectedMemberAddress(null);
           }
         } catch (e) {
           console.error('Error while dismissing admin', e);
-        //   groupInfoToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: e.message,
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
-        alert(e);
+          setToastInfo({
+            message: 'Error',
+            status: 'error'
+          })
         }
         setSelectedMemberAddress(null);
       };
@@ -291,36 +242,19 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            // if (updatedCurrentChat) setChat(updatedCurrentChat);
           } else {
-            // groupInfoToast.showMessageToast({
-            //   toastTitle: 'Error',
-            //   toastMessage: updateResponse,
-            //   toastType: 'ERROR',
-            //   getToastIcon: (size) => (
-            //     <MdError
-            //       size={size}
-            //       color="red"
-            //     />
-            //   ),
-            // });
-            alert(updateResponse);
+            setToastInfo({
+              message: updateResponse,
+              status: 'error'
+            })
             setSelectedMemberAddress(null);
           }
         } catch (error) {
           console.error('Error in removing member', error);
-          alert(error);
-        //   groupInfoToast.showMessageToast({
-        //     toastTitle: 'Error',
-        //     toastMessage: error.message,
-        //     toastType: 'ERROR',
-        //     getToastIcon: (size) => (
-        //       <MdError
-        //         size={size}
-        //         color="red"
-        //       />
-        //     ),
-        //   });
+          setToastInfo({
+            message: 'Error',
+            status: 'error'
+          })
         }
         setSelectedMemberAddress(null);
       };
@@ -452,6 +386,8 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
     
  </Section>)} 
 
+
+
  {showAddMoreWalletModal && (
     <AddWalletContent 
         onSubmit={addMembers}
@@ -465,7 +401,8 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo}
         isLoading={isLoading}
     />
  )}
-    </Modal>)
+    </Modal>
+    )
 } else { return null }
 
 }

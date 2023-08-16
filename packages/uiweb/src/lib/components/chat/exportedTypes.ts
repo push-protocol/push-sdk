@@ -16,6 +16,24 @@ export interface TwitterFeedReturnType {
   messageType: string;
 }
 
+export interface IToast {
+  message: string;
+  status: string;
+}
+
+export type OptionProps = {
+  options: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  isGroup: boolean;
+  chatInfo: any;
+  groupInfo: IGroup | null | undefined , 
+  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
+  theme: IChatTheme;
+  showToast: boolean; 
+  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
+  toastInfo: IToast;
+  setToastInfo: React.Dispatch<React.SetStateAction<IToast>> 
+}
 export type IMessagePayload = IMessageIPFS;
 
 export const CHAT_THEME_OPTIONS = {

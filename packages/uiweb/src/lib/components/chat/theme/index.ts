@@ -31,6 +31,11 @@ export interface IChatTheme {
   snackbarBorderIcon?: string,
   modalContentBackground?: string,
   modalProfileTextColor?: string,
+  toastSuccessBackground?: string;
+  toastErrorBackground?: string;
+  toastShadowColor?: string;
+  toastBorderColor?: string;
+  mainBg?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -61,6 +66,11 @@ export const lightChatTheme: IChatTheme = {
   snackbarBorderIcon: 'none',
   modalContentBackground: '#FFFFFF',
   modalProfileTextColor: '#1E1E1E',
+  toastSuccessBackground: 'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #F3FFF9 42.81%)',
+  toastErrorBackground: 'linear-gradient(90.15deg, #FF2070 -125.65%, #FF2D79 -125.63%, #FFF9FB 42.81%)',
+  toastShadowColor: '#ccc',
+  toastBorderColor: '#F4F3FF',
+  mainBg: '#fff',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -92,5 +102,10 @@ export const darkChatTheme: IChatTheme = {
   'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
   modalContentBackground: '#2F3137',
   modalProfileTextColor: '#B6BCD6',
+  toastSuccessBackground: 'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #2F3137 42.81%)',
+  toastErrorBackground: 'linear-gradient(89.96deg, #FF2070 -101.85%, #2F3137 51.33%)',
+  toastShadowColor: '#00000010',
+  toastBorderColor: '#4A4F67',
+  mainBg: '#000',
 };
 
