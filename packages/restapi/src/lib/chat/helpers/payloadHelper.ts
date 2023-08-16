@@ -229,6 +229,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     scheduleAt: groupDto.scheduleAt,
     scheduleEnd: groupDto.scheduleEnd,
     status: groupDto.status ?? null,
+    meta: groupDto.meta
   };
   return spaceDto;
 };
