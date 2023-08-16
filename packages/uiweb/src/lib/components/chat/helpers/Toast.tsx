@@ -38,11 +38,11 @@ const Toast = ({ toastMessage, position, status }: toastProps) => {
                         className={`toast ${position}`} >
                            
                             <NotificationImage>
-                                {status === 'success' ? <CheckCircleIcon width='35px' height='35px' /> : <InfoIcon />}
+                                {status === 'success' ? <CheckCircleIcon width='35px' height='35px' /> : <Image src={InfoIcon} width={'35px'} height='35px' />}
                             </NotificationImage>
 
                             <Section flexDirection='column' alignItems='flex-start'>
-                                <NotificationTitle theme={theme}>Success</NotificationTitle>
+                                <NotificationTitle theme={theme}>{status === 'success' ? 'Success' : 'Error'}</NotificationTitle>
                                 <NotificationMessage theme={theme}>
                                     {toastMessage}
                                 </NotificationMessage>
