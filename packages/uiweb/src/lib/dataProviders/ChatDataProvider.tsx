@@ -34,23 +34,27 @@ export const ChatUIProvider = ({
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
   useState<boolean>(false);
-  useEffect(() => {
-    console.log(envVal,  "envv");
-
-  }, [envVal])
+ 
 
   useEffect(() => {
-    setEnvVal(env)
-  }, [env])
+    resetStates();
+    setEnvVal(env);
+    setAccountVal(account);
+    setPgpPrivateKeyVal(pgpPrivateKey);
+  }, [env,account,pgpPrivateKey])
 
   useEffect(() => {
     setAccountVal(account)
   }, [account])
 
-useEffect(()=>{
-    setAccountVal(account)
-    setPgpPrivateKeyVal(pgpPrivateKey)
-},[pgpPrivateKey])
+
+
+const resetStates = () => {
+  setPushChatSocket(null);
+  setIsPushChatSocketConnected(false);
+  setConnectedProfile(undefined);
+  
+};
 
 useEffect(() => {
     (async () => {
@@ -61,7 +65,7 @@ useEffect(() => {
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account]);
+  }, [account,env]);
 
   const value: IChatDataContextValues = {
     account: accountVal,

@@ -60,7 +60,6 @@ const MessageCard = ({
 }) => {
     const theme = useContext(ThemeContext)
     const time = moment(chat.timestamp).format('hh:mm a');
-    console.log(theme.chatBubblePrimaryBgColor)
     return (
         <Section theme={theme} flexDirection="row" justifyContent="start" gap="6px" width="fit-content">
             {isGroup &&

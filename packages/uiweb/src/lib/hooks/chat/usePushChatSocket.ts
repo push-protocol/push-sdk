@@ -43,19 +43,19 @@ export const usePushChatSocket = () => {
     });
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
+     
+
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
       if (
-        chat.messageCategory === 'Request' &&
-        chat.messageContent === null &&
-        chat.messageType === null
+       ( chat.messageCategory === 'Request') &&
+        (chat.messageContent === null) &&
+        (chat.messageType === null)
       ) {
         return;
       }
-console.log(chat)
-console.log(connectedProfile);
-console.log(pgpPrivateKey)
+
       const response = await PushAPI.chat.decryptConversation({
         messages: [chat],
         connectedUser: connectedProfile,
@@ -70,7 +70,6 @@ console.log(pgpPrivateKey)
       /**
        * We receive a group creation or updated event.
        */
-      console.log(groupInfo);
       setGroupInformationSinceLastConnection(groupInfo);
     });
 

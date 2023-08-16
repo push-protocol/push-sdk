@@ -14,6 +14,7 @@ import { EncryptionIcon } from '../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../icons/NoEncryption';
 import {
   checkIfIntent,
+  checkIfSameChat,
   getDefaultFeedObject,
   getNewChatUser,
 } from '../../../helpers';
@@ -101,9 +102,12 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
     W2W: ` Please accept to enable push chat from this wallet`,
   };
 
+  // useEffect(() => {
+  //   setChatStatusText('');
+  // }, [chatId]);
+
   useEffect(() => {
     (async () => {
-      console.log(chatId);
       const chat = await fetchChat({ chatId });
       // const hash = await fetchConversationHash({ conversationId: chatId });
       // setConversationHash(hash?.threadHash);
@@ -111,13 +115,11 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       else {
         let newChatFeed;
         let group;
-        console.log(env, "envv");
         const result = await getNewChatUser({
           searchText: chatId,
           fetchChatProfile,
           env,
         });
-        console.log(result);
         if (result) {
           newChatFeed = getDefaultFeedObject({ user: result });
         } else {
@@ -150,24 +152,23 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       }
     }
   }, [groupInformationSinceLastConnection]);
-  console.log(Object.keys(chatFeed || {}).length);
-  console.log(chatFeed);
+
   useEffect(() => {
-    console.log(messagesSinceLastConnection, "messagesSinceLastConnection");
     if (
       Object.keys(messagesSinceLastConnection || {}).length &&
       Object.keys(chatFeed || {}).length &&
-      (chatFeed.did?.toLowerCase() ===
-        messagesSinceLastConnection.fromCAIP10?.toLowerCase() ||
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-          messagesSinceLastConnection.toCAIP10.toLowerCase())
+      checkIfSameChat(messagesSinceLastConnection, account!, chatId)
+      // ((chatFeed.did?.toLowerCase() ===
+      //   messagesSinceLastConnection.fromCAIP10?.toLowerCase()) ||
+      //   (chatFeed?.groupInformation?.chatId.toLowerCase() ===
+      //     messagesSinceLastConnection.toCAIP10.toLowerCase()))
     ) {
       const updatedChatFeed = chatFeed;
-      console.log(updatedChatFeed, "updatedChatFeed");
       updatedChatFeed.msg = messagesSinceLastConnection;
-      if (chatStatusText) {
-        setChatStatusText('');
-      }
+      // if (chatStatusText) {
+      //   setChatStatusText('');
+      // }
+      setChatStatusText('');
       setChatFeed(updatedChatFeed);
     }
   }, [messagesSinceLastConnection]);
@@ -181,7 +182,6 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
         chatId,
       });
       if (response) {
-        console.log(response);
         const updatedChatFeed = { ...(chatFeed as IFeeds) };
         updatedChatFeed.intent = response;
 
@@ -191,8 +191,7 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
       console.log(error_.message);
     }
   };
-  console.log(chatFeed);
-  console.log(chatStatusText);
+
   return (
     <Section
       width="100%"
@@ -227,20 +226,18 @@ export const MessageContainer: React.FC<IMessageContainerProps> = (
         ) : (
           <EncryptionMessage id={'ENCRYPTED'} />
         )}
-        {chatStatusText && (
-          <Section margin="20px 0 0 0">
-            <Span
-              fontSize="13px"
-              color={theme.textColorSecondary}
-              fontWeight="400"
-            >
-              {chatStatusText}
-            </Span>
-          </Section>
-        )}
-        {chatId && messageList && (
-          <MessageList limit={limit} chatId={chatId} />
-        )}
+
+      {chatStatusText &&  <Section margin="20px 0 0 0">
+          <Span
+            fontSize="13px"
+            color={theme.textColorSecondary}
+            fontWeight="400"
+          >
+            {chatStatusText}
+          </Span>
+        </Section>}
+
+        {chatId && messageList && <MessageList limit={limit} chatId={chatId} />}
         {checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
           <Section
             color={theme.textColorPrimary}

@@ -46,15 +46,20 @@ export const MessageList: React.FC<IMessageListProps> = (
   const theme = useContext(ThemeContext);
   const dates = new Set();
   const {env} = useChatData();
+
   useEffect(() => {
-   
+    setMessages(undefined);
+    setConversationHash(undefined);
+  }, [chatId]);
+
+  useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
-      console.log(messagesSinceLastConnection, "messagesSinceLastConnection");
       if (!Object.keys(messages || {}).length) {
         setMessages({
-          messages: messagesSinceLastConnection,
+          messages: [messagesSinceLastConnection],
           lastThreadHash: messagesSinceLastConnection.cid,
         });
+        setConversationHash(messagesSinceLastConnection.cid)
       } else {
         const newMessageList = appendUniqueMessages(
           messages as Messagetype,
@@ -73,14 +78,12 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     (async function () {
       const hash = await fetchConversationHash({ conversationId: chatId });
-      console.log(hash, "hash");
       setConversationHash(hash?.threadHash);
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
     if (conversationHash) {
-      console.log(conversationHash,  "conversationhash");
       (async function () {
         await getMessagesCall();
       })();
@@ -177,7 +180,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       </Span>
     );
   };
-  console.log(conversationHash);
+
   return (
     <MessageListCard
       overflow="hidden scroll"
@@ -193,7 +196,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       {loading ? <Spinner color={theme.accentBgColor}/> : ''}
 
       <Section flexDirection="column" justifyContent="start" width="100%">
-        {messages?.messages.map((chat: IMessageIPFS, index: number) => {
+        {messages?.messages && messages?.messages?.map((chat: IMessageIPFS, index: number) => {
           const dateNum = moment(chat.timestamp).format('L');
           const position =
             pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
