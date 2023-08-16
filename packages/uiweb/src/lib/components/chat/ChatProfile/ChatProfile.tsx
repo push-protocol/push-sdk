@@ -126,7 +126,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
         if(!chatId) return;
         fetchProfileData();
         getName(chatId);
-    },[chatId])
+    },[chatId, account, env])
 
     if (chatId && style === 'Info') {
         return (

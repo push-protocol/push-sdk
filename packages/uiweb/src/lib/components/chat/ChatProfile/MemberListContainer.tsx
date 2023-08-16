@@ -56,7 +56,7 @@ export const MemberListContainer = ({ key, memberData, handleMembers, handleMemb
 
     return (
     <WalletProfileContainer id={memberData?.wallets} background = { memberList ? 'transparent' : theme.groupSearchProfilBackground } 
-    border={memberList ? `1px solid ${theme.modalInputBorderColor}`: 'none'}
+    border={memberList ? `${theme.modalBorderColor}`: 'none'}
     >
       <WalletProfile>
         <Section
@@ -103,7 +103,7 @@ export const MemberListContainer = ({ key, memberData, handleMembers, handleMemb
       </Section>
 
       {selectedWallet?.toLowerCase() == memberData?.wallets?.toLowerCase() && (
-        <DropdownContainer style={{ top: dropdownHeight! > 500 ? '50%' : "40%" }} ref={dropdownRef} theme={theme}>
+        <DropdownContainer style={{ top: dropdownHeight! > 500 ? '30%' : "45%" }} ref={dropdownRef} theme={theme}>
           <Dropdown
             dropdownValues={memberData?.isAdmin ? [removeAdminDropdown,removeUserDropdown] : [addAdminDropdown, removeUserDropdown]}
             hoverBGColor={theme.snapFocusBg}
@@ -142,7 +142,8 @@ const DropdownContainer = styled.div`
   border-radius: 16px;
   padding: 14px 8px;
   background: ${(props) => props.theme.modalContentBackground};
-  z-index: 11;
+  border: 1px solid ${(props) => props.theme.modalBorderColor};
+  z-index: 400;
   @media ${device.mobileL} {
     left: 27%;
   }
