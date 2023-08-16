@@ -3,6 +3,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { ChatDataContext } from '../../context';
+import { useChatData } from './useChatData';
 
 
 
@@ -18,8 +19,7 @@ const useFetchHistoryMessages
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { account, env,pgpPrivateKey } =
-  useContext<any>(ChatDataContext);
+  const { account, env,pgpPrivateKey } = useChatData();
 
   const historyMessages = useCallback(async ({threadHash,limit = 10,}:HistoryMessagesParams) => {
 
@@ -27,7 +27,7 @@ const useFetchHistoryMessages
     try {
         const chatHistory:IMessageIPFS[] = await PushAPI.chat.history({
             threadhash: threadHash,
-            account: account,
+            account: account!,
             toDecrypt: pgpPrivateKey ? true : false,
             pgpPrivateKey: String(pgpPrivateKey),
             limit: limit,

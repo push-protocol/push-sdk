@@ -43,7 +43,7 @@ export const MessageList: React.FC<IMessageListProps> = (
   useEffect(() => {
     setMessages(undefined);
     setConversationHash(undefined);
-  }, [chatId]);
+  }, [chatId,account,pgpPrivateKey]);
 
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
@@ -54,7 +54,6 @@ export const MessageList: React.FC<IMessageListProps> = (
         });
         setConversationHash(messagesSinceLastConnection.cid)
       } else {
-        console.log(messagesSinceLastConnection)
         const newMessageList = appendUniqueMessages(messages as Messagetype, [messagesSinceLastConnection], false);
         setMessages({
 
@@ -72,7 +71,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       const hash = await fetchConversationHash({ conversationId: chatId });
       setConversationHash(hash?.threadHash);
     })();
-  }, [chatId, pgpPrivateKey, account, env]);
+  }, [chatId, account, env,pgpPrivateKey]);
 
   useEffect(() => {
     if (conversationHash) {
@@ -80,7 +79,9 @@ export const MessageList: React.FC<IMessageListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account]);
+  }, [conversationHash, pgpPrivateKey, account,env]);
+
+  
 
   useEffect(() => {
     scrollToBottom(null);
@@ -126,7 +127,7 @@ export const MessageList: React.FC<IMessageListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash && pgpPrivateKey && account) {
+    if (threadHash && account) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
