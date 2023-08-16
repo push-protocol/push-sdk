@@ -111,7 +111,7 @@ const useChatNotificationSocket = ({
           chat.messageType === null
         ) {
           if (chat.messageOrigin === 'other') {
-            const user = await fetchChatProfile({ profileId: chatId });
+            const user = await fetchChatProfile({ profileId: chatId,env });
 
             if (user || Object.keys(user || {}).length) {
               let newOne: IFeeds = {} as IFeeds;

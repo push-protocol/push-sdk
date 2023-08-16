@@ -12,22 +12,7 @@ const MessageListTest = () => {
   const { account, pgpPrivateKey } = useContext<any>(Web3Context)
 
   const { env } = useContext<any>(EnvContext);
-  const [conversationHash, setConversationHash] = useState<string>('');
 
-  const fetchConversationHash = async () => {
-    const ConversationHash = await PUSHAPI.chat.conversationHash({
-      account: `eip155:${account}`,
-      conversationId: '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc',
-      env: env
-    });
-    setConversationHash(ConversationHash.threadHash);
-  }
-  console.log(conversationHash)
-  useEffect(() => {
-    if (pgpPrivateKey) {
-      fetchConversationHash();
-    }
-  })
 
   usePushChatSocket();
   return (
@@ -37,8 +22,7 @@ const MessageListTest = () => {
       {/* <Loader show={isLoading} /> */}
 
       <MessageListCard    >
-
-        <MessageList conversationHash={conversationHash} limit={10} isConnected={false} />
+        <MessageList chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' limit={10} />
 
       </MessageListCard>
       <TypeBar chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' isConnected={true} />
@@ -51,4 +35,5 @@ export default MessageListTest;
 
 const MessageListCard = styled(Section)`
 height:40vh;
+background:black;
 `;

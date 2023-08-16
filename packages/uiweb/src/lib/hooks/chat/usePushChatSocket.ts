@@ -8,7 +8,6 @@ import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
 import { getChatId } from '../../helpers';
 
-
 export type PushChatSocketHookOptions = {
   account?: string | null;
   env?: ENV;
@@ -23,10 +22,21 @@ export const usePushChatSocket = () => {
     setIsPushChatSocketConnected,
     isPushChatSocketConnected,
     connectedProfile,
-    env
+    env,
   } = useChatData();
 
-  const [messagesSinceLastConnection,setMessagesSinceLastConnection] = useState<any>({});
+  const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
+    useState<any>({});
+  const [
+    groupInformationSinceLastConnection,
+    setGroupInformationSinceLastConnection,
+  ] = useState<any>({});
+
+  // useEffect(() => {
+  //   // console.log(pgpPrivateKey, "pgppppppppp")
+  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
+  // }, [pgpPrivateKey, connectedProfile])
+
   const addSocketEvents = useCallback(() => {
     console.log('addSocketEvents');
     pushChatSocket?.on(EVENTS.CONNECT, () => {
@@ -37,39 +47,41 @@ export const usePushChatSocket = () => {
       setIsPushChatSocketConnected(false);
     });
 
+    pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
+      console.log(chat)
+      console.log(connectedProfile)
+      console.log(pgpPrivateKey)
+      if (!connectedProfile || !pgpPrivateKey) {
+        return;
+      }
+      console.log(chat)
+      if (
+       ( chat.messageCategory === 'Request') &&
+        (chat.messageContent === null) &&
+        (chat.messageType === null)
+      ) {
+        return;
+      }
+      console.log(chat)
+      const response = await PushAPI.chat.decryptConversation({
+        messages: [chat],
+        connectedUser: connectedProfile,
+        pgpPrivateKey: pgpPrivateKey,
+        env: env,
+      });
+      console.log(chat)
 
-    pushChatSocket?.on(
-        EVENTS.CHAT_RECEIVED_MESSAGE,
-        async (chat: any) => {
-            console.log(chat)
-         if (!connectedProfile || !pgpPrivateKey) {
-            return;
-          }
-          console.log(chat)
-        //   const chatId = getChatId({ msg: chat, account:account! }).toLowerCase();
-          if (
-            chat.messageCategory === 'Request' &&
-            chat.messageContent === null &&
-            chat.messageType === null
-          ) {
-            return;
-          }
-console.log(chat)
-console.log(connectedProfile)
-console.log(pgpPrivateKey)
-          const response = await PushAPI.chat.decryptConversation({
-            messages: [chat],
-            connectedUser: connectedProfile,
-            pgpPrivateKey: pgpPrivateKey,
-            env: env,
-          });
-          if (response && response.length) {
-            setMessagesSinceLastConnection(response[0]);
-          }
-        }
-      );
+      if (response && response.length) {
+        setMessagesSinceLastConnection(response[0]);
+      }
+    });
+    pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
+      /**
+       * We receive a group creation or updated event.
+       */
+      setGroupInformationSinceLastConnection(groupInfo);
+    });
 
- 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     pushChatSocket,
@@ -77,7 +89,7 @@ console.log(pgpPrivateKey)
     pgpPrivateKey,
     messagesSinceLastConnection,
     env,
-
+    connectedProfile,
   ]);
 
   const removeSocketEvents = useCallback(() => {
@@ -97,7 +109,7 @@ console.log(pgpPrivateKey)
         removeSocketEvents();
       }
     };
-  }, [pushChatSocket]);
+  }, [pushChatSocket, pgpPrivateKey, connectedProfile]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -107,24 +119,21 @@ console.log(pgpPrivateKey)
   useEffect(() => {
     if (account) {
       if (pushChatSocket && pushChatSocket.connected) {
-        // console.log('=================>>> disconnection in the hook');
         // pushChatSocket?.disconnect();
-      }
-      else {
+      } else {
         const main = async () => {
-            const connectionObject = createSocketConnection({
-              user: account,
-              env,
-              socketType: SOCKET_TYPE.CHAT,
-              socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
-            });
-            console.warn('new connection object: ', connectionObject);
-    
-            setPushChatSocket(connectionObject);
-          };
-          main().catch((err) => console.error(err));
+          const connectionObject = createSocketConnection({
+            user: account,
+            env,
+            socketType: SOCKET_TYPE.CHAT,
+            socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
+          });
+          console.warn('new connection object: ', connectionObject);
+
+          setPushChatSocket(connectionObject);
+        };
+        main().catch((err) => console.error(err));
       }
-     
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,6 +142,7 @@ console.log(pgpPrivateKey)
   return {
     pushChatSocket,
     isPushChatSocketConnected,
-    messagesSinceLastConnection
+    messagesSinceLastConnection,
+    groupInformationSinceLastConnection,
   };
 };

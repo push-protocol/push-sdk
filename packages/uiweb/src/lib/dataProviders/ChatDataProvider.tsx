@@ -34,22 +34,37 @@ export const ChatUIProvider = ({
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
   useState<boolean>(false);
+ 
 
-useEffect(()=>{
+  useEffect(() => {
+    resetStates();
+    setEnvVal(env);
+    setAccountVal(account);
+    setPgpPrivateKeyVal(pgpPrivateKey);
+  }, [env,account,pgpPrivateKey])
+
+  useEffect(() => {
     setAccountVal(account)
-    setPgpPrivateKeyVal(pgpPrivateKey)
-},[pgpPrivateKey])
+  }, [account])
+
+
+
+const resetStates = () => {
+  setPushChatSocket(null);
+  setIsPushChatSocketConnected(false);
+  
+};
 
 useEffect(() => {
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account });
+        user = await fetchChatProfile({ profileId: account,env });
 
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account]);
+  }, [account,env]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
@@ -68,7 +83,7 @@ useEffect(() => {
 
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
-
+console.log(PROVIDER_THEME)
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
       <ChatDataContext.Provider value={value}>

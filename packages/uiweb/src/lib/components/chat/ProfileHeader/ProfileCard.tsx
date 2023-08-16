@@ -132,7 +132,7 @@ const DropdownContainer = styled.div`
   border-radius: 16px;
   padding: 14px 8px;
   background: ${(props) => props.theme.modalContentBackground};
-  border:1px solid ${(props) => props.theme.modalBorderColor};
+  border: 1px solid ${(props) => props.theme.modalBorderColor};
   z-index: 52;
   @media ${device.mobileL} {
     left: 27%;
