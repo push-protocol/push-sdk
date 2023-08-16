@@ -38,8 +38,6 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     const groupInfoToast = useToast();
 
 
-
-
     useEffect(() => {
         if (isInValidAddress) {
           groupInfoToast.showMessageToast({
@@ -250,11 +248,10 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                 <ModalConfirmButton
                     onClick={() => onSubmit()}
                     isLoading={isLoading}
-                    // loaderTitle={groupMembers ? 'Adding Members' : 'Creating group'}
                     memberListCount={memberList?.length > 0}
                     theme={theme}
                 >
-                  {groupMembers ? 'Add To Group' : 'Create Group'}
+                  {!isLoading && groupMembers  ? 'Add To Group' : ''}
                   {isLoading && <Spinner size='30' color='#fff' /> }
                 </ ModalConfirmButton>
             </Section>
@@ -375,6 +372,6 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
     font-weight: 500;
     display: flex;
     align-items: center;
-    justify-content: ${(props) => props.isLoading ? 'space-between' : 'center'};
+    justify-content: center;
     box-shadow: none;
 `;
