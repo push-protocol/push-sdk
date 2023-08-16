@@ -90,12 +90,14 @@ export const verifyProfileSignature = async (
 ): Promise<boolean> => {
   const SIG_TYPE_V2 = 'eip712v2';
   const SIG_TYPE_V3 = 'eip191';
+  const SIG_TYPE_V4 = 'eip191v2';
   let chainId: number | null = null;
   let signature: string;
   const sigType = verificationProof.split(':')[0];
-
   if (
-    (sigType !== SIG_TYPE_V2 && sigType !== SIG_TYPE_V3) ||
+    (sigType !== SIG_TYPE_V2 &&
+      sigType !== SIG_TYPE_V3 &&
+      sigType !== SIG_TYPE_V4) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
