@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
-import styled, { keyframes, ThemeProvider } from 'styled-components';
+import React, { useEffect, useState, useContext } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 import { Player } from '@livepeer/react';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
@@ -17,7 +17,6 @@ import MicOnIcon from '../../../icons/micon.svg';
 import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
 import HandIcon from '../../../icons/hand.svg';
-import ShareIcon from '../../../icons/Share.svg';
 import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
@@ -51,7 +50,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     setSpaceObjectData,
     isSpeaker,
     isListener,
-    setSpaceWidgetId,
     isJoined,
     initSpaceObject,
     raisedHandInfo,
@@ -211,15 +209,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     <ThemeProvider theme={theme}>
       <Item
         flex={'1'}
-        display={'flex'}
+        display={'grid'}
+        gridTemplateColumns={'repeat(auto-fill, 120px)'}
         padding={'16px 10px'}
         margin={'0 auto'}
         flexWrap={'wrap'}
-        justifyContent={'flex-start'}
+        justifyContent={'center'}
         gap={'24px 12px'}
         overflowY={'auto'}
         overflowX={'hidden'}
         alignContent={'flex-start'}
+        width={'100%'}
       >
 
         {
@@ -321,9 +321,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 <div style={{ position: 'relative' }}>
                   <LiveSpaceProfileContainer
                     wallet={profile?.wallet}
-                    image={createBlockie?.(profile?.wallet)
-                      ?.toDataURL()
-                      ?.toString()}
+                    image={profile?.image}
                   />
                 </div>
               ))
