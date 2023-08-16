@@ -26,8 +26,8 @@ import Toast from "../helpers/Toast";
 import useMediaQuery from "../helpers/useMediaQuery";
 import { createBlockie } from "../../space/helpers/blockies";
 // import { NewToast } from "../helpers/NewToast";
-// import { ToastContainer, toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.min.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 
 
@@ -137,8 +137,6 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
         getName(chatId);
     },[chatId])
 
-    // const notify = () => toast("Wow so easy!");
- 
     if (chatId) {
         return (
             <Container theme={theme}>
@@ -181,7 +179,7 @@ export const ProfileHeader: React.FC<IProfileHeader> = ({ chatId }: {chatId: str
                     /> 
 
                     {/* <NewToast /> */}
-                    {/* <ToastContainer /> */}
+                    <ToastContainer />
 
        
      </Container>

@@ -20,6 +20,10 @@ import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
 import useMediaQuery from "../helpers/useMediaQuery";
+import useToast from "../helpers/NewToast";
+import { MdCheckCircle, MdError } from "react-icons/md";
+
+
 
 export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
     const theme = useContext(ThemeContext);
@@ -30,16 +34,24 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
     const { account, env } = useChatData();
     const isMobile = useMediaQuery(device.mobileL);
+    const groupInfoToast = useToast();
+
 
 
 
     useEffect(() => {
         if (isInValidAddress) {
-          console.log('here we go');
-          setToastInfo({
-            message: 'Invalid Address',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Please, try again',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
       }, [isInValidAddress]);
     
@@ -77,10 +89,17 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         setIsLoadingSearch(false);
         }
         catch(error){
-            setToastInfo({
-              message: 'Unsuccessful search, Try again',
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: 'Unsuccessful search, Try again',
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
         }
       };
 
@@ -126,10 +145,17 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     errorMessage = addWalletValidation(member, memberList, groupMembers, account);
 
     if (errorMessage) {
-        setToastInfo({
-          message: `Error`,
-          status: 'error'
-        })
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
       } else {
         handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
       }
