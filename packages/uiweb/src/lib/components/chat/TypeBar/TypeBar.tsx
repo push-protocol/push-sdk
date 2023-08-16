@@ -147,6 +147,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
                 <ConnectButton />
             )} */}
             <TypebarSection
+            // zIndex="1"
                 borderRadius="13px"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}

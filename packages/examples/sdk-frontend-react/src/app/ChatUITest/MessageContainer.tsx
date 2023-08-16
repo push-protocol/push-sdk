@@ -18,7 +18,7 @@ const MessageContainerTest = () => {
       {/* <Loader show={isLoading} /> */}
     <MessageContainerCard>
         
-      <MessageContainer chatId='0x9fA0aBE5f7b0bb41FC02A7A22C80afBEE46a49C0' limit={10}/>
+      <MessageContainer chatId='24b029b8e07e60291bf9d8c0c48ff993fa1e0a99105459f7404c425c92e91bac' limit={10}/>
       </MessageContainerCard>
     </div>
   );

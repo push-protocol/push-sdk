@@ -8,7 +8,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { ethers } from "ethers";
 import { addWalletValidation } from "../helpers/helper";
 import ArrowGreyIcon from '../../../icons/CaretDownGrey.svg'
-import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
+// import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
 import CloseIcon from '../../../icons/close.svg';
 import { Spinner } from "../../supportChat/spinner/Spinner";
 import { ReactComponent as MoreLight } from '../../../icons/more.svg';
@@ -147,7 +147,7 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         <Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
             <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
-                 <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' />
+                 {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
 
                  <Span textAlign='center' fontSize='20px'>Add Wallets</Span>
 
