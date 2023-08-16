@@ -33,10 +33,10 @@ const ChatUITest = () => {
             CHAT BUBBLE
           </Link>
           <Link to="/messageList" className="nav-button">
-            MESSAGE LIST
+           CHAT VIEW LIST
           </Link>
           <Link to="/messageContainer" className="nav-button">
-            MESSAGE CONTAINER
+            CHAT VIEW COMPONENT
           </Link>
         </NavMenu>
       </Section>

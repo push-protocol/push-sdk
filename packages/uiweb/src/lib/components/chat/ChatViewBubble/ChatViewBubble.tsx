@@ -273,7 +273,7 @@ const TwitterCard = ({ chat, tweetId, isGroup, position }: { chat: IMessagePaylo
     )
 }
 
-export const MessageBubble = ({ chat }: { chat: IMessagePayload }) => {
+export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
     const { account, setAccount, pgpPrivateKey, setPgpPrivateKey, env, setEnv } = useChatData();
     const position = pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase() ? 0 : 1;
     const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({ message: chat?.messageContent });
