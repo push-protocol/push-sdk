@@ -77,9 +77,9 @@ import {
   darkChatTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
-import MessageListTest from './ChatUITest/MessageListTest';
-import { MessageBubbles } from './ChatUITest/MessageBubbles';
-import MessageContainerTest from './ChatUITest/MessageContainer';
+import ChatViewListTest from './ChatUITest/ChatViewListTest';
+import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
+import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import { ProfileHeaderTest } from './ChatUITest/ProfileHeader';
 import { lightChatTheme } from '@pushprotocol/uiweb';
 
@@ -212,7 +212,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.STAGING);
+  const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
 
   const { SpaceWidgetComponent } = useSpaceComponents();
@@ -486,15 +486,15 @@ export function App() {
                       {/* chat ui components routes */}
                       <Route
                         path="messageBubble"
-                        element={<MessageBubbles />}
+                        element={<ChatViewBubbles />}
                       />
                       <Route
                         path="messageList"
-                        element={<MessageListTest />}
+                        element={<ChatViewListTest />}
                       />
                       <Route
                         path="messageContainer"
-                        element={<MessageContainerTest />}
+                        element={<ChatViewComponentTest />}
                         />
                       <Route
                         path="profileHeader"
@@ -515,7 +515,7 @@ export function App() {
               <Route path="/chatUI" element={<ChatUITest />} />
               <Route
                 path="messageList"
-                element={<MessageListTest />}
+                element={<ChatViewListTest />}
               />
             </Routes>
           </ChatUIProvider>
