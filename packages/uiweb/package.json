@@ -8,6 +8,7 @@
     "@livepeer/react": "^2.6.0",
     "@pushprotocol/socket": "^0.5.0",
     "@unstoppabledomains/resolution": "^8.5.0",
+    "@web3-react/injected-connector": "^6.0.7",
     "date-fns": "^2.28.0",
     "emoji-picker-react": "^4.4.9",
     "font-awesome": "^4.7.0",
