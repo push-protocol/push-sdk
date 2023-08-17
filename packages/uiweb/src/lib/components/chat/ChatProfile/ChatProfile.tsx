@@ -59,7 +59,10 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
                         <DropDownItem cursor='pointer' onClick={ShowModal}>
                            <Image src={InfoIcon} height="21px" maxHeight="21px" width={'auto'} cursor="pointer"  />
 
-                          Group Info</DropDownItem>
+                          <TextItem>
+                            Group Info
+                          </TextItem>
+                        </DropDownItem>
                     </DropDownBar>)}
                 
                     {modal && 
@@ -196,12 +199,11 @@ const DummyImage = styled.div`
 const DropDownBar = styled.div`
     position: absolute;
     top: 30px;
-    left: -120px;
+    left: -130px;
     display: block;
-    min-width: 110px;
+    min-width: 140px;
     color: rgb(101, 119, 149);
-    border: 1px solid rgb(74, 79, 103);
-    border: ${(props) => props.theme.dropdownBorderColor};
+    border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
     background: ${(props) => props.theme.bgColorPrimary};
     z-index: 10;
     border-radius: 16px;
@@ -215,11 +217,16 @@ const DropDownItem = styled(Span)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   padding: 10px 16px;
   border-radius: 16px;
   z-index: 3000000;
+  width: 100%;
+`;
+
+const TextItem = styled(Span)`
+    white-space: nowrap;
+    overflow: hidden;
 `;
 
 
