@@ -83,7 +83,7 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
 // declaring the Space class
 export class Space extends Video {
-  protected mergeStreamObject: VideoStreamMerger | null = null;
+  protected mergedStream: VideoStreamMerger | null = null;
 
   protected spaceSpecificData: SpaceSpecificData;
   protected setSpaceSpecificData: (
@@ -121,7 +121,7 @@ export class Space extends Video {
           this.data.meta.broadcast?.hostAddress &&
           this.data.meta.broadcast.hostAddress === this.data.local.address
         ) {
-          addToMergedStream(this.mergeStreamObject!, receivedStream);
+          addToMergedStream(this.mergedStream!, receivedStream);
 
           // update live space info
           const oldLiveSpaceData = await getLiveSpaceData({

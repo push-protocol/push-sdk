@@ -202,10 +202,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [spaceObjectData?.connectionData?.local?.stream]);
 
   useEffect(() => {
-    if (!spaceObjectData?.spaceDescription) return;
-    const playBackUrl = spaceObjectData?.spaceDescription;
-    setPlayBackUrl(playBackUrl);
-  }, [spaceObjectData?.spaceDescription]);
+    if (!spaceObjectData?.meta) return;
+    setPlayBackUrl(spaceObjectData?.meta);
+  }, [spaceObjectData?.meta]);
 
   return (
     <ThemeProvider theme={theme}>
