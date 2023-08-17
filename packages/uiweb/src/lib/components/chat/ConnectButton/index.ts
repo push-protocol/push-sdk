@@ -1,1 +1,1 @@
-export { ConnectButton } from './ConnectButton';
+export { ConnectButtonComp } from './ConnectButton';

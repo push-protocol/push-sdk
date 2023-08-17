@@ -16,7 +16,7 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
-import { ConnectButton } from "../ConnectButton";
+import { ConnectButtonComp } from "../ConnectButton";
 
 
 /**
@@ -144,7 +144,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
     return (
         <Container theme={theme}>
             {/* {isConnected && (
-                <ConnectButton />
+                <ConnectButtonComp />
             )} */}
             <TypebarSection
             // zIndex="1"
@@ -162,7 +162,7 @@ export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = tr
                         <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
                         </Span>
-                        <ConnectButton />
+                        <ConnectButtonComp />
                     </Section>
                 )
                 }

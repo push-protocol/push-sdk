@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import ConnectButton from './components/Connect';
+import ConnectButtonComp from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
 import {
@@ -272,7 +272,7 @@ export function App() {
         <h1>SDK Demo React App</h1>
       </Link>
 
-      <ConnectButton />
+      <ConnectButtonComp />
 
       <Dropdown
         label="ENV"

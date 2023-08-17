@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButtonComp } from "@rainbow-me/rainbowkit";
 
 import * as PushAPI from "@pushprotocol/restapi";
 import { ENV } from "@pushprotocol/restapi/src/lib/constants";
@@ -211,7 +211,7 @@ const Home: NextPage = () => {
       <CallInfo>Video Call Status: {data.incoming[0].status}</CallInfo>
 
       <HContainer>
-        <ConnectButton />
+        <ConnectButtonComp />
       </HContainer>
 
       {isConnected ? (

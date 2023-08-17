@@ -13,7 +13,7 @@ import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
-import { ConnectButton } from '../ConnectButton';
+import { ConnectButtonComp } from '../ConnectButton';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 
 /**
@@ -183,7 +183,7 @@ export const MessageList: React.FC<IMessageListProps> = (
       onScroll={() => onScroll()}
     >
       {/* {isConnected && (
-        <ConnectButton />
+        <ConnectButtonComp />
       )} */}
       {loading ? <Spinner color={theme.accentBgColor}/> : ''}
 
