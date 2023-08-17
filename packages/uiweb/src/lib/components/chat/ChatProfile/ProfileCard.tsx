@@ -46,13 +46,15 @@ export const ProfileCard = ({
 
   return (
     <ProfileCardItem background={member.wallet === selectedMemberAddress ? theme.snapFocusBg : ''} id={member.wallet} key={key} theme={theme}>
-      <Section flex='1' justifyContent="flex-start">
+      <Section justifyContent="flex-start" position='relative' zIndex='2'>
         <Section
           height="48px"
           maxWidth="48px"
           borderRadius="100%"
           overflow="hidden"
           margin="0px 12px 0px 0px"
+          position='relative'
+          zIndex='2'
         >
           <Image
             height="48px" maxHeight="48px" width={'auto'} cursor='pointer'
@@ -63,11 +65,13 @@ export const ProfileCard = ({
           fontSize="18px"
           fontWeight="400"
           color={theme.modalProfileTextColor}
+          position='relative'
+          zIndex='2'
         >
           {shortenText(member?.wallet?.split(':')[1], 6, true)}
         </Span>
       </Section>
-      <Section justifyContent="flex-end">
+      <Section justifyContent="flex-end" position='relative' zIndex='2'>
         {member?.isAdmin && (
           <Span
             background="#F4DCEA"
@@ -84,6 +88,8 @@ export const ProfileCard = ({
           <Section
             maxWidth="fit-content"
             padding="0 0px 0 0"
+            position='relative'
+            zIndex='2'
             onClick={() => {
               handleHeight(member.wallet);
               setSelectedMemberAddress(member?.wallet)
@@ -109,31 +115,37 @@ export const ProfileCard = ({
   );
 };
 
-const ProfileCardItem = styled(Section)`
+const ProfileCardItem = styled(Section)<{id: any, key: any, background: any}>`
   justify-content: space-between;
   padding: 8px 16px;
   border-radius: 16px;
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  flex: 1;
   // background-color: ${(props) => props.theme.snapFocusBg};
-  margin-bottom: 8px;
   max-height: 64px;
+  align-self: stretch;
+  display: flex;
+  height: auto;
+  z-index: auto;
+  flex: 1;
   @media (max-width: 480px) {
     max-width: 100%;
   }
 `;
 
-const DropdownContainer = styled.div`
+const DropdownContainer = styled(Section)`
   position: absolute;
-  left:48%;
+  left: 48%;
   top: 69%;
   border-radius: 16px;
   padding: 14px 8px;
+  z-index: 999999999999 !important;
+  display: flex;
+  flex-direction: column !important;
   background: ${(props) => props.theme.modalContentBackground};
   border: 1px solid ${(props) => props.theme.modalBorderColor};
-  z-index: 400;
+
   @media ${device.mobileL} {
     left: 27%;
   }

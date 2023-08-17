@@ -138,7 +138,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
                     ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />)}
                 
 
-                <Span color="#fff" fontSize="17px" margin="0 0 0 10px">
+                <Span color={theme.textColorPrimary} fontSize="17px" margin="0 0 0 10px">
                     {isGroup ? groupInfo?.groupName : ensName ? `${ensName} (${isMobile ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true) : chatId})`: chatInfo ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true) : shortenText(chatId,6, true)}
                 
                 </Span>

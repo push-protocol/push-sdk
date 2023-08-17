@@ -41,7 +41,7 @@ export const Span = styled.span<SpanStyleProps>`
   cursor: ${(props) => props.cursor || 'default'};
   margin: ${(props) => props.margin || '0px'};
   padding: ${(props) => props.padding || '0px'};
-  position: ${(props) => props.position || 'static'};
+  position: ${(props) => props.position || 'relative'};
   right: ${(props) => props.right || 'auto'};
   text-align: ${(props) => props.textAlign || 'center'};
   text-transform: ${(props) => props.textTransform || 'inherit'};
@@ -100,7 +100,7 @@ export const Section = styled.div<SectionStyleProps>`
   width: ${(props) => props.width || 'auto'};
   overflow: ${(props) => props.overflow || 'default'};
   padding: ${(props) => props.padding || '0px'};
-  position: ${(props) => props.position || 'static'};
+  position: ${(props) => props.position || 'relative'};
   background: ${(props) =>
     props.gradient
       ? props.gradient
