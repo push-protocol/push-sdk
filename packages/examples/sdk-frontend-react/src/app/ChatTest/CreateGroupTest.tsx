@@ -83,13 +83,12 @@ const CreateGroupTest = () => {
       setLoading(true);
       const librarySigner = await library.getSigner();
       // Remove empty string elements
-
       const response = await PushAPI.chat.createGroup({
         groupName,
         groupDescription,
-        members: members.split(','),
+        members: members ? members.split(',') : [],
         groupImage,
-        admins: admins.split(','),
+        admins: admins ? admins.split(',') : [],
         isPublic: isPublic === 'true',
         contractAddressNFT,
         numberOfNFTs: numberOfNFTs != null ? Number(numberOfNFTs) : undefined,

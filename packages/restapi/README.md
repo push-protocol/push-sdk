@@ -4139,6 +4139,7 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress?: string;
 };
 
 connect(options: VideoConnectInputOptions): void {}
@@ -4148,6 +4149,7 @@ Allowed Options (params with _ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | signalData_ | any | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
+| peerAddress | string | data.incoming[0].address | Address of the receiver peer, received via push notification upon call acceptRequest |
 
 ---
 
@@ -4157,13 +4159,17 @@ Allowed Options (params with _ are mandatory)
 - Can be triggered on the initiator as well as receivers end.
 
 ```typescript
-disconnect(): void {}
+export type VideoDisconnectOptions = {
+  peerAddress: string;
+} | null;
+
+disconnect(options: VideoDisconnectOptions): void {}
 ```
 
 Allowed Options (params with \* are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| - | - | - | - |
+| peerAddress | string | data.incoming[0].address | Address of the peer to be disconnected from |
 
 ---
 
