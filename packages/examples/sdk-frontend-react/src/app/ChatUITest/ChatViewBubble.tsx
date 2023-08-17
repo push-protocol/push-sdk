@@ -1,11 +1,11 @@
-import { MessageBubble } from "@pushprotocol/uiweb";
+import { ChatViewBubble } from "@pushprotocol/uiweb";
 import { useEffect, useContext, useState } from "react";
 import { EnvContext, Web3Context } from "../context";
 import * as PUSHAPI from "@pushprotocol/restapi"
 import { ENV } from "@pushprotocol/uiweb";
 import { IMessagePayload } from "@pushprotocol/uiweb";
 
-export const MessageBubbles = () => {
+export const ChatViewBubbles = () => {
     const { env } = useContext<any>(EnvContext);
 
     const { library, account } = useContext<any>(Web3Context)
@@ -51,7 +51,7 @@ export const MessageBubbles = () => {
     return (
         <div style={{ height: "350px", width: "500px" }}>
             {message.map((msg) => (
-                <MessageBubble chat={msg} />
+                <ChatViewBubble chat={msg} />
             ))}
         </div>
     )

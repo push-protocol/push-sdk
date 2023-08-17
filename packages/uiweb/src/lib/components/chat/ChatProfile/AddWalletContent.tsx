@@ -11,12 +11,11 @@ import ArrowGreyIcon from '../../../icons/CaretDownGrey.svg'
 import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
 import CloseIcon from '../../../icons/close.svg';
 import { Spinner } from "../../supportChat/spinner/Spinner";
-import { ReactComponent as MoreLight } from '../../../icons/more.svg';
-import { ReactComponent as MoreDark } from '../../../icons/moredark.svg';
-import { ReactComponent as SearchIcon } from '../../../icons/search.svg';
+import { MoreLightIcon }  from '../../../icons/MoreLight';
+import { MoreDarkIcon } from '../../../icons/MoreDark';
+import { SearchIcon } from '../../../icons/SearchIcon';
 import { Section, Span, Image } from "../../reusables/sharedStyling";
-import { ReactComponent as AddUserLightIcon } from '../../../icons/addlight.svg';
-import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
+import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
 import useMediaQuery from "../helpers/useMediaQuery";
@@ -210,7 +209,11 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                         {searchedUser.length > 0 && (
                             <Image src={CloseIcon} height="20px" maxHeight="20px" width={'auto'}  onClick={()=>clearInput()} cursor='pointer' />
                         )}
-                        {searchedUser.length == 0 && !filteredUserData && <SearchIcon style={{ cursor: 'pointer' }} />}
+                        {searchedUser.length == 0 && !filteredUserData && 
+                          <div style={{ cursor: 'pointer' }}>
+                            <SearchIcon />
+                          </div>
+                        }
                     </Section>
                 </SearchBarContent>
             </Section>
@@ -238,8 +241,8 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                 memberData={member}
                 handleMembers={handleMemberList}
                 handleMemberList={removeMemberFromList}
-                lightIcon={<MoreLight />}
-                darkIcon={<MoreDark />}
+                lightIcon={<MoreLightIcon />}
+                darkIcon={<MoreDarkIcon />}
                 />
             ))}
             </MultipleMemberList>
