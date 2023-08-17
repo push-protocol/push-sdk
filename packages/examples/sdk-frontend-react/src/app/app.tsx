@@ -214,6 +214,7 @@ export function App() {
   const { account, library, active, chainId } = useWeb3React();
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
+  const [signer, setSigner] = useState();
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
@@ -241,6 +242,7 @@ export function App() {
       const user = await PushAPI.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
+      setSigner(librarySigner);
       if (user?.encryptedPrivateKey) {
         pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -253,7 +255,7 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
-
+console.log(signer)
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
@@ -305,7 +307,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={env} theme={darkChatTheme}>
+                <ChatUIProvider  env={env} theme={darkChatTheme}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
