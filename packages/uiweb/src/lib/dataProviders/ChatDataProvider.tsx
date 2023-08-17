@@ -6,13 +6,16 @@ import {
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
-import { IUser } from '@pushprotocol/restapi';
+import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
+import '@rainbow-me/rainbowkit/styles.css';
+
 
 export interface IChatUIProviderProps {
   children: ReactNode;
   theme?: IChatTheme;
   account?: string | null;
+  signer?: SignerType | undefined;
   pgpPrivateKey?: string | null;
   env?: ENV;
 }
@@ -22,10 +25,13 @@ export const ChatUIProvider = ({
   account = null,
   theme,
   pgpPrivateKey = null,
+  signer = undefined,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(account);
-  const [pushChatSocket, setPushChatSocket] = useState<any>(null);
+  const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
+   const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
+
   const [pgpPrivateKeyVal, setPgpPrivateKeyVal] =
     useState<string | null>(pgpPrivateKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
@@ -34,18 +40,16 @@ export const ChatUIProvider = ({
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
   useState<boolean>(false);
- 
 
   useEffect(() => {
     resetStates();
     setEnvVal(env);
     setAccountVal(account);
+    setSignerVal(signer);
     setPgpPrivateKeyVal(pgpPrivateKey);
-  }, [env,account,pgpPrivateKey])
+  }, [env,account,pgpPrivateKey,signer])
 
-  useEffect(() => {
-    setAccountVal(account)
-  }, [account])
+
 
 
 
@@ -68,6 +72,8 @@ useEffect(() => {
 
   const value: IChatDataContextValues = {
     account: accountVal,
+    signer:signerVal,
+    setSigner:setSignerVal,
     setAccount: setAccountVal,
     pgpPrivateKey: pgpPrivateKeyVal,
     setPgpPrivateKey: setPgpPrivateKeyVal,

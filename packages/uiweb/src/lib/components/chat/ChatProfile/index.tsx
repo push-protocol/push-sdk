@@ -1,0 +1,1 @@
+export { ChatProfile } from './ChatProfile'

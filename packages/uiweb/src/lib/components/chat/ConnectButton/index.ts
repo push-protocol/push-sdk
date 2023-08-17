@@ -1,1 +1,0 @@
-export { ConnectButtonComp } from './ConnectButton';

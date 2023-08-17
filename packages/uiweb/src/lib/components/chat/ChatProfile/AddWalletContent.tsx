@@ -11,17 +11,21 @@ import ArrowGreyIcon from '../../../icons/CaretDownGrey.svg'
 // import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
 import CloseIcon from '../../../icons/close.svg';
 import { Spinner } from "../../supportChat/spinner/Spinner";
-import { ReactComponent as MoreLight } from '../../../icons/more.svg';
-import { ReactComponent as MoreDark } from '../../../icons/moredark.svg';
-import { ReactComponent as SearchIcon } from '../../../icons/search.svg';
+import { MoreLightIcon }  from '../../../icons/MoreLight';
+import { MoreDarkIcon } from '../../../icons/MoreDark';
+import { SearchIcon } from '../../../icons/SearchIcon';
 import { Section, Span, Image } from "../../reusables/sharedStyling";
-import { ReactComponent as AddUserLightIcon } from '../../../icons/addlight.svg';
-import { ReactComponent as AddUserDarkIcon } from '../../../icons/adddark.svg';
+import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
 import useMediaQuery from "../helpers/useMediaQuery";
+import useToast from "../helpers/NewToast";
+import { MdCheckCircle, MdError } from "react-icons/md";
+import { Modal } from "../helpers/Modal";
 
-export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, setToastInfo }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, setToastInfo: React.Dispatch<React.SetStateAction<IToast>>  }) => {
+
+
+export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean  }) => {
     const theme = useContext(ThemeContext);
 
     const [searchedUser, setSearchedUser] = useState<string>('');
@@ -30,16 +34,22 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
     const { account, env } = useChatData();
     const isMobile = useMediaQuery(device.mobileL);
-
+    const groupInfoToast = useToast();
 
 
     useEffect(() => {
         if (isInValidAddress) {
-          console.log('here we go');
-          setToastInfo({
-            message: 'Invalid Address',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Invalid Address',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
       }, [isInValidAddress]);
     
@@ -77,10 +87,17 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         setIsLoadingSearch(false);
         }
         catch(error){
-            setToastInfo({
-              message: 'Unsuccessful search, Try again',
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: 'Unsuccessful search, Try again',
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
         }
       };
 
@@ -126,10 +143,17 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
     errorMessage = addWalletValidation(member, memberList, groupMembers, account);
 
     if (errorMessage) {
-        setToastInfo({
-          message: `Error`,
-          status: 'error'
-        })
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
       } else {
         handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
       }
@@ -149,15 +173,15 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
 
                  {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
 
-                 <Span textAlign='center' fontSize='20px'>Add Wallets</Span>
+                 <Span textAlign='center' fontSize='20px' color={theme.modalHeadingColor}>Add Wallets</Span>
 
                  <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
             </Section>
 
             <Section margin='50px 0 10px 0' flex='1' flexDirection='row' justifyContent='space-between'>
-                <Span fontSize='18px'>Add Wallets</Span>
+                <Span fontSize='18px' color={theme.modalIconColor}>Add Wallets</Span>
 
-                <Span fontSize='14px'>
+                <Span fontSize='14px' color={theme.modalPrimaryTextColor}>
                     {groupMembers
                     ? `0${memberList?.length + groupMembers?.length} / 09 Members`
                   : `0${memberList?.length} / 09 Members`}
@@ -185,7 +209,11 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                         {searchedUser.length > 0 && (
                             <Image src={CloseIcon} height="20px" maxHeight="20px" width={'auto'}  onClick={()=>clearInput()} cursor='pointer' />
                         )}
-                        {searchedUser.length == 0 && !filteredUserData && <SearchIcon style={{ cursor: 'pointer' }} />}
+                        {searchedUser.length == 0 && !filteredUserData && 
+                          <div style={{ cursor: 'pointer' }}>
+                            <SearchIcon />
+                          </div>
+                        }
                     </Section>
                 </SearchBarContent>
             </Section>
@@ -213,8 +241,8 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                 memberData={member}
                 handleMembers={handleMemberList}
                 handleMemberList={removeMemberFromList}
-                lightIcon={<MoreLight />}
-                darkIcon={<MoreDark />}
+                lightIcon={<MoreLightIcon />}
+                darkIcon={<MoreDarkIcon />}
                 />
             ))}
             </MultipleMemberList>
@@ -223,11 +251,10 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
                 <ModalConfirmButton
                     onClick={() => onSubmit()}
                     isLoading={isLoading}
-                    // loaderTitle={groupMembers ? 'Adding Members' : 'Creating group'}
                     memberListCount={memberList?.length > 0}
                     theme={theme}
                 >
-                  {groupMembers ? 'Add To Group' : 'Create Group'}
+                  {!isLoading && groupMembers  ? 'Add To Group' : ''}
                   {isLoading && <Spinner size='30' color='#fff' /> }
                 </ ModalConfirmButton>
             </Section>
@@ -348,6 +375,6 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
     font-weight: 500;
     display: flex;
     align-items: center;
-    justify-content: ${(props) => props.isLoading ? 'space-between' : 'center'};
+    justify-content: center;
     box-shadow: none;
 `;

@@ -1,7 +1,7 @@
-export { MessageBubble } from './MessageBubble';
-export * from './MessageList';
+export { ChatViewBubble } from './ChatViewBubble';
+export * from './ChatViewList';
 export * from './exportedTypes';
-export * from './MessageContainer';
-export * from "./TypeBar"
-export * from "./ProfileHeader"
+export * from "./ChatProfile"
+export * from './ChatViewComponent'
+export * from "./MessageInput"
 export * from './theme';

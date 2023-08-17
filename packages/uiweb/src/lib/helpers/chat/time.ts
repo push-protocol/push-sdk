@@ -6,7 +6,7 @@ export const dateToFromNowDaily = (timestamp: number): string => {
       lastDay: '[Yesterday]',
       sameDay: '[Today]',
       nextWeek: 'dddd',
-      sameElse: 'L'
+      sameElse: 'LL'
     });
     return timestampDate;
   };

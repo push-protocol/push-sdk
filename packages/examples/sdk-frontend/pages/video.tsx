@@ -1,17 +1,17 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { ConnectButtonComp } from "@rainbow-me/rainbowkit";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-import * as PushAPI from "@pushprotocol/restapi";
-import { ENV } from "@pushprotocol/restapi/src/lib/constants";
-import { produce } from "immer";
-import { useAccount, useNetwork, useSigner } from "wagmi";
-import styled from "styled-components";
+import * as PushAPI from '@pushprotocol/restapi';
+import { ENV } from '@pushprotocol/restapi/src/lib/constants';
+import { produce } from 'immer';
+import { useAccount, useNetwork, useSigner } from 'wagmi';
+import styled from 'styled-components';
 
-import { usePushSocket } from "../hooks/usePushSocket";
-import { useEffect, useRef, useState } from "react";
-import VideoPlayer from "../components/VideoPlayer";
-import { ADDITIONAL_META_TYPE } from "@pushprotocol/restapi/src/lib/payloads/constants";
+import { usePushSocket } from '../hooks/usePushSocket';
+import { useEffect, useRef, useState } from 'react';
+import VideoPlayer from '../components/VideoPlayer';
+import { ADDITIONAL_META_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
 
 interface VideoCallMetaDataType {
   recipientAddress: string;
@@ -34,23 +34,51 @@ const Home: NextPage = () => {
 
   const videoObjectRef = useRef<PushAPI.video.Video>();
   const recipientAddressRef = useRef<HTMLInputElement>(null);
-  const chatIdRef = useRef<HTMLInputElement>(null);
 
   const [data, setData] = useState<PushAPI.VideoCallData>(
     PushAPI.video.initVideoCallData
   );
 
   const setRequestVideoCall = async () => {
+    // fetching chatId between the local address and the remote address
+    const user = await PushAPI.user.get({
+      account: address!,
+      env,
+    });
+    let pgpPrivateKey = null;
+    if (user?.encryptedPrivateKey) {
+      pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+        encryptedPGPPrivateKey: user.encryptedPrivateKey,
+        account: address,
+        signer,
+        env,
+      });
+    }
+    const response = await PushAPI.chat.chats({
+      account: address!,
+      toDecrypt: true,
+      pgpPrivateKey: pgpPrivateKey,
+      env,
+    });
+
+    let chatId = '';
+    response.forEach((chat) => {
+      if (chat.did === 'eip155:' + recipientAddressRef?.current?.value) {
+        chatId = chat.chatId!;
+      }
+    });
+
+    if (!chatId) return;
+
     // update the video call 'data' state with the outgoing call data
     videoObjectRef.current?.setData((oldData) => {
       return produce(oldData, (draft: any) => {
         if (!recipientAddressRef || !recipientAddressRef.current) return;
-        if (!chatIdRef || !chatIdRef.current) return;
 
         draft.local.address = address;
         draft.incoming[0].address = recipientAddressRef.current.value;
         draft.incoming[0].status = PushAPI.VideoCallStatus.INITIALIZED;
-        draft.meta.chatId = chatIdRef.current.value;
+        draft.meta.chatId = chatId;
       });
     });
 
@@ -88,9 +116,13 @@ const Home: NextPage = () => {
     });
   };
 
-  const connectHandler = (videoCallMetaData: VideoCallMetaDataType) => {
+  const connectHandler = ({
+    signalData,
+    senderAddress,
+  }: VideoCallMetaDataType) => {
     videoObjectRef.current?.connect({
-      signalData: videoCallMetaData.signalData,
+      signalData,
+      peerAddress: senderAddress,
     });
   };
 
@@ -156,19 +188,19 @@ const Home: NextPage = () => {
 
     // check for additionalMeta
     if (
-      !Object.prototype.hasOwnProperty.call(payload, "data") ||
-      !Object.prototype.hasOwnProperty.call(payload["data"], "additionalMeta")
+      !Object.prototype.hasOwnProperty.call(payload, 'data') ||
+      !Object.prototype.hasOwnProperty.call(payload['data'], 'additionalMeta')
     )
       return;
 
-    const additionalMeta = payload["data"]["additionalMeta"];
-    console.log("RECEIVED ADDITIONAL META", additionalMeta);
+    const additionalMeta = payload['data']['additionalMeta'];
+    console.log('RECEIVED ADDITIONAL META', additionalMeta);
     if (!additionalMeta) return;
 
     // check for PUSH_VIDEO
     if (additionalMeta.type !== `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`) return;
     const videoCallMetaData = JSON.parse(additionalMeta.data);
-    console.log("RECIEVED VIDEO DATA", videoCallMetaData);
+    console.log('RECIEVED VIDEO DATA', videoCallMetaData);
 
     if (videoCallMetaData.status === PushAPI.VideoCallStatus.INITIALIZED) {
       setIncomingVideoCall(videoCallMetaData);
@@ -222,7 +254,6 @@ const Home: NextPage = () => {
               placeholder="recipient address"
               type="text"
             />
-            <input ref={chatIdRef} placeholder="chat id" type="text" />
           </HContainer>
 
           <HContainer>
@@ -250,7 +281,11 @@ const Home: NextPage = () => {
                 data.incoming[0].status ===
                 PushAPI.VideoCallStatus.UNINITIALIZED
               }
-              onClick={() => videoObjectRef.current?.disconnect()}
+              onClick={() =>
+                videoObjectRef.current?.disconnect({
+                  peerAddress: data.incoming[0].address,
+                })
+              }
             >
               Disconect
             </button>
@@ -285,10 +320,10 @@ const Home: NextPage = () => {
           </HContainer>
 
           <HContainer>
-            <p>LOCAL VIDEO: {data.local.video ? "TRUE" : "FALSE"}</p>
-            <p>LOCAL AUDIO: {data.local.audio ? "TRUE" : "FALSE"}</p>
-            <p>INCOMING VIDEO: {data.incoming[0].video ? "TRUE" : "FALSE"}</p>
-            <p>INCOMING AUDIO: {data.incoming[0].audio ? "TRUE" : "FALSE"}</p>
+            <p>LOCAL VIDEO: {data.local.video ? 'TRUE' : 'FALSE'}</p>
+            <p>LOCAL AUDIO: {data.local.audio ? 'TRUE' : 'FALSE'}</p>
+            <p>INCOMING VIDEO: {data.incoming[0].video ? 'TRUE' : 'FALSE'}</p>
+            <p>INCOMING AUDIO: {data.incoming[0].audio ? 'TRUE' : 'FALSE'}</p>
           </HContainer>
 
           <HContainer>
@@ -303,7 +338,7 @@ const Home: NextPage = () => {
           </HContainer>
         </>
       ) : (
-        "Please connect your wallet."
+        'Please connect your wallet.'
       )}
     </div>
   );

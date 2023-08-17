@@ -1,26 +1,30 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export const SpaceBannerLoadingSkeleton: React.FC = () => {
+  const theme = React.useContext(ThemeContext);
   return (
-    <SkeletonContainer>
-    <SkeletonContent>
-      <SkeletonProfilePic />
-      <SkeletonProfileInfo>
-        <SkeletonName />
-        <SkeletonHandle />
-      </SkeletonProfileInfo>
-    </SkeletonContent>
-    <SkeletonSpaceInfo />
-    <SkeletonLine>
-      <SkeletonLeftSquare />
-      <SkeletonOverlap>
-        <SkeletonOverlapProfilePic />
-        <SkeletonOverlapProfilePic />
-        <SkeletonOverlapProfilePic />
-      </SkeletonOverlap>
-    </SkeletonLine>
-  </SkeletonContainer>
+    <ThemeProvider theme={theme}>
+      <SkeletonContainer>
+        <SkeletonContent>
+          <SkeletonProfilePic />
+          <SkeletonProfileInfo>
+            <SkeletonName />
+            <SkeletonHandle />
+          </SkeletonProfileInfo>
+        </SkeletonContent>
+        <SkeletonSpaceInfo />
+        <SkeletonLine>
+          <SkeletonLeftSquare />
+          <SkeletonOverlap>
+            <SkeletonOverlapProfilePic />
+            <SkeletonOverlapProfilePic />
+            <SkeletonOverlapProfilePic />
+          </SkeletonOverlap>
+        </SkeletonLine>
+      </SkeletonContainer>
+    </ThemeProvider>
   );
 };
 
@@ -29,9 +33,9 @@ const SkeletonContainer = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 16px;
-  background-color: #f1f1f1;
+  background-color: ${(props) => props.theme.bgColorPrimary};
   border-radius: 17px;
-  border: 1px solid lightgrey;
+  border: 1px solid ${(props) => props.theme.borderColor};;
   position: relative;
   width: inherit;
 
@@ -43,7 +47,7 @@ const SkeletonContainer = styled.div`
     right: 0;
     bottom: 0;
     border-radius: 17px;
-    background-color: #f1f1f1;
+    background-color: ${(props) => props.theme.bgColorPrimary};
     opacity: 0.5;
     transition: opacity 0.8s ease-in-out infinite alternate;
   }
@@ -63,8 +67,8 @@ const SkeletonProfilePic = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid lightgrey;
-  background-color: #d9d9d9;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  background-color: ${(props) => props.theme.iconColorPrimary};
   transition: opacity 0.8s ease-in-out infinite alternate;
 
   &:hover {
@@ -82,9 +86,9 @@ const SkeletonProfileInfo = styled.div`
 const SkeletonText = styled.div`
   width: 100%;
   height: 18px;
-  background-color: #d9d9d9;
+  background-color: ${(props) => props.theme.iconColorPrimary};
   border-radius: 8px;
-  border: 1px solid lightgrey;
+  border: 1px solid ${(props) => props.theme.borderColor};
   transition: opacity 0.8s ease-in-out infinite alternate;
 
   &:hover {
@@ -126,7 +130,7 @@ const SkeletonOverlap = styled.div`
 
 const SkeletonOverlapProfilePic = styled(SkeletonProfilePic)`
   height: 48px;
-  border: 1px solid lightgrey;
+  border: 1px solid ${(props) => props.theme.borderColor};
   margin-left: -24px;
   transition: opacity 0.8s ease-in-out infinite alternate;
   &:nth-child(2) {

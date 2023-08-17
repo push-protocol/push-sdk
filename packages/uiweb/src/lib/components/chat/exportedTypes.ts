@@ -2,15 +2,15 @@ import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { IChatTheme } from "./theme";
 import { IGroup } from '../../types'
 
-export interface IMessageListProps {
+export interface IChatViewListProps {
   chatId: string;
   limit?: number;
 }
 
-export interface IMessageContainerProps {
-  typebar?: boolean;
-  messageList?: boolean;
-  profile?: boolean; //name needs to change
+export interface IChatViewComponentProps {
+  messageInput?: boolean;
+  chatViewList?: boolean;
+  chatProfile?: boolean; //name needs to change
   chatId: string; //need confirmation on this
   limit?: number;
   emoji?: boolean;
@@ -19,8 +19,9 @@ export interface IMessageContainerProps {
   isConnected?: boolean;
 }
 
-export interface IProfileHeader {
+export interface IChatProfile {
   chatId: string;
+  style: "Info" | "Preview";
 }
 
 export interface TwitterFeedReturnType {
@@ -41,10 +42,6 @@ export type OptionProps = {
   groupInfo: IGroup | null | undefined , 
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   theme: IChatTheme;
-  showToast: boolean; 
-  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
-  toastInfo: IToast;
-  setToastInfo: React.Dispatch<React.SetStateAction<IToast>> 
 }
 export type IMessagePayload = IMessageIPFS;
 
@@ -59,7 +56,7 @@ export type GIFType = {
   height: number;
 };
 
-export interface TypeBarProps {
+export interface MessageInputProps {
   chatId: string;
   Emoji?: boolean;
   GIF?: boolean;

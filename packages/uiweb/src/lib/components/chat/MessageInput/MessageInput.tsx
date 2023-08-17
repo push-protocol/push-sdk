@@ -2,7 +2,7 @@ import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
 import type { FileMessageContent } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import { GIFType, IChatTheme, TypeBarProps } from "../exportedTypes";
+import { GIFType, IChatTheme, MessageInputProps } from "../exportedTypes";
 import styled from "styled-components";
 import { PUBLIC_GOOGLE_TOKEN, device } from "../../../config";
 import { Section, Div, Span } from "../../reusables";
@@ -27,7 +27,7 @@ interface IThemeProps {
     theme?: IChatTheme;
 }
 
-export const TypeBar: React.FC<TypeBarProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected = true }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected = true }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
     const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [gifOpen, setGifOpen] = useState<boolean>(false);

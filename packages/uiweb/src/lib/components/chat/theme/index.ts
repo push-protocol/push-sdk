@@ -37,6 +37,11 @@ export interface IChatTheme {
   toastShadowColor?: string;
   toastBorderColor?: string;
   mainBg?: string;
+  modalBorderColor?: string;
+  modalDescriptionTextColor?: string;
+  modalIconColor?: string;
+  pendingCardBackground?: string,
+  modalHeadingColor?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -73,6 +78,11 @@ export const lightChatTheme: IChatTheme = {
   toastShadowColor: '#ccc',
   toastBorderColor: '#F4F3FF',
   mainBg: '#fff',
+  modalBorderColor: '#E5E8F6',
+  modalDescriptionTextColor: '#575D73',
+  modalIconColor: '#657795',
+  pendingCardBackground: 'rgba(173, 176, 190, 0.12)',
+  modalHeadingColor: '#333333',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -89,15 +99,15 @@ export const darkChatTheme: IChatTheme = {
   borderRadius: '24px',
   iconColorPrimary:
     'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(1567%) hue-rotate(191deg) brightness(86%) contrast(93%)',
+    dropdownBorderColor: '1px solid rgb(74, 79, 103)',
   fileIconColor: '#fff',
-  dropdownBorderColor: '1px solid rgb(74, 79, 103)',
   modalPrimaryTextColor: '#B6BCD6',
   modalSearchBarBorderColor: '#4A4F67',
   modalSearchBarBackground: '#282A2E',
   snapFocusBg: '#404650',
   groupButtonBackgroundColor: '#2F3137',
   groupButtonTextColor: '#787E99',
-  modalConfirmButtonBorder: '1px solid 787E99',
+  modalConfirmButtonBorder: '1px solid #787E99',
   groupSearchProfilBackground: '#404650',
   modalInputBorderColor: '#4A4F67',
   snackbarBorderText: '#B6BCD6',
@@ -110,5 +120,10 @@ export const darkChatTheme: IChatTheme = {
   toastShadowColor: '#00000010',
   toastBorderColor: '#4A4F67',
   mainBg: '#000',
+  modalBorderColor: '#4A4F67',
+  modalDescriptionTextColor: '#787E99',
+  modalIconColor: '#787E99',
+  pendingCardBackground: 'rgba(173, 176, 190, 0.08)',
+  modalHeadingColor: '#B6BCD6',
 };
 
