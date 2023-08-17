@@ -3303,6 +3303,15 @@ const response = await PushAPI.chat.createGroup({
               }
             },
             {
+              'type': 'PUSH',
+              'category': 'ERC721',
+              'subcategory': 'nft_owner',
+              'data': {
+                'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                'amount': 1
+              }
+            },
+            {
               'type': 'GUILD',
               'data': {
                 'guildId': '13468',
@@ -3373,7 +3382,6 @@ export enum ConditionType {
 
 export type Data = {
   address?: string;
-  comparison?: string;
   amount?: number;
   decimals?: number;
   guildId?: string;
@@ -4545,35 +4553,10 @@ const response = await PushAPI.space.create({
   spaceImage: &lt;space image link&gt; ,
   speakers: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   rules: {
-    'groupAccess': {
+    'spaceAccess': {
       'conditions': [
         {
           'any': [
-            {
-              'type': 'PUSH',
-              'category': 'ERC20',
-              'subcategory': 'token_holder',
-              'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-                'amount': 1000,
-                'decimals': 18
-              }
-            },
-            {
-              'type': 'GUILD',
-              'data': {
-                'guildId': '13468',
-                'roleId': '19924'
-              }
-            }
-          ]
-        }
-      ]
-    },
-    'chatAccess': {
-      'conditions': [
-        {
-          'all': [
             {
               'type': 'PUSH',
               'category': 'ERC20',
@@ -4621,9 +4604,45 @@ Allowed Options (params with _ are mandatory)
 | numberOfERC20 (deprecated) | int | 0 | Minimum number of tokens required to join the group |
 | contractAddressNFT (deprecated) | string | null | NFT Contract Address |
 | numberOfNFTTokens (deprecated) | int | 0 | Minimum number of nfts required to join the group |
-| rules | Rules | - | conditions for space and chat access (see format above) |
+| rules | Rules | - | conditions for space access (see format below) |
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+
+## **Rules format**
+```typescript
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  spaceAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+```
 
 <details>
   <summary><b>Expected response (create space)</b></summary>
@@ -4705,7 +4724,7 @@ Allowed Options (params with _ are mandatory)
 	scheduleEnd: '2023-07-15T15:48:00.000Z',
 	status: 'PENDING',
   rules: {
-    'groupAccess': {
+    'spaceAccess': {
       'conditions': [
         {
           'any': [
@@ -4729,33 +4748,8 @@ Allowed Options (params with _ are mandatory)
           ]
         }
       ]
-    },
-    'chatAccess': {
-      'conditions': [
-        {
-          'all': [
-            {
-              'type': 'PUSH',
-              'category': 'ERC20',
-              'subcategory': 'token_holder',
-              'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-                'amount': 1000,
-                'decimals': 18
-              }
-            },
-            {
-              'type': 'GUILD',
-              'data': {
-                'guildId': '13468',
-                'roleId': '19924'
-              }
-            }
-          ]
-        }
-      ]
     }
-  },
+  }
 }
 
 
@@ -4986,7 +4980,7 @@ Allowed Options (params with _ are mandatory)
   scheduleEnd: '2023-07-15T15:48:00.000Z',
   status: 'PENDING',
   rules: {
-    'groupAccess': {
+    'spaceAccess': {
       'conditions': [
         {
           'any': [
@@ -5014,31 +5008,6 @@ Allowed Options (params with _ are mandatory)
               'data': {
                   'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
                   'amount': 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    'chatAccess': {
-      'conditions': [
-        {
-          'all': [
-            {
-              'type': 'PUSH',
-              'category': 'ERC20',
-              'subcategory': 'token_holder',
-              'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-                'amount': 1000,
-                'decimals': 18
-              }
-            },
-            {
-              'type': 'GUILD',
-              'data': {
-                'guildId': '13468',
-                'roleId': '19924'
               }
             }
           ]
