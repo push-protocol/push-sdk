@@ -58,6 +58,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [To approve a chat request](#to-approve-a-chat-request)
     - [To create a group](#to-create-a-group)
     - [To create a token gated group](#to-create-a-token-gated-group)
+    - [To check user access of a token gated group](#to-check-user-access-of-a-token-gated-group)
     - [To update group details](#to-update-group-details)
     - [To update token gated group details](#to-update-token-gated-group-details)
     - [To get group details by group name](#to-get-group-details-by-group-name)
@@ -3435,8 +3436,6 @@ PUSH conditions may relate to:
 GUILD conditions require both guild ID and role ID.
 
 
-
-
 <details>
   <summary><b>Expected response (create group)</b></summary>
 
@@ -3603,6 +3602,107 @@ GUILD conditions require both guild ID and role ID.
 
 ```
 
+</details>
+
+---
+
+### **To check user access of a token gated group**
+
+```typescript
+
+// actual api
+const response = await PushAPI.chat.getGroupAccess({
+  chatId:'8f7be0068a677df166c2e5b8a9030fe8a4341807150339e588853c0049df3106',
+  did: '0x9e60c47edF21fa5e5Af33347680B3971F2FfD464'
+  env: 'staging',
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| chatId | string | - | group address |
+| did | string | - | user address |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+
+<details>
+  <summary><b>Expected response (group access)</b></summary>
+
+```typescript
+// PushAPI_chat_getGroupAccess | Response - 200 OK
+{
+    'groupAccess': true,
+    'chatAccess': false,
+    'rules': {
+        'groupAccess': {
+            'conditions': [
+                {
+                    'any': [
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC20',
+                            'subcategory': 'token_holder',
+                            'data': {
+                                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'amount': 1000,
+                                'decimals': 18
+                            },
+                            'access': false
+                        },
+                        {
+                            'type': 'GUILD',
+                            'data': {
+                                'guildId': '13468',
+                                'roleId': '19924'
+                            },
+                            'access': true
+                        },
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC721',
+                            'subcategory': 'nft_owner',
+                            'data': {
+                                'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                                'amount': 1
+                            },
+                            'access': true
+                        }
+                    ]
+                }
+            ]
+        },
+        'chatAccess': {
+            'conditions': [
+                {
+                    'all': [
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC20',
+                            'subcategory': 'token_holder',
+                            'data': {
+                                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'amount': 1000,
+                                'decimals': 18
+                            },
+                            'access': false
+                        },
+                        {
+                            'type': 'GUILD',
+                            'data': {
+                                'guildId': '13468',
+                                'roleId': '19924'
+                            },
+                            'access': true
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
+
+```
 </details>
 
 ---
