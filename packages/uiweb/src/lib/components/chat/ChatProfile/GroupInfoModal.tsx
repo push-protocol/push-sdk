@@ -545,7 +545,7 @@ const PublicEncrypted = styled.div`
     width: 100%;
     gap: 19px;  
     align-items: center;
-    border: ${(props) => props.theme.dropdownBorderColor};
+    border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
     border-radius: 16px;
     padding: 16px;
     box-sizing: border-box;
@@ -570,7 +570,7 @@ const AdminItem = styled.div`
 
 const AddWalletContainer = styled.div`
     margin-top: 20px;
-    border: ${(props) => props.theme.dropdownBorderColor};
+    border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
     border-radius: 16px;
     width: 100%;
     padding: 20px 16px;
@@ -601,7 +601,7 @@ const GroupPendingMembers = styled.div`
 const PendingRequestWrapper = styled.div`
     width: 100%;
     margin-top: 20px;
-    border: ${(props) => props.theme.dropdownBorderColor};
+    border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
     border-radius: 16px;
     padding: 0px 0px;
     box-sizing: border-box;

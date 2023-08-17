@@ -42,6 +42,7 @@ export interface IChatTheme {
   modalIconColor?: string;
   pendingCardBackground?: string,
   modalHeadingColor?: string;
+  defaultBorder?: string;
 }
 
 export const lightChatTheme: IChatTheme = {
@@ -83,6 +84,7 @@ export const lightChatTheme: IChatTheme = {
   modalIconColor: '#657795',
   pendingCardBackground: 'rgba(173, 176, 190, 0.12)',
   modalHeadingColor: '#333333',
+  defaultBorder: '#E5E8F6',
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -125,5 +127,6 @@ export const darkChatTheme: IChatTheme = {
   modalIconColor: '#787E99',
   pendingCardBackground: 'rgba(173, 176, 190, 0.08)',
   modalHeadingColor: '#B6BCD6',
+  defaultBorder: '#4A4F67'
 };
 
