@@ -336,6 +336,7 @@ export interface GroupDTO {
   scheduleEnd?: Date | null;
   groupType?: string;
   status?: ChatStatus | null;
+  meta?: string | null;
 }
 
 export interface SpaceDTO {
@@ -366,6 +367,7 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  meta?: string | null;
 }
 
 export interface Peer {
