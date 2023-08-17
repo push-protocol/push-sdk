@@ -118,16 +118,34 @@ export const MemberListContainer = ({ key, memberData, handleMembers, handleMemb
 
 const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
     // position: relative;
-    padding: 5px 16px;
-    margin: 8px 0px;
+    // padding: 5px 16px;
+    // margin: 8px 0px;
+    // justify-content: space-between;
+    // // min-width: 450px;
+    // min-width: 100%;
+    // box-sizing: border-box;
+    // align-items: center;
+    // border-radius: 16px;
+
+    // @media (max-width: 480px) {
+    // // min-width: 300px;
+    // }
+
     justify-content: space-between;
-    // min-width: 450px;
-    min-width: 100%;
-    box-sizing: border-box;
-    align-items: center;
+    padding: 8px 16px;
     border-radius: 16px;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    // background-color: ${(props) => props.theme.snapFocusBg};
+    max-height: 64px;
+    align-self: stretch;
+    display: flex;
+    height: auto;
+    z-index: auto;
+    flex: 1;
     @media (max-width: 480px) {
-    // min-width: 300px;
+      max-width: 100%;
     }
 
 `;
@@ -137,17 +155,37 @@ const WalletProfile = styled(Section)`
 `;
 
 const DropdownContainer = styled.div`
+  // position: absolute;
+  // left: 48%;
+  // border-radius: 16px;
+  // padding: 14px 8px;
+  // background: ${(props) => props.theme.modalContentBackground};
+  // border: 1px solid ${(props) => props.theme.modalBorderColor};
+  // z-index: 400;
+  // @media ${device.mobileL} {
+  //   left: 27%;
+  // }
+  // @media (min-width: 426px) and (max-width: 1150px) {
+  //   left: 47%;
+  // }
   position: absolute;
   left: 48%;
+  top: 69%;
   border-radius: 16px;
   padding: 14px 8px;
+  z-index: 999999999999 !important;
+  display: flex;
+  flex-direction: column !important;
   background: ${(props) => props.theme.modalContentBackground};
   border: 1px solid ${(props) => props.theme.modalBorderColor};
-  z-index: 400;
+
   @media ${device.mobileL} {
     left: 27%;
   }
   @media (min-width: 426px) and (max-width: 1150px) {
-    left: 47%;
+    left: 48%;
+  }
+  @media (max-width: 480px){
+    left: 25%;
   }
 `;

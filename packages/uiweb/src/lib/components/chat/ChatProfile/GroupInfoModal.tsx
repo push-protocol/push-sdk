@@ -309,7 +309,17 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
 
-            
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Success',
+              toastMessage: 'Removed Member successfully',
+              toastType: 'SUCCESS',
+              getToastIcon: (size) => (
+                <MdCheckCircle
+                  size={size}
+                  color="green"
+                />
+              ),
+            });
           } else {
             groupInfoToast.showMessageToast({
               toastTitle: 'Error',
@@ -385,7 +395,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
     if(groupInfo){
     return(
     <Modal clickawayClose={onClose}>
-     {!showAddMoreWalletModal && (<Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
+     {!showAddMoreWalletModal && (<Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'} >
         <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
         <div></div>
@@ -445,7 +455,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
           )}
     </Section>
 
-    <Section margin='15px 10px' flexDirection='column' flex='1'>
+    <Section margin='15px 10px' flexDirection='column' flex='1' zIndex="2" >
         {groupInfo?.members && groupInfo?.members?.length > 0 && groupInfo?.members.map((item, index) => (
             <ProfileCard
                     key={index}
@@ -462,7 +472,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
                     dropdownRef={dropdownRef}
                   />
         ))}
-    </Section>
+        </Section>
     
  </Section>)} 
 
@@ -485,6 +495,30 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
 } else { return null }
 
 }
+
+const ProfileDiv = styled.div<{minHeight?: number}>`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-right: 3px;
+  align-items: center;
+  min-width: 445px;
+  min-height: 72px;
+  max-height: 216px;
+  min-height: ${(props) => `${props.minHeight}px`};
+  overflow-y: auto;
+  overflow-x: hidden;
+  &&::-webkit-scrollbar {
+    width: 4px;
+  }
+  &&::-webkit-scrollbar-thumb {
+    background: #cf1c84;
+    border-radius: 10px;
+  }
+  @media (max-width: 480px) {
+    min-width: 300px;
+  }
+`;
 
 const GroupHeader = styled.div`
     margin-top: 34px;

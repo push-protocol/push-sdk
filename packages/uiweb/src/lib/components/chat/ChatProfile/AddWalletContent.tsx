@@ -317,11 +317,11 @@ const MemberList = styled.div`
 `;
 
 const MultipleMemberList = styled.div`
-  overflow-y: auto;
+  // overflow-y: auto;
   height: fit-content;
   max-height: 216px;
   padding: 0px 2px;
-  overflow-x: hidden;
+  // overflow-x: hidden;
   width: 100%;
 
   &::-webkit-scrollbar-track {
