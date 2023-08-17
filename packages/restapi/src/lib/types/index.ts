@@ -344,6 +344,13 @@ export interface Rules {
   };
 }
 
+export interface SpaceRules {
+  spaceAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -403,7 +410,7 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
-  rules?: Rules | null;
+  rules?: SpaceRules | null;
 }
 
 export interface Peer {

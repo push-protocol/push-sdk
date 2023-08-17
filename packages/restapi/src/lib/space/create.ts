@@ -1,6 +1,6 @@
 import Constants from '../constants';
-import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
-import { groupDtoToSpaceDto } from './../chat/helpers';
+import { EnvOptionsType, SignerType, SpaceDTO, SpaceRules } from '../types';
+import { convertSpaceRulesToRules, groupDtoToSpaceDto } from './../chat/helpers';
 import { createGroup } from '../chat/createGroup';
 
 export interface ChatCreateSpaceType extends EnvOptionsType {
@@ -19,6 +19,7 @@ export interface ChatCreateSpaceType extends EnvOptionsType {
   meta?: string;
   scheduleAt: Date;
   scheduleEnd?: Date | null;
+  rules?: SpaceRules | null;
 }
 
 export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
@@ -39,7 +40,10 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
     meta,
     scheduleAt,
     scheduleEnd,
+    rules,
   } = options || {};
+
+  const groupRules = rules ? convertSpaceRulesToRules(rules) : null;
 
   try {
     const group = await createGroup({
@@ -60,6 +64,7 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
       groupType: 'spaces',
       scheduleAt: scheduleAt,
       scheduleEnd: scheduleEnd,
+      rules: groupRules,
     });
 
     return groupDtoToSpaceDto(group);

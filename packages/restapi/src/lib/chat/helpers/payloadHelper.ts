@@ -1,5 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV, MessageType } from '../../constants';
 import * as AES from './aes';
@@ -233,8 +233,22 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     scheduleEnd: groupDto.scheduleEnd,
     status: groupDto.status ?? null,
   };
+
+    if (groupDto.rules) {
+      spaceDto.rules = {
+        spaceAccess: groupDto.rules.groupAccess,
+      };
+    }
+
   return spaceDto;
 };
+
+export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
+  return {
+    groupAccess: spaceRules.spaceAccess,
+    chatAccess: undefined,
+  };
+}
 
 export const updateGroupPayload = (
   groupName: string,
