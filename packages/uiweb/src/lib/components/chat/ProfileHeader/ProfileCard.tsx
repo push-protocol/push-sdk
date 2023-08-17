@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 
 // Internal Components
-import { MoreLightIcon }  from '../../../icons/more';
+import { MoreLightIcon }  from '../../../icons/MoreLight';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { shortenText } from "../../../helpers";
 import { ThemeContext } from "../theme/ThemeProvider";
