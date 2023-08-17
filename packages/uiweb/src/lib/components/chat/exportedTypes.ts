@@ -21,7 +21,7 @@ export interface IChatViewComponentProps {
 
 export interface IChatProfile {
   chatId: string;
-  style?: string;
+  style: "Info" | "Preview";
 }
 
 export interface TwitterFeedReturnType {

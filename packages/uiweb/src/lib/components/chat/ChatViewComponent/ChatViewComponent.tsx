@@ -56,7 +56,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
     >
      
-    {chatProfile && <ChatProfile chatId={chatId}/>}
+    {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
       <Section
         flex="1 1 auto"
         overflow="hidden"

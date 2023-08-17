@@ -81,7 +81,7 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
 
 
 
-export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: string, style?: string}) => {
+export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: string, style: "Info" | "Preview"}) => {
     const theme = useContext(ThemeContext);
     const { account, env } = useChatData();
     const { getGroupByID } = useGetGroupByID();
