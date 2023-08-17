@@ -22,7 +22,7 @@ import {
 
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
-describe.only('PushAPI.chat.send', () => {
+describe('PushAPI.chat.send', () => {
   const provider = ethers.getDefaultProvider(5);
   let _signer1: any;
   let walletAddress1: string;
