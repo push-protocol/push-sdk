@@ -22,6 +22,8 @@ import ArrowIcon from '../../../icons/CaretDown.svg'
 import { Modal } from "../helpers/Modal";
 import { device } from "../../../config";
 import useMediaQuery from "../helpers/useMediaQuery";
+import useToast from "../helpers/NewToast";
+import { MdCheckCircle, MdError } from "react-icons/md";
 
 
 
@@ -32,7 +34,7 @@ const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests
         theme={theme}
         >
         <PendingSection onClick={() => setShowPendingRequests(!showPendingRequests)}>
-            <Span fontSize='18px'>Pending Requests</Span>
+            <Span fontSize='18px' color={theme.modalProfileTextColor}>Pending Requests</Span>
             <Badge>{groupInfo?.pendingMembers?.length}</Badge>
 
                 <ArrowImage src={ArrowIcon} height="20px" maxHeight="20px" width={'auto'} setPosition={showPendingRequests} borderRadius='100%' />
@@ -40,9 +42,9 @@ const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests
         </PendingSection>
 
     {showPendingRequests && (
-        <Section margin='0px 15px 15px 15px' flexDirection='column' flex='1'>
+        <Section margin='0px 0px 0px 0px' flexDirection='column' flex='1' borderRadius="16px">
         {groupInfo?.pendingMembers && groupInfo?.pendingMembers?.length > 0 && groupInfo?.pendingMembers.map((item) => (
-             <GroupPendingMembers>
+             <GroupPendingMembers theme={theme}>
                     <Image src={item?.image} height="36px" maxHeight="36px" width={'auto'} borderRadius='100%' />
 
                     <Span margin='0 0 0 10px'>
@@ -55,11 +57,10 @@ const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests
     )}
     </PendingRequestWrapper>
     )
-} else {return null }
+  } else {return null }
 }
 
-
-export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo, showToast, setShowToast, toastInfo, setToastInfo}: {theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup, setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>, showToast: boolean, setShowToast: React.Dispatch<React.SetStateAction<boolean>>, toastInfo: IToast, setToastInfo: React.Dispatch<React.SetStateAction<IToast>> }) => {
+export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo }: { theme: IChatTheme, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>>, groupInfo: IGroup, setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>> }) => {
     const { account, env, pgpPrivateKey } = useChatData();
     const [showAddMoreWalletModal, setShowAddMoreWalletModal] = useState<boolean>(false);
     const [showPendingRequests, setShowPendingRequests] = useState<boolean>(false);
@@ -70,7 +71,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
     const handleClose = () => onClose();
     const dropdownRef = useRef<any>(null);
      useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-    // const groupInfoToast = useToast();
+    const groupInfoToast = useToast();
 
 
     const groupCreator = groupInfo?.groupCreator;
@@ -78,7 +79,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
     const groupMembers = [...membersExceptGroupCreator, ...groupInfo.pendingMembers];
 
 
-    const updateGroup = async(options:UpdateGroupType) => {
+    const updateGroup = async (options:UpdateGroupType) => {
         const { groupInfo, connectedUser,adminList,memberList } = options;
         const updateResponse = await PushAPI.chat.updateGroup({
             chatId: groupInfo?.chatId,
@@ -129,25 +130,46 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
           } else {
-            setToastInfo({
-              message: updateResponse,
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: updateResponse,
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
             setSelectedMemberAddress(null);
           }
           setIsLoading(false);
-          setToastInfo({
-            message: 'Group Invitation sent!',
-            status: 'success'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Success',
+            toastMessage: 'Group Invitation sent',
+            toastType: 'SUCCESS',
+            getToastIcon: (size) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />
+            ),
+          });
           handleClose();
         } catch (error) {
           setIsLoading(false);
           console.log('Error', error);
-          setToastInfo({
-            message: 'Error',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Please, try again',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
       };
     
@@ -169,23 +191,44 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            setToastInfo({
-              message: 'Admin Added Successfully',
-              status: 'success'
-            })
+           
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Success',
+              toastMessage: 'Admin added successfully',
+              toastType: 'SUCCESS',
+              getToastIcon: (size) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />),
+            });
           } else {
-            setToastInfo({
-              message: updateResponse,
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: updateResponse,
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
             setSelectedMemberAddress(null);
           }
         } catch (e) {
           console.error('Error while adding admin', e);
-          setToastInfo({
-            message: 'Error',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Error',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
         setSelectedMemberAddress(null);
       };
@@ -207,23 +250,45 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
-            setToastInfo({
-              message: 'Admin Successfully removed',
-              status: 'success'
-            })
+
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Success',
+              toastMessage: 'Admin removed successfully',
+              toastType: 'SUCCESS',
+              getToastIcon: (size) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />),
+            });
+            
           } else {
-            setToastInfo({
-              message: updateResponse,
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: updateResponse,
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
             setSelectedMemberAddress(null);
           }
         } catch (e) {
           console.error('Error while dismissing admin', e);
-          setToastInfo({
-            message: 'Error',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Please, try again',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
         setSelectedMemberAddress(null);
       };
@@ -243,19 +308,35 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
           if (typeof updateResponse !== 'string') {
             setSelectedMemberAddress(null);
             setGroupInfo(updateResponse);
+
+            
           } else {
-            setToastInfo({
-              message: updateResponse,
-              status: 'error'
-            })
+            groupInfoToast.showMessageToast({
+              toastTitle: 'Error',
+              toastMessage: updateResponse,
+              toastType: 'ERROR',
+              getToastIcon: (size) => (
+                <MdError
+                  size={size}
+                  color="red"
+                />
+              ),
+            });
             setSelectedMemberAddress(null);
           }
         } catch (error) {
           console.error('Error in removing member', error);
-          setToastInfo({
-            message: 'Error',
-            status: 'error'
-          })
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Please, try again',
+            toastType: 'ERROR',
+            getToastIcon: (size) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
+          });
         }
         setSelectedMemberAddress(null);
       };
@@ -295,10 +376,6 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
     const handlePrevious = () => {
         setShowAddMoreWalletModal(false);
     };
-
-    const handleCloseAddWalletModal = () => {
-        setShowAddMoreWalletModal(false);
-      };
     
     const onClose = () => {
         setModal(false);
@@ -313,7 +390,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
 
         <div></div>
 
-        <Span textAlign='center' fontSize='20px'>Group Info</Span>
+        <Span textAlign='center' fontSize='20px' color={theme.textColorPrimary}>Group Info</Span>
 
         <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
         </Section>
@@ -322,22 +399,22 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
             <Image src={groupInfo?.groupImage ?? ''} height="64px" maxHeight="64px" width={'auto'} borderRadius="16px" />
 
             <Section flexDirection='column' alignItems='flex-start' gap='5px'>
-                <Span fontSize='20px'>{groupInfo?.groupName}</Span>
-                <Span fontSize='16px'>{groupInfo?.members?.length} Members</Span>
+                <Span fontSize='20px' color={theme.textColorPrimary}>{groupInfo?.groupName}</Span>
+                <Span fontSize='16px' color={theme.modalDescriptionTextColor}>{groupInfo?.members?.length} Members</Span>
             </Section>
         </GroupHeader>
 
         <GroupDescription>
-            <Span fontSize='18px'>Group Description</Span>
-            <Span fontSize='18px'>{groupInfo?.groupDescription}</Span>
+            <Span fontSize='18px' color={theme.modalProfileTextColor} >Group Description</Span>
+            <Span fontSize='18px' color={theme.modalDescriptionTextColor}>{groupInfo?.groupDescription}</Span>
         </GroupDescription>
 
         <PublicEncrypted theme={theme}>
             <Image src={groupInfo?.isPublic ? LockIcon : LockSlashIcon} height="24px" maxHeight="24px" width={'auto'} />
 
             <Section flexDirection='column' alignItems='flex-start' gap='5px'>
-                <Span fontSize='18px'>{groupInfo?.isPublic ? 'Public' : 'Private'}</Span>
-                <Span fontSize='12px'>{groupInfo?.isPublic ? 'Chats are not encrypted' : 'Chats are encrypted'}</Span>
+                <Span fontSize='18px' color={theme.textColorPrimary}>{groupInfo?.isPublic ? 'Public' : 'Private'}</Span>
+                <Span fontSize='12px' color={theme.modalIconColor}>{groupInfo?.isPublic ? 'Chats are not encrypted' : 'Chats are encrypted'}</Span>
             </Section>
         </PublicEncrypted>
 
@@ -357,7 +434,7 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
               </Span>
         </AddWalletContainer>)}
 
-    <Section>
+    <Section borderRadius="16px">
         {groupInfo?.pendingMembers?.length > 0 && (
             <PendingMembers
               groupInfo={groupInfo}
@@ -398,11 +475,9 @@ export const GroupInfoModal = ({theme, modal, setModal, groupInfo, setGroupInfo,
         onClose={onClose}
         memberList={memberList}
         handleMemberList={setMemberList}
-        // handleClose={handleCloseAddWalletModal}
         title={'Add More Wallets'}
         groupMembers={groupMembers}
         isLoading={isLoading}
-        setToastInfo={setToastInfo}
     />
  )}
     </Modal>
@@ -474,11 +549,18 @@ const AddWalletContainer = styled.div`
 `;
 
 const GroupPendingMembers = styled.div`
-    margin-top: 10px;
+    margin-top: 3px;
     display: flex;
     flex-direction: row;
     width: 100%;
     align-items: center;
+    background: ${(props) => props.theme.pendingCardBackground};
+    padding: 10px 15px;
+    box-sizing: border-box;
+
+    &:last-child {
+      border-radius: 0px 0px 16px 16px;
+    }
 `;
 
 

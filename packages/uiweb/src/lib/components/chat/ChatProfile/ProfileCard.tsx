@@ -117,7 +117,7 @@ const ProfileCardItem = styled(Section)`
   box-sizing: border-box;
   width: 100%;
   flex: 1;
-  background-color: ${(props) => props.theme.snapFocusBg};
+  // background-color: ${(props) => props.theme.snapFocusBg};
   margin-bottom: 8px;
   max-height: 64px;
   @media (max-width: 480px) {
@@ -132,8 +132,8 @@ const DropdownContainer = styled.div`
   border-radius: 16px;
   padding: 14px 8px;
   background: ${(props) => props.theme.modalContentBackground};
-  border:1px solid ${(props) => props.theme.modalBorderColor};
-  z-index: 52;
+  border: 1px solid ${(props) => props.theme.modalBorderColor};
+  z-index: 400;
   @media ${device.mobileL} {
     left: 27%;
   }

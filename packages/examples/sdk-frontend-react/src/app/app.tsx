@@ -77,10 +77,10 @@ import {
   darkChatTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
+import { ChatProfileTest } from './ChatUITest/ChatProfile';
 import ChatViewListTest from './ChatUITest/ChatViewListTest';
 import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
-import { ProfileHeaderTest } from './ChatUITest/ProfileHeader';
 import { lightChatTheme } from '@pushprotocol/uiweb';
 
 window.Buffer = window.Buffer || Buffer;
@@ -497,8 +497,8 @@ export function App() {
                         element={<ChatViewComponentTest />}
                         />
                       <Route
-                        path="profileHeader"
-                        element={<ProfileHeaderTest />}
+                        path="ChatProfile"
+                        element={<ChatProfileTest />}
                       />
                   </Routes>
                   {/* <ChatWidgetTest/> */}

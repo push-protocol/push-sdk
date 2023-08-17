@@ -8,7 +8,7 @@ import { chatLimit } from '../../../config';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import { MessageInput } from '../MessageInput';
-import { ProfileHeader } from '../ProfileHeader';
+import { ChatProfile } from '../ChatProfile';
 
 
 
@@ -56,7 +56,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
     >
      
-    {chatProfile &&  <ProfileHeader chatId={chatId}/>}
+    {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
       <Section
         flex="1 1 auto"
         overflow="hidden"

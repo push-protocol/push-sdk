@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
+import CaretDownIcon from '../../../icons/CaretDownGrey.svg';
 import CaretUpIcon from '../../../icons/CaretUpGrey.svg';
 import { ThemeContext } from '../theme/ThemeProvider';
-import  CaretDownIcon from '../../../icons/CaretDown.svg';
 
 interface IAccordionProps {
     title: string;
