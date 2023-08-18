@@ -38,43 +38,7 @@ export async function acceptPromotionRequest(
     signer: this.signer,
     pgpPrivateKey: this.pgpPrivateKey,
     speakers: [pCAIP10ToWallet(promoteeAddress)],
-    env: this.env
-  });
-
-  // get old live space data
-  const oldLiveSpaceData = await getLiveSpaceData({
-    localAddress: this.data.local.address,
-    pgpPrivateKey: this.pgpPrivateKey,
     env: this.env,
-    spaceId: this.spaceSpecificData.spaceId,
-  });
-
-  // update the metamessage
-  const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex((listner) => listner.address === pCAIP10ToWallet(promoteeAddress));
-    if (listnerIndex >   -1) draft.listeners[listnerIndex].handRaised = false;
-
-    // convert listener to speaker type (ListenerPeer -> AdminPeer)
-    const promotedListener: AdminPeer = {
-      address: draft.listeners[listnerIndex].address,
-      emojiReactions: draft.listeners[listnerIndex].emojiReactions,
-      audio: true,
-    }
-
-    // remove listener from speaker array
-    draft.listeners.splice(listnerIndex, 1);
-
-    // add listener to speaker array
-    draft.speakers.push(promotedListener);
-  });
-
-  await sendLiveSpaceData({
-    liveSpaceData: updatedLiveSpaceData,
-    pgpPrivateKey: this.pgpPrivateKey,
-    env: this.env,
-    spaceId: this.spaceSpecificData.spaceId,
-    signer: this.signer,
-    action: META_ACTION.PROMOTE_TO_SPEAKER,
   });
 
   // accept the promotion request
