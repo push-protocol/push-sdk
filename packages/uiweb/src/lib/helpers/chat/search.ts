@@ -59,7 +59,7 @@ export const getNewChatUser = async ({
 
   address = await getAddress(searchText, env);
   if (address) {
-    chatProfile = await fetchChatProfile({ profileId: address });
+    chatProfile = await fetchChatProfile({ profileId: address ,env});
     if (!chatProfile)
       chatProfile = displayDefaultUser({ caip10: walletToPCAIP10(address) });
     return chatProfile;
