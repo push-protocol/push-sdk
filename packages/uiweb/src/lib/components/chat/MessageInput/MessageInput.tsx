@@ -142,7 +142,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }
 
     return (
-        <Container theme={theme}>
+        <Container>
             {/* {isConnected && (
                 <ConnectButtonComp />
             )} */}

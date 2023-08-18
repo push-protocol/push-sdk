@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ConnectButtonSub } from './ConnectButton';
-import '@rainbow-me/rainbowkit/styles.css';
 
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, useAccount, WagmiConfig } from 'wagmi';

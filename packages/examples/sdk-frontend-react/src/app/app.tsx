@@ -83,6 +83,7 @@ import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import { lightChatTheme } from '@pushprotocol/uiweb';
 
+
 window.Buffer = window.Buffer || Buffer;
 
 interface Web3ReactState {
@@ -212,7 +213,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+  const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [isCAIP, setIsCAIP] = useState(false);
   const [signer, setSigner] = useState();
 
@@ -307,7 +308,7 @@ console.log(signer)
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider  env={env} theme={darkChatTheme}>
+                <ChatUIProvider   env={env} theme={darkChatTheme}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
