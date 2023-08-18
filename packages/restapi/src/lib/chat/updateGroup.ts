@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { ChatStatus, EnvOptionsType, GroupDTO, SignerType } from '../types';
+import { ChatStatus, EnvOptionsType, GroupDTO, Rules, SignerType } from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
@@ -31,6 +31,7 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
   // If passed as null will update to null
   // If passed as string will update to that value
   meta?: string | null;
+  rules?: Rules | null;
 }
 
 /**
@@ -54,6 +55,7 @@ export const updateGroup = async (
     scheduleEnd,
     status,
     meta,
+    rules
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -108,7 +110,8 @@ export const updateGroup = async (
       scheduleAt,
       scheduleEnd,
       status,
-      meta
+      meta,
+      rules
     );
 
     return axios
