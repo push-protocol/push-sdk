@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.9...restapi-1.4.10) (2023-08-18)
+
+
+### Bug Fixes
+
+* add meta ([#643](https://github.com/ethereum-push-notification-service/push-sdk/issues/643)) ([06689e7](https://github.com/ethereum-push-notification-service/push-sdk/commit/06689e75b58dc93981302b7a5feff28f8486cb85))
+* added decryptedPGPPrivateKey in the returned response for client ([#650](https://github.com/ethereum-push-notification-service/push-sdk/issues/650)) ([16646b4](https://github.com/ethereum-push-notification-service/push-sdk/commit/16646b4e2f6792c2fb30c5e544012244e5b5a6fe))
+
+
+
 ## [1.4.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.8...restapi-1.4.9) (2023-08-11)
 
 
