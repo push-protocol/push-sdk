@@ -37,7 +37,12 @@ export type CreateUserProps = {
   progressHook?: (progress: ProgressHookType) => void;
 };
 
-export const create = async (options: CreateUserProps): Promise<IUser> => {
+interface ICreateUser extends IUser {
+  decryptedPrivateKey?: string;
+}
+export const create = async (
+  options: CreateUserProps
+): Promise<ICreateUser> => {
   const {
     account = null,
     signer = null,
@@ -138,12 +143,13 @@ export const create = async (options: CreateUserProps): Promise<IUser> => {
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       env,
     };
-    const createdUser = await createUserService(body);
+    const createdUser: ICreateUser = await createUserService(body);
 
     /**
      * 5. SUCCESSFUL USER CREATION
      */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-05'] as ProgressHookType);
+    createdUser.decryptedPrivateKey = keyPairs.privateKeyArmored;
     return createdUser;
   } catch (err) {
     /**

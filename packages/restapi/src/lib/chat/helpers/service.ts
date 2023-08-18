@@ -5,7 +5,7 @@ import {
   getAPIBaseUrls,
   getQueryParams,
   isValidCAIP10NFTAddress,
-  verifyPGPPublicKey,
+  verifyProfileKeys,
   walletToPCAIP10,
 } from '../../helpers';
 import {
@@ -63,10 +63,12 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     .post(requestUrl, body)
     .then(async (response) => {
       if (response.data)
-        response.data.publicKey = await verifyPGPPublicKey(
+        response.data.publicKey = await verifyProfileKeys(
           response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.wallets,
+          response.data.verificationProof
         );
       return populateDeprecatedUser(response.data);
     })
@@ -106,10 +108,12 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     .put(requestUrl, body)
     .then(async (response) => {
       if (response.data)
-        response.data.publicKey = verifyPGPPublicKey(
+        response.data.publicKey = await verifyProfileKeys(
           response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.wallets,
+          response.data.verificationProof
         );
       return populateDeprecatedUser(response.data);
     })
