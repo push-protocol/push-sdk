@@ -380,6 +380,7 @@ export interface GroupDTO {
   groupType?: string;
   status?: ChatStatus | null;
   rules?: Rules | null;
+  meta?: string | null;
 }
 
 export interface SpaceDTO {
@@ -411,6 +412,7 @@ export interface SpaceDTO {
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
   rules?: SpaceRules | null;
+  meta?: string | null;
 }
 
 export interface Peer {
