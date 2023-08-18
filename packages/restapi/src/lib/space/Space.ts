@@ -83,7 +83,7 @@ export interface SpaceConstructorType extends EnvOptionsType {
 
 // declaring the Space class
 export class Space extends Video {
-  protected mergeStreamObject: VideoStreamMerger | null = null;
+  protected mergedStream: VideoStreamMerger | null = null;
 
   protected spaceSpecificData: SpaceSpecificData;
   protected setSpaceSpecificData: (
@@ -121,7 +121,7 @@ export class Space extends Video {
           this.data.meta.broadcast?.hostAddress &&
           this.data.meta.broadcast.hostAddress === this.data.local.address
         ) {
-          addToMergedStream(this.mergeStreamObject!, receivedStream);
+          addToMergedStream(this.mergedStream!, receivedStream);
 
           // update live space info
           const oldLiveSpaceData = await getLiveSpaceData({
@@ -132,17 +132,21 @@ export class Space extends Video {
           });
           const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
             // check if the address was a listener
-            const listnerIndex = draft.listeners.findIndex(
-              (listner) => listner.address === senderAddress
+            const listenerIndex = draft.listeners.findIndex(
+              (listener) => listener.address === senderAddress
             );
-            if (listnerIndex > -1) draft.listeners.splice(listnerIndex, 1);
 
             // TODO: Create distinction between speakers and co hosts
             draft.speakers.push({
               address: senderAddress,
               audio,
-              emojiReactions: null,
+              emojiReactions:
+                listenerIndex > -1
+                  ? draft.listeners[listenerIndex].emojiReactions
+                  : null,
             });
+
+            if (listenerIndex > -1) draft.listeners.splice(listenerIndex, 1);
           });
           await sendLiveSpaceData({
             liveSpaceData: updatedLiveSpaceData,

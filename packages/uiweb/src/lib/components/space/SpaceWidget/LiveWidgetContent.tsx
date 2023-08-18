@@ -200,10 +200,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [spaceObjectData?.connectionData?.local?.stream]);
 
   useEffect(() => {
-    if (!spaceObjectData?.spaceDescription) return;
-    const playBackUrl = spaceObjectData?.spaceDescription;
-    setPlayBackUrl(playBackUrl);
-  }, [spaceObjectData?.spaceDescription]);
+    if (!spaceObjectData?.meta) return;
+    setPlayBackUrl(spaceObjectData?.meta);
+  }, [spaceObjectData?.meta]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -321,6 +320,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 <div style={{ position: 'relative' }}>
                   <LiveSpaceProfileContainer
                     wallet={profile?.wallet}
+                    isHost={profile?.wallet === spaceData.spaceCreator}
+                    isSpeaker={profile?.isSpeaker}
                     image={profile?.image || createBlockie?.(profile?.wallet)
                       ?.toDataURL()
                       ?.toString()}

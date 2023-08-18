@@ -1,7 +1,7 @@
-import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { get } from './get';
 import { pCAIP10ToWallet } from '../helpers';
+import { produce } from 'immer';
 
 import { META_ACTION } from '../types/metaTypes';
 import type Space from './Space';
@@ -34,43 +34,47 @@ export async function onJoinListener(this: Space, options: OnJoinListenerType) {
       !member.isSpeaker
   );
 
-  // if the address is not a listner then we dont fire a meta message
+  // if the address is not a listener then we dont fire a meta message
   if (!isAddressListener) {
     return;
   }
 
   // check if the listener is already present in the liveSpaceData
-  const fetchedLiveSpaceData = await getLiveSpaceData({
-    localAddress: this.data.local.address,
-    spaceId: this.spaceSpecificData.spaceId,
-    pgpPrivateKey: this.pgpPrivateKey,
-    env: this.env,
-  });
+  const modifiedLiveSpaceData = produce(
+    this.spaceSpecificData.liveSpaceData,
+    (draft) => {
+      const isListenerAlreadyAdded = this.spaceSpecificData.liveSpaceData.listeners.find(
+        (currentListener) =>
+          pCAIP10ToWallet(currentListener.address) ===
+          pCAIP10ToWallet(receivedAddress)
+      );
 
-  const isListenerAlreadyAdded = fetchedLiveSpaceData.listeners.find(
-    (currentListener) =>
-      pCAIP10ToWallet(currentListener.address) ===
-      pCAIP10ToWallet(receivedAddress)
+      if (isListenerAlreadyAdded) {
+        // listener is already added in the meta message
+        // might be case when the listener has left the space
+      } else {
+        // adding new listener in the live space data
+        draft.listeners.push({
+          address: pCAIP10ToWallet(receivedAddress),
+          handRaised: false,
+          emojiReactions: null,
+        });
+      }
+    }
   );
 
-  if (isListenerAlreadyAdded) {
-    // listener is already added in the meta message
-    // might be case when the listener has left the space
-  }
+  this.setSpaceSpecificData(() => ({
+    ...this.spaceSpecificData,
+    liveSpaceData: modifiedLiveSpaceData,
+  }));
 
-  // adding new listener in the live space data
-  fetchedLiveSpaceData.listeners.push({
-    address: pCAIP10ToWallet(receivedAddress),
-    handRaised: false,
-    emojiReactions: null
-  })
   // firing a meta message
   await sendLiveSpaceData({
     spaceId: this.spaceSpecificData.spaceId,
     pgpPrivateKey: this.pgpPrivateKey,
     env: this.env,
     signer: this.signer,
-    liveSpaceData: fetchedLiveSpaceData,
+    liveSpaceData: modifiedLiveSpaceData,
     action: META_ACTION.ADD_LISTENER,
   });
 }

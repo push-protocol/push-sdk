@@ -424,13 +424,6 @@
     tus-js-client "^3.0.1"
     zustand "^4.3.2"
 
-"@livepeer/webrtmp-sdk@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@livepeer/webrtmp-sdk/-/webrtmp-sdk-0.2.3.tgz#10c5baca5517b8f14ec766df15be467d14e7c8d7"
-  integrity sha512-tJ2gGhUZfbeXmIkZHxY/WNS0C9SYUhJ/6QlYhot1CJlBuXkuoki9gSGhYhS3G7Vu/HchL1HU/DXWKhrQhlogXg==
-  dependencies:
-    events "3.3.0"
-
 "@ljharb/resumer@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@ljharb/resumer/-/resumer-0.0.1.tgz#8a940a9192dd31f6a1df17564bbd26dc6ad3e68d"
@@ -1194,11 +1187,6 @@ ethjs-util@^0.1.6:
   dependencies:
     is-hex-prefixed "1.0.0"
     strip-hex-prefix "1.0.0"
-
-events@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
-  integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
 execa@^1.0.0:
   version "1.0.0"
