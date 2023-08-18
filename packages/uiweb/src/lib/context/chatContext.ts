@@ -27,7 +27,7 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     setPgpPrivateKey: () => {
       /**/
     },
-    env: Constants.ENV.DEV,
+    env: Constants.ENV.PROD,
     setEnv: () => {
       /**/
     },
