@@ -4,3 +4,4 @@ export * from './subscribemodal';
 export * from './space';
 export * from './supportChat';
 export * from './chatAndNotification';
+export * from './chat';

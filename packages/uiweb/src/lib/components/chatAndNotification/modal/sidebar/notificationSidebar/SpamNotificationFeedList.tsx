@@ -13,7 +13,7 @@ import { useIsInViewport } from '../../../../../hooks';
 import { NotificationFeedList } from './NotificationFeedList';
 import { notificationLimit } from '../../../../../config';
 import type { NotificationFeedsType } from '../../../../../types';
-import useFetchNotification from '../../../../../hooks/notifications/useFetchNotification';
+import useFetchNotification from '../../../../../hooks/chatAndNotification/notifications/useFetchNotification';
 
 export const SpamNotificationFeedList = () => {
   const { spamNotifsFeed, setSpamNotifsFeed,finishedFetchingSpam,setFinishedFetchingSpam } = useContext<any>(

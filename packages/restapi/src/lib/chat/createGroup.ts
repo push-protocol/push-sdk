@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType } from '../types';
+import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
@@ -29,9 +29,10 @@ export interface ChatCreateGroupType extends EnvOptionsType {
   numberOfERC20?: number;
   pgpPrivateKey?: string | null;
   meta?: string;
-  groupType? : string | null,
-  scheduleAt ?: Date | null;
+  groupType?: string | null;
+  scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
+  rules?: Rules | null;
 }
 
 export const createGroup = async (
@@ -55,7 +56,8 @@ export const createGroup = async (
     meta,
     groupType,
     scheduleAt,
-    scheduleEnd
+    scheduleEnd,
+    rules
   } = options || {};
 
   try {
@@ -132,7 +134,8 @@ export const createGroup = async (
       meta,
       groupType,
       scheduleAt,
-      scheduleEnd
+      scheduleEnd,
+      rules
     );
 
     return axios

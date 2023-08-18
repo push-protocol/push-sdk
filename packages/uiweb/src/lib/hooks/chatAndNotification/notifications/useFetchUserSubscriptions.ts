@@ -4,9 +4,9 @@ import { useCallback, useContext, useState } from 'react';
 import {
   ChatAndNotificationPropsContext,
   NotificationMainStateContext,
-} from '../../context';
-import { ParsedNotificationType } from '../../types';
-import { convertAddressToAddrCaip } from '../../helpers/notification';
+} from '../../../context';
+import { ParsedNotificationType } from '../../../types';
+import { convertAddressToAddrCaip } from '../../../helpers/notification';
 
 const useFetchUserSubscriptions = () => {
   const [error, setError] = useState<string>();

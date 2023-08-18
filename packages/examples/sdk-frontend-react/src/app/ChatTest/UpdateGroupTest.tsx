@@ -10,6 +10,7 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
+import { Rules } from '@pushprotocol/restapi';
 
 const UpdateGroupTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
@@ -23,6 +24,7 @@ const UpdateGroupTest = () => {
   const [admins, setAdmins] = useState<string>('');
   const [account, setAccount] = useState<string>(acc);
   const [sendResponse, setSendResponse] = useState<any>('');
+  const [rules, setRules] = useState<string>();
 
   const updateChatId = (e: React.SyntheticEvent<HTMLElement>) => {
     setChatId((e.target as HTMLInputElement).value);
@@ -47,6 +49,10 @@ const UpdateGroupTest = () => {
     setAdmins((e.target as HTMLInputElement).value);
   };
 
+  const updateRules = (e: React.SyntheticEvent<HTMLElement>) => {
+    setRules((e.target as HTMLInputElement).value);
+  };
+
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
   };
@@ -64,6 +70,7 @@ const UpdateGroupTest = () => {
         account: isCAIP ? walletToPCAIP10(account) : account,
         signer: librarySigner,
         env,
+        rules: rules ? JSON.parse(rules) as Rules : undefined
       });
 
       setSendResponse(response);
@@ -143,6 +150,17 @@ const UpdateGroupTest = () => {
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>rules</label>
+              <input
+                type="text"
+                onChange={updateRules}
+                value={rules}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
             <SectionItem style={{ marginTop: 20 }}>
               <label>Group Creator ( Waller Addr or NFT DID )</label>
               <input
