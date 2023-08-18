@@ -2,28 +2,13 @@ import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
-import { useContext, useEffect, useState } from 'react';
+import {  useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ThemeContext } from '../theme/ThemeProvider';
+
 import '@rainbow-me/rainbowkit/styles.css';
 
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, useAccount, WagmiConfig } from 'wagmi';
-import {
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
-  zora,
-  goerli,
-  polygonMumbai,
-  optimismGoerli,
-  arbitrumGoerli,
-  zoraTestnet,
-} from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { publicProvider } from 'wagmi/providers/public';
-import { ALCHEMY_API_KEY } from '../../../config';
+import { useAccount } from 'wagmi';
+
 import { useWalletClient } from 'wagmi';
 
 /**
@@ -46,59 +31,25 @@ export const ConnectButtonSub = () => {
   } = useChatData();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { chains, publicClient } = configureChains(
-    [
-      mainnet,
-      polygon,
-      optimism,
-      arbitrum,
-      zora,
-      goerli,
-      polygonMumbai,
-      optimismGoerli,
-      arbitrumGoerli,
-      zoraTestnet,
-    ],
-    [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
-  );
-  //for walletConnect
-  const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
-    chains,
-  });
 
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    connectors,
-    publicClient,
-  });
-  const handleConnect = async (openConnectModal: any) => {
-    console.log(signer);
-    if (signer) {
-      if (!account) {
-        // setAccount(signer.getAddress());
-      }
-      await handleUserCreation();
-    } else {
-      openConnectModal;
-      //rainbowKit
-    }
-  };
 
   useEffect(() => {
     (async () => {
-      setAccount(address as string);
-      setSigner(walletClient as PushAPI.SignerType);
-      await handleUserCreation();
+      console.log(account, signer);
+      if (!account) setAccount(address as string);
+      if (!signer) setSigner(walletClient as PushAPI.SignerType);
     })();
   }, [address, walletClient]);
 
-  //   const handlePgpDecryption = () =>{
-  //     if(!pgpPrivateKey){
+  useEffect(() => {
+    (async () => {
+        console.log(account)
+      if (account && signer) {
+        if (!pgpPrivateKey) await handleUserCreation();
+      }
+    })();
+  }, [account, signer]);
 
-  //     }
-  //   }
   const handleUserCreation = async () => {
     if (!account && !env) return;
     let user = await PushAPI.user.get({ account: account!, env: env });
@@ -121,104 +72,100 @@ export const ConnectButtonSub = () => {
   };
 
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <ConnectButton.Custom>
-          {({
-            account,
-            chain,
-            openAccountModal,
-            openChainModal,
-            openConnectModal,
-            authenticationStatus,
-            mounted,
-          }) => {
-            // Note: If your app doesn't use authentication, you
-            // can remove all 'authenticationStatus' checks
-            const ready = mounted && authenticationStatus !== 'loading';
-            const connected =
-              ready &&
-              account &&
-              chain &&
-              (!authenticationStatus ||
-                authenticationStatus === 'authenticated');
+   !signer ? <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+        authenticationStatus,
+        mounted,
+      }) => {
+        // Note: If your app doesn't use authentication, you
+        // can remove all 'authenticationStatus' checks
+        const ready = mounted && authenticationStatus !== 'loading';
+        const connected =
+          ready &&
+          account &&
+          chain &&
+          (!authenticationStatus || authenticationStatus === 'authenticated');
 
-            return (
-              <div
-                {...(!ready && {
-                  'aria-hidden': true,
-                  style: {
-                    opacity: 0,
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                  },
-                })}
-              >
-                {(() => {
-                  if (!connected) {
-                    return (
-                      <button
-                        onClick={() => handleConnect(openConnectModal)}
-                        type="button"
-                      >
-                        Connect Wallet
-                      </button>
-                    );
-                  }
+        return (
+          <div
+            {...(!ready && {
+              'aria-hidden': true,
+              style: {
+                opacity: 0,
+                pointerEvents: 'none',
+                userSelect: 'none',
+              },
+            })}
+          >
+            {(() => {
+              if (!connected) {
+                return (
+                  <button
+                    onClick={openConnectModal}
+                    type="button"
+                  >
+                    Connect Wallet
+                  </button>
+                );
+              }
 
-                  if (chain.unsupported) {
-                    return (
-                      <button onClick={openChainModal} type="button">
-                        Wrong network
-                      </button>
-                    );
-                  }
+              if (chain.unsupported) {
+                return (
+                  <button onClick={openChainModal} type="button">
+                    Wrong network
+                  </button>
+                );
+              }
+            //   return <></>;
 
-                  return (
-                    <div style={{ display: 'flex', gap: 12 }}>
-                      <button
-                        onClick={openChainModal}
-                        style={{ display: 'flex', alignItems: 'center' }}
-                        type="button"
-                      >
-                        {chain.hasIcon && (
-                          <div
-                            style={{
-                              background: chain.iconBackground,
-                              width: 12,
-                              height: 12,
-                              borderRadius: 999,
-                              overflow: 'hidden',
-                              marginRight: 4,
-                            }}
-                          >
-                            {chain.iconUrl && (
-                              <img
-                                alt={chain.name ?? 'Chain icon'}
-                                src={chain.iconUrl}
-                                style={{ width: 12, height: 12 }}
-                              />
-                            )}
-                          </div>
-                        )}
-                        {chain.name}
-                      </button>
+                return (
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button
+                      onClick={openChainModal}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                      type="button"
+                    >
+                      {chain.hasIcon && (
+                        <div
+                          style={{
+                            background: chain.iconBackground,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 999,
+                            overflow: 'hidden',
+                            marginRight: 4,
+                          }}
+                        >
+                          {chain.iconUrl && (
+                            <img
+                              alt={chain.name ?? 'Chain icon'}
+                              src={chain.iconUrl}
+                              style={{ width: 12, height: 12 }}
+                            />
+                          )}
+                        </div>
+                      )}
+                      {chain.name}
+                    </button>
 
-                      <button onClick={openAccountModal} type="button">
-                        {account.displayName}
-                        {account.displayBalance
-                          ? ` (${account.displayBalance})`
-                          : ''}
-                      </button>
-                    </div>
-                  );
-                })()}
-              </div>
-            );
-          }}
-        </ConnectButton.Custom>
-      </RainbowKitProvider>
-    </WagmiConfig>
+                     <button onClick={openAccountModal} type="button">
+                     {account.displayName}
+                      {account.displayBalance
+                        ? ` (${account.displayBalance})`
+                        : ''}
+                    </button>
+                  </div>
+                );
+            })()}
+          </div>
+        );
+      }}
+    </ConnectButton.Custom>: <></>
   );
 };
 

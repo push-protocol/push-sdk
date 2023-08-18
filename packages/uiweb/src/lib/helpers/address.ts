@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
+import { SignerType } from '@pushprotocol/restapi';
 
 /**
  * 
@@ -97,4 +98,12 @@ export const resolveNewEns = async (address: string, provider: InfuraProvider) =
 export const isPCAIP = (id: string) => {
   const prefix = `eip155:`;
   return id?.startsWith(prefix);
+};
+
+export const getAddressFromSigner = async (signer: SignerType): Promise<string> => {
+  if ('getAddress' in signer) {
+    return await signer.getAddress();
+  } else {
+    return signer.account['address'] ?? '';
+  }
 };

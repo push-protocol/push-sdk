@@ -8,7 +8,7 @@ import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
-import '@rainbow-me/rainbowkit/styles.css';
+import { getAddressFromSigner } from '../helpers';
 
 
 export interface IChatUIProviderProps {
@@ -42,11 +42,23 @@ export const ChatUIProvider = ({
   useState<boolean>(false);
 
   useEffect(() => {
-    resetStates();
-    setEnvVal(env);
-    setAccountVal(account);
-    setSignerVal(signer);
-    setPgpPrivateKeyVal(pgpPrivateKey);
+    (async()=>{
+      resetStates();
+      setEnvVal(env);
+    
+      if (signer) {
+        if (!account) {
+          const address = await getAddressFromSigner(signer);
+          setAccountVal(address);
+        }
+        else{
+          setAccountVal(account);
+        }
+      } 
+      setSignerVal(signer);
+      setPgpPrivateKeyVal(pgpPrivateKey);
+    })()
+    
   }, [env,account,pgpPrivateKey,signer])
 
 
