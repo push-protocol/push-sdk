@@ -90,15 +90,19 @@ export const create = async (
 
     // Convert NFT-DID To Wallet-DID For 6551 Based Encryption ( NFTPGP_V2 )
     if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V2) {
+      const nftChainId = +address.split(':')[2];
       let tokenboundClient: TokenboundClient;
       if (signer && '_signTypedData' in signer) {
         // ethersV5SignerType
-        tokenboundClient = new TokenboundClient({ signer, chainId: 1 });
+        tokenboundClient = new TokenboundClient({
+          signer,
+          chainId: nftChainId,
+        });
       } else {
         // viemSignerType
         tokenboundClient = new TokenboundClient({
           walletClient: signer as any,
-          chainId: 1,
+          chainId: nftChainId,
         });
       }
       const nftContractAddress = address.split(':')[3];
