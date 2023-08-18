@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.10...uiweb-1.1.11) (2023-08-18)
+
+
+
 ## [1.1.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.9...uiweb-1.1.10) (2023-08-10)
 
 
