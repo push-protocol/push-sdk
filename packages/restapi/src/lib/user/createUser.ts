@@ -23,6 +23,7 @@ import {
   ProgressHookTypeFunction,
 } from '../types';
 import PROGRESSHOOK from '../progressHook';
+import { TokenboundClient } from '@tokenbound/sdk';
 
 export type CreateUserProps = {
   account?: string;
@@ -69,7 +70,7 @@ export const create = async (
     await validateOptions(options);
 
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
+    let address = await getAccountAddress(wallet);
     let encryptionType = version;
 
     // Define encryption version
@@ -89,9 +90,25 @@ export const create = async (
 
     // Convert NFT-DID To Wallet-DID For 6551 Based Encryption ( NFTPGP_V2 )
     if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V2) {
-      // TODO
-      // Compute scw address from NFT-DID
-      // update wallet.account and address
+      let tokenboundClient: TokenboundClient;
+      if (signer && '_signTypedData' in signer) {
+        // ethersV5SignerType
+        tokenboundClient = new TokenboundClient({ signer, chainId: 1 });
+      } else {
+        // viemSignerType
+        tokenboundClient = new TokenboundClient({
+          walletClient: signer as any,
+          chainId: 1,
+        });
+      }
+      const nftContractAddress = address.split(':')[3];
+      const nftCTokenId = address.split(':')[4];
+      const tokenBoundAccount = tokenboundClient.getAccount({
+        tokenContract: nftContractAddress as `0x${string}`,
+        tokenId: nftCTokenId,
+      });
+      wallet.account = tokenBoundAccount;
+      address = tokenBoundAccount;
     }
 
     /**
@@ -107,8 +124,7 @@ export const create = async (
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
     const publicKey: string = await preparePGPPublicKey(
       encryptionType as string,
-      keyPairs.publicKeyArmored,
-      wallet
+      keyPairs.publicKeyArmored
     );
 
     /**

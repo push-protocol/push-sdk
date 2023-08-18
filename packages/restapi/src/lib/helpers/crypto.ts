@@ -6,11 +6,8 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { ethers } from 'ethers';
 import {
-  aesDecrypt,
   getAccountAddress,
   getWallet,
-  pgpDecrypt,
-  verifySignature,
   getEip712Signature,
   getEip191Signature,
 } from '../chat/helpers';
@@ -20,7 +17,6 @@ import {
   walletType,
   encryptedPrivateKeyType,
   encryptedPrivateKeyTypeV2,
-  IMessageIPFS,
   ProgressHookType,
   ProgressHookTypeFunction,
 } from '../types';
@@ -400,6 +396,24 @@ export const encryptPGPKey = async (
       );
       break;
     }
+    case Constants.ENC_TYPE_V2: {
+      const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
+      const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+      const { verificationProof: secret } = await getEip712Signature(
+        wallet,
+        enableProfileMessage,
+        true
+      );
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        hexToBytes(secret || '')
+      );
+      encryptedPrivateKey.version = encryptionType;
+      encryptedPrivateKey.preKey = input;
+      break;
+    }
     case Constants.ENC_TYPE_V3:
     case Constants.ENC_TYPE_V5: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
@@ -440,8 +454,7 @@ export const encryptPGPKey = async (
 
 export const preparePGPPublicKey = async (
   encryptionType: string,
-  publicKey: string,
-  wallet: walletType
+  publicKey: string
 ): Promise<string> => {
   let chatPublicKey: string;
   switch (encryptionType) {

@@ -27,6 +27,7 @@ enum ENCRYPTION_TYPE_VERSION {
   'aes256GcmHkdfSha256' = 'PGP_V2',
   'eip191-aes256-gcm-hkdf-sha256' = 'PGP_V3',
   'pgpv1:nft' = 'NFTPGP_V1',
+  'pgpv2:nft' = 'NFTPGP_V2',
 }
 
 export type AuthUpdateProps = {
@@ -89,8 +90,7 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
         );
     const signedPublicKey = await preparePGPPublicKey(
       pgpEncryptionVersion,
-      pgpPublicKey,
-      wallet
+      pgpPublicKey
     );
 
     // Report Progress

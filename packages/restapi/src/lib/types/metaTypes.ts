@@ -79,7 +79,7 @@ export const REACTION_SYMBOL: Record<REACTION_TYPE, string> = {
 
 export type REACTION_MESSAGE_META = {
   action: REACTION_TYPE;
-  refernce?: string;
+  conversationHash?: string;
 };
 
 // TODO
