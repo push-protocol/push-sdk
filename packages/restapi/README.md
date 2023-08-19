@@ -3444,7 +3444,74 @@ PUSH conditions may relate to:
 
 #### GUILD Conditions
 
-GUILD conditions require both guild ID and role ID.
+GUILD conditions require both guildID and guildRoleId or guildRoleAction.
+
+- **Working**:
+Guild ID Validation: The function first checks for the presence of the guildId.
+API Call: On confirming its presence, the function then fetches guild data from a specific API endpoint to ascertain the guild's validity.
+Role and Action Checks: After validating the guild:
+The function checks for the presence of guildRoleId or guildRoleAction. At least one must be specified.
+If guildRoleId is given, its legitimacy is cross-verified with the guild's roles.
+For guildRoleAction, the function ensures its value is strictly "all" or "any".
+
+#### CustomEndpointCondition
+
+The `CustomEndpointCondition` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application.
+
+##### Structure
+
+A `CustomEndpointCondition` consists of:
+- **endpointUrl**: The URL of the API endpoint that will be called to validate the condition.
+- **httpMethod**: The HTTP method to be used for the API call (GET, POST, PUT, DELETE).
+- **headers** (optional): Any headers that should be included in the API request.
+- **bodyTemplate** (optional): For POST requests, a template for the body content to be sent with the request.
+- **responseLogic**: Logic to interpret the API response to determine if the condition is met.
+
+##### Details
+
+###### endpointUrl
+This can include a template `{{user_address}}`, which will be replaced by the actual user address at runtime.
+Example: https://api.example.com/users/{{user_address}}/checkAccess
+
+###### httpMethod
+Currently supported methods are `GET` and `POST`. If a `POST` method is specified, a `bodyTemplate` must also be provided.
+
+###### headers
+The `headers` field should be an object that contains key-value pairs representing the HTTP headers to be sent with the API request. This can be useful for sending required headers like `Authorization` for authenticated requests, or `Content-Type` to specify the type of the request body. 
+
+Example:
+
+{
+  "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+  "Content-Type": "application/json"
+}
+
+###### bodyTemplate
+This is a JSON object where any value can include the template `{{user_address}}`.
+Example:
+
+{
+  "address": "{{user_address}}",
+  "action": "validate"
+}
+
+###### responseLogic
+Contains directives on how to interpret the API response. Currently, the supported logic is directMapping, which maps a key in the response to a boolean value.
+Example:
+
+{
+  "directMapping": {
+    "responseKey": "hasAccess"
+  }
+}
+
+##### Usage
+
+To validate a `CustomEndpointCondition`, the specified API endpoint is called with the provided `httpMethod`, `headers`, and `bodyTemplate` (if applicable). The response from the API is then parsed according to the `responseLogic` to determine if the condition is met.
+
+##### Error Handling
+
+If the API call fails for any reason, including a timeout, the condition is considered not met. Additionally, if the response from the API does not match the expected format as specified in `responseLogic`, the condition is also considered not met.
 
 
 <details>
