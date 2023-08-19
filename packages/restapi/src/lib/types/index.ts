@@ -350,6 +350,16 @@ export interface SpaceRules {
   };
 }
 
+export interface GroupAccess {
+  groupAccess: boolean;
+  chatAccess: boolean;
+  rules?: Rules;
+}
+
+export interface SpaceAccess {
+  spaceAccess: boolean;
+  rules?: SpaceRules;
+}
 
 export interface GroupDTO {
   members: {
