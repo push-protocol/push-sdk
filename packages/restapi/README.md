@@ -87,6 +87,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
   - [For Spaces](#for-spaces)
     - [To create a space](#to-create-a-space)
     - [To create a token gated space](#to-create-a-token-gated-space)
+    - [To check user access of a token gated space](#to-check-user-access-of-a-token-gated-space)
     - [To update space details](#to-update-space-details)
     - [To update token gated space details](#to-update-token-gated-space-details)
     - [To get space details by spaceId](#to-get-space-details-by-spaceid)
@@ -4830,6 +4831,7 @@ Allowed Options (params with _ are mandatory)
 export enum ConditionType {
   PUSH = 'PUSH',
   GUILD = 'GUILD',
+  CUSTOM_ENDPOINT = 'CUSTOM_ENDPOINT',
 }
 
 export type Data = {
@@ -4837,7 +4839,17 @@ export type Data = {
   amount?: number;
   decimals?: number;
   guildId?: string;
-  roleId?: string;
+  guildRoleId?: string;
+  guildRoleAction?: 'all' | 'any';
+  endpointUrl?: string;
+  httpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  headers?: { [key: string]: string };
+  bodyTemplate?: { [key: string]: any };
+  responseLogic?: {
+    directMapping?: {
+      responseKey?: string;
+    };
+  };
 };
 
 export type ConditionBase = {
@@ -4854,7 +4866,10 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  spaceAccess?: {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chatAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -4971,6 +4986,78 @@ export interface Rules {
 
 ```
 
+</details>
+
+---
+
+### **To check user access of a token gated group**
+
+```typescript
+
+// actual api
+const response = await PushAPI.space.getAccess({
+  spaceId:'8f7be0068a677df166c2e5b8a9030fe8a4341807150339e588853c0049df3106',
+  did: '0x9e60c47edF21fa5e5Af33347680B3971F2FfD464'
+  env: 'staging',
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| spaceId | string | - | space address |
+| did | string | - | user address |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+
+<details>
+  <summary><b>Expected response (space access)</b></summary>
+
+```typescript
+// PushAPI_chat_getSpaceAccess | Response - 200 OK
+{
+    'spaceAccess': true,
+    'rules': {
+        'spaceAccess': {
+            'conditions': [
+                {
+                    'any': [
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC20',
+                            'subcategory': 'token_holder',
+                            'data': {
+                                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'amount': 1000,
+                                'decimals': 18
+                            },
+                            'access': false
+                        },
+                        {
+                            'type': 'GUILD',
+                            'data': {
+                                'guildId': '13468',
+                                'roleId': '19924'
+                            },
+                            'access': true
+                        },
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC721',
+                            'subcategory': 'nft_owner',
+                            'data': {
+                                'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                                'amount': 1
+                            },
+                            'access': true
+                        }
+                    ]
+                }
+            ]
+        }
+}
+
+```
 </details>
 
 ---
