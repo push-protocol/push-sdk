@@ -247,6 +247,7 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+  origin: string | null;
 
   /**
    * @deprecated Use `profile.name` instead.

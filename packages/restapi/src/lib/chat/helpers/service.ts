@@ -22,6 +22,7 @@ type CreateUserOptionsType = {
   publicKey?: string;
   encryptedPrivateKey?: string;
   env?: ENV;
+  origin? : string | null;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {
@@ -30,6 +31,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     publicKey = '',
     encryptedPrivateKey = '',
     env = Constants.ENV.PROD,
+    origin,
   } = options || {};
   let { user } = options || {};
 
@@ -48,6 +50,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
+    origin: origin
   };
 
   const hash = generateHash(data);
