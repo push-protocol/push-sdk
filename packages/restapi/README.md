@@ -3379,6 +3379,7 @@ Allowed Options (params with _ are mandatory)
 export enum ConditionType {
   PUSH = 'PUSH',
   GUILD = 'GUILD',
+  CUSTOM_ENDPOINT = 'CUSTOM_ENDPOINT',
 }
 
 export type Data = {
@@ -3386,7 +3387,17 @@ export type Data = {
   amount?: number;
   decimals?: number;
   guildId?: string;
-  roleId?: string;
+  guildRoleId?: string;
+  guildRoleAction?: 'all' | 'any';
+  endpointUrl?: string;
+  httpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  headers?: { [key: string]: string };
+  bodyTemplate?: { [key: string]: any };
+  responseLogic?: {
+    directMapping?: {
+      responseKey?: string;
+    };
+  };
 };
 
 export type ConditionBase = {
@@ -3566,6 +3577,37 @@ GUILD conditions require both guild ID and role ID.
                 'guildId': '13468',
                 'roleId': '19924'
               }
+            },
+            {
+              "type": "CUSTOM_ENDPOINT",
+              "data": {
+                "endpointUrl": "https://api.example.com/checkUser",
+                "httpMethod": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "bodyTemplate": {
+                  "address": "{{user_address}}",
+                  "token": "xyz123"
+                },
+                "responseLogic": {
+                  "directMapping": {
+                    "responseKey": "accessGranted"
+                  }
+                }
+              }
+	          },
+            {
+              "type": "CUSTOM_ENDPOINT",
+              "data": {
+                "endpointUrl": "https://api.example.com/users/{{user_address}}/checkAccess",
+                "httpMethod": "GET",
+                "responseLogic": {
+                  "directMapping": {
+                    "responseKey": "userAllowed"
+                  }
+                }
+              }
             }
           ]
         }
@@ -3589,7 +3631,14 @@ GUILD conditions require both guild ID and role ID.
               'type': 'GUILD',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
+              }
+            },
+            {
+              'type': 'GUILD',
+              'data': {
+                'guildId': '13468',
+                'guildRoleAction': 'all/any'
               }
             }
           ]
