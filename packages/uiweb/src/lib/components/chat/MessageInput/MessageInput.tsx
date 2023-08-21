@@ -16,8 +16,7 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
-import { ConnectButton } from "../ConnectButton";
-
+import { ConnectButtonComp } from "../ConnectButton";
 
 /**
  * @interface IThemeProps
@@ -41,7 +40,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
-    const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
+    const { pgpPrivateKey, signer,setPgpPrivateKey } = useChatData();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -142,9 +141,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }
 
     return (
-        <Container theme={theme}>
+        <Container>
             {/* {isConnected && (
-                <ConnectButton />
+                <ConnectButtonComp />
             )} */}
             <TypebarSection
             // zIndex="1"
@@ -154,15 +153,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 alignItems="center"
                 justifyContent="space-between"
             >
-                {!pgpPrivateKey && isConnected && (
+                {!pgpPrivateKey  && isConnected && (
                     // align this button in right corner
 
                     <Section width="100%" justifyContent="space-between" alignItems="center"
+                    padding="8px"
                     >
-                        <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                       {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
-                        </Span>
-                        <ConnectButton />
+                        </Span>}
+                        <ConnectButtonComp />
                     </Section>
                 )
                 }

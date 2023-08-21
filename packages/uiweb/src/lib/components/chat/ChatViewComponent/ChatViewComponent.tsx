@@ -12,6 +12,9 @@ import { ChatProfile } from '../ChatProfile';
 
 
 
+
+
+
 export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
   options: IChatViewComponentProps
 ) => {
