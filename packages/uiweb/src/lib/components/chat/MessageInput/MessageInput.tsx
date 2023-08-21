@@ -17,6 +17,8 @@ import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { ConnectButton } from "../ConnectButton";
+import OpenLink from "../../../icons/OpenLink";
+import VerificationFailed from "./VerificationFailed";
 
 
 /**
@@ -35,6 +37,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const modalRef = useRef(null);
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
+    const [verified, setVerified] = useState<boolean>(false);
+    const [verificationSuccessfull, setVerificationSuccessfull] = useState<boolean>(true);
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -155,8 +159,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 justifyContent="space-between"
             >
                 {!pgpPrivateKey && isConnected && (
-                    // align this button in right corner
-
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
@@ -166,7 +168,24 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     </Section>
                 )
                 }
-                {pgpPrivateKey &&
+
+                {pgpPrivateKey && !verified && (
+                    <Section width="100%" justifyContent="space-between" alignItems="center"
+                    >
+                        <Span padding="8px 8px 8px 16px" color={theme.textColorPrimary} fontSize="15px" fontWeight="500" textAlign="start">
+                        Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Span color={theme.accentBgColor} cursor="pointer">Learn More <OpenLink /></Span>
+                        </Span>
+                        <ConnectWrapper>
+                            <Connect>
+                                Verify Access
+                            </Connect>
+                        </ConnectWrapper>
+                    </Section>
+                )}
+                {pgpPrivateKey && !verificationSuccessfull && (
+                    <VerificationFailed />
+                )}
+                {pgpPrivateKey && verified &&
                     <>
                         <Section gap="8px" flex="1">
                             {Emoji &&
@@ -338,3 +357,31 @@ const MultiLineInput = styled.textarea<IThemeProps>`
 const FileInput = styled.input`
   display: none;
 `;
+
+
+const ConnectWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  `;
+
+const StyledButton = styled.button`
+    border: 0px;
+    outline: 0px;
+    padding: 24px 9px;
+    font-weight: 500;
+    border-radius: 12px;
+    font-size: 17px;
+    cursor: pointer;
+    width: 147px;
+    height: 44px;
+    text-align: start;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  `;
+
+const Connect = styled(StyledButton)`
+    color: rgb(255, 255, 255);
+    background: #D53A94;
+  `;
