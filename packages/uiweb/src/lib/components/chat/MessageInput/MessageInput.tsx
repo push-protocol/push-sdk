@@ -17,7 +17,6 @@ import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
 import { ConnectButtonComp } from "../ConnectButton";
-import '@rainbow-me/rainbowkit/styles.css';
 
 /**
  * @interface IThemeProps
@@ -158,6 +157,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     // align this button in right corner
 
                     <Section width="100%" justifyContent="space-between" alignItems="center"
+                    padding="8px"
                     >
                        {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started

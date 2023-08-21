@@ -2,14 +2,16 @@ import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-import '@rainbow-me/rainbowkit/styles.css';
+import './index.css';
 
 import { useAccount } from 'wagmi';
 
 import { useWalletClient } from 'wagmi';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { device } from '../../../config';
 
 /**
  * @interface IThemeProps
@@ -31,6 +33,7 @@ export const ConnectButtonSub = () => {
   } = useChatData();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const theme = useContext(ThemeContext);
 
   useEffect(() => {
     (async () => {
@@ -73,12 +76,25 @@ export const ConnectButtonSub = () => {
       console.log(e);
     }
   };
-
   return !signer ? (
-    <ConnectButton/>
+    <ConnectButtonDiv theme={theme}>
+      <ConnectButton />
+    </ConnectButtonDiv>
   ) : (
     <></>
   );
 };
 
 //styles
+const ConnectButtonDiv = styled.div<IThemeProps>`
+  width: fit-content;
+ 
+  button{
+    background: ${(props) => `${props.theme.accentBgColor}!important`};
+    text-align:center;
+   
+  }
+  @media ${device.mobileL} {
+    font-size: 12px;
+  }
+`;
