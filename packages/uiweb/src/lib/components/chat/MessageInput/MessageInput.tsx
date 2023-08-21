@@ -151,7 +151,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 <ConnectButton />
             )} */}
             <TypebarSection
-                // zIndex="1"
+            // zIndex="1"
                 borderRadius="13px"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
@@ -159,6 +159,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 justifyContent="space-between"
             >
                 {!pgpPrivateKey && isConnected && (
+                    // align this button in right corner
+
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
