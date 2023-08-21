@@ -35,7 +35,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-        setTypedMessage(val.trim());
+        setTypedMessage(val);
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
@@ -146,8 +146,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 <ConnectButtonComp />
             )} */}
             <TypebarSection
-            // zIndex="1"
+                // zIndex="1"
                 borderRadius="13px"
+                position="static"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
                 alignItems="center"
@@ -168,25 +169,25 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 }
                 {pgpPrivateKey &&
                     <>
-                        <Section gap="8px" flex="1">
+                        <Section gap="8px" flex="1" position="static">
                             {Emoji &&
                                 <Div
-                                    width="20px"
+                                    width="24px"
                                     cursor="pointer"
-                                    height="20px"
+                                    height="24px"
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon />
+                                    <EmojiIcon color={theme.textColorSecondary} />
                                 </Div>
                             }
                             {showEmojis && (
                                 <Section
                                     ref={modalRef}
                                     position="absolute"
-                                    bottom="3.5rem"
-                                    left="2.7rem"
-                                    zIndex="1"
+                                    bottom="2.5rem"
+                                    left="2.5rem"
+                                    zIndex="700"
                                 ><EmojiPicker
                                         width={isMobile ? 260 : 320}
                                         height={370}
@@ -210,7 +211,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                 rows={1}
                             />
                         </Section>
-                        <SendSection>
+                        <SendSection position="static">
                             {GIF &&
                                 <Section
                                     width="34px"
@@ -224,9 +225,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                             {gifOpen && (
                                 <Section
                                     position="absolute"
-                                    bottom="3.5rem"
+                                    bottom="2.5rem"
                                     zIndex="1"
-                                    right={isMobile ? '5rem' : '8rem'}
+                                    right={isMobile ? '7rem' : '8rem'}
                                     ref={modalRef}>
                                     <GifPicker
                                         onGifClick={sendGIF}
@@ -246,7 +247,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                             alignSelf="end"
                                             onClick={() => setNewChat(true)}
                                         >
-                                            <AttachmentIcon />
+                                            <AttachmentIcon color={theme.textColorSecondary} />
                                         </Section>
                                         <FileInput
                                             type="file"
