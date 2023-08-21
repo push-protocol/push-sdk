@@ -16,8 +16,7 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
-import { ConnectButton } from "../ConnectButton";
-
+import { ConnectButtonComp } from "../ConnectButton";
 
 /**
  * @interface IThemeProps
@@ -36,12 +35,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
-        setTypedMessage(val.trim());
+        setTypedMessage(val);
     };
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
-    const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
+    const { pgpPrivateKey, signer,setPgpPrivateKey } = useChatData();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -142,33 +141,35 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }
 
     return (
-        <Container theme={theme}>
+        <Container>
             {/* {isConnected && (
-                <ConnectButton />
+                <ConnectButtonComp />
             )} */}
             <TypebarSection
-            // zIndex="1"
+                // zIndex="1"
                 borderRadius="13px"
+                position="static"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
                 alignItems="center"
                 justifyContent="space-between"
             >
-                {!pgpPrivateKey && isConnected && (
+                {!pgpPrivateKey  && isConnected && (
                     // align this button in right corner
 
                     <Section width="100%" justifyContent="space-between" alignItems="center"
+                    padding="8px"
                     >
-                        <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                       {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
-                        </Span>
-                        <ConnectButton />
+                        </Span>}
+                        <ConnectButtonComp />
                     </Section>
                 )
                 }
                 {pgpPrivateKey &&
                     <>
-                        <Section gap="8px" flex="1">
+                        <Section gap="8px" flex="1" position="static">
                             {Emoji &&
                                 <Div
                                     width="25px"
@@ -184,9 +185,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                 <Section
                                     ref={modalRef}
                                     position="absolute"
-                                    bottom="3.5rem"
-                                    left="2.7rem"
-                                    zIndex="1"
+                                    bottom="2.5rem"
+                                    left="2.5rem"
+                                    zIndex="700"
                                 ><EmojiPicker
                                         width={isMobile ? 260 : 320}
                                         height={370}
@@ -211,7 +212,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                 rows={1}
                             />
                         </Section>
-                        <SendSection>
+                        <SendSection position="static">
                             {GIF &&
                                 <Section
                                     width="34px"
@@ -225,9 +226,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                             {gifOpen && (
                                 <Section
                                     position="absolute"
-                                    bottom="3.5rem"
+                                    bottom="2.5rem"
                                     zIndex="1"
-                                    right={isMobile ? '5rem' : '8rem'}
+                                    right={isMobile ? '7rem' : '8rem'}
                                     ref={modalRef}>
                                     <GifPicker
                                         onGifClick={sendGIF}

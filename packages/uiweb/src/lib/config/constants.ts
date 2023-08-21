@@ -17,6 +17,7 @@ export const Constants = {
   
 };
 
+export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
 export const NETWORK_DETAILS = {
   5: {
     network: "goerli",

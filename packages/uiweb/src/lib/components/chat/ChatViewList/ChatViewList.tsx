@@ -49,9 +49,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<Messagetype>();
-  const [ loading,setLoading] = useState<boolean>(true); 
+  const [loading, setLoading] = useState<boolean>(true);
   const [conversationHash, setConversationHash] = useState<string>();
-  const { historyMessages, loading:messageLoading } = useFetchHistoryMessages();
+  const { historyMessages, loading: messageLoading } =
+    useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { fetchChat } = useFetchChat();
@@ -75,7 +76,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, pgpPrivateKey, env]);
 
   useEffect(() => {
+  
     (async () => {
+      if (!account && !env) return;
       const chat = await fetchChat({ chatId });
       if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
       else {
@@ -98,12 +101,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           if (!newChatFeed?.groupInformation) {
             setChatStatusText(ChatStatus.FIRST_CHAT);
           }
-          console.log(chatFeed)
+          console.log(chatFeed);
           setChatFeed(newChatFeed);
         } else {
           setChatStatusText(ChatStatus.INVALID_CHAT);
         }
-        
       }
       setLoading(false);
     })();
@@ -133,7 +135,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   useEffect(() => {
+  
     (async function () {
+      if (!account && !env) return;
       const hash = await fetchConversationHash({ conversationId: chatId });
       setConversationHash(hash?.threadHash);
     })();
@@ -264,7 +268,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       </Span>
     );
   };
-  return (
+  return  (
     <ChatViewListCard
       overflow="hidden scroll"
       flexDirection="column"
@@ -275,67 +279,78 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       theme={theme}
       onScroll={() => onScroll()}
     >
- {loading ? <Spinner color={theme.accentBgColor} /> : ''}
-    {!loading &&
-      <>
-      {chatFeed &&
-      (chatFeed.publicKey ||
-        (chatFeed?.groupInformation &&
-          !chatFeed?.groupInformation?.isPublic)) ? (
-        <EncryptionMessage  id={'ENCRYPTED'}/>
-      ) : (
-        <EncryptionMessage id={'NO_ENCRYPTED'} />
-      )}
+      {loading ? <Spinner color={theme.accentBgColor} /> : ''}
+      {!loading && (
+        <>
+          {chatFeed &&
+          (chatFeed.publicKey ||
+            (chatFeed?.groupInformation &&
+              !chatFeed?.groupInformation?.isPublic)) ? (
+            <EncryptionMessage id={'ENCRYPTED'} />
+          ) : (
+            <EncryptionMessage id={'NO_ENCRYPTED'} />
+          )}
 
-      {chatStatusText && (
-        <Section margin="20px 0 0 0">
-          <Span
-            fontSize="13px"
-            color={theme.textColorSecondary}
-            fontWeight="400"
-          >
-            {chatStatusText}
-          </Span>
-        </Section>
-      )}
-      {messageLoading ? <Spinner color={theme.accentBgColor} /> : ''}
+          {chatStatusText && (
+            <Section margin="20px 0 0 0">
+              <Span
+                fontSize="13px"
+                color={theme.textColorSecondary}
+                fontWeight="400"
+              >
+                {chatStatusText}
+              </Span>
+            </Section>
+          )}
+          {messageLoading ? <Spinner color={theme.accentBgColor} /> : ''}
 
-     {
-     !messageLoading && 
-     <>
-     <Section flexDirection="column" justifyContent="start" width="100%">
-        {messages?.messages &&
-          messages?.messages?.map((chat: IMessageIPFS, index: number) => {
-            const dateNum = moment(chat.timestamp).format('L');
-            const position =
-              pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-              account?.toLowerCase()
-                ? 0
-                : 1;
-            return (
-              <>
-                {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
-                <Section justifyContent={position ? 'end' : 'start'}>
-                  <ChatViewBubble chat={chat} key={index} />
-                </Section>
-              </>
-            );
-          })}
-        <div ref={bottomRef} />
-      </Section>
-      {chatFeed && checkIfIntent({ chat: chatFeed as IFeeds, account: account! }) && (
-        <ApproveRequestBubble
-          chatFeed={chatFeed}
-          chatId={chatId}
-          setChatFeed={setChatFeed}
-        />
+          {!messageLoading && (
+            <>
+              <Section
+                flexDirection="column"
+                justifyContent="start"
+                width="100%"
+              >
+                {messages?.messages &&
+                  messages?.messages?.map(
+                    (chat: IMessageIPFS, index: number) => {
+                      const dateNum = moment(chat.timestamp).format('L');
+                      const position =
+                        pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
+                        account?.toLowerCase()
+                          ? 0
+                          : 1;
+                      return (
+                        <>
+                          {dates.has(dateNum)
+                            ? null
+                            : renderDate({ chat, dateNum })}
+                          <Section justifyContent={position ? 'end' : 'start'}>
+                            <ChatViewBubble chat={chat} key={index} />
+                          </Section>
+                        </>
+                      );
+                    }
+                  )}
+                <div ref={bottomRef} />
+              </Section>
+              {chatFeed && account &&
+                checkIfIntent({
+                  chat: chatFeed as IFeeds,
+                  account: account!,
+                }) && (
+                  <ApproveRequestBubble
+                    chatFeed={chatFeed}
+                    chatId={chatId}
+                    setChatFeed={setChatFeed}
+                  />
+                )}
+            </>
+          )}
+        </>
       )}
-      </>
-    }
-    </>
-  }
     </ChatViewListCard>
-  );
+  )
 };
 
 //styles

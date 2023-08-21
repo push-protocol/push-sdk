@@ -4,7 +4,7 @@ type EmojiIconsProps = {
   color?: string;
 }
 
-export const EmojiIcon: React.FC<EmojiIconsProps> = ({color="none"}) => {
+export const EmojiIcon: React.FC<EmojiIconsProps> = ({color="#494D5F"}) => {
   return (
     <svg width="25" height="25" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M16 28.7407C22.6274 28.7407 28 23.2686 28 16.5185C28 9.76831 22.6274 4.29623 16 4.29623C9.37258 4.29623 4 9.76831 4 16.5185C4 23.2686 9.37258 28.7407 16 28.7407Z" stroke={color} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

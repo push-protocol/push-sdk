@@ -16,7 +16,7 @@ const ChatViewComponentTest = () => {
       {/* <Loader show={isLoading} /> */}
     <ChatViewComponentCard>
         
-      <ChatViewComponent chatId='0xCD0DAdAb45bAF9a06ce1279D1342EcC3F44845af' limit={10}/>
+      <ChatViewComponent chatId='0xa5427570CbA069bfD72aAb51494A2a35bF8b5003' limit={10}/>
       </ChatViewComponentCard>
     </div>
   );
