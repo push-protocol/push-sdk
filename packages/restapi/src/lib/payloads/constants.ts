@@ -71,6 +71,7 @@ export enum SPACE_ACCEPT_REQUEST_TYPE {
 export enum SPACE_DISCONNECT_TYPE {
   STOP, // space is stopped/ended
   LEAVE, // speaker leaves a space
+  DEMOTE_SPEAKER, // speaker is demoted to a listener
   FORCE_DISCONNECT // remove speaker from webrtc mesh
 }
 
