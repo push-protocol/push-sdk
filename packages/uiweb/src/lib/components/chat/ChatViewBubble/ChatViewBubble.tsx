@@ -93,7 +93,7 @@ const MessageCard = ({
                                 textAlign="left"
                                 fontSize="16px"
                                 fontWeight="400"
-                                color={position ? '#fff' : '#000'}
+                                color={position ? `${theme.accentTextColor}` : `${theme.textColorPrimary}`}
                             >
                                 {str}
                             </Span>

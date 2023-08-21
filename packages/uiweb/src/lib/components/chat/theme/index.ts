@@ -88,11 +88,11 @@ export const lightChatTheme: IChatTheme = {
 };
 
 export const darkChatTheme: IChatTheme = {
-  chatBubblePrimaryBgColor: '#fff',
-  bgColorPrimary: 'rgb(47, 49, 55)',
-  bgColorSecondary: 'rgb(40, 42, 46)',
-  textColorPrimary: '#fff',
-  textColorSecondary: 'rgb(182, 188, 214)',
+  chatBubblePrimaryBgColor: 'rgba(64, 70, 80, 1)',
+  bgColorPrimary: 'rgba(64, 70, 80, 1)',
+  bgColorSecondary: 'rgba(40, 42, 46, 1)',
+  textColorPrimary: 'rgba(182, 188, 214, 1)',
+  textColorSecondary: 'rgba(120, 126, 153, 1)',
   chatBubbleAccentBgColor: 'rgb(202, 89, 155)',
   accentBgColor: 'rgb(202, 89, 155)',
   accentTextColor: '#fff',

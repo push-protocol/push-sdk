@@ -171,13 +171,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                         <Section gap="8px" flex="1">
                             {Emoji &&
                                 <Div
-                                    width="20px"
+                                    width="25px"
                                     cursor="pointer"
-                                    height="20px"
+                                    height="25px"
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon />
+                                    <EmojiIcon color={theme.textColorSecondary}/>
                                 </Div>
                             }
                             {showEmojis && (
@@ -191,6 +191,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                         width={isMobile ? 260 : 320}
                                         height={370}
                                         onEmojiClick={addEmoji}
+                                        
                                     />
                                 </Section>
                             )}
@@ -246,12 +247,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                             alignSelf="end"
                                             onClick={() => setNewChat(true)}
                                         >
-                                            <AttachmentIcon />
+                                            <AttachmentIcon color={theme.textColorSecondary} />
                                         </Section>
                                         <FileInput
                                             type="file"
                                             ref={fileUploadInputRef}
                                             onChange={(e) => uploadFile(e)}
+                                            
                                         />
                                     </>
                                 )}
@@ -325,7 +327,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   }
   ::placeholder {
     color: ${(props) => props.theme.textColorSecondary};
-    transform: translateY(1px);
+    transform: translateY(0px);
     @media ${device.mobileL} {
       font-size: 14px;
     }
