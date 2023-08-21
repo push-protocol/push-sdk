@@ -150,7 +150,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 borderRadius="13px"
                 position="static"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-                background={`${theme.bgColorPrimary}`}
+                background={`${theme.backgroundColor?.messageInputBackground}`}
                 alignItems="center"
                 justifyContent="space-between"
             >
@@ -178,7 +178,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon color={theme.textColorSecondary}/>
+                                    <EmojiIcon color={theme.iconColor?.emoji}/>
                                 </Div>
                             }
                             {showEmojis && (
@@ -248,7 +248,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                             alignSelf="end"
                                             onClick={() => setNewChat(true)}
                                         >
-                                            <AttachmentIcon color={theme.textColorSecondary} />
+                                            <AttachmentIcon color={theme.iconColor?.attachment} />
                                         </Section>
                                         <FileInput
                                             type="file"
@@ -266,13 +266,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                     height="24px"
                                     onClick={() => sendTextMsg()}
                                 >
-                                    <SendCompIcon color={theme.accentBgColor} />
+                                    <SendCompIcon color={theme.iconColor?.sendButton} />
                                 </Section>
                             )}
 
                             {(loading || fileUploading) && (
                                 <Section alignSelf="end" height="24px">
-                                    <Spinner color={theme.accentBgColor} size="22" />
+                                    <Spinner color={theme.spinnerColor} size="22" />
                                 </Section>
                             )}
                         </SendSection>
@@ -307,9 +307,9 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
-  background:${(props) => props.theme.bgColorPrimary};
+  background:${(props) => props.theme.backgroundColor?.messageInputBackground};
   border: none;
-  color: ${(props) => props.theme.textColorSecondary};
+  color: ${(props) => props.theme.textColor?.messageInputText};
   resize: none;
   flex: 1;
   padding-right: 5px;
@@ -327,7 +327,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
     height: 50px;
   }
   ::placeholder {
-    color: ${(props) => props.theme.textColorSecondary};
+    color: ${(props) => props.theme.textColor?.messageInputText};
     transform: translateY(0px);
     @media ${device.mobileL} {
       font-size: 14px;

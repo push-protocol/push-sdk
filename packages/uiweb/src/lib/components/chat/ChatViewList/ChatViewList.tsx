@@ -35,6 +35,7 @@ import { ApproveRequestBubble } from './ApproveRequestBubble';
  */
 interface IThemeProps {
   theme?: IChatTheme;
+  blur:boolean;
 }
 const ChatStatus = {
   FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
@@ -76,7 +77,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, pgpPrivateKey, env]);
 
   useEffect(() => {
-  
     (async () => {
       if (!account && !env) return;
       const chat = await fetchChat({ chatId });
@@ -135,7 +135,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   useEffect(() => {
-  
     (async function () {
       if (!account && !env) return;
       const hash = await fetchConversationHash({ conversationId: chatId });
@@ -261,14 +260,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         margin="15px 0"
         fontSize="14px"
         fontWeight="600"
-        color={theme.textColorSecondary}
+        color={theme.textColor?.timestamp}
         textAlign="center"
       >
         {timestampDate}
       </Span>
     );
   };
-  return  (
+  return (
     <ChatViewListCard
       overflow="hidden scroll"
       flexDirection="column"
@@ -277,9 +276,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       justifyContent="start"
       padding="0 2px"
       theme={theme}
+      blur={!!(chatFeed &&
+        (chatFeed?.groupInformation &&
+        !chatFeed?.groupInformation?.isPublic) && !pgpPrivateKey)}
       onScroll={() => onScroll()}
     >
-      {loading ? <Spinner color={theme.accentBgColor} /> : ''}
+      {/* {chatFeed &&
+        chatFeed?.groupInformation &&
+        !chatFeed?.groupInformation?.isPublic && !pgpPrivateKey && */}
+        {/* <Overlay></Overlay> */}
+        {/* } */}
+      {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
         <>
           {chatFeed &&
@@ -295,14 +302,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             <Section margin="20px 0 0 0">
               <Span
                 fontSize="13px"
-                color={theme.textColorSecondary}
+                color={theme.textColor?.encryptionMessageText}
                 fontWeight="400"
               >
                 {chatStatusText}
               </Span>
             </Section>
           )}
-          {messageLoading ? <Spinner color={theme.accentBgColor} /> : ''}
+          {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
 
           {!messageLoading && (
             <>
@@ -334,7 +341,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                   )}
                 <div ref={bottomRef} />
               </Section>
-              {chatFeed && account &&
+              {chatFeed &&
+                account &&
                 checkIfIntent({
                   chat: chatFeed as IFeeds,
                   account: account!,
@@ -350,17 +358,25 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         </>
       )}
     </ChatViewListCard>
-  )
+  );
 };
 
 //styles
 const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar-thumb {
-    background: ${(props) => props.theme.accentBgColor};
+    background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
   }
 
   &::-webkit-scrollbar {
     width: 5px;
   }
+  ${({ blur }) => blur && `
+  filter: blur(12px);
+  `}
+  
+`;
+
+const Overlay = styled.div`
+ 
 `;

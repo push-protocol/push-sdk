@@ -54,8 +54,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       flexDirection="column"
       justifyContent="space-between"
       overflow="hidden"
-      background={theme.bgColorSecondary}
-      borderRadius={theme.borderRadius}
+      background={theme.backgroundColor?.chatViewComponentBackground}
+      borderRadius={theme.borderRadius?.chatViewComponent}
       padding="13px"
     >
      

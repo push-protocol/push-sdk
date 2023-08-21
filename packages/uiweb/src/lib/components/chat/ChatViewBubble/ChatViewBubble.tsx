@@ -19,7 +19,7 @@ const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
         <>
             {chat.fromCAIP10.split(":")[1] !== account && (
                 <Span theme={theme} alignSelf="start"
-                    textAlign="start" color={theme.textColorPrimary}>{chat.fromDID.split(":")[1].slice(0, 6)}...
+                    textAlign="start" color={theme.textColor?.chatReceivedBubbleText}>{chat.fromDID.split(":")[1].slice(0, 6)}...
                     {chat.fromDID.split(":")[1].slice(-6)}</Span>
             )}
         </>
@@ -72,7 +72,7 @@ const MessageCard = ({
                 }
                 <Section
                     gap="5px"
-                    background={position ? `${theme.chatBubbleAccentBgColor}` : `${theme.chatBubblePrimaryBgColor}`}
+                    background={position ? `${theme.backgroundColor?.chatSentBubbleBackground}` : `${theme.backgroundColor?.chatReceivedBubbleBackground}`}
                     padding="8px 12px"
                     borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
                     margin="5px 0"
@@ -82,7 +82,7 @@ const MessageCard = ({
                     minWidth="71px"
                     position="relative"
                     width="fit-content"
-                    color={position ? `${theme.accentTextColor}` : `${theme.textColorPrimary}`}
+                    color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
                 >
                     {' '}
                     <Section flexDirection="column" padding="5px 0 15px 0">
@@ -93,7 +93,7 @@ const MessageCard = ({
                                 textAlign="left"
                                 fontSize="16px"
                                 fontWeight="400"
-                                color={position ? `${theme.accentTextColor}` : `${theme.textColorPrimary}`}
+                                color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
                             >
                                 {str}
                             </Span>
@@ -103,7 +103,7 @@ const MessageCard = ({
                         position="absolute"
                         fontSize="12px"
                         fontWeight="400"
-                        color={position ? `${theme.accentTextColor}` : '#62626A'}
+                        color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
                         bottom="6px"
                         right="10px"
                     >
