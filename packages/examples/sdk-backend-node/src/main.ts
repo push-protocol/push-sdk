@@ -1,5 +1,9 @@
 import { runNotificaitonsUseCases } from './notification';
-import { runChatUseCases, runNFTChatUseCases } from './chat';
+import {
+  runChatUseCases,
+  runNFTChatUseCases,
+  run6551NFTChatUseCases,
+} from './chat';
 import { runVideoUseCases } from './video';
 import { runSpacesUseCases } from './spaces';
 
@@ -17,6 +21,7 @@ const start = async (): Promise<void> => {
   await runNotificaitonsUseCases();
   await runChatUseCases();
   await runNFTChatUseCases();
+  await run6551NFTChatUseCases();
   await runVideoUseCases();
   await runSpacesUseCases();
 };

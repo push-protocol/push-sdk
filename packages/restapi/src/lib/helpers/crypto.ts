@@ -458,14 +458,14 @@ export const preparePGPPublicKey = async (
 ): Promise<string> => {
   let chatPublicKey: string;
   switch (encryptionType) {
-    case Constants.ENC_TYPE_V1: {
+    case Constants.ENC_TYPE_V1:
+    case Constants.ENC_TYPE_V5: {
       chatPublicKey = publicKey;
       break;
     }
     case Constants.ENC_TYPE_V2:
     case Constants.ENC_TYPE_V3:
-    case Constants.ENC_TYPE_V4:
-    case Constants.ENC_TYPE_V5: {
+    case Constants.ENC_TYPE_V4: {
       const verificationProof = 'DEPRECATED';
 
       /**

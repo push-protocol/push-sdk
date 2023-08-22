@@ -23,7 +23,7 @@ import {
   ProgressHookTypeFunction,
 } from '../types';
 import PROGRESSHOOK from '../progressHook';
-import { TokenboundClient } from '@tokenbound/sdk';
+import { getTokenBoundAddress, getNFTDID } from '../helpers/tokenBound';
 
 export type CreateUserProps = {
   account?: string;
@@ -90,27 +90,7 @@ export const create = async (
 
     // Convert NFT-DID To Wallet-DID For 6551 Based Encryption ( NFTPGP_V2 )
     if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V2) {
-      const nftChainId = +address.split(':')[2];
-      let tokenboundClient: TokenboundClient;
-      if (signer && '_signTypedData' in signer) {
-        // ethersV5SignerType
-        tokenboundClient = new TokenboundClient({
-          signer,
-          chainId: nftChainId,
-        });
-      } else {
-        // viemSignerType
-        tokenboundClient = new TokenboundClient({
-          walletClient: signer as any,
-          chainId: nftChainId,
-        });
-      }
-      const nftContractAddress = address.split(':')[3];
-      const nftCTokenId = address.split(':')[4];
-      const tokenBoundAccount = tokenboundClient.getAccount({
-        tokenContract: nftContractAddress as `0x${string}`,
-        tokenId: nftCTokenId,
-      });
+      const tokenBoundAccount = await getTokenBoundAddress(address);
       wallet.account = tokenBoundAccount;
       address = tokenBoundAccount;
     }
@@ -169,7 +149,20 @@ export const create = async (
      * 5. SUCCESSFUL USER CREATION
      */
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-05'] as ProgressHookType);
+
+    /**
+     * Modify Response
+     * 1. Add decryptedPrivateKey - this removes the need to decrypt private key again
+     * 2. Mask w2w-DID to NFT-did for NFTPGP_V2
+     */
     createdUser.decryptedPrivateKey = keyPairs.privateKeyArmored;
+    if (encryptionType === ENCRYPTION_TYPE.NFTPGP_V2) {
+      createdUser.did = createdUser.wallets = await getNFTDID(
+        createdUser.did,
+        address
+      );
+    }
+
     return createdUser;
   } catch (err) {
     /**
