@@ -196,7 +196,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColorPrimary} fontSize="15px" fontWeight="500" textAlign="start">
-                            Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Span color={theme.accentBgColor} cursor="pointer">Learn More <OpenLink /></Span>
+                            Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Link href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group" target="_blank" color={theme.accentBgColor}>Learn More <OpenLink /></Link>
                         </Span>
                         <ConnectWrapper>
                             <Connect onClick={checkVerification}>
@@ -502,3 +502,8 @@ const TokenGet = styled(TokenStyledButton)`
     background: none;
     gap: 8px;
   `;
+const Link = styled.a`
+    color: #D53A94;
+    link-decoration: none;
+    text-decoration: none;
+`
