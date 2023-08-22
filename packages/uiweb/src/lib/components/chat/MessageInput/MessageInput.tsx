@@ -19,7 +19,7 @@ import { ThemeContext } from "../theme/ThemeProvider";
 import { ConnectButton } from "../ConnectButton";
 import OpenLink from "../../../icons/OpenLink";
 import VerificationFailed from "./VerificationFailed";
-
+import useVerifyAccessControl from "../../../hooks/chat/useVerifyAccessControl";
 
 /**
  * @interface IThemeProps
@@ -38,7 +38,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const [verified, setVerified] = useState<boolean>(false);
-    const [verificationSuccessfull, setVerificationSuccessfull] = useState<boolean>(true);
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -46,6 +45,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
     const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
+    const { verificationSuccessfull, verifyAccessControl, error } = useVerifyAccessControl();
+    const { account } = useChatData()
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -70,6 +71,29 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             fileUploadInputRef.current.click();
         }
     }
+
+    const checkVerification = () => {
+        verifyAccessControl({ chatId, did: account! });
+        console.log('chatId', chatId);
+    }
+
+    useEffect(() => {
+        const storedTimestampJSON = localStorage.getItem(chatId);
+
+        if (storedTimestampJSON) {
+            const storedTimestamp = JSON.parse(storedTimestampJSON);
+            const currentTimestamp = new Date().getTime();
+            const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+            if (currentTimestamp - storedTimestamp < twentyFourHoursInMilliseconds) {
+                console.log(currentTimestamp - storedTimestamp)
+                // setVerified(false);
+            } else {
+                // setVerified(true);
+                console.log("lakjdlkasjdkjas")
+            }
+        }
+    }, [chatId, pgpPrivateKey])
 
     const uploadFile = async (
         e: ChangeEvent<HTMLInputElement>
@@ -151,7 +175,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 <ConnectButton />
             )} */}
             <TypebarSection
-            // zIndex="1"
+                // zIndex="1"
                 borderRadius="13px"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
                 background={`${theme.bgColorPrimary}`}
@@ -175,16 +199,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColorPrimary} fontSize="15px" fontWeight="500" textAlign="start">
-                        Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Span color={theme.accentBgColor} cursor="pointer">Learn More <OpenLink /></Span>
+                            Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Span color={theme.accentBgColor} cursor="pointer">Learn More <OpenLink /></Span>
                         </Span>
                         <ConnectWrapper>
-                            <Connect>
+                            <Connect onClick={checkVerification}>
                                 Verify Access
                             </Connect>
                         </ConnectWrapper>
                     </Section>
                 )}
-                {pgpPrivateKey && !verificationSuccessfull && (
+                {pgpPrivateKey && verificationSuccessfull && (
                     <VerificationFailed />
                 )}
                 {pgpPrivateKey && verified &&

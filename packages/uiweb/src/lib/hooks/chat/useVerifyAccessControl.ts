@@ -11,6 +11,8 @@ interface VerifyAccessControlParams {
 const useVerifyAccessControl = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [verificationSuccessfull, setVerificationSuccessfull] =
+    useState<boolean>(true);
 
   const { pgpPrivateKey, env, account } = useChatData();
 
@@ -21,16 +23,27 @@ const useVerifyAccessControl = () => {
       try {
         const response = await PushAPI.chat.getGroupAccess({
           chatId: chatId,
-          did: did,
+          did: `eip155:${did}`,
           env: env,
         });
         setLoading(false);
+        if (response.chattingAccess === false) {
+          setVerificationSuccessfull(false);
+        } else if (response.chattingAccess === true) {
+          const timestamp = new Date().getTime();
+          localStorage.setItem(
+            chatId,
+            JSON.stringify(timestamp)
+          );
+        }
+        console.log(response);
         if (!response) {
           return false;
         }
         return;
       } catch (error: Error | any) {
         setLoading(false);
+        setVerificationSuccessfull(false);
         setError(error.message);
         console.log(error);
         return;
@@ -38,7 +51,7 @@ const useVerifyAccessControl = () => {
     },
     [pgpPrivateKey, account]
   );
-  return {verifyAccessControl, error, loading};
+  return { verifyAccessControl, error, loading, verificationSuccessfull, setVerificationSuccessfull };
 };
 
 export default useVerifyAccessControl;
