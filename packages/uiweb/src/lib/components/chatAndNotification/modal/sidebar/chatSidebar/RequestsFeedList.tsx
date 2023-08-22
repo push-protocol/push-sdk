@@ -1,4 +1,4 @@
-import useFetchRequests from '../../../../../hooks/chat/useFetchRequests';
+import useFetchRequests from '../../../../../hooks/chatAndNotification/chat/useFetchRequests';
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';

@@ -1,28 +1,27 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { useChatData } from './useChatData';
 
 interface ApproveChatParams {
-  senderAddress: string;
+  chatId: string;
 }
 
 const useApproveChatRequest = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatAndNotificationPropsContext);
+  const { account, env,pgpPrivateKey } =useChatData();
   const approveChatRequest = useCallback(async (options:ApproveChatParams) => {
     const {
 
-        senderAddress,
+        chatId,
       } = options || {};
       setLoading(true);
       try {
         const response = await PushAPI.chat.approve({
           status: 'Approved',
           account: account,
-          senderAddress: senderAddress,            // receiver's address or chatId of a group
-          pgpPrivateKey:decryptedPgpPvtKey,
+          senderAddress: chatId,            // receiver's address or chatId of a group
+          pgpPrivateKey:pgpPrivateKey,
           env: env,
         });
         return response;

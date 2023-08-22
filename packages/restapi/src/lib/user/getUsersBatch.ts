@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
-import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
+import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
 
@@ -36,10 +36,12 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
     .post(requestUrl, requestBody)
     .then((response) => {
       response.data.users.forEach(async (user: any, index: number) => {
-        response.data.users[index].publicKey = await verifyPGPPublicKey(
+        response.data.users[index].publicKey = await verifyProfileKeys(
           user.encryptedPrivateKey,
           user.publicKey,
-          user.did
+          user.did,
+          user.caip10,
+          user.verificationProof
         );
 
         response.data.users[index] = populateDeprecatedUser(

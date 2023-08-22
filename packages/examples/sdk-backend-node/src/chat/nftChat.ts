@@ -95,7 +95,7 @@ export const runNFTChatUseCases = async (): Promise<void> => {
   await PushAPI_nft_chat_updateGroup(chatId);
 
   console.log('PushAPI.chat.getGroupByName');
-  await PushAPI_nft_chat_getGroupByName();
+  await PushAPI_nft_chat_getGroupByName(updatedNftGroupName);
 
   console.log('PushAPI.chat.getGroup');
   await PushAPI_nft_chat_getGroup(chatId);
@@ -509,9 +509,12 @@ async function PushAPI_nft_chat_updateGroup(
 }
 
 // Push Chat - PushAPI.chat.getGroupByName
-async function PushAPI_nft_chat_getGroupByName(silent = !showAPIResponse) {
+async function PushAPI_nft_chat_getGroupByName(
+  name: string,
+  silent = !showAPIResponse
+) {
   const response = await PushAPI.chat.getGroupByName({
-    groupName: 'Push Group Chat 3',
+    groupName: name,
     env: env as ENV,
   });
 

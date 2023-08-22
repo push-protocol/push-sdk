@@ -133,7 +133,7 @@ describe('Update Group', () => {
     const admins: string[] = [];
     const members = [
       account2,
-      // 'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
+      'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
     ];
     // creator - account
     const group = await createGroup({

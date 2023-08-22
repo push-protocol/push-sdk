@@ -1,4 +1,4 @@
-import useFetchChats from '../../../../../hooks/chat/useFetchChats';
+import useFetchChats from '../../../../../hooks/chatAndNotification/chat/useFetchChats';
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import styled from 'styled-components';
 

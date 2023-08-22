@@ -1,27 +1,25 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { Constants } from '../../config';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { useChatData } from './useChatData';
 
 interface conversationHashParams {
-    conversationId: string;
+  conversationId: string;
 }
 
-const useGetConversationHash = () => {
+const useFetchConversationHash = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env } =
-  useContext<any>(ChatAndNotificationPropsContext);
+  const { account, env } = useChatData();
 
-  const getConversationHash = useCallback(
+  const fetchConversationHash = useCallback(
     async ({ conversationId }: conversationHashParams) => {
       setLoading(true);
       try {
         const response = await PushAPI.chat.conversationHash({
           conversationId,
-          account: account,
-          env: env
+          account: account!,
+          env: env,
         });
         setLoading(false);
         return response;
@@ -32,9 +30,9 @@ const useGetConversationHash = () => {
         return;
       }
     },
-    []
+    [env, account]
   );
-  return { getConversationHash, error, loading };
+  return { fetchConversationHash, error, loading };
 };
 
-export default useGetConversationHash;
+export default useFetchConversationHash;

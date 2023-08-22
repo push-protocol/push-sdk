@@ -4,7 +4,7 @@ import type { chainNameType, INotificationItemTheme} from '../../../../notificat
 import { notificationLightTheme } from '../../../../notification';
 import { NotificationItem } from '../../../../notification';
 import { ChatAndNotificationPropsContext, NotificationMainStateContext } from '../../../../../context';
-import useOnSubscribeToChannel from '../../../../../hooks/notifications/useOnSubscribeToChannel';
+import useOnSubscribeToChannel from '../../../../../hooks/chatAndNotification/notifications/useOnSubscribeToChannel';
 import { Div } from '../../../../reusables';
 
 type NotificationFeedListPropType = {

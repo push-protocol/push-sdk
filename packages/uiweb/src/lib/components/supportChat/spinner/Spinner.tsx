@@ -5,17 +5,18 @@ import { SpinnerSvg } from '../../../icons/SpinnerSvg';
 
 type SpinnerPropType = {
   size?: string;
+  color?: string
 };
 
 type SpinLoaderPropType = {
   width?: string;
 };
 
-export const Spinner: React.FC<SpinnerPropType> = ({ size = 42 }) => {
+export const Spinner: React.FC<SpinnerPropType> = ({ size = 42, color }) => {
   const { theme } = useContext<any>(SupportChatPropsContext);
   return (
     <SpinLoader width={`${size}px`}>
-      <SpinnerSvg color={theme.btnColorPrimary} />
+      <SpinnerSvg color={color ?? theme.btnColorPrimary} />
     </SpinLoader>
   );
 };
