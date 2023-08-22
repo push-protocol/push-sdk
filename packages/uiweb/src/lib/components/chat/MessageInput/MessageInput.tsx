@@ -32,7 +32,7 @@ interface IThemeProps {
     theme?: IChatTheme;
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected = true }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true, GIF = true, File = true, isConnected, onClick }) => {
     const [typedMessage, setTypedMessage] = useState<string>("");
     const [showEmojis, setShowEmojis] = useState<boolean>(false);
     const [gifOpen, setGifOpen] = useState<boolean>(false);
@@ -207,20 +207,26 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 )}
                 {pgpPrivateKey && !verificationSuccessfull && (
                     <Modal width='439px'>
-                        <Section theme={theme} gap='32px' flexDirection='column'>
+                        <Section padding="10px" theme={theme} gap='32px' flexDirection='column'>
                             <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
                             <Span color={theme.textColorSecondary} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
                             <Section gap='8px' alignItems='start'>
-                                <Image verticalAlign='start' height='32' width='32' src={TokenGatedIcon} alt='token-gated' />
+                                <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
                                     <Span textAlign='start' alignSelf='start'>Token Gated</Span>
-                                    <Span textAlign='start'>You need to have 1 PUSH Token in your wallet to be able to send messages.</Span>
+                                    <Span fontWeight="500" textAlign='start'>You need to have <Span color={theme.accentBgColor}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
                             <Section gap='8px'>
-                                <TokenWrapper>
+                                <TokenWrapper onClick={() => {
+                                    if (onClick) {
+                                        onClick();
+                                    }
+                                    setVerificationSuccessfull(true)
+                                }
+                                }>
                                     <TokenGet>
-                                        Get Tokens
+                                        Get Free Tokens
                                         <OpenLink height='12' width='12' />
                                     </TokenGet>
                                 </TokenWrapper>
@@ -346,7 +352,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     </>
                 }
             </TypebarSection>
-        </Container>
+        </Container >
     )
 }
 
@@ -437,7 +443,7 @@ const Connect = styled(StyledButton)`
     background: #D53A94;
   `;
 
-  const ConnectWrapperClose = styled.div`
+const ConnectWrapperClose = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -467,13 +473,13 @@ const ConnectClose = styled(StyledButtonClose)`
   `;
 
 
-  const TokenWrapper = styled.div`
+const TokenWrapper = styled.div`
     display: flex;
     align-items: center;
     flex-direction: column;
   `;
 
-  
+
 const TokenStyledButton = styled.button`
 border: 0px;
 outline: 0px;
@@ -482,7 +488,7 @@ font-weight: 500;
 border-radius: 12px;
 font-size: 17px;
 cursor: pointer;
-width: 147px;
+width: 100%;
 height: 44px;
 text-align: start;
 align-items: center;
@@ -490,7 +496,7 @@ display: flex;
 justify-content: center;
 `;
 
-const TokenGet = styled(StyledButton)`
+const TokenGet = styled(TokenStyledButton)`
     color: #D53A94;
     border: 2px solid #D53A94;
     background: none;

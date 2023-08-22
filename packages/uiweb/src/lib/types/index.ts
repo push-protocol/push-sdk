@@ -134,6 +134,6 @@ export interface IGroup {
   groupDescription: string | null,
   groupCreator: string,
   chatId: string,
-  groupType?:string | undefined
+  groupType?:string | undefined,
 }
 
