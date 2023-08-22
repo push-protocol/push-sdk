@@ -13,6 +13,7 @@ const useVerifyAccessControl = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [verificationSuccessfull, setVerificationSuccessfull] =
     useState<boolean>(true);
+  const [verified, setVerified] = useState<boolean>(false);
 
   const { pgpPrivateKey, env, account } = useChatData();
 
@@ -30,6 +31,7 @@ const useVerifyAccessControl = () => {
         if (response.chattingAccess === false) {
           setVerificationSuccessfull(false);
         } else if (response.chattingAccess === true) {
+          setVerified(true);
           const timestamp = new Date().getTime();
           localStorage.setItem(
             chatId,
@@ -51,7 +53,7 @@ const useVerifyAccessControl = () => {
     },
     [pgpPrivateKey, account]
   );
-  return { verifyAccessControl, error, loading, verificationSuccessfull, setVerificationSuccessfull };
+  return { verifyAccessControl, error, loading, verificationSuccessfull, setVerificationSuccessfull, verified, setVerified };
 };
 
 export default useVerifyAccessControl;

@@ -12,7 +12,7 @@ const VerificationFailed = () => {
     const theme = useContext(ThemeContext);
     const { setVerificationSuccessfull, verificationSuccessfull } = useVerifyAccessControl();
     return (
-        <Modal width='439px' clickawayClose={() => setVerificationSuccessfull(false)}>
+        <Modal width='439px'>
             <Section theme={theme} gap='32px' flexDirection='column'>
                 <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
                 <Span color={theme.textColorSecondary} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>

@@ -20,6 +20,9 @@ import { ConnectButton } from "../ConnectButton";
 import OpenLink from "../../../icons/OpenLink";
 import VerificationFailed from "./VerificationFailed";
 import useVerifyAccessControl from "../../../hooks/chat/useVerifyAccessControl";
+import TokenGatedIcon from "../../../icons/Token-Gated.svg";
+import { Modal } from "../helpers/Modal";
+import { Image } from "../../reusables";
 
 /**
  * @interface IThemeProps
@@ -37,7 +40,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const modalRef = useRef(null);
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
-    const [verified, setVerified] = useState<boolean>(false);
+    // const [verified, setVerified] = useState<boolean>(false);
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -45,7 +48,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
     const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
-    const { verificationSuccessfull, verifyAccessControl, error } = useVerifyAccessControl();
+    const { verificationSuccessfull, verifyAccessControl, setVerificationSuccessfull, verified, setVerified } = useVerifyAccessControl();
     const { account } = useChatData()
 
     useClickAway(modalRef, () => {
@@ -83,17 +86,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         if (storedTimestampJSON) {
             const storedTimestamp = JSON.parse(storedTimestampJSON);
             const currentTimestamp = new Date().getTime();
-            const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
 
             if (currentTimestamp - storedTimestamp < twentyFourHoursInMilliseconds) {
                 console.log(currentTimestamp - storedTimestamp)
-                // setVerified(false);
+                setVerified(true);
             } else {
-                // setVerified(true);
-                console.log("lakjdlkasjdkjas")
+                setVerified(false);
             }
         }
-    }, [chatId, pgpPrivateKey])
+    }, [chatId, verified])
 
     const uploadFile = async (
         e: ChangeEvent<HTMLInputElement>
@@ -160,9 +162,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         }
     }
 
-    // useEffect(() => {
-    //     setPgpPrivateKey
-    // }, [pgpPrivateKey])
 
     const sendGIF = async (emojiObject: GIFType) => {
         sendPushMessage(emojiObject.url as string, 'GIF');
@@ -183,8 +182,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 justifyContent="space-between"
             >
                 {!pgpPrivateKey && isConnected && (
-                    // align this button in right corner
-
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
@@ -208,8 +205,36 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                         </ConnectWrapper>
                     </Section>
                 )}
-                {pgpPrivateKey && verificationSuccessfull && (
-                    <VerificationFailed />
+                {pgpPrivateKey && !verificationSuccessfull && (
+                    <Modal width='439px'>
+                        <Section theme={theme} gap='32px' flexDirection='column'>
+                            <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
+                            <Span color={theme.textColorSecondary} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
+                            <Section gap='8px' alignItems='start'>
+                                <Image verticalAlign='start' height='32' width='32' src={TokenGatedIcon} alt='token-gated' />
+                                <Section flexDirection='column'> {/* Added marginLeft */}
+                                    <Span textAlign='start' alignSelf='start'>Token Gated</Span>
+                                    <Span textAlign='start'>You need to have 1 PUSH Token in your wallet to be able to send messages.</Span>
+                                </Section>
+                            </Section>
+                            <Section gap='8px'>
+                                <TokenWrapper>
+                                    <TokenGet>
+                                        Get Tokens
+                                        <OpenLink height='12' width='12' />
+                                    </TokenGet>
+                                </TokenWrapper>
+                                <ConnectWrapperClose onClick={() => {
+                                    setVerificationSuccessfull(true)
+                                    console.log(verificationSuccessfull)
+                                }}>
+                                    <ConnectClose>
+                                        Close
+                                    </ConnectClose>
+                                </ConnectWrapperClose>
+                            </Section>
+                        </Section>
+                    </Modal>
                 )}
                 {pgpPrivateKey && verified &&
                     <>
@@ -410,4 +435,64 @@ const StyledButton = styled.button`
 const Connect = styled(StyledButton)`
     color: rgb(255, 255, 255);
     background: #D53A94;
+  `;
+
+  const ConnectWrapperClose = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+
+const StyledButtonClose = styled.button`
+  border: 0px;
+  outline: 0px;
+  padding: 24px 9px;
+  font-weight: 500;
+  border-radius: 12px;
+  font-size: 17px;
+  cursor: pointer;
+  width: 147px;
+  height: 44px;
+  text-align: start;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
+
+const ConnectClose = styled(StyledButtonClose)`
+    color: rgb(255, 255, 255);
+    background: #D53A94;
+    gap: 8px;
+  `;
+
+
+  const TokenWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  `;
+
+  
+const TokenStyledButton = styled.button`
+border: 0px;
+outline: 0px;
+padding: 22px 9px;
+font-weight: 500;
+border-radius: 12px;
+font-size: 17px;
+cursor: pointer;
+width: 147px;
+height: 44px;
+text-align: start;
+align-items: center;
+display: flex;
+justify-content: center;
+`;
+
+const TokenGet = styled(StyledButton)`
+    color: #D53A94;
+    border: 2px solid #D53A94;
+    background: none;
+    gap: 8px;
   `;
