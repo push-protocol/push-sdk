@@ -23,7 +23,7 @@ import { ethers } from "ethers";
 import { IChatProfile, IToast, OptionProps } from "../exportedTypes";
 import { InfuraAPIKey, allowedNetworks, device } from "../../../config";
 import Toast from "../helpers/Toast";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import { createBlockie } from "../../space/helpers/blockies";
 // import { NewToast } from "../helpers/NewToast";
 import { ToastContainer, toast } from 'react-toastify';

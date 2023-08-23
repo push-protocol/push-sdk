@@ -21,7 +21,7 @@ import { AddWalletContent } from './AddWalletContent'
 import ArrowIcon from '../../../icons/CaretDown.svg'
 import { Modal } from "../helpers/Modal";
 import { device } from "../../../config";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import useToast from "../helpers/NewToast";
 import { MdCheckCircle, MdError } from "react-icons/md";
 

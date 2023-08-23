@@ -18,7 +18,7 @@ import { Section, Span, Image } from "../../reusables/sharedStyling";
 import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import useToast from "../helpers/NewToast";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { Modal } from "../helpers/Modal";
