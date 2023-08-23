@@ -312,32 +312,24 @@ export enum ChatStatus {
 export enum ConditionType {
   PUSH = 'PUSH',
   GUILD = 'GUILD',
-  CUSTOM_ENDPOINT = 'CUSTOM_ENDPOINT',
 }
 
 export type Data = {
-  address?: string;
+  contract?: string;
   amount?: number;
   decimals?: number;
   guildId?: string;
   guildRoleId?: string;
   guildRoleAction?: 'all' | 'any';
-  endpointUrl?: string;
-  httpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  headers?: { [key: string]: string };
-  bodyTemplate?: { [key: string]: any };
-  responseLogic?: {
-    directMapping?: {
-      responseKey?: string;
-    };
-  };
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
 };
 
 export type ConditionBase = {
-  type: ConditionType;
+  type?: ConditionType;
   category?: string;
   subcategory?: string;
-  data: Data;
+  data?: Data;
   access?: boolean;
 };
 
