@@ -1,5 +1,5 @@
 import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
-import type { FileMessageContent } from "../../../types";
+import type { FileMessageContent, IGroup } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import { GIFType, IChatTheme, MessageInputProps } from "../exportedTypes";
@@ -23,6 +23,9 @@ import TokenGatedIcon from "../../../icons/Token-Gated.svg";
 import { Modal } from "../helpers/Modal";
 import { Image } from "../../reusables";
 import { ConnectButtonComp } from "../ConnectButton";
+import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
+import { ethers } from "ethers";
+import { pCAIP10ToWallet } from "../../../helpers";
 
 /**
  * @interface IThemeProps
@@ -40,7 +43,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const modalRef = useRef(null);
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
-    // const [verified, setVerified] = useState<boolean>(false);
+    const [isRules, setIsRules] = useState<boolean>(false)
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -49,7 +52,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const { sendMessage, loading } = usePushSendMessage();
     const { verificationSuccessfull, verifyAccessControl, setVerificationSuccessfull, verified, setVerified } = useVerifyAccessControl();
     const { account } = useChatData()
-    const { pgpPrivateKey, signer,setPgpPrivateKey } = useChatData();
+    const { pgpPrivateKey, signer, setPgpPrivateKey } = useChatData();
+    const { getGroupByID } = useGetGroupByID();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -145,11 +149,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
 
     const sendPushMessage = async (content: string, type: string) => {
         try {
-            await sendMessage({
+            const sendTextMessage = await sendMessage({
                 message: content,
                 chatId,
                 messageType: type as any,
             });
+            console.log(sendTextMessage, "messageee");
         } catch (error) {
             console.log(error);
         }
@@ -168,6 +173,23 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         setGifOpen(false);
     }
 
+    const checkIfrules = async() => {
+        if (!ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
+            console.log("beingnnggg calleddd")
+            const groupInfo = await getGroupByID({ groupId: chatId })
+            if(groupInfo?.rules?.chattingAccess) {
+                setIsRules(true)
+                console.log(groupInfo?.rules)
+            }
+            console.log(groupInfo, "groupInfooooo")
+        }
+    }
+
+    useEffect(() => {
+        console.log(chatId, "chatIdddd")
+        checkIfrules();
+    }, [chatId])
+
     return (
         <Container>
             {/* {isConnected && (
@@ -184,9 +206,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             >
                 {!pgpPrivateKey && isConnected && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
-                    padding="8px"
+                        padding="8px"
                     >
-                       {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                        {!signer && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
                         </Span>}
                         <ConnectButtonComp />
@@ -194,7 +216,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 )
                 }
 
-                {pgpPrivateKey && !verified && (
+                {pgpPrivateKey && !verified  && isRules && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
@@ -244,7 +266,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                         </Section>
                     </Modal>
                 )}
-                {pgpPrivateKey && verified &&
+                {pgpPrivateKey && (isRules ? verified : true) &&
                     <>
                         <Section gap="8px" flex="1" position="static">
                             {Emoji &&
@@ -255,7 +277,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon color={theme.iconColor?.emoji}/>
+                                    <EmojiIcon color={theme.iconColor?.emoji} />
                                 </Div>
                             }
                             {showEmojis && (
@@ -269,7 +291,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                         width={isMobile ? 260 : 320}
                                         height={370}
                                         onEmojiClick={addEmoji}
-                                        
+
                                     />
                                 </Section>
                             )}
@@ -331,7 +353,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                             type="file"
                                             ref={fileUploadInputRef}
                                             onChange={(e) => uploadFile(e)}
-                                            
+
                                         />
                                     </>
                                 )}
