@@ -18,7 +18,7 @@ import {
 import {
   REACTION_SYMBOL,
   REACTION_TYPE,
-} from '../../../src/lib/types/messageObjectTypes';
+} from '../../../src/lib/types/messageTypes';
 
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
@@ -361,7 +361,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -379,25 +379,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -421,7 +403,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -439,6 +439,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -465,7 +505,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -483,25 +523,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -525,7 +547,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -543,6 +583,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -568,7 +648,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -586,25 +666,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -628,7 +690,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -646,6 +726,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -672,7 +792,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -690,25 +810,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -732,7 +834,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -750,6 +870,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -776,7 +936,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -794,25 +954,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -836,7 +978,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -854,6 +1014,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -988,7 +1188,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('EncType - PlainText ( Public Grp )', async () => {
+    it('Deprecated V1 | EncType - PlainText ( Public Grp )', async () => {
       const groupName = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
@@ -1029,7 +1229,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - pgp ( Private Grp )', async () => {
+    it('Deprecated V1 | EncType - pgp ( Private Grp )', async () => {
       const groupName = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
@@ -1057,6 +1257,88 @@ describe('PushAPI.chat.send', () => {
           info: { affected: [] },
         },
         receiverAddress: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, action: 1, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText ( Public Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          action: 1,
+          info: { affected: [] },
+        },
+        to: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, action: 1, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp ( Private Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: false,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          action: 1,
+          info: { affected: [] },
+        },
+        to: group.chatId,
         signer: _signer1,
         env: _env,
       });
@@ -1105,7 +1387,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('EncType - PlainText', async () => {
+    it('Deprecated V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageObj: {
@@ -1129,7 +1411,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -1142,6 +1424,59 @@ describe('PushAPI.chat.send', () => {
           action: REACTION_TYPE.THUMBS_UP,
         },
         receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          action: REACTION_TYPE.THUMBS_UP,
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText', async () => {
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          action: REACTION_TYPE.THUMBS_UP,
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+          action: REACTION_TYPE.THUMBS_UP,
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          action: REACTION_TYPE.THUMBS_UP,
+        },
+        to: walletAddress2,
         signer: _signer1,
         env: _env,
       });

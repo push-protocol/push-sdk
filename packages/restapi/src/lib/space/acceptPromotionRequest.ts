@@ -10,7 +10,7 @@ import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
-import { META_ACTION } from '../types/messageObjectTypes';
+import { META_ACTION } from '../types/messageTypes';
 import { AdminPeer } from '../types';
 
 export interface IAcceptPromotionRequestType {

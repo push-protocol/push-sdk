@@ -1,7 +1,7 @@
 import { send } from '../../chat';
 import { MessageType } from '../../constants';
 import { EnvOptionsType, LiveSpaceData, SignerType } from '../../types';
-import { META_ACTION } from '../../types/messageObjectTypes';
+import { META_ACTION } from '../../types/messageTypes';
 
 interface SendLiveSpaceData extends EnvOptionsType {
   liveSpaceData?: LiveSpaceData;
