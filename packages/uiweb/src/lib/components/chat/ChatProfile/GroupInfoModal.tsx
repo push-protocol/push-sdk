@@ -400,7 +400,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
 
         <div></div>
 
-        <Span textAlign='center' fontSize='20px' color={theme.textColor?.chatBubblesSenderAddressText}>Group Info</Span>
+        <Span textAlign='center' fontSize='20px' color={theme.textColor?.chatSentBubbleText}>Group Info</Span>
 
         <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
         </Section>
@@ -409,7 +409,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
             <Image src={groupInfo?.groupImage ?? ''} height="64px" maxHeight="64px" width={'auto'} borderRadius="16px" />
 
             <Section flexDirection='column' alignItems='flex-start' gap='5px'>
-                <Span fontSize='20px' color={theme.textColor?.chatBubblesSenderAddressText}>{groupInfo?.groupName}</Span>
+                <Span fontSize='20px' color={theme.textColor?.chatSentBubbleText}>{groupInfo?.groupName}</Span>
                 <Span fontSize='16px' color={theme.modalDescriptionTextColor}>{groupInfo?.members?.length} Members</Span>
             </Section>
         </GroupHeader>
@@ -435,7 +435,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
               <Image src={addIcon} height="18px" maxHeight="18px" width={'auto'} />
 
               <Span
-                color={theme.textColor?.chatBubblesSenderAddressText}
+                color={theme.textColor?.chatSentBubbleText}
                 margin="0px 14px"
                 fontSize="16px"
                 fontWeight="400"

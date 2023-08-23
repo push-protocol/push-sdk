@@ -272,8 +272,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     return (
       <Span
         margin="15px 0"
-        fontSize="14px"
-        fontWeight="600"
+        fontSize={theme.fontSize?.timestamp}
+        fontWeight={theme.fontWeight?.timestamp}
         color={theme.textColor?.timestamp}
         textAlign="center"
       >

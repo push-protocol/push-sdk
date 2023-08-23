@@ -19,7 +19,7 @@ const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
         <>
             {chat.fromCAIP10.split(":")[1] !== account && (
                 <Span theme={theme} alignSelf="start"
-                    textAlign="start" color={theme.textColor?.chatReceivedBubbleText}>{chat.fromDID.split(":")[1].slice(0, 6)}...
+                    textAlign="start" color={theme.textColor?.chatReceivedBubbleAddressText}>{chat.fromDID.split(":")[1].slice(0, 6)}...
                     {chat.fromDID.split(":")[1].slice(-6)}</Span>
             )}
         </>
@@ -91,8 +91,8 @@ const MessageCard = ({
                                 key={Math.random().toString()}
                                 alignSelf="start"
                                 textAlign="left"
-                                fontSize="16px"
-                                fontWeight="400"
+                                fontSize={position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`}
+                                fontWeight={position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`}
                                 color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
                             >
                                 {str}
@@ -101,8 +101,9 @@ const MessageCard = ({
                     </Section>
                     <Span
                         position="absolute"
-                        fontSize="12px"
-                        fontWeight="400"
+                        fontSize={position ? `${theme.fontSize?.chatSentBubbleTimestampText}` : `${theme.fontSize?.chatReceivedBubbleTimestampText}`}
+                        fontWeight={position ? `${theme.fontWeight?.chatSentBubbleTimestampText}` : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`}
+
                         color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
                         bottom="6px"
                         right="10px"

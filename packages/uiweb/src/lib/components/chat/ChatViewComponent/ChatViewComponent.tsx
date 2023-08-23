@@ -97,7 +97,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
 //styles
 const Conatiner = styled(Section)<IThemeProps>`
-border:${(props) => props.theme.border?.messageInput};
+border:${(props) => props.theme.border?.chatViewComponent};
 backdrop-filter:${(props) => props.theme.backdropFilter};
 
 `;
