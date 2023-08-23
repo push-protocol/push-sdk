@@ -346,7 +346,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                           {dates.has(dateNum)
                             ? null
                             : renderDate({ chat, dateNum })}
-                          <Section justifyContent={position ? 'end' : 'start'}>
+                          <Section justifyContent={position ? 'end' : 'start'} margin='7px'>
                             <ChatViewBubble chat={chat} key={index} />
                           </Section>
                         </>
