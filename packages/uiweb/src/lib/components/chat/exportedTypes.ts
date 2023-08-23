@@ -19,6 +19,7 @@ export interface IChatViewComponentProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
+  onClick?: () => void;
 }
 
 export interface IChatProfile {
@@ -65,6 +66,7 @@ export interface MessageInputProps {
   File?: boolean;
   Image?: boolean;
   isConnected?: boolean;
+  onClick?: () => void;
 }
 
 export type UpdateGroupType = {

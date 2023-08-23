@@ -6,7 +6,7 @@ import { Spinner } from '../../supportChat/spinner/Spinner';
 import { toast } from 'react-toastify';
 import styled, { ThemeProvider } from 'styled-components';
 import CloseIcon from '../../../icons/close.svg';
-import useMediaQuery from './useMediaQuery';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 import { useContext, useRef } from 'react';
 import { Image } from '../../reusables';
 import { device } from '../../../config';

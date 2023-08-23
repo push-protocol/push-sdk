@@ -37,6 +37,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     file = true,
     gif = true,
     isConnected = true,
+    onClick,
   } = options || {};
 
   const {env } = useChatData();
@@ -88,7 +89,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
       {messageInput && (
         <Section flex="0 1 auto">
-          <MessageInput chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
+          <MessageInput onClick={onClick} chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
         </Section>
       )}
     </Conatiner>

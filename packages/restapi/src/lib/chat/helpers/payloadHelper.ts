@@ -239,7 +239,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
     groupAccess: spaceRules.spaceAccess,
-    chatAccess: undefined,
+    chattingAccess: undefined,
   };
 }
 
