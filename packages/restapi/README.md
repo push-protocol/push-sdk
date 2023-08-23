@@ -3432,8 +3432,27 @@ There are two main types of conditions: `PUSH` and `GUILD`.
 
 PUSH conditions may relate to:
 
-- **ERC721**: Needs an address and an amount, and can only have the `nft_owner` subcategory.
-- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `token_holder` subcategory.
+- **ERC721**: Needs an address and an amount, and can only have the `owner` subcategory.
+- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory.
+- **CustomEndpoint**: The `CustomEndpoint` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application. As of now the Get API is supported and should return the 200 OK if the user is allowed to access.
+
+ {
+  "type": "PUSH",
+  "category": "CustomEndpoint",
+  "subcategory": "GET",
+  "data": {
+    "url": "https://api.example.com/user/{{user_address}}/validate"
+  }
+}
+
+Explanation:
+
+type: Represents the type of the condition, in this case "PUSH".
+category: Specifies that this is a condition based on a custom endpoint.
+subcategory: Represents the HTTP method for the request, in this case, a "GET" request.
+data: Contains the properties for the condition.
+url: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
+
 
 #### GUILD Conditions
 
@@ -3446,66 +3465,6 @@ Role and Action Checks: After validating the guild:
 The function checks for the presence of guildRoleId or guildRoleAction. At least one must be specified.
 If guildRoleId is given, its legitimacy is cross-verified with the guild's roles.
 For guildRoleAction, the function ensures its value is strictly "all" or "any".
-
-#### CustomEndpointCondition
-
-The `CustomEndpointCondition` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application.
-
-##### Structure
-
-A `CustomEndpointCondition` consists of:
-- **endpointUrl**: The URL of the API endpoint that will be called to validate the condition.
-- **httpMethod**: The HTTP method to be used for the API call (GET, POST, PUT, DELETE).
-- **headers** (optional): Any headers that should be included in the API request.
-- **bodyTemplate** (optional): For POST requests, a template for the body content to be sent with the request.
-- **responseLogic**: Logic to interpret the API response to determine if the condition is met.
-
-##### Details
-
-###### endpointUrl
-This can include a template `{{user_address}}`, which will be replaced by the actual user address at runtime.
-Example: https://api.example.com/users/{{user_address}}/checkAccess
-
-###### httpMethod
-Currently supported methods are `GET` and `POST`. If a `POST` method is specified, a `bodyTemplate` must also be provided.
-
-###### headers
-The `headers` field should be an object that contains key-value pairs representing the HTTP headers to be sent with the API request. This can be useful for sending required headers like `Authorization` for authenticated requests, or `Content-Type` to specify the type of the request body. 
-
-Example:
-
-{
-  "Authorization": "Bearer YOUR_ACCESS_TOKEN",
-  "Content-Type": "application/json"
-}
-
-###### bodyTemplate
-This is a JSON object where any value can include the template `{{user_address}}`.
-Example:
-
-{
-  "address": "{{user_address}}",
-  "action": "validate"
-}
-
-###### responseLogic
-Contains directives on how to interpret the API response. Currently, the supported logic is directMapping, which maps a key in the response to a boolean value.
-Example:
-
-{
-  "directMapping": {
-    "responseKey": "hasAccess"
-  }
-}
-
-##### Usage
-
-To validate a `CustomEndpointCondition`, the specified API endpoint is called with the provided `httpMethod`, `headers`, and `bodyTemplate` (if applicable). The response from the API is then parsed according to the `responseLogic` to determine if the condition is met.
-
-##### Error Handling
-
-If the API call fails for any reason, including a timeout, the condition is considered not met. Additionally, if the response from the API does not match the expected format as specified in `responseLogic`, the condition is also considered not met.
-
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
