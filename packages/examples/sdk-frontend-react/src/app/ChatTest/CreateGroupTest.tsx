@@ -10,6 +10,7 @@ import { Web3Context, EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 import { walletToPCAIP10 } from '../helpers';
 import ChatTest from './ChatTest';
+import { Rules } from '@pushprotocol/restapi';
 
 const CreateGroupTest = () => {
   const { account: acc, library } = useContext<any>(Web3Context);
@@ -26,6 +27,8 @@ const CreateGroupTest = () => {
   const [contractAddressERC20, setContractAddressERC20] = useState<string>();
   const [numberOfERC20, setNumberOfERC20] = useState<string>();
   const [meta, setMeta] = useState<string>();
+  const [rules, setRules] = useState<string>();
+
   const [account, setAccount] = useState<string>(acc);
 
   const [sendResponse, setSendResponse] = useState<any>('');
@@ -74,6 +77,10 @@ const CreateGroupTest = () => {
     setMeta((e.target as HTMLInputElement).value);
   };
 
+  const updateRules = (e: React.SyntheticEvent<HTMLElement>) => {
+    setRules((e.target as HTMLInputElement).value);
+  };
+
   const updateAccount = (e: React.SyntheticEvent<HTMLElement>) => {
     setAccount((e.target as HTMLInputElement).value);
   };
@@ -99,6 +106,7 @@ const CreateGroupTest = () => {
         signer: librarySigner,
         env,
         meta: meta,
+        rules: rules ? JSON.parse(rules) as Rules : undefined
       });
 
       setSendResponse(response);
@@ -234,6 +242,17 @@ const CreateGroupTest = () => {
                 type="text"
                 onChange={updateMeta}
                 value={meta}
+                style={{ width: 400, height: 30 }}
+              />
+            </SectionItem>
+
+
+            <SectionItem style={{ marginTop: 20 }}>
+              <label>rules</label>
+              <input
+                type="text"
+                onChange={updateRules}
+                value={rules}
                 style={{ width: 400, height: 30 }}
               />
             </SectionItem>

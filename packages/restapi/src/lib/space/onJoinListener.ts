@@ -3,7 +3,7 @@ import { get } from './get';
 import { pCAIP10ToWallet } from '../helpers';
 import { produce } from 'immer';
 
-import { META_ACTION } from '../types/metaTypes';
+import { META_ACTION } from '../types/messageObjectTypes';
 import type Space from './Space';
 
 export interface OnJoinListenerType {

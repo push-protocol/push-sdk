@@ -6,7 +6,7 @@ import {
 import React, { useEffect, useRef, useContext } from 'react';
 import { Image, Section, Span } from '../../../reusables/sharedStyling';
 import styled from 'styled-components';
-import useFetchHistoryMessages from '../../../../hooks/chat/useFetchHistoryMessages';
+import useFetchHistoryMessages from '../../../../hooks/chatAndNotification/chat/useFetchHistoryMessages';
 import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { Spinner } from '../../../reusables/Spinner';
 import moment from 'moment';
@@ -16,7 +16,7 @@ import {
   shortenText,
 } from '../../../../helpers';
 import { pCAIP10ToWallet } from '../../../../helpers';
-import useApproveChatRequest from '../../../../hooks/chat/useApproveChatRequest';
+import useApproveChatRequest from '../../../../hooks/chatAndNotification/chat/useApproveChatRequest';
 import type { FileMessageContent } from '../../../../types';
 
 import { Typebar } from './typebar/Typebar';

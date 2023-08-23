@@ -1,4 +1,4 @@
-import type { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
+import type { IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -10,20 +10,20 @@ import {
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import {
   checkIfIntent,
-  getData,
+  getChatId,
   isPCAIP,
-  pCAIP10ToWallet,
+
   setData,
 } from '../../helpers';
 import {
   convertAddressToAddrCaip,
   convertReponseToParsedArray,
 } from '../../helpers/notification';
-import type { ChatSocketType } from '../../types';
-import { CHAT_SOCKET_TYPE } from '../../types';
+import type { SocketType } from '../../types';
+import { SOCKET_TYPE } from '../../types';
 
-import useFetchChat from '../chat/useFetchChat';
-import useGetChatProfile from '../chat/useGetChatProfile';
+import useFetchChat from './chat/useFetchChat';
+import useGetChatProfile from '../useGetChatProfile';
 
 interface PushChatNotificationSocket {
   pushChatNotificationSocket: any;
@@ -34,24 +34,11 @@ interface PushChatNotificationSocket {
 }
 
 export type pushChatNotificationSocketType = {
-  socketType?: ChatSocketType;
-};
-
-const getChatId = ({
-  msg,
-  account,
-}: {
-  msg: IMessageIPFS;
-  account: string;
-}) => {
-  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
-    return msg.toDID;
-  }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+  socketType?: SocketType;
 };
 
 const useChatNotificationSocket = ({
-  socketType = CHAT_SOCKET_TYPE.NOTIFICATION,
+  socketType = SOCKET_TYPE.NOTIFICATION,
 }: pushChatNotificationSocketType): PushChatNotificationSocket => {
   const [isSDKSocketConnected, setIsSDKSocketConnected] =
     useState<boolean>(false);
@@ -124,7 +111,7 @@ const useChatNotificationSocket = ({
           chat.messageType === null
         ) {
           if (chat.messageOrigin === 'other') {
-            const user = await fetchChatProfile({ profileId: chatId });
+            const user = await fetchChatProfile({ profileId: chatId,env });
 
             if (user || Object.keys(user || {}).length) {
               let newOne: IFeeds = {} as IFeeds;
@@ -248,7 +235,7 @@ const useChatNotificationSocket = ({
       // this is auto-connect on instantiation
       const connectionObject = createSocketConnection({
         user:
-          socketType === CHAT_SOCKET_TYPE.CHAT
+          socketType === SOCKET_TYPE.CHAT
             ? account
             : convertAddressToAddrCaip(account, chainId),
         socketType,

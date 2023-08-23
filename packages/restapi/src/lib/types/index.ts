@@ -10,7 +10,7 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META, MessageTypeSpecificMeta } from './metaTypes';
+import { MessageTypeSpecificObject } from './messageObjectTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -162,12 +162,7 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageTypeSpecificObject[MessageType] | string;
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -308,6 +303,49 @@ export enum ChatStatus {
   PENDING = 'PENDING',
   ENDED = 'ENDED',
 }
+
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  address?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  roleId?: string;
+};
+
+export type ConditionBase = {
+  type: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chatAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+export interface SpaceRules {
+  spaceAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -336,6 +374,7 @@ export interface GroupDTO {
   scheduleEnd?: Date | null;
   groupType?: string;
   status?: ChatStatus | null;
+  rules?: Rules | null;
   meta?: string | null;
 }
 
@@ -367,6 +406,7 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  rules?: SpaceRules | null;
   meta?: string | null;
 }
 
@@ -422,10 +462,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatStartOptionsType {
   messageType: `${MessageType}`;
-  messageObj: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  };
+  messageObj: MessageTypeSpecificObject[MessageType];
   /**
    * @deprecated - To be used for now to provide backward compatibility
    */
@@ -440,10 +477,7 @@ export interface ChatStartOptionsType {
  */
 export interface ChatSendOptionsType {
   messageType?: `${MessageType}`;
-  messageObj?: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  };
+  messageObj?: MessageTypeSpecificObject[MessageType];
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -551,12 +585,7 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageTypeSpecificObject[MessageType] | string;
   /**
    * @deprecated - Use messageObj.content instead
    */

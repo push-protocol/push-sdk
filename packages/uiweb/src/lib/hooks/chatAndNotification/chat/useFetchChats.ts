@@ -1,11 +1,11 @@
 import type { Env, IFeeds } from '@pushprotocol/restapi';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { Constants } from '../../config';
-import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../context';
-import { getData, setData } from '../../helpers/chat/localStorage';
-import type { ChatFeedsType} from '../../types';
-import { LOCAL_STORAGE_KEYS } from '../../types';
+import { Constants } from '../../../config';
+import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../context';
+import { getData, setData } from '../../../helpers/chat/localStorage';
+import type { ChatFeedsType} from '../../../types';
+import { LOCAL_STORAGE_KEYS } from '../../../types';
 
 interface fetchChats {
   page: number;

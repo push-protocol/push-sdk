@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/restapi",
-  "version": "1.4.9",
+  "version": "1.4.11",
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -14,6 +14,7 @@
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "immer": "^10.0.2",
+    "joi": "^17.9.2",
     "livepeer": "^2.5.8",
     "openpgp": "^5.5.0",
     "simple-peer": "^9.11.1",
