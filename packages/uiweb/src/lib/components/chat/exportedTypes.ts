@@ -4,6 +4,7 @@ import { IGroup } from '../../types'
 
 export interface IChatViewListProps {
   chatId: string;
+  chatFilterList?: Array<string>;
   limit?: number;
 }
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ChatDataContext } from '../../../context';
 import { IChatViewListProps } from '../exportedTypes';
 import { chatLimit } from '../../../config';
-import { IFeeds, IMessageIPFS } from '@pushprotocol/restapi';
+import { IFeeds, IMessageIPFS, IMessageIPFSWithCID,  } from '@pushprotocol/restapi';
 import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
 import styled from 'styled-components';
 import { Div, Section, Span, Spinner } from '../../reusables';
@@ -45,7 +45,7 @@ const ChatStatus = {
 export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
-  const { chatId, limit = chatLimit } = options || {};
+  const { chatId, limit = chatLimit,chatFilterList=[] } = options || {};
   const { pgpPrivateKey, account } = useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -114,6 +114,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       if (!Object.keys(messages || {}).length) {
+        setFilteredMessages( [messagesSinceLastConnection] as IMessageIPFSWithCID[],
+          );
         setMessages({
           messages: [messagesSinceLastConnection],
           lastThreadHash: messagesSinceLastConnection.cid,
@@ -233,15 +235,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             chatHistory,
             true
           );
-          setMessages({
-            messages: newChatViewList,
-            lastThreadHash: chatHistory[0].link,
-          });
+          setFilteredMessages( newChatViewList as IMessageIPFSWithCID[],
+          );
         } else {
-          setMessages({
-            messages: chatHistory,
-            lastThreadHash: chatHistory[0].link,
-          });
+          setFilteredMessages( chatHistory as IMessageIPFSWithCID[],
+            );
+         
         }
       }
     }
@@ -252,6 +251,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     dateNum: string;
   };
 
+  const setFilteredMessages = (messageList:Array<IMessageIPFSWithCID>)=> {
+   const updatedMessageList = messageList.filter((elem) => {
+    return chatFilterList.some((ele) => {
+    return ele === elem.cid;
+      });
+    });
+
+    setMessages({
+      messages: updatedMessageList,
+      lastThreadHash: updatedMessageList[0].link,
+    });
+  }
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
     const timestampDate = dateToFromNowDaily(chat.timestamp as number);
     dates.add(dateNum);
