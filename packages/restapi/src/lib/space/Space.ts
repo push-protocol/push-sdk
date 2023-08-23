@@ -154,7 +154,48 @@ export class Space extends Video {
             env: this.env,
             spaceId: this.spaceSpecificData.spaceId,
             signer: this.signer,
-            action: META_ACTION.PROMOTE_TO_ADMIN, // TODO: Add a meta action for SPEAKER_JOINED
+            action: META_ACTION.PROMOTE_TO_SPEAKER, // TODO: Add a meta action for SPEAKER_JOINED
+          });
+          this.setSpaceSpecificData(() => ({
+            ...this.spaceSpecificData,
+            liveSpaceData: updatedLiveSpaceData,
+          }));
+        }
+      },
+      onDisconnect: async ({
+        peerAddress
+      }: {
+        peerAddress: string
+      }) => {
+        // for a space, that has started broadcast & the local peer is the host
+        if (
+          this.spaceSpecificData.status === ChatStatus.ACTIVE &&
+          this.data.meta.broadcast?.hostAddress &&
+          this.data.meta.broadcast.hostAddress === this.data.local.address
+        ) {
+
+          // update live space info
+          const oldLiveSpaceData = await getLiveSpaceData({
+            localAddress: this.data.local.address,
+            pgpPrivateKey: this.pgpPrivateKey,
+            env: this.env,
+            spaceId: this.spaceSpecificData.spaceId,
+          });
+          const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
+            // check if the address was a listener
+            const speakerIndex = draft.speakers.findIndex(
+              (speaker) => speaker.address === peerAddress
+            );
+
+            if (speakerIndex > -1) draft.speakers.splice(speakerIndex, 1);
+          });
+          await sendLiveSpaceData({
+            liveSpaceData: updatedLiveSpaceData,
+            pgpPrivateKey: this.pgpPrivateKey,
+            env: this.env,
+            spaceId: this.spaceSpecificData.spaceId,
+            signer: this.signer,
+            action: META_ACTION.REMOVE_SPEAKER
           });
           this.setSpaceSpecificData(() => ({
             ...this.spaceSpecificData,

@@ -80,6 +80,11 @@ export class Video {
     senderAddress: string,
     audio: boolean | null
   ) => Promise<void>;
+  protected onDisconnect: ({
+    peerAddress
+  }: {
+    peerAddress: string
+  }) => Promise<void>;
 
   // storing the peer instance
   private peerInstances: {
@@ -99,6 +104,9 @@ export class Video {
     onReceiveStream = async () => {
       return Promise.resolve();
     },
+    onDisconnect = async () => {
+      return Promise.resolve();
+    }
   }: {
     signer: SignerType;
     chainId: number;
@@ -111,6 +119,11 @@ export class Video {
       senderAddress: string,
       audio: boolean | null
     ) => Promise<void>;
+    onDisconnect?: ({
+      peerAddress
+    }: {
+      peerAddress: string
+    }) => Promise<void>;
   }) {
     this.signer = signer;
     this.chainId = chainId;
@@ -118,6 +131,7 @@ export class Video {
     this.env = env;
     this.callType = callType;
     this.onReceiveStream = onReceiveStream;
+    this.onDisconnect = onDisconnect;
 
     // init the react state
     setData(() => initVideoCallData);
@@ -490,10 +504,11 @@ export class Video {
       this.peerInstances[recipientAddress].on('error', (err: any) => {
         console.log('error in accept request', err);
 
-        if (this.data.incoming[0].retryCount >= 5) {
-          console.log('Max retries exceeded, please try again.');
-          this.disconnect({ peerAddress: recipientAddress });
-        }
+        // if (this.data.incoming[0].retryCount >= 5) {
+        //   console.log('Max retries exceeded, please try again.');
+        this.disconnect({ peerAddress: recipientAddress });
+        this.onDisconnect({ peerAddress: recipientAddress });
+        // }
 
         // retrying in case of connection error
         sendVideoCallNotification(
@@ -747,14 +762,19 @@ export class Video {
           ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
           : 0;
 
-        if (this.data.incoming[incomingIndex].retryCount >= 5) {
-          console.log('Max retries exceeded, please try again.');
-          this.disconnect({
-            peerAddress: peerAddress
-              ? peerAddress
-              : this.data.incoming[0].address,
-          });
-        }
+        // if (this.data.incoming[incomingIndex].retryCount >= 5) {
+        //   console.log('Max retries exceeded, please try again.');
+        this.disconnect({
+          peerAddress: peerAddress
+            ? peerAddress
+            : this.data.incoming[0].address,
+        });
+        this.onDisconnect({ 
+          peerAddress: peerAddress
+          ? peerAddress
+          : this.data.incoming[0].address, 
+        });
+        // }
 
         // retrying in case of connection error
         this.request({
