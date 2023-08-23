@@ -25,7 +25,7 @@ import { Image } from "../../reusables";
 import { ConnectButtonComp } from "../ConnectButton";
 import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
 import { ethers } from "ethers";
-import { pCAIP10ToWallet } from "../../../helpers";
+import { pCAIP10ToWallet, setAccessControl } from "../../../helpers";
 
 /**
  * @interface IThemeProps
@@ -91,12 +91,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             const storedTimestamp = JSON.parse(storedTimestampJSON);
             const currentTimestamp = new Date().getTime();
             const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+            console.log(twentyFourHoursInMilliseconds)
 
-            if (currentTimestamp - storedTimestamp < twentyFourHoursInMilliseconds) {
-                console.log(currentTimestamp - storedTimestamp)
+            if (Math.abs(currentTimestamp - storedTimestamp) < twentyFourHoursInMilliseconds) {
+                console.log(Math.abs(currentTimestamp - storedTimestamp))
                 setVerified(true);
             } else {
                 setVerified(false);
+                setAccessControl(chatId, true)
             }
         }
     }, [chatId, verified])
@@ -184,6 +186,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             console.log(groupInfo, "groupInfooooo")
         }
     }
+    console.log(verificationSuccessfull, "verrifficagtionnn")
 
     useEffect(() => {
         console.log(chatId, "chatIdddd")
@@ -216,7 +219,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 )
                 }
 
-                {pgpPrivateKey && !verified  && isRules && (
+                {pgpPrivateKey && 
+                !verified
+                // verified  
+                && isRules && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
@@ -232,13 +238,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 {pgpPrivateKey && !verificationSuccessfull && (
                     <Modal width='439px'>
                         <Section padding="10px" theme={theme} gap='32px' flexDirection='column'>
-                            <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
+                            <Span fontWeight='500' fontSize='24px' color={theme.textColor?.chatSentBubbleText}>Verification Failed</Span>
                             <Span color={theme.textColor?.encryptionMessageText} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
                             <Section gap='8px' alignItems='start'>
                                 <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
-                                    <Span textAlign='start' alignSelf='start'>Token Gated</Span>
-                                    <Span fontWeight="500" textAlign='start'>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
+                                    <Span  color={theme.textColor?.chatSentBubbleText} textAlign='start' alignSelf='start'>Token Gated</Span>
+                                    <Span fontWeight="500" textAlign='start' color={theme.textColor?.chatSentBubbleText}>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
                             <Section gap='8px'>
@@ -266,7 +272,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                         </Section>
                     </Modal>
                 )}
-                {pgpPrivateKey && (isRules ? verified : true) &&
+                {pgpPrivateKey && 
+                (isRules ? verified : true)
+                // true
+                 &&
                     <>
                         <Section gap="8px" flex="1" position="static">
                             {Emoji &&

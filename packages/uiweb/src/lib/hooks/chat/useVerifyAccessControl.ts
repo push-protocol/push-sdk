@@ -2,6 +2,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useState } from 'react';
 import { ENV } from '../../config';
 import { useChatData } from './useChatData';
+import { setAccessControl } from '../../helpers';
 
 interface VerifyAccessControlParams {
   chatId: string;
@@ -17,6 +18,7 @@ const useVerifyAccessControl = () => {
 
   const { pgpPrivateKey, env, account } = useChatData();
 
+  console.log('Verification control hook');
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
       const { chatId, did } = options || {};
@@ -32,11 +34,7 @@ const useVerifyAccessControl = () => {
           setVerificationSuccessfull(false);
         } else if (response.chatAccess === true) {
           setVerified(true);
-          const timestamp = new Date().getTime();
-          localStorage.setItem(
-            chatId,
-            JSON.stringify(timestamp)
-          );
+          setAccessControl(chatId, false);
         }
         console.log(response);
         if (!response) {
@@ -51,9 +49,17 @@ const useVerifyAccessControl = () => {
         return;
       }
     },
-    [pgpPrivateKey, account]
+    [pgpPrivateKey, account, verificationSuccessfull, verified, setVerified]
   );
-  return { verifyAccessControl, error, loading, verificationSuccessfull, setVerificationSuccessfull, verified, setVerified };
+  return {
+    verifyAccessControl,
+    error,
+    loading,
+    verificationSuccessfull,
+    setVerificationSuccessfull,
+    verified,
+    setVerified,
+  };
 };
 
 export default useVerifyAccessControl;

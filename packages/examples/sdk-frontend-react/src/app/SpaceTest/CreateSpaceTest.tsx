@@ -107,7 +107,7 @@ const CreateSpaceTest = () => {
           numberOfERC20 != null ? Number(numberOfERC20) : undefined,
         signer: librarySigner,
         env,
-        meta: meta,
+        // meta: meta,
         scheduleAt: new Date(scheduleAt),
         scheduleEnd: scheduleEnd ? new Date(scheduleEnd) : null,
       });
