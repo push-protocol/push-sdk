@@ -26,7 +26,7 @@ export const ChatViewBubbles = () => {
 
         const ConversationHash = await PUSHAPI.chat.conversationHash({
             account: `eip155:${account}`,
-            conversationId: '831b1d93f36fa2fce6c3d8c7c41c53335c82ad13cbe05478579af235f10716dc',
+            conversationId: '196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac',
             env: env
         });
         setConversationHash(ConversationHash.threadHash);

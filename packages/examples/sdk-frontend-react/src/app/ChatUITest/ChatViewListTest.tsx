@@ -22,10 +22,10 @@ const ChatViewListTest = () => {
       {/* <Loader show={isLoading} /> */}
 
       <ChatViewListCard    >
-        <ChatViewList chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' limit={10} />
+        <ChatViewList chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' limit={10} />
 
       </ChatViewListCard>
-      <MessageInput chatId='0xe19c4b204a76db09697ea54c9182eba2195542aD' isConnected={true} />
+      <MessageInput chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' isConnected={true} />
     </div>
   );
 };

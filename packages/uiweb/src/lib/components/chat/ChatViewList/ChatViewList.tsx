@@ -143,7 +143,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     (async function () {
-      if (!account && !env && chatId) return;
+      if (!account && !env && !chatId) return;
       const hash = await fetchConversationHash({ conversationId: chatId });
       setConversationHash(hash?.threadHash);
     })();

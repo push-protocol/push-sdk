@@ -318,11 +318,12 @@ export type Data = {
 };
 
 export type ConditionBase = {
-  type: ConditionType;
+  type?: ConditionType;
   category?: string;
   subcategory?: string;
-  data: Data;
+  data?: Data;
   access?: boolean;
+
 };
 
 export type Condition = ConditionBase & {
@@ -334,7 +335,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chatAccess?: {
+  chattingAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }

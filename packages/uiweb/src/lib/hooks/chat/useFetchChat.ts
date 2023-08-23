@@ -20,7 +20,7 @@ const useFetchChat = () => {
       setLoading(true);
       try {
         const chat = await PushAPI.chat.chat({
-          account: account!,
+          account: account ? account : '0x0',
           toDecrypt: pgpPrivateKey ? true : false,
           pgpPrivateKey: String(pgpPrivateKey),
           recipient: chatId,
