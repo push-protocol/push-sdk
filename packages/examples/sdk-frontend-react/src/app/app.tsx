@@ -58,6 +58,8 @@ import RemoveSpeakersFromSpaceTest from './SpaceTest/RemoveSpeakersFromSpaceTest
 import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
+import GetSpaceAccessTest from './SpaceTest/GetSpaceAccessTest';
+
 import SpaceUITest from './SpaceUITest/SpaceUITest';
 import {
   SpaceWidget,
@@ -506,6 +508,10 @@ export function App() {
                       element={<GetSpacesTrendingTest />}
                     />
                     
+                    <Route
+                      path="/getSpaceAccess"
+                      element={<GetSpaceAccessTest />}
+                    />
 
                       {/* spaces ui components routes */}
                       <Route path="spaceWidget" element={<SpaceWidget />} />

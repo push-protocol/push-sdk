@@ -1,9 +1,9 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules } from '../../types';
+import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules, GroupAccess, SpaceAccess } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV, MessageType } from '../../constants';
 import * as AES from './aes';
-import { MessageTypeSpecificMeta } from '../../types/metaTypes';
+import { MessageTypeSpecificObject } from '../../types/messageObjectTypes';
 import { sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
@@ -11,12 +11,7 @@ export interface ISendMessagePayload {
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageObj:
-    | {
-        content: string;
-        meta?: MessageTypeSpecificMeta[MessageType];
-      }
-    | string;
+  messageObj: MessageTypeSpecificObject[MessageType] | string;
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
@@ -73,10 +68,7 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  messageObj: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  },
+  messageObj: MessageTypeSpecificObject[MessageType],
   messageContent: string,
   messageType: string,
   group: GroupDTO | null,
@@ -250,6 +242,28 @@ export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
     chatAccess: undefined,
   };
 }
+
+export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
+  return {
+    spaceAccess: rules.groupAccess,
+  };
+};
+
+export const groupAccessToSpaceAccess = (
+  group: GroupAccess
+): SpaceAccess => {
+  const spaceAccess: SpaceAccess = {
+    spaceAccess: group.groupAccess,
+  };
+
+  // If rules are present in the groupAccess, map them to the spaceAccess
+  if (group.rules) {
+    spaceAccess.rules = convertRulesToSpaceRules(group.rules);
+  }
+
+  return spaceAccess;
+};
+
 
 export const updateGroupPayload = (
   groupName: string,
