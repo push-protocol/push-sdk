@@ -105,7 +105,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           if (!newChatFeed?.groupInformation) {
             setChatStatusText(ChatStatus.FIRST_CHAT);
           }
-          console.log(chatFeed);
           setChatFeed(newChatFeed);
         } else {
           setChatStatusText(ChatStatus.INVALID_CHAT);
@@ -121,10 +120,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setFilteredMessages([
           messagesSinceLastConnection,
         ] as IMessageIPFSWithCID[]);
-        setMessages({
-          messages: [messagesSinceLastConnection],
-          lastThreadHash: messagesSinceLastConnection.cid,
-        });
+        // setMessages({
+        //   messages: [messagesSinceLastConnection],
+        //   lastThreadHash: messagesSinceLastConnection.cid,
+        // });
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
         const newChatViewList = appendUniqueMessages(
@@ -132,10 +131,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           [messagesSinceLastConnection],
           false
         );
-        setMessages({
-          messages: newChatViewList,
-          lastThreadHash: messages!.lastThreadHash,
-        });
+        setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
+        // setMessages({
+        //   messages: newChatViewList,
+        //   lastThreadHash: messages!.lastThreadHash,
+        // });
       }
       scrollToBottom(null);
     }
@@ -240,6 +240,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             chatHistory,
             true
           );
+
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
           setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
@@ -254,11 +255,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
-    const updatedMessageList = messageList.filter((elem) => {
-      return chatFilterList?.some((ele) => {
-        return ele === elem.cid;
-      });
-    });
+    const updatedMessageList = messageList.filter(
+      (msg) => !chatFilterList.includes(msg.cid)
+    );
+
     if (updatedMessageList && updatedMessageList.length) {
       setMessages({
         messages: updatedMessageList,
@@ -266,7 +266,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       });
     }
   };
-  console.log(messages);
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
     const timestampDate = dateToFromNowDaily(chat.timestamp as number);
     dates.add(dateNum);
@@ -301,11 +300,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       }
       onScroll={() => onScroll()}
     >
-      {/* {chatFeed &&
-        chatFeed?.groupInformation &&
-        !chatFeed?.groupInformation?.isPublic && !pgpPrivateKey && */}
-      {/* <Overlay></Overlay> */}
-      {/* } */}
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
         <>

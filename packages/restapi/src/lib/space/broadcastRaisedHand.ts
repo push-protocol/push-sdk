@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import type Space from './Space';
 import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/metaTypes';
+import { META_ACTION } from '../types/messageObjectTypes';
 import { pCAIP10ToWallet } from '../helpers';
 
 export interface BroadcastRaisedHandType {

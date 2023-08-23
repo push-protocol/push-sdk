@@ -268,6 +268,7 @@ console.log(signer)
     [account, library, pgpPrivateKey, env]
   );
 console.log(signer)
+console.log(pgpPrivateKey)
   return (
     <StyledApp>
       <Link className="homeLink" to="/">

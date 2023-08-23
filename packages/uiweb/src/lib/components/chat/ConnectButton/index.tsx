@@ -52,8 +52,8 @@ export const ConnectButtonComp = () => {
   );
   //for walletConnect
   const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
+    appName: 'Push-sdk',
+    projectId: 'e22146926e005c4e513b24024521ef51',
     chains,
   });
 
