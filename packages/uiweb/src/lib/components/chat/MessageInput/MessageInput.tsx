@@ -177,7 +177,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         if (!ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
             console.log("beingnnggg calleddd")
             const groupInfo = await getGroupByID({ groupId: chatId })
-            if(groupInfo?.rules?.chattingAccess) {
+            if(groupInfo?.rules?.chatAccess) {
                 setIsRules(true)
                 console.log(groupInfo?.rules)
             }

@@ -340,7 +340,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chattingAccess?: {
+  chatAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }

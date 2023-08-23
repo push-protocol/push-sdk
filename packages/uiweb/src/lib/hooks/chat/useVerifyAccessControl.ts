@@ -28,9 +28,9 @@ const useVerifyAccessControl = () => {
           env: env,
         });
         setLoading(false);
-        if (response.chattingAccess === false) {
+        if (response.chatAccess === false) {
           setVerificationSuccessfull(false);
-        } else if (response.chattingAccess === true) {
+        } else if (response.chatAccess === true) {
           setVerified(true);
           const timestamp = new Date().getTime();
           localStorage.setItem(

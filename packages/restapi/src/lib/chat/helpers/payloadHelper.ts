@@ -247,7 +247,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
     groupAccess: spaceRules.spaceAccess,
-    chattingAccess: undefined,
+    chatAccess: undefined,
   };
 }
 
