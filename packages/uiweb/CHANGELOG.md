@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.1...uiweb-0.0.1-alpha.2) (2023-08-23)
+
+
+### Bug Fixes
+
+* hide few spaces features ([#622](https://github.com/ethereum-push-notification-service/push-sdk/issues/622)) ([0e2556c](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e2556c6bbe3438cd30851ffdd9764b027f42f6e))
+* merge alpha ([1783d45](https://github.com/ethereum-push-notification-service/push-sdk/commit/1783d45bb3ceab1cce3c6bb19dfbda38c3662a3e))
+* Merge branch 'alpha' into alpha-deployment ([8b50b53](https://github.com/ethereum-push-notification-service/push-sdk/commit/8b50b53eae51729ab9c5202b1750d70c444be829))
+* merge main ([f338fd4](https://github.com/ethereum-push-notification-service/push-sdk/commit/f338fd49707933c65bdcc7736cdd08d6784625ba))
+* **spaces:** broadcast changes and UX fixes ([#674](https://github.com/ethereum-push-notification-service/push-sdk/issues/674)) ([375ebe7](https://github.com/ethereum-push-notification-service/push-sdk/commit/375ebe7f7e757d84df62cd103884e75d04bcc2b0)), closes [#642](https://github.com/ethereum-push-notification-service/push-sdk/issues/642) [#657](https://github.com/ethereum-push-notification-service/push-sdk/issues/657) [#656](https://github.com/ethereum-push-notification-service/push-sdk/issues/656)
+
+
+
 ## [0.0.1-alpha.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.0...uiweb-0.0.1-alpha.1) (2023-08-10)
 
 
