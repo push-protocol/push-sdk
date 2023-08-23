@@ -72,9 +72,9 @@ export const ApproveRequestBubble = ({
       <Span
         alignSelf="center"
         textAlign="left"
-        fontSize="16px"
-        fontWeight="400"
-        color="#000"
+        fontSize={theme.fontSize?.chatReceivedBubbleText}
+        fontWeight={theme.fontWeight?.chatReceivedBubbleText}
+        color={theme.textColor?.chatReceivedBubbleText}
         lineHeight="24px"
       >
         {chatFeed?.groupInformation

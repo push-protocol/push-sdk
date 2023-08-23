@@ -10,7 +10,7 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META, MessageTypeSpecificMeta } from './metaTypes';
+import { MessageTypeSpecificObject } from './messageObjectTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -162,12 +162,7 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageTypeSpecificObject[MessageType] | string;
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -340,7 +335,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chatAccess?: {
+  chattingAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -468,10 +463,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatStartOptionsType {
   messageType: `${MessageType}`;
-  messageObj: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  };
+  messageObj: MessageTypeSpecificObject[MessageType];
   /**
    * @deprecated - To be used for now to provide backward compatibility
    */
@@ -486,10 +478,7 @@ export interface ChatStartOptionsType {
  */
 export interface ChatSendOptionsType {
   messageType?: `${MessageType}`;
-  messageObj?: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  };
+  messageObj?: MessageTypeSpecificObject[MessageType];
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -597,12 +586,7 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageTypeSpecificObject[MessageType] | string;
   /**
    * @deprecated - Use messageObj.content instead
    */

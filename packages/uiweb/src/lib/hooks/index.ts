@@ -8,3 +8,4 @@ export * from './chatAndNotification';
 export * from './useDivOffsetWidth';
 export * from './useDeviceWidthCheck';
 export * from './useGetChatProfile';
+export * from './useMediaQuery';

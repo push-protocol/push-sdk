@@ -3,7 +3,7 @@ import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules } fro
 import { getEncryptedRequest } from './crypto';
 import { ENV, MessageType } from '../../constants';
 import * as AES from './aes';
-import { MessageTypeSpecificMeta } from '../../types/metaTypes';
+import { MessageTypeSpecificObject } from '../../types/messageObjectTypes';
 import { sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
@@ -11,12 +11,7 @@ export interface ISendMessagePayload {
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageObj:
-    | {
-        content: string;
-        meta?: MessageTypeSpecificMeta[MessageType];
-      }
-    | string;
+  messageObj: MessageTypeSpecificObject[MessageType] | string;
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
@@ -73,10 +68,7 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  messageObj: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  },
+  messageObj: MessageTypeSpecificObject[MessageType],
   messageContent: string,
   messageType: string,
   group: GroupDTO | null,
@@ -247,7 +239,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
     groupAccess: spaceRules.spaceAccess,
-    chatAccess: undefined,
+    chattingAccess: undefined,
   };
 }
 

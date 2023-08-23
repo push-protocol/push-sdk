@@ -177,7 +177,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         if (!ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
             console.log("beingnnggg calleddd")
             const groupInfo = await getGroupByID({ groupId: chatId })
-            if(groupInfo?.rules?.chatAccess) {
+            if(groupInfo?.rules) {
                 setIsRules(true)
                 console.log(groupInfo?.rules)
             }
@@ -191,7 +191,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }, [chatId])
 
     return (
-        <Container>
+        <Container theme={theme}>
             {/* {isConnected && (
                 <ConnectButtonComp />
             )} */}
@@ -382,9 +382,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     )
 }
 
-const Container = styled.div`
+const Container = styled.div<IThemeProps>`
   width: 100%;
   overflow: hidden;
+  border:${(props) => props.theme.border?.messageInput};
+  border-radius:${(props) => props.theme.borderRadius?.messageInput};
 `;
 const TypebarSection = styled(Section)`
   gap: 10px;
