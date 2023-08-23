@@ -3,13 +3,14 @@ import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
 
 import { Section,  } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
-import { chatLimit } from '../../../config';
+import { chatLimit, device } from '../../../config';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import { MessageInput } from '../MessageInput';
 import { ChatProfile } from '../ChatProfile';
 import styled from 'styled-components';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 
 
 
@@ -48,12 +49,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
   const theme = useContext(ThemeContext);
 
- 
-
-
-
- 
-
+  const isMobile = useMediaQuery(device.mobileL);
 
 
 
@@ -74,7 +70,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       <Section
         flex="1 1 auto"
         overflow="hidden"
-        padding="0 20px"
+        padding={isMobile?"0 10px":"0 20px"}
         margin="0 0px 10px 0px"
         flexDirection="column"
         justifyContent="start"
