@@ -20,6 +20,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 ) => {
   const {
     chatId,
+    chatFilterList = [],
     messageInput = true,
     chatViewList = true,
     chatProfile = true,
@@ -70,7 +71,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       >
       
 
-        {chatId && chatViewList && <ChatViewList limit={limit} chatId={chatId} />}
+        {chatId && chatViewList && <ChatViewList chatFilterList={chatFilterList} limit={limit} chatId={chatId} />}
       
       </Section>
 

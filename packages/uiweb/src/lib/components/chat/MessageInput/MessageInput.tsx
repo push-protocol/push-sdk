@@ -139,7 +139,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         sendPushMessage(emojiObject.url as string, 'GIF');
         setGifOpen(false);
     }
-
+console.log(signer)
     return (
         <Container>
             {/* {isConnected && (

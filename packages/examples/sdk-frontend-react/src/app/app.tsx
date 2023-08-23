@@ -213,7 +213,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.DEV);
+  const [env, setEnv] = useState<ENV>(ENV.STAGING);
   const [isCAIP, setIsCAIP] = useState(false);
   const [signer, setSigner] = useState();
 
@@ -267,7 +267,7 @@ console.log(signer)
       }),
     [account, library, pgpPrivateKey, env]
   );
-
+console.log(signer)
   return (
     <StyledApp>
       <Link className="homeLink" to="/">
@@ -308,7 +308,7 @@ console.log(signer)
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider   env={env} theme={darkChatTheme}>
+                <ChatUIProvider account={account} signer={signer} pgpPrivateKey={pgpPrivateKey} env={env} theme={darkChatTheme}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route

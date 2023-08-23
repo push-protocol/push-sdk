@@ -11,6 +11,7 @@ export interface IChatViewListProps {
 export interface IChatViewComponentProps {
   messageInput?: boolean;
   chatViewList?: boolean;
+  chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
   chatId: string; //need confirmation on this
   limit?: number;

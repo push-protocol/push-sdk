@@ -2,7 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ChatDataContext } from '../../../context';
 import { IChatViewListProps } from '../exportedTypes';
 import { chatLimit } from '../../../config';
-import { IFeeds, IMessageIPFS, IMessageIPFSWithCID,  } from '@pushprotocol/restapi';
+import {
+  IFeeds,
+  IMessageIPFS,
+  IMessageIPFSWithCID,
+} from '@pushprotocol/restapi';
 import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
 import styled from 'styled-components';
 import { Div, Section, Span, Spinner } from '../../reusables';
@@ -35,7 +39,7 @@ import { ApproveRequestBubble } from './ApproveRequestBubble';
  */
 interface IThemeProps {
   theme?: IChatTheme;
-  blur:boolean;
+  blur: boolean;
 }
 const ChatStatus = {
   FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
@@ -45,7 +49,7 @@ const ChatStatus = {
 export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
-  const { chatId, limit = chatLimit,chatFilterList=[] } = options || {};
+  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
   const { pgpPrivateKey, account } = useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -114,8 +118,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       if (!Object.keys(messages || {}).length) {
-        setFilteredMessages( [messagesSinceLastConnection] as IMessageIPFSWithCID[],
-          );
+        setFilteredMessages([
+          messagesSinceLastConnection,
+        ] as IMessageIPFSWithCID[]);
         setMessages({
           messages: [messagesSinceLastConnection],
           lastThreadHash: messagesSinceLastConnection.cid,
@@ -138,7 +143,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     (async function () {
-      if (!account && !env) return;
+      if (!account && !env && chatId) return;
       const hash = await fetchConversationHash({ conversationId: chatId });
       setConversationHash(hash?.threadHash);
     })();
@@ -235,12 +240,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             chatHistory,
             true
           );
-          setFilteredMessages( newChatViewList as IMessageIPFSWithCID[],
-          );
+          setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-          setFilteredMessages( chatHistory as IMessageIPFSWithCID[],
-            );
-         
+          setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
         }
       }
     }
@@ -251,18 +253,20 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     dateNum: string;
   };
 
-  const setFilteredMessages = (messageList:Array<IMessageIPFSWithCID>)=> {
-   const updatedMessageList = messageList.filter((elem) => {
-    return chatFilterList.some((ele) => {
-    return ele === elem.cid;
+  const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
+    const updatedMessageList = messageList.filter((elem) => {
+      return chatFilterList?.some((ele) => {
+        return ele === elem.cid;
       });
     });
-
-    setMessages({
-      messages: updatedMessageList,
-      lastThreadHash: updatedMessageList[0].link,
-    });
-  }
+    if (updatedMessageList && updatedMessageList.length) {
+      setMessages({
+        messages: updatedMessageList,
+        lastThreadHash: updatedMessageList[0].link,
+      });
+    }
+  };
+  console.log(messages);
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
     const timestampDate = dateToFromNowDaily(chat.timestamp as number);
     dates.add(dateNum);
@@ -287,16 +291,21 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={!!(chatFeed &&
-        (chatFeed?.groupInformation &&
-        !chatFeed?.groupInformation?.isPublic) && !pgpPrivateKey)}
+      blur={
+        !!(
+          chatFeed &&
+          chatFeed?.groupInformation &&
+          !chatFeed?.groupInformation?.isPublic &&
+          !pgpPrivateKey
+        )
+      }
       onScroll={() => onScroll()}
     >
       {/* {chatFeed &&
         chatFeed?.groupInformation &&
         !chatFeed?.groupInformation?.isPublic && !pgpPrivateKey && */}
-        {/* <Overlay></Overlay> */}
-        {/* } */}
+      {/* <Overlay></Overlay> */}
+      {/* } */}
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
         <>
@@ -382,12 +391,11 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
-  ${({ blur }) => blur && `
+  ${({ blur }) =>
+    blur &&
+    `
   filter: blur(12px);
   `}
-  
 `;
 
-const Overlay = styled.div`
- 
-`;
+const Overlay = styled.div``;
