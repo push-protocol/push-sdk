@@ -11,7 +11,15 @@ import {
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 import { getGroup } from './getGroup';
-import { REACTION_SYMBOL, REACTION_TYPE } from '../types/metaTypes';
+import {
+  MessageTypeSpecificObject,
+  REACTION_SYMBOL,
+} from '../types/messageObjectTypes';
+import {
+  messageObjSchema,
+  metaMessageObjSchema,
+  reationMessageObjSchema,
+} from '../validations/messageObject';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -48,7 +56,9 @@ export const send = async (
     // OVERRIDE CONTENT FOR REACTION MESSAGE
     if (messageType === MessageType.REACTION && messageObj) {
       messageObj.content =
-        REACTION_SYMBOL[messageObj?.meta?.action as REACTION_TYPE];
+        REACTION_SYMBOL[
+          (messageObj as MessageTypeSpecificObject[MessageType.REACTION]).action
+        ];
     }
 
     // possible for initial types 'Text', 'Image', 'File', 'GIF', 'MediaEmbed'
@@ -139,32 +149,26 @@ const validateOptions = async (options: ChatSendOptionsType) => {
       messageType === MessageType.FILE ||
       messageType === MessageType.MEDIA_EMBED ||
       messageType === MessageType.GIF) &&
-    messageObj &&
-    messageObj.meta
+    messageObj
   ) {
-    throw new Error(
-      `Unable to parse this messageType. Meta is not allowed for this messageType.`
-    );
-  }
-
-  if (messageType === MessageType.META) {
-    if (
-      !(messageObj instanceof Object) ||
-      !(messageObj.meta instanceof Object) ||
-      !('action' in messageObj.meta) ||
-      !('info' in messageObj.meta) ||
-      !(messageObj.meta.info.affected instanceof Array)
-    ) {
+    const { error } = messageObjSchema.validate(messageObj);
+    if (error) {
       throw new Error(
         `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );
     }
-  } else if (messageType === MessageType.REACTION) {
-    if (
-      !(messageObj instanceof Object) ||
-      !(messageObj.meta instanceof Object) ||
-      !('action' in messageObj.meta)
-    ) {
+  }
+
+  if (messageType === MessageType.META && messageObj) {
+    const { error } = metaMessageObjSchema.validate(messageObj);
+    if (error) {
+      throw new Error(
+        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
+      );
+    }
+  } else if (messageType === MessageType.REACTION && messageObj) {
+    const { error } = reationMessageObjSchema.validate(messageObj);
+    if (error) {
       throw new Error(
         `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );

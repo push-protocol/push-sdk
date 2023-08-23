@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
-import type { ParsedResponseType, IFeeds, } from '@pushprotocol/restapi';
+import type { ParsedResponseType, IFeeds, Rules, } from '@pushprotocol/restapi';
 import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
@@ -119,3 +119,21 @@ export interface FileMessageContent {
   size: number
 }
 export type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
+
+export interface IGroup {
+  members: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  pendingMembers: { wallet: string, publicKey: string, isAdmin: boolean, image: string }[],
+  contractAddressERC20: string | null,
+  numberOfERC20: number,
+  contractAddressNFT: string | null,
+  numberOfNFTTokens: number,
+  verificationProof: string,
+  groupImage: string | null,
+  groupName: string,
+  isPublic: boolean,
+  groupDescription: string | null,
+  groupCreator: string,
+  chatId: string,
+  groupType?:string | undefined,
+  rules?: Rules | null,
+}

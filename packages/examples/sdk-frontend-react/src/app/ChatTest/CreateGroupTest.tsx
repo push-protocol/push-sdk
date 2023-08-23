@@ -106,7 +106,26 @@ const CreateGroupTest = () => {
         signer: librarySigner,
         env,
         meta: meta,
-        rules: rules ? JSON.parse(rules) as Rules : undefined
+        rules: {
+          'chatAccess': {
+            'conditions': [
+              {
+                'all': [
+                  {
+                    'type': PushAPI.ConditionType.PUSH,
+                    'category': 'ERC20',
+                    'subcategory': 'holder',
+                    'data': {
+                      'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                      'amount': 1,
+                      'decimals': 18
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
       });
 
       setSendResponse(response);

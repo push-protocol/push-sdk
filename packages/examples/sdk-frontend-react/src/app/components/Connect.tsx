@@ -65,7 +65,7 @@ const Disconnect = styled(StyledButton)`
   background: rgb(226, 8, 128);
 `;
 
-const ConnectButton = () => {
+const ConnectButtonComp = () => {
   const { active, account, activate, deactivate, chainId } = useWeb3React();
 
   async function connect() {
@@ -119,4 +119,4 @@ const ConnectButton = () => {
   );
 };
 
-export default ConnectButton;
+export default ConnectButtonComp;
