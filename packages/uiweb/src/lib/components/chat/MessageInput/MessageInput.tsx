@@ -1,5 +1,5 @@
 import { useChatData, useClickAway, useDeviceWidthCheck } from "../../../hooks";
-import type { FileMessageContent } from "../../../types";
+import type { FileMessageContent, IGroup } from "../../../types";
 import type { ChatMainStateContextType } from "../../../context/chatAndNotification/chat/chatMainStateContext";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import { GIFType, IChatTheme, MessageInputProps } from "../exportedTypes";
@@ -23,6 +23,9 @@ import TokenGatedIcon from "../../../icons/Token-Gated.svg";
 import { Modal } from "../helpers/Modal";
 import { Image } from "../../reusables";
 import { ConnectButtonComp } from "../ConnectButton";
+import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
+import { ethers } from "ethers";
+import { pCAIP10ToWallet, setAccessControl } from "../../../helpers";
 
 /**
  * @interface IThemeProps
@@ -40,7 +43,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const modalRef = useRef(null);
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
-    // const [verified, setVerified] = useState<boolean>(false);
+    const [isRules, setIsRules] = useState<boolean>(false)
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -49,7 +52,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const { sendMessage, loading } = usePushSendMessage();
     const { verificationSuccessfull, verifyAccessControl, setVerificationSuccessfull, verified, setVerified } = useVerifyAccessControl();
     const { account } = useChatData()
-    const { pgpPrivateKey, signer,setPgpPrivateKey } = useChatData();
+    const { pgpPrivateKey, signer, setPgpPrivateKey } = useChatData();
+    const { getGroupByID } = useGetGroupByID();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -87,12 +91,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             const storedTimestamp = JSON.parse(storedTimestampJSON);
             const currentTimestamp = new Date().getTime();
             const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+            console.log(twentyFourHoursInMilliseconds)
 
-            if (currentTimestamp - storedTimestamp < twentyFourHoursInMilliseconds) {
-                console.log(currentTimestamp - storedTimestamp)
+            if (Math.abs(currentTimestamp - storedTimestamp) < twentyFourHoursInMilliseconds) {
+                console.log(Math.abs(currentTimestamp - storedTimestamp))
                 setVerified(true);
             } else {
                 setVerified(false);
+                setAccessControl(chatId, true)
             }
         }
     }, [chatId, verified])
@@ -145,11 +151,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
 
     const sendPushMessage = async (content: string, type: string) => {
         try {
-            await sendMessage({
+            const sendTextMessage = await sendMessage({
                 message: content,
                 chatId,
                 messageType: type as any,
             });
+            console.log(sendTextMessage, "messageee");
         } catch (error) {
             console.log(error);
         }
@@ -167,7 +174,25 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         sendPushMessage(emojiObject.url as string, 'GIF');
         setGifOpen(false);
     }
-console.log(signer)
+
+    const checkIfrules = async() => {
+        if (!ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
+            console.log("beingnnggg calleddd")
+            const groupInfo = await getGroupByID({ groupId: chatId })
+            if(groupInfo?.rules) {
+                setIsRules(true)
+                console.log(groupInfo?.rules)
+            }
+            console.log(groupInfo, "groupInfooooo")
+        }
+    }
+    console.log(verificationSuccessfull, "verrifficagtionnn")
+
+    useEffect(() => {
+        console.log(chatId, "chatIdddd")
+        checkIfrules();
+    }, [chatId])
+
     return (
         <Container theme={theme}>
             {/* {isConnected && (
@@ -184,9 +209,9 @@ console.log(signer)
             >
                 {!pgpPrivateKey && isConnected && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
-                    padding="8px"
+                        padding="8px"
                     >
-                       {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                        {!signer && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
                         </Span>}
                         <ConnectButtonComp />
@@ -194,7 +219,10 @@ console.log(signer)
                 )
                 }
 
-                {pgpPrivateKey && !verified && (
+                {pgpPrivateKey && 
+                !verified
+                // verified  
+                && isRules && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
@@ -210,13 +238,13 @@ console.log(signer)
                 {pgpPrivateKey && !verificationSuccessfull && (
                     <Modal width='439px'>
                         <Section padding="10px" theme={theme} gap='32px' flexDirection='column'>
-                            <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
+                            <Span fontWeight='500' fontSize='24px' color={theme.textColor?.chatSentBubbleText}>Verification Failed</Span>
                             <Span color={theme.textColor?.encryptionMessageText} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
                             <Section gap='8px' alignItems='start'>
                                 <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
-                                    <Span textAlign='start' alignSelf='start'>Token Gated</Span>
-                                    <Span fontWeight="500" textAlign='start'>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
+                                    <Span  color={theme.textColor?.chatSentBubbleText} textAlign='start' alignSelf='start'>Token Gated</Span>
+                                    <Span fontWeight="500" textAlign='start' color={theme.textColor?.chatSentBubbleText}>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
                             <Section gap='8px'>
@@ -244,7 +272,10 @@ console.log(signer)
                         </Section>
                     </Modal>
                 )}
-                {pgpPrivateKey && verified &&
+                {pgpPrivateKey && 
+                (isRules ? verified : true)
+                // true
+                 &&
                     <>
                         <Section gap="8px" flex="1" position="static">
                             {Emoji &&
@@ -255,7 +286,7 @@ console.log(signer)
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon color={theme.iconColor?.emoji}/>
+                                    <EmojiIcon color={theme.iconColor?.emoji} />
                                 </Div>
                             }
                             {showEmojis && (
@@ -269,7 +300,7 @@ console.log(signer)
                                         width={isMobile ? 260 : 320}
                                         height={370}
                                         onEmojiClick={addEmoji}
-                                        
+
                                     />
                                 </Section>
                             )}
@@ -331,7 +362,7 @@ console.log(signer)
                                             type="file"
                                             ref={fileUploadInputRef}
                                             onChange={(e) => uploadFile(e)}
-                                            
+
                                         />
                                     </>
                                 )}

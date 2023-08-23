@@ -107,16 +107,16 @@ const CreateGroupTest = () => {
         env,
         meta: meta,
         rules: {
-          'chattingAccess': {
+          'chatAccess': {
             'conditions': [
               {
                 'all': [
                   {
                     'type': PushAPI.ConditionType.PUSH,
                     'category': 'ERC20',
-                    'subcategory': 'token_holder',
+                    'subcategory': 'holder',
                     'data': {
-                      'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                      'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                       'amount': 1,
                       'decimals': 18
                     }

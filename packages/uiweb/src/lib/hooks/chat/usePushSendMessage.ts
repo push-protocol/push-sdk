@@ -1,8 +1,9 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-
+import useVerifyAccessControl from './useVerifyAccessControl';
 import { useChatData } from '..';
 import { ENV } from '../../config';
+import { setAccessControl } from '../../helpers';
 
 interface SendMessageParams {
   message: string;
@@ -14,6 +15,8 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { verificationSuccessfull, setVerificationSuccessfull, setVerified } =
+    useVerifyAccessControl();
   const { pgpPrivateKey, env, account } = useChatData();
 
   const sendMessage = useCallback(
@@ -30,11 +33,17 @@ const usePushSendMessage = () => {
           env: env,
         });
         setLoading(false);
+        console.log(response);
         if (!response) {
           return false;
         }
         return;
       } catch (error: Error | any) {
+        if (error.message.includes('400')) {
+          setAccessControl(chatId, true);
+          setVerified(false);
+          setVerificationSuccessfull(false);
+        }
         setLoading(false);
         setError(error.message);
         console.log(error);
