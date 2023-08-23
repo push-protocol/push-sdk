@@ -1655,6 +1655,7 @@ const user = await PushAPI.user.create({
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
+  origin? : string | null;
 })
 ```
 
@@ -1666,6 +1667,8 @@ const user = await PushAPI.user.create({
 | version        | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
 | additionalMeta | Additional meta data for user                                 |
 | progressHook   | Progress hook                                                 |
+| origin         | Origin through which user is created                                               |
+
 
 Example creating normal user for chat:
 
