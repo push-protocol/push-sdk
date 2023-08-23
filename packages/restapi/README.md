@@ -3435,24 +3435,23 @@ PUSH conditions may relate to:
 - **ERC721**: Needs an address and an amount, and can only have the `owner` subcategory.
 - **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory.
 - **CustomEndpoint**: The `CustomEndpoint` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application. As of now the Get API is supported and should return the 200 OK if the user is allowed to access.
-
- {
-  "type": "PUSH",
-  "category": "CustomEndpoint",
-  "subcategory": "GET",
-  "data": {
-    "url": "https://api.example.com/user/{{user_address}}/validate"
+<pre>
+  {
+    "type": "PUSH",
+    "category": "CustomEndpoint",
+    "subcategory": "GET",
+    "data": {
+      "url": "https://api.example.com/user/{{user_address}}/validate"
+    }
   }
-}
-
+</pre>
 Explanation:
 
-type: Represents the type of the condition, in this case "PUSH".
-category: Specifies that this is a condition based on a custom endpoint.
-subcategory: Represents the HTTP method for the request, in this case, a "GET" request.
-data: Contains the properties for the condition.
-url: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
-
+- ***type***: Represents the type of the condition, in this case "PUSH".
+- ***category***: Specifies that this is a condition based on a custom endpoint.
+- ***subcategory***: Represents the HTTP method for the request, in this case, a "GET" request.
+- ***data***: Contains the properties for the condition.
+- ***url***: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
 
 #### GUILD Conditions
 
