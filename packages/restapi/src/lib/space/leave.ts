@@ -16,9 +16,6 @@ export async function leave(this: Space): Promise<void> {
           data: {},
         },
       });
-      this.onDisconnect({
-        peerAddress: address
-      });
     });
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${stop.name} -:  `, err);

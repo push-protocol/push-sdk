@@ -507,7 +507,6 @@ export class Video {
         // if (this.data.incoming[0].retryCount >= 5) {
         //   console.log('Max retries exceeded, please try again.');
         this.disconnect({ peerAddress: recipientAddress });
-        this.onDisconnect({ peerAddress: recipientAddress });
         // }
 
         // retrying in case of connection error
@@ -769,11 +768,6 @@ export class Video {
             ? peerAddress
             : this.data.incoming[0].address,
         });
-        this.onDisconnect({ 
-          peerAddress: peerAddress
-          ? peerAddress
-          : this.data.incoming[0].address, 
-        });
         // }
 
         // retrying in case of connection error
@@ -875,6 +869,10 @@ export class Video {
 
       // reset the state
       this.setData(() => initVideoCallData);
+
+      // fire metaMessage for removing address from mesh
+      if (peerAddress)
+        this.onDisconnect({ peerAddress: peerAddress });
     } catch (err) {
       console.log('error in disconnect', err);
     }
