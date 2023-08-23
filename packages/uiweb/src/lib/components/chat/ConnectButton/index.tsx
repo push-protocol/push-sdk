@@ -1,14 +1,11 @@
 import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
-import * as PushAPI from '@pushprotocol/restapi';
-import { useContext, useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ThemeContext } from '../theme/ThemeProvider';
+
 import { ConnectButtonSub } from './ConnectButton';
 
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, useAccount, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   mainnet,
   polygon,
@@ -23,7 +20,7 @@ import {
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-import { ALCHEMY_API_KEY } from '../../../config';
+import { ALCHEMY_API_KEY, RAINBOW_APP_NAME, RAINBOW_PROJECT_ID } from '../../../config';
 import { useWalletClient } from 'wagmi';
 
 /**
@@ -50,10 +47,12 @@ export const ConnectButtonComp = () => {
     ],
     [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
   );
+  const {signer} = useChatData()
+
   //for walletConnect
   const { connectors } = getDefaultWallets({
-    appName: 'Push-sdk',
-    projectId: 'e22146926e005c4e513b24024521ef51',
+    appName: RAINBOW_APP_NAME,
+    projectId: RAINBOW_PROJECT_ID,
     chains,
   });
 

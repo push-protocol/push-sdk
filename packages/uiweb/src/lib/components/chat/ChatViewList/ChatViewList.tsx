@@ -168,6 +168,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       messages?.messages.length &&
       messages?.messages.length <= limit
     ) {
+      setChatStatusText('');
       scrollToBottom(null);
     }
   }, [messages]);
