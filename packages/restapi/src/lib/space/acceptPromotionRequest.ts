@@ -10,7 +10,7 @@ import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
-import { META_ACTION } from '../types/metaTypes';
+import { META_ACTION } from '../types/messageObjectTypes';
 import { AdminPeer } from '../types';
 
 export interface IAcceptPromotionRequestType {
@@ -38,7 +38,7 @@ export async function acceptPromotionRequest(
     signer: this.signer,
     pgpPrivateKey: this.pgpPrivateKey,
     speakers: [pCAIP10ToWallet(promoteeAddress)],
-    env: this.env
+    env: this.env,
   });
 
   // get old live space data
@@ -51,15 +51,17 @@ export async function acceptPromotionRequest(
 
   // update the metamessage
   const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-    const listnerIndex = draft.listeners.findIndex((listner) => listner.address === pCAIP10ToWallet(promoteeAddress));
-    if (listnerIndex >   -1) draft.listeners[listnerIndex].handRaised = false;
+    const listnerIndex = draft.listeners.findIndex(
+      (listner) => listner.address === pCAIP10ToWallet(promoteeAddress)
+    );
+    if (listnerIndex > -1) draft.listeners[listnerIndex].handRaised = false;
 
     // convert listener to speaker type (ListenerPeer -> AdminPeer)
     const promotedListener: AdminPeer = {
       address: draft.listeners[listnerIndex].address,
       emojiReactions: draft.listeners[listnerIndex].emojiReactions,
       audio: true,
-    }
+    };
 
     // remove listener from speaker array
     draft.listeners.splice(listnerIndex, 1);
