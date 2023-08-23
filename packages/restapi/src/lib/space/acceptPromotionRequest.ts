@@ -1,17 +1,11 @@
-import { produce } from 'immer';
-
 import type Space from './Space';
 import { addSpeakers } from './addSpeakers';
-import getLiveSpaceData from './helpers/getLiveSpaceData';
-import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 
 import { pCAIP10ToWallet } from '../helpers';
 import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
-import { META_ACTION } from '../types/messageObjectTypes';
-import { AdminPeer } from '../types';
 
 export interface IAcceptPromotionRequestType {
   signalData: any;

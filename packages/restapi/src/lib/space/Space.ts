@@ -28,7 +28,6 @@ import {
   SpaceSpecificData,
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
-import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { META_ACTION } from '../types/messageObjectTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
@@ -124,30 +123,34 @@ export class Space extends Video {
           addToMergedStream(this.mergedStream!, receivedStream);
 
           // update live space info
-          const oldLiveSpaceData = await getLiveSpaceData({
-            localAddress: this.data.local.address,
-            pgpPrivateKey: this.pgpPrivateKey,
-            env: this.env,
-            spaceId: this.spaceSpecificData.spaceId,
-          });
-          const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-            // check if the address was a listener
-            const listenerIndex = draft.listeners.findIndex(
-              (listener) => listener.address === senderAddress
-            );
+          const updatedLiveSpaceData = produce(
+            this.spaceSpecificData.liveSpaceData,
+            (draft) => {
+              // check if the address was a listener
+              const listenerIndex =
+                this.spaceSpecificData.liveSpaceData.listeners.findIndex(
+                  (listener) => listener.address === senderAddress
+                );
 
-            // TODO: Create distinction between speakers and co hosts
-            draft.speakers.push({
-              address: senderAddress,
-              audio,
-              emojiReactions:
-                listenerIndex > -1
-                  ? draft.listeners[listenerIndex].emojiReactions
-                  : null,
-            });
+              // TODO: Create distinction between speakers and co hosts
+              draft.speakers.push({
+                address: senderAddress,
+                audio,
+                emojiReactions:
+                  listenerIndex > -1
+                    ? this.spaceSpecificData.liveSpaceData.listeners[
+                        listenerIndex
+                      ].emojiReactions
+                    : null,
+              });
 
-            if (listenerIndex > -1) draft.listeners.splice(listenerIndex, 1);
-          });
+              if (listenerIndex > -1) draft.listeners.splice(listenerIndex, 1);
+            }
+          );
+          this.setSpaceSpecificData(() => ({
+            ...this.spaceSpecificData,
+            liveSpaceData: updatedLiveSpaceData,
+          }));
           await sendLiveSpaceData({
             liveSpaceData: updatedLiveSpaceData,
             pgpPrivateKey: this.pgpPrivateKey,
@@ -156,10 +159,6 @@ export class Space extends Video {
             signer: this.signer,
             action: META_ACTION.PROMOTE_TO_ADMIN, // TODO: Add a meta action for SPEAKER_JOINED
           });
-          this.setSpaceSpecificData(() => ({
-            ...this.spaceSpecificData,
-            liveSpaceData: updatedLiveSpaceData,
-          }));
         }
       },
       setData: function () {
