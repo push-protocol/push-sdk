@@ -16,7 +16,6 @@ export interface ChatCreateSpaceType extends EnvOptionsType {
   contractAddressERC20?: string;
   numberOfERC20?: number;
   pgpPrivateKey?: string;
-  meta?: string;
   scheduleAt: Date;
   scheduleEnd?: Date | null;
   rules?: SpaceRules | null;
@@ -37,7 +36,6 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
     numberOfERC20,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
-    meta,
     scheduleAt,
     scheduleEnd,
     rules,
@@ -60,7 +58,6 @@ export async function create(options: ChatCreateSpaceType): Promise<SpaceDTO> {
       numberOfERC20: numberOfERC20,
       env,
       pgpPrivateKey,
-      meta: meta,
       groupType: 'spaces',
       scheduleAt: scheduleAt,
       scheduleEnd: scheduleEnd,

@@ -900,28 +900,33 @@ export class Video {
     if (this.data.local.audio !== state) {
       // need to change the audio state
 
-      // signal all the connected peers that the local peer has changed their audio state
+      // Signal all the connected peers that the local peer has changed their audio state
       for (const incomingPeer of this.data.incoming) {
-        if (incomingPeer.status === VideoCallStatus.CONNECTED) {
-          this.peerInstances[incomingPeer.address]?.send(
-            JSON.stringify({ type: 'isAudioOn', value: state })
-          );
+        if (incomingPeer.status === VideoCallStatus.CONNECTED && this.peerInstances[incomingPeer.address]) {
+            try {
+                this.peerInstances[incomingPeer.address].send(
+                    JSON.stringify({ type: 'isAudioOn', value: state })
+                );
+            } catch (error) {
+                console.error("Error sending data:", error);
+            }
         }
       }
-      if (this.data.local.stream) {
-        if (state) {
-          restartAudioStream(this.data.local.stream);
-        } else {
-          stopAudioStream(this.data.local.stream);
+
+        if (this.data.local.stream) {
+            if (state) {
+                restartAudioStream(this.data.local.stream);
+            } else {
+                stopAudioStream(this.data.local.stream);
+            }
+            this.setData((oldData) => {
+                return produce(oldData, (draft) => {
+                    draft.local.audio = state;
+                });
+            });
         }
-        this.setData((oldData) => {
-          return produce(oldData, (draft) => {
-            draft.local.audio = state;
-          });
-        });
-      }
     }
-  }
+}
 
   // helper functions
 
