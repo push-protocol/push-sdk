@@ -327,6 +327,7 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
+
 };
 
 export type Condition = ConditionBase & {

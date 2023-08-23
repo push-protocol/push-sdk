@@ -23,7 +23,7 @@ import { ethers } from "ethers";
 import { IChatProfile, IToast, OptionProps } from "../exportedTypes";
 import { InfuraAPIKey, allowedNetworks, device } from "../../../config";
 import Toast from "../helpers/Toast";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import { createBlockie } from "../../space/helpers/blockies";
 // import { NewToast } from "../helpers/NewToast";
 import { ToastContainer, toast } from 'react-toastify';
@@ -136,12 +136,12 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
             <Container theme={theme}>
                 {chatInfo || groupInfo ? (
                     <Image src={isGroup ? groupInfo?.groupImage ?? GreyImage : chatInfo?.profile?.picture ?? createBlockie?.(chatId)?.toDataURL()
-            ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />
+            ?.toString()} height="48px" maxHeight="48px" width='48px' borderRadius="100%" />
                 ) : (<Image src={createBlockie?.(chatId)?.toDataURL()
-                    ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />)}
+                    ?.toString()} height="48px" maxHeight="48px" width='48px' borderRadius="100%" />)}
                 
 
-                <Span color={theme.textColorPrimary} fontSize="17px" margin="0 0 0 10px">
+                <Span color={theme.textColor?.chatProfileText} fontSize="17px" margin="0 0 0 10px">
                     {isGroup ? groupInfo?.groupName : ensName ? `${ensName} (${isMobile ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true) : chatId})`: chatInfo ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true) : shortenText(chatId,6, true)}
                 
                 </Span>
@@ -175,8 +175,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
 
 const Container = styled.div`
   width: 100%;
-  background: ${(props) => props.theme.bgColorPrimary};
-  border-radius: 32px;
+  background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
+  border:${(props) => props.theme.border?.chatProfile};
+  border-radius:${(props) => props.theme.borderRadius?.chatProfile};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -204,7 +205,7 @@ const DropDownBar = styled.div`
     min-width: 140px;
     color: rgb(101, 119, 149);
     border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
-    background: ${(props) => props.theme.bgColorPrimary};
+    background: ${(props) => props.theme.backgroundColor.chatReceivedBubbleBackground};
     z-index: 10;
     border-radius: 16px;
 `;

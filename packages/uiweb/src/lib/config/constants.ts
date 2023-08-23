@@ -17,6 +17,9 @@ export const Constants = {
   
 };
 
+export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
+export const RAINBOW_PROJECT_ID = 'e22146926e005c4e513b24024521ef51';
+export const RAINBOW_APP_NAME = 'Push-sdk';
 export const NETWORK_DETAILS = {
   5: {
     network: "goerli",

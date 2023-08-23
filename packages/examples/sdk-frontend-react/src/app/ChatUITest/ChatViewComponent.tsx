@@ -4,10 +4,11 @@ import { Section } from '../components/StyledComponents';
 
 import { ChatViewComponent } from '@pushprotocol/uiweb';
 
-
 const ChatViewComponentTest = () => {
-
-
+  const chatFilterList = [
+    'bafyreidesy6f4iu34eqccmqh55g35wu36lvlz42c63ivtmgjjhezlzdqta',
+    'bafyreig3gs4tpwxumiz5fxypyt4omlxhvrvuj66kfoyioeshawlau6lgem',
+  ];
 
   return (
     <div>
@@ -16,7 +17,7 @@ const ChatViewComponentTest = () => {
       {/* <Loader show={isLoading} /> */}
     <ChatViewComponentCard>
         
-      <ChatViewComponent chatId='0xCD0DAdAb45bAF9a06ce1279D1342EcC3F44845af' limit={10}/>
+      <ChatViewComponent onClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='c4828a375fd261577927a9d73fe3fa30204c6667a3adbc345e010eccf5ec740e' limit={10}/>
       </ChatViewComponentCard>
     </div>
   );
@@ -24,7 +25,6 @@ const ChatViewComponentTest = () => {
 
 export default ChatViewComponentTest;
 
-
 const ChatViewComponentCard = styled(Section)`
-height:60vh;
+  height: 60vh;
 `;

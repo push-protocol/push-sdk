@@ -25,7 +25,7 @@ const EncryptionMessageContent = {
         padding="10px"
         alignSelf="center"
         borderRadius="12px"
-        background={theme.bgColorPrimary}
+        background={theme.backgroundColor?.encryptionMessageBackground}
         margin="10px 10px 0px"
         width={isMobile ? '80%' : 'fit-content'}
       >
@@ -35,7 +35,7 @@ const EncryptionMessageContent = {
           <Span
             fontSize="13px"
             margin="0 0 0 5px"
-            color={theme.textColorSecondary}
+            color={theme.textColor?.encryptionMessageText}
             fontWeight="400"
             textAlign="left"
           >

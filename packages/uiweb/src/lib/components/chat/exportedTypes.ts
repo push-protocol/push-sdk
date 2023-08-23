@@ -4,12 +4,14 @@ import { IGroup } from '../../types'
 
 export interface IChatViewListProps {
   chatId: string;
+  chatFilterList?: Array<string>;
   limit?: number;
 }
 
 export interface IChatViewComponentProps {
   messageInput?: boolean;
   chatViewList?: boolean;
+  chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
   chatId: string; //need confirmation on this
   limit?: number;
@@ -17,6 +19,7 @@ export interface IChatViewComponentProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
+  onClick?: () => void;
 }
 
 export interface IChatProfile {
@@ -63,6 +66,7 @@ export interface MessageInputProps {
   File?: boolean;
   Image?: boolean;
   isConnected?: boolean;
+  onClick?: () => void;
 }
 
 export type UpdateGroupType = {

@@ -56,9 +56,9 @@ export const ApproveRequestBubble = ({
   };
   return (
     <Section
-      color={theme.textColorPrimary}
+      color={theme.textColor?.chatReceivedBubbleText}
       gap="10px"
-      background={theme.chatBubblePrimaryBgColor}
+      background={theme.backgroundColor?.chatReceivedBubbleBackground}
       padding="8px 12px"
       margin="7px 0"
       borderRadius=" 0px 12px 12px 12px"
@@ -72,9 +72,9 @@ export const ApproveRequestBubble = ({
       <Span
         alignSelf="center"
         textAlign="left"
-        fontSize="16px"
-        fontWeight="400"
-        color="#000"
+        fontSize={theme.fontSize?.chatReceivedBubbleText}
+        fontWeight={theme.fontWeight?.chatReceivedBubbleText}
+        color={theme.textColor?.chatReceivedBubbleText}
         lineHeight="24px"
       >
         {chatFeed?.groupInformation
@@ -103,9 +103,9 @@ const Button = styled.button<IThemeProps>`
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  background: ${(props) => props.theme.accentBgColor};
+  background: ${(props) => props.theme.backgroundColor.buttonBackground};
   border: none;
-  color: white;
+  color:  ${(props) => props.theme.textColor.buttonText};
   width: 100%;
   font-size: 16px;
   font-weight: 600;

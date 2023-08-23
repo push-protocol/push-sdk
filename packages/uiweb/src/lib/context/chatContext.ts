@@ -1,4 +1,4 @@
-import { Env,IMessageIPFS, IUser } from "@pushprotocol/restapi";
+import { Env,IMessageIPFS, IUser, SignerType } from "@pushprotocol/restapi";
 import { Constants } from "../config";
 import { createContext } from "react";
 
@@ -8,6 +8,8 @@ export interface IChatDataContextValues {
     setAccount: React.Dispatch<React.SetStateAction<string| null>>;
     pgpPrivateKey: string | null;
     setPgpPrivateKey: React.Dispatch<React.SetStateAction<string | null>>;
+    signer: SignerType | undefined;
+    setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
     env: Env;
     setEnv: React.Dispatch<React.SetStateAction<Env>>;
     pushChatSocket: any;
@@ -21,6 +23,10 @@ export interface IChatDataContextValues {
 export const initialChatDataContextValues: IChatDataContextValues = {
     account: null,
     setAccount: () => {
+      /**/
+    },
+    signer: undefined,
+    setSigner: () => {
       /**/
     },
     pgpPrivateKey: '',

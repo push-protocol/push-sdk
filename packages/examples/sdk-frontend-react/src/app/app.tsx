@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import ConnectButton from './components/Connect';
+import ConnectButtonComp from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
 import {
@@ -84,6 +84,7 @@ import ChatViewListTest from './ChatUITest/ChatViewListTest';
 import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import { lightChatTheme } from '@pushprotocol/uiweb';
+
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -214,8 +215,9 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+  const [env, setEnv] = useState<ENV>(ENV.STAGING);
   const [isCAIP, setIsCAIP] = useState(false);
+  const [signer, setSigner] = useState();
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
@@ -243,6 +245,7 @@ export function App() {
       const user = await PushAPI.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
+      setSigner(librarySigner);
       if (user?.encryptedPrivateKey) {
         pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -255,7 +258,6 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
-
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
@@ -274,7 +276,7 @@ export function App() {
         <h1>SDK Demo React App</h1>
       </Link>
 
-      <ConnectButton />
+      <ConnectButtonComp />
 
       <Dropdown
         label="ENV"
@@ -507,7 +509,6 @@ export function App() {
                       path="/getSpacesTrending"
                       element={<GetSpacesTrendingTest />}
                     />
-                    
                     <Route
                       path="/getSpaceAccess"
                       element={<GetSpaceAccessTest />}
