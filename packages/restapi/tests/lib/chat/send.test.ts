@@ -18,7 +18,7 @@ import {
 import {
   REACTION_SYMBOL,
   REACTION_TYPE,
-} from '../../../src/lib/types/metaTypes';
+} from '../../../src/lib/types/messageObjectTypes';
 
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
@@ -346,13 +346,14 @@ describe('PushAPI.chat.send', () => {
   describe('Text Message', () => {
     const MESSAGE_TYPE = MessageType.TEXT;
     const MESSAGE = 'hey There!!!';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using action or info', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -449,13 +450,14 @@ describe('PushAPI.chat.send', () => {
     const MESSAGE_TYPE = MessageType.IMAGE;
     const MESSAGE =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4gg==';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -551,13 +553,14 @@ describe('PushAPI.chat.send', () => {
   describe('File Message', () => {
     const MESSAGE_TYPE = MessageType.FILE;
     const MESSAGE = '{"content":"data:application/pdf;base64,JVBERi0xLjQKJ}';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -654,13 +657,14 @@ describe('PushAPI.chat.send', () => {
     const MESSAGE_TYPE = MessageType.MEDIA_EMBED;
     const MESSAGE =
       'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -757,13 +761,14 @@ describe('PushAPI.chat.send', () => {
     const MESSAGE_TYPE = MessageType.GIF;
     const MESSAGE =
       'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -882,7 +887,17 @@ describe('PushAPI.chat.send', () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
-          messageObj: { content: MESSAGE },
+          messageObj: { content: MESSAGE, reference: '' },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, action: 1 }, // no info provided
           messageContent: MESSAGE,
           receiverAddress: account2,
           signer: _signer1,
@@ -896,7 +911,8 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -929,7 +945,8 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: group.chatId,
           signer: _signer2,
@@ -962,7 +979,8 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: group.chatId,
           signer: _signer2,
@@ -994,7 +1012,8 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: 1, info: { affected: [] } },
+          action: 1,
+          info: { affected: [] },
         },
         receiverAddress: group.chatId,
         signer: _signer1,
@@ -1003,7 +1022,7 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        { content: MESSAGE, meta: { action: 1, info: { affected: [] } } },
+        { content: MESSAGE, action: 1, info: { affected: [] } },
         account1,
         _signer1,
         group.chatId,
@@ -1034,7 +1053,8 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: 1, info: { affected: [] } },
+          action: 1,
+          info: { affected: [] },
         },
         receiverAddress: group.chatId,
         signer: _signer1,
@@ -1043,7 +1063,7 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        { content: MESSAGE, meta: { action: 1, info: { affected: [] } } },
+        { content: MESSAGE, action: 1, info: { affected: [] } },
         account1,
         _signer1,
         group.chatId,
@@ -1074,13 +1094,23 @@ describe('PushAPI.chat.send', () => {
           env: _env,
         })
       ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, info: { affected: [] } },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
     });
     it('EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: REACTION_TYPE.THUMBS_UP },
+          action: REACTION_TYPE.THUMBS_UP,
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -1089,7 +1119,10 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+        {
+          content: REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+          action: REACTION_TYPE.THUMBS_UP,
+        },
         account1,
         _signer1,
         account2,
@@ -1106,7 +1139,7 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: REACTION_TYPE.THUMBS_UP },
+          action: REACTION_TYPE.THUMBS_UP,
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -1115,7 +1148,10 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+        {
+          content: REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          action: REACTION_TYPE.THUMBS_UP,
+        },
         account1,
         _signer1,
         account2,

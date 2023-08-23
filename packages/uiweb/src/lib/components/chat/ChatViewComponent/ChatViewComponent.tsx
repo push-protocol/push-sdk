@@ -1,5 +1,5 @@
 import React, { useContext} from 'react';
-import { IChatViewComponentProps } from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
 
 import { Section,  } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
@@ -9,10 +9,18 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import { MessageInput } from '../MessageInput';
 import { ChatProfile } from '../ChatProfile';
+import styled from 'styled-components';
 
 
 
 
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
+  theme?: IChatTheme;
+}
 
 
 export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
@@ -20,6 +28,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 ) => {
   const {
     chatId,
+    chatFilterList = [],
     messageInput = true,
     chatViewList = true,
     chatProfile = true,
@@ -49,7 +58,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
 
   return (
-    <Section
+    <Conatiner
       width="100%"
       height="inherit"
       flexDirection="column"
@@ -58,6 +67,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       background={theme.backgroundColor?.chatViewComponentBackground}
       borderRadius={theme.borderRadius?.chatViewComponent}
       padding="13px"
+      theme={theme}
     >
      
     {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
@@ -71,7 +81,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       >
       
 
-        {chatId && chatViewList && <ChatViewList limit={limit} chatId={chatId} />}
+        {chatId && chatViewList && <ChatViewList chatFilterList={chatFilterList} limit={limit} chatId={chatId} />}
       
       </Section>
 
@@ -82,9 +92,13 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           <MessageInput onClick={onClick} chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
         </Section>
       )}
-    </Section>
+    </Conatiner>
   );
 };
 
 //styles
+const Conatiner = styled(Section)<IThemeProps>`
+border:${(props) => props.theme.border?.chatViewComponent};
+backdrop-filter:${(props) => props.theme.backdropFilter};
 
+`;

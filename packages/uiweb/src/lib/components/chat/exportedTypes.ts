@@ -4,12 +4,14 @@ import { IGroup } from '../../types'
 
 export interface IChatViewListProps {
   chatId: string;
+  chatFilterList?: Array<string>;
   limit?: number;
 }
 
 export interface IChatViewComponentProps {
   messageInput?: boolean;
   chatViewList?: boolean;
+  chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
   chatId: string; //need confirmation on this
   limit?: number;

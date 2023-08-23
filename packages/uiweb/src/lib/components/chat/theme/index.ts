@@ -21,7 +21,7 @@ interface IBackgroundColor {
   chatSentBubbleBackground?: string;
   chatReceivedBubbleBackground?: string;
   encryptionMessageBackground?: string;
-  buttonBackground?:string;
+  buttonBackground?: string;
 }
 
 interface ITextColor {
@@ -30,9 +30,11 @@ interface ITextColor {
   chatSentBubbleText?: string;
   chatReceivedBubbleText?: string;
   timestamp?: string;
-  chatBubblesSenderAddressText?: string;
   encryptionMessageText?: string;
-  buttonText?:string,
+  buttonText?: string;
+  chatReceivedBubbleAddressText?: string;
+  chatReceivedBubbleTimestampText?: string;
+  chatSentBubbleTimestampText?: string;
 }
 interface IFont {
   chatProfileText?: string;
@@ -40,8 +42,10 @@ interface IFont {
   chatSentBubbleText?: string;
   chatReceivedBubbleText?: string;
   timestamp?: string;
-  chatBubblesSenderAddressText?: string;
   encryptionMessageText?: string;
+  chatReceivedBubbleAddressText?: string;
+  chatReceivedBubbleTimestampText?: string;
+  chatSentBubbleTimestampText?: string;
 }
 interface IFontWeight {
   chatProfileText?: string;
@@ -49,8 +53,10 @@ interface IFontWeight {
   chatSentBubbleText?: string;
   chatReceivedBubbleText?: string;
   timestamp?: string;
-  chatBubblesSenderAddressText?: string;
   encryptionMessageText?: string;
+  chatReceivedBubbleAddressText?: string;
+  chatReceivedBubbleTimestampText?: string;
+  chatSentBubbleTimestampText?: string;
 }
 interface IIconColor {
   emoji?: string;
@@ -73,10 +79,10 @@ export interface IChatTheme {
   iconColor?: IIconColor;
   textColor?: ITextColor;
   backdropFilter?: string;
-  scrollbarColor?:string;
+  scrollbarColor?: string;
 
   //below needs to be categorised
-  spinnerColor?:string;
+  spinnerColor?: string;
   modalPrimaryTextColor?: string;
   modalSearchBarBorderColor?: string;
   modalSearchBarBackground?: string;
@@ -128,8 +134,10 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleText: '16px',
     chatReceivedBubbleText: '16px',
     timestamp: '12px',
-    chatBubblesSenderAddressText: '16px',
     encryptionMessageText: '13px',
+    chatReceivedBubbleAddressText: '16px',
+    chatReceivedBubbleTimestampText: '12px',
+    chatSentBubbleTimestampText: '12px',
   },
 
   fontWeight: {
@@ -138,8 +146,10 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleText: '400',
     chatReceivedBubbleText: '400',
     timestamp: '400',
-    chatBubblesSenderAddressText: '300',
     encryptionMessageText: '400',
+    chatReceivedBubbleAddressText: '300',
+    chatReceivedBubbleTimestampText: '400',
+    chatSentBubbleTimestampText: '400',
   },
 
   fontFamily: 'inherit',
@@ -162,13 +172,15 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: '#000',
     timestamp: '400',
-    chatBubblesSenderAddressText: '#000',
     encryptionMessageText: '#000',
     buttonText: '#fff',
+    chatReceivedBubbleAddressText: '#000',
+    chatReceivedBubbleTimestampText: '#000',
+    chatSentBubbleTimestampText: '#fff',
   },
   backdropFilter: 'none',
-  spinnerColor:'rgb(202, 89, 155)',
-  scrollbarColor:'rgb(202, 89, 155)',
+  spinnerColor: 'rgb(202, 89, 155)',
+  scrollbarColor: 'rgb(202, 89, 155)',
   //the rest param needs to be included in categories
   modalPrimaryTextColor: '#1E1E1E',
   modalSearchBarBorderColor: '#BAC4D6',
@@ -198,8 +210,6 @@ export const lightChatTheme: IChatTheme = {
   defaultBorder: '#E5E8F6',
 };
 
-
-
 export const darkChatTheme: IChatTheme = {
   borderRadius: {
     chatViewComponent: '24px',
@@ -208,8 +218,7 @@ export const darkChatTheme: IChatTheme = {
   },
 
   backgroundColor: {
-    chatViewComponentBackground:
-      'rgb(40, 42, 46);',
+    chatViewComponentBackground: 'rgb(40, 42, 46);',
     chatProfileBackground: 'rgb(64, 70, 80);',
     messageInputBackground: 'rgb(64, 70, 80);',
     chatSentBubbleBackground: 'rgb(202, 89, 155)',
@@ -224,8 +233,10 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleText: '16px',
     chatReceivedBubbleText: '16px',
     timestamp: '12px',
-    chatBubblesSenderAddressText: '16px',
     encryptionMessageText: '13px',
+    chatReceivedBubbleAddressText: '16px',
+    chatReceivedBubbleTimestampText: '12px',
+    chatSentBubbleTimestampText: '12px',
   },
 
   fontWeight: {
@@ -234,8 +245,10 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleText: '400',
     chatReceivedBubbleText: '400',
     timestamp: '400',
-    chatBubblesSenderAddressText: '300',
     encryptionMessageText: '400',
+    chatReceivedBubbleAddressText: '300',
+    chatReceivedBubbleTimestampText: '400',
+    chatSentBubbleTimestampText: '400',
   },
 
   fontFamily: 'inherit',
@@ -258,13 +271,15 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: 'rgb(182, 188, 214)',
     timestamp: 'rgb(182, 188, 214)',
-    chatBubblesSenderAddressText: 'rgb(182, 188, 214)',
     encryptionMessageText: 'rgb(182, 188, 214)',
     buttonText: '#fff',
+    chatReceivedBubbleAddressText: 'rgb(182, 188, 214)',
+    chatReceivedBubbleTimestampText: 'rgb(182, 188, 214)',
+    chatSentBubbleTimestampText: '#fff',
   },
   backdropFilter: 'none',
-  spinnerColor:'rgb(202, 89, 155)',
-  scrollbarColor:'rgb(202, 89, 155)',
+  spinnerColor: 'rgb(202, 89, 155)',
+  scrollbarColor: 'rgb(202, 89, 155)',
   //the rest param needs to be included in categories
   modalPrimaryTextColor: '#B6BCD6',
   modalSearchBarBorderColor: '#4A4F67',

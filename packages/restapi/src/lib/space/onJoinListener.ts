@@ -3,7 +3,7 @@ import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 import { get } from './get';
 import { pCAIP10ToWallet } from '../helpers';
 
-import { META_ACTION } from '../types/metaTypes';
+import { META_ACTION } from '../types/messageObjectTypes';
 import type Space from './Space';
 
 export interface OnJoinListenerType {
@@ -62,8 +62,8 @@ export async function onJoinListener(this: Space, options: OnJoinListenerType) {
   fetchedLiveSpaceData.listeners.push({
     address: pCAIP10ToWallet(receivedAddress),
     handRaised: false,
-    emojiReactions: null
-  })
+    emojiReactions: null,
+  });
   // firing a meta message
   await sendLiveSpaceData({
     spaceId: this.spaceSpecificData.spaceId,

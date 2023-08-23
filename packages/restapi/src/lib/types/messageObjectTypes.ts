@@ -1,19 +1,23 @@
 /**
- * This file defines the type for meta property for a Push Chat message
+ * This file defines the type for messageObj property for a Push Chat message
  */
 import { MessageType } from '../constants';
 
-export interface MessageTypeSpecificMeta {
-  [MessageType.TEXT]: never; // No meta for TEXT type
-  [MessageType.IMAGE]: never; // No meta for IMAGE type
-  [MessageType.FILE]: never; // No meta for FILE type
-  [MessageType.MEDIA_EMBED]: never; // No meta for MEDIA_EMBED type
-  [MessageType.GIF]: never; // No meta for GIF type
-  [MessageType.META]: META_MESSAGE_META;
-  [MessageType.REACTION]: REACTION_MESSAGE_META;
+export interface MessageTypeSpecificObject {
+  [MessageType.TEXT]: MESSAGE_OBJECT;
+  [MessageType.IMAGE]: MESSAGE_OBJECT;
+  [MessageType.FILE]: MESSAGE_OBJECT;
+  [MessageType.MEDIA_EMBED]: MESSAGE_OBJECT;
+  [MessageType.GIF]: MESSAGE_OBJECT;
+  [MessageType.META]: META_MESSAGE_OBJECT;
+  [MessageType.REACTION]: REACTION_MESSAGE_OBJECT;
 }
 
-export const enum META_ACTION {
+export type MESSAGE_OBJECT = {
+  content: string;
+};
+
+export enum META_ACTION {
   /**
    * DEFAULT GROUP ACTIONS
    */
@@ -40,7 +44,7 @@ export const enum META_ACTION {
   USER_INTERACTION = 15, // For MIC_ON | MIC_OFF | RAISE_HAND | EMOJI REACTION | or any other user activity
 }
 
-export type META_MESSAGE_META = {
+export type META_MESSAGE_OBJECT = MESSAGE_OBJECT & {
   action: META_ACTION;
   info: {
     affected: string[];
@@ -77,12 +81,12 @@ export const REACTION_SYMBOL: Record<REACTION_TYPE, string> = {
   [REACTION_TYPE.FIRE]: '\u{1F525}',
 };
 
-export type REACTION_MESSAGE_META = {
+export type REACTION_MESSAGE_OBJECT = MESSAGE_OBJECT & {
   action: REACTION_TYPE;
-  conversationHash?: string;
+  reference?: string | null;
 };
 
 // TODO
-// export type REPLY_MESSAGE_META = {};
-// export type COMPOSITE_MESSAGE_META = {};
-// export type PAYMENT_MESSAGE_META = {};
+// export type REPLY_MESSAGE_OBJECT = {};
+// export type COMPOSITE_MESSAGE_OBJECT = {};
+// export type PAYMENT_MESSAGE_OBJECT = {};

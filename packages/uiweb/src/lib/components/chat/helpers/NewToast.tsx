@@ -114,7 +114,7 @@ const useToast = (
         <ToastContent>
           <ToastTitle
             style={{
-              color: theme.textColor?.chatBubblesSenderAddressText,
+              color: theme.textColor?.chatReceivedBubbleText,
             }}
           >
             {toastTitle}

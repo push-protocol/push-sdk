@@ -213,7 +213,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.DEV);
+  const [env, setEnv] = useState<ENV>(ENV.STAGING);
   const [isCAIP, setIsCAIP] = useState(false);
   const [signer, setSigner] = useState();
 
@@ -256,7 +256,6 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
-console.log(signer)
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
