@@ -826,12 +826,13 @@ export class Video {
       if (
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
       ) {
-        this.peerInstances[
-          peerAddress ? peerAddress : this.data.incoming[0].address
-        ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
-        this.peerInstances[
-          peerAddress ? peerAddress : this.data.incoming[0].address
-        ]?.destroy();
+        try {
+          this.peerInstances[
+            peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
+          ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
@@ -856,10 +857,10 @@ export class Video {
 
       // destroy the peerInstance
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ]?.destroy();
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ] = null;
 
       // destroy the local stream
@@ -868,7 +869,11 @@ export class Video {
       }
 
       // reset the state
-      this.setData(() => initVideoCallData);
+      this.setData((oldData) => {
+        return produce(oldData, (draft) => {
+          draft.incoming.splice(incomingIndex, 1);
+        });
+      });
 
       // fire metaMessage for removing address from mesh
       if (peerAddress)
