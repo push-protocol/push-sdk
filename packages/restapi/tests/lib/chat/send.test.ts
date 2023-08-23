@@ -1497,7 +1497,7 @@ describe('PushAPI.chat.send', () => {
 });
 
 /**
- * HELPER FUNCTIONS
+ * HELPER FUNCTION
  */
 const expectMsg = async (
   msg: MessageWithCID,
