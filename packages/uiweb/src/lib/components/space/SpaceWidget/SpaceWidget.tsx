@@ -142,7 +142,7 @@ const Container = styled.div<WidgetContainerProps>`
   border: 1px solid ${(props) => props.theme.borderColor}; // update acc to theme
   display: flex;
   flex-direction: column;
-  width: ${(props) => (props.width ? `${props.width}px` : 'auto')};
+  width: ${(props) => (props.width ? `${props.width}px` : `${DEFAULT_MAXWIDTH}px`)};
   max-width: ${(props) =>
     props.width ? `${props.width}px` : `${DEFAULT_MAXWIDTH}px`};
   min-width: 320px;

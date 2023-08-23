@@ -15,14 +15,21 @@ export interface ChatUpdateSpaceType {
   spaceDescription?: string;
   scheduleAt?: Date;
   scheduleEnd?: Date | null;
+  meta?: string | null;
 }
 
 export async function update(
   this: Space,
   options: ChatUpdateSpaceType
 ): Promise<void> {
-  const { spaceName, spaceImage, spaceDescription, scheduleAt, scheduleEnd } =
-    options || {};
+  const {
+    spaceName,
+    spaceImage,
+    spaceDescription,
+    scheduleAt,
+    scheduleEnd,
+    meta,
+  } = options || {};
   try {
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,
@@ -60,6 +67,7 @@ export async function update(
       pgpPrivateKey: this.pgpPrivateKey,
       scheduleAt: scheduleAt ? scheduleAt : space.scheduleAt,
       scheduleEnd: scheduleEnd ? scheduleEnd : space.scheduleEnd,
+      meta: meta ? meta : space.meta,
     });
 
     // update space specific data
