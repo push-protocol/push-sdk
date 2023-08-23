@@ -141,7 +141,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }
 console.log(signer)
     return (
-        <Container>
+        <Container theme={theme}>
             {/* {isConnected && (
                 <ConnectButtonComp />
             )} */}
@@ -283,9 +283,11 @@ console.log(signer)
     )
 }
 
-const Container = styled.div`
+const Container = styled.div<IThemeProps>`
   width: 100%;
   overflow: hidden;
+  border:${(props) => props.theme.border?.messageInput};
+  border-radius:${(props) => props.theme.borderRadius?.messageInput};
 `;
 const TypebarSection = styled(Section)`
   gap: 10px;

@@ -136,9 +136,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
             <Container theme={theme}>
                 {chatInfo || groupInfo ? (
                     <Image src={isGroup ? groupInfo?.groupImage ?? GreyImage : chatInfo?.profile?.picture ?? createBlockie?.(chatId)?.toDataURL()
-            ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />
+            ?.toString()} height="48px" maxHeight="48px" width='48px' borderRadius="100%" />
                 ) : (<Image src={createBlockie?.(chatId)?.toDataURL()
-                    ?.toString()} height="48px" maxHeight="48px" width={'auto'} borderRadius="100%" />)}
+                    ?.toString()} height="48px" maxHeight="48px" width='48px' borderRadius="100%" />)}
                 
 
                 <Span color={theme.textColor?.chatBubblesSenderAddressText} fontSize="17px" margin="0 0 0 10px">
@@ -176,7 +176,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
 const Container = styled.div`
   width: 100%;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
-  border-radius: 32px;
+  border:${(props) => props.theme.border?.chatProfile};
+  border-radius:${(props) => props.theme.borderRadius?.chatProfile};
   display: flex;
   flex-direction: row;
   align-items: center;

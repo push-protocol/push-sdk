@@ -256,7 +256,6 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
-console.log(signer)
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
@@ -267,8 +266,7 @@ console.log(signer)
       }),
     [account, library, pgpPrivateKey, env]
   );
-console.log(signer)
-console.log(pgpPrivateKey)
+
   return (
     <StyledApp>
       <Link className="homeLink" to="/">
@@ -309,7 +307,7 @@ console.log(pgpPrivateKey)
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account} signer={signer} pgpPrivateKey={pgpPrivateKey} env={env} theme={darkChatTheme}>
+                <ChatUIProvider account={account} signer={signer} pgpPrivateKey={pgpPrivateKey} env={env} theme={lightChatTheme}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
