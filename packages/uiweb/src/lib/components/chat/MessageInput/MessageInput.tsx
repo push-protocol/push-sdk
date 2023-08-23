@@ -16,13 +16,13 @@ import usePushSendMessage from "../../../hooks/chat/usePushSendMessage";
 import { SendCompIcon } from "../../../icons/SendCompIcon";
 import { Spinner } from "../../reusables";
 import { ThemeContext } from "../theme/ThemeProvider";
-import { ConnectButton } from "../ConnectButton";
 import OpenLink from "../../../icons/OpenLink";
 import VerificationFailed from "./VerificationFailed";
 import useVerifyAccessControl from "../../../hooks/chat/useVerifyAccessControl";
 import TokenGatedIcon from "../../../icons/Token-Gated.svg";
 import { Modal } from "../helpers/Modal";
 import { Image } from "../../reusables";
+import { ConnectButtonComp } from "../ConnectButton";
 
 /**
  * @interface IThemeProps
@@ -47,9 +47,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(425);
     const { sendMessage, loading } = usePushSendMessage();
-    const { pgpPrivateKey, setPgpPrivateKey } = useChatData();
     const { verificationSuccessfull, verifyAccessControl, setVerificationSuccessfull, verified, setVerified } = useVerifyAccessControl();
     const { account } = useChatData()
+    const { pgpPrivateKey, signer,setPgpPrivateKey } = useChatData();
 
     useClickAway(modalRef, () => {
         setShowEmojis(false);
@@ -169,25 +169,27 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }
 
     return (
-        <Container theme={theme}>
+        <Container>
             {/* {isConnected && (
-                <ConnectButton />
+                <ConnectButtonComp />
             )} */}
             <TypebarSection
                 // zIndex="1"
                 borderRadius="13px"
+                position="static"
                 padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-                background={`${theme.bgColorPrimary}`}
+                background={`${theme.backgroundColor?.messageInputBackground}`}
                 alignItems="center"
                 justifyContent="space-between"
             >
                 {!pgpPrivateKey && isConnected && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
+                    padding="8px"
                     >
-                        <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
+                       {!signer  && <Span padding="8px 8px 8px 16px" color="#B6BCD6" fontSize="15px" fontWeight="400" textAlign="start">
                             You need to connect your wallet to get started
-                        </Span>
-                        <ConnectButton />
+                        </Span>}
+                        <ConnectButtonComp />
                     </Section>
                 )
                 }
@@ -195,8 +197,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 {pgpPrivateKey && !verified && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
-                        <Span padding="8px 8px 8px 16px" color={theme.textColorPrimary} fontSize="15px" fontWeight="500" textAlign="start">
-                            Sending messages requires <Span color={theme.accentBgColor}>1 PUSH Token</Span> for participation. <Link href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group" target="_blank" color={theme.accentBgColor}>Learn More <OpenLink /></Link>
+                        <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
+                            Sending messages requires <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> for participation. <Link href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group" target="_blank" color={theme.backgroundColor?.chatSentBubbleBackground}>Learn More <OpenLink /></Link>
                         </Span>
                         <ConnectWrapper>
                             <Connect onClick={checkVerification}>
@@ -209,12 +211,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     <Modal width='439px'>
                         <Section padding="10px" theme={theme} gap='32px' flexDirection='column'>
                             <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
-                            <Span color={theme.textColorSecondary} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
+                            <Span color={theme.textColor?.encryptionMessageText} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
                             <Section gap='8px' alignItems='start'>
                                 <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
                                     <Span textAlign='start' alignSelf='start'>Token Gated</Span>
-                                    <Span fontWeight="500" textAlign='start'>You need to have <Span color={theme.accentBgColor}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
+                                    <Span fontWeight="500" textAlign='start'>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
                             <Section gap='8px'>
@@ -244,16 +246,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 )}
                 {pgpPrivateKey && verified &&
                     <>
-                        <Section gap="8px" flex="1">
+                        <Section gap="8px" flex="1" position="static">
                             {Emoji &&
                                 <Div
-                                    width="24px"
+                                    width="25px"
                                     cursor="pointer"
-                                    height="24px"
+                                    height="25px"
                                     alignSelf="end"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
-                                    <EmojiIcon color={theme.textColorSecondary} />
+                                    <EmojiIcon color={theme.iconColor?.emoji}/>
                                 </Div>
                             }
                             {showEmojis && (
@@ -267,6 +269,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                         width={isMobile ? 260 : 320}
                                         height={370}
                                         onEmojiClick={addEmoji}
+                                        
                                     />
                                 </Section>
                             )}
@@ -286,7 +289,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                 rows={1}
                             />
                         </Section>
-                        <SendSection>
+                        <SendSection position="static">
                             {GIF &&
                                 <Section
                                     width="34px"
@@ -300,9 +303,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                             {gifOpen && (
                                 <Section
                                     position="absolute"
-                                    bottom="3.5rem"
+                                    bottom="2.5rem"
                                     zIndex="1"
-                                    right={isMobile ? '5rem' : '8rem'}
+                                    right={isMobile ? '7rem' : '8rem'}
                                     ref={modalRef}>
                                     <GifPicker
                                         onGifClick={sendGIF}
@@ -322,12 +325,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                             alignSelf="end"
                                             onClick={() => setNewChat(true)}
                                         >
-                                            <AttachmentIcon color={theme.textColorSecondary} />
+                                            <AttachmentIcon color={theme.iconColor?.attachment} />
                                         </Section>
                                         <FileInput
                                             type="file"
                                             ref={fileUploadInputRef}
                                             onChange={(e) => uploadFile(e)}
+                                            
                                         />
                                     </>
                                 )}
@@ -339,13 +343,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                     height="24px"
                                     onClick={() => sendTextMsg()}
                                 >
-                                    <SendCompIcon color={theme.accentBgColor} />
+                                    <SendCompIcon color={theme.iconColor?.sendButton} />
                                 </Section>
                             )}
 
                             {(loading || fileUploading) && (
                                 <Section alignSelf="end" height="24px">
-                                    <Spinner color={theme.accentBgColor} size="22" />
+                                    <Spinner color={theme.spinnerColor} size="22" />
                                 </Section>
                             )}
                         </SendSection>
@@ -380,9 +384,9 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
-  background:${(props) => props.theme.bgColorPrimary};
+  background:${(props) => props.theme.backgroundColor?.messageInputBackground};
   border: none;
-  color: ${(props) => props.theme.textColorSecondary};
+  color: ${(props) => props.theme.textColor?.messageInputText};
   resize: none;
   flex: 1;
   padding-right: 5px;
@@ -400,8 +404,8 @@ const MultiLineInput = styled.textarea<IThemeProps>`
     height: 50px;
   }
   ::placeholder {
-    color: ${(props) => props.theme.textColorSecondary};
-    transform: translateY(1px);
+    color: ${(props) => props.theme.textColor?.messageInputText};
+    transform: translateY(0px);
     @media ${device.mobileL} {
       font-size: 14px;
     }

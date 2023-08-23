@@ -15,7 +15,7 @@ const VerificationFailed = () => {
         <Modal width='439px'>
             <Section theme={theme} gap='32px' flexDirection='column'>
                 <Span fontWeight='500' fontSize='24px'>Verification Failed</Span>
-                <Span color={theme.textColorSecondary} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
+                <Span color={theme.textColor?.encryptionMessageText} fontSize='16px'>Please ensure the following conditions are met to participate and send messages.</Span>
                 <Section gap='8px' alignItems='start'>
                     <Image verticalAlign='start' height='32' width='32' src={TokenGatedIcon} alt='token-gated' />
                     <Section flexDirection='column'> {/* Added marginLeft */}
