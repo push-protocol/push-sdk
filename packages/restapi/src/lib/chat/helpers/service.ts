@@ -49,8 +49,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
-    encryptedPrivateKey,
-    origin: origin
+    encryptedPrivateKey
   };
 
   const hash = generateHash(data);
@@ -59,6 +58,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const body = {
     ...data,
+    origin: origin,
     ...signatureObj,
   };
 
