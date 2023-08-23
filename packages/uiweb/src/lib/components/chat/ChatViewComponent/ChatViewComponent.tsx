@@ -99,5 +99,5 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 const Conatiner = styled(Section)<IThemeProps>`
 border:${(props) => props.theme.border?.chatViewComponent};
 backdrop-filter:${(props) => props.theme.backdropFilter};
-
+box-sizing:border-box;
 `;
