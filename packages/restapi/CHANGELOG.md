@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.12...restapi-1.4.13) (2023-08-23)
+
+
+### Bug Fixes
+
+* changes messageObj for meta and reaction message type ([#645](https://github.com/ethereum-push-notification-service/push-sdk/issues/645)) ([4077049](https://github.com/ethereum-push-notification-service/push-sdk/commit/407704960117a8c7461e90cccf71a53696fa6770))
+* Merge branch 'main' into deployment ([5769701](https://github.com/ethereum-push-notification-service/push-sdk/commit/576970118ed6c8d5de8a83424aa3266f252ba586))
+* origin in user creation ([#665](https://github.com/ethereum-push-notification-service/push-sdk/issues/665)) ([13c471b](https://github.com/ethereum-push-notification-service/push-sdk/commit/13c471b6e4b17efe5ec15372373283db3f7fca1e))
+
+
+
 ## [1.4.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.11...restapi-1.4.12) (2023-08-18)
 
 
