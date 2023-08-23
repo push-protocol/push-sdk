@@ -3436,7 +3436,8 @@ There are two main types of conditions: `PUSH` and `GUILD`.
 PUSH conditions may relate to:
 
 - **ERC721**: Needs an address and an amount, and can only have the `owner` subcategory.
-- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory.
+. Comparison also can be given '>' | '<' | '>=' | '<=' | '==' | '!='. Default is > (greater than , that is minimum amount required)
+- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory. Comparison also can be given '>' | '<' | '>=' | '<=' | '==' | '!='. Default is > (greater than , that is minimum amount required)
 - **CustomEndpoint**: The `CustomEndpoint` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application. As of now the Get API is supported and should return the 200 OK if the user is allowed to access.
 <pre>
   {
