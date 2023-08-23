@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-import { PushAPI } from '../../../src/lib/PushAPI'; // Ensure correct import path
+import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 
 describe.only('PushAPI class functionality', () => {
