@@ -37,7 +37,6 @@ export const ConnectButtonSub = () => {
 
   useEffect(() => {
     (async () => {
-      console.log(account, signer);
       if (!account) setAccount(address as string);
       if (!signer) setSigner(walletClient as PushAPI.SignerType);
     })();
@@ -45,7 +44,6 @@ export const ConnectButtonSub = () => {
 
   useEffect(() => {
     (async () => {
-      console.log(account);
       if (account && signer) {
         if (!pgpPrivateKey) await handleUserCreation();
       }

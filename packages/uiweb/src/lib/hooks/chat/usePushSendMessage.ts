@@ -33,7 +33,6 @@ const usePushSendMessage = () => {
           env: env,
         });
         setLoading(false);
-        console.log(response);
         if (!response) {
           return false;
         }

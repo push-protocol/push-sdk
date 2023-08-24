@@ -33,7 +33,6 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
 
   useEffect(() => {
     if (isInValidAddress) {
-      console.log('here we go');
       setToastInfo({
         message: 'Invalid Address',
         status: 'error'

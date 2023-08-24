@@ -41,8 +41,7 @@ export const ApproveRequestBubble = ({
       if (!pgpPrivateKey) {
         return;
       }
-      console.log("aproving")
-      console.log(chatId, "chatid")
+
       const response = await approveChatRequest({
         chatId,
       });

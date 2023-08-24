@@ -166,8 +166,7 @@ type CheckIfIntentType = {
  account:string,
 }
 export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
-  console.log(chat)
-  console.log(account)
+
   if(account){
     if(Object.keys(chat || {}).length && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
     {

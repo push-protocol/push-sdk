@@ -119,7 +119,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({ chatId, style }: {chatId: 
       if(isValidETHAddress(chatId)){
         const result = await resolveNewEns(chatId, provider);
         // if(result) 
-        console.log(result);
         setEnsName(result);
       }
     }

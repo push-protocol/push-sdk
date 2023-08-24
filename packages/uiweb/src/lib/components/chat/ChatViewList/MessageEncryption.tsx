@@ -17,7 +17,6 @@ const EncryptionMessageContent = {
     },
   };
  export const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
-    console.log(id)
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(771);
     return (
