@@ -246,10 +246,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         Object.keys(chatFeed || {}).length
       ) {
         const chat = await fetchChat({ chatId });
+        let updatedChatFeed;
         if (Object.keys(chat || {}).length) {
-          const updatedChatFeed = { ...(chatFeed as IFeeds) };
+           updatedChatFeed = { ...(chatFeed as IFeeds) };
+          if(Object.keys(updatedChatFeed||{}).length)
           updatedChatFeed.intent = chat?.intent as string;
-          setChatFeed(updatedChatFeed);
+        else
+        updatedChatFeed = chat;
+          setChatFeed(updatedChatFeed as IFeeds);
         }
       }
     })();
