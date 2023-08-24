@@ -41,9 +41,9 @@ export interface IApproveRequestPayload {
 
 export interface ICreateGroupRequestPayload {
   groupName: string;
-  groupDescription: string | null;
+  groupDescription?: string | null;
   members: Array<string>;
-  groupImage: string | null;
+  groupImage?: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -58,7 +58,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string | null;
+  groupImage?: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -157,13 +157,13 @@ export const approveRequestPayload = (
 
 export const createGroupPayload = (
   groupName: string,
-  groupDescription: string | null,
   members: Array<string>,
-  groupImage: string | null,
   admins: Array<string>,
   isPublic: boolean,
   groupCreator: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   contractAddressNFT?: string,
   numberOfNFTs?: number,
   contractAddressERC20?: string,
@@ -172,7 +172,7 @@ export const createGroupPayload = (
   groupType?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
-  rules?: Rules | null,
+  rules?: Rules | null
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -191,7 +191,7 @@ export const createGroupPayload = (
     groupType: groupType,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
-    rules: rules
+    rules: rules,
   };
   return body;
 };
@@ -267,17 +267,17 @@ export const groupAccessToSpaceAccess = (
 
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string | null,
-  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
   meta?: string | null,
-  rules? : Rules | null
+  rules?: Rules | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,

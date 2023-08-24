@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ProgressHookType } from '../types';
+import { ChatStatus, ProgressHookType, Rules } from '../types';
 export type ChatListType = 'CHATS' | 'REQUESTS';
 
 
@@ -23,3 +23,35 @@ export interface PushAPIInitializeProps {
   spaces?: any;
 }
 
+export interface GroupCreationOptions {
+  description?: string;
+  image?: string;
+  members?: string[];
+  admins?: string[];
+  private?: boolean;
+  rules?: {
+    entry?: {
+      conditions: any[];
+    };
+    chat?: {
+      conditions: any[];
+    };
+  };
+}
+
+export interface ManageGroupOptions {
+  chatid: string;
+  role: string;
+  accounts: string[];
+}
+
+export interface GroupUpdateOptions {
+  name?: string;
+  description?: string;
+  image?: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
+  meta?: string | null;
+  rules?: Rules | null;
+}
