@@ -15,8 +15,7 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { verificationSuccessfull, setVerificationSuccessfull, setVerified } =
-    useVerifyAccessControl();
+
   const { pgpPrivateKey, env, account } = useChatData();
 
   const sendMessage = useCallback(

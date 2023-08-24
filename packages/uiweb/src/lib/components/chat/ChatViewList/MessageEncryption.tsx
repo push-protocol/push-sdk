@@ -14,7 +14,6 @@ export const ENCRYPTION_KEYS = {
 
 export type EncryptionKeys = (typeof ENCRYPTION_KEYS)[keyof typeof ENCRYPTION_KEYS];
 
-
 const EncryptionMessageContent = {
     ENCRYPTED: {
       IconComponent: <EncryptionIcon size="15" />,
@@ -29,6 +28,7 @@ const EncryptionMessageContent = {
       IconComponent: <NoEncryptionIcon size="15" />,
       text: `Messages in this group are not encrypted`,
     },
+  
   };
   export const EncryptionMessage = ({ id }: { id: EncryptionKeys}) => {
     const theme = useContext(ThemeContext);

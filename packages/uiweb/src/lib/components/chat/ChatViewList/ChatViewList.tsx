@@ -391,6 +391,7 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
     `
   filter: blur(12px);
   `}
+  overscroll-behavior: contain;
 `;
 
 const Overlay = styled.div``;
