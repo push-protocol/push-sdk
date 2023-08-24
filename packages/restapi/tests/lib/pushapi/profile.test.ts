@@ -6,7 +6,7 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct im
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 
-describe.only('PushAPI.profile functionality', () => {
+describe('PushAPI.profile functionality', () => {
   let userAlice: PushAPI;
 
   beforeEach(async () => {

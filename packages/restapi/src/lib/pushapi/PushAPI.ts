@@ -1,5 +1,6 @@
-import Constants, { ENV } from '../constants';
+import Constants, { ENV, MessageType } from '../constants';
 import {
+  ChatSendOptionsType,
   GroupAccess,
   GroupDTO,
   IFeeds,
@@ -27,7 +28,6 @@ import {
   getGroupAccess,
   removeAdmins,
   removeMembers,
-  send,
 } from '../chat';
 import { isValidETHAddress } from '../helpers';
 import {
@@ -176,22 +176,20 @@ export class PushAPI {
       to: string,
       options: SendMessageOptions
     ): Promise<MessageWithCID> => {
-      const defaultMessageType = 'Text';
+      const defaultMessageType = MessageType.TEXT;
       const messageType = options.type || defaultMessageType;
 
-      const sendParams = {
+      const sendParams: ChatSendOptionsType = {
         message: {
-          type: messageType,
+          type: messageType as any,
           content: options.content,
         },
-        receiverAddress: to,
+        to: to,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
       };
-
-      const response = await send(sendParams);
-      return response;
+      return await PUSH_CHAT.send(sendParams);
     },
 
     /*permissions: (): void => {
