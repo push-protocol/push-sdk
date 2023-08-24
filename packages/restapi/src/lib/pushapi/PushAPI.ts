@@ -8,6 +8,7 @@ import {
   MessageWithCID,
   SignerType,
   Message,
+  ProgressHookType,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -30,17 +31,20 @@ export class PushAPI {
   private account: string;
   private decryptedPgpPvtKey: string;
   private env: ENV;
+  private progressHook?: (progress: ProgressHookType) => void;
 
   private constructor(
     signer: SignerType,
     env: ENV,
     account: string,
-    decryptedPgpPvtKey: string
+    decryptedPgpPvtKey: string,
+    progressHook?: (progress: ProgressHookType) => void
   ) {
     this.signer = signer;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
+    this.progressHook = progressHook;
   }
 
   static async initialize(
@@ -87,6 +91,7 @@ export class PushAPI {
         encryptedPGPPrivateKey: user.encryptedPrivateKey,
         signer: signer,
         toUpgrade: settings.autoUpgrade,
+        progressHook: settings.progressHook,
       });
     } else {
       const newUser = await PUSH_USER.create({
@@ -95,6 +100,7 @@ export class PushAPI {
         signer,
         version: settings.version,
         origin: settings.origin,
+        progressHook: settings.progressHook,
       });
       decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
     }
@@ -104,7 +110,8 @@ export class PushAPI {
       signer,
       settings.env as ENV,
       derivedAccount,
-      decryptedPGPPrivateKey
+      decryptedPGPPrivateKey,
+      settings.progressHook
     );
   }
 
@@ -123,6 +130,7 @@ export class PushAPI {
           picture: picture,
         },
         env: this.env,
+        progressHook: this.progressHook,
       });
     },
   };
