@@ -1,4 +1,4 @@
-import Constants, { ENV, MessageType } from '../constants';
+import Constants, { ENV } from '../constants';
 import {
   ChatSendOptionsType,
   GroupAccess,
@@ -8,13 +8,13 @@ import {
   MessageWithCID,
   SignerType,
 } from '../types';
+import { Message } from '../types/messageTypes';
 import {
   GroupUpdateOptions,
   ChatListType,
   GroupCreationOptions,
   ManageGroupOptions,
   PushAPIInitializeProps,
-  SendMessageOptions,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -139,7 +139,7 @@ export class PushAPI {
   chat = {
     list: async (
       type: `${ChatListType}`,
-      options: {
+      options?: {
         page?: number;
         limit?: number;
       }
@@ -147,8 +147,8 @@ export class PushAPI {
       const listParams = {
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
-        page: options.page || 1,
-        limit: options.limit || 10,
+        page: options?.page || 1,
+        limit: options?.limit || 10,
         env: this.env,
         toDecrypt: true,
       };
@@ -163,26 +163,55 @@ export class PushAPI {
       }
     },
 
-    latest: (): void => {
-      console.log('Fetching latest chat...');
+    latest: async (to: string) => {
+      const { threadHash } = await PUSH_CHAT.conversationHash({
+        conversationId: to,
+        account: this.account,
+        env: this.env,
+      });
+
+      return await PUSH_CHAT.latest({
+        threadhash: threadHash,
+        toDecrypt: true,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        account: this.account,
+        env: this.env,
+      });
     },
 
-    history: (): void => {
-      console.log('Fetching chat history...');
-    },
-
-    send: async (
+    history: async (
       to: string,
-      options: SendMessageOptions
-    ): Promise<MessageWithCID> => {
-      const defaultMessageType = MessageType.TEXT;
-      const messageType = options.type || defaultMessageType;
+      options?: {
+        reference?: string | null;
+        limit?: number;
+      }
+    ) => {
+      let reference: string;
 
+      if (!options?.reference) {
+        const { threadHash } = await PUSH_CHAT.conversationHash({
+          conversationId: to,
+          account: this.account,
+          env: this.env,
+        });
+        reference = threadHash;
+      } else {
+        reference = options.reference;
+      }
+
+      return await PUSH_CHAT.history({
+        account: this.account,
+        env: this.env,
+        threadhash: reference,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        toDecrypt: true,
+        limit: options?.limit,
+      });
+    },
+
+    send: async (to: string, options: Message): Promise<MessageWithCID> => {
       const sendParams: ChatSendOptionsType = {
-        message: {
-          type: messageType as any,
-          content: options.content,
-        },
+        message: options,
         to: to,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
@@ -200,10 +229,7 @@ export class PushAPI {
     },*/
 
     group: {
-      create: async (
-        name: string,
-        options: GroupCreationOptions
-      ): Promise<any> => {
+      create: async (name: string, options: GroupCreationOptions) => {
         const groupParams = {
           groupName: name,
           groupDescription: options.description,
@@ -220,8 +246,7 @@ export class PushAPI {
           env: this.env,
         };
 
-        const response = await createGroup(groupParams);
-        return response;
+        return await createGroup(groupParams);
       },
 
       permissions: async (chatId: string): Promise<GroupAccess> => {

@@ -1,16 +1,10 @@
-import Constants, { ENV, MessageType } from '../constants';
+import Constants, { ENV } from '../constants';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
   REQUESTS = 'REQUESTS',
 }
-
-export interface SendMessageOptions {
-  type?: `${MessageType}`;
-  content: string;
-}
-
 export interface PushAPIInitializeProps {
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
