@@ -712,6 +712,15 @@ export class Video {
               // reset the state
               this.setData(() => initVideoCallData);
             }
+
+            if (
+              this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO ||
+              (this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
+                parsedData?.details?.type === SPACE_DISCONNECT_TYPE.DEMOTE_SPEAKER)
+            ) {
+              // reset the state
+              this.setData(() => initVideoCallData);
+            }
           }
         } else {
           onReceiveMessage(data);
