@@ -1,9 +1,18 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules, GroupAccess, SpaceAccess } from '../../types';
+import {
+  IConnectedUser,
+  GroupDTO,
+  SpaceDTO,
+  ChatStatus,
+  Rules,
+  SpaceRules,
+  GroupAccess, 
+  SpaceAccess
+} from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { ENV, MessageType } from '../../constants';
+import { ENV } from '../../constants';
 import * as AES from './aes';
-import { MessageTypeSpecificObject } from '../../types/messageObjectTypes';
+import { MessageObj } from '../../types/messageTypes';
 import { sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
@@ -11,7 +20,7 @@ export interface ISendMessagePayload {
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageObj: MessageTypeSpecificObject[MessageType] | string;
+  messageObj: MessageObj | string;
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
@@ -68,7 +77,7 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  messageObj: MessageTypeSpecificObject[MessageType],
+  messageObj: MessageObj,
   messageContent: string,
   messageType: string,
   group: GroupDTO | null,
@@ -172,7 +181,7 @@ export const createGroupPayload = (
   groupType?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
-  rules?: Rules | null,
+  rules?: Rules | null
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -191,7 +200,7 @@ export const createGroupPayload = (
     groupType: groupType,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
-    rules: rules
+    rules: rules,
   };
   return body;
 };
@@ -224,14 +233,14 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     scheduleAt: groupDto.scheduleAt,
     scheduleEnd: groupDto.scheduleEnd,
     status: groupDto.status ?? null,
-    meta: groupDto.meta
+    meta: groupDto.meta,
   };
 
-    if (groupDto.rules) {
-      spaceDto.rules = {
-        spaceAccess: groupDto.rules.groupAccess,
-      };
-    }
+  if (groupDto.rules) {
+    spaceDto.rules = {
+      spaceAccess: groupDto.rules.groupAccess,
+    };
+  }
 
   return spaceDto;
 };
@@ -241,7 +250,7 @@ export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
     groupAccess: spaceRules.spaceAccess,
     chatAccess: undefined,
   };
-}
+};
 
 export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
   return {
@@ -277,7 +286,7 @@ export const updateGroupPayload = (
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
   meta?: string | null,
-  rules? : Rules | null
+  rules?: Rules | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,

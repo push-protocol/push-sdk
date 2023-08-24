@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/messageObjectTypes';
+import { META_ACTION } from '../types/messageTypes';
 import { pCAIP10ToWallet } from '../helpers';
 
 import type Space from './Space';
