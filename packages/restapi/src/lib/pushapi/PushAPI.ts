@@ -1,5 +1,12 @@
 import Constants, { ENV } from '../constants';
-import { GroupAccess, GroupDTO, IFeeds, IUser, MessageWithCID, SignerType } from '../types';
+import {
+  GroupAccess,
+  GroupDTO,
+  IFeeds,
+  IUser,
+  MessageWithCID,
+  SignerType,
+} from '../types';
 import {
   GroupUpdateOptions,
   ChatListType,
@@ -8,9 +15,8 @@ import {
   PushAPIInitializeProps,
   SendMessageOptions,
 } from './pushAPITypes';
-import { upgrade } from '../../lib/user/upgradeUser';
-import { get } from '../../lib/user/getUser';
-import { create } from '../../lib/user/createUser';
+import * as PUSH_USER from '../user';
+import * as PUSH_CHAT from '../chat';
 import { getAccountAddress, getWallet } from '../chat/helpers';
 import {
   GetGroupAccessType,
@@ -18,14 +24,12 @@ import {
   addMembers,
   chats,
   createGroup,
-  decryptPGPKey,
   getGroupAccess,
   removeAdmins,
   removeMembers,
   requests,
   send,
 } from '../chat';
-import { profileUpdate } from '../user/profile.updateUser';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
@@ -34,75 +38,85 @@ import {
 
 export class PushAPI {
   private signer: SignerType;
-  private account?: string;
-  private decryptedPgpPvtKey?: string;
+  private account: string;
+  private decryptedPgpPvtKey: string;
   private env: ENV;
 
-  private constructor(signer: SignerType, env: ENV, account: string) {
+  private constructor(
+    signer: SignerType,
+    env: ENV,
+    account: string,
+    decryptedPgpPvtKey: string
+  ) {
     this.signer = signer;
     this.env = env;
     this.account = account;
+    this.decryptedPgpPvtKey = decryptedPgpPvtKey;
   }
 
   static async initialize(
     signer: SignerType,
-    options: PushAPIInitializeProps
+    options?: PushAPIInitializeProps
   ): Promise<PushAPI> {
-    console.log('Initializing PushAPI...');
-
+    // Default options
     const defaultOptions: PushAPIInitializeProps = {
       env: ENV.STAGING,
       version: Constants.ENC_TYPE_V3,
       autoUpgrade: true,
+      account: null,
     };
 
-    // Settings object which has the default values overridden by any passed options
+    // Settings object
+    // Default options are overwritten by the options passed in the initialize method
     const settings = {
       ...defaultOptions,
       ...options,
     };
-    const account = await getAccountAddress(
+
+    // Get account
+    // Derives account from signer if not provided
+    const derivedAccount = await getAccountAddress(
       getWallet({
-        account: null,
+        account: settings.account as string | null,
         signer: signer,
       })
     );
-    const instance = new PushAPI(signer, settings.env!, account);
 
-    if (!instance.account) {
-      throw new Error('Account not initialized');
-    }
+    let decryptedPGPPrivateKey: string;
 
-    try {
-      const user = await get({
-        account: instance.account,
-        env: instance.env,
-      });
-      instance.decryptedPgpPvtKey = await decryptPGPKey({
+    /**
+     * Decrypt PGP private key
+     * If user exists, decrypts the PGP private key
+     * If user does not exist, creates a new user and returns the decrypted PGP private key
+     */
+    const user = await PUSH_USER.get({
+      account: derivedAccount,
+      env: settings.env,
+    });
+    if (user && user.encryptedPrivateKey) {
+      decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
         encryptedPGPPrivateKey: user.encryptedPrivateKey,
         signer: signer,
+        toUpgrade: settings.autoUpgrade,
       });
-    } catch (error) {
-      console.log('User not found, creating a new one...');
-      const newUser = await create({
+    } else {
+      const newUser = await PUSH_USER.create({
         env: settings.env,
-        account: instance.account,
+        account: derivedAccount,
         signer,
         version: settings.version,
-        origin: options.origin,
+        origin: settings.origin,
       });
-
-      instance.decryptedPgpPvtKey = newUser.decryptedPrivateKey;
+      decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
     }
 
-    if (settings.autoUpgrade) {
-      await upgrade({
-        env: settings.env,
-        account: instance.account,
-        signer: instance.signer,
-      });
-    }
-    return instance;
+    // Initialize PushAPI instance
+    return new PushAPI(
+      signer,
+      settings.env as ENV,
+      derivedAccount,
+      decryptedPGPPrivateKey
+    );
   }
 
   profile = {
@@ -111,9 +125,9 @@ export class PushAPI {
       desc?: string,
       picture?: string
     ): Promise<IUser> => {
-      const response = await profileUpdate({
-        pgpPrivateKey: this.decryptedPgpPvtKey!,
-        account: this.account!,
+      return await PUSH_USER.profile.update({
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        account: this.account,
         profile: {
           name: name,
           desc: desc,
@@ -121,8 +135,6 @@ export class PushAPI {
         },
         env: this.env,
       });
-
-      return response;
     },
   };
 
@@ -242,7 +254,6 @@ export class PushAPI {
         chatid: string,
         options: GroupUpdateOptions
       ): Promise<GroupDTO> => {
-
         if (!chatid || typeof chatid !== 'string') {
           throw new Error('Invalid chatid provided.');
         }

@@ -2,7 +2,6 @@ import Constants, { ENV } from '../constants';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 export type ChatListType = 'CHATS' | 'REQUESTS';
 
-
 export type MessageType = 'Text';
 
 export interface SendMessageOptions {
@@ -13,7 +12,7 @@ export interface SendMessageOptions {
 export interface PushAPIInitializeProps {
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
-  account?: string;
+  account?: string | null;
   version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
   versionMeta?: { password: string };
   autoUpgrade?: boolean;
