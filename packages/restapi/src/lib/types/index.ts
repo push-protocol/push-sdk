@@ -316,7 +316,6 @@ export type Data = {
   decimals?: number;
   guildId?: string;
   guildRoleId?: string;
-  guildRoleAction?: 'all' | 'any';
   url?: string;
   comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
 };
