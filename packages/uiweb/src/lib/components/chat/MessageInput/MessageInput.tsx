@@ -84,6 +84,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerificationSuccessfull,
     verified,
     setVerified,
+    loading:accessLoading
   } = useVerifyAccessControl();
   const { account, env } = useChatData();
   const { fetchChat } = useFetchChat();
@@ -305,7 +306,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsRules(true);
     }
   };
-console.log(isRules,isMember,verified)
+console.log(isRules,isMember,verified,verificationSuccessfull)
   useEffect(() => {
     if (chatFeed && chatFeed?.groupInformation) checkIfrules();
   }, [chatId,chatFeed]);
@@ -398,7 +399,7 @@ console.log(isRules,isMember,verified)
                 </Span>
                 <ConnectWrapper>
                   <Connect onClick={() => checkVerification()}>
-                    Verify Access
+                  {accessLoading ? <Spinner color="#fff" size="24" /> : 'Verify Access'}
                   </Connect>
                 </ConnectWrapper>
               </Section>

@@ -29,9 +29,11 @@ const useVerifyAccessControl = () => {
           env: env,
         });
         setLoading(false);
-        if (response.chatAccess === false) {
+        console.log(response)
+        if (response.chat === false) {
+          
           setVerificationSuccessfull(false);
-        } else if (response.chatAccess === true) {
+        } else if (response.chat === true) {
           setVerified(true);
           setAccessControl(chatId, false);
         }

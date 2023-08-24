@@ -29,7 +29,7 @@ import {
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/messageObjectTypes';
+import { META_ACTION } from '../types/messageTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
 import { onReceiveMetaMessage } from './onReceiveMetaMessage';
 import { onJoinListener } from './onJoinListener';

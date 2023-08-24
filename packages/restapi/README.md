@@ -3318,16 +3318,18 @@ const response = await PushAPI.chat.createGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -3343,9 +3345,11 @@ const response = await PushAPI.chat.createGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -3413,7 +3417,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>
   }
-  chatAccess?: {
+  chat?: {
     conditions: Array<Condition | ConditionBase>
   }
 }
@@ -3421,7 +3425,7 @@ export interface Rules {
 
 ## Rules Object Description
 
-The rules object consists of two main sections: `groupAccess` and `chatAccess`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
+The rules object consists of two main sections: `groupAccess` and `chat`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
 
 ### Conditions
 
@@ -3458,15 +3462,37 @@ Explanation:
 
 #### GUILD Conditions
 
-GUILD conditions require both guildID and guildRoleId or guildRoleAction.
+Sample GUILD condition schema
+<pre>
+{
+	"type": "GUILD",
+	"category": "guildRoles",
+	"subcategory": <Role Type>,
+	"data": {
+		"guildId": <Guild ID>,
+		"guildRoleId": <Specific Role ID>
+	}
+}
+</pre>
 
 - **Working**:
-Guild ID Validation: The function first checks for the presence of the guildId.
-API Call: On confirming its presence, the function then fetches guild data from a specific API endpoint to ascertain the guild's validity.
-Role and Action Checks: After validating the guild:
-The function checks for the presence of guildRoleId or guildRoleAction. At least one must be specified.
-If guildRoleId is given, its legitimacy is cross-verified with the guild's roles.
-For guildRoleAction, the function ensures its value is strictly "all" or "any".
+
+Fields:
+  type:
+    Always set to: "GUILD"
+  category:
+    Always set to: "guildRoles"
+  subcategory:
+    Role type classification.
+    Values:
+      specificRole: For a singular role.
+      allRoles: Pertaining to all roles in the guild.
+      anyRole: Referring to any role within the guild.
+  data:
+  guildId: Unique identifier of a guild.
+  guildRoleId: Role ID within the guild. (Required only for the specificRole subcategory.)
+Usage:
+This structure governs user permissions within a guild. The subcategory dictates the manner of role-based operations, from checking permissions of a single role (specificRole) to broad checks across any or all roles (anyRole, allRoles).
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
@@ -3594,6 +3620,8 @@ For guildRoleAction, the function ensures its value is strictly "all" or "any".
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -3611,7 +3639,7 @@ For guildRoleAction, the function ensures its value is strictly "all" or "any".
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -3627,6 +3655,8 @@ For guildRoleAction, the function ensures its value is strictly "all" or "any".
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -3634,9 +3664,10 @@ For guildRoleAction, the function ensures its value is strictly "all" or "any".
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'anyRole',
               'data': {
-                'guildId': '13468',
-                'guildRoleAction': 'all/any'
+                'guildId': '13468'
               }
             }
           ]
@@ -3680,7 +3711,7 @@ Allowed Options (params with _ are mandatory)
 // PushAPI_chat_getGroupAccess | Response - 200 OK
 {
     'groupAccess': true,
-    'chatAccess': false,
+    'chat': false,
     'rules': {
         'groupAccess': {
             'conditions': [
@@ -3699,6 +3730,8 @@ Allowed Options (params with _ are mandatory)
                         },
                         {
                             'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
                             'data': {
                                 'guildId': '13468',
                                 'guildRoleId': '19924'
@@ -3719,7 +3752,7 @@ Allowed Options (params with _ are mandatory)
                 }
             ]
         },
-        'chatAccess': {
+        'chat': {
             'conditions': [
                 {
                     'all': [
@@ -3736,6 +3769,8 @@ Allowed Options (params with _ are mandatory)
                         },
                         {
                             'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
                             'data': {
                                 'guildId': '13468',
                                 'guildRoleId': '19924'
@@ -3817,6 +3852,8 @@ const response = await PushAPI.chat.updateGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guidlRoleId': '19924'
@@ -3826,7 +3863,7 @@ const response = await PushAPI.chat.updateGroup({
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -3842,6 +3879,8 @@ const response = await PushAPI.chat.updateGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -4017,6 +4056,8 @@ Allowed Options (params with _ are mandatory)
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -4026,7 +4067,7 @@ Allowed Options (params with _ are mandatory)
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -4042,6 +4083,8 @@ Allowed Options (params with _ are mandatory)
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -4716,6 +4759,8 @@ const response = await PushAPI.space.create({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -4791,7 +4836,7 @@ export interface Rules {
   groupAccess?: {
     conditions: Array<Condition | ConditionBase>
   }
-  chatAccess?: {
+  chat?: {
     conditions: Array<Condition | ConditionBase>
   }
 }
@@ -4893,6 +4938,8 @@ export interface Rules {
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
                 'guildRoleId': '19924'
@@ -4957,6 +5004,8 @@ Allowed Options (params with _ are mandatory)
                         },
                         {
                             'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
                             'data': {
                                 'guildId': '13468',
                                 'guildRoleId': '19924'
@@ -5053,16 +5102,17 @@ const response = await PushAPI.space.update({
               },
               {
                 'type': 'GUILD',
+                'category': 'guildRoles',
+                'subcategory': 'allRoles',
                 'data': {
-                  'guildId': '13468',
-                  'roleId': '19924'
+                  'guildId': '13468'
                 }
               }
             ]
           }
         ]
       },
-      'chatAccess': {
+      'chat': {
         'conditions': [
           {
             'all': [
@@ -5078,9 +5128,11 @@ const response = await PushAPI.space.update({
               },
               {
                 'type': 'GUILD',
+                'category': 'guildRoles',
+                'subcategory': 'specificRole',
                 'data': {
                   'guildId': '13468',
-                  'roleId': '19924'
+                  'guildRoleId': '19924'
                 }
               }
             ]
@@ -5221,9 +5273,11 @@ Allowed Options (params with _ are mandatory)
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             },
             {

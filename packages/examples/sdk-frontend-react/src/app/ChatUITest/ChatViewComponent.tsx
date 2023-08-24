@@ -17,7 +17,7 @@ const ChatViewComponentTest = () => {
       {/* <Loader show={isLoading} /> */}
     <ChatViewComponentCard>
         
-      <ChatViewComponent onClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='0xDb7dB5E0910ed21cA7872311763E1BDaAa01C6D6' limit={10}/>
+      <ChatViewComponent onClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='0ff5022ef524b5eacf0bf4bdf4565d5091e022b8f353caacdb47f76bddcd0771' limit={10}/>
       </ChatViewComponentCard>
     </div>
   );
