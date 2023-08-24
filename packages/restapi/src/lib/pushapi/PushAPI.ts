@@ -198,13 +198,13 @@ export class PushAPI {
       return response;
     },
 
-    permissions: (): void => {
-      console.log('Fetching chat permissions...');
+    /*permissions: (): void => {
+      console.warn('Fetching chat permissions... Coming Soon');
     },
 
     info: (): void => {
-      console.log('Fetching chat info...');
-    },
+      console.warn('Fetching chat info...  Coming Soon');
+    },*/
 
     group: {
       create: async (
