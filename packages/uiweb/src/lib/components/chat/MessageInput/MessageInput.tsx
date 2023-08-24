@@ -25,7 +25,7 @@ import { Image } from "../../reusables";
 import { ConnectButtonComp } from "../ConnectButton";
 import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
 import { ethers } from "ethers";
-import { pCAIP10ToWallet, setAccessControl } from "../../../helpers";
+import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from "../../../helpers";
 
 /**
  * @interface IThemeProps
@@ -86,7 +86,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         console.log('chatId', chatId);
     }
 
-    const sendRequestMessage = async() => {
+    const sendRequestMessage = async () => {
         const sendTextMessage = await sendMessage({
             message: `Hello, please let me join this group, my wallet address is ${account}`,
             chatId: groupInformation?.groupCreator || '',
@@ -112,7 +112,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 setAccessControl(chatId, true)
             }
         }
-    }, [chatId, verified])
+    }, [chatId, verified, isMember])
 
     const uploadFile = async (
         e: ChangeEvent<HTMLInputElement>
@@ -196,9 +196,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
 
             console.log(allMembers, "allMembers")
             allMembers.map((acc) => {
-                if (acc.wallet === `eip155:${account}`) {
+                console.log(acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase(), "testing calleddd")
+                if (acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()) {
                     setIsMember(true)
+                    // console.log(isMember, "isMebberrrr")
                 } else {
+                    // console.log("else is being alledddd")
                     setIsMember(false)
                 }
             })
@@ -210,6 +213,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             console.log(groupInfo, "groupInfooooo")
         }
     }
+
+    useEffect(() => {
+        console.log(isMember, "afterupdatinggg")
+    }, [isMember])
 
     useEffect(() => {
         console.log(chatId, "chatIdddd")
