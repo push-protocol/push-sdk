@@ -44,6 +44,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const [isRules, setIsRules] = useState<boolean>(false)
+    const [isMember, setIsMember] = useState<boolean>(false)
+    const [groupInformation, setGroupInformation] = useState<IGroup | undefined>(undefined);
     const onChangeTypedMessage = (val: string) => {
         setTypedMessage(val);
     };
@@ -82,6 +84,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     const checkVerification = () => {
         verifyAccessControl({ chatId, did: account! });
         console.log('chatId', chatId);
+    }
+
+    const sendRequestMessage = async() => {
+        const sendTextMessage = await sendMessage({
+            message: `Hello, please let me join this group, my wallet address is ${account}`,
+            chatId: groupInformation?.groupCreator || '',
+            messageType: 'Text',
+        });
+        console.log(sendTextMessage, "messageee");
     }
 
     useEffect(() => {
@@ -156,7 +167,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 chatId,
                 messageType: type as any,
             });
-            console.log(sendTextMessage, "messageee");
         } catch (error) {
             console.log(error);
         }
@@ -175,18 +185,34 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
         setGifOpen(false);
     }
 
-    const checkIfrules = async() => {
+    const checkIfrules = async () => {
         if (!ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
-            console.log("beingnnggg calleddd")
             const groupInfo = await getGroupByID({ groupId: chatId })
-            if(groupInfo?.rules) {
+            setGroupInformation(groupInfo)
+            const members = groupInfo?.members || [];
+            const pendingMembers = groupInfo?.pendingMembers || [];
+            const allMembers = [...members, ...pendingMembers];
+
+            console.log(allMembers, "allMembers")
+            allMembers.map((acc) => {
+                if (acc.wallet === `eip155:${account}`) {
+                    setIsMember(true)
+                } else {
+                    setIsMember(false)
+                }
+            })
+
+            if (groupInfo?.rules) {
                 setIsRules(true)
                 console.log(groupInfo?.rules)
             }
             console.log(groupInfo, "groupInfooooo")
         }
     }
-    console.log(verificationSuccessfull, "verrifficagtionnn")
+
+    useEffect(() => {
+        console.log(isMember, "isMember")
+    }, [isMember])
 
     useEffect(() => {
         console.log(chatId, "chatIdddd")
@@ -218,23 +244,36 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                     </Section>
                 )
                 }
-
-                {pgpPrivateKey && 
-                !verified
-                // verified  
-                && isRules && (
+                {pgpPrivateKey && !isMember && (
                     <Section width="100%" justifyContent="space-between" alignItems="center"
                     >
                         <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
-                            Sending messages requires <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> for participation. <Link href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group" target="_blank" color={theme.backgroundColor?.chatSentBubbleBackground}>Learn More <OpenLink /></Link>
+                            Click on the button to join the group
                         </Span>
                         <ConnectWrapper>
-                            <Connect onClick={checkVerification}>
-                                Verify Access
+                            <Connect onClick={sendRequestMessage}>
+                                Join Group
                             </Connect>
                         </ConnectWrapper>
                     </Section>
                 )}
+                {pgpPrivateKey &&
+                    !verified
+                    &&
+                    isMember
+                    && isRules && (
+                        <Section width="100%" justifyContent="space-between" alignItems="center"
+                        >
+                            <Span padding="8px 8px 8px 16px" color={theme.textColor?.chatReceivedBubbleText} fontSize="15px" fontWeight="500" textAlign="start">
+                                Sending messages requires <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> for participation. <Link href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group" target="_blank" color={theme.backgroundColor?.chatSentBubbleBackground}>Learn More <OpenLink /></Link>
+                            </Span>
+                            <ConnectWrapper>
+                                <Connect onClick={checkVerification}>
+                                    Verify Access
+                                </Connect>
+                            </ConnectWrapper>
+                        </Section>
+                    )}
                 {pgpPrivateKey && !verificationSuccessfull && (
                     <Modal width='439px'>
                         <Section padding="10px" theme={theme} gap='32px' flexDirection='column'>
@@ -243,7 +282,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                             <Section gap='8px' alignItems='start'>
                                 <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
-                                    <Span  color={theme.textColor?.chatSentBubbleText} textAlign='start' alignSelf='start'>Token Gated</Span>
+                                    <Span color={theme.textColor?.chatSentBubbleText} textAlign='start' alignSelf='start'>Token Gated</Span>
                                     <Span fontWeight="500" textAlign='start' color={theme.textColor?.chatSentBubbleText}>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
@@ -272,10 +311,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                         </Section>
                     </Modal>
                 )}
-                {pgpPrivateKey && 
-                (isRules ? verified : true)
-                // true
-                 &&
+                {pgpPrivateKey &&
+                    (isRules ? verified : true)
+                    &&
+                    isMember
+                    &&
                     <>
                         <Section gap="8px" flex="1" position="static">
                             {Emoji &&
