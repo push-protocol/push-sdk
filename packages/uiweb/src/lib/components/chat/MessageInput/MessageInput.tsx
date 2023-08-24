@@ -84,7 +84,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerificationSuccessfull,
     verified,
     setVerified,
-    loading:accessLoading
+    loading: accessLoading,
   } = useVerifyAccessControl();
   const { account, env } = useChatData();
   const { fetchChat } = useFetchChat();
@@ -129,7 +129,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     });
   };
 
-  console.log(chatFeed)
+  console.log(chatFeed);
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
@@ -148,7 +148,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
       }
     }
-  }, [chatId, verified, isMember]);
+  }, [chatId, verified, isMember, account, env]);
 
   const uploadFile = async (
     e: ChangeEvent<HTMLInputElement>
@@ -233,7 +233,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       ) {
         const updateChatFeed = chatFeed;
         updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        console.log("in socket group")
+        console.log('in socket group');
         setChatFeed(updateChatFeed);
       }
     }
@@ -248,11 +248,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         const chat = await fetchChat({ chatId });
         let updatedChatFeed;
         if (Object.keys(chat || {}).length) {
-           updatedChatFeed = { ...(chatFeed as IFeeds) };
-          if(Object.keys(updatedChatFeed||{}).length)
-          updatedChatFeed.intent = chat?.intent as string;
-        else
-        updatedChatFeed = chat;
+          updatedChatFeed = { ...(chatFeed as IFeeds) };
+          if (Object.keys(updatedChatFeed || {}).length)
+            updatedChatFeed.intent = chat?.intent as string;
+          else updatedChatFeed = chat;
           setChatFeed(updatedChatFeed as IFeeds);
         }
       }
@@ -263,7 +262,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       if (!account && !env) return;
       const chat = await fetchChat({ chatId });
-      console.log(chat)
+      console.log(chat);
       if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
       else {
         let newChatFeed;
@@ -277,14 +276,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           newChatFeed = getDefaultFeedObject({ user: result });
         } else {
           group = await getGroup({ searchText: chatId });
-          console.log(group,"group information")
+          console.log(group, 'group information');
           if (group) {
-            console.log(group,"group information")
+            console.log(group, 'group information');
             newChatFeed = getDefaultFeedObject({ groupInformation: group });
           }
         }
         if (newChatFeed) {
-            console.log("in ise effect *****")
+          console.log('in ise effect *****');
           setChatFeed(newChatFeed);
         }
       }
@@ -295,9 +294,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     const members = chatFeed?.groupInformation?.members || [];
     const pendingMembers = chatFeed?.groupInformation?.pendingMembers || [];
     const allMembers = [...members, ...pendingMembers];
-
     allMembers.forEach((acc) => {
-     
       if (
         acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
       ) {
@@ -309,10 +306,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsRules(true);
     }
   };
-console.log(isRules,isMember,verified,verificationSuccessfull)
+  console.log(isRules, isMember, verified, verificationSuccessfull);
   useEffect(() => {
-    if (chatFeed && chatFeed?.groupInformation) checkIfrules();
-  }, [chatId,chatFeed]);
+    if (!account && !env && !chatId) return;
+    if (account && env && chatId && chatFeed && chatFeed?.groupInformation)
+      checkIfrules();
+  }, [chatId, chatFeed, account, env]);
 
   return !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
@@ -402,7 +401,11 @@ console.log(isRules,isMember,verified,verificationSuccessfull)
                 </Span>
                 <ConnectWrapper>
                   <Connect onClick={() => checkVerification()}>
-                  {accessLoading ? <Spinner color="#fff" size="24" /> : 'Verify Access'}
+                    {accessLoading ? (
+                      <Spinner color="#fff" size="24" />
+                    ) : (
+                      'Verify Access'
+                    )}
                   </Connect>
                 </ConnectWrapper>
               </Section>
@@ -491,117 +494,119 @@ console.log(isRules,isMember,verified,verificationSuccessfull)
             )}
           </>
         ) : null}
-        {pgpPrivateKey &&(( (isRules ? verified : true) && isMember) || (chatFeed&&!chatFeed?.groupInformation)) && (
-          <>
-            <Section gap="8px" flex="1" position="static">
-              {Emoji && (
-                <Div
-                  width="25px"
-                  cursor="pointer"
-                  height="25px"
-                  alignSelf="end"
-                  onClick={() => setShowEmojis(!showEmojis)}
-                >
-                  <EmojiIcon color={theme.iconColor?.emoji} />
-                </Div>
-              )}
-              {showEmojis && (
-                <Section
-                  ref={modalRef}
-                  position="absolute"
-                  bottom="2.5rem"
-                  left="2.5rem"
-                  zIndex="700"
-                >
-                  <EmojiPicker
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    onEmojiClick={addEmoji}
-                  />
-                </Section>
-              )}
-              <MultiLineInput
-                theme={theme}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendTextMsg();
-                  }
-                }}
-                placeholder="Type your message..."
-                onChange={(e) => onChangeTypedMessage(e.target.value)}
-                value={typedMessage}
-                ref={textAreaRef}
-                rows={1}
-              />
-            </Section>
-            <SendSection position="static">
-              {GIF && (
-                <Section
-                  width="34px"
-                  height="24px"
-                  cursor="pointer"
-                  alignSelf="end"
-                  onClick={() => setGifOpen(!gifOpen)}
-                >
-                  <GifIcon />
-                </Section>
-              )}
-              {gifOpen && (
-                <Section
-                  position="absolute"
-                  bottom="2.5rem"
-                  zIndex="1"
-                  right={isMobile ? '7rem' : '8rem'}
-                  ref={modalRef}
-                >
-                  <GifPicker
-                    onGifClick={sendGIF}
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-                  />
-                </Section>
-              )}
-              <Section onClick={handleUploadFile}>
-                {!fileUploading && File && (
-                  <>
-                    <Section
-                      width="17"
-                      height="24px"
-                      cursor="pointer"
-                      alignSelf="end"
-                      onClick={() => setNewChat(true)}
-                    >
-                      <AttachmentIcon color={theme.iconColor?.attachment} />
-                    </Section>
-                    <FileInput
-                      type="file"
-                      ref={fileUploadInputRef}
-                      onChange={(e) => uploadFile(e)}
-                    />
-                  </>
+        {pgpPrivateKey &&
+          (((isRules ? verified : true) && isMember) ||
+            (chatFeed && !chatFeed?.groupInformation)) && (
+            <>
+              <Section gap="8px" flex="1" position="static">
+                {Emoji && (
+                  <Div
+                    width="25px"
+                    cursor="pointer"
+                    height="25px"
+                    alignSelf="end"
+                    onClick={() => setShowEmojis(!showEmojis)}
+                  >
+                    <EmojiIcon color={theme.iconColor?.emoji} />
+                  </Div>
                 )}
+                {showEmojis && (
+                  <Section
+                    ref={modalRef}
+                    position="absolute"
+                    bottom="2.5rem"
+                    left="2.5rem"
+                    zIndex="700"
+                  >
+                    <EmojiPicker
+                      width={isMobile ? 260 : 320}
+                      height={370}
+                      onEmojiClick={addEmoji}
+                    />
+                  </Section>
+                )}
+                <MultiLineInput
+                  theme={theme}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                      event.preventDefault();
+                      sendTextMsg();
+                    }
+                  }}
+                  placeholder="Type your message..."
+                  onChange={(e) => onChangeTypedMessage(e.target.value)}
+                  value={typedMessage}
+                  ref={textAreaRef}
+                  rows={1}
+                />
               </Section>
-              {!(loading || fileUploading) && (
-                <Section
-                  cursor="pointer"
-                  alignSelf="end"
-                  height="24px"
-                  onClick={() => sendTextMsg()}
-                >
-                  <SendCompIcon color={theme.iconColor?.sendButton} />
+              <SendSection position="static">
+                {GIF && (
+                  <Section
+                    width="34px"
+                    height="24px"
+                    cursor="pointer"
+                    alignSelf="end"
+                    onClick={() => setGifOpen(!gifOpen)}
+                  >
+                    <GifIcon />
+                  </Section>
+                )}
+                {gifOpen && (
+                  <Section
+                    position="absolute"
+                    bottom="2.5rem"
+                    zIndex="1"
+                    right={isMobile ? '7rem' : '8rem'}
+                    ref={modalRef}
+                  >
+                    <GifPicker
+                      onGifClick={sendGIF}
+                      width={isMobile ? 260 : 320}
+                      height={370}
+                      tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                    />
+                  </Section>
+                )}
+                <Section onClick={handleUploadFile}>
+                  {!fileUploading && File && (
+                    <>
+                      <Section
+                        width="17"
+                        height="24px"
+                        cursor="pointer"
+                        alignSelf="end"
+                        onClick={() => setNewChat(true)}
+                      >
+                        <AttachmentIcon color={theme.iconColor?.attachment} />
+                      </Section>
+                      <FileInput
+                        type="file"
+                        ref={fileUploadInputRef}
+                        onChange={(e) => uploadFile(e)}
+                      />
+                    </>
+                  )}
                 </Section>
-              )}
+                {!(loading || fileUploading) && (
+                  <Section
+                    cursor="pointer"
+                    alignSelf="end"
+                    height="24px"
+                    onClick={() => sendTextMsg()}
+                  >
+                    <SendCompIcon color={theme.iconColor?.sendButton} />
+                  </Section>
+                )}
 
-              {(loading || fileUploading) && (
-                <Section alignSelf="end" height="24px">
-                  <Spinner color={theme.spinnerColor} size="22" />
-                </Section>
-              )}
-            </SendSection>
-          </>
-        )}
+                {(loading || fileUploading) && (
+                  <Section alignSelf="end" height="24px">
+                    <Spinner color={theme.spinnerColor} size="22" />
+                  </Section>
+                )}
+              </SendSection>
+            </>
+          )}
       </TypebarSection>
     </Container>
   ) : (
