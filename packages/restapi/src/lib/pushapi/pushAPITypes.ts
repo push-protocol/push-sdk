@@ -13,9 +13,6 @@ export interface PushAPIInitializeProps {
   versionMeta?: { password: string };
   autoUpgrade?: boolean;
   origin?: string;
-  chat?: any;
-  notification?: any;
-  spaces?: any;
 }
 
 export interface GroupCreationOptions {
@@ -36,7 +33,7 @@ export interface GroupCreationOptions {
 
 export interface ManageGroupOptions {
   chatid: string;
-  role: string;
+  role: 'ADMIN' | 'MEMBER';
   accounts: string[];
 }
 
