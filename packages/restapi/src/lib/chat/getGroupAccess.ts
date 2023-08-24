@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupAccess } from '../types';
+import {  getUserDID } from './helpers';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -22,12 +23,15 @@ export const getGroupAccess = async (
     if (chatId == null || chatId.length === 0) {
       throw new Error(`chatId cannot be null or empty`);
     }
+
     if (did == null || did.length === 0) {
       throw new Error(`did cannot be null or empty`);
     }
 
+    const user = await getUserDID(did, env);
+
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/access/${did}`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/access/${user}`;
     return axios
       .get(requestUrl)
       .then((response) => {
