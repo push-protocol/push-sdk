@@ -49,7 +49,7 @@ const useVerifyAccessControl = () => {
         return;
       }
     },
-    [pgpPrivateKey, account, verificationSuccessfull, verified, setVerified]
+    [pgpPrivateKey, account, env]
   );
   return {
     verifyAccessControl,

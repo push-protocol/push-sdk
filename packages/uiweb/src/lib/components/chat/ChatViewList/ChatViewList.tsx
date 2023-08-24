@@ -27,7 +27,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 
-import { EncryptionMessage } from './MessageEncryption';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
@@ -308,9 +308,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           (chatFeed.publicKey ||
             (chatFeed?.groupInformation &&
               !chatFeed?.groupInformation?.isPublic)) ? (
-            <EncryptionMessage id={'ENCRYPTED'} />
+                <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
-            <EncryptionMessage id={'NO_ENCRYPTED'} />
+            <EncryptionMessage id={chatFeed?.groupInformation?ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP:ENCRYPTION_KEYS.NO_ENCRYPTED} />
           )}
 
           {chatStatusText && (

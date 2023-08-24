@@ -249,7 +249,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         if (Object.keys(chat || {}).length) {
           const updatedChatFeed = { ...(chatFeed as IFeeds) };
           updatedChatFeed.intent = chat?.intent as string;
-          console.log("accept ********")
           setChatFeed(updatedChatFeed);
         }
       }
