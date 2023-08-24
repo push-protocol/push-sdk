@@ -59,7 +59,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { historyMessages, loading: messageLoading } =
     useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  // const bottomRef = useRef<HTMLDivElement>(null);
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
   const { getGroup } = useGetGroup();
@@ -188,8 +188,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   const scrollToBottom = (behavior?: string | null) => {
-    bottomRef?.current?.scrollIntoView({ behavior: "smooth", block: 'end' });
-  };
+    if (listInnerRef.current) {
+      listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
+    }  };
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -330,6 +331,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                 flexDirection="column"
                 justifyContent="start"
                 width="100%"
+             
               >
                 {messages?.messages &&
                   messages?.messages?.map(
@@ -352,7 +354,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                       );
                     }
                   )}
-                <div ref={bottomRef} />
+                {/* <div ref={bottomRef} /> */}
               </Section>
               {chatFeed &&
                 account &&
@@ -390,6 +392,7 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   filter: blur(12px);
   `}
   overscroll-behavior: contain;
+  scroll-behavior: smooth
 `;
 
 const Overlay = styled.div``;
