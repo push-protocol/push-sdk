@@ -195,14 +195,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             const allMembers = [...members, ...pendingMembers];
 
             console.log(allMembers, "allMembers")
-            allMembers.map((acc) => {
-                console.log(acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase(), "testing calleddd")
+            allMembers.forEach((acc) => {
+                console.log(acc.wallet, "allt he member wallet")
+                console.log(walletToPCAIP10(account!), "wallet vaala address")
                 if (acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()) {
                     setIsMember(true)
-                    // console.log(isMember, "isMebberrrr")
-                } else {
-                    // console.log("else is being alledddd")
-                    setIsMember(false)
                 }
             })
 
@@ -221,7 +218,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     useEffect(() => {
         console.log(chatId, "chatIdddd")
         checkIfrules();
-    }, [chatId])
+    }, [chatId, verified])
 
     return (
         <Container theme={theme}>
