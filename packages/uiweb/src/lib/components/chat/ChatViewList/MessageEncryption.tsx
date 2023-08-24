@@ -6,6 +6,14 @@ import { ThemeContext } from "../theme/ThemeProvider";
 import { NoEncryptionIcon } from "../../../icons/NoEncryption";
 import { EncryptionIcon } from "../../../icons/Encryption";
 
+export const ENCRYPTION_KEYS = {
+  ENCRYPTED: 'ENCRYPTED',
+  NO_ENCRYPTED: 'NO_ENCRYPTED',
+  NO_ENCRYPTED_GROUP: 'NO_ENCRYPTED_GROUP'
+} as const;
+
+export type EncryptionKeys = (typeof ENCRYPTION_KEYS)[keyof typeof ENCRYPTION_KEYS];
+
 const EncryptionMessageContent = {
     ENCRYPTED: {
       IconComponent: <EncryptionIcon size="15" />,
@@ -15,8 +23,14 @@ const EncryptionMessageContent = {
       IconComponent: <NoEncryptionIcon size="15" />,
       text: `Messages are not encrypted`,
     },
+    NO_ENCRYPTED_GROUP: {
+      IconComponent: <NoEncryptionIcon size="15" />,
+      text: `Messages in this group are not encrypted`,
+    },
   };
- export const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
+
+
+ export const EncryptionMessage = ({ id }: { id: EncryptionKeys}) => {
     console.log(id)
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(771);
