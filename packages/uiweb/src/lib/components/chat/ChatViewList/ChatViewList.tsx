@@ -188,9 +188,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   const scrollToBottom = (behavior?: string | null) => {
-    bottomRef?.current?.scrollIntoView(
-      !behavior ? true : { behavior: 'smooth' }
-    );
+    bottomRef?.current?.scrollIntoView({ behavior: "smooth", block: 'end' });
   };
 
   useEffect(() => {
@@ -299,7 +297,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           !pgpPrivateKey
         )
       }
-      onScroll={() => onScroll()}
+      onScroll={(e) => {e.stopPropagation();onScroll()}}
     >
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
