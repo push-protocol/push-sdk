@@ -156,7 +156,7 @@ export const getDefaultFeedObject = ({user,groupInformation}:{user?:IUser,groupI
     publicKey: groupInformation?null: user!.publicKey,
     combinedDID: '',
     cid: '',
-    groupInformation: undefined,
+    groupInformation: groupInformation??undefined,
   };
   return feed as IFeeds;
 }

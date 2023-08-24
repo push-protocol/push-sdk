@@ -38,15 +38,11 @@ const usePushSendMessage = () => {
         }
         return;
       } catch (error: Error | any) {
-        if (error.message.includes('400')) {
-          setAccessControl(chatId, true);
-          setVerified(false);
-          setVerificationSuccessfull(false);
-        }
+       
         setLoading(false);
         setError(error.message);
         console.log(error);
-        return;
+        return error.message;
       }
     },
     [pgpPrivateKey, account]
