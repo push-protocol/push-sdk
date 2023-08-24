@@ -6,6 +6,8 @@ import {
   ChatStatus,
   Rules,
   SpaceRules,
+  GroupAccess, 
+  SpaceAccess
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
@@ -249,6 +251,28 @@ export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
     chatAccess: undefined,
   };
 };
+
+export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
+  return {
+    spaceAccess: rules.groupAccess,
+  };
+};
+
+export const groupAccessToSpaceAccess = (
+  group: GroupAccess
+): SpaceAccess => {
+  const spaceAccess: SpaceAccess = {
+    spaceAccess: group.groupAccess,
+  };
+
+  // If rules are present in the groupAccess, map them to the spaceAccess
+  if (group.rules) {
+    spaceAccess.rules = convertRulesToSpaceRules(group.rules);
+  }
+
+  return spaceAccess;
+};
+
 
 export const updateGroupPayload = (
   groupName: string,

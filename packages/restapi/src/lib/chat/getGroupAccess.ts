@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
+import { GroupAccess } from '../types';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -14,7 +15,7 @@ export interface GetGroupAccessType {
 
 export const getGroupAccess = async (
   options: GetGroupAccessType
-): Promise<any> => {
+): Promise<GroupAccess> => {
   // Replace "any" with the actual response type
   const { chatId, did, env = Constants.ENV.PROD } = options || {};
   try {

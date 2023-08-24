@@ -242,6 +242,7 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+  origin?: string | null;
 
   /**
    * @deprecated Use `profile.name` instead.
@@ -310,18 +311,21 @@ export enum ConditionType {
 }
 
 export type Data = {
-  address?: string;
+  contract?: string;
   amount?: number;
   decimals?: number;
   guildId?: string;
-  roleId?: string;
+  guildRoleId?: string;
+  guildRoleAction?: 'all' | 'any';
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
 };
 
 export type ConditionBase = {
-  type: ConditionType;
+  type?: ConditionType;
   category?: string;
   subcategory?: string;
-  data: Data;
+  data?: Data;
   access?: boolean;
 };
 
@@ -343,6 +347,17 @@ export interface SpaceRules {
   spaceAccess?: {
     conditions: Array<Condition | ConditionBase>;
   };
+}
+
+export interface GroupAccess {
+  groupAccess: boolean;
+  chatAccess: boolean;
+  rules?: Rules;
+}
+
+export interface SpaceAccess {
+  spaceAccess: boolean;
+  rules?: SpaceRules;
 }
 
 export interface GroupDTO {
