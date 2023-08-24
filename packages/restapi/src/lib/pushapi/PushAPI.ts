@@ -24,6 +24,7 @@ import {
   addAdmins,
   addMembers,
   createGroup,
+  getGroup,
   getGroupAccess,
   removeAdmins,
   removeMembers,
@@ -264,8 +265,13 @@ export class PushAPI {
         return response;
       },
 
-      info: (): void => {
+      info: async (chatId: string): Promise<GroupDTO> => {
         console.log('Fetching group info...');
+        const group = await getGroup({
+          chatId: chatId,
+          env: this.env,
+        });
+        return group;
       },
 
       update: async (
@@ -306,7 +312,7 @@ export class PushAPI {
       manage: async (
         action: 'ADD' | 'REMOVE',
         options: ManageGroupOptions
-      ): Promise<any> => {
+      ): Promise<GroupDTO> => {
         console.log('Managing/Adjusting chat group...');
 
         const { chatid, role, accounts } = options;
