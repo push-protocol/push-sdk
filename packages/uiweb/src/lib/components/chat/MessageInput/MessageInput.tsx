@@ -167,6 +167,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                 chatId,
                 messageType: type as any,
             });
+            console.log(sendTextMessage, "messageee");
         } catch (error) {
             console.log(error);
         }
@@ -209,10 +210,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
             console.log(groupInfo, "groupInfooooo")
         }
     }
-
-    useEffect(() => {
-        console.log(isMember, "isMember")
-    }, [isMember])
 
     useEffect(() => {
         console.log(chatId, "chatIdddd")
@@ -283,6 +280,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
                                 <Image verticalAlign='start' height='24' width='24' src={TokenGatedIcon} alt='token-gated' />
                                 <Section flexDirection='column'> {/* Added marginLeft */}
                                     <Span color={theme.textColor?.chatSentBubbleText} textAlign='start' alignSelf='start'>Token Gated</Span>
+
                                     <Span fontWeight="500" textAlign='start' color={theme.textColor?.chatSentBubbleText}>You need to have <Span color={theme.backgroundColor?.chatSentBubbleBackground}>1 PUSH Token</Span> in your wallet to be able to send messages.</Span>
                                 </Section>
                             </Section>
