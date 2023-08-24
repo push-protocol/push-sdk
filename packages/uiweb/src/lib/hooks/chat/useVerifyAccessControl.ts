@@ -18,7 +18,6 @@ const useVerifyAccessControl = () => {
 
   const { pgpPrivateKey, env, account } = useChatData();
 
-  console.log('Verification control hook');
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
       const { chatId, did } = options || {};
@@ -36,7 +35,6 @@ const useVerifyAccessControl = () => {
           setVerified(true);
           setAccessControl(chatId, false);
         }
-        console.log(response);
         if (!response) {
           return false;
         }

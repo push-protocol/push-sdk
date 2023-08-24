@@ -27,6 +27,8 @@ export const usePushChatSocket = () => {
 
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
     useState<any>({});
+    const [acceptedRequestMessage, setAcceptedRequestMessage] =
+    useState<any>({});
   const [
     groupInformationSinceLastConnection,
     setGroupInformationSinceLastConnection,
@@ -60,20 +62,24 @@ export const usePushChatSocket = () => {
         (chat.messageContent === null) &&
         (chat.messageType === null)
       ) {
-        return;
+        setAcceptedRequestMessage(chat);
       }
-      console.log(chat)
-      const response = await PushAPI.chat.decryptConversation({
-        messages: [chat],
-        connectedUser: connectedProfile,
-        pgpPrivateKey: pgpPrivateKey,
-        env: env,
-      });
-      console.log(chat)
-
-      if (response && response.length) {
-        setMessagesSinceLastConnection(response[0]);
+      else
+      {
+        console.log(chat)
+        const response = await PushAPI.chat.decryptConversation({
+          messages: [chat],
+          connectedUser: connectedProfile,
+          pgpPrivateKey: pgpPrivateKey,
+          env: env,
+        });
+        console.log(chat)
+  
+        if (response && response.length) {
+          setMessagesSinceLastConnection(response[0]);
+        }
       }
+     
     });
     pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
       /**
@@ -143,6 +149,7 @@ export const usePushChatSocket = () => {
     pushChatSocket,
     isPushChatSocketConnected,
     messagesSinceLastConnection,
+    acceptedRequestMessage,
     groupInformationSinceLastConnection,
   };
 };
