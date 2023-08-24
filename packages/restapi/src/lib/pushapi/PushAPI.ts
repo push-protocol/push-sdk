@@ -22,12 +22,10 @@ import {
   GetGroupAccessType,
   addAdmins,
   addMembers,
-  chats,
   createGroup,
   getGroupAccess,
   removeAdmins,
   removeMembers,
-  requests,
   send,
 } from '../chat';
 import { isValidETHAddress } from '../helpers';
@@ -140,14 +138,14 @@ export class PushAPI {
 
   chat = {
     list: async (
-      type: ChatListType,
+      type: `${ChatListType}`,
       options: {
         page?: number;
         limit?: number;
       }
     ): Promise<IFeeds[]> => {
-      const commonParams = {
-        account: this.account!,
+      const listParams = {
+        account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         page: options.page || 1,
         limit: options.limit || 10,
@@ -155,17 +153,14 @@ export class PushAPI {
         toDecrypt: true,
       };
 
-      let response;
-
-      if (type === 'CHATS') {
-        response = await chats(commonParams);
-      } else if (type === 'REQUESTS') {
-        response = await requests(commonParams);
-      } else {
-        throw new Error('Invalid chat list type');
+      switch (type) {
+        case ChatListType.CHATS:
+          return await PUSH_CHAT.chats(listParams);
+        case ChatListType.REQUESTS:
+          return await PUSH_CHAT.requests(listParams);
+        default:
+          throw new Error('Invalid Chat List Type');
       }
-
-      return response;
     },
 
     latest: (): void => {

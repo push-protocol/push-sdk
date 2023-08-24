@@ -1,11 +1,13 @@
-import Constants, { ENV } from '../constants';
+import Constants, { ENV, MessageType } from '../constants';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
-export type ChatListType = 'CHATS' | 'REQUESTS';
 
-export type MessageType = 'Text';
+export enum ChatListType {
+  CHATS = 'CHATS',
+  REQUESTS = 'REQUESTS',
+}
 
 export interface SendMessageOptions {
-  type?: MessageType;
+  type?: `${MessageType}`;
   content: string;
 }
 
