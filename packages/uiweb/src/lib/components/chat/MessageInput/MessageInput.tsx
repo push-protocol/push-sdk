@@ -25,7 +25,7 @@ import { Image } from "../../reusables";
 import { ConnectButtonComp } from "../ConnectButton";
 import useGetGroupByID from "../../../hooks/chat/useGetGroupByID";
 import { ethers } from "ethers";
-import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from "../../../helpers";
+import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10, checkIfIntent } from "../../../helpers";
 
 /**
  * @interface IThemeProps
@@ -221,6 +221,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ chatId, Emoji = true
     }, [chatId, verified])
 
     return (
+        // {checkIfIntent() && ()}
         <Container theme={theme}>
             {/* {isConnected && (
                 <ConnectButtonComp />
