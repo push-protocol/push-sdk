@@ -1,21 +1,7 @@
 /**
- * This file defines the type for messageObj property for a Push Chat message
+ * This file defines the type for message property for a Push Chat message
  */
 import { MessageType } from '../constants';
-
-export interface MessageTypeSpecificObject {
-  [MessageType.TEXT]: MESSAGE_OBJECT;
-  [MessageType.IMAGE]: MESSAGE_OBJECT;
-  [MessageType.FILE]: MESSAGE_OBJECT;
-  [MessageType.MEDIA_EMBED]: MESSAGE_OBJECT;
-  [MessageType.GIF]: MESSAGE_OBJECT;
-  [MessageType.META]: META_MESSAGE_OBJECT;
-  [MessageType.REACTION]: REACTION_MESSAGE_OBJECT;
-}
-
-export type MESSAGE_OBJECT = {
-  content: string;
-};
 
 export enum META_ACTION {
   /**
@@ -46,16 +32,6 @@ export enum META_ACTION {
   REMOVE_SPEAKER = 17
 }
 
-export type META_MESSAGE_OBJECT = MESSAGE_OBJECT & {
-  action: META_ACTION;
-  info: {
-    affected: string[];
-    arbitrary?: {
-      [key: string]: any;
-    };
-  };
-};
-
 export enum REACTION_TYPE {
   THUMBS_UP,
   THUMBS_DOWN,
@@ -83,12 +59,42 @@ export const REACTION_SYMBOL: Record<REACTION_TYPE, string> = {
   [REACTION_TYPE.FIRE]: '\u{1F525}',
 };
 
-export type REACTION_MESSAGE_OBJECT = MESSAGE_OBJECT & {
+export interface BaseMessage<T> {
+  type: T;
+  content: string;
+}
+
+export interface MetaMessage extends BaseMessage<MessageType.META> {
+  action: META_ACTION;
+  info: {
+    affected: string[];
+    arbitrary?: {
+      [key: string]: any;
+    };
+  };
+}
+
+export interface ReactionMessage extends BaseMessage<MessageType.REACTION> {
   action: REACTION_TYPE;
   reference?: string | null;
-};
+}
 
-// TODO
-// export type REPLY_MESSAGE_OBJECT = {};
-// export type COMPOSITE_MESSAGE_OBJECT = {};
-// export type PAYMENT_MESSAGE_OBJECT = {};
+export type BaseMessageTypes =
+  | MessageType.TEXT
+  | MessageType.IMAGE
+  | MessageType.FILE
+  | MessageType.MEDIA_EMBED
+  | MessageType.GIF;
+
+export type Message =
+  | BaseMessage<BaseMessageTypes>
+  | MetaMessage
+  | ReactionMessage;
+
+/**
+ * @deprecated
+ */
+export type MessageObj =
+  | Omit<BaseMessage<BaseMessageTypes>, 'type'>
+  | Omit<MetaMessage, 'type'>
+  | Omit<ReactionMessage, 'type'>;

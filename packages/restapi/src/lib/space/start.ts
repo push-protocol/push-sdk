@@ -24,7 +24,7 @@ export interface StartSpaceType extends EnvOptionsType {
 import type Space from './Space';
 import { produce } from 'immer';
 import { pCAIP10ToWallet } from '../helpers';
-import { META_ACTION } from '../types/messageObjectTypes';
+import { META_ACTION } from '../types/messageTypes';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 
 type StartType = {
