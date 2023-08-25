@@ -201,9 +201,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   const scrollToBottom = (behavior?: string | null) => {
-    if (listInnerRef.current) {
-      listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
-    }
+    setTimeout(()=>{
+      if (listInnerRef.current) {
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100000;
+        console.log(listInnerRef.current.scrollHeight +100000)
+      }
+    },0)
+  
   };
 
   useEffect(()=>{
