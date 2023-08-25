@@ -35,7 +35,7 @@ const usePushSendMessage = () => {
         if (!response) {
           return false;
         }
-        return;
+        return response;
       } catch (error: Error | any) {
        
         setLoading(false);
