@@ -72,6 +72,11 @@ const resetStates = () => {
 };
 
 useEffect(() => {
+  console.log('*************************************************')
+ console.log(account)
+}, [account,env]);
+
+useEffect(() => {
     (async () => {
       let user;
       console.log(account)
@@ -81,7 +86,7 @@ console.log(user)
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account,env,pgpPrivateKey]);
+  }, [account,env]);
 
   const value: IChatDataContextValues = {
     account: accountVal,

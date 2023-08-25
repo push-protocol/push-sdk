@@ -50,7 +50,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account } = useChatData();
+  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
+    useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<Messagetype>();
@@ -76,6 +77,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, env]);
 
   useEffect(() => {
+    (async () => {
+      if (!connectedProfile && account) {
+        const user = await fetchChatProfile({ profileId: account!, env });
+        if (user) setConnectedProfile(user);
+      }
+    })();
+  }, [account]);
+
+  useEffect(() => {
     setMessages(undefined);
     setConversationHash(undefined);
   }, [chatId, account, pgpPrivateKey, env]);
@@ -83,7 +93,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      if(account && env){
+      if (account && env) {
         const chat = await fetchChat({ chatId });
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
@@ -113,7 +123,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         }
         setLoading(false);
       }
-      
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
@@ -147,14 +156,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async function () {
       if (!account && !env && !chatId) return;
-      if(account && env && chatId){
+      if (account && env && chatId) {
         const hash = await fetchConversationHash({ conversationId: chatId });
         setConversationHash(hash?.threadHash);
       }
-     
     })();
   }, [chatId, account, env, pgpPrivateKey]);
-console.log(account)
+  console.log(account);
   useEffect(() => {
     if (conversationHash) {
       (async function () {
@@ -196,7 +204,8 @@ console.log(account)
   const scrollToBottom = (behavior?: string | null) => {
     if (listInnerRef.current) {
       listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
-    }  };
+    }
+  };
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -304,7 +313,10 @@ console.log(account)
           !pgpPrivateKey
         )
       }
-      onScroll={(e) => {e.stopPropagation();onScroll()}}
+      onScroll={(e) => {
+        e.stopPropagation();
+        onScroll();
+      }}
     >
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
@@ -313,9 +325,15 @@ console.log(account)
           (chatFeed.publicKey ||
             (chatFeed?.groupInformation &&
               !chatFeed?.groupInformation?.isPublic)) ? (
-                <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
+            <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
-            <EncryptionMessage id={chatFeed?.groupInformation?ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP:ENCRYPTION_KEYS.NO_ENCRYPTED} />
+            <EncryptionMessage
+              id={
+                chatFeed?.groupInformation
+                  ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP
+                  : ENCRYPTION_KEYS.NO_ENCRYPTED
+              }
+            />
           )}
 
           {chatStatusText && (
@@ -337,7 +355,6 @@ console.log(account)
                 flexDirection="column"
                 justifyContent="start"
                 width="100%"
-             
               >
                 {messages?.messages &&
                   messages?.messages?.map(
@@ -353,7 +370,10 @@ console.log(account)
                           {dates.has(dateNum)
                             ? null
                             : renderDate({ chat, dateNum })}
-                          <Section justifyContent={position ? 'end' : 'start'} margin='7px'>
+                          <Section
+                            justifyContent={position ? 'end' : 'start'}
+                            margin="7px"
+                          >
                             <ChatViewBubble chat={chat} key={index} />
                           </Section>
                         </>
@@ -398,7 +418,7 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   filter: blur(12px);
   `}
   overscroll-behavior: contain;
-  scroll-behavior: smooth
+  scroll-behavior: smooth;
 `;
 
 const Overlay = styled.div``;

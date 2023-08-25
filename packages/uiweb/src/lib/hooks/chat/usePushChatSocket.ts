@@ -7,6 +7,7 @@ import { isAccountsEqual } from '../../components/space/helpers/account';
 import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
 import { getChatId } from '../../helpers';
+import useGetChatProfile from '../useGetChatProfile';
 
 export type PushChatSocketHookOptions = {
   account?: string | null;
@@ -22,9 +23,10 @@ export const usePushChatSocket = () => {
     setIsPushChatSocketConnected,
     isPushChatSocketConnected,
     connectedProfile,
+    setConnectedProfile,
     env,
   } = useChatData();
-
+const {fetchChatProfile} = useGetChatProfile();
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
     useState<any>({});
     const [acceptedRequestMessage, setAcceptedRequestMessage] =
@@ -53,6 +55,7 @@ export const usePushChatSocket = () => {
       console.log(chat)
       console.log(connectedProfile)
       console.log(pgpPrivateKey)
+    
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }

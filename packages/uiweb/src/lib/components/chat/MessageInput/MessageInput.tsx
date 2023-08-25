@@ -89,10 +89,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerified,
     loading: accessLoading,
   } = useVerifyAccessControl();
-  const { account, env ,connectedProfile} = useChatData();
+  const { account, env ,connectedProfile,setConnectedProfile,pgpPrivateKey, signer,} = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
-  const { pgpPrivateKey, signer, setPgpPrivateKey } = useChatData();
   const { getGroupByID } = useGetGroupByID();
   const { getGroup } = useGetGroup();
 
@@ -222,6 +221,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      if (!connectedProfile && account) {
+        const user = await fetchChatProfile({ profileId: account!, env });
+        if (user) setConnectedProfile(user);
+      }
+    })();
+  }, [account]);
 
   const sendTextMsg = async () => {
     if (typedMessage.trim() !== '') {
