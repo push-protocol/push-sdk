@@ -80,6 +80,11 @@ export class Video {
     senderAddress: string,
     audio: boolean | null
   ) => Promise<void>;
+  protected onDisconnect: ({
+    peerAddress
+  }: {
+    peerAddress: string
+  }) => Promise<void>;
 
   // storing the peer instance
   private peerInstances: {
@@ -99,6 +104,9 @@ export class Video {
     onReceiveStream = async () => {
       return Promise.resolve();
     },
+    onDisconnect = async () => {
+      return Promise.resolve();
+    }
   }: {
     signer: SignerType;
     chainId: number;
@@ -111,6 +119,11 @@ export class Video {
       senderAddress: string,
       audio: boolean | null
     ) => Promise<void>;
+    onDisconnect?: ({
+      peerAddress
+    }: {
+      peerAddress: string
+    }) => Promise<void>;
   }) {
     this.signer = signer;
     this.chainId = chainId;
@@ -118,6 +131,7 @@ export class Video {
     this.env = env;
     this.callType = callType;
     this.onReceiveStream = onReceiveStream;
+    this.onDisconnect = onDisconnect;
 
     // init the react state
     setData(() => initVideoCallData);
@@ -490,9 +504,15 @@ export class Video {
       this.peerInstances[recipientAddress].on('error', (err: any) => {
         console.log('error in accept request', err);
 
-        if (this.data.incoming[0].retryCount >= 5) {
+        if (this.data.incoming[0].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
           console.log('Max retries exceeded, please try again.');
-          this.disconnect({ peerAddress: recipientAddress });
+          this.disconnect({ 
+            peerAddress: recipientAddress,
+            details: {
+              type: SPACE_DISCONNECT_TYPE.FORCE_DISCONNECT,
+              data: {},
+            }, 
+          });
         }
 
         // retrying in case of connection error
@@ -737,22 +757,26 @@ export class Video {
         console.warn('disconnect requires a peer address');
       }
 
-      // setup error handler
-      this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
-      ].on('error', (err: any) => {
-        console.log('error in connect', err);
-
-        const incomingIndex = peerAddress
+      const incomingIndex = peerAddress
           ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
           : 0;
 
-        if (this.data.incoming[incomingIndex].retryCount >= 5) {
+      // setup error handler
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
+      ].on('error', (err: any) => {
+        console.log('error in connect', err);
+
+        if (this.data.incoming[incomingIndex].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
           console.log('Max retries exceeded, please try again.');
           this.disconnect({
             peerAddress: peerAddress
               ? peerAddress
-              : this.data.incoming[0].address,
+              : this.data.incoming[incomingIndex].address,
+            details: {
+              type: SPACE_DISCONNECT_TYPE.FORCE_DISCONNECT,
+              data: {},
+            },
           });
         }
 
@@ -766,7 +790,7 @@ export class Video {
       });
 
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ]?.signal(signalData);
 
       // set videoCallInfo state with status connected for the caller's end
@@ -812,12 +836,13 @@ export class Video {
       if (
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
       ) {
-        this.peerInstances[
-          peerAddress ? peerAddress : this.data.incoming[0].address
-        ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
-        this.peerInstances[
-          peerAddress ? peerAddress : this.data.incoming[0].address
-        ]?.destroy();
+        try {
+          this.peerInstances[
+            peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
+          ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
         // send a notif to the other user signaling status = DISCONNECTED
@@ -842,10 +867,10 @@ export class Video {
 
       // destroy the peerInstance
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ]?.destroy();
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ] = null;
 
       // destroy the local stream
@@ -854,7 +879,15 @@ export class Video {
       }
 
       // reset the state
-      this.setData(() => initVideoCallData);
+      this.setData((oldData) => {
+        return produce(oldData, (draft) => {
+          draft.incoming.splice(incomingIndex, 1);
+        });
+      });
+
+      // fire metaMessage for removing address from mesh
+      if (peerAddress)
+        this.onDisconnect({ peerAddress: peerAddress });
     } catch (err) {
       console.log('error in disconnect', err);
     }
