@@ -86,7 +86,7 @@ console.log(user)
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account,env]);
+  }, [account,env,pgpPrivateKey]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
