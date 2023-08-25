@@ -42,6 +42,7 @@ import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { IFeeds } from '@pushprotocol/restapi';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
+import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 
 /**
  * @interface IThemeProps
@@ -68,6 +69,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
+  const { approveChatRequest, loading: approveLoading } =
+    useApproveChatRequest();
   // const [groupInformation, setGroupInformation] = useState<IGroup | undefined>(undefined);
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
@@ -121,15 +124,23 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     verifyAccessControl({ chatId, did: account! });
   };
 
-  const sendRequestMessage = async () => {
-    const sendTextMessage = await sendMessage({
-      message: `Hello, please let me join this group, my wallet address is ${account}`,
-      chatId: chatFeed?.groupInformation?.groupCreator || '',
-      messageType: 'Text',
-    });
+  const handleJoinGroup = async () => {
+    if (chatFeed && chatFeed?.groupInformation?.isPublic) {
+      const response = await approveChatRequest({
+        chatId,
+      });
+      console.log(response)
+      if(response)
+        await updateChatFeed();
+    } else {
+      const sendTextMessage = await sendMessage({
+        message: `Hello, please let me join this group, my wallet address is ${account}`,
+        chatId: chatFeed?.groupInformation?.groupCreator || '',
+        messageType: 'Text',
+      });
+    }
   };
 
-  console.log(chatFeed);
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
@@ -233,36 +244,36 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       ) {
         const updateChatFeed = chatFeed;
         updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        console.log('in socket group');
         setChatFeed(updateChatFeed);
       }
     }
   }, [groupInformationSinceLastConnection]);
 
+  const updateChatFeed = async() => {
+    const chat = await fetchChat({ chatId });
+    if (Object.keys(chat || {}).length) {
+        console.log(chat)
+      setChatFeed(chat as IFeeds);
+    }
+  }
+  
   useEffect(() => {
     (async () => {
+        console.log(acceptedRequestMessage)
       if (
         Object.keys(acceptedRequestMessage || {}).length &&
         Object.keys(chatFeed || {}).length
       ) {
-        const chat = await fetchChat({ chatId });
-        let updatedChatFeed;
-        if (Object.keys(chat || {}).length) {
-          updatedChatFeed = { ...(chatFeed as IFeeds) };
-          if (Object.keys(updatedChatFeed || {}).length)
-            updatedChatFeed.intent = chat?.intent as string;
-          else updatedChatFeed = chat;
-          setChatFeed(updatedChatFeed as IFeeds);
-        }
+       await updateChatFeed();
       }
     })();
   }, [acceptedRequestMessage]);
 
+console.log(chatFeed)
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
       const chat = await fetchChat({ chatId });
-      console.log(chat);
       if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
       else {
         let newChatFeed;
@@ -276,14 +287,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           newChatFeed = getDefaultFeedObject({ user: result });
         } else {
           group = await getGroup({ searchText: chatId });
-          console.log(group, 'group information');
           if (group) {
-            console.log(group, 'group information');
             newChatFeed = getDefaultFeedObject({ groupInformation: group });
           }
         }
         if (newChatFeed) {
-          console.log('in ise effect *****');
           setChatFeed(newChatFeed);
         }
       }
@@ -306,7 +314,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsRules(true);
     }
   };
-  console.log(isRules, isMember, verified, verificationSuccessfull);
   useEffect(() => {
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation)
@@ -367,8 +374,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   Click on the button to join the group
                 </Span>
                 <ConnectWrapper>
-                  <Connect onClick={() => sendRequestMessage()}>
-                    Join Group
+                  <Connect onClick={() => handleJoinGroup()}>
+                    {approveLoading ? (
+                      <Spinner color="#fff" size="24" />
+                    ) : (
+                      ' Join Group '
+                    )}
                   </Connect>
                 </ConnectWrapper>
               </Section>
@@ -679,6 +690,7 @@ const ConnectWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  cursor:pointer;
 `;
 
 const StyledButton = styled.button`
