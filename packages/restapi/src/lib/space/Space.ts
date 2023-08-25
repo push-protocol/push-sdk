@@ -178,15 +178,9 @@ export class Space extends Video {
         ) {
 
           // update live space info
-          const oldLiveSpaceData = await getLiveSpaceData({
-            localAddress: this.data.local.address,
-            pgpPrivateKey: this.pgpPrivateKey,
-            env: this.env,
-            spaceId: this.spaceSpecificData.spaceId,
-          });
-          const updatedLiveSpaceData = produce(oldLiveSpaceData, (draft) => {
-            // check if the address was a listener
-            const speakerIndex = draft.speakers.findIndex(
+          const updatedLiveSpaceData = produce(this.spaceSpecificData.liveSpaceData, (draft) => {
+            // check if the address if it was a speaker
+            const speakerIndex = this.spaceSpecificData.liveSpaceData.speakers.findIndex(
               (speaker) => speaker.address === peerAddress
             );
 
