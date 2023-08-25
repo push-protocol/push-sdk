@@ -1,7 +1,12 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import type { ENV } from '../../config';
 import { Constants } from '../../config';
-import type { AccountEnvOptionsType, IGroup, IMessageIPFS, Messagetype } from '../../types';
+import type {
+  AccountEnvOptionsType,
+  IGroup,
+  IMessageIPFS,
+  Messagetype,
+} from '../../types';
 import { ChatFeedsType } from '../../types';
 import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
@@ -18,11 +23,9 @@ type GetChatsType = {
   supportAddress: string;
   limit: number;
   threadHash?: string;
-  env?:  Env;
+  env?: Env;
   account: string;
-}
-
-
+};
 
 export const handleOnChatIconClick = ({
   isModalOpen,
@@ -37,13 +40,17 @@ export const createUserIfNecessary = async (
   const { account, signer, env = Constants.ENV.PROD } = options || {};
   let connectedUser = await PushAPI.user.get({ account: account, env });
   if (!connectedUser?.encryptedPrivateKey) {
-    connectedUser = await PushAPI.user.create({ account: account, signer: signer, env });
+    connectedUser = await PushAPI.user.create({
+      account: account,
+      signer: signer,
+      env,
+    });
   }
   const decryptedPrivateKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: connectedUser.encryptedPrivateKey,
     account,
     signer,
-    env
+    env,
   });
   return { ...connectedUser, privateKey: decryptedPrivateKey };
 };
@@ -80,7 +87,7 @@ export const getChats = async (
       account: account,
       pgpPrivateKey: pgpPrivateKey,
       threadhash: threadhash,
-      toDecrypt:true,
+      toDecrypt: true,
       limit: limit,
       env,
     });
@@ -93,19 +100,15 @@ export const getChats = async (
 };
 
 type DecrypteChatType = {
-  message: IMessageIPFS,
-  connectedUser: IConnectedUser,
-  env:  ENV
-}
+  message: IMessageIPFS;
+  connectedUser: IConnectedUser;
+  env: ENV;
+};
 export const decryptChat = async (
   options: DecrypteChatType
-):Promise<IMessageIPFS> => {
-  const {
-    message,
-    connectedUser,
-    env = Constants.ENV.PROD,
-  } = options || {};
-  const decryptedChat:IMessageIPFS[] = await PushAPI.chat.decryptConversation({
+): Promise<IMessageIPFS> => {
+  const { message, connectedUser, env = Constants.ENV.PROD } = options || {};
+  const decryptedChat: IMessageIPFS[] = await PushAPI.chat.decryptConversation({
     messages: [message],
     connectedUser,
     pgpPrivateKey: connectedUser.privateKey!,
@@ -127,8 +130,13 @@ export const copyToClipboard = (address: string): void => {
   }
 };
 
-
-export const getDefaultFeedObject = ({user,groupInformation}:{user?:IUser,groupInformation?:IGroup}) :IFeeds => {
+export const getDefaultFeedObject = ({
+  user,
+  groupInformation,
+}: {
+  user?: IUser;
+  groupInformation?: IGroup;
+}): IFeeds => {
   const feed = {
     msg: {
       messageContent: '',
@@ -144,49 +152,64 @@ export const getDefaultFeedObject = ({user,groupInformation}:{user?:IUser,groupI
       toDID: '',
       toCAIP10: '',
     },
-    wallets:  groupInformation?null: user!.wallets,
-    did: groupInformation?null: user!.did,
+    wallets: groupInformation ? null : user!.wallets,
+    did: groupInformation ? null : user!.did,
     threadhash: null,
-    profilePicture: groupInformation?groupInformation.groupImage:user?.profile.picture,
+    profilePicture: groupInformation
+      ? groupInformation.groupImage
+      : user?.profile.picture,
     name: null,
-    about: groupInformation?null:user!.about,
+    about: groupInformation ? null : user!.about,
     intent: null,
     intentSentBy: null,
     intentTimestamp: new Date(),
-    publicKey: groupInformation?null: user!.publicKey,
+    publicKey: groupInformation ? null : user!.publicKey,
     combinedDID: '',
     cid: '',
-    groupInformation: groupInformation??undefined,
+    groupInformation: groupInformation ?? undefined,
   };
   return feed as IFeeds;
-}
+};
 
 type CheckIfIntentType = {
- chat:IFeeds,
- account:string,
-}
-export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
-
-  if(account){
-    if(Object.keys(chat || {}).length && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
-    {
-      if( chat.intent && (chat.intent.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
-      return false;
-      else
-      return true;
+  chat: IFeeds;
+  account: string;
+};
+export const checkIfIntent = ({
+  chat,
+  account,
+}: CheckIfIntentType): boolean => {
+  if (account) {
+    if (
+      Object.keys(chat || {}).length &&
+      chat.combinedDID
+        .toLowerCase()
+        .includes(walletToPCAIP10(account).toLowerCase())
+    ) {
+      if (
+        chat.intent &&
+        chat.intent
+          .toLowerCase()
+          .includes(walletToPCAIP10(account).toLowerCase())
+      )
+        return false;
+      else return true;
     }
   }
- 
-  return false;
-} 
 
-export const checkIfUnread = (chatId:string,chat:IFeeds):boolean => {
+  return false;
+};
+
+export const checkIfUnread = (chatId: string, chat: IFeeds): boolean => {
   const tempChat = getData(chatId);
-  if(tempChat && tempChat?.msg && (tempChat.msg.timestamp!) < (chat.msg.timestamp!))
-   return true;
+  if (
+    tempChat &&
+    tempChat?.msg &&
+    tempChat.msg.timestamp! < chat.msg.timestamp!
+  )
+    return true;
   return false;
-}
-
+};
 
 export const getChatId = ({
   msg,
@@ -201,22 +224,25 @@ export const getChatId = ({
   return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
 };
 
-export const appendUniqueMessages = (parentList:Messagetype,newlist:IMessageIPFS[],infront:boolean) =>{
+export const appendUniqueMessages = (
+  parentList: Messagetype,
+  newlist: IMessageIPFS[],
+  infront: boolean
+) => {
   const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
-  const appendedArray = infront?[...newlist, ...parentList.messages]:[ ...parentList.messages,...newlist];
+  const appendedArray = infront
+    ? [...newlist, ...parentList.messages]
+    : [...parentList.messages, ...newlist];
   const newMessageList = Object.values(
-    appendedArray.reduce(
-      (uniqueMap, message) => {
-        if (message.timestamp && !uniqueMap[message.timestamp]) {
-          uniqueMap[message.timestamp] = message;
-        }
-        return uniqueMap;
-      },
-      uniqueMap
-    )
+    appendedArray.reduce((uniqueMap, message) => {
+      if (message.timestamp && !uniqueMap[message.timestamp]) {
+        uniqueMap[message.timestamp] = message;
+      }
+      return uniqueMap;
+    }, uniqueMap)
   );
-  return newMessageList
-}
+  return newMessageList;
+};
 
 export const checkIfSameChat = (
   msg: IMessageIPFS,
@@ -225,19 +251,26 @@ export const checkIfSameChat = (
 ) => {
   if (ethers.utils.isAddress(chatId)) {
     chatId = walletToPCAIP10(chatId);
+    if (
+      Object.keys(msg || {}).length &&
+      (((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase()) &&
+       ( walletToPCAIP10(account!).toLowerCase() ===
+          msg.toCAIP10?.toLowerCase())) ||
+        ((chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()) &&
+          (walletToPCAIP10(account!).toLowerCase() ===
+            msg.fromCAIP10?.toLowerCase())))
+    ) {
+      return true;
+    }
+  } else {
+    if (
+      Object.keys(msg || {}).length &&
+      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
+    ) {
+      return true;
+    }
   }
-  if (
-    Object.keys(msg || {}).length &&
-    ((chatId.toLowerCase() ===
-      msg.fromCAIP10?.toLowerCase() &&
-      walletToPCAIP10(account!).toLowerCase() ===
-        msg.toCAIP10?.toLowerCase()) ||
-      (chatId.toLowerCase() ===
-        msg.toCAIP10?.toLowerCase() &&
-        walletToPCAIP10(account!).toLowerCase() ===
-          msg.fromCAIP10?.toLowerCase()))
-  ) {
-    return true;
-  }
+  console.log(chatId);
+
   return false;
 };

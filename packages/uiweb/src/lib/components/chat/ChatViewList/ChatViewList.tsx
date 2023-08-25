@@ -204,7 +204,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setTimeout(()=>{
       if (listInnerRef.current) {
         listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100000;
-        console.log(listInnerRef.current.scrollHeight +100000)
+
       }
     },0)
   
