@@ -36,7 +36,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [pgpPrivateKey,env]
+    [pgpPrivateKey,env,account]
   );
 
   return { fetchChat, error, loading };
