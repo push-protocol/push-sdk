@@ -43,6 +43,8 @@ import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { IFeeds } from '@pushprotocol/restapi';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
+import useToast from '../helpers/NewToast';
+import { MdCheckCircle, MdError } from 'react-icons/md';
 
 /**
  * @interface IThemeProps
@@ -94,6 +96,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const { fetchChatProfile } = useGetChatProfile();
   const { getGroupByID } = useGetGroupByID();
   const { getGroup } = useGetGroup();
+  const statusToast = useToast();
 
   useClickAway(modalRef, () => {
     setShowEmojis(false);
@@ -136,6 +139,31 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatId: chatFeed?.groupInformation?.groupCreator || '',
         messageType: 'Text',
       });
+      if(sendTextMessage) {
+        statusToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'Request sent successfully',
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => (
+            <MdCheckCircle
+              size={size}
+              color="green"
+            />
+          ),
+        })
+      } else {
+        statusToast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: 'Unable to send request',
+          toastType: 'ERROR',
+          getToastIcon: (size) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
+        })
+      }
     }
   };
 
