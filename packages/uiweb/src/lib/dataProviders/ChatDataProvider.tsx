@@ -74,13 +74,14 @@ const resetStates = () => {
 useEffect(() => {
     (async () => {
       let user;
+      console.log(account)
       if (account) {
         user = await fetchChatProfile({ profileId: account,env });
-
+console.log(user)
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account,env]);
+  }, [account,env,pgpPrivateKey]);
 
   const value: IChatDataContextValues = {
     account: accountVal,

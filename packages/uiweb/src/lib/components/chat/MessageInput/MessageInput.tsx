@@ -89,7 +89,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerified,
     loading: accessLoading,
   } = useVerifyAccessControl();
-  const { account, env } = useChatData();
+  const { account, env ,connectedProfile} = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
   const { pgpPrivateKey, signer, setPgpPrivateKey } = useChatData();
@@ -129,7 +129,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       const response = await approveChatRequest({
         chatId,
       });
-      console.log(response)
       if(response)
         await updateChatFeed();
     } else {
@@ -252,14 +251,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const updateChatFeed = async() => {
     const chat = await fetchChat({ chatId });
     if (Object.keys(chat || {}).length) {
-        console.log(chat)
       setChatFeed(chat as IFeeds);
     }
   }
   
   useEffect(() => {
     (async () => {
-        console.log(acceptedRequestMessage)
       if (
         Object.keys(acceptedRequestMessage || {}).length &&
         Object.keys(chatFeed || {}).length
@@ -269,7 +266,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     })();
   }, [acceptedRequestMessage]);
 
-console.log(chatFeed)
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
@@ -320,7 +316,7 @@ console.log(chatFeed)
       checkIfrules();
   }, [chatId, chatFeed, account, env]);
 
-  return !checkIfIntent({ chat: chatFeed, account: account! }) &&
+  return !checkIfIntent({ chat: chatFeed, account: account! }) && connectedProfile &&
     Object.keys(chatFeed || {}).length ? (
     <Container theme={theme}>
       {/* {isConnected && (

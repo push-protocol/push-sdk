@@ -83,34 +83,37 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      const chat = await fetchChat({ chatId });
-      if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
-      else {
-        let newChatFeed;
-        let group;
-        const result = await getNewChatUser({
-          searchText: chatId,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          newChatFeed = getDefaultFeedObject({ user: result });
-        } else {
-          group = await getGroup({ searchText: chatId });
-          if (group) {
-            newChatFeed = getDefaultFeedObject({ groupInformation: group });
+      if(account && env){
+        const chat = await fetchChat({ chatId });
+        if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
+        else {
+          let newChatFeed;
+          let group;
+          const result = await getNewChatUser({
+            searchText: chatId,
+            fetchChatProfile,
+            env,
+          });
+          if (result) {
+            newChatFeed = getDefaultFeedObject({ user: result });
+          } else {
+            group = await getGroup({ searchText: chatId });
+            if (group) {
+              newChatFeed = getDefaultFeedObject({ groupInformation: group });
+            }
+          }
+          if (newChatFeed) {
+            if (!newChatFeed?.groupInformation) {
+              setChatStatusText(ChatStatus.FIRST_CHAT);
+            }
+            setChatFeed(newChatFeed);
+          } else {
+            setChatStatusText(ChatStatus.INVALID_CHAT);
           }
         }
-        if (newChatFeed) {
-          if (!newChatFeed?.groupInformation) {
-            setChatStatusText(ChatStatus.FIRST_CHAT);
-          }
-          setChatFeed(newChatFeed);
-        } else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
-        }
+        setLoading(false);
       }
-      setLoading(false);
+      
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
@@ -144,11 +147,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async function () {
       if (!account && !env && !chatId) return;
-      const hash = await fetchConversationHash({ conversationId: chatId });
-      setConversationHash(hash?.threadHash);
+      if(account && env && chatId){
+        const hash = await fetchConversationHash({ conversationId: chatId });
+        setConversationHash(hash?.threadHash);
+      }
+     
     })();
   }, [chatId, account, env, pgpPrivateKey]);
-
+console.log(account)
   useEffect(() => {
     if (conversationHash) {
       (async function () {
