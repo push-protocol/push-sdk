@@ -35,6 +35,7 @@ export type CreateUserProps = {
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
+  origin? : string | null
 };
 
 interface ICreateUser extends IUser {
@@ -55,6 +56,7 @@ export const create = async (
       },
     },
     progressHook,
+    origin
   } = options || {};
 
   try {
@@ -121,6 +123,7 @@ export const create = async (
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       env,
+      origin: origin
     };
     const createdUser: ICreateUser = await createUserService(body);
 

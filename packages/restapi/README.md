@@ -87,6 +87,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
   - [For Spaces](#for-spaces)
     - [To create a space](#to-create-a-space)
     - [To create a token gated space](#to-create-a-token-gated-space)
+    - [To check user access of a token gated space](#to-check-user-access-of-a-token-gated-space)
     - [To update space details](#to-update-space-details)
     - [To update token gated space details](#to-update-token-gated-space-details)
     - [To get space details by spaceId](#to-get-space-details-by-spaceid)
@@ -1654,6 +1655,7 @@ const user = await PushAPI.user.create({
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
+  origin? : string | null;
 })
 ```
 
@@ -1665,6 +1667,8 @@ const user = await PushAPI.user.create({
 | version        | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
 | additionalMeta | Additional meta data for user                                 |
 | progressHook   | Progress hook                                                 |
+| origin         | Origin through which user is created                                               |
+
 
 Example creating normal user for chat:
 
@@ -3314,9 +3318,11 @@ const response = await PushAPI.chat.createGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -3339,9 +3345,11 @@ const response = await PushAPI.chat.createGroup({
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -3378,37 +3386,40 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 export enum ConditionType {
   PUSH = 'PUSH',
-  GUILD = 'GUILD',
+  GUILD = 'GUILD'
 }
 
 export type Data = {
-  address?: string;
-  amount?: number;
-  decimals?: number;
-  guildId?: string;
-  roleId?: string;
-};
+  contract?: string
+  amount?: number
+  decimals?: number
+  guildId?: string
+  guildRoleId?: string
+  guildRoleAction?: 'all' | 'any'
+  url?: string
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!='
+}
 
 export type ConditionBase = {
-  type: ConditionType;
-  category?: string;
-  subcategory?: string;
-  data: Data;
-  access?: boolean;
-};
+  type?: ConditionType
+  category?: string
+  subcategory?: string
+  data?: Data
+  access?: Boolean
+}
 
 export type Condition = ConditionBase & {
-  any?: ConditionBase[];
-  all?: ConditionBase[];
-};
+  any?: ConditionBase[]
+  all?: ConditionBase[]
+}
 
 export interface Rules {
   groupAccess?: {
-    conditions: Array<Condition | ConditionBase>;
-  };
+    conditions: Array<Condition | ConditionBase>
+  }
   chatAccess?: {
-    conditions: Array<Condition | ConditionBase>;
-  };
+    conditions: Array<Condition | ConditionBase>
+  }
 }
 ```
 
@@ -3428,13 +3439,60 @@ There are two main types of conditions: `PUSH` and `GUILD`.
 
 PUSH conditions may relate to:
 
-- **ERC721**: Needs an address and an amount, and can only have the `nft_owner` subcategory.
-- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `token_holder` subcategory.
+- **ERC721**: Needs an address and an amount, and can only have the `owner` subcategory.
+- **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory.
+- **CustomEndpoint**: The `CustomEndpoint` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application. As of now the Get API is supported and should return the 200 OK if the user is allowed to access.
+<pre>
+  {
+    "type": "PUSH",
+    "category": "CustomEndpoint",
+    "subcategory": "GET",
+    "data": {
+      "url": "https://api.example.com/user/{{user_address}}/validate"
+    }
+  }
+</pre>
+Explanation:
+
+- ***type***: Represents the type of the condition, in this case "PUSH".
+- ***category***: Specifies that this is a condition based on a custom endpoint.
+- ***subcategory***: Represents the HTTP method for the request, in this case, a "GET" request.
+- ***data***: Contains the properties for the condition.
+- ***url***: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
 
 #### GUILD Conditions
 
-GUILD conditions require both guild ID and role ID.
+Sample GUILD condition schema
+<pre>
+{
+	"type": "GUILD",
+	"category": "guildRoles",
+	"subcategory": <Role Type>,
+	"data": {
+		"guildId": <Guild ID>,
+		"guildRoleId": <Specific Role ID>
+	}
+}
+</pre>
 
+- **Working**:
+
+Fields:
+  type:
+    Always set to: "GUILD"
+  category:
+    Always set to: "guildRoles"
+  subcategory:
+    Role type classification.
+    Values:
+      specificRole: For a singular role.
+      allRoles: Pertaining to all roles in the guild.
+      anyRole: Referring to any role within the guild.
+  data:
+  guildId: Unique identifier of a guild.
+  guildRoleId: Role ID within the guild. (Required only for the specificRole subcategory.)
+Usage:
+This structure governs user permissions within a guild. The subcategory dictates the manner of role-based operations, from checking permissions of a single role (specificRole) to broad checks across any or all roles (anyRole, allRoles).
 
 <details>
   <summary><b>Expected response (create group)</b></summary>
@@ -3553,20 +3611,30 @@ GUILD conditions require both guild ID and role ID.
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
-            }
+            },
+            {
+              "type": "PUSH",
+              "category": 'CustomEndpoint',
+              "subcategory": "GET"
+              "data": {
+                "url": "https://api.example.com/users/{{user_address}}/checkAccess",
+              }
+	          }
           ]
         }
       ]
@@ -3578,18 +3646,28 @@ GUILD conditions require both guild ID and role ID.
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
+              }
+            },
+            {
+              'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'anyRole',
+              'data': {
+                'guildId': '13468'
               }
             }
           ]
@@ -3642,9 +3720,9 @@ Allowed Options (params with _ are mandatory)
                         {
                             'type': 'PUSH',
                             'category': 'ERC20',
-                            'subcategory': 'token_holder',
+                            'subcategory': 'holder',
                             'data': {
-                                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                                 'amount': 1000,
                                 'decimals': 18
                             },
@@ -3652,18 +3730,20 @@ Allowed Options (params with _ are mandatory)
                         },
                         {
                             'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
                             'data': {
                                 'guildId': '13468',
-                                'roleId': '19924'
+                                'guildRoleId': '19924'
                             },
                             'access': true
                         },
                         {
                             'type': 'PUSH',
                             'category': 'ERC721',
-                            'subcategory': 'nft_owner',
+                            'subcategory': 'owner',
                             'data': {
-                                'address': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                                'contract': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
                                 'amount': 1
                             },
                             'access': true
@@ -3679,9 +3759,9 @@ Allowed Options (params with _ are mandatory)
                         {
                             'type': 'PUSH',
                             'category': 'ERC20',
-                            'subcategory': 'token_holder',
+                            'subcategory': 'holder',
                             'data': {
-                                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                                 'amount': 1000,
                                 'decimals': 18
                             },
@@ -3689,9 +3769,11 @@ Allowed Options (params with _ are mandatory)
                         },
                         {
                             'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
                             'data': {
                                 'guildId': '13468',
-                                'roleId': '19924'
+                                'guildRoleId': '19924'
                             },
                             'access': true
                         }
@@ -3761,18 +3843,20 @@ const response = await PushAPI.chat.updateGroup({
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guidlRoleId': '19924'
               }
             }
           ]
@@ -3786,18 +3870,20 @@ const response = await PushAPI.chat.updateGroup({
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -3961,18 +4047,20 @@ Allowed Options (params with _ are mandatory)
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -3986,18 +4074,20 @@ Allowed Options (params with _ are mandatory)
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -4660,18 +4750,20 @@ const response = await PushAPI.space.create({
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -4713,34 +4805,40 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 export enum ConditionType {
   PUSH = 'PUSH',
-  GUILD = 'GUILD',
+  GUILD = 'GUILD'
 }
 
 export type Data = {
-  address?: string;
-  amount?: number;
-  decimals?: number;
-  guildId?: string;
-  roleId?: string;
-};
+  contract?: string
+  amount?: number
+  decimals?: number
+  guildId?: string
+  guildRoleId?: string
+  guildRoleAction?: 'all' | 'any'
+  url?: string
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!='
+}
 
 export type ConditionBase = {
-  type: ConditionType;
-  category?: string;
-  subcategory?: string;
-  data: Data;
-  access?: boolean;
-};
+  type?: ConditionType
+  category?: string
+  subcategory?: string
+  data?: Data
+  access?: Boolean
+}
 
 export type Condition = ConditionBase & {
-  any?: ConditionBase[];
-  all?: ConditionBase[];
-};
+  any?: ConditionBase[]
+  all?: ConditionBase[]
+}
 
 export interface Rules {
-  spaceAccess?: {
-    conditions: Array<Condition | ConditionBase>;
-  };
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>
+  }
+  chatAccess?: {
+    conditions: Array<Condition | ConditionBase>
+  }
 }
 ```
 
@@ -4831,18 +4929,20 @@ export interface Rules {
             {
               'type': 'PUSH',
               'category': 'ERC20',
-              'subcategory': 'token_holder',
+              'subcategory': 'holder',
               'data': {
-                'address': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
                 'amount': 1000,
                 'decimals': 18
               }
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             }
           ]
@@ -4855,6 +4955,80 @@ export interface Rules {
 
 ```
 
+</details>
+
+---
+
+### **To check user access of a token gated group**
+
+```typescript
+
+// actual api
+const response = await PushAPI.space.getAccess({
+  spaceId:'8f7be0068a677df166c2e5b8a9030fe8a4341807150339e588853c0049df3106',
+  did: '0x9e60c47edF21fa5e5Af33347680B3971F2FfD464'
+  env: 'staging',
+});
+```
+
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
+|----------|---------|---------|--------------------------------------------|
+| spaceId | string | - | space address |
+| did | string | - | user address |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+
+
+<details>
+  <summary><b>Expected response (space access)</b></summary>
+
+```typescript
+// PushAPI_chat_getSpaceAccess | Response - 200 OK
+{
+    'spaceAccess': true,
+    'rules': {
+        'spaceAccess': {
+            'conditions': [
+                {
+                    'any': [
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC20',
+                            'subcategory': 'holder',
+                            'data': {
+                                'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+                                'amount': 1000,
+                                'decimals': 18
+                            },
+                            'access': false
+                        },
+                        {
+                            'type': 'GUILD',
+                            'category': 'guildRoles',
+                            'subcategory': 'specificRole',
+                            'data': {
+                                'guildId': '13468',
+                                'guildRoleId': '19924'
+                            },
+                            'access': true
+                        },
+                        {
+                            'type': 'PUSH',
+                            'category': 'ERC721',
+                            'subcategory': 'owner',
+                            'data': {
+                                'contract': 'eip155:5:0x42af3147f17239341477113484752D5D3dda997B',
+                                'amount': 1
+                            },
+                            'access': true
+                        }
+                    ]
+                }
+            ]
+        }
+}
+
+```
 </details>
 
 ---
@@ -4928,9 +5102,10 @@ const response = await PushAPI.space.update({
               },
               {
                 'type': 'GUILD',
+                'category': 'guildRoles',
+                'subcategory': 'allRoles',
                 'data': {
-                  'guildId': '13468',
-                  'roleId': '19924'
+                  'guildId': '13468'
                 }
               }
             ]
@@ -4953,9 +5128,11 @@ const response = await PushAPI.space.update({
               },
               {
                 'type': 'GUILD',
+                'category': 'guildRoles',
+                'subcategory': 'specificRole',
                 'data': {
                   'guildId': '13468',
-                  'roleId': '19924'
+                  'guildRoleId': '19924'
                 }
               }
             ]
@@ -5096,9 +5273,11 @@ Allowed Options (params with _ are mandatory)
             },
             {
               'type': 'GUILD',
+              'category': 'guildRoles',
+              'subcategory': 'specificRole',
               'data': {
                 'guildId': '13468',
-                'roleId': '19924'
+                'guildRoleId': '19924'
               }
             },
             {
