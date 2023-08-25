@@ -16,6 +16,10 @@ import { join } from './join';
 import { leave } from './leave';
 import { stop } from './stop';
 import { initialize } from './initialize';
+import { broadcastRaisedHand } from './broadcastRaisedHand';
+import { onReceiveMetaMessage } from './onReceiveMetaMessage';
+import { onJoinListener } from './onJoinListener';
+import { demoteSpeaker } from './demoteSpeaker';
 import addToMergedStream from './helpers/addToMergedStream';
 
 import { VideoStreamMerger } from 'video-stream-merger';
@@ -29,10 +33,7 @@ import {
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/messageTypes';
-import { broadcastRaisedHand } from './broadcastRaisedHand';
-import { onReceiveMetaMessage } from './onReceiveMetaMessage';
-import { onJoinListener } from './onJoinListener';
+import { META_ACTION } from '../types/metaTypes';
 import { pCAIP10ToWallet } from '../helpers';
 
 export const initLiveSpaceData: LiveSpaceData = {
@@ -300,6 +301,8 @@ export class Space extends Video {
   public acceptPromotionRequest = acceptPromotionRequest;
   public connectPromotor = connectPromotor;
   public rejectPromotionRequest = rejectPromotionRequest;
+
+  public demoteSpeaker = demoteSpeaker;
 
   /*
     - add/remove co-host to the space group as admins
