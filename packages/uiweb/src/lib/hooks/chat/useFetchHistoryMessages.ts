@@ -27,7 +27,7 @@ const useFetchHistoryMessages
     try {
         const chatHistory:IMessageIPFS[] = await PushAPI.chat.history({
             threadhash: threadHash,
-            account: account!,
+            account:account ? account : '0x0',
             toDecrypt: pgpPrivateKey ? true : false,
             pgpPrivateKey: String(pgpPrivateKey),
             limit: limit,
