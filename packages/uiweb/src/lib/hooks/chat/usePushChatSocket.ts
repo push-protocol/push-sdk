@@ -2,11 +2,9 @@ import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
 import * as PushAPI from '@pushprotocol/restapi';
-import type { IMessageIPFS } from '@pushprotocol/restapi';
-import { isAccountsEqual } from '../../components/space/helpers/account';
+
 import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
-import { getChatId } from '../../helpers';
 import useGetChatProfile from '../useGetChatProfile';
 
 export type PushChatSocketHookOptions = {
@@ -52,14 +50,11 @@ const {fetchChatProfile} = useGetChatProfile();
     });
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
-      console.log(chat)
-      console.log(connectedProfile)
-      console.log(pgpPrivateKey)
+   
     
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
-      console.log(chat)
       if (
        ( chat.messageCategory === 'Request') &&
         (chat.messageContent === null) &&
@@ -69,14 +64,12 @@ const {fetchChatProfile} = useGetChatProfile();
       }
       else
       {
-        console.log(chat)
         const response = await PushAPI.chat.decryptConversation({
           messages: [chat],
           connectedUser: connectedProfile,
           pgpPrivateKey: pgpPrivateKey,
           env: env,
         });
-        console.log(chat)
   
         if (response && response.length) {
           setMessagesSinceLastConnection(response[0]);

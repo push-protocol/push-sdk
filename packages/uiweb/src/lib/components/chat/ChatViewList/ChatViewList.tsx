@@ -20,6 +20,7 @@ import {
   getDefaultFeedObject,
   getNewChatUser,
   pCAIP10ToWallet,
+  walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
@@ -60,6 +61,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { historyMessages, loading: messageLoading } =
     useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
+  const [isMember, setIsMember] = useState<boolean>(false);
+
   // const bottomRef = useRef<HTMLDivElement>(null);
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
@@ -155,7 +158,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     (async function () {
       if (!account && !env && !chatId) return;
       const hash = await fetchConversationHash({ conversationId: chatId });
-      console.log(hash);
       setConversationHash(hash?.threadHash);
     })();
   }, [chatId, account, env, pgpPrivateKey]);
@@ -163,7 +165,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     if (conversationHash) {
       (async function () {
-        console.log('in fetch msgs');
         await getMessagesCall();
       })();
     }
@@ -204,6 +205,20 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
     }
   };
+
+  useEffect(()=>{
+
+    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
+    {
+      chatFeed?.groupInformation?.members.forEach((acc) => {
+        if (
+          acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+        ) {
+          setIsMember(true);
+        }
+      });
+    }
+  },[account,chatFeed])
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -250,7 +265,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         limit: limit,
         threadHash,
       });
-      console.log(chatHistory);
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
@@ -284,6 +298,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       });
     }
   };
+
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
     const timestampDate = dateToFromNowDaily(chat.timestamp as number);
     dates.add(dateNum);
@@ -313,7 +328,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           chatFeed &&
           chatFeed?.groupInformation &&
           !chatFeed?.groupInformation?.isPublic &&
-          !pgpPrivateKey
+          ((!isMember && pgpPrivateKey) || (!pgpPrivateKey))
         )
       }
       onScroll={(e) => {

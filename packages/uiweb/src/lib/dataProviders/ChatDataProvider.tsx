@@ -71,18 +71,13 @@ const resetStates = () => {
   
 };
 
-useEffect(() => {
-  console.log('*************************************************')
- console.log(account)
-}, [account,env]);
+
 
 useEffect(() => {
     (async () => {
       let user;
-      console.log(account)
       if (account) {
         user = await fetchChatProfile({ profileId: account,env });
-console.log(user)
         if (user) setConnectedProfile(user);
       }
     })();

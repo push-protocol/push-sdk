@@ -12,13 +12,11 @@ interface VerifyAccessControlParams {
 const useVerifyAccessControl = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  console.log('in hereeeeeee');
   const [verificationSuccessfull, setVerificationSuccessfull] =
     useState<boolean>(true);
   const [verified, setVerified] = useState<boolean>(false);
 
   const { pgpPrivateKey, env, account } = useChatData();
-  console.log(verificationSuccessfull);
 
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
@@ -31,7 +29,6 @@ const useVerifyAccessControl = () => {
           env: env,
         });
         setLoading(false);
-        console.log(response)
         if (response.chat === false) {
           
           setVerificationSuccessfull(false);
