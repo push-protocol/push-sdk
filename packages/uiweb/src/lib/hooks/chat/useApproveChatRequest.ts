@@ -34,7 +34,9 @@ const useApproveChatRequest = () => {
         return;
       }
     },
+
     [account,env,signer,pgpPrivateKey]
+
   );
 
   return { approveChatRequest, error, loading };
