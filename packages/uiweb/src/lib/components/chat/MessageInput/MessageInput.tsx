@@ -243,7 +243,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       if (
         sendMessageResponse &&
         typeof sendMessageResponse === 'string' &&
-        sendMessageResponse.includes('400')
+        sendMessageResponse.includes('403')
       ) {
         setAccessControl(chatId, true);
         setVerified(false);
@@ -489,7 +489,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                     <Span
                       fontWeight="500"
                       fontSize="24px"
-                      color={theme.textColor?.chatSentBubbleText}
+                      color={theme.textColor?.encryptionMessageText}
                     >
                       Verification Failed
                     </Span>
@@ -512,7 +512,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                         {' '}
                         {/* Added marginLeft */}
                         <Span
-                          color={theme.textColor?.chatSentBubbleText}
+                              color={theme.textColor?.encryptionMessageText}
                           textAlign="start"
                           alignSelf="start"
                         >
@@ -521,7 +521,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                         <Span
                           fontWeight="500"
                           textAlign="start"
-                          color={theme.textColor?.chatSentBubbleText}
+                          color={theme.textColor?.encryptionMessageText}
                         >
                           You need to have{' '}
                           <Span
