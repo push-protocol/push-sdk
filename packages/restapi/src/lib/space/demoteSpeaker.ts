@@ -3,7 +3,7 @@ import { SPACE_DISCONNECT_TYPE } from '../payloads/constants';
 import { produce } from 'immer';
 import getLiveSpaceData from './helpers/getLiveSpaceData';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/metaTypes';
+import { META_ACTION } from '../types/messageTypes';
 import { pCAIP10ToWallet } from '../helpers';
 import { ListenerPeer, SignerType } from '../types';
 
