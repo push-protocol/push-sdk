@@ -17,6 +17,7 @@ const useApproveChatRequest = () => {
       } = options || {};
       setLoading(true);
       try {
+        console.log(account)
         const response = await PushAPI.chat.approve({
           status: 'Approved',
           account: account,

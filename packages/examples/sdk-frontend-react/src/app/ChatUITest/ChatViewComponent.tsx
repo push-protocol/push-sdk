@@ -21,7 +21,7 @@ const ChatViewComponentTest = () => {
       </ChatViewComponentCard>
     </div>
   );
-};
+}
 
 export default ChatViewComponentTest;
 
