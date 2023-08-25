@@ -5,6 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+import { MessageType } from '../../../src/lib/constants';
 
 describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
@@ -47,7 +48,7 @@ describe('PushAPI.chat functionality', () => {
   it('Should send message ', async () => {
     const response = await userAlice.chat.send(account2, {
       content: 'Hello',
-      type: 'Text',
+      type: MessageType.TEXT,
     });
     expect(response).to.be.an('object');
   });

@@ -58,7 +58,7 @@ export const REACTION_SYMBOL: Record<REACTION_TYPE, string> = {
 };
 
 export interface BaseMessage<T> {
-  type: T;
+  type?: T;
   content: string;
 }
 

@@ -1,4 +1,4 @@
-import Constants, { ENV } from '../constants';
+import Constants, { ENV, MessageType } from '../constants';
 import {
   ChatSendOptionsType,
   GroupAccess,
@@ -214,6 +214,9 @@ export class PushAPI {
     },
 
     send: async (to: string, options: Message): Promise<MessageWithCID> => {
+      if (!options.type) {
+        options.type = MessageType.TEXT;
+      }
       const sendParams: ChatSendOptionsType = {
         message: options,
         to: to,
