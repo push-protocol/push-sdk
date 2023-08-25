@@ -91,7 +91,9 @@ export class PushAPI {
         encryptedPGPPrivateKey: user.encryptedPrivateKey,
         signer: signer,
         toUpgrade: settings.autoUpgrade,
+        additionalMeta: { NFTPGP_V1: settings.versionMeta },
         progressHook: settings.progressHook,
+        env: settings.env,
       });
     } else {
       const newUser = await PUSH_USER.create({

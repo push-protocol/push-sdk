@@ -6,7 +6,7 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct im
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 
-describe.only('PushAPI.chat functionality', () => {
+describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let signer1: any;
