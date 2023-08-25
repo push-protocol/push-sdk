@@ -139,7 +139,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatId: chatFeed?.groupInformation?.groupCreator || '',
         messageType: 'Text',
       });
-      if(sendTextMessage) {
+      if (sendTextMessage) {
         statusToast.showMessageToast({
           toastTitle: 'Success',
           toastMessage: 'Request sent successfully',
@@ -240,7 +240,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatId,
         messageType: type as any,
       });
-      if (sendMessageResponse&&sendMessageResponse.includes('400')) {
+      if (
+        sendMessageResponse &&
+        typeof sendMessageResponse === 'string' &&
+        sendMessageResponse.includes('400')
+      ) {
         setAccessControl(chatId, true);
         setVerified(false);
         setVerificationSuccessfull(false);
@@ -289,15 +293,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     if (Object.keys(chat || {}).length) {
       setChatFeed(chat as IFeeds);
     }
-  }
-  
+  };
+
   useEffect(() => {
     (async () => {
       if (
         Object.keys(acceptedRequestMessage || {}).length &&
         Object.keys(chatFeed || {}).length
       ) {
-       await updateChatFeed();
+        await updateChatFeed();
       }
     })();
   }, [acceptedRequestMessage]);
@@ -305,7 +309,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      if(account && env){
+      if (account && env) {
         const chat = await fetchChat({ chatId });
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
@@ -329,9 +333,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           }
         }
       }
-       
-      
-    
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
@@ -347,7 +348,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     });
 
-    if (chatFeed?.groupInformation?.rules) {
+    if (chatFeed?.groupInformation?.rules && 
+      (chatFeed?.groupInformation?.rules?.groupAccess ||
+      chatFeed?.groupInformation?.rules?.chat)
+    ) {
       setIsRules(true);
     }
   };
