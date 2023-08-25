@@ -206,7 +206,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100000;
         console.log(listInnerRef.current.scrollHeight +100000)
       }
-    },100)
+    },0)
   
   };
 
