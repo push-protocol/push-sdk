@@ -44,7 +44,7 @@ const usePushSendMessage = () => {
         return error.message;
       }
     },
-    [pgpPrivateKey, account]
+    [pgpPrivateKey, account,env]
   );
 
   return { sendMessage, error, loading };
