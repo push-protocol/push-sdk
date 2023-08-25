@@ -15,7 +15,6 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-
   const { pgpPrivateKey, env, account } = useChatData();
 
   const sendMessage = useCallback(
@@ -32,6 +31,7 @@ const usePushSendMessage = () => {
           env: env,
         });
         setLoading(false);
+        console.log(response);
         if (!response) {
           return false;
         }

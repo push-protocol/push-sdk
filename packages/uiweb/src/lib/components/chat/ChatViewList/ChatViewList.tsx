@@ -298,7 +298,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       });
     }
   };
-
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
     const timestampDate = dateToFromNowDaily(chat.timestamp as number);
     dates.add(dateNum);
