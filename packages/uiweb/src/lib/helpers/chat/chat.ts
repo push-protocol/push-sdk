@@ -253,19 +253,19 @@ export const checkIfSameChat = (
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      ((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase() &&
-        walletToPCAIP10(account!).toLowerCase() ===
-          msg.toCAIP10?.toLowerCase()) ||
-        (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase() &&
-          walletToPCAIP10(account!).toLowerCase() ===
-            msg.fromCAIP10?.toLowerCase()))
+      (((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase()) &&
+       ( walletToPCAIP10(account!).toLowerCase() ===
+          msg.toCAIP10?.toLowerCase())) ||
+        ((chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()) &&
+          (walletToPCAIP10(account!).toLowerCase() ===
+            msg.fromCAIP10?.toLowerCase())))
     ) {
       return true;
     }
   } else {
     if (
       Object.keys(msg || {}).length &&
-      chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()
+      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
     ) {
       return true;
     }
