@@ -71,16 +71,17 @@ const resetStates = () => {
   
 };
 
+
+
 useEffect(() => {
     (async () => {
       let user;
       if (account) {
         user = await fetchChatProfile({ profileId: account,env });
-
         if (user) setConnectedProfile(user);
       }
     })();
-  }, [account,env]);
+  }, [account,env,pgpPrivateKey]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
@@ -101,7 +102,6 @@ useEffect(() => {
 
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
-console.log(PROVIDER_THEME)
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
       <ChatDataContext.Provider value={value}>

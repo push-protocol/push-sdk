@@ -15,8 +15,6 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { verificationSuccessfull, setVerificationSuccessfull, setVerified } =
-    useVerifyAccessControl();
   const { pgpPrivateKey, env, account } = useChatData();
 
   const sendMessage = useCallback(
@@ -37,17 +35,13 @@ const usePushSendMessage = () => {
         if (!response) {
           return false;
         }
-        return;
+        return response;
       } catch (error: Error | any) {
-        if (error.message.includes('400')) {
-          setAccessControl(chatId, true);
-          setVerified(false);
-          setVerificationSuccessfull(false);
-        }
+       
         setLoading(false);
         setError(error.message);
         console.log(error);
-        return;
+        return error.message;
       }
     },
     [pgpPrivateKey, account]

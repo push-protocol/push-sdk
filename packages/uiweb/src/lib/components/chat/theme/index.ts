@@ -83,6 +83,7 @@ export interface IChatTheme {
 
   //below needs to be categorised
   spinnerColor?: string;
+  modalBackgroundColor?:string;
   modalPrimaryTextColor?: string;
   modalSearchBarBorderColor?: string;
   modalSearchBarBackground?: string;
@@ -182,6 +183,7 @@ export const lightChatTheme: IChatTheme = {
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
   //the rest param needs to be included in categories
+  modalBackgroundColor:'#fff',
   modalPrimaryTextColor: '#1E1E1E',
   modalSearchBarBorderColor: '#BAC4D6',
   modalSearchBarBackground: '#FFF',
@@ -281,6 +283,7 @@ export const darkChatTheme: IChatTheme = {
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
   //the rest param needs to be included in categories
+  modalBackgroundColor:'rgba(47, 49, 55, 1)',
   modalPrimaryTextColor: '#B6BCD6',
   modalSearchBarBorderColor: '#4A4F67',
   modalSearchBarBackground: '#282A2E',

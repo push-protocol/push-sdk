@@ -20,6 +20,7 @@ import {
   getDefaultFeedObject,
   getNewChatUser,
   pCAIP10ToWallet,
+  walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
 import { Messagetype } from '../../../types';
@@ -27,7 +28,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import useFetchConversationHash from '../../../hooks/chat/useFetchConversationHash';
 
-import { EncryptionMessage } from './MessageEncryption';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
@@ -50,7 +51,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account } = useChatData();
+  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
+    useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<Messagetype>();
@@ -59,7 +61,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { historyMessages, loading: messageLoading } =
     useFetchHistoryMessages();
   const listInnerRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [isMember, setIsMember] = useState<boolean>(false);
+
+  // const bottomRef = useRef<HTMLDivElement>(null);
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
   const { getGroup } = useGetGroup();
@@ -74,6 +78,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     setChatStatusText('');
   }, [chatId, account, env]);
+
+  useEffect(() => {
+    (async () => {
+      if (!connectedProfile && account) {
+        const user = await fetchChatProfile({ profileId: account!, env });
+        if (user) setConnectedProfile(user);
+      }
+    })();
+  }, [account]);
 
   useEffect(() => {
     setMessages(undefined);
@@ -188,10 +201,24 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messagesSinceLastConnection]);
 
   const scrollToBottom = (behavior?: string | null) => {
-    bottomRef?.current?.scrollIntoView(
-      !behavior ? true : { behavior: 'smooth' }
-    );
+    if (listInnerRef.current) {
+      listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
+    }
   };
+
+  useEffect(()=>{
+
+    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
+    {
+      chatFeed?.groupInformation?.members.forEach((acc) => {
+        if (
+          acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+        ) {
+          setIsMember(true);
+        }
+      });
+    }
+  },[account,chatFeed])
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -229,7 +256,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash && account) {
+    if (
+      threadHash &&
+      ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
+        (chatFeed && chatFeed?.groupInformation))
+    ) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
@@ -296,10 +327,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           chatFeed &&
           chatFeed?.groupInformation &&
           !chatFeed?.groupInformation?.isPublic &&
-          !pgpPrivateKey
+          ((!isMember && pgpPrivateKey) || (!pgpPrivateKey))
         )
       }
-      onScroll={() => onScroll()}
+      onScroll={(e) => {
+        e.stopPropagation();
+        onScroll();
+      }}
     >
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
@@ -308,9 +342,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           (chatFeed.publicKey ||
             (chatFeed?.groupInformation &&
               !chatFeed?.groupInformation?.isPublic)) ? (
-            <EncryptionMessage id={'ENCRYPTED'} />
+            <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
-            <EncryptionMessage id={'NO_ENCRYPTED'} />
+            <EncryptionMessage
+              id={
+                chatFeed?.groupInformation
+                  ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP
+                  : ENCRYPTION_KEYS.NO_ENCRYPTED
+              }
+            />
           )}
 
           {chatStatusText && (
@@ -347,14 +387,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                           {dates.has(dateNum)
                             ? null
                             : renderDate({ chat, dateNum })}
-                          <Section justifyContent={position ? 'end' : 'start'} margin='7px'>
+                          <Section
+                            justifyContent={position ? 'end' : 'start'}
+                            margin="7px"
+                          >
                             <ChatViewBubble chat={chat} key={index} />
                           </Section>
                         </>
                       );
                     }
                   )}
-                <div ref={bottomRef} />
+                {/* <div ref={bottomRef} /> */}
               </Section>
               {chatFeed &&
                 account &&
@@ -391,6 +434,8 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
     `
   filter: blur(12px);
   `}
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
 `;
 
 const Overlay = styled.div``;

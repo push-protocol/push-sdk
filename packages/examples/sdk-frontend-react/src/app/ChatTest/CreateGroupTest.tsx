@@ -107,7 +107,7 @@ const CreateGroupTest = () => {
         env,
         meta: meta,
         rules: {
-          'chatAccess': {
+          'chat': {
             'conditions': [
               {
                 'all': [

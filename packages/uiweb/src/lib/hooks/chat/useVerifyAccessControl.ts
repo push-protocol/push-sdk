@@ -18,7 +18,6 @@ const useVerifyAccessControl = () => {
 
   const { pgpPrivateKey, env, account } = useChatData();
 
-  console.log('Verification control hook');
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
       const { chatId, did } = options || {};
@@ -30,13 +29,13 @@ const useVerifyAccessControl = () => {
           env: env,
         });
         setLoading(false);
-        if (response.chatAccess === false) {
+        if (response.chat === false) {
+          
           setVerificationSuccessfull(false);
-        } else if (response.chatAccess === true) {
+        } else if (response.chat === true) {
           setVerified(true);
           setAccessControl(chatId, false);
         }
-        console.log(response);
         if (!response) {
           return false;
         }
@@ -49,8 +48,9 @@ const useVerifyAccessControl = () => {
         return;
       }
     },
-    [pgpPrivateKey, account, verificationSuccessfull, verified, setVerified]
+    [pgpPrivateKey, account, env]
   );
+
   return {
     verifyAccessControl,
     error,

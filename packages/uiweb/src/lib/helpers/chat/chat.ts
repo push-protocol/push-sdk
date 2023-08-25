@@ -156,7 +156,7 @@ export const getDefaultFeedObject = ({user,groupInformation}:{user?:IUser,groupI
     publicKey: groupInformation?null: user!.publicKey,
     combinedDID: '',
     cid: '',
-    groupInformation: undefined,
+    groupInformation: groupInformation??undefined,
   };
   return feed as IFeeds;
 }
@@ -166,15 +166,17 @@ type CheckIfIntentType = {
  account:string,
 }
 export const checkIfIntent = ({chat,account}:CheckIfIntentType):boolean => {
-  console.log(chat)
-  console.log(account)
-  if(Object.keys(chat || {}).length && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
-  {
-    if( chat.intent && (chat.intent.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
-    return false;
-    else
-    return true;
+
+  if(account){
+    if(Object.keys(chat || {}).length && (chat.combinedDID.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
+    {
+      if( chat.intent && (chat.intent.toLowerCase()).includes(walletToPCAIP10(account).toLowerCase()))
+      return false;
+      else
+      return true;
+    }
   }
+ 
   return false;
 } 
 

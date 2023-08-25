@@ -43,7 +43,6 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
   const {env } = useChatData();
 
-  console.log(env);
   
   // const [conversationHash, setConversationHash] = useState<string>();
 

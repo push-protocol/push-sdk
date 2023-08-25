@@ -17,7 +17,7 @@ const ChatViewComponentTest = () => {
       {/* <Loader show={isLoading} /> */}
     <ChatViewComponentCard>
         
-      <ChatViewComponent onClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='c4828a375fd261577927a9d73fe3fa30204c6667a3adbc345e010eccf5ec740e' limit={10}/>
+      <ChatViewComponent onClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='c2d544ad9d1efd5c5a593b143bf8232875c926cf28015564e70ad078b95f807e' limit={10}/>
       </ChatViewComponentCard>
     </div>
   );
@@ -28,3 +28,4 @@ export default ChatViewComponentTest;
 const ChatViewComponentCard = styled(Section)`
   height: 60vh;
 `;
+//c2d544ad9d1efd5c5a593b143bf8232875c926cf28015564e70ad078b95f807e

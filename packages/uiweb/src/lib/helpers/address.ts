@@ -26,10 +26,14 @@ export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
 };
 
 export const walletToPCAIP10 = (account:string): string => {
-  if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
-    return account
+  if(account){
+    if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
+      return account
+    }
+    return 'eip155:' + account
   }
-  return 'eip155:' + account
+  return account;
+ 
 }
 
 export const pCAIP10ToWallet = (wallet: string): string => {

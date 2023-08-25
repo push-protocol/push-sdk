@@ -17,6 +17,7 @@ const useApproveChatRequest = () => {
       } = options || {};
       setLoading(true);
       try {
+        console.log(account)
         const response = await PushAPI.chat.approve({
           status: 'Approved',
           account: account,
@@ -24,6 +25,7 @@ const useApproveChatRequest = () => {
           pgpPrivateKey:pgpPrivateKey,
           env: env,
         });
+        setLoading(false);
         return response;
       } catch (error: Error | any) {
         setLoading(false);
