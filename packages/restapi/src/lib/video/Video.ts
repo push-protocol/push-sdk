@@ -504,10 +504,16 @@ export class Video {
       this.peerInstances[recipientAddress].on('error', (err: any) => {
         console.log('error in accept request', err);
 
-        // if (this.data.incoming[0].retryCount >= 5) {
-        //   console.log('Max retries exceeded, please try again.');
-        this.disconnect({ peerAddress: recipientAddress });
-        // }
+        if (this.data.incoming[0].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect({ 
+            peerAddress: recipientAddress,
+            details: {
+              type: SPACE_DISCONNECT_TYPE.FORCE_DISCONNECT,
+              data: {},
+            }, 
+          });
+        }
 
         // retrying in case of connection error
         sendVideoCallNotification(
@@ -751,24 +757,28 @@ export class Video {
         console.warn('disconnect requires a peer address');
       }
 
-      // setup error handler
-      this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
-      ].on('error', (err: any) => {
-        console.log('error in connect', err);
-
-        const incomingIndex = peerAddress
+      const incomingIndex = peerAddress
           ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
           : 0;
 
-        // if (this.data.incoming[incomingIndex].retryCount >= 5) {
-        //   console.log('Max retries exceeded, please try again.');
-        this.disconnect({
-          peerAddress: peerAddress
-            ? peerAddress
-            : this.data.incoming[0].address,
-        });
-        // }
+      // setup error handler
+      this.peerInstances[
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
+      ].on('error', (err: any) => {
+        console.log('error in connect', err);
+
+        if (this.data.incoming[incomingIndex].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
+          console.log('Max retries exceeded, please try again.');
+          this.disconnect({
+            peerAddress: peerAddress
+              ? peerAddress
+              : this.data.incoming[incomingIndex].address,
+            details: {
+              type: SPACE_DISCONNECT_TYPE.FORCE_DISCONNECT,
+              data: {},
+            },
+          });
+        }
 
         // retrying in case of connection error
         this.request({
@@ -780,7 +790,7 @@ export class Video {
       });
 
       this.peerInstances[
-        peerAddress ? peerAddress : this.data.incoming[0].address
+        peerAddress ? peerAddress : this.data.incoming[incomingIndex].address
       ]?.signal(signalData);
 
       // set videoCallInfo state with status connected for the caller's end
