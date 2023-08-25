@@ -93,7 +93,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      if (account && env) {
         const chat = await fetchChat({ chatId });
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
@@ -122,7 +121,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           }
         }
         setLoading(false);
-      }
+      
     })();
   }, [chatId, pgpPrivateKey, account, env]);
 
@@ -156,13 +155,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async function () {
       if (!account && !env && !chatId) return;
-      if (account && env && chatId) {
         const hash = await fetchConversationHash({ conversationId: chatId });
+        console.log(hash)
         setConversationHash(hash?.threadHash);
-      }
     })();
   }, [chatId, account, env, pgpPrivateKey]);
-  console.log(account);
+
   useEffect(() => {
     if (conversationHash) {
       (async function () {
@@ -243,11 +241,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash && account) {
+    if (threadHash) {
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
       });
+     
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
