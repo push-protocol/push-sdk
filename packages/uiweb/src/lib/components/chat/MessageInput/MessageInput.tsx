@@ -594,6 +594,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                     </Section>
                   )}
                   <MultiLineInput
+                    disabled={loading ? true : false}
                     theme={theme}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' && !event.shiftKey) {
