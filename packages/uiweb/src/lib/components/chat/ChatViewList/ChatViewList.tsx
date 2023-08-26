@@ -168,7 +168,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account, env]);
+  }, [conversationHash, pgpPrivateKey, account, env,chatFeed]);
 
   useEffect(() => {
     scrollToBottom(null);
@@ -260,11 +260,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
+  
     if (
       threadHash &&
       ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
         (chatFeed && chatFeed?.groupInformation))
     ) {
+      
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
