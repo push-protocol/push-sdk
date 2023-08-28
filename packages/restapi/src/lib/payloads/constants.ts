@@ -60,6 +60,7 @@ export enum SPACE_REQUEST_TYPE {
   ESTABLISH_MESH, // request to establish mesh connection
   INVITE_TO_PROMOTE, // host invites someone to be promoted as the speaker
   REQUEST_TO_PROMOTE, // someone requests the host to be promoted to a spaeker
+  MUTE_MIC, // host mutes the mic of a speaker
 }
 
 export enum SPACE_ACCEPT_REQUEST_TYPE {
