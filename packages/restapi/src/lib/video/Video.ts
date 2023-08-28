@@ -504,7 +504,7 @@ export class Video {
       this.peerInstances[recipientAddress].on('error', (err: any) => {
         console.log('error in accept request', err);
 
-        if (this.data.incoming[0].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
+        if (this.data.incoming[0].retryCount >= 5 || err.code === "ERR_CONNECTION_FAILURE" || err.code === "ERR_DATA_CHANNEL") {
           console.log('Max retries exceeded, please try again.');
           this.disconnect({ 
             peerAddress: recipientAddress,
@@ -767,7 +767,7 @@ export class Video {
       ].on('error', (err: any) => {
         console.log('error in connect', err);
 
-        if (this.data.incoming[incomingIndex].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE") {
+        if (this.data.incoming[incomingIndex].retryCount >= 5 || err.code == "ERR_CONNECTION_FAILURE" || err.code === "ERR_DATA_CHANNEL") {
           console.log('Max retries exceeded, please try again.');
           this.disconnect({
             peerAddress: peerAddress
