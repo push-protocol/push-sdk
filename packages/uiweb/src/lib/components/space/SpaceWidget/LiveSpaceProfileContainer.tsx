@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IMediaStream } from '@pushprotocol/restapi';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider, keyframes } from 'styled-components';
 
 import { VideoPlayer } from './VideoPlayer';
 
@@ -10,6 +10,7 @@ import { Image, Item, Text } from '../../../config';
 import HandIcon from '../../../icons/hand.svg';
 import MicOffIcon from '../../../icons/micoff.svg';
 import MicOnIcon from '../../../icons/micon.svg';
+import { useSpaceData } from '../../../hooks';
 
 export interface ILiveSpaceProfileContainerProps {
   wallet: string;
@@ -35,7 +36,10 @@ export const LiveSpaceProfileContainer = (
     stream,
   } = options || {};
 
+  const { spacesObjectRef, spaceObjectData, signer } = useSpaceData();
+
   const [isDDOpen, setIsDDOpen] = useState(false);
+  const [isSpeakerDemoted, setIsSpeakerDemoted] = useState(false)
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +60,25 @@ export const LiveSpaceProfileContainer = (
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isSpeakerDemoted)
+      return;
+
+    const requestedForMicFromEffect = async () => {
+      await spacesObjectRef?.current?.demoteSpeaker?.({
+        demoteeAddress: wallet.replace('eip155:', ''),
+        spaceId: spaceObjectData.spaceId,
+        signer: signer,
+      });
+    };
+    requestedForMicFromEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSpeakerDemoted]);
+
+  const demoteSpeaker = async () => {
+    setIsSpeakerDemoted(true);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -125,7 +148,62 @@ export const LiveSpaceProfileContainer = (
             )}
           </Item>
         )}
+
+        {isDDOpen && !isHost ? (
+          <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
+            {/* <DDItem>Invite to Speak</DDItem> */}
+            {isSpeaker && <DDItem onClick={demoteSpeaker}>Kick Listener</DDItem>}
+            {/* <DDItem>Mute</DDItem> */}
+          </DropDown>
+        ) : null}
       </Item>
     </ThemeProvider>
   );
 };
+
+const DropDown = styled.div<{ theme?: any; isDDOpen: any }>`
+  position: absolute;
+  top: 48px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  padding: 12px 6px;
+  animation: ${({ isDDOpen }) => (isDDOpen ? fadeIn : fadeOut)} 0.2s ease-in-out;
+  background: ${(props) => props.theme.bgColorPrimary};
+  color: ${(props) => props.theme.textColorPrimary};
+  border-radius: 16px;
+  border: 1px solid ${(props) => props.theme.borderColor};
+`;
+
+const DDItem = styled.div`
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 4px;
+  transition: 200ms ease;
+  &:hover {
+    background-color: ${(props) => props.theme.borderColor};
+    transition: 200ms ease;
+  }
+`;
+
+const fadeIn = keyframes`
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+`;
+
+const fadeOut = keyframes`
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+`;
