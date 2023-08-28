@@ -504,6 +504,8 @@ export class Video {
       this.peerInstances[recipientAddress].on('error', (err: any) => {
         console.log('error in accept request', err);
 
+        // ERR_CONNECTION_FAILURE -> gets triggered if peer connection fails (e.g. internet connection issue or tab closed)
+        // ERR_DATA_CHANNEL -> gets triggered if peer aborts connection (e.g. reloads the tab)
         if (this.data.incoming[0].retryCount >= 5 || err.code === "ERR_CONNECTION_FAILURE" || err.code === "ERR_DATA_CHANNEL") {
           console.log('Max retries exceeded, please try again.');
           this.disconnect({ 
