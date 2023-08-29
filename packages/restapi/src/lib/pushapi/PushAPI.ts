@@ -118,12 +118,8 @@ export class PushAPI {
   }
 
   profile = {
-    update: async (
-      name?: string,
-      desc?: string,
-      picture?: string
-    ): Promise<IUser> => {
-      return await PUSH_USER.profile.update({
+    update: async (name?: string, desc?: string, picture?: string) => {
+      const response = await PUSH_USER.profile.update({
         pgpPrivateKey: this.decryptedPgpPvtKey,
         account: this.account,
         profile: {
@@ -134,6 +130,7 @@ export class PushAPI {
         env: this.env,
         progressHook: this.progressHook,
       });
+      return response.profile;
     },
   };
 
