@@ -167,9 +167,9 @@ export class PushAPI {
       }
     },
 
-    latest: async (to: string) => {
+    latest: async (target: string) => {
       const { threadHash } = await PUSH_CHAT.conversationHash({
-        conversationId: to,
+        conversationId: target,
         account: this.account,
         env: this.env,
       });
@@ -184,7 +184,7 @@ export class PushAPI {
     },
 
     history: async (
-      to: string,
+      target: string,
       options?: {
         reference?: string | null;
         limit?: number;
@@ -194,7 +194,7 @@ export class PushAPI {
 
       if (!options?.reference) {
         const { threadHash } = await PUSH_CHAT.conversationHash({
-          conversationId: to,
+          conversationId: target,
           account: this.account,
           env: this.env,
         });
@@ -213,13 +213,13 @@ export class PushAPI {
       });
     },
 
-    send: async (to: string, options: Message): Promise<MessageWithCID> => {
+    send: async (target: string, options: Message): Promise<MessageWithCID> => {
       if (!options.type) {
         options.type = MessageType.TEXT;
       }
       const sendParams: ChatSendOptionsType = {
         message: options,
-        to: to,
+        to: target,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
