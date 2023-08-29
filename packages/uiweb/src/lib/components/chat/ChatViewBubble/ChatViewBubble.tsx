@@ -92,6 +92,7 @@ const MessageCard = ({
       justifyContent="start"
       gap="6px"
       width="fit-content"
+      maxWidth="70%"
     >
       {isGroup && <SenderMessafeProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
@@ -108,7 +109,6 @@ const MessageCard = ({
           margin="5px 0"
           alignSelf={position ? 'end' : 'start'}
           justifyContent="start"
-          maxWidth="100%"
           minWidth="71px"
           position="relative"
           width="fit-content"
