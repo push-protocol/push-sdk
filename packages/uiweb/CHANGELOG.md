@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.7...uiweb-0.0.1-alpha.8) (2023-08-29)
+
+
+### Bug Fixes
+
+* fixed msg bubble width ([#691](https://github.com/ethereum-push-notification-service/push-sdk/issues/691)) ([c24a9e1](https://github.com/ethereum-push-notification-service/push-sdk/commit/c24a9e144110ad3c67decbc1364b5dd610f5f58a))
+* Merge branch 'alpha' into alpha-deployment ([a825667](https://github.com/ethereum-push-notification-service/push-sdk/commit/a825667be9380ec6e5b457f5751a8b6b6b5a6b23))
+
+
+
 ## [0.0.1-alpha.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.6...uiweb-0.0.1-alpha.7) (2023-08-26)
 
 
