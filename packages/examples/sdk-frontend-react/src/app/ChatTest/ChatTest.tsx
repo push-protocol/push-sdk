@@ -71,6 +71,9 @@ const ChatTest = () => {
           <Link to="/getGroupAccess" className="nav-button">
             CHAT.GETGROUPACCESS
           </Link>
+          <Link to="/searchGroups" className="nav-button">
+            CHAT.SEARCHGROUPS
+          </Link>
           <Link to="/addMembersToGroup" className="nav-button">
             CHAT.ADDMEMBERSTOGROUP
           </Link>

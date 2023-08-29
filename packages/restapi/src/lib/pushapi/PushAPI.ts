@@ -1,10 +1,9 @@
-import Constants, { ENV, MessageType } from '../constants';
+import Constants, { ENCRYPTION_TYPE, ENV, MessageType } from '../constants';
 import {
   ChatSendOptionsType,
   GroupAccess,
   GroupDTO,
   IFeeds,
-  IUser,
   MessageWithCID,
   SignerType,
   Message,
@@ -25,11 +24,14 @@ import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
+import { authUpdate } from '../user/auth.updateUser';
 
 export class PushAPI {
   private signer: SignerType;
   private account: string;
   private decryptedPgpPvtKey: string;
+  private pgpPublicKey: string;
+
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
 
@@ -38,12 +40,14 @@ export class PushAPI {
     env: ENV,
     account: string,
     decryptedPgpPvtKey: string,
+    pgpPublicKey: string,
     progressHook?: (progress: ProgressHookType) => void
   ) {
     this.signer = signer;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
+    this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
   }
 
@@ -76,6 +80,7 @@ export class PushAPI {
     );
 
     let decryptedPGPPrivateKey: string;
+    let pgpPublicKey: string;
 
     /**
      * Decrypt PGP private key
@@ -95,6 +100,7 @@ export class PushAPI {
         progressHook: settings.progressHook,
         env: settings.env,
       });
+      pgpPublicKey = user.publicKey;
     } else {
       const newUser = await PUSH_USER.create({
         env: settings.env,
@@ -105,6 +111,7 @@ export class PushAPI {
         progressHook: settings.progressHook,
       });
       decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
+      pgpPublicKey = newUser.publicKey;
     }
 
     // Initialize PushAPI instance
@@ -113,6 +120,7 @@ export class PushAPI {
       settings.env as ENV,
       derivedAccount,
       decryptedPGPPrivateKey,
+      pgpPublicKey,
       settings.progressHook
     );
   }
@@ -225,6 +233,27 @@ export class PushAPI {
         env: this.env,
       };
       return await PUSH_CHAT.send(sendParams);
+    },
+
+    accept: async (target: string): Promise<string> => {
+      return await PUSH_CHAT.approve({
+        senderAddress: target,
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+      });
+    },
+
+    reject: async (target: string): Promise<string> => {
+      return await PUSH_CHAT.approve({
+        status: 'Reproved',
+        senderAddress: target,
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+      });
     },
   };
 
@@ -383,6 +412,54 @@ export class PushAPI {
           throw new Error('Invalid action provided.');
       }
       return response;
+    },
+
+    join: async (target: string): Promise<GroupDTO> => {
+      return await PUSH_CHAT.addMembers({
+        chatId: target,
+        members: [this.account],
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+      });
+    },
+
+    leave: async (target: string): Promise<GroupDTO> => {
+      return await PUSH_CHAT.removeMembers({
+        chatId: target,
+        members: [this.account],
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+      });
+    },
+  };
+
+  encryption = {
+    update: async (
+      updatedEncryptionType: ENCRYPTION_TYPE,
+      options: {
+        versionMeta?: Record<string, Record<string, string>>;
+      }
+    ): Promise<void> => {
+      const { versionMeta } = options;
+
+      await authUpdate({
+        account: this.account,
+        pgpEncryptionVersion: updatedEncryptionType,
+        additionalMeta: versionMeta,
+        progressHook: this.progressHook,
+        signer: this.signer,
+        env: this.env,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        pgpPublicKey: this.pgpPublicKey,
+      });
+    },
+
+    info: async (
+      
+    ): Promise<void> => {
+        // TODO: Aman pls take up this
     },
   };
 }
