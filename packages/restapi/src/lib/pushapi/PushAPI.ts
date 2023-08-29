@@ -173,6 +173,7 @@ export class PushAPI {
         account: this.account,
         env: this.env,
       });
+      if (!threadHash) return {};
 
       return await PUSH_CHAT.latest({
         threadhash: threadHash,
@@ -203,6 +204,8 @@ export class PushAPI {
         reference = options.reference;
       }
 
+      if (!reference) return [];
+
       return await PUSH_CHAT.history({
         account: this.account,
         env: this.env,
@@ -226,8 +229,9 @@ export class PushAPI {
       };
       return await PUSH_CHAT.send(sendParams);
     },
+  };
 
-    /*permissions: (): void => {
+  /*permissions: (): void => {
       console.warn('Fetching chat permissions... Coming Soon');
     },
 
@@ -235,156 +239,153 @@ export class PushAPI {
       console.warn('Fetching chat info...  Coming Soon');
     },*/
 
-    group: {
-      create: async (name: string, options?: GroupCreationOptions) => {
-        const groupParams: PUSH_CHAT.ChatCreateGroupType = {
-          groupName: name,
-          groupDescription: options?.description,
-          members: options?.members ? options.members : [],
-          groupImage: options?.image,
-          admins: options?.admins ? options.admins : [],
-          rules: {
-            groupAccess: options?.rules?.entry,
-            chatAccess: options?.rules?.chat,
-          },
-          isPublic: options?.private || false,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
-          env: this.env,
-        };
+  group = {
+    create: async (name: string, options?: GroupCreationOptions) => {
+      const groupParams: PUSH_CHAT.ChatCreateGroupType = {
+        groupName: name,
+        groupDescription: options?.description,
+        members: options?.members ? options.members : [],
+        groupImage: options?.image,
+        admins: options?.admins ? options.admins : [],
+        rules: {
+          groupAccess: options?.rules?.entry,
+          chatAccess: options?.rules?.chat,
+        },
+        isPublic: options?.private || false,
+        signer: this.signer,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        env: this.env,
+      };
 
-        return await PUSH_CHAT.createGroup(groupParams);
-      },
+      return await PUSH_CHAT.createGroup(groupParams);
+    },
 
-      permissions: async (chatId: string): Promise<GroupAccess> => {
-        const getGroupAccessOptions: PUSH_CHAT.GetGroupAccessType = {
-          chatId,
-          did: this.account,
-          env: this.env,
-        };
-        return await PUSH_CHAT.getGroupAccess(getGroupAccessOptions);
-      },
+    permissions: async (chatId: string): Promise<GroupAccess> => {
+      const getGroupAccessOptions: PUSH_CHAT.GetGroupAccessType = {
+        chatId,
+        did: this.account,
+        env: this.env,
+      };
+      return await PUSH_CHAT.getGroupAccess(getGroupAccessOptions);
+    },
 
-      info: async (chatId: string): Promise<GroupDTO> => {
-        return await PUSH_CHAT.getGroup({
-          chatId: chatId,
-          env: this.env,
-        });
-      },
+    info: async (chatId: string): Promise<GroupDTO> => {
+      return await PUSH_CHAT.getGroup({
+        chatId: chatId,
+        env: this.env,
+      });
+    },
 
-      update: async (
-        chatId: string,
-        options: GroupUpdateOptions
-      ): Promise<GroupDTO> => {
-        // Fetch Group Details
-        const group = await PUSH_CHAT.getGroup({
-          chatId: chatId,
-          env: this.env,
-        });
-        if (!group) {
-          throw new Error('Group not found');
+    update: async (
+      chatId: string,
+      options: GroupUpdateOptions
+    ): Promise<GroupDTO> => {
+      // Fetch Group Details
+      const group = await PUSH_CHAT.getGroup({
+        chatId: chatId,
+        env: this.env,
+      });
+      if (!group) {
+        throw new Error('Group not found');
+      }
+
+      const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
+        chatId: chatId,
+        groupName: options.name ? options.name : group.groupName,
+        groupImage: options.image ? options.image : group.groupImage,
+        groupDescription: options.description
+          ? options.description
+          : group.groupDescription,
+        scheduleAt: options.scheduleAt ? options.scheduleAt : group.scheduleAt,
+        scheduleEnd: options.scheduleEnd
+          ? options.scheduleEnd
+          : group.scheduleEnd,
+        status: options.status ? options.status : group.status,
+        meta: options.meta ? options.meta : group.meta,
+        rules: options.rules ? options.rules : group.rules,
+        account: this.account,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        env: this.env,
+      };
+      return await updateGroupProfile(updateGroupProfileOptions);
+    },
+
+    manage: async (
+      action: 'ADD' | 'REMOVE',
+      options: ManageGroupOptions
+    ): Promise<GroupDTO> => {
+      const { chatid, role, accounts } = options;
+
+      const validRoles = ['ADMIN', 'MEMBER'];
+      if (!validRoles.includes(role)) {
+        throw new Error('Invalid role provided.');
+      }
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('accounts array cannot be empty!');
+      }
+
+      accounts.forEach((account) => {
+        if (!isValidETHAddress(account)) {
+          throw new Error(`Invalid account address: ${account}`);
         }
+      });
 
-        const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
-          chatId: chatId,
-          groupName: options.name ? options.name : group.groupName,
-          groupImage: options.image ? options.image : group.groupImage,
-          groupDescription: options.description
-            ? options.description
-            : group.groupDescription,
-          scheduleAt: options.scheduleAt
-            ? options.scheduleAt
-            : group.scheduleAt,
-          scheduleEnd: options.scheduleEnd
-            ? options.scheduleEnd
-            : group.scheduleEnd,
-          status: options.status ? options.status : group.status,
-          meta: options.meta ? options.meta : group.meta,
-          rules: options.rules ? options.rules : group.rules,
-          account: this.account,
-          signer: this.signer,
-          env: this.env,
-        };
-        return await updateGroupProfile(updateGroupProfileOptions);
-      },
+      const env = this.env;
+      const account = this.account;
+      const signer = this.signer;
 
-      manage: async (
-        action: 'ADD' | 'REMOVE',
-        options: ManageGroupOptions
-      ): Promise<GroupDTO> => {
-        const { chatid, role, accounts } = options;
+      let response: GroupDTO;
 
-        const validRoles = ['ADMIN', 'MEMBER'];
-        if (!validRoles.includes(role)) {
-          throw new Error('Invalid role provided.');
-        }
-
-        if (!accounts || accounts.length === 0) {
-          throw new Error('accounts array cannot be empty!');
-        }
-
-        accounts.forEach((account) => {
-          if (!isValidETHAddress(account)) {
-            throw new Error(`Invalid account address: ${account}`);
+      switch (action) {
+        case 'ADD':
+          if (role === 'ADMIN') {
+            response = await PUSH_CHAT.addAdmins({
+              chatId: chatid,
+              admins: accounts,
+              env,
+              account,
+              signer: signer,
+            });
+          } else if (role === 'MEMBER') {
+            response = await PUSH_CHAT.addMembers({
+              chatId: chatid,
+              members: accounts,
+              env,
+              account,
+              signer: signer,
+            });
+          } else {
+            throw new Error('Invalid role provided.');
           }
-        });
+          break;
 
-        const env = this.env;
-        const account = this.account;
-        const signer = this.signer;
+        case 'REMOVE':
+          if (role === 'ADMIN') {
+            response = await PUSH_CHAT.removeAdmins({
+              chatId: chatid,
+              admins: accounts,
+              env,
+              account,
+              signer: signer,
+            });
+          } else if (role === 'MEMBER') {
+            response = await PUSH_CHAT.removeMembers({
+              chatId: chatid,
+              members: accounts,
+              env,
+              account,
+              signer: signer,
+            });
+          } else {
+            throw new Error('Invalid role provided.');
+          }
+          break;
 
-        let response: GroupDTO;
-
-        switch (action) {
-          case 'ADD':
-            if (role === 'ADMIN') {
-              response = await PUSH_CHAT.addAdmins({
-                chatId: chatid,
-                admins: accounts,
-                env,
-                account,
-                signer: signer,
-              });
-            } else if (role === 'MEMBER') {
-              response = await PUSH_CHAT.addMembers({
-                chatId: chatid,
-                members: accounts,
-                env,
-                account,
-                signer: signer,
-              });
-            } else {
-              throw new Error('Invalid role provided.');
-            }
-            break;
-
-          case 'REMOVE':
-            if (role === 'ADMIN') {
-              response = await PUSH_CHAT.removeAdmins({
-                chatId: chatid,
-                admins: accounts,
-                env,
-                account,
-                signer: signer,
-              });
-            } else if (role === 'MEMBER') {
-              response = await PUSH_CHAT.removeMembers({
-                chatId: chatid,
-                members: accounts,
-                env,
-                account,
-                signer: signer,
-              });
-            } else {
-              throw new Error('Invalid role provided.');
-            }
-            break;
-
-          default:
-            throw new Error('Invalid action provided.');
-        }
-        return response;
-      },
+        default:
+          throw new Error('Invalid action provided.');
+      }
+      return response;
     },
   };
 }
