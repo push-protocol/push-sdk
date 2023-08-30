@@ -125,8 +125,28 @@ export class PushAPI {
     );
   }
 
+  info = async () => {
+    return await PUSH_USER.get({
+      account: this.account,
+      env: this.env,
+    });
+  };
+
   profile = {
-    update: async (name?: string, desc?: string, picture?: string) => {
+    info: async () => {
+      const response = await PUSH_USER.get({
+        account: this.account,
+        env: this.env,
+      });
+      return response.profile;
+    },
+
+    update: async (
+      name?: string,
+      desc?: string,
+      picture?: string,
+      blockedUsersList?: Array<string>
+    ) => {
       const response = await PUSH_USER.profile.update({
         pgpPrivateKey: this.decryptedPgpPvtKey,
         account: this.account,
@@ -134,6 +154,7 @@ export class PushAPI {
           name: name,
           desc: desc,
           picture: picture,
+          blockedUsersList: blockedUsersList,
         },
         env: this.env,
         progressHook: this.progressHook,
@@ -456,10 +477,8 @@ export class PushAPI {
       });
     },
 
-    info: async (
-      
-    ): Promise<void> => {
-        // TODO: Aman pls take up this
+    info: async (): Promise<void> => {
+      // TODO: Aman pls take up this
     },
   };
 }

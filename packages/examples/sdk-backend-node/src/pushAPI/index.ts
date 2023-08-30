@@ -63,6 +63,22 @@ export const runPushAPICases = async (): Promise<void> => {
   console.log('PushAPI.initialize | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
+  console.log('PushAPI.info');
+  const userAliceInfo = await userAlice.info();
+  if (showAPIResponse) {
+    console.log(userAliceInfo);
+  }
+  console.log('PushAPI.info | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.profile.info');
+  const userAliceProfileInfo = await userAlice.profile.info();
+  if (showAPIResponse) {
+    console.log(userAliceProfileInfo);
+  }
+  console.log('PushAPI.profile.info | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
   console.log('PushAPI.profile.update');
   const updatedName = 'Bob The Builder';
   const response = await userAlice.profile.update(updatedName);
