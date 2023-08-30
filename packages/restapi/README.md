@@ -7173,8 +7173,8 @@ const aliceChats = await userAlice.chat.latest(bobAddress);
 ### **Fetch Chat History**
 
 ```typescript
-// Latest Chat message with the target user
-const aliceChats = await userAlice.chat.history(bobAddress);
+// Chat History with the target user
+const aliceChatHistoryWithBob = await userAlice.chat.history(bobAddress);
 ```
 
 | Param                  | Type               | Default | Remarks                                                                                                                         |
@@ -7252,20 +7252,20 @@ const aliceChats = await userAlice.chat.history(bobAddress);
 ];
 ```
 
-| Param             | Type   | Remarks                                     |
-| ----------------- | ------ | ------------------------------------------- |
-| `fromCAIP10`      | string | sender address                              |
-| `toCAIP10`        | string | receiver address                            |
-| `fromDID`         | string | sender did                                  |
-| `toDID`           | string | receiver did                                |
-| `messageType`     | string | message type                                |
-| `messageContent`  | string | message content                             |
-| `signature`       | string | signature of the message                    |
-| `sigType`         | string | signature type                              |
-| `link`            | string | content identifier of the previous messages |
-| `timestamp`       | number | timestamp of the message                    |
-| `encType`         | string | encryption type                             |
-| `encryptedSecret` | string | encrypted secret                            |
+| Param             | Type     | Remarks                                     |
+| ----------------- | -------- | ------------------------------------------- |
+| `fromCAIP10`      | `string` | sender address                              |
+| `toCAIP10`        | `string` | receiver address                            |
+| `fromDID`         | `string` | sender did                                  |
+| `toDID`           | `string` | receiver did                                |
+| `messageType`     | `string` | message type                                |
+| `messageContent`  | `string` | message content                             |
+| `signature`       | `string` | signature of the message                    |
+| `sigType`         | `string` | signature type                              |
+| `link`            | `string` | content identifier of the previous messages |
+| `timestamp`       | `number` | timestamp of the message                    |
+| `encType`         | `string` | encryption type                             |
+| `encryptedSecret` | `string` | encrypted secret                            |
 
 </details>
 
@@ -7290,6 +7290,8 @@ const aliceMessagesBob = await userAlice.chat.send(bobAddress, {
 | `options.action` \*    | `string`                                                                     | -       | Message action ( Only available for Meta & Reaction Messages )                      |
 | `options.reference` \* | `string` or `null`                                                           | -       | Message reference hash ( Only available for Reaction Messages )                     |
 | `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                | -       | Message reference hash ( Only available for Meta Messages )                         |
+
+\* - Optional
 
 <details>
 
