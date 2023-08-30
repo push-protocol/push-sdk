@@ -7460,7 +7460,7 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
 
 ---
 
-### **Update Encryption Info**
+### **Update Encryption**
 
 ```typescript
 // Update keys encryption
@@ -7468,6 +7468,14 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
   ENCRYPTION_VERSION.PGP_V3
 );
 ```
+
+| Param                     | Type                                    | Default | Remarks                                               |
+| ------------------------- | --------------------------------------- | ------- | ----------------------------------------------------- |
+| `updatedEncryptionType`   | `ENCRYPTION_TYPE`                       | -       | New Encryption Scheme to which keys are to be updated |
+| `options` /\*             | `object`                                | -       | Optional Configuration for updating encryption        |
+| `options.versionMeta` /\* | `{ NFTPGP_V1 ?: { password : string} }` | -       | New Password ( In case of NFT Profile )               |
+
+\* - Optional
 
 <details>
 

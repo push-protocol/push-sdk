@@ -106,6 +106,7 @@ export class PushAPI {
         account: derivedAccount,
         signer,
         version: settings.version,
+        additionalMeta: settings.versionMeta,
         origin: settings.origin,
         progressHook: settings.progressHook,
       });
