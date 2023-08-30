@@ -6773,7 +6773,7 @@ const userAlice = await PushAPI.initialize(signer);
 | ------------------------ | -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
 | `signer`                 | `SignerType`                           | -             | EthersV5 or Viem Signer                                                                |
 | `options` \*             | `PushAPIInitializeProps`               | -             | Optional configuration properties for initializing the PushAPI.                        |
-| `options.env` \*         | `ENV`                                  | 'staging'     | API env - 'prod', 'staging', 'dev'                                                     |
+| `options.env` \*         | `ENV`                                  | `staging`     | API env - 'prod', 'staging', 'dev'                                                     |
 | `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
 | `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
 | `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
@@ -6789,7 +6789,7 @@ const userAlice = await PushAPI.initialize(signer);
 
 ```typescript
 // Update Push Profile
-const aliceinfo = await userAlice.info();
+const aliceInfo = await userAlice.info();
 ```
 
 <details>
@@ -6856,6 +6856,30 @@ const aliceinfo = await userAlice.info();
   nfts: null
 }
 ```
+
+| Parameter           | Type     | Remarks                                                         |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| did                 | `string` | user decentralized identity                                     |
+| wallets             | `string` | all wallets associated to the did                               |
+| publicKey           | `string` | Public PGP key                                                  |
+| encryptedPrivateKey | `string` | Encrypted PGP Private Key                                       |
+| verificationProof   | `string` | Verification proof                                              |
+| msgSent             | `number` | Number of messages sent                                         |
+| maxMsgPersisted     | `number` | Maximum number of messages that can be persisted                |
+| profile             | `object` | User profile information                                        |
+| origin              | `string` | Origin information (source of the data)                         |
+| name                | `string` | Profile Name ( Deprecated )                                     |
+| about               | `string` | Profile Description ( Deprecated )                              |
+| profilePicture      | `string` | Profile Picture ( Deprecated )                                  |
+| numMsg              | `number` | Number of messages sent ( Deprecated )                          |
+| allowedNumMsg       | `number` | Maximum number of messages that can be persisted ( Deprecated ) |
+| encryptionType      | `string` | Type of encryption used                                         |
+| signature           | `string` | Account signature ( Deprecated )                                |
+| sigType             | `string` | Type of signature ( Dprecated )                                 |
+| encryptedPassword   | `null`   | Encrypted user password ( Deprecated )                          |
+| nftOwner            | `null`   | Owner of NFT ( Deprecated )                                     |
+| linkedListHash      | `null`   | Deprecated                                                      |
+| nfts                | `null`   | Information about owned NFTs( Dprecated )                       |
 
 </details>
 
