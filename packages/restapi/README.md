@@ -102,6 +102,17 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
     - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
   - [PushAPI Class](#pushapi-class)
+    - [Initialize](#initialize)
+    - [Fetch Info](#fetch-info)
+    - [Fetch Profile Info](#fetch-profile-info)
+    - [Update Profile Info](#update-profile)
+    - [Fetch Latest Chat](#fetch-latest-chat)
+    - [Fetch Chat History](#fetch-chat-history)
+    - [Send Message](#send-message)
+    - [Accept Chat Request](#accept-chat-request)
+    - [Reject Chat Request](#reject-chat-request)
+    - [Fetch Encryption Password](#fetch-encryption-password)
+    - [Update Encryption](#update-encryption)
 
 # How to use in your app?
 
@@ -6916,7 +6927,7 @@ const aliceProfileInfo = await userAlice.profile.info();
 
 ---
 
-### **Update Profile**
+### **Update Profile Info**
 
 ```typescript
 // Update Push Profile
@@ -7436,7 +7447,7 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 ---
 
-### **Fetch Encryption Info**
+### **Fetch Encryption Password**
 
 ```typescript
 // Fetch Decrypted Profile Password
