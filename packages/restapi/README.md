@@ -101,6 +101,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetching list of user spaces](#fetching-list-of-user-spaces)
     - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
     - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
+  - [PushAPI Class](#pushapi-class)
 
 # How to use in your app?
 
@@ -1667,8 +1668,7 @@ const user = await PushAPI.user.create({
 | version        | 'x25519-xsalsa20-poly1305' or 'eip191-aes256-gcm-hkdf-sha256' |
 | additionalMeta | Additional meta data for user                                 |
 | progressHook   | Progress hook                                                 |
-| origin         | Origin through which user is created                                               |
-
+| origin         | Origin through which user is created                          |
 
 Example creating normal user for chat:
 
@@ -3383,43 +3383,44 @@ Allowed Options (params with _ are mandatory)
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
 ## **Rules format**
+
 ```typescript
 export enum ConditionType {
   PUSH = 'PUSH',
-  GUILD = 'GUILD'
+  GUILD = 'GUILD',
 }
 
 export type Data = {
-  contract?: string
-  amount?: number
-  decimals?: number
-  guildId?: string
-  guildRoleId?: string
-  guildRoleAction?: 'all' | 'any'
-  url?: string
-  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!='
-}
+  contract?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  guildRoleId?: string;
+  guildRoleAction?: 'all' | 'any';
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+};
 
 export type ConditionBase = {
-  type?: ConditionType
-  category?: string
-  subcategory?: string
-  data?: Data
-  access?: Boolean
-}
+  type?: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data?: Data;
+  access?: Boolean;
+};
 
 export type Condition = ConditionBase & {
-  any?: ConditionBase[]
-  all?: ConditionBase[]
-}
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
 
 export interface Rules {
   groupAccess?: {
-    conditions: Array<Condition | ConditionBase>
-  }
+    conditions: Array<Condition | ConditionBase>;
+  };
   chatAccess?: {
-    conditions: Array<Condition | ConditionBase>
-  }
+    conditions: Array<Condition | ConditionBase>;
+  };
 }
 ```
 
@@ -3442,27 +3443,29 @@ PUSH conditions may relate to:
 - **ERC721**: Needs an address and an amount, and can only have the `owner` subcategory.
 - **ERC20**: Needs an address, an amount, and a decimals value. It can only have the `holder` subcategory.
 - **CustomEndpoint**: The `CustomEndpoint` provides a flexible way to validate a condition based on the response from a custom API endpoint. This is particularly useful when you want to incorporate data or validation logic that is external to your main application. As of now the Get API is supported and should return the 200 OK if the user is allowed to access.
-<pre>
-  {
-    "type": "PUSH",
-    "category": "CustomEndpoint",
-    "subcategory": "GET",
-    "data": {
-      "url": "https://api.example.com/user/{{user_address}}/validate"
+  <pre>
+    {
+      "type": "PUSH",
+      "category": "CustomEndpoint",
+      "subcategory": "GET",
+      "data": {
+        "url": "https://api.example.com/user/{{user_address}}/validate"
+      }
     }
-  }
-</pre>
-Explanation:
+  </pre>
 
-- ***type***: Represents the type of the condition, in this case "PUSH".
-- ***category***: Specifies that this is a condition based on a custom endpoint.
-- ***subcategory***: Represents the HTTP method for the request, in this case, a "GET" request.
-- ***data***: Contains the properties for the condition.
-- ***url***: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
+  Explanation:
+
+- **_type_**: Represents the type of the condition, in this case "PUSH".
+- **_category_**: Specifies that this is a condition based on a custom endpoint.
+- **_subcategory_**: Represents the HTTP method for the request, in this case, a "GET" request.
+- **_data_**: Contains the properties for the condition.
+- **_url_**: The endpoint URL with a placeholder ({{user_address}}) which will be replaced with the actual user address when the condition is being evaluated.
 
 #### GUILD Conditions
 
 Sample GUILD condition schema
+
 <pre>
 {
 	"type": "GUILD",
@@ -3478,19 +3481,19 @@ Sample GUILD condition schema
 - **Working**:
 
 Fields:
-  type:
-    Always set to: "GUILD"
-  category:
-    Always set to: "guildRoles"
-  subcategory:
-    Role type classification.
-    Values:
-      specificRole: For a singular role.
-      allRoles: Pertaining to all roles in the guild.
-      anyRole: Referring to any role within the guild.
-  data:
-  guildId: Unique identifier of a guild.
-  guildRoleId: Role ID within the guild. (Required only for the specificRole subcategory.)
+type:
+Always set to: "GUILD"
+category:
+Always set to: "guildRoles"
+subcategory:
+Role type classification.
+Values:
+specificRole: For a singular role.
+allRoles: Pertaining to all roles in the guild.
+anyRole: Referring to any role within the guild.
+data:
+guildId: Unique identifier of a guild.
+guildRoleId: Role ID within the guild. (Required only for the specificRole subcategory.)
 Usage:
 This structure governs user permissions within a guild. The subcategory dictates the manner of role-based operations, from checking permissions of a single role (specificRole) to broad checks across any or all roles (anyRole, allRoles).
 
@@ -3696,13 +3699,12 @@ const response = await PushAPI.chat.getGroupAccess({
 });
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with \_ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | chatId | string | - | group address |
 | did | string | - | user address |
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
-
 
 <details>
   <summary><b>Expected response (group access)</b></summary>
@@ -3785,6 +3787,7 @@ Allowed Options (params with _ are mandatory)
 }
 
 ```
+
 </details>
 
 ---
@@ -4800,45 +4803,45 @@ Allowed Options (params with _ are mandatory)
 | pgpPrivateKey | string | null | mandatory for users having pgp keys|
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
 
-
 ## **Rules format**
+
 ```typescript
 export enum ConditionType {
   PUSH = 'PUSH',
-  GUILD = 'GUILD'
+  GUILD = 'GUILD',
 }
 
 export type Data = {
-  contract?: string
-  amount?: number
-  decimals?: number
-  guildId?: string
-  guildRoleId?: string
-  guildRoleAction?: 'all' | 'any'
-  url?: string
-  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!='
-}
+  contract?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  guildRoleId?: string;
+  guildRoleAction?: 'all' | 'any';
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+};
 
 export type ConditionBase = {
-  type?: ConditionType
-  category?: string
-  subcategory?: string
-  data?: Data
-  access?: Boolean
-}
+  type?: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data?: Data;
+  access?: Boolean;
+};
 
 export type Condition = ConditionBase & {
-  any?: ConditionBase[]
-  all?: ConditionBase[]
-}
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
 
 export interface Rules {
   groupAccess?: {
-    conditions: Array<Condition | ConditionBase>
-  }
+    conditions: Array<Condition | ConditionBase>;
+  };
   chatAccess?: {
-    conditions: Array<Condition | ConditionBase>
-  }
+    conditions: Array<Condition | ConditionBase>;
+  };
 }
 ```
 
@@ -4971,13 +4974,12 @@ const response = await PushAPI.space.getAccess({
 });
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with \_ are mandatory)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | spaceId | string | - | space address |
 | did | string | - | user address |
 | env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
-
 
 <details>
   <summary><b>Expected response (space access)</b></summary>
@@ -5029,6 +5031,7 @@ Allowed Options (params with _ are mandatory)
 }
 
 ```
+
 </details>
 
 ---
@@ -6754,5 +6757,597 @@ const spaces = await PushAPI.space.trending({
 | spaceInformation | `SpaceDTO`     | all space information                                              |
 
 </details>
+
+---
+
+## PushAPI Class
+
+### **Initialize**
+
+```typescript
+// Initialize PushAPI class instance
+const userAlice = await PushAPI.initialize(signer);
+```
+
+| Param                    | Type                                   | Default       | Remarks                                                                                |
+| ------------------------ | -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `signer`                 | `SignerType`                           | -             | EthersV5 or Viem Signer                                                                |
+| `options` \*             | `PushAPIInitializeProps`               | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.env` \*         | `ENV`                                  | 'staging'     | API env - 'prod', 'staging', 'dev'                                                     |
+| `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
+| `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
+| `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
+| `options.versionMeta` \* | `{ password: string }`                 | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.autoUpgrade` \* | `boolean`                              | `true`        | If `true`, upgrades encryption keys to latest encryption version                       |
+| `options.origin` \*      | `string`                               | -             | Specify origin or source while creating a Push Profile                                 |
+
+\* - Optional
+
+---
+
+### **Fetch Info**
+
+```typescript
+// Update Push Profile
+const aliceinfo = await userAlice.info();
+```
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  did: 'eip155:0xEaC9c666570782E262f1E2a0b1d3BE4B95aFA7cd',
+  wallets: 'eip155:0xEaC9c666570782E262f1E2a0b1d3BE4B95aFA7cd',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGTu6YUBCACa7JaMqfhAnD/9ynE5Rhi8KNQ1tfdQe0ay/9jXX2naZIA+\n' +
+    '6WCi1uNcB2TTLfMuzsEl4u/26LTgtkr51snRt2QKgEqi5dXqbRD76wiRLd4h\n' +
+    'ktBb4WB28o+BWOHYYJQq8he+zu3mQWjKLb1e9DyS0cTzwPwWVKce9IsG3NOi\n' +
+    'eM7O5Kg5cU3qHXR+frF25peCBrzNXH+xuuTJPsX85h9dSz/u6dWXhk2LsX3s\n' +
+    'cmX5mFcFErnGvUBddDGZc11q+WzZAtENPCxQrNjpkMtzCj9UMwgsJdzBghZZ\n' +
+    'ZouGTG2uhfmIj3/KHOdwx/KGpTgC1iMVOb78kw9LmaxL6fGy4x9uvvI3ABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZO7phQQLCQcICZABDloJB8hpcgMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBMga3B8GDU79nd/0mAEOWgkHyGlyAAAbHAf/bJMPIyvNZNjO\n' +
+    'JK2xA1hYpzIGdbi3jMego6GXrmet3qY50zMKDccB2Ot399y/nmWMVEyfKYaP\n' +
+    '7N+mJbeAqIZ8TAHtpw++k/h8/hXoxb9iPsQyWYossuG499XyHnk+KEd4g0Wf\n' +
+    'mqPk/XJB3xLLgW820jOsRRbWLyYKJEdh1Q+GIM+D6oIJ9ZmyRPv25u6yCF2P\n' +
+    '2IQZErWeYD/LxqMDw+uHdRZJRiyFy/Y7A43clejN+p3my8oktXh2N4+tEl7i\n' +
+    'Hwxc5z9AOffuEyUerm0Rjwdn8rG8po7AfuXwmTiW1Sdc9TdJtAK/n6e9EFHV\n' +
+    'gHzArwyaydHHy80Wqa+UF591NkPi387ATQRk7umFAQgAs0ao+EFoKJirGHfI\n' +
+    '69vZg+eAAUUKG657BzNzTAF2r5Y+a61jdcCAL+DXBcfks+H0dqG36zjOZTCJ\n' +
+    'NirABp5RRPFty2VvUtOyezuKX/MBVg3st3t/yE3SncVaWMblAv3iegviNNpH\n' +
+    'cFKqpHoVBWDNdhFHNsKTjpJcq3BVohy2Dxh8Di8N/1+gEPxADvIuH9MQ8MJk\n' +
+    '6lB9XYXBmmqtlQ3sB916mvusUIl8Zxw1C76yY0PAXz055zJMiL1vwo5gKDiV\n' +
+    'iKyzry3wq7upPGJyeTKu7uUMifTPhJtyYvon2TIik5DIgHpqKziirCrolA+s\n' +
+    '7LhnFbawqDKleEdyCcL5mFCzXQARAQABwsB2BBgBCAAqBYJk7umFCZABDloJ\n' +
+    'B8hpcgKbDBYhBMga3B8GDU79nd/0mAEOWgkHyGlyAABIqQgAmK9ijEEvtWTm\n' +
+    '7/mhkuDEtfPfcMexfkaCcGL4SdZqVz/h+eIL8+4EbI9uq+YTzcjtX8FAEQta\n' +
+    'KWFACNEOPmSy6Sb9bDoNZUVpDaZzNNtqIK9Brt4zjJLEsDfmkuW3S/SgIYBQ\n' +
+    'yTkuNmmAf8dr7L4fG0JlxPyGaL1/w9UDAr7xdU7WcHuyPc0edDGeE7NwaGWp\n' +
+    'uBipXFw8AkikV3fCTDuOi3uhkIzZ5zlGCshD7m0aDSABwr4hbFzLFBDSrsiW\n' +
+    'GKhWGYgf5Vx8qzlwXYYnoW/rn3UXWpeTXjq46ZNaxjHJ4VxGMyn/tHZOEjDE\n' +
+    'vHapLIAgGyw2b+s+zZSqsXaMkH8WOw==\n' +
+    '=gPzx\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  encryptedPrivateKey: '{"ciphertext":"4f1243e1ffa76180f46ade2eb093867750c6bf72e8d6c71c7c0edca176c2f9fb32c603bb5e52d933730e0350292431b6e5287b8201f60ce9151b6a141bde98cdc3d9e5df8f84e00e5e4173bdf28b66e9590db10195fbd41ed241a65ab84fb5da251f613376bf78efe1af64613dd54fb05dced7cf8de0907d61489712ad42f06b5c775d97d15dee09b1c58cd79f596674e403353bc7e03297aa0d3fdaecac573c962409622ff8b1335b6fbb661bd2d5f5a076d9079f857849ba917662b40151041eca71385844160fc603c4d1beefbf71b26ac8968de52d6bb534ef6d6e2ea987170059d7d881dc684d28b5b2817804fba3b659e3ec0e802583e581b9f75d2f7e69e428cba91e62719e9ca6697588389db89b982370d23952120c0f972ab4b3a0da888d52b5055c60785d276152e43929df532bc7d5d68c6bc3cfdd1ca780df346113999a19d8e4a96c02f149d1ee4cde802277081ef339153872c00c9e9ddfe3ba8da8c68c0565752fea32258087e66aab37397a27b0228b5ed1aeb09a93b80778fd7f949409106c4cd82ff550aafb9d7bdce8727a76882f59ef2c54a137e51f04b6c27a0b1b92cd781dafb489a5e8203232669f5416454cc9cfe8c5b0fd8abc19d9ef16285a8da0aca2ed747adef7b49b8215790266d9c4791c250b0580e89c6429d10a1bcd45cf016a7ae30e1db948147d992722a7191e31852e6fd3c3679d868f34ebbe65f255be4b90dd64ceb52eaeee7d3356683b7fd511729493c887289ddb0f00c65ca2a95114f0e37d3b73d06333e2787c5fa6dd6f6c9e8334ff153dd63e30c81247efd497cf2c038843d8653edf23822eae07dd19d0be26a921673185bcf016533fdb59150ff46096419e6a6aeb1bd4293fc8146848d715d43afd04aa40f2b5ae9d058671677aad2413952a20b5214e18bbf3b4b033d936d673a0302967de3f74b05b74bc6c89f30ddeaab1bf6c567fcee355797b6cba17c3fcc8955bdf096e2dda2577b3374089d8c9d287552e5658c91e812bd0b8b63482c8de98fde216dd557eb34bafca2f8e73dc4582fa36332e8869f2717519921605915d8e1c75a37295e198ec0af75926d89a6832456304474a10c567334998226d9b6f709ebc216fb067d958e78a622040c91f46af202273d0b40307fb34cba5a6a57fbb196ac6e88c16d527b9bdb04b12fa7ed0bc771692712ccd146c41890b5caddbbb13b8ba77e632b2d7597256fb576ce87d2aff35a0e953b8227a5dcbf30f7d189ca7f77f6f8b2c4eb2752199a7a485ab52a6b65b6edd6cf65caaeb6f65544cc74c2fb3431fa484fb69adbda08d2402da953f20425832b6a2d712d56a5cc34095f25fb9524a478a71d387b7dea45b4bd41e79c61dceca332898dfeecf83999ed4fad892e2ede714b93f3969ad140f38bfa95d321ae5ef089cf0ce435d59f8b6611c0fd014c67ed38646f0771f1a74c1f950ee0900d883aca3ec4efbb2f7737e717007ae757d874573d4d70c9d7e38f8ff30a29b983036e684c4eaf35a7c03ed32a8e3fc62f0863c56830127a5f3c0e905a93e7466a4f43f0793cb6752b9be8d03d7be26170f694ecbb200f611bbf1dac4b6ec085deb8c3d8ee188d8c9c8c17ca720c0f0dee4d00e5866b5443b6af6e69ca64b8eb5a8f5fa1e1d27bfacbf1b0ae11241215358f5045b0d1a73d1b15dbd904709340c1e2b42a4ef78f76b8f901d6337849cff1052f06a8919255b596fb36d2fdf789fdf611813d20729c26d517dde6f11a3f6045ec5158652e128cf7c483a0fb8ab772cb5cdb56e42e6bf8c863f173307c3e053168e54e9e65bcacbb144413ff76d08a94929e6cdde2c5944246a4b344f3ca0ada3b403429750bdce76f04668b05ed79e9119f00901e7f7b4f1eea8a1b5b0186e3ed41277040a257601b0f3917db595f3f1808d92071a4e9521a251e9c5a66f2c8a57511f61b9fd88df77330aeb4bc15c043814b33610d60f6d0a13fd7977efaa1843913f6d3a79bc88020406c9979163684efe7b7ade9613221d06b52cd96abd31b77a707748d52e6e16c8c90821f29359b35307c10dafce5f35c0ff9802c23aef19f0a95b49a317cd6207002a5a9b822b4c056c4cbf9b27045dda8325d93060f358bb837f00954a6e281d1bdd1817a7cce8ed4a801f9164d32c52739c1ac650109868664be1fabab47c675222dc9ff9d75f9fb49531c832264aa5b55998675975f59e34829ce90b00092bd77e46328a6459d5c967d905b8e976611b839925ad742500231fa86cb5f7e6f39cb1e2e36b81c55269ea0f5fdcba5c8c0e38a899540d52be49c83efae5243998b926f029dc2980d4fdb1c125db409d015e0b36bc02272da1c688ee1f61d23cbde585064ab1e2164d0ca529774ec7797407ba5d988c58853e74a124a64dc24d0289b6a599354faf64790177c3032f5d660d7b76dfbf1c03388a7c75b2309c509c6a92144e124c8bd188274bc844e8f0aa7b5a06e79ad5776b5a62003b89aef194dcc03cd3c1b1f3ea541805cfc4e18aa159f9b5395185b573538c9bab16876dff91f365d16dcc56b339b01b86882ef8e52c51edd9c5b2f8a35713ed6eb43036e09f64f6e59ab417958faff974b6705400b341439fef4cba371c601927da7e0a8f23e1c6d3e070a19c2216da85f159d60303ab1321e479f4c371372845cef03daa7d2776c18face6cfa2ff9eed26f9f0a353a0f1c9a99b2556dccc1212fcb5c2078a3b0e58a7f3f7b3f346d624435ef94c95d40dc726d2e7400ae405e89473a934e7646124e34473dfe17f7f9cf481aa059ef422508ffe67f9b9276084973db0683269a046c1a0aafa7ab075b28008cbfb862b7e30c8b2afa1c2923d914b3d2469266e8e0182274a3d8d89642723820e61aa2d97a9370789ec4e89ebee05b6c0bef10778caf2a34c2d7622dde5fa64b012bea6205127c3c845229ef553f013b73823dc6631078fc628532e3e518bdc790ab8460078dedf0c5cb00492136813e2b91679bba82f3cf95169751933bee4358f84154014dbcc1de1a30613218039ebb2444429380fd283d3b60bd5d5b470e861f6ecc751c22aa467168512a0ef45755e6b59a7be591bd3b08fde874b166ccfbbedba10a0956d2d18cbda515341c2112d6094a746e9f562db6543e5bde2c4d4f7c06b7550400d66f7242a14f34cd8a7374372f0eea49a49b72909fc11ff81ea54a1e2c07225cdee856383a657b0f13c14b00ae3b7b2a32a22beaab8cfd18641dbfa82619fdcdddd3339e9423e71c487305e8aa932b694e94c37c7e418e4014c8bb264f47e8283e216eeeabf0fbdd2f5eb8d0ea979738d4f18b7bf72d7711f5d22653f217c7305314ec2c47a0ecbf1dc8f9bc1379ae38e2a04e736a1171b947609bb66f8d352ce57230d709f196953471c5504c7f9f40ed2f64bf3bd04bd57521a364ea03b5f0603cceec7851738d97c3fd73c16547d4d143b009a79832a1ed244937dce09edf2d5e32ae52ab0331c449325dce9e5e8ed1563c967a5f92031f4275e3179274ef3e0752ac01caf8a20aabb23d584d4d6607833f95cfc92832d936c37bb8b37222aa842f48944d06b37434c8dce5f19b450a7d1bd568672ef2c8eaa2afb7cff404b33377a61061f56b01849feb918521a7d63cfbe12466aedc7159c577f213f2c157586b8719164cd7108edfa9211287b43aadbad997bc62f8169eec4a6e02aeb535f670878e6af538b5281da04470d318f893102613977390a434e0557302a68ce42e532d350446d4d813b84c07b42bf22fbe4889096ec6303574c95040d8dcfed1b9bd26782c5033d7d1a491fece156cbc19a705204ed38a547e00a09b73bc7a702ef9c2e659171d1daab63958268148aba59766bc7a4ffb68c1ae047d1f0c5fb45fbacd07079f72af301c6aa00eebc0662c6792fc707d388b339d4f45afbf576bacf8730ec3e0f1e9dc0f9a6d58fd146b2293aed8d110da24336f9a4c01ae12c03ce214c6502f5fbc5224dd8b8b2e4edf2af16b811e5c8595fa76cafe34ba66199caaed48b5dfd5ae74a3e6b6d51a09c70afc30ebc0f40d51a15f1a8c2c41ec482eddf14bed3fd11a9e2aa4446268af25b49e429e2528d5df57797f6f3cd431eb5ded8f830c85cecde8012c31500ce9363903739a6759704fa87bfef984ed0285c8c0a5bf2f0985b1b511eb4145e4b27e2df6aa7b5c7a913b76b1ca869151b75c0717389b3d186f4e4637a5ceba3cef64809c3a06551a6a46be31af61c0ef78afb057f6cc625647dc04dcd74eb97f7aee0f5640e24b7662c799013efb83c80ec2851acda7c6328de789ae99ce296494225bd169e49c9a12dc7e281778f7fe275e72571cd5a3608733998d2f6b96c1d26c25223153fc5afc2f6e3d72f57fbcb2d087d718d3b6703b286f1e340c23cd3bc715797edf3ce6d5169bcf783ac9686233cc0358725143008b25bfbd329e1c30654e4b4c9461239d41ae77f706e64e5e60ce6de83becfd056f2678f17474ab9f4976b2d7d5d014d78f716d7d4edbf6ce4ed44ed677274d6b9b6e4bf4946dfd1ed8b821c81957b4bf5cd534ed6ca84dadd9d6380513dc6406b32dcd5c1bfa468a79e88a56656e71aed0c6675540e1617a31e1c122295427590e83b63e8da58a6c5c21a15703994bdc2b90d399b62679a4269224257f3ead5a2dd0980e6f5a45c5a9392929cc4743e106c7335136c9f8a3a29190462eef908eab02cda97dbcb71dff26b0ef4dae51de293b4cff0ebf37fce1391247c5ccf77dfb64974c4a1e6beeaf82041bb0d653e2e9b612f3442bba8480b86fd7b35514fc056d7429d5fb36199d4a6f632ea615d9acc961082d9d91aca416b57582bcd2f182f5f5be02b3f597c680b2e6b37ee4d133e51d077491cb536d6261808c42684d0912fd7bcc97dacdf32394e7b","salt":"da23dc7dbf23136dabc337a0caa170c0db7e4efec5f5c8a648dff9b7cd7df49f","nonce":"fe0e4ec3d40fb7de21a354bf","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"b43efae4c92a35d9c0b5f6178cb8b8a6642c77d0a9281f61beb9f6e8f7b006a5"}',
+  verificationProof: 'eip191v2:0x97ca70a87ec658e0e488e8b9f71644ee23840d809803fcf5bdcd174c9f39cdeb27f6e3a8885fec5bede5f264b3996bc3fa019b0d52745a5573a972b7e79e321c1c',
+  msgSent: 0,
+  maxMsgPersisted: 1000,
+  profile: {
+    name: null,
+    desc: null,
+    picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAqElEQVR4AcXBsQ3CUBBEwcfKCfIPnbgxF+ACKIYct+cGDpEdpCeCS0Damcu2PN40gqQaiE6QVAPREWbCTJgJM2EmzITZxJcg+acgqQaiEmbCTJhNQVINRCdIOgPRCZJKmAkzYTYNRLWfT6pjnalu54vOsc5U+/mkOtaZSpgJM2E2BUknSKr7eqWXdIKkEmbCTJhdtuXxphEkvxiIjjATZsJMmAkzYSbMPjaMJNvaf06gAAAAAElFTkSuQmCC',
+    profileVerificationProof: null
+  },
+  origin: null,
+  name: null,
+  about: null,
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAqElEQVR4AcXBsQ3CUBBEwcfKCfIPnbgxF+ACKIYct+cGDpEdpCeCS0Damcu2PN40gqQaiE6QVAPREWbCTJgJM2EmzITZxJcg+acgqQaiEmbCTJhNQVINRCdIOgPRCZJKmAkzYTYNRLWfT6pjnalu54vOsc5U+/mkOtaZSpgJM2E2BUknSKr7eqWXdIKkEmbCTJhdtuXxphEkvxiIjjATZsJMmAkzYSbMPjaMJNvaf06gAAAAAElFTkSuQmCC',
+  numMsg: 0,
+  allowedNumMsg: 1000,
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  signature: '0x97ca70a87ec658e0e488e8b9f71644ee23840d809803fcf5bdcd174c9f39cdeb27f6e3a8885fec5bede5f264b3996bc3fa019b0d52745a5573a972b7e79e321c1c',
+  sigType: 'eip191v2',
+  encryptedPassword: null,
+  nftOwner: null,
+  linkedListHash: null,
+  nfts: null
+}
+```
+
+</details>
+
+---
+
+### **Fetch Profile Info**
+
+```typescript
+// Update Push Profile
+const aliceProfileInfo = await userAlice.profile.info();
+```
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  name: null,
+  desc: null,
+  picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAqElEQVR4AcXBsQ3CUBBEwcfKCfIPnbgxF+ACKIYct+cGDpEdpCeCS0Damcu2PN40gqQaiE6QVAPREWbCTJgJM2EmzITZxJcg+acgqQaiEmbCTJhNQVINRCdIOgPRCZJKmAkzYTYNRLWfT6pjnalu54vOsc5U+/mkOtaZSpgJM2E2BUknSKr7eqWXdIKkEmbCTJhdtuXxphEkvxiIjjATZsJMmAkzYSbMPjaMJNvaf06gAAAAAElFTkSuQmCC',
+  profileVerificationProof: null
+}
+```
+
+| Param                    | Type               | Remarks                   |
+| ------------------------ | ------------------ | ------------------------- |
+| name                     | `string` or `null` | Profile Name              |
+| desc                     | `string` or `null` | Profile Description       |
+| picture                  | `string` or `null` | Profile Picture           |
+| profileVerificationProof | `string` or `null` | Profile VerificationProof |
+
+</details>
+
+---
+
+### **Update Profile**
+
+```typescript
+// Update Push Profile
+const updatedProfile = await userAlice.profile.update(updatedName);
+```
+
+| Param        | Type     | Default | Remarks             |
+| ------------ | -------- | ------- | ------------------- |
+| `name` \*    | `string` | -       | Profile Name        |
+| `desc` \*    | `string` | -       | Profile Description |
+| `picture` \* | `string` | -       | Profile Picture     |
+
+\* - Optional
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  name: 'Bob The Builder',
+  desc: null,
+  picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA0klEQVR4AcXBsW0EIRRF0esv0k2mGhogp4FJ3AC1UMM2QE66AQ24DZIpwE75E2CtbOmd8/H1+vxmcZ2ZVao4vbCVKk4vOI9nY2WIGWKGWOAmVbZS5S2p4gw8Q8wQM8QCv+gFJ1W2esFJlS1DzBAzxEKcmVUv/KtecGLNrAwxQ8wQC+NoOE/2Zmbn8WzsDDxDzBAzxEKcmZ1xNP4izsyOIWaIGWKBm3E0VnFmVuNo7MSZWY2jsYozszLEDDFDLHBznRmn4sSZecd1ZpyKY4gZYobYD0RQL1bKLk86AAAAAElFTkSuQmCC',
+  blockedUsersList: [],
+  verificationProof: 'pgpv2:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJk7dERCZAIZdJAfLB6iRYhBK0xCN+/G/tf7pts7whl0kB8\n' +
+    'sHqJAADd9Af/Z4DcYGZyQmVmIXM3CSDf2RaJOsEchm3hN93ErvTwGrKiviKW\n' +
+    '3/k6HWON3COHqmL5D1wlgZERTqaw3Xft1JC/82P108/IgDHiid4Wo4ojONn+\n' +
+    'ZZV6KUfH1i0+wxXNsSvS1XtVYVnq/pQbXi8fzayCYM9jwdiFzBosQTLmXIbY\n' +
+    'mUl1OezZ35kPQuZWjtZ2jyATQit6QL0uvQBiGAIevj1LRiB8uQsi0+Xr7R6I\n' +
+    'D7WQ0Iwr85OIENGyv1KgrH/1Q944SjamWWI31gUhedH5a+THVLNDJGg3CAfq\n' +
+    'FoOb2DNDviovMQxZwUOyCRCxVE6Ohw5Hwkw1YQOvzSwJRzz70l8A8w==\n' +
+    '=k8OV\n' +
+    '-----END PGP SIGNATURE-----\n'
+}
+```
+
+| Param                    | Type               | Remarks                    |
+| ------------------------ | ------------------ | -------------------------- |
+| name                     | `string` or `null` | Profile Name               |
+| desc                     | `string` or `null` | Profile Description        |
+| picture                  | `string` or `null` | Profile Picture            |
+| profileVerificationProof | `string`           | Profile Verification Proof |
+
+</details>
+
+---
+
+### **Fetch List of Chats**
+
+```typescript
+// List all chats
+const aliceChats = await userAlice.chat.list('CHATS');
+// List all chat requests
+const aliceRequests = await userAlice.chat.list('REQUESTS');
+```
+
+| Param              | Type                  | Default | Remarks                                            |
+| ------------------ | --------------------- | ------- | -------------------------------------------------- |
+| `type`             | `CHATS` or `REQUESTS` | -       | Type of Chats to be listed                         |
+| `options` \*       | `Object`              | -       | Optional configuration properties for listing chat |
+| `options.page` \*  | `number`              | `1`     | The page number for pagination                     |
+| `options.limit` \* | `number`              | `10`    | The maximum number of items to retrieve per page   |
+
+\* - Optional
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+[
+  {
+    chatId: '6168440929ced5109c50534d40bb98a5e109ebf1d33df966ae898f002fac8973',
+    about: null,
+    did: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+    intent: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+    intentSentBy: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+    intentTimestamp: '2023-08-29T08:05:03.000Z',
+    publicKey:
+      '{"key":"-----BEGIN PGP PUBLIC KEY BLOCK-----\\n\\nxsBNBGTt9AcBCADXjt9OEXDQyE7w2veaHqTUN9fALt7c+cubz2nhWfmD07M1\\n5Spm3ScT/4HdlPpUBYnGUKlCT09g663RvvmDzp8442vZhfYeKbetrcNFxfnp\\n+ePQGiLDY0h2FmjQGkmZGP43ZLyhNT4eCIGPcPSpzaWAKw4wgE/tW2hli5m/\\n7e8HFno+bHp2ycNoPJpdqhY77CJL9zPqFdctCPxI5r1/+xkVLcf+NZ+vD7mz\\nq8xVpu3Tij5Jb5ShDPQ3qqPsqdCcB/fpnEtAOT/Ryuf5Qqic/bDrzImfaIO9\\nYmdnuc6uQBR1s8WbLHmOsQvJhe2D8MtggV5HwHbkPqxXBmpGIJnMeLHZABEB\\nAAHNAMLAigQQAQgAPgWCZO30BwQLCQcICZBvKHl019glPAMVCAoEFgACAQIZ\\nAQKbAwIeARYhBEyKE1gcoT4IIxerrG8oeXTX2CU8AADltgf/dREUaHmfMnwa\\nWwcoGxfya7xeSeqGLWoWsCDg55lq0rf59IFKw59AKL+4kKQrmVDW0x6oo844\\nxBv3NBq7OssNbRr4XYIXJN4oP8g0SdOYinTTcnHFjJcRHfTIa+lmlf7fwc7d\\n2DRW3Kyu66OGq9sLzcgI3Q4Fg3VOQGRDdVGF4zJGjPEpnHsJuGCVnbn5L94p\\nMZHEMIahYrYg2asglSByNUZIH+r0Y8rCzKp8rs37X/Q8RBrmW/oTnE/bb+xo\\n1jHgRR3MUs2Ea0oAqv/TwqpBRzMIWQ8tGKfEaJ22p02FJaE5q9KMbLp0mMIe\\nd33xGwOezLKoK5L9cHKg7wmz4sWvUs7ATQRk7fQHAQgApXcZbj43S5sr7v8d\\nq9JwcXkSdpRuzGw5zyauxUUElq2RLKPvsP8En+OJQceKWQcpvz16xLjnSoZI\\nfgIl1wXUaEb2T45rUrWmnoO+Csy2h6FePNmlHOerY2/C0GHQX3XP/B0t41By\\nG/o4losESsBaHEYugHIg5kXhgsGnlgoC3Bu4zHFmIvLlZXjCWYUG2JnhNHlG\\nrD67/Xuox1FO+Hh/rR7sSsWIH6S+SFgG/P4bwiW0JAYQP6bC4tbXfzvKJk2R\\ndeySnppEAwdn/3lCU5QscYIIUXSaPoV3Q6hg+wRigBk2ixkqdOTJmJROTOo3\\nUdnaeGSwP23USJIUncZWgcIokwARAQABwsB2BBgBCAAqBYJk7fQHCZBvKHl0\\n19glPAKbDBYhBEyKE1gcoT4IIxerrG8oeXTX2CU8AABx6Af/XRamjQ4T79rf\\nhNArQt3VuHvpIUP860MCg0aW5rMtZ8q4+TwOyjiEgOUIFx215Yprb3R3NTKV\\nQWJr8n++ZGDmQ8iro8nrRMRELmoEJzyWp3yr0dyr2lx01//bud+vVw+ARPLt\\nVUnX8eguLKRrltQmIRwCqX01PCTiN2RDB2Akd+zlBGRiHoavW9dDdGGBY9wW\\nA2Pyw73BeMzVA3akiGzLsdRIshO0DBALaX0G5ytqyIf3QjXOqO6C7gp9XW7R\\njXhRhzvR9NjZPmSXEeYqYw2CUPxzaLsKoSP4dbXE7Hl+sYJptzke7LE1StzH\\nG64gRgEYMCKvRZaPXYnPJXAZwDhijw==\\n=8aQd\\n-----END PGP PUBLIC KEY BLOCK-----\\n","signature":"DEPRECATED"}',
+    profilePicture:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAsklEQVR4AcXBQY0DMRBE0Z+SCRhCsBhGAJiAYQwBgzGmZuDk2pPDSKPsqt57zNfzTVKPxX+K0ciEmTATZqXuSRajkdVjkcVoXKnHIovRyOqeZMJMmAmzEurcUffkF6FOJsyEmTAr3BTqXKks7hBmwkyYFb7UPflLdU+yUCcTZsJMmBW+hDong5O6J1diNE7EJWEmzIRZqccii9G4Eur8oh6LTJgJM2H2mK/nGyNhJsyE2QfJZChdHLm7QQAAAABJRU5ErkJggg==',
+    threadhash: 'bafyreiewla5iyd7rnvjw2c5w6dbab4zkyf2desbowzouijoea2jzakxz6i',
+    wallets: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+    combinedDID:
+      'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562_eip155:0x84a9385e9b97df87b80c2e689997133703853874',
+    name: null,
+    groupInformation: null,
+    msg: {
+      fromDID: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+      toDID: 'eip155:0x84a9385e9b97df87b80c2e689997133703853874',
+      messageObj: [Object],
+      messageContent: 'Hello Alice!',
+      messageType: 'Text',
+      timestamp: 1693316103747,
+      fromCAIP10: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+      toCAIP10: 'eip155:0x84a9385e9b97df87b80c2e689997133703853874',
+      encryptedSecret:
+        '-----BEGIN PGP MESSAGE-----\n' +
+        '\n' +
+        'wcBMA3d9z8TNUuddAQf/U2hMcybh5mUt9FFen5tfZ52PaB0vc2G+wYYIsBfu\n' +
+        'zg58rgLy8uGMxvzhtCWhpIE91G62d8M4OmaDa+PLjs8SqyRoyih/9pt8P4cw\n' +
+        'UJVHHDcJNC9r6/AV4aZySdz5u5utE7o3iB1FU0Sr9HEQsImmOM7J6LZJ3xWJ\n' +
+        'V+o4ToLbqUFYKg2uY1kUXpyX+D6JRinagnAosh4zCICLUqrEkKNqbyV2mr+5\n' +
+        'FK+fClWBGCwpf38L220FqHYPQ4bQXks0N07yW4OVjVpCTZVuNttr7PIEqcyZ\n' +
+        'qIovbQbkltiDpsb/yYysEHTwBtvugna7xMW7SRY34x3iWm/HBNJmfBG7LnjI\n' +
+        '6cHATAMrTKobmmcFTAEH/20nW6aNzfj1vn/5GIWjZ5Z4Rw6G3Syt+0NxPUix\n' +
+        'dpKIFOR0/BEJkafGMdlk/vRElsyluKbzykBlIQ0hHGRpGMNEW8s8GrJeiXvV\n' +
+        'JSNZ24u5DDk8DIBaJWJnyWM7XzgcmOmn9rvVbvc9qgNNgtDeMIZwUpiDipnA\n' +
+        '++7n72h0JSs8dWFQ62FSf5ACHC0UVbPiL3TRrRBEo7vQp4JsJyXp70CUclqU\n' +
+        '3ANLvNhINV6GGtpXEKnsBVkkg35HR92nIzk+8HL86SsRUYfXkufzXdkPpmRn\n' +
+        'SG7MoDecNf/bwoqP8/l2X2h3R1c+WTQFb6Z+eK/NsJ/AnSErFZh3yEHAi1Rz\n' +
+        'yIXSQAEA2KupLnBVC9fqZqhUySvOW/Hs/hD6iEEGIl+U/RC9AwdG2jpg4sVi\n' +
+        'f9PhBJ5Tanynb3aHngRKtIzjP5m223A=\n' +
+        '=5w+B\n' +
+        '-----END PGP MESSAGE-----\n',
+      encType: 'pgp',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJk7fQHCZBvKHl019glPBYhBEyKE1gcoT4IIxerrG8oeXTX\n' +
+        '2CU8AACRLQf/bbeJoUNwRkJYz100R3ULO27HGjKnFeOaMZWRNF8JqWzNmCBL\n' +
+        'Cj3aIBkDuCUj7avBsanScbSa7tD8Mc8PZgpSkd22nNH5iHiDJqlPtySJ2KoZ\n' +
+        '3ekVXfOgfLlHtN78ghTxABewYQRuB6kwtv3XQW8X9sCL2jEF4NIIl5eXZvIT\n' +
+        'nhbHhhOR47k2E0hiHjPv2t3ggrwkrw6ISDgV8qYcrnf7vEFeGHpeSc25QLJH\n' +
+        'pXCeeHhH7h4C9L3PEdMt8T+Ne36cfNiwTGdOavin/yfNES6k0kqZxP44hn1M\n' +
+        'ZBk4jfyaDUh70mv4FtxdPcdb1TGQsPC1YYAIh/059EBqkdJFhVF4+A==\n' +
+        '=DBch\n' +
+        '-----END PGP SIGNATURE-----\n',
+      sigType: 'pgpv2',
+      verificationProof:
+        'pgpv2:-----BEGIN PGP SIGNATURE-----\n' +
+        '\n' +
+        'wsBzBAEBCAAnBYJk7fQHCZBvKHl019glPBYhBEyKE1gcoT4IIxerrG8oeXTX\n' +
+        '2CU8AADsmwf/UpJCmnqztJLt1Ltg0OD7xoDvumitRwkfhnXzUdBWxM3i7vj4\n' +
+        'cfjtcpQI2R5W0TXj9e2fymimIc98kjUqpDiUIaVAuD0OnEbJdIluGLBTJeks\n' +
+        'YTRikqkgjFJT9Y6/2VRQj59IR0rgC0sec8mSKPlxuhixkdSS7Wec0+84cGmX\n' +
+        'aieskReKeitKacYkU4Uf82Klc7Ft8+duBsaMGR3TS22PzHfYIHmy+8Z3b1SK\n' +
+        'pMyJ8NBXCG2F+05WdoUsXBR+lO74RjSDWnWZlgRngWjjvSXQuZ/QznIyBVmQ\n' +
+        'oOxJM5LSCCwH6ch5J/HmXudJG+3wsCINchvSQx0LntZUoeSp8cezvg==\n' +
+        '=KUqZ\n' +
+        '-----END PGP SIGNATURE-----\n',
+      link: null,
+    },
+  },
+];
+```
+
+| Param            | Type           | Remarks                                                                                                                         |
+| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| msg              | `IMessageIPFS` | message object                                                                                                                  |
+| did              | `string`       | user DID                                                                                                                        |
+| wallets          | `string`       | user wallets                                                                                                                    |
+| profilePicture   | `string`       | user profile picture                                                                                                            |
+| publicKey        | `string`       | user public key                                                                                                                 |
+| about            | `string`       | user description                                                                                                                |
+| threadhash       | `string`       | cid from the latest message sent on this conversation                                                                           |
+| intent           | `string`       | addresses concatenated from the users who have approved the intent                                                              |
+| intentSentBy     | `string`       | address of the user who sent the intent                                                                                         |
+| intentTimestamp  | `number`       | timestamp of the intent                                                                                                         |
+| combinedDID      | `string`       | concatenated addresses of the members of this chat (for DM the 2 addresses and from Group the addresses from all group members) |
+| cid              | `string`       | content identifier on IPFS                                                                                                      |
+| chatId           | `string`       | chat identifier                                                                                                                 |
+| groupInformation | `GroupDTO`     | if group chat, all group information                                                                                            |
+
+</details>
+
+---
+
+### **Fetch Latest Chat**
+
+```typescript
+// Latest Chat message with the target user
+const aliceChats = await userAlice.chat.latest(bobAddress);
+```
+
+| Param    | Type     | Default | Remarks                                                                             |
+| -------- | -------- | ------- | ----------------------------------------------------------------------------------- |
+| `target` | `string` | -       | Target DID ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+[
+  {
+    link: 'bafyreibfikschwlfi275hr7lrfqgj73mf6absailazh4sm5fwihspy2ky4',
+    toDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    encType: 'pgp',
+    fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    sigType: 'pgp',
+    toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    signature:
+      '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
+    timestamp: 1669831523684,
+    fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    messageType: 'Text',
+    messageContent: 'Hi',
+    encryptedSecret:
+      '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n',
+  },
+];
+```
+
+| Param             | Type   | Remarks                                     |
+| ----------------- | ------ | ------------------------------------------- |
+| `fromCAIP10`      | string | sender address                              |
+| `toCAIP10`        | string | receiver address                            |
+| `fromDID`         | string | sender did                                  |
+| `toDID`           | string | receiver did                                |
+| `messageType`     | string | message type                                |
+| `messageContent`  | string | message content                             |
+| `signature`       | string | signature of the message                    |
+| `sigType`         | string | signature type                              |
+| `link`            | string | content identifier of the previous messages |
+| `timestamp`       | number | timestamp of the message                    |
+| `encType`         | string | encryption type                             |
+| `encryptedSecret` | string | encrypted secret                            |
+
+</details>
+
+---
+
+### **Fetch Chat History**
+
+```typescript
+// Latest Chat message with the target user
+const aliceChats = await userAlice.chat.history(bobAddress);
+```
+
+| Param                  | Type               | Default | Remarks                                                                                                                         |
+| ---------------------- | ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `target`               | `string`           | -       | Target DID ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID )                                             |
+| `options` \*           | `object`           | -       | Optional Configuration for fetching chat history                                                                                |
+| `options.reference` \* | `string` or `null` | -       | Refers to message refernce hash from where the previous messages are fetched. If null, messages are fetched from latest message |
+| `options.limit` \*     | `number`           | 10      | No. of messages to be loaded                                                                                                    |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+[
+  {
+    link: 'bafyreibfikschwlfi275hr7lrfqgj73mf6absailazh4sm5fwihspy2ky4',
+    toDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    encType: 'pgp',
+    fromDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    sigType: 'pgp',
+    toCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    signature:
+      '-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBQJjh5tjCRBaJmgmByp5FRYhBJC23yBJT2d/pTAID1omaCYH\n' +
+      'KnkVAAAZmwf/buPLw6caSZmYnw6D3/p6HF1kWlkGUOTP4RasaU/6dkeDaZs9\n' +
+      'SJlz2wC8oOpBGWHMJ/5n3ZWmU71E6U7IKIY793MyIv5t32vTNkwsRHUX7IIn\n' +
+      'QFF+FzTIEtHHVTRlnkqNR2YUk1kqcpZCZWHfahi5W2d/WkXlFNdvyyFH4W8L\n' +
+      'd03FGhOyXbWwU3xicBz5mSBpIFaaSCXl1SdgJDPXLSk3b65EEOjCOaiz85xC\n' +
+      'G+6SW4RUzCGSDcOd9F2EXvvY5H9LgQNi1jjlZn6JrPTPJTJ+wXZXzcZmtOXG\n' +
+      'EKcwvPbbPY9wd+gavRSOgYLYn5xoZQW/o3hW7AQlbC5Kj6js48Z0HQ==\n' +
+      '=qLiJ\n' +
+      '-----END PGP SIGNATURE-----\n',
+    timestamp: 1669831523684,
+    fromCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    messageType: 'Text',
+    messageContent: 'Hi',
+    encryptedSecret:
+      '-----BEGIN PGP MESSAGE-----\n' +
+      '\n' +
+      'wcBMA1fn1CNqxQ7nAQgArlo75qe54WerfRKFv1+F9j4NRMvSTgUztvIe51eg\n' +
+      'd5MVuj6RYxKERr2bTuBt5cMDJMlNuTnBBkPe4L8+SlsI46L9wmXV9xLoZq1a\n' +
+      '94JdxD98RGMF99Jde/3hC/X6GS1yVqPpKPKdWx/tkOPeyqeO/wFF7kqShgIi\n' +
+      'Wgq6hGz1fzD3GZhKGY0VSLuC3s0aUy/qw5En1Xd0uX0jdXBl07IIj8p1G2zx\n' +
+      '9BuVlksSK34yvIc0RQfCeRadMHkxbA0Hyj31Wrr+Y310YLTppL0s5bQR9APL\n' +
+      'WHsIztJ1fHTnXsPhnA7YG0SQpHTyJhuX3rgBjxGrvbZBArmZ+R/Pq9IkOkJe\n' +
+      'z8HATAMOsbaZjGN5JwEH/jYjLN6AFRWeaB5CSBSAF+CvHsUgadGmxTdSHBM6\n' +
+      'LM9rfGg/MCnpRBuHckA0NNZh+wepq6TDA54ZopsdP14gHj4MKCdfqZr86Jft\n' +
+      'ldtjeSgPTFEEJxPMJ4/Z3UeFU9rvOgfxX6l0eHWS0MYwJ3sVYvSyqqHir1K5\n' +
+      'TRdEIgtQ3NvLTKkX4bKTSU+SInrvDA+wsc2BcBsbgNhRiGb+XYrbqXBshL1a\n' +
+      'lIdpnomkAQgOZMO2n347uURYoruH3OtFeNABJ9D/nEU+LdhDOPGZPefvPBc5\n' +
+      'BxK4ExKZ2Wo/TZw8lgC53uqOljsGV63Hp71LkyesKWu5/+vdVrYx/vU63shh\n' +
+      'x/TSQAEiaFYEfkWSOthtH0nrJHhkY7FWgjp/1bj/J4J9HCQrVtt2WlQfhowZ\n' +
+      'ILxhKk/vep0sJviM3SfJ4hPtoYpZESc=\n' +
+      '=43Ta\n' +
+      '-----END PGP MESSAGE-----\n',
+  },
+  {
+    link: null,
+    toDID: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    encType: 'PlainText',
+    fromDID: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    sigType: '',
+    toCAIP10: 'eip155:0x0F1AAC847B5720DDf01BFa07B7a8Ee641690816d',
+    signature: '',
+    timestamp: 1669831499724,
+    fromCAIP10: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
+    messageType: 'Text',
+    messageContent: 'Hey Fabio!',
+    encryptedSecret: '',
+  },
+];
+```
+
+| Param             | Type   | Remarks                                     |
+| ----------------- | ------ | ------------------------------------------- |
+| `fromCAIP10`      | string | sender address                              |
+| `toCAIP10`        | string | receiver address                            |
+| `fromDID`         | string | sender did                                  |
+| `toDID`           | string | receiver did                                |
+| `messageType`     | string | message type                                |
+| `messageContent`  | string | message content                             |
+| `signature`       | string | signature of the message                    |
+| `sigType`         | string | signature type                              |
+| `link`            | string | content identifier of the previous messages |
+| `timestamp`       | number | timestamp of the message                    |
+| `encType`         | string | encryption type                             |
+| `encryptedSecret` | string | encrypted secret                            |
+
+</details>
+
+---
+
+### **Send Message**
+
+```typescript
+// Alice sends message to bob
+const aliceMessagesBob = await userAlice.chat.send(bobAddress, {
+  content: 'Hello Bob!',
+  type: 'Text',
+});
+```
+
+| Param                  | Type                                                                         | Default | Remarks                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `target`               | `string`                                                                     | -       | Target DID ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
+| `options`              | `object`                                                                     | -       | Configuration for message to be sent                                                |
+| `options.type` \*      | `Text` or `Image` or `File` or `MediaEmbed` or `GIF` or `Meta` or `Reaction` | -       | Type of message Content                                                             |
+| `options.content`      | `string`                                                                     | -       | Message Content                                                                     |
+| `options.action` \*    | `string`                                                                     | -       | Message action ( Only available for Meta & Reaction Messages )                      |
+| `options.reference` \* | `string` or `null`                                                           | -       | Message reference hash ( Only available for Reaction Messages )                     |
+| `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                | -       | Message reference hash ( Only available for Meta Messages )                         |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+fromCAIP10: 'eip155:0x84a9385e9b97df87b80c2e689997133703853874',
+toCAIP10: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+fromDID: 'eip155:0x84a9385e9b97df87b80c2e689997133703853874',
+toDID: 'eip155:0x14727F96dF61105661E78275D1A03C4F8aeff562',
+messageObj: 'U2FsdGVkX1/S1wljx7jN0NXJzSNoJCkg/6cw7gHwVibLsqyhpe/XgzJi7OUrXwUh',
+messageContent: 'U2FsdGVkX19oSSMVZpQdw+jZRExfd1GvJkIwgWAGe5g=',
+messageType: 'Text',
+timestamp: 1693316104031,
+encType: 'pgp',
+encryptedSecret: '-----BEGIN PGP MESSAGE-----\n' +
+  '\n' +
+  'wcBMAytMqhuaZwVMAQf+KkUcX1rmNnorm0bCeGPknnjMBFn2wQ4nIAbQV5cW\n' +
+  'W7bCHneK0V0+kpronJwuPb8e8GUZiJEmJGdTJYf3XMVP8sJkVVVQEbvYvAJL\n' +
+  'tUEsdqgqRuqGB+u4k5shtlHN1ViTjjc1N97C0eQUqTCVFKa1Ul9eZirhDqiI\n' +
+  'C/rj8uxESy+NH7o/nnbGTlwQonOOLLHfGH2zCpl/F59CO2CcLnuecfDT0WxJ\n' +
+  'xi2hM/ovKgbsKVI8WOOde0sIV3MQEvxAFuPJ8gINpoDA28Ty+lf7x1bN9ONN\n' +
+  'RZl4yjLpA7KUojWyfjp1/UW635NY11aZYEXIygDppCCvf6AE7je+1FDaVR/B\n' +
+  'I8HATAN3fc/EzVLnXQEH/1H4r6FubywzPzRlDJzPgxyNpNGPZbexrWRQT5U4\n' +
+  'eHmh7EsOfEattUCHb8zChL8crnX0CCw9MiN/ryfs9PXXK2qP3lFU59GUHd9q\n' +
+  'Mz3RQwF76M9C8zbsoUymIPXUypBBma/qsF8MK54qYoVPody6T3u7bEfW6E8r\n' +
+  'nDtlz62+G6wk4sNE7iJsk6KhGmb1t9v/j1qgmJwuE7zGP0QjSuquJsfkzUot\n' +
+  '1eU85XnUTGdoYBR2u5F2TsjIHn1ex2R0sZYfdc9eRNSSvDHrce9m7R5p7Y5F\n' +
+  'sSs96Skx7wLuepGt/vY2cH9Mq3AEGaXREV2NSr453+gHeTupp3aIiQ2CDpFB\n' +
+  '/MzSQAHCPW1DUf8r1cFE1Y1RXU15gNBeFju/ZBnpDlTbj3xXi0shafcl59pe\n' +
+  '0LTGhdDSYPX0Rs6zqJgex20XBnfgPD0=\n' +
+  '=ycNl\n' +
+  '-----END PGP MESSAGE-----\n',
+signature: '-----BEGIN PGP SIGNATURE-----\n' +
+  '\n' +
+  'wsBzBAEBCAAnBYJk7fQICZASd4ccCgkrMhYhBGLo0VO3qtKBG9Y0eBJ3hxwK\n' +
+  'CSsyAACktggAr3mI2uwn4m4sI7m8A8wIRgjs6h8V7d2feLsdqV7QL6aUzYld\n' +
+  'bewZYKQjSXdnklRtnlCIG1jmqFOCycv++3O5jcWY+du8lR912Gkjn0PDN/wW\n' +
+  'jSBDTkH0IKmIrYqIDnfbxYoUfUxAWXzm8N0LgVnA+qgs1CYzcS8S38zAONvH\n' +
+  'GBl8ZXNTgY5HYN3Pk74wms5jhBF1J7mtfMCNN8k7VHFaoC6YVF1REhwrSlxx\n' +
+  'l4bajYkJJMWfKdiQWQ31kSHChzKXBhu2rIWJ6A7ijyoc7Ff0s4xgwm/3cLQc\n' +
+  'hrlBpkMKI2xCDnP10Sr1sgmG7ropd+tCOFwsoEWqFqt+kJ592+g1mw==\n' +
+  '=TVDb\n' +
+  '-----END PGP SIGNATURE-----\n',
+sigType: 'pgpv2',
+verificationProof: 'pgpv2:-----BEGIN PGP SIGNATURE-----\n' +
+  '\n' +
+  'wsBzBAEBCAAnBYJk7fQICZASd4ccCgkrMhYhBGLo0VO3qtKBG9Y0eBJ3hxwK\n' +
+  'CSsyAAA8/Qf/Qvcom0DtPUQAOWkM+FCeBttjkCiM/ekZa1Gxioyy7jT0Baoi\n' +
+  'oUi8y4BpmjKjCvUGCDovcvvnjeLW8gpqunN/LOx1c4mPsgFTU0IQFqZmTtZK\n' +
+  'KMa+p/uiTXNnwx9635FV8WLOWQoyJP+u76rTu8n2YU1+5+N7xan9Wl+yuu4d\n' +
+  '/WkFwAq/WQjW4cgIZ08OWfNGaOh6kt3ceCvR25XVbb8gdMPOj262d7RuWVqs\n' +
+  'L31XJ8U/EkKZN5AxIB7AP6HKhZhlV6qbgizVFskWefT4E3Qq+9WLn4ApHf2R\n' +
+  'OksjHVbukZNbXrWeMjbZE9RlswPCXM68WsxWe1zItjXs63w1mwoQZg==\n' +
+  '=e9QO\n' +
+  '-----END PGP SIGNATURE-----\n',
+link: 'bafyreiewla5iyd7rnvjw2c5w6dbab4zkyf2desbowzouijoea2jzakxz6i',
+cid: 'bafyreibhnilz634i55hdkrkp3j4vt76dnyegvmrezdiuykeizq7unvx7cy',
+messageCategory: 'Chat',
+messageOrigin: 'other'
+}
+```
+
+| Param               | Type     | Remarks                                     |
+| ------------------- | -------- | ------------------------------------------- |
+| `fromCAIP10`        | `string` | sender address                              |
+| `toCAIP10`          | `string` | receiver address                            |
+| `fromDID`           | `string` | sender did                                  |
+| `toDID`             | `string` | receiver did                                |
+| `messageObject`     | `string` | message obejct                              |
+| `messageContent`    | `string` | message content ( deprecated )              |
+| `messageType`       | `string` | message type ( deprecated )                 |
+| `timestamp`         | `number` | timestamp of the message                    |
+| `encType`           | `string` | encryption type                             |
+| `encryptedSecret`   | `string` | encrypted secret                            |
+| `signature`         | `string` | signature of the message ( deprecated )     |
+| `sigType`           | `string` | signature type ( deprecated )               |
+| `verificationProof` | `string` | message verificationProof                   |
+| `link`              | `string` | identifier of the previous messages         |
+| `cid`               | `string` | identifier of the message                   |
+| `messageCategory`   | `string` | Category of message ( `Chat` or `Request` ) |
+| `messageOrigin`     | `string` | `Self` or `Other` depending on the receiver |
+
+ </details>
 
 ---
