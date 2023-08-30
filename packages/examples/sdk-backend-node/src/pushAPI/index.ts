@@ -180,4 +180,21 @@ export const runPushAPICases = async (): Promise<void> => {
     console.log(updateMember);
   }
   console.log('PushAPI.group.manage | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.encryption.info');
+  const encryptionInfo = await userAlice.encryption.info();
+  if (showAPIResponse) {
+    console.log(encryptionInfo);
+  }
+  console.log('PushAPI.encryption.info | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.encryption.update');
+  const PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256';
+  const encryptionUpdate = await userAlice.encryption.update(PGP_V3 as any);
+  if (showAPIResponse) {
+    console.log(encryptionUpdate);
+  }
+  console.log('PushAPI.encryption.update | Response - 200 OK\n\n');
 };
