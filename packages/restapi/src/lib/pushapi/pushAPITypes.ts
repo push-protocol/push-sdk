@@ -32,7 +32,6 @@ export interface GroupCreationOptions {
 }
 
 export interface ManageGroupOptions {
-  chatid: string;
   role: 'ADMIN' | 'MEMBER';
   accounts: string[];
 }

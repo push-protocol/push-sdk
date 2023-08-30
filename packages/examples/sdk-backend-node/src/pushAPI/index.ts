@@ -157,12 +157,12 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.create');
-  const createdGroup = await userAlice.group.create(groupName, {
+  const createdGroup = await userAlice.chat.group.create(groupName, {
     description: groupDescription,
     image: groupImage,
-    members: [randomWallet1, randomWallet2],
-    admins: [secondSignerAddress],
-    private: true,
+    members: [randomWallet1, randomWallet2, secondSignerAddress],
+    admins: [],
+    private: false,
   });
   const groupChatId = createdGroup.chatId; // to be used in other examples
   if (showAPIResponse) {
@@ -172,7 +172,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.permissions');
-  const grouppermissions = await userAlice.group.permissions(groupChatId);
+  const grouppermissions = await userAlice.chat.group.permissions(groupChatId);
   if (showAPIResponse) {
     console.log(grouppermissions);
   }
@@ -180,7 +180,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.info');
-  const groupInfo = await userAlice.group.info(groupChatId);
+  const groupInfo = await userAlice.chat.group.info(groupChatId);
   if (showAPIResponse) {
     console.log(groupInfo);
   }
@@ -188,7 +188,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.update');
-  const updatedGroup = await userAlice.group.update(groupChatId, {
+  const updatedGroup = await userAlice.chat.group.update(groupChatId, {
     description: 'Updated Description',
   });
   if (showAPIResponse) {
@@ -197,16 +197,43 @@ export const runPushAPICases = async (): Promise<void> => {
   console.log('PushAPI.group.update | Response - 200 OK');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.manage');
-  const updateMember = await userAlice.group.manage('ADD', {
-    chatid: groupChatId,
+  console.log('PushAPI.group.add');
+  const addMember = await userAlice.chat.group.add(groupChatId, {
     role: 'MEMBER',
     accounts: [randomWallet3],
   });
   if (showAPIResponse) {
-    console.log(updateMember);
+    console.log(addMember);
   }
-  console.log('PushAPI.group.manage | Response - 200 OK\n\n');
+  console.log('PushAPI.group.add | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.group.remove');
+  const removeMember = await userAlice.chat.group.remove(groupChatId, {
+    role: 'MEMBER',
+    accounts: [randomWallet3],
+  });
+  if (showAPIResponse) {
+    console.log(removeMember);
+  }
+  console.log('PushAPI.group.remove | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  // TODO: Fix this
+  // console.log('PushAPI.group.join');
+  // const joinGrp = await userBob.chat.group.join(groupChatId);
+  // if (showAPIResponse) {
+  //   console.log(joinGrp);
+  // }
+  // console.log('PushAPI.group.join | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.group.leave');
+  const leaveGrp = await userBob.chat.group.leave(groupChatId);
+  if (showAPIResponse) {
+    console.log(leaveGrp);
+  }
+  console.log('PushAPI.group.leave | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.encryption.info');
