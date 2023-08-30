@@ -14,7 +14,9 @@ export interface SearchSpacesType {
   env?: ENV;
 }
 
-export const search = async (options: SearchSpacesType): Promise<SpaceDTO[]> => {
+export const search = async (
+  options: SearchSpacesType
+): Promise<SpaceDTO[]> => {
   const {
     searchTerm,
     pageNumber,
@@ -42,12 +44,7 @@ export const search = async (options: SearchSpacesType): Promise<SpaceDTO[]> => 
         throw new Error(err);
       });
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${searchSpaces.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${searchSpaces.name} -: ${err}`
-    );
+    console.error(`[Push SDK] - API  - Error - API ${search.name} -:  `, err);
+    throw Error(`[Push SDK] - API  - Error - API ${search.name} -: ${err}`);
   }
 };

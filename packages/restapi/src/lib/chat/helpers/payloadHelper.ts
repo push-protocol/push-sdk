@@ -6,8 +6,8 @@ import {
   ChatStatus,
   Rules,
   SpaceRules,
-  GroupAccess, 
-  SpaceAccess
+  GroupAccess,
+  SpaceAccess,
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
@@ -43,7 +43,7 @@ export interface IApproveRequestPayload {
   fromDID: string;
   toDID: string;
   signature: string;
-  status: 'Approved';
+  status: 'Approved' | 'Reproved';
   sigType: string;
   verificationProof?: string | null | undefined;
 }
@@ -149,7 +149,7 @@ export const sendMessagePayload = async (
 export const approveRequestPayload = (
   fromDID: string,
   toDID: string,
-  status: 'Approved',
+  status: 'Approved' | 'Reproved',
   sigType: string,
   signature: string
 ): IApproveRequestPayload => {
@@ -258,9 +258,7 @@ export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
   };
 };
 
-export const groupAccessToSpaceAccess = (
-  group: GroupAccess
-): SpaceAccess => {
+export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
   const spaceAccess: SpaceAccess = {
     spaceAccess: group.groupAccess,
   };
@@ -272,7 +270,6 @@ export const groupAccessToSpaceAccess = (
 
   return spaceAccess;
 };
-
 
 export const updateGroupPayload = (
   groupName: string,
