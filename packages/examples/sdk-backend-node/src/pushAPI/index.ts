@@ -28,6 +28,12 @@ const secondSigner = createWalletClient({
   transport: http(),
 });
 const secondSignerAddress = secondSigner.account.address;
+const thirdSigner = createWalletClient({
+  account: privateKeyToAccount(generatePrivateKey()),
+  chain: goerli,
+  transport: http(),
+});
+const thirdSignerAddress = thirdSigner.account.address;
 // Dummy Wallet Addresses
 const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
 const randomWallet2 = privateKeyToAccount(generatePrivateKey()).address;
@@ -127,6 +133,27 @@ export const runPushAPICases = async (): Promise<void> => {
     console.log(aliceMessagesBob);
   }
   console.log('PushAPI.chat.send | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.chat.accept');
+  const bobAcceptsRequest = await userBob.chat.accept(signerAddress);
+  if (showAPIResponse) {
+    console.log(bobAcceptsRequest);
+  }
+  console.log('PushAPI.chat.accept | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  // TODO: Fix this
+  // console.log('PushAPI.chat.reject');
+  // const tempUser = await PushAPI.initialize(thirdSigner, { env });
+  // await tempUser.chat.send(secondSignerAddress, {
+  //   content: 'Sending Malicious message to bob',
+  // });
+  // const bobRejectsRequest = await userBob.chat.reject(thirdSignerAddress);
+  // if (showAPIResponse) {
+  //   console.log(bobRejectsRequest);
+  // }
+  // console.log('PushAPI.chat.reject | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.create');
