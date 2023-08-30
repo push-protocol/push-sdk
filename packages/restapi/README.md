@@ -110,7 +110,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetch Chat History](#fetch-chat-history)
     - [Send Message](#send-message)
     - [Accept Chat Request](#accept-chat-request)
-    - [Reject Chat Request](#reject-chat-request)
+    <!-- - [Reject Chat Request](#reject-chat-request) -->
     - [Fetch Encryption Password](#fetch-encryption-password)
     - [Update Encryption](#update-encryption)
 
@@ -7419,7 +7419,8 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 ---
 
-### **Reject Chat Request**
+<!-- TODO : Uncomment After Fn Fix -->
+<!-- ### **Reject Chat Request**
 
 ```typescript
 // Accept Chat Request
@@ -7445,7 +7446,7 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 </details>
 
----
+--- -->
 
 ### **Create Group**
 
@@ -7460,8 +7461,6 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 ---
 
 ### **Update Group**
-
----
 
 ### **Fetch Encryption Password**
 

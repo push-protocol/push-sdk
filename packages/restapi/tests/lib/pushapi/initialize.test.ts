@@ -133,7 +133,7 @@ describe.only('PushAPI.initialize functionality', () => {
       PushAPI.initialize(nftSigner, {
         account: nftAccount,
         progressHook: updateProgressInfo,
-        versionMeta: { password: 'wrongpassword' },
+        versionMeta: { NFTPGP_V1: { password: 'wrongpassword' } },
       })
     ).to.be.rejected;
   });
