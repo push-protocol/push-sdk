@@ -23,14 +23,12 @@ const ChatViewListTest = () => {
       <h2>Chat UI Test page</h2>
 
       {/* <Loader show={isLoading} /> */}
-      <Section>
-      <ChatSearchInput handleSearch={()=>{console.log('handle search')}} clearInput={()=>{console.log('clear input')}} placeholder='search domain or 123'/>
-      </Section>
-      {/* <ChatViewListCard    >
+  
+      <ChatViewListCard    >
         <ChatViewList chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' limit={10} />
 
       </ChatViewListCard>
-      <MessageInput chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' isConnected={true} /> */}
+      <MessageInput chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' isConnected={true} />
     </div>
   );
 };
