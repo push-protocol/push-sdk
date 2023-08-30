@@ -6788,7 +6788,7 @@ const userAlice = await PushAPI.initialize(signer);
 ### **Fetch Info**
 
 ```typescript
-// Update Push Profile
+// Fetch Info
 const aliceInfo = await userAlice.info();
 ```
 
@@ -6888,7 +6888,7 @@ const aliceInfo = await userAlice.info();
 ### **Fetch Profile Info**
 
 ```typescript
-// Update Push Profile
+// Fetch Push Profile
 const aliceProfileInfo = await userAlice.profile.info();
 ```
 
@@ -7151,20 +7151,20 @@ const aliceChats = await userAlice.chat.latest(bobAddress);
 ];
 ```
 
-| Param             | Type   | Remarks                                     |
-| ----------------- | ------ | ------------------------------------------- |
-| `fromCAIP10`      | string | sender address                              |
-| `toCAIP10`        | string | receiver address                            |
-| `fromDID`         | string | sender did                                  |
-| `toDID`           | string | receiver did                                |
-| `messageType`     | string | message type                                |
-| `messageContent`  | string | message content                             |
-| `signature`       | string | signature of the message                    |
-| `sigType`         | string | signature type                              |
-| `link`            | string | content identifier of the previous messages |
-| `timestamp`       | number | timestamp of the message                    |
-| `encType`         | string | encryption type                             |
-| `encryptedSecret` | string | encrypted secret                            |
+| Param             | Type     | Remarks                                     |
+| ----------------- | -------- | ------------------------------------------- |
+| `fromCAIP10`      | `string` | sender address                              |
+| `toCAIP10`        | `string` | receiver address                            |
+| `fromDID`         | `string` | sender did                                  |
+| `toDID`           | `string` | receiver did                                |
+| `messageType`     | `string` | message type                                |
+| `messageContent`  | `string` | message content                             |
+| `signature`       | `string` | signature of the message                    |
+| `sigType`         | `string` | signature type                              |
+| `link`            | `string` | content identifier of the previous messages |
+| `timestamp`       | `number` | timestamp of the message                    |
+| `encType`         | `string` | encryption type                             |
+| `encryptedSecret` | `string` | encrypted secret                            |
 
 </details>
 
@@ -7183,6 +7183,8 @@ const aliceChats = await userAlice.chat.history(bobAddress);
 | `options` \*           | `object`           | -       | Optional Configuration for fetching chat history                                                                                |
 | `options.reference` \* | `string` or `null` | -       | Refers to message refernce hash from where the previous messages are fetched. If null, messages are fetched from latest message |
 | `options.limit` \*     | `number`           | 10      | No. of messages to be loaded                                                                                                    |
+
+\* - Optional
 
 <details>
 
