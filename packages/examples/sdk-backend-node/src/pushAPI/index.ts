@@ -87,7 +87,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.profile.update');
   const updatedName = 'Bob The Builder';
-  const response = await userAlice.profile.update(updatedName);
+  const response = await userAlice.profile.update({ name: updatedName });
   if (showAPIResponse) {
     console.log(response);
   }

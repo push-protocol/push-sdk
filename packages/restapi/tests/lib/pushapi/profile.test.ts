@@ -19,8 +19,11 @@ describe('PushAPI.profile functionality', () => {
   it('Should update profile', async () => {
     const updatedName = 'Bob The Builder';
     const updatedDesc = 'Yes We Can';
-    const response = await userAlice.profile.update(updatedName, updatedDesc);
-    expect(response.profile.name).to.equal(updatedName);
-    expect(response.profile.desc).to.equal(updatedDesc);
+    const response = await userAlice.profile.update({
+      name: updatedName,
+      desc: updatedDesc,
+    });
+    expect(response.name).to.equal(updatedName);
+    expect(response.desc).to.equal(updatedDesc);
   });
 });

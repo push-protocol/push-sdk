@@ -141,12 +141,12 @@ export class PushAPI {
       return response.profile;
     },
 
-    update: async (
-      name?: string,
-      desc?: string,
-      picture?: string,
-      blockedUsersList?: Array<string>
-    ) => {
+    update: async (options: {
+      name?: string;
+      desc?: string;
+      picture?: string;
+    }) => {
+      const { name, desc, picture } = options;
       const response = await PUSH_USER.profile.update({
         pgpPrivateKey: this.decryptedPgpPvtKey,
         account: this.account,
@@ -154,7 +154,6 @@ export class PushAPI {
           name: name,
           desc: desc,
           picture: picture,
-          blockedUsersList: blockedUsersList,
         },
         env: this.env,
         progressHook: this.progressHook,
@@ -451,7 +450,7 @@ export class PushAPI {
   encryption = {
     info: async () => {
       const userInfo = await this.info();
-      return await PUSH_USER.decryptAuth({
+      const decryptedPassword = await PUSH_USER.decryptAuth({
         account: this.account,
         env: this.env,
         signer: this.signer,
@@ -464,6 +463,14 @@ export class PushAPI {
           },
         },
       });
+
+      return {
+        decryptedPgpPrivateKey: this.decryptedPgpPvtKey,
+        pgpPublicKey: this.pgpPublicKey,
+        ...(decryptedPassword !== undefined && decryptedPassword !== null
+          ? { decryptedPassword: decryptedPassword }
+          : {}),
+      };
     },
 
     update: async (
