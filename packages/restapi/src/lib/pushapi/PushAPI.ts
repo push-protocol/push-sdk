@@ -278,14 +278,6 @@ export class PushAPI {
     },
   };
 
-  /*permissions: (): void => {
-      console.warn('Fetching chat permissions... Coming Soon');
-    },
-
-    info: (): void => {
-      console.warn('Fetching chat info...  Coming Soon');
-    },*/
-
   group = {
     create: async (name: string, options?: GroupCreationOptions) => {
       const groupParams: PUSH_CHAT.ChatCreateGroupType = {

@@ -7447,6 +7447,22 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 ---
 
+### **Create Group**
+
+---
+
+### **Fetch Group Info**
+
+---
+
+### **Fetch Group Permissions**
+
+---
+
+### **Update Group**
+
+---
+
 ### **Fetch Encryption Password**
 
 ```typescript
