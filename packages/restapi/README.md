@@ -6777,7 +6777,7 @@ const userAlice = await PushAPI.initialize(signer);
 | `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
 | `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
 | `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
-| `options.versionMeta` \* | `{ password: string }`                 | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.versionMeta` \* | `{ NFTPGP_V1 ?: password: string }`    | -             | Metadata related to the encryption version, including a password if needed.            |
 | `options.autoUpgrade` \* | `boolean`                              | `true`        | If `true`, upgrades encryption keys to latest encryption version                       |
 | `options.origin` \*      | `string`                               | -             | Specify origin or source while creating a Push Profile                                 |
 
@@ -7377,5 +7377,187 @@ messageOrigin: 'other'
 | `messageOrigin`     | `string` | `Self` or `Other` depending on the receiver |
 
  </details>
+
+---
+
+### **Accept Chat Request**
+
+```typescript
+// Accept Chat Request
+const bobAcceptAliceRequest = await userBob.chat.accept(aliceAddress);
+```
+
+| Param    | Type     | Default | Remarks                                                                             |
+| -------- | -------- | ------- | ----------------------------------------------------------------------------------- |
+| `target` | `string` | -       | Target ( For Group Chats target is chatId, for 1 To 1 chat target is Push Account ) |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+// Combined DID for Chat
+eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E82907d2dAD6728ea4159
+```
+
+| Param         | Type     | Remarks            |
+| ------------- | -------- | ------------------ |
+| `combinedDID` | `string` | Combined Chat DIDs |
+
+</details>
+
+---
+
+### **Reject Chat Request**
+
+```typescript
+// Accept Chat Request
+const bobRejectAliceRequest = await userBob.chat.reject(aliceAddress);
+```
+
+| Param    | Type     | Default | Remarks                                                                             |
+| -------- | -------- | ------- | ----------------------------------------------------------------------------------- |
+| `target` | `string` | -       | Target ( For Group Chats target is chatId, for 1 To 1 chat target is Push Account ) |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+// Combined DID for Chat
+eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E82907d2dAD6728ea4159
+```
+
+| Param         | Type     | Remarks            |
+| ------------- | -------- | ------------------ |
+| `combinedDID` | `string` | Combined Chat DIDs |
+
+</details>
+
+---
+
+### **Fetch Encryption Info**
+
+```typescript
+// Fetch Decrypted Profile Password
+const aliceEncryptionInfo = await userAlice.encryption.info();
+```
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+  // decryption Porfile Password ( only available for NFT Profile )
+  0xA#bc12341dkox
+```
+
+| Param      | Type               | Remarks          |
+| ---------- | ------------------ | ---------------- |
+| `password` | `string` or `null` | Profile Password |
+
+</details>
+
+---
+
+### **Update Encryption Info**
+
+```typescript
+// Update keys encryption
+const aliceUpdateEncryption = await userAlice.encryption.update(
+  ENCRYPTION_VERSION.PGP_V3
+);
+```
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  did: 'eip155:0xEaC9c666570782E262f1E2a0b1d3BE4B95aFA7cd',
+  wallets: 'eip155:0xEaC9c666570782E262f1E2a0b1d3BE4B95aFA7cd',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGTu6YUBCACa7JaMqfhAnD/9ynE5Rhi8KNQ1tfdQe0ay/9jXX2naZIA+\n' +
+    '6WCi1uNcB2TTLfMuzsEl4u/26LTgtkr51snRt2QKgEqi5dXqbRD76wiRLd4h\n' +
+    'ktBb4WB28o+BWOHYYJQq8he+zu3mQWjKLb1e9DyS0cTzwPwWVKce9IsG3NOi\n' +
+    'eM7O5Kg5cU3qHXR+frF25peCBrzNXH+xuuTJPsX85h9dSz/u6dWXhk2LsX3s\n' +
+    'cmX5mFcFErnGvUBddDGZc11q+WzZAtENPCxQrNjpkMtzCj9UMwgsJdzBghZZ\n' +
+    'ZouGTG2uhfmIj3/KHOdwx/KGpTgC1iMVOb78kw9LmaxL6fGy4x9uvvI3ABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZO7phQQLCQcICZABDloJB8hpcgMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBMga3B8GDU79nd/0mAEOWgkHyGlyAAAbHAf/bJMPIyvNZNjO\n' +
+    'JK2xA1hYpzIGdbi3jMego6GXrmet3qY50zMKDccB2Ot399y/nmWMVEyfKYaP\n' +
+    '7N+mJbeAqIZ8TAHtpw++k/h8/hXoxb9iPsQyWYossuG499XyHnk+KEd4g0Wf\n' +
+    'mqPk/XJB3xLLgW820jOsRRbWLyYKJEdh1Q+GIM+D6oIJ9ZmyRPv25u6yCF2P\n' +
+    '2IQZErWeYD/LxqMDw+uHdRZJRiyFy/Y7A43clejN+p3my8oktXh2N4+tEl7i\n' +
+    'Hwxc5z9AOffuEyUerm0Rjwdn8rG8po7AfuXwmTiW1Sdc9TdJtAK/n6e9EFHV\n' +
+    'gHzArwyaydHHy80Wqa+UF591NkPi387ATQRk7umFAQgAs0ao+EFoKJirGHfI\n' +
+    '69vZg+eAAUUKG657BzNzTAF2r5Y+a61jdcCAL+DXBcfks+H0dqG36zjOZTCJ\n' +
+    'NirABp5RRPFty2VvUtOyezuKX/MBVg3st3t/yE3SncVaWMblAv3iegviNNpH\n' +
+    'cFKqpHoVBWDNdhFHNsKTjpJcq3BVohy2Dxh8Di8N/1+gEPxADvIuH9MQ8MJk\n' +
+    '6lB9XYXBmmqtlQ3sB916mvusUIl8Zxw1C76yY0PAXz055zJMiL1vwo5gKDiV\n' +
+    'iKyzry3wq7upPGJyeTKu7uUMifTPhJtyYvon2TIik5DIgHpqKziirCrolA+s\n' +
+    '7LhnFbawqDKleEdyCcL5mFCzXQARAQABwsB2BBgBCAAqBYJk7umFCZABDloJ\n' +
+    'B8hpcgKbDBYhBMga3B8GDU79nd/0mAEOWgkHyGlyAABIqQgAmK9ijEEvtWTm\n' +
+    '7/mhkuDEtfPfcMexfkaCcGL4SdZqVz/h+eIL8+4EbI9uq+YTzcjtX8FAEQta\n' +
+    'KWFACNEOPmSy6Sb9bDoNZUVpDaZzNNtqIK9Brt4zjJLEsDfmkuW3S/SgIYBQ\n' +
+    'yTkuNmmAf8dr7L4fG0JlxPyGaL1/w9UDAr7xdU7WcHuyPc0edDGeE7NwaGWp\n' +
+    'uBipXFw8AkikV3fCTDuOi3uhkIzZ5zlGCshD7m0aDSABwr4hbFzLFBDSrsiW\n' +
+    'GKhWGYgf5Vx8qzlwXYYnoW/rn3UXWpeTXjq46ZNaxjHJ4VxGMyn/tHZOEjDE\n' +
+    'vHapLIAgGyw2b+s+zZSqsXaMkH8WOw==\n' +
+    '=gPzx\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  encryptedPrivateKey: '{"ciphertext":"4f1243e1ffa76180f46ade2eb093867750c6bf72e8d6c71c7c0edca176c2f9fb32c603bb5e52d933730e0350292431b6e5287b8201f60ce9151b6a141bde98cdc3d9e5df8f84e00e5e4173bdf28b66e9590db10195fbd41ed241a65ab84fb5da251f613376bf78efe1af64613dd54fb05dced7cf8de0907d61489712ad42f06b5c775d97d15dee09b1c58cd79f596674e403353bc7e03297aa0d3fdaecac573c962409622ff8b1335b6fbb661bd2d5f5a076d9079f857849ba917662b40151041eca71385844160fc603c4d1beefbf71b26ac8968de52d6bb534ef6d6e2ea987170059d7d881dc684d28b5b2817804fba3b659e3ec0e802583e581b9f75d2f7e69e428cba91e62719e9ca6697588389db89b982370d23952120c0f972ab4b3a0da888d52b5055c60785d276152e43929df532bc7d5d68c6bc3cfdd1ca780df346113999a19d8e4a96c02f149d1ee4cde802277081ef339153872c00c9e9ddfe3ba8da8c68c0565752fea32258087e66aab37397a27b0228b5ed1aeb09a93b80778fd7f949409106c4cd82ff550aafb9d7bdce8727a76882f59ef2c54a137e51f04b6c27a0b1b92cd781dafb489a5e8203232669f5416454cc9cfe8c5b0fd8abc19d9ef16285a8da0aca2ed747adef7b49b8215790266d9c4791c250b0580e89c6429d10a1bcd45cf016a7ae30e1db948147d992722a7191e31852e6fd3c3679d868f34ebbe65f255be4b90dd64ceb52eaeee7d3356683b7fd511729493c887289ddb0f00c65ca2a95114f0e37d3b73d06333e2787c5fa6dd6f6c9e8334ff153dd63e30c81247efd497cf2c038843d8653edf23822eae07dd19d0be26a921673185bcf016533fdb59150ff46096419e6a6aeb1bd4293fc8146848d715d43afd04aa40f2b5ae9d058671677aad2413952a20b5214e18bbf3b4b033d936d673a0302967de3f74b05b74bc6c89f30ddeaab1bf6c567fcee355797b6cba17c3fcc8955bdf096e2dda2577b3374089d8c9d287552e5658c91e812bd0b8b63482c8de98fde216dd557eb34bafca2f8e73dc4582fa36332e8869f2717519921605915d8e1c75a37295e198ec0af75926d89a6832456304474a10c567334998226d9b6f709ebc216fb067d958e78a622040c91f46af202273d0b40307fb34cba5a6a57fbb196ac6e88c16d527b9bdb04b12fa7ed0bc771692712ccd146c41890b5caddbbb13b8ba77e632b2d7597256fb576ce87d2aff35a0e953b8227a5dcbf30f7d189ca7f77f6f8b2c4eb2752199a7a485ab52a6b65b6edd6cf65caaeb6f65544cc74c2fb3431fa484fb69adbda08d2402da953f20425832b6a2d712d56a5cc34095f25fb9524a478a71d387b7dea45b4bd41e79c61dceca332898dfeecf83999ed4fad892e2ede714b93f3969ad140f38bfa95d321ae5ef089cf0ce435d59f8b6611c0fd014c67ed38646f0771f1a74c1f950ee0900d883aca3ec4efbb2f7737e717007ae757d874573d4d70c9d7e38f8ff30a29b983036e684c4eaf35a7c03ed32a8e3fc62f0863c56830127a5f3c0e905a93e7466a4f43f0793cb6752b9be8d03d7be26170f694ecbb200f611bbf1dac4b6ec085deb8c3d8ee188d8c9c8c17ca720c0f0dee4d00e5866b5443b6af6e69ca64b8eb5a8f5fa1e1d27bfacbf1b0ae11241215358f5045b0d1a73d1b15dbd904709340c1e2b42a4ef78f76b8f901d6337849cff1052f06a8919255b596fb36d2fdf789fdf611813d20729c26d517dde6f11a3f6045ec5158652e128cf7c483a0fb8ab772cb5cdb56e42e6bf8c863f173307c3e053168e54e9e65bcacbb144413ff76d08a94929e6cdde2c5944246a4b344f3ca0ada3b403429750bdce76f04668b05ed79e9119f00901e7f7b4f1eea8a1b5b0186e3ed41277040a257601b0f3917db595f3f1808d92071a4e9521a251e9c5a66f2c8a57511f61b9fd88df77330aeb4bc15c043814b33610d60f6d0a13fd7977efaa1843913f6d3a79bc88020406c9979163684efe7b7ade9613221d06b52cd96abd31b77a707748d52e6e16c8c90821f29359b35307c10dafce5f35c0ff9802c23aef19f0a95b49a317cd6207002a5a9b822b4c056c4cbf9b27045dda8325d93060f358bb837f00954a6e281d1bdd1817a7cce8ed4a801f9164d32c52739c1ac650109868664be1fabab47c675222dc9ff9d75f9fb49531c832264aa5b55998675975f59e34829ce90b00092bd77e46328a6459d5c967d905b8e976611b839925ad742500231fa86cb5f7e6f39cb1e2e36b81c55269ea0f5fdcba5c8c0e38a899540d52be49c83efae5243998b926f029dc2980d4fdb1c125db409d015e0b36bc02272da1c688ee1f61d23cbde585064ab1e2164d0ca529774ec7797407ba5d988c58853e74a124a64dc24d0289b6a599354faf64790177c3032f5d660d7b76dfbf1c03388a7c75b2309c509c6a92144e124c8bd188274bc844e8f0aa7b5a06e79ad5776b5a62003b89aef194dcc03cd3c1b1f3ea541805cfc4e18aa159f9b5395185b573538c9bab16876dff91f365d16dcc56b339b01b86882ef8e52c51edd9c5b2f8a35713ed6eb43036e09f64f6e59ab417958faff974b6705400b341439fef4cba371c601927da7e0a8f23e1c6d3e070a19c2216da85f159d60303ab1321e479f4c371372845cef03daa7d2776c18face6cfa2ff9eed26f9f0a353a0f1c9a99b2556dccc1212fcb5c2078a3b0e58a7f3f7b3f346d624435ef94c95d40dc726d2e7400ae405e89473a934e7646124e34473dfe17f7f9cf481aa059ef422508ffe67f9b9276084973db0683269a046c1a0aafa7ab075b28008cbfb862b7e30c8b2afa1c2923d914b3d2469266e8e0182274a3d8d89642723820e61aa2d97a9370789ec4e89ebee05b6c0bef10778caf2a34c2d7622dde5fa64b012bea6205127c3c845229ef553f013b73823dc6631078fc628532e3e518bdc790ab8460078dedf0c5cb00492136813e2b91679bba82f3cf95169751933bee4358f84154014dbcc1de1a30613218039ebb2444429380fd283d3b60bd5d5b470e861f6ecc751c22aa467168512a0ef45755e6b59a7be591bd3b08fde874b166ccfbbedba10a0956d2d18cbda515341c2112d6094a746e9f562db6543e5bde2c4d4f7c06b7550400d66f7242a14f34cd8a7374372f0eea49a49b72909fc11ff81ea54a1e2c07225cdee856383a657b0f13c14b00ae3b7b2a32a22beaab8cfd18641dbfa82619fdcdddd3339e9423e71c487305e8aa932b694e94c37c7e418e4014c8bb264f47e8283e216eeeabf0fbdd2f5eb8d0ea979738d4f18b7bf72d7711f5d22653f217c7305314ec2c47a0ecbf1dc8f9bc1379ae38e2a04e736a1171b947609bb66f8d352ce57230d709f196953471c5504c7f9f40ed2f64bf3bd04bd57521a364ea03b5f0603cceec7851738d97c3fd73c16547d4d143b009a79832a1ed244937dce09edf2d5e32ae52ab0331c449325dce9e5e8ed1563c967a5f92031f4275e3179274ef3e0752ac01caf8a20aabb23d584d4d6607833f95cfc92832d936c37bb8b37222aa842f48944d06b37434c8dce5f19b450a7d1bd568672ef2c8eaa2afb7cff404b33377a61061f56b01849feb918521a7d63cfbe12466aedc7159c577f213f2c157586b8719164cd7108edfa9211287b43aadbad997bc62f8169eec4a6e02aeb535f670878e6af538b5281da04470d318f893102613977390a434e0557302a68ce42e532d350446d4d813b84c07b42bf22fbe4889096ec6303574c95040d8dcfed1b9bd26782c5033d7d1a491fece156cbc19a705204ed38a547e00a09b73bc7a702ef9c2e659171d1daab63958268148aba59766bc7a4ffb68c1ae047d1f0c5fb45fbacd07079f72af301c6aa00eebc0662c6792fc707d388b339d4f45afbf576bacf8730ec3e0f1e9dc0f9a6d58fd146b2293aed8d110da24336f9a4c01ae12c03ce214c6502f5fbc5224dd8b8b2e4edf2af16b811e5c8595fa76cafe34ba66199caaed48b5dfd5ae74a3e6b6d51a09c70afc30ebc0f40d51a15f1a8c2c41ec482eddf14bed3fd11a9e2aa4446268af25b49e429e2528d5df57797f6f3cd431eb5ded8f830c85cecde8012c31500ce9363903739a6759704fa87bfef984ed0285c8c0a5bf2f0985b1b511eb4145e4b27e2df6aa7b5c7a913b76b1ca869151b75c0717389b3d186f4e4637a5ceba3cef64809c3a06551a6a46be31af61c0ef78afb057f6cc625647dc04dcd74eb97f7aee0f5640e24b7662c799013efb83c80ec2851acda7c6328de789ae99ce296494225bd169e49c9a12dc7e281778f7fe275e72571cd5a3608733998d2f6b96c1d26c25223153fc5afc2f6e3d72f57fbcb2d087d718d3b6703b286f1e340c23cd3bc715797edf3ce6d5169bcf783ac9686233cc0358725143008b25bfbd329e1c30654e4b4c9461239d41ae77f706e64e5e60ce6de83becfd056f2678f17474ab9f4976b2d7d5d014d78f716d7d4edbf6ce4ed44ed677274d6b9b6e4bf4946dfd1ed8b821c81957b4bf5cd534ed6ca84dadd9d6380513dc6406b32dcd5c1bfa468a79e88a56656e71aed0c6675540e1617a31e1c122295427590e83b63e8da58a6c5c21a15703994bdc2b90d399b62679a4269224257f3ead5a2dd0980e6f5a45c5a9392929cc4743e106c7335136c9f8a3a29190462eef908eab02cda97dbcb71dff26b0ef4dae51de293b4cff0ebf37fce1391247c5ccf77dfb64974c4a1e6beeaf82041bb0d653e2e9b612f3442bba8480b86fd7b35514fc056d7429d5fb36199d4a6f632ea615d9acc961082d9d91aca416b57582bcd2f182f5f5be02b3f597c680b2e6b37ee4d133e51d077491cb536d6261808c42684d0912fd7bcc97dacdf32394e7b","salt":"da23dc7dbf23136dabc337a0caa170c0db7e4efec5f5c8a648dff9b7cd7df49f","nonce":"fe0e4ec3d40fb7de21a354bf","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"b43efae4c92a35d9c0b5f6178cb8b8a6642c77d0a9281f61beb9f6e8f7b006a5"}',
+  verificationProof: 'eip191v2:0x97ca70a87ec658e0e488e8b9f71644ee23840d809803fcf5bdcd174c9f39cdeb27f6e3a8885fec5bede5f264b3996bc3fa019b0d52745a5573a972b7e79e321c1c',
+  msgSent: 0,
+  maxMsgPersisted: 1000,
+  profile: {
+    name: null,
+    desc: null,
+    picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAqElEQVR4AcXBsQ3CUBBEwcfKCfIPnbgxF+ACKIYct+cGDpEdpCeCS0Damcu2PN40gqQaiE6QVAPREWbCTJgJM2EmzITZxJcg+acgqQaiEmbCTJhNQVINRCdIOgPRCZJKmAkzYTYNRLWfT6pjnalu54vOsc5U+/mkOtaZSpgJM2E2BUknSKr7eqWXdIKkEmbCTJhdtuXxphEkvxiIjjATZsJMmAkzYSbMPjaMJNvaf06gAAAAAElFTkSuQmCC',
+    profileVerificationProof: null
+  },
+  origin: null,
+  name: null,
+  about: null,
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAqElEQVR4AcXBsQ3CUBBEwcfKCfIPnbgxF+ACKIYct+cGDpEdpCeCS0Damcu2PN40gqQaiE6QVAPREWbCTJgJM2EmzITZxJcg+acgqQaiEmbCTJhNQVINRCdIOgPRCZJKmAkzYTYNRLWfT6pjnalu54vOsc5U+/mkOtaZSpgJM2E2BUknSKr7eqWXdIKkEmbCTJhdtuXxphEkvxiIjjATZsJMmAkzYSbMPjaMJNvaf06gAAAAAElFTkSuQmCC',
+  numMsg: 0,
+  allowedNumMsg: 1000,
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  signature: '0x97ca70a87ec658e0e488e8b9f71644ee23840d809803fcf5bdcd174c9f39cdeb27f6e3a8885fec5bede5f264b3996bc3fa019b0d52745a5573a972b7e79e321c1c',
+  sigType: 'eip191v2',
+  encryptedPassword: null,
+  nftOwner: null,
+  linkedListHash: null,
+  nfts: null
+}
+```
+
+| Parameter           | Type     | Remarks                                                         |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| did                 | `string` | user decentralized identity                                     |
+| wallets             | `string` | all wallets associated to the did                               |
+| publicKey           | `string` | Public PGP key                                                  |
+| encryptedPrivateKey | `string` | Encrypted PGP Private Key                                       |
+| verificationProof   | `string` | Verification proof                                              |
+| msgSent             | `number` | Number of messages sent                                         |
+| maxMsgPersisted     | `number` | Maximum number of messages that can be persisted                |
+| profile             | `object` | User profile information                                        |
+| origin              | `string` | Origin information (source of the data)                         |
+| name                | `string` | Profile Name ( Deprecated )                                     |
+| about               | `string` | Profile Description ( Deprecated )                              |
+| profilePicture      | `string` | Profile Picture ( Deprecated )                                  |
+| numMsg              | `number` | Number of messages sent ( Deprecated )                          |
+| allowedNumMsg       | `number` | Maximum number of messages that can be persisted ( Deprecated ) |
+| encryptionType      | `string` | Type of encryption used                                         |
+| signature           | `string` | Account signature ( Deprecated )                                |
+| sigType             | `string` | Type of signature ( Dprecated )                                 |
+| encryptedPassword   | `null`   | Encrypted user password ( Deprecated )                          |
+| nftOwner            | `null`   | Owner of NFT ( Deprecated )                                     |
+| linkedListHash      | `null`   | Deprecated                                                      |
+| nfts                | `null`   | Information about owned NFTs( Dprecated )                       |
+
+</details>
 
 ---
