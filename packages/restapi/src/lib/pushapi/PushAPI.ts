@@ -24,7 +24,6 @@ import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
-import { authUpdate } from '../user/auth.updateUser';
 
 export class PushAPI {
   private signer: SignerType;
@@ -96,7 +95,7 @@ export class PushAPI {
         encryptedPGPPrivateKey: user.encryptedPrivateKey,
         signer: signer,
         toUpgrade: settings.autoUpgrade,
-        additionalMeta: { NFTPGP_V1: settings.versionMeta },
+        additionalMeta: settings.versionMeta,
         progressHook: settings.progressHook,
         env: settings.env,
       });
@@ -457,28 +456,41 @@ export class PushAPI {
   };
 
   encryption = {
+    info: async () => {
+      const userInfo = await this.info();
+      return await PUSH_USER.decryptAuth({
+        account: this.account,
+        env: this.env,
+        signer: this.signer,
+        progressHook: this.progressHook,
+        additionalMeta: {
+          NFTPGP_V1: {
+            encryptedPassword: JSON.stringify(
+              JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
+            ),
+          },
+        },
+      });
+    },
+
     update: async (
       updatedEncryptionType: ENCRYPTION_TYPE,
-      options: {
-        versionMeta?: Record<string, Record<string, string>>;
+      options?: {
+        versionMeta?: {
+          NFTPGP_V1?: { password: string };
+        };
       }
-    ): Promise<void> => {
-      const { versionMeta } = options;
-
-      await authUpdate({
+    ) => {
+      return await PUSH_USER.auth.update({
         account: this.account,
         pgpEncryptionVersion: updatedEncryptionType,
-        additionalMeta: versionMeta,
+        additionalMeta: options?.versionMeta,
         progressHook: this.progressHook,
         signer: this.signer,
         env: this.env,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         pgpPublicKey: this.pgpPublicKey,
       });
-    },
-
-    info: async (): Promise<void> => {
-      // TODO: Aman pls take up this
     },
   };
 }
