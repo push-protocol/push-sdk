@@ -111,7 +111,15 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Send Message](#send-message)
     - [Accept Chat Request](#accept-chat-request)
     <!-- - [Reject Chat Request](#reject-chat-request) -->
-    - [Fetch Encryption Password](#fetch-encryption-info)
+    - [Create Group](#create-group)
+    - [Fetch Group Info](#fetcg-group-info)
+    - [Fetch Group Permission](#fetch-group-permissions)
+    - [Update Group Info](#update-group-info)
+    - [Add To Group](#add-to-group)
+    - [Remove From Group](#remove-from-group)
+    - [Join Group](#join-group)
+    - [Leave Group](#leave-group)
+    - [Fetch Encryption Info](#fetch-encryption-info)
     - [Update Encryption](#update-encryption)
 
 # How to use in your app?
