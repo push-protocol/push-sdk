@@ -194,7 +194,7 @@ export const runPushAPICases = async (): Promise<void> => {
   if (showAPIResponse) {
     console.log(updatedGroup);
   }
-  console.log('PushAPI.group.update | Response - 200 OK');
+  console.log('PushAPI.group.update | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.add');

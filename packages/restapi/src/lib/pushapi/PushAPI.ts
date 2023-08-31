@@ -374,6 +374,7 @@ export class PushAPI {
             env: this.env,
             account: this.account,
             signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
           });
         } else {
           return await PUSH_CHAT.addMembers({
@@ -382,6 +383,7 @@ export class PushAPI {
             env: this.env,
             account: this.account,
             signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
           });
         }
       },
@@ -411,6 +413,7 @@ export class PushAPI {
             env: this.env,
             account: this.account,
             signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
           });
         } else {
           return await PUSH_CHAT.removeMembers({
@@ -419,6 +422,7 @@ export class PushAPI {
             env: this.env,
             account: this.account,
             signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
           });
         }
       },

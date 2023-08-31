@@ -111,7 +111,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Send Message](#send-message)
     - [Accept Chat Request](#accept-chat-request)
     <!-- - [Reject Chat Request](#reject-chat-request) -->
-    - [Fetch Encryption Password](#fetch-encryption-password)
+    - [Fetch Encryption Password](#fetch-encryption-info)
     - [Update Encryption](#update-encryption)
 
 # How to use in your app?
@@ -6931,14 +6931,15 @@ const aliceProfileInfo = await userAlice.profile.info();
 
 ```typescript
 // Update Push Profile
-const updatedProfile = await userAlice.profile.update(updatedName);
+const updatedProfile = await userAlice.profile.update({ name: updatedName });
 ```
 
-| Param        | Type     | Default | Remarks             |
-| ------------ | -------- | ------- | ------------------- |
-| `name` \*    | `string` | -       | Profile Name        |
-| `desc` \*    | `string` | -       | Profile Description |
-| `picture` \* | `string` | -       | Profile Picture     |
+| Param                | Type     | Default | Remarks                                    |
+| -------------------- | -------- | ------- | ------------------------------------------ |
+| `options`            | `object` | -       | Configuration options for updating profile |
+| `options.name` \*    | `string` | -       | Profile Name                               |
+| `options.desc` \*    | `string` | -       | Profile Description                        |
+| `options.picture` \* | `string` | -       | Profile Picture                            |
 
 \* - Optional
 
@@ -7450,22 +7451,586 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 ### **Create Group**
 
+```typescript
+// Create a Group
+const createdGroup = await userAlice.chat.group.create(groupName, {
+  description: groupDescription,
+  image: groupImage,
+  members: [walletAddress1, walletAddress2, walletAddress3],
+  admins: [],
+  private: false,
+});
+```
+
+| Param                               | Type       | Default | Remarks                                    |
+| ----------------------------------- | ---------- | ------- | ------------------------------------------ |
+| `name`                              | `string`   | -       | The name of the group to be created.       |
+| `options` \*                        | `object`   | -       | Optional Configuration for creating group. |
+| `options.description` \*            | `string`   | -       | A description of the group.                |
+| `options.image` \*                  | `string`   | -       | Image for the group.                       |
+| `options.members` \*                | `string[]` | `[]`    | An array of member DID.                    |
+| `options.admins` \*                 | `string[]` | -       | An array of admin DID.                     |
+| `options.private` \*                | `boolean`  | `false` | Indicates if the group is private.         |
+| `options.rules.entry.conditions` \* | `any[]`    | -       | Conditions for entry to the group.         |
+| `options.rules.chat.conditions` \*  | `any[]`    | -       | Conditions for chat within the group.      |
+
+\* - Optional
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  members: [
+    {
+      wallet: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADeYpZfxgn1HoMUuWM42v8ZWfLPwglQYmzz5rY3PdPPoRFU\n' +
+        'v0AyPjYKpmLh2ZNfXjPaS9GuMdpXaomYSEwsV02hXZOQelo9cLop0Fc2i+l7\n' +
+        '70rYhePuOuQ+XD/xYzhngAgNJ9rX96YnSodldb8uJfxYmgoF0E9Z2o2fgZGj\n' +
+        'll2CPnOaLXZaBQlPS3x/461TmZ1n2ZePS/fwiC7taLz3PtyGtKaC0vo4isvI\n' +
+        'yf04fkjudG0XIns5CWjdR2HeDC8BzSl8OVj8AQAc5uVU8Abk+ejWVr4zfoox\n' +
+        'eaziDPgGdkckFiQ6Tdsg0tPwwOpSrCCtJocTmc/fWaBb0YlnyAAL88fJABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZBMYqhmfI2WQQMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAACxNQf/UrM/whR7vCs+\n' +
+        'ez8Y8Hz4WqIuXtfMh4l2nKVv5UUuAfQkBxEY5j6Ga2+JgKU3neQ34x/v6fm9\n' +
+        'CLcY38Tc4AWyEx8KC78J+xOs7RMfyNBeiaf8KdaFfQrP0nMmufE6TxkfV1Y5\n' +
+        'LJZZ8350rZVtYJppWtlH+gbyUmMObyWDWbL3aWtqa3xjv0kLsf7TnugiFwzB\n' +
+        'gHHtk8tlDSOxRt0VdNNd19+/zrBYNl07Ig24WD2ETaJiaqa651z24/6/MkGT\n' +
+        'MBoQh+679tuWWcTrNi4jIA8jhSQ5BOgbAapl3qXk0m9/Aexpe2s6ISLXe8YJ\n' +
+        'j4cObDLv/ZKKeLZYTq9lVCydLAQUbs7ATQRk7zWYAQgAmx36uefgUF4cCSYH\n' +
+        'WMWAOTyc8Awo+hxn6FktOLU1+9hfGrX2jwGLOoOwjNgbYJbiSvRglAX2b57/\n' +
+        'qkkltAg1ZYCLSUzfBUbbWYlJNBwpv7+52zHaLUZ3gmI5aE48ad+uzaadgpVT\n' +
+        'VqLbhdgkN6jkemPTlfMehyS49AAbmqeKfo2U72tm9ZqT2cPVCASMjN/Ux2qG\n' +
+        '3W8HTo0KIVFSbkTthl1zAlwAFksp0q437+pxbdJIecJ9mO6N4OQMnv+hVBDc\n' +
+        'WrPqBDJ0nas4JNgLxmLv0pheGg/TEfwS/p6xGRW5m08bj2l0cgqmEaM27jbi\n' +
+        'DEpOykRWsDMhheEfI2zV/Qam8QARAQABwsB2BBgBCAAqBYJk7zWYCZBMYqhm\n' +
+        'fI2WQQKbDBYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAAAnBggA1gkIopr9HJFP\n' +
+        'fO5SebcbowH4AG9M0qBqF4h1JIKbqvOnxLSsC5QmmzFcjS9ihyHBvzbRVGkC\n' +
+        'zEHYpLRedQ2AmQQfsf/VOoZJEOlb7tTk4+SpYtsGte5X/yLT5Bkls7Rp8ubK\n' +
+        '/V99muj1nA/OkasllXQUSGEweVz6ejzJ0oMm3Vewmw8PelsdAnfS7Ud1MnXQ\n' +
+        'h+O8TCR56F5gAMWxZmxFpZMZyUFOH6KM+vL7HJUBztUS2g0ELsHKy9ep2yhv\n' +
+        'iABIwx/gEuPr0NDAH9x9XFKg5m3rO64KTY4BRWBISwmQ25dM1s1bwDPLi5XI\n' +
+        '6Daw1glFxpPRrxgQGlVLzJOu5b8swQ==\n' +
+        '=9hCc\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzUlEQVR4AcXBsWlDMRiF0c8XTeAJPIAgoFbgQew1PIbXyKsyhUGtCqM6ZAJX6Z32fykM4hnuObv71++TYJRKlHtji1EqUe6NSJgJM2G2W74/nkzIvfHKKJUZwkyYCbOUe+Odcm/MEGbCTJil2/VMdLx8Eo1S2SL3RnS7nomEmTATZmm//BANKlHujS1GqUT7hRVhJsyEWWLSKJVXcm/MEGbCTJgl/sm9EY1SmTFKJcq9EY1SiYSZMBNm6XE6sHJhJffGOz1OByJhJsyE2R/3lDA4e9QQhAAAAABJRU5ErkJggg=='
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x119bb8ad40B1f94e2b30ae5f59eeaEB67cD0Bd6C',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0x6e0C509d14EbF26A529bf6DC5CC9bee7F5b8DBa4',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0xE3FDD0527a9F8418f9a7D9e970452827FbE202FF',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADouo4S2kPqA//+I7nDAk15/LcJ2TGvDhOYuPNUNMiNGOb4\n' +
+        'txusuKz6HOaG+K9hiUBpHjKrYEmCT2FEXxt8bfS3SpWb74RHSkWUNUkxk25y\n' +
+        'gE5gaCKyAdcnOUyVLmobVFFYtH6naK9bULaUtkVik1P0iuEevWHxtTpsjbyH\n' +
+        'bZtNpVTdprdLib4Wx6bb7VogsvjlvNJcVJ4sfPE0XgsQgAGIev7yJyU0DGzt\n' +
+        '/EbvFX4sv51Kb1dX9ctBcvzVbs9+qT6LTivsrQp+TNHUN4zEeMhnWFFP5K1d\n' +
+        'H445S6FWk53XvBudcOkFPtltU1MPCS6hmhevArBfYzy5eSlaKA/fH+kFABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZCrD2gy8Zu4awMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBKru9/u8wPcTeHibkasPaDLxm7hrAADa/Af+PbamVg/Ig2S2\n' +
+        'HgIy4w5x7ulSk1/49+AmuiUMiVUwJSVBhROsyDbLET56w4+1TIMYZFJaczW3\n' +
+        '8tCvAOUSauzc52I3zwGmaCupBJokIWp7ncPh0B8TFYrgThgXV7sLf3xy4roy\n' +
+        'y8oFz1Zla88krwtPe4Az7TF+WNdXoDsLNJ3GXRmNqs1GITmDqAXFWncl12NM\n' +
+        'ajUKWIKc/Gi1oKfz22mabJTtWBimDpA12LaGK3GjEK5CiWXT3Tzlqn6R14EZ\n' +
+        '6ohpKZldSJiMPL0Bu9iT52iHOsw1wTZNC1L5lKhOCi3c+/fLRcJZt3hdCjqy\n' +
+        'd/FSCa8/Ny/GrHBWoL49rSF4pDEA+s7ATQRk7zWYAQgAtNOoHCL7BCnjwp8O\n' +
+        'htTxEI5r7Q/1zKKHiz6QKjjrGBYyR6gcmPM3JNEcvzY4OsCFnKBv2suOgrqH\n' +
+        '8kXJzfpIQ7u7uJs+O3p/cn86RMANiEnO8NbB/0scpfZ7Vg3eOfoiWYE4I/1o\n' +
+        'FVDCyZ1YVqtbcmuW6D8i1djjeoUmkUDZyPo7Qs6hUsJeYA/Rfl8mH5sjy2cN\n' +
+        'WXf8cEtOUqJtwERXt5aRB/nBZiC0bsP6hf0HtAoNA8/96TkqrcQpODW/RckD\n' +
+        'fo4wkpEONHRH+LGX7GV0pwymHu42TUnULmED6BrMgMYG2sKpxMThxtAxRaiP\n' +
+        'nZ3DKXr8GCjTYnbEZpoi2zKCOQARAQABwsB2BBgBCAAqBYJk7zWYCZCrD2gy\n' +
+        '8Zu4awKbDBYhBKru9/u8wPcTeHibkasPaDLxm7hrAADGyQgA5NMUkoyDTPZa\n' +
+        'Znj1dB+17xBXCZ/u7pPQc1DukBefVke7/qYIicdnnEGIX3Zd7TckFRsDljR/\n' +
+        '3418Bne4WyL57fAF/GgYsegpJ9n1KT7oPxWzibIaYdj7R6bkDt5r61EDWC3N\n' +
+        'VBbnZu9cO15TYkObJIiyNvwbQyd6Dm313b39GnEE8sM709TWsI6Es6rRZAfC\n' +
+        '+sI8ezYxqVUbP7sW3jJZYzdPOhZPHvFd5iJ2EfygEOuk5tb7AimfNwF/CNcB\n' +
+        'weQGEU7feOSB9lXXA+Ag1duLM4B9bLbbHEQIPhKlBF1ED64e/W/5HNfoAkS4\n' +
+        'qhzOD5XWs6xs45nnYqUbBFLG9Xk+Jg==\n' +
+        '=qtAv\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAw0lEQVR4AcXBsXECMRRF0csbdbAZBagHKlJMSOL90IUq2h5UABktLE6/HcizY4/fOafrcntzQB/BTKvBEcJMmAmz0keQtRpk67bzRQ1m1m0nu19E1keQCTNhJsxO1+X2JukjmHm+Ppg5Lw9mWg0yYSbMhFnhoPPy4C8JM2EmzArftBr8J2EmzIRZ6SPIWg2yPoKs1WCmjyBrNcj6CDJhJsyEWWk1OKKP4DdaDTJhJsyEWeEHrQbZuu3M3C/iCGEmzITZJ/s7LOkKUABjAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJk7zWZCZBMYqhmfI2WQRYhBC9DyzhpX3ACb/yTq0xiqGZ8\n' +
+    'jZZBAADwAwgAq/6WjtwRt1aPTLWwtSx80Ng/Wxf97dkpebMXSj9T7f5ia1rM\n' +
+    '8wqsuNUDMEMPB9LM34f6Q5pD994oeN2YT7z34u20mskiNphZdx/DNvu8w9UZ\n' +
+    'rI3tyjfZULhARNVM34sSABnHtExbl4ZArhNDsT86ku0sZNjr9frn2mtgmlKN\n' +
+    'nQdGcLJSxbci0hFg3nE5mYNpwZNs2S/2uk11WHKxzMhII6AdePE77BKPqedu\n' +
+    'PiXDODO2dIvV8glLQoJPRPgc2ap+/xYIBUFljqHGPU/62VSLlHxBJv72p5s/\n' +
+    'kOxiqD42TmpaaMtfudqgsZsGoYpZDHcMKYGNZs+9qVRHPRD+s0QhEA==\n' +
+    '=c6IF\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  groupName: 'influential_maroon_gamefowl',
+  groupDescription: 'urgent_brown_butterfly',
+  isPublic: false,
+  groupCreator: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+  chatId: '5f769c881ffe328117dea3d3acd0b97ce7f4c163e440f75a96be3e33f7d2a000',
+  meta: null,
+  scheduleAt: null,
+  scheduleEnd: null,
+  groupType: 'default',
+  status: null,
+  rules: {},
+  eventType: 'create'
+}
+```
+
+| Parameter                  | Type                  | Remarks                                                        |
+| -------------------------- | --------------------- | -------------------------------------------------------------- |
+| `members`                  | `Array<Object>`       | An array containing member objects.                            |
+| `members.wallet`           | `string`              | The wallet address of the member.                              |
+| `members.publicKey`        | `string`              | The member's public PGP key (if available).                    |
+| `members.isAdmin`          | `boolean`             | Indicates whether the member is an admin.                      |
+| `members.image`            | `string`              | Image associated with the member.                              |
+| `pendingMembers`           | `Array<Object>`       | An array containing pending member objects.                    |
+| `pendingMembers.wallet`    | `string`              | The wallet address of the pending member.                      |
+| `pendingMembers.publicKey` | `string`              | The pending member's public PGP key (if available).            |
+| `pendingMembers.isAdmin`   | `boolean`             | Indicates whether the pending member is an admin.              |
+| `pendingMembers.image`     | `string`              | Image associated with the pending member.                      |
+| `contractAddressERC20`     | `string` or `null`    | Contract address for ERC20 tokens (Used for tokenGating).      |
+| `numberOfERC20`            | `number`              | The number of ERC20 tokens associated. (Used for tokenGating). |
+| `contractAddressNFT`       | `string` or `null`    | Contract address for NFT tokens (Used for tokenGating)         |
+| `numberOfNFTTokens`        | `number`              | The number of NFT tokens associated. (Used for tokenGating)    |
+| `verificationProof`        | `string`              | Verification proof associated with group data.                 |
+| `groupImage`               | `string`              | Group's image.                                                 |
+| `groupName`                | `string`              | The name of the group.                                         |
+| `groupDescription`         | `string`              | Description of the group.                                      |
+| `isPublic`                 | `boolean`             | Indicates whether the group is public or private.              |
+| `groupCreator`             | `string`              | Push Profile DID of the group creator.                         |
+| `chatId`                   | `string`              | Unique chat ID associated with the group.                      |
+| `meta`                     | `object` or `null`    | Additional metadata (if available).                            |
+| `scheduleAt`               | `timestamp` or `null` | Scheduled start time (if available).                           |
+| `scheduleEnd`              | `timestamp` or `null` | Scheduled end time (if available).                             |
+| `groupType`                | `string`              | Type of the group (default, spaces, live etc).                 |
+| `status`                   | `string` or `null`    | Status information ( active, expired etc)                      |
+| `rules`                    | `Object`              | Group-specific moderation rules                                |
+| `eventType`                | `string`              | The type of event (create, update etc)                         |
+
+</details>
+
 ---
 
 ### **Fetch Group Info**
+
+```typescript
+// Fetch Group Info
+const fetchGroupInfo = await userAlice.chat.group.info(groupChatId);
+```
+
+| Param    | Type     | Default | Remarks      |
+| -------- | -------- | ------- | ------------ |
+| `chatId` | `string` | -       | Group ChatId |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  members: [
+    {
+      wallet: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADeYpZfxgn1HoMUuWM42v8ZWfLPwglQYmzz5rY3PdPPoRFU\n' +
+        'v0AyPjYKpmLh2ZNfXjPaS9GuMdpXaomYSEwsV02hXZOQelo9cLop0Fc2i+l7\n' +
+        '70rYhePuOuQ+XD/xYzhngAgNJ9rX96YnSodldb8uJfxYmgoF0E9Z2o2fgZGj\n' +
+        'll2CPnOaLXZaBQlPS3x/461TmZ1n2ZePS/fwiC7taLz3PtyGtKaC0vo4isvI\n' +
+        'yf04fkjudG0XIns5CWjdR2HeDC8BzSl8OVj8AQAc5uVU8Abk+ejWVr4zfoox\n' +
+        'eaziDPgGdkckFiQ6Tdsg0tPwwOpSrCCtJocTmc/fWaBb0YlnyAAL88fJABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZBMYqhmfI2WQQMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAACxNQf/UrM/whR7vCs+\n' +
+        'ez8Y8Hz4WqIuXtfMh4l2nKVv5UUuAfQkBxEY5j6Ga2+JgKU3neQ34x/v6fm9\n' +
+        'CLcY38Tc4AWyEx8KC78J+xOs7RMfyNBeiaf8KdaFfQrP0nMmufE6TxkfV1Y5\n' +
+        'LJZZ8350rZVtYJppWtlH+gbyUmMObyWDWbL3aWtqa3xjv0kLsf7TnugiFwzB\n' +
+        'gHHtk8tlDSOxRt0VdNNd19+/zrBYNl07Ig24WD2ETaJiaqa651z24/6/MkGT\n' +
+        'MBoQh+679tuWWcTrNi4jIA8jhSQ5BOgbAapl3qXk0m9/Aexpe2s6ISLXe8YJ\n' +
+        'j4cObDLv/ZKKeLZYTq9lVCydLAQUbs7ATQRk7zWYAQgAmx36uefgUF4cCSYH\n' +
+        'WMWAOTyc8Awo+hxn6FktOLU1+9hfGrX2jwGLOoOwjNgbYJbiSvRglAX2b57/\n' +
+        'qkkltAg1ZYCLSUzfBUbbWYlJNBwpv7+52zHaLUZ3gmI5aE48ad+uzaadgpVT\n' +
+        'VqLbhdgkN6jkemPTlfMehyS49AAbmqeKfo2U72tm9ZqT2cPVCASMjN/Ux2qG\n' +
+        '3W8HTo0KIVFSbkTthl1zAlwAFksp0q437+pxbdJIecJ9mO6N4OQMnv+hVBDc\n' +
+        'WrPqBDJ0nas4JNgLxmLv0pheGg/TEfwS/p6xGRW5m08bj2l0cgqmEaM27jbi\n' +
+        'DEpOykRWsDMhheEfI2zV/Qam8QARAQABwsB2BBgBCAAqBYJk7zWYCZBMYqhm\n' +
+        'fI2WQQKbDBYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAAAnBggA1gkIopr9HJFP\n' +
+        'fO5SebcbowH4AG9M0qBqF4h1JIKbqvOnxLSsC5QmmzFcjS9ihyHBvzbRVGkC\n' +
+        'zEHYpLRedQ2AmQQfsf/VOoZJEOlb7tTk4+SpYtsGte5X/yLT5Bkls7Rp8ubK\n' +
+        '/V99muj1nA/OkasllXQUSGEweVz6ejzJ0oMm3Vewmw8PelsdAnfS7Ud1MnXQ\n' +
+        'h+O8TCR56F5gAMWxZmxFpZMZyUFOH6KM+vL7HJUBztUS2g0ELsHKy9ep2yhv\n' +
+        'iABIwx/gEuPr0NDAH9x9XFKg5m3rO64KTY4BRWBISwmQ25dM1s1bwDPLi5XI\n' +
+        '6Daw1glFxpPRrxgQGlVLzJOu5b8swQ==\n' +
+        '=9hCc\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzUlEQVR4AcXBsWlDMRiF0c8XTeAJPIAgoFbgQew1PIbXyKsyhUGtCqM6ZAJX6Z32fykM4hnuObv71++TYJRKlHtji1EqUe6NSJgJM2G2W74/nkzIvfHKKJUZwkyYCbOUe+Odcm/MEGbCTJil2/VMdLx8Eo1S2SL3RnS7nomEmTATZmm//BANKlHujS1GqUT7hRVhJsyEWWLSKJVXcm/MEGbCTJgl/sm9EY1SmTFKJcq9EY1SiYSZMBNm6XE6sHJhJffGOz1OByJhJsyE2R/3lDA4e9QQhAAAAABJRU5ErkJggg=='
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x119bb8ad40B1f94e2b30ae5f59eeaEB67cD0Bd6C',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0x6e0C509d14EbF26A529bf6DC5CC9bee7F5b8DBa4',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0xE3FDD0527a9F8418f9a7D9e970452827FbE202FF',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADouo4S2kPqA//+I7nDAk15/LcJ2TGvDhOYuPNUNMiNGOb4\n' +
+        'txusuKz6HOaG+K9hiUBpHjKrYEmCT2FEXxt8bfS3SpWb74RHSkWUNUkxk25y\n' +
+        'gE5gaCKyAdcnOUyVLmobVFFYtH6naK9bULaUtkVik1P0iuEevWHxtTpsjbyH\n' +
+        'bZtNpVTdprdLib4Wx6bb7VogsvjlvNJcVJ4sfPE0XgsQgAGIev7yJyU0DGzt\n' +
+        '/EbvFX4sv51Kb1dX9ctBcvzVbs9+qT6LTivsrQp+TNHUN4zEeMhnWFFP5K1d\n' +
+        'H445S6FWk53XvBudcOkFPtltU1MPCS6hmhevArBfYzy5eSlaKA/fH+kFABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZCrD2gy8Zu4awMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBKru9/u8wPcTeHibkasPaDLxm7hrAADa/Af+PbamVg/Ig2S2\n' +
+        'HgIy4w5x7ulSk1/49+AmuiUMiVUwJSVBhROsyDbLET56w4+1TIMYZFJaczW3\n' +
+        '8tCvAOUSauzc52I3zwGmaCupBJokIWp7ncPh0B8TFYrgThgXV7sLf3xy4roy\n' +
+        'y8oFz1Zla88krwtPe4Az7TF+WNdXoDsLNJ3GXRmNqs1GITmDqAXFWncl12NM\n' +
+        'ajUKWIKc/Gi1oKfz22mabJTtWBimDpA12LaGK3GjEK5CiWXT3Tzlqn6R14EZ\n' +
+        '6ohpKZldSJiMPL0Bu9iT52iHOsw1wTZNC1L5lKhOCi3c+/fLRcJZt3hdCjqy\n' +
+        'd/FSCa8/Ny/GrHBWoL49rSF4pDEA+s7ATQRk7zWYAQgAtNOoHCL7BCnjwp8O\n' +
+        'htTxEI5r7Q/1zKKHiz6QKjjrGBYyR6gcmPM3JNEcvzY4OsCFnKBv2suOgrqH\n' +
+        '8kXJzfpIQ7u7uJs+O3p/cn86RMANiEnO8NbB/0scpfZ7Vg3eOfoiWYE4I/1o\n' +
+        'FVDCyZ1YVqtbcmuW6D8i1djjeoUmkUDZyPo7Qs6hUsJeYA/Rfl8mH5sjy2cN\n' +
+        'WXf8cEtOUqJtwERXt5aRB/nBZiC0bsP6hf0HtAoNA8/96TkqrcQpODW/RckD\n' +
+        'fo4wkpEONHRH+LGX7GV0pwymHu42TUnULmED6BrMgMYG2sKpxMThxtAxRaiP\n' +
+        'nZ3DKXr8GCjTYnbEZpoi2zKCOQARAQABwsB2BBgBCAAqBYJk7zWYCZCrD2gy\n' +
+        '8Zu4awKbDBYhBKru9/u8wPcTeHibkasPaDLxm7hrAADGyQgA5NMUkoyDTPZa\n' +
+        'Znj1dB+17xBXCZ/u7pPQc1DukBefVke7/qYIicdnnEGIX3Zd7TckFRsDljR/\n' +
+        '3418Bne4WyL57fAF/GgYsegpJ9n1KT7oPxWzibIaYdj7R6bkDt5r61EDWC3N\n' +
+        'VBbnZu9cO15TYkObJIiyNvwbQyd6Dm313b39GnEE8sM709TWsI6Es6rRZAfC\n' +
+        '+sI8ezYxqVUbP7sW3jJZYzdPOhZPHvFd5iJ2EfygEOuk5tb7AimfNwF/CNcB\n' +
+        'weQGEU7feOSB9lXXA+Ag1duLM4B9bLbbHEQIPhKlBF1ED64e/W/5HNfoAkS4\n' +
+        'qhzOD5XWs6xs45nnYqUbBFLG9Xk+Jg==\n' +
+        '=qtAv\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAw0lEQVR4AcXBsXECMRRF0csbdbAZBagHKlJMSOL90IUq2h5UABktLE6/HcizY4/fOafrcntzQB/BTKvBEcJMmAmz0keQtRpk67bzRQ1m1m0nu19E1keQCTNhJsxO1+X2JukjmHm+Ppg5Lw9mWg0yYSbMhFnhoPPy4C8JM2EmzArftBr8J2EmzIRZ6SPIWg2yPoKs1WCmjyBrNcj6CDJhJsyEWWk1OKKP4DdaDTJhJsyEWeEHrQbZuu3M3C/iCGEmzITZJ/s7LOkKUABjAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJk7zWZCZBMYqhmfI2WQRYhBC9DyzhpX3ACb/yTq0xiqGZ8\n' +
+    'jZZBAADwAwgAq/6WjtwRt1aPTLWwtSx80Ng/Wxf97dkpebMXSj9T7f5ia1rM\n' +
+    '8wqsuNUDMEMPB9LM34f6Q5pD994oeN2YT7z34u20mskiNphZdx/DNvu8w9UZ\n' +
+    'rI3tyjfZULhARNVM34sSABnHtExbl4ZArhNDsT86ku0sZNjr9frn2mtgmlKN\n' +
+    'nQdGcLJSxbci0hFg3nE5mYNpwZNs2S/2uk11WHKxzMhII6AdePE77BKPqedu\n' +
+    'PiXDODO2dIvV8glLQoJPRPgc2ap+/xYIBUFljqHGPU/62VSLlHxBJv72p5s/\n' +
+    'kOxiqD42TmpaaMtfudqgsZsGoYpZDHcMKYGNZs+9qVRHPRD+s0QhEA==\n' +
+    '=c6IF\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  groupName: 'influential_maroon_gamefowl',
+  groupDescription: 'urgent_brown_butterfly',
+  isPublic: false,
+  groupCreator: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+  chatId: '5f769c881ffe328117dea3d3acd0b97ce7f4c163e440f75a96be3e33f7d2a000',
+  meta: null,
+  scheduleAt: null,
+  scheduleEnd: null,
+  groupType: 'default',
+  status: null,
+  rules: {},
+  eventType: 'create'
+}
+```
+
+| Parameter                  | Type                  | Remarks                                                        |
+| -------------------------- | --------------------- | -------------------------------------------------------------- |
+| `members`                  | `Array<Object>`       | An array containing member objects.                            |
+| `members.wallet`           | `string`              | The wallet address of the member.                              |
+| `members.publicKey`        | `string`              | The member's public PGP key (if available).                    |
+| `members.isAdmin`          | `boolean`             | Indicates whether the member is an admin.                      |
+| `members.image`            | `string`              | Image associated with the member.                              |
+| `pendingMembers`           | `Array<Object>`       | An array containing pending member objects.                    |
+| `pendingMembers.wallet`    | `string`              | The wallet address of the pending member.                      |
+| `pendingMembers.publicKey` | `string`              | The pending member's public PGP key (if available).            |
+| `pendingMembers.isAdmin`   | `boolean`             | Indicates whether the pending member is an admin.              |
+| `pendingMembers.image`     | `string`              | Image associated with the pending member.                      |
+| `contractAddressERC20`     | `string` or `null`    | Contract address for ERC20 tokens (Used for tokenGating).      |
+| `numberOfERC20`            | `number`              | The number of ERC20 tokens associated. (Used for tokenGating). |
+| `contractAddressNFT`       | `string` or `null`    | Contract address for NFT tokens (Used for tokenGating)         |
+| `numberOfNFTTokens`        | `number`              | The number of NFT tokens associated. (Used for tokenGating)    |
+| `verificationProof`        | `string`              | Verification proof associated with group data.                 |
+| `groupImage`               | `string`              | Group's image.                                                 |
+| `groupName`                | `string`              | The name of the group.                                         |
+| `groupDescription`         | `string`              | Description of the group.                                      |
+| `isPublic`                 | `boolean`             | Indicates whether the group is public or private.              |
+| `groupCreator`             | `string`              | Push Profile DID of the group creator.                         |
+| `chatId`                   | `string`              | Unique chat ID associated with the group.                      |
+| `meta`                     | `object` or `null`    | Additional metadata (if available).                            |
+| `scheduleAt`               | `timestamp` or `null` | Scheduled start time (if available).                           |
+| `scheduleEnd`              | `timestamp` or `null` | Scheduled end time (if available).                             |
+| `groupType`                | `string`              | Type of the group (default, spaces, live etc).                 |
+| `status`                   | `string` or `null`    | Status information ( active, expired etc)                      |
+| `rules`                    | `Object`              | Group-specific moderation rules                                |
+| `eventType`                | `string`              | The type of event (create, update etc)                         |
+
+</details>
 
 ---
 
 ### **Fetch Group Permissions**
 
+```typescript
+// Fetch Group Permissions
+const fetchGroupPermissions = await userAlice.chat.group.permissions(
+  groupChatId
+);
+```
+
+| Param    | Type     | Default | Remarks      |
+| -------- | -------- | ------- | ------------ |
+| `chatId` | `string` | -       | Group ChatId |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  entry: true,
+  chat: true,
+  rules: { entry: { conditions: [] }, chat: { conditions: [] } }
+}
+```
+
+| Param   | Type      | Remarks                                               |
+| ------- | --------- | ----------------------------------------------------- |
+| `entry` | `boolean` | Refers if the Profile has access to enter the group   |
+| `chat`  | `boolean` | Refers if the Profile has access to chat in the group |
+| `rules` | `object`  | Moderation rules of the group                         |
+
+</details>
+
 ---
 
 ### **Update Group**
 
-### **Fetch Encryption Password**
+```typescript
+// Update Group Info
+const createdGroup = await userAlice.chat.group.create(groupChatId, {
+  description: newGroupDescription,
+  image: newGroupImage,
+});
+```
+
+| Param                    | Type               | Default | Remarks                                    |
+| ------------------------ | ------------------ | ------- | ------------------------------------------ |
+| `chatId`                 | `string`           | -       | Unique identifier of the group.            |
+| `options` \*             | `object`           | -       | Optional Configuration for updating group. |
+| `options.name` \*        | `string`           | -       | Updated Group Name                         |
+| `options.description` \* | `string`           | -       | Updated Description                        |
+| `options.image` \*       | `string`           | -       | Updated Image                              |
+| `options.scheduleAt` \*  | `date` or `null`   | -       | Updated Start Schedule                     |
+| `options.scheduleEnd` \* | `date` or `null`   | -       | Updated End Schedule                       |
+| `options.status` \*      | `string` or `null` | -       | Updated group Status                       |
+| `options.meta` \*        | `object` or `null` | -       | Updated Group Meta                         |
+| `options.rules` \*       | `object`           | -       | Updated Group Moderation Rules             |
+
+\* - Optional
+
+<details>
+
+  <summary><b>Expected response</b></summary>
 
 ```typescript
-// Fetch Decrypted Profile Password
+{
+  members: [
+    {
+      wallet: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADeYpZfxgn1HoMUuWM42v8ZWfLPwglQYmzz5rY3PdPPoRFU\n' +
+        'v0AyPjYKpmLh2ZNfXjPaS9GuMdpXaomYSEwsV02hXZOQelo9cLop0Fc2i+l7\n' +
+        '70rYhePuOuQ+XD/xYzhngAgNJ9rX96YnSodldb8uJfxYmgoF0E9Z2o2fgZGj\n' +
+        'll2CPnOaLXZaBQlPS3x/461TmZ1n2ZePS/fwiC7taLz3PtyGtKaC0vo4isvI\n' +
+        'yf04fkjudG0XIns5CWjdR2HeDC8BzSl8OVj8AQAc5uVU8Abk+ejWVr4zfoox\n' +
+        'eaziDPgGdkckFiQ6Tdsg0tPwwOpSrCCtJocTmc/fWaBb0YlnyAAL88fJABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZBMYqhmfI2WQQMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAACxNQf/UrM/whR7vCs+\n' +
+        'ez8Y8Hz4WqIuXtfMh4l2nKVv5UUuAfQkBxEY5j6Ga2+JgKU3neQ34x/v6fm9\n' +
+        'CLcY38Tc4AWyEx8KC78J+xOs7RMfyNBeiaf8KdaFfQrP0nMmufE6TxkfV1Y5\n' +
+        'LJZZ8350rZVtYJppWtlH+gbyUmMObyWDWbL3aWtqa3xjv0kLsf7TnugiFwzB\n' +
+        'gHHtk8tlDSOxRt0VdNNd19+/zrBYNl07Ig24WD2ETaJiaqa651z24/6/MkGT\n' +
+        'MBoQh+679tuWWcTrNi4jIA8jhSQ5BOgbAapl3qXk0m9/Aexpe2s6ISLXe8YJ\n' +
+        'j4cObDLv/ZKKeLZYTq9lVCydLAQUbs7ATQRk7zWYAQgAmx36uefgUF4cCSYH\n' +
+        'WMWAOTyc8Awo+hxn6FktOLU1+9hfGrX2jwGLOoOwjNgbYJbiSvRglAX2b57/\n' +
+        'qkkltAg1ZYCLSUzfBUbbWYlJNBwpv7+52zHaLUZ3gmI5aE48ad+uzaadgpVT\n' +
+        'VqLbhdgkN6jkemPTlfMehyS49AAbmqeKfo2U72tm9ZqT2cPVCASMjN/Ux2qG\n' +
+        '3W8HTo0KIVFSbkTthl1zAlwAFksp0q437+pxbdJIecJ9mO6N4OQMnv+hVBDc\n' +
+        'WrPqBDJ0nas4JNgLxmLv0pheGg/TEfwS/p6xGRW5m08bj2l0cgqmEaM27jbi\n' +
+        'DEpOykRWsDMhheEfI2zV/Qam8QARAQABwsB2BBgBCAAqBYJk7zWYCZBMYqhm\n' +
+        'fI2WQQKbDBYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAAAnBggA1gkIopr9HJFP\n' +
+        'fO5SebcbowH4AG9M0qBqF4h1JIKbqvOnxLSsC5QmmzFcjS9ihyHBvzbRVGkC\n' +
+        'zEHYpLRedQ2AmQQfsf/VOoZJEOlb7tTk4+SpYtsGte5X/yLT5Bkls7Rp8ubK\n' +
+        '/V99muj1nA/OkasllXQUSGEweVz6ejzJ0oMm3Vewmw8PelsdAnfS7Ud1MnXQ\n' +
+        'h+O8TCR56F5gAMWxZmxFpZMZyUFOH6KM+vL7HJUBztUS2g0ELsHKy9ep2yhv\n' +
+        'iABIwx/gEuPr0NDAH9x9XFKg5m3rO64KTY4BRWBISwmQ25dM1s1bwDPLi5XI\n' +
+        '6Daw1glFxpPRrxgQGlVLzJOu5b8swQ==\n' +
+        '=9hCc\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzUlEQVR4AcXBsWlDMRiF0c8XTeAJPIAgoFbgQew1PIbXyKsyhUGtCqM6ZAJX6Z32fykM4hnuObv71++TYJRKlHtji1EqUe6NSJgJM2G2W74/nkzIvfHKKJUZwkyYCbOUe+Odcm/MEGbCTJil2/VMdLx8Eo1S2SL3RnS7nomEmTATZmm//BANKlHujS1GqUT7hRVhJsyEWWLSKJVXcm/MEGbCTJgl/sm9EY1SmTFKJcq9EY1SiYSZMBNm6XE6sHJhJffGOz1OByJhJsyE2R/3lDA4e9QQhAAAAABJRU5ErkJggg=='
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x119bb8ad40B1f94e2b30ae5f59eeaEB67cD0Bd6C',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0x6e0C509d14EbF26A529bf6DC5CC9bee7F5b8DBa4',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0xE3FDD0527a9F8418f9a7D9e970452827FbE202FF',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADouo4S2kPqA//+I7nDAk15/LcJ2TGvDhOYuPNUNMiNGOb4\n' +
+        'txusuKz6HOaG+K9hiUBpHjKrYEmCT2FEXxt8bfS3SpWb74RHSkWUNUkxk25y\n' +
+        'gE5gaCKyAdcnOUyVLmobVFFYtH6naK9bULaUtkVik1P0iuEevWHxtTpsjbyH\n' +
+        'bZtNpVTdprdLib4Wx6bb7VogsvjlvNJcVJ4sfPE0XgsQgAGIev7yJyU0DGzt\n' +
+        '/EbvFX4sv51Kb1dX9ctBcvzVbs9+qT6LTivsrQp+TNHUN4zEeMhnWFFP5K1d\n' +
+        'H445S6FWk53XvBudcOkFPtltU1MPCS6hmhevArBfYzy5eSlaKA/fH+kFABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZCrD2gy8Zu4awMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBKru9/u8wPcTeHibkasPaDLxm7hrAADa/Af+PbamVg/Ig2S2\n' +
+        'HgIy4w5x7ulSk1/49+AmuiUMiVUwJSVBhROsyDbLET56w4+1TIMYZFJaczW3\n' +
+        '8tCvAOUSauzc52I3zwGmaCupBJokIWp7ncPh0B8TFYrgThgXV7sLf3xy4roy\n' +
+        'y8oFz1Zla88krwtPe4Az7TF+WNdXoDsLNJ3GXRmNqs1GITmDqAXFWncl12NM\n' +
+        'ajUKWIKc/Gi1oKfz22mabJTtWBimDpA12LaGK3GjEK5CiWXT3Tzlqn6R14EZ\n' +
+        '6ohpKZldSJiMPL0Bu9iT52iHOsw1wTZNC1L5lKhOCi3c+/fLRcJZt3hdCjqy\n' +
+        'd/FSCa8/Ny/GrHBWoL49rSF4pDEA+s7ATQRk7zWYAQgAtNOoHCL7BCnjwp8O\n' +
+        'htTxEI5r7Q/1zKKHiz6QKjjrGBYyR6gcmPM3JNEcvzY4OsCFnKBv2suOgrqH\n' +
+        '8kXJzfpIQ7u7uJs+O3p/cn86RMANiEnO8NbB/0scpfZ7Vg3eOfoiWYE4I/1o\n' +
+        'FVDCyZ1YVqtbcmuW6D8i1djjeoUmkUDZyPo7Qs6hUsJeYA/Rfl8mH5sjy2cN\n' +
+        'WXf8cEtOUqJtwERXt5aRB/nBZiC0bsP6hf0HtAoNA8/96TkqrcQpODW/RckD\n' +
+        'fo4wkpEONHRH+LGX7GV0pwymHu42TUnULmED6BrMgMYG2sKpxMThxtAxRaiP\n' +
+        'nZ3DKXr8GCjTYnbEZpoi2zKCOQARAQABwsB2BBgBCAAqBYJk7zWYCZCrD2gy\n' +
+        '8Zu4awKbDBYhBKru9/u8wPcTeHibkasPaDLxm7hrAADGyQgA5NMUkoyDTPZa\n' +
+        'Znj1dB+17xBXCZ/u7pPQc1DukBefVke7/qYIicdnnEGIX3Zd7TckFRsDljR/\n' +
+        '3418Bne4WyL57fAF/GgYsegpJ9n1KT7oPxWzibIaYdj7R6bkDt5r61EDWC3N\n' +
+        'VBbnZu9cO15TYkObJIiyNvwbQyd6Dm313b39GnEE8sM709TWsI6Es6rRZAfC\n' +
+        '+sI8ezYxqVUbP7sW3jJZYzdPOhZPHvFd5iJ2EfygEOuk5tb7AimfNwF/CNcB\n' +
+        'weQGEU7feOSB9lXXA+Ag1duLM4B9bLbbHEQIPhKlBF1ED64e/W/5HNfoAkS4\n' +
+        'qhzOD5XWs6xs45nnYqUbBFLG9Xk+Jg==\n' +
+        '=qtAv\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAw0lEQVR4AcXBsXECMRRF0csbdbAZBagHKlJMSOL90IUq2h5UABktLE6/HcizY4/fOafrcntzQB/BTKvBEcJMmAmz0keQtRpk67bzRQ1m1m0nu19E1keQCTNhJsxO1+X2JukjmHm+Ppg5Lw9mWg0yYSbMhFnhoPPy4C8JM2EmzArftBr8J2EmzIRZ6SPIWg2yPoKs1WCmjyBrNcj6CDJhJsyEWWk1OKKP4DdaDTJhJsyEWeEHrQbZuu3M3C/iCGEmzITZJ/s7LOkKUABjAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJk7zWZCZBMYqhmfI2WQRYhBC9DyzhpX3ACb/yTq0xiqGZ8\n' +
+    'jZZBAADwAwgAq/6WjtwRt1aPTLWwtSx80Ng/Wxf97dkpebMXSj9T7f5ia1rM\n' +
+    '8wqsuNUDMEMPB9LM34f6Q5pD994oeN2YT7z34u20mskiNphZdx/DNvu8w9UZ\n' +
+    'rI3tyjfZULhARNVM34sSABnHtExbl4ZArhNDsT86ku0sZNjr9frn2mtgmlKN\n' +
+    'nQdGcLJSxbci0hFg3nE5mYNpwZNs2S/2uk11WHKxzMhII6AdePE77BKPqedu\n' +
+    'PiXDODO2dIvV8glLQoJPRPgc2ap+/xYIBUFljqHGPU/62VSLlHxBJv72p5s/\n' +
+    'kOxiqD42TmpaaMtfudqgsZsGoYpZDHcMKYGNZs+9qVRHPRD+s0QhEA==\n' +
+    '=c6IF\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  groupName: 'influential_maroon_gamefowl',
+  groupDescription: 'urgent_brown_butterfly',
+  isPublic: false,
+  groupCreator: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+  chatId: '5f769c881ffe328117dea3d3acd0b97ce7f4c163e440f75a96be3e33f7d2a000',
+  meta: null,
+  scheduleAt: null,
+  scheduleEnd: null,
+  groupType: 'default',
+  status: null,
+  rules: {},
+  eventType: 'update'
+}
+```
+
+| Parameter                  | Type                  | Remarks                                                        |
+| -------------------------- | --------------------- | -------------------------------------------------------------- |
+| `members`                  | `Array<Object>`       | An array containing member objects.                            |
+| `members.wallet`           | `string`              | The wallet address of the member.                              |
+| `members.publicKey`        | `string`              | The member's public PGP key (if available).                    |
+| `members.isAdmin`          | `boolean`             | Indicates whether the member is an admin.                      |
+| `members.image`            | `string`              | Image associated with the member.                              |
+| `pendingMembers`           | `Array<Object>`       | An array containing pending member objects.                    |
+| `pendingMembers.wallet`    | `string`              | The wallet address of the pending member.                      |
+| `pendingMembers.publicKey` | `string`              | The pending member's public PGP key (if available).            |
+| `pendingMembers.isAdmin`   | `boolean`             | Indicates whether the pending member is an admin.              |
+| `pendingMembers.image`     | `string`              | Image associated with the pending member.                      |
+| `contractAddressERC20`     | `string` or `null`    | Contract address for ERC20 tokens (Used for tokenGating).      |
+| `numberOfERC20`            | `number`              | The number of ERC20 tokens associated. (Used for tokenGating). |
+| `contractAddressNFT`       | `string` or `null`    | Contract address for NFT tokens (Used for tokenGating)         |
+| `numberOfNFTTokens`        | `number`              | The number of NFT tokens associated. (Used for tokenGating)    |
+| `verificationProof`        | `string`              | Verification proof associated with group data.                 |
+| `groupImage`               | `string`              | Group's image.                                                 |
+| `groupName`                | `string`              | The name of the group.                                         |
+| `groupDescription`         | `string`              | Description of the group.                                      |
+| `isPublic`                 | `boolean`             | Indicates whether the group is public or private.              |
+| `groupCreator`             | `string`              | Push Profile DID of the group creator.                         |
+| `chatId`                   | `string`              | Unique chat ID associated with the group.                      |
+| `meta`                     | `object` or `null`    | Additional metadata (if available).                            |
+| `scheduleAt`               | `timestamp` or `null` | Scheduled start time (if available).                           |
+| `scheduleEnd`              | `timestamp` or `null` | Scheduled end time (if available).                             |
+| `groupType`                | `string`              | Type of the group (default, spaces, live etc).                 |
+| `status`                   | `string` or `null`    | Status information ( active, expired etc)                      |
+| `rules`                    | `Object`              | Group-specific moderation rules                                |
+| `eventType`                | `string`              | The type of event (create, update etc)                         |
+
+</details>
+
+---
+
+### **Fetch Encryption Info**
+
+```typescript
+// Fetch Encryption Info
 const aliceEncryptionInfo = await userAlice.encryption.info();
 ```
 
@@ -7474,13 +8039,106 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
   <summary><b>Expected response</b></summary>
 
 ```typescript
-  // decryption Porfile Password ( only available for NFT Profile )
-  0xA#bc12341dkox
+{
+  decryptedPgpPrivateKey: '-----BEGIN PGP PRIVATE KEY BLOCK-----\n' +
+    '\n' +
+    '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\n' +
+    'l2L+h0L32V6yjL0asut2G+qfvw==\n' +
+    '=o527\n' +
+    '-----END PGP PRIVATE KEY BLOCK-----\n',
+  pgpPublicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGTvQKUBCACgsuLM540Bq39fAbLRGoaRZR5/lETkpQSArzP4+B+wxcQe\n' +
+    'IItuLF9z1+OHilx/uAJ6yWH2En8QdlSBRMDCSwhLOXYnrB5dTvEM2nm+v59H\n' +
+    'sIRkRUogXSIgTrcVG7Tt0JsrjBV2avOki1L4vzPvHEDUtlKcxdJ5914W2lSu\n' +
+    '05xPG+ALRsYFki1ga6bt6kT1+v7GV+862hOHY/FugohLKdIZOo6CeI0ddnHF\n' +
+    '9jL3pu4aTRn11VIphju3KQ2oCxF/6843OrA4X/GtVtsoRq00RBLuv61ZmRpr\n' +
+    'qsOgEz009cDEWdUWs8wvf75TG/MfYM4g+9nSWflJGMSD3PfVHKTzOsYlABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZO9ApQQLCQcICZD+BWKBkBMI0AMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBEXCtUQEMuKbuZLzrv4FYoGQEwjQAAC0VAf/VNnQ5xfPHhm6\n' +
+    'JfZ+cH2lUfy65pZ+5GqXHanB9RcxZPHe9hzr0l1IJk4o48HUrIcwJhpBfXUs\n' +
+    'd9oLC81Un1io0uX37hE3in+ND4j11ZiRe8kQakH67/R7XKUaD3JTfXTshVpW\n' +
+    'hVTa1mjBZZcxOzr8ZxhnuaSQ7888t5cF0zBuOo6YPmqiNVudlXlhXuiAVqp+\n' +
+    'xK5yamqxW9drz767aXUAvE9GChE4+P0ia1wwvvA2wkZTE2+rJKvAWA8iit4T\n' +
+    'eOTTDJoja0zc2yKxytdeOy6PWr6lGjjbzJEq9uqs1tx8znRosDkb+Gw26CHd\n' +
+    'Uo2uVUDGkcesqxNUv+C/4R9eubBVYM7ATQRk70ClAQgA38Hi0a1rqZAPdBaU\n' +
+    'nlqY4x4pIi2KyFPQ7TmW3Y/V1NgEm9Y8w3bx3TF8O8uDETn6U5ASUa2DG4gp\n' +
+    'pcZrDqFsChnxhHOdJhEgh3X8LeyzuCHnqWQPbo2iCt3ve0fRsK/f0ZPABgCq\n' +
+    'lgTGkeVi7KppUqB1FtkRMfh0Eqr3fLC9pNRLtlnQT793rfavvXavK+0eeukZ\n' +
+    'VPYbALuJq2tX0IBwr9+/6YEzSi7yo/1PpRZSRSM9KQwk/R2ohS2FAytUpTRp\n' +
+    '/4OFIJqv93PxS7MlHVfe/lhc9fXeTvH2sMQCfMsp16wP7Em+AjT5elJgXv3V\n' +
+    'rQ4whrr5yGfTvO9uQVoV7LKoWQARAQABwsB2BBgBCAAqBYJk70ClCZD+BWKB\n' +
+    'kBMI0AKbDBYhBEXCtUQEMuKbuZLzrv4FYoGQEwjQAABMkAf/UKvQHe+oYH/h\n' +
+    'U0/p7OXUMCKIzSHD9c7lrb2nnP4CGyxF+FoZbQ9qnMVuT6FX6zPyZgDtOjp8\n' +
+    'GrvcACBibxwujfnNdKBdA1r0XQGf2ht3BWYpgn9jGYw58bf3yaxr6/Dg1D7F\n' +
+    'zgbNFkaarU8C4fEAhiAHY4SpMUzqej/QfrwvasjyqPnbD+vCqyTivNmpTb6L\n' +
+    'YzXPBtXQW0A1B6EhmFwftGyNxIG1wEO+tWE4v4XLCyscAz8ZBMBPdfaRe26l\n' +
+    'nr6CUnTUwL+VecX2uIVRE9w9FhXuKeaPoDzPWnu0SZ6WCUV3DxQwMoUB/3vJ\n' +
+    '8sRKl2L+h0L32V6yjL0asut2G+qfvw==\n' +
+    '=4XKH\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n'
+}
 ```
 
-| Param      | Type               | Remarks          |
-| ---------- | ------------------ | ---------------- |
-| `password` | `string` or `null` | Profile Password |
+| Param                    | Type                    | Remarks                        |
+| ------------------------ | ----------------------- | ------------------------------ |
+| `decryptedPgpPrivateKey` | `string`                | Push Profile's PGP Private key |
+| `pgpPublicKey`           | `string`                | Push Profile's PGP Public key  |
+| `decryptedPassword`      | `string` or `undefined` | Push Profile's Password        |
 
 </details>
 
