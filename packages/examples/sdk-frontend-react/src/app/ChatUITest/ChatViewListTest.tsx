@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import * as PUSHAPI from '@pushprotocol/restapi';
 import { Link } from 'react-router-dom';
 import { Section } from '../components/StyledComponents';
-import { ChatSearchInput, ChatViewList } from '@pushprotocol/uiweb';
+import {  ChatViewList } from '@pushprotocol/uiweb';
 import { EnvContext, Web3Context } from '../context';
 import { usePushChatSocket } from '@pushprotocol/uiweb';
 import { MessageInput } from '@pushprotocol/uiweb';

@@ -1,7 +1,7 @@
-import React, { useContext} from 'react';
+import React, { useContext } from 'react';
 import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
 
-import { Section,  } from '../../reusables';
+import { Section, Span } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
 import { chatLimit, device } from '../../../config';
 
@@ -12,9 +12,6 @@ import { ChatProfile } from '../ChatProfile';
 import styled from 'styled-components';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 
-
-
-
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -22,7 +19,6 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 interface IThemeProps {
   theme?: IChatTheme;
 }
-
 
 export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
   options: IChatViewComponentProps
@@ -41,16 +37,13 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     onClick,
   } = options || {};
 
-  const {env } = useChatData();
+  const { env, signer, account, pgpPrivateKey } = useChatData();
 
-  
   // const [conversationHash, setConversationHash] = useState<string>();
 
   const theme = useContext(ThemeContext);
 
   const isMobile = useMediaQuery(device.mobileL);
-
-
 
   return (
     <Conatiner
@@ -64,36 +57,52 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-     
-    {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
+      {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
       <Section
         flex="1 1 auto"
         overflow="hidden"
-        padding={isMobile?"0 10px":"0 20px"}
+        padding={isMobile ? '0 10px' : '0 20px'}
         margin="0 0px 10px 0px"
         flexDirection="column"
         justifyContent="start"
       >
-      
-
-        {chatId && chatViewList && <ChatViewList chatFilterList={chatFilterList} limit={limit} chatId={chatId} />}
-      
+        {chatId && chatViewList && (
+          <ChatViewList
+            chatFilterList={chatFilterList}
+            limit={limit}
+            chatId={chatId}
+          />
+        )}
       </Section>
-
       {/* )} */}
-
-      {messageInput && (
+      {(!signer && !(!!account && !!pgpPrivateKey) && !isConnected) && (
         <Section flex="0 1 auto">
-          <MessageInput onClick={onClick} chatId={chatId} File={file} Emoji={emoji} GIF={gif} isConnected={isConnected} />
+          <Span>
+            You need to either pass signer or isConnected  to send
+            messages{' '}
+          </Span>
         </Section>
       )}
+      {(messageInput && (!!signer || (!!account && !!pgpPrivateKey) || isConnected )) && (
+        <Section flex="0 1 auto">
+          <MessageInput
+            onClick={onClick}
+            chatId={chatId}
+            File={file}
+            Emoji={emoji}
+            GIF={gif}
+            isConnected={isConnected}
+          />
+        </Section>
+      )}
+      
     </Conatiner>
   );
 };
 
 //styles
 const Conatiner = styled(Section)<IThemeProps>`
-border:${(props) => props.theme.border?.chatViewComponent};
-backdrop-filter:${(props) => props.theme.backdropFilter};
-box-sizing:border-box;
+  border: ${(props) => props.theme.border?.chatViewComponent};
+  backdrop-filter: ${(props) => props.theme.backdropFilter};
+  box-sizing: border-box;
 `;
