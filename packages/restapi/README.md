@@ -8868,11 +8868,11 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 );
 ```
 
-| Param                     | Type                                    | Default | Remarks                                               |
-| ------------------------- | --------------------------------------- | ------- | ----------------------------------------------------- |
-| `updatedEncryptionType`   | `ENCRYPTION_TYPE`                       | -       | New Encryption Scheme to which keys are to be updated |
-| `options` /\*             | `object`                                | -       | Optional Configuration for updating encryption        |
-| `options.versionMeta` /\* | `{ NFTPGP_V1 ?: { password : string} }` | -       | New Password ( In case of NFT Profile )               |
+| Param                    | Type                                    | Default | Remarks                                               |
+| ------------------------ | --------------------------------------- | ------- | ----------------------------------------------------- |
+| `updatedEncryptionType`  | `ENCRYPTION_TYPE`                       | -       | New Encryption Scheme to which keys are to be updated |
+| `options` \*             | `object`                                | -       | Optional Configuration for updating encryption        |
+| `options.versionMeta` \* | `{ NFTPGP_V1 ?: { password : string} }` | -       | New Password ( In case of NFT Profile )               |
 
 \* - Optional
 
