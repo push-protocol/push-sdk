@@ -6,8 +6,8 @@ import {
   ChatStatus,
   Rules,
   SpaceRules,
-  GroupAccess, 
-  SpaceAccess
+  GroupAccess,
+  SpaceAccess,
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
@@ -43,16 +43,16 @@ export interface IApproveRequestPayload {
   fromDID: string;
   toDID: string;
   signature: string;
-  status: 'Approved';
+  status: 'Approved' | 'Reproved';
   sigType: string;
   verificationProof?: string | null | undefined;
 }
 
 export interface ICreateGroupRequestPayload {
   groupName: string;
-  groupDescription: string | null;
+  groupDescription?: string | null;
   members: Array<string>;
-  groupImage: string | null;
+  groupImage?: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -67,7 +67,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string | null;
+  groupImage?: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -149,7 +149,7 @@ export const sendMessagePayload = async (
 export const approveRequestPayload = (
   fromDID: string,
   toDID: string,
-  status: 'Approved',
+  status: 'Approved' | 'Reproved',
   sigType: string,
   signature: string
 ): IApproveRequestPayload => {
@@ -166,13 +166,13 @@ export const approveRequestPayload = (
 
 export const createGroupPayload = (
   groupName: string,
-  groupDescription: string | null,
   members: Array<string>,
-  groupImage: string | null,
   admins: Array<string>,
   isPublic: boolean,
   groupCreator: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   contractAddressNFT?: string,
   numberOfNFTs?: number,
   contractAddressERC20?: string,
@@ -258,9 +258,7 @@ export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
   };
 };
 
-export const groupAccessToSpaceAccess = (
-  group: GroupAccess
-): SpaceAccess => {
+export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
   const spaceAccess: SpaceAccess = {
     spaceAccess: group.groupAccess,
   };
@@ -273,15 +271,14 @@ export const groupAccessToSpaceAccess = (
   return spaceAccess;
 };
 
-
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string | null,
-  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
