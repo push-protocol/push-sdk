@@ -11,6 +11,7 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
+export * from './messageTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 

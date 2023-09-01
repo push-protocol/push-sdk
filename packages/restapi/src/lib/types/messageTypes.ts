@@ -58,11 +58,11 @@ export const REACTION_SYMBOL: Record<REACTION_TYPE, string> = {
 };
 
 export interface BaseMessage<T> {
-  type: T;
+  type?: T;
   content: string;
 }
 
-export interface MetaMessage extends BaseMessage<MessageType.META> {
+export interface MetaMessage extends BaseMessage<`${MessageType.META}`> {
   action: META_ACTION;
   info: {
     affected: string[];
@@ -72,17 +72,18 @@ export interface MetaMessage extends BaseMessage<MessageType.META> {
   };
 }
 
-export interface ReactionMessage extends BaseMessage<MessageType.REACTION> {
+export interface ReactionMessage
+  extends BaseMessage<`${MessageType.REACTION}`> {
   action: REACTION_TYPE;
   reference?: string | null;
 }
 
 export type BaseMessageTypes =
-  | MessageType.TEXT
-  | MessageType.IMAGE
-  | MessageType.FILE
-  | MessageType.MEDIA_EMBED
-  | MessageType.GIF;
+  | `${MessageType.TEXT}`
+  | `${MessageType.IMAGE}`
+  | `${MessageType.FILE}`
+  | `${MessageType.MEDIA_EMBED}`
+  | `${MessageType.GIF}`;
 
 export type Message =
   | BaseMessage<BaseMessageTypes>

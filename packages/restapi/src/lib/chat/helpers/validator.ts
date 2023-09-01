@@ -4,59 +4,70 @@ import {
 } from '../../helpers';
 
 export const createGroupRequestValidator = (
-    groupName: string, groupDescription: string | null,members: Array < string > , admins: Array < string > , contractAddressNFT ? : string,
-    numberOfNFTs ? : number,
-    contractAddressERC20 ? : string,
-    numberOfERC20 ? : number
+  groupName: string,
+  members: Array<string>,
+  admins: Array<string>,
+  groupDescription?: string | null,
+  contractAddressNFT?: string,
+  numberOfNFTs?: number,
+  contractAddressERC20?: string,
+  numberOfERC20?: number
 ): void => {
+  if (groupName == null || groupName.length == 0) {
+    throw new Error(`groupName cannot be null or empty`);
+  }
 
-    if (groupName == null || groupName.length == 0) {
-        throw new Error(`groupName cannot be null or empty`);
-    }
+  if (groupName.length > 50) {
+    throw new Error(`groupName cannot be more than 50 characters`);
+  }
 
-    if (groupName.length > 50) {
-        throw new Error(`groupName cannot be more than 50 characters`);
-    }
+  if (groupDescription && groupDescription.length > 150) {
+    throw new Error(`groupDescription cannot be more than 150 characters`);
+  }
 
-    if (groupDescription && groupDescription.length > 150) {
-        throw new Error(`groupDescription cannot be more than 150 characters`);
-    }
+  if (members == null) {
+    throw new Error(`members cannot be null`);
+  }
 
-    if (members == null) {
-        throw new Error(`members cannot be null`);
+  for (let i = 0; i < members.length; i++) {
+    if (members[i] && !isValidETHAddress(members[i])) {
+      throw new Error(`Invalid member address!`);
     }
+  }
 
-    for (let i = 0; i < members.length; i++) {
-        if (members[i] && !isValidETHAddress(members[i])) {
-            throw new Error(`Invalid member address!`);
-        }
-    }
+  if (admins == null) {
+    throw new Error(`admins cannot be null`);
+  }
 
-    if (admins == null) {
-         throw new Error(`admins cannot be null`);
+  for (let i = 0; i < admins.length; i++) {
+    if (!isValidETHAddress(admins[i])) {
+      throw new Error(`Invalid admin address!`);
     }
+  }
 
-    for (let i = 0; i < admins.length; i++) {
-        if (!isValidETHAddress(admins[i])) {
-            throw new Error(`Invalid admin address!`);
-        }
-    }
+  if (
+    contractAddressNFT != null &&
+    contractAddressNFT?.length > 0 &&
+    !isValidNFTCAIP10Address(contractAddressNFT)
+  ) {
+    throw new Error(`Invalid contractAddressNFT address!`);
+  }
 
-    if (contractAddressNFT != null && contractAddressNFT?.length > 0 && !isValidNFTCAIP10Address(contractAddressNFT)) {
-        throw new Error(`Invalid contractAddressNFT address!`);
-    }
+  if (numberOfNFTs != null && numberOfNFTs < 0) {
+    throw new Error(`numberOfNFTs cannot be negative number`);
+  }
 
-    if (numberOfNFTs != null && numberOfNFTs < 0) {
-        throw new Error(`numberOfNFTs cannot be negative number`);
-    }
+  if (
+    contractAddressERC20 != null &&
+    contractAddressERC20?.length > 0 &&
+    !isValidNFTCAIP10Address(contractAddressERC20)
+  ) {
+    throw new Error(`Invalid contractAddressERC20 address!`);
+  }
 
-    if (contractAddressERC20 != null && contractAddressERC20?.length > 0 && !isValidNFTCAIP10Address(contractAddressERC20)) {
-        throw new Error(`Invalid contractAddressERC20 address!`);
-    }
-
-    if (numberOfERC20 != null && numberOfERC20 < 0) {
-        throw new Error(`numberOfERC20 cannot be negative number`);
-    }
+  if (numberOfERC20 != null && numberOfERC20 < 0) {
+    throw new Error(`numberOfERC20 cannot be negative number`);
+  }
 };
 
 export const createSpaceRequestValidator = (
@@ -141,8 +152,12 @@ export const validateScheduleDates = (scheduleAt?: Date | null,
 };
 
 export const updateGroupRequestValidator = (
-    chatId: string, groupName: string, groupDescription: string | null, members: Array < string > ,
-    admins: Array < string > , address: string
+    chatId: string, 
+    groupName: string, 
+    members: Array < string > ,
+    admins: Array < string > , 
+    address: string,
+    groupDescription?: string | null
 ): void => {
 
 
@@ -158,8 +173,11 @@ export const updateGroupRequestValidator = (
         throw new Error(`groupName cannot be more than 50 characters`);
     }
 
-    if (groupDescription != null && groupDescription.length > 150) {
-        throw new Error(`groupDescription cannot be more than 150 characters`);
+    if (
+      groupDescription && groupDescription != null &&
+      groupDescription.length > 150
+    ) {
+      throw new Error(`groupDescription cannot be more than 150 characters`);
     }
 
     if (members != null && members.length > 0) {
