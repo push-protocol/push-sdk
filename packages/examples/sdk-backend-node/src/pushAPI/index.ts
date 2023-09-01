@@ -219,21 +219,20 @@ export const runPushAPICases = async (): Promise<void> => {
   console.log('PushAPI.group.remove | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  // TODO: Fix this
   // console.log('PushAPI.group.join');
-  // const joinGrp = await userBob.chat.group.join(groupChatId);
-  // if (showAPIResponse) {
-  //   console.log(joinGrp);
-  // }
-  // console.log('PushAPI.group.join | Response - 200 OK\n\n');
+  //   const joinGrp = await userBob.chat.group.join(groupChatId);
+  //   if (showAPIResponse) {
+  //     console.log(joinGrp);
+  //   }
+  //   console.log('PushAPI.group.join | Response - 200 OK\n\n');
+  //-------------------------------------------------------------------
   // -------------------------------------------------------------------
-  // -------------------------------------------------------------------
-  console.log('PushAPI.group.leave');
-  const leaveGrp = await userBob.chat.group.leave(groupChatId);
-  if (showAPIResponse) {
-    console.log(leaveGrp);
-  }
-  console.log('PushAPI.group.leave | Response - 200 OK\n\n');
+  //console.log('PushAPI.group.leave');
+  //const leaveGrp = await userBob.chat.group.leave(groupChatId);
+  //if (showAPIResponse) {
+  //  console.log(leaveGrp);
+  //}
+  //console.log('PushAPI.group.leave | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.encryption.info');
