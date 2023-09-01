@@ -21,7 +21,7 @@ enum ENV {
 const { env, showAPIResponse } = config;
 
 // If you own a channel, you can use your channel address as well
-const channelPrivateKey: string = process.env.WALLET_PRIVATE_KEY;
+const channelPrivateKey = process.env.WALLET_PRIVATE_KEY;
 
 /***************** SAMPLE SIGNER GENERATION *********************/
 /**
@@ -170,7 +170,7 @@ async function PushAPI_user_getSubscriptions(silent = !showAPIResponse) {
 // Push Notification - PushAPI.channels.getChannel
 async function PushAPI_channels_getChannel(silent = !showAPIResponse) {
   const channelData = await PushAPI.channels.getChannel({
-    channel: channelAddress,
+    channel: channelAddress as string,
     env: env as ENV,
   });
 

@@ -146,14 +146,14 @@ async function PushAPI_nft_user_create(silent = !showAPIResponse) {
     account: nftAccount1,
     signer: nftSigner1,
     env: env as ENV,
-    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword1 } },
+    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword1 as string } },
   });
 
   const user2 = await PushAPI.user.create({
     account: nftAccount2,
     signer: nftSigner2,
     env: env as ENV,
-    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword2 } },
+    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword2 as string } },
   });
 
   console.log('PushAPI_nft_user_create | Response - 200 OK');
