@@ -18,9 +18,9 @@ export interface ChatCreateGroupType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   groupName: string;
-  groupDescription: string;
+  groupDescription?: string | null;
   members: Array<string>;
-  groupImage: string | null;
+  groupImage?: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -71,9 +71,9 @@ export const createGroup = async (
 
     createGroupRequestValidator(
       groupName,
-      groupDescription,
       members,
       admins,
+      groupDescription,
       contractAddressNFT,
       numberOfNFTs,
       contractAddressERC20,
@@ -120,13 +120,13 @@ export const createGroup = async (
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;
     const body: ICreateGroupRequestPayload = createGroupPayload(
       groupName,
-      groupDescription,
       convertedMembers,
-      groupImage,
       convertedAdmins,
       isPublic,
       connectedUser.did,
       verificationProof,
+      groupDescription,
+      groupImage,
       contractAddressNFT,
       numberOfNFTs,
       contractAddressERC20,

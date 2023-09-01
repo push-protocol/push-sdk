@@ -71,6 +71,9 @@ const SpaceTest = () => {
           <Link to="/getSpaceAccess" className="nav-button">
             SPACE.GETSPACEACCESS
           </Link>
+          <Link to="/searchSpaces" className="nav-button">
+            CHAT.SEARCHSPACES
+          </Link>
         </NavMenu>
       </Section>
     </div>

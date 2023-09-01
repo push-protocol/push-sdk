@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { decryptPGPKey } from '../helpers';
+import { decryptPGPKey, isValidNFTCAIP10Address } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import {
   ProgressHookType,
@@ -28,7 +28,7 @@ type decryptAuthProps = {
  */
 export const decryptAuth = async (
   options: decryptAuthProps
-): Promise<string> => {
+): Promise<string | null> => {
   const {
     account,
     signer,
@@ -37,6 +37,9 @@ export const decryptAuth = async (
     progressHook,
   } = options || {};
   try {
+    if (!isValidNFTCAIP10Address(account as string)) {
+      return null;
+    }
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-DECRYPT-AUTH-01'] as ProgressHookType);
     const password = await decryptPGPKey({
