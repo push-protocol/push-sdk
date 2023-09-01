@@ -21,18 +21,22 @@ enum ENV {
 const { env, showAPIResponse } = config;
 
 // If you own a channel, you can use your channel address as well
-const channelPrivateKey: string = process.env.WALLET_PRIVATE_KEY!;
+const channelPrivateKey: string = process.env.WALLET_PRIVATE_KEY;
 
 /***************** SAMPLE SIGNER GENERATION *********************/
 /**
  * USING VIEM
  */
-const signerChannel = createWalletClient({
-  account: privateKeyToAccount(`0x${channelPrivateKey}`),
-  chain: goerli,
-  transport: http(),
-});
-const channelAddress = signerChannel.account.address;
+const signerChannel = channelPrivateKey
+  ? createWalletClient({
+      account: privateKeyToAccount(`0x${channelPrivateKey}`),
+      chain: goerli,
+      transport: http(),
+    })
+  : undefined;
+const channelAddress = signerChannel
+  ? signerChannel.account.address
+  : undefined;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
@@ -55,6 +59,18 @@ const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
 // const randomWallet1 = ethers.Wallet.createRandom().address;
 /************************************************************* */
 
+const skipExample = () => {
+  const requiredEnvVars = ['WALLET_PRIVATE_KEY'];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      return true; // Skip the example if any of the required env vars is missing
+    }
+  }
+
+  return false; // All required env vars are present, don't skip the example
+};
+
 // Push Notification - Run Notifications Use cases
 export const runNotificaitonsUseCases = async (): Promise<void> => {
   console.log(`
@@ -73,40 +89,42 @@ export const runNotificaitonsUseCases = async (): Promise<void> => {
   console.log('PushAPI.user.getSubscriptions');
   await PushAPI_user_getSubscriptions();
 
-  console.log('PushAPI.channels.getChannel()');
-  await PushAPI_channels_getChannel();
+  if (!skipExample()) {
+    console.log('PushAPI.channels.getChannel()');
+    await PushAPI_channels_getChannel();
 
-  console.log('PushAPI.channels.search()');
-  await PushAPI_channels_search();
+    console.log('PushAPI.channels.search()');
+    await PushAPI_channels_search();
 
-  console.log('PushAPI.channels.subscribe()');
-  await PushAPI_channels_subscribe();
+    console.log('PushAPI.channels.subscribe()');
+    await PushAPI_channels_subscribe();
 
-  console.log('PushAPI.channels.unsubscribe()');
-  await PushAPI_channels_unsubscribe();
+    console.log('PushAPI.channels.unsubscribe()');
+    await PushAPI_channels_unsubscribe();
 
-  // IMPORTANT: VARIOUS OTHER NOTIFICATIONS FORMAT SUPPORTED
-  // EXAMPLES HERE: https://github.com/ethereum-push-notification-service/push-sdk/blob/main/packages/restapi/README.md
-  console.log(
-    'PushAPI.payloads.sendNotification() [Direct Payload, Single Recipient]'
-  );
-  await PushAPI_payloads_sendNotification__direct_payload_single_recipient();
+    // IMPORTANT: VARIOUS OTHER NOTIFICATIONS FORMAT SUPPORTED
+    // EXAMPLES HERE: https://github.com/ethereum-push-notification-service/push-sdk/blob/main/packages/restapi/README.md
+    console.log(
+      'PushAPI.payloads.sendNotification() [Direct Payload, Single Recipient]'
+    );
+    await PushAPI_payloads_sendNotification__direct_payload_single_recipient();
 
-  console.log(
-    'PushAPI.payloads.sendNotification() [Direct Payload, Batch of Recipients (Subset)]'
-  );
-  await PushAPI_payloads_sendNotification__direct_payload_group_of_recipient_subset();
+    console.log(
+      'PushAPI.payloads.sendNotification() [Direct Payload, Batch of Recipients (Subset)]'
+    );
+    await PushAPI_payloads_sendNotification__direct_payload_group_of_recipient_subset();
 
-  console.log(
-    'PushAPI.payloads.sendNotification() [Direct Payload, All Recipients (Broadcast)]'
-  );
-  await PushAPI_payloads_sendNotification__direct_payload_all_recipients_brodcast();
+    console.log(
+      'PushAPI.payloads.sendNotification() [Direct Payload, All Recipients (Broadcast)]'
+    );
+    await PushAPI_payloads_sendNotification__direct_payload_all_recipients_brodcast();
 
-  console.log('PushAPI.channels._getSubscribers()');
-  await PushAPI_channels_getSubscribers();
+    console.log('PushAPI.channels._getSubscribers()');
+    await PushAPI_channels_getSubscribers();
 
-  console.log('Push Notification - PushSDKSocket()');
-  await PushSDKSocket();
+    console.log('Push Notification - PushSDKSocket()');
+    await PushSDKSocket();
+  }
 };
 
 // Push Notification - PushAPI.user.getFeeds
