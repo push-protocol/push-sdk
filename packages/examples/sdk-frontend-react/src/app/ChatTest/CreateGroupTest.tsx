@@ -113,12 +113,11 @@ const CreateGroupTest = () => {
                 'all': [
                   {
                     'type': PushAPI.ConditionType.PUSH,
-                    'category': 'ERC20',
-                    'subcategory': 'holder',
+                    'category': 'ERC721',
+                    'subcategory': 'owner',
                     'data': {
-                      'contract': 'eip155:5:0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-                      'amount': 1,
-                      'decimals': 18
+                      'contract': 'eip155:5:0x57d38B9085B6dcc4b7cBdDac7Eb878CDdA5b4145',
+                      'amount': 1
                     }
                   }
                 ]
