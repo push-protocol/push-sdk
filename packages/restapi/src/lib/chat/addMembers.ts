@@ -84,8 +84,10 @@ export const addMembers = async (
       account: account,
       signer: signer,
       env: env,
-      pgpPrivateKey: pgpPrivateKey
-  });
+      rules: group.rules,
+      meta: group.meta,
+      pgpPrivateKey: pgpPrivateKey,
+    });
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${addMembers.name} -:  `,

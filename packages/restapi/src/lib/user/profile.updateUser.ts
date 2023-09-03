@@ -73,6 +73,8 @@ export const profileUpdate = async (
         }
       );
       blockedUsersList = await Promise.all(convertedBlockedListUsersPromise);
+
+      blockedUsersList = Array.from(new Set(blockedUsersList));
     }
 
     const updatedProfile = {

@@ -160,8 +160,11 @@ export const runPushAPICases = async (): Promise<void> => {
   const createdGroup = await userAlice.chat.group.create(groupName, {
     description: groupDescription,
     image: groupImage,
-    members: [randomWallet1, randomWallet2, secondSignerAddress],
-    admins: [],
+    members: [
+      randomWallet1,
+      randomWallet2,
+    ],
+    admins: ['0xF0c587b098E73Ac0c6808be56C10baBef19CAdDE'],
     private: false,
   });
   const groupChatId = createdGroup.chatId; // to be used in other examples
@@ -219,20 +222,20 @@ export const runPushAPICases = async (): Promise<void> => {
   console.log('PushAPI.group.remove | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  // console.log('PushAPI.group.join');
-  //   const joinGrp = await userBob.chat.group.join(groupChatId);
-  //   if (showAPIResponse) {
-  //     console.log(joinGrp);
-  //   }
-  //   console.log('PushAPI.group.join | Response - 200 OK\n\n');
+  console.log('PushAPI.group.join');
+  const joinGrp = await userBob.chat.group.join(groupChatId);
+  if (showAPIResponse) {
+    console.log(joinGrp);
+  }
+  console.log('PushAPI.group.join | Response - 200 OK\n\n');
   //-------------------------------------------------------------------
   // -------------------------------------------------------------------
-  //console.log('PushAPI.group.leave');
-  //const leaveGrp = await userBob.chat.group.leave(groupChatId);
-  //if (showAPIResponse) {
-  //  console.log(leaveGrp);
-  //}
-  //console.log('PushAPI.group.leave | Response - 200 OK\n\n');
+  console.log('PushAPI.group.leave');
+  const leaveGrp = await userBob.chat.group.leave(groupChatId);
+  if (showAPIResponse) {
+    console.log(leaveGrp);
+  }
+  console.log('PushAPI.group.leave | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.encryption.info');
