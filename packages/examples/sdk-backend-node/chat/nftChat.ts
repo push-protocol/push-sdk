@@ -22,14 +22,18 @@ const nftChainId1 = process.env.NFT_CHAIN_ID_1;
 const nftContractAddress1 = process.env.NFT_CONTRACT_ADDRESS_1;
 const nftTokenId1 = process.env.NFT_TOKEN_ID_1;
 const nftHolderWalletPrivatekey1 = process.env.NFT_HOLDER_WALLET_PRIVATE_KEY_1;
-const nftSigner1 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey1}`);
+const nftSigner1 = nftHolderWalletPrivatekey1
+  ? new ethers.Wallet(`0x${nftHolderWalletPrivatekey1}`)
+  : undefined;
 const nftAccount1 = `nft:eip155:${nftChainId1}:${nftContractAddress1}:${nftTokenId1}`;
 const nftProfilePassword1 = process.env.NFT_PROFILE_PASSWORD_1;
 const nftChainId2 = process.env.NFT_CHAIN_ID_2;
 const nftContractAddress2 = process.env.NFT_CONTRACT_ADDRESS_2;
 const nftTokenId2 = process.env.NFT_TOKEN_ID_2;
 const nftHolderWalletPrivatekey2 = process.env.NFT_HOLDER_WALLET_PRIVATE_KEY_2;
-const nftSigner2 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey2}`);
+const nftSigner2 = nftHolderWalletPrivatekey2
+  ? new ethers.Wallet(`0x${nftHolderWalletPrivatekey2}`)
+  : undefined;
 const nftAccount2 = `nft:eip155:${nftChainId2}:${nftContractAddress2}:${nftTokenId2}`;
 const nftProfilePassword2 = process.env.NFT_PROFILE_PASSWORD_2;
 const nftAccount3 = `nft:eip155:${nftChainId2}:${nftContractAddress2}:10`;
@@ -46,6 +50,29 @@ const groupDescription = uniqueNamesGenerator({
 const groupImage =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
 
+const skipExample = () => {
+  const requiredEnvVars = [
+    'NFT_CHAIN_ID_1',
+    'NFT_CONTRACT_ADDRESS_1',
+    'NFT_TOKEN_ID_1',
+    'NFT_HOLDER_WALLET_PRIVATE_KEY_1',
+    'NFT_PROFILE_PASSWORD_1',
+    'NFT_CHAIN_ID_2',
+    'NFT_CONTRACT_ADDRESS_2',
+    'NFT_TOKEN_ID_2',
+    'NFT_HOLDER_WALLET_PRIVATE_KEY_2',
+    'NFT_PROFILE_PASSWORD_2',
+  ];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      return true; // Skip the example if any of the required env vars is missing
+    }
+  }
+
+  return false; // All required env vars are present, don't skip the example
+};
+
 // Push Chat - Run Chat Use cases
 export const runNFTChatUseCases = async (): Promise<void> => {
   console.log(`
@@ -55,6 +82,12 @@ export const runNFTChatUseCases = async (): Promise<void> => {
     ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██
     ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██
     `);
+
+  if (skipExample()) {
+    console.log('Skipping examples as required env vars are missing');
+    return;
+  }
+
   console.log('PushAPI.user.create');
   await PushAPI_nft_user_create();
 
@@ -113,14 +146,14 @@ async function PushAPI_nft_user_create(silent = !showAPIResponse) {
     account: nftAccount1,
     signer: nftSigner1,
     env: env as ENV,
-    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword1 } },
+    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword1 as string } },
   });
 
   const user2 = await PushAPI.user.create({
     account: nftAccount2,
     signer: nftSigner2,
     env: env as ENV,
-    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword2 } },
+    additionalMeta: { NFTPGP_V1: { password: nftProfilePassword2 as string } },
   });
 
   console.log('PushAPI_nft_user_create | Response - 200 OK');
