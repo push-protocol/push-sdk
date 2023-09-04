@@ -255,6 +255,9 @@ export class Video {
 
         this.peerInstances[recipientAddress].on('connect', () => {
           this.peerInstances[recipientAddress].send(
+            `initial message from ${senderAddress}`
+          );
+          this.peerInstances[recipientAddress].send(
             JSON.stringify({
               type: 'isVideoOn',
               value: this.data.local.video,
