@@ -326,9 +326,15 @@ export class PushAPI {
         return user;
       }
 
+      const userDIDsPromises = users.map(async (user) => {
+        return (await getUserDID(user, this.env)).toLowerCase();
+      });
+      const userDIDs = await Promise.all(userDIDsPromises);
+
       user.profile.blockedUsersList = user.profile.blockedUsersList.filter(
-        async (blockedUser) =>
-          !users.includes(await getUserDID(blockedUser, this.env))
+        (blockedUser) => {
+          !userDIDs.includes(blockedUser.toLowerCase());
+        }
       );
 
       return await PUSH_USER.profile.update({

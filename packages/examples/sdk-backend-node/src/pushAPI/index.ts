@@ -143,28 +143,40 @@ export const runPushAPICases = async (): Promise<void> => {
   console.log('PushAPI.chat.accept | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  // TODO: Fix this
-  // console.log('PushAPI.chat.reject');
-  // const tempUser = await PushAPI.initialize(thirdSigner, { env });
-  // await tempUser.chat.send(secondSignerAddress, {
-  //   content: 'Sending Malicious message to bob',
-  // });
-  // const bobRejectsRequest = await userBob.chat.reject(thirdSignerAddress);
-  // if (showAPIResponse) {
-  //   console.log(bobRejectsRequest);
-  // }
-  // console.log('PushAPI.chat.reject | Response - 200 OK\n\n');
+  console.log('PushAPI.chat.reject');
+  const tempUser = await PushAPI.initialize(thirdSigner, { env });
+  await tempUser.chat.send(secondSignerAddress, {
+    content: 'Sending Malicious message to bob',
+  });
+  const bobRejectsRequest = await userBob.chat.reject(thirdSignerAddress);
+  if (showAPIResponse) {
+    console.log(bobRejectsRequest);
+  }
+  console.log('PushAPI.chat.reject | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.chat.block');
+  const AliceBlocksBob = await userAlice.chat.block([secondSignerAddress]);
+  if (showAPIResponse) {
+    console.log(AliceBlocksBob);
+  }
+  console.log('PushAPI.chat.block | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.chat.unblock');
+  const AliceUnblocksBob = await userAlice.chat.unblock([secondSignerAddress]);
+  if (showAPIResponse) {
+    console.log(AliceUnblocksBob);
+  }
+  console.log('PushAPI.chat.unblock | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.group.create');
   const createdGroup = await userAlice.chat.group.create(groupName, {
     description: groupDescription,
     image: groupImage,
-    members: [
-      randomWallet1,
-      randomWallet2,
-    ],
-    admins: ['0xF0c587b098E73Ac0c6808be56C10baBef19CAdDE'],
+    members: [randomWallet1, randomWallet2],
+    admins: [],
     private: false,
   });
   const groupChatId = createdGroup.chatId; // to be used in other examples
@@ -236,6 +248,21 @@ export const runPushAPICases = async (): Promise<void> => {
     console.log(leaveGrp);
   }
   console.log('PushAPI.group.leave | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.group.reject');
+  const sampleGrp = await userAlice.chat.group.create('Sample Grp', {
+    description: groupDescription,
+    image: groupImage,
+    members: [secondSignerAddress], // invite bob
+    admins: [],
+    private: true,
+  });
+  const rejectGrpJoiningReq = await userBob.chat.group.reject(sampleGrp.chatId);
+  if (showAPIResponse) {
+    console.log(rejectGrpJoiningReq);
+  }
+  console.log('PushAPI.group.reject | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.encryption.info');
