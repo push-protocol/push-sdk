@@ -269,8 +269,8 @@ export class PushAPI {
       });
     },
 
-    reject: async (target: string): Promise<string> => {
-      return await PUSH_CHAT.reject({
+    reject: async (target: string): Promise<void> => {
+      await PUSH_CHAT.reject({
         senderAddress: target,
         env: this.env,
         account: this.account,
@@ -527,8 +527,8 @@ export class PushAPI {
         });
       },
 
-      reject: async (target: string): Promise<string> => {
-        return await PUSH_CHAT.reject({
+      reject: async (target: string): Promise<void> => {
+        await PUSH_CHAT.reject({
           senderAddress: target,
           env: this.env,
           account: this.account,
