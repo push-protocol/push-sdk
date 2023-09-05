@@ -110,7 +110,9 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetch Chat History](#fetch-chat-history)
     - [Send Message](#send-message)
     - [Accept Chat Request](#accept-chat-request)
-    <!-- - [Reject Chat Request](#reject-chat-request) -->
+    - [Reject Chat Request](#reject-chat-request)
+    - [Block Chat User](#block-chat-user)
+    - [Unblock Chat User](#unblock-chat-user)
     - [Create Group](#create-group)
     - [Fetch Group Info](#fetcg-group-info)
     - [Fetch Group Permission](#fetch-group-permissions)
@@ -119,6 +121,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Remove From Group](#remove-from-group)
     - [Join Group](#join-group)
     - [Leave Group](#leave-group)
+    - [Reject Group Joining Request](#reject-group-joining-request)
     - [Fetch Encryption Info](#fetch-encryption-info)
     - [Update Encryption](#update-encryption)
 
@@ -7428,8 +7431,7 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 
 ---
 
-<!-- TODO : Uncomment After Fn Fix -->
-<!-- ### **Reject Chat Request**
+### **Reject Chat Request**
 
 ```typescript
 // Accept Chat Request
@@ -7440,7 +7442,8 @@ const bobRejectAliceRequest = await userBob.chat.reject(aliceAddress);
 | -------- | -------- | ------- | ----------------------------------------------------------------------------------- |
 | `target` | `string` | -       | Target ( For Group Chats target is chatId, for 1 To 1 chat target is Push Account ) |
 
-<details>
+<!-- TODO : Confirm Response -->
+<!-- <details>
 
   <summary><b>Expected response</b></summary>
 
@@ -7453,9 +7456,239 @@ eip155:0x7a38D295786d1480BAab4a63b8d85B5a47bA4b78+eip155:0xcCC0Cc5081A135E4269E8
 | ------------- | -------- | ------------------ |
 | `combinedDID` | `string` | Combined Chat DIDs |
 
+</details> -->
+
+---
+
+### **Block Chat User**
+
+```typescript
+// Block chat user
+const AliceBlocksBob = await userAlice.chat.block([bobAddress]);
+```
+
+| Param   | Type       | Default | Remarks              |
+| ------- | ---------- | ------- | -------------------- |
+| `users` | `string[]` | -       | Users to be blocked. |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  did: 'eip155:0xdE3CA2cC2c91Cb9B3aDB80ac497662Dd9E57BFaA',
+  wallets: 'eip155:0xdE3CA2cC2c91Cb9B3aDB80ac497662Dd9E57BFaA',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGT29asBCADVtp8rHsmtqgUSHxutStJ8AO78jWFFerHJQQ7M/QRZ/1mg\n' +
+    'uDTt4QTsmhNPlyzQ/OztVDOddn3qqZg4/gLUpJclMmR3UmxmTGrv9PaL9IOv\n' +
+    'otdKrLlYKeXUHbaBWVgXHv6F7hrCx1Faiq4I5Ca8tdxhKyQc9WAA4f7TTxhg\n' +
+    'htDY3VfRnp1LFlXyx8GyqCBGpmQx3tSK0w6SoC0FdCq/DpaXD6ofIKH8kcjJ\n' +
+    'vpBXw6MLwymZrfzbUtYWykOZ7QWgDWF6Y0xjDjZvlajGeY7NfciQR+2ylb1r\n' +
+    'eOn1yGN0Fvw6+7gGZy85XaDoCnyDAws0Nn+2G9BqTKVH0UwweWKcqOtbABEB\n' +
+    'AAHNAMLAigQQAQgAPgWCZPb1qwQLCQcICZDxpr16PpcWmAMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBDqZlQ8vQkW6qMko3/GmvXo+lxaYAAC9AwgAy6nLLykcdRlW\n' +
+    'dPXUN/wTqowopbuRo5bMhz6+Q53Hf6qkjfknaswoBtE2bq/J54N0BN70Lv+j\n' +
+    '5klfjZWJF2stgMEyQfPbXp1yXQi9Rlmvg4qZvZRww5UNm6CuqxU/stXQK/Je\n' +
+    'N9eIqd+fTB1EMKwbFrFHfOSKWK7OGnb6fi6JqofJcGvA0Oj1Wkf3i6UohsZL\n' +
+    'XE8L1Ku2IXc4oUZH5UZD6vRYkQg6/EGq+WrHUXX2nifdK5b5tGZcfGe6Tudm\n' +
+    'KeYFGTGfgbA8ag67nD4Esr296Mjjm06TTvqdo2r28/zn5KcRPWtHNpPU+t2u\n' +
+    'kwq7UBvoroACgr3yZkdAFLt9E5NRTs7ATQRk9vWrAQgApfSeqUx3ob+kinzU\n' +
+    'opKC8L9qV6jqkYu80coITufcc4TUEYlNEZwSaMRA+vOk+bwWbc+zJG7zW8aq\n' +
+    'Tx0LyZqABgRsWOsNblepCzyejLmAwxl8kBEAMQvJ4Hjo55MGEjfsIFSqeEGt\n' +
+    'PkPZBpxYN0/sB+yYZDt+59L0GGLC0vrxvj9aLw1xRaTNCNLkawTa8vTCwSTY\n' +
+    '/833aJy6kevAXzj7V8hOGnY5JU6dx5Wbsi1HmzuhtW/lG2n0JtYokfpESnQ7\n' +
+    'La8I9PqpJC87iFEdt7MST2x687sf0vJI/QMRQ2kZF6Pi8LRYuMmrYTF2BIaH\n' +
+    'kmPafAoy8BYNfetl67EArGHckQARAQABwsB2BBgBCAAqBYJk9vWrCZDxpr16\n' +
+    'PpcWmAKbDBYhBDqZlQ8vQkW6qMko3/GmvXo+lxaYAABjFwf/epZQQVs6w3Fj\n' +
+    'JV2OhS5PYsNr7hWAgAVTgqBLOuPkWG+yfwmayqyQKJmr3a/e+1wKC+Mrz1D7\n' +
+    'cRpyiwyiCp01has6qMAledjGweg5wTz4axMSQn/KsLc7dsLOtccV05RkRPMZ\n' +
+    'vRDDJkfIVYILBikTcg5WEIulGuy7enQO+Mo239WrUxi2QjAkEMt2pxjp4qNM\n' +
+    '9vMEPo8uUiEj/+Tsq15kbE5NGpL+n69R1/PYpHp6R7acimsZlXqyhUVaTD67\n' +
+    'QDFLdR8nVToU2ACOvmJicTVHCiDbRfeUgMaaTu45degUEE7rbh+dNiJrkyFh\n' +
+    'GCHIKjRcKEpModMxiZSJBINcWI2hlA==\n' +
+    '=ktHx\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  encryptedPrivateKey: '{"ciphertext":"5d3b651b63db81767bd7b9387a085c0134a30d2c77545b4db528c15c429286620edf527b069d4f90fb7e7e769c6a0fff19f52676972765881cbb601e78f386cc492b6ff7a4739996148904dc09f4f95ebbd53ee4e0f17d17dac66aa5b11e09daecf307b120f5d1157465ef15114b0b20642d7b64d45a218307764bf48c819e05247db0d782745d458e5ca574f92e0479188d5ba557201d58d85753f2619fd1648a80f8153e4847b7fa455e50379b096b4e430fb49b3084441a08f715f3b99c722e5a6b730ca8c2160075594caf3fccc26bc9289c116751e4e8306cf33b96a60bbbe46bf4363dd3b25529ced93c67ec60a153331fb340d2344851ace937dc161dd9aeef20dc71a6afd7cf308d8f4c05e9c779bf5d684fbc4620b955b0aaa80f89287c197f2f4b00b5450b55770ca1d44c8a78583762c3740dc88fe122afbec422e64842ae9719d21334d0289718468d11a3cd12373583488da7631f924c9f1566c6eaabcfc9f146fa50e49986300f7e7a3d36d0056c381f6decb38b10ca291a747deb0d896168fee9279b5bbd0ffb7aa419843d1f69da632552aa885ad694fe8ab50fe0bbc79ca4980e522d4b001215bd267752340f02270d05a5ad8673ef998199b1b0e6930cc53c97a14245ea5355e10a438513a94bdcab49b4aa605277ad11ba0603ac59d6f2e1068791a61b4531d55c55837bf43299524e5c4ff454631eddcdab0f036b70985e49f155bed3bbbc36f9e69b6c411077051c2f3083354160146336f7d023b51b8091b32cec3b0d8e5dd67f3796e00472d1b305ad3f861b6ea863deeabad29bac8dad1ded1a59fdd965ff5903c7dfa1ad956a4264e2227ffe9bd9e15ce7eb48c0a6494c07a95865770adacc94703c19f4c1aba9bf885d6311490a285d42a6e8899de07709e176a30dff3e8988de3f22188d0adf03bb633607ffd4daa503b7121a5e5c3946bf3a48d62d511cf5518ad94b43839827af07faf9037bc959a7ef621df75ad965045dba6c89ae255d200ebcfaa0a2f652ffe630df57685eb471c4b089ec6e7d4c841f1e2e25bfc3b852cf79c4fdf66327a18302fdc10c6f044e42387bb89c45644643546e93324b8ef4d7ddb6016457f5098da369915ac6e1d2ef45fc9155cf13d165d7822bc6e463932cc69ac7b372a0e3b18c45b45bd275b38af4b29d665856dfbd6e6c6ecd9b6d02f4e61308273d76ba0baa0eaa03ad831adb428ec70a1dd29b3b2c4941adfddaa76ac99c47bf6eef92a361ab890c3e9bc714263a4f93289cad7344882886aa101685586a54e5da7d370449b91400e48c6a1ae8f6e2bcc06fe186d981399c28143a3faf1cf2c06342b82382c01096ff8542ef55c24175d052f199fe39a4ebf39c56bd30a8251c19745d1b9d0a1a96d81e6cff3c060d00d85d627a9344e1ae98cb42c1f05cd2dd9ae3d83b7974a7bf96980c33fcd76f96ec6c2ea11a2348026333424307f1568e5aa575c31f819260d52ad968e9a17cc46723ba1e129614d2a47ece4dde0e0cf4bce2be7ab25441255997d8bc659a194665090baf6e071dd4775b2e2f7974d26e0cd040df9890ab58c77732d6e33a8ce909e965c2f04a7f65ab5331c044cbbbe39184721310235a772b30a30071a8058b9941f42d85c2e63bbfece7d6116a507bf1612194ed17f430274e4053d2b8de761cd6c316f08c401c66f1650d0e83fcd0d69dc92763f8202748d8e40bacae6cfa264d8ab19ff86e1753d3a33c3ee9b4b9fa6ef64765e9d2b2ba52b28e61743aca96471e6c35143ac8238275b504e7d0ccf0c9cec095d02259849b5f382fd7eb0b7fa3ddc0c5dd91cc2be7829948852dc740d9227f17b2f960141f4807678a2dca6ee24a858a6f20874b1b8e35305106c77c38dbbe52d3e533a845dc8a0912c7d95218c6b820384de5c2693447529522df552383e35d126122801008aca30065c8f93c8556ceb09f5512e64dd481d5ae823675c201124759a80477b1be6ff4756e94e814b279f4de19b79a72acc52d0e1d1e9119abbcbaa1ef0c6dd50894db4ee5f4c005658416fa840f19e36b65c591e73ac8ae4d9e49ac13dfc40d754cc4f9eefd327876a94e5a72f6ebcc8bb4645f6da8a7505d64190ef400829be6455737fb60d595ab13cc9d8634514675803693402570ff869858943c4cfaf914402153a41bcbf417be30c8220ff994d48d85a2893991a5241d407e6acf8341d11bc72de3967720238b218052580d121c6d2d01e788d6cfb2bac26ae205e0e72198c40418bb6e3f25f0e14f03d237bde9efdccdcdb2659a40276ac760a4eeb0770bdff49513b88e51a649bccd82da5c82e6c50a91cf9145091f08bacf7aee46e80bdaeb320af371d6e6b6bc29fab41df2c4f09953c0efa3b92f0745c9480536680d60fa0badaaed85b8836b5e5e54c5aebfc99e2a3b32ad3a5c882829b55e9d80a33468b05e8196c408a9de4a13af00df4c9b632eb4d04372c99c8020fad56383cd4937088d2fb4e7a0c4edc15e3bd79214337e02fc72cfa703e12bebc396068da9eb6ef142a55f6eefd8d11a501c4c6610c808a75923e2b279a2809ca34c2da49731ce85756a7039b667cafcb081693375f4cf8e1b39aa5f29560d7ca003775ad5affc621c359198a4dfe484edb11853586c1c664459c996457454803fee7350786410b8b9d81bc0e31f4426760ef812ebb49b1a63612c3c3249a0dfea9b50b620a818654bc18bb3f411024ef9ef7fa21a494f359473bcb30c70070b78ea9106d5441dd89322ee2a31c945b884ee9008841ca8dc776aaa6c46526e6a21ead1831b20697b75905a13dd947ee53e6a105f0bccb3184f679b05c475f5294d96a16fc50dd9430967a1c7013c054f3fb0fe07c586c5835b048238fd1effb7bcb6ae6da40883f387dcf684ac20709c59a312507d125fbb65208a985f0a6f5e2e442330ce39c0503d27cd32d61541f99e1d20b2314e830f3d03918be89152a0547a45ba0a419ef6beccb83b444c8081fd12c79f8d88ace21c9057265b351a7ed8588560a9f549149b1e2fcacf99fa6cd045462122a4f60d969fdc7d780465349fa359c95a5b58a9e2b751e45301696407a1ddd17c32dc7bd5acc3ce09ff5ad20b9d91a9ac8eb3d142bb6907f19b789cbbe15a2a34469e90a652e5504228f12411a4ef54abc1c1d9a132ab85e42f1dbe2c14eab46532f22fbad0e912911f44510c10569a99a0a99f774070178776a970d83bdf50257cb6ba08ba6561b16535b1e05c16a06bf0e3b29b082f66b8336e676cb4c6e9bf98362b631173f683d251c4866e49860fb83f4053087f44c033198397ffb69b7053746ba150e16399c2f064967334f893125de76539730211f8c6edff3108db2c7e8641fc50ccb9946596b59fa425265ec86db50414218b494b5166399209a1d664d2157da0161d9786396dcf2d91f9433d39219d35f6974c96e4f1bf5f5e0a17db196e97dfff13e58131ffcbe3a8a647cb6a17754657b93e9b9cb458b9bd1d8cbbde72cdbccef7073ab2c290e237423b8053a5cbf358a88d1101e1f648c392c80704c7dc9d0509e186a11a9d90e9106bb1fee1883af0daeed804702b9e2384ab0c519129ae330914ade6c5080f6a2d17b716f71d81c352c07c2cca0c210e0d951b0fefecbb00ff0c3693fe262cf9125094b46329eed041d3801025ebb67722659b98d3e5da83ba5343a058540e868742ac36c852f26b3310bd33af4884d3e51e046c0ee17b714ce1f29df6442468791a469eb1e387cf9d366d24b00aec6a089a88c96a82a1ff71b1947a24015b1cc13be259be5bb75731a18ca58aa46609e2a2ee9fe0583588f0c453a2b99166831669547428941bda9a65ab82462de8add40f16976a13e36a0018886d27b4cba663369d13fb056a874f6d5e0e9ee6567ce7428d9e179790b44649a05aa8523fbda4b9db72873e9aba33892bc0677339332d5da9b3b4754e2b387597d8405de304d8b65ba6bba9b0558457431820582df5ae3577efba787ea3b4eea2515cfba590c7821d2d47ada99c612ed4e3b9d3ff9ced63e76379789da562f45f851bd10e8e6d2ef633984ef4bc6bfdb4c833175448c3c6f1f7735587b6e325866a21b8d02cda06e9520d18350e38b428b3949635dad18cccd4d840d9e4c872b32c527d2f521de3822565b7af6f5d8e254bc142029faa91effaaea2ce70de748eae946a2521d3b5952d5874e5bd6c4322a35660b51ff114d5cf6c5b5fbaacf834eb1eb68087ec06668dbe804d349b1d5bd3396099f3062982fdb9a6afe542c8529752c728501ddbed65a210a28f351f3f44ad40d3a6ce4995f2e6da7495dfa40a4838fd2d808b2e298a863a7475c2134a713cfe8a47fb5bd479891c2747f0db0005ee4a894b6e8b66cb5e1af8d938fb1f5f53c24aeacbcf25b57b83c5abc3a1adbf7853e0a6ed5904e19d5d824b1500296550589c4a3186359b72a1d482b02dfdc1874e64c78a9df7097696457832d6aa572102000c06af444c8ab83e6204ea920a2a847cb163efd9a4701148b4009b2f8053bd7d6408045f627df3f45b002d249a20dd829cc8ba18d9c468d816d451b7f3792e31f360c5932656aa7bfae55b75ae0c40af53ad33005d065d047926543d68e9548c51c3d5405a164b902825fa5ba8c8be5dbfe8632a94df6ae322425be86df9234140bbeeb707d45dfb4b64a09925499ddd2192ad1174776f006f3e91627768f60be59756b7a9b51e4e4e02c01a7fb8b06e63dc3e71951e0b426652b1796bf546da832ae70b055a4700b3d6e266f4af898f0f517277db75aac827d6c30f75c6a6fc9fe6ef67e6f3fbf9c21f731f1f5d89feeb1a76c7ac9923320eb56c517f937a32f3629a8fb4f134a499562f837515596508cf6b2ff3de5c536dedf2946b85505c5843d09bed34","salt":"7b0c5813b930a5ab6713f1572441734633ec845aaebf526f1daafbf89ef268c4","nonce":"bf2c1e6312caa6a32e95eee5","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"fe71bd49335560367aee6772233e69316de48378df6ed104647068e8525d2c4e"}',
+  verificationProof: 'eip191v2:0xe58171978843f55fda11f3989ef8a2310a3366585cf3ba6c71dc260e362bea1b2b2667e287959f6f79628a03073d5757011b7161a2782c32290f924486f87e0a1b',
+  msgSent: 1,
+  maxMsgPersisted: 1000,
+  profile: {
+    name: 'Bob The Builder',
+    desc: null,
+    picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA40lEQVR4AcXBsU1DUQxA0RvrK3JJReE50jADEpTZwRUbsEIq75AS5sgcnsFKE1orxUMRSD5n9/n8cqMxV7qMojNXVjKKzlzpMopOGCYME4Zt3Mko/lNGsSIME4YJwzZ+Ya48wlzpMooVYZgwTBi2ccdcWckoVsyVzlzpMopOGCYME4Zt5spKRtGZKysZRWeudOZKJwwThgnDtoyiM1c6c+UR5spKRtEJw4RhwrDNXOkyiu5yPdK9fXyx8n16pzvsz3TmSicME4YJw3avT6cbzWF/pjNX/iKj6C7XI50wTBgmDPsBSK85Mi5fmXwAAAAASUVORK5CYII=',
+    blockedUsersList: [ 'eip155:0x30d45C4aAfDB894Dc529aE15e7A55fCf49184eCf' ],
+    verificationProof: 'pgpv2:-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBYJk9vWtCZDxpr16PpcWmBYhBDqZlQ8vQkW6qMko3/GmvXo+\n' +
+      'lxaYAAADJggAoSO2WXXxPtkFBMcM2Bqc9pzBFkklicmWj3Fjl+6FB3sDXt3V\n' +
+      'YGNDqSruqpqoiCpMATy9QC48zO9Bj/gbIzuIbLRvNs9M3D5e0si4/OHKIbSX\n' +
+      '3dBiaqaLdki7tUvtPioQ4Q1ZkdOATr3Wr/PyrHc0V00fE64qb0MlN4ouvYYf\n' +
+      'yG4WK/0x0iH/RPRyG60fkrsmZa/PPpRBzReZXwrsVbBoOCBSe6f9s3EYTfim\n' +
+      '4ThX4zrbwKXx7Wgv1lXw386jvlaqUze9A14DAq6OjwqAZEVmLZaq6r/OHmqM\n' +
+      'Jy4fZI2auG9uYDorCxP7n6RjOSEOCLG8k+WRDFn6LSPJpdrYoYi6MA==\n' +
+      '=d+/X\n' +
+      '-----END PGP SIGNATURE-----\n'
+  },
+  origin: null,
+  name: 'Bob The Builder',
+  about: null,
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA40lEQVR4AcXBsU1DUQxA0RvrK3JJReE50jADEpTZwRUbsEIq75AS5sgcnsFKE1orxUMRSD5n9/n8cqMxV7qMojNXVjKKzlzpMopOGCYME4Zt3Mko/lNGsSIME4YJwzZ+Ya48wlzpMooVYZgwTBi2ccdcWckoVsyVzlzpMopOGCYME4Zt5spKRtGZKysZRWeudOZKJwwThgnDtoyiM1c6c+UR5spKRtEJw4RhwrDNXOkyiu5yPdK9fXyx8n16pzvsz3TmSicME4YJw3avT6cbzWF/pjNX/iKj6C7XI50wTBgmDPsBSK85Mi5fmXwAAAAASUVORK5CYII=',
+  numMsg: 1,
+  allowedNumMsg: 1000,
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  signature: '0xe58171978843f55fda11f3989ef8a2310a3366585cf3ba6c71dc260e362bea1b2b2667e287959f6f79628a03073d5757011b7161a2782c32290f924486f87e0a1b',
+  sigType: 'eip191v2',
+  encryptedPassword: null,
+  nftOwner: null,
+  linkedListHash: null,
+  nfts: null
+}
+```
+
+| Parameter           | Type     | Remarks                                                         |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| did                 | `string` | user decentralized identity                                     |
+| wallets             | `string` | all wallets associated to the did                               |
+| publicKey           | `string` | Public PGP key                                                  |
+| encryptedPrivateKey | `string` | Encrypted PGP Private Key                                       |
+| verificationProof   | `string` | Verification proof                                              |
+| msgSent             | `number` | Number of messages sent                                         |
+| maxMsgPersisted     | `number` | Maximum number of messages that can be persisted                |
+| profile             | `object` | User profile information                                        |
+| origin              | `string` | Origin information (source of the data)                         |
+| name                | `string` | Profile Name ( Deprecated )                                     |
+| about               | `string` | Profile Description ( Deprecated )                              |
+| profilePicture      | `string` | Profile Picture ( Deprecated )                                  |
+| numMsg              | `number` | Number of messages sent ( Deprecated )                          |
+| allowedNumMsg       | `number` | Maximum number of messages that can be persisted ( Deprecated ) |
+| encryptionType      | `string` | Type of encryption used                                         |
+| signature           | `string` | Account signature ( Deprecated )                                |
+| sigType             | `string` | Type of signature ( Dprecated )                                 |
+| encryptedPassword   | `null`   | Encrypted user password ( Deprecated )                          |
+| nftOwner            | `null`   | Owner of NFT ( Deprecated )                                     |
+| linkedListHash      | `null`   | Deprecated                                                      |
+| nfts                | `null`   | Information about owned NFTs( Dprecated )                       |
+
 </details>
 
---- -->
+---
+
+### **Unblock Chat User**
+
+```typescript
+// Block chat user
+const AliceUnblocksBob = await userAlice.chat.unblock([bobAddress]);
+```
+
+| Param   | Type       | Default | Remarks                |
+| ------- | ---------- | ------- | ---------------------- |
+| `users` | `string[]` | -       | Users to be unblocked. |
+
+<details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  did: 'eip155:0xd1790E37fe3459e3F48eEEe41a7708a3eC2148f7',
+  wallets: 'eip155:0xd1790E37fe3459e3F48eEEe41a7708a3eC2148f7',
+  publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+    '\n' +
+    'xsBNBGT291gBCADFq+sw1v0dNAqkG7bMUZy0tzo3E6iPZQ5UwlOvtzaen2md\n' +
+    'OHOTnvaCFRjRQZjrvlmbWwBELOTsHbmluA41MeayoJ7aA+o6+aflaa6PCUG5\n' +
+    'ugAfXjuQxPn+gK0hFdn6IYxvBQHdh+Hu0Obi4peol1GobzraVZt/fRrXdttA\n' +
+    'tLM7EmvX/l5440xO8+kZ9/uhMx5MR6fdD32AWPpGDy6tJin4awSdTN4eIwI4\n' +
+    'ueKUZ0+B4wWAiEkRwIRWY4vbCCfMeF+qNMGBaz69I+YS/2FvyqAXTkyKytt4\n' +
+    'U9efp+ObJsNGk8OA2JWZE+X/16eO8xvQSHhcoH5L2ahGTmG8+xr8bFoRABEB\n' +
+    'AAHNAMLAiQQQAQgAPgWCZPb3WAQLCQcICZDzsIc63rzcLQMVCAoEFgACAQIZ\n' +
+    'AQKbAwIeARYhBLvWJU1IWhvs+frC7POwhzrevNwtAAD9Awf2KFgMZaNyYeMO\n' +
+    'DNojkd6YpwtXGp4zxxL4JrZwDBginbcba4oUyTAqIcJWe3BAGPXX4hi3AYjE\n' +
+    'BIERstIeb/YkcTyRgyZKDj7tDNPF0itxfiUXAETN7Z+ySkLWx+5rQ8B9VQv5\n' +
+    '0PLDDwBfwju2pp1/j8XTx/81PSjVKpFQoEsEPOj+WloOdonzx+SGcr5mjjYj\n' +
+    'rR9NpHVUxi3Xx40zJVVqWFbTdnqd1Wm5SGkrRWLJAe1hzHhYxtpEDGqPfxYo\n' +
+    'bBMe7bphBkh4DYWuemj/2PiZaS8NC1ed32YOwOSWJV+9wmUvIvq3Q08AE2yF\n' +
+    'tfeNnX6Gb6fDgvPa3Y1Qg/0S3wYvzsBNBGT291gBCACqFMmyuJkBkNwwpNE1\n' +
+    'L1bJLulRqEm/tCZ2HY58G9NGYgo6u9Ii8H+ia42bf9Ezq4fLBDzYH0T6Pe9Z\n' +
+    'zAQHudpId8SNfT15QdqYvHjovxk7jqucF/+W7+DilPXZn6eomrOKePCNP8Cg\n' +
+    'JXSoShkVaWkbkr2UkHGpcU7YIvooAtsxXMWWr1Z3hbk7tCf1uwXV4NlAGIXx\n' +
+    '7FSvWuQ5ow21GqM/6HyeOzbJRis0DNV5NHY6uUoFNUNzPPBBYx8DRDzjmmde\n' +
+    'KpjialSW5QK7g8KlWaSGnHFCd6eS7pHZURl1l299ONNJ5m/B9yibBKwHCQ3r\n' +
+    'V/8ByDlxzjU3wbgdZ7+LfjitABEBAAHCwHYEGAEIACoFgmT291gJkPOwhzre\n' +
+    'vNwtApsMFiEEu9YlTUhaG+z5+sLs87CHOt683C0AAGnNCACtFS+hJSnqZDmf\n' +
+    'XGSIw3FLkD7OsaOd/75BZ+cqXnfE4is4JlN7IceOHb/9+UlghAOfpjJYfn3Z\n' +
+    'HobaRnUZTm8unx0uVQZ4PEZgPGuIKjnwmU75xZVpYegXTE55faiDoQZp0Kir\n' +
+    'zyScqaIuxHGkuW5Ii4hcLXKBK5qKv8cydeOgZU4NJ7jb8DMQhWulx4PHOaMk\n' +
+    'JR/sRVuzkxfZQ6LPtnWoTmJLr4wJ4WD/nM77W7XmO8ZGoe2hE5V/OZJC+0uQ\n' +
+    'OPK4S3YmXcBZoz8L6/gdUQz6kaLtRzsP7vZfyn4jWhlbfad1R7KM1srRT+OT\n' +
+    'HDPpdh1b+4npYo8iTcJTnANQ5oAm\n' +
+    '=rs9R\n' +
+    '-----END PGP PUBLIC KEY BLOCK-----\n',
+  encryptedPrivateKey: '{"ciphertext":"4bb789bbdaa33f355800c4b8d14e75f310050a0269961b1f4b64c820756ce3595ac737fba749f0b268c418b19cb32f5ccd476bddec8d252ea4cd8e7cf15423a03cc00e9a2064e4134aba89524fe2018fb5ef6b27024a4dbe519883e6f41b462608c33914e129fd651e88d0f14973b3305f8e9d1e3d95670263b1b36921a1b5052f43282768a7210c7b66d5f5886359526cb56f48c61fd3cb165ba15b36f47611d1af8c2aa6d34eec0966d1aaa5522bc2291a5a962585218b4cca7a8d4081aed274ca8ceef95596583683b212549f0568a78b9116a4847d94d32488a0c4ecb9a9b5045afcebc9bcf9d3406fbb4d7eba89f21efce27e3ac174941768008f9d67842efb65e1f3f658a9b366c5c164b5cde2c2db442421c39d46e6017be35bb5b73b06a1569b35e8c4814e0edc1f1be46a964b5a4d9a8245694e530c43e9dbfb9176c41731b315f53b46138c270b6faaec8562abfdf7b595284de89d75bfb87e977330e943788ff914636a2cb81da54dcbaaaa39bd06929020dddcd3b628c44a91a3985f527a9b4592bda19aee4da3e3ee6bc73f98d6de843315476b1f67f8b8174db7b985b94c88c0686b4fd42b45ba398a46638b8d0cde5caa22f45fa51c749377baf35358ee2c1c057dd85b550194f4436af0a43c7c5f36bd7620f28a5ccfa28f16732a4992ff9345a863f1a8f48e5312ef5927b2af2890fee50ad219b43a88781e4b007572e4b7abf5fc5b41e3b944bb164f6c9a397495c46da239b0d40aad8d5bd17a5d02a032212f6495c2f4b8287a0e2d4b7a7d4a56114becb7a26e87233ec3201c558e6f42bc74414b34ec39ada6ab64f7ba9c47e0ddbbe5a622045b236b4a137adbeeeea3559b7b8873d727f7707f75a60a3310a54080eb00e59d6fce88ffd079ac9bf3c85f4fcdb56355bdb8b0b844f42526f4b624591a1729d5b7bed31c1affb0a95266e1092afd45f5c2466a2a7234f8481b8526180ae854e6b9b5e2a2835aef5dfba36ede0c01a56eda4aea27dc415f3ef1440ed0b8f8ae805544d3f4e24d0c9ee8b4ed6def38c7a545cfdc32b3efcf3ad321fab80a15b19c5710198f97826321b69c7677bcf5cae6218279f4bf9192b4ea77e510b7409b31e7b50c4b2dee85857ecf42f3b12365ac73c41d7bbe0564c8d741128c0723619a48ac29760c1a9eff36c179b50e6be26b4e10432cf6b8f987838450189a9474e20bc10adfcaacd1199c026cecb9d8b905bf9a2216345ef532e7cf3b94bc6962b4ac1cf52ed86547aaac352d2ce3a294ccd7299221722cd2852b7c5120dad85e041b09709b49e29e2fa17e6e94c0a77c0508ae805f4ecd0fc70b3ff78cd38ada6d8ddb9b150677589ab5b77968bafdf9f8cbfb0c7ec85d35c004b7d74dab2b3c235069276422878d6c0967ed051b03f05ae70ee8f054eb25054ece32f548c48671aa2b0206f61261f3ce8f44e2754f505ea29d879a1842531e7f2c37333be6c34178c4ccde01fa79f344809e0bddf8aa07e4614e4ed31b4d2fb4dff0b97cb33305afaff864ded85b13a69de4b421f331471595df86e6a8a6bf0c64bd00a7b8521614d00e0120895ce81355285fbbdfde434df2846fb062d5e309fe58df0ebc568378ccee69d6f86aeaed2a65e3ff477812692316535f52b927da1ae3a3cd49ed49fc19988e2759f7252510af3d6f3b4b444d838c24df9627b3cbaef01707de84182c1440c736d5432da40a9ba9d493917c82f3b6475a2d2b82e77dc72111ed454b7cd6fe0d0b0f68512fe9538898060043dc9ed2995a1f8df00ac7b58fd8f9d169225c66b527b5447cf597a2c785b8777aeb2054e2c95106f701d1645bdbee9a1c48649e51dd7ceeb611a99cbd85f8e9f8fae2bdce1a46023eff7bf6748434117624a9002eaf2d1feee0b5d4519706a7fd04b7fa497a0f5e152d5387b010fce47b7df330c12b9091848976cc1aef5b50f93bc2332e320bc46d01c891fedce914141805e74c3f912dbf2991aa927eddec4ec2a80cd3acdb5946764ae5da7759f142420567cf51172b37a50d827e4f463c51a9fd6dd47139c8acba1dbd6036dd4ce6af0e5e37ddc6b2c37dfe3d1482d0f695268e842e980cdb2d6d3541856f7780b216012ac67363cdf9907626ac81fd498cd133150c95aa5832ad4119fbdab0bc8ac0012c7217558e52de5e9a0dc779cb7c013cb7a277849cb9e040d5b32d9c454317b59c8962a645540fa0d7ee59ce4468b697ffdd29c93d4db10bde567c9d2105553116860829e728e9510a4cf986a9857de09846fe78095a48787985ba2b95d2094798d9fa209b893e1874615b313b099550ad17f7050112ca81a8a3ef6c83f4c44a90b2ebe44c60d658f15ef773304ac2d715e7c061675c3abe58386a7a2803856009e5e8c495c7d3c97091ba82893899fd12fb127db0deb06aa5717c63a1f949b35be830c2a3f7731d3f41423aca7a3951c4b4ebc5e3d874c36b518276cb0c07c27952571691d4fc16655be7450b55b3587f0ce79695661d325bb6f736e20338556efc1191eab56f5a2479be34a4c7c8d58b1028def385eb0e60aed6b7e9dac35863aba918641eecb7d12cc55b858bfcaed15e330d6fc47c42e76a13e6671758d8f665aaea876191f51f335b48d1fca47dc3dbaf7a357eb3f1946d8b3073b925ba58b7886a68118d3fc5eea83c1650cb5842668f82eb3350efa6ae6f5002bef3c11c3e7f368489c5a93dec16b93817778941626f6ae7a14c6ce4e5512664b23845e0df4bb76aceb20931765106fdaefb0f749a5fee20cfe467b87dccc73dc66b652cf63ce97e8470b195ed7aec14a7c154f2a3563b8f5b3db7992499dc9795217be05148a21468b204cd025ead1cc1e4144728c9e910140d1d04225df4632fa71604bec728117791d4742c1e1006a0604601942f5852de872fef382378676f59fe6d704d1bd07b7ad0c797b6da17bd39d8b66f90d95d913d46686c3ce881c9136efe0445b1e87c2eb8cb2283532e617cf6a0c5f40fdff1fc25b8372c9d46295934a48ecb5d8a6bd5388b76a984d20a1934823501cc85b0b453bc8aa5a6f19502ca788f4ae5219e6470fd9cfc75a244cf2923cd05e1d9da40f21bdf3bbdeb4647cc82f5988d365dc2b4ae331db8e504cca746092c63f1e305b027e707c38e13c66f5d90553717f9f41cc2624d0c2cfbf814a2355d1e9dfeb06cee67b132425b4d0ec68bdc0fb058ce6c444fdd284995349379a2a17739f0859b7ce24e9b681aac2a78b5b65790aa0dc83aacc6607b15acbafcf7bf943cd3826ea64c765c6943fdbb11853abad1aa92aca6f34c0dd2002fac9f4293dc9cd776d882ccb6e1bc02eb1294e99a0cfadf3923fd9798927aa9754e0cc573ee57a20df72b08fd571ee093fac1cb074b9cc90d10ee909031fe0f3c0cd85f31871b7527d653f143cd71c2084c8a9d8354d98ca9e138eb9e813bb90bd71e58880f5b03da49218e77afc3a8802ae80770490233478c9ff149d1eda00df6af91a57f022e158d23f29c058c9183ee39c6dd86fdbdccc81851ad136fc2813c639e8b367dee11d7eb3efe8f57852f2629cdaa1586fd47150c8ecca8d1ac9cfbef23d2489a0cc515154a09b35717d029a5e7ff14d3969692281c71ebc1f8e21b6f77d724bfa60d75d3a77a54ff3043edf1339bc53fa4c2279c3068a47f8d57dea5481c6c1a3aea9938972dc00bf8b637dab25e7b01cffccce70ff15896e38bb160266370e58c61518b4de88ffa121d6f0c0c757c2585f89f456756176fcd2c18852b43231f9f3c439a338ba8052d1a498d92b9f329610f4a636abc3bec7e895b6244c2c013a1cb9c2661ea1679f2fcb931ab9ffc7d04674144a2012ecda09272d6bb83fe039cd472cd059d734137cc2cf017b1177a63b1c2db74c4b5a6ae9f65524b090c6857bfa9f05960b8dcbc6d4d340064ea6079cba74961dcb6a0f00b0de01863574158bc424cd3dcf14f43b067b3584aef99d5c4cd7831ed3e8608f3f31045c4c37d6b408f32d4590fef6435036164632698c880d22577bb1c521e01e96a57c5780665d97eb8c1b472f3a00c04362ce6f72bd9250958ed6970d411c38d616d90cdda53ab2a5621ad318cb5e23f923426c15c8dcf55d7f54a516fb0bf61fbca1e73ceb9d13742a200fa92bc06fdf8027f7fda8549cbc3f837cbf53f249225e2b7d11bb45f79ac946f9e236da16e080338bc0ec5cee88691dd9e5ea54c6079c325801e0ccc980443b652d8971bca1fd253f078da4390eef90d975460a1300a92936a2097b3529e3316efcc11b398ca5ca7128431f438b4756ca3f690844a4ebbc133f8ebcf030ad7839daebd8e9a10724754fb5d4ae289a9637932ae3dafc5b8d6017648305b1eb4d43b16e58eae02fb9501a56ba23f0c27bc9a800120b018cc69f1a070da2936a5af9cd25ba1aa64eae66b218c8964f2b38c371c8a25c04a353d228fc59f08602fbf74a98e61ba3d2a34a844bc829d5f1ee1eaf1bb1cacca386496e22eaf171f1145695f759062f9fa254c5d8c103ff26f1cd73b1c7fd0ced091c917cb63d2fc98ff2e1437b802fd60d6d72b146b695dc93d646913bb9ffc763d604ec61fa733aefd5f14c465cb1ac85a6a1bbc34fc2204876b76c631725690155eaa5d8f07648f22fe954b3b121c56046c24e99e3ab5b2bf10dbd85505d8f55a1cf985ecdf4a42b6d031ea322ac969f86acc6d3a8ba3f5361b6e05b86374bd43d707293c27993a5ac7595a0d5348332dc13c6b651b4a859702844cbded3c6bd35aa67c8fdfc4e913a8b8615ce28129aecf3217ecc4c2bfc48607b650c47bec3365e1af941b9046958b7c8b64bf45028760984336b6c27bc044a7ea69385805d089434190f0044d856ad2fbad4965846f59491e37f0256548d82145f571e18090b0fa91","salt":"d2deba0a43769862a0fbd80dd6fc867599706ca644920fe1bc05585f922b518e","nonce":"74e9fa0359646cdfbe86a7ad","version":"eip191-aes256-gcm-hkdf-sha256","preKey":"358718727d4b43422a7719176c09b66f633e52a47ee3879d1e19b85cc362938d"}',
+  verificationProof: 'eip191v2:0xd7f0bc7c3960f84280c1433e27c0110dea4b4af1a8c10f7531b8194625cada9456cb67117154f20e97a3d8764b8e3e276d0e6da44f36c4a89a06da9a76d3821a1c',
+  msgSent: 1,
+  maxMsgPersisted: 1000,
+  profile: {
+    name: 'Bob The Builder',
+    desc: null,
+    picture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAnUlEQVR4AcXBQQ0CMBBE0c+kSXVUBWdMoGRl1AsSkLIWuO4Jrj2VNCTMe5fr9fFmI7L4xRydHWEmzIRZ49AcnZ3I4oQwE2bCrEUWJyKLE5HFjjATZsKszdFZRRarOTq/iCxWc3RWwkyYCbPGF5HFao7OTmRxQpgJM2HWIot/iixWwkyYCbM2R+fE/fVkZ44bJ4SZMBNmwkyYCTNh9gEzZiOL39d+3QAAAABJRU5ErkJggg==',
+    blockedUsersList: [],
+    verificationProof: 'pgpv2:-----BEGIN PGP SIGNATURE-----\n' +
+      '\n' +
+      'wsBzBAEBCAAnBYJk9vdaCZDzsIc63rzcLRYhBLvWJU1IWhvs+frC7POwhzre\n' +
+      'vNwtAAB5dAf/cDGsyD3YabE6iTIhNPDn+hvbHuZUjpNPnnSb+mjrvD/XBNYV\n' +
+      'ITTHhp3Xy4Kuk19BkgmPO3O5TZHVUXK7IwYJd7uutNJJyLEWZYI9ttfeJ9cY\n' +
+      'HQM3GjApAHycDkBAn5ZRDtmruyWipeE1II3omDUgChQOnQFoK/jWohoIOUvO\n' +
+      'zi+0V02z7uIGwgTjBLgOYehD8NloGxTjwaZHMqEN7xbr1mZqy82Aew1Bw+EY\n' +
+      '+JPMyiKTF6HXHYrJZL1yaNw/T7ukCI8ecGoql04xlOHU+SKUTz+8Kcg4tZQR\n' +
+      '0pp6Fz9Fy9ROUI8ieu5LytJwQq4c9VkH/SPUvkoODloXc0MbrY59tA==\n' +
+      '=A3pG\n' +
+      '-----END PGP SIGNATURE-----\n'
+  },
+  origin: null,
+  name: 'Bob The Builder',
+  about: null,
+  profilePicture: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAnUlEQVR4AcXBQQ0CMBBE0c+kSXVUBWdMoGRl1AsSkLIWuO4Jrj2VNCTMe5fr9fFmI7L4xRydHWEmzIRZ49AcnZ3I4oQwE2bCrEUWJyKLE5HFjjATZsKszdFZRRarOTq/iCxWc3RWwkyYCbPGF5HFao7OTmRxQpgJM2HWIot/iixWwkyYCbM2R+fE/fVkZ44bJ4SZMBNmwkyYCTNh9gEzZiOL39d+3QAAAABJRU5ErkJggg==',
+  numMsg: 1,
+  allowedNumMsg: 1000,
+  encryptionType: 'eip191-aes256-gcm-hkdf-sha256',
+  signature: '0xd7f0bc7c3960f84280c1433e27c0110dea4b4af1a8c10f7531b8194625cada9456cb67117154f20e97a3d8764b8e3e276d0e6da44f36c4a89a06da9a76d3821a1c',
+  sigType: 'eip191v2',
+  encryptedPassword: null,
+  nftOwner: null,
+  linkedListHash: null,
+  nfts: null
+}
+```
+
+| Parameter           | Type     | Remarks                                                         |
+| ------------------- | -------- | --------------------------------------------------------------- |
+| did                 | `string` | user decentralized identity                                     |
+| wallets             | `string` | all wallets associated to the did                               |
+| publicKey           | `string` | Public PGP key                                                  |
+| encryptedPrivateKey | `string` | Encrypted PGP Private Key                                       |
+| verificationProof   | `string` | Verification proof                                              |
+| msgSent             | `number` | Number of messages sent                                         |
+| maxMsgPersisted     | `number` | Maximum number of messages that can be persisted                |
+| profile             | `object` | User profile information                                        |
+| origin              | `string` | Origin information (source of the data)                         |
+| name                | `string` | Profile Name ( Deprecated )                                     |
+| about               | `string` | Profile Description ( Deprecated )                              |
+| profilePicture      | `string` | Profile Picture ( Deprecated )                                  |
+| numMsg              | `number` | Number of messages sent ( Deprecated )                          |
+| allowedNumMsg       | `number` | Maximum number of messages that can be persisted ( Deprecated ) |
+| encryptionType      | `string` | Type of encryption used                                         |
+| signature           | `string` | Account signature ( Deprecated )                                |
+| sigType             | `string` | Type of signature ( Dprecated )                                 |
+| encryptedPassword   | `null`   | Encrypted user password ( Deprecated )                          |
+| nftOwner            | `null`   | Owner of NFT ( Deprecated )                                     |
+| linkedListHash      | `null`   | Deprecated                                                      |
+| nfts                | `null`   | Information about owned NFTs( Dprecated )                       |
+
+</details>
+
+---
 
 ### **Create Group**
 
@@ -8739,6 +8972,178 @@ const leaveGrp = await userAlice.chat.group.leave(groupChatId);
 | `eventType`                | `string`              | The type of event (create, update etc)                         |
 
 </details>
+
+---
+
+### **Reject Group Joining Request**
+
+```typescript
+// Reject Group Request
+const rejectReq = await userAlice.chat.group.reject(groupChatId);
+```
+
+| Param    | Type     | Default | Remarks                         |
+| -------- | -------- | ------- | ------------------------------- |
+| `chatId` | `string` | -       | Unique identifier of the group. |
+
+<!-- TODO : FIX RESPONSE -->
+<!-- <details>
+
+  <summary><b>Expected response</b></summary>
+
+```typescript
+{
+  members: [
+    {
+      wallet: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADeYpZfxgn1HoMUuWM42v8ZWfLPwglQYmzz5rY3PdPPoRFU\n' +
+        'v0AyPjYKpmLh2ZNfXjPaS9GuMdpXaomYSEwsV02hXZOQelo9cLop0Fc2i+l7\n' +
+        '70rYhePuOuQ+XD/xYzhngAgNJ9rX96YnSodldb8uJfxYmgoF0E9Z2o2fgZGj\n' +
+        'll2CPnOaLXZaBQlPS3x/461TmZ1n2ZePS/fwiC7taLz3PtyGtKaC0vo4isvI\n' +
+        'yf04fkjudG0XIns5CWjdR2HeDC8BzSl8OVj8AQAc5uVU8Abk+ejWVr4zfoox\n' +
+        'eaziDPgGdkckFiQ6Tdsg0tPwwOpSrCCtJocTmc/fWaBb0YlnyAAL88fJABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZBMYqhmfI2WQQMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAACxNQf/UrM/whR7vCs+\n' +
+        'ez8Y8Hz4WqIuXtfMh4l2nKVv5UUuAfQkBxEY5j6Ga2+JgKU3neQ34x/v6fm9\n' +
+        'CLcY38Tc4AWyEx8KC78J+xOs7RMfyNBeiaf8KdaFfQrP0nMmufE6TxkfV1Y5\n' +
+        'LJZZ8350rZVtYJppWtlH+gbyUmMObyWDWbL3aWtqa3xjv0kLsf7TnugiFwzB\n' +
+        'gHHtk8tlDSOxRt0VdNNd19+/zrBYNl07Ig24WD2ETaJiaqa651z24/6/MkGT\n' +
+        'MBoQh+679tuWWcTrNi4jIA8jhSQ5BOgbAapl3qXk0m9/Aexpe2s6ISLXe8YJ\n' +
+        'j4cObDLv/ZKKeLZYTq9lVCydLAQUbs7ATQRk7zWYAQgAmx36uefgUF4cCSYH\n' +
+        'WMWAOTyc8Awo+hxn6FktOLU1+9hfGrX2jwGLOoOwjNgbYJbiSvRglAX2b57/\n' +
+        'qkkltAg1ZYCLSUzfBUbbWYlJNBwpv7+52zHaLUZ3gmI5aE48ad+uzaadgpVT\n' +
+        'VqLbhdgkN6jkemPTlfMehyS49AAbmqeKfo2U72tm9ZqT2cPVCASMjN/Ux2qG\n' +
+        '3W8HTo0KIVFSbkTthl1zAlwAFksp0q437+pxbdJIecJ9mO6N4OQMnv+hVBDc\n' +
+        'WrPqBDJ0nas4JNgLxmLv0pheGg/TEfwS/p6xGRW5m08bj2l0cgqmEaM27jbi\n' +
+        'DEpOykRWsDMhheEfI2zV/Qam8QARAQABwsB2BBgBCAAqBYJk7zWYCZBMYqhm\n' +
+        'fI2WQQKbDBYhBC9DyzhpX3ACb/yTq0xiqGZ8jZZBAAAnBggA1gkIopr9HJFP\n' +
+        'fO5SebcbowH4AG9M0qBqF4h1JIKbqvOnxLSsC5QmmzFcjS9ihyHBvzbRVGkC\n' +
+        'zEHYpLRedQ2AmQQfsf/VOoZJEOlb7tTk4+SpYtsGte5X/yLT5Bkls7Rp8ubK\n' +
+        '/V99muj1nA/OkasllXQUSGEweVz6ejzJ0oMm3Vewmw8PelsdAnfS7Ud1MnXQ\n' +
+        'h+O8TCR56F5gAMWxZmxFpZMZyUFOH6KM+vL7HJUBztUS2g0ELsHKy9ep2yhv\n' +
+        'iABIwx/gEuPr0NDAH9x9XFKg5m3rO64KTY4BRWBISwmQ25dM1s1bwDPLi5XI\n' +
+        '6Daw1glFxpPRrxgQGlVLzJOu5b8swQ==\n' +
+        '=9hCc\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: true,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzUlEQVR4AcXBsWlDMRiF0c8XTeAJPIAgoFbgQew1PIbXyKsyhUGtCqM6ZAJX6Z32fykM4hnuObv71++TYJRKlHtji1EqUe6NSJgJM2G2W74/nkzIvfHKKJUZwkyYCbOUe+Odcm/MEGbCTJil2/VMdLx8Eo1S2SL3RnS7nomEmTATZmm//BANKlHujS1GqUT7hRVhJsyEWWLSKJVXcm/MEGbCTJgl/sm9EY1SmTFKJcq9EY1SiYSZMBNm6XE6sHJhJffGOz1OByJhJsyE2R/3lDA4e9QQhAAAAABJRU5ErkJggg=='
+    }
+  ],
+  pendingMembers: [
+    {
+      wallet: 'eip155:0x119bb8ad40B1f94e2b30ae5f59eeaEB67cD0Bd6C',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0x6e0C509d14EbF26A529bf6DC5CC9bee7F5b8DBa4',
+      publicKey: null,
+      isAdmin: false,
+      image: null
+    },
+    {
+      wallet: 'eip155:0xE3FDD0527a9F8418f9a7D9e970452827FbE202FF',
+      publicKey: '-----BEGIN PGP PUBLIC KEY BLOCK-----\n' +
+        '\n' +
+        'xsBNBGTvNZgBCADouo4S2kPqA//+I7nDAk15/LcJ2TGvDhOYuPNUNMiNGOb4\n' +
+        'txusuKz6HOaG+K9hiUBpHjKrYEmCT2FEXxt8bfS3SpWb74RHSkWUNUkxk25y\n' +
+        'gE5gaCKyAdcnOUyVLmobVFFYtH6naK9bULaUtkVik1P0iuEevWHxtTpsjbyH\n' +
+        'bZtNpVTdprdLib4Wx6bb7VogsvjlvNJcVJ4sfPE0XgsQgAGIev7yJyU0DGzt\n' +
+        '/EbvFX4sv51Kb1dX9ctBcvzVbs9+qT6LTivsrQp+TNHUN4zEeMhnWFFP5K1d\n' +
+        'H445S6FWk53XvBudcOkFPtltU1MPCS6hmhevArBfYzy5eSlaKA/fH+kFABEB\n' +
+        'AAHNAMLAigQQAQgAPgWCZO81mAQLCQcICZCrD2gy8Zu4awMVCAoEFgACAQIZ\n' +
+        'AQKbAwIeARYhBKru9/u8wPcTeHibkasPaDLxm7hrAADa/Af+PbamVg/Ig2S2\n' +
+        'HgIy4w5x7ulSk1/49+AmuiUMiVUwJSVBhROsyDbLET56w4+1TIMYZFJaczW3\n' +
+        '8tCvAOUSauzc52I3zwGmaCupBJokIWp7ncPh0B8TFYrgThgXV7sLf3xy4roy\n' +
+        'y8oFz1Zla88krwtPe4Az7TF+WNdXoDsLNJ3GXRmNqs1GITmDqAXFWncl12NM\n' +
+        'ajUKWIKc/Gi1oKfz22mabJTtWBimDpA12LaGK3GjEK5CiWXT3Tzlqn6R14EZ\n' +
+        '6ohpKZldSJiMPL0Bu9iT52iHOsw1wTZNC1L5lKhOCi3c+/fLRcJZt3hdCjqy\n' +
+        'd/FSCa8/Ny/GrHBWoL49rSF4pDEA+s7ATQRk7zWYAQgAtNOoHCL7BCnjwp8O\n' +
+        'htTxEI5r7Q/1zKKHiz6QKjjrGBYyR6gcmPM3JNEcvzY4OsCFnKBv2suOgrqH\n' +
+        '8kXJzfpIQ7u7uJs+O3p/cn86RMANiEnO8NbB/0scpfZ7Vg3eOfoiWYE4I/1o\n' +
+        'FVDCyZ1YVqtbcmuW6D8i1djjeoUmkUDZyPo7Qs6hUsJeYA/Rfl8mH5sjy2cN\n' +
+        'WXf8cEtOUqJtwERXt5aRB/nBZiC0bsP6hf0HtAoNA8/96TkqrcQpODW/RckD\n' +
+        'fo4wkpEONHRH+LGX7GV0pwymHu42TUnULmED6BrMgMYG2sKpxMThxtAxRaiP\n' +
+        'nZ3DKXr8GCjTYnbEZpoi2zKCOQARAQABwsB2BBgBCAAqBYJk7zWYCZCrD2gy\n' +
+        '8Zu4awKbDBYhBKru9/u8wPcTeHibkasPaDLxm7hrAADGyQgA5NMUkoyDTPZa\n' +
+        'Znj1dB+17xBXCZ/u7pPQc1DukBefVke7/qYIicdnnEGIX3Zd7TckFRsDljR/\n' +
+        '3418Bne4WyL57fAF/GgYsegpJ9n1KT7oPxWzibIaYdj7R6bkDt5r61EDWC3N\n' +
+        'VBbnZu9cO15TYkObJIiyNvwbQyd6Dm313b39GnEE8sM709TWsI6Es6rRZAfC\n' +
+        '+sI8ezYxqVUbP7sW3jJZYzdPOhZPHvFd5iJ2EfygEOuk5tb7AimfNwF/CNcB\n' +
+        'weQGEU7feOSB9lXXA+Ag1duLM4B9bLbbHEQIPhKlBF1ED64e/W/5HNfoAkS4\n' +
+        'qhzOD5XWs6xs45nnYqUbBFLG9Xk+Jg==\n' +
+        '=qtAv\n' +
+        '-----END PGP PUBLIC KEY BLOCK-----\n',
+      isAdmin: false,
+      image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAw0lEQVR4AcXBsXECMRRF0csbdbAZBagHKlJMSOL90IUq2h5UABktLE6/HcizY4/fOafrcntzQB/BTKvBEcJMmAmz0keQtRpk67bzRQ1m1m0nu19E1keQCTNhJsxO1+X2JukjmHm+Ppg5Lw9mWg0yYSbMhFnhoPPy4C8JM2EmzArftBr8J2EmzIRZ6SPIWg2yPoKs1WCmjyBrNcj6CDJhJsyEWWk1OKKP4DdaDTJhJsyEWeEHrQbZuu3M3C/iCGEmzITZJ/s7LOkKUABjAAAAAElFTkSuQmCC'
+    }
+  ],
+  contractAddressERC20: null,
+  numberOfERC20: 0,
+  contractAddressNFT: null,
+  numberOfNFTTokens: 0,
+  verificationProof: 'pgp:-----BEGIN PGP SIGNATURE-----\n' +
+    '\n' +
+    'wsBzBAEBCAAnBYJk7zWZCZBMYqhmfI2WQRYhBC9DyzhpX3ACb/yTq0xiqGZ8\n' +
+    'jZZBAADwAwgAq/6WjtwRt1aPTLWwtSx80Ng/Wxf97dkpebMXSj9T7f5ia1rM\n' +
+    '8wqsuNUDMEMPB9LM34f6Q5pD994oeN2YT7z34u20mskiNphZdx/DNvu8w9UZ\n' +
+    'rI3tyjfZULhARNVM34sSABnHtExbl4ZArhNDsT86ku0sZNjr9frn2mtgmlKN\n' +
+    'nQdGcLJSxbci0hFg3nE5mYNpwZNs2S/2uk11WHKxzMhII6AdePE77BKPqedu\n' +
+    'PiXDODO2dIvV8glLQoJPRPgc2ap+/xYIBUFljqHGPU/62VSLlHxBJv72p5s/\n' +
+    'kOxiqD42TmpaaMtfudqgsZsGoYpZDHcMKYGNZs+9qVRHPRD+s0QhEA==\n' +
+    '=c6IF\n' +
+    '-----END PGP SIGNATURE-----\n',
+  groupImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+  groupName: 'influential_maroon_gamefowl',
+  groupDescription: 'urgent_brown_butterfly',
+  isPublic: false,
+  groupCreator: 'eip155:0x140BE62b2177A975Bbef398DF8934b883E7d13f9',
+  chatId: '5f769c881ffe328117dea3d3acd0b97ce7f4c163e440f75a96be3e33f7d2a000',
+  meta: null,
+  scheduleAt: null,
+  scheduleEnd: null,
+  groupType: 'default',
+  status: null,
+  rules: {},
+  eventType: 'update'
+}
+```
+
+| Parameter                  | Type                  | Remarks                                                        |
+| -------------------------- | --------------------- | -------------------------------------------------------------- |
+| `members`                  | `Array<Object>`       | An array containing member objects.                            |
+| `members.wallet`           | `string`              | The wallet address of the member.                              |
+| `members.publicKey`        | `string`              | The member's public PGP key (if available).                    |
+| `members.isAdmin`          | `boolean`             | Indicates whether the member is an admin.                      |
+| `members.image`            | `string`              | Image associated with the member.                              |
+| `pendingMembers`           | `Array<Object>`       | An array containing pending member objects.                    |
+| `pendingMembers.wallet`    | `string`              | The wallet address of the pending member.                      |
+| `pendingMembers.publicKey` | `string`              | The pending member's public PGP key (if available).            |
+| `pendingMembers.isAdmin`   | `boolean`             | Indicates whether the pending member is an admin.              |
+| `pendingMembers.image`     | `string`              | Image associated with the pending member.                      |
+| `contractAddressERC20`     | `string` or `null`    | Contract address for ERC20 tokens (Used for tokenGating).      |
+| `numberOfERC20`            | `number`              | The number of ERC20 tokens associated. (Used for tokenGating). |
+| `contractAddressNFT`       | `string` or `null`    | Contract address for NFT tokens (Used for tokenGating)         |
+| `numberOfNFTTokens`        | `number`              | The number of NFT tokens associated. (Used for tokenGating)    |
+| `verificationProof`        | `string`              | Verification proof associated with group data.                 |
+| `groupImage`               | `string`              | Group's image.                                                 |
+| `groupName`                | `string`              | The name of the group.                                         |
+| `groupDescription`         | `string`              | Description of the group.                                      |
+| `isPublic`                 | `boolean`             | Indicates whether the group is public or private.              |
+| `groupCreator`             | `string`              | Push Profile DID of the group creator.                         |
+| `chatId`                   | `string`              | Unique chat ID associated with the group.                      |
+| `meta`                     | `object` or `null`    | Additional metadata (if available).                            |
+| `scheduleAt`               | `timestamp` or `null` | Scheduled start time (if available).                           |
+| `scheduleEnd`              | `timestamp` or `null` | Scheduled end time (if available).                             |
+| `groupType`                | `string`              | Type of the group (default, spaces, live etc).                 |
+| `status`                   | `string` or `null`    | Status information ( active, expired etc)                      |
+| `rules`                    | `Object`              | Group-specific moderation rules                                |
+| `eventType`                | `string`              | The type of event (create, update etc)                         |
+
+</details> -->
 
 ---
 

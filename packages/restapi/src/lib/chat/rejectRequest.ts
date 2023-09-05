@@ -20,7 +20,6 @@ interface RejectRequestOptionsType extends EnvOptionsType {
   senderAddress: string;
   pgpPrivateKey?: string | null;
 
-
   account?: string | null;
   signer?: SignerType | null;
 }
@@ -28,7 +27,9 @@ interface RejectRequestOptionsType extends EnvOptionsType {
 /**
  * Reject Chat Request
  */
-export const reject = async (options: RejectRequestOptionsType): Promise<string> => {
+export const reject = async (
+  options: RejectRequestOptionsType
+): Promise<string> => {
   const {
     account = null,
     signer = null,
