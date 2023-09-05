@@ -7304,15 +7304,15 @@ const aliceMessagesBob = await userAlice.chat.send(bobAddress, {
 });
 ```
 
-| Param                  | Type                                                                         | Default | Remarks                                                                             |
-| ---------------------- | ---------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `target`               | `string`                                                                     | -       | Target DID ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
-| `options`              | `object`                                                                     | -       | Configuration for message to be sent                                                |
-| `options.type` \*      | `Text` or `Image` or `File` or `MediaEmbed` or `GIF` or `Meta` or `Reaction` | -       | Type of message Content                                                             |
-| `options.content`      | `string`                                                                     | -       | Message Content                                                                     |
-| `options.action` \*    | `string`                                                                     | -       | Message action ( Only available for Meta & Reaction Messages )                      |
-| `options.reference` \* | `string` or `null`                                                           | -       | Message reference hash ( Only available for Reaction Messages )                     |
-| `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                | -       | Message reference hash ( Only available for Meta Messages )                         |
+| Param                  | Type                                                                         | Default | Remarks                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `recipient`            | `string`                                                                     | -       | Recipient ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
+| `options`              | `object`                                                                     | -       | Configuration for message to be sent                                               |
+| `options.type` \*      | `Text` or `Image` or `File` or `MediaEmbed` or `GIF` or `Meta` or `Reaction` | -       | Type of message Content                                                            |
+| `options.content`      | `string`                                                                     | -       | Message Content                                                                    |
+| `options.action` \*    | `string`                                                                     | -       | Message action ( Only available for Meta & Reaction Messages )                     |
+| `options.reference` \* | `string` or `null`                                                           | -       | Message reference hash ( Only available for Reaction Messages )                    |
+| `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                | -       | Message reference hash ( Only available for Meta Messages )                        |
 
 \* - Optional
 
@@ -7578,7 +7578,7 @@ const AliceBlocksBob = await userAlice.chat.block([bobAddress]);
 ### **Unblock Chat User**
 
 ```typescript
-// Block chat user
+// Unblock chat user
 const AliceUnblocksBob = await userAlice.chat.unblock([bobAddress]);
 ```
 

@@ -242,13 +242,16 @@ export class PushAPI {
       });
     },
 
-    send: async (target: string, options: Message): Promise<MessageWithCID> => {
+    send: async (
+      recipient: string,
+      options: Message
+    ): Promise<MessageWithCID> => {
       if (!options.type) {
         options.type = MessageType.TEXT;
       }
       const sendParams: ChatSendOptionsType = {
         message: options,
-        to: target,
+        to: recipient,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
