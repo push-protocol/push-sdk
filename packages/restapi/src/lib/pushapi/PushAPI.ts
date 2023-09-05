@@ -8,6 +8,7 @@ import {
   SignerType,
   Message,
   ProgressHookType,
+  ISendNotificationInputOptions,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -15,16 +16,28 @@ import {
   GroupCreationOptions,
   ManageGroupOptions,
   PushAPIInitializeProps,
+  FeedsOptions,
+  SubscriptionOptions,
+  ChannelInfoOptions,
+  ChannelSearchOptions,
+  SubscribeUnsubscribeOptions,
+  AliasOptions,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
+import * as PUSH_PAYLOAD from '../payloads';
+import * as PUSH_CHANNEL from '../channels';
+import * as PUSH_ALIAS from '../alias';
 import { getAccountAddress, getWallet } from '../chat/helpers';
-import { isValidETHAddress } from '../helpers';
+import {
+  isValidETHAddress,
+  getCAIPDetails,
+  getCAIPWithChainId,
+} from '../helpers';
 import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
-
 export class PushAPI {
   private signer: SignerType;
   private account: string;
@@ -495,6 +508,191 @@ export class PushAPI {
         pgpPrivateKey: this.decryptedPgpPvtKey,
         pgpPublicKey: this.pgpPublicKey,
       });
+    },
+  };
+
+  user = {
+    /**
+     * @description - Fetches feeds and spam feeds for a specific user
+     * @param {string} [options.user] - user address, defaults to address from signer
+     * @param {number} [options.page] -  page number. default is set to Constants.PAGINATION.INITIAL_PAGE
+     * @param {number} [options.limit] - number of feeds per page. default is set to Constants.PAGINATION.LIMIT
+     * @param {boolean} [options.spam] - indicates if its a spam or not. default to non-spam feeds
+     * @param {boolean} [options.raw] - indicates if the response should be raw or formatted. defaults is set to false
+     * @returns feeds for a specific address
+     */
+    feeds: async (options: FeedsOptions) => {
+      const {
+        user = this.account,
+        page = Constants.PAGINATION.INITIAL_PAGE,
+        limit = Constants.PAGINATION.LIMIT,
+        spam = false,
+        raw = false,
+      } = options || {};
+
+      return await PUSH_USER.getFeeds({
+        user: user,
+        page: page,
+        limit: limit,
+        spam: spam,
+        raw: raw,
+        env: this.env,
+      });
+    },
+
+    /**
+     * @description - fetches all the channels a user is subscribed to
+     * @param {string} [options.user] -  user address, defaults to address from signer
+     * @returns the channels to which the user is subscribed
+     */
+    subscriptions: async (options: SubscriptionOptions) => {
+      const { user = this.account } = options || {};
+      return await PUSH_USER.getSubscriptions({
+        user: user,
+        env: this.env,
+      });
+    },
+  };
+
+  channels = {
+    /**
+     * @description - returns information about a channel
+     * @param {string} [options.channel] - channel address, defaults to eth caip address
+     * @returns information about the channel if it exists
+     */
+    info: async (options: ChannelInfoOptions) => {
+      const { channel = this.account } = options || {};
+      return await PUSH_CHANNEL.getChannel({
+        channel: channel as string,
+        env: this.env,
+      });
+    },
+
+    /**
+     * @description - returns relevant information as per the query that was passed
+     * @param {string} options.query - search query
+     * @param {number} [options.page] -  page number. default is set to Constants.PAGINATION.INITIAL_PAGE
+     * @param {number} [options.limit] - number of feeds per page. default is set to Constants.PAGINATION.LIMIT
+     * @returns Array of results relevant to the serach query
+     */
+    search: async (options: ChannelSearchOptions) => {
+      const {
+        query,
+        page = Constants.PAGINATION.INITIAL_PAGE,
+        limit = Constants.PAGINATION.LIMIT,
+      } = options || {};
+      return await PUSH_CHANNEL.search({
+        query: query,
+        page: page,
+        limit: limit,
+        env: this.env,
+      });
+    },
+
+    /**
+     * Subscribes a user to a channel
+     * @param {string} options.channelAddress - channel address in caip format
+     * @param {string} [options.verifyingContractAddress] - verifying contract address
+     * @param {function} [options.onSuccess] - callback function when a user successfully subscribes to a channel
+     * @param {function} [options.onError] - callback function incase a user was not able to subscribe to a channel
+     * @returns Status object
+     */
+    subscribe: async (options: SubscribeUnsubscribeOptions) => {
+      const { channelAddress, verifyingContractAddress, onSuccess, onError } =
+        options || {};
+      const caipDetail = getCAIPDetails(channelAddress);
+      const userAddressInCaip = getCAIPWithChainId(
+        this.account,
+        parseInt(caipDetail?.networkId as string)
+      );
+      return await PUSH_CHANNEL.subscribe({
+        signer: this.signer,
+        channelAddress: channelAddress,
+        userAddress: userAddressInCaip,
+        verifyingContractAddress: verifyingContractAddress,
+        env: this.env,
+        onSuccess: onSuccess,
+        onError: onError,
+      });
+    },
+    /**
+     * Unsubscribes a user to a channel
+     * @param {string} options.channelAddress - channel address in caip format
+     * @param {string} [options.verifyingContractAddress] - verifying contract address
+     * @param {function} [options.onSuccess] - callback function when a user successfully unsubscribes to a channel
+     * @param {function} [options.onError] - callback function incase a user was not able to unsubscribe to a channel
+     * @returns 
+     */
+    unsubscribe: async (options: SubscribeUnsubscribeOptions) => {
+      const { channelAddress, verifyingContractAddress, onSuccess, onError } =
+        options || {};
+      const caipDetail = getCAIPDetails(channelAddress);
+      const userAddressInCaip = getCAIPWithChainId(
+        this.account,
+        parseInt(caipDetail?.networkId as string)
+      );
+      return await PUSH_CHANNEL.unsubscribe({
+        signer: this.signer,
+        channelAddress: channelAddress,
+        userAddress: userAddressInCaip,
+        verifyingContractAddress: verifyingContractAddress,
+        env: this.env,
+        onSuccess: onSuccess,
+        onError: onError,
+      });
+    },
+    /**
+     * @description - Get subscribers of a channell
+     * @param {string} [options.channel] - channel in caip. defaults to account from signer with eth caip 
+     * @returns array of subscribers
+     */
+    _subscribers: async (options: ChannelInfoOptions) => {
+      const { channel = this.account } = options || {};
+      return await PUSH_CHANNEL._getSubscribers({
+        channel: channel,
+        env: this.env,
+      });
+    },
+
+    /**
+     * @description - Get delegates of a channell
+     * @param {string} [options.channel] - channel in caip. defaults to account from signer with eth caip 
+     * @returns array of subscribers
+     */
+    delegates: async (options: ChannelInfoOptions) => {
+      const { channel = this.account } = options || {};
+      return await PUSH_CHANNEL.getDelegates({
+        channel: channel,
+        env: this.env,
+      });
+    },
+  };
+
+  payloads = {
+    /**
+     * @description - sends notification
+     * @param {ISendNotificationInputOptions} options parameters related to payload
+     * @returns 
+     */
+    send: async (
+      options: Omit<ISendNotificationInputOptions, 'signer' | 'env'>
+    ) => {
+      return await PUSH_PAYLOAD.sendNotification({
+        ...options,
+        signer: this.signer,
+        env: this.env,
+      });
+    },
+  };
+
+  alias = {
+    /**
+     * @description - fetches alias information
+     * @param {AliasOptions} options - options related to alias
+     * @returns Alias details
+     */
+    info: async (options: AliasOptions) => {
+      return await PUSH_ALIAS.getAliasInfo({ ...options, env: this.env });
     },
   };
 }

@@ -1,6 +1,6 @@
 import Constants, { ENV } from '../constants';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
-
+import {GetAliasInfoOptionsType} from "../alias"
 export enum ChatListType {
   CHATS = 'CHATS',
   REQUESTS = 'REQUESTS',
@@ -46,3 +46,34 @@ export interface GroupUpdateOptions {
   meta?: string | null;
   rules?: Rules | null;
 }
+
+export type FeedsOptions = {
+  user?: string;
+  page?: number;
+  limit?: number;
+  spam?: boolean;
+  raw?: boolean;
+}
+
+export type SubscriptionOptions = {
+  user?: string;
+}
+
+export type ChannelInfoOptions = {
+  channel?: string;
+}
+
+export type ChannelSearchOptions = {
+  query: string,
+  page?: number;
+  limit?: number;
+}
+
+export type SubscribeUnsubscribeOptions = {
+  channelAddress: string;
+  verifyingContractAddress?: string;
+  onSuccess?: () => void
+  onError?: (err: Error) => void,
+}
+
+export type AliasOptions = Omit<GetAliasInfoOptionsType, "env">
