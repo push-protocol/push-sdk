@@ -11,19 +11,19 @@ const { env } = config;
 const signer = ethers.Wallet.createRandom();
 
 // Video Data
-const videoChainId = +process.env.VIDEO_CHAIN_ID;
+const videoChainId = +(process.env.VIDEO_CHAIN_ID as string);
 let videoData = PushAPI.video.initVideoCallData;
 const videoSetData: (
   fn: (data: PushAPI.VideoCallData) => PushAPI.VideoCallData
 ) => void = (fn) => {
   videoData = fn(videoData);
 };
-let videoObject = null;
+let videoObject: any = null;
 const videoLocalStream = null; // get the local stream
 const videoSenderAddress = process.env.VIDEO_SENDER_ADDRESS;
 const videoRecipientAddress = process.env.VIDEO_RECIPEINT_ADDRESS;
 const videoChatId = process.env.VIDEO_CHAT_ID;
-let videoSignalData_1 = null;
+let videoSignalData_1: any = null;
 
 const skipExample = () => {
   const requiredEnvVars = [
@@ -146,7 +146,7 @@ async function PushAPI_video_disconnect() {
 
 async function PushVideoSDKSocket() {
   const pushSDKSocket = createSocketConnection({
-    user: videoSenderAddress,
+    user: videoSenderAddress as string,
     socketType: 'chat',
     socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
     env: env as ENV,
