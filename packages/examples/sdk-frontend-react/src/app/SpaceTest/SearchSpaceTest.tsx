@@ -33,7 +33,7 @@ const SearchSpaceTest = () => {
     try {
       setLoading(true);
 
-      const response = await PushAPI.space.searchSpaces({
+      const response = await PushAPI.space.search({
         searchTerm,
         pageNumber,
         pageSize,

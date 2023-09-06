@@ -48,6 +48,12 @@ export interface IApproveRequestPayload {
   verificationProof?: string | null | undefined;
 }
 
+export interface IRejectRequestPayload {
+  fromDID: string;
+  toDID: string;
+  verificationProof?: string | null | undefined;
+}
+
 export interface ICreateGroupRequestPayload {
   groupName: string;
   groupDescription?: string | null;
@@ -159,6 +165,20 @@ export const approveRequestPayload = (
     signature,
     status,
     sigType,
+    verificationProof: sigType + ':' + signature,
+  };
+  return body;
+};
+
+export const rejectRequestPayload = (
+  fromDID: string,
+  toDID: string,
+  sigType: string,
+  signature: string
+): IRejectRequestPayload => {
+  const body = {
+    fromDID,
+    toDID,
     verificationProof: sigType + ':' + signature,
   };
   return body;

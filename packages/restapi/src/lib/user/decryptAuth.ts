@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { decryptPGPKey, isValidNFTCAIP10Address } from '../helpers';
+import { decryptPGPKey, isValidCAIP10NFTAddress } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import {
   ProgressHookType,
@@ -37,7 +37,7 @@ export const decryptAuth = async (
     progressHook,
   } = options || {};
   try {
-    if (!isValidNFTCAIP10Address(account as string)) {
+    if (!isValidCAIP10NFTAddress(account as string)) {
       return null;
     }
     // Report Progress
