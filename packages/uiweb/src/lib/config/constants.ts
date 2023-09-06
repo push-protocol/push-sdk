@@ -73,6 +73,8 @@ export const allowedNetworks = {
   ]
 }
 
+export const blockNativeApikey = 'f55f3a76-8510-4af8-9833-b7f85255de83'
+
 export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 
 export const PUBLIC_GOOGLE_TOKEN = 'AIzaSyBhUBnCia6zpxY7KcqjghRS1IphinAvKXs';
