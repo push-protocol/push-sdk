@@ -8,6 +8,7 @@ import {
   SignerType,
   Message,
   ProgressHookType,
+  IUser,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -18,7 +19,7 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { getAccountAddress, getWallet } from '../chat/helpers';
+import { getAccountAddress, getUserDID, getWallet } from '../chat/helpers';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
@@ -241,13 +242,16 @@ export class PushAPI {
       });
     },
 
-    send: async (target: string, options: Message): Promise<MessageWithCID> => {
+    send: async (
+      recipient: string,
+      options: Message
+    ): Promise<MessageWithCID> => {
       if (!options.type) {
         options.type = MessageType.TEXT;
       }
       const sendParams: ChatSendOptionsType = {
         message: options,
-        to: target,
+        to: recipient,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
@@ -265,14 +269,88 @@ export class PushAPI {
       });
     },
 
-    reject: async (target: string): Promise<string> => {
-      return await PUSH_CHAT.approve({
-        status: 'Reproved',
+    reject: async (target: string): Promise<void> => {
+      await PUSH_CHAT.reject({
         senderAddress: target,
         env: this.env,
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
+      });
+    },
+
+    block: async (users: Array<string>): Promise<IUser> => {
+      const user = await PUSH_USER.get({
+        account: this.account,
+        env: this.env,
+      });
+
+      for (const element of users) {
+        if (!isValidETHAddress(element)) {
+          throw new Error('Invalid address in the users: ' + element);
+        }
+      }
+
+      if (!user.profile.blockedUsersList) {
+        user.profile.blockedUsersList = [];
+      }
+
+      user.profile.blockedUsersList = [
+        ...new Set([...user.profile.blockedUsersList, ...users]),
+      ];
+
+      return await PUSH_USER.profile.update({
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        account: this.account,
+        profile: {
+          name: user.profile.name!,
+          desc: user.profile.desc!,
+          picture: user.profile.picture!,
+          blockedUsersList: user.profile.blockedUsersList,
+        },
+        env: this.env,
+        progressHook: this.progressHook,
+      });
+    },
+
+    unblock: async (users: Array<string>): Promise<IUser> => {
+      const user = await PUSH_USER.get({
+        account: this.account,
+        env: this.env,
+      });
+
+      for (const element of users) {
+        if (!isValidETHAddress(element)) {
+          throw new Error('Invalid address in the users: ' + element);
+        }
+      }
+
+      if (!user.profile.blockedUsersList) {
+        return user;
+      }
+
+      const userDIDsPromises = users.map(async (user) => {
+        return (await getUserDID(user, this.env)).toLowerCase();
+      });
+      const userDIDs = await Promise.all(userDIDsPromises);
+
+      user.profile.blockedUsersList = user.profile.blockedUsersList.filter(
+        (blockedUser) => {
+          !userDIDs.includes(blockedUser.toLowerCase());
+        }
+      );
+
+      return await PUSH_USER.profile.update({
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        account: this.account,
+        profile: {
+          name: user.profile.name!,
+          desc: user.profile.desc!,
+          picture: user.profile.picture!,
+          blockedUsersList: user.profile.blockedUsersList,
+        },
+        env: this.env,
+        progressHook: this.progressHook,
       });
     },
 
@@ -288,7 +366,7 @@ export class PushAPI {
             groupAccess: options?.rules?.entry,
             chatAccess: options?.rules?.chat,
           },
-          isPublic: options?.private || false,
+          isPublic: !options?.private,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           env: this.env,
@@ -442,6 +520,16 @@ export class PushAPI {
         return await PUSH_CHAT.removeMembers({
           chatId: target,
           members: [this.account],
+          env: this.env,
+          account: this.account,
+          signer: this.signer,
+          pgpPrivateKey: this.decryptedPgpPvtKey,
+        });
+      },
+
+      reject: async (target: string): Promise<void> => {
+        await PUSH_CHAT.reject({
+          senderAddress: target,
           env: this.env,
           account: this.account,
           signer: this.signer,

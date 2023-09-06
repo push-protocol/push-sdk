@@ -86,6 +86,9 @@ const ChatTest = () => {
           <Link to="/removeAdminsFromGroup" className="nav-button">
             CHAT.REMOVEADMINSFROMGROUP
           </Link>
+          <Link to="/reject" className="nav-button">
+            CHAT.REJECT
+          </Link>
         </NavMenu>
       </Section>
     </div>

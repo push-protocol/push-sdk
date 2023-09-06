@@ -1,7 +1,13 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { ChatStatus, EnvOptionsType, GroupDTO, Rules, SignerType } from '../types';
+import {
+  ChatStatus,
+  EnvOptionsType,
+  GroupDTO,
+  Rules,
+  SignerType,
+} from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
@@ -55,7 +61,7 @@ export const updateGroup = async (
     scheduleEnd,
     status,
     meta,
-    rules
+    rules,
   } = options || {};
   try {
     if (account == null && signer == null) {
