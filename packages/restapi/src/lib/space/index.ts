@@ -13,5 +13,8 @@ export * from './removeListeners';
 export * from './approve';
 export * from './requests';
 export * from './getAccess';
+export * from './search';
+
 export {spaceFeed as space} from './spaceFeed';
 export * from './Space'
+

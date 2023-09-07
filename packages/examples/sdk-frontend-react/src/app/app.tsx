@@ -84,6 +84,9 @@ import ChatViewListTest from './ChatUITest/ChatViewListTest';
 import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import { lightChatTheme } from '@pushprotocol/uiweb';
+import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
+import SearchGroupTest from './ChatTest/SearchGroupTest';
+import RejectRequestTest from './ChatTest/RejectRequestTest';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -445,6 +448,7 @@ export function App() {
                     />
                     <Route path="/send" element={<SendMessageTest />} />
                     <Route path="/approve" element={<ApproveRequestTest />} />
+                    <Route path="/reject" element={<RejectRequestTest />} />
                     <Route path="/chats" element={<GetChatsTest />} />
                     <Route path="/hash" element={<ConversationHashTest />} />
                     <Route path="/history" element={<HistoryTest />} />
@@ -470,6 +474,10 @@ export function App() {
                     />
                     <Route path="/updateGroup" element={<UpdateGroupTest />} />
 
+                    <Route
+                      path="/searchGroups"
+                      element={<SearchGroupTest />}
+                    />
                     {/* spaces method  routes */}
                     <Route path="/createSpace" element={<CreateSpaceTest />} />
                     <Route path="/updateSpace" element={<UpdateSpaceTest />} />
@@ -512,6 +520,11 @@ export function App() {
                     <Route
                       path="/getSpaceAccess"
                       element={<GetSpaceAccessTest />}
+                    />
+
+                    <Route
+                      path="/searchSpaces"
+                      element={<SearchSpaceTest />}
                     />
 
                       {/* spaces ui components routes */}

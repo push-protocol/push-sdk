@@ -71,6 +71,9 @@ const ChatTest = () => {
           <Link to="/getGroupAccess" className="nav-button">
             CHAT.GETGROUPACCESS
           </Link>
+          <Link to="/searchGroups" className="nav-button">
+            CHAT.SEARCHGROUPS
+          </Link>
           <Link to="/addMembersToGroup" className="nav-button">
             CHAT.ADDMEMBERSTOGROUP
           </Link>
@@ -82,6 +85,9 @@ const ChatTest = () => {
           </Link>
           <Link to="/removeAdminsFromGroup" className="nav-button">
             CHAT.REMOVEADMINSFROMGROUP
+          </Link>
+          <Link to="/reject" className="nav-button">
+            CHAT.REJECT
           </Link>
         </NavMenu>
       </Section>

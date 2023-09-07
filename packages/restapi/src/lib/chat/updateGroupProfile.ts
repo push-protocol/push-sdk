@@ -14,19 +14,20 @@ import {
   sign,
   getWallet,
   getAccountAddress,
-  getUserDID,
   getConnectedUserV2,
   updateGroupRequestValidator,
+  getAdminsList,
+  getMembersList,
 } from './helpers';
+
+import { getGroup } from './getGroup';
 import * as CryptoJS from 'crypto-js';
 
-export interface ChatUpdateGroupType extends EnvOptionsType {
+export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   chatId: string;
   groupName: string;
-  members: Array<string>;
-  admins: Array<string>;
   groupImage?: string | null;
   groupDescription?: string | null;
   pgpPrivateKey?: string | null;
@@ -43,16 +44,14 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
 /**
  * Update Group information
  */
-export const updateGroup = async (
-  options: ChatUpdateGroupType
+export const updateGroupProfile = async (
+  options: ChatUpdateGroupProfileType
 ): Promise<GroupDTO> => {
   const {
     chatId,
     groupName,
     groupImage,
     groupDescription,
-    members,
-    admins,
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
@@ -73,21 +72,27 @@ export const updateGroup = async (
     updateGroupRequestValidator(
       chatId,
       groupName,
-      members,
-      admins,
+      [],
+      [],
       address,
       groupDescription
     );
 
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
-    const convertedMembersPromise = members.map(async (each) => {
-      return getUserDID(each, env);
+
+    const group = await getGroup({
+      chatId: chatId,
+      env: env,
     });
-    const convertedAdminsPromise = admins.map(async (each) => {
-      return getUserDID(each, env);
-    });
-    const convertedMembers = await Promise.all(convertedMembersPromise);
-    const convertedAdmins = await Promise.all(convertedAdminsPromise);
+
+    // TODO: look at user did in updateGroup
+    const convertedMembers = getMembersList(
+      group.members,
+      group.pendingMembers
+    );
+
+    const convertedAdmins = getAdminsList(group.members, group.pendingMembers);
+
     const bodyToBeHashed = {
       groupName: groupName,
       groupDescription: groupDescription,
@@ -131,11 +136,11 @@ export const updateGroup = async (
       });
   } catch (err) {
     console.error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -:  `,
+      `[Push SDK] - API  - Error - API ${updateGroupProfile.name} -:  `,
       err
     );
     throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -: ${err}`
+      `[Push SDK] - API  - Error - API ${updateGroupProfile.name} -: ${err}`
     );
   }
 };
