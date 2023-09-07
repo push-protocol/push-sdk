@@ -11,26 +11,39 @@ const { env } = config;
 const signer = ethers.Wallet.createRandom();
 
 // Video Data
-const videoChainId = +process.env.VIDEO_CHAIN_ID;
+const videoChainId = +(process.env.VIDEO_CHAIN_ID as string);
 let videoData = PushAPI.video.initVideoCallData;
 const videoSetData: (
   fn: (data: PushAPI.VideoCallData) => PushAPI.VideoCallData
 ) => void = (fn) => {
   videoData = fn(videoData);
 };
-let videoObject = null;
+let videoObject: any = null;
 const videoLocalStream = null; // get the local stream
 const videoSenderAddress = process.env.VIDEO_SENDER_ADDRESS;
 const videoRecipientAddress = process.env.VIDEO_RECIPEINT_ADDRESS;
 const videoChatId = process.env.VIDEO_CHAT_ID;
-let videoSignalData_1 = null;
+let videoSignalData_1: any = null;
+
+const skipExample = () => {
+  const requiredEnvVars = [
+    'VIDEO_SENDER_ADDRESS',
+    'VIDEO_RECIPEINT_ADDRESS',
+    'VIDEO_CHAT_ID',
+    'VIDEO_CHAIN_ID',
+  ];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      return true; // Skip the example if any of the required env vars is missing
+    }
+  }
+
+  return false; // All required env vars are present, don't skip the example
+};
 
 // Push Video - Run Video Use cases
 export const runVideoUseCases = async (): Promise<void> => {
-  if (videoLocalStream === null) {
-    console.log(' No VideoStream Detected. Skipping Push Video Examples');
-    return;
-  }
   console.log(`
   ██╗   ██╗██╗██████╗ ███████╗ ██████╗
   ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗
@@ -39,6 +52,16 @@ export const runVideoUseCases = async (): Promise<void> => {
    ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝
     ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝
     `);
+
+  if (videoLocalStream === null) {
+    console.log(' No VideoStream Detected. Skipping Push Video Examples');
+    return;
+  }
+  if (skipExample()) {
+    console.log('Skipping examples as required env vars are missing');
+    return;
+  }
+
   console.log('new PushAPI.video.Video({...})');
   videoObject = await PushAPI_video_object_init();
 
@@ -123,7 +146,7 @@ async function PushAPI_video_disconnect() {
 
 async function PushVideoSDKSocket() {
   const pushSDKSocket = createSocketConnection({
-    user: videoSenderAddress,
+    user: videoSenderAddress as string,
     socketType: 'chat',
     socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
     env: env as ENV,

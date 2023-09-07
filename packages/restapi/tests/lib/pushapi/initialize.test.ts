@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 
-describe.only('PushAPI.initialize functionality', () => {
+describe('PushAPI.initialize functionality', () => {
   let signer: ethers.Wallet;
 
   beforeEach(async () => {
