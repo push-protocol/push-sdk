@@ -20,33 +20,6 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-// const apiKey = 'f55f3a76-8510-4af8-9833-b7f85255de83'
-
-// const injected = injectedModule();
-// const coinbaseWalletSdk = coinbaseWalletModule({darkMode: true})
-
-// init({
-//   apiKey: apiKey,
-//   wallets: [injected, coinbaseWalletSdk],
-//   chains: [
-//     {
-//       id: '0x1',
-//       token: 'ETH',
-//       label: 'Ethereum Mainnet',
-//       rpcUrl: `https://mainnet.infura.io/v3/${InfuraAPIKey}`
-//     },
-//     {
-//       id: '0x2105',
-//       token: 'ETH',
-//       label: 'Base',
-//       rpcUrl: 'https://mainnet.base.org'
-//     }
-//   ]
-// })
-
-
-// const infuraKey = 
-
 export const ConnectButtonSub = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
