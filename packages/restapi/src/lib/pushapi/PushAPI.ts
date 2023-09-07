@@ -363,8 +363,8 @@ export class PushAPI {
           groupImage: options?.image,
           admins: options?.admins ? options.admins : [],
           rules: {
-            groupAccess: options?.rules?.entry,
-            chatAccess: options?.rules?.chat,
+            entry: options?.rules?.entry,
+            chat: options?.rules?.chat,
           },
           isPublic: !options?.private,
           signer: this.signer,

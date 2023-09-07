@@ -336,7 +336,7 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
+  entry?: {
     conditions: Array<Condition | ConditionBase>;
   };
   chat?: {
@@ -345,7 +345,7 @@ export interface Rules {
 }
 
 export interface SpaceRules {
-  spaceAccess?: {
+  entry?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -357,7 +357,7 @@ export interface GroupAccess {
 }
 
 export interface SpaceAccess {
-  spaceAccess: boolean;
+  entry: boolean;
   rules?: SpaceRules;
 }
 

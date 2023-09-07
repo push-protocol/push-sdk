@@ -258,7 +258,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
   if (groupDto.rules) {
     spaceDto.rules = {
-      spaceAccess: groupDto.rules.groupAccess,
+      entry: groupDto.rules.entry,
     };
   }
 
@@ -267,20 +267,20 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
-    groupAccess: spaceRules.spaceAccess,
+    entry: spaceRules.entry,
     chat: undefined,
   };
 };
 
 export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
   return {
-    spaceAccess: rules.groupAccess,
+    entry: rules.entry,
   };
 };
 
 export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
   const spaceAccess: SpaceAccess = {
-    spaceAccess: group.groupAccess,
+    entry: group.groupAccess,
   };
 
   // If rules are present in the groupAccess, map them to the spaceAccess
