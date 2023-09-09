@@ -8,11 +8,17 @@ interface IBorder {
   chatViewComponent?: string;
   chatProfile?: string;
   messageInput?: string;
+  searchInput?:string;
+  modal?:string;
+  modalInnerComponents?:string;
 }
 interface IBorderRadius {
   chatViewComponent?: string;
   chatProfile?: string;
   messageInput?: string;
+  searchInput?:string;
+  modal?:string;
+  modalInnerComponents?:string;
 }
 interface IBackgroundColor {
   chatViewComponentBackground?: string;
@@ -22,6 +28,10 @@ interface IBackgroundColor {
   chatReceivedBubbleBackground?: string;
   encryptionMessageBackground?: string;
   buttonBackground?: string;
+  searchInputBackground?:string;
+  modalBackground?:string;
+  modalInputBackground?:string;
+  modalHoverBackground?:string;
 }
 
 interface ITextColor {
@@ -35,6 +45,10 @@ interface ITextColor {
   chatReceivedBubbleAddressText?: string;
   chatReceivedBubbleTimestampText?: string;
   chatSentBubbleTimestampText?: string;
+  searchInputText?:string;
+  searchPlaceholderText?:string;
+  modalHeadingText?:string;
+  modalSubHeadingText?:string;
 }
 interface IFont {
   chatProfileText?: string;
@@ -46,6 +60,8 @@ interface IFont {
   chatReceivedBubbleAddressText?: string;
   chatReceivedBubbleTimestampText?: string;
   chatSentBubbleTimestampText?: string;
+  searchInputText?:string;
+  searchPlaceholderText?:string;
 }
 interface IFontWeight {
   chatProfileText?: string;
@@ -57,6 +73,8 @@ interface IFontWeight {
   chatReceivedBubbleAddressText?: string;
   chatReceivedBubbleTimestampText?: string;
   chatSentBubbleTimestampText?: string;
+  searchInputText?:string;
+  searchPlaceholderText?:string;
 }
 interface IIconColor {
   emoji?: string;
@@ -116,6 +134,9 @@ export const lightChatTheme: IChatTheme = {
     chatViewComponent: '24px',
     chatProfile: '32px',
     messageInput: '13px',
+    searchInput: '99px',
+    modal: '16px',
+    modalInnerComponents:'12px'
   },
 
   backgroundColor: {
@@ -127,6 +148,10 @@ export const lightChatTheme: IChatTheme = {
     chatReceivedBubbleBackground: '#fff',
     encryptionMessageBackground: '#fff',
     buttonBackground: 'rgb(202, 89, 155)',
+    searchInputBackground: 'rgb(244, 245, 250)',
+    modalBackground:'#fff',
+    modalInputBackground:'transparent',
+    modalHoverBackground:'rgb(244, 245, 250)'
   },
 
   fontSize: {
@@ -139,6 +164,8 @@ export const lightChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: '16px',
     chatReceivedBubbleTimestampText: '12px',
     chatSentBubbleTimestampText: '12px',
+    searchInputText:'16px',
+    searchPlaceholderText:'16px'
   },
 
   fontWeight: {
@@ -151,6 +178,8 @@ export const lightChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: '300',
     chatReceivedBubbleTimestampText: '400',
     chatSentBubbleTimestampText: '400',
+    searchInputText:'400',
+    searchPlaceholderText:'400'
   },
 
   fontFamily: 'inherit',
@@ -159,6 +188,9 @@ export const lightChatTheme: IChatTheme = {
     chatViewComponent: 'none',
     chatProfile: 'none',
     messageInput: 'none',
+    searchInput:'1px solid transparent',
+    modal:'1px solid rgb(229, 232, 246)',
+    modalInnerComponents:'1px solid rgb(194, 203, 219)'
   },
 
   iconColor: {
@@ -178,6 +210,10 @@ export const lightChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: '#000',
     chatReceivedBubbleTimestampText: '#000',
     chatSentBubbleTimestampText: '#fff',
+    searchInputText:'#000',
+    searchPlaceholderText:'rgb(101, 119, 149)',
+    modalHeadingText:'#000',
+    modalSubHeadingText:'rgb(101, 119, 149)'
   },
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
@@ -217,6 +253,9 @@ export const darkChatTheme: IChatTheme = {
     chatViewComponent: '24px',
     chatProfile: '32px',
     messageInput: '13px',
+    searchInput: '99px',
+    modal: '16px',
+    modalInnerComponents:'12px'
   },
 
   backgroundColor: {
@@ -227,6 +266,9 @@ export const darkChatTheme: IChatTheme = {
     chatReceivedBubbleBackground: 'rgb(64, 70, 80);',
     encryptionMessageBackground: 'rgb(64, 70, 80);',
     buttonBackground: 'rgb(202, 89, 155)',
+    modalBackground:'rgb(47, 49, 55)',
+    modalInputBackground:'rgb(40, 42, 46)',
+    modalHoverBackground:'rgb(64, 70, 80)'
   },
 
   fontSize: {
@@ -239,6 +281,8 @@ export const darkChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: '16px',
     chatReceivedBubbleTimestampText: '12px',
     chatSentBubbleTimestampText: '12px',
+    searchInputText:'16px',
+    searchPlaceholderText:'16px'
   },
 
   fontWeight: {
@@ -251,6 +295,8 @@ export const darkChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: '300',
     chatReceivedBubbleTimestampText: '400',
     chatSentBubbleTimestampText: '400',
+    searchInputText:'400',
+    searchPlaceholderText:'400'
   },
 
   fontFamily: 'inherit',
@@ -259,6 +305,9 @@ export const darkChatTheme: IChatTheme = {
     chatViewComponent: 'none',
     chatProfile: 'none',
     messageInput: 'none',
+    searchInput:'1px solid transparent',
+    modal:'1px solid rgb(74, 79, 103)',
+    modalInnerComponents:'1px solid rgb(74, 79, 103)'
   },
 
   iconColor: {
@@ -278,6 +327,10 @@ export const darkChatTheme: IChatTheme = {
     chatReceivedBubbleAddressText: 'rgb(182, 188, 214)',
     chatReceivedBubbleTimestampText: 'rgb(182, 188, 214)',
     chatSentBubbleTimestampText: '#fff',
+    searchInputText:'#fff',
+    searchPlaceholderText:'rgb(101, 119, 149)',
+    modalHeadingText:'#fff',
+    modalSubHeadingText:'rgb(182, 188, 214)'
   },
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',

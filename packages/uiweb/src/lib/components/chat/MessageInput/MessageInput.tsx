@@ -363,7 +363,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   return (
    !Object.keys(chatFeed || {}).length? <>
-   {!pgpPrivateKey && isConnected && (
+   {(!pgpPrivateKey && (isConnected || !!signer)) && (
      <TypebarSection
      // zIndex="1"
        width="100%"

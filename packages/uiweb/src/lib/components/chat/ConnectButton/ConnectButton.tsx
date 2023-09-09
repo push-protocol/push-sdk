@@ -2,16 +2,15 @@ import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
+import { init, useConnectWallet } from "@web3-onboard/react";
+import injectedModule from "@web3-onboard/injected-wallets";
+import { Signer, ethers } from 'ethers';
 import './index.css';
-
-import { useAccount } from 'wagmi';
-
-import { useWalletClient } from 'wagmi';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { device } from '../../../config';
+import { getAddressFromSigner } from '../../../helpers';
 
 /**
  * @interface IThemeProps
@@ -22,6 +21,8 @@ interface IThemeProps {
 }
 
 export const ConnectButtonSub = () => {
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+
   const {
     signer,
     pgpPrivateKey,
@@ -31,16 +32,31 @@ export const ConnectButtonSub = () => {
     setAccount,
     setSigner,
   } = useChatData();
-  const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
   const theme = useContext(ThemeContext);
 
+  const newFunc = () => {
+    console.log("wallet getting called")
+    if (wallet) {
+      (async () => {
+        console.log("Not sure what's happening lol")
+        const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
+        const signer = ethersProvider.getSigner()
+        const newAdd = await getAddressFromSigner(signer)
+        console.log(newAdd, "newAdd")
+        setSigner(signer)
+        setAccount(newAdd);
+      })()
+    } else if (!wallet) {
+      setAccount('')
+      setSigner(undefined)
+      setPgpPrivateKey(null)
+    }
+  }
+
   useEffect(() => {
-    (async () => {
-      if (!account) setAccount(address as string);
-      if (!signer) setSigner(walletClient as PushAPI.SignerType);
-    })();
-  }, [address, walletClient]);
+    newFunc()
+  }, [wallet])
+
 
   useEffect(() => {
     (async () => {
@@ -76,7 +92,7 @@ export const ConnectButtonSub = () => {
   };
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
-      <ConnectButton />
+      <button onClick={() => (wallet ? disconnect(wallet) : connect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
     </ConnectButtonDiv>
   ) : (
     <></>
@@ -89,9 +105,21 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
  
   button{
     background: ${(props) => `${props.theme.backgroundColor.buttonBackground}!important`};
-    color: ${(props) => `${props.theme.backgroundColor.buttonText}!important`};
+    // color: ${(props) => `${props.theme.backgroundColor.buttonText}!important`};
+    color: #fff;
     text-align:center;
+    font-size: 1em;
+    border-radius: 10px;
+    padding: 10px 20px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
    
+  }
+  button:hover{
+    scale: 1.05;
+    transition: 0.3s;
   }
   @media ${device.mobileL} {
     font-size: 12px;
