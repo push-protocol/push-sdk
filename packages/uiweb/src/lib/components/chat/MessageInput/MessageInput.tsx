@@ -349,7 +349,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     });
 
     if (chatFeed?.groupInformation?.rules && 
-      (chatFeed?.groupInformation?.rules?.groupAccess ||
+      (chatFeed?.groupInformation?.rules?.entry ||
       chatFeed?.groupInformation?.rules?.chat)
     ) {
       setIsRules(true);
