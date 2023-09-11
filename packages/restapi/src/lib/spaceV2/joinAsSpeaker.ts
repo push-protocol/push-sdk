@@ -1,3 +1,8 @@
+/**
+ * @file joinAsSpeaker
+ * defines a function that allows a user to join a space as a speaker in the SpaceV2 implmentation
+ */
+
 import { get } from './get';
 import { SpaceV2 } from './SpaceV2';
 import { approve } from './approve';
