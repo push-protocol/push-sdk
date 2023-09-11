@@ -1,20 +1,31 @@
+import { produce } from "immer";
 import Constants, { ENV } from "../constants";
-import { VIDEO_CALL_TYPE } from "../payloads/constants";
-import { SignerType, VideoCallData, VideoCallStatus } from "../types";
+import { EnvOptionsType, SignerType, SpaceDTO, SpaceV2Data, VideoCallStatus } from "../types";
+import { pCAIP10ToWallet } from "../helpers";
+import { join } from "./join";
 
-export const initVideoCallData: VideoCallData = {
-    meta: {
-        chatId: '',
-        initiator: {
-            address: '',
-            signal: null,
-        },
-        broadcast: {
-            livepeerInfo: null,
-            hostAddress: '',
-            coHostAddress: '',
-        },
-    },
+export const initSpaceInfo: SpaceDTO = {
+    members: [],
+    pendingMembers: [],
+    contractAddressERC20: null,
+    numberOfERC20: -1,
+    contractAddressNFT: null,
+    numberOfNFTTokens: -1,
+    verificationProof: '',
+    spaceImage: null,
+    spaceName: '',
+    isPublic: false,
+    spaceDescription: '',
+    spaceCreator: '',
+    spaceId: '',
+    scheduleAt: null,
+    scheduleEnd: null,
+    status: null,
+    inviteeDetails: {}
+  };
+
+export const initSpaceV2Data: SpaceV2Data = {
+    spaceInfo: initSpaceInfo,
     local: {
         stream: null,
         audio: null,
@@ -33,50 +44,67 @@ export const initVideoCallData: VideoCallData = {
     ],
 };
 
+export interface SpaceV2ConstructorType extends EnvOptionsType {
+    signer: SignerType;
+    pgpPrivateKey: string;
+    chainId: number;
+    address: string;
+    setSpaceV2Data: (fn: (data: SpaceV2Data) => SpaceV2Data) => void;
+}
+
 export class SpaceV2 {
     // user, call related info
     protected signer: SignerType;
     protected chainId: number;
     protected pgpPrivateKey: string;
     protected env: ENV;
-    protected callType: VIDEO_CALL_TYPE;
 
     private peerConnections: Map<string, RTCPeerConnection> = new Map();
 
-    protected data!: VideoCallData;
-    setData: (fn: (data: VideoCallData) => VideoCallData) => void;
+    protected data!: SpaceV2Data;
 
-    constructor({
-        signer,
-        chainId,
-        pgpPrivateKey,
-        env = Constants.ENV.PROD,
-        callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
-        setData,
-    }: {
-        signer: SignerType;
-        chainId: number;
-        pgpPrivateKey: string;
-        env?: ENV;
-        callType?: VIDEO_CALL_TYPE;
-        setData: (fn: (data: VideoCallData) => VideoCallData) => void;
-    }) {
+    setSpaceV2Data: (fn: (data: SpaceV2Data) => SpaceV2Data) => void;
+
+    constructor(options: SpaceV2ConstructorType) {
+        const {
+            signer,
+            pgpPrivateKey,
+            address,
+            chainId,
+            env = Constants.ENV.PROD,
+            setSpaceV2Data, // to update the 'spaceData' state maintained by the developer
+        } = options || {};
+        
         this.signer = signer;
         this.chainId = chainId;
         this.pgpPrivateKey = pgpPrivateKey;
         this.env = env;
-        this.callType = callType;
 
-        setData(() => initVideoCallData);
+        setSpaceV2Data(() => initSpaceV2Data);
 
         // set the state updating function
-        this.setData = function (fn) {
+        this.setSpaceV2Data = function (fn) {
             // update the react state
-            setData(fn);
+            setSpaceV2Data(fn);
 
             // update the class variable
             this.data = fn(this.data);
         };
+
+
+        // initializing state
+        // set the local address inside video call 'data'
+        this.setSpaceV2Data((oldSpaceV2Data) => {
+            return produce(oldSpaceV2Data, (draft) => {
+                draft.local.address = pCAIP10ToWallet(address);
+            });
+        });
+    
+        // init the state maintained by the developer
+        setSpaceV2Data(() => initSpaceV2Data);
+    
+        // init the spaceSpecificData class variable
+        this.data = initSpaceV2Data;
     }
 
     // Add a connected peer to the space
@@ -125,15 +153,11 @@ export class SpaceV2 {
          */
     }
 
-    async join(options: any) {
-        /**
-         * will contain logic to handle joining of speakers and listeners based on role
-         */
-    }
-
     async invite(options: any) {
         /**
          * will contain logic to handle invites made by host to listener
          */
     }
+
+    public join = join;
 }
