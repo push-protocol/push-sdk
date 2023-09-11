@@ -9,6 +9,7 @@ import {
 import {
   approve as approveRequest
 } from '../chat/approveRequest';
+
 interface ApproveRequestOptionsType extends EnvOptionsType {
   senderAddress: string;
   pgpPrivateKey ? : string | null;

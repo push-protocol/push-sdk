@@ -4,10 +4,6 @@ import { get } from './get';
 import getPlainAddress from './helpers/getPlainAddress';
 import { SpaceV2 } from './SpaceV2';
 
-/**
- *
- * @param options
- */
 export async function join(this: SpaceV2) {
   try {
     const space = await get({

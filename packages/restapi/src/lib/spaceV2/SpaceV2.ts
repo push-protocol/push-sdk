@@ -1,8 +1,10 @@
 import { produce } from "immer";
+
+import { join } from "./join";
+
 import Constants, { ENV } from "../constants";
 import { EnvOptionsType, SignerType, SpaceDTO, SpaceV2Data, VideoCallStatus } from "../types";
 import { pCAIP10ToWallet } from "../helpers";
-import { join } from "./join";
 
 export const initSpaceInfo: SpaceDTO = {
     members: [],
