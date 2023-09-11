@@ -1,6 +1,37 @@
 import Constants, { ENV } from "../constants";
 import { VIDEO_CALL_TYPE } from "../payloads/constants";
-import { SignerType } from "../types";
+import { SignerType, VideoCallData, VideoCallStatus } from "../types";
+
+export const initVideoCallData: VideoCallData = {
+    meta: {
+        chatId: '',
+        initiator: {
+            address: '',
+            signal: null,
+        },
+        broadcast: {
+            livepeerInfo: null,
+            hostAddress: '',
+            coHostAddress: '',
+        },
+    },
+    local: {
+        stream: null,
+        audio: null,
+        video: null,
+        address: '',
+    },
+    incoming: [
+        {
+            stream: null,
+            audio: null,
+            video: null,
+            address: '',
+            status: VideoCallStatus.UNINITIALIZED,
+            retryCount: 0,
+        },
+    ],
+};
 
 export class SpaceV2 {
     // user, call related info
@@ -12,24 +43,40 @@ export class SpaceV2 {
 
     private peerConnections: Map<string, RTCPeerConnection> = new Map();
 
+    protected data!: VideoCallData;
+    setData: (fn: (data: VideoCallData) => VideoCallData) => void;
+
     constructor({
         signer,
         chainId,
         pgpPrivateKey,
         env = Constants.ENV.PROD,
         callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
+        setData,
     }: {
         signer: SignerType;
         chainId: number;
         pgpPrivateKey: string;
         env?: ENV;
         callType?: VIDEO_CALL_TYPE;
+        setData: (fn: (data: VideoCallData) => VideoCallData) => void;
     }) {
         this.signer = signer;
         this.chainId = chainId;
         this.pgpPrivateKey = pgpPrivateKey;
         this.env = env;
         this.callType = callType;
+
+        setData(() => initVideoCallData);
+
+        // set the state updating function
+        this.setData = function (fn) {
+            // update the react state
+            setData(fn);
+
+            // update the class variable
+            this.data = fn(this.data);
+        };
     }
 
     // Add a connected peer to the space
