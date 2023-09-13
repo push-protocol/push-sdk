@@ -105,7 +105,6 @@ export async function inviteToJoin(
               spaceId,
               signalData: data,
               env: this.env,
-              callType: VIDEO_CALL_TYPE.PUSH_SPACE,
               callDetails: details,
             }
           );
