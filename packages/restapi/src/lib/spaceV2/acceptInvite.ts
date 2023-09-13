@@ -3,19 +3,26 @@
 import * as Peer from 'simple-peer';
 import { produce } from 'immer';
 
-import { SPACE_ACCEPT_REQUEST_TYPE } from '../payloads/constants';
-import type { SpaceV2 } from './SpaceV2';
-import getIncomingIndexFromAddress from '../video/helpers/getIncomingIndexFromAddress';
-import { VideoCallStatus } from '../types';
+import { initSpaceV2Data, type SpaceV2 } from './SpaceV2';
 import sendSpaceNotification from './helpers/sendSpaceNotification';
-import { getIceServerConfig } from './helpers/getIceServerConfig';
+
+import { SPACE_ACCEPT_REQUEST_TYPE, SPACE_DISCONNECT_TYPE, SPACE_REQUEST_TYPE } from '../payloads/constants';
+import { VideoCallStatus } from '../types';
+
+// imports from Video
+import getIncomingIndexFromAddress from '../video/helpers/getIncomingIndexFromAddress';
 import getConnectedAddresses from '../video/helpers/getConnectedAddresses';
+import getConnectToAddresses from '../video/helpers/getConnectToAddresses';
+import isJSON from '../video/helpers/isJSON';
+import { endStream } from '../video/helpers/mediaToggle';
+import { getIceServerConfig } from '../video/helpers/getIceServerConfig';
 
 export interface IAcceptInvite {
     signalData: any;
     senderAddress: string;
     recipientAddress: string;
-    chatId: string;
+    spaceId: string;
+    onReceiveMessage?: (message: string) => void;
     retry?: boolean;
     details?: {
         type: SPACE_ACCEPT_REQUEST_TYPE;
@@ -23,7 +30,7 @@ export interface IAcceptInvite {
     };
 }
 
-export async function acceptPromotionInvite(
+export async function acceptInvite(
     this: SpaceV2,
     options: IAcceptInvite
 ) {
@@ -31,7 +38,10 @@ export async function acceptPromotionInvite(
         signalData,
         senderAddress,
         recipientAddress,
-        chatId,
+        spaceId,
+        onReceiveMessage = (message: string) => {
+            console.log('received a meesage', message);
+        },
         retry = false,
         details,
     } = options || {};
@@ -48,20 +58,19 @@ export async function acceptPromotionInvite(
         // fetching the iceServers config
         const iceServerConfig = await getIceServerConfig(this.env);
 
-        // sets a new `RTCPeerConnection` for a recipient address in the space.
-        this.setPeerConnection(recipientAddress, new Peer({
-            initiator: false,
+        let peerConnection = new Peer({
+            initiator: true,
             trickle: false,
             stream: this.data.local.stream,
             config: {
                 iceServers: iceServerConfig,
             },
-        }))
+        });
 
-        const receipentPeer = this.getPeerConnection(recipientAddress) as Peer;
+        this.setPeerConnection(recipientAddress, peerConnection);
 
-        receipentPeer.on('error', (err: any) => {
-            if (this.data.incoming[0].retryCount >= 5) {
+        peerConnection.on('error', (err: any) => {
+            if (this.data.incomingPeerStreams[0].retryCount >= 5) {
                 console.log('Max retries exceeded, please try again.');
                 this.disconnect({ peerAddress: recipientAddress });
             }
@@ -77,22 +86,21 @@ export async function acceptPromotionInvite(
                     senderAddress,
                     recipientAddress,
                     status: VideoCallStatus.RETRY_INITIALIZED,
-                    spaceId: chatId,
+                    spaceId: spaceId,
                     signalData: null,
-                    // callType: this.callType,
                     env: this.env,
                 }
             );
         })
 
-        receipentPeer.signal(signalData);
+        peerConnection.signal(signalData);
 
-        receipentPeer.on('signal', (data: any) => {
-            // this.setSpaceV2Data((oldData) => {
-            //     return produce(oldData, (draft) => {
-            //         draft.meta.initiator.signal = data;
-            //     });
-            // });
+        peerConnection.on('signal', (data: any) => {
+            this.setSpaceV2Data((oldData) => {
+                return produce(oldData, (draft) => {
+                    draft.meta.initiator.signal = data;
+                });
+            });
 
             sendSpaceNotification(
                 {
@@ -105,8 +113,8 @@ export async function acceptPromotionInvite(
                     recipientAddress,
                     status: retry
                         ? VideoCallStatus.RETRY_RECEIVED
-                        : VideoCallStatus.RECEIVED,
-                    spaceId: chatId,
+                        : VideoCallStatus.INITIALIZED,
+                    spaceId,
                     signalData: data,
                     env: this.env,
                     callDetails: details,
@@ -114,14 +122,14 @@ export async function acceptPromotionInvite(
             );
         });
 
-        receipentPeer.on('connect', () => {
-            receipentPeer.send(
+        peerConnection.on('connect', () => {
+            peerConnection.send(
                 JSON.stringify({
                     type: 'isVideoOn',
                     value: this.data.local.video,
                 })
             );
-            receipentPeer.send(
+            peerConnection.send(
                 JSON.stringify({
                     type: 'isAudioOn',
                     value: this.data.local.audio,
@@ -130,7 +138,7 @@ export async function acceptPromotionInvite(
 
             // send the addresses the local peer is connected to remote peer
             const connectedAddresses = getConnectedAddresses({
-                incomingPeers: this.data.incoming,
+                incomingPeers: this.data.incomingPeerStreams,
             });
 
             console.log(
@@ -138,7 +146,7 @@ export async function acceptPromotionInvite(
                 'connectedAddresses',
                 connectedAddresses
             );
-            receipentPeer.send(
+            peerConnection.send(
                 JSON.stringify({
                     type: 'connectedAddresses',
                     value: connectedAddresses,
@@ -149,14 +157,145 @@ export async function acceptPromotionInvite(
             this.setSpaceV2Data((oldData) => {
                 return produce(oldData, (draft) => {
                     const incomingIndex = getIncomingIndexFromAddress(
-                        oldData.incoming,
+                        oldData.incomingPeerStreams,
                         recipientAddress
                     );
-                    draft.incoming[incomingIndex].status = VideoCallStatus.CONNECTED;
+                    draft.incomingPeerStreams[incomingIndex].status = VideoCallStatus.CONNECTED;
                 });
             });
         });
+
+        peerConnection.on('data', (data: any) => {
+            if (isJSON(data)) {
+                const parsedData = JSON.parse(data);
+
+                if (parsedData.type === 'connectedAddresses') {
+                    console.log(
+                        'ACCEPT REQUEST - RECEIVING CONNECTED ADDRESSES',
+                        'CONNECTED ADDRESSES',
+                        parsedData.value
+                    );
+
+                    const receivedConnectedAddresses = parsedData.value;
+                    const localConnectedAddresses = getConnectedAddresses({
+                        incomingPeers: this.data.incomingPeerStreams,
+                    });
+
+                    // find out the address to which local peer is not connected to but the remote peer is
+                    // then connect with them
+                    const connectToAddresses = getConnectToAddresses({
+                        localAddress: senderAddress,
+                        localConnectedAddresses,
+                        receivedConnectedAddresses,
+                    });
+                    this.request({
+                        senderAddress,
+                        recipientAddress: connectToAddresses,
+                        spaceId,
+                        details: {
+                            type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
+                            data: {},
+                        },
+                    });
+                }
+
+                if (parsedData.type === 'isVideoOn') {
+                    console.log('IS VIDEO ON', parsedData.value);
+                    this.setSpaceV2Data((oldData) => {
+                        return produce(oldData, (draft) => {
+                            const incomingIndex = getIncomingIndexFromAddress(
+                                oldData.incomingPeerStreams,
+                                recipientAddress
+                            );
+                            draft.incomingPeerStreams[incomingIndex].video = parsedData.value;
+                        });
+                    });
+                }
+
+                if (parsedData.type === 'isAudioOn') {
+                    console.log('IS AUDIO ON', parsedData.value);
+                    this.setSpaceV2Data((oldData) => {
+                        return produce(oldData, (draft) => {
+                            const incomingIndex = getIncomingIndexFromAddress(
+                                oldData.incomingPeerStreams,
+                                recipientAddress
+                            );
+                            draft.incomingPeerStreams[incomingIndex].audio = parsedData.value;
+                        });
+                    });
+                }
+
+                if (parsedData.type === 'endCall') {
+                    console.log('END CALL');
+
+                    if (
+                        parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
+                    ) {
+                        // destroy connection to only the current peer
+                        peerConnection?.destroy();
+                        peerConnection = null;
+                        this.setSpaceV2Data((oldData) => {
+                            return produce(oldData, (draft) => {
+                                const incomingIndex = getIncomingIndexFromAddress(
+                                    oldData.incomingPeerStreams,
+                                    recipientAddress
+                                );
+                                draft.incomingPeerStreams.splice(incomingIndex, 1);
+                            });
+                        });
+                    }
+                    if (
+                        parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
+                    ) {
+                        // destroy connection to all the peers
+                        for (const connectedAddress in this.getConnectedPeerIds()) {
+                            // TODO: refactor
+                            // this.getPeerConnection(connectedAddress)?.destroy();
+                            this.setPeerConnection(connectedAddress, undefined);
+                        }
+                    }
+
+                    if (
+                        parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP
+                    ) {
+                        // destroy the local stream
+                        if (this.data.local.stream) {
+                            endStream(this.data.local.stream);
+                        }
+
+                        // reset the state
+                        this.setSpaceV2Data(() => initSpaceV2Data);
+                    }
+                }
+            } else {
+                onReceiveMessage(data);
+            }
+        });
+
+        peerConnection.on(
+            'stream',
+            (currentStream: MediaStream) => {
+                console.log('received incoming stream', currentStream);
+                const incomingIndex = getIncomingIndexFromAddress(
+                    this.data.pendingPeerStreams,
+                    recipientAddress
+                );
+
+                // Here, we can handle if we want to merge stream or anything
+                // this.onReceiveStream(
+                //   currentStream,
+                //   recipientAddress,
+                //   this.data.pendingPeerStreams[pendingIndex].audio
+                // );
+
+                this.setSpaceV2Data((oldData) => {
+                    return produce(oldData, (draft) => {
+                        draft.incomingPeerStreams[incomingIndex].stream = currentStream;
+                    });
+                });
+            }
+        );
     } catch (error) {
-        console.log('error in accept request', error);
+        console.log('error in acceptInvite', error);
     }
 }
