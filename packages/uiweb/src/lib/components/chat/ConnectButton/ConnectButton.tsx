@@ -34,14 +34,12 @@ export const ConnectButtonSub = () => {
   const theme = useContext(ThemeContext);
 
   const newFunc = () => {
-    console.log("wallet getting called")
     if (wallet) {
       (async () => {
-        console.log("Not sure what's happening lol")
+
         const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
-        console.log(newAdd, "newAdd")
         setSigner(signer)
         setAccount(newAdd);
       })()

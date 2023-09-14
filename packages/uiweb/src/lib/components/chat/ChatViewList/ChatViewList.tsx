@@ -96,7 +96,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     (async () => {
       if (!account && !env) return;
       const chat = await fetchChat({ chatId });
-      if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
+      if (Object.keys(chat || {}).length) {
+        setConversationHash(chat?.threadhash as string);
+        setChatFeed(chat as IFeeds);
+      }
       else {
         let newChatFeed;
         let group;
@@ -126,7 +129,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setLoading(false);
     })();
   }, [chatId, pgpPrivateKey, account, env]);
-
   //moniters socket changes
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
