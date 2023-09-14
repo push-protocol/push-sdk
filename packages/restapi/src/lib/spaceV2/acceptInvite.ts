@@ -1,3 +1,12 @@
+/**
+ * @file acceptInvite
+ * This file defines functions related to accepting invites
+ * and managing connections within the SpaceV2 class.
+ * It includes the `acceptInvite` function,
+ * which handles incoming invitations and manages peer connections,
+ * as well as related utility functions.
+ */
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as Peer from 'simple-peer';
@@ -121,12 +130,6 @@ export async function acceptInvite(
         });
 
         peerConnection.on('connect', () => {
-            peerConnection.send(
-                JSON.stringify({
-                    type: 'isVideoOn',
-                    value: this.data.local.video,
-                })
-            );
             peerConnection.send(
                 JSON.stringify({
                     type: 'isAudioOn',
