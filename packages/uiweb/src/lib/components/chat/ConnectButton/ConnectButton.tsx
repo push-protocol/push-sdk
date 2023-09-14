@@ -3,11 +3,10 @@ import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useContext, useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { Signer, ethers } from 'ethers';
-import './index.css';
+
 import { ThemeContext } from '../theme/ThemeProvider';
 import { device } from '../../../config';
 import { getAddressFromSigner } from '../../../helpers';
