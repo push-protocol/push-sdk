@@ -227,7 +227,7 @@ export async function acceptInvite(
             'stream',
             (currentStream: MediaStream) => {
                 console.log('received incoming stream', currentStream);
-                const incomingIndex = getIncomingIndexFromAddress(
+                const pendingStreamIndex = getIncomingIndexFromAddress(
                     this.data.pendingPeerStreams,
                     recipientAddress
                 );
@@ -242,9 +242,9 @@ export async function acceptInvite(
                 // remove stream from pendingPeerStreams and add it to incomingPeerStreams
                 this.setSpaceV2Data((oldData) => {
                     return produce(oldData, (draft) => {
-                        draft.incomingPeerStreams.push(draft.pendingPeerStreams[incomingIndex]);
-                        draft.pendingPeerStreams.splice(incomingIndex, 1);
-                        draft.incomingPeerStreams[incomingIndex].stream = currentStream;
+                        draft.incomingPeerStreams.push(draft.pendingPeerStreams[pendingStreamIndex]);
+                        draft.pendingPeerStreams.splice(pendingStreamIndex, 1);
+                        draft.incomingPeerStreams[pendingStreamIndex].stream = currentStream;
                     });
                 });
             }
