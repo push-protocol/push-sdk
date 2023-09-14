@@ -192,7 +192,9 @@ export async function inviteToJoin(
 
             this.setSpaceV2Data((oldData) => {
               return produce(oldData, (draft) => {
-                draft.incomingPeerStreams.push(draft.pendingPeerStreams[pendingIndex]);
+                const peerStream = draft.pendingPeerStreams[pendingIndex];
+                peerStream.stream = currentStream;
+                draft.incomingPeerStreams.push(peerStream);
                 draft.pendingPeerStreams.splice(pendingIndex, 1);
               });
             });
