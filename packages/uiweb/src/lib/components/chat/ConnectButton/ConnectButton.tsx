@@ -3,11 +3,10 @@ import { IChatTheme } from '../theme';
 import { useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useContext, useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { Signer, ethers } from 'ethers';
-import './index.css';
+
 import { ThemeContext } from '../theme/ThemeProvider';
 import { device } from '../../../config';
 import { getAddressFromSigner } from '../../../helpers';
@@ -35,14 +34,12 @@ export const ConnectButtonSub = () => {
   const theme = useContext(ThemeContext);
 
   const newFunc = () => {
-    console.log("wallet getting called")
     if (wallet) {
       (async () => {
-        console.log("Not sure what's happening lol")
+
         const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
-        console.log(newAdd, "newAdd")
         setSigner(signer)
         setAccount(newAdd);
       })()
