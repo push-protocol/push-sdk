@@ -143,36 +143,42 @@ export async function inviteToJoin(
         });
 
         peerConnection.on('data', (data: any) => {
-            if (isJSON(data)) {
-                const parsedData = JSON.parse(data);
+          if (isJSON(data)) {
+            const parsedData = JSON.parse(data);
     
-                if (parsedData.type === 'isVideoOn') {
-                    console.log('IS VIDEO ON', parsedData.value);
-                    this.setSpaceV2Data((oldData) => {
-                        return produce(oldData, (draft) => {
-                        const incomingIndex = getIncomingIndexFromAddress(
-                            oldData.pendingPeerStreams,
-                            recipientAddress
-                        );
-                        draft.pendingPeerStreams[incomingIndex].video = parsedData.value;
-                        });
-                    });
-                }
-    
-                if (parsedData.type === 'isAudioOn') {
-                    console.log('IS AUDIO ON', parsedData.value);
-                    this.setSpaceV2Data((oldData) => {
-                        return produce(oldData, (draft) => {
-                        const incomingIndex = getIncomingIndexFromAddress(
-                            oldData.pendingPeerStreams,
-                            recipientAddress
-                        );
-                        draft.pendingPeerStreams[incomingIndex].audio = parsedData.value;
-                        });
-                    });
-                }
+            if (parsedData.type === 'isVideoOn' || parsedData.type === 'isAudioOn') {
+              console.log(`IS ${parsedData.type.toUpperCase()}`, parsedData.value);
+  
+              this.setSpaceV2Data((oldData) => {
+                return produce(oldData, (draft) => {
+                  let arrayToUpdate = null;
+
+                  // Check if the peer is in pendingPeerStreams
+                  const indexInPending = draft.pendingPeerStreams.findIndex(peer => peer.address === recipientAddress);
+                  if (indexInPending !== -1) {
+                      arrayToUpdate = draft.pendingPeerStreams;
+                  }
+
+                  // Check if the peer is in incomingPeerStreams
+                  const indexInIncoming = draft.incomingPeerStreams.findIndex(peer => peer.address === recipientAddress);
+                  if (indexInIncoming !== -1) {
+                    arrayToUpdate = draft.incomingPeerStreams;
+                  }
+
+                  // If the peer is found in either array, update the property
+                  if (arrayToUpdate) {
+                    if (parsedData.type === 'isVideoOn') {
+                      arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].video = parsedData.value;
+                    }
+                    if (parsedData.type === 'isAudioOn') {
+                      arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].audio = parsedData.value;
+                    }
+                  }
+                });
+              });
             }
-        });
+          }
+      });           
 
         peerConnection.on(
           'stream',
