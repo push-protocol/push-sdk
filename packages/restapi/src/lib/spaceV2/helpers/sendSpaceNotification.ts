@@ -22,7 +22,6 @@ interface SpaceInfoType {
     signalData: any;
     status: VideoCallStatus;
     env?: ENV;
-    callType?: VIDEO_CALL_TYPE;
     callDetails?: CallDetailsType;
 }
 
@@ -50,7 +49,6 @@ const sendSpaceNotification = async (
         status,
         signalData = null,
         env = Constants.ENV.PROD,
-        callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
         callDetails
     }: SpaceInfoType
 ) => {
@@ -93,7 +91,7 @@ const sendSpaceNotification = async (
                 cta: '',
                 img: '',
                 additionalMeta: {
-                    type: `${callType}+1`,
+                    type: `${VIDEO_CALL_TYPE.PUSH_SPACE}+1`,
                     data: JSON.stringify(spaceData),
                 },
             },

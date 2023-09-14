@@ -6,13 +6,11 @@ import { produce } from 'immer';
 import { initSpaceV2Data, type SpaceV2 } from './SpaceV2';
 import sendSpaceNotification from './helpers/sendSpaceNotification';
 
-import { SPACE_ACCEPT_REQUEST_TYPE, SPACE_DISCONNECT_TYPE, SPACE_REQUEST_TYPE } from '../payloads/constants';
+import { SPACE_ACCEPT_REQUEST_TYPE, SPACE_DISCONNECT_TYPE } from '../payloads/constants';
 import { VideoCallStatus } from '../types';
 
 // imports from Video
 import getIncomingIndexFromAddress from '../video/helpers/getIncomingIndexFromAddress';
-import getConnectedAddresses from '../video/helpers/getConnectedAddresses';
-import getConnectToAddresses from '../video/helpers/getConnectToAddresses';
 import isJSON from '../video/helpers/isJSON';
 import { endStream } from '../video/helpers/mediaToggle';
 import { getIceServerConfig } from '../video/helpers/getIceServerConfig';
@@ -136,23 +134,6 @@ export async function acceptInvite(
                 })
             );
 
-            // send the addresses the local peer is connected to remote peer
-            const connectedAddresses = getConnectedAddresses({
-                incomingPeers: this.data.incomingPeerStreams,
-            });
-
-            console.log(
-                'ACCEPT REQUEST - SENDING THE CONNECTED ADDRESSES',
-                'connectedAddresses',
-                connectedAddresses
-            );
-            peerConnection.send(
-                JSON.stringify({
-                    type: 'connectedAddresses',
-                    value: connectedAddresses,
-                })
-            );
-
             // set videoCallInfo state with status connected for the receiver's end
             this.setSpaceV2Data((oldData) => {
                 return produce(oldData, (draft) => {
@@ -168,36 +149,6 @@ export async function acceptInvite(
         peerConnection.on('data', (data: any) => {
             if (isJSON(data)) {
                 const parsedData = JSON.parse(data);
-
-                if (parsedData.type === 'connectedAddresses') {
-                    console.log(
-                        'ACCEPT REQUEST - RECEIVING CONNECTED ADDRESSES',
-                        'CONNECTED ADDRESSES',
-                        parsedData.value
-                    );
-
-                    const receivedConnectedAddresses = parsedData.value;
-                    const localConnectedAddresses = getConnectedAddresses({
-                        incomingPeers: this.data.incomingPeerStreams,
-                    });
-
-                    // find out the address to which local peer is not connected to but the remote peer is
-                    // then connect with them
-                    const connectToAddresses = getConnectToAddresses({
-                        localAddress: senderAddress,
-                        localConnectedAddresses,
-                        receivedConnectedAddresses,
-                    });
-                    this.request({
-                        senderAddress,
-                        recipientAddress: connectToAddresses,
-                        spaceId,
-                        details: {
-                            type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
-                            data: {},
-                        },
-                    });
-                }
 
                 if (parsedData.type === 'isVideoOn') {
                     console.log('IS VIDEO ON', parsedData.value);
@@ -288,8 +239,11 @@ export async function acceptInvite(
                 //   this.data.pendingPeerStreams[pendingIndex].audio
                 // );
 
+                // remove stream from pendingPeerStreams and add it to incomingPeerStreams
                 this.setSpaceV2Data((oldData) => {
                     return produce(oldData, (draft) => {
+                        draft.incomingPeerStreams.push(draft.pendingPeerStreams[incomingIndex]);
+                        draft.pendingPeerStreams.splice(incomingIndex, 1);
                         draft.incomingPeerStreams[incomingIndex].stream = currentStream;
                     });
                 });
