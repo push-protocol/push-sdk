@@ -244,7 +244,13 @@ export async function acceptInvite(
                     return produce(oldData, (draft) => {
                         draft.incomingPeerStreams.push(draft.pendingPeerStreams[pendingStreamIndex]);
                         draft.pendingPeerStreams.splice(pendingStreamIndex, 1);
-                        draft.incomingPeerStreams[pendingStreamIndex].stream = currentStream;
+
+                        const incomingStreamIndex = getIncomingIndexFromAddress(
+                            this.data.incomingPeerStreams,
+                            recipientAddress
+                        );
+
+                        draft.incomingPeerStreams[incomingStreamIndex].stream = currentStream;
                     });
                 });
             }
