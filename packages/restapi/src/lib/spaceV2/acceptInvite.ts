@@ -137,11 +137,11 @@ export async function acceptInvite(
             // set videoCallInfo state with status connected for the receiver's end
             this.setSpaceV2Data((oldData) => {
                 return produce(oldData, (draft) => {
-                    const incomingIndex = getIncomingIndexFromAddress(
-                        oldData.incomingPeerStreams,
+                    const pendingIndex = getIncomingIndexFromAddress(
+                        oldData.pendingPeerStreams,
                         recipientAddress
                     );
-                    draft.incomingPeerStreams[incomingIndex].status = VideoCallStatus.CONNECTED;
+                    draft.pendingPeerStreams[pendingIndex].status = VideoCallStatus.CONNECTED;
                 });
             });
         });
@@ -150,28 +150,29 @@ export async function acceptInvite(
             if (isJSON(data)) {
                 const parsedData = JSON.parse(data);
 
-                if (parsedData.type === 'isVideoOn') {
-                    console.log('IS VIDEO ON', parsedData.value);
-                    this.setSpaceV2Data((oldData) => {
-                        return produce(oldData, (draft) => {
-                            const incomingIndex = getIncomingIndexFromAddress(
-                                oldData.incomingPeerStreams,
-                                recipientAddress
-                            );
-                            draft.incomingPeerStreams[incomingIndex].video = parsedData.value;
-                        });
-                    });
-                }
-
                 if (parsedData.type === 'isAudioOn') {
-                    console.log('IS AUDIO ON', parsedData.value);
+                    console.log('IS AUDIO ON', parsedData.value)
+
                     this.setSpaceV2Data((oldData) => {
                         return produce(oldData, (draft) => {
-                            const incomingIndex = getIncomingIndexFromAddress(
-                                oldData.incomingPeerStreams,
-                                recipientAddress
-                            );
-                            draft.incomingPeerStreams[incomingIndex].audio = parsedData.value;
+                            let arrayToUpdate = null;
+
+                            // Check if the peer is in pendingPeerStreams
+                            const indexInPending = draft.pendingPeerStreams.findIndex(peer => peer.address === recipientAddress);
+                            if (indexInPending !== -1) {
+                                arrayToUpdate = draft.pendingPeerStreams;
+                            }
+
+                            // Check if the peer is in incomingPeerStreams
+                            const indexInIncoming = draft.incomingPeerStreams.findIndex(peer => peer.address === recipientAddress);
+                            if (indexInIncoming !== -1) {
+                                arrayToUpdate = draft.incomingPeerStreams;
+                            }
+
+                            // If the peer is found in either array, update the property
+                            if (arrayToUpdate) {
+                                arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].audio = parsedData.value;
+                            }
                         });
                     });
                 }
@@ -242,15 +243,10 @@ export async function acceptInvite(
                 // remove stream from pendingPeerStreams and add it to incomingPeerStreams
                 this.setSpaceV2Data((oldData) => {
                     return produce(oldData, (draft) => {
-                        draft.incomingPeerStreams.push(draft.pendingPeerStreams[pendingStreamIndex]);
+                        const peerStream = draft.pendingPeerStreams[pendingStreamIndex];
+                        peerStream.stream = currentStream;
+                        draft.incomingPeerStreams.push(peerStream);
                         draft.pendingPeerStreams.splice(pendingStreamIndex, 1);
-
-                        const incomingStreamIndex = getIncomingIndexFromAddress(
-                            this.data.incomingPeerStreams,
-                            recipientAddress
-                        );
-
-                        draft.incomingPeerStreams[incomingStreamIndex].stream = currentStream;
                     });
                 });
             }
