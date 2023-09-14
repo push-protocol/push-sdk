@@ -130,12 +130,6 @@ export async function inviteToJoin(
           );
           peerConnection.send(
             JSON.stringify({
-              type: 'isVideoOn',
-              value: this.data.local.video,
-            })
-          );
-          peerConnection.send(
-            JSON.stringify({
               type: 'isAudioOn',
               value: this.data.local.audio,
             })
@@ -146,7 +140,7 @@ export async function inviteToJoin(
           if (isJSON(data)) {
             const parsedData = JSON.parse(data);
     
-            if (parsedData.type === 'isVideoOn' || parsedData.type === 'isAudioOn') {
+            if (parsedData.type === 'isAudioOn') {
               console.log(`IS ${parsedData.type.toUpperCase()}`, parsedData.value);
   
               this.setSpaceV2Data((oldData) => {
@@ -167,12 +161,7 @@ export async function inviteToJoin(
 
                   // If the peer is found in either array, update the property
                   if (arrayToUpdate) {
-                    if (parsedData.type === 'isVideoOn') {
-                      arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].video = parsedData.value;
-                    }
-                    if (parsedData.type === 'isAudioOn') {
-                      arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].audio = parsedData.value;
-                    }
+                    arrayToUpdate[indexInIncoming !== -1 ? indexInIncoming : indexInPending].audio = parsedData.value;
                   }
                 });
               });

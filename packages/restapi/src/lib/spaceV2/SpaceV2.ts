@@ -1,6 +1,7 @@
 import { produce } from "immer";
 
 import { join } from "./join";
+import { acceptInvite } from "./acceptInvite";
 import { ISpaceInviteInputOptions, inviteToJoin } from "./inviteToJoin";
 
 import Constants, { ENV } from "../constants";
@@ -25,14 +26,14 @@ export const initSpaceInfo: SpaceDTO = {
     scheduleEnd: null,
     status: null,
     inviteeDetails: {}
-  };
+};
 
 export const initSpaceV2Data: SpaceV2Data = {
     spaceInfo: initSpaceInfo,
     meta: {
         initiator: {
-          address: '',
-          signal: null,
+            address: '',
+            signal: null,
         },
     },
     local: {
@@ -78,7 +79,7 @@ export class SpaceV2 {
     protected pgpPrivateKey: string;
     protected env: ENV;
 
-    private peerConnections: Map<string, RTCPeerConnection> = new Map();
+    private peerConnections: Map<string, RTCPeerConnection | undefined> = new Map();
 
     protected data!: SpaceV2Data;
 
@@ -93,7 +94,7 @@ export class SpaceV2 {
             env = Constants.ENV.PROD,
             setSpaceV2Data, // to update the 'spaceData' state maintained by the developer
         } = options || {};
-        
+
         this.signer = signer;
         this.chainId = chainId;
         this.pgpPrivateKey = pgpPrivateKey;
@@ -118,10 +119,10 @@ export class SpaceV2 {
                 draft.local.address = pCAIP10ToWallet(address);
             });
         });
-    
+
         // init the state maintained by the developer
         setSpaceV2Data(() => initSpaceV2Data);
-    
+
         // init the spaceSpecificData class variable
         this.data = initSpaceV2Data;
     }
@@ -150,7 +151,7 @@ export class SpaceV2 {
     }
 
     // Set a connected peer's peer connection by their ID
-    setPeerConnection(peerId: string, peerConnection: RTCPeerConnection) {
+    setPeerConnection(peerId: string, peerConnection: RTCPeerConnection | undefined) {
         this.peerConnections.set(peerId, peerConnection);
     }
 
@@ -185,4 +186,6 @@ export class SpaceV2 {
     }
 
     public join = join;
+
+    public acceptInvite = acceptInvite;
 }
