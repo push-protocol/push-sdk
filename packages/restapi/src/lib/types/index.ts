@@ -680,13 +680,20 @@ export type VideoCallData = {
 
 export type SpaceV2Data = {
   spaceInfo: SpaceDTO;
+  meta: {
+    initiator: {
+      address: string;
+      signal: any;
+    };
+  };
   local: {
     stream: IMediaStream;
     audio: boolean | null;
     video: boolean | null;
     address: string;
   };
-  incoming: PeerData[];
+  incomingPeerStreams: PeerData[];
+  pendingPeerStreams: PeerData[];
 }
 
 export type VideoCreateInputOptions = {

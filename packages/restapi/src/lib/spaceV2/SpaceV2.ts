@@ -1,6 +1,7 @@
 import { produce } from "immer";
 
 import { join } from "./join";
+import { ISpaceInviteInputOptions, inviteToJoin } from "./inviteToJoin";
 
 import Constants, { ENV } from "../constants";
 import { EnvOptionsType, SignerType, SpaceDTO, SpaceV2Data, VideoCallStatus } from "../types";
@@ -28,13 +29,19 @@ export const initSpaceInfo: SpaceDTO = {
 
 export const initSpaceV2Data: SpaceV2Data = {
     spaceInfo: initSpaceInfo,
+    meta: {
+        initiator: {
+          address: '',
+          signal: null,
+        },
+    },
     local: {
         stream: null,
         audio: null,
         video: null,
         address: '',
     },
-    incoming: [
+    incomingPeerStreams: [
         {
             stream: null,
             audio: null,
@@ -44,6 +51,16 @@ export const initSpaceV2Data: SpaceV2Data = {
             retryCount: 0,
         },
     ],
+    pendingPeerStreams: [
+        {
+            stream: null,
+            audio: null,
+            video: null,
+            address: '',
+            status: VideoCallStatus.UNINITIALIZED,
+            retryCount: 0,
+        },
+    ]
 };
 
 export interface SpaceV2ConstructorType extends EnvOptionsType {
@@ -132,6 +149,11 @@ export class SpaceV2 {
         return this.peerConnections.get(peerId);
     }
 
+    // Set a connected peer's peer connection by their ID
+    setPeerConnection(peerId: string, peerConnection: RTCPeerConnection) {
+        this.peerConnections.set(peerId, peerConnection);
+    }
+
     // Get the list of all connected peer IDs
     getConnectedPeerIds(): string[] {
         return Array.from(this.peerConnections.keys());
@@ -155,7 +177,8 @@ export class SpaceV2 {
          */
     }
 
-    async invite(options: any) {
+    async invite(options: ISpaceInviteInputOptions) {
+        await inviteToJoin.call(this, options); // Call the function with the current "this"
         /**
          * will contain logic to handle invites made by host to listener
          */
