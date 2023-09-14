@@ -4,18 +4,32 @@ import * as Peer from 'simple-peer';
 import { produce } from "immer";
 
 import { SpaceV2 } from "./SpaceV2";
-import { SpaceInviteInputOptions } from "./types";
-
-import getIncomingIndexFromAddress from "../video/helpers/getIncomingIndexFromAddress";
-import { VideoCallStatus } from "../types";
-import { getIceServerConfig } from "../video/helpers/getIceServerConfig";
 import sendSpaceNotification from './helpers/sendSpaceNotification';
-import { VIDEO_CALL_TYPE } from '../payloads/constants';
+
+import { VideoCallStatus } from "../types";
+import { SPACE_REQUEST_TYPE } from '../payloads';
+
+// imports from video
+import getIncomingIndexFromAddress from "../video/helpers/getIncomingIndexFromAddress";
+import { getIceServerConfig } from "../video/helpers/getIceServerConfig";
 import isJSON from '../video/helpers/isJSON';
+
+
+export interface ISpaceInviteInputOptions {
+  senderAddress: string;
+  recipientAddress: string;
+  spaceId: string;
+  onReceiveMessage?: (message: string) => void;
+  retry?: boolean;
+  details?: {
+      type: SPACE_REQUEST_TYPE;
+      data: Record<string, unknown>;
+  };
+};
 
 export async function inviteToJoin(
     this: SpaceV2, 
-    options: SpaceInviteInputOptions
+    options: ISpaceInviteInputOptions
   ): Promise<void> {
     const {
       senderAddress,
@@ -185,7 +199,7 @@ export async function inviteToJoin(
           }
         );
       } catch (err) {
-        console.log('error in request', err);
+        console.log('error in invite', err);
       }
     }
   }

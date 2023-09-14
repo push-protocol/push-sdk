@@ -1,12 +1,11 @@
 import { produce } from "immer";
 
 import { join } from "./join";
+import { ISpaceInviteInputOptions, inviteToJoin } from "./inviteToJoin";
 
 import Constants, { ENV } from "../constants";
 import { EnvOptionsType, SignerType, SpaceDTO, SpaceV2Data, VideoCallStatus } from "../types";
 import { pCAIP10ToWallet } from "../helpers";
-import { inviteToJoin } from "./inviteToJoin";
-import { SpaceInviteInputOptions } from "./types";
 
 export const initSpaceInfo: SpaceDTO = {
     members: [],
@@ -178,7 +177,7 @@ export class SpaceV2 {
          */
     }
 
-    async invite(options: SpaceInviteInputOptions) {
+    async invite(options: ISpaceInviteInputOptions) {
         await inviteToJoin.call(this, options); // Call the function with the current "this"
         /**
          * will contain logic to handle invites made by host to listener
