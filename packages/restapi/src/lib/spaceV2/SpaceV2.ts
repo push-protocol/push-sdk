@@ -162,7 +162,7 @@ export class SpaceV2 {
     }
 
     async connect(options: any) {
-        connect.call(this, options);
+        await connect.call(this, options);
         /**
          * will contain logic to handle all connections
          */

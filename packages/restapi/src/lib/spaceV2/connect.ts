@@ -10,7 +10,7 @@ export interface IConnectOptions {
     peerAddress?: string;
 }
 
-export function connect(
+export async function connect(
     this: SpaceV2,
     options: IConnectOptions
 ) {
