@@ -45,10 +45,10 @@ export async function connect(
             }
 
             // retrying in case of connection error
-            this.request({
+            this.invite({
                 senderAddress: this.data.local.address,
                 recipientAddress: this.data.pendingPeerStreams[pendingIndex].address,
-                chatId: this.data.spaceInfo.spaceId,
+                spaceId: this.data.spaceInfo.spaceId,
                 retry: true,
             });
         })
