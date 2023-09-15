@@ -1,3 +1,10 @@
+/**
+ * connect.ts
+ *
+ * The 'connect' function is responsible for establishing peer connections
+ * 
+ * @param {IConnectOptions} options - An object containing signal data and a peer address.
+ */
 import { produce } from "immer";
 
 import { SpaceV2 } from "./SpaceV2";
@@ -7,7 +14,7 @@ import getIncomingIndexFromAddress from "../video/helpers/getIncomingIndexFromAd
 
 export interface IConnectOptions {
     signalData: any;
-    peerAddress?: string;
+    peerAddress: string;
 }
 
 export async function connect(
