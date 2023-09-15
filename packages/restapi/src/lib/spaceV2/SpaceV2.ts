@@ -1,6 +1,7 @@
 import { produce } from "immer";
 
 import { join } from "./join";
+import { connect } from "./connect";
 import { acceptInvite } from "./acceptInvite";
 import { ISpaceInviteInputOptions, inviteToJoin } from "./inviteToJoin";
 
@@ -161,6 +162,7 @@ export class SpaceV2 {
     }
 
     async connect(options: any) {
+        connect.call(this, options);
         /**
          * will contain logic to handle all connections
          */

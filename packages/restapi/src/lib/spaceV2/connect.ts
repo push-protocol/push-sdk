@@ -17,9 +17,11 @@ export function connect(
     const { peerAddress, signalData } = options || {};
 
     try {
-        this.getPeerConnection(
+        const peerConnection = this.getPeerConnection(
             peerAddress ? peerAddress : this.data.incomingPeerStreams[0].address
-        )?.on('error', (err: any) => {
+        ) as any;
+
+        peerConnection?.on('error', (err: any) => {
             console.log('error in connect', err);
 
             const incomingIndex = peerAddress
@@ -44,9 +46,7 @@ export function connect(
             });
         })
 
-        this.getPeerConnection(
-            peerAddress ? peerAddress : this.data.incomingPeerStreams[0].address
-        )?.signal(signalData);
+        peerConnection?.signal(signalData);
 
         // update space data
         this.setSpaceV2Data((oldSpaceData) => {
