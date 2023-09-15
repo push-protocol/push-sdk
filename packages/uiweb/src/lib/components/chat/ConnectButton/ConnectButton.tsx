@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { IChatTheme } from '../theme';
-import { useChatData } from '../../../hooks';
+import { useAccount, useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useContext, useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { Signer, ethers } from 'ethers';
@@ -21,7 +20,7 @@ interface IThemeProps {
 }
 
 export const ConnectButtonSub = () => {
-  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const {wallet, connecting , connect, disconnect} = useAccount();
 
   const {
     signer,

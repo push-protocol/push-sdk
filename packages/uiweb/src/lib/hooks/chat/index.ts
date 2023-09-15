@@ -7,3 +7,4 @@ export * from './useFetchChat';
 export * from './useFetchConversationHash';
 export * from  './usePushSendMessage';
 export * from './useGetGroupByID';
+export * from './useAccount';
