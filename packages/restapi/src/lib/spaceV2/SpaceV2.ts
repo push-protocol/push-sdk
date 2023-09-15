@@ -1,6 +1,7 @@
 import { produce } from "immer";
 
 import { join } from "./join";
+import { start } from "./start";
 import { acceptInvite } from "./acceptInvite";
 import { ISpaceInviteInputOptions, inviteToJoin } from "./inviteToJoin";
 
@@ -188,4 +189,6 @@ export class SpaceV2 {
     public join = join;
 
     public acceptInvite = acceptInvite;
+
+    public start = start;
 }
