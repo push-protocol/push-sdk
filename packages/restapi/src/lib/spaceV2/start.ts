@@ -1,3 +1,9 @@
+/**
+ * start.ts
+ *
+ * The 'start' function is responsible for starting the space and updating that in backend
+ * 
+ */
 import { produce } from 'immer';
 
 import { get } from './get';
