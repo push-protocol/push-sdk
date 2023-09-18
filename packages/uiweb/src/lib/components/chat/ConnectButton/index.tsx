@@ -23,6 +23,7 @@ const wcv2InitOptions = {
 }
 
 const walletConnect = walletConnectModule(wcv2InitOptions)
+//move to config
 const chains = [
   {
     id: '0x1',
@@ -63,6 +64,7 @@ const chains = [
 ]
 const wallets = [injectedModule(), walletConnect]
 
+//move to config
 const appMetadata = {
   name: 'Push Protocol',
   icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',

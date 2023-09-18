@@ -2,6 +2,7 @@ import { IMessagePayload, User } from "../exportedTypes";
 import { ethers } from "ethers";
 import { IGroup } from "../../../types";
 import { walletToPCAIP10 } from "../../../helpers";
+import { IFeeds } from "@pushprotocol/restapi";
 
 export const getAdminList = (groupInformation: IGroup): Array<string> => {
     const adminsFromMembers = convertToWalletAddressList(groupInformation?.members.filter((admin) => admin.isAdmin == true));
@@ -104,3 +105,32 @@ export const addWalletValidation = (member:User,memberList:any,groupMembers:any,
 export function isValidETHAddress(address: string) {
     return ethers.utils.isAddress(address);
   }
+
+ export  const checkIfMember =  (chatFeed:IFeeds,account:string) => {
+    const members = chatFeed?.groupInformation?.members || [];
+    const pendingMembers = chatFeed?.groupInformation?.pendingMembers || [];
+    const allMembers = [...members, ...pendingMembers];
+    let isMember = false;
+    allMembers.forEach((acc) => {
+      if (
+        acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+      ) {
+       isMember = true;
+      }
+    });
+
+   
+    return isMember;
+  };
+
+  export  const checkIfAccessVerifiedGroup =  (chatFeed:IFeeds) => {
+    let isRules = false;
+    if (
+      chatFeed?.groupInformation?.rules &&
+      (chatFeed?.groupInformation?.rules?.entry ||
+        chatFeed?.groupInformation?.rules?.chat)
+    ) {
+      isRules = true;
+    }
+    return isRules;
+  };

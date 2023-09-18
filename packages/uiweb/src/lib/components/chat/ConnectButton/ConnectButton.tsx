@@ -3,10 +3,8 @@ import { IChatTheme } from '../theme';
 import { useAccount, useChatData } from '../../../hooks';
 import * as PushAPI from '@pushprotocol/restapi';
 import { useContext, useEffect, useState } from 'react';
-import { init, useConnectWallet } from "@web3-onboard/react";
-import injectedModule from "@web3-onboard/injected-wallets";
 import { Signer, ethers } from 'ethers';
-import './index.css';
+
 import { ThemeContext } from '../theme/ThemeProvider';
 import { device } from '../../../config';
 import { getAddressFromSigner } from '../../../helpers';
@@ -34,14 +32,13 @@ export const ConnectButtonSub = () => {
   const theme = useContext(ThemeContext);
 
   const newFunc = () => {
-    console.log("wallet getting called")
     if (wallet) {
       (async () => {
-        console.log("Not sure what's happening lol")
+
         const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
-        console.log(newAdd, "newAdd")
+        console.log(newAdd)
         setSigner(signer)
         setAccount(newAdd);
       })()
@@ -51,12 +48,12 @@ export const ConnectButtonSub = () => {
       setPgpPrivateKey(null)
     }
   }
-
+console.log(wallet)
   useEffect(() => {
     newFunc()
   }, [wallet])
 
-
+console.log(account)
   useEffect(() => {
     (async () => {
       if (account && signer) {
@@ -65,6 +62,8 @@ export const ConnectButtonSub = () => {
     })();
   }, [account, signer]);
 
+
+  //move user creation to a hook
   const handleUserCreation = async () => {
     if (!account && !env) return;
     try {
@@ -108,6 +107,7 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
     color: #fff;
     text-align:center;
     font-size: 1em;
+    cursor:pointer;
     border-radius: 10px;
     padding: 10px 20px;
     outline: none;

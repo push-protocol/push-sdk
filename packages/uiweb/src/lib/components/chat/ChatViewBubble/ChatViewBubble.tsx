@@ -8,7 +8,6 @@ import {
   formatFileSize,
   getPfp,
   pCAIP10ToWallet,
-  setPfp,
   shortenText,
 } from '../../../helpers';
 import { checkTwitterUrl } from '../helpers/twitter';
@@ -40,7 +39,7 @@ const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   );
 };
 
-const SenderMessafeProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
+const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   const { account, env } = useContext(ChatDataContext);
   const [pfp, setPfp] = useState<string>('');
   const getUserPfp = async () => {
@@ -74,6 +73,8 @@ const SenderMessafeProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   );
 };
 
+
+//can create a wrapper for till the senderMessageAddress and use it for all cards(types of messages)
 const MessageCard = ({
   chat,
   position,
@@ -94,7 +95,7 @@ const MessageCard = ({
       width="fit-content"
       maxWidth="70%"
     >
-      {isGroup && <SenderMessafeProfilePicture chat={chat} />}
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
         <Section
@@ -194,7 +195,7 @@ const FileCard = ({
       gap="6px"
       width="fit-content"
     >
-      {isGroup && <SenderMessafeProfilePicture chat={chat} />}
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
         <Section
@@ -247,7 +248,7 @@ const ImageCard = ({
 }) => {
   return (
     <Section flexDirection="row" justifyContent="start" gap="6px">
-      {isGroup && <SenderMessafeProfilePicture chat={chat} />}
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
         <Section
@@ -286,7 +287,7 @@ const GIFCard = ({
       gap="6px"
       width="fit-content"
     >
-      {isGroup && <SenderMessafeProfilePicture chat={chat} />}
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
         <Section
@@ -327,7 +328,7 @@ const TwitterCard = ({
       gap="6px"
       width="fit-content"
     >
-      {isGroup && <SenderMessafeProfilePicture chat={chat} />}
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
         <Section
@@ -344,7 +345,7 @@ const TwitterCard = ({
 };
 
 export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
-  const { account, setAccount, pgpPrivateKey, setPgpPrivateKey, env, setEnv } =
+  const { account} =
     useChatData();
   const position =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase()
@@ -366,11 +367,7 @@ export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
     }
   }, [chat.toDID, isGroup]);
 
-  // useEffect(() => {
-  //     setAccount("");
-  //     setPgpPrivateKey("");
-  //     setEnv(env);
-  // }, [account, env, pgpPrivateKey])
+
 
   if (messageType === 'TwitterFeedLink') {
     chat.messageType = 'TwitterFeedLink';
