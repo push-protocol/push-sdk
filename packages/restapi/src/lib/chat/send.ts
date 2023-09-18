@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
-import Constants, { MessageType } from '../constants';
-import { ChatSendOptionsType, MessageWithCID } from '../types';
+import Constants, { MessageType, ENV } from '../constants';
+import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
 import {
   IPGPHelper,
   PGPHelper,
@@ -13,6 +13,16 @@ import {
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { getGroup } from './getGroup';
+import {
+  MessageObj,
+  REACTION_SYMBOL,
+  ReactionMessage,
+} from '../types/messageTypes';
+import {
+  messageObjSchema,
+  metaMessageObjSchema,
+  reationMessageObjSchema,
+} from '../validations/messageObject';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -37,27 +47,37 @@ export const sendCore = async (
   } = options || {};
 
   try {
-    await validateOptions(options);
+    /**
+     * Compute Input Options
+     * 1. Provides the options object with default values
+     * 2. Takes care of deprecated fields
+     */
+    const computedOptions = computeOptions(options);
+    const { messageType, messageObj, account, to, signer, pgpPrivateKey, env } =
+      computedOptions;
+    /**
+     * Validate Input Options
+     */
+    await validateOptions(computedOptions);
 
     const wallet = getWallet({ account, signer });
     const sender = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
     const receiver = await getUserDID(receiverAddress, env);
     const API_BASE_URL = getAPIBaseUrls(env);
-    const isGroup = isValidETHAddress(receiverAddress) ? false : true;
+    const isGroup = isValidETHAddress(to) ? false : true;
     const group = isGroup
       ? await getGroup({
-          chatId: receiverAddress,
+          chatId: to,
           env: env,
         })
       : null;
 
-    let messageObj = options.messageObj;
-    // possible for initial types 'Text', 'Image', 'File', 'GIF', 'MediaEmbed'
-    if (!messageObj) {
-      messageObj = {
-        content: options.messageContent ? options.messageContent : '',
-      };
+    // OVERRIDE CONTENT FOR REACTION MESSAGE
+    if (messageType === MessageType.REACTION) {
+      messageObj.content =
+        REACTION_SYMBOL[(messageObj as Omit<ReactionMessage, 'type'>).action];
     }
+
     const messageContent = messageObj.content; // provide backward compatibility & override deprecated field
 
     const conversationResponse = await conversationHash({
@@ -90,17 +110,19 @@ export const sendCore = async (
   }
 };
 
-const validateOptions = async (options: ChatSendOptionsType) => {
-  const {
-    messageType = 'Text',
-    messageObj,
-    messageContent,
-    receiverAddress,
-    pgpPrivateKey = null,
-    account = null,
-    signer = null,
-    env,
-  } = options;
+type ComputedOptionsType = {
+  messageType: MessageType;
+  messageObj: MessageObj;
+  account: string | null;
+  to: string;
+  signer: SignerType | null;
+  pgpPrivateKey: string | null;
+  env: ENV;
+};
+
+const validateOptions = async (options: ComputedOptionsType) => {
+  const { messageType, messageObj, account, to, signer, pgpPrivateKey, env } =
+    options;
 
   if (!account && !signer) {
     throw new Error(
@@ -122,10 +144,10 @@ const validateOptions = async (options: ChatSendOptionsType) => {
     );
   }
 
-  const isGroup = isValidETHAddress(receiverAddress) ? false : true;
+  const isGroup = isValidETHAddress(to) ? false : true;
   if (isGroup) {
     const group = await getGroup({
-      chatId: receiverAddress,
+      chatId: to,
       env: env,
     });
     if (!group) {
@@ -135,30 +157,92 @@ const validateOptions = async (options: ChatSendOptionsType) => {
     }
   }
 
-  if (messageType === MessageType.META) {
-    if (
-      !(messageObj instanceof Object) ||
-      !(messageObj.meta instanceof Object) ||
-      !('action' in messageObj.meta) ||
-      !('info' in messageObj.meta) ||
-      !(messageObj.meta.info.affected instanceof Array)
-    ) {
+  if (
+    messageType === MessageType.TEXT ||
+    messageType === MessageType.IMAGE ||
+    messageType === MessageType.FILE ||
+    messageType === MessageType.MEDIA_EMBED ||
+    messageType === MessageType.GIF
+  ) {
+    const { error } = messageObjSchema.validate(messageObj);
+    if (error) {
       throw new Error(
         `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );
     }
-  } else {
-    if (messageObj && messageObj.meta) {
+  }
+
+  if (messageType === MessageType.META) {
+    const { error } = metaMessageObjSchema.validate(messageObj);
+    if (error) {
       throw new Error(
-        `Unable to parse this messageType. Meta is not allowed for this messageType.`
+        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
+      );
+    }
+  } else if (messageType === MessageType.REACTION) {
+    const { error } = reationMessageObjSchema.validate(messageObj);
+    if (error) {
+      throw new Error(
+        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
       );
     }
   }
+};
 
-  if (!pgpPrivateKey) {
-    // WARNING - WALLET SIGNING POPUPS
+const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {
+  const messageType =
+    options.message?.type !== undefined
+      ? options.message.type
+      : options.messageType ?? 'Text';
+
+  let messageObj: any = options.message;
+  if (messageObj === undefined) {
+    if (
+      options.messageObj === undefined &&
+      ![
+        MessageType.TEXT,
+        MessageType.IMAGE,
+        MessageType.FILE,
+        MessageType.MEDIA_EMBED,
+        MessageType.GIF,
+      ].includes(messageType as MessageType)
+    ) {
+      throw new Error('Options.message is required');
+    } else {
+      messageObj =
+        options.messageObj !== undefined
+          ? options.messageObj
+          : {
+              content: options.messageContent ?? '',
+            };
+    }
+  } else {
+    // Remove the 'type' property from messageObj
+    const { type, ...rest } = messageObj;
+    messageObj = rest;
   }
-  if (messageContent) {
-    // WARNING - DEPRECATED AND TO BE REMOVED IN UPCOMING MAJOR RELEASE
+
+  const account = options.account !== undefined ? options.account : null;
+
+  const to = options.to !== undefined ? options.to : options.receiverAddress;
+  if (to === undefined) {
+    throw new Error('Options.to is required');
   }
+
+  const signer = options.signer !== undefined ? options.signer : null;
+
+  const pgpPrivateKey =
+    options.pgpPrivateKey !== undefined ? options.pgpPrivateKey : null;
+
+  const env = options.env !== undefined ? options.env : Constants.ENV.PROD;
+
+  return {
+    messageType: messageType as MessageType,
+    messageObj: messageObj as MessageObj,
+    account: account,
+    to: to,
+    signer: signer,
+    pgpPrivateKey: pgpPrivateKey,
+    env: env,
+  };
 };

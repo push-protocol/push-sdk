@@ -36,6 +36,7 @@ export type CreateUserProps = {
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
+  origin? : string | null
 };
 
 export const create = async (options:CreateUserProps):Promise<IUser>=>{
@@ -56,6 +57,7 @@ export const createUserCore = async ( options: CreateUserProps,
       },
     },
     progressHook,
+    origin
   } = options || {};
 
   try {
@@ -122,11 +124,13 @@ export const createUserCore = async ( options: CreateUserProps,
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       env,
+      origin: origin
     };
-    const createdUser = await createUserService(body);
+    const createdUser: ICreateUser = await createUserService(body);
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-05'] as ProgressHookType);
+    createdUser.decryptedPrivateKey = keyPairs.privateKeyArmored;
     return createdUser;
   } catch (err) {
     // Report Progress

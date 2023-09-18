@@ -2,6 +2,113 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.9...uiweb-1.1.10) (2023-08-10)
+
+
+
+## [1.1.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.8...uiweb-1.1.9) (2023-08-10)
+## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-0.0.1-alpha.0) (2023-08-09)
+
+
+### Bug Fixes
+
+* hide few spaces features ([#622](https://github.com/ethereum-push-notification-service/push-sdk/issues/622)) ([0e2556c](https://github.com/ethereum-push-notification-service/push-sdk/commit/0e2556c6bbe3438cd30851ffdd9764b027f42f6e))
+* Merge branch 'main' into deployment ([843cd01](https://github.com/ethereum-push-notification-service/push-sdk/commit/843cd0169a270bbab69922021edf312616de3802))
+
+
+
+## [1.1.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.7...uiweb-1.1.8) (2023-08-04)
+
+
+### Bug Fixes
+
+* merge main ([b9e4440](https://github.com/ethereum-push-notification-service/push-sdk/commit/b9e44408fa4c97720b12217486e8d13ef3caeb00))
+
+
+
+## [1.1.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.6...uiweb-1.1.7) (2023-07-31)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([9755baf](https://github.com/ethereum-push-notification-service/push-sdk/commit/9755baf3d4bcd3ab3fd365fad9d8fb7623fda58f))
+
+
+
+## [1.1.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.5...uiweb-1.1.6) (2023-07-28)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([e33017a](https://github.com/ethereum-push-notification-service/push-sdk/commit/e33017afb2d4e9361d5df47e0f7e726ecdffbc32))
+
+
+
+## [1.1.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.4...uiweb-1.1.5) (2023-07-27)
+* add alpha support to UI web ([8ecf5d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ecf5d92cc1b5c25562ba0d6d1ae1137877a5be7))
+* fixed bugs ([#566](https://github.com/ethereum-push-notification-service/push-sdk/issues/566)) ([481d8fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/481d8fcd7c40325654ba490640daabc38ee2f96e))
+* fixed build issues ([#550](https://github.com/ethereum-push-notification-service/push-sdk/issues/550)) ([0ce6e18](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ce6e18a82901478fe3157788c716e5224f14bdb))
+* fixed issue with build uiweb ([#541](https://github.com/ethereum-push-notification-service/push-sdk/issues/541)) ([3e00f81](https://github.com/ethereum-push-notification-service/push-sdk/commit/3e00f81af99de5bee468c3320062aec243708798))
+* merged main ([c5533f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c5533f8dce7b88cb1f14aa72f83579a8e01dcf36))
+* signer compatibility with viem ([3df201c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3df201c7474b88d270d6e868bc516f223539e74c))
+* signer compatibility with viem and ethers ([1edea43](https://github.com/ethereum-push-notification-service/push-sdk/commit/1edea431ccf7f19cc0430deb2ce7a5c61390d99f))
+
+
+### Features
+
+* add video sdk methods ([#395](https://github.com/ethereum-push-notification-service/push-sdk/issues/395)) ([4b9dd69](https://github.com/ethereum-push-notification-service/push-sdk/commit/4b9dd691ac1fde6a91be0478b20780f6755fbb4f)), closes [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295) [#309](https://github.com/ethereum-push-notification-service/push-sdk/issues/309) [#357](https://github.com/ethereum-push-notification-service/push-sdk/issues/357) [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)
+* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+
+
+
+## [1.1.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.3...uiweb-1.1.4) (2023-07-20)
+
+
+### Bug Fixes
+
+* merge main ([24784e9](https://github.com/ethereum-push-notification-service/push-sdk/commit/24784e9ceca8f3757481f3be72efd0ca1ff3fba8))
+
+
+
+## [1.1.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.2...uiweb-1.1.3) (2023-07-20)
+
+
+### Bug Fixes
+
+* fixed bugs ([#566](https://github.com/ethereum-push-notification-service/push-sdk/issues/566)) ([481d8fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/481d8fcd7c40325654ba490640daabc38ee2f96e))
+* Merge branch 'main' into deployment ([9f77f39](https://github.com/ethereum-push-notification-service/push-sdk/commit/9f77f391b26111006891c10a3cc8eab06e26f14f))
+
+
+
+## [1.1.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.1...uiweb-1.1.2) (2023-07-18)
+
+
+
+## [1.1.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.0...uiweb-1.1.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* fixed build issues ([#550](https://github.com/ethereum-push-notification-service/push-sdk/issues/550)) ([0ce6e18](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ce6e18a82901478fe3157788c716e5224f14bdb))
+* Merge branch 'main' into deployment ([2e2c904](https://github.com/ethereum-push-notification-service/push-sdk/commit/2e2c904040260726d5c5087aed6e33d0d722a0f4))
+
+
+
+# [1.1.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.2...uiweb-1.1.0) (2023-07-14)
+
+
+### Bug Fixes
+
+* fixed issue with build uiweb ([#541](https://github.com/ethereum-push-notification-service/push-sdk/issues/541)) ([3e00f81](https://github.com/ethereum-push-notification-service/push-sdk/commit/3e00f81af99de5bee468c3320062aec243708798))
+
+
+### Features
+
+* add video sdk methods ([#395](https://github.com/ethereum-push-notification-service/push-sdk/issues/395)) ([4b9dd69](https://github.com/ethereum-push-notification-service/push-sdk/commit/4b9dd691ac1fde6a91be0478b20780f6755fbb4f)), closes [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295) [#309](https://github.com/ethereum-push-notification-service/push-sdk/issues/309) [#357](https://github.com/ethereum-push-notification-service/push-sdk/issues/357) [#295](https://github.com/ethereum-push-notification-service/push-sdk/issues/295)
+* chat widget component ([#386](https://github.com/ethereum-push-notification-service/push-sdk/issues/386)) ([93a8fd8](https://github.com/ethereum-push-notification-service/push-sdk/commit/93a8fd8b41831ab61931336044a8f66cb9453edd)), closes [#460](https://github.com/ethereum-push-notification-service/push-sdk/issues/460)
+
+
+
 ## [1.0.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.0.1...uiweb-1.0.2) (2023-05-13)
 
 

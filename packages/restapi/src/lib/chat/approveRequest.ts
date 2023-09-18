@@ -19,15 +19,15 @@ export interface ApproveRequestOptionsType extends EnvOptionsType {
    * Chat request sender address
    */
   senderAddress: string;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
 
   /**
    * Request state. As of now, only `Approved` is allowed
    */
-  status?: 'Approved';
+  status?: 'Approved' | 'Reproved';
   // sigType?: string;
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
 }
 
 /**

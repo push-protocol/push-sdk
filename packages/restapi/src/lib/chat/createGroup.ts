@@ -1,34 +1,37 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType } from '../types';
+import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
   createGroupRequestValidator,
   getWallet,
   getUserDID,
-  IPGPHelper,
-  PGPHelper,
-  getConnectedUserV2Core,
+  getConnectedUserV2,
+  validateScheduleDates,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
   groupName: string;
-  groupDescription: string;
+  groupDescription?: string | null;
   members: Array<string>;
-  groupImage: string;
+  groupImage?: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
   numberOfNFTs?: number;
   contractAddressERC20?: string;
   numberOfERC20?: number;
-  pgpPrivateKey?: string;
+  pgpPrivateKey?: string | null;
   meta?: string;
+  groupType?: string | null;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  rules?: Rules | null;
 }
 
 export const createGroup = async (options: ChatCreateGroupType) => {
@@ -55,6 +58,10 @@ export const createGroupCore = async (
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
     meta,
+    groupType,
+    scheduleAt,
+    scheduleEnd,
+    rules
   } = options || {};
 
   try {
@@ -62,13 +69,15 @@ export const createGroupCore = async (
       throw new Error(`At least one from account or signer is necessary!`);
     }
 
+    validateScheduleDates(scheduleAt, scheduleEnd)
+
     const wallet = getWallet({ account, signer });
 
     createGroupRequestValidator(
       groupName,
-      groupDescription,
       members,
       admins,
+      groupDescription,
       contractAddressNFT,
       numberOfNFTs,
       contractAddressERC20,
@@ -120,18 +129,22 @@ export const createGroupCore = async (
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups`;
     const body: ICreateGroupRequestPayload = createGroupPayload(
       groupName,
-      groupDescription,
       convertedMembers,
-      groupImage,
       convertedAdmins,
       isPublic,
       connectedUser.did,
       verificationProof,
+      groupDescription,
+      groupImage,
       contractAddressNFT,
       numberOfNFTs,
       contractAddressERC20,
       numberOfERC20,
-      meta
+      meta,
+      groupType,
+      scheduleAt,
+      scheduleEnd,
+      rules
     );
 
     return axios

@@ -2,7 +2,7 @@
 // fix the typescript issues here
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 // @ts-nocheck
-import { CustomParseShape } from '../customParser.types';
+import type { CustomParseShape } from '../customParser.types';
 
 /**
  * If you want to provide a custom regexp, this is the configuration to use.

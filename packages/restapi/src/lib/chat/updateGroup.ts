@@ -1,34 +1,46 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType } from '../types';
+import {
+  ChatStatus,
+  EnvOptionsType,
+  GroupDTO,
+  Rules,
+  SignerType,
+} from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  updateGroupRequestValidator,
   getWallet,
-  getAccountAddress,
-  getUserDID,
   IPGPHelper,
   PGPHelper,
   getConnectedUserV2Core,
+  sign,
+  getAccountAddress,
+  getUserDID,
+  getConnectedUserV2,
+  updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
-  account?: string;
-  signer?: SignerType;
+  account?: string | null;
+  signer?: SignerType | null;
   chatId: string;
   groupName: string;
-  groupImage: string;
-  groupDescription: string;
   members: Array<string>;
   admins: Array<string>;
-  pgpPrivateKey?: string;
+  groupImage?: string | null;
+  groupDescription?: string | null;
+  pgpPrivateKey?: string | null;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
   // If meta is not passed, old meta is not affected
   // If passed as null will update to null
   // If passed as string will update to that value
   meta?: string | null;
+  rules?: Rules | null;
 }
 
 /**
@@ -56,7 +68,11 @@ export const updateGroupCore = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    scheduleAt,
+    scheduleEnd,
+    status,
     meta,
+    rules,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -68,11 +84,10 @@ export const updateGroupCore = async (
     updateGroupRequestValidator(
       chatId,
       groupName,
-      groupDescription,
-      groupImage,
       members,
       admins,
-      address
+      address,
+      groupDescription
     );
     const connectedUser = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
     const convertedMembersPromise = members.map(async (each) => {
@@ -102,13 +117,17 @@ export const updateGroupCore = async (
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
     const body: IUpdateGroupRequestPayload = updateGroupPayload(
       groupName,
-      groupImage,
-      groupDescription,
       convertedMembers,
       convertedAdmins,
       connectedUser.did,
       verificationProof,
-      meta
+      groupDescription,
+      groupImage,
+      scheduleAt,
+      scheduleEnd,
+      status,
+      meta,
+      rules
     );
 
     return axios
