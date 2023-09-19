@@ -1,13 +1,17 @@
-import styled from 'styled-components';
-import { IChatTheme } from '../theme';
-import { useAccount, useChatData } from '../../../hooks';
-import * as PushAPI from '@pushprotocol/restapi';
 import { useContext, useEffect, useState } from 'react';
+
+import styled from 'styled-components';
 import { Signer, ethers } from 'ethers';
 
+import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { device } from '../../../config';
+import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
+import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
+
 import { getAddressFromSigner } from '../../../helpers';
+import { IChatTheme } from '../theme';
+import { device } from '../../../config';
 
 /**
  * @interface IThemeProps
@@ -30,15 +34,17 @@ export const ConnectButtonSub = () => {
     setSigner,
   } = useChatData();
   const theme = useContext(ThemeContext);
+  const {fetchChatProfile} = useGetChatProfile();
+  const {creteChatProfile} = useCreateChatProfile();
+  const {decryptPGPKey} = useDecryptPGPKey();
 
-  const newFunc = () => {
+
+  const setUserData = () => {
     if (wallet) {
       (async () => {
-
         const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
-        console.log(newAdd)
         setSigner(signer)
         setAccount(newAdd);
       })()
@@ -48,12 +54,10 @@ export const ConnectButtonSub = () => {
       setPgpPrivateKey(null)
     }
   }
-console.log(wallet)
   useEffect(() => {
-    newFunc()
+    setUserData()
   }, [wallet])
 
-console.log(account)
   useEffect(() => {
     (async () => {
       if (account && signer) {
@@ -63,25 +67,22 @@ console.log(account)
   }, [account, signer]);
 
 
-  //move user creation to a hook
   const handleUserCreation = async () => {
     if (!account && !env) return;
     try {
-      let user = await PushAPI.user.get({ account: account!, env: env });
+      let user  = await fetchChatProfile({ profileId: account! ,env});
       if (!user) {
         if (!signer) return;
-        user = await PushAPI.user.create({
-          signer: signer,
-          env: env,
-        });
+        user = await creteChatProfile({ signer: signer ,env});
       }
       if (user?.encryptedPrivateKey && !pgpPrivateKey) {
-        const decryptPgpKey = await PushAPI.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
+        const decryptPgpKey = await decryptPGPKey({
+          encryptedPrivateKey: user.encryptedPrivateKey,
           account: account!,
           signer: signer,
           env: env,
         });
+        if(decryptPgpKey)
         setPgpPrivateKey(decryptPgpKey);
       }
     } catch (e: any) {
@@ -103,8 +104,7 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
  
   button{
     background: ${(props) => `${props.theme.backgroundColor.buttonBackground}!important`};
-    // color: ${(props) => `${props.theme.backgroundColor.buttonText}!important`};
-    color: #fff;
+    color: ${(props) => `${props.theme.textColor.buttonText}!important`};
     text-align:center;
     font-size: 1em;
     cursor:pointer;
@@ -122,5 +122,8 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   }
   @media ${device.mobileL} {
     font-size: 12px;
+  }
+  body.modal-open {
+    overflow-y: hidden;
   }
 `;

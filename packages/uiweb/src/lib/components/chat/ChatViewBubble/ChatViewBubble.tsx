@@ -1,8 +1,23 @@
-import { useContext, useEffect, useState } from 'react';
-import { Section, Span, Image } from '../../reusables';
+import {
+  ReactElement,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
 import moment from 'moment';
 import styled from 'styled-components';
+import { TwitterTweetEmbed } from 'react-twitter-embed';
+
+import { Section, Span, Image } from '../../reusables';
+import { checkTwitterUrl } from '../helpers/twitter';
+import { ChatDataContext } from '../../../context';
+import { useChatData } from '../../../hooks';
+import { ThemeContext } from '../theme/ThemeProvider';
+
 import { FileMessageContent } from '../../../types';
+import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { FILE_ICON } from '../../../config';
 import {
   formatFileSize,
@@ -10,12 +25,6 @@ import {
   pCAIP10ToWallet,
   shortenText,
 } from '../../../helpers';
-import { checkTwitterUrl } from '../helpers/twitter';
-import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
-import { TwitterTweetEmbed } from 'react-twitter-embed';
-import { ChatDataContext } from '../../../context';
-import { useChatData } from '../../../hooks';
-import { ThemeContext } from '../theme/ThemeProvider';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { account } = useContext(ChatDataContext);
@@ -73,8 +82,36 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   );
 };
 
+const MessageWrapper = ({
+  chat,
+  children,
+  isGroup,
+  maxWidth,
+}: {
+  chat: IMessagePayload;
+  children: ReactNode;
+  isGroup: boolean;
+  maxWidth?: string;
+}) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <Section
+      theme={theme}
+      flexDirection="row"
+      justifyContent="start"
+      gap="6px"
+      width="fit-content"
+      maxWidth={maxWidth || 'auto'}
+    >
+      {isGroup && <SenderMessageProfilePicture chat={chat} />}
+      <Section justifyContent="start" flexDirection="column">
+        {isGroup && <SenderMessageAddress chat={chat} />}
+      </Section>
+      {children}
+    </Section>
+  );
+};
 
-//can create a wrapper for till the senderMessageAddress and use it for all cards(types of messages)
 const MessageCard = ({
   chat,
   position,
@@ -87,90 +124,79 @@ const MessageCard = ({
   const theme = useContext(ThemeContext);
   const time = moment(chat.timestamp).format('hh:mm a');
   return (
-    <Section
-      theme={theme}
-      flexDirection="row"
-      justifyContent="start"
-      gap="6px"
-      width="fit-content"
-      maxWidth="70%"
-    >
-      {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section justifyContent="start" flexDirection="column">
-        {isGroup && <SenderMessageAddress chat={chat} />}
-        <Section
-          gap="5px"
-          background={
+    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="70%">
+      <Section
+        gap="5px"
+        background={
+          position
+            ? `${theme.backgroundColor?.chatSentBubbleBackground}`
+            : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
+        }
+        padding="8px 12px"
+        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
+        margin="5px 0"
+        alignSelf={position ? 'end' : 'start'}
+        justifyContent="start"
+        minWidth="71px"
+        position="relative"
+        width="fit-content"
+        color={
+          position
+            ? `${theme.textColor?.chatSentBubbleText}`
+            : `${theme.textColor?.chatReceivedBubbleText}`
+        }
+      >
+        {' '}
+        <Section flexDirection="column" padding="5px 0 15px 0">
+          {chat.messageContent.split('\n').map((str) => (
+            <Span
+              key={Math.random().toString()}
+              alignSelf="start"
+              textAlign="left"
+              fontSize={
+                position
+                  ? `${theme.fontSize?.chatSentBubbleText}`
+                  : `${theme.fontSize?.chatReceivedBubbleText}`
+              }
+              fontWeight={
+                position
+                  ? `${theme.fontWeight?.chatSentBubbleText}`
+                  : `${theme.fontWeight?.chatReceivedBubbleText}`
+              }
+              color={
+                position
+                  ? `${theme.textColor?.chatSentBubbleText}`
+                  : `${theme.textColor?.chatReceivedBubbleText}`
+              }
+            >
+              {str}
+            </Span>
+          ))}
+        </Section>
+        <Span
+          position="absolute"
+          fontSize={
             position
-              ? `${theme.backgroundColor?.chatSentBubbleBackground}`
-              : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
+              ? `${theme.fontSize?.chatSentBubbleTimestampText}`
+              : `${theme.fontSize?.chatReceivedBubbleTimestampText}`
           }
-          padding="8px 12px"
-          borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
-          margin="5px 0"
-          alignSelf={position ? 'end' : 'start'}
-          justifyContent="start"
-          minWidth="71px"
-          position="relative"
-          width="fit-content"
+          fontWeight={
+            position
+              ? `${theme.fontWeight?.chatSentBubbleTimestampText}`
+              : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
+          }
           color={
             position
               ? `${theme.textColor?.chatSentBubbleText}`
               : `${theme.textColor?.chatReceivedBubbleText}`
           }
+          bottom="6px"
+          right="10px"
         >
-          {' '}
-          <Section flexDirection="column" padding="5px 0 15px 0">
-            {chat.messageContent.split('\n').map((str) => (
-              <Span
-                key={Math.random().toString()}
-                alignSelf="start"
-                textAlign="left"
-                fontSize={
-                  position
-                    ? `${theme.fontSize?.chatSentBubbleText}`
-                    : `${theme.fontSize?.chatReceivedBubbleText}`
-                }
-                fontWeight={
-                  position
-                    ? `${theme.fontWeight?.chatSentBubbleText}`
-                    : `${theme.fontWeight?.chatReceivedBubbleText}`
-                }
-                color={
-                  position
-                    ? `${theme.textColor?.chatSentBubbleText}`
-                    : `${theme.textColor?.chatReceivedBubbleText}`
-                }
-              >
-                {str}
-              </Span>
-            ))}
-          </Section>
-          <Span
-            position="absolute"
-            fontSize={
-              position
-                ? `${theme.fontSize?.chatSentBubbleTimestampText}`
-                : `${theme.fontSize?.chatReceivedBubbleTimestampText}`
-            }
-            fontWeight={
-              position
-                ? `${theme.fontWeight?.chatSentBubbleTimestampText}`
-                : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
-            }
-            color={
-              position
-                ? `${theme.textColor?.chatSentBubbleText}`
-                : `${theme.textColor?.chatReceivedBubbleText}`
-            }
-            bottom="6px"
-            right="10px"
-          >
-            {time}
-          </Span>
-        </Section>
+          {time}
+        </Span>
       </Section>
-    </Section>
+    </MessageWrapper>
   );
 };
 
@@ -189,51 +215,42 @@ const FileCard = ({
   const size = fileContent.size;
 
   return (
-    <Section
-      flexDirection="row"
-      justifyContent="start"
-      gap="6px"
-      width="fit-content"
-    >
-      {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section flexDirection="column">
-        {isGroup && <SenderMessageAddress chat={chat} />}
-        <Section
-          alignSelf="start"
-          maxWidth="100%"
-          margin="5px 0"
-          background="#343536"
-          borderRadius="8px"
-          justifyContent="space-around"
-          padding="10px 13px"
-          gap="15px"
-          width="fit-content"
-        >
-          <Image
-            src={FILE_ICON(name.split('.').slice(-1)[0])}
-            alt="extension icon"
-            width="20px"
-            height="20px"
-          />
-          <Section flexDirection="column" gap="5px">
-            <Span color="#fff" fontSize="15px">
-              {shortenText(name, 11)}
-            </Span>
-            <Span color="#fff" fontSize="12px">
-              {formatFileSize(size)}
-            </Span>
-          </Section>
-          <FileDownloadIconAnchor
-            href={content}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-          >
-            <FileDownloadIcon className="fa fa-download" aria-hidden="true" />
-          </FileDownloadIconAnchor>
+    <MessageWrapper maxWidth="fit-content" chat={chat} isGroup={isGroup}>
+      <Section
+        alignSelf="start"
+        maxWidth="100%"
+        margin="5px 0"
+        background="#343536"
+        borderRadius="8px"
+        justifyContent="space-around"
+        padding="10px 13px"
+        gap="15px"
+        width="fit-content"
+      >
+        <Image
+          src={FILE_ICON(name.split('.').slice(-1)[0])}
+          alt="extension icon"
+          width="20px"
+          height="20px"
+        />
+        <Section flexDirection="column" gap="5px">
+          <Span color="#fff" fontSize="15px">
+            {shortenText(name, 11)}
+          </Span>
+          <Span color="#fff" fontSize="12px">
+            {formatFileSize(size)}
+          </Span>
         </Section>
+        <FileDownloadIconAnchor
+          href={content}
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+        >
+          <FileDownloadIcon className="fa fa-download" aria-hidden="true" />
+        </FileDownloadIconAnchor>
       </Section>
-    </Section>
+    </MessageWrapper>
   );
 };
 
@@ -247,27 +264,21 @@ const ImageCard = ({
   isGroup: boolean;
 }) => {
   return (
-    <Section flexDirection="row" justifyContent="start" gap="6px">
-      {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section justifyContent="start" flexDirection="column">
-        {isGroup && <SenderMessageAddress chat={chat} />}
-        <Section
-          alignSelf={position ? 'end' : 'start'}
-          maxWidth="65%"
-          width="fit-content"
-          margin="5px 0"
-        >
-          <Image
-            src={JSON.parse(chat.messageContent).content}
-            alt=""
-            width="100%"
-            borderRadius={
-              position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'
-            }
-          />
-        </Section>
+    <MessageWrapper chat={chat} isGroup={isGroup}>
+      <Section
+        alignSelf={position ? 'end' : 'start'}
+        maxWidth="65%"
+        width="fit-content"
+        margin="5px 0"
+      >
+        <Image
+          src={JSON.parse(chat.messageContent).content}
+          alt=""
+          width="100%"
+          borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
+        />
       </Section>
-    </Section>
+    </MessageWrapper>
   );
 };
 
@@ -281,32 +292,21 @@ const GIFCard = ({
   isGroup: boolean;
 }) => {
   return (
-    <Section
-      flexDirection="row"
-      justifyContent="start"
-      gap="6px"
-      width="fit-content"
-    >
-      {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section justifyContent="start" flexDirection="column">
-        {isGroup && <SenderMessageAddress chat={chat} />}
-        <Section
-          alignSelf={position ? 'end' : 'start'}
-          maxWidth="65%"
-          margin="5px 0"
-          width="fit-content"
-        >
-          <Image
-            src={chat.messageContent}
-            alt=""
-            width="100%"
-            borderRadius={
-              position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'
-            }
-          />
-        </Section>
+    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="fit-content">
+      <Section
+        alignSelf={position ? 'end' : 'start'}
+        maxWidth="65%"
+        margin="5px 0"
+        width="fit-content"
+      >
+        <Image
+          src={chat.messageContent}
+          alt=""
+          width="100%"
+          borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
+        />
       </Section>
-    </Section>
+    </MessageWrapper>
   );
 };
 
@@ -322,31 +322,21 @@ const TwitterCard = ({
   position: number;
 }) => {
   return (
-    <Section
-      flexDirection="row"
-      justifyContent="start"
-      gap="6px"
-      width="fit-content"
-    >
-      {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section justifyContent="start" flexDirection="column">
-        {isGroup && <SenderMessageAddress chat={chat} />}
-        <Section
-          alignSelf={position ? 'end' : 'start'}
-          maxWidth="100%"
-          width="fit-content"
-          margin="5px 0"
-        >
-          <TwitterTweetEmbed tweetId={tweetId} />
-        </Section>
+    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="fit-content">
+      <Section
+        alignSelf={position ? 'end' : 'start'}
+        maxWidth="100%"
+        width="fit-content"
+        margin="5px 0"
+      >
+        <TwitterTweetEmbed tweetId={tweetId} />
       </Section>
-    </Section>
+    </MessageWrapper>
   );
 };
 
 export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
-  const { account} =
-    useChatData();
+  const { account } = useChatData();
   const position =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase()
       ? 0
@@ -366,8 +356,6 @@ export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
       }
     }
   }, [chat.toDID, isGroup]);
-
-
 
   if (messageType === 'TwitterFeedLink') {
     chat.messageType = 'TwitterFeedLink';

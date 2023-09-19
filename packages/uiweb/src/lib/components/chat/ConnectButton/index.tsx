@@ -1,30 +1,23 @@
 import { IChatTheme } from '../theme';
 
 import { ConnectButtonSub } from './ConnectButton';
-import { InfuraAPIKey } from '../../../config';
+import { BLOCKNATIVE_PROJECT_ID, InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
 import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
-import { ethers } from 'ethers';
 
+const APP_META_DATA = {
+  name: 'Push Protocol',
+  icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',
+  description: 'Example showcasing how to connect a wallet.',
 
-/**
- * @interface IThemeProps
- * this interface is used for defining the props for styled components
- */
-interface IThemeProps {
-  theme?: IChatTheme;
+  recommendedInjectedWallets: [
+    { name: 'MetaMask', url: 'https://metamask.io' },
+  ]
 }
 
-const wcv2InitOptions = {
-  projectId: '64a44a0fb537407bfe97d24330e4109c',
-  requiredChains: [1, 56]
-}
-
-const walletConnect = walletConnectModule(wcv2InitOptions)
-//move to config
-const chains = [
+const CHAINS = [
   {
     id: '0x1',
     token: 'ETH',
@@ -62,23 +55,23 @@ const chains = [
     rpcUrl: 'https://rpc.ankr.com/arbitrum'
   }
 ]
+
+
+const wcv2InitOptions = {
+  projectId: BLOCKNATIVE_PROJECT_ID,
+  requiredChains: [1, 56]
+}
+
+const walletConnect = walletConnectModule(wcv2InitOptions)
+
 const wallets = [injectedModule(), walletConnect]
 
-//move to config
-const appMetadata = {
-  name: 'Push Protocol',
-  icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',
-  description: 'Example showcasing how to connect a wallet.',
 
-  recommendedInjectedWallets: [
-    { name: 'MetaMask', url: 'https://metamask.io' },
-  ]
-}
 
 const web3OnBoard = init({
   wallets,
-  chains,
-  appMetadata,
+  chains:CHAINS,
+  appMetadata:APP_META_DATA,
   accountCenter: {
     desktop: {
       enabled: false

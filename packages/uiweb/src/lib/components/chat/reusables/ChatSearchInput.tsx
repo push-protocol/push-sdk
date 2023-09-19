@@ -51,7 +51,7 @@ export const ChatSearchInput: React.FC<ChatSearchInputPropType> = ({
       clearInput();
     }
   };
-console.log(theme.border?.searchInput)
+  
   return (
     <Container
       justifyContent="space-between"

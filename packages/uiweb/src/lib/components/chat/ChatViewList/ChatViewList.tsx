@@ -76,7 +76,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setChatStatusText('');
   }, [chatId, account, env]);
 
-  //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
       if (!connectedProfile && account) {
