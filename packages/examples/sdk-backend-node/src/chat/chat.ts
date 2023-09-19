@@ -485,7 +485,7 @@ async function PushAPI_chat_updateGroup(
 // Push Chat - PushAPI.chat.getGroupByName
 async function PushAPI_chat_getGroupByName(silent = !showAPIResponse) {
   const response = await PushAPI.chat.getGroupByName({
-    groupName: 'Push Group Chat 3',
+    groupName: groupName,
     env: env as ENV,
   });
 

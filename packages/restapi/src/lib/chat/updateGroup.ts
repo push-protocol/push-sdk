@@ -1,4 +1,6 @@
+import * as PGP from '../chat/helpers/pgp';
 import axios from 'axios';
+import * as AES from '../chat/helpers/aes';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { ChatStatus, EnvOptionsType, GroupDTO, SignerType } from '../types';
@@ -13,6 +15,7 @@ import {
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { getGroup } from './getGroup';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -78,6 +81,26 @@ export const updateGroup = async (
     const convertedAdminsPromise = admins.map(async (each) => {
       return getUserDID(each, env);
     });
+    const groupChat = await getGroup({ chatId, env });
+    // Compare members array with updateGroup.members array. If they have all the same elements then return true
+    const sameMembers = members.every(
+      (val, index) => val === groupChat.members[index].wallet
+    );
+    let sessionKey: string | null = null;
+    let encryptedSecret: string | null = null;
+    if (!sameMembers) {
+      sessionKey = AES.generateRandomSecret(15);
+      const secretKey = AES.generateRandomSecret(15);
+      // Encrypt secret key with group members public keys
+      const publicKeys: string[] = groupChat.members.map(
+        (member) => member.publicKey
+      );
+      encryptedSecret = await PGP.pgpEncrypt({
+        plainText: secretKey,
+        keys: publicKeys,
+      });
+    }
+
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
     const bodyToBeHashed = {
@@ -105,6 +128,8 @@ export const updateGroup = async (
       convertedAdmins,
       connectedUser.did,
       verificationProof,
+      sessionKey,
+      encryptedSecret,
       scheduleAt,
       scheduleEnd,
       status,

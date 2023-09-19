@@ -1,3 +1,4 @@
+import * as PGP from '../chat/helpers/pgp';
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
@@ -12,6 +13,8 @@ import {
   getUserDID,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import * as AES from '../chat/helpers/aes';
+import { getGroup } from './getGroup';
 
 interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -44,7 +47,6 @@ export const approve = async (
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
   } = options || {};
-
   if (account == null && signer == null) {
     throw new Error(`At least one from account or signer is necessary!`);
   }
@@ -81,12 +83,35 @@ export const approve = async (
     signingKey: connectedUser.privateKey!,
   });
 
+  let sessionKey: string | null = null;
+  let encryptedSecret: string | null = null;
+  if (isGroup) {
+    const group = await getGroup({ chatId: senderAddress, env });
+    if (
+      !group.isPublic &&
+      group.members.length >= Constants.MAX_GROUP_MEMBERS_PRIVATE
+    ) {
+      sessionKey = AES.generateRandomSecret(15);
+      const secretKey = AES.generateRandomSecret(15);
+      // Encrypt secret key with group members public keys
+      const publicKeys: string[] = group.members.map(
+        (member) => member.publicKey
+      );
+      encryptedSecret = await PGP.pgpEncrypt({
+        plainText: secretKey,
+        keys: publicKeys,
+      });
+    }
+  }
+
   const body: IApproveRequestPayload = approveRequestPayload(
     fromDID,
     toDID,
     status,
     'pgp',
-    signature
+    signature,
+    sessionKey,
+    encryptedSecret
   );
 
   return axios

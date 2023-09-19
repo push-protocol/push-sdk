@@ -193,6 +193,7 @@ export interface IMessageIPFS {
    * scope only at sdk level
    */
   deprecatedCode?: string;
+  sessionKey?: string;
 }
 export interface IFeeds {
   msg: IMessageIPFS;
@@ -336,6 +337,8 @@ export interface GroupDTO {
   scheduleEnd?: Date | null;
   groupType?: string;
   status?: ChatStatus | null;
+  encryptedSecret?: string | null;
+  sessionKey?: string | null;
 }
 
 export interface SpaceDTO {

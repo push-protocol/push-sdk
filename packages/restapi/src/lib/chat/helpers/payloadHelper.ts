@@ -1,10 +1,10 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
 import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus } from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { ENV } from '../../constants';
+import Constants, { ENV } from '../../constants';
 import * as AES from './aes';
 import { META_MESSAGE_META } from '../../types/metaTypes';
-import { sign } from './pgp';
+import { pgpDecrypt, sign } from './pgp';
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
@@ -33,6 +33,7 @@ export interface ISendMessagePayload {
    * @deprecated - Use messageObj instead
    */
   sigType: string | null | undefined;
+  sessionKey?: string | null;
 }
 
 export interface IApproveRequestPayload {
@@ -42,6 +43,8 @@ export interface IApproveRequestPayload {
   status: 'Approved';
   sigType: string;
   verificationProof?: string | null | undefined;
+  sessionKey?: string | null;
+  encryptedSecret?: string | null;
 }
 
 export interface ICreateGroupRequestPayload {
@@ -67,6 +70,8 @@ export interface IUpdateGroupRequestPayload {
   admins: Array<string>;
   address: string;
   verificationProof: string;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
 }
 
 export const sendMessagePayload = async (
@@ -82,8 +87,22 @@ export const sendMessagePayload = async (
   env: ENV
 ): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
-
-  const secretKey: string = AES.generateRandomSecret(15);
+  let secretKey: string;
+  let newGroupEncryption = false;
+  if (
+    isGroup &&
+    !group!.isPublic &&
+    group!.members!.length > Constants.MAX_GROUP_MEMBERS_PRIVATE
+  ) {
+    const encryptedSecret = group!.encryptedSecret!;
+    secretKey = await pgpDecrypt({
+      cipherText: encryptedSecret,
+      toPrivateKeyArmored: senderCreatedUser.privateKey!,
+    });
+    newGroupEncryption = true;
+  } else {
+    secretKey = AES.generateRandomSecret(15);
+  }
 
   const { message: encryptedMessageContent, signature: deprecatedSignature } =
     await getEncryptedRequest(
@@ -93,7 +112,8 @@ export const sendMessagePayload = async (
       isGroup,
       env,
       group,
-      secretKey
+      secretKey,
+      newGroupEncryption
     );
   const {
     message: encryptedMessageObj,
@@ -106,7 +126,8 @@ export const sendMessagePayload = async (
     isGroup,
     env,
     group,
-    secretKey
+    secretKey,
+    newGroupEncryption
   );
 
   const body: ISendMessagePayload = {
@@ -118,10 +139,11 @@ export const sendMessagePayload = async (
     messageObj:
       encryptionType === 'PlainText' ? messageObj : encryptedMessageObj,
     encType: encryptionType!,
-    encryptedSecret: aesEncryptedSecret!,
+    encryptedSecret: newGroupEncryption ? null : aesEncryptedSecret!,
     messageContent: encryptedMessageContent,
     signature: deprecatedSignature, //for backward compatibility
     sigType: 'pgpv2',
+    sessionKey: group?.sessionKey,
   };
 
   //build verificationProof
@@ -149,7 +171,9 @@ export const approveRequestPayload = (
   toDID: string,
   status: 'Approved',
   sigType: string,
-  signature: string
+  signature: string,
+  sessionKey: string | null = null,
+  encryptedSecret: string | null = null
 ): IApproveRequestPayload => {
   const body = {
     fromDID,
@@ -157,6 +181,8 @@ export const approveRequestPayload = (
     signature,
     status,
     sigType,
+    sessionKey,
+    encryptedSecret,
     verificationProof: sigType + ':' + signature,
   };
   return body;
@@ -241,6 +267,8 @@ export const updateGroupPayload = (
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  sessionKey: string | null,
+  encryptedSecret: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
@@ -258,6 +286,8 @@ export const updateGroupPayload = (
     scheduleEnd: scheduleEnd,
     status: status,
     ...(meta !== undefined && { meta: meta }),
+    sessionKey: sessionKey,
+    encryptedSecret: encryptedSecret,
   };
   return body;
 };

@@ -25,12 +25,14 @@ import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
 import { pgpDecrypt, verifySignature } from './pgp';
 import { aesDecrypt } from './aes';
+import { getGroup } from '../getGroup';
+import { EncryptedSecret } from './getEncryptedSecret';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
 interface IEncryptedRequest {
   message: string;
-  encryptionType: 'PlainText' | 'pgp';
+  encryptionType: 'PlainText' | 'pgp' | 'group-v1';
   aesEncryptedSecret: string;
   signature: string;
 }
@@ -41,6 +43,7 @@ interface IDecryptMessage {
   chainId: number;
   currentChat: IFeeds;
   inbox: IFeeds[];
+  env: ENV;
 }
 
 export const encryptAndSign = async ({
@@ -130,7 +133,8 @@ export const decryptFeeds = async ({
       feed.msg = await decryptAndVerifyMessage(
         feed.msg,
         signatureValidationPubliKey,
-        pgpPrivateKey
+        pgpPrivateKey,
+        env
       );
     }
   }
@@ -143,6 +147,7 @@ export const decryptMessages = async ({
   account,
   currentChat,
   inbox,
+  env,
 }: IDecryptMessage): Promise<IMessageIPFSWithCID> => {
   if (connectedUser.privateKey) {
     if (savedMsg.encType !== 'PlainText' && savedMsg.encType !== null) {
@@ -165,7 +170,8 @@ export const decryptMessages = async ({
       savedMsg = (await decryptAndVerifyMessage(
         savedMsg,
         signatureValidationPubliKey,
-        connectedUser.privateKey
+        connectedUser.privateKey,
+        env
       )) as IMessageIPFSWithCID;
     }
   }
@@ -179,7 +185,8 @@ export const getEncryptedRequest = async (
   isGroup: boolean,
   env: ENV,
   group: GroupDTO | null,
-  secretKey: string
+  secretKey: string,
+  newGroupEncryption: boolean
 ): Promise<IEncryptedRequest> => {
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
@@ -261,15 +268,29 @@ export const getEncryptedRequest = async (
       const publicKeys: string[] = group.members.map(
         (member) => member.publicKey
       );
+      // Steps for new group encryption
+      // 1. Check if group member has changed. This will not be possible.
+      /*
+       - How to check if group member has changed? Just compare previous group members with current group members
+       - Our SDK doesn't store any chat state, so on the SDK side there is no way for knowing if group members has changed
+       - When group member changes, a nonce must be generated on the client, so the client must send the nonce whenever it calls the update group route for changing group members.
+       Changing the group members can also be called using the rest api directly, so by adding the nonce to the update group route, it will be considered a breaking change.
+       *** - The proposed solution is for only use this new group encryption when a *private* group reaches more than 50 members.***
+      */
+      // 2. Call Push Node to get latest `nonce` for this group
+      // 3. Encrypt with new nonce by replacing the `secretKey` created in this function called by the `nonce` from Push Node
       const { cipherText, encryptedSecret, signature } = await encryptAndSign({
         plainText: message,
         keys: publicKeys,
         privateKeyArmored: senderCreatedUser.privateKey!,
         secretKey,
       });
+      let encryptionType: 'PlainText' | 'pgp' | 'group-v1';
+      if (newGroupEncryption) encryptionType = 'group-v1';
+      else encryptionType = 'pgp';
       return {
         message: cipherText,
-        encryptionType: 'pgp',
+        encryptionType,
         aesEncryptedSecret: encryptedSecret,
         signature: signature,
       };
@@ -361,7 +382,8 @@ export async function getDecryptedPrivateKey(
 export const decryptAndVerifyMessage = async (
   message: IMessageIPFS | IMessageIPFSWithCID,
   pgpPublicKey: string,
-  pgpPrivateKey: string
+  pgpPrivateKey: string,
+  env: ENV
 ): Promise<IMessageIPFS | IMessageIPFSWithCID> => {
   /**
    * VERIFICATION
@@ -426,8 +448,17 @@ export const decryptAndVerifyMessage = async (
    */
   const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
   try {
+    let encryptedSecret: string;
+    if (decryptedMessage.encType === Constants.ENC_TYPE_V5) {
+      // Call push nodes to get latest group encryption password
+      const group = await getGroup({ chatId: message.toCAIP10, env });
+      const sessionKey = group.sessionKey;
+      encryptedSecret = await EncryptedSecret({ sessionKey: sessionKey!, env });
+    } else {
+      encryptedSecret = message.encryptedSecret;
+    }
     const secretKey: string = await pgpDecrypt({
-      cipherText: message.encryptedSecret,
+      cipherText: encryptedSecret,
       toPrivateKeyArmored: pgpPrivateKey,
     });
     decryptedMessage.messageContent = aesDecrypt({

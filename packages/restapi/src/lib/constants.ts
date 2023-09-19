@@ -60,6 +60,8 @@ const Constants = {
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',
   ENC_TYPE_V3: 'eip191-aes256-gcm-hkdf-sha256',
   ENC_TYPE_V4: 'pgpv1:nft',
+  ENC_TYPE_V5: 'group-v1',
+  MAX_GROUP_MEMBERS_PRIVATE: 50,
 };
 
 export default Constants;
