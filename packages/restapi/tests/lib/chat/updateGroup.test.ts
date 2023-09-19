@@ -11,7 +11,7 @@ import {
   colors,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
-const _env = Constants.ENV.STAGING;
+const _env = Constants.ENV.DEV;
 let account: string;
 let signer: any;
 let account2: string;
