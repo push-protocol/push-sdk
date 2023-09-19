@@ -39,12 +39,17 @@ export type CreateUserProps = {
   origin? : string | null
 };
 
-export const create = async (options:CreateUserProps):Promise<IUser>=>{
+interface ICreateUser extends IUser {
+  decryptedPrivateKey?: string;
+}
+
+
+export const create = async (options:CreateUserProps):Promise<ICreateUser>=>{
   return await createUserCore(options, PGPHelper)
 }
 
 export const createUserCore = async ( options: CreateUserProps,
-  pgpHelper: IPGPHelper): Promise<IUser> => {
+  pgpHelper: IPGPHelper): Promise<ICreateUser> => {
   const passPrefix = '$0Pc'; //password prefix to ensure password validation
   const {
     env = Constants.ENV.PROD,

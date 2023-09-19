@@ -37,15 +37,6 @@ export const sendCore = async (
   options: ChatSendOptionsType,
   pgpHelper: IPGPHelper
 ): Promise<MessageWithCID> => {
-  const {
-    messageType = 'Text',
-    receiverAddress,
-    pgpPrivateKey = null,
-    account = null,
-    signer = null,
-    env = Constants.ENV.PROD,
-  } = options || {};
-
   try {
     /**
      * Compute Input Options
@@ -62,7 +53,7 @@ export const sendCore = async (
 
     const wallet = getWallet({ account, signer });
     const sender = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
-    const receiver = await getUserDID(receiverAddress, env);
+    const receiver = await getUserDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
     const isGroup = isValidETHAddress(to) ? false : true;
     const group = isGroup

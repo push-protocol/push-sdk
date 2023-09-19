@@ -14,8 +14,10 @@ import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
 import { IPGPHelper, PGPHelper } from './pgp';
 import * as AES from './aes';
-import { MessageObj } from '../../types/messageTypes';
 import { sign } from './pgp';
+import { MessageObj } from '../../types/messageTypes';
+
+
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
@@ -107,10 +109,7 @@ export const sendMessagePayload = async (
 export const sendMessagePayloadCore = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  messageObj: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  },
+  messageObj: MessageObj | string,
   messageContent: string,
   messageType: string,
   group: GroupDTO | null,

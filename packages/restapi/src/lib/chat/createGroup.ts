@@ -8,8 +8,10 @@ import {
   createGroupRequestValidator,
   getWallet,
   getUserDID,
-  getConnectedUserV2,
+  IPGPHelper,
+  PGPHelper,
   validateScheduleDates,
+  getConnectedUserV2Core,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
