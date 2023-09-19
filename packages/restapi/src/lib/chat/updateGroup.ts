@@ -3,7 +3,13 @@ import axios from 'axios';
 import * as AES from '../chat/helpers/aes';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
-import { ChatStatus, EnvOptionsType, GroupDTO, SignerType } from '../types';
+import {
+  ChatStatus,
+  EnvOptionsType,
+  GroupDTO,
+  Rules,
+  SignerType,
+} from '../types';
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
@@ -22,10 +28,10 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
   signer?: SignerType | null;
   chatId: string;
   groupName: string;
-  groupImage: string | null;
-  groupDescription: string;
   members: Array<string>;
   admins: Array<string>;
+  groupImage?: string | null;
+  groupDescription?: string | null;
   pgpPrivateKey?: string | null;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
@@ -34,6 +40,7 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
   // If passed as null will update to null
   // If passed as string will update to that value
   meta?: string | null;
+  rules?: Rules | null;
 }
 
 /**
@@ -57,6 +64,7 @@ export const updateGroup = async (
     scheduleEnd,
     status,
     meta,
+    rules,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -68,10 +76,10 @@ export const updateGroup = async (
     updateGroupRequestValidator(
       chatId,
       groupName,
-      groupDescription,
       members,
       admins,
-      address
+      address,
+      groupDescription
     );
 
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
@@ -122,18 +130,19 @@ export const updateGroup = async (
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
     const body: IUpdateGroupRequestPayload = updateGroupPayload(
       groupName,
-      groupImage,
-      groupDescription,
       convertedMembers,
       convertedAdmins,
       connectedUser.did,
       verificationProof,
       sessionKey,
       encryptedSecret,
+      groupDescription,
+      groupImage,
       scheduleAt,
       scheduleEnd,
       status,
-      meta
+      meta,
+      rules
     );
 
     return axios

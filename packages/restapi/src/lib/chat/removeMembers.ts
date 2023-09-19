@@ -80,6 +80,8 @@ export const removeMembers = async (
       scheduleAt: group.scheduleAt,
       scheduleEnd: group.scheduleEnd,
       status: group.status,
+      rules: group.rules,
+      meta: group.meta,
       account: account,
       signer: signer,
       env: env,

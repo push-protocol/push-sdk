@@ -5,7 +5,7 @@ import {
   getAPIBaseUrls,
   getQueryParams,
   isValidCAIP10NFTAddress,
-  verifyPGPPublicKey,
+  verifyProfileKeys,
   walletToPCAIP10,
 } from '../../helpers';
 import {
@@ -22,6 +22,7 @@ type CreateUserOptionsType = {
   publicKey?: string;
   encryptedPrivateKey?: string;
   env?: ENV;
+  origin? : string | null;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {
@@ -30,6 +31,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     publicKey = '',
     encryptedPrivateKey = '',
     env = Constants.ENV.PROD,
+    origin,
   } = options || {};
   let { user } = options || {};
 
@@ -47,7 +49,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
-    encryptedPrivateKey,
+    encryptedPrivateKey
   };
 
   const hash = generateHash(data);
@@ -56,6 +58,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const body = {
     ...data,
+    origin: origin,
     ...signatureObj,
   };
 
@@ -63,10 +66,12 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     .post(requestUrl, body)
     .then(async (response) => {
       if (response.data)
-        response.data.publicKey = await verifyPGPPublicKey(
+        response.data.publicKey = await verifyProfileKeys(
           response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.wallets,
+          response.data.verificationProof
         );
       return populateDeprecatedUser(response.data);
     })
@@ -106,10 +111,12 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     .put(requestUrl, body)
     .then(async (response) => {
       if (response.data)
-        response.data.publicKey = verifyPGPPublicKey(
+        response.data.publicKey = await verifyProfileKeys(
           response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.wallets,
+          response.data.verificationProof
         );
       return populateDeprecatedUser(response.data);
     })

@@ -30,6 +30,7 @@ export enum MessageType {
   FILE = 'File',
   MEDIA_EMBED = 'MediaEmbed',
   META = 'Meta',
+  REACTION = 'Reaction',
   /**
    * @deprecated - Use MediaEmbed Instead
    */

@@ -1,30 +1,29 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import { Constants } from '../../config';
-import { ChatAndNotificationPropsContext } from '../../context';
+import { useChatData } from './useChatData';
 
 
 interface fetchChat {
-  recipientAddress: string;
+  chatId: string;
 }
 
 const useFetchChat = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,decryptedPgpPvtKey } =
-  useContext<any>(ChatAndNotificationPropsContext);
+  const { account, env,pgpPrivateKey } = useChatData();
 
 
   const fetchChat = useCallback(
-    async ({ recipientAddress}: fetchChat) => {
+    async ({ chatId}: fetchChat) => {
+      console.log(env);
       setLoading(true);
       try {
         const chat = await PushAPI.chat.chat({
-          account: account,
-          toDecrypt: decryptedPgpPvtKey ? true : false,
-          pgpPrivateKey: String(decryptedPgpPvtKey),
-          recipient: recipientAddress,
+          account: account!,
+          toDecrypt: pgpPrivateKey ? true : false,
+          pgpPrivateKey: String(pgpPrivateKey),
+          recipient: chatId,
           env: env
         });
         return chat;
@@ -38,7 +37,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [decryptedPgpPvtKey,env]
+    [pgpPrivateKey,env]
   );
 
   return { fetchChat, error, loading };

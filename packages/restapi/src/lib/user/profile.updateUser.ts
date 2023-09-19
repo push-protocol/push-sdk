@@ -5,7 +5,7 @@ import Constants, { ENV } from '../constants';
 import {
   getAPIBaseUrls,
   isValidETHAddress,
-  verifyPGPPublicKey,
+  verifyProfileKeys,
 } from '../helpers';
 import { IUser, ProgressHookType, ProgressHookTypeFunction } from '../types';
 import { get } from './getUser';
@@ -73,6 +73,8 @@ export const profileUpdate = async (
         }
       );
       blockedUsersList = await Promise.all(convertedBlockedListUsersPromise);
+
+      blockedUsersList = Array.from(new Set(blockedUsersList));
     }
 
     const updatedProfile = {
@@ -99,10 +101,12 @@ export const profileUpdate = async (
     progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-01'] as ProgressHookType);
     const response = await axios.put(apiEndpoint, body);
     if (response.data)
-      response.data.publicKey = await verifyPGPPublicKey(
+      response.data.publicKey = await verifyProfileKeys(
         response.data.encryptedPrivateKey,
         response.data.publicKey,
-        response.data.did
+        response.data.did,
+        response.data.wallets,
+        response.data.verificationProof
       );
 
     // Report Progress

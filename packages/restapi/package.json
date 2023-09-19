@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/restapi",
-  "version": "0.0.1-alpha.28",
+  "version": "1.4.11",
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@ambire/signature-validator": "^1.3.1",
-    "@livepeer/webrtmp-sdk": "^0.2.3",
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "immer": "^10.0.2",
+    "joi": "^17.9.2",
     "livepeer": "^2.5.8",
     "openpgp": "^5.5.0",
     "simple-peer": "^9.11.1",

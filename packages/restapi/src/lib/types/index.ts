@@ -10,7 +10,8 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META } from './metaTypes';
+import { Message, MessageObj } from './messageTypes';
+export * from './messageTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -162,12 +163,7 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageObj | string;
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -248,6 +244,7 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+  origin?: string | null;
 
   /**
    * @deprecated Use `profile.name` instead.
@@ -309,6 +306,61 @@ export enum ChatStatus {
   PENDING = 'PENDING',
   ENDED = 'ENDED',
 }
+
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  contract?: string;
+  amount?: number;
+  decimals?: number;
+  guildId?: string;
+  guildRoleId?: string;
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+};
+
+export type ConditionBase = {
+  type?: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data?: Data;
+  access?: boolean;
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  groupAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+  chatAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+export interface SpaceRules {
+  spaceAccess?: {
+    conditions: Array<Condition | ConditionBase>;
+  };
+}
+
+export interface GroupAccess {
+  groupAccess: boolean;
+  chatAccess: boolean;
+  rules?: Rules;
+}
+
+export interface SpaceAccess {
+  spaceAccess: boolean;
+  rules?: SpaceRules;
+}
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -339,6 +391,8 @@ export interface GroupDTO {
   status?: ChatStatus | null;
   encryptedSecret?: string | null;
   sessionKey?: string | null;
+  rules?: Rules | null;
+  meta?: string | null;
 }
 
 export interface SpaceDTO {
@@ -369,6 +423,8 @@ export interface SpaceDTO {
   scheduleEnd?: Date | null;
   status: ChatStatus | null;
   inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  rules?: SpaceRules | null;
+  meta?: string | null;
 }
 
 export interface Peer {
@@ -423,10 +479,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatStartOptionsType {
   messageType: `${MessageType}`;
-  messageObj: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  };
+  messageObj: MessageObj | string;
   /**
    * @deprecated - To be used for now to provide backward compatibility
    */
@@ -440,23 +493,37 @@ export interface ChatStartOptionsType {
  * EXPORTED ( Chat.send )
  */
 export interface ChatSendOptionsType {
-  messageType?: `${MessageType}`;
-  messageObj?: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  };
+  /** Message to be send */
+  message?: Message;
   /**
-   * @deprecated - Use messageObj.content instead
+   * Message Sender's Account ( DID )
+   * In case account is not provided, it will be derived from signer
    */
-  messageContent?: string;
-  receiverAddress: string;
-  pgpPrivateKey?: string;
   account?: string;
-  signer?: SignerType;
-  env?: ENV;
+  /** Message Receiver's Account ( DID ) */
+  to?: string;
   /**
-   * @deprecated APIkey is not needed now
+   * Message Sender's ethers signer or viem walletClient
+   * Used for deriving account if not provided
+   * Used for decrypting pgpPrivateKey if not provided
    */
+  signer?: SignerType;
+  /**
+   * Message Sender's decrypted pgp private key
+   * Used for signing message
+   */
+  pgpPrivateKey?: string;
+  /** Enironment - prod, staging, dev */
+  env?: ENV;
+  /** @deprecated - Use message instead */
+  messageObj?: MessageObj;
+  /** @deprecated - Use message.content instead */
+  messageContent?: string;
+  /** @deprecated - Use message.type instead */
+  messageType?: `${MessageType}`;
+  /** @deprecated - Use to instead */
+  receiverAddress?: string;
+  /** @deprecated Not needed anymore */
   apiKey?: string;
 }
 
@@ -552,12 +619,7 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageObj | string;
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -652,7 +714,7 @@ export type VideoAcceptRequestInputOptions = {
 
 export type VideoConnectInputOptions = {
   signalData: any;
-  peerAddress: string;
+  peerAddress?: string;
 };
 
 export type VideoDisconnectOptions = {
@@ -661,7 +723,7 @@ export type VideoDisconnectOptions = {
     type: SPACE_DISCONNECT_TYPE;
     data: Record<string, unknown>;
   };
-};
+} | null;
 
 export type EnableVideoInputOptions = {
   state: boolean;
