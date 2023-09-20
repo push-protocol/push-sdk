@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.11...uiweb-0.0.1-alpha.12) (2023-09-20)
+
+
+### Bug Fixes
+
+* added condition while showing tokengatedIcon ([#715](https://github.com/ethereum-push-notification-service/push-sdk/issues/715)) ([8ae0f49](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ae0f49fcd385dfdcad197de2f89c58a074f681e))
+* added disconnect for wallet ([#721](https://github.com/ethereum-push-notification-service/push-sdk/issues/721)) ([4e30c36](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e30c36532a55abd440f779c98b31f52bfb9e107))
+* Merge branch 'alpha' into alpha-deployment ([a3b4ead](https://github.com/ethereum-push-notification-service/push-sdk/commit/a3b4ead84601329e36afd8555011a5088dba6983))
+* Merge branch 'alpha' into alpha-deployment ([a356f4b](https://github.com/ethereum-push-notification-service/push-sdk/commit/a356f4b8497252e75c8f70fd6f6bf533a6980c0a))
+* Merge branch 'alpha' into alpha-deployment ([1a4c5ac](https://github.com/ethereum-push-notification-service/push-sdk/commit/1a4c5ac8f704cc5bfeed1ba4eb688e4742acfd9e))
+
+
+
 ## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.10...uiweb-0.0.1-alpha.11) (2023-09-15)
 
 
