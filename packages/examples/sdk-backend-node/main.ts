@@ -6,6 +6,7 @@ import { runPushAPICases } from './pushAPI';
 
 import { config } from './config';
 import { ENV } from './types';
+import { runPushStreamCases } from './pushStream';
 
 // CONFIGS
 const { env } = config;
@@ -15,12 +16,13 @@ const start = async (): Promise<void> => {
   console.log(`${returnHeadingLog()}`);
   console.log(`${returnENVLog()}`);
 
-  await runPushAPICases();
+  await runPushStreamCases();
+  /*await runPushAPICases();
   await runNotificaitonsUseCases();
   await runChatUseCases();
   await runNFTChatUseCases();
   await runVideoUseCases();
-  await runSpacesUseCases();
+  await runSpacesUseCases();*/
 };
 
 start();
