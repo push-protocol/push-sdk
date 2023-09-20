@@ -20,7 +20,7 @@ export interface IChatViewComponentProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
-  onClick?: () => void;
+  onGetTokenClick?: () => void;
 }
 
 export interface IChatProfile {
