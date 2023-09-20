@@ -90,10 +90,14 @@ const web3OnBoard = init({
   }
 })
 
-export const ConnectButtonComp = ({ pageProps }: any) => {
+interface IConnectButtonCompProps {
+  autoConnect?: boolean;
+}
+
+export const ConnectButtonComp:React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
   return (
     <Web3OnboardProvider web3Onboard={web3OnBoard}>
-      <ConnectButtonSub {...pageProps} />
+      <ConnectButtonSub autoConnect={autoConnect} />
     </Web3OnboardProvider>
   );
 };
