@@ -34,6 +34,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     file = true,
     gif = true,
     isConnected = true,
+    autoConnect = false,
     onClick,
   } = options || {};
 
@@ -92,6 +93,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
             Emoji={emoji}
             GIF={gif}
             isConnected={isConnected}
+            autoConnect = {autoConnect}
           />
         </Section>
       )}
