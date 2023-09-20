@@ -68,7 +68,7 @@ export interface MessageInputProps {
   Image?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
-  onClick?: () => void;
+  onGetTokenClick?: () => void;
 }
 
 export type UpdateGroupType = {
