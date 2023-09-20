@@ -22,13 +22,12 @@ import * as PUSH_USER from '../user';
 import * as PUSH_PAYLOAD from '../payloads';
 import * as PUSH_CHANNEL from '../channels';
 import * as PUSH_ALIAS from '../alias';
-import { getAccountAddress, getWallet } from '../chat/helpers';
+import { getAccountAddress } from '../chat/helpers';
 import {
   getCAIPDetails,
   getCAIPWithChainId,
   validateCAIP,
   getFallbackETHCAIPAddress,
-  isValidETHAddress,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
@@ -163,15 +162,15 @@ export class PushNotifications {
       payload: {
         title: options.payload?.title ?? options.notification.title,
         body: options.payload?.body ?? options.notification.body,
-        cta: options.payload?.cta!,
-        img: options.payload?.embed!,
+        cta: options.payload?.cta ?? "",
+        img: options.payload?.embed?? "",
         hidden: options.config?.hidden,
         etime: options.config?.expiry,
         silent: options.config?.silent,
         additionalMeta: options.payload?.meta,
       },
       recipients: notificationType.recipient,
-      graph: options.advanced?.graph!,
+      graph: options.advanced?.graph,
       ipfsHash: options.advanced?.ipfs,
       env: env,
       chatId: options.advanced?.chatid,
@@ -201,7 +200,7 @@ export class PushNotifications {
 
   // check if url is valid
   private isValidUrl(urlString: string): boolean {
-    var urlPattern = new RegExp(
+    const urlPattern = new RegExp(
       '^((?:https|http):\\/\\/)' + // validate protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
         '((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
@@ -554,8 +553,7 @@ export class PushNotifications {
         // create push token instance
         let aliasInfo;
         this.checkSignerObjectExists();
-        if (this.signer && this.signer.provider) {
-        } else {
+        if (!this.signer || !this.signer?.provider) {
           throw new Error('Provider is required');
         }
         // validate all the parameters and length
@@ -643,8 +641,7 @@ export class PushNotifications {
         // create push token instance
         let aliasInfo;
         this.checkSignerObjectExists();
-        if (this.signer && this.signer.provider) {
-        } else {
+        if (!this.signer || !this.signer.provider) {
           throw new Error('Provider is required');
         }
         // validate all the parameters and length
