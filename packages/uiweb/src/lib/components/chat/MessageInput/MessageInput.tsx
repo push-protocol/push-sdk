@@ -54,7 +54,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   Emoji = true,
   GIF = true,
   File = true,
-  isConnected,
+  isConnected = true,
+  autoConnect = false,
   onClick,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
@@ -385,7 +386,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 You need to connect your wallet to get started
               </Span>
             )}
-            <ConnectButtonComp />
+            <ConnectButtonComp autoConnect={autoConnect} />
           </Section>
         </TypebarSection>
       )}

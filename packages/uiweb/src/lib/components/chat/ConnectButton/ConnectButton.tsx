@@ -19,7 +19,10 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export const ConnectButtonSub = () => {
+interface IConnectButtonProps {
+  autoConnect?: boolean;
+}
+export const ConnectButtonSub: React.FC<IConnectButtonProps> = ({autoConnect = false}) => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
   const {
@@ -51,6 +54,8 @@ export const ConnectButtonSub = () => {
   }
 
   useEffect(() => {
+    if(wallet && !autoConnect)
+    disconnect(wallet);
     newFunc()
   }, [wallet])
 
