@@ -56,7 +56,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   File = true,
   isConnected = true,
   autoConnect = false,
-  onClick,
+  onGetTokenClick,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -527,8 +527,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   <Section gap="8px">
                     <TokenWrapper
                       onClick={() => {
-                        if (onClick) {
-                          onClick();
+                        if (onGetTokenClick) {
+                          onGetTokenClick();
                         }
                         setVerificationSuccessfull(true);
                       }}
