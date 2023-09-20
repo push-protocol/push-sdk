@@ -177,6 +177,60 @@ const PROGRESSHOOK: Record<
     level: 'SUCCESS',
   },
   /**
+   * PUSH_CHANNEL_CREATE PROGRESSHOOKS
+   */
+  'PUSH-CHANNEL-CREATE-01': {
+    progressId: 'PUSH-CHANNEL-CREATE-01',
+    progressTitle: 'Uploading data to IPFS',
+    progressInfo: 'The channel’s data is getting uploaded to IPFS',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-CREATE-02': {
+    progressId: 'PUSH-CHANNEL-CREATE-02',
+    progressTitle: 'Approving PUSH tokens',
+    progressInfo: 'Gives approval to Push Core contract to spend 50 DAI',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-CREATE-03': {
+    progressId: 'PUSH-CHANNEL-CREATE-03',
+    progressTitle: 'Channel is getting created',
+    progressInfo: 'Calls Push Core contract to create your channel',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-CREATE-04': {
+    progressId: 'PUSH-CHANNEL-CREATE-04',
+    progressTitle: 'Channel creation is done, Welcome to Push Ecosystem',
+    progressInfo: 'Channel creation is completed',
+    level: 'SUCCESS',
+  },
+  /**
+   * PUSH_CHANNEL_UPDATE PROGRESSHOOKS
+   */
+  'PUSH-CHANNEL-UPDATE-01': {
+    progressId: 'PUSH-CHANNEL-UPDATE-01',
+    progressTitle: 'Uploading new data to IPFS',
+    progressInfo: 'The channel’s new data is getting uploaded to IPFS',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-UPDATE-02': {
+    progressId: 'PUSH-CHANNEL-UPDATE-02',
+    progressTitle: 'Approving PUSH tokens',
+    progressInfo: 'Gives approval to Push Core contract to spend 50 DAI',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-UPDATE-03': {
+    progressId: 'PUSH-CHANNEL-UPDATE-03',
+    progressTitle: 'Channel is getting updated',
+    progressInfo: 'Calls Push Core contract to update your channel details',
+    level: 'INFO',
+  },
+  'PUSH-CHANNEL-UPDATE-04': {
+    progressId: 'PUSH-CHANNEL-UPDATE-04',
+    progressTitle: 'Channel is updated with new data',
+    progressInfo: 'Channel is successfully updated',
+    level: 'SUCCESS',
+  },
+  /**
    * PUSH-ERROR PROGRESSHOOKS
    */
   'PUSH-ERROR-00': (functionName: string, err: string) => {
@@ -193,6 +247,14 @@ const PROGRESSHOOK: Record<
       progressTitle: 'Upgrade Profile Failed',
       progressInfo: `[Push SDK] - API  - Error - API decryptPgpKey() -: ${err}`,
       level: 'WARN',
+    };
+  },
+  'PUSH-ERROR-02': (name: string, err: string) => {
+    return {
+      progressId: 'PUSH-ERROR-02',
+      progressTitle: 'Transaction failed',
+      progressInfo: `[Push SDK] - Contract  - Error - ${name} -: ${err}`,
+      level: 'ERROR',
     };
   },
 };
