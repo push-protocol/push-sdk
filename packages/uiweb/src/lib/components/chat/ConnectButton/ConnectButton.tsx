@@ -51,6 +51,8 @@ export const ConnectButtonSub = () => {
   }
 
   useEffect(() => {
+    if(wallet)
+    disconnect(wallet);
     newFunc()
   }, [wallet])
 
