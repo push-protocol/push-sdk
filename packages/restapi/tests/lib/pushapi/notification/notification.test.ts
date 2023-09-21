@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { PushNotifications } from '../../../../src/lib/pushapi/PushNotification'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import tokenABI from './toekenABI';
+// import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushNotifications;
   let userBob: PushNotifications;
