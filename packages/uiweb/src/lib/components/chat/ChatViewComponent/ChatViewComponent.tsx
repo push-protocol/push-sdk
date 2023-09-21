@@ -89,9 +89,9 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           <MessageInput
             onGetTokenClick={onGetTokenClick}
             chatId={chatId}
-            File={file}
-            Emoji={emoji}
-            GIF={gif}
+            file={file}
+            emoji={emoji}
+            gif={gif}
             isConnected={isConnected}
             autoConnect = {autoConnect}
           />
