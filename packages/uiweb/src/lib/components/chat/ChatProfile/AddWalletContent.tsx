@@ -24,9 +24,10 @@ import { device } from '../../../config';
 import CloseIcon from '../../../icons/close.svg';
 import { ChatSearchInput, CustomStyleParamsType } from '../reusables';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import { BackIcon } from '../../../icons/Back';
 
 
-//add back button
+//add back button ---> done
 type AddWalletContentProps = {
   onSubmit: () => void;
   onClose: () => void;
@@ -63,7 +64,7 @@ export const AddWalletContent = ({
   };
 
   const handleSearch = async ({searchedText}:{searchedText:string}): Promise<void> => {
-    //fix ens search
+    //fix ens search ---> done
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
       fetchChatProfile,
@@ -125,7 +126,9 @@ export const AddWalletContent = ({
       padding={isMobile ? '0px auto' : '0px 10px'}
     >
       <Section flex="1" flexDirection="row" justifyContent="space-between">
-        {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
+        <Span onClick={() => handlePrevious()}>
+        <BackIcon />
+        </Span>
 
         <Span
           textAlign="center"
@@ -163,7 +166,7 @@ export const AddWalletContent = ({
       </Section>
 
       <Section flex="1">
-        {/* check the search for dark mode */}
+        {/* check the search for dark mode ----> pending */} 
       <ChatSearchInput
             handleSearch={handleSearch}
             clearInput={clearInput}
@@ -198,7 +201,7 @@ export const AddWalletContent = ({
       </MultipleMemberList>
 
       <Section flex="1" alignSelf="center">
-        {/* fix the buttom  width and fontSize font Weight */}
+        {/* fix the buttom  width and fontSize font Weight ----> done */}
         <ModalConfirmButton
           onClick={() => onSubmit()}
           isLoading={isLoading}
@@ -267,6 +270,7 @@ const MultipleMemberList = styled.div`
 
 const ModalConfirmButton = styled.button<ModalButtonProps>`
   margin: 60px 0 0 0;
+  width: 197px;
   background: ${(props) =>
     props.memberListCount ? '#CF1C84' : props.theme.groupButtonBackgroundColor};
   color: ${(props) =>
@@ -278,10 +282,11 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
   cursor: pointer;
   border-radius: 15px;
   padding: 16px;
-  font-size: 1.125rem;
+  font-size: 16px;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: none;
+  height: 48px;
 `;
