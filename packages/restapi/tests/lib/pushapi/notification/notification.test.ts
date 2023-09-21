@@ -1,12 +1,12 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 import { PushNotifications } from '../../../../src/lib/pushapi/PushNotification'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import tokenABI from './toekenABI';
-describe('PushAPI.chat functionality', () => {
+describe('PushAPI.notification functionality', () => {
   let userAlice: PushNotifications;
   let userBob: PushNotifications;
   let userKate: PushNotifications;
@@ -16,16 +16,20 @@ describe('PushAPI.chat functionality', () => {
   let account2: string;
 
   beforeEach(async () => {
-    const WALLET1 = ethers.Wallet.createRandom();
-    signer1 = new ethers.Wallet(WALLET1.privateKey);
-    account1 = WALLET1.address;
+    signer1 = new ethers.Wallet(
+      `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
+    );
+    account1 = await signer1.getAddress();
 
     const provider = new ethers.providers.JsonRpcProvider(
       'https://goerli.blockpi.network/v1/rpc/public'
     );
-    const WALLET2 = ethers.Wallet.createRandom();
-    signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
-    account2 = WALLET2.address;
+
+    signer2 = new ethers.Wallet(
+      `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`,
+      provider
+    );
+    account2 = await signer2.getAddress();
 
     // initialisation with signer and provider
     userKate = await PushNotifications.initialize(signer2);
@@ -150,62 +154,68 @@ describe('PushAPI.chat functionality', () => {
     });
   });
 
-  describe('channel :: info', () => {
-    it('Without signer and account: Should throw error', async () => {
-      await expect(() => userBob.channel.info()).to.Throw;
-    });
+  // TO RUN THIS, MAKE THE PRIVATE FUNTIONS PUBLIC
+  // describe('debug :: test private functions', () => {
+    //     it('Fetching data from contract', async () => {
+    //       const contract = userKate.createContractInstance(
+    //         '0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+    //         tokenABI
+    //       );
+    //       const balance = await contract['balanceOf'](
+    //         '0xD8634C39BBFd4033c0d3289C4515275102423681'
+    //       );
+    //       console.log(balance.toString());
+    //       const fees = ethers.utils.parseUnits('50', 18);
+    //       console.log(fees)
+    //       console.log(fees.lte(balance))
+    //     });
 
-    it('Without signer but with non-caip account: Should return response', async () => {
-      const res = await userBob.channel.info(
-        '0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
-      expect(res).not.null;
-    });
+    //     it("Uploading data to ipfs via push node", async () => {
+    //         await userAlice.uploadToIPFSViaPushNode("test")
+    //     })
 
-    it('Without signer and with valid caip account: Should return response', async () => {
-      const res = await userBob.channel.info(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
-      //   console.log(res);
-      expect(res).not.null;
-    });
-  });
+    // it('Should get proper minnimal payload', () => {
+    //   const inputData = [
+    //     {
+    //       type: 0,
+    //       default: 1,
+    //       description: 'test1',
+    //     },
+    //     {
+    //       type: 1,
+    //       default: 10,
+    //       description: 'test2',
+    //       data: {
+    //         upper: 100,
+    //         lower: 1,
+    //       },
+    //     },
+    //   ];
 
-  describe('channel :: search', () => {
-    it('Without signer and account : Should return response', async () => {
-      const res = await userBob.channel.search(' ');
-      //   console.log(res);
-      expect(res).not.null;
-    });
+    //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+    //   console.log(minimalSettings);
+    // });
 
-    it('With signer: Should return response', async () => {
-      const res = await userBob.channel.search(' ');
-      // console.log(res);
-      expect(res).not.null;
-    });
+    // it('Should get proper minnimal payload', () => {
+    //   const inputData = [
+    //     {
+    //       type: 1,
+    //       default: 10,
+    //       description: 'test2',
+    //       data: {
+    //         upper: 100,
+    //         lower: 1,
+    //       },
+    //     },
+    //     {
+    //       type: 0,
+    //       default: 1,
+    //       description: 'test1',
+    //     },
+    //   ];
 
-    it('Should throw error for empty query', async () => {
-        await expect(()=> userBob.channel.search('')).to.Throw
-    })
-  });
-
-  //   describe('debug :: test private functions', () => {
-  //     it('Fetching data from contract', async () => {
-  //       const contract = userKate.createContractInstance(
-  //         '0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-  //         tokenABI
-  //       );
-  //       const balance = await contract['balanceOf'](
-  //         '0xD8634C39BBFd4033c0d3289C4515275102423681'
-  //       );
-  //       console.log(balance.toString());
-  //       const fees = ethers.utils.parseUnits('50', 18);
-  //       console.log(fees)
-  //       console.log(fees.lte(balance))
-  //     });
-
-  //     it("Uploading data to ipfs via push node", async () => {
-  //         await userAlice.uploadToIPFSViaPushNode("test")
-  //     })
-  //   });
+    //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+    //   console.log(minimalSettings);
+    // });
+  // });
 });

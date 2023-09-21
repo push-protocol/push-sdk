@@ -4,6 +4,7 @@ import {
   ISendNotificationInputOptions,
   ProgressHookType,
   ProgressHookTypeFunction,
+  ethersV5SignerType,
 } from '../types';
 import {
   ChannelInfoOptions,
@@ -31,8 +32,11 @@ import {
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
-import { ethers, Contract } from 'ethers';
+import { ethers, Contract, ContractInterface, Signer } from 'ethers';
 import axios from 'axios';
+import { mainnet, goerli } from 'viem/chains';
+import { createPublicClient, http, getContract } from 'viem';
+
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
 const ERROR_SIGNER_NEEDED = 'Signer object is required';
@@ -49,10 +53,6 @@ export const FEED_MAP = {
   INBOX: false,
   SPAM: true,
 };
-//TODO
-// add the new subscribers low level function
-// test everything
-
 export class PushNotifications {
   private signer: SignerType | undefined;
   private account: string | undefined;
@@ -123,12 +123,15 @@ export class PushNotifications {
   private getNotificationType(
     recipient: string[],
     channel: string
-  ): { recipient: string[]; type: number } {
+  ): { recipient: string[] | string; type: number } {
     if (recipient.length == 1) {
       if (recipient[0] == BROADCAST_TYPE) {
-        return { recipient: [channel], type: NOTIFICATION_TYPE['BROADCAST'] };
+        return { recipient: channel, type: NOTIFICATION_TYPE['BROADCAST'] };
       } else {
-        return { recipient, type: NOTIFICATION_TYPE['TARGETTED'] };
+        return {
+          recipient: recipient[0],
+          type: NOTIFICATION_TYPE['TARGETTED'],
+        };
       }
     }
     return { recipient, type: NOTIFICATION_TYPE['SUBSET'] };
@@ -162,8 +165,8 @@ export class PushNotifications {
       payload: {
         title: options.payload?.title ?? options.notification.title,
         body: options.payload?.body ?? options.notification.body,
-        cta: options.payload?.cta ?? "",
-        img: options.payload?.embed?? "",
+        cta: options.payload?.cta ?? '',
+        img: options.payload?.embed ?? '',
         hidden: options.config?.hidden,
         etime: options.config?.expiry,
         silent: options.config?.silent,
@@ -258,19 +261,41 @@ export class PushNotifications {
 
   // create contract instance
   private createContractInstance(
-    contractAddress: string,
+    contractAddress: string | `0x${string}`,
     contractABI: ethers.ContractInterface
   ) {
     this.checkSignerObjectExists();
     if (!this.signer?.provider) {
       throw new Error('Provider is required');
     }
-    const contract = new ethers.Contract(
-      contractAddress,
-      contractABI,
-      this.signer.provider
-    );
-    return contract;
+    if (
+      !('_signTypedData' in this.signer) &&
+      !('signTypedData' in this.signer)
+    ) {
+      throw new Error('Unsupported signer type');
+    } else if ('_signTypedData' in this.signer) {
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        this.signer as unknown as Signer
+      );
+      return contract;
+    } else {
+      throw new Error('viem support coming soon');
+    }
+    // else if ('signTypedData' in this.signer) {
+    //   const client = createPublicClient({
+    //     chain: mainnet,
+    //     transport: http()
+    //   })
+    //   const contract = getContract({
+    //     abi: contractABI ,
+    //     address: contractAddress as `0x${string}`,
+    //     publicClient: client
+    //   })
+    // } else{
+    //   throw new Error("Unsupported signer type")
+    // }
   }
 
   private async uploadToIPFSViaPushNode(data: string): Promise<string> {
@@ -279,7 +304,6 @@ export class PushNotifications {
         `${config.CORE_CONFIG[this.env!].API_BASE_URL}/v1/ipfs/upload`,
         { data }
       );
-      console.log(response.data);
       return response.data.cid as string;
     } catch (error) {
       throw new Error('Something went wrong while uploading data to IPFS');
@@ -328,7 +352,7 @@ export class PushNotifications {
       }
     }
     return {
-      setting: notificationSetting,
+      setting: notificationSetting.replace(/^\+/, ''),
       description: notificationSettingDescription,
     };
   }
@@ -353,43 +377,57 @@ export class PushNotifications {
         channels = [],
         raw = false,
       } = options || {};
-      // guest mode and valid address check
-      this.checkUserAddressExists(account!);
-      if (channels.length == 0) {
-        // else return the response
-        return await PUSH_USER.getFeeds({
-          user: account!,
-          page: page,
-          limit: limit,
-          spam: FEED_MAP[spam],
-          raw: raw,
-          env: this.env,
-        });
-      } else {
-        return await PUSH_USER.getFeedsPerChannel({
-          user: account!,
-          page: page,
-          limit: limit,
-          spam: FEED_MAP[spam],
-          raw: raw,
-          env: this.env,
-          channels: channels,
-        });
+      try {
+        // guest mode and valid address check
+        this.checkUserAddressExists(account!);
+        if (channels.length == 0) {
+          // else return the response
+          return await PUSH_USER.getFeeds({
+            user: account!,
+            page: page,
+            limit: limit,
+            spam: FEED_MAP[spam],
+            raw: raw,
+            env: this.env,
+          });
+        } else {
+          return await PUSH_USER.getFeedsPerChannel({
+            user: account!,
+            page: page,
+            limit: limit,
+            spam: FEED_MAP[spam],
+            raw: raw,
+            env: this.env,
+            channels: channels,
+          });
+        }
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : notifcaiton::list : ${JSON.stringify(error)}`
+        );
       }
     },
 
     subscriptions: async (options?: SubscriptionOptionsV2) => {
-      const {
-        account = this.account,
-        // TODO: to be used once pagination is implemeted at API level
-        page = Constants.PAGINATION.INITIAL_PAGE,
-        limit = Constants.PAGINATION.LIMIT,
-      } = options || {};
-      this.checkUserAddressExists(account!);
-      return await PUSH_USER.getSubscriptions({
-        user: account!,
-        env: this.env,
-      });
+      try {
+        const {
+          account = this.account,
+          // TODO: to be used once pagination is implemeted at API level
+          page = Constants.PAGINATION.INITIAL_PAGE,
+          limit = Constants.PAGINATION.LIMIT,
+        } = options || {};
+        this.checkUserAddressExists(account!);
+        return await PUSH_USER.getSubscriptions({
+          user: account!,
+          env: this.env,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : notifcaiton::subscriptions : ${JSON.stringify(
+            error
+          )}`
+        );
+      }
     },
     /**
      * Subscribes a user to a channel
@@ -402,35 +440,43 @@ export class PushNotifications {
       channel: string,
       options?: SubscribeUnsubscribeOptionsV2
     ) => {
-      const { onSuccess, onError } = options || {};
-      // Vaidatiions
-      // validates if signer object is present
-      this.checkSignerObjectExists();
-      // validates if the user address exists
-      this.checkUserAddressExists();
-      // validates if channel exists
-      if (!channel && channel != '') {
-        throw new Error(ERROR_CHANNEL_NEEDED);
+      try {
+        const { onSuccess, onError } = options || {};
+        // Vaidatiions
+        // validates if signer object is present
+        this.checkSignerObjectExists();
+        // validates if the user address exists
+        this.checkUserAddressExists();
+        // validates if channel exists
+        if (!channel && channel != '') {
+          throw new Error(ERROR_CHANNEL_NEEDED);
+        }
+        // validates if caip is correct
+        if (!validateCAIP(channel)) {
+          throw new Error(ERROR_INVALID_CAIP);
+        }
+        // get channel caip
+        const caipDetail = getCAIPDetails(channel);
+        // based on the caip, construct the user caip
+        const userAddressInCaip = getCAIPWithChainId(
+          this.account!,
+          parseInt(caipDetail?.networkId as string)
+        );
+        return await PUSH_CHANNEL.subscribe({
+          signer: this.signer!,
+          channelAddress: channel,
+          userAddress: userAddressInCaip,
+          env: this.env,
+          onSuccess: onSuccess,
+          onError: onError,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : notifcaiton::subscribe : ${JSON.stringify(
+            error
+          )}`
+        );
       }
-      // validates if caip is correct
-      if (!validateCAIP(channel)) {
-        throw new Error(ERROR_INVALID_CAIP);
-      }
-      // get channel caip
-      const caipDetail = getCAIPDetails(channel);
-      // based on the caip, construct the user caip
-      const userAddressInCaip = getCAIPWithChainId(
-        this.account!,
-        parseInt(caipDetail?.networkId as string)
-      );
-      return await PUSH_CHANNEL.subscribe({
-        signer: this.signer!,
-        channelAddress: channel,
-        userAddress: userAddressInCaip,
-        env: this.env,
-        onSuccess: onSuccess,
-        onError: onError,
-      });
     },
 
     /**
@@ -444,33 +490,41 @@ export class PushNotifications {
       channel: string,
       options?: SubscribeUnsubscribeOptionsV2
     ) => {
-      const { onSuccess, onError } = options || {};
-      // Vaidatiions
-      // validates if the user address exists
-      this.checkUserAddressExists();
-      // validates if signer object is present
-      this.checkSignerObjectExists();
-      // validates if channel exists
-      if (!channel && channel != '') {
-        return new Error(ERROR_CHANNEL_NEEDED);
+      try {
+        const { onSuccess, onError } = options || {};
+        // Vaidatiions
+        // validates if the user address exists
+        this.checkUserAddressExists();
+        // validates if signer object is present
+        this.checkSignerObjectExists();
+        // validates if channel exists
+        if (!channel && channel != '') {
+          return new Error(ERROR_CHANNEL_NEEDED);
+        }
+        // validates if caip is correct
+        if (!validateCAIP(channel)) {
+          return new Error(ERROR_INVALID_CAIP);
+        }
+        const caipDetail = getCAIPDetails(channel);
+        const userAddressInCaip = getCAIPWithChainId(
+          this.account!,
+          parseInt(caipDetail?.networkId as string)
+        );
+        return await PUSH_CHANNEL.unsubscribe({
+          signer: this.signer!,
+          channelAddress: channel,
+          userAddress: userAddressInCaip,
+          env: this.env,
+          onSuccess: onSuccess,
+          onError: onError,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : notifcaiton::unsubscribe : ${JSON.stringify(
+            error
+          )}`
+        );
       }
-      // validates if caip is correct
-      if (!validateCAIP(channel)) {
-        return new Error(ERROR_INVALID_CAIP);
-      }
-      const caipDetail = getCAIPDetails(channel);
-      const userAddressInCaip = getCAIPWithChainId(
-        this.account!,
-        parseInt(caipDetail?.networkId as string)
-      );
-      return await PUSH_CHANNEL.unsubscribe({
-        signer: this.signer!,
-        channelAddress: channel,
-        userAddress: userAddressInCaip,
-        env: this.env,
-        onSuccess: onSuccess,
-        onError: onError,
-      });
     },
   };
 
@@ -481,12 +535,19 @@ export class PushNotifications {
      * @returns information about the channel if it exists
      */
     info: async (channel?: string) => {
-      this.checkUserAddressExists(channel);
-      channel = channel ?? getFallbackETHCAIPAddress(this.env!, this.account!);
-      return await PUSH_CHANNEL.getChannel({
-        channel: channel as string,
-        env: this.env,
-      });
+      try {
+        this.checkUserAddressExists(channel);
+        channel =
+          channel ?? getFallbackETHCAIPAddress(this.env!, this.account!);
+        return await PUSH_CHANNEL.getChannel({
+          channel: channel as string,
+          env: this.env,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : channel::info : ${JSON.stringify(error)}`
+        );
+      }
     },
 
     /**
@@ -497,30 +558,46 @@ export class PushNotifications {
      * @returns Array of results relevant to the serach query
      */
     search: async (query: string, options?: ChannelSearchOptionsV2) => {
-      const {
-        page = Constants.PAGINATION.INITIAL_PAGE,
-        limit = Constants.PAGINATION.LIMIT,
-      } = options || {};
-      return await PUSH_CHANNEL.search({
-        query: query,
-        page: page,
-        limit: limit,
-        env: this.env,
-      });
+      try {
+        const {
+          page = Constants.PAGINATION.INITIAL_PAGE,
+          limit = Constants.PAGINATION.LIMIT,
+        } = options || {};
+        return await PUSH_CHANNEL.search({
+          query: query,
+          page: page,
+          limit: limit,
+          env: this.env,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : channel::search : ${JSON.stringify(error)}`
+        );
+      }
     },
     /**
      * @description - Get subscribers of a channell
      * @param {string} [options.channel] - channel in caip. defaults to account from signer with eth caip
      * @returns array of subscribers
      */
-    _subscribers: async (options: ChannelInfoOptions) => {
-      const { channel = getFallbackETHCAIPAddress(this.env!, this.account!) } =
-        options || {};
-      this.checkUserAddressExists(channel);
-      return await PUSH_CHANNEL._getSubscribers({
-        channel: channel!,
-        env: this.env,
-      });
+    subscribers: async (options?: ChannelInfoOptions) => {
+      try {
+        const { channel } = options || {};
+        this.checkUserAddressExists(channel);
+        if (!validateCAIP(channel!)) {
+          throw new Error('Invalid CAIP');
+        }
+        return await PUSH_CHANNEL._getSubscribers({
+          channel: channel!,
+          env: this.env,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : channel::subscribers : ${JSON.stringify(
+            error
+          )}`
+        );
+      }
     },
     /**
      *
@@ -529,15 +606,21 @@ export class PushNotifications {
      * @returns
      */
     send: async (recipients: string[], options: NotificationOptions) => {
-      this.checkSignerObjectExists();
-      const lowLevelPayload = this.generateNotificationLowLevelPayload({
-        signer: this.signer!,
-        env: this.env!,
-        recipients: recipients,
-        options: options,
-        channel: options.channel ?? this.account,
-      });
-      return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
+      try {
+        this.checkSignerObjectExists();
+        const lowLevelPayload = this.generateNotificationLowLevelPayload({
+          signer: this.signer!,
+          env: this.env!,
+          recipients: recipients,
+          options: options,
+          channel: options.channel ?? this.account,
+        });
+        return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : channel::send : ${JSON.stringify(error)}`
+        );
+      }
     },
 
     create: async (options: CreateChannelOptions) => {
@@ -563,7 +646,7 @@ export class PushNotifications {
           config.TOKEN[this.env!],
           config.ABIS.TOKEN
         );
-        const balance = await pushTokenContract['balanceOf'](this.account);
+        const balance = await pushTokenContract!['balanceOf'](this.account);
         const fees = ethers.utils.parseUnits(
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
@@ -594,7 +677,7 @@ export class PushNotifications {
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
         // approve the tokens to core contract
         progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
-        const approvalTrxPromise = pushTokenContract['approve'](
+        const approvalTrxPromise = pushTokenContract!['approve'](
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
           fees
         );
@@ -611,20 +694,25 @@ export class PushNotifications {
         ](channelType, identityBytes, fees, this.getTimeBound(), {
           gasLimit: 1000000,
         });
-        const createChannelTrx = await createChannelPromise();
+        const createChannelTrx = await createChannelPromise;
         const createChannelTrxStatus =
           await this.signer.provider.waitForTransaction(createChannelTrx.hash);
         if (createChannelTrxStatus.status == 0) {
           throw new Error('Something Went wrong while creating your channel');
         } else {
           progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
-          return createChannelTrx.hash;
+          return { transactionHash: createChannelTrx.hash };
         }
       } catch (error) {
         const errorProgressHook = PROGRESSHOOK[
           'PUSH-ERROR-02'
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Create Channel', error));
+        throw new Error(
+          `Push SDK Error: Contract : createChannelWithPUSH : ${JSON.stringify(
+            error
+          )}`
+        );
       }
     },
 
@@ -651,7 +739,7 @@ export class PushNotifications {
           config.TOKEN[this.env!],
           config.ABIS.TOKEN
         );
-        const balance = await pushTokenContract['balanceOf'](this.account);
+        const balance = await pushTokenContract!['balanceOf'](this.account);
         const fees = ethers.utils.parseUnits(
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
@@ -682,7 +770,7 @@ export class PushNotifications {
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
         // approve the tokens to core contract
         progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
-        const approvalTrxPromise = pushTokenContract['approve'](
+        const approvalTrxPromise = pushTokenContract!['approve'](
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
           fees
         );
@@ -701,137 +789,194 @@ export class PushNotifications {
             gasLimit: 1000000,
           }
         );
-        const updateChannelTrx = await updateChannelPromise();
+        const updateChannelTrx = await updateChannelPromise;
         const updateChannelTrxStatus =
           await this.signer.provider.waitForTransaction(updateChannelTrx.hash);
         if (updateChannelTrxStatus.status == 0) {
           throw new Error('Something Went wrong while creating your channel');
-        } else {
-          progressHook?.(PROGRESSHOOK['PUSH-UPDATE-04'] as ProgressHookType);
-          return updateChannelTrx.hash;
         }
+        progressHook?.(PROGRESSHOOK['PUSH-UPDATE-04'] as ProgressHookType);
+        return { transactionHash: updateChannelTrx.hash };
       } catch (error) {
         const errorProgressHook = PROGRESSHOOK[
           'PUSH-ERROR-02'
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Update Channel', error));
+        throw new Error(
+          `Push SDK Error: Contract channel::update : ${JSON.stringify(error)}`
+        );
       }
     },
-
+    /**
+     * @description verifies a channel
+     * @param {string} channelToBeVerified - address of the channel to be verified
+     * @returns the transaction hash if the transaction is successful
+     */
     verify: async (channelToBeVerified: string) => {
-      this.checkSignerObjectExists();
-      // checks if it is a valid address
-      if (!ethers.utils.isAddress(channelToBeVerified)) {
-        throw new Error('Invalid channel address');
+      try {
+        this.checkSignerObjectExists();
+        // checks if it is a valid address
+        if (!ethers.utils.isAddress(channelToBeVerified)) {
+          throw new Error('Invalid channel address');
+        }
+        // if valid, continue with it
+        const verifyTrxPromise =
+          this.coreContract!['verify'](channelToBeVerified);
+        const verifyTrx = await verifyTrxPromise();
+        await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
+        return { transactionHash: verifyTrx.hash };
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: Contract channel::verify : ${JSON.stringify(error)}`
+        );
       }
-      // if valid, continue with it
-      const verifyTrxPromise =
-        this.coreContract!['verify'](channelToBeVerified);
-      const verifyTrx = await verifyTrxPromise();
-      await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
-      return verifyTrx.hash;
     },
 
     setting: async (configuration: NotificationSettings) => {
-      this.checkSignerObjectExists();
-      // check for PUSH balance
-      const pushTokenContract = await this.createContractInstance(
-        config.TOKEN[this.env!],
-        config.ABIS.TOKEN
-      );
-      const balance = await pushTokenContract['balanceOf'](this.account);
-      const fees = ethers.utils.parseUnits(
-        config.MIN_TOKEN_BALANCE[this.env!].toString(),
-        18
-      );
-      if (fees.gte(balance)) {
-        throw new Error('Insufficient PUSH balance');
+      try {
+        this.checkSignerObjectExists();
+        // check for PUSH balance
+        const pushTokenContract = await this.createContractInstance(
+          config.TOKEN[this.env!],
+          config.ABIS.TOKEN
+        );
+        const balance = await pushTokenContract!['balanceOf'](this.account);
+        const fees = ethers.utils.parseUnits(
+          config.MIN_TOKEN_BALANCE[this.env!].toString(),
+          18
+        );
+        if (fees.gte(balance)) {
+          throw new Error('Insufficient PUSH balance');
+        }
+        const { setting, description } = this.getMinimalSetting(configuration);
+        const createChannelSettingPromise = this.coreContract![
+          'createChannelSettings'
+        ](configuration.length.toString(), setting, description, fees);
+        const createChannelSettingTrx = await createChannelSettingPromise;
+        await this.signer?.provider?.waitForTransaction(
+          createChannelSettingTrx.hash
+        );
+        return { transactionHash: createChannelSettingTrx.hash };
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: Contract : channel::setting : ${JSON.stringify(
+            error
+          )}`
+        );
       }
-      const { setting, description } = this.getMinimalSetting(configuration);
-      const createChannelSettingPromise = this.coreContract![
-        'createChannelSettings'
-      ](configuration.length.toString(), setting, description, fees);
-      const createChannelSettingTrx = await createChannelSettingPromise();
-      await this.signer?.provider?.waitForTransaction(
-        createChannelSettingTrx.hash
-      );
-      return createChannelSettingTrx.hash;
     },
   };
 
-  delegates = {
+  delegate = {
     /**
      * @description - Get delegates of a channell
      * @param {string} [options.channel] - channel in caip. defaults to account from signer with eth caip
      * @returns array of delegates
      */
-    get: async (options: ChannelInfoOptions) => {
-      const { channel = this.account } = options || {};
-      this.checkUserAddressExists(channel);
-      return await PUSH_CHANNEL.getDelegates({
-        channel: channel!,
-        env: this.env,
-      });
+    get: async (options?: ChannelInfoOptions) => {
+      try {
+        const {
+          channel = this.account
+            ? getFallbackETHCAIPAddress(this.env!, this.account!)
+            : null,
+        } = options || {};
+        this.checkUserAddressExists(channel!);
+        if (!validateCAIP(channel!)) {
+          throw new Error('Invalid CAIP');
+        }
+        return await PUSH_CHANNEL.getDelegates({
+          channel: channel!,
+          env: this.env,
+        });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : delegate::get : ${JSON.stringify(error)}`
+        );
+      }
     },
 
+    /**
+     * @description adds a delegate
+     * @param {string} delegate - delegate address in caip to be added
+     * @returns the transaction hash if the transaction is successfull
+     */
     add: async (delegate: string) => {
-      this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
-      if (!validateCAIP(delegate)) {
-        throw new Error('Invalid CAIP');
-      }
+      try {
+        this.checkSignerObjectExists();
+        if (this.signer && !this.signer.provider) {
+          throw new Error('Provider is required');
+        }
+        if (!validateCAIP(delegate)) {
+          throw new Error('Invalid CAIP');
+        }
 
-      const networkDetails = await this.signer?.provider?.getNetwork();
-      if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
-        return new Error('Signer and CAIP chain id doesnt match');
+        const networkDetails = await this.signer?.provider?.getNetwork();
+        if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
+          return new Error('Signer and CAIP chain id doesnt match');
+        }
+        const caip = `eip155:${networkDetails.chainId}`;
+        if (!CONFIG[this.env!][caip]) {
+          throw new Error('Unsupported Chainid');
+        }
+        const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
+        const commContract = this.createContractInstance(
+          commAddress,
+          config.ABIS.COMM
+        );
+        const addDelegatePromise = commContract!['addDelegate'](
+          delegate.split(':')[2]
+        );
+        const addDelegateTrx = await addDelegatePromise;
+        await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
+        return { transactionHash: addDelegateTrx.hash };
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: Contract : delegate::add : ${JSON.stringify(error)}`
+        );
       }
-      const caip = `eip155:${networkDetails.chainId}`;
-      if (!CONFIG[this.env!][caip]) {
-        throw new Error('Unsupported Chainid');
-      }
-      const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
-      const commContract = this.createContractInstance(
-        commAddress,
-        config.ABIS.COMM
-      );
-      const addDelegatePromise = commContract['addDelegate'](
-        delegate.split(':')[2]
-      );
-      const addDelegateTrx = await addDelegatePromise();
-      await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
-      return addDelegateTrx.hash;
     },
 
+    /**
+     * @description removes a delegate
+     * @param {string} delegate - caip address of the delegate to be removed
+     * @returns the transaction hash if the transaction is successfull
+     */
     remove: async (delegate: string) => {
-      this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
-      if (!validateCAIP(delegate)) {
-        throw new Error('Invalid CAIP');
-      }
+      try {
+        this.checkSignerObjectExists();
+        if (this.signer && !this.signer.provider) {
+          throw new Error('Provider is required');
+        }
+        if (!validateCAIP(delegate)) {
+          throw new Error('Invalid CAIP');
+        }
 
-      const networkDetails = await this.signer?.provider?.getNetwork();
-      if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
-        return new Error('Signer and CAIP chain id doesnt match');
+        const networkDetails = await this.signer?.provider?.getNetwork();
+        if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
+          return new Error('Signer and CAIP chain id doesnt match');
+        }
+        const caip = `eip155:${networkDetails.chainId}`;
+        if (!CONFIG[this.env!][caip]) {
+          throw new Error('Unsupported Chainid');
+        }
+        const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
+        const commContract = this.createContractInstance(
+          commAddress,
+          config.ABIS.COMM
+        );
+        const removeDelegatePromise = commContract!['removeDelegate'](
+          delegate.split(':')[2]
+        );
+        const removeDelegateTrx = await removeDelegatePromise;
+        await this.signer?.provider?.waitForTransaction(removeDelegateTrx.hash);
+        return { transactionHash: removeDelegateTrx.hash };
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: Contract : delegate::remove : ${JSON.stringify(
+            error
+          )}`
+        );
       }
-      const caip = `eip155:${networkDetails.chainId}`;
-      if (!CONFIG[this.env!][caip]) {
-        throw new Error('Unsupported Chainid');
-      }
-      const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
-      const commContract = this.createContractInstance(
-        commAddress,
-        config.ABIS.COMM
-      );
-      const removeDelegatePromise = commContract['removeDelegate'](
-        delegate.split(':')[2]
-      );
-      const removeDelegateTrx = await removeDelegatePromise();
-      await this.signer?.provider?.waitForTransaction(removeDelegateTrx.hash);
-      return removeDelegateTrx.hash;
     },
   };
 
@@ -842,7 +987,13 @@ export class PushNotifications {
      * @returns Alias details
      */
     info: async (options: AliasOptions) => {
-      return await PUSH_ALIAS.getAliasInfo({ ...options, env: this.env });
+      try {
+        return await PUSH_ALIAS.getAliasInfo({ ...options, env: this.env });
+      } catch (error) {
+        throw new Error(
+          `Push SDK Error: API : alias::info : ${JSON.stringify(error)}`
+        );
+      }
     },
   };
 }
