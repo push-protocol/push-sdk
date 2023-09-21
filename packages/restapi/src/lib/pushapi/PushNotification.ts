@@ -92,7 +92,7 @@ export class PushNotifications {
         coreContract = new ethers.Contract(
           config.CORE_CONFIG[env].EPNS_CORE_CONTRACT,
           config.ABIS.CORE,
-          signer.provider
+          signer as unknown as Signer
         );
       }
     }
@@ -403,7 +403,7 @@ export class PushNotifications {
         }
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::list : ${JSON.stringify(error)}`
+          `Push SDK Error: API : notifcaiton::list : ${(error)}`
         );
       }
     },
@@ -423,7 +423,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::subscriptions : ${JSON.stringify(
+          `Push SDK Error: API : notifcaiton::subscriptions : ${(
             error
           )}`
         );
@@ -472,7 +472,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::subscribe : ${JSON.stringify(
+          `Push SDK Error: API : notifcaiton::subscribe : ${(
             error
           )}`
         );
@@ -520,7 +520,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::unsubscribe : ${JSON.stringify(
+          `Push SDK Error: API : notifcaiton::unsubscribe : ${(
             error
           )}`
         );
@@ -545,7 +545,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : channel::info : ${JSON.stringify(error)}`
+          `Push SDK Error: API : channel::info : ${(error)}`
         );
       }
     },
@@ -571,7 +571,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : channel::search : ${JSON.stringify(error)}`
+          `Push SDK Error: API : channel::search : ${(error)}`
         );
       }
     },
@@ -593,7 +593,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : channel::subscribers : ${JSON.stringify(
+          `Push SDK Error: API : channel::subscribers : ${(
             error
           )}`
         );
@@ -618,7 +618,7 @@ export class PushNotifications {
         return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : channel::send : ${JSON.stringify(error)}`
+          `Push SDK Error: API : channel::send : ${(error)}`
         );
       }
     },
@@ -709,7 +709,7 @@ export class PushNotifications {
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Create Channel', error));
         throw new Error(
-          `Push SDK Error: Contract : createChannelWithPUSH : ${JSON.stringify(
+          `Push SDK Error: Contract : createChannelWithPUSH : ${(
             error
           )}`
         );
@@ -744,7 +744,7 @@ export class PushNotifications {
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
         );
-        if (fees.gte(balance)) {
+        if (fees.gt(balance)) {
           throw new Error('Insufficient PUSH balance');
         }
         // if alias is passed, check for the caip
@@ -803,7 +803,7 @@ export class PushNotifications {
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Update Channel', error));
         throw new Error(
-          `Push SDK Error: Contract channel::update : ${JSON.stringify(error)}`
+          `Push SDK Error: Contract channel::update : ${error}`
         );
       }
     },
@@ -827,7 +827,7 @@ export class PushNotifications {
         return { transactionHash: verifyTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract channel::verify : ${JSON.stringify(error)}`
+          `Push SDK Error: Contract channel::verify : ${(error)}`
         );
       }
     },
@@ -859,7 +859,7 @@ export class PushNotifications {
         return { transactionHash: createChannelSettingTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract : channel::setting : ${JSON.stringify(
+          `Push SDK Error: Contract : channel::setting : ${(
             error
           )}`
         );
@@ -890,7 +890,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : delegate::get : ${JSON.stringify(error)}`
+          `Push SDK Error: API : delegate::get : ${(error)}`
         );
       }
     },
@@ -931,7 +931,7 @@ export class PushNotifications {
         return { transactionHash: addDelegateTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract : delegate::add : ${JSON.stringify(error)}`
+          `Push SDK Error: Contract : delegate::add : ${(error)}`
         );
       }
     },
@@ -972,7 +972,7 @@ export class PushNotifications {
         return { transactionHash: removeDelegateTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract : delegate::remove : ${JSON.stringify(
+          `Push SDK Error: Contract : delegate::remove : ${(
             error
           )}`
         );
@@ -991,7 +991,7 @@ export class PushNotifications {
         return await PUSH_ALIAS.getAliasInfo({ ...options, env: this.env });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : alias::info : ${JSON.stringify(error)}`
+          `Push SDK Error: API : alias::info : ${(error)}`
         );
       }
     },
