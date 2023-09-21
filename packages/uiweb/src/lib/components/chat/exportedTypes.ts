@@ -62,10 +62,9 @@ export type GIFType = {
 
 export interface MessageInputProps {
   chatId: string;
-  Emoji?: boolean;
-  GIF?: boolean;
-  File?: boolean;
-  Image?: boolean;
+  emoji?: boolean;
+  gif?: boolean;
+  file?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
   onGetTokenClick?: () => void;
