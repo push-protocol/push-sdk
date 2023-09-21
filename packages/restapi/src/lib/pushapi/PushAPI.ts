@@ -363,8 +363,8 @@ export class PushAPI {
           groupImage: options?.image,
           admins: options?.admins ? options.admins : [],
           rules: {
-            groupAccess: options?.rules?.entry,
-            chatAccess: options?.rules?.chat,
+            entry: options?.rules?.entry,
+            chat: options?.rules?.chat,
           },
           isPublic: !options?.private,
           signer: this.signer,
@@ -505,6 +505,7 @@ export class PushAPI {
         }
       },
 
+      // TODO: If invite was sent, the inside accept should be called here.
       join: async (target: string): Promise<GroupDTO> => {
         return await PUSH_CHAT.addMembers({
           chatId: target,

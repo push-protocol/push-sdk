@@ -1,11 +1,13 @@
 import { EventEmitter } from 'events';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { ENV } from '../constants';
-import { PushStreamInitializeProps } from './pushStreamTypes';
+import { PushStreamInitializeProps, STREAM } from './pushStreamTypes';
+import { DataModifier } from './DataModifier';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
   private account: string;
+  private raw: boolean;
 
   private constructor(account: string, options: PushStreamInitializeProps) {
     super();
@@ -23,17 +25,11 @@ export class PushStream extends EventEmitter {
 
     if (!this.pushChatSocket) {
       throw new Error('Push chat socket not connected');
+    } else {
+      console.log('Push socket connected');
     }
 
-    const raw = options.raw ?? false;
-    this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
-      const modifiedData = raw ? data : this.modifyDataForSpecificEvent(data);
-      this.emit(EVENTS.CHAT_GROUPS, modifiedData);
-    });
-  }
-
-  private modifyDataForSpecificEvent(data: any): any {
-    return data;
+    this.raw = options.raw ?? false;
   }
 
   static async initialize(
@@ -55,6 +51,20 @@ export class PushStream extends EventEmitter {
       ...options,
     };
 
-    return new PushStream(account, settings);
+    const stream = new PushStream(account, settings);
+    await stream.init();
+    return stream;
+  }
+
+  public async init(): Promise<void> {
+    this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
+      const modifiedData = DataModifier.handleChatGroupEvent(data, this.raw);
+      this.emit(STREAM.CHAT_OPS, modifiedData);
+    });
+
+    this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (data: any) => {
+      const modifiedData = DataModifier.handleChatEvent(data, this.raw);
+      this.emit(STREAM.CHAT, modifiedData);
+    });
   }
 }
