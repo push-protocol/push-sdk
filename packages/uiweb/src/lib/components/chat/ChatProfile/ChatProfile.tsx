@@ -25,7 +25,6 @@ import { InfuraAPIKey, allowedNetworks, device } from "../../../config";
 import Toast from "../helpers/Toast";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import { createBlockie } from "../../space/helpers/blockies";
-// import { NewToast } from "../helpers/NewToast";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -59,7 +58,7 @@ const Options = ({ options, setOptions, isGroup, chatInfo, groupInfo, setGroupIn
                         <DropDownItem cursor='pointer' onClick={ShowModal}>
                            <Image src={InfoIcon} height="21px" maxHeight="21px" width={'auto'} cursor="pointer"  />
 
-                          <TextItem>
+                          <TextItem cursor="pointer">
                             Group Info
                           </TextItem>
                         </DropDownItem>

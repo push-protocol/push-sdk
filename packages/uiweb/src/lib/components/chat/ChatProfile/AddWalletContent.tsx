@@ -25,7 +25,7 @@ import { Modal } from "../helpers/Modal";
 
 
 
-export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean  }) => {
+export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList, handleMemberList, title, groupMembers, isLoading, modalHeader }: {onSubmit: ()=> void ,onClose: ()=> void, handlePrevious: ()=> void, memberList: any, handleMemberList: any, title: string, groupMembers: any, isLoading?: boolean, modalHeader: string }) => {
     const theme = useContext(ThemeContext);
 
     const [searchedUser, setSearchedUser] = useState<string>('');
@@ -173,7 +173,7 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
 
                  {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
 
-                 <Span textAlign='center' fontSize='20px' color={theme.modalHeadingColor}>Add Wallets</Span>
+                 <Span textAlign='center' fontSize='20px' color={theme.modalHeadingColor}>{modalHeader}</Span>
 
                  <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
             </Section>

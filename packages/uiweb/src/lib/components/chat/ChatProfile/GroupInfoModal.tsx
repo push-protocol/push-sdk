@@ -292,7 +292,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
         }
         setSelectedMemberAddress(null);
       };
-    
+
       const removeMember = async () => {
         const updatedMemberList = getUpdatedMemberList(groupInfo, selectedMemberAddress!);
         const adminList = getUpdatedAdminList(groupInfo, selectedMemberAddress, true);
@@ -432,9 +432,10 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
         <AddWalletContainer theme={theme}
         onClick={() => setShowAddMoreWalletModal(true)}
         >
-              <Image src={addIcon} height="18px" maxHeight="18px" width={'auto'} />
+              <Image cursor="pointer" src={addIcon} height="18px" maxHeight="18px" width={'auto'} />
 
               <Span
+              cursor="pointer"
           color={theme.modalProfileTextColor}
                 margin="0px 14px"
                 fontSize="16px"
@@ -488,6 +489,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
         title={'Add More Wallets'}
         groupMembers={groupMembers}
         isLoading={isLoading}
+        modalHeader={'Add Wallets'}
     />
  )}
     </Modal>
