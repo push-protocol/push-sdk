@@ -12,14 +12,23 @@ import { IChatTheme } from '../theme';
  */
 interface IThemeProps {
   theme?: IChatTheme;
-  customStyle?: any;
+  customStyle?: CustomStyleParamsType | null;
 }
 
 type ChatSearchInputPropType = {
   handleSearch: any;
   clearInput: () => void;
   placeholder: string;
-  customStyle?: any;
+  customStyle?: CustomStyleParamsType | null;
+};
+export type CustomStyleParamsType = {
+  background?: string;
+  borderRadius?: string;
+  placeholderColor?: string;
+  color?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  border?: string;
 };
 
 export const ChatSearchInput: React.FC<ChatSearchInputPropType> = ({
@@ -51,28 +60,30 @@ export const ChatSearchInput: React.FC<ChatSearchInputPropType> = ({
       clearInput();
     }
   };
-console.log(theme.border?.searchInput)
+  console.log(customStyle);
   return (
     <Container
       justifyContent="space-between"
       margin="4px 0"
       gap="15px"
+      width="100%"
       alignItems="center"
     >
       <InputSection
-      theme={theme}
+        theme={theme}
         width="100%"
         background={
-          customStyle
+          customStyle?.background
             ? customStyle.background
             : theme.backgroundColor?.searchInputBackground
         }
         padding="8px 12px"
         borderRadius={
-          customStyle
+          customStyle?.borderRadius
             ? customStyle.borderRadius
             : theme.borderRadius?.searchInput
         }
+        customStyle={customStyle}
       >
         <Input
           theme={theme}
@@ -125,34 +136,30 @@ const Container = styled(Section)`
 
 const InputSection = styled(Section)<IThemeProps>`
   border: ${(props) =>
-    props.customStyle
+    props.customStyle?.border
       ? props.customStyle.border
       : props.theme.border?.searchInput};
 
-    &:focus-within {
-      outline: none;
-      background-image: linear-gradient(
-        #F4F5FA,
-        #F4F5FA
-        ),
-        linear-gradient(
-          to right,
-          rgba(182, 160, 245, 1),
-          rgba(244, 110, 246, 1),
-          rgba(255, 222, 211, 1),
-          rgba(255, 207, 197, 1)
-        );
-      background-origin: border;
-      border: 1px solid transparent !important;
-      background-clip: padding-box, border-box;
-    }
-  
+  &:focus-within {
+    outline: none;
+    background-image: linear-gradient(#f4f5fa, #f4f5fa),
+      linear-gradient(
+        to right,
+        rgba(182, 160, 245, 1),
+        rgba(244, 110, 246, 1),
+        rgba(255, 222, 211, 1),
+        rgba(255, 207, 197, 1)
+      );
+    background-origin: border;
+    border: 1px solid transparent !important;
+    background-clip: padding-box, border-box;
+  }
 `;
 
 const Input = styled.input<IThemeProps>`
   border: none;
   background: ${(props) =>
-    props.customStyle
+    props.customStyle?.background
       ? props.customStyle.background
       : props.theme.backgroundColor?.searchInputBackground};
   width: 100%;
@@ -160,15 +167,15 @@ const Input = styled.input<IThemeProps>`
   margin-left: 10px;
   font-style: normal;
   color: ${(props) =>
-    props.customStyle
+    props.customStyle?.color
       ? props.customStyle.color
       : props.theme.textColor.searchInputText};
   font-weight: ${(props) =>
-    props.customStyle
+    props.customStyle?.fontWeight
       ? props.customStyle.fontWeight
       : props.theme.fontWeight.searchInputText};
   font-size: ${(props) =>
-    props.customStyle
+    props.customStyle?.fontSize
       ? props.customStyle.fontSize
       : props.theme.fontSize.searchInputText};
   line-height: 24px;
@@ -179,11 +186,18 @@ const Input = styled.input<IThemeProps>`
   }
   &::placeholder {
     color: ${(props) =>
-      props.customStyle
+      props.customStyle?.placeholderColor
         ? props.customStyle.placeholderColor
         : props.theme.textColor.searchPlaceholderText};
+    font-weight: ${(props) =>
+      props.customStyle?.fontWeight
+        ? props.customStyle.fontWeight
+        : props.theme.fontWeight.searchInputText};
+    font-size: ${(props) =>
+      props.customStyle?.fontSize
+        ? props.customStyle.fontSize
+        : props.theme.fontSize.searchInputText};
   }
- 
 `;
 
 //theme

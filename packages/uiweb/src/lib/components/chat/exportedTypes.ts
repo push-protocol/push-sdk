@@ -37,15 +37,6 @@ export interface IToast {
   status: string;
 }
 
-export type OptionProps = {
-  options: boolean;
-  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  isGroup: boolean;
-  chatInfo: any;
-  groupInfo: IGroup | null | undefined , 
-  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-  theme: IChatTheme;
-}
 export type IMessagePayload = IMessageIPFS;
 
 export const CHAT_THEME_OPTIONS = {
@@ -69,12 +60,7 @@ export interface MessageInputProps {
   onClick?: () => void;
 }
 
-export type UpdateGroupType = {
-  groupInfo: IGroup,
-  connectedUser: User,
-  adminList: Array<string>,
-  memberList: Array<string>,
-}
+
 
 export type MemberListContainerType = {
   key?: number;

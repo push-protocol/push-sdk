@@ -3,14 +3,12 @@ import React, { useContext ,useState } from 'react';
 
 // External Packages
 import styled from 'styled-components';
-import { ethers } from 'ethers';
 
 // Internal Components
 import { MoreLightIcon }  from '../../../icons/MoreLight';
-import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { shortenText } from "../../../helpers";
 import { ThemeContext } from "../theme/ThemeProvider";
-import { useChatData, useClickAway} from "../../../hooks";
+import { useChatData} from "../../../hooks";
 import { Image, Section, Span } from "../../reusables";
 import Dropdown from './DropDown';
 import { pCAIP10ToWallet } from '../../../helpers';
@@ -115,14 +113,14 @@ export const ProfileCard = ({
   );
 };
 
+//styles
 const ProfileCardItem = styled(Section)<{id: any, key: any, background: any}>`
   justify-content: space-between;
-  padding: 8px 16px;
+  padding: 8px 8px;
   border-radius: 16px;
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  // background-color: ${(props) => props.theme.snapFocusBg};
   max-height: 64px;
   align-self: stretch;
   display: flex;
