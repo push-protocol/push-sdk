@@ -149,8 +149,9 @@ export const runPushAPICases = async (): Promise<void> => {
       type: 'Text',
     });
     pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (message) => {
-      await userAlice.chat.decrypt(message);
-      pushSDKSocket.disconnect();
+      // uncomment after latest sdk deployment
+      // await userAlice.chat.decrypt([message]);
+      // pushSDKSocket.disconnect();
     });
   }
   console.log('PushAPI.chat.decrypt | Response - 200 OK\n\n');
