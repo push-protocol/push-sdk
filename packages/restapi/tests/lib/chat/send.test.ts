@@ -21,8 +21,8 @@ import {
 } from '../../../src/lib/types/messageTypes';
 
 chai.use(chaiAsPromised);
-const _env = Constants.ENV.DEV;
-describe('PushAPI.chat.send', () => {
+const _env = Constants.ENV.LOCAL;
+describe.only('PushAPI.chat.send', () => {
   const provider = ethers.getDefaultProvider(5);
   let _signer1: any;
   let walletAddress1: string;
@@ -616,6 +616,232 @@ describe('PushAPI.chat.send', () => {
       const msg = await send({
         message: { type: MESSAGE_TYPE, content: MESSAGE },
         receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Video Message', () => {
+    const MESSAGE_TYPE = MessageType.VIDEO;
+    const MESSAGE = '{"content":"data:application/mp4;base64,JVBERi0xLjQKJ}';
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            action: 1,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    // Video message was not supported in v1 & v2
+    it('should throw error for deprecated V1', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Audio Message', () => {
+    const MESSAGE_TYPE = MessageType.AUDIO;
+    const MESSAGE = '{"content":"data:application/mp3;base64,JVBERi0xLjQKJ}';
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            action: 1,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    // Audio message was not supported in v1 & v2
+    it('should throw error for deprecated V1', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
         signer: _signer1,
         env: _env,
       });

@@ -81,9 +81,11 @@ export interface ReactionMessage
 export type BaseMessageTypes =
   | `${MessageType.TEXT}`
   | `${MessageType.IMAGE}`
+  | `${MessageType.VIDEO}`
+  | `${MessageType.AUDIO}`
   | `${MessageType.FILE}`
-  | `${MessageType.MEDIA_EMBED}`
-  | `${MessageType.GIF}`;
+  | `${MessageType.GIF}`
+  | `${MessageType.MEDIA_EMBED}`;
 
 export type Message =
   | BaseMessage<BaseMessageTypes>

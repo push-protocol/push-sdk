@@ -141,9 +141,11 @@ const validateOptions = async (options: ComputedOptionsType) => {
   if (
     messageType === MessageType.TEXT ||
     messageType === MessageType.IMAGE ||
+    messageType === MessageType.VIDEO ||
+    messageType === MessageType.AUDIO ||
     messageType === MessageType.FILE ||
-    messageType === MessageType.MEDIA_EMBED ||
-    messageType === MessageType.GIF
+    messageType === MessageType.GIF ||
+    messageType === MessageType.MEDIA_EMBED
   ) {
     const { error } = messageObjSchema.validate(messageObj);
     if (error) {
