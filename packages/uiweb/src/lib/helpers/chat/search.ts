@@ -3,6 +3,7 @@ import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import {
   CoreContractChainId,
+  ENV,
   InfuraAPIKey,
   ProfilePicture,
 } from '../../config';
@@ -66,11 +67,12 @@ export const getNewChatUser = async ({
 }: getNewChatUserParamType): Promise<IUser | undefined> => {
   let chatProfile: IUser | undefined;
   let address: string | null = null;
-  const provider = new ethers.providers.InfuraProvider();
-  address = await provider.resolveName(searchText);
-  if (!address) {
-    address = await getAddress(searchText, env);
-  }
+  address = await getAddress(searchText, env);
+  // const provider = new ethers.providers.InfuraProvider();
+  // address = await provider.resolveName(searchText);
+  // if (!address) {
+  //   address = await getAddress(searchText, env);
+  // }
   if (address) {
     chatProfile = await fetchChatProfile({ profileId: address, env });
     if (!chatProfile)
@@ -81,20 +83,22 @@ export const getNewChatUser = async ({
 };
 
 export const getAddress = async (searchText: string, env: Env) => {
-  const udResolver = getUdResolver(env);
+  const udResolver = getUdResolver(ENV.PROD);
   const provider = new ethers.providers.InfuraProvider(
     CoreContractChainId[env],
     InfuraAPIKey
   );
-
+console.log(provider)
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
+      console.log(env)
       address =
         (await udResolver.owner(searchText)) ||
         (await provider.resolveName(searchText));
       // (await library.resolveName(searchText)) ||
-
+      console.log(env)
+console.log(address)
       return address;
     } catch (err) {
       console.log(err);

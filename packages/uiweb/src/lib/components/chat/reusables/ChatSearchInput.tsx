@@ -140,20 +140,25 @@ const InputSection = styled(Section)<IThemeProps>`
       ? props.customStyle.border
       : props.theme.border?.searchInput};
 
-  &:focus-within {
-    outline: none;
-    background-image: linear-gradient(#f4f5fa, #f4f5fa),
-      linear-gradient(
-        to right,
-        rgba(182, 160, 245, 1),
-        rgba(244, 110, 246, 1),
-        rgba(255, 222, 211, 1),
-        rgba(255, 207, 197, 1)
-      );
-    background-origin: border;
-    border: 1px solid transparent !important;
-    background-clip: padding-box, border-box;
-  }
+
+    //   props.customStyle?.background
+    //     ? props.customStyle.background
+    //     : props.theme.backgroundColor?.searchInputBackground
+    //   };
+  //   outline: none;
+  //   background-image: linear-gradient(#f4f5fa, #f4f5fa),
+  //     linear-gradient(
+  //       to right,
+  //       rgba(182, 160, 245, 1),
+  //       rgba(244, 110, 246, 1),
+  //       rgba(255, 222, 211, 1),
+  //       rgba(255, 207, 197, 1)
+  //     );
+  //   background-origin: border;
+  //   border: 1px solid transparent !important;
+  //   background-clip: padding-box, border-box;
+  // }
+
 `;
 
 const Input = styled.input<IThemeProps>`

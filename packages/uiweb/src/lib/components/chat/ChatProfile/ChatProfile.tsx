@@ -15,6 +15,7 @@ import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { GroupInfoModal } from './GroupInfoModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { createBlockie } from '../../space/helpers/blockies';
+import { ProfileContainer } from '../reusables';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import { IGroup } from '../../../types';
@@ -28,15 +29,14 @@ import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 
-
 type OptionProps = {
-    options: boolean;
-    setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-    isGroup: boolean;
-    groupInfo: IGroup | null | undefined , 
-    setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-    theme: IChatTheme;
-}
+  options: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  isGroup: boolean;
+  groupInfo: IGroup | null | undefined;
+  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
+  theme: IChatTheme;
+};
 
 const Options = ({
   options,
@@ -66,7 +66,7 @@ const Options = ({
         margin="0 20px 0 auto"
       >
         <Image
-          src={(groupInfo?.isPublic)?PublicChatIcon:TokenGatedIcon}
+          src={groupInfo?.isPublic ? PublicChatIcon : TokenGatedIcon}
           height="28px"
           maxHeight="32px"
           width={'auto'}
@@ -183,21 +183,11 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   if (chatId && style === 'Info') {
     return (
       <Container theme={theme}>
-        <Image
-          src={getImage()}
-          height="48px"
-          maxHeight="48px"
-          width="48px"
-          borderRadius="100%"
+        <ProfileContainer
+          theme={theme}
+          member={{ wallet: getProfileName() as string, image: getImage() }}
+          customStyle={{fontSize:'17px'}}
         />
-
-        <Span
-          color={theme.textColor?.chatProfileText}
-          fontSize="17px"
-          margin="0 0 0 10px"
-        >
-          {getProfileName()}
-        </Span>
 
         <Options
           options={options}
@@ -240,13 +230,6 @@ const ImageItem = styled.div`
   position: relative;
 `;
 
-const DummyImage = styled.div`
-  height: 48px;
-  width: 48px;
-  border-radius: 100%;
-  background: #ccc;
-`;
-
 const DropDownBar = styled.div`
   position: absolute;
   top: 30px;
@@ -254,11 +237,10 @@ const DropDownBar = styled.div`
   display: block;
   min-width: 140px;
   color: rgb(101, 119, 149);
-  border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
-  background: ${(props) =>
-    props.theme.backgroundColor.chatReceivedBubbleBackground};
+  background: ${(props) => props.theme.backgroundColor.modalBackground};
+  border: ${(props) => props.theme.border.modalInnerComponents};
   z-index: 10;
-  border-radius: 16px;
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 `;
 
 const VideoChatSection = styled.div`
@@ -281,6 +263,4 @@ const TextItem = styled(Span)`
   overflow: hidden;
 `;
 
-//auto update members when an user accepts not done 
-
-//make the profile reusable
+//auto update members when an user accepts not done

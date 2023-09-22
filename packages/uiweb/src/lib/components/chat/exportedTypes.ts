@@ -62,22 +62,6 @@ export interface MessageInputProps {
 
 
 
-export type MemberListContainerType = {
-  key?: number;
-  memberData: User;
-  handleMemberList: (member: User) => void;
-  handleMembers?: (value: User[]) => void;
-  lightIcon: any;
-  darkIcon: any;
-  memberList?: any;
-};
-
-export interface WalletProfileContainerProps {
-  id?: any;
-  background?: any;
-  border?: any;
-
-};
 
 export interface MessageIPFS {
   fromCAIP10: string

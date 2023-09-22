@@ -126,14 +126,14 @@ export const AddWalletContent = ({
       padding={isMobile ? '0px auto' : '0px 10px'}
     >
       <Section flex="1" flexDirection="row" justifyContent="space-between">
-        <Span onClick={() => handlePrevious()}>
+        <Span onClick={() => handlePrevious()} cursor='pointer'>
         <BackIcon />
         </Span>
 
         <Span
           textAlign="center"
           fontSize="20px"
-          color={theme.modalHeadingColor}
+          color={theme.textColor?.modalHeadingText}
         >
           {modalHeader}
         </Span>
@@ -154,11 +154,11 @@ export const AddWalletContent = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Span fontSize="18px" color={theme.modalIconColor}>
+        <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
           Add Wallets
         </Span>
 
-        <Span fontSize="14px" color={theme.modalPrimaryTextColor}>
+        <Span fontSize="14px" color={theme.textColor?.modalSubHeadingText}>
           {groupMembers
             ? `0${memberList?.length + groupMembers?.length} / 09 Members`
             : `0${memberList?.length} / 09 Members`}
@@ -166,7 +166,6 @@ export const AddWalletContent = ({
       </Section>
 
       <Section flex="1">
-        {/* check the search for dark mode ----> pending */} 
       <ChatSearchInput
             handleSearch={handleSearch}
             clearInput={clearInput}
@@ -180,7 +179,6 @@ export const AddWalletContent = ({
           <MemberListContainer
             memberData={filteredUserData}
             handleMemberList={addMemberToList}
-            lightIcon={<AddUserDarkIcon />}
             darkIcon={<AddUserDarkIcon />}
           />
         </MemberList>
@@ -194,14 +192,12 @@ export const AddWalletContent = ({
             memberData={member}
             handleMembers={handleMemberList}
             handleMemberList={removeMemberFromList}
-            lightIcon={<MoreLightIcon />}
             darkIcon={<MoreDarkIcon />}
           />
         ))}
       </MultipleMemberList>
 
       <Section flex="1" alignSelf="center">
-        {/* fix the buttom  width and fontSize font Weight ----> done */}
         <ModalConfirmButton
           onClick={() => onSubmit()}
           isLoading={isLoading}
@@ -222,7 +218,7 @@ export const AddWalletContent = ({
 const MemberList = styled.div`
   flex: 1;
   width: 100%;
-  margin-bottom:5px;
+  margin-bottom:40px;
 `;
 
 const MultipleMemberList = styled.div`
@@ -232,11 +228,11 @@ const MultipleMemberList = styled.div`
   width: 100%;
 
   &::-webkit-scrollbar-track {
-    background-color: ${(props) => props.theme.scrollBg};
+    background-color: ${(props) => props.theme.scrollbarColor};
   }
 
   &::-webkit-scrollbar {
-    background-color: ${(props) => props.theme.scrollBg};
+    background-color: ${(props) => props.theme.scrollbarColor};
     width: 6px;
   }
 
@@ -272,11 +268,11 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
   margin: 60px 0 0 0;
   width: 197px;
   background: ${(props) =>
-    props.memberListCount ? '#CF1C84' : props.theme.groupButtonBackgroundColor};
+    props.memberListCount ? '#CF1C84' : props.theme.backgroundColor.buttonBackground};
   color: ${(props) =>
-    props.memberListCount ? '#fff' : props.theme.groupButtonTextColor};
+    props.memberListCount ? '#fff' : props.theme.textColor.buttonText};
   border: ${(props) =>
-    props.memberListCount ? 'none' : props.theme.modalConfirmButtonBorder};
+    props.memberListCount ? 'none' : props.theme.border.modalInnerComponents};
   min-width: 50%;
   box-sizing: border-box;
   cursor: pointer;

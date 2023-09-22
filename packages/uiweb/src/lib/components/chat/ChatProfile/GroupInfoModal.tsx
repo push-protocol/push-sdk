@@ -1,19 +1,19 @@
 import { useRef, useState } from 'react';
 
 import styled from 'styled-components';
-import * as PushAPI from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
 import { useChatData, useClickAway } from '../../../hooks';
-import { DropdownValueType } from './DropDown';
+import { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
 import { Modal } from '../helpers/Modal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../helpers/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
+import { MemberProfileCard } from './MemberProfileCard';
+import { ProfileContainer } from '../reusables';
 
-import { pCAIP10ToWallet, shortenText } from '../../../helpers';
 import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
@@ -29,11 +29,11 @@ import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import ArrowIcon from '../../../icons/CaretUp.svg';
 import CloseIcon from '../../../icons/close.svg';
-import { ProfileCard } from './ProfileCard';
 import addIcon from '../../../icons/addicon.svg';
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
+import { shortenText } from '../../../helpers';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -57,7 +57,6 @@ type PendingMembersProps = {
   theme: IChatTheme;
 };
 
-// fidn a way to use profileCard can be used in pending requests too
 const PendingMembers = ({
   groupInfo,
   setShowPendingRequests,
@@ -70,7 +69,7 @@ const PendingMembers = ({
         <PendingSection
           onClick={() => setShowPendingRequests(!showPendingRequests)}
         >
-          <Span fontSize="18px" color={theme.modalProfileTextColor}>
+          <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
             Pending Requests
           </Span>
           <Badge>{groupInfo?.pendingMembers?.length}</Badge>
@@ -94,17 +93,19 @@ const PendingMembers = ({
               groupInfo?.pendingMembers?.length > 0 &&
               groupInfo?.pendingMembers.map((item) => (
                 <GroupPendingMembers theme={theme}>
-                  <Image
-                    src={item?.image}
-                    height="36px"
-                    maxHeight="36px"
-                    width={'auto'}
-                    borderRadius="100%"
+                  <ProfileContainer
+                    theme={theme}
+                    member={{
+                      wallet: shortenText(item.wallet?.split(':')[1], 6, true),
+                      image: item?.image || '',
+                    }}
+                    customStyle={{
+                      imgHeight: '36px',
+                      imgMaxHeight: '36px',
+                      fontSize: 'inherit',
+                      fontWeight: '300',
+                    }}
                   />
-
-                  <Span margin="0 0 0 10px" color={theme.modalProfileTextColor}>
-                    {shortenText(item?.wallet?.split(':')[1] ?? '', 6, true)}
-                  </Span>
                 </GroupPendingMembers>
               ))}
           </Section>
@@ -128,7 +129,7 @@ export const GroupInfoModal = ({
   groupInfo,
   setGroupInfo,
 }: GroupInfoModalProps) => {
-  const { account} = useChatData();
+  const { account } = useChatData();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
   const [showPendingRequests, setShowPendingRequests] =
@@ -155,7 +156,6 @@ export const GroupInfoModal = ({
     ...membersExceptGroupCreator,
     ...groupInfo.pendingMembers,
   ];
-
 
   type UpdateGroupType = {
     adminList: Array<string>;
@@ -209,8 +209,7 @@ export const GroupInfoModal = ({
         getToastIcon: (size) => <MdError size={size} color="red" />,
       });
     } finally {
-      if(updateKey === UPDATE_KEYS.ADD_MEMBER)
-      handleClose();
+      if (updateKey === UPDATE_KEYS.ADD_MEMBER) handleClose();
       setIsLoading(false);
       setSelectedMemberAddress(null);
     }
@@ -326,7 +325,7 @@ export const GroupInfoModal = ({
               <Span
                 textAlign="center"
                 fontSize="20px"
-                color={theme.modalProfileTextColor}
+                color={theme.textColor?.modalHeadingText}
               >
                 Group Info
               </Span>
@@ -351,20 +350,20 @@ export const GroupInfoModal = ({
               />
 
               <Section flexDirection="column" alignItems="flex-start" gap="5px">
-                <Span fontSize="20px" color={theme.modalProfileTextColor}>
+                <Span fontSize="20px" color={theme.textColor?.modalHeadingText}>
                   {groupInfo?.groupName}
                 </Span>
-                <Span fontSize="16px" color={theme.modalDescriptionTextColor}>
+                <Span fontSize="16px" color={theme.textColor?.modalSubHeadingText}>
                   {groupInfo?.members?.length} Members
                 </Span>
               </Section>
             </GroupHeader>
 
             <GroupDescription>
-              <Span fontSize="18px" color={theme.modalProfileTextColor}>
+              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
                 Group Description
               </Span>
-              <Span fontSize="18px" color={theme.modalDescriptionTextColor}>
+              <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
                 {groupInfo?.groupDescription}
               </Span>
             </GroupDescription>
@@ -380,11 +379,11 @@ export const GroupInfoModal = ({
               <Section flexDirection="column" alignItems="flex-start" gap="5px">
                 <Span
                   fontSize="18px"
-                  color={theme.textColor?.chatReceivedBubbleText}
+                  color={theme.textColor?.modalHeadingText}
                 >
                   {groupInfo?.isPublic ? 'Public' : 'Private'}
                 </Span>
-                <Span fontSize="12px" color={theme.modalIconColor}>
+                <Span fontSize="12px" color={theme.textColor?.modalSubHeadingText}>
                   {groupInfo?.isPublic
                     ? 'Chats are not encrypted'
                     : 'Chats are encrypted'}
@@ -409,7 +408,7 @@ export const GroupInfoModal = ({
 
                   <Span
                     cursor="pointer"
-                    color={theme.modalProfileTextColor}
+                    color={theme.textColor?.modalSubHeadingText}
                     margin="0px 14px"
                     fontSize="16px"
                     fontWeight="400"
@@ -439,7 +438,7 @@ export const GroupInfoModal = ({
               {groupInfo?.members &&
                 groupInfo?.members?.length > 0 &&
                 groupInfo?.members.map((item, index) => (
-                  <ProfileCard
+                  <MemberProfileCard
                     key={index}
                     member={item}
                     dropdownValues={
@@ -502,16 +501,16 @@ const PublicEncrypted = styled.div`
   width: 100%;
   gap: 19px;
   align-items: center;
-  border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
-  border-radius: 16px;
+  border: ${(props) =>props.theme.border.modalInnerComponents};
+  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
   padding: 16px;
   box-sizing: border-box;
 `;
 
 const AddWalletContainer = styled.div`
   margin-top: 20px;
-  border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
-  border-radius: 16px;
+  border: ${(props) =>props.theme.border.modalInnerComponents};
+  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
   width: 100%;
   padding: 20px 16px;
   box-sizing: border-box;
@@ -528,7 +527,7 @@ const GroupPendingMembers = styled.div`
   flex-direction: row;
   width: 100%;
   align-items: center;
-  background: ${(props) => props.theme.pendingCardBackground};
+  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   padding: 10px 15px;
   box-sizing: border-box;
 
@@ -540,8 +539,8 @@ const GroupPendingMembers = styled.div`
 const PendingRequestWrapper = styled.div`
   width: 100%;
   margin-top: 20px;
-  border: ${(props) => `1px solid ${props.theme.defaultBorder}`};
-  border-radius: 16px;
+  border: ${(props) =>props.theme.border.modalInnerComponents};
+  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
   padding: 0px 0px;
   box-sizing: border-box;
 `;

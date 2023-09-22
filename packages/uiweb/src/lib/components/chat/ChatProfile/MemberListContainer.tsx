@@ -4,30 +4,39 @@ import styled from 'styled-components';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
-import Dropdown, { DropdownValueType } from './DropDown';
-import { Section, Image, Span } from '../../reusables/sharedStyling';
+import Dropdown, { DropdownValueType } from '../reusables/DropDown';
+import { Section, Span } from '../../reusables/sharedStyling';
 
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import {
-  MemberListContainerType,
-  WalletProfileContainerProps,
-} from '../exportedTypes';
+import { IChatTheme, User } from '../exportedTypes';
 import { findObject } from '../helpers/helper';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
+import { ProfileContainer } from '../reusables';
 
-//profileCard can be used here the same way we used in the GroupInfoModal
-//add border as per design
-//think how we are doing it in addWalletContainer
-//find a way to use profileCard 
+
+type MemberListContainerType = {
+  key?: number;
+  memberData: User;
+  handleMemberList: (member: User) => void;
+  handleMembers?: (value: User[]) => void;
+  darkIcon: any;
+  memberList?: any;
+};
+
+export interface WalletProfileContainerProps {
+  id?: any;
+  background?: any;
+  border?: string;
+};
+
 export const MemberListContainer = ({
   key,
   memberData,
   handleMembers,
   handleMemberList,
-  lightIcon,
   darkIcon,
   memberList,
 }: MemberListContainerType) => {
@@ -90,40 +99,24 @@ export const MemberListContainer = ({
       ?.getBoundingClientRect();
     setDropdownHeight(containerHeight?.top);
   };
-
   return (
     <WalletProfileContainer
       id={memberData?.wallets}
       background={
-        memberList ? 'transparent' : theme.groupSearchProfilBackground
+        memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground
       }
-      border={memberList ? `${theme.modalBorderColor}` : 'none'}
+      border={
+        memberList ? theme.border?.modalInnerComponents:'none' 
+      }
+      borderRadius={theme.borderRadius?.modalInnerComponents}
     >
-      <WalletProfile>
-        <Section
-          width="48px"
-          maxWidth="48px"
-          borderRadius="100%"
-          overflow="auto"
-          margin="0px 12px 0px 0px"
-        >
-          <Image
-            src={memberData?.profilePicture ?? ''}
-            height="48px"
-            maxHeight="48px"
-            width={'auto'}
-            cursor="pointer"
-          />
-        </Section>
-
-        <Span
-          fontSize="18px"
-          fontWeight="400"
-          color={theme.modalPrimaryTextColor}
-        >
-          {shortenText(memberData?.wallets?.split(':')[1], 8, true)}
-        </Span>
-      </WalletProfile>
+      <ProfileContainer
+        theme={theme}
+        member={{
+          wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          image: memberData.profilePicture || '',
+        }}
+      />
 
       <Section justifyContent="flex-end">
         {memberData?.isAdmin && (
@@ -150,7 +143,6 @@ export const MemberListContainer = ({
               : handleMemberList(memberData);
           }}
         >
-          {/* {theme === 'light' ? lightIcon : darkIcon} */}
           {darkIcon}
         </Section>
       </Section>
@@ -167,7 +159,7 @@ export const MemberListContainer = ({
                 ? [removeAdminDropdown, removeUserDropdown]
                 : [addAdminDropdown, removeUserDropdown]
             }
-            hoverBGColor={theme.snapFocusBg}
+            hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
         </DropdownContainer>
       )}
@@ -176,10 +168,9 @@ export const MemberListContainer = ({
 };
 
 const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
-
   justify-content: space-between;
   padding: 8px 16px;
-  border-radius: 16px;
+    border: ${(props) => props.border};
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -194,21 +185,17 @@ const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
   }
 `;
 
-const WalletProfile = styled(Section)`
-  justify-content: flex-start;
-`;
-
 const DropdownContainer = styled.div`
   position: absolute;
   left: 48%;
   top: 69%;
-  border-radius: 16px;
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 14px 8px;
   z-index: 999999999999 !important;
   display: flex;
   flex-direction: column !important;
-  background: ${(props) => props.theme.modalContentBackground};
-  border: 1px solid ${(props) => props.theme.modalBorderColor};
+  background: ${(props) => props.theme.backgroundColor.modalBackground};
+  border: ${(props) => props.theme.border.modalInnerComponents};
 
   @media ${device.mobileL} {
     left: 27%;
