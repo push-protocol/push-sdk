@@ -83,7 +83,7 @@ export const getNewChatUser = async ({
 };
 
 export const getAddress = async (searchText: string, env: Env) => {
-  const udResolver = getUdResolver(ENV.PROD);
+  const udResolver = getUdResolver(env);
   const provider = new ethers.providers.InfuraProvider(
     CoreContractChainId[env],
     InfuraAPIKey
