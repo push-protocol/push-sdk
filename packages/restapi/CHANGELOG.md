@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.20](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.19...restapi-1.4.20) (2023-09-22)
+
+
+### Bug Fixes
+
+* added chat.decrypt ([#726](https://github.com/ethereum-push-notification-service/push-sdk/issues/726)) ([995042b](https://github.com/ethereum-push-notification-service/push-sdk/commit/995042b789b19d487b5e2953463cae60e75199b8))
+* Merge branch 'main' into deployment ([2462c8b](https://github.com/ethereum-push-notification-service/push-sdk/commit/2462c8b060f4a2e6a0ea2cd03735569ead0b8e93))
+
+
+
 ## [1.4.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.18...restapi-1.4.19) (2023-09-06)
 
 
