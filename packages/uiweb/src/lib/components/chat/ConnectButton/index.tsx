@@ -1,5 +1,6 @@
 import { IChatTheme } from '../theme';
 
+import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { ConnectButtonSub } from './ConnectButton';
 import { InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
@@ -23,6 +24,7 @@ const wcv2InitOptions = {
 }
 
 const walletConnect = walletConnectModule(wcv2InitOptions)
+const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true })
 const chains = [
   {
     id: '0x1',
@@ -61,7 +63,9 @@ const chains = [
     rpcUrl: 'https://rpc.ankr.com/arbitrum'
   }
 ]
-const wallets = [injectedModule(), walletConnect]
+
+const wallets = [injectedModule(), walletConnect,coinbaseWalletSdk]
+
 
 const appMetadata = {
   name: 'Push Protocol',

@@ -14,7 +14,7 @@ const ChatViewComponentTest = () => {
     <div>
       <h2>Chat UI Test page</h2>
       <ChatViewComponentCard>
-        <ChatViewComponent onGetTokenClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='b8e068e02fe12d7136bc2f24408835573f30c6fbf0b65ea26ab4c7055a2c85f1' limit={10} isConnected={true} autoConnect={true}/>
+        <ChatViewComponent onGetTokenClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='b8e068e02fe12d7136bc2f24408835573f30c6fbf0b65ea26ab4c7055a2c85f1' limit={10} isConnected={true} autoConnect={false}/>
       </ChatViewComponentCard>
     </div>
   );
