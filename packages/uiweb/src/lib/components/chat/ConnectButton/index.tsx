@@ -69,7 +69,7 @@ const wallets = [injectedModule(), walletConnect,coinbaseWalletSdk]
 
 const appMetadata = {
   name: 'Push Protocol',
-  icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',
+  icon: 'https://push.org/static/media/PushLogoTextBlack.fa01629c2ebd2149bab979861756591d.svg',
   description: 'Example showcasing how to connect a wallet.',
 
   recommendedInjectedWallets: [
