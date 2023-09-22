@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Modal } from '../helpers/Modal'
+import { Modal } from '../reusables/Modal'
 import { Image, Section, Span } from '../../reusables'
 import { ThemeContext } from '../theme/ThemeProvider';
 import TokenGatedIcon from "../../../icons/Token-Gated.svg"

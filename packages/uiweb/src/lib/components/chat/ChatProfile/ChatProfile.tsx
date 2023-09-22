@@ -3,7 +3,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
 import type { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 
@@ -205,7 +204,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                     } */}
 
         {/* check the error for this component */}
-        <ToastContainer />
+        {/* <ToastContainer /> */}
       </Container>
     );
   } else {

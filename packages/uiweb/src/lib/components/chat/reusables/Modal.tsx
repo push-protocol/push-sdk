@@ -1,17 +1,16 @@
 /**
  * @file Modal
- * generic modal component for spaces UI
+ * generic modal component for chat UI
  * does not handle any business logic, acts only as a container
  */
 import { useRef, useContext } from 'react';
+
 import styled from 'styled-components'
+
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
 import { IChatTheme } from '../theme';
 
-// import { ThemeContext } from '../theme/ThemeProvider';
-
-// import { useClickAway } from '../../../hooks';
 
 interface IModalProps {
     width?: string;
@@ -67,7 +66,7 @@ const ModalOverlay = styled.div<IModalProps>`
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
     display: flex;
-    color: ${(props) => props.theme.modalBackgroundColor?? '#000'};
+    color: ${(props) => props.theme.backgroundColor.modalBackground?? '#000'};
     justify-content: center;
     align-items: center;
     z-index: 2000;
@@ -78,18 +77,14 @@ const ModalOverlay = styled.div<IModalProps>`
 `;
 
 const ModalParent = styled.div<IModalProps>`
-    // position: absolute;
-    // top: 50%;
-    // left: 50%;
-    // transform: translate(-50%, -50%);
 
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 24px 20px;
 
-    background: ${(props) => props.theme.modalBackgroundColor};
-    border-radius: 12px;
+    background: ${(props) => props.theme.backgroundColor.modalBackground};
+    border-radius: ${(props) => props.theme.borderRadius.modal};
 
     width: ${(props => props.width ? props.width : 'auto')};
     margin: auto !important;

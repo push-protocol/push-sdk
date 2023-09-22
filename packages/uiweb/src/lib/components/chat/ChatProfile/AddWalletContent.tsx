@@ -13,7 +13,7 @@ import { Section, Span, Image } from '../../reusables/sharedStyling';
 import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { MemberListContainer } from './MemberListContainer';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import useToast from '../helpers/NewToast';
+import useToast from '../reusables/NewToast';
 
 import {
   getNewChatUser,
@@ -268,9 +268,9 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
   margin: 60px 0 0 0;
   width: 197px;
   background: ${(props) =>
-    props.memberListCount ? '#CF1C84' : props.theme.backgroundColor.buttonBackground};
+    props.memberListCount ? props.theme.backgroundColor.buttonBackground : props.theme.backgroundColor.buttonDisableBackground};
   color: ${(props) =>
-    props.memberListCount ? '#fff' : props.theme.textColor.buttonText};
+    props.memberListCount ? props.theme.textColor.buttonText : props.theme.textColor.buttonDisableText};
   border: ${(props) =>
     props.memberListCount ? 'none' : props.theme.border.modalInnerComponents};
   min-width: 50%;

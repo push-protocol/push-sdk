@@ -122,7 +122,7 @@ export const ChatSearchInput: React.FC<ChatSearchInputPropType> = ({
               <CloseIcon />
             </Div>
           )}
-          {loading && <Spinner size="17.49" />}
+          {loading && <Spinner size="17.49" color={theme.spinnerColor}/>}
         </Span>
       </InputSection>
     </Container>

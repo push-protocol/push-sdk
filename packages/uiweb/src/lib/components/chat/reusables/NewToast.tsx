@@ -1,27 +1,24 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-// // React + Web3 Essentials
-
-// // External Packages
-import { Spinner } from '../../supportChat/spinner/Spinner';
-import { toast } from 'react-toastify';
-import styled, { ThemeProvider } from 'styled-components';
-import CloseIcon from '../../../icons/close.svg';
-import useMediaQuery from '../../../hooks/useMediaQuery';
+// React + Web3 Essentials
 import { useContext, useRef } from 'react';
-import { Image } from '../../reusables';
-import { device } from '../../../config';
-import { ThemeContext } from '../theme/ThemeProvider';
+
+// External Packages
+import { toast } from 'react-toastify';
 import { MdOutlineClose } from 'react-icons/md';
-// import useMediaQuery from './useMediaQuery';
+import styled, { ThemeProvider } from 'styled-components';
+
+
+import { Spinner } from '../../supportChat/spinner/Spinner';
+import useMediaQuery from '../../../hooks/useMediaQuery';
+import { ThemeContext } from '../theme/ThemeProvider';
+
+
+import { device } from '../../../config';
 
 
 // Types
 type LoaderToastType = { msg: string; loaderColor: string; textColor: string };
 
-const override: React.CSSProperties = {
-  // width: "fit-content",
-  height: '45px',
-};
 
 
 const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
@@ -29,10 +26,6 @@ const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
     <Spinner
       color={loaderColor}
       size='35px'
-    //   height={9}
-    //   width={2.5}
-    //   margin={0}
-    //   css={override}
     />
     <LoaderMessage
       style={{

@@ -13,7 +13,7 @@ type ProfileProps = {
     imgMaxHeight?: string;
   };
   export const ProfileContainer = ({ theme, member, customStyle }: ProfileProps) => {
-    console.log(member);
+   
     return (
       <Section justifyContent="flex-start" position="relative" zIndex="2">
         <Section

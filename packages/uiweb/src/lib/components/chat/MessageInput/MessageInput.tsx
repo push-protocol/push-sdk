@@ -22,7 +22,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import OpenLink from '../../../icons/OpenLink';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
 import TokenGatedIcon from '../../../icons/Token-Gated.svg';
-import { Modal } from '../helpers/Modal';
+import { Modal } from '../reusables/Modal';
 import { Image } from '../../reusables';
 import { ConnectButtonComp } from '../ConnectButton';
 import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
@@ -38,7 +38,7 @@ import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { IFeeds } from '@pushprotocol/restapi';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
-import useToast from '../helpers/NewToast';
+import useToast from '../reusables/NewToast';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
 /**

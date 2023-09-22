@@ -28,6 +28,7 @@ interface IBackgroundColor {
   chatReceivedBubbleBackground?: string;
   encryptionMessageBackground?: string;
   buttonBackground?: string;
+  buttonDisableBackground?: string;
   searchInputBackground?:string;
   modalBackground?:string;
   modalInputBackground?:string;
@@ -42,6 +43,7 @@ interface ITextColor {
   timestamp?: string;
   encryptionMessageText?: string;
   buttonText?: string;
+  buttonDisableText?: string;
   chatReceivedBubbleAddressText?: string;
   chatReceivedBubbleTimestampText?: string;
   chatSentBubbleTimestampText?: string;
@@ -151,7 +153,8 @@ export const lightChatTheme: IChatTheme = {
     searchInputBackground: 'rgb(244, 245, 250)',
     modalBackground:'#fff',
     modalInputBackground:'transparent',
-    modalHoverBackground:'rgb(244, 245, 250)'
+    modalHoverBackground:'rgb(244, 245, 250)',
+    buttonDisableBackground:'#ADB0BE',
   },
 
   fontSize: {
@@ -207,6 +210,7 @@ export const lightChatTheme: IChatTheme = {
     timestamp: '400',
     encryptionMessageText: '#000',
     buttonText: '#fff',
+    buttonDisableText:'#fff',
     chatReceivedBubbleAddressText: '#000',
     chatReceivedBubbleTimestampText: '#000',
     chatSentBubbleTimestampText: '#fff',
@@ -268,7 +272,8 @@ export const darkChatTheme: IChatTheme = {
     buttonBackground: 'rgb(202, 89, 155)',
     modalBackground:'rgb(47, 49, 55)',
     modalInputBackground:'rgb(40, 42, 46)',
-    modalHoverBackground:'rgb(64, 70, 80)'
+    modalHoverBackground:'rgb(64, 70, 80)',
+    buttonDisableBackground:'#2F3137'
   },
 
   fontSize: {
@@ -330,7 +335,8 @@ export const darkChatTheme: IChatTheme = {
     searchInputText:'#fff',
     searchPlaceholderText:'rgb(101, 119, 149)',
     modalHeadingText:'#fff',
-    modalSubHeadingText:'rgb(182, 188, 214)'
+    modalSubHeadingText:'rgb(182, 188, 214)',
+    buttonDisableText:'#787E99'
   },
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
