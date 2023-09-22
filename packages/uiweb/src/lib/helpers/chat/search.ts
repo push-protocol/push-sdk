@@ -88,17 +88,12 @@ export const getAddress = async (searchText: string, env: Env) => {
     CoreContractChainId[env],
     InfuraAPIKey
   );
-console.log(provider)
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
-      console.log(env)
       address =
         (await udResolver.owner(searchText)) ||
         (await provider.resolveName(searchText));
-      // (await library.resolveName(searchText)) ||
-      console.log(env)
-console.log(address)
       return address;
     } catch (err) {
       console.log(err);
