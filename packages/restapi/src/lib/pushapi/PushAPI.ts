@@ -9,6 +9,7 @@ import {
   Message,
   ProgressHookType,
   IUser,
+  IMessageIPFS,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -257,6 +258,15 @@ export class PushAPI {
         env: this.env,
       };
       return await PUSH_CHAT.send(sendParams);
+    },
+
+    decrypt: async (messagePayloads: IMessageIPFS[]) => {
+      return await PUSH_CHAT.decryptConversation({
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        env: this.env,
+        messages: messagePayloads,
+        connectedUser: await this.info(),
+      });
     },
 
     accept: async (target: string): Promise<string> => {

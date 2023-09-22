@@ -171,23 +171,31 @@ export const decryptConversation = async (options: DecryptConverationType) => {
     const message = messages[i];
     let gotOtherPeer = false;
     if (message.encType !== 'PlainText') {
-      if (!pgpPrivateKey) {
-        throw Error('Decrypted private key is necessary');
-      }
-      if (message.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
-        if (!gotOtherPeer) {
-          otherPeer = await getUser({ account: message.fromCAIP10, env });
-          gotOtherPeer = true;
+      // check if message is already decrypted
+      if (
+        // legacy messages ( no way to know if they are decrypted or not )
+        message.messageObj === undefined ||
+        // new messages ( if messageObj is string then it is not decrypted )
+        typeof message.messageObj === 'string'
+      ) {
+        if (!pgpPrivateKey) {
+          throw Error('Decrypted private key is necessary');
         }
-        signatureValidationPubliKey = otherPeer!.publicKey;
-      } else {
-        signatureValidationPubliKey = connectedUser.publicKey;
+        if (message.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
+          if (!gotOtherPeer) {
+            otherPeer = await getUser({ account: message.fromCAIP10, env });
+            gotOtherPeer = true;
+          }
+          signatureValidationPubliKey = otherPeer!.publicKey;
+        } else {
+          signatureValidationPubliKey = connectedUser.publicKey;
+        }
+        messages[i] = await decryptAndVerifyMessage(
+          message,
+          signatureValidationPubliKey,
+          pgpPrivateKey
+        );
       }
-      messages[i] = await decryptAndVerifyMessage(
-        message,
-        signatureValidationPubliKey,
-        pgpPrivateKey
-      );
     }
   }
   return messages;
