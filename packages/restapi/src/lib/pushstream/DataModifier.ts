@@ -1,17 +1,17 @@
 import {
   CreateGroupEvent,
-  Meta,
+  GroupMeta,
   GroupEventRawData,
   UpdateGroupEvent,
   MessageRawData,
   MessageEvent,
+  MessageEventType,
+  Member,
+  GroupEventType,
 } from './pushStreamTypes';
 
 export class DataModifier {
-  public static handleChatGroupEvent(
-    data: any,
-    includeRaw = false
-  ): any {
+  public static handleChatGroupEvent(data: any, includeRaw = false): any {
     if (data.eventType === 'create') {
       return this.mapToCreateGroupEvent(data, includeRaw);
     } else if (data.eventType === 'update') {
@@ -26,17 +26,48 @@ export class DataModifier {
     incomingData: any,
     includeRaw: boolean
   ): {
-    meta: Meta;
+    meta: GroupMeta;
     raw?: GroupEventRawData;
   } {
-    const meta: Meta = {
+    const mapMembersAdmins = (arr: any[]): Member[] => {
+      return arr.map((item) => ({
+        address: item.wallet,
+        profile: {
+          image: item.image,
+          publicKey: item.publicKey,
+        },
+      }));
+    };
+
+    const mapPendingMembersAdmins = (arr: any[]): Member[] => {
+      return arr.map((item) => ({
+        address: item.wallet,
+        profile: {
+          image: item.image,
+          publicKey: item.publicKey,
+        },
+      }));
+    };
+
+    const meta: GroupMeta = {
       name: incomingData.groupName,
       description: incomingData.groupDescription,
       image: incomingData.groupImage,
       owner: incomingData.groupCreator,
-      members: incomingData?.members || [], // TODO: only latest 20, TODO: Fix member user profiles
-      admins: incomingData?.admins || [], // TODO: only latest 20
-      pending: incomingData?.pending || [], // TODO: only latest 20
+      members: mapMembersAdmins(
+        incomingData.members.filter((m: any) => !m.isAdmin)
+      ),
+      admins: mapMembersAdmins(
+        incomingData.members.filter((m: any) => m.isAdmin)
+      ),
+      pending: {
+        members: mapPendingMembersAdmins(
+          incomingData.pendingMembers.filter((m: any) => !m.isAdmin)
+        ),
+        admins: mapPendingMembersAdmins(
+          incomingData.pendingMembers.filter((m: any) => m.isAdmin)
+        ),
+      },
       private: !incomingData.isPublic,
       rules: incomingData.rules || {},
     };
@@ -51,73 +82,74 @@ export class DataModifier {
     return { meta };
   }
 
-  public static mapToCreateGroupEvent(
+  public static mapToGroupEvent(
+    eventType: GroupEventType,
     incomingData: any,
     includeRaw: boolean
-  ): CreateGroupEvent {
+  ): CreateGroupEvent | UpdateGroupEvent {
     const { meta, raw } = this.buildChatGroupEventMetaAndRaw(
       incomingData,
       includeRaw
     );
 
-    const createGroupEvent: CreateGroupEvent = {
-      event: 'createGroup',
-      origin: 'self', // TODO: This is missing in the event
-      timestamp: String(Date.now()), // TODO: This is missing in the event
+    const groupEvent: any = {
+      event: eventType,
+      origin: incomingData.messageOrigin,
+      timestamp: incomingData.timestamp,
       chatId: incomingData.chatId,
-      from: incomingData.groupCreator,
+      from: incomingData.from,
       meta,
     };
 
     if (includeRaw) {
-      createGroupEvent.raw = raw;
+      groupEvent.raw = raw;
     }
-    return createGroupEvent;
+
+    return groupEvent as CreateGroupEvent | UpdateGroupEvent;
+  }
+
+  public static mapToCreateGroupEvent(
+    incomingData: any,
+    includeRaw: boolean
+  ): CreateGroupEvent {
+    return this.mapToGroupEvent(
+      GroupEventType.createGroup,
+      incomingData,
+      includeRaw
+    ) as CreateGroupEvent;
   }
 
   public static mapToUpdateGroupEvent(
     incomingData: any,
     includeRaw: boolean
   ): UpdateGroupEvent {
-    const { meta, raw } = this.buildChatGroupEventMetaAndRaw(
+    return this.mapToGroupEvent(
+      GroupEventType.updateGroup,
       incomingData,
       includeRaw
-    );
-
-    const updateGroupEvent: UpdateGroupEvent = {
-      event: 'updateGroup',
-      origin: incomingData.origin, // TODO: This is missing in the event
-      timestamp: String(Date.now()), // TODO: This is missing in the event
-      chatId: incomingData.chatId,
-      from: incomingData.from, // TODO: This is missing in the event
-      meta,
-    };
-
-    if (includeRaw) {
-      updateGroupEvent.raw = raw;
-    }
-
-    return updateGroupEvent;
+    ) as UpdateGroupEvent;
   }
 
   public static mapToMessageEvent(
     data: any,
-    includeRaw = false
+    includeRaw = false,
+    eventType: MessageEventType
   ): MessageEvent {
     const messageEvent: MessageEvent = {
-      event: 'message',
-      origin: data.messageOrigin === 'other' ? 'other' : 'self', // Replace with the actual logic
+      event: eventType,
+      origin: data.messageOrigin,
       timestamp: data.timestamp.toString(),
-      chatId: data.chatId,
+      chatId: data.chatId, // TODO: ChatId not working for w2w
       from: data.fromCAIP10,
-      to: [data.toCAIP10], // Assuming 'to' is an array in MessageEvent. Update as necessary.
+      to: [data.toCAIP10], // TODO: Assuming 'to' is an array in MessageEvent. Update as necessary.
       message: {
         type: data.messageType,
         content: data.messageContent,
       },
       meta: {
-        group: true, // Replace with the actual logic
+        group: data.isGroup || false,
       },
+      reference: data.cid,
     };
 
     if (includeRaw) {
@@ -126,29 +158,34 @@ export class DataModifier {
         toCAIP10: data.toCAIP10,
         fromDID: data.fromDID,
         toDID: data.toDID,
-        messageObj: data.messageObj,
-        messageContent: data.messageContent,
-        messageType: data.messageType,
-        timestamp: data.timestamp,
         encType: data.encType,
         encryptedSecret: data.encryptedSecret,
         signature: data.signature,
         sigType: data.sigType,
         verificationProof: data.verificationProof,
-        link: data.link,
-        cid: data.cid,
-        chatId: data.chatId,
+        previousReference: data.link,
       };
       messageEvent.raw = rawData;
     }
+
     return messageEvent;
   }
 
   public static handleChatEvent(data: any, includeRaw = false): any {
-    if (data.messageCategory === 'Chat') {
-      return this.mapToMessageEvent(data, includeRaw);
+    const eventTypeMap: { [key: string]: MessageEventType } = {
+      Chat: 'message',
+      Request: 'request',
+      Approve: 'accept',
+      Reject: 'reject',
+    };
+
+    const eventType: MessageEventType | undefined =
+      eventTypeMap[data.messageCategory];
+
+    if (eventType) {
+      return this.mapToMessageEvent(data, includeRaw, eventType);
     } else {
-      console.warn('Unknown eventType:', data.eventType);
+      console.warn('Unknown messageCategory:', data.messageCategory);
       return data;
     }
   }

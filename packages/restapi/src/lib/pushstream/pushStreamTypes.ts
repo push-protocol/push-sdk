@@ -2,7 +2,7 @@ import { ENV } from "../constants";
 import { Rules } from "../types";
 
 export type PushStreamInitializeProps = {
-  listen: string[];
+  listen?: string[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -12,7 +12,7 @@ export type PushStreamInitializeProps = {
     retries?: number;
   };
   raw?: boolean;
-  env: ENV;
+  env?: ENV;
 };
 
 export enum STREAM {
@@ -26,16 +26,36 @@ export enum STREAM {
   DISCONNECT = 'STREAM.DISCONNECT',
 }
 
-type Origin = 'other' | 'self';
+export type MessageOrigin = 'other' | 'self';
+export type MessageEventType = 'message' | 'request' | 'accept' | 'reject';
+export enum GroupEventType {
+  createGroup = 'createGroup',
+  updateGroup = 'updateGroup',
+}
 
-export interface Meta {
+export interface Profile {
+  image: string;
+  publicKey: string;
+}
+
+export interface Member {
+  address: string;
+  profile: Profile;
+}
+
+export interface Pending {
+  members: Member[];
+  admins: Member[];
+}
+
+export interface GroupMeta {
   name: string;
   description: string;
   image: string;
   owner: string;
-  members: string[];
-  admins: string[];
-  pending: string[];
+  members: Member[];
+  admins: Member[];
+  pending: Pending;
   private: boolean;
   rules: Rules;
 }
@@ -44,29 +64,27 @@ export interface GroupEventRawData {
   verificationProof: string;
 }
 
-export interface CreateGroupEvent {
-  event: 'createGroup';
-  origin: Origin;
+export interface GroupEventBase {
+  origin: MessageOrigin;
   timestamp: string;
   chatId: string;
   from: string;
-  meta: Meta;
+  meta: GroupMeta;
   raw?: GroupEventRawData;
+  event: GroupEventType;
 }
 
-export interface UpdateGroupEvent {
-  event: 'updateGroup';
-  origin: Origin;
-  timestamp: string;
-  chatId: string;
-  from: string;
-  meta: Meta;
-  raw?: GroupEventRawData;
+export interface CreateGroupEvent extends GroupEventBase {
+  event: GroupEventType.createGroup;
+}
+
+export interface UpdateGroupEvent extends GroupEventBase {
+  event: GroupEventType.updateGroup;
 }
 
 export interface MessageEvent {
-  event: 'message';
-  origin: 'other' | 'self';
+  event: MessageEventType;
+  origin: MessageOrigin;
   timestamp: string;
   chatId: string;
   from: string;
@@ -78,6 +96,7 @@ export interface MessageEvent {
   meta: {
     group: boolean;
   };
+  reference: string;
   raw?: MessageRawData;
 }
 
@@ -86,16 +105,10 @@ export interface MessageRawData {
   toCAIP10: string;
   fromDID: string;
   toDID: string;
-  messageObj: string;
-  messageContent: string;
-  messageType: string;
-  timestamp: number;
   encType: string;
   encryptedSecret: string;
   signature: string;
   sigType: string;
   verificationProof: string;
-  link: string;
-  cid: string;
-  chatId: string;
+  previousReference: string;
 }

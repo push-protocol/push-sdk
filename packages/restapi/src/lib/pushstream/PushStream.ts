@@ -20,13 +20,13 @@ export class PushStream extends EventEmitter {
         autoConnect: options.connection?.auto ?? true,
         reconnectionAttempts: options.connection?.retries ?? 3,
       },
-      env: options.env,
+      env: options.env as ENV,
     });
 
     if (!this.pushChatSocket) {
       throw new Error('Push chat socket not connected');
     } else {
-      console.log('Push socket connected');
+      console.log('Push socket connected ' + `eip155:${account}`);
     }
 
     this.raw = options.raw ?? false;

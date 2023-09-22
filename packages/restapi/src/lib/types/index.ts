@@ -355,6 +355,12 @@ export interface GroupAccess {
   rules?: Rules;
 }
 
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
+}
+
 export interface SpaceAccess {
   entry: boolean;
   rules?: SpaceRules;

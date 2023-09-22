@@ -395,7 +395,6 @@ export class PushAPI {
         chatId: string,
         options: GroupUpdateOptions
       ): Promise<GroupDTO> => {
-        // Fetch Group Details
         const group = await PUSH_CHAT.getGroup({
           chatId: chatId,
           env: this.env,
@@ -505,15 +504,34 @@ export class PushAPI {
         }
       },
 
-      // TODO: If invite was sent, the inside accept should be called here.
       join: async (target: string): Promise<GroupDTO> => {
-        return await PUSH_CHAT.addMembers({
+        const status = await PUSH_CHAT.getGroupMemberStatus({
           chatId: target,
-          members: [this.account],
+          did: this.account,
+        });
+
+        if (status.isPending) {
+          await PUSH_CHAT.approve({
+            senderAddress: target,
+            env: this.env,
+            account: this.account,
+            signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
+          });
+        } else if (!status.isMember) {
+          return await PUSH_CHAT.addMembers({
+            chatId: target,
+            members: [this.account],
+            env: this.env,
+            account: this.account,
+            signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
+          });
+        }
+
+        return await PUSH_CHAT.getGroup({
+          chatId: target,
           env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
         });
       },
 
