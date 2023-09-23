@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { ENV } from '../constants';
-import { PushStreamInitializeProps, STREAM } from './pushStreamTypes';
+import { GroupEventType, MessageEventType, PushStreamInitializeProps, STREAM } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 
 export class PushStream extends EventEmitter {
@@ -57,10 +57,20 @@ export class PushStream extends EventEmitter {
   }
 
   public async init(): Promise<void> {
-    this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
-      const modifiedData = DataModifier.handleChatGroupEvent(data, this.raw);
-      this.emit(STREAM.CHAT_OPS, modifiedData);
-    });
+   this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
+     const modifiedData = DataModifier.handleChatGroupEvent(data, this.raw);
+     if (
+       data.eventType === GroupEventType.JoinGroup ||
+       data.eventType === GroupEventType.LeaveGroup ||
+       data.eventType === MessageEventType.Request ||
+       data.eventType === GroupEventType.Remove
+     ) {
+       this.emit(STREAM.CHAT, modifiedData);
+     } else {
+       this.emit(STREAM.CHAT_OPS, modifiedData);
+     }
+   });
+
 
     this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (data: any) => {
       const modifiedData = DataModifier.handleChatEvent(data, this.raw);

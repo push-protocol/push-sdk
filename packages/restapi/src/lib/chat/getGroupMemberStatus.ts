@@ -33,8 +33,6 @@ export const getGroupMemberStatus = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/${user}/status`;
 
-    console.log(requestUrl)
-
     return axios
       .get(requestUrl)
       .then((response) => {

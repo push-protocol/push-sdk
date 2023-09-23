@@ -26,11 +26,24 @@ export enum STREAM {
   DISCONNECT = 'STREAM.DISCONNECT',
 }
 
-export type MessageOrigin = 'other' | 'self';
-export type MessageEventType = 'message' | 'request' | 'accept' | 'reject';
+export enum MessageOrigin {
+  Other = 'other',
+  Self = 'self',
+}
+
+export enum MessageEventType {
+  Message = 'message',
+  Request = 'request',
+  Accept = 'accept',
+  Reject = 'reject',
+}
+
 export enum GroupEventType {
-  createGroup = 'createGroup',
-  updateGroup = 'updateGroup',
+  CreateGroup = 'createGroup',
+  UpdateGroup = 'updateGroup',
+  JoinGroup = 'joinGroup',
+  LeaveGroup = 'leaveGroup',
+  Remove = 'remove',
 }
 
 export interface Profile {
@@ -75,11 +88,29 @@ export interface GroupEventBase {
 }
 
 export interface CreateGroupEvent extends GroupEventBase {
-  event: GroupEventType.createGroup;
+  event: GroupEventType.CreateGroup;
 }
 
 export interface UpdateGroupEvent extends GroupEventBase {
-  event: GroupEventType.updateGroup;
+  event: GroupEventType.UpdateGroup;
+}
+
+export interface GroupMemberEventBase {
+  event: GroupEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  chatId: string;
+  from: string;
+  to: string[];
+  raw?: GroupEventRawData;
+}
+
+export interface JoinGroupEvent extends GroupMemberEventBase {
+  event: GroupEventType.JoinGroup;
+}
+
+export interface LeaveGroupEvent extends GroupMemberEventBase {
+  event: GroupEventType.LeaveGroup;
 }
 
 export interface MessageEvent {

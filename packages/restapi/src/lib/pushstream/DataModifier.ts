@@ -8,6 +8,8 @@ import {
   MessageEventType,
   Member,
   GroupEventType,
+  LeaveGroupEvent,
+  JoinGroupEvent,
 } from './pushStreamTypes';
 
 export class DataModifier {
@@ -16,6 +18,13 @@ export class DataModifier {
       return this.mapToCreateGroupEvent(data, includeRaw);
     } else if (data.eventType === 'update') {
       return this.mapToUpdateGroupEvent(data, includeRaw);
+    } else if (
+      data.eventType === GroupEventType.JoinGroup ||
+      data.eventType === GroupEventType.LeaveGroup ||
+      data.eventType === MessageEventType.Request ||
+      data.eventType === GroupEventType.Remove
+    ) {
+      return this.mapToGroupMemberEvent(data, includeRaw, data.eventType);
     } else {
       console.warn('Unknown eventType:', data.eventType);
       return data;
@@ -113,7 +122,7 @@ export class DataModifier {
     includeRaw: boolean
   ): CreateGroupEvent {
     return this.mapToGroupEvent(
-      GroupEventType.createGroup,
+      GroupEventType.CreateGroup,
       incomingData,
       includeRaw
     ) as CreateGroupEvent;
@@ -124,7 +133,7 @@ export class DataModifier {
     includeRaw: boolean
   ): UpdateGroupEvent {
     return this.mapToGroupEvent(
-      GroupEventType.updateGroup,
+      GroupEventType.UpdateGroup,
       incomingData,
       includeRaw
     ) as UpdateGroupEvent;
@@ -173,20 +182,49 @@ export class DataModifier {
 
   public static handleChatEvent(data: any, includeRaw = false): any {
     const eventTypeMap: { [key: string]: MessageEventType } = {
-      Chat: 'message',
-      Request: 'request',
-      Approve: 'accept',
-      Reject: 'reject',
+      Chat: MessageEventType.Message,
+      Request: MessageEventType.Request,
+      Approve: MessageEventType.Accept,
+      Reject: MessageEventType.Reject,
     };
 
     const eventType: MessageEventType | undefined =
-      eventTypeMap[data.messageCategory];
+      eventTypeMap[data.eventType || data.messageCategory];
 
     if (eventType) {
-      return this.mapToMessageEvent(data, includeRaw, eventType);
+      return this.mapToMessageEvent(
+        data,
+        includeRaw,
+        eventType as MessageEventType
+      );
     } else {
-      console.warn('Unknown messageCategory:', data.messageCategory);
+      console.warn(
+        'Unknown eventType:',
+        data.eventType || data.messageCategory
+      );
       return data;
     }
+  }
+
+  private static mapToGroupMemberEvent(
+    data: any,
+    includeRaw: boolean,
+    eventType: GroupEventType
+  ): JoinGroupEvent | LeaveGroupEvent {
+    const baseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: eventType as GroupEventType.JoinGroup | GroupEventType.LeaveGroup,
+    };
+
+    return includeRaw
+      ? {
+          ...baseEventData,
+          raw: { verificationProof: data.verificationProof },
+        }
+      : baseEventData;
   }
 }

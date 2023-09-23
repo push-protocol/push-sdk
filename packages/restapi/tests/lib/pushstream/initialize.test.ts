@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { ENV } from '../../../src/lib/constants';
 import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
+import * as util from 'util';
 
 describe.only('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
@@ -76,7 +77,7 @@ describe.only('PushStream.initialize functionality', () => {
     const CREATE_GROUP_REQUEST = {
       description: 'test',
       image: 'test',
-      members: [signer2.address],
+      members: [],
       admins: [],
       private: false,
       rules: {},
@@ -91,20 +92,23 @@ describe.only('PushStream.initialize functionality', () => {
     ) => {
       return new Promise((resolve, reject) => {
         let eventCount = 0;
+        if (expectedEventCount == 0) {
+          resolve('Done');
+        }
         const receivedEvents: any[] = [];
         stream.on(eventType, (data: any) => {
           try {
             receivedEvents.push(data);
             eventCount++;
 
-            /*console.log(
+            console.log(
               `Event ${eventCount} for ${expectedEvent}:`,
               util.inspect(data, {
                 showHidden: false,
                 depth: null,
                 colors: true,
               })
-            );*/
+            );
             expect(data).to.not.be.null;
 
             if (eventCount === expectedEventCount) {
@@ -118,8 +122,11 @@ describe.only('PushStream.initialize functionality', () => {
       });
     };
 
-    const onDataReceived = createEventPromise('CHAT_OPS', STREAM.CHAT_OPS, 1);
-    const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 1);
+    //  leave admin bug
+    //  group creator check remove add
+
+    const onDataReceived = createEventPromise('CHAT_OPS', STREAM.CHAT_OPS, 2);
+    const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 3);
 
     // Create and update group
     const createdGroup = await user.chat.group.create(
@@ -127,11 +134,30 @@ describe.only('PushStream.initialize functionality', () => {
       CREATE_GROUP_REQUEST
     );
 
+    console.log(createdGroup.chatId);
+    console.log(signer2.address);
+
+    //const w2wRejectRequest = await user2.chat.group.join(createdGroup.chatId);
+
+    const updatedGroup = await user.chat.group.add(createdGroup.chatId, {
+      role: 'ADMIN',
+      accounts: [signer2.address, signer3.address, signer4.address],
+    });
+
     const w2wRejectRequest = await user2.chat.group.join(createdGroup.chatId);
 
-    console.log(w2wRejectRequest);
+    const updatedGroup2 = await user2.chat.group.leave(createdGroup.chatId);
 
-    /*const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
+    /*const w2wMessageResponse = await user2.chat.send(signer.address, {
+      content: MESSAGE,
+    });
+    const w2wAcceptsRequest = await user.chat.accept(signer2.address);
+
+    const w2wMessageResponse2 = await user2.chat.send(signer.address, {
+      content: MESSAGE,
+    });
+
+    const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
       description: 'Updated Description',
     });
 
@@ -140,10 +166,7 @@ describe.only('PushStream.initialize functionality', () => {
       type: MessageType.TEXT,
     });
 
-    const w2wMessageResponse = await user2.chat.send(signer.address, {
-      content: MESSAGE,
-    });
-    const w2wAcceptsRequest = await user.chat.accept(signer2.address);
+  
 
     const w2wMessageResponse2 = await user2.chat.send(signer.address, {
          content: MESSAGE,
@@ -154,27 +177,33 @@ describe.only('PushStream.initialize functionality', () => {
     });
     const w2wRejectRequest = await user.chat.reject(signer3.address);*/
 
-    // Timeout promise
+    let timeoutTriggered = false;
+
     const timeout = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Timeout after 5 seconds')), 5);
+      setTimeout(() => {
+        timeoutTriggered = true;
+        reject(new Error('Timeout after 5 seconds'));
+      }, 5000);
     });
 
-    // Wait for either one of the events to be emitted or for the timeout
+    // Wrap the Promise.allSettled inside a Promise.race with the timeout
     try {
-      const results = await Promise.allSettled([
-        onDataReceived,
-        onMessageReceived,
+      const result = await Promise.race([
+        Promise.allSettled([onDataReceived, onMessageReceived]),
         timeout,
       ]);
 
-      results.forEach((result) => {
-        if (result.status === 'rejected') {
-          console.error(result.reason);
-        } else {
-          // Handle result.value if necessary
-          console.log(result.value);
-        }
-      });
+      if (timeoutTriggered) {
+        console.error('Timeout reached before events were emitted.');
+      } else {
+        (result as PromiseSettledResult<any>[]).forEach((outcome) => {
+          if (outcome.status === 'fulfilled') {
+            //console.log(outcome.value);
+          } else if (outcome.status === 'rejected') {
+            console.error(outcome.reason);
+          }
+        });
+      }
     } catch (error) {
       console.error(error);
     }

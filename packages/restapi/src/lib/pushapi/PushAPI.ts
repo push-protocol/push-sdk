@@ -508,6 +508,7 @@ export class PushAPI {
         const status = await PUSH_CHAT.getGroupMemberStatus({
           chatId: target,
           did: this.account,
+          env: this.env,
         });
 
         if (status.isPending) {
@@ -536,14 +537,31 @@ export class PushAPI {
       },
 
       leave: async (target: string): Promise<GroupDTO> => {
-        return await PUSH_CHAT.removeMembers({
+        const status = await PUSH_CHAT.getGroupMemberStatus({
           chatId: target,
-          members: [this.account],
+          did: this.account,
           env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
         });
+
+        if (status.isAdmin) {
+          return await PUSH_CHAT.removeAdmins({
+            chatId: target,
+            admins: [this.account],
+            env: this.env,
+            account: this.account,
+            signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
+          });
+        } else {
+          return await PUSH_CHAT.removeMembers({
+            chatId: target,
+            members: [this.account],
+            env: this.env,
+            account: this.account,
+            signer: this.signer,
+            pgpPrivateKey: this.decryptedPgpPvtKey,
+          });
+        }
       },
 
       reject: async (target: string): Promise<void> => {
