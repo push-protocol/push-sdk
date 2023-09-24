@@ -96,6 +96,11 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
+    it('Without signer and account : Should return response without passing the options', async () => {
+        const res = await userKate.channel.subscribers();
+        expect(res).not.null;
+      });
+
     it('Without signer and account : Should throw error for invalid caip', async () => {
       await expect(() =>
         userBob.channel.subscribers({

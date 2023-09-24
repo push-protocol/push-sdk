@@ -575,8 +575,13 @@ export class PushNotifications {
      */
     subscribers: async (options?: ChannelInfoOptions) => {
       try {
-        const { channel } = options || {};
-        this.checkUserAddressExists(channel);
+        const {
+          channel = this.account
+            ? getFallbackETHCAIPAddress(this.env!, this.account!)
+            : null,
+        } = options || {};
+
+        this.checkUserAddressExists(channel!);
         if (!validateCAIP(channel!)) {
           throw new Error('Invalid CAIP');
         }
@@ -811,6 +816,9 @@ export class PushNotifications {
     verify: async (channelToBeVerified: string) => {
       try {
         this.checkSignerObjectExists();
+        if (validateCAIP(channelToBeVerified)) {
+          channelToBeVerified = channelToBeVerified.split(':')[2];
+        }
         // checks if it is a valid address
         if (!ethers.utils.isAddress(channelToBeVerified)) {
           throw new Error('Invalid channel address');
@@ -826,7 +834,7 @@ export class PushNotifications {
       }
     },
 
-    setting: async (configuration: NotificationSettings) => {
+    settings: async (configuration: NotificationSettings) => {
       try {
         this.checkSignerObjectExists();
         // check for PUSH balance
