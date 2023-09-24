@@ -5,6 +5,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { PushNotifications } from '../../../../src/lib/pushapi/PushNotification'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+import { createWalletClient, http } from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { goerli } from 'viem/chains';
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushNotifications;
@@ -14,7 +17,8 @@ describe('PushAPI.notification functionality', () => {
   let account1: string;
   let signer2: any;
   let account2: string;
-
+  let viemSigner: any;
+  let userViem: PushNotifications;
   beforeEach(async () => {
     signer1 = new ethers.Wallet(
       `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
@@ -30,13 +34,21 @@ describe('PushAPI.notification functionality', () => {
       provider
     );
     account2 = await signer2.getAddress();
-
+    viemSigner = createWalletClient({
+      account: privateKeyToAccount(
+        `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
+      ),
+      chain: goerli,
+      transport: http(),
+    });
     // initialisation with signer and provider
     userKate = await PushNotifications.initialize(signer2);
     // initialisation with signer
     userAlice = await PushNotifications.initialize(signer1);
     // initialisation without signer
     userBob = await PushNotifications.initialize();
+    // initialisation with viem
+    userViem = await PushNotifications.initialize(viemSigner);
   });
 
   describe('notification :: list', () => {
@@ -47,7 +59,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds with signer object when an account is passed', async () => {
       const response = await userAlice.notification.list('SPAM', {
-        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
       expect(response.length).not.equal(0);
@@ -55,7 +67,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds without signer object when an account is passed', async () => {
       const response = await userBob.notification.list('SPAM', {
-        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
       expect(response.length).not.equal(0);
@@ -70,9 +82,14 @@ describe('PushAPI.notification functionality', () => {
       expect(response).not.null;
     });
 
+    it('Should return feeds when viem is used', async () => {
+      const response = await userViem.notification.list('SPAM');
+      expect(response).not.null;
+    });
+
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('INBOX', {
-        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
         channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
         raw: true,
       });
@@ -131,6 +148,14 @@ describe('PushAPI.notification functionality', () => {
       // console.log(res)
       expect(res).not.null;
     });
+
+    it('With viem signer and provider: Should subscribe', async () => {
+      const res = await userViem.notification.subscribe(
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res)
+      expect(res).not.null;
+    });
   });
 
   describe('notification :: subscriptions', () => {
@@ -156,66 +181,66 @@ describe('PushAPI.notification functionality', () => {
 
   // TO RUN THIS, MAKE THE PRIVATE FUNTIONS PUBLIC
   // describe('debug :: test private functions', () => {
-    //     it('Fetching data from contract', async () => {
-    //       const contract = userKate.createContractInstance(
-    //         '0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-    //         tokenABI
-    //       );
-    //       const balance = await contract['balanceOf'](
-    //         '0xD8634C39BBFd4033c0d3289C4515275102423681'
-    //       );
-    //       console.log(balance.toString());
-    //       const fees = ethers.utils.parseUnits('50', 18);
-    //       console.log(fees)
-    //       console.log(fees.lte(balance))
-    //     });
+  //     it('Fetching data from contract', async () => {
+  //       const contract = userKate.createContractInstance(
+  //         '0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
+  //         tokenABI
+  //       );
+  //       const balance = await contract['balanceOf'](
+  //         '0xD8634C39BBFd4033c0d3289C4515275102423681'
+  //       );
+  //       console.log(balance.toString());
+  //       const fees = ethers.utils.parseUnits('50', 18);
+  //       console.log(fees)
+  //       console.log(fees.lte(balance))
+  //     });
 
-    //     it("Uploading data to ipfs via push node", async () => {
-    //         await userAlice.uploadToIPFSViaPushNode("test")
-    //     })
+  //     it("Uploading data to ipfs via push node", async () => {
+  //         await userAlice.uploadToIPFSViaPushNode("test")
+  //     })
 
-    // it('Should get proper minnimal payload', () => {
-    //   const inputData = [
-    //     {
-    //       type: 0,
-    //       default: 1,
-    //       description: 'test1',
-    //     },
-    //     {
-    //       type: 1,
-    //       default: 10,
-    //       description: 'test2',
-    //       data: {
-    //         upper: 100,
-    //         lower: 1,
-    //       },
-    //     },
-    //   ];
+  // it('Should get proper minnimal payload', () => {
+  //   const inputData = [
+  //     {
+  //       type: 0,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //     {
+  //       type: 1,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //       },
+  //     },
+  //   ];
 
-    //   const minimalSettings = userAlice.getMinimalSetting(inputData);
-    //   console.log(minimalSettings);
-    // });
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   console.log(minimalSettings);
+  // });
 
-    // it('Should get proper minnimal payload', () => {
-    //   const inputData = [
-    //     {
-    //       type: 1,
-    //       default: 10,
-    //       description: 'test2',
-    //       data: {
-    //         upper: 100,
-    //         lower: 1,
-    //       },
-    //     },
-    //     {
-    //       type: 0,
-    //       default: 1,
-    //       description: 'test1',
-    //     },
-    //   ];
+  // it('Should get proper minnimal payload', () => {
+  //   const inputData = [
+  //     {
+  //       type: 1,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //       },
+  //     },
+  //     {
+  //       type: 0,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //   ];
 
-    //   const minimalSettings = userAlice.getMinimalSetting(inputData);
-    //   console.log(minimalSettings);
-    // });
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   console.log(minimalSettings);
+  // });
   // });
 });

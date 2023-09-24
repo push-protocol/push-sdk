@@ -8,12 +8,12 @@ import {
 } from '../types';
 import {
   ChannelInfoOptions,
-  SubscribeUnsubscribeOptionsV2,
-  SubscriptionOptionsV2,
+  SubscribeUnsubscribeOptions,
+  SubscriptionOptions,
   AliasOptions,
   FeedType,
-  FeedsOptionsV2,
-  ChannelSearchOptionsV2,
+  FeedsOptions,
+  ChannelSearchOptions,
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
@@ -32,7 +32,7 @@ import {
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
-import { ethers, Contract, ContractInterface, Signer } from 'ethers';
+import { ethers, Contract, ContractInterface, Signer, BigNumber } from 'ethers';
 import axios from 'axios';
 import { mainnet, goerli } from 'viem/chains';
 import { createPublicClient, http, getContract } from 'viem';
@@ -74,11 +74,9 @@ export class PushNotifications {
   }
   static async initialize(
     signer?: SignerType,
-    env?: ENV
+    options?: { env?: ENV }
   ): Promise<PushNotifications> {
-    if (!env) {
-      env = ENV.STAGING;
-    }
+    const { env = ENV.STAGING } = options || {};
     // Derives account from signer if not provided
     let derivedAccount;
     let coreContract;
@@ -281,7 +279,7 @@ export class PushNotifications {
       );
       return contract;
     } else {
-      throw new Error('viem support coming soon');
+      throw new Error('viem support coming soon for contracts');
     }
     // else if ('signTypedData' in this.signer) {
     //   const client = createPublicClient({
@@ -368,10 +366,12 @@ export class PushNotifications {
      */
     list: async (
       spam: `${FeedType}` = FeedType.INBOX,
-      options?: FeedsOptionsV2
+      options?: FeedsOptions
     ) => {
       const {
-        account = this.account,
+        account = this.account
+          ? getFallbackETHCAIPAddress(this.env!, this.account!)
+          : null,
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
         channels = [],
@@ -380,10 +380,15 @@ export class PushNotifications {
       try {
         // guest mode and valid address check
         this.checkUserAddressExists(account!);
+        if (!validateCAIP(account!)) {
+          throw new Error('Invalid CAIP');
+        }
+        const nonCaipAccount =
+          account?.split(':')[account?.split(':').length - 1];
         if (channels.length == 0) {
           // else return the response
           return await PUSH_USER.getFeeds({
-            user: account!,
+            user: nonCaipAccount!,
             page: page,
             limit: limit,
             spam: FEED_MAP[spam],
@@ -392,7 +397,7 @@ export class PushNotifications {
           });
         } else {
           return await PUSH_USER.getFeedsPerChannel({
-            user: account!,
+            user: nonCaipAccount!,
             page: page,
             limit: limit,
             spam: FEED_MAP[spam],
@@ -402,13 +407,11 @@ export class PushNotifications {
           });
         }
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : notifcaiton::list : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : notifcaiton::list : ${error}`);
       }
     },
 
-    subscriptions: async (options?: SubscriptionOptionsV2) => {
+    subscriptions: async (options?: SubscriptionOptions) => {
       try {
         const {
           account = this.account,
@@ -423,9 +426,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::subscriptions : ${(
-            error
-          )}`
+          `Push SDK Error: API : notifcaiton::subscriptions : ${error}`
         );
       }
     },
@@ -438,7 +439,7 @@ export class PushNotifications {
      */
     subscribe: async (
       channel: string,
-      options?: SubscribeUnsubscribeOptionsV2
+      options?: SubscribeUnsubscribeOptions
     ) => {
       try {
         const { onSuccess, onError } = options || {};
@@ -472,9 +473,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::subscribe : ${(
-            error
-          )}`
+          `Push SDK Error: API : notifcaiton::subscribe : ${error}`
         );
       }
     },
@@ -488,7 +487,7 @@ export class PushNotifications {
      */
     unsubscribe: async (
       channel: string,
-      options?: SubscribeUnsubscribeOptionsV2
+      options?: SubscribeUnsubscribeOptions
     ) => {
       try {
         const { onSuccess, onError } = options || {};
@@ -520,9 +519,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : notifcaiton::unsubscribe : ${(
-            error
-          )}`
+          `Push SDK Error: API : notifcaiton::unsubscribe : ${error}`
         );
       }
     },
@@ -544,9 +541,7 @@ export class PushNotifications {
           env: this.env,
         });
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : channel::info : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : channel::info : ${error}`);
       }
     },
 
@@ -557,7 +552,7 @@ export class PushNotifications {
      * @param {number} [options.limit] - number of feeds per page. default is set to Constants.PAGINATION.LIMIT
      * @returns Array of results relevant to the serach query
      */
-    search: async (query: string, options?: ChannelSearchOptionsV2) => {
+    search: async (query: string, options?: ChannelSearchOptions) => {
       try {
         const {
           page = Constants.PAGINATION.INITIAL_PAGE,
@@ -570,9 +565,7 @@ export class PushNotifications {
           env: this.env,
         });
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : channel::search : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : channel::search : ${error}`);
       }
     },
     /**
@@ -593,9 +586,7 @@ export class PushNotifications {
         });
       } catch (error) {
         throw new Error(
-          `Push SDK Error: API : channel::subscribers : ${(
-            error
-          )}`
+          `Push SDK Error: API : channel::subscribers : ${error}`
         );
       }
     },
@@ -617,9 +608,7 @@ export class PushNotifications {
         });
         return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : channel::send : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : channel::send : ${error}`);
       }
     },
 
@@ -676,13 +665,18 @@ export class PushNotifications {
         };
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
         // approve the tokens to core contract
-        progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
-        const approvalTrxPromise = pushTokenContract!['approve'](
-          config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
-          fees
-        );
-        const approvalTrx = await approvalTrxPromise;
-        await this.signer.provider.waitForTransaction(approvalTrx.hash);
+        const allowanceAmount: BigNumber = await pushTokenContract![
+          'allowance'
+        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        if (!allowanceAmount.gte(fees)) {
+          progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
+          const approvalTrxPromise = pushTokenContract!['approve'](
+            config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
+            fees
+          );
+          const approvalTrx = await approvalTrxPromise;
+          await this.signer.provider.waitForTransaction(approvalTrx.hash);
+        }
         // generate the contract parameters
         const channelType = config.CHANNEL_TYPE['GENERAL'];
         const identity = '1+' + cid;
@@ -709,9 +703,7 @@ export class PushNotifications {
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Create Channel', error));
         throw new Error(
-          `Push SDK Error: Contract : createChannelWithPUSH : ${(
-            error
-          )}`
+          `Push SDK Error: Contract : createChannelWithPUSH : ${error}`
         );
       }
     },
@@ -769,13 +761,19 @@ export class PushNotifications {
         };
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
         // approve the tokens to core contract
-        progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
-        const approvalTrxPromise = pushTokenContract!['approve'](
-          config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
-          fees
-        );
-        const approvalTrx = await approvalTrxPromise;
-        await this.signer.provider.waitForTransaction(approvalTrx.hash);
+        const allowanceAmount: BigNumber = await pushTokenContract![
+          'allowance'
+        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        // if allowance is not greater than the fees, dont call approval again
+        if (!allowanceAmount.gte(fees)) {
+          progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
+          const approvalTrxPromise = pushTokenContract!['approve'](
+            config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
+            fees
+          );
+          const approvalTrx = await approvalTrxPromise;
+          await this.signer.provider.waitForTransaction(approvalTrx.hash);
+        }
         // generate the contract parameters
         const identity = '1+' + cid;
         const identityBytes = ethers.utils.toUtf8Bytes(identity);
@@ -802,9 +800,7 @@ export class PushNotifications {
           'PUSH-ERROR-02'
         ] as ProgressHookTypeFunction;
         progressHook?.(errorProgressHook('Update Channel', error));
-        throw new Error(
-          `Push SDK Error: Contract channel::update : ${error}`
-        );
+        throw new Error(`Push SDK Error: Contract channel::update : ${error}`);
       }
     },
     /**
@@ -826,9 +822,7 @@ export class PushNotifications {
         await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
         return { transactionHash: verifyTrx.hash };
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: Contract channel::verify : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: Contract channel::verify : ${error}`);
       }
     },
 
@@ -848,6 +842,18 @@ export class PushNotifications {
         if (fees.gte(balance)) {
           throw new Error('Insufficient PUSH balance');
         }
+        const allowanceAmount: BigNumber = await pushTokenContract![
+          'allowance'
+        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        // if allowance is not greater than the fees, dont call approval again
+        if (!allowanceAmount.gte(fees)) {
+          const approvalTrxPromise = pushTokenContract!['approve'](
+            config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
+            fees
+          );
+          const approvalTrx = await approvalTrxPromise;
+          await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
+        }
         const { setting, description } = this.getMinimalSetting(configuration);
         const createChannelSettingPromise = this.coreContract![
           'createChannelSettings'
@@ -859,9 +865,7 @@ export class PushNotifications {
         return { transactionHash: createChannelSettingTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract : channel::setting : ${(
-            error
-          )}`
+          `Push SDK Error: Contract : channel::setting : ${error}`
         );
       }
     },
@@ -889,9 +893,7 @@ export class PushNotifications {
           env: this.env,
         });
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : delegate::get : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : delegate::get : ${error}`);
       }
     },
 
@@ -930,9 +932,7 @@ export class PushNotifications {
         await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
         return { transactionHash: addDelegateTrx.hash };
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: Contract : delegate::add : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: Contract : delegate::add : ${error}`);
       }
     },
 
@@ -972,9 +972,7 @@ export class PushNotifications {
         return { transactionHash: removeDelegateTrx.hash };
       } catch (error) {
         throw new Error(
-          `Push SDK Error: Contract : delegate::remove : ${(
-            error
-          )}`
+          `Push SDK Error: Contract : delegate::remove : ${error}`
         );
       }
     },
@@ -990,9 +988,7 @@ export class PushNotifications {
       try {
         return await PUSH_ALIAS.getAliasInfo({ ...options, env: this.env });
       } catch (error) {
-        throw new Error(
-          `Push SDK Error: API : alias::info : ${(error)}`
-        );
+        throw new Error(`Push SDK Error: API : alias::info : ${error}`);
       }
     },
   };

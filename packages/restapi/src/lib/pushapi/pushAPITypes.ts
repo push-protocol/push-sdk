@@ -51,18 +51,8 @@ export interface GroupUpdateOptions {
   rules?: Rules | null;
 }
 
-export type FeedsOptions = {
-  user?: string;
-  page?: number;
-  limit?: number;
-  spam?: boolean;
-  raw?: boolean;
-};
 
 export type SubscriptionOptions = {
-  user?: string;
-};
-export type SubscriptionOptionsV2 = {
   account?: string;
   page?: number;
   limit?: number;
@@ -71,20 +61,7 @@ export type ChannelInfoOptions = {
   channel?: string;
 };
 
-export type ChannelSearchOptions = {
-  query: string;
-  page?: number;
-  limit?: number;
-};
-
 export type SubscribeUnsubscribeOptions = {
-  channelAddress: string;
-  verifyingContractAddress?: string;
-  onSuccess?: () => void;
-  onError?: (err: Error) => void;
-};
-
-export type SubscribeUnsubscribeOptionsV2 = {
   onSuccess?: () => void;
   onError?: (err: Error) => void;
 };
@@ -96,7 +73,7 @@ export enum FeedType {
   SPAM = 'SPAM',
 }
 
-export type FeedsOptionsV2 = {
+export type FeedsOptions = {
   account?: string;
   //TODO: change it to string[] once we start supporting multiple channel
   channels?: [string];
@@ -105,7 +82,7 @@ export type FeedsOptionsV2 = {
   raw?: boolean;
 };
 
-export type ChannelSearchOptionsV2 = {
+export type ChannelSearchOptions = {
   page?: number;
   limit?: number;
 };
