@@ -1,8 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { Player } from '@livepeer/react';
 import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
+
+// livekit imports
+import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
+import { Room } from 'livekit-client';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
@@ -12,7 +16,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 import CircularProgressSpinner from '../../loader/loader';
 
-import { Button, Image, Item, Text } from '../../../config';
+import { Button, Image, Item, LIVEKIT_SERVER_URL, Text } from '../../../config';
 import MicOnIcon from '../../../icons/micon.svg';
 import MicEngagedIcon from '../../../icons/MicEngage.svg';
 import MuteIcon from '../../../icons/Muted.svg';
@@ -21,6 +25,7 @@ import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
 import { pCAIP10ToWallet } from '../../../helpers';
+import { getLivekitRoomToken } from '../../../services';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -41,6 +46,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const [isRequestedForMic, setIsRequestedForMic] = useState(false);
 
   const [promotedListener, setPromotedListener] = useState('');
+  const [livekitToken, setLivekitToken] = useState(null);
 
   const theme = useContext(ThemeContext);
 
@@ -62,6 +68,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
   };
+
+  useEffect(() => {
+    (async function () {
+      if(isListener && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
+        setLivekitToken(livekitToken.data);
+      }
+    })();
+  }, [isListener, spaceData]);
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
@@ -203,6 +218,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     if (!spaceObjectData?.meta) return;
     setPlayBackUrl(spaceObjectData?.meta);
   }, [spaceObjectData?.meta]);
+
+  const livekitRoom = useMemo(() => new Room(), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -422,6 +439,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               <PeerPlayerDiv>
                 <Player title="spaceAudio" playbackId={playBackUrl} autoPlay />
               </PeerPlayerDiv>
+            )}
+            {isListener && !isHost && livekitToken && (
+              <LiveKitRoom
+                serverUrl={LIVEKIT_SERVER_URL}
+                token={livekitToken}
+                room={livekitRoom}
+              >
+                <RoomAudioRenderer />
+              </LiveKitRoom>
             )}
           </Item>
         ) : (
