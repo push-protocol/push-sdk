@@ -64,9 +64,9 @@ const chains = [
   }
 ]
 
-const wallets = [injectedModule({
-  displayUnavailable: [ProviderLabel.MetaMask]
-}), walletConnect, coinbaseWalletSdk]
+
+const wallets = [injectedModule(), walletConnect, coinbaseWalletSdk]
+
 
 
 const appMetadata = {
