@@ -4,7 +4,7 @@ import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { ConnectButtonSub } from './ConnectButton';
 import { InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
-import injectedModule from '@web3-onboard/injected-wallets';
+import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
 import { ethers } from 'ethers';
@@ -64,7 +64,9 @@ const chains = [
   }
 ]
 
-const wallets = [injectedModule(), walletConnect,coinbaseWalletSdk]
+const wallets = [injectedModule({
+  displayUnavailable: [ProviderLabel.MetaMask]
+}), walletConnect, coinbaseWalletSdk]
 
 
 const appMetadata = {
@@ -98,7 +100,7 @@ interface IConnectButtonCompProps {
   autoConnect?: boolean;
 }
 
-export const ConnectButtonComp:React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
+export const ConnectButtonComp: React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
   return (
     <Web3OnboardProvider web3Onboard={web3OnBoard}>
       <ConnectButtonSub autoConnect={autoConnect} />
