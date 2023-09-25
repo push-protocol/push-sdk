@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
@@ -161,6 +161,7 @@ export const GroupInfoModal = ({
     adminList: Array<string>;
     memberList: Array<string>;
   };
+
   const handleUpdateGroup = async (options: UpdateGroupType) => {
     const { adminList, memberList } = options || {};
     const updateResponse = await updateGroup({
@@ -391,7 +392,7 @@ export const GroupInfoModal = ({
               </Section>
             </PublicEncrypted>
 
-            {isAccountOwnerAdmin(groupInfo, account!) &&
+            {!isAccountOwnerAdmin(groupInfo, account!) &&
               groupInfo?.members &&
               groupInfo?.members?.length < 10 && (
                 <AddWalletContainer
@@ -442,7 +443,7 @@ export const GroupInfoModal = ({
                     key={index}
                     member={item}
                     dropdownValues={
-                      item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
+                      !item?.isAdmin && !isAccountOwnerAdmin(groupInfo, account!)
                         ? [removeAdminDropdown, removeMemberDropdown]
                         : isAccountOwnerAdmin(groupInfo, account!)
                         ? [addAdminDropdown, removeMemberDropdown]

@@ -75,9 +75,9 @@ export const MemberProfileCard = ({
             Admin
           </Span>
         )}
-        {pCAIP10ToWallet(member?.wallet)?.toLowerCase() !==
+        {/* {pCAIP10ToWallet(member?.wallet)?.toLowerCase() !==
           account?.toLowerCase() &&
-          dropdownValues.length > 0 && (
+          dropdownValues.length > 0 && ( */}
             <Section
               maxWidth="fit-content"
               padding="0 0px 0 0"
@@ -91,7 +91,7 @@ export const MemberProfileCard = ({
             >
               <MoreLightIcon fill={theme.iconColor?.groupSettings} />
             </Section>
-          )}
+          {/* )} */}
       </Section>
       {selectedMemberAddress?.toLowerCase() ==
         member?.wallet?.toLowerCase() && (
@@ -139,7 +139,7 @@ const DropdownContainer = styled(Section)`
   display: flex;
   flex-direction: column !important;
   background: ${(props) => props.theme.backgroundColor.modalBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.theme.border.modal};
 
   @media ${device.mobileL} {
     left: 27%;

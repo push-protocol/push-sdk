@@ -72,12 +72,13 @@ const useToast = (
 
   const showLoaderToast: ShowLoaderToastType = ({ loaderMessage }) => {
     isLoaderToastShown = true;
+    console.log("in here")
     return (toastId.current = toast(
       <ThemeProvider theme={theme}>
         <LoaderToast
           msg={loaderMessage}
-          loaderColor="#CF1C84"
-          textColor={theme.snackbarBorderText!}
+          loaderColor={theme.spinnerColor!}
+          textColor={theme.textColor!.modalHeadingText!}
         />
       </ThemeProvider>,
       {
@@ -90,9 +91,9 @@ const useToast = (
         progress: undefined,
         closeButton: false,
         style: {
-          background: theme.mainBg,
-          border: `1px solid ${theme.toastBorderColor}`,
-          boxShadow: `8px 8px 8px ${theme.toastShadowColor}`,
+          background: theme.backgroundColor?.modalBackground,
+          border: theme.border?.modalInnerComponents,
+          boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
           borderRadius: '20px',
         },
       }
@@ -100,21 +101,21 @@ const useToast = (
   };
 
   const showMessageToast: ShowMessageToastType = ({ toastTitle, toastMessage, toastType, getToastIcon }) => {
-    
+    console.log('show message toast')
     const toastUI = (
       <Toast>
         <ToastIcon>{getToastIcon ? getToastIcon(30) : ''}</ToastIcon>
         <ToastContent>
           <ToastTitle
             style={{
-              color: theme.textColor?.chatReceivedBubbleText,
+              color: theme.textColor?.modalHeadingText,
             }}
           >
             {toastTitle}
           </ToastTitle>
           <ToastMessage
             style={{
-              color: theme.snackbarBorderText,
+              color: theme.textColor?.modalSubHeadingText,
             }}
           >
             {toastMessage}
@@ -134,8 +135,8 @@ const useToast = (
       closeButton: CloseButton,
       autoClose: autoClose,
       style: {
-        background: toastType === 'SUCCESS' ? theme.toastSuccessBackground : theme.toastErrorBackground,
-        boxShadow: `10px 10px 10px ${theme.toastShadowColor}`,
+        background: toastType === 'SUCCESS' ? theme.backgroundColor?.toastSuccessBackground : theme.backgroundColor?.toastErrorBackground,
+        boxShadow: `10px 10px 10px ${theme.backgroundColor?.toastShadowBackground}`,
         borderRadius: '20px',
         margin: isMobile ? '20px' : '0px',
       },

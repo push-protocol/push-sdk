@@ -66,7 +66,7 @@ const ModalOverlay = styled.div<IModalProps>`
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
     display: flex;
-    color: ${(props) => props.theme.backgroundColor.modalBackground?? '#000'};
+    color: ${(props) => props.theme.textColor.modalHeadingText?? '#000'};
     justify-content: center;
     align-items: center;
     z-index: 2000;

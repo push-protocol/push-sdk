@@ -222,6 +222,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       const response = await approveChatRequest({
         chatId,
       });
+      
       if (response) await updateChatFeed();
     } else {
       const sendTextMessage = await sendMessage({

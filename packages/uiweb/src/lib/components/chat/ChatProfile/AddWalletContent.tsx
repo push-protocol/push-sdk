@@ -7,7 +7,6 @@ import { useChatData } from '../../../hooks';
 import { MdError } from 'react-icons/md';
 
 import { Spinner } from '../../supportChat/spinner/Spinner';
-import { MoreLightIcon } from '../../../icons/MoreLight';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { Section, Span, Image } from '../../reusables/sharedStyling';
 import { AddUserDarkIcon } from '../../../icons/Adddark';
@@ -27,7 +26,6 @@ import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { BackIcon } from '../../../icons/Back';
 
 
-//add back button ---> done
 type AddWalletContentProps = {
   onSubmit: () => void;
   onClose: () => void;
@@ -64,7 +62,13 @@ export const AddWalletContent = ({
   };
 
   const handleSearch = async ({searchedText}:{searchedText:string}): Promise<void> => {
-    //fix ens search ---> done
+    //fix ens search 
+    // groupInfoToast.showMessageToast({
+    //   toastTitle: 'Error',
+    //   toastMessage: 'Invalid Address',
+    //   toastType: 'ERROR',
+    //   getToastIcon: (size) => <MdError size={size} color="red" />,
+    // });
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
       fetchChatProfile,
@@ -74,6 +78,7 @@ export const AddWalletContent = ({
       setFilteredUserData(newChatUser);
     }
     else{
+      console.log("in hereeeeee in valid")
         groupInfoToast.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Invalid Address',
