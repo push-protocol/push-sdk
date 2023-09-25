@@ -11,16 +11,8 @@ import {
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayload } from './helpers';
 import { getGroup } from './getGroup';
-import {
-  MessageObj,
-  REACTION_SYMBOL,
-  ReactionMessage,
-} from '../types/messageTypes';
-import {
-  messageObjSchema,
-  metaMessageObjSchema,
-  reationMessageObjSchema,
-} from '../validations/messageObject';
+import { MessageObj } from '../types/messageTypes';
+import { validateMessageObj } from '../validations/messageObject';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -53,12 +45,6 @@ export const send = async (
           env: env,
         })
       : null;
-
-    // OVERRIDE CONTENT FOR REACTION MESSAGE
-    if (messageType === MessageType.REACTION) {
-      messageObj.content =
-        REACTION_SYMBOL[(messageObj as Omit<ReactionMessage, 'type'>).action];
-    }
 
     const messageContent = messageObj.content; // provide backward compatibility & override deprecated field
 
@@ -138,38 +124,7 @@ const validateOptions = async (options: ComputedOptionsType) => {
     }
   }
 
-  if (
-    messageType === MessageType.TEXT ||
-    messageType === MessageType.IMAGE ||
-    messageType === MessageType.VIDEO ||
-    messageType === MessageType.AUDIO ||
-    messageType === MessageType.FILE ||
-    messageType === MessageType.GIF ||
-    messageType === MessageType.MEDIA_EMBED
-  ) {
-    const { error } = messageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  }
-
-  if (messageType === MessageType.META) {
-    const { error } = metaMessageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  } else if (messageType === MessageType.REACTION) {
-    const { error } = reationMessageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  }
+  validateMessageObj(messageObj, messageType);
 };
 
 const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {

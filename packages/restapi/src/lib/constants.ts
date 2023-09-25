@@ -35,11 +35,12 @@ export enum MessageType {
   MEDIA_EMBED = 'MediaEmbed',
   META = 'Meta',
   REACTION = 'Reaction',
-
-  // TODO
-  // PAYMENT = 'Payment',
-  // REPLY = 'Reply',
-  // COMPOSITE = 'Composite',
+  READ_RECEIPT = 'ReadReceipt',
+  USER_ACTIVITY = 'UserActivity',
+  INTENT = 'Intent',
+  REPLY = 'Reply',
+  COMPOSITE = 'Composite',
+  PAYMENT = 'Payment',
 }
 
 const Constants = {
