@@ -17,7 +17,7 @@ import {
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
-} from './pushAPITypes';
+} from './PushNotificationTypes';
 import CONFIG, * as config from '../config';
 import * as PUSH_USER from '../user';
 import * as PUSH_PAYLOAD from '../payloads';
@@ -35,7 +35,14 @@ import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
 import { ethers, Contract, ContractInterface, Signer, BigNumber } from 'ethers';
 import axios from 'axios';
 import { mainnet, goerli } from 'viem/chains';
-import { createPublicClient, http, getContract } from 'viem';
+import {
+  createPublicClient,
+  http,
+  getContract,
+  GetContractReturnType,
+  WalletClient,
+  Chain,
+} from 'viem';
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -53,7 +60,7 @@ export const FEED_MAP = {
   INBOX: false,
   SPAM: true,
 };
-export class PushNotifications {
+export class PushNotification {
   private signer: SignerType | undefined;
   private account: string | undefined;
   private env: ENV | undefined;
@@ -64,7 +71,7 @@ export class PushNotifications {
     signer?: SignerType,
     env?: ENV,
     account?: string,
-    coreContract?: Contract
+    coreContract?: any
   ) {
     this.signer = signer;
     this.env = env;
@@ -75,28 +82,46 @@ export class PushNotifications {
   static async initialize(
     signer?: SignerType,
     options?: { env?: ENV }
-  ): Promise<PushNotifications> {
+  ): Promise<PushNotification> {
     const { env = ENV.STAGING } = options || {};
     // Derives account from signer if not provided
     let derivedAccount;
     let coreContract;
     if (signer) {
-      derivedAccount = await getAccountAddress({
-        account: null,
-        signer: signer,
-      });
-      // provider is presenet then initiate the contract
-      if (signer.provider) {
-        coreContract = new ethers.Contract(
-          config.CORE_CONFIG[env].EPNS_CORE_CONTRACT,
-          config.ABIS.CORE,
-          signer as unknown as Signer
-        );
+      if (!('_signTypedData' in signer!) && !('signTypedData' in signer!)) {
+        throw new Error('Unsupported signer type');
+      } else if ('_signTypedData' in signer) {
+        derivedAccount = await getAccountAddress({
+          account: null,
+          signer: signer,
+        });
+        if (signer?.provider) {
+          coreContract = new ethers.Contract(
+            config.CORE_CONFIG[env].EPNS_CORE_CONTRACT,
+            config.ABIS.CORE,
+            signer as unknown as Signer
+          );
+        }
+      } else if ('signTypedData' in signer) {
+        derivedAccount = await getAccountAddress({
+          account: null,
+          signer: signer,
+        });
+        const client = createPublicClient({
+          chain: config.TOKEN_VIEM_NETWORK_MAP[env],
+          transport: http(),
+        });
+        coreContract = getContract({
+          abi: config.ABIS.CORE,
+          address: config.CORE_CONFIG[env].EPNS_CORE_CONTRACT as `0x${string}`,
+          publicClient: client,
+          walletClient: signer as unknown as WalletClient,
+        });
       }
     }
 
     // Initialize PushNotifications instance
-    return new PushNotifications(
+    return new PushNotification(
       signer,
       env as ENV,
       derivedAccount,
@@ -258,42 +283,342 @@ export class PushNotifications {
   }
 
   // create contract instance
-  private createContractInstance(
+  public createContractInstance(
     contractAddress: string | `0x${string}`,
-    contractABI: ethers.ContractInterface
+    contractABI: any,
+    network: Chain
   ) {
-    this.checkSignerObjectExists();
-    if (!this.signer?.provider) {
-      throw new Error('Provider is required');
-    }
+    let contract: any;
     if (
-      !('_signTypedData' in this.signer) &&
-      !('signTypedData' in this.signer)
+      !('_signTypedData' in this.signer!) &&
+      !('signTypedData' in this.signer!)
     ) {
       throw new Error('Unsupported signer type');
     } else if ('_signTypedData' in this.signer) {
-      const contract = new ethers.Contract(
+      if (!this.signer?.provider) {
+        throw new Error('Provider is required');
+      }
+      contract = new ethers.Contract(
         contractAddress,
         contractABI,
         this.signer as unknown as Signer
       );
-      return contract;
+    } else if ('signTypedData' in this.signer) {
+      const client = createPublicClient({
+        chain: network,
+        transport: http(),
+      });
+      contract = getContract({
+        abi: contractABI,
+        address: contractAddress as `0x${string}`,
+        publicClient: client,
+        walletClient: this.signer as unknown as WalletClient,
+      });
     } else {
-      throw new Error('viem support coming soon for contracts');
+      throw new Error('Unsupported signer type');
     }
-    // else if ('signTypedData' in this.signer) {
-    //   const client = createPublicClient({
-    //     chain: mainnet,
-    //     transport: http()
-    //   })
-    //   const contract = getContract({
-    //     abi: contractABI ,
-    //     address: contractAddress as `0x${string}`,
-    //     publicClient: client
-    //   })
-    // } else{
-    //   throw new Error("Unsupported signer type")
-    // }
+    return contract;
+  }
+
+  private async fetchBalance(contract: any, userAddress: string) {
+    let balance: BigNumber;
+    try {
+      if ('_signTypedData' in this.signer!) {
+        balance = await contract!['balanceOf'](userAddress);
+      } else if ('signTypedData' in this.signer!) {
+        const balanceInBigInt = await contract.read.balanceOf({
+          args: [userAddress],
+        });
+        balance = ethers.BigNumber.from(balanceInBigInt);
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return balance;
+    } catch (error) {
+      console.log(error);
+      throw new Error(JSON.stringify(error));
+    }
+  }
+
+  private async fetchAllownace(
+    contract: any,
+    userAddress: string,
+    spenderAddress: string
+  ) {
+    let allowance: BigNumber;
+    try {
+      if ('_signTypedData' in this.signer!) {
+        allowance = await contract!['allowance'](userAddress, spenderAddress);
+      } else if ('signTypedData' in this.signer!) {
+        const allowanceInBigInt = await contract.read.allowance({
+          args: [userAddress, spenderAddress],
+        });
+        allowance = ethers.BigNumber.from(allowanceInBigInt);
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return allowance;
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
+    }
+  }
+
+  private async approveToken(
+    contract: any,
+    spenderAddress: string,
+    amount: string | BigNumber
+  ) {
+    try {
+      if ('_signTypedData' in this.signer!) {
+        if (!this.signer || !this.signer.provider) {
+          throw new Error('ethers provider/signer is not provided');
+        }
+        const approvalTrxPromise = contract!['approve'](spenderAddress, amount);
+        const approvalTrx = await approvalTrxPromise;
+        await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
+        // console.log(approvalTrx.hash)
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const approvalTrxPromise = contract.write.approve({
+          args: [spenderAddress, amount],
+        });
+        const approvalTrxRes = await approvalTrxPromise;
+        // console.log(approvalTrxRes);
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  private async createChannel(
+    contract: any,
+    channelType: number,
+    identityBytes: Uint8Array,
+    fees: BigNumber
+  ) {
+    let createChannelRes;
+    try {
+      if (!this.signer || !this.signer.provider) {
+        throw new Error('ethers provider/signer is not provided');
+      }
+      if ('_signTypedData' in this.signer!) {
+        const createChannelPromise = contract!['createChannelWithPUSH'](
+          channelType,
+          identityBytes,
+          fees,
+          this.getTimeBound(),
+          {
+            gasLimit: 1000000,
+          }
+        );
+        const createChannelTrx = await createChannelPromise;
+        const createChannelTrxStatus =
+          await this.signer?.provider?.waitForTransaction(
+            createChannelTrx.hash
+          );
+        if (createChannelTrxStatus?.status == 0) {
+          throw new Error('Something Went wrong while creating your channel');
+        }
+        createChannelRes = createChannelTrx.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const createChannelPromise = contract.write.createChannelWithPUSH({
+          args: [channelType, identityBytes, fees, this.getTimeBound()],
+        });
+        createChannelRes = await createChannelPromise;
+      }
+
+      return createChannelRes;
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  }
+
+  private async updateChannel(
+    contract: any,
+    account: string,
+    identityBytes: Uint8Array,
+    fees: BigNumber
+  ) {
+    let updateChannelRes;
+    try {
+      if (!this.signer || !this.signer.provider) {
+        throw new Error('ethers provider/signer is not provided');
+      }
+      if ('_signTypedData' in this.signer!) {
+        const updateChannelPromise = contract!['updateChannelMeta'](
+          account,
+          identityBytes,
+          fees,
+          {
+            gasLimit: 1000000,
+          }
+        );
+        const updateChannelTrx = await updateChannelPromise;
+        const updateChannelTrxStatus =
+          await this.signer?.provider?.waitForTransaction(
+            updateChannelTrx.hash
+          );
+        if (updateChannelTrxStatus?.status == 0) {
+          throw new Error('Something Went wrong while creating your channel');
+        }
+        updateChannelRes = updateChannelTrx.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const updateChannelPromise = contract.write.createChannelWithPUSH({
+          args: [account, identityBytes, fees],
+        });
+        updateChannelRes = await updateChannelPromise;
+      }
+
+      return updateChannelRes;
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  }
+
+  private async verifyChannel(contract: any, channelToBeVerified: string) {
+    try {
+      let verifyTrxRes;
+      if ('_signTypedData' in this.signer!) {
+        if (!this.signer || !this.signer.provider) {
+          throw new Error('ethers provider/signer is not provided');
+        }
+        const verifyTrxPromise = contract!['verify'](channelToBeVerified);
+        const verifyTrx = await verifyTrxPromise;
+        await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
+        verifyTrxRes = verifyTrx.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const verifyTrxPromise = contract.write.verify({
+          args: [channelToBeVerified],
+        });
+        verifyTrxRes = await verifyTrxPromise;
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return verifyTrxRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  private async createChanelSettings(
+    contract: any,
+    numberOfSettings: number,
+    settings: string,
+    description: string,
+    fees: BigNumber
+  ) {
+    try {
+      let createSettingsRes;
+      if ('_signTypedData' in this.signer!) {
+        if (!this.signer || !this.signer.provider) {
+          throw new Error('ethers provider/signer is not provided');
+        }
+        const createSettingsPromise = contract!['createChannelSettings'](
+          numberOfSettings,
+          settings,
+          description,
+          fees
+        );
+        const createSettings = await createSettingsPromise;
+        await this.signer?.provider?.waitForTransaction(createSettings.hash);
+        createSettingsRes = createSettings.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const createSettingsTrxPromise = contract.write.createChannelSettings({
+          args: [numberOfSettings, settings, description, fees],
+        });
+        createSettingsRes = await createSettingsTrxPromise;
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return createSettingsRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  private async addDelegator(contract: any, delegatee: string) {
+    try {
+      let addDelegateRes;
+      if ('_signTypedData' in this.signer!) {
+        if (!this.signer || !this.signer.provider) {
+          throw new Error('ethers provider/signer is not provided');
+        }
+        const addDelegateTrxPromise = contract!['addDelegate'](delegatee);
+        const addDelegateTrx = await addDelegateTrxPromise;
+        await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
+        addDelegateRes = addDelegateTrx.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const addDelegateTrxPromise = contract.write.addDelegate({
+          args: [delegatee],
+        });
+        addDelegateRes = await addDelegateTrxPromise;
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return addDelegateRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  private async removeDelegator(contract: any, delegatee: string) {
+    try {
+      let removeDelegateRes;
+      if ('_signTypedData' in this.signer!) {
+        if (!this.signer || !this.signer.provider) {
+          throw new Error('ethers provider/signer is not provided');
+        }
+        const removeDelegateTrxPromise = contract!['removeDelegate'](delegatee);
+        const removeDelegateTrx = await removeDelegateTrxPromise;
+        await this.signer?.provider?.waitForTransaction(removeDelegateTrx.hash);
+        removeDelegateRes = removeDelegateTrx.hash;
+      } else if ('signTypedData' in this.signer!) {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const removeDelegateTrxPromise = contract.write.removeDelegate({
+          args: [delegatee],
+        });
+        removeDelegateRes = await removeDelegateTrxPromise;
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      return removeDelegateRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  private async getChianId(signer: SignerType) {
+    let chainId;
+    if ('_signTypedData' in signer!) {
+      const chainDetails = await signer?.provider?.getNetwork();
+      chainId = chainDetails?.chainId;
+    } else if ('signTypedData' in signer!) {
+      chainId = await signer.getChainId();
+    }
+    return chainId;
   }
 
   private async uploadToIPFSViaPushNode(data: string): Promise<string> {
@@ -638,9 +963,13 @@ export class PushNotifications {
         // check for PUSH balance
         const pushTokenContract = await this.createContractInstance(
           config.TOKEN[this.env!],
-          config.ABIS.TOKEN
+          config.ABIS.TOKEN,
+          config.TOKEN_VIEM_NETWORK_MAP[this.env!]
         );
-        const balance = await pushTokenContract!['balanceOf'](this.account);
+        const balance = await this.fetchBalance(
+          pushTokenContract,
+          this.account!
+        );
         const fees = ethers.utils.parseUnits(
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
@@ -669,18 +998,21 @@ export class PushNotifications {
           aliasDetails: aliasInfo ?? {},
         };
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
-        // approve the tokens to core contract
-        const allowanceAmount: BigNumber = await pushTokenContract![
-          'allowance'
-        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        const allowanceAmount = await this.fetchAllownace(
+          pushTokenContract,
+          this.account!,
+          config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
+        );
         if (!allowanceAmount.gte(fees)) {
           progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
-          const approvalTrxPromise = pushTokenContract!['approve'](
+          const approvalRes = await this.approveToken(
+            pushTokenContract,
             config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
             fees
           );
-          const approvalTrx = await approvalTrxPromise;
-          await this.signer.provider.waitForTransaction(approvalTrx.hash);
+          if (!approvalRes) {
+            throw new Error('Something went wrong while approving the token');
+          }
         }
         // generate the contract parameters
         const channelType = config.CHANNEL_TYPE['GENERAL'];
@@ -688,20 +1020,14 @@ export class PushNotifications {
         const identityBytes = ethers.utils.toUtf8Bytes(identity);
         // call contract
         progressHook?.(PROGRESSHOOK['PUSH-CREATE-03'] as ProgressHookType);
-        const createChannelPromise = this.coreContract![
-          'createChannelWithPUSH'
-        ](channelType, identityBytes, fees, this.getTimeBound(), {
-          gasLimit: 1000000,
-        });
-        const createChannelTrx = await createChannelPromise;
-        const createChannelTrxStatus =
-          await this.signer.provider.waitForTransaction(createChannelTrx.hash);
-        if (createChannelTrxStatus.status == 0) {
-          throw new Error('Something Went wrong while creating your channel');
-        } else {
-          progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
-          return { transactionHash: createChannelTrx.hash };
-        }
+        const createChannelRes = await this.createChannel(
+          this.coreContract,
+          channelType,
+          identityBytes,
+          fees
+        );
+        progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
+        return { transactionHash: createChannelRes };
       } catch (error) {
         const errorProgressHook = PROGRESSHOOK[
           'PUSH-ERROR-02'
@@ -734,9 +1060,13 @@ export class PushNotifications {
         // check for PUSH balance
         const pushTokenContract = await this.createContractInstance(
           config.TOKEN[this.env!],
-          config.ABIS.TOKEN
+          config.ABIS.TOKEN,
+          config.TOKEN_VIEM_NETWORK_MAP[this.env!]
         );
-        const balance = await pushTokenContract!['balanceOf'](this.account);
+        const balance = await this.fetchBalance(
+          pushTokenContract,
+          this.account!
+        );
         const fees = ethers.utils.parseUnits(
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
@@ -766,40 +1096,36 @@ export class PushNotifications {
         };
         const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
         // approve the tokens to core contract
-        const allowanceAmount: BigNumber = await pushTokenContract![
-          'allowance'
-        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        const allowanceAmount = await this.fetchAllownace(
+          pushTokenContract,
+          this.account!,
+          config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
+        );
         // if allowance is not greater than the fees, dont call approval again
         if (!allowanceAmount.gte(fees)) {
           progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
-          const approvalTrxPromise = pushTokenContract!['approve'](
+          const approvalRes = await this.approveToken(
+            pushTokenContract,
             config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
             fees
           );
-          const approvalTrx = await approvalTrxPromise;
-          await this.signer.provider.waitForTransaction(approvalTrx.hash);
+          if (!approvalRes) {
+            throw new Error('Something went wrong while approving the token');
+          }
         }
         // generate the contract parameters
         const identity = '1+' + cid;
         const identityBytes = ethers.utils.toUtf8Bytes(identity);
         // call contract
         progressHook?.(PROGRESSHOOK['PUSH-UPDATE-03'] as ProgressHookType);
-        const updateChannelPromise = this.coreContract!['updateChannelMeta'](
-          this.account,
+        const updateChannelRes = await this.updateChannel(
+          this.coreContract,
+          this.account!,
           identityBytes,
-          fees,
-          {
-            gasLimit: 1000000,
-          }
+          fees
         );
-        const updateChannelTrx = await updateChannelPromise;
-        const updateChannelTrxStatus =
-          await this.signer.provider.waitForTransaction(updateChannelTrx.hash);
-        if (updateChannelTrxStatus.status == 0) {
-          throw new Error('Something Went wrong while creating your channel');
-        }
         progressHook?.(PROGRESSHOOK['PUSH-UPDATE-04'] as ProgressHookType);
-        return { transactionHash: updateChannelTrx.hash };
+        return { transactionHash: updateChannelRes };
       } catch (error) {
         const errorProgressHook = PROGRESSHOOK[
           'PUSH-ERROR-02'
@@ -824,25 +1150,32 @@ export class PushNotifications {
           throw new Error('Invalid channel address');
         }
         // if valid, continue with it
-        const verifyTrxPromise =
-          this.coreContract!['verify'](channelToBeVerified);
-        const verifyTrx = await verifyTrxPromise();
-        await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
-        return { transactionHash: verifyTrx.hash };
+        const res = await this.verifyChannel(
+          this.coreContract,
+          channelToBeVerified
+        );
+        if (!res) {
+          throw new Error('Something went wrong while verifying the channel');
+        }
+        return { transactionHash: res };
       } catch (error) {
         throw new Error(`Push SDK Error: Contract channel::verify : ${error}`);
       }
     },
 
-    settings: async (configuration: NotificationSettings) => {
+    setting: async (configuration: NotificationSettings) => {
       try {
         this.checkSignerObjectExists();
         // check for PUSH balance
         const pushTokenContract = await this.createContractInstance(
           config.TOKEN[this.env!],
-          config.ABIS.TOKEN
+          config.ABIS.TOKEN,
+          config.TOKEN_VIEM_NETWORK_MAP[this.env!]
         );
-        const balance = await pushTokenContract!['balanceOf'](this.account);
+        const balance = await this.fetchBalance(
+          pushTokenContract,
+          this.account!
+        );
         const fees = ethers.utils.parseUnits(
           config.MIN_TOKEN_BALANCE[this.env!].toString(),
           18
@@ -850,27 +1183,31 @@ export class PushNotifications {
         if (fees.gte(balance)) {
           throw new Error('Insufficient PUSH balance');
         }
-        const allowanceAmount: BigNumber = await pushTokenContract![
-          'allowance'
-        ](this.account, config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT);
+        const allowanceAmount = await this.fetchAllownace(
+          pushTokenContract,
+          this.account!,
+          config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
+        );
         // if allowance is not greater than the fees, dont call approval again
         if (!allowanceAmount.gte(fees)) {
-          const approvalTrxPromise = pushTokenContract!['approve'](
+          const approveRes = this.approveToken(
+            pushTokenContract,
             config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
             fees
           );
-          const approvalTrx = await approvalTrxPromise;
-          await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
+          if (!approveRes) {
+            throw new Error('Something went wrong while approving your token');
+          }
         }
         const { setting, description } = this.getMinimalSetting(configuration);
-        const createChannelSettingPromise = this.coreContract![
-          'createChannelSettings'
-        ](configuration.length.toString(), setting, description, fees);
-        const createChannelSettingTrx = await createChannelSettingPromise;
-        await this.signer?.provider?.waitForTransaction(
-          createChannelSettingTrx.hash
+        const createSettingsRes = await this.createChanelSettings(
+          this.coreContract,
+          configuration.length,
+          setting,
+          description,
+          fees
         );
-        return { transactionHash: createChannelSettingTrx.hash };
+        return { transactionHash: createSettingsRes };
       } catch (error) {
         throw new Error(
           `Push SDK Error: Contract : channel::setting : ${error}`
@@ -912,33 +1249,29 @@ export class PushNotifications {
      */
     add: async (delegate: string) => {
       try {
-        this.checkSignerObjectExists();
-        if (this.signer && !this.signer.provider) {
-          throw new Error('Provider is required');
-        }
         if (!validateCAIP(delegate)) {
           throw new Error('Invalid CAIP');
         }
 
-        const networkDetails = await this.signer?.provider?.getNetwork();
-        if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
+        const networkDetails = await this.getChianId(this.signer!);
+        if (networkDetails !== parseInt(delegate.split(':')[1])) {
           return new Error('Signer and CAIP chain id doesnt match');
         }
-        const caip = `eip155:${networkDetails.chainId}`;
-        if (!CONFIG[this.env!][caip]) {
+        const caip = `eip155:${networkDetails}`;
+        if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
           throw new Error('Unsupported Chainid');
         }
         const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
         const commContract = this.createContractInstance(
           commAddress,
-          config.ABIS.COMM
+          config.ABIS.COMM,
+          config.VIEM_CONFIG[this.env!][caip].NETWORK
         );
-        const addDelegatePromise = commContract!['addDelegate'](
+        const addDelegateRes = await this.addDelegator(
+          commContract,
           delegate.split(':')[2]
         );
-        const addDelegateTrx = await addDelegatePromise;
-        await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
-        return { transactionHash: addDelegateTrx.hash };
+        return { transactionHash: addDelegateRes };
       } catch (error) {
         throw new Error(`Push SDK Error: Contract : delegate::add : ${error}`);
       }
@@ -959,25 +1292,25 @@ export class PushNotifications {
           throw new Error('Invalid CAIP');
         }
 
-        const networkDetails = await this.signer?.provider?.getNetwork();
-        if (networkDetails?.chainId !== parseInt(delegate.split(':')[1])) {
+        const networkDetails = await this.getChianId(this.signer!);
+        if (networkDetails !== parseInt(delegate.split(':')[1])) {
           return new Error('Signer and CAIP chain id doesnt match');
         }
-        const caip = `eip155:${networkDetails.chainId}`;
-        if (!CONFIG[this.env!][caip]) {
+        const caip = `eip155:${networkDetails}`;
+        if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
           throw new Error('Unsupported Chainid');
         }
         const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
         const commContract = this.createContractInstance(
           commAddress,
-          config.ABIS.COMM
+          config.ABIS.COMM,
+          config.VIEM_CONFIG[this.env!][caip].NETWORK
         );
-        const removeDelegatePromise = commContract!['removeDelegate'](
+        const removeDelegateRes = await this.removeDelegator(
+          commContract,
           delegate.split(':')[2]
         );
-        const removeDelegateTrx = await removeDelegatePromise;
-        await this.signer?.provider?.waitForTransaction(removeDelegateTrx.hash);
-        return { transactionHash: removeDelegateTrx.hash };
+        return { transactionHash: removeDelegateRes };
       } catch (error) {
         throw new Error(
           `Push SDK Error: Contract : delegate::remove : ${error}`

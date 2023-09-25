@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-import { PushNotifications } from '../../../../src/lib/pushapi/PushNotification'; // Ensure correct import path
+import { PushNotification } from '../../../src/lib/pushNotification/PushNotification'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
@@ -10,15 +10,15 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { goerli } from 'viem/chains';
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
-  let userAlice: PushNotifications;
-  let userBob: PushNotifications;
-  let userKate: PushNotifications;
+  let userAlice: PushNotification;
+  let userBob: PushNotification;
+  let userKate: PushNotification;
   let signer1: any;
   let account1: string;
   let signer2: any;
   let account2: string;
   let viemSigner: any;
-  let userViem: PushNotifications;
+  let userViem: PushNotification;
   beforeEach(async () => {
     signer1 = new ethers.Wallet(
       `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
@@ -42,13 +42,13 @@ describe('PushAPI.notification functionality', () => {
       transport: http(),
     });
     // initialisation with signer and provider
-    userKate = await PushNotifications.initialize(signer2);
+    userKate = await PushNotification.initialize(signer2);
     // initialisation with signer
-    userAlice = await PushNotifications.initialize(signer1);
+    userAlice = await PushNotification.initialize(signer1);
     // initialisation without signer
-    userBob = await PushNotifications.initialize();
+    userBob = await PushNotification.initialize();
     // initialisation with viem
-    userViem = await PushNotifications.initialize(viemSigner);
+    userViem = await PushNotification.initialize(viemSigner);
   });
 
   describe('notification :: list', () => {

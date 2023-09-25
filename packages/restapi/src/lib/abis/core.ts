@@ -1,4 +1,4 @@
-export default [
+export const coreABI = [
   {
     anonymous: false,
     inputs: [
@@ -954,4 +954,4 @@ export default [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as const;

@@ -2,14 +2,14 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-import { PushNotifications } from '../../../../src/lib/pushapi/PushNotification'; // Ensure correct import path
+import { PushNotification } from '../../../src/lib/pushNotification/PushNotification'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
-  let userAlice: PushNotifications;
-  let userBob: PushNotifications;
-  let userKate: PushNotifications;
+  let userAlice: PushNotification;
+  let userBob: PushNotification;
+  let userKate: PushNotification;
   let signer1: any;
   let account1: string;
   let signer2: any;
@@ -30,11 +30,11 @@ describe('PushAPI.notification functionality', () => {
     account2 = await signer2.getAddress();
 
     // initialisation with signer and provider
-    userKate = await PushNotifications.initialize(signer2);
+    userKate = await PushNotification.initialize(signer2);
     // initialisation with signer
-    userAlice = await PushNotifications.initialize(signer1);
+    userAlice = await PushNotification.initialize(signer1);
     // initialisation without signer
-    userBob = await PushNotifications.initialize();
+    userBob = await PushNotification.initialize();
   });
 
   describe('delegate :: add', () => {
@@ -80,7 +80,7 @@ describe('PushAPI.notification functionality', () => {
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
       );
-      userKate = await PushNotifications.initialize(signer2);
+      userKate = await PushNotification.initialize(signer2);
       const res = await userKate.delegate.add(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
