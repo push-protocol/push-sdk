@@ -64,7 +64,9 @@ const chains = [
   }
 ]
 
+
 const wallets = [injectedModule(), walletConnect, coinbaseWalletSdk]
+
 
 
 const appMetadata = {
