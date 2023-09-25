@@ -1,9 +1,10 @@
 import { IChatTheme } from '../theme';
 
+import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { ConnectButtonSub } from './ConnectButton';
 import { InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
-import injectedModule from '@web3-onboard/injected-wallets';
+import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
 import { ethers } from 'ethers';
@@ -23,6 +24,7 @@ const wcv2InitOptions = {
 }
 
 const walletConnect = walletConnectModule(wcv2InitOptions)
+const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true })
 const chains = [
   {
     id: '0x1',
@@ -61,11 +63,15 @@ const chains = [
     rpcUrl: 'https://rpc.ankr.com/arbitrum'
   }
 ]
-const wallets = [injectedModule(), walletConnect]
+
+const wallets = [injectedModule({
+  displayUnavailable: [ProviderLabel.MetaMask]
+}), walletConnect, coinbaseWalletSdk]
+
 
 const appMetadata = {
   name: 'Push Protocol',
-  icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',
+  icon: 'https://push.org/static/media/PushLogoTextBlack.fa01629c2ebd2149bab979861756591d.svg',
   description: 'Example showcasing how to connect a wallet.',
 
   recommendedInjectedWallets: [
@@ -94,7 +100,7 @@ interface IConnectButtonCompProps {
   autoConnect?: boolean;
 }
 
-export const ConnectButtonComp:React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
+export const ConnectButtonComp: React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
   return (
     <Web3OnboardProvider web3Onboard={web3OnBoard}>
       <ConnectButtonSub autoConnect={autoConnect} />
