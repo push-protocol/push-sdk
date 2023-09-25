@@ -92,3 +92,7 @@ export const notificationLimit = 5;
 
 export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;
+
+// Livekit Server URLs
+export const LIVEKIT_SERVER_URL = "";
+export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = "";
