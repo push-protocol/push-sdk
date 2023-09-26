@@ -2,7 +2,7 @@ import { ENV } from "../constants";
 import { Rules } from "../types";
 
 export type PushStreamInitializeProps = {
-  listen?: string[];
+  listen?: STREAM[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -16,14 +16,12 @@ export type PushStreamInitializeProps = {
 };
 
 export enum STREAM {
-  CONNECT = 'STREAM.CONNECT',
   PROFILE = 'STREAM.PROFILE',
   ENCRYPTION = 'STREAM.ENCRYPTION',
   NOTIF = 'STREAM.NOTIF',
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
-  DISCONNECT = 'STREAM.DISCONNECT',
 }
 
 export enum MessageOrigin {
@@ -45,6 +43,19 @@ export enum GroupEventType {
   LeaveGroup = 'leaveGroup',
   Remove = 'remove',
 }
+
+export enum ProposedEventNames {
+  Message = 'chat.message',
+  Request = 'chat.request',
+  Accept = 'chat.accept',
+  Reject = 'chat.reject',
+  LeaveGroup = 'chat.group.participant.leave',
+  JoinGroup = 'chat.group.participant.join',
+  CreateGroup = 'chat.group.create',
+  UpdateGroup = 'chat.group.update',
+  Remove = 'chat.group.participant.remove',
+}
+
 
 export interface Profile {
   image: string;
@@ -96,7 +107,7 @@ export interface UpdateGroupEvent extends GroupEventBase {
 }
 
 export interface GroupMemberEventBase {
-  event: GroupEventType;
+  event: GroupEventType | MessageEventType;
   origin: MessageOrigin;
   timestamp: string;
   chatId: string;
@@ -112,6 +123,18 @@ export interface JoinGroupEvent extends GroupMemberEventBase {
 export interface LeaveGroupEvent extends GroupMemberEventBase {
   event: GroupEventType.LeaveGroup;
 }
+
+export interface RequestEvent extends GroupMemberEventBase {
+  event: MessageEventType.Request;
+  meta: {
+    group: boolean;
+  };
+}
+
+export interface RemoveEvent extends GroupMemberEventBase {
+  event: GroupEventType.Remove;
+}
+
 
 export interface MessageEvent {
   event: MessageEventType;

@@ -10,25 +10,108 @@ import {
   GroupEventType,
   LeaveGroupEvent,
   JoinGroupEvent,
+  ProposedEventNames,
+  RequestEvent,
+  RemoveEvent,
 } from './pushStreamTypes';
 
 export class DataModifier {
   public static handleChatGroupEvent(data: any, includeRaw = false): any {
-    if (data.eventType === 'create') {
-      return this.mapToCreateGroupEvent(data, includeRaw);
-    } else if (data.eventType === 'update') {
-      return this.mapToUpdateGroupEvent(data, includeRaw);
-    } else if (
-      data.eventType === GroupEventType.JoinGroup ||
-      data.eventType === GroupEventType.LeaveGroup ||
-      data.eventType === MessageEventType.Request ||
-      data.eventType === GroupEventType.Remove
-    ) {
-      return this.mapToGroupMemberEvent(data, includeRaw, data.eventType);
-    } else {
-      console.warn('Unknown eventType:', data.eventType);
-      return data;
+    switch (data.eventType) {
+      case 'create':
+        return this.mapToCreateGroupEvent(data, includeRaw);
+      case 'update':
+        return this.mapToUpdateGroupEvent(data, includeRaw);
+      case GroupEventType.JoinGroup:
+        return this.mapToJoinGroupEvent(data, includeRaw);
+      case GroupEventType.LeaveGroup:
+        return this.mapToLeaveGroupEvent(data, includeRaw);
+      case MessageEventType.Request:
+        return this.mapToRequestEvent(data, includeRaw);
+      case GroupEventType.Remove:
+        return this.mapToRemoveEvent(data, includeRaw);
+      default:
+        console.warn('Unknown eventType:', data.eventType);
+        return data;
     }
+  }
+
+  private static mapToJoinGroupEvent(
+    data: any,
+    includeRaw: boolean
+  ): JoinGroupEvent {
+    const baseEventData: JoinGroupEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: GroupEventType.JoinGroup,
+    };
+
+    return includeRaw
+      ? {
+          ...baseEventData,
+          raw: { verificationProof: data.verificationProof },
+        }
+      : baseEventData;
+  }
+
+  private static mapToLeaveGroupEvent(
+    data: any,
+    includeRaw: boolean
+  ): LeaveGroupEvent {
+    const baseEventData: LeaveGroupEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: GroupEventType.LeaveGroup,
+    };
+
+    return includeRaw
+      ? {
+          ...baseEventData,
+          raw: { verificationProof: data.verificationProof },
+        }
+      : baseEventData;
+  }
+
+  private static mapToRequestEvent(data: any, includeRaw: boolean): any {
+    const eventData: RequestEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: MessageEventType.Request,
+      meta: {
+        group: data.isGroup || false,
+      },
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToRemoveEvent(data: any, includeRaw: boolean): any {
+    // Whatever the structure of your RemoveEvent, modify accordingly
+    const eventData: RemoveEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: GroupEventType.Remove,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
   }
 
   private static buildChatGroupEventMetaAndRaw(
@@ -204,27 +287,5 @@ export class DataModifier {
       );
       return data;
     }
-  }
-
-  private static mapToGroupMemberEvent(
-    data: any,
-    includeRaw: boolean,
-    eventType: GroupEventType
-  ): JoinGroupEvent | LeaveGroupEvent {
-    const baseEventData = {
-      origin: data.messageOrigin,
-      timestamp: data.timestamp,
-      chatId: data.chatId,
-      from: data.from,
-      to: data.to,
-      event: eventType as GroupEventType.JoinGroup | GroupEventType.LeaveGroup,
-    };
-
-    return includeRaw
-      ? {
-          ...baseEventData,
-          raw: { verificationProof: data.verificationProof },
-        }
-      : baseEventData;
   }
 }
