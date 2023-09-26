@@ -392,7 +392,7 @@ export const GroupInfoModal = ({
               </Section>
             </PublicEncrypted>
 
-            {!isAccountOwnerAdmin(groupInfo, account!) &&
+            {isAccountOwnerAdmin(groupInfo, account!) &&
               groupInfo?.members &&
               groupInfo?.members?.length < 10 && (
                 <AddWalletContainer

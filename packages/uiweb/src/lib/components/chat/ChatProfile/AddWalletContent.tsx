@@ -63,12 +63,6 @@ export const AddWalletContent = ({
 
   const handleSearch = async ({searchedText}:{searchedText:string}): Promise<void> => {
     //fix ens search 
-    // groupInfoToast.showMessageToast({
-    //   toastTitle: 'Error',
-    //   toastMessage: 'Invalid Address',
-    //   toastType: 'ERROR',
-    //   getToastIcon: (size) => <MdError size={size} color="red" />,
-    // });
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
       fetchChatProfile,
@@ -78,7 +72,6 @@ export const AddWalletContent = ({
       setFilteredUserData(newChatUser);
     }
     else{
-      console.log("in hereeeeee in valid")
         groupInfoToast.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Invalid Address',
