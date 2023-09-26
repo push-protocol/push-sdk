@@ -443,7 +443,7 @@ export const GroupInfoModal = ({
                     key={index}
                     member={item}
                     dropdownValues={
-                      !item?.isAdmin && !isAccountOwnerAdmin(groupInfo, account!)
+                      item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
                         ? [removeAdminDropdown, removeMemberDropdown]
                         : isAccountOwnerAdmin(groupInfo, account!)
                         ? [addAdminDropdown, removeMemberDropdown]
