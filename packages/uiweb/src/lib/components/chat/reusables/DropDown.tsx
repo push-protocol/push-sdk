@@ -33,7 +33,7 @@ function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: Dropd
 
 
   const getTextColor = (dropdownValue:DropdownValueType) => {
-    return dropdownValue.textColor ? dropdownValue.textColor : textColor ?  textColor : theme.snackbarBorderText;
+    return dropdownValue.textColor ? dropdownValue.textColor : textColor ?  textColor : theme.textColor?.modalSubHeadingText;
   }
 
  
@@ -110,7 +110,7 @@ function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: Dropd
                 alt="icon"
                 width="max-content"
                 // spacing="1px"
-                filter={iconFilter ? iconFilter : theme.snackbarBorderIcon}
+                filter={iconFilter ? iconFilter : theme.textColor?.modalSubHeadingText}
               />
             )}
             {dropdownValue?.icon && (

@@ -17,7 +17,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import OpenLink from '../../../icons/OpenLink';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
 import TokenGatedIcon from '../../../icons/Token-Gated.svg';
-import { Modal } from '../helpers/Modal';
+import { Modal } from '../reusables/Modal';
 import { Image } from '../../reusables';
 import { ConnectButtonComp } from '../ConnectButton';
 import {
@@ -30,18 +30,18 @@ import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
-import useToast from '../helpers/NewToast';
-
 import {
   useChatData,
   useClickAway,
   useDeviceWidthCheck,
   usePushChatSocket,
 } from '../../../hooks';
+
 import type { FileMessageContent } from '../../../types';
 import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
+import useToast from '../reusables/NewToast';
 
 /**
  * @interface IThemeProps
@@ -416,6 +416,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       const response = await approveChatRequest({
         chatId,
       });
+      
       if (response) await updateChatFeed();
     } else {
       const sendTextMessage = await sendMessage({

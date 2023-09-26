@@ -167,7 +167,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [groupInformationSinceLastConnection]);
 
-
   useEffect(() => {
     if (conversationHash) {
       (async function () {

@@ -1,27 +1,24 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-// // React + Web3 Essentials
-
-// // External Packages
-import { Spinner } from '../../supportChat/spinner/Spinner';
-import { toast } from 'react-toastify';
-import styled, { ThemeProvider } from 'styled-components';
-import CloseIcon from '../../../icons/close.svg';
-import useMediaQuery from '../../../hooks/useMediaQuery';
+// React + Web3 Essentials
 import { useContext, useRef } from 'react';
-import { Image } from '../../reusables';
-import { device } from '../../../config';
-import { ThemeContext } from '../theme/ThemeProvider';
+
+// External Packages
+import { toast } from 'react-toastify';
 import { MdOutlineClose } from 'react-icons/md';
-// import useMediaQuery from './useMediaQuery';
+import styled, { ThemeProvider } from 'styled-components';
+
+
+import { Spinner } from '../../supportChat/spinner/Spinner';
+import useMediaQuery from '../../../hooks/useMediaQuery';
+import { ThemeContext } from '../theme/ThemeProvider';
+
+
+import { device } from '../../../config';
 
 
 // Types
 type LoaderToastType = { msg: string; loaderColor: string; textColor: string };
 
-const override: React.CSSProperties = {
-  // width: "fit-content",
-  height: '45px',
-};
 
 
 const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
@@ -29,10 +26,6 @@ const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
     <Spinner
       color={loaderColor}
       size='35px'
-    //   height={9}
-    //   width={2.5}
-    //   margin={0}
-    //   css={override}
     />
     <LoaderMessage
       style={{
@@ -79,12 +72,13 @@ const useToast = (
 
   const showLoaderToast: ShowLoaderToastType = ({ loaderMessage }) => {
     isLoaderToastShown = true;
+    console.log("in here")
     return (toastId.current = toast(
       <ThemeProvider theme={theme}>
         <LoaderToast
           msg={loaderMessage}
-          loaderColor="#CF1C84"
-          textColor={theme.snackbarBorderText!}
+          loaderColor={theme.spinnerColor!}
+          textColor={theme.textColor!.modalHeadingText!}
         />
       </ThemeProvider>,
       {
@@ -97,9 +91,9 @@ const useToast = (
         progress: undefined,
         closeButton: false,
         style: {
-          background: theme.mainBg,
-          border: `1px solid ${theme.toastBorderColor}`,
-          boxShadow: `8px 8px 8px ${theme.toastShadowColor}`,
+          background: theme.backgroundColor?.modalBackground,
+          border: theme.border?.modalInnerComponents,
+          boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
           borderRadius: '20px',
         },
       }
@@ -107,21 +101,21 @@ const useToast = (
   };
 
   const showMessageToast: ShowMessageToastType = ({ toastTitle, toastMessage, toastType, getToastIcon }) => {
-    
+    console.log('show message toast')
     const toastUI = (
       <Toast>
         <ToastIcon>{getToastIcon ? getToastIcon(30) : ''}</ToastIcon>
         <ToastContent>
           <ToastTitle
             style={{
-              color: theme.textColor?.chatReceivedBubbleText,
+              color: theme.textColor?.modalHeadingText,
             }}
           >
             {toastTitle}
           </ToastTitle>
           <ToastMessage
             style={{
-              color: theme.snackbarBorderText,
+              color: theme.textColor?.modalSubHeadingText,
             }}
           >
             {toastMessage}
@@ -141,8 +135,8 @@ const useToast = (
       closeButton: CloseButton,
       autoClose: autoClose,
       style: {
-        background: toastType === 'SUCCESS' ? theme.toastSuccessBackground : theme.toastErrorBackground,
-        boxShadow: `10px 10px 10px ${theme.toastShadowColor}`,
+        background: toastType === 'SUCCESS' ? theme.backgroundColor?.toastSuccessBackground : theme.backgroundColor?.toastErrorBackground,
+        boxShadow: `10px 10px 10px ${theme.backgroundColor?.toastShadowBackground}`,
         borderRadius: '20px',
         margin: isMobile ? '20px' : '0px',
       },
