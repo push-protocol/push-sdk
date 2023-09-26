@@ -31,7 +31,6 @@ export class PushAPI {
   private account: string;
   private decryptedPgpPvtKey: string;
   private pgpPublicKey: string;
-
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
 
@@ -49,6 +48,7 @@ export class PushAPI {
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
+
   }
 
   static async initialize(
