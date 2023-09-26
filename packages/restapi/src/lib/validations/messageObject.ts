@@ -35,8 +35,10 @@ const reationMessageObjSchema = Joi.object({
   reference: Joi.string().required(),
 });
 
-const readReceiptMessageObjSchema = Joi.object({
-  content: Joi.string().valid(CHAT.READ_RECEIPT).required(),
+const receiptMessageObjSchema = Joi.object({
+  content: Joi.string()
+    .valid(...Object.values(extractValidValues(CHAT.RECEIPT)))
+    .required(),
   reference: Joi.string().required(),
 });
 
@@ -125,8 +127,8 @@ export const validateMessageObj = (
       error = reationMessageObjSchema.validate(messageObj).error;
       break;
     }
-    case MessageType.READ_RECEIPT: {
-      error = readReceiptMessageObjSchema.validate(messageObj).error;
+    case MessageType.RECEIPT: {
+      error = receiptMessageObjSchema.validate(messageObj).error;
       break;
     }
     case MessageType.USER_ACTIVITY: {

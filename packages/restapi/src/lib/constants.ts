@@ -35,7 +35,7 @@ export enum MessageType {
   MEDIA_EMBED = 'MediaEmbed',
   META = 'Meta',
   REACTION = 'Reaction',
-  READ_RECEIPT = 'ReadReceipt',
+  RECEIPT = 'Receipt',
   USER_ACTIVITY = 'UserActivity',
   INTENT = 'Intent',
   REPLY = 'Reply',

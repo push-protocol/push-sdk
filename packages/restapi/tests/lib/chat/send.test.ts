@@ -19,7 +19,7 @@ import { CHAT } from '../../../src/lib/types/messageTypes';
 
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
-describe('PushAPI.chat.send', () => {
+describe.only('PushAPI.chat.send', () => {
   const provider = ethers.getDefaultProvider(5);
   let _signer1: any;
   let walletAddress1: string;
@@ -1778,9 +1778,9 @@ describe('PushAPI.chat.send', () => {
       );
     });
   });
-  describe('Read Receipt Message', () => {
-    const MESSAGE_TYPE = MessageType.READ_RECEIPT;
-    const MESSAGE = CHAT.READ_RECEIPT;
+  describe('Receipt Message', () => {
+    const MESSAGE_TYPE = MessageType.RECEIPT;
+    const MESSAGE = CHAT.RECEIPT.READ;
     it('should throw error using messageContent on wrong MessageObject', async () => {
       await expect(
         send({
@@ -2421,8 +2421,8 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: {
-              type: MessageType.READ_RECEIPT,
-              content: CHAT.READ_RECEIPT,
+              type: MessageType.RECEIPT,
+              content: CHAT.RECEIPT.READ,
             },
             reference:
               'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
@@ -2577,26 +2577,7 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-          },
-          receiverAddress: account2,
-          signer: _signer1,
-          env: _env,
-        })
-      ).to.be.rejected;
-
-      await expect(
-        send({
-          messageType: MESSAGE_TYPE,
-          messageObj: {
-            // Adding content is legacy format is not allowed for reply
-            content: {
-              messageType: MessageType.TEXT,
-              messageObj: {
-                content: 'Hey',
-              },
-            },
-            reference:
-              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+            info: { affected: [] }, // not supported for composite
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -2610,8 +2591,6 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: 'Invalid Message',
-            reference:
-              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -2619,17 +2598,17 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('should throw error for unsupported messageType reply', async () => {
+    it('should throw error for unsupported messageType composite', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
-            content: {
-              type: MessageType.READ_RECEIPT,
-              content: CHAT.READ_RECEIPT,
-            },
-            reference:
-              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+            content: [
+              {
+                type: MessageType.READ_RECEIPT,
+                content: CHAT.READ_RECEIPT,
+              },
+            ],
           },
           receiverAddress: walletAddress2,
           signer: _signer1,
@@ -2642,8 +2621,6 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -2654,12 +2631,12 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         {
-          content: {
-            messageType: MESSAGE.type,
-            messageObj: { content: MESSAGE.content },
-          },
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
         },
         account1,
         _signer1,
@@ -2678,8 +2655,6 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -2689,12 +2664,12 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         {
-          content: {
-            messageType: MESSAGE.type,
-            messageObj: { content: MESSAGE.content },
-          },
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
         },
         account1,
         _signer1,
@@ -2707,8 +2682,6 @@ describe('PushAPI.chat.send', () => {
         message: {
           type: MESSAGE_TYPE,
           content: MESSAGE,
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
         },
         to: walletAddress2,
         signer: _signer1,
@@ -2718,12 +2691,12 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         {
-          content: {
-            messageType: MESSAGE.type,
-            messageObj: { content: MESSAGE.content },
-          },
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
         },
         account1,
         _signer1,
@@ -2751,12 +2724,12 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         {
-          content: {
-            messageType: MESSAGE.type,
-            messageObj: { content: MESSAGE.content },
-          },
-          reference:
-            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
         },
         account1,
         _signer1,

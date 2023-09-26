@@ -57,7 +57,9 @@ export const CHAT = {
     FIRE: '\u{1F525}',
   },
 
-  READ_RECEIPT: 'READ_RECEIPT',
+  RECEIPT: {
+    READ: 'READ_RECEIPT',
+  },
 
   UA: {
     LISTENER: {
@@ -96,9 +98,7 @@ export interface InfoMessage
 }
 
 interface ReferenceMessage
-  extends BaseMessage<
-    `${MessageType.REACTION}` | `${MessageType.READ_RECEIPT}`
-  > {
+  extends BaseMessage<`${MessageType.REACTION}` | `${MessageType.RECEIPT}`> {
   reference: string;
 }
 
@@ -115,12 +115,10 @@ interface ReplyMessage {
 interface CompositeMessage {
   type: `${MessageType.COMPOSITE}`;
   /** Only Few BaseMessageTypes are allowed, this can be changed in the future */
-  content: [
-    {
-      type: string;
-      content: string;
-    }
-  ];
+  content: {
+    type: string;
+    content: string;
+  }[];
 }
 
 type BaseMessageTypes =

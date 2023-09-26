@@ -48,7 +48,10 @@ export const send = async (
 
     // Not supported by legacy sdk versions, need to override messageContent to avoid parsing errors on legacy sdk versions
     let messageContent: string;
-    if (messageType === MessageType.REPLY) {
+    if (
+      messageType === MessageType.REPLY ||
+      messageType === MessageType.COMPOSITE
+    ) {
       messageContent =
         'MessageType Not Supported by this sdk version. Plz upgrade !!!';
     } else {
