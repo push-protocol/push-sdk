@@ -166,22 +166,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       }
     }
   }, [groupInformationSinceLastConnection]);
-  // useEffect(() => {
-  //   if (
-  //     Object.keys(messagesSinceLastConnection || {}).length &&
-  //     Object.keys(chatFeed || {}).length &&
-  //     checkIfSameChat(messagesSinceLastConnection, account!, chatId)
-  //   ) {
-      
-  //   }
-  // }, [messagesSinceLastConnection]);
-  // useEffect(() => {
-  //   (async function () {
-  //     if (!account && !env && !chatId) return;
-  //     const hash = await fetchConversationHash({ conversationId: chatId });
-  //     setConversationHash(hash?.threadHash);
-  //   })();
-  // }, [chatId, account, env, pgpPrivateKey]);
+ 
 
   useEffect(() => {
     if (conversationHash) {
