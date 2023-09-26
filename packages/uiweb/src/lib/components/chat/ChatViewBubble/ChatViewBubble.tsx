@@ -106,8 +106,9 @@ const MessageWrapper = ({
       {isGroup && <SenderMessageProfilePicture chat={chat} />}
       <Section justifyContent="start" flexDirection="column">
         {isGroup && <SenderMessageAddress chat={chat} />}
+        {children}
       </Section>
-      {children}
+   
     </Section>
   );
 };
