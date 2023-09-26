@@ -46,7 +46,14 @@ export const send = async (
         })
       : null;
 
-    const messageContent = messageObj.content; // provide backward compatibility & override deprecated field
+    // Not supported by legacy sdk versions, need to override messageContent to avoid parsing errors on legacy sdk versions
+    let messageContent: string;
+    if (messageType === MessageType.REPLY) {
+      messageContent =
+        'MessageType Not Supported by this sdk version. Plz upgrade !!!';
+    } else {
+      messageContent = messageObj.content as string;
+    }
 
     const conversationResponse = await conversationHash({
       conversationId: receiver,
@@ -158,6 +165,36 @@ const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {
     // Remove the 'type' property from messageObj
     const { type, ...rest } = messageObj;
     messageObj = rest;
+  }
+
+  // Parse Reply Message
+  if (messageType === MessageType.REPLY) {
+    if (typeof messageObj.content === 'object') {
+      const { type, ...rest } = messageObj.content;
+      messageObj.content = {
+        messageType: type,
+        messageObj: rest,
+      };
+    } else {
+      throw new Error('Options.message is not properly defined for Reply');
+    }
+  }
+
+  // Parse Composite Message
+  if (messageType === MessageType.COMPOSITE) {
+    if (messageObj.content instanceof Array) {
+      messageObj.content = messageObj.content.map(
+        (obj: { type: string; content: string }) => {
+          const { type, ...rest } = obj;
+          return {
+            messageType: type,
+            messageObj: rest,
+          };
+        }
+      );
+    } else {
+      throw new Error('Options.message is not properly defined for Composite');
+    }
   }
 
   const account = options.account !== undefined ? options.account : null;

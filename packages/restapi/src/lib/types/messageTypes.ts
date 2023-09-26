@@ -63,9 +63,11 @@ export const CHAT = {
     LISTENER: {
       JOIN: 'LISTENER_JOIN',
       LEAVE: 'LISTENER_LEAVE',
+      MICREQUEST: 'LISTENER_REQUEST_MIC',
     },
     SPEAKER: {
-      MICREQUEST: 'SPEAKER_REQUEST_MIC',
+      MIC_ON: 'SPEAKER_MIC_ON',
+      MIC_OFF: 'SPEAKER_MIC_OFF',
     },
   },
 
@@ -82,7 +84,9 @@ interface BaseMessage<T> {
   content: string;
 }
 
-export interface MetaMessage extends BaseMessage<`${MessageType.META}`> {
+// Used by MessageType.Meta & MessageType.USER_ACTIVITY
+export interface InfoMessage
+  extends BaseMessage<`${MessageType.META}` | `${MessageType.USER_ACTIVITY}`> {
   info: {
     affected: string[];
     arbitrary?: {
@@ -98,6 +102,27 @@ interface ReferenceMessage
   reference: string;
 }
 
+interface ReplyMessage {
+  type: `${MessageType.REPLY}`;
+  /** Only Few BaseMessageTypes are allowed, this can be changed in the future */
+  content: {
+    type: string;
+    content: string;
+  };
+  reference: string;
+}
+
+interface CompositeMessage {
+  type: `${MessageType.COMPOSITE}`;
+  /** Only Few BaseMessageTypes are allowed, this can be changed in the future */
+  content: [
+    {
+      type: string;
+      content: string;
+    }
+  ];
+}
+
 type BaseMessageTypes =
   | `${MessageType.TEXT}`
   | `${MessageType.IMAGE}`
@@ -110,13 +135,17 @@ type BaseMessageTypes =
 
 export type Message =
   | BaseMessage<BaseMessageTypes>
-  | MetaMessage
-  | ReferenceMessage;
+  | InfoMessage
+  | ReferenceMessage
+  | ReplyMessage
+  | CompositeMessage;
 
 /**
  * @deprecated
  */
 export type MessageObj =
   | Omit<BaseMessage<BaseMessageTypes>, 'type'>
-  | Omit<MetaMessage, 'type'>
-  | Omit<ReferenceMessage, 'type'>;
+  | Omit<InfoMessage, 'type'>
+  | Omit<ReferenceMessage, 'type'>
+  | Omit<ReplyMessage, 'type'>
+  | Omit<CompositeMessage, 'type'>;

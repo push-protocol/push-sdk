@@ -1,7 +1,6 @@
 import * as Joi from 'joi';
 import { CHAT, MessageObj } from '../types/messageTypes';
 import { MessageType } from '../constants';
-import { ca } from 'date-fns/locale';
 
 const extractValidValues = (obj: any): string[] => {
   const validValues: string[] = [];
@@ -41,10 +40,65 @@ const readReceiptMessageObjSchema = Joi.object({
   reference: Joi.string().required(),
 });
 
+const userActivityMessageObjSchema = Joi.object({
+  content: Joi.string()
+    .valid(...Object.values(extractValidValues(CHAT.UA)))
+    .required(),
+  info: Joi.object({
+    affected: Joi.array().items(Joi.string()).required(),
+    arbitrary: Joi.object().pattern(Joi.string(), Joi.any()),
+  }).required(),
+});
+
 const intentMessageObjSchema = Joi.object({
   content: Joi.string().valid(
     ...Object.values(extractValidValues(CHAT.INTENT))
   ),
+});
+
+const replyMessageObjSchema = Joi.object({
+  content: Joi.object({
+    messageType: Joi.string()
+      .valid(
+        ...Object.values([
+          MessageType.TEXT,
+          MessageType.IMAGE,
+          MessageType.AUDIO,
+          MessageType.VIDEO,
+          MessageType.FILE,
+          MessageType.MEDIA_EMBED,
+        ])
+      )
+      .required(),
+    messageObj: Joi.object({
+      content: Joi.string().required(), // Change the validation as needed
+    }).required(),
+  }).required(),
+  reference: Joi.string().required(),
+});
+
+const compositeMessageObjSchema = Joi.object({
+  content: Joi.array()
+    .items(
+      Joi.object({
+        messageType: Joi.string()
+          .valid(
+            ...Object.values([
+              MessageType.TEXT,
+              MessageType.IMAGE,
+              MessageType.AUDIO,
+              MessageType.VIDEO,
+              MessageType.FILE,
+              MessageType.MEDIA_EMBED,
+            ])
+          )
+          .required(),
+        messageObj: Joi.object({
+          content: Joi.string().required(),
+        }).required(),
+      })
+    )
+    .required(),
 });
 
 export const validateMessageObj = (
@@ -75,8 +129,20 @@ export const validateMessageObj = (
       error = readReceiptMessageObjSchema.validate(messageObj).error;
       break;
     }
+    case MessageType.USER_ACTIVITY: {
+      error = userActivityMessageObjSchema.validate(messageObj).error;
+      break;
+    }
     case MessageType.INTENT: {
       error = intentMessageObjSchema.validate(messageObj).error;
+      break;
+    }
+    case MessageType.REPLY: {
+      error = replyMessageObjSchema.validate(messageObj).error;
+      break;
+    }
+    case MessageType.COMPOSITE: {
+      error = compositeMessageObjSchema.validate(messageObj).error;
       break;
     }
     default: {
