@@ -537,7 +537,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-type ethersV5SignerType = {
+export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, Array<TypedDataField>>,
@@ -549,7 +549,7 @@ type ethersV5SignerType = {
   privateKey?: string;
   provider?: providers.Provider;
 };
-type viemSignerType = {
+export type viemSignerType = {
   signTypedData: (args: {
     account: any;
     domain: any;
@@ -566,6 +566,7 @@ type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
+  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;
