@@ -60,6 +60,7 @@ export const ChatSearchInput: React.FC<ChatSearchInputPropType> = ({
       clearInput();
     }
   };
+  
   return (
     <Container
       justifyContent="space-between"

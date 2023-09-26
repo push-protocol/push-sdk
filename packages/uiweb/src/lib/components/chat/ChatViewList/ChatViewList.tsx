@@ -76,7 +76,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setChatStatusText('');
   }, [chatId, account, env]);
 
-  //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
       if (!connectedProfile && account) {
@@ -129,6 +128,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setLoading(false);
     })();
   }, [chatId, pgpPrivateKey, account, env]);
+
   //moniters socket changes
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
@@ -166,7 +166,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       }
     }
   }, [groupInformationSinceLastConnection]);
- 
 
   useEffect(() => {
     if (conversationHash) {

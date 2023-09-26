@@ -2,6 +2,7 @@ import { IMessagePayload, User } from "../exportedTypes";
 import { ethers } from "ethers";
 import { IGroup } from "../../../types";
 import { walletToPCAIP10 } from "../../../helpers";
+import { IFeeds } from "@pushprotocol/restapi";
 
 
 export const profilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
@@ -78,4 +79,31 @@ export function isValidETHAddress(address: string) {
     return ethers.utils.isAddress(address);
   }
 
-  
+ export  const checkIfMember =  (chatFeed:IFeeds,account:string) => {
+    const members = chatFeed?.groupInformation?.members || [];
+    const pendingMembers = chatFeed?.groupInformation?.pendingMembers || [];
+    const allMembers = [...members, ...pendingMembers];
+    let isMember = false;
+    allMembers.forEach((acc) => {
+      if (
+        acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+      ) {
+       isMember = true;
+      }
+    });
+
+   
+    return isMember;
+  };
+
+  export  const checkIfAccessVerifiedGroup =  (chatFeed:IFeeds) => {
+    let isRules = false;
+    if (
+      chatFeed?.groupInformation?.rules &&
+      (chatFeed?.groupInformation?.rules?.entry ||
+        chatFeed?.groupInformation?.rules?.chat)
+    ) {
+      isRules = true;
+    }
+    return isRules;
+  };
