@@ -50,7 +50,7 @@ export const MemberProfileCard = ({
   return (
     <ProfileCardItem
       background={
-        (member.wallet.toLowerCase() === selectedMemberAddress.toLowerCase()) ? theme.backgroundColor?.modalHoverBackground : ''
+        (member.wallet?.toLowerCase() === selectedMemberAddress?.toLowerCase()) ? theme.backgroundColor?.modalHoverBackground : ''
       }
       id={member.wallet}
       key={key}

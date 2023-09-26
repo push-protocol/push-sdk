@@ -5,6 +5,7 @@ import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
 import { IFeeds } from '@pushprotocol/restapi';
+import { ToastContainer } from 'react-toastify';
 
 import { Section, Div, Span } from '../../reusables';
 import { EmojiIcon } from '../../../icons/Emoji';
@@ -260,9 +261,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [isMember, setIsMember] = useState<boolean>(false);
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
-  const onChangeTypedMessage = (val: string) => {
-    setTypedMessage(val);
-  };
   const { acceptedRequestMessage, groupInformationSinceLastConnection } =
     usePushChatSocket();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
@@ -289,6 +287,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const { getGroup } = useGetGroup();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+
+  const onChangeTypedMessage = (val: string) => {
+    setTypedMessage(val);
+  };
 
   useClickAway(modalRef, () => {
     setShowEmojis(false);
@@ -680,6 +683,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </SendSection>
           </>
         )}
+           <ToastContainer />
     </TypebarSection>
   ) : (
     <></>

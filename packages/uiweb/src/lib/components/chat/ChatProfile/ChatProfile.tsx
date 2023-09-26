@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import type { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
+import { ToastContainer } from 'react-toastify';
 
 import { Image, Section, Span } from '../../reusables';
 import { useChatData, useClickAway } from '../../../hooks';
@@ -27,6 +28,7 @@ import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
+
 
 type OptionProps = {
   options: boolean;
@@ -203,8 +205,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                     </VideoChatSection>
                     } */}
 
-        {/* check the error for this component */}
-        {/* <ToastContainer /> */}
+        <ToastContainer />
       </Container>
     );
   } else {
