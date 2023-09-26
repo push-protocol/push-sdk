@@ -38,7 +38,7 @@ export const getUpdatedAdminList = (
     return [...groupAdminList, walletAddress];
   } else {
     const newAdminList = groupAdminList.filter(
-      (wallet: any) => wallet !== walletAddress
+      (wallet: any) => wallet.toLowerCase() !== walletAddress?.toLowerCase()
     );
     return newAdminList;
   }

@@ -112,9 +112,7 @@ export interface User {
   isAdmin?:boolean;
 }
 
-export interface ShadowedProps {
-   setPosition: boolean;
-};
+
 
 export interface ModalButtonProps {
   memberListCount?: boolean;

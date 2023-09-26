@@ -3,41 +3,49 @@ import { useContext } from 'react';
 
 // External Packages
 import styled from 'styled-components';
-import { shortenText } from "../../../helpers";
+import { shortenText } from '../../../helpers';
 
 // Internal Components
-import { Image, Section, Span } from "../../reusables";
-import { ThemeContext } from "../theme/ThemeProvider";
-
+import { Image, Section, Span } from '../../reusables';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export type DropdownValueType = {
-  id: number|string,
-  value?: string,
-  title: string,
-  icon: string,
-  textColor?: string,
-  function: () => void,
-}
+  invertedIcon?: any;
+  id: number | string;
+  link?: string;
+
+  value?: string;
+  title: string;
+  icon?: string;
+  textColor?: string;
+  function: () => void;
+};
 
 type DropdownProps = {
-  dropdownValues: any[];
+  dropdownValues: DropdownValueType[];
   textColor?: string;
   iconFilter?: string;
   hoverBGColor?: string;
 };
 
-
 // Create Dropdown
-function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: DropdownProps) {
+function Dropdown({
+  dropdownValues,
+  textColor,
+  iconFilter,
+  hoverBGColor,
+}: DropdownProps) {
   const theme = useContext(ThemeContext);
 
+  const getTextColor = (dropdownValue: DropdownValueType) => {
+    return dropdownValue.textColor
+      ? dropdownValue.textColor
+      : textColor
+      ? textColor
+      : theme.textColor?.modalSubHeadingText;
+  };
 
-  const getTextColor = (dropdownValue:DropdownValueType) => {
-    return dropdownValue.textColor ? dropdownValue.textColor : textColor ?  textColor : theme.textColor?.modalSubHeadingText;
-  }
-
- 
-  const copyToClipboard = (address:string) => {
+  const copyToClipboard = (address: string) => {
     if (navigator && navigator.clipboard) {
       navigator.clipboard.writeText(address);
     } else {
@@ -60,8 +68,8 @@ function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: Dropd
             padding="2px 12px"
             // wrap="nowrap"
             margin="0px 0 8px 0"
-            width="max-content"
-            style={{cursor: "pointer"}}
+            width="100%"
+            style={{ cursor: 'pointer' }}
             onClick={() => dropdownValue?.function()}
           >
             <Span
@@ -70,47 +78,53 @@ function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: Dropd
               fontSize="14px"
               textTransform="uppercase"
               color="#fff"
+              textAlign="start"
               letterSpacing="1px"
-              width="max-content"
+              width="100%"
             >
               <DesktopAddress>{dropdownValue?.title}</DesktopAddress>
               <MobileAddress>
-                {shortenText(dropdownValue?.title,6)}
+                {shortenText(dropdownValue?.title, 6)}
               </MobileAddress>
             </Span>
             {dropdownValue?.invertedIcon && (
               <Image
-                src={dropdownValue?.invertedIcon}
+                src={dropdownValue.invertedIcon}
                 alt="icon"
                 width="auto"
                 cursor="pointer"
                 filter="brightness(0) invert(1)"
                 onClick={() => {
-                  copyToClipboard(dropdownValue?.value);
+                  copyToClipboard(dropdownValue?.value||'');
                 }}
               />
             )}
             {dropdownValue?.icon && (
               <Image
-                src={dropdownValue?.icon}
+                src={dropdownValue.icon}
                 alt="icon"
                 width="auto"
                 cursor="pointer"
                 onClick={() => {
-                  copyToClipboard(dropdownValue?.value);
+                  copyToClipboard(dropdownValue?.value || '');
                 }}
               />
             )}
           </Section>
         ) : (
-          <DropdownItemContainer hoverBGColor={hoverBGColor} onClick={() => dropdownValue?.function()}>
+          <DropdownItemContainer
+            hoverBGColor={hoverBGColor}
+            onClick={() => dropdownValue?.function()}
+          >
             {dropdownValue?.invertedIcon && (
               <Image
                 src={dropdownValue.invertedIcon}
                 alt="icon"
-                width="max-content"
+                width="100%"
                 // spacing="1px"
-                filter={iconFilter ? iconFilter : theme.textColor?.modalSubHeadingText}
+                filter={
+                  iconFilter ? iconFilter : theme.textColor?.modalSubHeadingText
+                }
               />
             )}
             {dropdownValue?.icon && (
@@ -121,10 +135,11 @@ function Dropdown({ dropdownValues, textColor, iconFilter, hoverBGColor }: Dropd
                 cursor="pointer"
               />
             )}
-            {!dropdownValue?.link && dropdownValue?.function && (
+            {!dropdownValue?.link && (
               <Span
-                width="max-content"
+                // width="100%"
                 color={getTextColor(dropdownValue)}
+                textAlign="start"
                 margin="8px 10px"
                 fontWeight="400"
                 fontSize="15px"
@@ -158,7 +173,7 @@ const SpanAddress = styled(Span)`
   text-transform: uppercase;
   color: #fff;
   spacing: 1px;
-  width: max-content;
+  width: 100%;
 `;
 
 const MobileAddress = styled(SpanAddress)`
@@ -173,8 +188,7 @@ const DesktopAddress = styled(SpanAddress)`
   }
 `;
 
-const DropdownItemContainer = styled(Section)<{hoverBGColor?: string}>`
-  width: 12.5rem;
+const DropdownItemContainer = styled(Section)<{ hoverBGColor?: string }>`
   justify-content: flex-start;
   flex-wrap: nowrap;
   margin: 1px 0;
@@ -188,18 +202,17 @@ const DropdownItemContainer = styled(Section)<{hoverBGColor?: string}>`
   }
 `;
 
-
 const A = styled.a`
-    margin: 8px 10px;
-    font-weight: 400;
-    font-size: 16px;
-    width: max-content;
-                   
-    background: ${(props) => props.color};
-    z-index: 11;
-    &. hover {
-        background: transparent !important;
-    }
+  margin: 8px 10px;
+  font-weight: 400;
+  font-size: 16px;
+  width: max-content;
+
+  background: ${(props) => props.color};
+  z-index: 11;
+  &. hover {
+    background: transparent !important;
+  }
 `;
 
 export default Dropdown;

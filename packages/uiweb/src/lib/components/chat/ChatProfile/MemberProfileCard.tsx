@@ -46,13 +46,11 @@ export const MemberProfileCard = ({
     setDropdownHeight(containerHeight?.top);
   };
 
-  console.log(pCAIP10ToWallet(member?.wallet)?.toLowerCase() !==
-  account?.toLowerCase())
-  console.log(account)
+
   return (
     <ProfileCardItem
       background={
-        member.wallet === selectedMemberAddress ? theme.backgroundColor?.modalHoverBackground : ''
+        (member.wallet.toLowerCase() === selectedMemberAddress.toLowerCase()) ? theme.backgroundColor?.modalHoverBackground : ''
       }
       id={member.wallet}
       key={key}

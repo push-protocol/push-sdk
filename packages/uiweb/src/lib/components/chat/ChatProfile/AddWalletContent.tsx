@@ -21,7 +21,7 @@ import { ModalButtonProps, User } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
 import { device } from '../../../config';
 import CloseIcon from '../../../icons/close.svg';
-import { ChatSearchInput, CustomStyleParamsType } from '../reusables';
+import { ChatSearchInput, CustomStyleParamsType, ModalHeader } from '../reusables';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { BackIcon } from '../../../icons/Back';
 
@@ -112,7 +112,7 @@ export const AddWalletContent = ({
 
   const removeMemberFromList = (member: User) => {
     const filteredMembers = memberList?.filter(
-      (user: any) => user.wallets !== member.wallets
+      (user: any) => user.wallets.toLowerCase() !== member.wallets.toLowerCase()
     );
     handleMemberList(filteredMembers);
   };
@@ -123,28 +123,7 @@ export const AddWalletContent = ({
       flexDirection="column"
       padding={isMobile ? '0px auto' : '0px 10px'}
     >
-      <Section flex="1" flexDirection="row" justifyContent="space-between">
-        <Span onClick={() => handlePrevious()} cursor='pointer'>
-        <BackIcon />
-        </Span>
-
-        <Span
-          textAlign="center"
-          fontSize="20px"
-          color={theme.textColor?.modalHeadingText}
-        >
-          {modalHeader}
-        </Span>
-
-        <Image
-          src={CloseIcon}
-          height="24px"
-          maxHeight="24px"
-          width={'auto'}
-          onClick={() => onClose()}
-          cursor="pointer"
-        />
-      </Section>
+      <ModalHeader title='Add More Wallets' handleClose={onClose} handlePrevious={handlePrevious} />
 
       <Section
         margin="50px 0 10px 0"

@@ -7,7 +7,7 @@ import { useChatData, useClickAway } from '../../../hooks';
 import { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
-import { Modal } from '../reusables';
+import {  Modal, ModalHeader, } from '../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
@@ -17,7 +17,6 @@ import { ProfileContainer } from '../reusables';
 import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
-import { ShadowedProps } from '../exportedTypes';
 import {
   convertToWalletAddressList,
   getAdminList,
@@ -55,6 +54,10 @@ type PendingMembersProps = {
   setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
   showPendingRequests: boolean;
   theme: IChatTheme;
+};
+
+interface ShadowedProps {
+  setPosition: boolean;
 };
 
 const PendingMembers = ({
@@ -136,6 +139,7 @@ export const GroupInfoModal = ({
     useState<boolean>(false);
   const [memberList, setMemberList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [checkedValue, setchecked] = useState<boolean>(false);
   const [selectedMemberAddress, setSelectedMemberAddress] = useState<
     string | null
   >(null);
@@ -297,13 +301,25 @@ export const GroupInfoModal = ({
     textColor: '#ED5858',
   };
 
-  //shift ot helper
+  //remove all testing things
+
+  const a1: DropdownValueType = {
+    id: 'dismiss_admin',
+    title: 'Dismiss as admin',
+    function: () => updateGroupAdmin(UPDATE_KEYS.REMOVE_ADMIN),
+  };
+  const a2: DropdownValueType = {
+    id: 'add_admin',
+    title: 'Make group admin',
+    function: () => updateGroupAdmin(UPDATE_KEYS.ADD_ADMIN),
+  };
+
 
   const handlePrevious = () => {
     setShowAddMoreWalletModal(false);
   };
 
-  const onClose = () => {
+  const onClose = ():void => {
     setModal(false);
   };
 
@@ -316,30 +332,7 @@ export const GroupInfoModal = ({
             flexDirection="column"
             padding={isMobile ? '0px auto' : '0px 10px'}
           >
-            <Section
-              flex="1"
-              flexDirection="row"
-              justifyContent="space-between"
-            >
-              <div></div>
-
-              <Span
-                textAlign="center"
-                fontSize="20px"
-                color={theme.textColor?.modalHeadingText}
-              >
-                Group Info
-              </Span>
-
-              <Image
-                src={CloseIcon}
-                height="24px"
-                maxHeight="24px"
-                width={'auto'}
-                onClick={() => onClose()}
-                cursor="pointer"
-              />
-            </Section>
+            <ModalHeader title='Group Info' handleClose={onClose} />
 
             <GroupHeader>
               <Image
@@ -354,7 +347,10 @@ export const GroupInfoModal = ({
                 <Span fontSize="20px" color={theme.textColor?.modalHeadingText}>
                   {groupInfo?.groupName}
                 </Span>
-                <Span fontSize="16px" color={theme.textColor?.modalSubHeadingText}>
+                <Span
+                  fontSize="16px"
+                  color={theme.textColor?.modalSubHeadingText}
+                >
                   {groupInfo?.members?.length} Members
                 </Span>
               </Section>
@@ -364,7 +360,10 @@ export const GroupInfoModal = ({
               <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
                 Group Description
               </Span>
-              <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
+              <Span
+                fontSize="18px"
+                color={theme.textColor?.modalSubHeadingText}
+              >
                 {groupInfo?.groupDescription}
               </Span>
             </GroupDescription>
@@ -378,13 +377,13 @@ export const GroupInfoModal = ({
               />
 
               <Section flexDirection="column" alignItems="flex-start" gap="5px">
-                <Span
-                  fontSize="18px"
-                  color={theme.textColor?.modalHeadingText}
-                >
+                <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
                   {groupInfo?.isPublic ? 'Public' : 'Private'}
                 </Span>
-                <Span fontSize="12px" color={theme.textColor?.modalSubHeadingText}>
+                <Span
+                  fontSize="12px"
+                  color={theme.textColor?.modalSubHeadingText}
+                >
                   {groupInfo?.isPublic
                     ? 'Chats are not encrypted'
                     : 'Chats are encrypted'}
@@ -502,16 +501,16 @@ const PublicEncrypted = styled.div`
   width: 100%;
   gap: 19px;
   align-items: center;
-  border: ${(props) =>props.theme.border.modalInnerComponents};
-  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
+  border: ${(props) => props.theme.border.modalInnerComponents};
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 16px;
   box-sizing: border-box;
 `;
 
 const AddWalletContainer = styled.div`
   margin-top: 20px;
-  border: ${(props) =>props.theme.border.modalInnerComponents};
-  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
+  border: ${(props) => props.theme.border.modalInnerComponents};
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   width: 100%;
   padding: 20px 16px;
   box-sizing: border-box;
@@ -540,8 +539,8 @@ const GroupPendingMembers = styled.div`
 const PendingRequestWrapper = styled.div`
   width: 100%;
   margin-top: 20px;
-  border: ${(props) =>props.theme.border.modalInnerComponents};
-  border-radius: ${(props) =>props.theme.borderRadius.modalInnerComponents};
+  border: ${(props) => props.theme.border.modalInnerComponents};
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 0px 0px;
   box-sizing: border-box;
 `;
