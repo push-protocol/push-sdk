@@ -9,9 +9,12 @@ import {
   STREAM,
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
+import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
+  private pushNotificationSocket: any;
+
   private account: string;
   private raw: boolean;
   private options: PushStreamInitializeProps;
@@ -21,7 +24,7 @@ export class PushStream extends EventEmitter {
 
     this.account = account;
     this.pushChatSocket = createSocketConnection({
-      user: `eip155:${account}`,
+      user: walletToPCAIP10(account),
       socketType: 'chat',
       socketOptions: {
         autoConnect: options.connection?.auto ?? true,
@@ -30,10 +33,25 @@ export class PushStream extends EventEmitter {
       env: options.env as ENV,
     });
 
+    this.pushNotificationSocket = createSocketConnection({
+      user: pCAIP10ToWallet(this.account),
+      env: options.env as ENV,
+      socketOptions: {
+        autoConnect: options.connection?.auto ?? true,
+        reconnectionAttempts: options.connection?.retries ?? 3,
+      },
+    });
+
+    if (!this.pushNotificationSocket) {
+      throw new Error('Push notification socket not connected');
+    } else {
+      console.log('Push notification socket connected ' + `eip155:${account}`);
+    }
+
     if (!this.pushChatSocket) {
       throw new Error('Push chat socket not connected');
     } else {
-      console.log('Push socket connected ' + `eip155:${account}`);
+      console.log('Push chat socket connected ' + `eip155:${account}`);
     }
 
     this.raw = options.raw ?? false;

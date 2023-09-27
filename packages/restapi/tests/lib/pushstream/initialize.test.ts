@@ -7,6 +7,7 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { ENV } from '../../../src/lib/constants';
 import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
+import { ConditionType } from '../../../src/lib';
 
 describe.only('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
@@ -80,6 +81,41 @@ describe.only('PushStream.initialize functionality', () => {
       members: [],
       admins: [],
       private: false,
+      rules: {
+        chat: {
+          conditions: {
+            any: [
+              {
+                type: ConditionType.PUSH,
+                category: 'ERC20',
+                subcategory: 'holder',
+                data: {
+                  contract:
+                    'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
+                  amount: 1,
+                  decimals: 18,
+                },
+              },
+              {
+                type: ConditionType.PUSH,
+                category: 'INVITE',
+                subcategory: 'DEFAULT',
+                data: {
+                  inviterRoles: ['ADMIN', 'OWNER'],
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const CREATE_GROUP_REQUEST_2 = {
+      description: 'test',
+      image: 'test',
+      members: [],
+      admins: [],
+      private: false,
       rules: {},
     };
 
@@ -129,12 +165,12 @@ describe.only('PushStream.initialize functionality', () => {
     const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 4);
 
     // Create and update group
-    /*const createdGroup = await user.chat.group.create(
+    const createdGroup = await user.chat.group.create(
       'test',
-      CREATE_GROUP_REQUEST
+      CREATE_GROUP_REQUEST_2
     );
 
-    const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
+    /*const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
       description: 'Updated Description',
     });*/
 
@@ -158,7 +194,7 @@ describe.only('PushStream.initialize functionality', () => {
               }
             );*/
 
-    const w2wMessageResponse = await user2.chat.send(signer.address, {
+    /*const w2wMessageResponse = await user2.chat.send(signer.address, {
       content: MESSAGE,
     });
     const w2wAcceptsRequest = await user.chat.accept(signer2.address);

@@ -227,10 +227,7 @@ export class Chat {
         members: options?.members ? options.members : [],
         groupImage: options?.image,
         admins: options?.admins ? options.admins : [],
-        rules: {
-          entry: options?.rules?.entry,
-          chat: options?.rules?.chat,
-        },
+        rules: options?.rules,
         isPublic: !options?.private,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,

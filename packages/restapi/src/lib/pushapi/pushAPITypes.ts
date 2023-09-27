@@ -23,14 +23,7 @@ export interface GroupCreationOptions {
   members?: string[];
   admins?: string[];
   private?: boolean;
-  rules?: {
-    entry?: {
-      conditions: any[];
-    };
-    chat?: {
-      conditions: any[];
-    };
-  };
+  rules?: Rules | null;
 }
 
 export interface ManageGroupOptions {
