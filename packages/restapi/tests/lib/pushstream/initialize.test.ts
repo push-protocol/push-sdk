@@ -13,7 +13,7 @@ import { ConditionType } from '../../../src/lib';
 
 
 
-describe.only('PushStream.initialize functionality', () => {
+describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 

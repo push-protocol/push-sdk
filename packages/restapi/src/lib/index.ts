@@ -9,7 +9,6 @@ import * as video from "./video"
 
 export * from './types';
 export { PushAPI } from './pushapi/PushAPI';
-export { PushStream } from './pushstream/PushStream';
 
 export {
   alias,
