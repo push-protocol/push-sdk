@@ -52,172 +52,183 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export interface JoinVerificationGroupSectionProps {
-  isRules: boolean;
-  isMember: boolean;
-  onGetTokenClick?: () => void;
-  handleJoinGroup: () => void;
-  checkVerification: () => void;
-}
+// export interface JoinVerificationGroupSectionProps {
+//   isRules: boolean;
+//   isMember: boolean;
+//   onGetTokenClick?: () => void;
+//   handleJoinGroup: () => void;
+//   checkVerification: () => void;
+// }
 
-const JoinVerificationGroupSection: React.FC<
-  JoinVerificationGroupSectionProps
-> = ({ isRules, isMember, onGetTokenClick, handleJoinGroup, checkVerification }) => {
-  const theme = useContext(ThemeContext);
-  const { loading: approveLoading } = useApproveChatRequest();
-  const {
-    verificationSuccessfull,
-    setVerificationSuccessfull,
-    verified,
-    loading: accessLoading,
-  } = useVerifyAccessControl();
-  const { pgpPrivateKey } = useChatData();
+// const JoinVerificationGroupSection: React.FC<
+//   JoinVerificationGroupSectionProps
+// > = ({
+//   isRules,
+//   isMember,
+//   onGetTokenClick,
+//   handleJoinGroup,
+//   checkVerification,
+// }) => {
+//   const theme = useContext(ThemeContext);
+//   const { loading: approveLoading } = useApproveChatRequest();
+//   const {
+//     verificationSuccessfull,
+//     setVerificationSuccessfull,
+//     verified,
+//     loading: accessLoading,
+//   } = useVerifyAccessControl();
+//   const { pgpPrivateKey } = useChatData();
 
-  const isJoinGroup = () =>{
-    return pgpPrivateKey && !isMember;
-  }
+//   const isJoinGroup = () => {
+//     return !!pgpPrivateKey && !isMember;
+//   };
 
-  const isNotVerified = () =>{
-    return pgpPrivateKey && !verified && isMember && isRules;
-  }
-  return (
-    <>
-      {isJoinGroup() ||
-        isNotVerified() && (
-          <Section
-            width="100%"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Span
-              padding="8px 8px 8px 16px"
-              color={theme.textColor?.chatReceivedBubbleText}
-              fontSize="15px"
-              fontWeight="500"
-              textAlign="start"
-            >
-              {isJoinGroup() &&
-                'Click on the button to join the group'}
-              {isNotVerified() && (
-                <>
-                  Sending messages requires{' '}
-                  <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-                    1 PUSH Token
-                  </Span>{' '}
-                  for participation.{' '}
-                  <Link
-                    href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
-                    target="_blank"
-                    color={theme.backgroundColor?.chatSentBubbleBackground}
-                  >
-                    Learn More <OpenLink />
-                  </Link>
-                </>
-              )}
-            </Span>
-            <ConnectWrapper>
-              <Connect
-                onClick={() =>
-                  isJoinGroup()
-                    ? handleJoinGroup()
-                    : checkVerification()
-                }
-              >
-                { isJoinGroup() && approveLoading ? (
-                  <Spinner color="#fff" size="24" />
-                ) : (
-                  ' Join Group '
-                )}
-                {isNotVerified() &&
-                  (accessLoading ? (
-                    <Spinner color="#fff" size="24" />
-                  ) : (
-                    'Verify Access'
-                  ))}
-              </Connect>
-            </ConnectWrapper>
-          </Section>
-        )}
-      {pgpPrivateKey && !verificationSuccessfull && (
-        <Modal width="439px">
-          <Section
-            padding="10px"
-            theme={theme}
-            gap="32px"
-            flexDirection="column"
-          >
-            <Span
-              fontWeight="500"
-              fontSize="24px"
-              color={theme.textColor?.encryptionMessageText}
-            >
-              Verification Failed
-            </Span>
-            <Span
-              color={theme.textColor?.encryptionMessageText}
-              fontSize="16px"
-            >
-              Please ensure the following conditions are met to participate and
-              send messages.
-            </Span>
-            <Section gap="8px" alignItems="start">
-              <Image
-                verticalAlign="start"
-                height="24"
-                width="24"
-                src={TokenGatedIcon}
-                alt="token-gated"
-              />
-              <Section flexDirection="column">
-                {' '}
-                <Span
-                  color={theme.textColor?.encryptionMessageText}
-                  textAlign="start"
-                  alignSelf="start"
-                >
-                  Token Gated
-                </Span>
-                <Span
-                  fontWeight="500"
-                  textAlign="start"
-                  color={theme.textColor?.encryptionMessageText}
-                >
-                  You need to have{' '}
-                  <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-                    1 PUSH Token
-                  </Span>{' '}
-                  in your wallet to be able to send messages.
-                </Span>
-              </Section>
-            </Section>
-            <Section gap="8px">
-              <TokenWrapper
-                onClick={() => {
-                  if (onGetTokenClick) {
-                    onGetTokenClick();
-                  }
-                  setVerificationSuccessfull(true);
-                }}
-              >
-                <TokenGet>
-                  Get Free Tokens
-                  <OpenLink height="12" width="12" />
-                </TokenGet>
-              </TokenWrapper>
-              <ConnectWrapperClose
-                onClick={() => {
-                  setVerificationSuccessfull(true);
-                }}
-              >
-                <ConnectClose>Close</ConnectClose>
-              </ConnectWrapperClose>
-            </Section>
-          </Section>
-        </Modal>
-      )}
-    </>
-  );
-};
+//   const isNotVerified = () => {
+//     return !!pgpPrivateKey && !verified && isMember && isRules;
+//   };
+//   console.log(isMember)
+//   console.log(verificationSuccessfull)
+//   return (
+//     <>
+//       {(isJoinGroup() || isNotVerified()) && (
+//         <Section
+//           width="100%"
+//           justifyContent="space-between"
+//           alignItems="center"
+//         >
+//           <Span
+//             padding="8px 8px 8px 16px"
+//             color={theme.textColor?.chatReceivedBubbleText}
+//             fontSize="15px"
+//             fontWeight="500"
+//             textAlign="start"
+//           >
+//             {isJoinGroup() && 'Click on the button to join the group'}
+//             {isNotVerified() && (
+//               <>
+//                 Sending messages requires{' '}
+//                 <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+//                   1 PUSH Token
+//                 </Span>{' '}
+//                 for participation.{' '}
+//                 <Link
+//                   href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+//                   target="_blank"
+//                   color={theme.backgroundColor?.chatSentBubbleBackground}
+//                 >
+//                   Learn More <OpenLink />
+//                 </Link>
+//               </>
+//             )}
+//           </Span>
+//           <ConnectWrapper>
+//             <Connect
+//               onClick={() =>
+//                 isJoinGroup() ? handleJoinGroup() : checkVerification()
+//               }
+//             >
+//               {isJoinGroup() &&
+//               <>
+//                {approveLoading ? (
+//                 <Spinner color="#fff" size="24" />
+//               ) : (
+//                 ' Join Group '
+//               )}
+//               </>
+//               }
+//               {isNotVerified() &&
+//               <>
+//                 {accessLoading ? (
+//                   <Spinner color="#fff" size="24" />
+//                 ) : (
+//                   'Verify Access'
+//                 )}
+//                 </>
+//                 }
+//             </Connect>
+//           </ConnectWrapper>
+//         </Section>
+//       )}
+//       {(!!pgpPrivateKey && !verificationSuccessfull) && (
+//         <Modal width="439px">
+//           <Section
+//             padding="10px"
+//             theme={theme}
+//             gap="32px"
+//             flexDirection="column"
+//           >
+//             <Span
+//               fontWeight="500"
+//               fontSize="24px"
+//               color={theme.textColor?.encryptionMessageText}
+//             >
+//               Verification Failed
+//             </Span>
+//             <Span
+//               color={theme.textColor?.encryptionMessageText}
+//               fontSize="16px"
+//             >
+//               Please ensure the following conditions are met to participate and
+//               send messages.
+//             </Span>
+//             <Section gap="8px" alignItems="start">
+//               <Image
+//                 verticalAlign="start"
+//                 height="24"
+//                 width="24"
+//                 src={TokenGatedIcon}
+//                 alt="token-gated"
+//               />
+//               <Section flexDirection="column">
+//                 {' '}
+//                 <Span
+//                   color={theme.textColor?.encryptionMessageText}
+//                   textAlign="start"
+//                   alignSelf="start"
+//                 >
+//                   Token Gated
+//                 </Span>
+//                 <Span
+//                   fontWeight="500"
+//                   textAlign="start"
+//                   color={theme.textColor?.encryptionMessageText}
+//                 >
+//                   You need to have{' '}
+//                   <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+//                     1 PUSH Token
+//                   </Span>{' '}
+//                   in your wallet to be able to send messages.
+//                 </Span>
+//               </Section>
+//             </Section>
+//             <Section gap="8px">
+//               <TokenWrapper
+//                 onClick={() => {
+//                   if (onGetTokenClick) {
+//                     onGetTokenClick();
+//                   }
+//                   setVerificationSuccessfull(true);
+//                 }}
+//               >
+//                 <TokenGet>
+//                   Get Free Tokens
+//                   <OpenLink height="12" width="12" />
+//                 </TokenGet>
+//               </TokenWrapper>
+//               <ConnectWrapperClose
+//                 onClick={() => {
+//                   setVerificationSuccessfull(true);
+//                 }}
+//               >
+//                 <ConnectClose>Close</ConnectClose>
+//               </ConnectWrapperClose>
+//             </Section>
+//           </Section>
+//         </Modal>
+//       )}
+//     </>
+//   );
+// };
 const ConnectButtonSection: React.FC = () => {
   const { signer } = useChatData();
   return (
@@ -270,6 +281,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const {
     verifyAccessControl,
     setVerificationSuccessfull,
+    verificationSuccessfull,
     verified,
     setVerified,
     loading: accessLoading,
@@ -288,11 +300,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
   };
-
   useClickAway(modalRef, () => {
     setShowEmojis(false);
     setGifOpen(false);
@@ -392,13 +402,17 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
+    console.log('in useEffect')
+    console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
+      console.log('inside condition')
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
   }, [chatId, chatFeed, account, env]);
-
+console.log(isMember)
+console.log(checkIfMember(chatFeed, account!))
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -419,8 +433,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       const response = await approveChatRequest({
         chatId,
       });
-      
-      if (response) await updateChatFeed();
+console.log(response)
+      if (response) {
+        console.log('in here')
+        await updateChatFeed();}
     } else {
       const sendTextMessage = await sendMessage({
         message: `Hello, please let me join this group, my wallet address is ${account}`,
@@ -491,6 +507,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
+  const isJoinGroup = () => {
+    return !!pgpPrivateKey && !isMember;
+  };
+
+  const isNotVerified = () => {
+    return !!pgpPrivateKey && !verified && isMember && isRules;
+  };
+
   const sendPushMessage = async (content: string, type: string) => {
     try {
       const sendMessageResponse = await sendMessage({
@@ -525,12 +549,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const updateChatFeed = async () => {
+console.log('in update chat feed')
     const chat = await fetchChat({ chatId });
+    console.log(chat)
     if (Object.keys(chat || {}).length) {
+      console.log(chat)
       setChatFeed(chat as IFeeds);
     }
   };
-
+  
   return !Object.keys(chatFeed || {}).length ? (
     <>
       {!pgpPrivateKey && (isConnected || !!signer) && (
@@ -562,15 +589,146 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       justifyContent="space-between"
     >
       {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
-        <JoinVerificationGroupSection
-          isMember={isMember}
-          isRules={isRules}
-          onGetTokenClick={onGetTokenClick}
-          handleJoinGroup={handleJoinGroup}
-          checkVerification={checkVerification}
-        />
+        <>
+        {(isJoinGroup() || isNotVerified()) && (
+          <Section
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Span
+              padding="8px 8px 8px 16px"
+              color={theme.textColor?.chatReceivedBubbleText}
+              fontSize="15px"
+              fontWeight="500"
+              textAlign="start"
+            >
+              {isJoinGroup() && 'Click on the button to join the group'}
+              {isNotVerified() && (
+                <>
+                  Sending messages requires{' '}
+                  <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+                    1 PUSH Token
+                  </Span>{' '}
+                  for participation.{' '}
+                  <Link
+                    href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+                    target="_blank"
+                    color={theme.backgroundColor?.chatSentBubbleBackground}
+                  >
+                    Learn More <OpenLink />
+                  </Link>
+                </>
+              )}
+            </Span>
+            <ConnectWrapper>
+              <Connect
+                onClick={async() =>
+                  isJoinGroup() ? await handleJoinGroup() : await checkVerification()
+                }
+              >
+                {isJoinGroup() &&
+                <>
+                 {approveLoading ? (
+                  <Spinner color="#fff" size="24" />
+                ) : (
+                  ' Join Group '
+                )}
+                </>
+                }
+                {isNotVerified() &&
+                <>
+                  {accessLoading ? (
+                    <Spinner color="#fff" size="24" />
+                  ) : (
+                    'Verify Access'
+                  )}
+                  </>
+                  }
+              </Connect>
+            </ConnectWrapper>
+          </Section>
+        )}
+        {(!!pgpPrivateKey && !verificationSuccessfull) && (
+          <Modal width="439px">
+            <Section
+              padding="10px"
+              theme={theme}
+              gap="32px"
+              flexDirection="column"
+            >
+              <Span
+                fontWeight="500"
+                fontSize="24px"
+                color={theme.textColor?.encryptionMessageText}
+              >
+                Verification Failed
+              </Span>
+              <Span
+                color={theme.textColor?.encryptionMessageText}
+                fontSize="16px"
+              >
+                Please ensure the following conditions are met to participate and
+                send messages.
+              </Span>
+              <Section gap="8px" alignItems="start">
+                <Image
+                  verticalAlign="start"
+                  height="24"
+                  width="24"
+                  src={TokenGatedIcon}
+                  alt="token-gated"
+                />
+                <Section flexDirection="column">
+                  {' '}
+                  <Span
+                    color={theme.textColor?.encryptionMessageText}
+                    textAlign="start"
+                    alignSelf="start"
+                  >
+                    Token Gated
+                  </Span>
+                  <Span
+                    fontWeight="500"
+                    textAlign="start"
+                    color={theme.textColor?.encryptionMessageText}
+                  >
+                    You need to have{' '}
+                    <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+                      1 PUSH Token
+                    </Span>{' '}
+                    in your wallet to be able to send messages.
+                  </Span>
+                </Section>
+              </Section>
+              <Section gap="8px">
+                <TokenWrapper
+                  onClick={() => {
+                    if (onGetTokenClick) {
+                      onGetTokenClick();
+                    }
+                    setVerificationSuccessfull(true);
+                  }}
+                >
+                  <TokenGet>
+                    Get Free Tokens
+                    <OpenLink height="12" width="12" />
+                  </TokenGet>
+                </TokenWrapper>
+                <ConnectWrapperClose
+                  onClick={() => {
+                    setVerificationSuccessfull(true);
+                  }}
+                >
+                  <ConnectClose>Close</ConnectClose>
+                </ConnectWrapperClose>
+              </Section>
+            </Section>
+          </Modal>
+        )}
+      </>
       ) : null}
-      {pgpPrivateKey &&
+      {!!pgpPrivateKey &&
         (((isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
@@ -683,7 +841,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </SendSection>
           </>
         )}
-           <ToastContainer />
+      <ToastContainer />
     </TypebarSection>
   ) : (
     <></>
