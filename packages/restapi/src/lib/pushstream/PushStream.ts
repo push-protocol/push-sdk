@@ -191,10 +191,7 @@ export class PushStream extends EventEmitter {
 
     this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (data: any) => {
       if (data.messageCategory == 'Chat' || data.messageCategory == 'Request') {
-        console.log(data);
-        data = await this.chatInstance.decrypt([data])
-        console.log("Post decrypt")
-        console.log(data);
+        data = await this.chatInstance.decrypt([data]);
       }
 
       const modifiedData = DataModifier.handleChatEvent(data[0], this.raw);
@@ -205,6 +202,18 @@ export class PushStream extends EventEmitter {
           this.emit(STREAM.CHAT, modifiedData);
         }
       }
+    });
+
+    this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
+      console.log('Incoming Feed from Socket');
+      console.log(data);
+      this.emit(STREAM.NOTIF, data);
+    });
+
+    this.pushNotificationSocket.on(EVENTS.USER_SPAM_FEEDS, (data: any) => {
+      console.log('Incoming Spam Feed from Socket');
+      console.log(data);
+      this.emit(STREAM.NOTIF, data);
     });
   }
 }

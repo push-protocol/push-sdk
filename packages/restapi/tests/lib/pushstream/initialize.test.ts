@@ -5,13 +5,12 @@ import { expect } from 'chai'; // Assuming you're using chai for assertions
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { sendNotification } from '../../../src/lib/payloads/sendNotifications';
+import { subscribe, unsubscribe } from '../../../src/lib/channels';
 
 import { ENV } from '../../../src/lib/constants';
 import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
 import { ConditionType } from '../../../src/lib';
-
-
 
 describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
@@ -167,6 +166,7 @@ describe('PushStream.initialize functionality', () => {
 
     const onDataReceived = createEventPromise('CHAT_OPS', STREAM.CHAT_OPS, 5);
     const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 4);
+    const onNoitificationsReceived = createEventPromise('NOTIF', STREAM.NOTIF, 4);
 
     // Create and update group
     /*const createdGroup = await user.chat.group.create(
@@ -189,7 +189,21 @@ describe('PushStream.initialize functionality', () => {
     const channelAddress = signerChannel.address;
 
     console.log(channelAddress);
-   
+
+    const response = await subscribe({
+      signer: signer,
+      channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
+      userAddress: `eip155:5:${signer.address}`, // user address in CAIP
+      onSuccess: () => {
+        console.log('opt in success');
+      },
+      onError: () => {
+        console.error('opt in error');
+      },
+      env: ENV.LOCAL,
+    });
+
+
     const apiResponse = await sendNotification({
       signer: signerChannel, // Needs to resolve to channel address
       type: 1, // broadcast
@@ -208,7 +222,40 @@ describe('PushStream.initialize functionality', () => {
       env: ENV.LOCAL,
     });
 
-    console.log(apiResponse);
+
+    const response2 = await unsubscribe({
+      signer: signer,
+      channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
+      userAddress: `eip155:5:${signer.address}`, // user address in CAIP
+      onSuccess: () => {
+        console.log('opt out success');
+      },
+      onError: () => {
+        console.error('opt out error');
+      },
+      env: ENV.LOCAL,
+    });
+
+
+    const apiResponse2 = await sendNotification({
+      signer: signerChannel, // Needs to resolve to channel address
+      type: 3, // broadcast
+      identityType: 2, // direct payload
+      notification: {
+        title: `notification TITLE:`,
+        body: `notification BODY`,
+      },
+      payload: {
+        title: `payload title`,
+        body: `sample msg body`,
+        cta: '',
+        img: '',
+      },
+      recipients: `eip155:5:${signer.address}`,
+      channel: `eip155:5:${channelAddress}`, // your channel address
+      env: ENV.LOCAL,
+    });
+
 
     /*const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
       description: 'Updated Description',
@@ -290,7 +337,11 @@ describe('PushStream.initialize functionality', () => {
     // Wrap the Promise.allSettled inside a Promise.race with the timeout
     try {
       const result = await Promise.race([
-        Promise.allSettled([onDataReceived, onMessageReceived]),
+        Promise.allSettled([
+          onDataReceived,
+          onMessageReceived,
+          onNoitificationsReceived,
+        ]),
         timeout,
       ]);
 
