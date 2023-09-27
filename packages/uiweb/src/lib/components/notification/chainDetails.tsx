@@ -7,7 +7,7 @@ import { BSCSvg } from "../../icons/BSCSvg";
 import { OptimismSvg } from "../../icons/OptimismSvg";
 import { PolygonzkevmSvg } from "../../icons/PolygonzkevmSvg";
 import { TheGraphSvg } from "../../icons/TheGraphSvg";
-import { ReactElement } from "react";
+import { ArbitrumSvg } from "../../icons/ArbitrumSvg"
 
 const createSVGIcon = (element:any, chainName: string) => {
   return (
@@ -58,14 +58,14 @@ export default {
     label: 'POLYGON ZK EVM MAINNET',
     icon: createSVGIcon(<PolygonzkevmSvg/>, 'Polygon ZK EVM Mainnet'),
   },
-  //TODO: change it to arbitum one
+
   ARBITRUMONE_MAINNET: {
-    label: 'ARBITRUMONE_MAINNET ZK EVM MAINNET',
-    icon: createSVGIcon(<PolygonzkevmSvg/>, 'Polygon ZK EVM Mainnet'),
+    label: 'ARBITRUMONE MAINNET',
+    icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Mainnet'),
   },
   ARBITRUM_TESTNET: {
-    label: 'ARBITRUMONE_MAINNET ZK EVM MAINNET',
-    icon: createSVGIcon(<PolygonzkevmSvg/>, 'Polygon ZK EVM Mainnet'),
+    label: 'ARBITRUMONE MAINNET',
+    icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Testnet'),
   },
   THE_GRAPH: { label: 'THE GRAPH', icon: createSVGIcon(<TheGraphSvg/>, 'The Graph') },
 };

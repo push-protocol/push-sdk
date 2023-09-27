@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const SvgComponent = () => (
+export const ArbitrumSvg = () => (
   <svg
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
@@ -21,4 +21,3 @@ const SvgComponent = () => (
   </svg>
 );
 
-export default SvgComponent;
