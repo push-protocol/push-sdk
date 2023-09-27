@@ -1,10 +1,9 @@
 import { IFeeds } from '@pushprotocol/restapi';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Dispatch, useContext } from 'react';
-import { Div, Section, Span, Spinner } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import { useChatData } from '../../../hooks';
-import { TickSvg } from '../../../icons/Tick';
 import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 
@@ -21,17 +20,19 @@ export interface IApproveRequestBubbleProps {
   setChatFeed: Dispatch<IFeeds>;
 }
 
+
 export const ApproveRequestBubble = ({
   chatFeed,
   chatId,
   setChatFeed,
 }: IApproveRequestBubbleProps) => {
-  const { account, pgpPrivateKey, env } = useChatData();
+  const { pgpPrivateKey } = useChatData();
 
   const ApproveRequestText = {
     GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,
     W2W: ` Please accept to enable push chat from this wallet`,
   };
+  
   const theme = useContext(ThemeContext);
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
@@ -41,6 +42,7 @@ export const ApproveRequestBubble = ({
       if (!pgpPrivateKey) {
         return;
       }
+
       const response = await approveChatRequest({
         chatId,
       });
@@ -56,9 +58,9 @@ export const ApproveRequestBubble = ({
   };
   return (
     <Section
-      color={theme.textColorPrimary}
+      color={theme.textColor?.chatReceivedBubbleText}
       gap="10px"
-      background={theme.chatBubblePrimaryBgColor}
+      background={theme.backgroundColor?.chatReceivedBubbleBackground}
       padding="8px 12px"
       margin="7px 0"
       borderRadius=" 0px 12px 12px 12px"
@@ -72,9 +74,9 @@ export const ApproveRequestBubble = ({
       <Span
         alignSelf="center"
         textAlign="left"
-        fontSize="16px"
-        fontWeight="400"
-        color="#000"
+        fontSize={theme.fontSize?.chatReceivedBubbleText}
+        fontWeight={theme.fontWeight?.chatReceivedBubbleText}
+        color={theme.textColor?.chatReceivedBubbleText}
         lineHeight="24px"
       >
         {chatFeed?.groupInformation
@@ -87,13 +89,7 @@ export const ApproveRequestBubble = ({
       >
         {approveLoading ? <Spinner color="#fff" size="24" /> : 'Accept'}
       </Button>
-      {/* <Div
-        width="auto"
-        cursor="pointer"
-        onClick={() => (!approveLoading ? handleApproveChatRequest() : null)}
-      >
-        {approveLoading ? <Spinner /> : <TickSvg />}
-      </Div> */}
+     
     </Section>
   );
 };
@@ -103,9 +99,9 @@ const Button = styled.button<IThemeProps>`
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  background: ${(props) => props.theme.accentBgColor};
+  background: ${(props) => props.theme.backgroundColor.buttonBackground};
   border: none;
-  color: white;
+  color:  ${(props) => props.theme.textColor.buttonText};
   width: 100%;
   font-size: 16px;
   font-weight: 600;
