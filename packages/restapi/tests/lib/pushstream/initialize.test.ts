@@ -4,10 +4,14 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { expect } from 'chai'; // Assuming you're using chai for assertions
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
+import { sendNotification } from '../../../src/lib/payloads/sendNotifications';
+
 import { ENV } from '../../../src/lib/constants';
 import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
 import { ConditionType } from '../../../src/lib';
+
+
 
 describe.only('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
@@ -165,10 +169,46 @@ describe.only('PushStream.initialize functionality', () => {
     const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 4);
 
     // Create and update group
-    const createdGroup = await user.chat.group.create(
+    /*const createdGroup = await user.chat.group.create(
       'test',
       CREATE_GROUP_REQUEST_2
-    );
+    );*/
+
+    /*const w2wMessageResponse = await user2.chat.send(signer.address, {
+      content: MESSAGE,
+    });
+    const w2wAcceptsRequest = await user.chat.accept(signer2.address);
+
+    const w2wMessageResponse2 = await user2.chat.send(signer.address, {
+      content: MESSAGE,
+    });*/
+
+    const channelPrivateKey = process.env['WALLET_PRIVATE_KEY'];
+
+    const signerChannel = new ethers.Wallet(`0x${channelPrivateKey}`);
+    const channelAddress = signerChannel.address;
+
+    console.log(channelAddress);
+   
+    const apiResponse = await sendNotification({
+      signer: signerChannel, // Needs to resolve to channel address
+      type: 1, // broadcast
+      identityType: 2, // direct payload
+      notification: {
+        title: `notification TITLE:`,
+        body: `notification BODY`,
+      },
+      payload: {
+        title: `payload title`,
+        body: `sample msg body`,
+        cta: '',
+        img: '',
+      },
+      channel: `eip155:5:${channelAddress}`, // your channel address
+      env: ENV.LOCAL,
+    });
+
+    console.log(apiResponse);
 
     /*const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
       description: 'Updated Description',

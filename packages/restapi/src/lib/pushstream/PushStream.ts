@@ -10,6 +10,8 @@ import {
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
+import { Chat } from '../pushapi/chat';
+import { ProgressHookType, SignerType } from '../types';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -18,8 +20,15 @@ export class PushStream extends EventEmitter {
   private account: string;
   private raw: boolean;
   private options: PushStreamInitializeProps;
+  private chatInstance: Chat;
 
-  constructor(account: string, options: PushStreamInitializeProps) {
+  constructor(
+    account: string,
+    private decryptedPgpPvtKey: string,
+    private signer: SignerType,
+    options: PushStreamInitializeProps,
+    private progressHook?: (progress: ProgressHookType) => void
+  ) {
     super();
 
     this.account = account;
@@ -56,10 +65,21 @@ export class PushStream extends EventEmitter {
 
     this.raw = options.raw ?? false;
     this.options = options;
+
+    this.chatInstance = new Chat(
+      this.account,
+      this.decryptedPgpPvtKey,
+      this.options.env as ENV,
+      this.signer,
+      this.progressHook
+    );
   }
 
   static async initialize(
     account: string,
+    decryptedPgpPvtKey: string,
+    signer: SignerType,
+    progressHook?: (progress: ProgressHookType) => void,
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     const defaultOptions: PushStreamInitializeProps = {
@@ -77,7 +97,13 @@ export class PushStream extends EventEmitter {
       ...options,
     };
 
-    const stream = new PushStream(account, settings);
+    const stream = new PushStream(
+      account,
+      decryptedPgpPvtKey,
+      signer,
+      settings,
+      progressHook
+    );
     await stream.init();
     return stream;
   }
@@ -163,8 +189,15 @@ export class PushStream extends EventEmitter {
       }
     });
 
-    this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (data: any) => {
-      const modifiedData = DataModifier.handleChatEvent(data, this.raw);
+    this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (data: any) => {
+      if (data.messageCategory == 'Chat' || data.messageCategory == 'Request') {
+        console.log(data);
+        data = await this.chatInstance.decrypt([data])
+        console.log("Post decrypt")
+        console.log(data);
+      }
+
+      const modifiedData = DataModifier.handleChatEvent(data[0], this.raw);
       modifiedData.event = this.convertToProposedName(modifiedData.event);
       this.handleToField(modifiedData);
       if (this.shouldEmitChat(data.chatId)) {

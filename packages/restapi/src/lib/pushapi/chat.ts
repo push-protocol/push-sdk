@@ -9,6 +9,7 @@ import {
   Message,
   ProgressHookType,
   IUser,
+  IMessageIPFS,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -18,20 +19,24 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import {  getUserDID } from '../chat/helpers';
+import { getUserDID } from '../chat/helpers';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
+import { UserInfo } from './userInfo';
 export class Chat {
+  private userInfoInstance: UserInfo;
+
   constructor(
     private account: string,
     private decryptedPgpPvtKey: string,
     private env: ENV,
     private signer: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
-  ) {}
+  ) {    this.userInfoInstance = new UserInfo(this.account, this.env);
+}
 
   async list(
     type: `${ChatListType}`,
@@ -122,6 +127,15 @@ export class Chat {
       env: this.env,
     };
     return await PUSH_CHAT.send(sendParams);
+  }
+
+  async decrypt(messagePayloads: IMessageIPFS[]) {
+    return await PUSH_CHAT.decryptConversation({
+      pgpPrivateKey: this.decryptedPgpPvtKey,
+      env: this.env,
+      messages: messagePayloads,
+      connectedUser: await this.userInfoInstance.info(),
+    });
   }
 
   async accept(target: string): Promise<string> {

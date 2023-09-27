@@ -141,6 +141,9 @@ export class PushAPI {
 
       const streamInstance = await PushStream.initialize(
         api.account,
+        decryptedPGPPrivateKey,
+        signer,
+        settings.progressHook,
         settings.streamOptions
       );
       if (streamInstance) {
