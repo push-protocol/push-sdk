@@ -52,4 +52,15 @@ describe('PushAPI.chat functionality', () => {
     });
     expect(response).to.be.an('object');
   });
+  it('Should decrypt message ', async () => {
+    await userAlice.chat.send(account2, {
+      content: 'Hello',
+      type: MessageType.TEXT,
+    });
+    const messagePayloads = await userAlice.chat.history(account2);
+    const decryptedMessagePayloads = await userBob.chat.decrypt(
+      messagePayloads
+    );
+    expect(decryptedMessagePayloads).to.be.an('array');
+  });
 });
