@@ -5,7 +5,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 // livekit imports
-import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
+import { LiveKitRoom, ConnectionState, RoomName, RoomAudioRenderer, ControlBar } from '@livekit/components-react';
 import { Room } from 'livekit-client';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
@@ -63,7 +63,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  // const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -71,12 +71,15 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   useEffect(() => {
     (async function () {
-      if(isListener && spaceData?.spaceId) {
+      if (isListener && spaceData?.spaceId) {
         const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
+        setLivekitToken(livekitToken.data);
+      } else if (isHost && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "sender", roomId: spaceData?.spaceId });
         setLivekitToken(livekitToken.data);
       }
     })();
-  }, [isListener, spaceData]);
+  }, [isListener, isHost, spaceData]);
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
@@ -398,13 +401,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             </Item>
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {
+                {/* {
                   isHost && numberOfRequests ?
                     <RequestsCount>
                       {numberOfRequests}
                     </RequestsCount>
                     : null
-                }
+                } */}
                 <Image
                   width={'21px'}
                   height={'24px'}
@@ -435,20 +438,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && !isHost && playBackUrl.length > 0 && (
+            {/* {isListener && !isHost && playBackUrl.length > 0 && (
               <PeerPlayerDiv>
                 <Player title="spaceAudio" playbackId={playBackUrl} autoPlay />
               </PeerPlayerDiv>
-            )}
-            {isListener && !isHost && livekitToken && (
-              <LiveKitRoom
-                serverUrl={LIVEKIT_SERVER_URL}
-                token={livekitToken}
-                room={livekitRoom}
-              >
-                <RoomAudioRenderer />
-              </LiveKitRoom>
-            )}
+            )} */}
           </Item>
         ) : (
           <Button
@@ -481,6 +475,19 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           />
         ) : null}
       </Item>
+      <LiveKitComp>
+        {livekitToken && (
+          <LiveKitRoom
+            serverUrl={LIVEKIT_SERVER_URL}
+            token={livekitToken}
+            room={livekitRoom}
+          >
+            <ConnectionState />
+            <RoomAudioRenderer />
+            <ControlBar />
+          </LiveKitRoom>
+        )}
+      </LiveKitComp>
     </ThemeProvider>
   );
 };
@@ -508,4 +515,10 @@ const RequestsCount = styled.div`
   padding: 2px 4px;
   border-radius: 4px;
   font-size: 12px;
+`;
+
+const LiveKitComp = styled.div`
+  background-color: white;
+  padding: 12px;
+  margin: 12px;
 `;
