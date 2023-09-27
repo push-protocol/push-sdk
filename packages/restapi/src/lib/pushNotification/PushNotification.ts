@@ -4,7 +4,6 @@ import {
   ISendNotificationInputOptions,
   ProgressHookType,
   ProgressHookTypeFunction,
-  ethersV5SignerType,
 } from '../types';
 import {
   ChannelInfoOptions,
@@ -32,14 +31,12 @@ import {
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
-import { ethers, Contract, ContractInterface, Signer, BigNumber } from 'ethers';
+import { ethers, Contract, Signer, BigNumber } from 'ethers';
 import axios from 'axios';
-import { mainnet, goerli } from 'viem/chains';
 import {
   createPublicClient,
   http,
   getContract,
-  GetContractReturnType,
   WalletClient,
   Chain,
 } from 'viem';
