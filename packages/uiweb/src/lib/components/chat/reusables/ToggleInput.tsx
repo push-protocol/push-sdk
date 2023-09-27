@@ -38,8 +38,7 @@ export const ToggleInput = (props: IToggleInputProps) => {
           <input type="checkbox" id="checkbox" checked={props.checked} onChange={()=>props.onToggle()} />
           <div className="slider round"></div>
         </ToggleLabel>
-        {/* <input type="checkbox" id="checkbox" />
-    <div class="slider round"></div> */}
+
       </ToggleContainer>
     </ThemeProvider>
   );
@@ -52,6 +51,7 @@ const ToggleContainer = styled.div`
   gap:10px;
   font-family: ${props => props.theme.fontFamily};
     align-items:center;
+    width:100%;
 `;
 
 const LabelContainer = styled.div`

@@ -112,6 +112,9 @@ export interface User {
   isAdmin?:boolean;
 }
 
+export interface CreateGroupModalProps {
+  onClose: ()=>void;
+};
 
 
 export interface ModalButtonProps {

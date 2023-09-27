@@ -6,3 +6,6 @@ export * from './NewToast';
 export * from './TextInput';
 export * from './ToggleInput';
 export * from './DropDownInput';
+export * from './TextArea';
+export * from './OptionButtons';
+export * from './Button';

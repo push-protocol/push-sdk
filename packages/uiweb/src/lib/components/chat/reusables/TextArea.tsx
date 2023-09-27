@@ -1,6 +1,7 @@
 import React, {ChangeEvent, useContext} from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import { ISpacesTheme } from '../theme'
+
+import { IChatTheme } from '../theme'
 import { ThemeContext } from '../theme/ThemeProvider'
 
 export interface ITextAreaProps {
@@ -8,6 +9,7 @@ export interface ITextAreaProps {
     labelName?: string;
     inputValue: string;
     onInputChange: any;
+
 }
 
 export const TextArea = (props: ITextAreaProps) => {
@@ -29,7 +31,7 @@ export const TextArea = (props: ITextAreaProps) => {
             <label>{props.labelName}</label>
             <CharCounter theme={theme}>{props.inputValue.length} / {props.charCount}</CharCounter>
         </LabelContainer>
-        <Input theme={theme} value={props.inputValue} onChange={handleChange} />
+        <Input  theme={theme} value={props.inputValue} onChange={handleChange} />
         </InputContainer>
     </ThemeProvider>
   )
@@ -39,9 +41,9 @@ const InputContainer = styled.div`
     display: flex;
     flex-direction: column;
 
-    margin: 16px 0;
+    width: 100%;
 
-    font-family: 'Strawford'; // update to fontFamily theme
+    font-family: ${(props) => props.theme.fontFamily};
 `;
 
 
@@ -50,24 +52,28 @@ const LabelContainer = styled.div`
     justify-content: space-between;
 
     font-weight: 500;
-    color: ${props => props.theme.textColorPrimary ?? '#000'}
+    color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const Input = styled.textarea<ISpacesTheme>`
+const Input = styled.textarea<IChatTheme>`
     padding: 16px;
-    margin-top: 12px;
+    margin-top: 8px;
 
-    width: 330px;
+    // width: 330px;
     height: 121px;
+    color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
-    background: #FFFFFF;
-    border: 2px solid ${(props => props.theme.btnOutline)};
-    border-radius: 12px;
+    background: ${(props) => props.theme.backgroundColor.modalInputBackground};
+    border: ${(props) => props.theme.border.modalInnerComponents};
+    border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
-    font-family: 'Strawford'; // update to fontFamily theme
+    font-family: ${(props) => props.theme.fontFamily};
     font-size: 14px;
 `;
 
-const CharCounter = styled.div<ISpacesTheme>`
-    color: ${(props => props.theme.textColorSecondary)};
+const CharCounter = styled.div<IChatTheme>`
+color: ${(props) => props.theme.textColor?.modalSubHeadingText};
+font-size: 14px;
+
+  font-weight: 400;
 `;

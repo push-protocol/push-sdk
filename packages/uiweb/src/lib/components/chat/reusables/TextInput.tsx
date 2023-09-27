@@ -64,7 +64,8 @@ const LabelContainer = styled.div`
 
 const Input = styled.input<IChatTheme>`
   padding: 16px;
-  margin-top: 12px;
+  margin-top: 8px;
+  color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
   background: ${(props) => props.theme.backgroundColor.modalInputBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
@@ -78,4 +79,7 @@ const Input = styled.input<IChatTheme>`
 
 const CharCounter = styled.div<IChatTheme>`
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
+  font-size: 14px;
+
+  font-weight: 400;
 `;

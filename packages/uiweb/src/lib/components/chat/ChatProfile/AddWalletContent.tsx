@@ -249,11 +249,11 @@ const ModalConfirmButton = styled.button<ModalButtonProps>`
   color: ${(props) =>
     props.memberListCount ? props.theme.textColor.buttonText : props.theme.textColor.buttonDisableText};
   border: ${(props) =>
-    props.memberListCount ? 'none' : props.theme.border.modalInnerComponents};
+    props.memberListCount ? 'none' : props.theme.border.modal};
   min-width: 50%;
   box-sizing: border-box;
   cursor: pointer;
-  border-radius: 15px;
+  border-radius: 12px;
   padding: 16px;
   font-size: 16px;
   font-weight: 500;
