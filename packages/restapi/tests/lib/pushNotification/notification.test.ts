@@ -9,7 +9,7 @@ import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { goerli } from 'viem/chains';
 // import tokenABI from './tokenABI';
-describe.only('PushAPI.notification functionality', () => {
+describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;
@@ -52,7 +52,7 @@ describe.only('PushAPI.notification functionality', () => {
     userViem = await PushAPI.initialize(viemSigner);
   });
 
-  describe('notification :: list', () => {
+  describe('', () => {
     it('Should return feeds with signer object', async () => {
       const response = await userAlice.notification.list('SPAM');
       expect(response).not.null;
