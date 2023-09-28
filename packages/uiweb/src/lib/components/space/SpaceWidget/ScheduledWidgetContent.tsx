@@ -170,9 +170,17 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   useEffect(() => {
     async function startSpace() {
+      if (spaceStatusState === SpaceStatus.Live) return;
+      if (!isStarted) return;
+
+      await spacesObjectRef?.current?.start?.();
+
       console.log('SPACE STARTED');
+
       setIsStarted(false);
+
       setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
+      console.log(spaceStatusState)
     }
     startSpace();
   }, [isStarted]);

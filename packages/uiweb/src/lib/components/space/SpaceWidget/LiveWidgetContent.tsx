@@ -5,8 +5,8 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 // livekit imports
-import { LiveKitRoom, ConnectionState, RoomName, RoomAudioRenderer, ControlBar } from '@livekit/components-react';
-import { Room } from 'livekit-client';
+import { LiveKitRoom, ConnectionState, RoomAudioRenderer, TrackToggle, ConnectionStateToast } from '@livekit/components-react';
+import { Room, Track } from 'livekit-client';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
@@ -26,6 +26,7 @@ import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
 import { pCAIP10ToWallet } from '../../../helpers';
 import { getLivekitRoomToken } from '../../../services';
+import Microphone from './Microphone';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
@@ -360,45 +361,58 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             justifyContent={'space-between'}
             padding={'6px 8px'}
           >
-            <Item
-              cursor={'pointer'}
-              display={'flex'}
-              alignItems={'center'}
-              gap={'8px'}
-              padding={'10px'}
-              onClick={() =>
-                isHost || isSpeaker ? handleMicState() : handleRequest()
-              }
-            >
-              <Image
-                width={'14px'}
-                height={'20px'}
-                src={
-                  isHost || isSpeaker
-                    ? isMicOn
-                      ? MicEngagedIcon
-                      : MuteIcon
-                    : isRequestedForMic
-                      ? HandIcon
-                      : MicOnIcon
-                }
-                alt="Mic Icon"
-              />
-              <Text
-                color={`${theme.btnOutline}`}
-                fontSize={'14px'}
-                fontWeight={600}
+            {livekitToken && (
+              <LiveKitRoom
+                serverUrl={LIVEKIT_SERVER_URL}
+                token={livekitToken}
+                room={livekitRoom}
               >
-                {isHost || isSpeaker
-                  ? isMicOn
-                    ? 'Speaking'
-                    : 'Muted'
-                  : isRequestedForMic
-                    ? 'Requested'
-                    : 'Request'
+                <ConnectionState />
+                <Microphone />
+                <ConnectionStateToast />
+                <RoomAudioRenderer />
+                <TrackToggle source={Track.Source.Microphone} />
+              </LiveKitRoom>
+            )}
+            {/* <Item
+                cursor={'pointer'}
+                display={'flex'}
+                alignItems={'center'}
+                gap={'8px'}
+                padding={'10px'}
+                onClick={() =>
+                  isHost || isSpeaker ? handleMicState() : handleRequest()
                 }
-              </Text>
-            </Item>
+              >
+                <Image
+                  width={'14px'}
+                  height={'20px'}
+                  src={
+                    isHost || isSpeaker
+                      ? isMicOn
+                        ? MicEngagedIcon
+                        : MuteIcon
+                      : isRequestedForMic
+                        ? HandIcon
+                        : MicOnIcon
+                  }
+                  alt="Mic Icon"
+                />
+                <Text
+                  color={`${theme.btnOutline}`}
+                  fontSize={'14px'}
+                  fontWeight={600}
+                >
+                  {isHost || isSpeaker
+                    ? isMicOn
+                      ? 'Speaking'
+                      : 'Muted'
+                    : isRequestedForMic
+                      ? 'Requested'
+                      : 'Request'
+                  }
+                </Text>
+              </Item> */}
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
                 {/* {
@@ -475,19 +489,6 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
           />
         ) : null}
       </Item>
-      <LiveKitComp>
-        {livekitToken && (
-          <LiveKitRoom
-            serverUrl={LIVEKIT_SERVER_URL}
-            token={livekitToken}
-            room={livekitRoom}
-          >
-            <ConnectionState />
-            <RoomAudioRenderer />
-            <ControlBar />
-          </LiveKitRoom>
-        )}
-      </LiveKitComp>
     </ThemeProvider>
   );
 };
