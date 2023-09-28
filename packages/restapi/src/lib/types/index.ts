@@ -315,10 +315,10 @@ export type Data = {
   contract?: string;
   amount?: number;
   decimals?: number;
-  guildId?: string;
-  guildRoleId?: string;
+  id?: string;
+  role?: string;
   url?: string;
-  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'all' | 'any';
 };
 
 export type ConditionBase = {
@@ -337,23 +337,30 @@ export type Condition = ConditionBase & {
 
 export interface Rules {
   entry?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
   chat?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
+
 export interface SpaceRules {
   entry?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
 export interface GroupAccess {
-  groupAccess: boolean;
+  entry: boolean;
   chat: boolean;
   rules?: Rules;
+}
+
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
 }
 
 export interface SpaceAccess {

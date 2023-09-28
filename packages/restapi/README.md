@@ -2121,10 +2121,10 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
+  entry?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chatAccess?: {
+  chat?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -2374,7 +2374,7 @@ const response = await PushAPI.space.update({
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
     rules: {
-      'groupAccess': {
+      'entry': {
         'conditions': [
           {
             'any': [
