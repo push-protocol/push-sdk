@@ -1,4 +1,5 @@
 import Constants, { ENV } from '../constants';
+import { PushStreamInitializeProps } from '../pushstream/pushStreamTypes';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
@@ -13,6 +14,7 @@ export interface PushAPIInitializeProps {
   versionMeta?: { NFTPGP_V1?: { password: string } };
   autoUpgrade?: boolean;
   origin?: string;
+  streamOptions?: PushStreamInitializeProps;
 }
 
 export interface GroupCreationOptions {
@@ -21,14 +23,7 @@ export interface GroupCreationOptions {
   members?: string[];
   admins?: string[];
   private?: boolean;
-  rules?: {
-    entry?: {
-      conditions: any[];
-    };
-    chat?: {
-      conditions: any[];
-    };
-  };
+  rules?: Rules | null;
 }
 
 export interface ManageGroupOptions {

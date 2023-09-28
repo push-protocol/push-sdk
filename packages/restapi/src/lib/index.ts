@@ -9,7 +9,6 @@ import * as video from "./video"
 
 export * from './types';
 export { PushAPI } from './pushapi/PushAPI';
-export { PushNotification } from './pushNotification/PushNotification'
 export {
   alias,
   channels,
