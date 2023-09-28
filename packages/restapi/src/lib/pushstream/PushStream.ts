@@ -53,15 +53,11 @@ export class PushStream extends EventEmitter {
 
     if (!this.pushNotificationSocket) {
       throw new Error('Push notification socket not connected');
-    } else {
-      console.log('Push notification socket connected ' + `eip155:${account}`);
-    }
+    } 
 
     if (!this.pushChatSocket) {
       throw new Error('Push chat socket not connected');
-    } else {
-      console.log('Push chat socket connected ' + `eip155:${account}`);
-    }
+    } 
 
     this.raw = options.raw ?? false;
     this.options = options;

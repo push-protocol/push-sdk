@@ -25,7 +25,7 @@ import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
-import { UserInfo } from './userInfo';
+import { UserInfo } from './user';
 export class Chat {
   private userInfoInstance: UserInfo;
 

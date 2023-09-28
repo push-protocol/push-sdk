@@ -7,7 +7,7 @@ import { getAccountAddress, getWallet } from '../chat/helpers';
 import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
-import { UserInfo } from './userInfo';
+import { User } from './user';
 import { PushStream } from '../pushstream/PushStream';
 
 export class PushAPI {
@@ -21,7 +21,7 @@ export class PushAPI {
   public chat: Chat; // Public instances to be accessed from outside the class
   public profile: Profile;
   public encryption: Encryption;
-  public userInfo: UserInfo;
+  public user: User;
   public stream!: PushStream;
 
   private constructor(
@@ -61,7 +61,7 @@ export class PushAPI {
       this.signer,
       this.progressHook
     );
-    this.userInfo = new UserInfo(this.account, this.env);
+    this.user = new User(this.account, this.env);
   }
 
   static async initialize(

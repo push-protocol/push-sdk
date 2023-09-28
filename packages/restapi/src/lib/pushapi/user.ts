@@ -1,7 +1,7 @@
 import * as PUSH_USER from '../user';
 import { ENV } from '../constants';
 
-export class UserInfo {
+export class User {
   constructor(private account: string, private env: ENV) {}
 
   async info() {
