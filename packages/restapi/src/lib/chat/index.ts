@@ -21,3 +21,4 @@ export * from './removeAdmins';
 export * from './getGroupAccess';
 export * from './searchGroups';
 export * from './rejectRequest';
+export * from './getGroupMemberStatus';
