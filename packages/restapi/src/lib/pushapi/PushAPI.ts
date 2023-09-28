@@ -9,7 +9,10 @@ import { Profile } from './profile';
 import { Encryption } from './encryption';
 import { UserInfo } from './userInfo';
 import { PushStream } from '../pushstream/PushStream';
-
+import { Channel } from '../pushNotification/channel';
+import { Alias } from '../pushNotification/alias';
+import { Delegate } from '../pushNotification/delegate';
+import { Notification } from '../pushNotification/notification';
 export class PushAPI {
   private signer: SignerType;
   private account: string;
@@ -23,6 +26,11 @@ export class PushAPI {
   public encryption: Encryption;
   public userInfo: UserInfo;
   public stream!: PushStream;
+  // Notification
+  public channel!: Channel;
+  public alias!: Alias;
+  public delegate!: Delegate;
+  public notification!: Notification;
 
   private constructor(
     signer: SignerType,
@@ -38,7 +46,25 @@ export class PushAPI {
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
-
+    // Instantiate the notification classes
+    this.channel = new Channel(
+      this.signer,
+      this.env,
+      this.account
+    )
+    this.alias = new Alias(
+      this.env
+    )
+    this.delegate = new Delegate(
+      this.signer,
+      this.env,
+      this.account
+    )
+    this.notification = new Notification(
+      this.signer,
+      this.env,
+      this.account
+    )
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,

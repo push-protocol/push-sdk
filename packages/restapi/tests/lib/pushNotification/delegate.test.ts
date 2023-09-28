@@ -2,14 +2,14 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-import { PushNotification } from '../../../src/lib/pushNotification/PushNotification'; // Ensure correct import path
+import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 // import tokenABI from './tokenABI';
-describe('PushAPI.notification functionality', () => {
-  let userAlice: PushNotification;
-  let userBob: PushNotification;
-  let userKate: PushNotification;
+describe('PushAPI.delegate functionality', () => {
+  let userAlice: PushAPI;
+  let userBob: PushAPI;
+  let userKate: PushAPI;
   let signer1: any;
   let account1: string;
   let signer2: any;
@@ -30,15 +30,16 @@ describe('PushAPI.notification functionality', () => {
     account2 = await signer2.getAddress();
 
     // initialisation with signer and provider
-    userKate = await PushNotification.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2);
     // initialisation with signer
-    userAlice = await PushNotification.initialize(signer1);
+    userAlice = await PushAPI.initialize(signer1);
     // initialisation without signer
-    userBob = await PushNotification.initialize();
+    userBob = await PushAPI.initialize(signer1);
   });
 
   describe('delegate :: add', () => {
-    it('Without signer and account :: should throw error', async () => {
+    // TODO: remove skip after signer becomes optional
+    it.skip('Without signer and account :: should throw error', async () => {
       await expect(() =>
         userBob.delegate.add(
           'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
@@ -70,7 +71,7 @@ describe('PushAPI.notification functionality', () => {
       ).to.Throw;
     });
 
-    it('With signer and provider :: should throw error as delegate caip and provider doesnt match', async () => {
+    it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
       const provider = new ethers.providers.JsonRpcProvider(
         'https://rpc-mumbai.maticvigil.com'
@@ -80,7 +81,7 @@ describe('PushAPI.notification functionality', () => {
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
       );
-      userKate = await PushNotification.initialize(signer2);
+      userKate = await PushAPI.initialize(signer2);
       const res = await userKate.delegate.add(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
@@ -89,8 +90,61 @@ describe('PushAPI.notification functionality', () => {
     }, 10000000);
   });
 
+  describe('delegate :: remove', () => {
+    // TODO: remove skip after signer becomes optional
+    it.skip('Without signer and account :: should throw error', async () => {
+      await expect(() =>
+        userBob.delegate.remove(
+          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        )
+      ).to.Throw;
+    });
+
+    it('With signer and without provider :: should throw error', async () => {
+      await expect(() =>
+        userAlice.delegate.remove(
+          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        )
+      ).to.Throw;
+    });
+
+    it('With signer and provider :: should add delegate', async () => {
+      const res = await userKate.delegate.remove(
+        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      );
+        console.log(res);
+      expect(res).not.null;
+    }, 100000000);
+
+    it('With signer and provider :: should throw error as delegate caip and provider doesnt match', async () => {
+      await expect(() =>
+        userKate.delegate.remove(
+          'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        )
+      ).to.Throw;
+    });
+
+    it('With viem signer: Should add delegate', async () => {
+      // create polygon mumbai provider
+      const provider = new ethers.providers.JsonRpcProvider(
+        'https://rpc-mumbai.maticvigil.com'
+      );
+
+      signer2 = new ethers.Wallet(
+        `0x${process.env['WALLET_PRIVATE_KEY']}`,
+        provider
+      );
+      userKate = await PushAPI.initialize(signer2);
+      const res = await userKate.delegate.remove(
+        'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      );
+        // console.log(res);
+      expect(res).not.null;
+    }, 10000000);
+  });
+
   describe('delegate :: get', () => {
-    it('Without signer and account : Should throw error', async () => {
+    it.skip('Without signer and account : Should throw error', async () => {
       await expect(() => userBob.delegate.get()).to.Throw;
     });
     it('Without signer : Should throw error for non-caip format', async () => {
@@ -105,7 +159,7 @@ describe('PushAPI.notification functionality', () => {
       const res = await userBob.delegate.get({
         channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      //   console.log(res)
+      console.log(res);
       expect(res).not.null;
     });
 
@@ -119,7 +173,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer : Should fetch delegates for channel', async () => {
       const res = await userKate.delegate.get();
-    //   console.log(res);
+      //   console.log(res);
       expect(res).not.null;
     });
   });
