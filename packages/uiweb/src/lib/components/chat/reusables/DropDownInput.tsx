@@ -23,7 +23,7 @@ export const DropDownInput = (props: IDropDownInputProps) => {
   const { selectedValue, dropdownValues, labelName } = props;
 
   //check if it works
-    useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
+    // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
 
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);

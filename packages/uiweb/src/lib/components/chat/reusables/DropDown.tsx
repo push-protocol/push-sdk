@@ -41,8 +41,8 @@ function Dropdown({
     return dropdownValue.textColor
       ? dropdownValue.textColor
       : textColor
-      ? textColor
-      : theme.textColor?.modalSubHeadingText;
+        ? textColor
+        : theme.textColor?.modalSubHeadingText;
   };
 
   const copyToClipboard = (address: string) => {
@@ -70,7 +70,10 @@ function Dropdown({
             margin="0px 0 8px 0"
             width="100%"
             style={{ cursor: 'pointer' }}
-            onClick={() => dropdownValue?.function()}
+            onClick={() => {
+              dropdownValue?.function()
+              // setshowDropdown?(false): true
+            }}
           >
             <Span
               margin="11px 22px 11px 2px"
@@ -95,7 +98,7 @@ function Dropdown({
                 cursor="pointer"
                 filter="brightness(0) invert(1)"
                 onClick={() => {
-                  copyToClipboard(dropdownValue?.value||'');
+                  copyToClipboard(dropdownValue?.value || '');
                 }}
               />
             )}
@@ -188,7 +191,7 @@ const DesktopAddress = styled(SpanAddress)`
   }
 `;
 
-const DropdownItemContainer = styled(Section)<{ hoverBGColor?: string }>`
+const DropdownItemContainer = styled(Section) <{ hoverBGColor?: string }>`
   justify-content: flex-start;
   flex-wrap: nowrap;
   margin: 1px 0;

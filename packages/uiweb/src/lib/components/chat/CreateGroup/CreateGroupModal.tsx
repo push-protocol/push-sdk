@@ -16,10 +16,14 @@ import { CreateGroupType } from './CreateGroupType';
 import { Image, device } from '../../../config';
 import { CreateGroupModalProps } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
+import { DefineCondtion } from './DefineCondition';
+import AddCriteria from './AddCriteria';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
   GROUP_TYPE: 2,
+  DEFINITE_CONDITION: 3,
+  ADD_CRITERIA: 4,
 } as const;
 
 export type CreateGroupStepKeys =
@@ -31,10 +35,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
 }) => {
   const [activeComponent, setActiveComponent] = useState<CreateGroupStepKeys>(
+    // replace it with info one
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
   const handleNext = () => {
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
+      console.log(activeComponent)
   };
   const handlePrevious = () => {
     setActiveComponent(activeComponent-1 as CreateGroupStepKeys);
@@ -45,9 +51,13 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return <CreateGroupDetail handleNext={handleNext} onClose={onClose} />;
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
-        return <CreateGroupType onClose={onClose} handlePrevious={handlePrevious}/>;
+        return <CreateGroupType handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
+      case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
+        return <DefineCondtion handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
+      case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
+        return <AddCriteria handlePrevious={handlePrevious} />
       default:
-        return <CreateGroupDetail onClose={onClose} />;
+        return <CreateGroupDetail handlePrevious={handlePrevious} onClose={onClose} />;
     }
   };
 
@@ -128,7 +138,10 @@ const CreateGroupDetail = ({ handleNext, onClose }: ModalHeaderProps) => {
   );
 };
 
-
+interface DEFINE_CONDITION {
+    handlePrevious: () => void;
+    onClose: () => void;
+}
 
 
 //use the theme
