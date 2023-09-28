@@ -10,7 +10,7 @@ import { useClickAway } from '../../../hooks';
 import Dropdown, { DropdownValueType } from './DropDown';
 
 export interface IDropDownInputProps {
-  selectedValue: string;
+  selectedValue: number;
   labelName?: string;
   dropdownValues: DropdownValueType[];
 }
@@ -22,30 +22,31 @@ export const DropDownInput = (props: IDropDownInputProps) => {
 
   const { selectedValue, dropdownValues, labelName } = props;
 
-  //check if it works
     // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
 
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);
   };
-
+console.log(dropdownValues)
+console.log(selectedValue)
   return (
     <ThemeProvider theme={theme}>
       <DropdownContainer>
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-        <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
-          <Span>{selectedValue}</Span>
+         {!showDropdown && <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
+          <Span  margin='0 7px 0 0'>{dropdownValues[selectedValue].title} </Span>
           <ArrowImage
             src={ArrowIcon}
             width={'auto'}
             setPosition={!showDropdown}
             borderRadius="100%"
+           
           />
-        </DropdownDiv>
+        </DropdownDiv>}
         {showDropdown && (
-          <DropdownListContainer theme={theme} >
+          <DropdownListContainer theme={theme} onClick={closeDropdown} >
             <Dropdown
               dropdownValues={dropdownValues}
               hoverBGColor={theme.backgroundColor?.modalHoverBackground}
@@ -63,18 +64,17 @@ const DropdownContainer = styled.div`
   flex-direction: column;
   width: 100%;
   font-family: ${(props) => props.theme.fontFamily};
-  gap: 5px;
+  gap: 8px;
 `;
 
 const LabelContainer = styled.div`
-  font-weight: 500;
+  font-weight: 400;
   font-size: 16px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
 const DropdownDiv = styled.div<IChatTheme>`
   padding: 16px;
-  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -95,6 +95,7 @@ const ArrowImage = styled(Image)<{ setPosition: boolean }>`
 `;
 
 const DropdownListContainer = styled(Section)<IChatTheme>`
+
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding:  8px;
   z-index: 9999999 !important;

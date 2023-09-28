@@ -18,6 +18,8 @@ import { CreateGroupModalProps } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
+import { SpamIcon } from '../../../icons/SpamIcon';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -55,7 +57,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
         return <DefineCondtion handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
       case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
-        return <AddCriteria handlePrevious={handlePrevious} />
+        return <AddCriteria handlePrevious={handlePrevious} onClose={onClose} />
       default:
         return <CreateGroupDetail handlePrevious={handlePrevious} onClose={onClose} />;
     }
@@ -138,10 +140,19 @@ const CreateGroupDetail = ({ handleNext, onClose }: ModalHeaderProps) => {
   );
 };
 
-interface DEFINE_CONDITION {
-    handlePrevious: () => void;
-    onClose: () => void;
-}
+export const GatingRulesInformation = () => {
+
+    const theme = useContext(ThemeContext);
+    return (
+      <Section gap="4px">
+        <SpamIcon />
+        <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
+          Learn more about gating rules
+        </Span>
+      </Section>
+    )
+  }
+
 
 
 //use the theme

@@ -57,6 +57,7 @@ function Dropdown({
       document.body.removeChild(el);
     }
   };
+  console.log(dropdownValues)
   return (
     <>
       {dropdownValues.map((dropdownValue) =>

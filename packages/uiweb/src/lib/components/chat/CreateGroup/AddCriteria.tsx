@@ -1,108 +1,462 @@
-import React, { useState } from 'react'
-import { DropDownInput, ModalHeader } from '../reusables'
-import { Section } from '../../reusables'
-import { EthereumIcon } from '../../../icons/Ethereum';
-import { PolygonIcon } from '../../../icons/PolygonIcon';
-import { BSC } from '../../../icons/Bsc';
+import React, { useContext, useState } from 'react';
 
-interface AddCriteriaProps {
-    handlePrevious?: () => void,
-    handleNext?: () => void,
-    handleClose?: () => void,
-}
+import {
+  Button,
+  DropDownInput,
+  DropdownValueType,
+  ModalHeader,
+  TextInput,
+} from '../reusables';
+import { Section, Span } from '../../reusables';
+import EthereumSvg from '../../../icons/ethereum.svg';
+import PolygonSvg from '../../../icons/polygon.svg';
+import BSCSvg from '../../../icons/bsc.svg';
+import OptimismSvg from '../../../icons/optimisim.svg';
 
-const AddCriteria = ({ handlePrevious, handleNext, handleClose }: AddCriteriaProps) => {
-    const [selectedTypeValue, setSelectedTypeValue] = useState<string>('PUSH');
-    const [selectedCategoryValue, setSelectedCategoryValue] = useState<string>('ERC20');
-    const [selectedSubCategoryValue, setSelectedSubCategoryValue] = useState<string>('Holder');
-    const [selectedChainValue, setSelectedChainValue] = useState<string>('Ethereum');
-    const dropdownValues = [
-        {
-            id: 1,
-            value: 'PUSH',
-            title: 'Push Protocol',
-            function: () => setSelectedTypeValue('PUSH'),
-        },
-        {
-            id: 2,
-            value: 'GUILD',
-            title: 'GUILD',
-            function: () => setSelectedTypeValue('GUILD'),
-        }
-    ]
+import useMediaQuery from '../../../hooks/useMediaQuery';
 
-    const dropdownCategoryValues = [
-        {
-            id: 0,
-            value: 'Token ERC20',
-            title: 'Token ERC20',
-            function: () => setSelectedCategoryValue('Token ERC20'),
-        },
-        {
-            id: 1,
-            value: 'NFT ERC721',
-            title: 'NFT ERC721',
-            function: () => setSelectedCategoryValue('NFT ERC721'),
-        },
-        {
-            id: 2,
-            value: 'INVITE',
-            title: 'Invite',
-            function: () => setSelectedCategoryValue('INVITE'),
-        }, {
-            id: 3,
-            value: 'CustomEndpoint',
-            title: 'Custom Endpoint',
-            function: () => setSelectedCategoryValue('CustomEndpoint'),
-        }
-    ]
+import { BLOCKCHAIN_NETWORK, device } from '../../../config';
+import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
+import { useChatData } from '../../../hooks';
+import { QuantityInput } from '../reusables/QuantityInput';
+import styled from 'styled-components';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { Checkbox } from '../reusables/Checkbox';
+import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 
-    const dropdownSubCategoryValues = [
-        {
-            id: 0,
-            value: 'Holder',
-            title: 'Holder',
-            function: () => setSelectedSubCategoryValue('Holder'),
-        }, {
-            id: 1,
-            value: 'Owner',
-            title: 'Owner',
-            function: () => setSelectedSubCategoryValue('Owner'),
-        }
-    ]
+//shift to types and constants as per data
+const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
+  owner: 'Only Owner can invite',
+  admin: 'Only Admin can invite',
+};
 
-    const dropdownChains = [
-        {
-            id: 0,
-            value: 'Ethereum',
-            title: 'Ethereum',
-            invertedIcon: <EthereumIcon />,
-            function: () => setSelectedChainValue('Ethereum'),
-        },
-        {
-            id: 1,
-            value: 'Polygon',
-            title: 'Polygon',
-            invertedIcon: <PolygonIcon />,
-            function: () => setSelectedChainValue('Polygon'),
-        }, {
-            id: 2,
-            value: 'BSC',
-            title: 'BSC',
-            invertedIcon: <BSC />,
-            function: () => setSelectedChainValue('BSC'),
-        }
-    ]
+const GUILD_COMPARISON_OPTIONS: Array<OptionDescription> = [
+    {
+      heading: 'ALL',
+      value: 'all',
+    },
+    {
+      heading: 'ALL',
+      value:'any'
+    },
+    {
+        heading: 'SPECIFIC',
+        value:'specific'
+      },
+  ];
 
-    return (
+const TYPE = {
+  PUSH: 'PUSH',
+  GUILD: 'GUILD',
+} as const;
+
+type TypeKeys = (typeof TYPE)[keyof typeof TYPE];
+
+const CATEGORY = {
+  ERC20: 'ERC20',
+  ERC721: 'ERC721',
+  INVITE: 'INVITE',
+  CustomEndpoint: 'CustomEndpoint',
+  ROLES: 'ROLES',
+} as const;
+
+const UNIT = {
+  ERC20: 'TOKEN',
+  ERC721: 'NFT',
+} as const;
+type UnitKeys = (typeof UNIT)[keyof typeof UNIT];
+const SUBCATEGORY = {
+  HOLDER: 'holder',
+  OWENER: 'owner',
+  //   INVITE: 'INVITE',
+  GET: 'GET',
+  DEFAULT: 'DEFAULT',
+} as const;
+
+type InputType =
+  | DropdownValueType[]
+  | {
+      value: string;
+      title: string;
+    };
+type SubCategoryKeys = (typeof CATEGORY)[keyof typeof CATEGORY];
+
+type DropdownCategoryValuesType = {
+  [key in TypeKeys]: InputType;
+};
+
+type DropdownSubCategoryValuesType = {
+  [key in SubCategoryKeys]: InputType;
+};
+
+const AddCriteria = ({
+  handlePrevious,
+  //handle add criteria
+  handleNext,
+  onClose,
+}: ModalHeaderProps) => {
+  const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
+  const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
+  const [selectedSubCategoryValue, setSelectedSubCategoryValue] =
+    useState<number>(0);
+  const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
+  const [contract, setContract] = useState<string>('');
+  const [inviteCheckboxes, setInviteCheckboxes] = useState<{
+    admin: boolean;
+    owner: boolean;
+  }>({ admin: false, owner: false });
+  const [url, setUrl] = useState<string>('');
+  const [guildId, setGuildId] = useState<string>('');
+  const [specificRoleId, setSpecificRoleId] = useState<string>('');
+
+  const [quantity, setQuantity] = useState<{ value: number; range: number }>({
+    value: 0,
+    range: 0,
+  });
+  const { env } = useChatData();
+  const theme = useContext(ThemeContext);
+
+  const isMobile = useMediaQuery(device.mobileL);
+
+  const dropdownQuantityRangeValues: Array<DropdownValueType> = [
+    {
+      id: 0,
+      title: 'Minimum',
+      value: 'MINIMUM',
+      function: () => setQuantity({ ...quantity, range: 0 }),
+    },
+    {
+      id: 1,
+      title: 'Maximum',
+      value: 'MAXIMUM',
+      function: () => setQuantity({ ...quantity, range: 1 }),
+    },
+  ];
+  const dropdownTypeValues: Array<DropdownValueType> = [
+    {
+      id: 0,
+      title: 'Push protocol',
+      value: TYPE.PUSH,
+      function: () => setSelectedTypeValue(0),
+    },
+    {
+      id: 1,
+      title: 'Guild',
+      value: TYPE.GUILD,
+      function: () => setSelectedTypeValue(1),
+    },
+  ];
+  const dropdownCategoryValues: DropdownCategoryValuesType = {
+    PUSH: [
+      {
+        id: 0,
+        value: CATEGORY.ERC20,
+        title: 'Token ERC20',
+        function: () => setSelectedCategoryValue(0),
+      },
+      {
+        id: 1,
+        value: CATEGORY.ERC721,
+        title: 'NFT ERC721',
+        function: () => setSelectedCategoryValue(1),
+      },
+      {
+        id: 2,
+        value: CATEGORY.INVITE,
+        title: 'Invite',
+        function: () => setSelectedCategoryValue(2),
+      },
+      {
+        id: 3,
+        value: CATEGORY.CustomEndpoint,
+        title: 'Custom Endpoint',
+        function: () => setSelectedCategoryValue(3),
+      },
+    ],
+    GUILD: {
+      value: CATEGORY.ROLES,
+      title: 'Roles',
+    },
+  };
+
+  const tokenCategoryValues = [
+    {
+      id: 0,
+      value: SUBCATEGORY.HOLDER,
+      title: 'Holder',
+      function: () => setSelectedSubCategoryValue(0),
+    },
+    {
+      id: 1,
+      value: SUBCATEGORY.OWENER,
+      title: 'Owner',
+      function: () => setSelectedSubCategoryValue(1),
+    },
+  ];
+  const dropdownSubCategoryValues: DropdownSubCategoryValuesType = {
+    ERC20: tokenCategoryValues,
+    ERC721: tokenCategoryValues,
+    INVITE: {
+      value: SUBCATEGORY.DEFAULT,
+      title: 'Default',
+    },
+    CustomEndpoint: [
+      {
+        id: 0,
+        value: SUBCATEGORY.GET,
+        title: 'Get',
+        function: () => setSelectedSubCategoryValue(0),
+      },
+    ],
+    ROLES: {
+      value: SUBCATEGORY.DEFAULT,
+      title: 'Default',
+    },
+  };
+
+  const dropdownChainsValues: Array<DropdownValueType> = [
+    {
+      id: 0,
+      value: BLOCKCHAIN_NETWORK[env].ETHEREUM,
+      title: 'Ethereum',
+      icon: EthereumSvg,
+      function: () => setSelectedChainValue(0),
+    },
+    {
+      id: 1,
+      value: BLOCKCHAIN_NETWORK[env].POLYGON,
+      title: 'Polygon',
+      icon: PolygonSvg,
+      function: () => setSelectedChainValue(1),
+    },
+    {
+      id: 2,
+      value: BLOCKCHAIN_NETWORK[env].BSC,
+      title: 'BSC',
+      icon: BSCSvg,
+      function: () => setSelectedChainValue(2),
+    },
+    {
+      id: 3,
+      value: BLOCKCHAIN_NETWORK[env].OPTIMISM,
+      title: 'Optimism',
+      icon: OptimismSvg,
+      function: () => setSelectedChainValue(3),
+    },
+  ];
+
+  const getCategoryDropdownValues = () => {
+    return dropdownCategoryValues[
+      dropdownTypeValues[selectedTypeValue].value as TypeKeys
+    ];
+  };
+
+  const getSelectedCategoryValue = () => {
+    const category = getCategoryDropdownValues();
+    if (Array.isArray(category))
+      return (category as DropdownValueType[])[selectedCategoryValue].value!;
+    else return category.value! as SubCategoryKeys;
+  };
+
+  const getSelectedSubCategoryValue = () => {
+    const subCategory = getSubCategoryDropdownValues();
+    if (Array.isArray(subCategory))
+      return (subCategory as DropdownValueType[])[selectedCategoryValue].value!;
+    else return subCategory.value! as SubCategoryKeys;
+  };
+
+  const checkIfTokenNFT = () => {
+    const category = getSelectedCategoryValue();
+    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721)
+      return true;
+
+    return false;
+  };
+
+  const checkIfCustomEndpoint = () => {
+    const category = getSelectedCategoryValue();
+    if (category === CATEGORY.CustomEndpoint) return true;
+    return false;
+  };
+
+  const checkIfPushInvite = () => {
+    const accessType = dropdownTypeValues[selectedTypeValue].value;
+    if (accessType === TYPE.PUSH) {
+      const category = getSelectedCategoryValue();
+      if (category === CATEGORY.INVITE) return true;
+    }
+
+    return false;
+  };
+
+  const checkIfGuild = () => {
+    const accessType = dropdownTypeValues[selectedTypeValue].value;
+    if (accessType === TYPE.GUILD) {
+      return true;
+    }
+
+    return false;
+  };
+
+  console.log(checkIfPushInvite())
+
+  const getSubCategoryDropdownValues = () => {
+    const category = getCategoryDropdownValues();
+    console.log(category);
+    console.log(selectedCategoryValue);
+    console.log((category as DropdownValueType[])[selectedCategoryValue]);
+    if (Array.isArray(category))
+      return dropdownSubCategoryValues[
+        (category as DropdownValueType[])[selectedCategoryValue]
+          .value as SubCategoryKeys
+      ];
+    else return dropdownSubCategoryValues[category.value as SubCategoryKeys];
+  };
+
+  const onQuantityChange = (e: any) => {
+    setQuantity({ ...quantity, value: e.target.value });
+  };
+
+  return (
+    <Section
+      flexDirection="column"
+      gap="25px"
+      width={isMobile ? '300px' : '400px'}
+    >
+      <Section margin="0 0 10px 0">
+        <ModalHeader
+          handleClose={onClose}
+          handlePrevious={handlePrevious}
+          title="Add Criteria"
+        />
+      </Section>
+      <DropDownInput
+        labelName="Type"
+        selectedValue={selectedTypeValue}
+        dropdownValues={dropdownTypeValues}
+      />
+      {Array.isArray(getCategoryDropdownValues()) ? (
+        <DropDownInput
+          labelName="Gating Category"
+          selectedValue={selectedCategoryValue}
+          dropdownValues={getCategoryDropdownValues() as DropdownValueType[]}
+        />
+      ) : (
+        // need to change it to dynamic
+        <TextInput
+        labelName="Gating category"
+        inputValue={'Roles'}
+        disabled={true}
+        customStyle={{
+          background: theme.backgroundColor?.modalHoverBackground,
+        }}
+      />
+      )}
+      
+      {Array.isArray(getSubCategoryDropdownValues()) ? (
+        <DropDownInput
+          labelName="Sub-Category"
+          selectedValue={selectedSubCategoryValue}
+          dropdownValues={getSubCategoryDropdownValues() as DropdownValueType[]}
+        />
+      ) : (
+     // need to change it to dynamic
+        <TextInput
+          labelName="Sub-category"
+          inputValue={'Default'}
+          disabled={true}
+          customStyle={{
+            background: theme.backgroundColor?.modalHoverBackground,
+          }}
+        />
+      )}
+      {/* shift to minor components  leave for now*/}
+      {checkIfTokenNFT() && (
+        <>
+          <DropDownInput
+            labelName="Blockchain"
+            selectedValue={selectedChainValue}
+            dropdownValues={dropdownChainsValues}
+          />
+          <TextInput
+            labelName="Contract"
+            inputValue={contract}
+            onInputChange={(e: any) => setContract(e.target.value)}
+            placeholder="e.g. 0x123..."
+          />
+          {/* fix the width in mobile view and laptop view */}
+          <QuantityInput
+            dropDownValues={dropdownQuantityRangeValues}
+            labelName="Quantity"
+            inputValue={quantity}
+            onInputChange={onQuantityChange}
+            placeholder="e.g. 1.45678"
+            unit={'TOKEN'}
+          />
+        </>
+      )}
+
+      {checkIfCustomEndpoint() && (
+        <TextInput
+          labelName="URL"
+          inputValue={url}
+          onInputChange={(e: any) => setUrl(e.target.value)}
+          placeholder="e.g. abc.com"
+        />
+      )}
+      {checkIfPushInvite() && (
+
         <Section flexDirection='column' gap='10px'>
-            <ModalHeader handleClose={() => console.log("Yooo")} handlePrevious={handlePrevious} title='Add Criteria' />
-            <DropDownInput labelName='Type' selectedValue={selectedTypeValue} dropdownValues={dropdownValues} />
-            <DropDownInput labelName='Gating Category' selectedValue={selectedCategoryValue} dropdownValues={dropdownCategoryValues} />
-            <DropDownInput labelName='Sub-category' selectedValue={selectedSubCategoryValue} dropdownValues={dropdownSubCategoryValues} />
-            <DropDownInput labelName='Blockchain' selectedValue={selectedChainValue} dropdownValues={dropdownChains} />
+          {Object.keys(INVITE_CHECKBOX_LABEL).map((key) => (
+            <Checkbox
+              labelName={
+                INVITE_CHECKBOX_LABEL[key as keyof typeof INVITE_CHECKBOX_LABEL]
+              }
+              onToggle={() =>
+                setInviteCheckboxes({
+                  ...inviteCheckboxes,
+                  [key]:
+                    !inviteCheckboxes[
+                      key as keyof typeof INVITE_CHECKBOX_LABEL
+                    ],
+                })
+              }
+              checked={
+                inviteCheckboxes[key as keyof typeof INVITE_CHECKBOX_LABEL]
+              }
+            />
+          ))}
         </Section>
-    )
-}
+      )}
 
-export default AddCriteria
+      {checkIfGuild() &&(
+        <>
+         <TextInput
+         labelName="ID"
+         inputValue={guildId}
+         onInputChange={(e: any) => setGuildId(e.target.value)}
+         placeholder="e.g. 4687"
+       />
+             <OptionButtons options={GUILD_COMPARISON_OPTIONS} />
+
+       <TextInput
+       labelName="Specific Role"
+       inputValue={specificRoleId}
+       onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+       placeholder="e.g. 4687"
+     />
+     </>
+      )}
+      <Button width="197px" onClick={handleNext}>
+        Add
+      </Button>
+      <GatingRulesInformation />
+    </Section>
+  );
+};
+
+export default AddCriteria;
+
+//styles
+
+

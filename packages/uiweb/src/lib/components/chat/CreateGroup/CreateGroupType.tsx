@@ -6,7 +6,7 @@ import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 import { Section, Span } from '../../reusables';
 import { ToggleInput } from '../reusables';
 import { Button } from '../reusables';
-import { ModalHeaderProps } from './CreateGroupModal';
+import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 
 import { SpamIcon } from '../../../icons/SpamIcon';
 
@@ -103,25 +103,9 @@ export const CreateGroupType = ({ onClose, handlePrevious, handleNext }: ModalHe
       )}
       <Section gap="20px" flexDirection="column">
         <Button width="197px">Create Group</Button>
-        <Section gap="4px">
-          <SpamIcon />
-          <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-            Learn more about gating rules
-          </Span>
-        </Section>
+       < GatingRulesInformation/>
       </Section>
     </Section>
   );
 };
 
-export const GatingRulesInformation = () => {
-  const theme = useContext(ThemeContext);
-  return (
-    <Section gap="4px">
-      <SpamIcon />
-      <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-        Learn more about gating rules
-      </Span>
-    </Section>
-  )
-}

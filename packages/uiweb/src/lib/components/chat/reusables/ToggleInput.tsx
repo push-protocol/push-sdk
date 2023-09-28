@@ -49,6 +49,7 @@ export const ToggleInput = (props: IToggleInputProps) => {
 const ToggleContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width:100%;
   gap:10px;
   font-family: ${props => props.theme.fontFamily};
     align-items:center;

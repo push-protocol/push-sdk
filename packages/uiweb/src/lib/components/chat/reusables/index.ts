@@ -9,3 +9,6 @@ export * from './DropDownInput';
 export * from './TextArea';
 export * from './OptionButtons';
 export * from './Button';
+export * from './QuantityInput';
+
+export * from './Checkbox';
