@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.35](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.34...restapi-0.0.1-alpha.35) (2023-09-28)
+
+
+### Bug Fixes
+
+* added chat.decrypt ([#726](https://github.com/ethereum-push-notification-service/push-sdk/issues/726)) ([995042b](https://github.com/ethereum-push-notification-service/push-sdk/commit/995042b789b19d487b5e2953463cae60e75199b8))
+* error fixed ([99163b3](https://github.com/ethereum-push-notification-service/push-sdk/commit/99163b3338940dd9904630007868ca01faf4190c))
+* Merge branch 'alpha' into alpha-deployment ([be03539](https://github.com/ethereum-push-notification-service/push-sdk/commit/be035393a90a50ac2b9115b8f0a817a988f395f9))
+* Merge branch 'alpha' into alpha-deployment ([8d56ee8](https://github.com/ethereum-push-notification-service/push-sdk/commit/8d56ee882719a65391e7e51abfb0b7f86c2ae5ad))
+* Merge branch 'main' into alpha ([b6887db](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6887db0aa76126a47efa6ec88fc9841d7c3ae06))
+* remove only from test ([09524c7](https://github.com/ethereum-push-notification-service/push-sdk/commit/09524c793ecdef095f90c54bc5895ca1c6adba01))
+
+
+
 ## [0.0.1-alpha.34](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.33...restapi-0.0.1-alpha.34) (2023-09-27)
 
 
