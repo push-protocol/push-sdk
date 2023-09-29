@@ -23,7 +23,10 @@ interface CriteriaProps {
   dropdownValues: CriteraValueType[];
 }
 
-const MultipleCriterias = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
+const MultipleCriterias = ({
+  dropdownValues,
+  width = '100%',
+}: CriteriaProps) => {
   const [selectedValue, setSelectedValue] = useState<number>(0);
   const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
 
@@ -59,15 +62,25 @@ const MultipleCriterias = ({ dropdownValues, width = '100%' }: CriteriaProps) =>
   };
 
   return (
-    <Section flexDirection='column' gap='8px'>
-      {dropdownValues &&
-        // dropdownValues.map((criteria) => (
-            <Section borderWidth='1px' justifyContent='center' alignItems='center' borderColor='#E6E7EE' borderRadius='12px' borderStyle='solid' padding='8px 0px 8px 8px'>
-                <Criteria width='330px' dropdownValues={dropdownValues}/>
-            </Section>
+    <Section flexDirection="column" gap="8px">
+      {
+        dropdownValues && (
+          // dropdownValues.map((criteria) => (
+          <Section
+            borderWidth="1px"
+            justifyContent="center"
+            alignItems="center"
+            borderColor="#E6E7EE"
+            borderRadius="12px"
+            borderStyle="solid"
+            padding="8px 0px 8px 8px"
+          >
+            <Criteria width="330px" dropdownValues={dropdownValues} />
+          </Section>
+        )
         // )
         // )
-        }
+      }
     </Section>
   );
 };
@@ -95,7 +108,7 @@ const DropdownContainer = styled.div`
   @media (max-width: 480px) {
     left: 25%;
   }
-};`
+};`;
 
 const CriteriaContainer = styled(Section)`
   @media (max-width: 426px) {

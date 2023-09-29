@@ -32,8 +32,12 @@ export const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
 ]
 
 
-export const OPERATOR_OPTIONS_INFO:{any:string,all:string} = {
-    any:'Any one of the following criteria must be true',
-    all:'All of the following criteria must be true'
+export const OPERATOR_OPTIONS_INFO = {
+    any:{ head:'Any one',
+    tail:'of the following criteria must be true'
+       },
+    all:{ head:'All',
+    tail:'of the following criteria must be true'
+       }
 } ;
 

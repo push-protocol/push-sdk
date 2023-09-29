@@ -66,11 +66,90 @@ const AddConditionSection = ({
   handleNext,
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('');
+  const [criteriaOperator, setCriteriaOperator] = useState<string>('any');
 
   /** todo - dummy data to be removed after we get condition data
    *  and check for the chat and entry conditions
    */
+  interface ConditionData {
+    operator?: string;
+    type?: string;
+    category?: string;
+    subcategory?: string;
+    data?: Record<string, any>;
+  }
+  
+  type ConditionArray = [ConditionData] | ConditionData[];
+  
+  const dummyConditonsData: ConditionArray[] = [
+    [{ operator: 'any' }],
+    [{
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
+        amount: 1,
+        decimals: 18,
+      },
+    }],
+    [
+      { operator: 'all' } ,
+      {
+        type: 'PUSH',
+        category: 'ERC20',
+        subcategory: 'holder',
+        data: {
+          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+          amount: 1,
+          decimals: 18,
+        },
+      },
+      {
+        type: 'PUSH',
+        category: 'ERC721',
+        subcategory: 'holder',
+        data: {
+          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+          amount: 1,
+          decimals: 18,
+        },
+      },
+      {
+        type: 'GUILD',
+        category: 'ROLES',
+        subcategory: 'DEFAULT',
+        data: {
+          id: '1',
+          role: '346243',
+          comparison: 'all',
+        },
+      },
+    ],
+    [
+      { operator: 'any' },
+      {
+        type: 'PUSH',
+        category: 'INVITE',
+        subcategory: 'DEFAULT',
+        data: {
+          inviterRoles: 'ADMIN',
+        },
+      },
+      {
+        type: 'PUSH',
+        category: 'INVITE',
+        subcategory: 'DEFAULT',
+        data: {
+          inviterRoles: 'OWNER',
+        },
+      },
+    ],
+  ];
+
+
+  const dummySingleCondtionData = dummyConditonsData[2];
+
   const criteriaOptions = [
     {
       id: 0,
@@ -99,35 +178,49 @@ const AddConditionSection = ({
   ];
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
-      <Section flexDirection='column' alignItems='start' gap="5px">
-      <Span
-        color={theme.textColor?.modalHeadingText}
-        fontSize="16px"
-        fontWeight="500"
-      >
-        {heading}
-      </Span>
-      <Span
-        color={theme.textColor?.modalSubHeadingText}
-        fontWeight="400"
-        fontSize="12px"
-      >
-        {subHeading}
-      </Span>
+      <Section flexDirection="column" alignItems="start" gap="5px">
+        <Span
+          color={theme.textColor?.modalHeadingText}
+          fontSize="16px"
+          fontWeight="500"
+        >
+          {heading}
+        </Span>
+        <Span
+          color={theme.textColor?.modalSubHeadingText}
+          fontWeight="400"
+          fontSize="12px"
+        >
+          {subHeading}
+        </Span>
       </Section>
 
       {/* todo - check later if this etire section can be optimised for define condtion page too */}
-      <Section flexDirection='column' gap='16px'>
-      <OptionButtons
-        options={OPERATOR_OPTIONS}
-        selectedValue={criteriaOperator}
-        handleClick={(newEl: string) => {
-          setCriteriaOperator(newEl );
-        }}
-      />
-      <Span fontSize="14px">Any one<Span color={theme.textColor?.modalSubHeadingText}> of the following criteria must be true</Span></Span>
-      <Criteria width="350px" dropdownValues={criteriaOptions} />
-      <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
+      <Section flexDirection="column" gap="16px">
+        <OptionButtons
+          options={OPERATOR_OPTIONS}
+          selectedValue={criteriaOperator}
+          handleClick={(newEl: string) => {
+            setCriteriaOperator(newEl);
+          }}
+        />
+        <Span fontSize="14px">
+          {
+            OPERATOR_OPTIONS_INFO[
+              criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+            ].head
+          }
+          <Span color={theme.textColor?.modalSubHeadingText}>
+            {' '}
+            {
+              OPERATOR_OPTIONS_INFO[
+                criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+              ].tail
+            }
+          </Span>
+        </Span>
+        <Criteria width="350px" dropdownValues={criteriaOptions} />
+        <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
       </Section>
       <Button
         onClick={handleNext}
