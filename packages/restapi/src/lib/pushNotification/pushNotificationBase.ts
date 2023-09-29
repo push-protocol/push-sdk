@@ -328,6 +328,26 @@ export class PushNotificationBaseClass {
     }
   }
 
+  protected async fetchUpdateCounter(contract: any, userAddress: string) {
+    let count: BigNumber;
+    try {
+      if ('_signTypedData' in this.signer!) {
+        count = await contract!['channelUpdateCounter'](userAddress);
+      } else if ('signTypedData' in this.signer!) {
+        const countInBigInt = await contract.read.channelUpdateCounter({
+          args: [userAddress],
+        });
+        count = ethers.BigNumber.from(countInBigInt);
+      } else {
+        throw new Error('Unsupported signer');
+      }
+      // add one and return the count
+      return count.add(ethers.BigNumber.from(1));
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
+    }
+  }
+
   protected async approveToken(
     contract: any,
     spenderAddress: string,
@@ -650,7 +670,9 @@ export class PushNotificationBaseClass {
             ele.data.upper;
 
           notificationSettingDescription =
-            notificationSettingDescription + SETTING_SEPARATOR + ele.description;
+            notificationSettingDescription +
+            SETTING_SEPARATOR +
+            ele.description;
         }
       }
     }

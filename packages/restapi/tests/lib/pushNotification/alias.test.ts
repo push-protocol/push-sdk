@@ -42,7 +42,7 @@ describe('PushAPI.alias functionality', () => {
   describe('alias :: info', () => {
     // TODO: remove skip after signer becomes optional
     it('Should return response', async () => {
-      const res = await userBob.alias.info({
+      const res = await userBob.channel.alias.info({
         alias: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         aliasChain: 'POLYGON',
       });
