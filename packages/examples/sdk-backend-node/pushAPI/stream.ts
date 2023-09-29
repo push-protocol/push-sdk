@@ -28,10 +28,12 @@ const eventlistener = async (
   pushAPI: PushAPI,
   eventName: string
 ): Promise<void> => {
-  pushAPI.stream.on(eventName, (data: any) => {
-    // if (showAPIResponse) {
-    console.log(data);
-    // }
+  return new Promise((resolve, reject) => {
+    pushAPI.stream.on(eventName, (data: any) => {
+      // if (showAPIResponse) {
+      console.log(data);
+      // }
+    });
   });
 };
 export const runPushAPIStreamCases = async (): Promise<void> => {
@@ -56,7 +58,6 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
   await userAlice.chat.send(secondSignerAddress, {
     content: 'Hello Bob!',
   });
-  console.log('sent!!');
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
   await delay(4000);

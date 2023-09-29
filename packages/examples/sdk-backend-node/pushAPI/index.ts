@@ -51,7 +51,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   await runPushAPIProfileCases(); //  PushAPI.profile
-  // await runPushAPIChatCases(); // PushAPI.chat // todo: fails due to stream
+  await runPushAPIChatCases(); // PushAPI.chat
   await runPushAPIEncryptionCases(); // PushAPI.encryption
   await runPushAPINotificationCases(); // PushAPI.notification
   // await runPushAPIChannelCases(); // PushAPI.channel // todo: OnChain Fn Fails
