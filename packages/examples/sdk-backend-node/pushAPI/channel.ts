@@ -129,7 +129,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.verify');
-  // only verified channels can verify other channels
+  // only verified channels can verify other channels (otherwise this action is skipped by sdk)
   if (channelInfo.verified_status) {
     const verifiedTrx = await userAlice.channel.verify(
       '0x35B84d6848D16415177c64D64504663b998A6ab4'
@@ -142,11 +142,51 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.setting');
-  const channelSettingTrx = userAlice.channel.setting([
+  const channelSettingTrx = await userAlice.channel.setting([
     { type: 0, default: 1, description: 'My Notif Settings' },
   ]);
   if (showAPIResponse) {
     console.log(channelSettingTrx);
   }
   console.log('PushAPI.channel.setting | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.channel.delegate.add');
+  const addedDelegate = await userAlice.channel.delegate.add(
+    `eip155:5:${randomWallet1}`
+  );
+
+  if (showAPIResponse) {
+    console.log(addedDelegate);
+  }
+  console.log('PushAPI.channel.delegate.add | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.channel.delegate.get');
+  const delegates = await userAlice.channel.delegate.get();
+  if (showAPIResponse) {
+    console.log(delegates);
+  }
+  console.log('PushAPI.channel.delegate.get | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.channel.delegate.remove');
+  const removedDelegate = await userAlice.channel.delegate.remove(
+    `eip155:5:${randomWallet1}`
+  );
+  if (showAPIResponse) {
+    console.log(removedDelegate);
+  }
+  console.log('PushAPI.channel.delegate.remove | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.channel.alias.info');
+  const aliasInfo = await userAlice.channel.alias.info({
+    alias: '0x35B84d6848D16415177c64D64504663b998A6ab4',
+    aliasChain: 'POLYGON',
+  });
+  if (showAPIResponse) {
+    console.log(aliasInfo);
+  }
+  console.log('PushAPI.channel.alias.info | Response - 200 OK\n\n');
 };

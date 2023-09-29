@@ -9,8 +9,6 @@ import { runPushAPINotificationCases } from './notification';
 import { runPushAPIProfileCases } from './profile';
 import { runPushAPIStreamCases } from './stream';
 import { runPushAPIChannelCases } from './channel';
-import { runPushAPIAliasCases } from './alias';
-import { runPushAPIDelegateCases } from './delegate';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -42,20 +40,18 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   // todo : This is yet to be discussed
-  console.log('PushAPI.user.info');
-  const userAliceInfo = await userAlice.user.info();
+  console.log('PushAPI.info');
+  const userAliceInfo = await userAlice.info();
   if (showAPIResponse) {
     console.log(userAliceInfo);
   }
-  console.log('PushAPI.user.info | Response - 200 OK\n\n');
+  console.log('PushAPI.info | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   await runPushAPIProfileCases(); //  PushAPI.profile
   await runPushAPIChatCases(); // PushAPI.chat
   await runPushAPIEncryptionCases(); // PushAPI.encryption
   await runPushAPINotificationCases(); // PushAPI.notification
-  // await runPushAPIChannelCases(); // PushAPI.channel // todo: OnChain Fn Fails
-  await runPushAPIDelegateCases(); //PushAPI.delegate
-  await runPushAPIAliasCases(); // PushAPI.alias
+  await runPushAPIChannelCases(); // PushAPI.channel
   await runPushAPIStreamCases(); // PushAPI.stream
 };
