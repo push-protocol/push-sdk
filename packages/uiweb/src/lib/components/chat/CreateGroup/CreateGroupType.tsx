@@ -14,6 +14,21 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import { AddButtons } from './AddButtons';
+import Criteria from './Criteria';
+import MultipleCriterias from './MultipleCriterias';
+
+
+const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
+  {
+    heading: 'All',
+    value: 'All',
+  },
+  {
+    heading: 'Any',
+    value: 'Any',
+  },
+];
+
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -81,6 +96,33 @@ export const CreateGroupType = ({ onClose, handlePrevious, handleNext }: ModalHe
   const [checked, setChecked] = useState<boolean>(false);
   const theme = useContext(ThemeContext);
 
+  const criteriaOptions = [
+    {
+      id: 0,
+      type: 'Token',
+      value: '1.0 ETH',
+      title: 'Token',
+      function: () => console.log("Token")
+  }
+  ]
+
+  const multiplecriteriaOptions = [
+    {
+        id: 0,
+        type: 'Token',
+        value: '1.0 ETH',
+        title: 'Token',
+        function: () => console.log("Token")
+    },
+    {
+        id: 1,
+        type: 'Token',
+        value: '1.0 ETH',
+        title: 'Token',
+        function: () => console.log("NFT")
+    }
+]
+
   const isMobile = useMediaQuery(device.mobileL);
   console.log(isMobile)
   return (
@@ -97,6 +139,9 @@ export const CreateGroupType = ({ onClose, handlePrevious, handleNext }: ModalHe
 
       {checked && (
         <Section flexDirection="column" gap='32px'>
+          <OptionButtons options={GATING_TYPE_OTPIONS} />
+          <Criteria width='350px' dropdownValues={criteriaOptions} />
+          <MultipleCriterias dropdownValues={multiplecriteriaOptions}/>
           <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.ENTRY} />
           <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.CHAT} />
         </Section>
