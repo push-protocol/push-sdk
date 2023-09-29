@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from 'react';
 
 import { MdError } from 'react-icons/md';
@@ -19,8 +18,7 @@ import { AddButtons } from './AddButtons';
 import Criteria from './Criteria';
 import MultipleCriterias from './MultipleCriterias';
 import useToast from '../reusables/NewToast';
-
-
+import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
 
 const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
   {
@@ -32,10 +30,6 @@ const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
     value: 'Any',
   },
 ];
-
-
-
-
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -54,161 +48,182 @@ const ACCESS_TYPE_TITLE = {
   ENTRY: {
     heading: 'Conditions to Join',
     subHeading: 'Add a condition to join or leave it open for everyone',
-
   },
   CHAT: {
     heading: 'Conditions to Chat',
     subHeading: 'Add a condition to join or leave it open for everyone',
-
   },
 };
 
-
-
 interface AddConditionProps {
-    heading: string;
-    subHeading: string;
-    handleNext?: () => void;
-  }
-  const AddConditionSection = ({ heading, subHeading,handleNext }: AddConditionProps) => {
-    const theme = useContext(ThemeContext);
-  
-    return (
-      <Section
-        // margin="20px 0px 10px 0px"
-        alignItems="start"
-        flexDirection="column"
-        gap='5px'
+  heading: string;
+  subHeading: string;
+  handleNext?: () => void;
+}
+const AddConditionSection = ({
+  heading,
+  subHeading,
+  handleNext,
+}: AddConditionProps) => {
+  const theme = useContext(ThemeContext);
+  const [criteriaOperator, setCriteriaOperator] = useState<string>('');
+
+  /** todo - dummy data to be removed after we get condition data
+   *  and check for the chat and entry conditions
+   */
+  const criteriaOptions = [
+    {
+      id: 0,
+      type: 'Token',
+      value: '1.0 ETH',
+      title: 'Token',
+      function: () => console.log('Token'),
+    },
+  ];
+
+  const multiplecriteriaOptions = [
+    {
+      id: 0,
+      type: 'Token',
+      value: '1.0 ETH',
+      title: 'Token',
+      function: () => console.log('Token'),
+    },
+    {
+      id: 1,
+      type: 'Token',
+      value: '1.0 ETH',
+      title: 'Token',
+      function: () => console.log('NFT'),
+    },
+  ];
+  return (
+    <Section alignItems="start" flexDirection="column" gap="10px">
+      <Section flexDirection='column' alignItems='start' gap="5px">
+      <Span
+        color={theme.textColor?.modalHeadingText}
+        fontSize="16px"
+        fontWeight="500"
       >
-        <Span
-          color={theme.textColor?.modalHeadingText}
-          fontSize="16px"
-          fontWeight="500"
-        >
-          {heading}
-        </Span>
-        <Span
-          color={theme.textColor?.modalSubHeadingText}
-          fontWeight="400"
-          fontSize="12px"
-        >
-          {subHeading}
-        </Span>
-        <Button
+        {heading}
+      </Span>
+      <Span
+        color={theme.textColor?.modalSubHeadingText}
+        fontWeight="400"
+        fontSize="12px"
+      >
+        {subHeading}
+      </Span>
+      </Section>
+
+      {/* todo - check later if this etire section can be optimised for define condtion page too */}
+      <Section flexDirection='column' gap='16px'>
+      <OptionButtons
+        options={OPERATOR_OPTIONS}
+        selectedValue={criteriaOperator}
+        handleClick={(newEl: string) => {
+          setCriteriaOperator(newEl );
+        }}
+      />
+      <Span fontSize="14px">Any one<Span color={theme.textColor?.modalSubHeadingText}> of the following criteria must be true</Span></Span>
+      <Criteria width="350px" dropdownValues={criteriaOptions} />
+      <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
+      </Section>
+      <Button
         onClick={handleNext}
-          customStyle={{
-            color: `${theme.backgroundColor?.buttonBackground}`,
-            fontSize: '15px',
-            fontWeight: '500',
-            border: `${theme.border?.modalInnerComponents}`,
-            background: 'transparent',
-          }}
-        >
-          + Add conditions
-        </Button>
-      </Section>
-    );
-  };
-  
-export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails , handleNext }: ModalHeaderProps & GroupTypeState) => {
-    const [checked, setChecked] = useState<boolean>(false);
-    const [groupEncryptionType, setGroupEncryptionType] = useState('')
-    const theme = useContext(ThemeContext);
-    const isMobile = useMediaQuery(device.mobileL);
-    const groupInfoToast = useToast();
-console.log(handleNext)
-    const criteriaOptions = [
-      {
-        id: 0,
-        type: 'Token',
-        value: '1.0 ETH',
-        title: 'Token',
-        function: () => console.log("Token")
-    }
-    ]
-  
-    const multiplecriteriaOptions = [
-      {
-          id: 0,
-          type: 'Token',
-          value: '1.0 ETH',
-          title: 'Token',
-          function: () => console.log("Token")
-      },
-      {
-          id: 1,
-          type: 'Token',
-          value: '1.0 ETH',
-          title: 'Token',
-          function: () => console.log("NFT")
-      }
-  ]
-  
-    const createGroupService = async()=>{
-      const groupInfo = {
-        groupInfo:{...groupInputDetails},
-        groupType:groupEncryptionType
-      }
-      console.log("created group with", groupInfo);
-      onClose()      
-    }
-
-    const verifyAndCreateGroup = async()=>{
-      if(groupEncryptionType.trim() === ""){
-        showError("Group encryption type is not selected")
-        return
-      }
-
-      await createGroupService();
-    }
-
-    const showError =(errorMessage:string)=>{
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: errorMessage,
-        toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
-      });
-    }
-
-    return (
-        <Section flexDirection="column" gap="32px" >
-          <ModalHeader title="Create Group" handleClose={onClose} handlePrevious={handlePrevious} />
-          <OptionButtons options={GROUP_TYPE_OPTIONS} selectedValue={groupEncryptionType} handleClick={(newEl:string)=>{
-            setGroupEncryptionType(newEl)
-            console.log("we called it");
-          }}/>
-  
-          <ToggleInput
-            labelHeading="Gated Group"
-            labelSubHeading="Turn this on for Token/NFT gating options"
-            checked={checked}
-            onToggle={() => setChecked(!checked)}
-          />
-  
-          {checked && (
-            <Section flexDirection="column" gap='32px'>
-          <Criteria width='350px' dropdownValues={criteriaOptions} />
-          <MultipleCriterias dropdownValues={multiplecriteriaOptions}/>
-          <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.ENTRY} />
-          <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.CHAT} />
-            </Section>
-          )}
-          <Section gap="20px" flexDirection="column">
-            <Button width="197px" onClick={verifyAndCreateGroup}>Create Group</Button>
-            <Section gap="4px">
-              <SpamIcon />
-              <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-                Learn more about gating rules
-              </Span>
-            </Section>
-          </Section>
-   
-      <Section gap="20px" flexDirection="column">
-        <Button width="197px">Create Group</Button>
-       < GatingRulesInformation/>
-      </Section>
+        customStyle={{
+          color: `${theme.backgroundColor?.buttonBackground}`,
+          fontSize: '15px',
+          fontWeight: '500',
+          border: `${theme.border?.modalInnerComponents}`,
+          background: 'transparent',
+        }}
+      >
+        + Add conditions
+      </Button>
     </Section>
   );
 };
 
+export const CreateGroupType = ({
+  onClose,
+  handlePrevious,
+  groupInputDetails,
+  handleNext,
+}: ModalHeaderProps & GroupTypeState) => {
+  const [checked, setChecked] = useState<boolean>(false);
+  const [groupEncryptionType, setGroupEncryptionType] = useState('');
+  const theme = useContext(ThemeContext);
+  const isMobile = useMediaQuery(device.mobileL);
+  const groupInfoToast = useToast();
+
+  const createGroupService = async () => {
+    const groupInfo = {
+      groupInfo: { ...groupInputDetails },
+      groupType: groupEncryptionType,
+    };
+    console.log('created group with', groupInfo);
+    onClose();
+  };
+
+  const verifyAndCreateGroup = async () => {
+    if (groupEncryptionType.trim() === '') {
+      showError('Group encryption type is not selected');
+      return;
+    }
+
+    await createGroupService();
+  };
+
+  const showError = (errorMessage: string) => {
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  };
+
+  return (
+    <Section flexDirection="column" gap="32px">
+      <ModalHeader
+        title="Create Group"
+        handleClose={onClose}
+        handlePrevious={handlePrevious}
+      />
+      <OptionButtons
+        options={GROUP_TYPE_OPTIONS}
+        selectedValue={groupEncryptionType}
+        handleClick={(newEl: string) => {
+          setGroupEncryptionType(newEl);
+          console.log('we called it');
+        }}
+      />
+
+      <ToggleInput
+        labelHeading="Gated Group"
+        labelSubHeading="Turn this on for Token/NFT gating options"
+        checked={checked}
+        onToggle={() => setChecked(!checked)}
+      />
+
+      {checked && (
+        <Section flexDirection="column" gap="32px">
+          <AddConditionSection
+            handleNext={handleNext}
+            {...ACCESS_TYPE_TITLE.ENTRY}
+          />
+          <AddConditionSection
+            handleNext={handleNext}
+            {...ACCESS_TYPE_TITLE.CHAT}
+          />
+        </Section>
+      )}
+
+      <Section gap="20px" flexDirection="column">
+        <Button width="197px">Create Group</Button>
+        <GatingRulesInformation />
+      </Section>
+    </Section>
+  );
+};

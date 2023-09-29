@@ -9,21 +9,12 @@ import useMediaQuery from "../../../hooks/useMediaQuery";
 import { device } from "../../../config";
 import OptionButtons from "../reusables/OptionButtons";
 import Criteria from "./Criteria";
+import { OPERATOR_OPTIONS } from "../constants";
 
 
 export const DefineCondtion = ({ onClose, handlePrevious, handleNext }: ModalHeaderProps) => {
     const [criteriaOperator, setCriteriaOperator] = useState<string>('');
-    const options = [
-        {
-            heading: 'Any',
-            value: 'any',
-        },
-        {
-            heading: 'All',
-            value: 'all',
-        }
-    ]
-
+  //todo remove dummy data after we have condition data
     const criteriaOptions = [
         {
             id: 0,
@@ -54,7 +45,7 @@ export const DefineCondtion = ({ onClose, handlePrevious, handleNext }: ModalHea
             <ModalHeader title='Define Condition' handleClose={onClose} handlePrevious={handlePrevious} />
             {isCriteriaAdded && (
                 <Section flexDirection="column" gap="16px">
-                    <OptionButtons options={options}  selectedValue={criteriaOperator} handleClick={(newEl:string)=>{
+                    <OptionButtons options={OPERATOR_OPTIONS}  selectedValue={criteriaOperator} handleClick={(newEl:string)=>{
               setCriteriaOperator(newEl)}}/>
                     <Span fontSize="14px">Any one<Span color={theme.textColor?.modalSubHeadingText}> of the following criteria must be true</Span></Span>
                     <Section>
