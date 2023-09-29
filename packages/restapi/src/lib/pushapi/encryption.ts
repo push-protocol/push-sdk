@@ -4,10 +4,10 @@ import {
   ProgressHookType,
 } from '../types';
 import * as PUSH_USER from '../user';
-import { UserInfo } from './userInfo';
+import { User } from './user';
 
 export class Encryption {
-  private userInfoInstance: UserInfo;
+  private userInstance: User;
 
   constructor(
     private account: string,
@@ -17,11 +17,11 @@ export class Encryption {
     private signer: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
-    this.userInfoInstance = new UserInfo(this.account, this.env);
+    this.userInstance = new User(this.account, this.env);
   }
 
   async info() {
-    const userInfo = await this.userInfoInstance.info();
+    const userInfo = await this.userInstance.info();
     const decryptedPassword = await PUSH_USER.decryptAuth({
       account: this.account,
       env: this.env,

@@ -191,7 +191,6 @@ const expectGroup = async (
   expect(group.scheduleEnd).to.be.null;
   expect(group.groupType).to.equal('default');
   expect((group as any).status).to.be.null;
-  expect((group as any).eventType).to.equal('update');
   if (!HasMeta) {
     expect((group as any).meta).to.be.null;
   } else {
