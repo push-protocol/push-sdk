@@ -196,11 +196,12 @@ export class PushStream extends EventEmitter {
             data.messageCategory == 'Request'
           ) {
             data = await this.chatInstance.decrypt([data]);
+            data = data[0]
           }
-
+          console.log("Hola")
           console.log(data);
 
-          const modifiedData = DataModifier.handleChatEvent(data[0], this.raw);
+          const modifiedData = DataModifier.handleChatEvent(data, this.raw);
           modifiedData.event = this.convertToProposedName(modifiedData.event);
           this.handleToField(modifiedData);
           if (this.shouldEmitChat(data.chatId)) {
