@@ -12,7 +12,7 @@ import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
 import { ConditionType } from '../../../src/lib';
 
-describe('PushStream.initialize functionality', () => {
+describe.only('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
@@ -142,7 +142,7 @@ describe('PushStream.initialize functionality', () => {
 
             console.log(
               `Event ${eventCount} for ${expectedEvent}:`,
-              util.inspect(data, {
+              util.inspect(JSON.stringify(data), {
                 showHidden: false,
                 depth: null,
                 colors: true,
@@ -169,10 +169,25 @@ describe('PushStream.initialize functionality', () => {
     const onNoitificationsReceived = createEventPromise('NOTIF', STREAM.NOTIF, 4);
 
     // Create and update group
-    /*const createdGroup = await user.chat.group.create(
+    const createdGroup = await user.chat.group.create(
       'test',
       CREATE_GROUP_REQUEST_2
-    );*/
+    );
+
+     const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
+       description: 'Updated Description',
+     });
+
+       const updatedGroup2 = await user.chat.group.add(createdGroup.chatId, {
+         role: 'ADMIN',
+         accounts: [signer2.address, signer3.address, signer4.address],
+       });
+
+       const w2wRejectRequest = await user2.chat.group.join(
+         createdGroup.chatId
+       );
+
+
 
     /*const w2wMessageResponse = await user2.chat.send(signer.address, {
       content: MESSAGE,
@@ -183,7 +198,7 @@ describe('PushStream.initialize functionality', () => {
       content: MESSAGE,
     });*/
 
-    const channelPrivateKey = process.env['WALLET_PRIVATE_KEY'];
+    /*const channelPrivateKey = process.env['WALLET_PRIVATE_KEY'];
 
     const signerChannel = new ethers.Wallet(`0x${channelPrivateKey}`);
     const channelAddress = signerChannel.address;
@@ -257,10 +272,7 @@ describe('PushStream.initialize functionality', () => {
     });
 
 
-    /*const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
-      description: 'Updated Description',
-    });*/
-
+   
     //const w2wRejectRequest = await user2.chat.group.join(createdGroup.chatId);
     //const updatedGroup2 = await user2.chat.group.leave(createdGroup.chatId);
 
@@ -294,13 +306,7 @@ describe('PushStream.initialize functionality', () => {
 
     /*
 
-      const updatedGroup = await user.chat.group.add(createdGroup.chatId, {
-       role: 'ADMIN',
-       accounts: [signer2.address, signer3.address, signer4.address],
-     });
-
-    const w2wRejectRequest = await user2.chat.group.join(createdGroup.chatId);
-
+    
     const updatedGroup2 = await user2.chat.group.leave(createdGroup.chatId);
 
   
