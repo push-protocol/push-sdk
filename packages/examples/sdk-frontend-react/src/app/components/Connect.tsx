@@ -19,10 +19,12 @@ const NETWORK_MAPPING: NwMappingType = {
   10: 'OPTIMISM_MAINNET',
   1442: 'POLYGON_ZK_EVM_TESTNET',
   1101: 'POLYGON_ZK_EVM_MAINNET',
+  421613: "ARBITRUM_TESTNET",
+  42161: "ARBITRUMONE_MAINNET"
 };
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101],
+  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
 });
 
 const ConnectWrapper = styled.div`
