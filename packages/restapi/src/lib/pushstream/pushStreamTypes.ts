@@ -16,12 +16,6 @@ export type PushStreamInitializeProps = {
   enabled?: boolean;
 };
 
-export type PushChatInitializeProps = {
-  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
-  versionMeta?: { NFTPGP_V1?: { password: string } };
-  autoUpgrade?: boolean;
-}
-
 export enum STREAM {
   PROFILE = 'STREAM.PROFILE',
   ENCRYPTION = 'STREAM.ENCRYPTION',

@@ -24,7 +24,7 @@ export class PushAPI {
   public chat: Chat; // Public instances to be accessed from outside the class
   public profile: Profile;
   public encryption: Encryption;
-  public user: User;
+  private user: User;
   public stream!: PushStream;
   // Notification
   public channel!: Channel;
@@ -78,16 +78,19 @@ export class PushAPI {
 
   static async initialize(
     signer: SignerType,
-    options?: PushAPIInitializeProps
+    options?: PushAPIInitializeProps,
+    version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3,
+    versionMeta?: { NFTPGP_V1?: { password: string } },
+    autoUpgrade?: boolean
   ): Promise<PushAPI> {
     try {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-        chatOptions: {
+    
           version: Constants.ENC_TYPE_V3,
           autoUpgrade: true,
-        },
+        
         account: null,
         streamOptions: {
           enabled: true, // Default value
@@ -99,10 +102,6 @@ export class PushAPI {
       const settings = {
         ...defaultOptions,
         ...options,
-        chatOptions: {
-          ...defaultOptions.chatOptions,
-          ...(options?.chatOptions ?? {}),
-        },
         streamOptions: {
           ...defaultOptions.streamOptions,
           ...(options?.streamOptions ?? {}),
@@ -134,8 +133,8 @@ export class PushAPI {
         decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           signer: signer,
-          toUpgrade: settings.chatOptions.autoUpgrade,
-          additionalMeta: settings.chatOptions.versionMeta,
+          toUpgrade: settings.autoUpgrade,
+          additionalMeta: settings.versionMeta,
           progressHook: settings.progressHook,
           env: settings.env,
         });
@@ -145,8 +144,8 @@ export class PushAPI {
           env: settings.env,
           account: derivedAccount,
           signer,
-          version: settings.chatOptions.version,
-          additionalMeta: settings.chatOptions.versionMeta,
+          version: settings.version,
+          additionalMeta: settings.versionMeta,
           origin: settings.origin,
           progressHook: settings.progressHook,
         });
@@ -184,5 +183,12 @@ export class PushAPI {
       console.error('Error initializing PushAPI:', error);
       throw error; // or handle it more gracefully if desired
     }
+  }
+
+  async info() {
+    return await PUSH_USER.get({
+      account: this.account,
+      env: this.env,
+    });
   }
 }
