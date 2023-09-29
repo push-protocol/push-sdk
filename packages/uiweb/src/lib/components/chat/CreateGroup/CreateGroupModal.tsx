@@ -50,6 +50,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   );
 
   const handleNext = () => {
+    console.log('active')
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
       console.log(activeComponent)
   };

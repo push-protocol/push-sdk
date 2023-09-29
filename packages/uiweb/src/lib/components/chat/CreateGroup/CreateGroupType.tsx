@@ -68,8 +68,9 @@ const ACCESS_TYPE_TITLE = {
 interface AddConditionProps {
     heading: string;
     subHeading: string;
+    handleNext?: () => void;
   }
-  const AddConditionSection = ({ heading, subHeading }: AddConditionProps) => {
+  const AddConditionSection = ({ heading, subHeading,handleNext }: AddConditionProps) => {
     const theme = useContext(ThemeContext);
   
     return (
@@ -94,6 +95,7 @@ interface AddConditionProps {
           {subHeading}
         </Span>
         <Button
+        onClick={handleNext}
           customStyle={{
             color: `${theme.backgroundColor?.buttonBackground}`,
             fontSize: '15px',
@@ -108,13 +110,13 @@ interface AddConditionProps {
     );
   };
   
-export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails }: ModalHeaderProps & GroupTypeState) => {
+export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails , handleNext }: ModalHeaderProps & GroupTypeState) => {
     const [checked, setChecked] = useState<boolean>(false);
     const [groupEncryptionType, setGroupEncryptionType] = useState('')
     const theme = useContext(ThemeContext);
     const isMobile = useMediaQuery(device.mobileL);
     const groupInfoToast = useToast();
-
+console.log(handleNext)
     const criteriaOptions = [
       {
         id: 0,
@@ -188,8 +190,8 @@ export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails }: Mo
             <Section flexDirection="column" gap='32px'>
           <Criteria width='350px' dropdownValues={criteriaOptions} />
           <MultipleCriterias dropdownValues={multiplecriteriaOptions}/>
-              <AddConditionSection {...ACCESS_TYPE_TITLE.ENTRY}/>
-              <AddConditionSection {...ACCESS_TYPE_TITLE.CHAT}/>
+          <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.ENTRY} />
+          <AddConditionSection handleNext={handleNext} {...ACCESS_TYPE_TITLE.CHAT} />
             </Section>
           )}
           <Section gap="20px" flexDirection="column">
