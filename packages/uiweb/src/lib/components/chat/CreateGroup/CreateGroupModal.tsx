@@ -11,6 +11,8 @@ import { TextArea } from '../reusables/TextArea';
 import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
 import { CreateGroupType } from './CreateGroupType';
+import useToast from '../reusables/NewToast';
+import { MdError } from 'react-icons/md';
 
 
 import { Image, device } from '../../../config';
@@ -26,13 +28,19 @@ export type CreateGroupStepKeys =
   (typeof CREATE_GROUP_STEP_KEYS)[keyof typeof CREATE_GROUP_STEP_KEYS];
 
 
-  
+interface GroupInputDetailsType{
+  groupName:string; 
+  groupDescription:string; 
+  groupImage:string|null; 
+}
+
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
 }) => {
   const [activeComponent, setActiveComponent] = useState<CreateGroupStepKeys>(
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
+
   const handleNext = () => {
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
   };
@@ -40,14 +48,29 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     setActiveComponent(activeComponent-1 as CreateGroupStepKeys);
   };
 
+  const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
+    groupName:'',
+    groupDescription:'',
+    groupImage:null
+  })
+
   const renderComponent = () => {
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
-        return <CreateGroupDetail handleNext={handleNext} onClose={onClose} />;
+        return <CreateGroupDetail 
+          handleNext={handleNext} 
+          onClose={onClose} 
+          groupInputDetails={groupInputDetails} 
+          setGroupInputDetails={setGroupInputDetails}
+        />;
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
-        return <CreateGroupType onClose={onClose} handlePrevious={handlePrevious}/>;
+        return <CreateGroupType onClose={onClose} handlePrevious={handlePrevious} groupInputDetails={groupInputDetails}/>;
       default:
-        return <CreateGroupDetail onClose={onClose} />;
+        return <CreateGroupDetail 
+          onClose={onClose} 
+          groupInputDetails={groupInputDetails} 
+          setGroupInputDetails={setGroupInputDetails}
+        />;
     }
   };
 
@@ -59,10 +82,21 @@ export interface ModalHeaderProps {
   handlePrevious?:() =>void;
   onClose: () => void;
 }
-const CreateGroupDetail = ({ handleNext, onClose }: ModalHeaderProps) => {
-  const [groupName, setGroupName] = useState<string>('');
-  const [groupImage, setGroupImage] = useState<string | null>(null);
-  const [groupDescription, setGroupDescription] = useState<string>('');
+
+interface GroupDetailState{
+  groupInputDetails: GroupInputDetailsType;
+  setGroupInputDetails: React.Dispatch<React.SetStateAction<GroupInputDetailsType>>
+}
+
+export interface GroupTypeState{
+  groupInputDetails: GroupInputDetailsType;
+}
+
+const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInputDetails }: ModalHeaderProps & GroupDetailState ) => {
+
+  const groupInfoToast = useToast();
+  const { groupName, groupDescription, groupImage } = groupInputDetails;
+ 
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
   
@@ -81,10 +115,44 @@ const CreateGroupDetail = ({ handleNext, onClose }: ModalHeaderProps) => {
       reader.readAsDataURL(e.target.files[0]);
 
       reader.onloadend = function () {
-        setGroupImage(reader.result as string);
+        setGroupInputDetails({groupDescription,groupName,groupImage:reader.result as string})
       };
     }
   };
+
+  const showError =(errorMessage:string)=>{
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  }
+
+  const verifyAndHandelNext = ()=>{
+    // verify name
+    if (groupName.trim().length === 0){
+      showError("Group Name is empty")
+      return
+    }
+
+    // verify description
+    if (groupDescription.trim().length === 0){
+      showError("Group Description is empty")
+      return
+    }
+
+    // verify description 
+    if (!groupImage){
+      showError("Group image can't be empty")
+      return
+    }
+    
+    if(handleNext){
+      handleNext()
+    }
+  }
+
   //groupImage and desccription is optional
   return (
     <Section flexDirection="column" alignItems='center' gap='20px' width={!isMobile?'400px':'300px'}>
@@ -112,24 +180,21 @@ const CreateGroupDetail = ({ handleNext, onClose }: ModalHeaderProps) => {
         labelName="Group Name"
         charCount={30}
         inputValue={groupName}
-        onInputChange={(e: any) => setGroupName(e.target.value)}
+        onInputChange={(e: any) => setGroupInputDetails({groupDescription,groupName:e.target.value,groupImage})}
       />
 
       <TextArea
         labelName="Group Description"
         charCount={80}
         inputValue={groupDescription}
-        onInputChange={(e: any) => setGroupDescription(e.target.value)}
+        onInputChange={(e: any) => setGroupInputDetails({groupDescription:e.target.value,groupName,groupImage})} 
       />
-      <Button width="197px" onClick={handleNext}>
+      <Button width="197px" onClick={verifyAndHandelNext}>
         Next
       </Button>
     </Section>
   );
 };
-
-
-
 
 //use the theme
 const UploadContainer = styled.div`
