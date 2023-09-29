@@ -270,8 +270,17 @@ export class DataModifier {
       Reject: MessageEventType.Reject,
     };
 
-    const eventType: MessageEventType | undefined =
-      eventTypeMap[data.eventType || data.messageCategory];
+  const key = data.eventType || data.messageCategory;
+
+  if (!eventTypeMap[key]) {
+    console.error(
+      'Error in handleChatEvent: Invalid eventType or messageCategory',
+      JSON.stringify(data)
+    );
+    throw new Error('Invalid eventType or messageCategory in data');
+  }
+
+  const eventType: MessageEventType = eventTypeMap[key];
 
     if (eventType) {
       return this.mapToMessageEvent(
