@@ -22,72 +22,19 @@ import { QuantityInput } from '../reusables/QuantityInput';
 import styled from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
-import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
+import OptionButtons from '../reusables/OptionButtons';
+import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
+import {
+  CATEGORY,
+  DropdownCategoryValuesType,
+  DropdownSubCategoryValuesType,
+  SUBCATEGORY,
+  TYPE,
+  SubCategoryKeys,
+  TypeKeys,
+  ReadonlyInputType,
+} from '../types';
 
-//shift to types and constants as per data
-const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
-  owner: 'Only Owner can invite',
-  admin: 'Only Admin can invite',
-};
-
-const GUILD_COMPARISON_OPTIONS: Array<OptionDescription> = [
-    {
-      heading: 'ALL',
-      value: 'all',
-    },
-    {
-      heading: 'ALL',
-      value:'any'
-    },
-    {
-        heading: 'SPECIFIC',
-        value:'specific'
-      },
-  ];
-
-const TYPE = {
-  PUSH: 'PUSH',
-  GUILD: 'GUILD',
-} as const;
-
-type TypeKeys = (typeof TYPE)[keyof typeof TYPE];
-
-const CATEGORY = {
-  ERC20: 'ERC20',
-  ERC721: 'ERC721',
-  INVITE: 'INVITE',
-  CustomEndpoint: 'CustomEndpoint',
-  ROLES: 'ROLES',
-} as const;
-
-const UNIT = {
-  ERC20: 'TOKEN',
-  ERC721: 'NFT',
-} as const;
-type UnitKeys = (typeof UNIT)[keyof typeof UNIT];
-const SUBCATEGORY = {
-  HOLDER: 'holder',
-  OWENER: 'owner',
-  //   INVITE: 'INVITE',
-  GET: 'GET',
-  DEFAULT: 'DEFAULT',
-} as const;
-
-type InputType =
-  | DropdownValueType[]
-  | {
-      value: string;
-      title: string;
-    };
-type SubCategoryKeys = (typeof CATEGORY)[keyof typeof CATEGORY];
-
-type DropdownCategoryValuesType = {
-  [key in TypeKeys]: InputType;
-};
-
-type DropdownSubCategoryValuesType = {
-  [key in SubCategoryKeys]: InputType;
-};
 
 const AddCriteria = ({
   handlePrevious,
@@ -298,7 +245,7 @@ const AddCriteria = ({
     return false;
   };
 
-  console.log(checkIfPushInvite())
+  console.log(checkIfPushInvite());
 
   const getSubCategoryDropdownValues = () => {
     const category = getCategoryDropdownValues();
@@ -342,17 +289,16 @@ const AddCriteria = ({
           dropdownValues={getCategoryDropdownValues() as DropdownValueType[]}
         />
       ) : (
-        // need to change it to dynamic
         <TextInput
-        labelName="Gating category"
-        inputValue={'Roles'}
-        disabled={true}
-        customStyle={{
-          background: theme.backgroundColor?.modalHoverBackground,
-        }}
-      />
+          labelName="Gating category"
+          inputValue={(getCategoryDropdownValues() as ReadonlyInputType).title}
+          disabled={true}
+          customStyle={{
+            background: theme.backgroundColor?.modalHoverBackground,
+          }}
+        />
       )}
-      
+
       {Array.isArray(getSubCategoryDropdownValues()) ? (
         <DropDownInput
           labelName="Sub-Category"
@@ -360,10 +306,9 @@ const AddCriteria = ({
           dropdownValues={getSubCategoryDropdownValues() as DropdownValueType[]}
         />
       ) : (
-     // need to change it to dynamic
         <TextInput
           labelName="Sub-category"
-          inputValue={'Default'}
+          inputValue={(getSubCategoryDropdownValues()  as ReadonlyInputType)?.title}
           disabled={true}
           customStyle={{
             background: theme.backgroundColor?.modalHoverBackground,
@@ -384,7 +329,6 @@ const AddCriteria = ({
             onInputChange={(e: any) => setContract(e.target.value)}
             placeholder="e.g. 0x123..."
           />
-          {/* fix the width in mobile view and laptop view */}
           <QuantityInput
             dropDownValues={dropdownQuantityRangeValues}
             labelName="Quantity"
@@ -405,8 +349,7 @@ const AddCriteria = ({
         />
       )}
       {checkIfPushInvite() && (
-
-        <Section flexDirection='column' gap='10px'>
+        <Section flexDirection="column" gap="10px">
           {Object.keys(INVITE_CHECKBOX_LABEL).map((key) => (
             <Checkbox
               labelName={
@@ -429,23 +372,26 @@ const AddCriteria = ({
         </Section>
       )}
 
-      {checkIfGuild() &&(
+      {checkIfGuild() && (
         <>
-         <TextInput
-         labelName="ID"
-         inputValue={guildId}
-         onInputChange={(e: any) => setGuildId(e.target.value)}
-         placeholder="e.g. 4687"
-       />
-             <OptionButtons options={GUILD_COMPARISON_OPTIONS} />
+          <TextInput
+            labelName="ID"
+            inputValue={guildId}
+            onInputChange={(e: any) => setGuildId(e.target.value)}
+            placeholder="e.g. 4687"
+          />
+          <OptionButtons
+            options={GUILD_COMPARISON_OPTIONS}
+            totalWidth="410px"
+          />
 
-       <TextInput
-       labelName="Specific Role"
-       inputValue={specificRoleId}
-       onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
-       placeholder="e.g. 4687"
-     />
-     </>
+          <TextInput
+            labelName="Specific Role"
+            inputValue={specificRoleId}
+            onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+            placeholder="e.g. 4687"
+          />
+        </>
       )}
       <Button width="197px" onClick={handleNext}>
         Add
@@ -458,5 +404,3 @@ const AddCriteria = ({
 export default AddCriteria;
 
 //styles
-
-
