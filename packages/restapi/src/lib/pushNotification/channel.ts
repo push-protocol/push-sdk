@@ -250,11 +250,14 @@ export class Channel extends PushNotificationBaseClass {
         config.TOKEN_VIEM_NETWORK_MAP[this.env!]
       );
       const balance = await this.fetchBalance(pushTokenContract, this.account!);
+      // get counter
+      const counter = await this.fetchUpdateCounter(this.coreContract, this.account!);
       const fees = ethers.utils.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gt(balance)) {
+      const totalFees = fees.mul(counter)
+      if (totalFees.gte(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -285,12 +288,12 @@ export class Channel extends PushNotificationBaseClass {
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
       // if allowance is not greater than the fees, dont call approval again
-      if (!allowanceAmount.gte(fees)) {
+      if (!allowanceAmount.gte(totalFees)) {
         progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
         const approvalRes = await this.approveToken(
           pushTokenContract,
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
-          fees
+          totalFees
         );
         if (!approvalRes) {
           throw new Error('Something went wrong while approving the token');
@@ -305,7 +308,7 @@ export class Channel extends PushNotificationBaseClass {
         this.coreContract,
         this.account!,
         identityBytes,
-        fees
+        totalFees
       );
       progressHook?.(PROGRESSHOOK['PUSH-UPDATE-04'] as ProgressHookType);
       return { transactionHash: updateChannelRes };
