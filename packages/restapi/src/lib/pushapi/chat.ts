@@ -25,9 +25,9 @@ import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
-import { UserInfo } from './user';
+import { User } from './user';
 export class Chat {
-  private userInfoInstance: UserInfo;
+  private userInstance: User;
 
   constructor(
     private account: string,
@@ -35,8 +35,9 @@ export class Chat {
     private env: ENV,
     private signer: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
-  ) {    this.userInfoInstance = new UserInfo(this.account, this.env);
-}
+  ) {
+    this.userInstance = new User(this.account, this.env);
+  }
 
   async list(
     type: `${ChatListType}`,
@@ -134,7 +135,7 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
-      connectedUser: await this.userInfoInstance.info(),
+      connectedUser: await this.userInstance.info(),
     });
   }
 

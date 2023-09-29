@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.34](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.33...restapi-0.0.1-alpha.34) (2023-09-27)
+
+
+### Bug Fixes
+
+* added class based implementation for notification ([#699](https://github.com/ethereum-push-notification-service/push-sdk/issues/699)) ([44f0b7b](https://github.com/ethereum-push-notification-service/push-sdk/commit/44f0b7be1fb568c90c4dfebb7dc61ab82efaddc2))
+* changed typescript 5.0.2 and configured eslint ([8ca7e42](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ca7e4203bcc06886dfe293f8aec5597aec60e5b))
+
+
+
 ## [0.0.1-alpha.33](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.19...restapi-0.0.1-alpha.33) (2023-09-07)
 
 

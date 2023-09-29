@@ -39,7 +39,7 @@ describe('PushAPI.channel functionality', () => {
       LOCAL = 'local',
     }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2)
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer2);
     // TODO: remove signer1 after chat makes signer as optional
@@ -65,7 +65,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.info(
         'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
       );
-      // console.log(res);
+        // console.log(res);
       expect(res).not.null;
     });
   });
@@ -73,7 +73,7 @@ describe('PushAPI.channel functionality', () => {
   describe('channel :: search', () => {
     it('Without signer and account : Should return response', async () => {
       const res = await userBob.channel.search(' ');
-      // console.log(res);
+        // console.log(res);
       expect(res).not.null;
     });
 
