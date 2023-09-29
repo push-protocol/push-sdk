@@ -393,7 +393,7 @@ export class Channel extends PushNotificationBaseClass {
       );
       // if allowance is not greater than the fees, dont call approval again
       if (!allowanceAmount.gte(fees)) {
-        const approveRes = this.approveToken(
+        const approveRes = await this.approveToken(
           pushTokenContract,
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
           fees

@@ -634,7 +634,7 @@ export class PushNotificationBaseClass {
           SETTING_DELIMITER +
           ele.default;
         notificationSettingDescription =
-          notificationSettingDescription + ele.description;
+          notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
       if (ele.type == 1) {
         if (ele.data) {
@@ -650,13 +650,13 @@ export class PushNotificationBaseClass {
             ele.data.upper;
 
           notificationSettingDescription =
-            notificationSettingDescription + ele.description;
+            notificationSettingDescription + SETTING_SEPARATOR + ele.description;
         }
       }
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
-      description: notificationSettingDescription,
+      description: notificationSettingDescription.replace(/^\+/, ''),
     };
   }
 }

@@ -9,7 +9,7 @@ import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { goerli } from 'viem/chains';
 // import tokenABI from './tokenABI';
-describe.only('PushAPI.notification functionality', () => {
+describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;

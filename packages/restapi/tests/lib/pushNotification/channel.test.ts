@@ -2,7 +2,6 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
@@ -30,9 +29,17 @@ describe('PushAPI.channel functionality', () => {
       provider
     );
     account2 = await signer2.getAddress();
-
+    enum ENV {
+      PROD = 'prod',
+      STAGING = 'staging',
+      DEV = 'dev',
+      /**
+       * **This is for local development only**
+       */
+      LOCAL = 'local',
+    }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2)
+    userKate = await PushAPI.initialize(signer2);
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer2);
     // TODO: remove signer1 after chat makes signer as optional
@@ -58,7 +65,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.info(
         'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
       );
-        // console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
   });
@@ -66,7 +73,7 @@ describe('PushAPI.channel functionality', () => {
   describe('channel :: search', () => {
     it('Without signer and account : Should return response', async () => {
       const res = await userBob.channel.search(' ');
-        // console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
 
@@ -105,9 +112,9 @@ describe('PushAPI.channel functionality', () => {
     });
 
     it('Without signer and account : Should return response without passing the options', async () => {
-        const res = await userKate.channel.subscribers();
-        expect(res).not.null;
-      });
+      const res = await userKate.channel.subscribers();
+      expect(res).not.null;
+    });
 
     it('Without signer and account : Should throw error for invalid caip', async () => {
       await expect(() =>
@@ -260,8 +267,32 @@ describe('PushAPI.channel functionality', () => {
         url: 'https://google.com',
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
       });
-    //   console.log(res)
-    expect(res).not.null
+      //   console.log(res)
+      expect(res).not.null;
+    }, 10000000000);
+  });
+
+  describe.skip('channel :: create', () => {
+    it('Should create channel', async () => {
+      const res = await userKate.channel.create({
+        name: 'SDK Test',
+        description: 'Testing new description',
+        url: 'https://google.com',
+        icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
+      });
+      //   console.log(res)
+      expect(res).not.null;
+    }, 10000000000);
+  });
+
+  describe.skip('channel :: settings', () => {
+    it('Should create channel', async () => {
+      const res = await userKate.channel.setting([
+        { type: 0, default: 1, description: 'My Notif Settings' },
+        {type: 1, default: 5, description: "My notif setting 2", data: {upper:100, lower:5}}
+      ]);
+      //   console.log(res)
+      expect(res).not.null;
     }, 10000000000);
   });
 });
