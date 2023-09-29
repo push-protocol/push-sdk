@@ -34,6 +34,8 @@ export type chainNameType =
   | 'OPTIMISM_TESTNET'
   | 'POLYGON_ZK_EVM_TESTNET'
   | 'POLYGON_ZK_EVM_MAINNET'
+  | 'ARBITRUMONE_MAINNET'
+  | 'ARBITRUM_TESTNET'
   | 'THE_GRAPH'
   | undefined;
 
