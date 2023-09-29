@@ -190,6 +190,8 @@ export class PushStream extends EventEmitter {
         data = await this.chatInstance.decrypt([data]);
       }
 
+      console.log(data);
+
       const modifiedData = DataModifier.handleChatEvent(data[0], this.raw);
       modifiedData.event = this.convertToProposedName(modifiedData.event);
       this.handleToField(modifiedData);

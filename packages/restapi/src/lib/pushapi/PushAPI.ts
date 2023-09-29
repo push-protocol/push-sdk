@@ -47,24 +47,10 @@ export class PushAPI {
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
     // Instantiate the notification classes
-    this.channel = new Channel(
-      this.signer,
-      this.env,
-      this.account
-    )
-    this.alias = new Alias(
-      this.env
-    )
-    this.delegate = new Delegate(
-      this.signer,
-      this.env,
-      this.account
-    )
-    this.notification = new Notification(
-      this.signer,
-      this.env,
-      this.account
-    )
+    this.channel = new Channel(this.signer, this.env, this.account);
+    this.alias = new Alias(this.env);
+    this.delegate = new Delegate(this.signer, this.env, this.account);
+    this.notification = new Notification(this.signer, this.env, this.account);
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
@@ -98,9 +84,14 @@ export class PushAPI {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-        version: Constants.ENC_TYPE_V3,
-        autoUpgrade: true,
+        chatOptions: {
+          version: Constants.ENC_TYPE_V3,
+          autoUpgrade: true,
+        },
         account: null,
+        streamOptions: {
+          socketEnabled: true, // Default value
+        },
       };
 
       // Settings object
@@ -108,6 +99,14 @@ export class PushAPI {
       const settings = {
         ...defaultOptions,
         ...options,
+        chatOptions: {
+          ...defaultOptions.chatOptions,
+          ...(options?.chatOptions ?? {}),
+        },
+        streamOptions: {
+          ...defaultOptions.streamOptions,
+          ...(options?.streamOptions ?? {}),
+        },
       };
 
       // Get account
@@ -135,8 +134,8 @@ export class PushAPI {
         decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           signer: signer,
-          toUpgrade: settings.autoUpgrade,
-          additionalMeta: settings.versionMeta,
+          toUpgrade: settings.chatOptions.autoUpgrade,
+          additionalMeta: settings.chatOptions.versionMeta,
           progressHook: settings.progressHook,
           env: settings.env,
         });
@@ -146,8 +145,8 @@ export class PushAPI {
           env: settings.env,
           account: derivedAccount,
           signer,
-          version: settings.version,
-          additionalMeta: settings.versionMeta,
+          version: settings.chatOptions.version,
+          additionalMeta: settings.chatOptions.versionMeta,
           origin: settings.origin,
           progressHook: settings.progressHook,
         });
@@ -165,17 +164,19 @@ export class PushAPI {
         settings.progressHook
       );
 
-      const streamInstance = await PushStream.initialize(
-        api.account,
-        decryptedPGPPrivateKey,
-        signer,
-        settings.progressHook,
-        settings.streamOptions
-      );
-      if (streamInstance) {
-        api.stream = streamInstance;
-      } else {
-        throw new Error('Failed to initialize PushStream.');
+      if (settings.streamOptions.socketEnabled) {
+        const streamInstance = await PushStream.initialize(
+          api.account,
+          decryptedPGPPrivateKey,
+          signer,
+          settings.progressHook,
+          settings.streamOptions
+        );
+        if (streamInstance) {
+          api.stream = streamInstance;
+        } else {
+          throw new Error('Failed to initialize PushStream.');
+        }
       }
 
       return api;

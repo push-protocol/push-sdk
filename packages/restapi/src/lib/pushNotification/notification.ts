@@ -1,26 +1,15 @@
 import Constants, { ENV } from '../constants';
 import {
   SignerType,
-  ProgressHookType,
-  ProgressHookTypeFunction,
 } from '../types';
 import {
-  ChannelInfoOptions,
   SubscribeUnsubscribeOptions,
   SubscriptionOptions,
-  AliasOptions,
   FeedType,
   FeedsOptions,
-  ChannelSearchOptions,
-  NotificationOptions,
-  CreateChannelOptions,
-  NotificationSettings,
 } from './PushNotificationTypes';
-import CONFIG, * as config from '../config';
 import * as PUSH_USER from '../user';
-import * as PUSH_PAYLOAD from '../payloads';
 import * as PUSH_CHANNEL from '../channels';
-import * as PUSH_ALIAS from '../alias';
 
 import {
   getCAIPDetails,

@@ -1,5 +1,5 @@
-import { ENV } from "../constants";
 import { Rules } from "../types";
+import Constants, { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   listen?: STREAM[];
@@ -13,7 +13,14 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
+  socketEnabled?: boolean;
 };
+
+export type PushChatInitializeProps = {
+  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
+  versionMeta?: { NFTPGP_V1?: { password: string } };
+  autoUpgrade?: boolean;
+}
 
 export enum STREAM {
   PROFILE = 'STREAM.PROFILE',

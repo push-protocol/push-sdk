@@ -1,10 +1,8 @@
 import { ENV } from '../constants';
-import { SignerType } from '../types';
 import { AliasOptions } from './PushNotificationTypes';
 
 import * as PUSH_ALIAS from '../alias';
 
-import { PushNotificationBaseClass } from './pushNotificationBase';
 
 export class Alias {
   private env: ENV

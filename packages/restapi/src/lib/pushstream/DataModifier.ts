@@ -10,7 +10,6 @@ import {
   GroupEventType,
   LeaveGroupEvent,
   JoinGroupEvent,
-  ProposedEventNames,
   RequestEvent,
   RemoveEvent,
 } from './pushStreamTypes';

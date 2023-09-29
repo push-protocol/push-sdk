@@ -183,7 +183,7 @@ describe.only('PushStream.initialize functionality', () => {
          accounts: [signer2.address, signer3.address, signer4.address],
        });
 
-       const w2wRejectRequest = await user2.chat.group.join(
+      const w2wRejectRequest = await user2.chat.group.join(
          createdGroup.chatId
        );
 

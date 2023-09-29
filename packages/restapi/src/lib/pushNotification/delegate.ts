@@ -1,4 +1,4 @@
-import Constants, { ENV } from '../constants';
+import  { ENV } from '../constants';
 import { SignerType } from '../types';
 import { ChannelInfoOptions } from './PushNotificationTypes';
 import CONFIG, * as config from '../config';
