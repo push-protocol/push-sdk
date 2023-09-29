@@ -12,8 +12,8 @@ export interface OptionDescription {
 }
 interface OptionButtonsProps {
   options: Array<OptionDescription>;
-  // selectedValue: string;
-  // handleClick: ()=>void;
+  selectedValue: string;
+  handleClick: (el:string)=>void;
 }
 
 interface ButtonSectionProps {
@@ -22,6 +22,7 @@ interface ButtonSectionProps {
   borderColor: string;
   // background:string;
 }
+
 const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
   const theme = useContext(ThemeContext);
   return (
@@ -48,9 +49,9 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
     </>
   );
 };
-const OptionButtons = ({ options,
-  //  selectedValue
-   }: OptionButtonsProps) => {
+
+
+const OptionButtons = ({ options,selectedValue,handleClick}: OptionButtonsProps) => {
   const theme = useContext(ThemeContext);
   return (
     <ThemeProvider theme={theme}>
@@ -62,7 +63,8 @@ const OptionButtons = ({ options,
             }
             borderColor={theme.border!.modalInnerComponents!}
             borderWidth={index === 0 ? '1px 0px 1px 1px' : '1px'}
-            // background={selectedValue === option.value?theme.backgroundColor.modalHoverBackground:'none'}
+            background={selectedValue === option.value ? theme.backgroundColor?.modalHoverBackground : 'none'}
+            onClick={()=>{handleClick(option.value)}}
           >
             <OptionDescripton {...option} />
           </ButtonSection>
@@ -79,7 +81,7 @@ const ButtonContainer = styled.div`
 `;
 
 const ButtonSection = styled(Section)<ButtonSectionProps>`
-  cursor:pointer
+  cursor:pointer;
   justify-content: center;
   align-items: center;
   gap: 3px;

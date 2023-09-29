@@ -6,13 +6,17 @@ import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 import { Section, Span } from '../../reusables';
 import { ToggleInput } from '../reusables';
 import { Button } from '../reusables';
-import { ModalHeaderProps } from './CreateGroupModal';
+import { GroupTypeState, ModalHeaderProps } from './CreateGroupModal';
 
 import { SpamIcon } from '../../../icons/SpamIcon';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
+import useToast from '../reusables/NewToast';
+import { MdError } from 'react-icons/md';
+
+
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
     {
@@ -85,16 +89,48 @@ interface AddConditionProps {
     );
   };
   
-export const CreateGroupType = ({ onClose,handlePrevious }: ModalHeaderProps) => {
+export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails }: ModalHeaderProps & GroupTypeState) => {
     const [checked, setChecked] = useState<boolean>(false);
+    const [groupEncryptionType, setGroupEncryptionType] = useState('')
     const theme = useContext(ThemeContext);
-
     const isMobile = useMediaQuery(device.mobileL);
-    console.log(isMobile)
+    const groupInfoToast = useToast();
+
+
+    const createGroupService = async()=>{
+      const groupInfo = {
+        groupInfo:{...groupInputDetails},
+        groupType:groupEncryptionType
+      }
+      console.log("created group with", groupInfo);
+      onClose()      
+    }
+
+    const verifyAndCreateGroup = async()=>{
+      if(groupEncryptionType.trim() === ""){
+        showError("Group encryption type is not selected")
+        return
+      }
+
+      await createGroupService();
+    }
+
+    const showError =(errorMessage:string)=>{
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size) => <MdError size={size} color="red" />,
+      });
+    }
+
     return (
         <Section flexDirection="column" gap="32px" >
           <ModalHeader title="Create Group" handleClose={onClose} handlePrevious={handlePrevious} />
-          <OptionButtons options={GROUP_TYPE_OPTIONS} />
+          <OptionButtons options={GROUP_TYPE_OPTIONS} selectedValue={groupEncryptionType} handleClick={(newEl:string)=>{
+            setGroupEncryptionType(newEl)
+            console.log("we called it");
+          }}/>
   
           <ToggleInput
             labelHeading="Gated Group"
@@ -110,7 +146,7 @@ export const CreateGroupType = ({ onClose,handlePrevious }: ModalHeaderProps) =>
             </Section>
           )}
           <Section gap="20px" flexDirection="column">
-            <Button width="197px">Create Group</Button>
+            <Button width="197px" onClick={verifyAndCreateGroup}>Create Group</Button>
             <Section gap="4px">
               <SpamIcon />
               <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
