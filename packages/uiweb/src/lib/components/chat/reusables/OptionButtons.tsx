@@ -13,8 +13,8 @@ export interface OptionDescription {
 interface OptionButtonsProps {
   options: Array<OptionDescription>;
   totalWidth?:string;
-  // selectedValue: string;
-  // handleClick: ()=>void;
+  selectedValue: string;
+  handleClick: (el:string)=>void;
 }
 
 interface ButtonSectionProps {
@@ -25,6 +25,7 @@ interface ButtonSectionProps {
   noOfOptions:number;
   // background:string;
 }
+
 const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
   const theme = useContext(ThemeContext);
   return (
@@ -53,10 +54,7 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
 };
 
 
-const OptionButtons = ({ options,
-  totalWidth = '400px',
-  //  selectedValue
-   }: OptionButtonsProps) => {
+export const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',}: OptionButtonsProps) => {
   const theme = useContext(ThemeContext);
 
 const getBorderWidth = (index:number) =>{
@@ -88,7 +86,8 @@ const getBorderRadius = (index:number) =>{
             }
             borderColor={theme.border!.modalInnerComponents!}
             borderWidth={getBorderWidth(index)}
-            // background={selectedValue === option.value?theme.backgroundColor.modalHoverBackground:'none'}
+            background={selectedValue === option.value ? theme.backgroundColor?.modalHoverBackground : 'none'}
+            onClick={()=>{handleClick(option.value)}}
           >
             <OptionDescripton {...option} />
           </ButtonSection>
@@ -105,7 +104,7 @@ const ButtonContainer = styled.div`
 `;
 
 const ButtonSection = styled(Section)<ButtonSectionProps>`
-  cursor:pointer
+  cursor:pointer;
   justify-content: center;
   align-items: center;
   gap: 3px;

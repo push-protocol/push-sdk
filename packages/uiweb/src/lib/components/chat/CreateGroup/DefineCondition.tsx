@@ -12,14 +12,15 @@ import Criteria from "./Criteria";
 
 
 export const DefineCondtion = ({ onClose, handlePrevious, handleNext }: ModalHeaderProps) => {
+    const [criteriaOperator, setCriteriaOperator] = useState<string>('');
     const options = [
         {
             heading: 'Any',
-            value: 'open',
+            value: 'any',
         },
         {
             heading: 'All',
-            value: 'encrypted',
+            value: 'all',
         }
     ]
 
@@ -53,7 +54,8 @@ export const DefineCondtion = ({ onClose, handlePrevious, handleNext }: ModalHea
             <ModalHeader title='Define Condition' handleClose={onClose} handlePrevious={handlePrevious} />
             {isCriteriaAdded && (
                 <Section flexDirection="column" gap="16px">
-                    <OptionButtons options={options} />
+                    <OptionButtons options={options}  selectedValue={criteriaOperator} handleClick={(newEl:string)=>{
+              setCriteriaOperator(newEl)}}/>
                     <Span fontSize="14px">Any one<Span color={theme.textColor?.modalSubHeadingText}> of the following criteria must be true</Span></Span>
                     <Section>
                         <Criteria width="385px" dropdownValues={criteriaOptions}/>

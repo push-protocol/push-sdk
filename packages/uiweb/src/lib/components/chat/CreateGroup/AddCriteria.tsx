@@ -46,6 +46,7 @@ const AddCriteria = ({
   const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
   const [selectedSubCategoryValue, setSelectedSubCategoryValue] =
     useState<number>(0);
+    const [guildComparison, setGuildComparison] = useState('')
   const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
   const [contract, setContract] = useState<string>('');
   const [inviteCheckboxes, setInviteCheckboxes] = useState<{
@@ -383,6 +384,9 @@ const AddCriteria = ({
           <OptionButtons
             options={GUILD_COMPARISON_OPTIONS}
             totalWidth="410px"
+            selectedValue={guildComparison}
+            handleClick={(newEl:string)=>{
+              setGuildComparison(newEl)}}
           />
 
           <TextInput
