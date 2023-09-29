@@ -90,7 +90,7 @@ export class PushAPI {
         },
         account: null,
         streamOptions: {
-          socketEnabled: true, // Default value
+          enabled: true, // Default value
         },
       };
 
@@ -164,7 +164,7 @@ export class PushAPI {
         settings.progressHook
       );
 
-      if (settings.streamOptions.socketEnabled) {
+      if (settings.streamOptions.enabled) {
         const streamInstance = await PushStream.initialize(
           api.account,
           decryptedPGPPrivateKey,

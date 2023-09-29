@@ -13,7 +13,7 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
-  socketEnabled?: boolean;
+  enabled?: boolean;
 };
 
 export type PushChatInitializeProps = {
