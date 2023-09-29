@@ -164,54 +164,82 @@ export class PushStream extends EventEmitter {
     };
 
     this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
-      const modifiedData = DataModifier.handleChatGroupEvent(data, this.raw);
-      modifiedData.event = this.convertToProposedName(modifiedData.event);
-      this.handleToField(modifiedData);
-      if (this.shouldEmitChat(data.chatId)) {
-        if (
-          data.eventType === GroupEventType.JoinGroup ||
-          data.eventType === GroupEventType.LeaveGroup ||
-          data.eventType === MessageEventType.Request ||
-          data.eventType === GroupEventType.Remove
-        ) {
-          if (shouldEmit(STREAM.CHAT)) {
-            this.emit(STREAM.CHAT, modifiedData);
-          }
-        } else {
-          if (shouldEmit(STREAM.CHAT_OPS)) {
-            this.emit(STREAM.CHAT_OPS, modifiedData);
-          }
-        }
-      }
+       try {
+         const modifiedData = DataModifier.handleChatGroupEvent(data, this.raw);
+         modifiedData.event = this.convertToProposedName(modifiedData.event);
+         this.handleToField(modifiedData);
+         if (this.shouldEmitChat(data.chatId)) {
+           if (
+             data.eventType === GroupEventType.JoinGroup ||
+             data.eventType === GroupEventType.LeaveGroup ||
+             data.eventType === MessageEventType.Request ||
+             data.eventType === GroupEventType.Remove
+           ) {
+             if (shouldEmit(STREAM.CHAT)) {
+               this.emit(STREAM.CHAT, modifiedData);
+             }
+           } else {
+             if (shouldEmit(STREAM.CHAT_OPS)) {
+               this.emit(STREAM.CHAT_OPS, modifiedData);
+             }
+           }
+         }
+       } catch (error) {
+         console.error('Error handling CHAT_GROUPS event:', error, 'Data:', data);
+       }
     });
 
     this.pushChatSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (data: any) => {
-      if (data.messageCategory == 'Chat' || data.messageCategory == 'Request') {
-        data = await this.chatInstance.decrypt([data]);
-      }
+        try {
+          if (
+            data.messageCategory == 'Chat' ||
+            data.messageCategory == 'Request'
+          ) {
+            data = await this.chatInstance.decrypt([data]);
+            data = data[0]
+          }
 
-      console.log(data);
-
-      const modifiedData = DataModifier.handleChatEvent(data[0], this.raw);
-      modifiedData.event = this.convertToProposedName(modifiedData.event);
-      this.handleToField(modifiedData);
-      if (this.shouldEmitChat(data.chatId)) {
-        if (shouldEmit(STREAM.CHAT)) {
-          this.emit(STREAM.CHAT, modifiedData);
+          const modifiedData = DataModifier.handleChatEvent(data, this.raw);
+          modifiedData.event = this.convertToProposedName(modifiedData.event);
+          this.handleToField(modifiedData);
+          if (this.shouldEmitChat(data.chatId)) {
+            if (shouldEmit(STREAM.CHAT)) {
+              this.emit(STREAM.CHAT, modifiedData);
+            }
+          }
+        } catch (error) {
+          console.error(
+            'Error handling CHAT_RECEIVED_MESSAGE event:',
+            error,
+            'Data:',
+            data
+          );
         }
-      }
     });
 
     this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
-      console.log('Incoming Feed from Socket');
-      console.log(data);
-      this.emit(STREAM.NOTIF, data);
+      try {
+        console.log('Incoming Feed from Socket');
+        console.log(data);
+        this.emit(STREAM.NOTIF, data);
+      } catch (error) {
+        console.error('Error handling USER_FEEDS event:', error, 'Data:', data);
+      }
     });
 
     this.pushNotificationSocket.on(EVENTS.USER_SPAM_FEEDS, (data: any) => {
-      console.log('Incoming Spam Feed from Socket');
-      console.log(data);
-      this.emit(STREAM.NOTIF, data);
+       try {
+         console.log('Incoming Spam Feed from Socket');
+         console.log(data);
+         this.emit(STREAM.NOTIF, data);
+       } catch (error) {
+         console.error(
+           'Error handling USER_SPAM_FEEDS event:',
+           error,
+           'Data:',
+           data
+         );
+       }
     });
   }
 }

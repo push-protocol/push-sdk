@@ -1,5 +1,5 @@
-import { ENV } from '../constants';
-import { PushChatInitializeProps, PushStreamInitializeProps } from '../pushstream/pushStreamTypes';
+import Constants, { ENV } from '../constants';
+import { PushStreamInitializeProps } from '../pushstream/pushStreamTypes';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
@@ -10,7 +10,9 @@ export interface PushAPIInitializeProps {
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
   account?: string | null;
-  chatOptions?:  PushChatInitializeProps;
+  version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
+  versionMeta?: { NFTPGP_V1?: { password: string } };
+  autoUpgrade?: boolean;
   origin?: string;
   streamOptions?: PushStreamInitializeProps;
 }

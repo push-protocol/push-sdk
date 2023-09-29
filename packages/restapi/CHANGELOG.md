@@ -2,6 +2,43 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.40](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.39...restapi-0.0.1-alpha.40) (2023-09-29)
+
+
+### Bug Fixes
+
+* minor fixes ([be3e90a](https://github.com/ethereum-push-notification-service/push-sdk/commit/be3e90ae43625eac56cc82548e150a6296a09777))
+* socket enabled ([fa4fc0a](https://github.com/ethereum-push-notification-service/push-sdk/commit/fa4fc0ae78898432232031df85a1ec04cc9027c8))
+
+
+
+## [0.0.1-alpha.39](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.38...restapi-0.0.1-alpha.39) (2023-09-29)
+
+
+### Bug Fixes
+
+* more fixes ([fe0ad48](https://github.com/ethereum-push-notification-service/push-sdk/commit/fe0ad486338d1cc57508e5ccc1c3b2aeece9624a))
+
+
+
+## [0.0.1-alpha.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.37...restapi-0.0.1-alpha.38) (2023-09-29)
+
+
+### Bug Fixes
+
+* error handling in socket events ([399d1fe](https://github.com/ethereum-push-notification-service/push-sdk/commit/399d1fe396ce19f764c9fc80dea3a3852216837a))
+
+
+
+## [0.0.1-alpha.37](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.36...restapi-0.0.1-alpha.37) (2023-09-29)
+
+
+### Bug Fixes
+
+* minor fixes ([12e3ca5](https://github.com/ethereum-push-notification-service/push-sdk/commit/12e3ca542aa11f7640ba5b84492707eb6e8bc3fc))
+
+
+
 ## [0.0.1-alpha.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.35...restapi-0.0.1-alpha.36) (2023-09-29)
 
 
