@@ -52,7 +52,7 @@ describe('PushAPI.notification functionality', () => {
     userViem = await PushAPI.initialize(viemSigner);
   });
 
-  describe('', () => {
+  describe('PushAPI.notification functionality', () => {
     it('Should return feeds with signer object', async () => {
       const response = await userAlice.notification.list('SPAM');
       expect(response).not.null;

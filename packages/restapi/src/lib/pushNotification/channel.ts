@@ -23,10 +23,16 @@ import PROGRESSHOOK from '../progressHook';
 import { ethers } from 'ethers';
 
 import { PushNotificationBaseClass } from './pushNotificationBase';
+import { Delegate } from './delegate';
+import { Alias } from './alias';
 
 export class Channel extends PushNotificationBaseClass {
+  public delegate!: Delegate
+  public alias!: Alias
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
+    this.delegate = new Delegate(signer, env, account)
+    this.alias = new Alias(env!);
   }
 
   /**
@@ -345,6 +351,10 @@ export class Channel extends PushNotificationBaseClass {
       // checks if it is a valid address
       if (!ethers.utils.isAddress(channelToBeVerified)) {
         throw new Error('Invalid channel address');
+      }
+      const channelDetails = await this.info(this.account);
+      if(channelDetails?.verified_status == 0){
+        throw new Error("Only verified channel can verify other channel")
       }
       // if valid, continue with it
       const res = await this.verifyChannel(

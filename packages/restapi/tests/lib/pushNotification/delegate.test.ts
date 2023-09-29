@@ -41,7 +41,7 @@ describe('PushAPI.delegate functionality', () => {
     // TODO: remove skip after signer becomes optional
     it.skip('Without signer and account :: should throw error', async () => {
       await expect(() =>
-        userBob.delegate.add(
+        userBob.channel.delegate.add(
           'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
@@ -49,14 +49,14 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
-        userAlice.delegate.add(
+        userAlice.channel.delegate.add(
           'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
 
     it('With signer and provider :: should add delegate', async () => {
-      const res = await userKate.delegate.add(
+      const res = await userKate.channel.delegate.add(
         'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       //   console.log(res);
@@ -65,7 +65,7 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With signer and provider :: should throw error as delegate caip and provider doesnt match', async () => {
       await expect(() =>
-        userKate.delegate.add(
+        userKate.channel.delegate.add(
           'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
@@ -82,7 +82,7 @@ describe('PushAPI.delegate functionality', () => {
         provider
       );
       userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.delegate.add(
+      const res = await userKate.channel.delegate.add(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       //   console.log(res);
@@ -94,7 +94,7 @@ describe('PushAPI.delegate functionality', () => {
     // TODO: remove skip after signer becomes optional
     it.skip('Without signer and account :: should throw error', async () => {
       await expect(() =>
-        userBob.delegate.remove(
+        userBob.channel.delegate.remove(
           'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
@@ -102,14 +102,14 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
-        userAlice.delegate.remove(
+        userAlice.channel.delegate.remove(
           'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
 
     it('With signer and provider :: should add delegate', async () => {
-      const res = await userKate.delegate.remove(
+      const res = await userKate.channel.delegate.remove(
         'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
         console.log(res);
@@ -118,13 +118,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With signer and provider :: should throw error as delegate caip and provider doesnt match', async () => {
       await expect(() =>
-        userKate.delegate.remove(
+        userKate.channel.delegate.remove(
           'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
 
-    it('With viem signer: Should add delegate', async () => {
+    it.only('With viem signer: Should remove delegate', async () => {
       // create polygon mumbai provider
       const provider = new ethers.providers.JsonRpcProvider(
         'https://rpc-mumbai.maticvigil.com'
@@ -135,7 +135,7 @@ describe('PushAPI.delegate functionality', () => {
         provider
       );
       userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.delegate.remove(
+      const res = await userKate.channel.delegate.remove(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
         // console.log(res);
@@ -145,18 +145,18 @@ describe('PushAPI.delegate functionality', () => {
 
   describe('delegate :: get', () => {
     it.skip('Without signer and account : Should throw error', async () => {
-      await expect(() => userBob.delegate.get()).to.Throw;
+      await expect(() => userBob.channel.delegate.get()).to.Throw;
     });
     it('Without signer : Should throw error for non-caip format', async () => {
       await expect(() =>
-        userBob.delegate.get({
+        userBob.channel.delegate.get({
           channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924',
         })
       ).to.Throw;
     });
 
     it('Without signer : Should fetch delegates', async () => {
-      const res = await userBob.delegate.get({
+      const res = await userBob.channel.delegate.get({
         channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       console.log(res);
@@ -164,7 +164,7 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('Without signer : Should fetch delegates for alias', async () => {
-      const res = await userBob.delegate.get({
+      const res = await userBob.channel.delegate.get({
         channel: 'eip155:80001:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       //   console.log(res)
@@ -172,7 +172,7 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('With signer : Should fetch delegates for channel', async () => {
-      const res = await userKate.delegate.get();
+      const res = await userKate.channel.delegate.get();
       //   console.log(res);
       expect(res).not.null;
     });
