@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { MdError } from 'react-icons/md';
 
@@ -18,7 +18,10 @@ import { AddButtons } from './AddButtons';
 import Criteria from './Criteria';
 import MultipleCriterias from './MultipleCriterias';
 import useToast from '../reusables/NewToast';
+import {ConditionType, CriteriaStateType, Rule, useCriteriaState} from './Type'
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { SingleAndMultipleCriteria } from './SingleAndMultipleCriteria';
+
 
 const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
   {
@@ -59,14 +62,16 @@ interface AddConditionProps {
   heading: string;
   subHeading: string;
   handleNext?: () => void;
+  criteriaState: CriteriaStateType;
 }
+
 const AddConditionSection = ({
   heading,
   subHeading,
   handleNext,
+  criteriaState
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('any');
 
   /** todo - dummy data to be removed after we get condition data
    *  and check for the chat and entry conditions
@@ -199,28 +204,28 @@ const AddConditionSection = ({
       <Section flexDirection="column" gap="16px">
         <OptionButtons
           options={OPERATOR_OPTIONS}
-          selectedValue={criteriaOperator}
+          selectedValue={criteriaState.entryRootCondition}
           handleClick={(newEl: string) => {
-            setCriteriaOperator(newEl);
+            criteriaState.setEntryRootCondition(newEl as ConditionType);
           }}
         />
         <Span fontSize="14px">
           {
             OPERATOR_OPTIONS_INFO[
-              criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+              criteriaState.entryRootCondition as keyof typeof OPERATOR_OPTIONS_INFO
             ].head
           }
           <Span color={theme.textColor?.modalSubHeadingText}>
             {' '}
             {
               OPERATOR_OPTIONS_INFO[
-                criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+                criteriaState.entryRootCondition as keyof typeof OPERATOR_OPTIONS_INFO
               ].tail
             }
           </Span>
         </Span>
-        <Criteria width="350px" dropdownValues={criteriaOptions} />
-        <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
+        <SingleAndMultipleCriteria dropdownValues={criteriaOptions} />
+        <SingleAndMultipleCriteria dropdownValues={multiplecriteriaOptions} />
       </Section>
       <Button
         onClick={handleNext}
@@ -238,16 +243,20 @@ const AddConditionSection = ({
   );
 };
 
+
+
 export const CreateGroupType = ({
   onClose,
   handlePrevious,
   groupInputDetails,
   handleNext,
+  entryCriteria
 }: ModalHeaderProps & GroupTypeState) => {
-  const [checked, setChecked] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(true);
   const [groupEncryptionType, setGroupEncryptionType] = useState('');
-  const theme = useContext(ThemeContext);
-  const isMobile = useMediaQuery(device.mobileL);
+  
+  // const theme = useContext(ThemeContext);
+  // const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
@@ -303,13 +312,14 @@ export const CreateGroupType = ({
       {checked && (
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
+            criteriaState={entryCriteria}
             handleNext={handleNext}
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
-          <AddConditionSection
+          {/* <AddConditionSection
             handleNext={handleNext}
             {...ACCESS_TYPE_TITLE.CHAT}
-          />
+          /> */}
         </Section>
       )}
 

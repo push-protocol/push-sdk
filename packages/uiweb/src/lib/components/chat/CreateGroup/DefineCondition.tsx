@@ -16,7 +16,7 @@ export const DefineCondtion = ({
   handlePrevious,
   handleNext,
 }: ModalHeaderProps) => {
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('');
+  const [criteriaOperator, setCriteriaOperator] = useState<string>('any');
   //todo remove dummy data after we have condition data
   const criteriaOptions = [
     {
@@ -72,7 +72,7 @@ export const DefineCondtion = ({
               OPERATOR_OPTIONS_INFO[
                 criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
               ].head
-            }
+            } 
             <Span color={theme.textColor?.modalSubHeadingText}>
               {' '}
               {

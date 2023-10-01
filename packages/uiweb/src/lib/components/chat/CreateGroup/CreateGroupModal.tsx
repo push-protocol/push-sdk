@@ -23,6 +23,7 @@ import AddCriteria from './AddCriteria';
 import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ToastContainer } from 'react-toastify';
+import { CriteriaStateType, useCriteriaState } from './Type';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -49,6 +50,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
 
+
+
   const handleNext = () => {
     console.log('active')
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
@@ -64,6 +67,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     groupImage:null
   })
 
+  const entryCriteria = useCriteriaState()
+
   const renderComponent = () => {
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
@@ -74,7 +79,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           setGroupInputDetails={setGroupInputDetails}
         />;
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
-        return <CreateGroupType  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
+        return <CreateGroupType entryCriteria={entryCriteria}  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
         return <DefineCondtion handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
       case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
@@ -101,6 +106,7 @@ interface GroupDetailState{
 
 export interface GroupTypeState{
   groupInputDetails: GroupInputDetailsType;
+  entryCriteria:CriteriaStateType
 }
 
 const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInputDetails }: ModalHeaderProps & GroupDetailState ) => {
@@ -141,22 +147,26 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
   }
 
   const verifyAndHandelNext = ()=>{
-    // verify name
-    if (groupName.trim().length === 0){
-      showError("Group Name is empty")
-      return
-    }
+    const skipVerify = true;
 
-    // verify description
-    if (groupDescription.trim().length === 0){
-      showError("Group Description is empty")
-      return
-    }
+    if(!skipVerify){
+      // verify name
+      if (groupName.trim().length === 0){
+        showError("Group Name is empty")
+        return
+      }
 
-    // verify description 
-    if (!groupImage){
-      showError("Group image can't be empty")
-      return
+      // verify description
+      if (groupDescription.trim().length === 0){
+        showError("Group Description is empty")
+        return
+      }
+
+      // verify description 
+      if (!groupImage){
+        showError("Group image can't be empty")
+        return
+      }
     }
     
     if(handleNext){
