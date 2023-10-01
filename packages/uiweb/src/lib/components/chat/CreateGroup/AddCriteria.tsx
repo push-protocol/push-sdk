@@ -34,10 +34,12 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
+import { Rule } from './Type';
 
 
 const AddCriteria = ({
   handlePrevious,
+  entryCriteria,
   //handle add criteria
   handleNext,
   onClose,
@@ -265,6 +267,26 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
+  const verifyAndDoNext = ()=>{
+    const rule:Rule = {
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: `eip155:${1}:${contract}`,
+        amount: 1,
+        decimals: 18,
+      },
+    }
+
+    entryCriteria.addNewRule(rule)
+
+    if(handlePrevious){
+      handlePrevious()
+    }
+
+  }
+
   return (
     <Section
       flexDirection="column"
@@ -397,7 +419,7 @@ const AddCriteria = ({
           />
         </>
       )}
-      <Button width="197px" onClick={handleNext}>
+      <Button width="197px" onClick={verifyAndDoNext}>
         Add
       </Button>
       <GatingRulesInformation />

@@ -10,14 +10,18 @@ import { device } from '../../../config';
 import OptionButtons from '../reusables/OptionButtons';
 import Criteria from './Criteria';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { SingleAndMultipleCriteria } from './SingleAndMultipleCriteria';
+import { Rule } from './Type';
 
 export const DefineCondtion = ({
   onClose,
   handlePrevious,
   handleNext,
+  entryCriteria
 }: ModalHeaderProps) => {
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('any');
+  
   //todo remove dummy data after we have condition data
+  
   const criteriaOptions = [
     {
       id: 0,
@@ -35,6 +39,16 @@ export const DefineCondtion = ({
     // }
   ];
 
+  const ruleToCriteriaOptions = (rule:Rule, idx:number) =>{
+    return [{
+      id:idx,
+      type: rule.type,
+      value: rule.data.amount,
+      title: rule.category,
+      function: () => console.log('Token'),
+    }]
+  }
+
   const theme = useContext(ThemeContext);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const customButtonStyle = {
@@ -47,6 +61,15 @@ export const DefineCondtion = ({
   };
   const [isCriteriaAdded, setIsCriteriaAdded] = useState<boolean>(true);
   const isMobile = useMediaQuery(device.mobileL);
+
+  const verifyAndDoNext = ()=>{
+    entryCriteria.addNewCondtion()
+
+    if(handlePrevious){
+      handlePrevious()
+    }
+  }
+
   return (
     <Section
       flexDirection="column"
@@ -62,29 +85,31 @@ export const DefineCondtion = ({
         <Section flexDirection="column" gap="16px">
           <OptionButtons
             options={OPERATOR_OPTIONS}
-            selectedValue={criteriaOperator}
+            selectedValue={entryCriteria.entryRuleTypeCondition}
             handleClick={(newEl: string) => {
-              setCriteriaOperator(newEl);
+              entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
             }}
           />
           <Span fontSize="14px">
             {
               OPERATOR_OPTIONS_INFO[
-                criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+                entryCriteria.entryRuleTypeCondition as keyof typeof OPERATOR_OPTIONS_INFO
               ].head
             } 
             <Span color={theme.textColor?.modalSubHeadingText}>
               {' '}
               {
                 OPERATOR_OPTIONS_INFO[
-                  criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
+                  entryCriteria.entryRuleTypeCondition as keyof typeof OPERATOR_OPTIONS_INFO
                 ].tail
               }
             </Span>
           </Span>{' '}
-          <Section>
-            <Criteria width="385px" dropdownValues={criteriaOptions} />
-          </Section>
+            {entryCriteria.selectedRules.map((el,idx)=> (
+              <Section>
+                <Criteria dropdownValues={ruleToCriteriaOptions(el,idx)} />
+              </Section>
+            ))}
         </Section>
       )}
       <Section flexDirection="column" gap="10px">
@@ -97,7 +122,7 @@ export const DefineCondtion = ({
           You must add at least 1 criteria to enable gating
         </Span>
       </Section>
-      <Button customStyle={customButtonStyle} width="158px">
+      <Button onClick={verifyAndDoNext} customStyle={customButtonStyle} width="158px">
         Add
       </Button>
       <GatingRulesInformation />

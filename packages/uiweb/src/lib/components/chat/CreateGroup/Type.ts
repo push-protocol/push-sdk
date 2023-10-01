@@ -93,20 +93,48 @@ export type ConditionType = 'any' | 'all'
 export interface CriteriaStateType{
   entryRootCondition: ConditionType;
   setEntryRootCondition: React.Dispatch<React.SetStateAction<ConditionType>>;
+  entryRuleTypeCondition: ConditionType;
+  setEntryRuleTypeCondition: React.Dispatch<React.SetStateAction<ConditionType>>
   entryOptionTypeArray: ConditionType[];
   setEntryOptionTypeArray: React.Dispatch<React.SetStateAction<ConditionType[]>>;
   entryOptionsDataArray: Rule[][];
   setEntryOptionsDataArray: React.Dispatch<React.SetStateAction<Rule[][]>>;
+  selectedCriteria:number;
+  setSelectedCriteria: React.Dispatch<React.SetStateAction<number>>;
+  selectedRules:Rule[];
+  addNewCondtion: () => void
+  addNewRule: (newRule: Rule) => void
 }
 
 export const useCriteriaState = ():CriteriaStateType=>{
   const [entryRootCondition, setEntryRootCondition] = useState<ConditionType>('all')
+  const [entryRuleTypeCondition, setEntryRuleTypeCondition] = useState<ConditionType>('all')
   const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<ConditionType[]>([])
   const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>([])
+  
+  const [selectedCriteria, setSelectedCriteria] = useState(-1);
+  const [selectedRules, setSelectedRule] = useState<Rule[]>([])
+  
+  const addNewRule = (newRule:Rule)=>{
+    if (selectedCriteria === -1){
+      setSelectedCriteria(entryOptionTypeArray.length)
+    }
+    setSelectedRule((prev)=>[...prev,newRule])
+  }
+
+  const addNewCondtion = ()=>{
+    setEntryOptionTypeArray(prev => [...prev,entryRuleTypeCondition])
+    setEntryOptionsDataArray(prev => [...prev,[...selectedRules]])
+    setSelectedRule([])
+  }
 
   return {
     entryRootCondition, setEntryRootCondition,
+    entryRuleTypeCondition, setEntryRuleTypeCondition,
     entryOptionTypeArray, setEntryOptionTypeArray,
-    entryOptionsDataArray, setEntryOptionsDataArray
+    entryOptionsDataArray, setEntryOptionsDataArray,
+    selectedCriteria, setSelectedCriteria,
+    addNewCondtion,
+    selectedRules,addNewRule
   }
 }

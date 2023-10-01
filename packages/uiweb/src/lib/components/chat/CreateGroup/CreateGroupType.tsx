@@ -65,11 +65,23 @@ interface AddConditionProps {
   criteriaState: CriteriaStateType;
 }
 
+
+const rulesToCriteriaOptions = (rules:Rule[], idx:number)=>{
+  return rules.map((rule,idx)=>({
+    id:idx,
+    type: rule.type,
+    value: rule.data.amount,
+    title: rule.category,
+    function: () => console.log('Token'),
+  }))
+}
+
+
 const AddConditionSection = ({
   heading,
   subHeading,
   handleNext,
-  criteriaState
+  criteriaState,
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
 
@@ -224,8 +236,11 @@ const AddConditionSection = ({
             }
           </Span>
         </Span>
-        <SingleAndMultipleCriteria dropdownValues={criteriaOptions} />
-        <SingleAndMultipleCriteria dropdownValues={multiplecriteriaOptions} />
+        {
+         criteriaState.entryOptionsDataArray.map((ruleArray,idx) => (
+           <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(ruleArray,idx)} />
+         )) 
+        }
       </Section>
       <Button
         onClick={handleNext}
@@ -313,7 +328,17 @@ export const CreateGroupType = ({
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
             criteriaState={entryCriteria}
-            handleNext={handleNext}
+            handleNext={
+              ()=>{
+                // add new condtion
+                // entryCriteria.
+
+
+                if(handleNext){
+                  handleNext()
+                }
+              }
+            }
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
           {/* <AddConditionSection

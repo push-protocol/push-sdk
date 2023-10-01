@@ -50,8 +50,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
 
-
-
   const handleNext = () => {
     console.log('active')
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
@@ -73,6 +71,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return <CreateGroupDetail 
+          entryCriteria={entryCriteria}
           handleNext={handleNext} 
           onClose={onClose} 
           groupInputDetails={groupInputDetails} 
@@ -81,11 +80,11 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
         return <CreateGroupType entryCriteria={entryCriteria}  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
-        return <DefineCondtion handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
+        return <DefineCondtion entryCriteria={entryCriteria} handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
       case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
-        return <AddCriteria handlePrevious={handlePrevious} onClose={onClose} />
+        return <AddCriteria entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose} />
       default:
-        return <CreateGroupDetail handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
+        return <CreateGroupDetail entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
         setGroupInputDetails={setGroupInputDetails}/>;
     }
   };
@@ -97,6 +96,7 @@ export interface ModalHeaderProps {
   handleNext?: () => void;
   handlePrevious?:() =>void;
   onClose: () => void;
+  entryCriteria:CriteriaStateType;
 }
 
 interface GroupDetailState{
@@ -106,7 +106,6 @@ interface GroupDetailState{
 
 export interface GroupTypeState{
   groupInputDetails: GroupInputDetailsType;
-  entryCriteria:CriteriaStateType
 }
 
 const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInputDetails }: ModalHeaderProps & GroupDetailState ) => {
