@@ -19,6 +19,8 @@ import Criteria from './Criteria';
 import MultipleCriterias from './MultipleCriterias';
 import useToast from '../reusables/NewToast';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { ConditionArray } from '../exportedTypes';
+import { ConditionData } from '../exportedTypes';
 
 const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
   {
@@ -71,18 +73,17 @@ const AddConditionSection = ({
   /** todo - dummy data to be removed after we get condition data
    *  and check for the chat and entry conditions
    */
-  interface ConditionData {
-    operator?: string;
-    type?: string;
-    category?: string;
-    subcategory?: string;
-    data?: Record<string, any>;
-  }
+  // interface ConditionData {
+  //   operator?: string;
+  //   type?: string;
+  //   category?: string;
+  //   subcategory?: string;
+  //   data?: Record<string, any>;
+  // }
   
-  type ConditionArray = [ConditionData] | ConditionData[];
+  // type ConditionArray = [ConditionData] | ConditionData[];
   
   const dummyConditonsData: ConditionArray[] = [
-    [{ operator: 'any' }],
     [{
       type: 'PUSH',
       category: 'ERC20',
@@ -93,6 +94,7 @@ const AddConditionSection = ({
         decimals: 18,
       },
     }],
+    [{ operator: 'any' }],
     [
       { operator: 'all' } ,
       {
@@ -219,7 +221,7 @@ const AddConditionSection = ({
             }
           </Span>
         </Span>
-        <Criteria width="350px" dropdownValues={criteriaOptions} />
+        <Criteria width="350px" dropdownValues={dummyConditonsData} />
         <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
       </Section>
       <Button

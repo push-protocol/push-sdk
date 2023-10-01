@@ -7,6 +7,7 @@ import { device } from '../../../config';
 import Dropdown from '../reusables/DropDown';
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
+import { ConditionArray } from '../exportedTypes';
 
 export type CriteraValueType = {
     invertedIcon?: any;
@@ -19,7 +20,7 @@ export type CriteraValueType = {
 
 interface CriteriaProps {
     width?: string;
-    dropdownValues: CriteraValueType[];
+    dropdownValues: ConditionArray[];
 }
 
 const Criteria = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
@@ -47,6 +48,8 @@ const Criteria = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
 
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
+    // can use the for the modal maybe
+
     const toggleDropdown = (criteriaId: number) => {
         if (openDropdownId === criteriaId) {
             // Clicked on an already open dropdown, so close it
@@ -57,60 +60,111 @@ const Criteria = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
         }
     };
 
-    const showOrText = dropdownValues.length === 2; // Show "or" text if there are exactly 2 dropdowns
 
     return (
         <Section flexDirection='column' gap='8px'>
+            {/* we can reuse the code by creating a reusable component for it */}
             {dropdownValues &&
                 dropdownValues.map((criteria, index) => (
-                    <Section key={criteria.id} alignItems='center' justifyContent='center' flexDirection='row' gap='8px'>
-                        <CriteriaContainer
-                            height='48px'
-                            borderRadius='12px'
-                            background={theme.backgroundColor?.modalHoverBackground}
-                            padding='0px 4px 0px 12px'
-                            justifyContent='space-between'
-                            width={width}
-                        >
-                            <Section gap='4px'>
-                                <Span
-                                    alignSelf='center'
-                                    background='#657795'
-                                    borderRadius='4px'
-                                    fontSize='13px'
-                                    color={theme.textColor?.buttonText}
-                                    padding='4px 8px 4px 8px'
-                                >
-                                    {criteria.type}
-                                </Span>
-                                <Span fontWeight='700'>
-                                    {criteria.title}{' '}
-                                    <Span color={theme.textColor?.modalSubHeadingText}>or more</Span>
-                                </Span>
+                    <Section>
+                        {criteria.length === 1 && criteria.map((singleCriteria) => (
+                            <Section flexDirection='column'>
+                                {singleCriteria.type && (
+                                    <CriteriaContainer
+                                        height='48px'
+                                        borderRadius='12px'
+                                        background={theme.backgroundColor?.modalHoverBackground}
+                                        padding='0px 4px 0px 12px'
+                                        justifyContent='space-between'
+                                        width={width}
+                                    >
+                                        <Section gap='4px'>
+                                            <Span
+                                                alignSelf='center'
+                                                background='#657795'
+                                                borderRadius='4px'
+                                                fontSize='13px'
+                                                color={theme.textColor?.buttonText}
+                                                padding='4px 8px 4px 8px'
+                                            >
+                                                {singleCriteria.category}
+                                            </Span>
+                                            <Span fontWeight='700'>
+                                                {singleCriteria.type}{' '}
+                                                <Span color={theme.textColor?.modalSubHeadingText}>or more</Span>
+                                            </Span>
+                                        </Section>
+                                        <Section>
+                                            <MoreDarkIcon />
+                                        </Section>
+                                    </CriteriaContainer>
+                                )}
+                                {singleCriteria.operator && (
+                                    <Span color={theme.textColor?.modalSubHeadingText} background={theme.backgroundColor?.modalHoverBackground} padding='4px 8px 4px 8px' borderRadius='8px'>{singleCriteria.operator}</Span>
+                                )}
                             </Section>
-                            {openDropdownId === criteria.id && (
-                                <DropdownContainer
-                                    style={{
-                                        top: dropdownHeight! > 500 ? '30%' : '45%',
-                                    }}
-                                    theme={theme}
-                                >
-                                    <Dropdown dropdownValues={dropDownValues} />
-                                </DropdownContainer>
-                            )}
-                            <Section>
-                                <MoreDarkIcon />
-                            </Section>
-                        </CriteriaContainer>
-                        {showOrText && index === 0 && (
-                            <Span
-                                borderRadius='12px'
-                                color={theme.textColor?.modalSubHeadingText}
-                                padding='4px 12px 4px 12px'
-                                background='#F4F5FA'
+                        ))}
+                        {criteria.length > 1 && (
+                            <MainMultipleCriteriaContainer flexDirection='row'
+                                borderWidth="1px"
+                                justifyContent="center"
+                                alignItems="center"
+                                borderColor="#E6E7EE"
+                                borderRadius="12px"
+                                borderStyle="solid"
+                                padding="8px 0px 8px 8px"
+                                gap='0px 4px'
+                                width='350px'
                             >
-                                or
-                            </Span>
+                                <Section
+                                    flexDirection='column' gap='8px'>
+                                    {criteria.map((singleCriteria) => (
+                                        <Section>
+                                            {singleCriteria.type && (
+                                                <Section
+                                                >
+                                                    <MultipleCriteriaContainer
+                                                        height='48px'
+                                                        borderRadius='12px'
+                                                        background={theme.backgroundColor?.modalHoverBackground}
+                                                        padding='0px 4px 0px 12px'
+                                                        justifyContent='space-between'
+                                                        width={'220px'}
+                                                    >
+                                                        <Section gap='4px'>
+                                                            <Span
+                                                                alignSelf='center'
+                                                                background='#657795'
+                                                                borderRadius='4px'
+                                                                fontSize='13px'
+                                                                color={theme.textColor?.buttonText}
+                                                                padding='4px 8px 4px 8px'
+                                                            >
+                                                                {singleCriteria.category}
+                                                            </Span>
+                                                            <Span fontWeight='700'>
+                                                                {singleCriteria.type ? singleCriteria.type : singleCriteria.operator}{' '}
+                                                                <Span color={theme.textColor?.modalSubHeadingText}>or more</Span>
+                                                            </Span>
+                                                        </Section>
+                                                    </MultipleCriteriaContainer>
+                                                </Section>
+                                            )}
+                                        </Section>
+                                    ))}
+                                </Section>
+                                {criteria.map((singleCriteria) => (
+                                    <Section>
+                                        {singleCriteria.operator && !singleCriteria.type && (
+                                            <Span color={theme.textColor?.modalSubHeadingText} background={theme.backgroundColor?.modalHoverBackground} padding='4px 8px 4px 8px' borderRadius='8px'>{singleCriteria.operator}</Span>
+                                        )
+                                        }
+                                    </Section>
+                                ))}
+                                <Section>
+                                    <MoreDarkIcon />
+                                </Section>
+                            </MainMultipleCriteriaContainer>
                         )}
                     </Section>
                 ))}
@@ -148,3 +202,15 @@ const CriteriaContainer = styled(Section)`
         width: 280px;
     }
 `;
+
+const MainMultipleCriteriaContainer = styled(Section)`
+@media (max-width: 426px) {
+    width: 280px;
+}
+`
+
+const MultipleCriteriaContainer = styled(Section)`
+@media (max-width: 426px) {
+    width: 180px;
+}
+`

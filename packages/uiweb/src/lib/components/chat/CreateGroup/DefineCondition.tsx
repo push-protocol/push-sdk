@@ -82,9 +82,9 @@ export const DefineCondtion = ({
               }
             </Span>
           </Span>{' '}
-          <Section>
+          {/* <Section>
             <Criteria width="385px" dropdownValues={criteriaOptions} />
-          </Section>
+          </Section> */}
         </Section>
       )}
       <Section flexDirection="column" gap="10px">

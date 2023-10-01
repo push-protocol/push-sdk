@@ -75,7 +75,7 @@ const MultipleCriterias = ({
             borderStyle="solid"
             padding="8px 0px 8px 8px"
           >
-            <Criteria width="330px" dropdownValues={dropdownValues} />
+            {/* <Criteria width="330px" dropdownValues={dropdownValues} /> */}
           </Section>
         )
         // )
