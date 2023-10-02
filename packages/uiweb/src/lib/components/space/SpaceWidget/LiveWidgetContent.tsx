@@ -72,11 +72,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   useEffect(() => {
     (async function () {
-      if (isListener && spaceData?.spaceId) {
-        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
-        setLivekitToken(livekitToken.data);
-      } else if (isHost && spaceData?.spaceId) {
+      if (isHost && spaceData?.spaceId) {
         const livekitToken = await getLivekitRoomToken({ userType: "sender", roomId: spaceData?.spaceId });
+        setLivekitToken(livekitToken.data);
+      } else if (isListener && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
         setLivekitToken(livekitToken.data);
       }
     })();
@@ -367,11 +367,44 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 token={livekitToken}
                 room={livekitRoom}
               >
-                <ConnectionState />
-                <Microphone />
-                <ConnectionStateToast />
+                {/* <ConnectionState /> */}
                 <RoomAudioRenderer />
-                <TrackToggle source={Track.Source.Microphone} />
+                {isHost
+                  ?
+                  <TrackToggleComp showIcon={false} source={Track.Source.Microphone} >
+                    <Microphone source={Track.Source.Microphone} />
+                  </TrackToggleComp>
+                  :
+                  <Item
+                    cursor={'pointer'}
+                    display={'flex'}
+                    alignItems={'center'}
+                    gap={'8px'}
+                    padding={'10px'}
+                  >
+                    <Image
+                      width={'14px'}
+                      height={'20px'}
+                      src={
+                        isRequestedForMic
+                          ? HandIcon
+                          : MicOnIcon
+                      }
+                      alt="Mic Icon"
+                    />
+                    <Text
+                      color={`${theme.btnOutline}`}
+                      fontSize={'14px'}
+                      fontWeight={600}
+                    >
+                      {
+                        isRequestedForMic
+                          ? 'Requested'
+                          : 'Request'
+                      }
+                    </Text>
+                  </Item>
+                }
               </LiveKitRoom>
             )}
             {/* <Item
@@ -522,4 +555,9 @@ const LiveKitComp = styled.div`
   background-color: white;
   padding: 12px;
   margin: 12px;
+`;
+
+const TrackToggleComp = styled(TrackToggle)`
+  background-color: transparent;
+  border: none;
 `;
