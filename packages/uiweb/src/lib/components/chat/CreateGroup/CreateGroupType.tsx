@@ -66,7 +66,7 @@ interface AddConditionProps {
 }
 
 
-const rulesToCriteriaOptions = (rules:Rule[], idx:number)=>{
+export const rulesToCriteriaOptions = (rules:Rule[])=>{
   return rules.map((rule,idx)=>({
     id:idx,
     type: rule.type,
@@ -238,7 +238,7 @@ const AddConditionSection = ({
         </Span>
         {
          criteriaState.entryOptionsDataArray.map((ruleArray,idx) => (
-           <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(ruleArray,idx)} />
+           <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(ruleArray)} conditionType={criteriaState.entryOptionTypeArray[idx]}/>
          )) 
         }
       </Section>

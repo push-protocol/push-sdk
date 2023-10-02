@@ -7,6 +7,7 @@ import { device } from '../../../config';
 import Dropdown from '../reusables/DropDown';
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
+import { ConditionType } from './Type';
 
 export type CriteraValueType = {
     invertedIcon?: any;
@@ -18,11 +19,13 @@ export type CriteraValueType = {
 };
 
 interface CriteriaProps {
-    width?: string;
     dropdownValues: CriteraValueType[];
+    // criteraType:
+    conditionType:ConditionType
+    width?: string;
 }
 
-const Criteria = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
+const Criteria = ({ dropdownValues,conditionType,  width = '100%' }: CriteriaProps) => {
     const [selectedValue, setSelectedValue] = useState<number>(0);
     const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
 
@@ -109,7 +112,7 @@ const Criteria = ({ dropdownValues, width = '100%' }: CriteriaProps) => {
                                 padding='4px 12px 4px 12px'
                                 background='#F4F5FA'
                             >
-                                or
+                                {conditionType}
                             </Span>
                         )}
                     </Section>

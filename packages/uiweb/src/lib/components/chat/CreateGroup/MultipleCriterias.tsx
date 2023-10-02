@@ -8,6 +8,7 @@ import Dropdown from '../reusables/DropDown';
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import Criteria from './Criteria';
+import { ConditionType } from './Type';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -21,11 +22,13 @@ export type CriteraValueType = {
 interface CriteriaProps {
   width?: string;
   dropdownValues: CriteraValueType[];
+  conditionType:ConditionType
 }
 
 const MultipleCriterias = ({
   dropdownValues,
   width = '100%',
+  conditionType
 }: CriteriaProps) => {
   const [selectedValue, setSelectedValue] = useState<number>(0);
   const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
@@ -75,7 +78,7 @@ const MultipleCriterias = ({
             borderStyle="solid"
             padding="8px 0px 8px 8px"
           >
-            <Criteria width="330px" dropdownValues={dropdownValues} />
+            <Criteria width="330px" dropdownValues={dropdownValues} conditionType={conditionType}/>
           </Section>
         )
         // )

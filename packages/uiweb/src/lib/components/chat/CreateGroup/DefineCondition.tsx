@@ -12,6 +12,7 @@ import Criteria from './Criteria';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
 import { SingleAndMultipleCriteria } from './SingleAndMultipleCriteria';
 import { Rule } from './Type';
+import { rulesToCriteriaOptions } from './CreateGroupType';
 
 export const DefineCondtion = ({
   onClose,
@@ -39,15 +40,15 @@ export const DefineCondtion = ({
     // }
   ];
 
-  const ruleToCriteriaOptions = (rule:Rule, idx:number) =>{
-    return [{
-      id:idx,
-      type: rule.type,
-      value: rule.data.amount,
-      title: rule.category,
-      function: () => console.log('Token'),
-    }]
-  }
+  // const ruleToCriteriaOptions = (rule:Rule, idx:number) =>{
+  //   return [{
+  //     id:idx,
+  //     type: rule.type,
+  //     value: rule.data.amount,
+  //     title: rule.category,
+  //     function: () => console.log('Token'),
+  //   }]
+  // }
 
   const theme = useContext(ThemeContext);
   const [disableButton, setDisableButton] = useState<boolean>(true);
@@ -105,11 +106,9 @@ export const DefineCondtion = ({
               }
             </Span>
           </Span>{' '}
-            {entryCriteria.selectedRules.map((el,idx)=> (
               <Section>
-                <Criteria dropdownValues={ruleToCriteriaOptions(el,idx)} />
+                <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(entryCriteria.selectedRules)} conditionType={entryCriteria.entryRuleTypeCondition}/>
               </Section>
-            ))}
         </Section>
       )}
       <Section flexDirection="column" gap="10px">
