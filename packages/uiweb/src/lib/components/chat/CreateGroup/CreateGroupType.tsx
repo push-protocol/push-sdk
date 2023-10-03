@@ -10,26 +10,14 @@ import { Button } from '../reusables';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 
-import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
-import { AddButtons } from './AddButtons';
-import Criteria from './Criteria';
-import MultipleCriterias from './MultipleCriterias';
 import useToast from '../reusables/NewToast';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-
-const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
-  {
-    heading: 'All',
-    value: 'All',
-  },
-  {
-    heading: 'Any',
-    value: 'Any',
-  },
-];
+import { ConditionArray } from '../exportedTypes';
+import ConditionsComponent from './ConditionsComponent';
+import { OperatorContainer } from './OperatorContainer';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -65,36 +53,24 @@ const AddConditionSection = ({
   subHeading,
   handleNext,
 }: AddConditionProps) => {
-  const theme = useContext(ThemeContext);
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('any');
+    //todo - dummy data to be removed after we get condition data
 
-  /** todo - dummy data to be removed after we get condition data
-   *  and check for the chat and entry conditions
-   */
-  interface ConditionData {
-    operator?: string;
-    type?: string;
-    category?: string;
-    subcategory?: string;
-    data?: Record<string, any>;
-  }
-  
-  type ConditionArray = [ConditionData] | ConditionData[];
-  
   const dummyConditonsData: ConditionArray[] = [
     [{ operator: 'any' }],
-    [{
-      type: 'PUSH',
-      category: 'ERC20',
-      subcategory: 'holder',
-      data: {
-        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
-        amount: 1,
-        decimals: 18,
-      },
-    }],
     [
-      { operator: 'all' } ,
+      {
+        type: 'PUSH',
+        category: 'ERC20',
+        subcategory: 'holder',
+        data: {
+          contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
+          amount: 1,
+          decimals: 18,
+        },
+      },
+    ],
+    [
+      { operator: 'all' },
       {
         type: 'PUSH',
         category: 'ERC20',
@@ -147,35 +123,14 @@ const AddConditionSection = ({
     ],
   ];
 
-
   const dummySingleCondtionData = dummyConditonsData[2];
+  const theme = useContext(ThemeContext);
+  const [conditionOperator, setConditionOperator] = useState<string>(dummyConditonsData[0][0]?.operator as string);
 
-  const criteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-  ];
 
-  const multiplecriteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-    {
-      id: 1,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('NFT'),
-    },
-  ];
+ 
+
+
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
       <Section flexDirection="column" alignItems="start" gap="5px">
@@ -195,33 +150,14 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-      {/* todo - check later if this etire section can be optimised for define condtion page too */}
-      <Section flexDirection="column" gap="16px">
-        <OptionButtons
-          options={OPERATOR_OPTIONS}
-          selectedValue={criteriaOperator}
-          handleClick={(newEl: string) => {
-            setCriteriaOperator(newEl);
-          }}
+      <Section margin='20px 0 10px 0'>
+        <OperatorContainer
+          operator={conditionOperator}
+          setOperator={setConditionOperator}
         />
-        <Span fontSize="14px">
-          {
-            OPERATOR_OPTIONS_INFO[
-              criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
-            ].head
-          }
-          <Span color={theme.textColor?.modalSubHeadingText}>
-            {' '}
-            {
-              OPERATOR_OPTIONS_INFO[
-                criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
-              ].tail
-            }
-          </Span>
-        </Span>
-        <Criteria width="350px" dropdownValues={criteriaOptions} />
-        <MultipleCriterias dropdownValues={multiplecriteriaOptions} />
       </Section>
+      <ConditionsComponent conditionData={dummyConditonsData} />
+
       <Button
         onClick={handleNext}
         customStyle={{
