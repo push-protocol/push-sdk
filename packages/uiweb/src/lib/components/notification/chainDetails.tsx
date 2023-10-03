@@ -64,7 +64,7 @@ export default {
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Mainnet'),
   },
   ARBITRUM_TESTNET: {
-    label: 'ARBITRUMONE MAINNET',
+    label: 'ARBITRUMONE TESTNET',
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Testnet'),
   },
   THE_GRAPH: { label: 'THE GRAPH', icon: createSVGIcon(<TheGraphSvg/>, 'The Graph') },

@@ -63,6 +63,7 @@ export const allowedNetworks = {
     5, // for goerli
     80001, //for mumbai polygon
     97, // bnb testnet
+    420, // optimism goerli testnet
     421613 // for arbitrum testnet
   ],
   'local' :[
