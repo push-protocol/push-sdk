@@ -61,3 +61,12 @@ export const setPfp = ({
 }) => {
   localStorage.setItem(account, value);
 };
+
+export const setAccessControl = (chatId: string, toRemove: boolean) => {
+  if (toRemove) {
+    localStorage.removeItem(chatId);
+  } else {
+    const timestamp = new Date().getTime();
+    localStorage.setItem(chatId, JSON.stringify(timestamp));
+  }
+};

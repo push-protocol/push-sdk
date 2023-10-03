@@ -71,7 +71,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.info');
-  const userAliceInfo = await userAlice.info();
+  const userAliceInfo = await userAlice.user.info();
   if (showAPIResponse) {
     console.log(userAliceInfo);
   }
