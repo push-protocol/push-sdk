@@ -219,8 +219,6 @@ export class PushStream extends EventEmitter {
 
     this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
       try {
-        console.log('Incoming Feed from Socket');
-        console.log(data);
         this.emit(STREAM.NOTIF, data);
       } catch (error) {
         console.error('Error handling USER_FEEDS event:', error, 'Data:', data);
@@ -229,8 +227,6 @@ export class PushStream extends EventEmitter {
 
     this.pushNotificationSocket.on(EVENTS.USER_SPAM_FEEDS, (data: any) => {
        try {
-         console.log('Incoming Spam Feed from Socket');
-         console.log(data);
          this.emit(STREAM.NOTIF, data);
        } catch (error) {
          console.error(
