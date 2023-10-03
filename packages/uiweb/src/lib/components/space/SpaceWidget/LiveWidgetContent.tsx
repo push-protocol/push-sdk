@@ -25,7 +25,7 @@ import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
 import { pCAIP10ToWallet } from '../../../helpers';
-import { getLivekitRoomToken } from '../../../services';
+import { getLivekitRoomToken, performAction } from '../../../services';
 import Microphone from './Microphone';
 
 interface LiveWidgetContentProps {
@@ -33,12 +33,14 @@ interface LiveWidgetContentProps {
   // temp props only for testing demo purpose for now
   isHost?: boolean;
   setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
+  account: string | undefined;
 }
 
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
   isHost,
   setSpaceStatusState,
+  account
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
@@ -72,11 +74,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   useEffect(() => {
     (async function () {
-      if (isHost && spaceData?.spaceId) {
-        const livekitToken = await getLivekitRoomToken({ userType: "sender", roomId: spaceData?.spaceId });
+      const removeEIP155 = (input: string) => input.substring(7);
+      const nonEIPAddress = removeEIP155(account as string);
+
+      if ((isHost || isSpeaker) && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "sender", roomId: spaceData?.spaceId, userId: nonEIPAddress });
         setLivekitToken(livekitToken.data);
       } else if (isListener && spaceData?.spaceId) {
-        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
+        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId, userId: nonEIPAddress });
         setLivekitToken(livekitToken.data);
       }
     })();
@@ -102,11 +107,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    // if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    //   return;
+    if (promotedListener.length === 0)
       return;
 
     const options = {
-      signalData: raisedHandInfo[promotedListener].signalData,
+      // signalData: raisedHandInfo[promotedListener].signalData,
       promoteeAddress: pCAIP10ToWallet(
         raisedHandInfo[promotedListener].senderAddress
       ),
@@ -121,14 +128,16 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [promotedListener]);
 
   const handleAcceptPromotion = async (requesterAddress: any) => {
-    await spacesObjectRef?.current?.createAudioStream?.();
+    // await spacesObjectRef?.current?.createAudioStream?.();
     setPromotedListener(requesterAddress);
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
     await spacesObjectRef?.current?.rejectPromotionRequest?.({
       promoteeAddress: pCAIP10ToWallet(requesterAddress),
     });
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: false });
   };
 
   const handleJoinSpace = async () => {
@@ -367,9 +376,9 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 token={livekitToken}
                 room={livekitRoom}
               >
-                {/* <ConnectionState /> */}
                 <RoomAudioRenderer />
-                {isHost
+                <TrackToggleComp source={Track.Source.Microphone} />
+                {isHost || isSpeaker
                   ?
                   <TrackToggleComp showIcon={false} source={Track.Source.Microphone} >
                     <Microphone source={Track.Source.Microphone} />
@@ -381,6 +390,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                     alignItems={'center'}
                     gap={'8px'}
                     padding={'10px'}
+                    onClick={() => handleRequest()}
                   >
                     <Image
                       width={'14px'}
