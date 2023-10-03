@@ -1,39 +1,100 @@
+import { useContext, useState } from 'react';
+
 import { Section, Span } from '../../reusables';
 import { Button, ModalHeader } from '../reusables';
 import { AddButtons } from './AddButtons';
 import { ModalHeaderProps } from './CreateGroupModal';
-import { useContext, useState } from 'react';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
 import OptionButtons from '../reusables/OptionButtons';
-import Criteria from './Criteria';
+
+import { device } from '../../../config';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { ConditionArray } from '../exportedTypes';
+import ConditionsComponent from './ConditionsComponent';
+import { OperatorContainer } from './OperatorContainer';
+
+const dummyConditonsData: ConditionArray[] = [
+  [{ operator: 'any' }],
+  [
+    {
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+  ],
+  [
+    { operator: 'all' },
+    {
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+    {
+      type: 'PUSH',
+      category: 'ERC721',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+    {
+      type: 'GUILD',
+      category: 'ROLES',
+      subcategory: 'DEFAULT',
+      data: {
+        id: '1',
+        role: '346243',
+        comparison: 'all',
+      },
+    },
+  ],
+  [
+    { operator: 'any' },
+    {
+      type: 'PUSH',
+      category: 'INVITE',
+      subcategory: 'DEFAULT',
+      data: {
+        inviterRoles: 'ADMIN',
+      },
+    },
+    {
+      type: 'PUSH',
+      category: 'INVITE',
+      subcategory: 'DEFAULT',
+      data: {
+        inviterRoles: 'OWNER',
+      },
+    },
+  ],
+];
+
+const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map((criteria) => [
+    criteria,
+  ]);
 
 export const DefineCondtion = ({
   onClose,
   handlePrevious,
   handleNext,
 }: ModalHeaderProps) => {
-  const [criteriaOperator, setCriteriaOperator] = useState<string>('');
-  //todo remove dummy data after we have condition data
-  const criteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-    // {
-    //     id: 1,
-    //     type: 'Token',
-    //     value: '1.0 ETH',
-    //     title: 'Token',
-    //     function: () => console.log("NFT")
-    // }
-  ];
+  const [criteriaOperator, setCriteriaOperator] = useState<string>(
+    dummySingleCondtionData[0][0].operator as string
+  );
 
   const theme = useContext(ThemeContext);
   const [disableButton, setDisableButton] = useState<boolean>(true);
@@ -47,6 +108,7 @@ export const DefineCondtion = ({
   };
   const [isCriteriaAdded, setIsCriteriaAdded] = useState<boolean>(true);
   const isMobile = useMediaQuery(device.mobileL);
+
   return (
     <Section
       flexDirection="column"
@@ -59,33 +121,17 @@ export const DefineCondtion = ({
         handlePrevious={handlePrevious}
       />
       {isCriteriaAdded && (
-        <Section flexDirection="column" gap="16px">
-          <OptionButtons
-            options={OPERATOR_OPTIONS}
-            selectedValue={criteriaOperator}
-            handleClick={(newEl: string) => {
-              setCriteriaOperator(newEl);
-            }}
+        <>
+          <Section margin="20px 0 10px 0">
+            <OperatorContainer
+              operator={criteriaOperator}
+              setOperator={setCriteriaOperator}
+            />
+          </Section>
+          <ConditionsComponent
+            conditionData={dummySingleCondtionData}
           />
-          <Span fontSize="14px">
-            {
-              OPERATOR_OPTIONS_INFO[
-                criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
-              ].head
-            }
-            <Span color={theme.textColor?.modalSubHeadingText}>
-              {' '}
-              {
-                OPERATOR_OPTIONS_INFO[
-                  criteriaOperator as keyof typeof OPERATOR_OPTIONS_INFO
-                ].tail
-              }
-            </Span>
-          </Span>{' '}
-          {/* <Section>
-            <Criteria width="385px" dropdownValues={criteriaOptions} />
-          </Section> */}
-        </Section>
+        </>
       )}
       <Section flexDirection="column" gap="10px">
         <AddButtons handleNext={handleNext} title={'+ Add criteria'} />

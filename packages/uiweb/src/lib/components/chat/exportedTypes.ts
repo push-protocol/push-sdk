@@ -134,4 +134,4 @@ export interface ConditionData {
   data?: Record<string, any>;
 }
 
-export type ConditionArray = [ConditionData] | ConditionData[];
+export type ConditionArray = ConditionData[];
