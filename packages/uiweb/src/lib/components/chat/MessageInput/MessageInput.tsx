@@ -256,10 +256,11 @@ const ConnectButtonSection: React.FC = () => {
 
 export const MessageInput: React.FC<MessageInputProps> = ({
   chatId,
-  Emoji = true,
-  GIF = true,
-  File = true,
-  isConnected,
+  emoji = true,
+  gif = true,
+  file = true,
+  isConnected = true,
+  autoConnect = false,
   onGetTokenClick,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
@@ -733,7 +734,7 @@ console.log('in update chat feed')
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
             <Section gap="8px" flex="1" position="static">
-              {Emoji && (
+              {emoji && (
                 <Div
                   width="25px"
                   cursor="pointer"
@@ -776,7 +777,7 @@ console.log('in update chat feed')
               />
             </Section>
             <SendSection position="static">
-              {GIF && (
+              {gif && (
                 <Section
                   width="34px"
                   height="24px"
@@ -804,7 +805,7 @@ console.log('in update chat feed')
                 </Section>
               )}
               <Section onClick={handleUploadFile}>
-                {!fileUploading && File && (
+                {!fileUploading && file && (
                   <>
                     <Section
                       width="17"

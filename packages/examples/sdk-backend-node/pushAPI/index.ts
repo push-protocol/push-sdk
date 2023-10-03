@@ -9,6 +9,7 @@ import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
 import { goerli } from 'viem/chains';
+import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -70,7 +71,7 @@ export const runPushAPICases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.info');
-  const userAliceInfo = await userAlice.info();
+  const userAliceInfo = await userAlice.user.info();
   if (showAPIResponse) {
     console.log(userAliceInfo);
   }
@@ -133,6 +134,27 @@ export const runPushAPICases = async (): Promise<void> => {
     console.log(aliceMessagesBob);
   }
   console.log('PushAPI.chat.send | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.chat.decrypt');
+  const pushSDKSocket = createSocketConnection({
+    user: signerAddress,
+    socketType: 'chat',
+    socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
+    env: env,
+  });
+  if (pushSDKSocket) {
+    await userAlice.chat.send(secondSignerAddress, {
+      content: 'Hello Bob!',
+      type: 'Text',
+    });
+    pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (message) => {
+      // uncomment after latest sdk deployment
+      // await userAlice.chat.decrypt([message]);
+      // pushSDKSocket.disconnect();
+    });
+  }
+  console.log('PushAPI.chat.decrypt | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.chat.accept');
