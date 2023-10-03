@@ -52,184 +52,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-// export interface JoinVerificationGroupSectionProps {
-//   isRules: boolean;
-//   isMember: boolean;
-//   onGetTokenClick?: () => void;
-//   handleJoinGroup: () => void;
-//   checkVerification: () => void;
-// }
-
-// const JoinVerificationGroupSection: React.FC<
-//   JoinVerificationGroupSectionProps
-// > = ({
-//   isRules,
-//   isMember,
-//   onGetTokenClick,
-//   handleJoinGroup,
-//   checkVerification,
-// }) => {
-//   const theme = useContext(ThemeContext);
-//   const { loading: approveLoading } = useApproveChatRequest();
-//   const {
-//     verificationSuccessfull,
-//     setVerificationSuccessfull,
-//     verified,
-//     loading: accessLoading,
-//   } = useVerifyAccessControl();
-//   const { pgpPrivateKey } = useChatData();
-
-//   const isJoinGroup = () => {
-//     return !!pgpPrivateKey && !isMember;
-//   };
-
-//   const isNotVerified = () => {
-//     return !!pgpPrivateKey && !verified && isMember && isRules;
-//   };
-//   console.log(isMember)
-//   console.log(verificationSuccessfull)
-//   return (
-//     <>
-//       {(isJoinGroup() || isNotVerified()) && (
-//         <Section
-//           width="100%"
-//           justifyContent="space-between"
-//           alignItems="center"
-//         >
-//           <Span
-//             padding="8px 8px 8px 16px"
-//             color={theme.textColor?.chatReceivedBubbleText}
-//             fontSize="15px"
-//             fontWeight="500"
-//             textAlign="start"
-//           >
-//             {isJoinGroup() && 'Click on the button to join the group'}
-//             {isNotVerified() && (
-//               <>
-//                 Sending messages requires{' '}
-//                 <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-//                   1 PUSH Token
-//                 </Span>{' '}
-//                 for participation.{' '}
-//                 <Link
-//                   href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
-//                   target="_blank"
-//                   color={theme.backgroundColor?.chatSentBubbleBackground}
-//                 >
-//                   Learn More <OpenLink />
-//                 </Link>
-//               </>
-//             )}
-//           </Span>
-//           <ConnectWrapper>
-//             <Connect
-//               onClick={() =>
-//                 isJoinGroup() ? handleJoinGroup() : checkVerification()
-//               }
-//             >
-//               {isJoinGroup() &&
-//               <>
-//                {approveLoading ? (
-//                 <Spinner color="#fff" size="24" />
-//               ) : (
-//                 ' Join Group '
-//               )}
-//               </>
-//               }
-//               {isNotVerified() &&
-//               <>
-//                 {accessLoading ? (
-//                   <Spinner color="#fff" size="24" />
-//                 ) : (
-//                   'Verify Access'
-//                 )}
-//                 </>
-//                 }
-//             </Connect>
-//           </ConnectWrapper>
-//         </Section>
-//       )}
-//       {(!!pgpPrivateKey && !verificationSuccessfull) && (
-//         <Modal width="439px">
-//           <Section
-//             padding="10px"
-//             theme={theme}
-//             gap="32px"
-//             flexDirection="column"
-//           >
-//             <Span
-//               fontWeight="500"
-//               fontSize="24px"
-//               color={theme.textColor?.encryptionMessageText}
-//             >
-//               Verification Failed
-//             </Span>
-//             <Span
-//               color={theme.textColor?.encryptionMessageText}
-//               fontSize="16px"
-//             >
-//               Please ensure the following conditions are met to participate and
-//               send messages.
-//             </Span>
-//             <Section gap="8px" alignItems="start">
-//               <Image
-//                 verticalAlign="start"
-//                 height="24"
-//                 width="24"
-//                 src={TokenGatedIcon}
-//                 alt="token-gated"
-//               />
-//               <Section flexDirection="column">
-//                 {' '}
-//                 <Span
-//                   color={theme.textColor?.encryptionMessageText}
-//                   textAlign="start"
-//                   alignSelf="start"
-//                 >
-//                   Token Gated
-//                 </Span>
-//                 <Span
-//                   fontWeight="500"
-//                   textAlign="start"
-//                   color={theme.textColor?.encryptionMessageText}
-//                 >
-//                   You need to have{' '}
-//                   <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-//                     1 PUSH Token
-//                   </Span>{' '}
-//                   in your wallet to be able to send messages.
-//                 </Span>
-//               </Section>
-//             </Section>
-//             <Section gap="8px">
-//               <TokenWrapper
-//                 onClick={() => {
-//                   if (onGetTokenClick) {
-//                     onGetTokenClick();
-//                   }
-//                   setVerificationSuccessfull(true);
-//                 }}
-//               >
-//                 <TokenGet>
-//                   Get Free Tokens
-//                   <OpenLink height="12" width="12" />
-//                 </TokenGet>
-//               </TokenWrapper>
-//               <ConnectWrapperClose
-//                 onClick={() => {
-//                   setVerificationSuccessfull(true);
-//                 }}
-//               >
-//                 <ConnectClose>Close</ConnectClose>
-//               </ConnectWrapperClose>
-//             </Section>
-//           </Section>
-//         </Modal>
-//       )}
-//     </>
-//   );
-// };
-const ConnectButtonSection: React.FC = () => {
+const ConnectButtonSection = ({autoConnect}:{autoConnect:boolean}) => {
   const { signer } = useChatData();
   return (
     <Section
@@ -249,7 +72,7 @@ const ConnectButtonSection: React.FC = () => {
           You need to connect your wallet to get started
         </Span>
       )}
-      <ConnectButtonComp />
+      <ConnectButtonComp autoConnect={autoConnect} />
     </Section>
   );
 };
@@ -434,9 +257,7 @@ console.log(checkIfMember(chatFeed, account!))
       const response = await approveChatRequest({
         chatId,
       });
-console.log(response)
       if (response) {
-        console.log('in here')
         await updateChatFeed();}
     } else {
       const sendTextMessage = await sendMessage({
@@ -550,11 +371,11 @@ console.log(response)
   };
 
   const updateChatFeed = async () => {
-console.log('in update chat feed')
+
     const chat = await fetchChat({ chatId });
-    console.log(chat)
+
     if (Object.keys(chat || {}).length) {
-      console.log(chat)
+
       setChatFeed(chat as IFeeds);
     }
   };
@@ -572,7 +393,7 @@ console.log('in update chat feed')
           alignItems="center"
           justifyContent="space-between"
         >
-          <ConnectButtonSection />
+          <ConnectButtonSection autoConnect={autoConnect}/>
         </TypebarSection>
       )}
     </>
