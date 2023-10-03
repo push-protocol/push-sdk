@@ -315,10 +315,10 @@ export type Data = {
   contract?: string;
   amount?: number;
   decimals?: number;
-  guildId?: string;
-  guildRoleId?: string;
+  id?: string;
+  role?: string;
   url?: string;
-  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'all' | 'any';
 };
 
 export type ConditionBase = {
@@ -337,23 +337,30 @@ export type Condition = ConditionBase & {
 
 export interface Rules {
   entry?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
   chat?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
+
 export interface SpaceRules {
   entry?: {
-    conditions: Array<Condition | ConditionBase>;
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
 export interface GroupAccess {
-  groupAccess: boolean;
+  entry: boolean;
   chat: boolean;
   rules?: Rules;
+}
+
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
 }
 
 export interface SpaceAccess {
@@ -537,7 +544,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-type ethersV5SignerType = {
+export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, Array<TypedDataField>>,
@@ -549,7 +556,7 @@ type ethersV5SignerType = {
   privateKey?: string;
   provider?: providers.Provider;
 };
-type viemSignerType = {
+export type viemSignerType = {
   signTypedData: (args: {
     account: any;
     domain: any;
@@ -566,6 +573,7 @@ type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
+  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;

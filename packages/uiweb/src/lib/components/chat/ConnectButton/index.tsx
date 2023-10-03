@@ -1,9 +1,10 @@
 import { IChatTheme } from '../theme';
 
+import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { ConnectButtonSub } from './ConnectButton';
 import { BLOCKNATIVE_PROJECT_ID, InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
-import injectedModule from '@web3-onboard/injected-wallets';
+import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
 
@@ -17,6 +18,13 @@ const APP_META_DATA = {
   ]
 }
 
+const wcv2InitOptions = {
+  projectId: BLOCKNATIVE_PROJECT_ID,
+  requiredChains: [1, 56]
+}
+
+const walletConnect = walletConnectModule(wcv2InitOptions)
+const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true })
 const CHAINS = [
   {
     id: '0x1',
@@ -57,14 +65,8 @@ const CHAINS = [
 ]
 
 
-const wcv2InitOptions = {
-  projectId: BLOCKNATIVE_PROJECT_ID,
-  requiredChains: [1, 56]
-}
+const wallets = [injectedModule(), walletConnect, coinbaseWalletSdk]
 
-const walletConnect = walletConnectModule(wcv2InitOptions)
-
-const wallets = [injectedModule(), walletConnect]
 
 
 
@@ -85,10 +87,14 @@ const web3OnBoard = init({
   }
 })
 
-export const ConnectButtonComp = ({ pageProps }: any) => {
+interface IConnectButtonCompProps {
+  autoConnect?: boolean;
+}
+
+export const ConnectButtonComp: React.FC<IConnectButtonCompProps> = ({ autoConnect }) => {
   return (
     <Web3OnboardProvider web3Onboard={web3OnBoard}>
-      <ConnectButtonSub {...pageProps} />
+      <ConnectButtonSub autoConnect={autoConnect} />
     </Web3OnboardProvider>
   );
 };
