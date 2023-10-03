@@ -14,8 +14,8 @@ import { CreateGroupType } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
 import { MdError } from 'react-icons/md';
 
-
-import { Image, device } from '../../../config';
+import {Image} from "../../../config/styles"
+import { device } from '../../../config';
 import { CreateGroupModalProps } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
@@ -164,12 +164,18 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
     }
   }
 
+  const handleUpload = () => {
+    if(fileUploadInputRef.current) {
+      fileUploadInputRef.current.click();
+    }
+  }
+
   //groupImage and desccription is optional
   return (
     <Section flexDirection="column" alignItems='center' gap='20px' width={!isMobile?'400px':'300px'}>
       <ModalHeader title="Create Group" handleClose={onClose} />
 
-      <UploadContainer>
+      <UploadContainer onClick={handleUpload}>
         {!groupImage && (
           <ImageContainer>
             <AiTwotoneCamera fontSize={40} color="black" />
@@ -177,12 +183,13 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
         )}
         {groupImage && (
           <UpdatedImageContainer>
-            <Image src={groupImage} alt="group image" />
+            <Image src={groupImage} objectFit='contain' alt="group image" />
           </UpdatedImageContainer>
         )}
         <FileInput
           type="file"
           accept="image/*"
+          className='hidden'
           ref={fileUploadInputRef}
           onChange={(e) => handleChange(e as unknown as Event)}
         />
@@ -247,5 +254,5 @@ const UpdatedImageContainer = styled.div`
 `;
 
 const FileInput = styled.input`
-  hidden: true;
+display: none;
 `;
