@@ -15,7 +15,7 @@ const ChatViewComponentTest = () => {
       <h2>Chat UI Test page</h2>
       <CreateGroupModal onClose={()=>{console.log('in close')}} />
       <ChatViewComponentCard>
-        <ChatViewComponent onGetTokenClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' limit={10} isConnected={true} />
+        <ChatViewComponent onGetTokenClick={() => console.log("BOIIII RETURNNNSSSSS")} chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' limit={10} isConnected={true}  autoConnect={false}/>
       </ChatViewComponentCard>
     </div>
   );
