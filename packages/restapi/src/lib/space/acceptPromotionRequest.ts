@@ -36,14 +36,14 @@ export async function acceptPromotionRequest(
   });
 
   // accept the promotion request
-  this.acceptRequest({
-    signalData,
-    senderAddress: this.data.local.address,
-    recipientAddress: pCAIP10ToWallet(promoteeAddress),
-    chatId: spaceId,
-    details: {
-      type: SPACE_ACCEPT_REQUEST_TYPE.ACCEPT_PROMOTION,
-      data: {},
-    },
-  });
+  // this.acceptRequest({
+  //   signalData,
+  //   senderAddress: this.data.local.address,
+  //   recipientAddress: pCAIP10ToWallet(promoteeAddress),
+  //   chatId: spaceId,
+  //   details: {
+  //     type: SPACE_ACCEPT_REQUEST_TYPE.ACCEPT_PROMOTION,
+  //     data: {},
+  //   },
+  // });
 }

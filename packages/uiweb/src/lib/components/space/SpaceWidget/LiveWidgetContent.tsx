@@ -5,8 +5,8 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { SpaceDTO } from '@pushprotocol/restapi';
 
 // livekit imports
-import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
-import { Room } from 'livekit-client';
+import { LiveKitRoom, ConnectionState, RoomAudioRenderer, TrackToggle, ConnectionStateToast } from '@livekit/components-react';
+import { Room, Track } from 'livekit-client';
 
 import { LiveSpaceProfileContainer } from './LiveSpaceProfileContainer';
 import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
@@ -25,19 +25,22 @@ import MembersIcon from '../../../icons/Members.svg';
 import { useSpaceData } from '../../../hooks';
 import { SpaceStatus } from './WidgetContent';
 import { pCAIP10ToWallet } from '../../../helpers';
-import { getLivekitRoomToken } from '../../../services';
+import { getLivekitRoomToken, performAction } from '../../../services';
+import Microphone from './Microphone';
 
 interface LiveWidgetContentProps {
   spaceData?: SpaceDTO;
   // temp props only for testing demo purpose for now
   isHost?: boolean;
   setSpaceStatusState: React.Dispatch<React.SetStateAction<any>>;
+  account: string | undefined;
 }
 
 export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   spaceData,
   isHost,
   setSpaceStatusState,
+  account
 }) => {
   const [showMembersModal, setShowMembersModal] = useState<boolean>(false);
   const [playBackUrl, setPlayBackUrl] = useState<string>('');
@@ -63,7 +66,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  // const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -71,12 +74,18 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   useEffect(() => {
     (async function () {
-      if(isListener && spaceData?.spaceId) {
-        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId });
+      const removeEIP155 = (input: string) => input.substring(7);
+      const nonEIPAddress = removeEIP155(account as string);
+
+      if ((isHost || isSpeaker) && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "sender", roomId: spaceData?.spaceId, userId: nonEIPAddress });
+        setLivekitToken(livekitToken.data);
+      } else if (isListener && spaceData?.spaceId) {
+        const livekitToken = await getLivekitRoomToken({ userType: "receiver", roomId: spaceData?.spaceId, userId: nonEIPAddress });
         setLivekitToken(livekitToken.data);
       }
     })();
-  }, [isListener, spaceData]);
+  }, [isListener, isHost, spaceData]);
 
   useEffect(() => {
     if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
@@ -98,11 +107,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   };
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    // if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
+    //   return;
+    if (promotedListener.length === 0)
       return;
 
     const options = {
-      signalData: raisedHandInfo[promotedListener].signalData,
+      // signalData: raisedHandInfo[promotedListener].signalData,
       promoteeAddress: pCAIP10ToWallet(
         raisedHandInfo[promotedListener].senderAddress
       ),
@@ -117,14 +128,16 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [promotedListener]);
 
   const handleAcceptPromotion = async (requesterAddress: any) => {
-    await spacesObjectRef?.current?.createAudioStream?.();
+    // await spacesObjectRef?.current?.createAudioStream?.();
     setPromotedListener(requesterAddress);
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
     await spacesObjectRef?.current?.rejectPromotionRequest?.({
       promoteeAddress: pCAIP10ToWallet(requesterAddress),
     });
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: false });
   };
 
   const handleJoinSpace = async () => {
@@ -357,54 +370,101 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             justifyContent={'space-between'}
             padding={'6px 8px'}
           >
-            <Item
-              cursor={'pointer'}
-              display={'flex'}
-              alignItems={'center'}
-              gap={'8px'}
-              padding={'10px'}
-              onClick={() =>
-                isHost || isSpeaker ? handleMicState() : handleRequest()
-              }
-            >
-              <Image
-                width={'14px'}
-                height={'20px'}
-                src={
-                  isHost || isSpeaker
-                    ? isMicOn
-                      ? MicEngagedIcon
-                      : MuteIcon
-                    : isRequestedForMic
-                      ? HandIcon
-                      : MicOnIcon
-                }
-                alt="Mic Icon"
-              />
-              <Text
-                color={`${theme.btnOutline}`}
-                fontSize={'14px'}
-                fontWeight={600}
+            {livekitToken && (
+              <LiveKitRoom
+                serverUrl={LIVEKIT_SERVER_URL}
+                token={livekitToken}
+                room={livekitRoom}
               >
+                <RoomAudioRenderer />
+                <TrackToggleComp source={Track.Source.Microphone} />
                 {isHost || isSpeaker
-                  ? isMicOn
-                    ? 'Speaking'
-                    : 'Muted'
-                  : isRequestedForMic
-                    ? 'Requested'
-                    : 'Request'
+                  ?
+                  <TrackToggleComp showIcon={false} source={Track.Source.Microphone} >
+                    <Microphone source={Track.Source.Microphone} />
+                  </TrackToggleComp>
+                  :
+                  <Item
+                    cursor={'pointer'}
+                    display={'flex'}
+                    alignItems={'center'}
+                    gap={'8px'}
+                    padding={'10px'}
+                    onClick={() => handleRequest()}
+                  >
+                    <Image
+                      width={'14px'}
+                      height={'20px'}
+                      src={
+                        isRequestedForMic
+                          ? HandIcon
+                          : MicOnIcon
+                      }
+                      alt="Mic Icon"
+                    />
+                    <Text
+                      color={`${theme.btnOutline}`}
+                      fontSize={'14px'}
+                      fontWeight={600}
+                    >
+                      {
+                        isRequestedForMic
+                          ? 'Requested'
+                          : 'Request'
+                      }
+                    </Text>
+                  </Item>
                 }
-              </Text>
-            </Item>
+              </LiveKitRoom>
+            )}
+            {/* <Item
+                cursor={'pointer'}
+                display={'flex'}
+                alignItems={'center'}
+                gap={'8px'}
+                padding={'10px'}
+                onClick={() =>
+                  isHost || isSpeaker ? handleMicState() : handleRequest()
+                }
+              >
+                <Image
+                  width={'14px'}
+                  height={'20px'}
+                  src={
+                    isHost || isSpeaker
+                      ? isMicOn
+                        ? MicEngagedIcon
+                        : MuteIcon
+                      : isRequestedForMic
+                        ? HandIcon
+                        : MicOnIcon
+                  }
+                  alt="Mic Icon"
+                />
+                <Text
+                  color={`${theme.btnOutline}`}
+                  fontSize={'14px'}
+                  fontWeight={600}
+                >
+                  {isHost || isSpeaker
+                    ? isMicOn
+                      ? 'Speaking'
+                      : 'Muted'
+                    : isRequestedForMic
+                      ? 'Requested'
+                      : 'Request'
+                  }
+                </Text>
+              </Item> */}
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {
+                {/* {
                   isHost && numberOfRequests ?
                     <RequestsCount>
                       {numberOfRequests}
                     </RequestsCount>
                     : null
-                }
+                } */}
                 <Image
                   width={'21px'}
                   height={'24px'}
@@ -435,20 +495,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 {!isHost ? 'Leave' : 'End space'}
               </Button>
             </Item>
-            {isListener && !isHost && playBackUrl.length > 0 && (
+            {/* {isListener && !isHost && playBackUrl.length > 0 && (
               <PeerPlayerDiv>
                 <Player title="spaceAudio" playbackId={playBackUrl} autoPlay />
               </PeerPlayerDiv>
-            )}
-            {isListener && !isHost && livekitToken && (
-              <LiveKitRoom
-                serverUrl={LIVEKIT_SERVER_URL}
-                token={livekitToken}
-                room={livekitRoom}
-              >
-                <RoomAudioRenderer />
-              </LiveKitRoom>
-            )}
+            )} */}
           </Item>
         ) : (
           <Button
@@ -508,4 +559,15 @@ const RequestsCount = styled.div`
   padding: 2px 4px;
   border-radius: 4px;
   font-size: 12px;
+`;
+
+const LiveKitComp = styled.div`
+  background-color: white;
+  padding: 12px;
+  margin: 12px;
+`;
+
+const TrackToggleComp = styled(TrackToggle)`
+  background-color: transparent;
+  border: none;
 `;
