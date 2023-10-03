@@ -222,9 +222,6 @@ export const runPushAPIChatCases = async (): Promise<void> => {
     admins: [],
     private: true,
   });
-  const rejectGrpJoiningReq = await userBob.chat.group.reject(sampleGrp.chatId);
-  if (showAPIResponse) {
-    console.log(rejectGrpJoiningReq);
-  }
+  await userBob.chat.group.reject(sampleGrp.chatId);
   console.log('PushAPI.group.reject | Response - 200 OK\n\n');
 };

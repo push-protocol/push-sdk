@@ -16,11 +16,11 @@ const start = async (): Promise<void> => {
   console.log(`${returnENVLog()}`);
 
   await runPushAPICases();
-  // await runNotificaitonsUseCases();
-  // await runChatUseCases();
-  // await runNFTChatUseCases();
-  // await runVideoUseCases();
-  // await runSpacesUseCases();
+  await runNotificaitonsUseCases();
+  await runChatUseCases();
+  await runNFTChatUseCases();
+  await runVideoUseCases();
+  await runSpacesUseCases();
 };
 
 start();

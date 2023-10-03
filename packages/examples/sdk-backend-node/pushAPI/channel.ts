@@ -8,7 +8,7 @@ const { env, showAPIResponse } = config;
 export const runPushAPIChannelCases = async (): Promise<void> => {
   if (!process.env.WALLET_PRIVATE_KEY) {
     console.log(
-      'skipping PushAPI.delegate examples, no private key passed in .env'
+      'skipping PushAPI.channel examples, no private key passed in .env'
     );
     return;
   }
