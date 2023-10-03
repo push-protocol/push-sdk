@@ -2,6 +2,92 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.40](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.39...restapi-0.0.1-alpha.40) (2023-09-29)
+
+
+### Bug Fixes
+
+* minor fixes ([be3e90a](https://github.com/ethereum-push-notification-service/push-sdk/commit/be3e90ae43625eac56cc82548e150a6296a09777))
+* socket enabled ([fa4fc0a](https://github.com/ethereum-push-notification-service/push-sdk/commit/fa4fc0ae78898432232031df85a1ec04cc9027c8))
+
+
+
+## [0.0.1-alpha.39](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.38...restapi-0.0.1-alpha.39) (2023-09-29)
+
+
+### Bug Fixes
+
+* more fixes ([fe0ad48](https://github.com/ethereum-push-notification-service/push-sdk/commit/fe0ad486338d1cc57508e5ccc1c3b2aeece9624a))
+
+
+
+## [0.0.1-alpha.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.37...restapi-0.0.1-alpha.38) (2023-09-29)
+
+
+### Bug Fixes
+
+* error handling in socket events ([399d1fe](https://github.com/ethereum-push-notification-service/push-sdk/commit/399d1fe396ce19f764c9fc80dea3a3852216837a))
+
+
+
+## [0.0.1-alpha.37](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.36...restapi-0.0.1-alpha.37) (2023-09-29)
+
+
+### Bug Fixes
+
+* minor fixes ([12e3ca5](https://github.com/ethereum-push-notification-service/push-sdk/commit/12e3ca542aa11f7640ba5b84492707eb6e8bc3fc))
+
+
+
+## [0.0.1-alpha.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.35...restapi-0.0.1-alpha.36) (2023-09-29)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([c4d2cff](https://github.com/ethereum-push-notification-service/push-sdk/commit/c4d2cff0d7ecf909ab9dd993f54ffa9f4ce9d7b4))
+* some changes on stream ([92a2202](https://github.com/ethereum-push-notification-service/push-sdk/commit/92a220264e15dad6636b1e7a34ca6f0871849b14))
+* stream cases ([3ca0496](https://github.com/ethereum-push-notification-service/push-sdk/commit/3ca0496396a9796568973376ee99e26b65f1abed))
+
+
+
+## [0.0.1-alpha.35](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.34...restapi-0.0.1-alpha.35) (2023-09-29)
+
+
+### Bug Fixes
+
+* added chat.decrypt ([#726](https://github.com/ethereum-push-notification-service/push-sdk/issues/726)) ([995042b](https://github.com/ethereum-push-notification-service/push-sdk/commit/995042b789b19d487b5e2953463cae60e75199b8))
+* error fixed ([99163b3](https://github.com/ethereum-push-notification-service/push-sdk/commit/99163b3338940dd9904630007868ca01faf4190c))
+* Merge branch 'alpha' into alpha-deployment ([be03539](https://github.com/ethereum-push-notification-service/push-sdk/commit/be035393a90a50ac2b9115b8f0a817a988f395f9))
+* Merge branch 'alpha' into alpha-deployment ([8d56ee8](https://github.com/ethereum-push-notification-service/push-sdk/commit/8d56ee882719a65391e7e51abfb0b7f86c2ae5ad))
+* Merge branch 'main' into alpha ([b6887db](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6887db0aa76126a47efa6ec88fc9841d7c3ae06))
+* remove only from test ([09524c7](https://github.com/ethereum-push-notification-service/push-sdk/commit/09524c793ecdef095f90c54bc5895ca1c6adba01))
+
+
+
+## [0.0.1-alpha.35](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.34...restapi-0.0.1-alpha.35) (2023-09-28)
+
+
+### Bug Fixes
+
+* added chat.decrypt ([#726](https://github.com/ethereum-push-notification-service/push-sdk/issues/726)) ([995042b](https://github.com/ethereum-push-notification-service/push-sdk/commit/995042b789b19d487b5e2953463cae60e75199b8))
+* error fixed ([99163b3](https://github.com/ethereum-push-notification-service/push-sdk/commit/99163b3338940dd9904630007868ca01faf4190c))
+* Merge branch 'alpha' into alpha-deployment ([be03539](https://github.com/ethereum-push-notification-service/push-sdk/commit/be035393a90a50ac2b9115b8f0a817a988f395f9))
+* Merge branch 'alpha' into alpha-deployment ([8d56ee8](https://github.com/ethereum-push-notification-service/push-sdk/commit/8d56ee882719a65391e7e51abfb0b7f86c2ae5ad))
+* Merge branch 'main' into alpha ([b6887db](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6887db0aa76126a47efa6ec88fc9841d7c3ae06))
+* remove only from test ([09524c7](https://github.com/ethereum-push-notification-service/push-sdk/commit/09524c793ecdef095f90c54bc5895ca1c6adba01))
+
+
+
+## [0.0.1-alpha.34](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.33...restapi-0.0.1-alpha.34) (2023-09-27)
+
+
+### Bug Fixes
+
+* added class based implementation for notification ([#699](https://github.com/ethereum-push-notification-service/push-sdk/issues/699)) ([44f0b7b](https://github.com/ethereum-push-notification-service/push-sdk/commit/44f0b7be1fb568c90c4dfebb7dc61ab82efaddc2))
+* changed typescript 5.0.2 and configured eslint ([8ca7e42](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ca7e4203bcc06886dfe293f8aec5597aec60e5b))
+
+
+
 ## [0.0.1-alpha.33](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.19...restapi-0.0.1-alpha.33) (2023-09-07)
 
 

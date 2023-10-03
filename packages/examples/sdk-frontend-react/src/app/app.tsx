@@ -87,6 +87,7 @@ import { lightChatTheme } from '@pushprotocol/uiweb';
 import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
 import SearchGroupTest from './ChatTest/SearchGroupTest';
 import RejectRequestTest from './ChatTest/RejectRequestTest';
+import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -456,6 +457,8 @@ export function App() {
                     <Route path="/createGroup" element={<CreateGroupTest />} />
                     <Route path="/getGroup" element={<GetGroupTest />} />
                     <Route path="/getGroupAccess" element={<GetGroupAccessTest />} />
+                    <Route path="/getGroupMemberStatus" element={<GetGroupMemberStatusTest />} />
+
                     <Route
                       path="/addMembersToGroup"
                       element={<AddMembersToGroupTest />}
