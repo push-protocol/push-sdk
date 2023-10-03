@@ -37,9 +37,9 @@ const eventlistener = async (
   eventName: string
 ): Promise<void> => {
   pushAPI.stream.on(eventName, (data: any) => {
-    // if (showAPIResponse) {
-    console.log(data);
-    // }
+    if (showAPIResponse) {
+      console.log(data);
+    }
   });
 };
 
@@ -65,18 +65,14 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
   eventlistener(userAlice, STREAM.CHAT_OPS);
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log(
-    '\n\nNew Chat Request, Expected Events:\n1. chat.request\n2. Spam Notification'
-  );
+  console.log('\n\nNew Chat Request, Expected Events:\n1. chat.request');
   await userAlice.chat.send(secondSignerAddress, {
     content: 'Hello Bob! from Alice',
   });
   await delay(3000); // Delay added to log the events in order
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log(
-    '\n\nNew Chat Request, Expected Events:\n1. chat.request\n2. Spam Notification'
-  );
+  console.log('\n\nNew Chat Request, Expected Events:\n1. chat.request');
   await userAlice.chat.send(thirdSignerAddress, {
     content: 'Hello Kate! from Alice',
   });
@@ -93,9 +89,7 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
   await delay(3000);
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log(
-    '\n\nCreate Chat Group, Expected Events:\n1. chat.group.create\n2. Spam Notification'
-  );
+  console.log('\n\nCreate Chat Group, Expected Events:\n1. chat.group.create');
   const groupChatId = (
     await userAlice.chat.group.create('Test Grp', {
       description: 'Test Desc',
