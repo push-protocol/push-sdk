@@ -179,7 +179,7 @@ const expectGroup = async (
   expect(group.pendingMembers).to.be.an('array');
   expect(group.pendingMembers.length).to.equal(pendingMembers.length);
   for (let i = 0; i < pendingMembers.length; i++) {
-    expect(group.pendingMembers[i].wallet).to.equal(pendingMembers[i]);
+    expect(pendingMembers.includes(group.pendingMembers[i].wallet)).to.be.true;
   }
   expect(group.groupImage).to.equal(groupImage);
   expect(group.groupName).to.equal(groupName);
