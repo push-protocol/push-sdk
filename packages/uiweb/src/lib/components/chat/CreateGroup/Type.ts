@@ -113,10 +113,15 @@ export interface CriteriaStateType{
   selectedCriteria:number;
   setSelectedCriteria: React.Dispatch<React.SetStateAction<number>>;
   selectedRules:Rule[];
-  addNewCondtion: () => void
-  addNewRule: (newRule: Rule) => void
-  deleteRule: (idx: number) => void
-  deleteEntryOptionsDataArray: (idx: number) => void
+  setSelectedRule: React.Dispatch<React.SetStateAction<Rule[]>>;
+  addNewCondtion: () => void;
+  addNewRule: (newRule: Rule) => void;
+  deleteRule: (idx: number) => void;
+  deleteEntryOptionsDataArray: (idx: number) => void;
+  selectEntryOptionsDataArrayForUpdate: (idx: number)=>void;
+  entryOptionsDataArrayUpdate:number;
+  isCondtionUpdateEnabled: () => boolean;
+  updateCondition: () => void;
 }
 
 export const useCriteriaState = ():CriteriaStateType=>{
@@ -128,7 +133,7 @@ export const useCriteriaState = ():CriteriaStateType=>{
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([])
 
-
+  const [entryOptionsDataArrayUpdate, setEntryOptionsDataArrayUpdate] = useState(-1)
   
   const addNewRule = (newRule:Rule)=>{
     if (selectedCriteria === -1){
@@ -149,10 +154,29 @@ export const useCriteriaState = ():CriteriaStateType=>{
     setSelectedRule([])
   }
 
+  const updateCondition = ()=>{
+    const optionTypeArrayUpdated = [...entryOptionTypeArray]
+    optionTypeArrayUpdated[entryOptionsDataArrayUpdate] = entryRuleTypeCondition
+
+    const entryOptionsDataArrayUpdated = [...entryOptionsDataArray]
+    entryOptionsDataArrayUpdated[entryOptionsDataArrayUpdate] = [...selectedRules]
+    
+    setEntryOptionTypeArray(optionTypeArrayUpdated) 
+    setEntryOptionsDataArray(entryOptionsDataArrayUpdated)
+  }
+
+  const isCondtionUpdateEnabled = ()=>{
+    return entryOptionsDataArrayUpdate !== -1
+  }
+
   const deleteEntryOptionsDataArray = (idx:number)=>{
     const removedRule = [...entryOptionsDataArray]
     removedRule.splice(idx,1)
     setEntryOptionsDataArray(removedRule) 
+  }
+
+  const selectEntryOptionsDataArrayForUpdate = (idx:number)=>{
+    setEntryOptionsDataArrayUpdate(idx)
   }
 
   return {
@@ -164,6 +188,11 @@ export const useCriteriaState = ():CriteriaStateType=>{
     addNewCondtion,
     selectedRules,addNewRule,
     deleteRule,
-    deleteEntryOptionsDataArray
+    deleteEntryOptionsDataArray,
+    selectEntryOptionsDataArrayForUpdate,
+    entryOptionsDataArrayUpdate,
+    isCondtionUpdateEnabled,
+    updateCondition,
+    setSelectedRule
   }
 }

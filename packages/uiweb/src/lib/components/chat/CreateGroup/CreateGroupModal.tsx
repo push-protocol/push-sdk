@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 import { AiTwotoneCamera } from 'react-icons/ai';
@@ -51,13 +51,20 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   );
 
   const handleNext = () => {
-    console.log('active')
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
-      console.log(activeComponent)
   };
   const handlePrevious = () => {
     setActiveComponent(activeComponent-1 as CreateGroupStepKeys);
   };
+  
+  const entryCriteria = useCriteriaState()
+
+  useEffect(()=>{
+    // reset update rules
+    if(activeComponent === 2){
+      entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
+    }
+  },[activeComponent,entryCriteria])
 
   const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
     groupName:'',
@@ -65,7 +72,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     groupImage:null
   })
 
-  const entryCriteria = useCriteriaState()
 
   const renderComponent = () => {
     switch (activeComponent) {

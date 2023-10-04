@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Section, Span } from '../../reusables';
 import { Button, ModalHeader } from '../reusables';
@@ -33,12 +33,40 @@ export const DefineCondtion = ({
   const isMobile = useMediaQuery(device.mobileL);
 
   const verifyAndDoNext = ()=>{
-    entryCriteria.addNewCondtion()
+    if(entryCriteria.isCondtionUpdateEnabled()){
+      // handle update
+      entryCriteria.updateCondition()
+    }else{
+      // handle insertion
+      entryCriteria.addNewCondtion()
+    }
 
     if(handlePrevious){
       handlePrevious()
     }
   }
+
+  const getRules = ()=>{
+    return[
+      [{ operator: entryCriteria.entryRuleTypeCondition}],
+      ...entryCriteria.selectedRules.map(el => [el]) 
+    ]
+  }
+
+  useEffect(()=>{
+    if(entryCriteria.isCondtionUpdateEnabled()){
+      entryCriteria.setEntryRuleTypeCondition(
+        entryCriteria.entryOptionTypeArray[entryCriteria.entryOptionsDataArrayUpdate]
+      )
+
+      entryCriteria.setSelectedRule([
+        ...entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate]
+      ])
+    }else{
+      entryCriteria.setSelectedRule([])
+    }
+  },[0])
+
 
   return (
     <Section
@@ -47,7 +75,7 @@ export const DefineCondtion = ({
       width={isMobile ? '300px' : '400px'}
     >
       <ModalHeader
-        title="Define Condition"
+        title={entryCriteria.isCondtionUpdateEnabled() ? "Update Condition" : "Define Condition"}
         handleClose={onClose}
         handlePrevious={handlePrevious}
       />
@@ -55,7 +83,9 @@ export const DefineCondtion = ({
         <Section flexDirection="column" gap="16px">
           <OptionButtons
             options={OPERATOR_OPTIONS}
-            selectedValue={entryCriteria.entryRuleTypeCondition}
+            selectedValue={
+              entryCriteria.entryRuleTypeCondition
+            }
             handleClick={(newEl: string) => {
               entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
             }}
@@ -76,10 +106,7 @@ export const DefineCondtion = ({
             </Span>
           </Span>{' '}
           <ConditionsComponent
-            conditionData={ [
-              [{ operator: entryCriteria.entryRuleTypeCondition}],
-              ...entryCriteria.selectedRules.map(el => [el]) 
-            ]}
+            conditionData={getRules()}
             deleteFunction={(idx:number)=>{
               entryCriteria.deleteRule(idx)
             }}
@@ -97,7 +124,7 @@ export const DefineCondtion = ({
         </Span>
       </Section>
       <Button onClick={verifyAndDoNext} customStyle={customButtonStyle} width="158px">
-        Add
+        {entryCriteria.isCondtionUpdateEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>

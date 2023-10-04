@@ -313,7 +313,7 @@ const AddCriteria = ({
       data: getData(_type, category),
     }
 
-    alert(JSON.stringify(rule))
+    // alert(JSON.stringify(rule))
     entryCriteria.addNewRule(rule)
 
     if(handlePrevious){

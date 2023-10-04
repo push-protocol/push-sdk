@@ -116,6 +116,13 @@ const AddConditionSection = ({
         deleteFunction={(idx)=>{
           criteriaState.deleteEntryOptionsDataArray(idx)
         }}
+
+        updateFunction={(idx)=>{
+          criteriaState.selectEntryOptionsDataArrayForUpdate(idx)
+          if(handleNext){
+            handleNext()
+          }
+        }}
       
       /> 
 
