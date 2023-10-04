@@ -1,12 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Section, Span } from '../../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import styled from 'styled-components';
 import { device } from '../../../config';
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
-import Criteria from './Criteria';
 import { ConditionType } from './Type';
+import Criteria from './ConditionsComponent';
+import { useClickAway } from '../../../hooks';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -30,6 +31,8 @@ const MultipleCriterias = ({
 }: CriteriaProps) => {
   const [selectedValue, setSelectedValue] = useState<number>(0);
   const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const dropdownRef = useRef<any>(null);
 
   const dropDownValues = [
     {
@@ -52,6 +55,7 @@ const MultipleCriterias = ({
 
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
+
   const toggleDropdown = (criteriaId: number) => {
     if (openDropdownId === criteriaId) {
       // Clicked on an already open dropdown, so close it
@@ -61,6 +65,8 @@ const MultipleCriterias = ({
       setOpenDropdownId(criteriaId);
     }
   };
+
+  useClickAway(dropdownRef, () => setSelectedIndex(null));
 
   return (
     <Section flexDirection="column" gap="8px">
