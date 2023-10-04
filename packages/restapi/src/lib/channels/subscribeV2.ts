@@ -1,0 +1,110 @@
+import axios from 'axios';
+import {
+  getCAIPAddress,
+  getConfig,
+  getCAIPDetails,
+  signTypedData,
+} from '../helpers';
+import {
+  getDomainInformation,
+  getTypeInformationV2,
+  getSubscriptionMessageV2,
+} from './signature.helpers';
+import Constants, { ENV } from '../constants';
+import { SignerType } from '../types';
+export type SubscribeOptionsV2Type = {
+  signer: SignerType;
+  channelAddress: string;
+  userAddress: string;
+  userSetting?: string;
+  verifyingContractAddress?: string;
+  env?: ENV;
+  onSuccess?: () => void;
+  onError?: (err: Error) => void;
+};
+
+export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
+  const {
+    signer,
+    channelAddress,
+    userAddress,
+    userSetting = undefined,
+    verifyingContractAddress,
+    env = Constants.ENV.PROD,
+    onSuccess,
+    onError,
+  } = options || {};
+  try {
+    const _channelAddress = await getCAIPAddress(
+      env,
+      channelAddress,
+      'Channel'
+    );
+
+    const channelCAIPDetails = getCAIPDetails(_channelAddress);
+    if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
+
+    const chainId = parseInt(channelCAIPDetails.networkId, 10);
+
+    const _userAddress = await getCAIPAddress(env, userAddress, 'User');
+
+    const userCAIPDetails = getCAIPDetails(_userAddress);
+    if (!userCAIPDetails) throw Error('Invalid User CAIP!');
+
+    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
+      env,
+      channelCAIPDetails
+    );
+
+    const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/subscribe`;
+    // get domain information
+    const domainInformation = getDomainInformation(
+      chainId,
+      verifyingContractAddress || EPNS_COMMUNICATOR_CONTRACT
+    );
+
+    // get type information
+    const typeInformation = getTypeInformationV2();
+
+    // get message
+    const messageInformation = {
+      data: getSubscriptionMessageV2(
+        channelCAIPDetails.address,
+        userCAIPDetails.address,
+        'Subscribe',
+        userSetting
+      ),
+    };
+    // sign a message using EIP712
+    const signature = await signTypedData(
+      signer,
+      domainInformation,
+      typeInformation,
+      messageInformation,
+      'Data'
+    );
+
+    const verificationProof = signature; // might change
+
+    const body = {
+      verificationProof: `eip712v2:${verificationProof}`,
+      message:
+        messageInformation.data,
+      
+    };
+
+    await axios.post(requestUrl, body);
+
+    if (typeof onSuccess === 'function') onSuccess();
+
+    return { status: 'success', message: 'successfully opted into channel' };
+  } catch (err) {
+    console.log(err);
+    if (typeof onError === 'function') onError(err as Error);
+
+    return {
+      status: 'error',
+      message: err instanceof Error ? err.message : JSON.stringify(err),
+    };
+  }
+};
