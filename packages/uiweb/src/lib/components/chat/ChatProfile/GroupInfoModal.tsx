@@ -7,7 +7,7 @@ import { useChatData, useClickAway } from '../../../hooks';
 import { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
-import {  Modal, ModalHeader, } from '../reusables';
+import { Modal, ModalHeader, } from '../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
@@ -33,6 +33,7 @@ import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { shortenText } from '../../../helpers';
+import TokenGatedIcon from "../../../icons/TokenGatedIcon.svg";
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -319,7 +320,7 @@ export const GroupInfoModal = ({
     setShowAddMoreWalletModal(false);
   };
 
-  const onClose = ():void => {
+  const onClose = (): void => {
     setModal(false);
   };
 
@@ -390,6 +391,28 @@ export const GroupInfoModal = ({
                 </Span>
               </Section>
             </PublicEncrypted>
+            {(groupInfo.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
+              <PublicEncrypted theme={theme}>
+                <Image
+                  src={TokenGatedIcon}
+                  height="24px"
+                  maxHeight="24px"
+                  width={'auto'}
+                />
+
+                <Section flexDirection="column" alignItems="flex-start" gap="5px">
+                  <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+                    Gated group
+                  </Span>
+                  <Span
+                    fontSize="12px"
+                    color={theme.textColor?.modalSubHeadingText}
+                  >
+                    Conditions must be true to join
+                  </Span>
+                </Section>
+              </PublicEncrypted>
+            )}
 
             {isAccountOwnerAdmin(groupInfo, account!) &&
               groupInfo?.members &&
@@ -445,8 +468,8 @@ export const GroupInfoModal = ({
                       item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
                         ? [removeAdminDropdown, removeMemberDropdown]
                         : isAccountOwnerAdmin(groupInfo, account!)
-                        ? [addAdminDropdown, removeMemberDropdown]
-                        : []
+                          ? [addAdminDropdown, removeMemberDropdown]
+                          : []
                     }
                     selectedMemberAddress={selectedMemberAddress}
                     setSelectedMemberAddress={setSelectedMemberAddress}
@@ -505,6 +528,7 @@ const PublicEncrypted = styled.div`
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 16px;
   box-sizing: border-box;
+  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
 `;
 
 const AddWalletContainer = styled.div`
@@ -556,7 +580,7 @@ const PendingSection = styled.div`
   box-sizing: border-box;
 `;
 
-const ArrowImage = styled(Image)<ShadowedProps>`
+const ArrowImage = styled(Image) <ShadowedProps>`
   margin-left: auto;
   transform: ${(props) =>
     props?.setPosition ? 'rotate(0)' : 'rotate(180deg)'};
