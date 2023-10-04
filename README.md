@@ -13,7 +13,7 @@
 
 <h4 align="center">
 
-  <a href="discord.gg/pushprotocol">
+  <a href="https://discord.com/invite/pushprotocol">
     <img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square" alt="discord">
   </a>
   <a href="https://twitter.com/pushprotocol">
@@ -177,7 +177,7 @@ node main
 - **[Website](https://push.org)** To checkout our Product.
 - **[Docs](https://docs.push.org/developers/)** For comprehensive documentation.
 - **[Blog](https://medium.com/push-protocol)** To learn more about our partners, new launches, etc.
-- **[Discord](discord.gg/pushprotocol)** for support and discussions with the community and the team.
+- **[Discord](https://discord.com/invite/pushprotocol)** for support and discussions with the community and the team.
 - **[GitHub](https://github.com/ethereum-push-notification-service)** for source code, project board, issues, and pull requests.
 - **[Twitter](https://twitter.com/pushprotocol)** for the latest updates on the product and published blogs.
 
@@ -196,7 +196,7 @@ Read how you can contribute <a href="https://github.com/ethereum-push-notificati
 Not sure where to start? Join our discord and we will help you get started!
 
 
-<a href="discord.gg/pushprotocol" title="Join Our Community"><img src="https://www.freepnglogos.com/uploads/discord-logo-png/playerunknown-battlegrounds-bgparty-15.png" width="200" alt="Discord" /></a>
+<a href="https://discord.com/invite/pushprotocol" title="Join Our Community"><img src="https://www.freepnglogos.com/uploads/discord-logo-png/playerunknown-battlegrounds-bgparty-15.png" width="200" alt="Discord" /></a>
 
 ## License
 Check out our License <a href='https://github.com/ethereum-push-notification-service/push-sdk/blob/main/license-v1.md'>HERE </a>
