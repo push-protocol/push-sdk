@@ -93,6 +93,10 @@ const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType}>`
   [readonly='readonly'] {
     pointer-events: none;
   }
+  &:focus {
+    border: 1px solid #ffdbf0;
+  }
+ 
 `;
 
 const CharCounter = styled.div<IChatTheme>`

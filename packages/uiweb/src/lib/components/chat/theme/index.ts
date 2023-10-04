@@ -231,7 +231,7 @@ export const darkChatTheme: IChatTheme = {
     encryptionMessageBackground: 'rgb(64, 70, 80);',
     buttonBackground: 'rgb(202, 89, 155)',
     modalBackground:'rgb(47, 49, 55)',
-    modalInputBackground:'rgb(40, 42, 46)',
+    modalInputBackground:'transparent',
     modalHoverBackground:'rgb(64, 70, 80)',
     buttonDisableBackground:'#2F3137',
     toastSuccessBackground:
