@@ -80,6 +80,9 @@ export const DefineCondtion = ({
               [{ operator: entryCriteria.entryRuleTypeCondition}],
               ...entryCriteria.selectedRules.map(el => [el]) 
             ]}
+            deleteFunction={(idx:number)=>{
+              entryCriteria.deleteRule(idx)
+            }}
           />
         </Section>
       )}

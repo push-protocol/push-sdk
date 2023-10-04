@@ -115,6 +115,8 @@ export interface CriteriaStateType{
   selectedRules:Rule[];
   addNewCondtion: () => void
   addNewRule: (newRule: Rule) => void
+  deleteRule: (idx: number) => void
+  deleteEntryOptionsDataArray: (idx: number) => void
 }
 
 export const useCriteriaState = ():CriteriaStateType=>{
@@ -125,6 +127,8 @@ export const useCriteriaState = ():CriteriaStateType=>{
   
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([])
+
+
   
   const addNewRule = (newRule:Rule)=>{
     if (selectedCriteria === -1){
@@ -133,10 +137,22 @@ export const useCriteriaState = ():CriteriaStateType=>{
     setSelectedRule((prev)=>[...prev,newRule])
   }
 
+  const deleteRule = (idx:number)=>{
+    const removedRule = [...selectedRules]
+    removedRule.splice(idx,1)
+    setSelectedRule(removedRule)
+  }
+
   const addNewCondtion = ()=>{
     setEntryOptionTypeArray(prev => [...prev,entryRuleTypeCondition])
     setEntryOptionsDataArray(prev => [...prev,[...selectedRules]])
     setSelectedRule([])
+  }
+
+  const deleteEntryOptionsDataArray = (idx:number)=>{
+    const removedRule = [...entryOptionsDataArray]
+    removedRule.splice(idx,1)
+    setEntryOptionsDataArray(removedRule) 
   }
 
   return {
@@ -146,6 +162,8 @@ export const useCriteriaState = ():CriteriaStateType=>{
     entryOptionsDataArray, setEntryOptionsDataArray,
     selectedCriteria, setSelectedCriteria,
     addNewCondtion,
-    selectedRules,addNewRule
+    selectedRules,addNewRule,
+    deleteRule,
+    deleteEntryOptionsDataArray
   }
 }

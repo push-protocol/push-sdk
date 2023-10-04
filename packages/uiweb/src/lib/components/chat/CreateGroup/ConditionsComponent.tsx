@@ -21,6 +21,7 @@ export type CriteraValueType = {
 
 interface CriteriaProps {
   conditionData: ConditionArray[];
+  deleteFunction?:(idx:number)=>void;
 }
 
 interface MoreOptionsContainerProps {
@@ -86,7 +87,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData,deleteFunction }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -109,7 +110,11 @@ const ConditionsComponent = ({ conditionData }: CriteriaProps) => {
       title: 'Remove',
       icon: RemoveSvg,
       function: () => {
-        console.log('function to remove');
+        if(deleteFunction){
+          if(selectedIndex){
+            deleteFunction(selectedIndex[0])
+          }
+        }
       },
     },
   ];

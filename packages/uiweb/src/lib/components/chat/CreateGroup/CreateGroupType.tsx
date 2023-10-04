@@ -45,19 +45,6 @@ interface AddConditionProps {
   criteriaState: CriteriaStateType;
 }
 
-
-export const rulesToCriteriaOptions = (rules:Rule[])=>{
-  return rules.map((rule,idx)=>({
-    id:idx,
-    type: rule.type,
-    // value: rule.data.ammount,
-    value: 100,
-    title: rule.category,
-    function: () => console.log('Token'),
-  }))
-}
-
-
 const AddConditionSection = ({
   heading,
   subHeading,
@@ -120,11 +107,17 @@ const AddConditionSection = ({
           </Span>
         </Span>
       
-      <ConditionsComponent conditionData={[
-        [{ operator:  criteriaState.entryRootCondition }],
-        ...generateMapping()
-        ,
-      ]} /> 
+      <ConditionsComponent 
+        conditionData={[
+          [{ operator:  criteriaState.entryRootCondition }],
+          ...generateMapping()
+        ]}
+        
+        deleteFunction={(idx)=>{
+          criteriaState.deleteEntryOptionsDataArray(idx)
+        }}
+      
+      /> 
 
       <Button
         onClick={handleNext}
