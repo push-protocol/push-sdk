@@ -20,8 +20,11 @@ import { device } from '../../../config';
 interface IThemeProps {
   theme?: IChatTheme;
 }
+interface IConnectButtonProps {
+  autoConnect?: boolean;
+}
 
-export const ConnectButtonSub = () => {
+export const ConnectButtonSub = ({autoConnect = false})  => {
   const {wallet, connecting , connect, disconnect} = useAccount();
 
   const {
@@ -55,6 +58,8 @@ export const ConnectButtonSub = () => {
     }
   }
   useEffect(() => {
+    if(wallet && !autoConnect)
+    disconnect(wallet);
     setUserData()
   }, [wallet])
 

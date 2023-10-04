@@ -19,6 +19,7 @@ export interface IChatViewComponentProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
+  autoConnect?:boolean;
   onGetTokenClick?: () => void;
 }
 
@@ -52,11 +53,11 @@ export type GIFType = {
 
 export interface MessageInputProps {
   chatId: string;
-  Emoji?: boolean;
-  GIF?: boolean;
-  File?: boolean;
-  Image?: boolean;
+  emoji?: boolean;
+  gif?: boolean;
+  file?: boolean;
   isConnected?: boolean;
+  autoConnect?:boolean;
   onGetTokenClick?: () => void;
 }
 
@@ -125,3 +126,13 @@ export interface ModalButtonProps {
 
 
 export {IChatTheme} from './theme';
+
+export interface ConditionData {
+  operator?: string;
+  type?: string;
+  category?: string;
+  subcategory?: string;
+  data?: Record<string, any>;
+}
+
+export type ConditionArray = ConditionData[];
