@@ -1,6 +1,6 @@
 import { MessageType } from '../constants';
 import { IMessageIPFS, LiveSpaceData } from '../types';
-import { MetaMessage } from '../types/messageTypes';
+import { InfoMessage } from '../types/messageTypes';
 import type Space from './Space';
 
 export interface OnReceiveMetaMessageType {
@@ -18,14 +18,14 @@ export function onReceiveMetaMessage(
   if (
     receivedMetaMessage.messageType !== MessageType.META ||
     typeof receivedMetaMessage.messageObj !== 'object' ||
-    !(receivedMetaMessage?.messageObj as Omit<MetaMessage, 'type'>)?.info
+    !(receivedMetaMessage?.messageObj as Omit<InfoMessage, 'type'>)?.info
       ?.arbitrary
   ) {
     return;
   }
 
   const receivedLiveSpaceData = (
-    receivedMetaMessage.messageObj as Omit<MetaMessage, 'type'>
+    receivedMetaMessage.messageObj as Omit<InfoMessage, 'type'>
   ).info.arbitrary as LiveSpaceData;
 
   console.log('RECEIVED LIVE SPACE DATA', receivedLiveSpaceData);

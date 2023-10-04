@@ -27,21 +27,20 @@ export enum ENCRYPTION_TYPE {
 export enum MessageType {
   TEXT = 'Text',
   IMAGE = 'Image',
+  VIDEO = 'Video',
+  AUDIO = 'Audio',
   FILE = 'File',
+  /** @deprecated - Use `MediaEmbed` Instead */
+  GIF = 'GIF',
   MEDIA_EMBED = 'MediaEmbed',
   META = 'Meta',
   REACTION = 'Reaction',
-  /**
-   * @deprecated - Use MediaEmbed Instead
-   */
-  GIF = 'GIF',
-
-  // TODO
-  // AUDIO = 'Audio',
-  // VIDEO = 'Video',
-  // PAYMENT = 'Payment',
-  // REPLY = 'Reply',
-  // COMPOSITE = 'Composite',
+  RECEIPT = 'Receipt',
+  USER_ACTIVITY = 'UserActivity',
+  INTENT = 'Intent',
+  REPLY = 'Reply',
+  COMPOSITE = 'Composite',
+  PAYMENT = 'Payment',
 }
 
 const Constants = {
