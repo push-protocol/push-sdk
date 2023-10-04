@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-
+import { useContext, useState } from 'react';
 import { MdError } from 'react-icons/md';
-
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 import { Section, Span } from '../../reusables';
@@ -10,29 +8,11 @@ import { Button } from '../reusables';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 
-import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
-import { AddButtons } from './AddButtons';
-import Criteria from './Criteria';
-import MultipleCriterias from './MultipleCriterias';
 import useToast from '../reusables/NewToast';
-import {ConditionType, CriteriaStateType, Rule, useCriteriaState} from './Type'
+import {ConditionType, CriteriaStateType, Rule, } from './Type'
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { SingleAndMultipleCriteria } from './SingleAndMultipleCriteria';
-
-
-const GATING_TYPE_OTPIONS: Array<OptionDescription> = [
-  {
-    heading: 'All',
-    value: 'All',
-  },
-  {
-    heading: 'Any',
-    value: 'Any',
-  },
-];
+import ConditionsComponent from './ConditionsComponent';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -85,115 +65,17 @@ const AddConditionSection = ({
   criteriaState,
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
+    //todo - dummy data to be removed after we get condition data
 
-  /** todo - dummy data to be removed after we get condition data
-   *  and check for the chat and entry conditions
-   */
-  interface ConditionData {
-    operator?: string;
-    type?: string;
-    category?: string;
-    subcategory?: string;
-    data?: Record<string, any>;
+  const generateMapping =()=>{
+    return criteriaState.entryOptionsDataArray.map((rule,idx)=>(
+      [
+        {operator: criteriaState.entryOptionTypeArray[idx]},
+        ...rule.map(el => el)
+      ]
+    ))
   }
-  
-  type ConditionArray = [ConditionData] | ConditionData[];
-  
-  const dummyConditonsData: ConditionArray[] = [
-    [{ operator: 'any' }],
-    [{
-      type: 'PUSH',
-      category: 'ERC20',
-      subcategory: 'holder',
-      data: {
-        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
-        amount: 1,
-        decimals: 18,
-      },
-    }],
-    [
-      { operator: 'all' } ,
-      {
-        type: 'PUSH',
-        category: 'ERC20',
-        subcategory: 'holder',
-        data: {
-          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-          amount: 1,
-          decimals: 18,
-        },
-      },
-      {
-        type: 'PUSH',
-        category: 'ERC721',
-        subcategory: 'holder',
-        data: {
-          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-          amount: 1,
-          decimals: 18,
-        },
-      },
-      {
-        type: 'GUILD',
-        category: 'ROLES',
-        subcategory: 'DEFAULT',
-        data: {
-          id: '1',
-          role: '346243',
-          comparison: 'all',
-        },
-      },
-    ],
-    [
-      { operator: 'any' },
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: 'ADMIN',
-        },
-      },
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: 'OWNER',
-        },
-      },
-    ],
-  ];
 
-
-  const dummySingleCondtionData = dummyConditonsData[2];
-
-  const criteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-  ];
-
-  const multiplecriteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-    {
-      id: 1,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('NFT'),
-    },
-  ];
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
       <Section flexDirection="column" alignItems="start" gap="5px">
@@ -237,12 +119,13 @@ const AddConditionSection = ({
             }
           </Span>
         </Span>
-        {
-         criteriaState.entryOptionsDataArray.map((ruleArray,idx) => (
-           <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(ruleArray)} conditionType={criteriaState.entryOptionTypeArray[idx]}/>
-         )) 
-        }
-      </Section>
+      
+      <ConditionsComponent conditionData={[
+        [{ operator:  criteriaState.entryRootCondition }],
+        ...generateMapping()
+        ,
+      ]} /> 
+
       <Button
         onClick={handleNext}
         customStyle={{
@@ -255,6 +138,7 @@ const AddConditionSection = ({
       >
         + Add conditions
       </Button>
+    </Section>
     </Section>
   );
 };

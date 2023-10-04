@@ -314,11 +314,11 @@ const AddCriteria = ({
     }
 
     alert(JSON.stringify(rule))
-    // entryCriteria.addNewRule(rule)
+    entryCriteria.addNewRule(rule)
 
-    // if(handlePrevious){
-    //   handlePrevious()
-    // }
+    if(handlePrevious){
+      handlePrevious()
+    }
 
   }
 

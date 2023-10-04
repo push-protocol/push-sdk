@@ -1,18 +1,16 @@
+import { useContext, useState } from 'react';
+
 import { Section, Span } from '../../reusables';
 import { Button, ModalHeader } from '../reusables';
 import { AddButtons } from './AddButtons';
 import { ModalHeaderProps } from './CreateGroupModal';
-import { useContext, useState } from 'react';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
 import OptionButtons from '../reusables/OptionButtons';
-import Criteria from './Criteria';
+import { device } from '../../../config';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { SingleAndMultipleCriteria } from './SingleAndMultipleCriteria';
-import { Rule } from './Type';
-import { rulesToCriteriaOptions } from './CreateGroupType';
+import ConditionsComponent from './ConditionsComponent';
 
 export const DefineCondtion = ({
   onClose,
@@ -21,35 +19,6 @@ export const DefineCondtion = ({
   entryCriteria
 }: ModalHeaderProps) => {
   
-  //todo remove dummy data after we have condition data
-  
-  const criteriaOptions = [
-    {
-      id: 0,
-      type: 'Token',
-      value: '1.0 ETH',
-      title: 'Token',
-      function: () => console.log('Token'),
-    },
-    // {
-    //     id: 1,
-    //     type: 'Token',
-    //     value: '1.0 ETH',
-    //     title: 'Token',
-    //     function: () => console.log("NFT")
-    // }
-  ];
-
-  // const ruleToCriteriaOptions = (rule:Rule, idx:number) =>{
-  //   return [{
-  //     id:idx,
-  //     type: rule.type,
-  //     value: rule.data.amount,
-  //     title: rule.category,
-  //     function: () => console.log('Token'),
-  //   }]
-  // }
-
   const theme = useContext(ThemeContext);
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const customButtonStyle = {
@@ -106,9 +75,12 @@ export const DefineCondtion = ({
               }
             </Span>
           </Span>{' '}
-              <Section>
-                <SingleAndMultipleCriteria dropdownValues={rulesToCriteriaOptions(entryCriteria.selectedRules)} conditionType={entryCriteria.entryRuleTypeCondition}/>
-              </Section>
+          <ConditionsComponent
+            conditionData={ [
+              [{ operator: entryCriteria.entryRuleTypeCondition}],
+              ...entryCriteria.selectedRules.map(el => [el]) 
+            ]}
+          />
         </Section>
       )}
       <Section flexDirection="column" gap="10px">

@@ -280,10 +280,10 @@ export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
 
 export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
   const spaceAccess: SpaceAccess = {
-    entry: group.groupAccess,
+    entry: group.entry,
   };
 
-  // If rules are present in the groupAccess, map them to the spaceAccess
+  // If rules are present in the entry, map them to the spaceAccess
   if (group.rules) {
     spaceAccess.rules = convertRulesToSpaceRules(group.rules);
   }
