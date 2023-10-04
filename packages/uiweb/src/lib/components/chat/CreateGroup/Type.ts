@@ -1,15 +1,26 @@
 import { useState } from "react";
 
-export interface Data {
-  contract: string;
-  amount: number;
-  decimals: number;
+export interface PushData{
+  contract?: string;
+  amount?: number;
+  decimals?: number;
+  inviterRoles?: 'OWNER' | 'ADMIN',
+  url?:string
 }
+
+export interface GuildData{
+  id:string;
+  role:string;
+  comparison:string;
+}
+
+export type Data = PushData | GuildData
 
 export interface Rule {
   type: 'PUSH' | 'GUILD';
-  category: 'ERC20' | 'ERC721';
-  subcategory: 'holder' | 'owner';
+  // category: 'ERC20' | 'ERC721';
+  category: string;
+  subcategory: 'holder' | 'owner' | 'DEFAULT';
   data: Data;
 }
 

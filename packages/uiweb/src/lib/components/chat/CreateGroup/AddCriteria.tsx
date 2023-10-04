@@ -34,7 +34,7 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { Rule } from './Type';
+import { Data, Rule } from './Type';
 
 
 const AddCriteria = ({
@@ -248,8 +248,6 @@ const AddCriteria = ({
     return false;
   };
 
-  console.log(checkIfPushInvite());
-
   const getSubCategoryDropdownValues = () => {
     const category = getCategoryDropdownValues();
     console.log(category);
@@ -267,23 +265,60 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
+
   const verifyAndDoNext = ()=>{
+
+    const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
+    
+    const subCategory = getSelectedSubCategoryValue() as "owner" | "holder"
+    const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
+      selectedCategoryValue
+    ].value || CATEGORY.ERC20 : "ROLES"
+    
+    const getData = (type:string, category:string):Data=>{
+      if(type === "PUSH"){
+        if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+          const selectedChain = dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+          return {
+            contract: `${selectedChain}:${contract}`,
+            amount: quantity.value,
+            decimals: 18,
+          }
+        }else if(category === CATEGORY.INVITE){
+          return{
+            inviterRoles: inviteCheckboxes.admin ? "ADMIN" : "OWNER"
+          }
+        }else{
+          // CATEGORY.CustomEndpoint
+          // TODO: validate url
+          return{
+            url:url
+          }
+        }
+      }else{
+        // GUILD type
+        return {
+          id:guildId,
+          role:specificRoleId,
+          comparison:guildComparison,
+        }
+      }
+
+    }
+
     const rule:Rule = {
-      type: 'PUSH',
-      category: 'ERC20',
-      subcategory: 'holder',
-      data: {
-        contract: `eip155:${1}:${contract}`,
-        amount: 1,
-        decimals: 18,
-      },
+      type: _type,
+      category: category,
+      subcategory: subCategory,
+      data: getData(_type, category),
     }
 
-    entryCriteria.addNewRule(rule)
+    alert(JSON.stringify(rule))
+    // entryCriteria.addNewRule(rule)
 
-    if(handlePrevious){
-      handlePrevious()
-    }
+    // if(handlePrevious){
+    //   handlePrevious()
+    // }
 
   }
 

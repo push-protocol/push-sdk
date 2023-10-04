@@ -70,7 +70,8 @@ export const rulesToCriteriaOptions = (rules:Rule[])=>{
   return rules.map((rule,idx)=>({
     id:idx,
     type: rule.type,
-    value: rule.data.amount,
+    // value: rule.data.ammount,
+    value: 100,
     title: rule.category,
     function: () => console.log('Token'),
   }))
