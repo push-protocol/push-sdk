@@ -63,6 +63,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     // reset update rules
     if(activeComponent === 2){
       entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
+    }else if(activeComponent === 3){
+      entryCriteria.setUpdateCriteriaIdx(-1)
     }
   },[activeComponent,entryCriteria])
 

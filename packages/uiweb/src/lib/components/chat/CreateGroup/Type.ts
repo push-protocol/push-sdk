@@ -122,6 +122,9 @@ export interface CriteriaStateType{
   entryOptionsDataArrayUpdate:number;
   isCondtionUpdateEnabled: () => boolean;
   updateCondition: () => void;
+  updateCriteriaIdx: number;
+  setUpdateCriteriaIdx: React.Dispatch<React.SetStateAction<number>>;
+  isUpdateCriteriaEnabled: () => boolean
 }
 
 export const useCriteriaState = ():CriteriaStateType=>{
@@ -134,6 +137,7 @@ export const useCriteriaState = ():CriteriaStateType=>{
   const [selectedRules, setSelectedRule] = useState<Rule[]>([])
 
   const [entryOptionsDataArrayUpdate, setEntryOptionsDataArrayUpdate] = useState(-1)
+  const [updateCriteriaIdx, setUpdateCriteriaIdx] = useState(-1)
   
   const addNewRule = (newRule:Rule)=>{
     if (selectedCriteria === -1){
@@ -163,6 +167,8 @@ export const useCriteriaState = ():CriteriaStateType=>{
     
     setEntryOptionTypeArray(optionTypeArrayUpdated) 
     setEntryOptionsDataArray(entryOptionsDataArrayUpdated)
+
+    setSelectedRule([])
   }
 
   const isCondtionUpdateEnabled = ()=>{
@@ -179,6 +185,10 @@ export const useCriteriaState = ():CriteriaStateType=>{
     setEntryOptionsDataArrayUpdate(idx)
   }
 
+  const isUpdateCriteriaEnabled = ()=>{
+    return updateCriteriaIdx !== -1
+  }
+
   return {
     entryRootCondition, setEntryRootCondition,
     entryRuleTypeCondition, setEntryRuleTypeCondition,
@@ -193,6 +203,9 @@ export const useCriteriaState = ():CriteriaStateType=>{
     entryOptionsDataArrayUpdate,
     isCondtionUpdateEnabled,
     updateCondition,
-    setSelectedRule
+    setSelectedRule,
+    updateCriteriaIdx,
+    setUpdateCriteriaIdx,
+    isUpdateCriteriaEnabled
   }
 }

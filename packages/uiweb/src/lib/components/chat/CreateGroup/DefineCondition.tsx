@@ -62,8 +62,6 @@ export const DefineCondtion = ({
       entryCriteria.setSelectedRule([
         ...entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate]
       ])
-    }else{
-      entryCriteria.setSelectedRule([])
     }
   },[0])
 
@@ -107,8 +105,14 @@ export const DefineCondtion = ({
           </Span>{' '}
           <ConditionsComponent
             conditionData={getRules()}
-            deleteFunction={(idx:number)=>{
+            deleteFunction={(idx)=>{
               entryCriteria.deleteRule(idx)
+            }}
+            updateFunction={(idx)=>{
+              entryCriteria.setUpdateCriteriaIdx(idx)
+              if(handleNext){
+                handleNext()
+              }
             }}
           />
         </Section>

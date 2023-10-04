@@ -1,10 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Section, Span } from '../../reusables';
-import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
 import styled from 'styled-components';
 import { device } from '../../../config';
-import Dropdown from '../reusables/DropDown';
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import Criteria from './Criteria';

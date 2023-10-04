@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-
+import { useContext, useEffect, useState } from 'react';
 import {
   Button,
   DropDownInput,
@@ -7,7 +6,7 @@ import {
   ModalHeader,
   TextInput,
 } from '../reusables';
-import { Section, Span } from '../../reusables';
+import { Section, } from '../../reusables';
 import EthereumSvg from '../../../icons/ethereum.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import BSCSvg from '../../../icons/bsc.svg';
@@ -19,7 +18,6 @@ import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
-import styled from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
@@ -40,7 +38,6 @@ import { Data, Rule } from './Type';
 const AddCriteria = ({
   handlePrevious,
   entryCriteria,
-  //handle add criteria
   handleNext,
   onClose,
 }: ModalHeaderProps) => {
@@ -322,6 +319,15 @@ const AddCriteria = ({
 
   }
 
+  useEffect(()=>{
+   if(entryCriteria.isUpdateCriteriaEnabled()){
+    //Load the states
+    const oldValue = entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate][entryCriteria.updateCriteriaIdx]
+    
+    // TODO: reverse the form fill
+   } 
+  },[0])
+
   return (
     <Section
       flexDirection="column"
@@ -332,7 +338,7 @@ const AddCriteria = ({
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title="Add Criteria"
+          title={entryCriteria.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
         />
       </Section>
       <DropDownInput
@@ -455,7 +461,7 @@ const AddCriteria = ({
         </>
       )}
       <Button width="197px" onClick={verifyAndDoNext}>
-        Add
+        {entryCriteria.isUpdateCriteriaEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>
@@ -464,4 +470,3 @@ const AddCriteria = ({
 
 export default AddCriteria;
 
-//styles
