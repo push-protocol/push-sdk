@@ -16,7 +16,7 @@ import { MdError } from 'react-icons/md';
 
 import {Image} from "../../../config/styles"
 import { device } from '../../../config';
-import { CreateGroupModalProps } from '../exportedTypes';
+import { CreateGroupModalProps, IChatTheme } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
@@ -118,7 +118,8 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
 
   const groupInfoToast = useToast();
   const { groupName, groupDescription, groupImage } = groupInputDetails;
- 
+  const theme = useContext(ThemeContext);
+
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
   
@@ -192,8 +193,8 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
 
       <UploadContainer onClick={handleUpload}>
         {!groupImage && (
-          <ImageContainer>
-            <AiTwotoneCamera fontSize={40} color="black" />
+          <ImageContainer theme={theme}>
+            <AiTwotoneCamera fontSize={40} color={'rgba(87, 93, 115, 1)'} />
           </ImageContainer>
         )}
         {groupImage && (
@@ -234,7 +235,7 @@ export const GatingRulesInformation = () => {
     const theme = useContext(ThemeContext);
     return (
       <Section gap="4px">
-        <SpamIcon />
+        <SpamIcon color={theme.textColor?.modalSubHeadingText}/>
         <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
           Learn more about gating rules
         </Span>
@@ -251,12 +252,12 @@ const UploadContainer = styled.div`
   align-self: center;
 `;
 
-const ImageContainer = styled.div`
+const ImageContainer = styled.div<{theme:IChatTheme}>`
   margin-top: 10px;
   width: fit-content;
   cursor: pointer;
   border-radius: 32px;
-  background-color: #2f3137;
+  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   padding: 40px;
 `;
 const UpdatedImageContainer = styled.div`

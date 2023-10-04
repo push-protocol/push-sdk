@@ -50,7 +50,7 @@ const MoreOptionsContainer = ({
 
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}>
-      <MoreDarkIcon />
+      <MoreDarkIcon color={theme.iconColor?.groupSettings}/>
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer
           ref={dropdownRef}
@@ -127,13 +127,9 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
-
-  //fix the theming
-
   const handleMoreOptionsClick = (row: number, col: number) => {
     setSelectedIndex([row, col]);
   };
-// alert(JSON.stringify(conditionData))
 
   return (
     <Section flexDirection='column' >
@@ -146,7 +142,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                 <>
                   {singleCriteria.type && (
                     <Section
-                      borderRadius="12px"
+                      borderRadius={theme.borderRadius?.modalInnerComponents}
                       background={theme.backgroundColor?.modalHoverBackground}
                       padding="10px 4px 10px 12px"
                       justifyContent="space-between"
@@ -166,14 +162,13 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
               ))}
 
             {criteria.length > 1 && (
-              <Section
+              <CriteriaGroup
+              theme={theme}
                 flexDirection="row"
-                borderWidth="1px"
                 justifyContent="space-between"
                 alignItems="center"
-                borderColor="#E6E7EE"
-                borderRadius="12px"
-                borderStyle="solid"
+           
+                borderRadius={theme.borderRadius?.modalInnerComponents}
                 padding="8px 0px 8px 8px"
                 gap="25px"
               >
@@ -183,7 +178,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       {singleCriteria.type && (
                         <>
                           <Section
-                            borderRadius="12px"
+                            borderRadius={theme.borderRadius?.modalInnerComponents}
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
@@ -217,7 +212,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                     selectedIndex={selectedIndex}
                   />
                 </Section>
-              </Section>
+              </CriteriaGroup>
             )}
             {conditionData &&
               row < conditionData.length - 2 &&
@@ -240,7 +235,8 @@ const DropdownContainer = styled.div`
   left: 48%;
   top: 69%;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  padding: 14px 8px;
+ 
+  padding: 6px 32px 6px 12px;
   z-index: 999999999999 !important;
   display: flex;
   flex-direction: column !important;
@@ -258,9 +254,14 @@ const DropdownContainer = styled.div`
   }
 `;
 
-const OperatorSpan = styled.span<{ theme: IChatTheme }>`
+const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
+`;
+
+const CriteriaGroup = styled(Section)<{ theme: IChatTheme }>`
+ 
+  border: ${(props) => props.theme.border?.modalInnerComponents};
 `;

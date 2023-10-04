@@ -35,7 +35,7 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
           // selectedValue === value?
           // theme.textColor?.modalHeadingText
           // :
-          theme.textColor?.modalSubHeadingText
+          theme.textColor?.modalHeadingText
         }
         fontSize="18px"
         fontWeight="500"
