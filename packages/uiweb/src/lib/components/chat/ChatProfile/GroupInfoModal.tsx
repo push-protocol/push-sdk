@@ -362,6 +362,7 @@ export const GroupInfoModal = ({
                 Group Description
               </Span>
               <Span
+              textAlign='start'
                 fontSize="18px"
                 color={theme.textColor?.modalSubHeadingText}
               >
@@ -379,7 +380,7 @@ export const GroupInfoModal = ({
 
               <Section flexDirection="column" alignItems="flex-start" gap="5px">
                 <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                  {groupInfo?.isPublic ? 'Public' : 'Private'}
+                  {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
                 </Span>
                 <Span
                   fontSize="12px"
@@ -387,7 +388,7 @@ export const GroupInfoModal = ({
                 >
                   {groupInfo?.isPublic
                     ? 'Chats are not encrypted'
-                    : 'Chats are encrypted'}
+                    : 'Chats are end-to-end encrypted'}
                 </Span>
               </Section>
             </PublicEncrypted>
