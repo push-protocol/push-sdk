@@ -63,6 +63,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:66 ~ raisedHandInfo:", raisedHandInfo)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -109,7 +110,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   useEffect(() => {
     // if (!spaceObjectData?.connectionData?.local?.stream || promotedListener.length === 0)
     //   return;
-    if (promotedListener.length === 0)
+    if (promotedListener.length === 0 || Object.keys(raisedHandInfo).length === 0)
       return;
 
     const options = {
@@ -129,8 +130,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const handleAcceptPromotion = async (requesterAddress: any) => {
     // await spacesObjectRef?.current?.createAudioStream?.();
-    setPromotedListener(requesterAddress);
     await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
+    setPromotedListener(requesterAddress);
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
