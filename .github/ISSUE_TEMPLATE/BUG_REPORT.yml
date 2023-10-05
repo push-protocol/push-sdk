@@ -1,0 +1,80 @@
+name: "🐛 Bug Report"
+description: Create a bug report to help us improve.
+title: "🐛 [BUG] - <title>"
+labels: [
+  "bug"
+]
+body:
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: "Expected Behaviour"
+      description: Please describe the behavior you are expecting
+      placeholder: Short and explicit description of your desired behaviour...
+    validations:
+      required: true
+  - type: textarea
+    id: current-behaviour
+    attributes:
+      label: "Current Behaviour"
+      description: Please describe the current behavior
+      placeholder: What is the current behavior?...
+    validations:
+      required: true
+  - type: textarea
+    id: reprod
+    attributes:
+      label: "Reproduction steps"
+      description: Please enter an explicit description of your issue
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshots"
+      description: If applicable, add screenshots to help explain your problem.
+      value: |
+        ![DESCRIPTION](LINK.png)
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant Logs"
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: bash
+    validations:
+      required: false
+  - type: dropdown
+    id: dapp-env
+    attributes:
+      label: "Dapp Env"
+      description: What is the impacted DApp environment ?
+      multiple: true
+      options:
+        - Prod (app.push.org)
+        - Staging (staging.push.org)
+        - Dev (dev.push.org)
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: "Browsers"
+      description: What browsers are you seeing the problem on ?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Opera
+    validations:
+      required: false
