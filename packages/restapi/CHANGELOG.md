@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.45](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.44...restapi-0.0.1-alpha.45) (2023-10-05)
+
+
+### Bug Fixes
+
+* alpha to main ([76a8d84](https://github.com/ethereum-push-notification-service/push-sdk/commit/76a8d849e689793590cf096c794016267503df3d))
+* local tests ([#744](https://github.com/ethereum-push-notification-service/push-sdk/issues/744)) ([e6ac9dc](https://github.com/ethereum-push-notification-service/push-sdk/commit/e6ac9dc896e710213d74e715da8af971c10b5e29))
+* Merge branch 'alpha' into alpha-deployment ([522814d](https://github.com/ethereum-push-notification-service/push-sdk/commit/522814d67af116576c753ee4c1a2681967a4c11c))
+* Merge branch 'alpha' into alpha-deployment ([fdb3925](https://github.com/ethereum-push-notification-service/push-sdk/commit/fdb3925a9ee63dc747ba227dfb719d784c21592d))
+* Notification event mutation ([ec2aedb](https://github.com/ethereum-push-notification-service/push-sdk/commit/ec2aedbc2e09bc4ded91a9f119464e3a61983606))
+* restored config ([098beac](https://github.com/ethereum-push-notification-service/push-sdk/commit/098beacaebdd19678878c9e50d5b3f103cb39803))
+
+
+
 ## [0.0.1-alpha.44](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.43...restapi-0.0.1-alpha.44) (2023-10-03)
 
 
