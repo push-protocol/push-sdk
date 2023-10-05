@@ -17,6 +17,9 @@ export const Constants = {
   
 };
 
+export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
+export const RAINBOW_PROJECT_ID = 'e22146926e005c4e513b24024521ef51';
+export const RAINBOW_APP_NAME = 'Push-sdk';
 export const NETWORK_DETAILS = {
   5: {
     network: "goerli",
@@ -75,6 +78,8 @@ export const allowedNetworks = {
   ]
 }
 
+export const blockNativeApikey = 'f55f3a76-8510-4af8-9833-b7f85255de83'
+
 export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 
 export const PUBLIC_GOOGLE_TOKEN = 'AIzaSyBhUBnCia6zpxY7KcqjghRS1IphinAvKXs';
@@ -97,3 +102,8 @@ export const notificationLimit = 5;
 
 export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;
+
+// Livekit Server URLs
+export const LIVEKIT_SERVER_URL = "https://spacev2-demo-17wvllxz.livekit.cloud";
+export const LIVEKIT_SERVER_WEBSOCKET_URL = "wss://spacev2-demo-17wvllxz.livekit.cloud";
+export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = "https://ms-lk-server.onrender.com";

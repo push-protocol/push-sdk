@@ -2123,10 +2123,10 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
+  entry?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chatAccess?: {
+  chat?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -2376,7 +2376,7 @@ const response = await PushAPI.space.update({
 	  scheduleEnd: '2023-07-15T15:48:00.000Z',
     status: PushAPI.ChatStatus.PENDING,
     rules: {
-      'groupAccess': {
+      'entry': {
         'conditions': [
           {
             'any': [
@@ -2402,7 +2402,7 @@ const response = await PushAPI.space.update({
           }
         ]
       },
-      'chatAccess': {
+      'chat': {
         'conditions': [
           {
             'all': [
@@ -6462,3 +6462,335 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 </details>
 
 ---
+
+
+### **Fetch Inbox /Spam notifications**
+
+```tsx
+// lists feeds
+const  aliceInfo = await  userAlice.notification.list();
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| spam | INBOX  or SPAM | INBOX | A string representing the type of feed to retrieve. |
+| options* | object | - | An object containing additional options for filtering and pagination. |
+| options.account* | string | - | Account in full CAIP |
+| options.channels* | [string] | - | An array of channels to filter feeds by. |
+| options.page* | number | - | A number representing the page of results to retrieve. |
+| options.limit* | number | - | A number representing the maximum number of feeds to retrieve per page. |
+| options.raw* | boolean | - | A boolean indicating whether to retrieve raw feed data. |
+
+\* - Optional
+
+---
+
+### **Fetch user subscriptions**
+
+```tsx
+// fetches list of channels to which the user is subscribed
+const subscriptions = await userAlice.notification.subscriptions();
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options* | object | - | An object containing additional options for subscriptions. |
+| options.account* | string | - | Account in CAIP . |
+| options.page* | number | - | page of results to retrieve. |
+| options.limit* | number | - | represents the maximum number of subscriptions to retrieve per page. |
+
+\* - Optional
+
+---
+
+### **Subscribe to a channel**
+
+```tsx
+// subscribes to a channel
+const subscribeStatus = await userAlice.notification.subscribe(channelInCAIP)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| channel | string | - | Channel/Alias address in CAIP format |
+| options* | SubscribeUnsubscribeOptions | - | Optional configuration |
+| options.onSuccess* | () => void | - | A callback function to execute when the subscription is successful. |
+| options.onError* | (err: Error) => void | - | A callback function to execute when an error occurs during subscription. |
+
+\* - Optional
+
+---
+
+### **Unsubscribe to a channel**
+
+```tsx
+// unsubscribes to the channel
+const unsubscribeStatus = await userAlice.notification.unsubscribe(channelInCAIP)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| channel | string | - | Channel/Alias address in CAIP format |
+| options* | SubscribeUnsubscribeOptions | - | Optional configuration |
+| options.onSuccess* | () => void | - | A callback function to execute when the unsubscription is successful. |
+| options.onError* | (err: Error) => void | - | A callback function to execute when an error occurs during unsubscription. |
+
+\* - Optional
+
+---
+
+### **Channel information**
+
+```tsx
+// fetches information about the channel
+const channelInfo = await userAlice.channel.info(pushChannelInCAIP)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| channel* | string | - | Channel address in CAIP format |
+
+\* - Optional
+
+---
+
+### **Search Channels**
+
+```tsx
+// returns channel matching the query
+const searchResult = await userAlice.channel.search("push")
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| query | string | - | The search query to find channels. |
+| options* | ChannelSearchOptions | - | Configuration options for the search. |
+| options.page* | number | - | The page of results to retrieve. Default is set to 1 |
+| options.limit* | number | - | The maximum number of channels to retrieve per page. Default is set to 10 |
+
+\* - Optional
+
+### **Get a channel's subscribers**
+
+```tsx
+// fetches subscribers of a channel
+const subscribersResult = await userAlice.channel.subscribers()
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options* | ChannelInfoOptions | - | Configuration options for retrieving subscribers. |
+| options.channel* | string | - | Channel address in CAIP |
+
+\* - Optional
+
+### **Send a notification**
+
+```tsx
+// sends a notification
+const sendNotifRes = await userAlice.channel.send(['*'], {notification: {title:  'test',body:  'test',},})
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| recipients | string[] | - | An array of recipient addresses. Possible values are: Broadcast -> [*], Targeted -> [0xA], Subset -> [0xA, 0xB] |
+| options | NotificationOptions | - | Configuration options for sending notifications. |
+| options.notification | INotification | - | An object containing the notification's title and body. (Mandatory) |
+| options.payload* | IPayload | - | An object containing additional payload information for the notification. |
+| options.payload.title* | string | - | The title for the notification. If not provided, it is taken from notification.title. |
+| options.payload.body* | string | - | The body of the notification. If not provided, it is taken from notification.body. |
+| options.payload.cta* | string | - | Call to action for the notification. |
+| options.payload.embed | string | - | Media information like image/video links |
+| options.payload.meta* | { domain?: string, type: string, data: string } | - | Metadata for the notification, including domain, type, and data. |
+| options.config* | IConfig | - | An object containing configuration options for the notification. |
+| options.config.expiry* | number | - | Expiry time for the notification in seconds |
+| options.config.silent* | boolean | - | Indicates whether the notification is silent. |
+| options.config.hidden* | boolean | - | Indicates whether the notification is hidden. |
+| options.advanced* | IAdvance | - | An object containing advanced options for the notification. |
+| options.advanced.graph* | { id: string, counter: number } | - | Advanced options related to the graph based notification. |
+| options.advanced.ipfs* | string | - | IPFS information for the notification. |
+| options.advanced.minimal* | string | - | Minimal Payload type notification. |
+| options.advanced.chatid* | string | - | For chat based notification. |
+| options.advanced.pgpPrivateKey* | string | - | PGP private key for chat based notification. |
+| options.channel* | string | - | Channel address in CAIP. Mostly used when a delegator sends a notification on behalf of the channel |
+
+\* - Optional
+
+---
+
+### **Create a channel**
+
+```tsx
+// creates a channel
+const createChannelRes = await userAlice.channel.create({name: channelName, description: channelDescription, url: channelURL, icon: base64FormatImage, alias?: aliasAddressInCAIP})
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options | CreateChannelOptions | - | Configuration options for creating a channel. |
+| options.name | string | - | The name of the channel. |
+| options.description | string | - | A description of the channel. |
+| options.icon | string (base64 encoded) | - | The channel's icon in base64 encoded string format. |
+| options.url | string | - | The URL associated with the channel. |
+| options.alias* | string | - | alias address in CAIP |
+| options.progresshook* | () => void | - | (Optional) A callback function to execute when the channel creation progresses. |
+
+**Note**: Support for contract interaction via `viem` is coming soon
+\* - Optional
+
+---
+
+### **Update a channel's information**
+
+```tsx
+// updates channel info
+const updateChannelRes = await userAlice.channel.update({name: newChannelName, description: newChannelDescription, url: newChannelURL, icon: newBase64FormatImage, alias?: newAliasAddressInCAIP})
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options | - | - | Configuration options for creating a channel. |
+| options.name | string | - | New name of the channel. |
+| options.description | string | - | New description of the channel. |
+| options.icon | string (base64 encoded) | - | The channel's new icon in base64 encoded string format. |
+| options.url | string | - | New URL associated with the channel. |
+| options.alias* | string | - | New alias address in CAIP |
+| options.progresshook* | () => void | - | A callback function to execute when the channel updation progresses. |
+| Note: Support for contract interaction via viem is coming soon |  |  |  |
+
+\* - Optional
+
+---
+
+### **Verify a channel**
+
+```tsx
+const verifyChannelRes = await userAlice.channel.verify(channelToBeVerified)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| channelToBeVerified | string | - | Channel address in CAIP to be verified |
+
+---
+
+### **Create channel Setting**
+
+```tsx
+// creates channel settings
+const createChannelSettingRes = userAlice.channel.settings([{ type: 0, default: 1, description: 'marketing' }, {type: 2, default: 10, description: 'loan liquidation threshold', data: {upper: 100, lower: 5}}])
+
+```
+
+**Parameters:**
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| type | number | - | The type of notification setting. 1 for boolean type and 2 for slider type |
+| default | number | - | The default value for the setting. |
+| description | string | - | A description of the setting. |
+| data.upper* | number | - | Valid for slider type only. The upper limit for the setting. |
+| data.lower* | number | - | Valid for slider type only. The lower limit for the setting. |
+| Note: Support for contract interaction via viem is coming soon |  |  |  |
+| \* - Optional |  |  |  |
+
+---
+
+### **Get delegators information**
+
+```tsx
+// fetch delegate information
+const delegatorsInfo = userAlice.channel.delegate.get()
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options* | ChannelInfoOptions | - | Configuration options for retrieving delegator information. |
+| options.channel* | string | - | channel address in CAIP |
+| \* - Optional |  |  |  |
+
+---
+
+### **Add delegator to a channel/alias**
+
+```tsx
+// adds a delegate
+const addDelegatorRes = userAlice.channel.delegate.add(delegatorAddressInCAIP)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| delegate | string | - | delegator address in CAIP |
+| Note: Support for contract interaction via viem is coming soon |  |  |  |
+
+---
+
+### **Remove delegator from a channel/alias**
+
+```tsx
+// removes a delegate
+const removeDelegatorRes = userAlice.channel.delegate.remove(delegatorAddressInCAIP)
+
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| delegate | string | - | delegator address in CAIP |
+| Note: Support for contract interaction via viem is coming soon |  |  |  |
+
+---
+
+### **Alias Information**
+
+```tsx
+// fetch alias info
+const aliasInfo = userAlice.channel.alias.info({alias: '0xABC', aliasChain:'POLYGON'})
+
+```
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options | AliasOptions | - | Configuration options for retrieving alias information. |
+| options.alias | string | - | The alias address |
+| options.aliasChain | ALIAS_CHAIN | - | The name of the alias chain, which can be 'POLYGON' or 'BSC' or 'OPTIMISM' or 'POLYGONZKEVM' |

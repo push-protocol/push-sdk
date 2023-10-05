@@ -8,7 +8,7 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { ethers } from "ethers";
 import { addWalletValidation } from "../helpers/helper";
 import ArrowGreyIcon from '../../../icons/CaretDownGrey.svg'
-import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
+// import ArrowLeftIcon from '../../../icons/ArrowLeft.svg';
 import CloseIcon from '../../../icons/close.svg';
 import { Spinner } from "../../supportChat/spinner/Spinner";
 import { MoreLightIcon }  from '../../../icons/MoreLight';
@@ -18,7 +18,7 @@ import { Section, Span, Image } from "../../reusables/sharedStyling";
 import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { device } from "../../../config";
 import { MemberListContainer } from "./MemberListContainer";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import useToast from "../helpers/NewToast";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { Modal } from "../helpers/Modal";
@@ -171,7 +171,7 @@ export const AddWalletContent = ({ onSubmit, handlePrevious, onClose, memberList
         <Section width={isMobile ? '100%' : '410px'} flexDirection='column' padding={isMobile ? '0px auto' :'0px 10px'}>
             <Section flex='1' flexDirection='row' justifyContent='space-between'>
 
-                 <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' />
+                 {/* <Image src={ArrowLeftIcon} height="24px" maxHeight="24px" width={'auto'} onClick={()=>handlePrevious()} cursor='pointer' /> */}
 
                  <Span textAlign='center' fontSize='20px' color={theme.modalHeadingColor}>Add Wallets</Span>
 
