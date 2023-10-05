@@ -238,12 +238,14 @@ const DropdownContainer = styled.div`
 
   @media ${device.mobileL} {
     left: 27%;
+    z-index: 999999999999 !important;
   }
   @media (min-width: 426px) and (max-width: 1150px) {
     left: 48%;
   }
-  @media (max-width: 480px) {
+  @media (max-width: 674px) {
     left: 25%;
+    margin-left: -130px;
   }
 `;
 

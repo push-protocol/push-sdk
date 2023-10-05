@@ -34,6 +34,9 @@ import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { shortenText } from '../../../helpers';
 import TokenGatedIcon from "../../../icons/TokenGatedIcon.svg";
+import { DefineCondtion } from '../CreateGroup/DefineCondition';
+import ConditionsComponent from '../CreateGroup/ConditionsComponent';
+import { ConditionArray } from '../exportedTypes';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -121,18 +124,175 @@ const PendingMembers = ({
   }
 };
 
+const dummyConditonsData: ConditionArray[] = [
+  [{ operator: 'any' }],
+  [
+    {
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+  ],
+  [
+    { operator: 'all' },
+    {
+      type: 'PUSH',
+      category: 'ERC20',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+    {
+      type: 'PUSH',
+      category: 'ERC721',
+      subcategory: 'holder',
+      data: {
+        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
+        amount: 1,
+        decimals: 18,
+      },
+    },
+    {
+      type: 'GUILD',
+      category: 'ROLES',
+      subcategory: 'DEFAULT',
+      data: {
+        id: '1',
+        role: '346243',
+        comparison: 'all',
+      },
+    },
+  ],
+  [
+    { operator: 'any' },
+    {
+      type: 'PUSH',
+      category: 'INVITE',
+      subcategory: 'DEFAULT',
+      data: {
+        inviterRoles: 'ADMIN',
+      },
+    },
+    {
+      type: 'PUSH',
+      category: 'INVITE',
+      subcategory: 'DEFAULT',
+      data: {
+        inviterRoles: 'OWNER',
+      },
+    },
+  ],
+];
+
+const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map((criteria) => [
+  criteria,
+]);
+
+interface ConditionsInformationProps{
+  theme: IChatTheme;
+  groupInfo?: IGroup | null;
+}
+
+export const ConditionsInformation = ({theme, groupInfo}: ConditionsInformationProps) => {
+  return (
+    <Section margin='15px 0px 0px 0px' flexDirection='column'>
+      <Section margin='0px 0px 15px 0px'>
+      {
+        (groupInfo?.rules?.chat?.conditions || groupInfo?.rules?.entry?.conditions) && (
+          <PublicEncrypted theme={theme}>
+            <Image
+              src={TokenGatedIcon}
+              height="24px"
+              maxHeight="24px"
+              width={'auto'}
+            />
+
+            <Section flexDirection="column" alignItems="flex-start" gap="5px">
+              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+                Gated group
+              </Span>
+              <Span
+                fontSize="12px"
+                color={theme.textColor?.modalSubHeadingText}
+              >
+                Conditions must be true to join
+              </Span>
+            </Section>
+          </PublicEncrypted>
+        )
+      }
+      </Section>
+      <ConditionsComponent conditionData={dummyConditonsData} />
+    </Section>
+  )
+}
+
+interface GroupTypeProps {
+  theme: IChatTheme;
+  Icon: string;
+  header: string;
+  subheader: string;
+  groupInfo?: IGroup | null;
+}
+
+const GroupTypeBadge = ({ theme, Icon, header, subheader, groupInfo }: GroupTypeProps) => {
+  return (
+    <Section>
+      <PublicEncrypted theme={theme}>
+        <Image
+          src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+          height="24px"
+          maxHeight="24px"
+          width={'auto'}
+        />
+
+        <Section flexDirection="column" alignItems="flex-start" gap="5px">
+          <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+            {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
+          </Span>
+          <Span
+            fontSize="12px"
+            color={theme.textColor?.modalSubHeadingText}
+          >
+            {groupInfo?.isPublic
+              ? 'Chats are not encrypted'
+              : 'Chats are end-to-end encrypted'}
+          </Span>
+        </Section>
+      </PublicEncrypted>
+    </Section>
+  )
+}
+
 type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: IGroup;
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
+  handleNextInformation: () => void;
+  handlePreviousInformation: () => void;
 };
-export const GroupInfoModal = ({
-  theme,
+
+export const GROUPINFO_STEPS = {
+  GROUP_INFO: 1,
+  CRITERIA: 2,
+} as const;
+
+export type GROUP_INFO_TYPE = (typeof GROUPINFO_STEPS)[keyof typeof GROUPINFO_STEPS];
+
+const GroupInformation = ({ theme,
   setModal,
   groupInfo,
-  setGroupInfo,
-}: GroupInfoModalProps) => {
+  setGroupInfo, handleNextInformation, handlePreviousInformation }: GroupInfoModalProps) => {
+
   const { account } = useChatData();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
@@ -324,6 +484,318 @@ export const GroupInfoModal = ({
     setModal(false);
   };
 
+  return (
+    <Section
+      width={isMobile ? '100%' : '410px'}
+      flexDirection="column"
+    >
+
+      <GroupDescription>
+        <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+          Group Description
+        </Span>
+        <Span
+          textAlign='start'
+          fontSize="18px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
+          {groupInfo?.groupDescription}
+        </Span>
+      </GroupDescription>
+
+      <PublicEncrypted theme={theme}>
+        <Image
+          src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+          height="24px"
+          maxHeight="24px"
+          width={'auto'}
+        />
+
+        <Section flexDirection="column" alignItems="flex-start" gap="5px">
+          <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+            {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
+          </Span>
+          <Span
+            fontSize="12px"
+            color={theme.textColor?.modalSubHeadingText}
+          >
+            {groupInfo?.isPublic
+              ? 'Chats are not encrypted'
+              : 'Chats are end-to-end encrypted'}
+          </Span>
+        </Section>
+      </PublicEncrypted>
+      {
+        (groupInfo.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
+          <PublicEncrypted onClick={handleNextInformation} theme={theme}>
+            <Image
+              src={TokenGatedIcon}
+              height="24px"
+              maxHeight="24px"
+              width={'auto'}
+            />
+
+            <Section flexDirection="column" alignItems="flex-start" gap="5px">
+              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+                Gated group
+              </Span>
+              <Span
+                fontSize="12px"
+                color={theme.textColor?.modalSubHeadingText}
+              >
+                Conditions must be true to join
+              </Span>
+            </Section>
+          </PublicEncrypted>
+        )
+      }
+
+      {
+        isAccountOwnerAdmin(groupInfo, account!) &&
+        groupInfo?.members &&
+        groupInfo?.members?.length < 10 && (
+          <AddWalletContainer
+            theme={theme}
+            onClick={() => setShowAddMoreWalletModal(true)}
+          >
+            <Image
+              cursor="pointer"
+              src={addIcon}
+              height="18px"
+              maxHeight="18px"
+              width={'auto'}
+            />
+
+            <Span
+              cursor="pointer"
+              color={theme.textColor?.modalSubHeadingText}
+              margin="0px 14px"
+              fontSize="16px"
+              fontWeight="400"
+            >
+              Add more wallets
+            </Span>
+          </AddWalletContainer>
+        )
+      }
+
+      <Section borderRadius="16px">
+        {groupInfo?.pendingMembers?.length > 0 && (
+          <PendingMembers
+            groupInfo={groupInfo}
+            setShowPendingRequests={setShowPendingRequests}
+            showPendingRequests={showPendingRequests}
+            theme={theme}
+          />
+        )}
+      </Section>
+
+      <Section
+        margin="15px 10px"
+        flexDirection="column"
+        flex="1"
+        zIndex="2"
+      >
+        {groupInfo?.members &&
+          groupInfo?.members?.length > 0 &&
+          groupInfo?.members.map((item, index) => (
+            <MemberProfileCard
+              key={index}
+              member={item}
+              dropdownValues={
+                item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
+                  ? [removeAdminDropdown, removeMemberDropdown]
+                  : isAccountOwnerAdmin(groupInfo, account!)
+                    ? [addAdminDropdown, removeMemberDropdown]
+                    : []
+              }
+              selectedMemberAddress={selectedMemberAddress}
+              setSelectedMemberAddress={setSelectedMemberAddress}
+              dropdownRef={dropdownRef}
+            />
+          ))}
+      </Section>
+      {showAddMoreWalletModal && (
+        <AddWalletContent
+          onSubmit={addMembers}
+          handlePrevious={handlePrevious}
+          onClose={onClose}
+          memberList={memberList}
+          handleMemberList={setMemberList}
+          groupMembers={groupMembers}
+          isLoading={isLoading}
+          modalHeader={'Add More Wallets'}
+        />
+      )}
+    </Section>
+  )
+}
+
+export const GroupInfoModal = ({
+  theme,
+  setModal,
+  groupInfo,
+  setGroupInfo,
+}: GroupInfoModalProps) => {
+  const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(GROUPINFO_STEPS.GROUP_INFO);
+  const handleNextInfo = () => {
+    console.log("criteria")
+    setActiveComponent(activeComponent + 1 as GROUP_INFO_TYPE);
+    console.log(activeComponent);
+  };
+
+  const handlePreviousInfo = () => {
+    setActiveComponent(activeComponent - 1 as GROUP_INFO_TYPE);
+  };
+
+  const renderComponent = () => {
+    switch (activeComponent) {
+      case GROUPINFO_STEPS.GROUP_INFO:
+        return <GroupInformation handleNextInformation={handleNextInfo} handlePreviousInformation={handlePreviousInfo} theme={theme} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />;
+      case GROUPINFO_STEPS.CRITERIA:
+        return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
+      default:
+        return <GroupInformation handleNextInformation={handleNextInfo} handlePreviousInformation={handlePreviousInfo} theme={theme} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />;
+    }
+  }
+  const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
+    useState<boolean>(false);
+  useState<boolean>(false);
+  const [memberList, setMemberList] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
+    string | null
+  >(null);
+  const { updateGroup } = useUpdateGroup();
+  const isMobile = useMediaQuery(device.mobileL);
+
+  const handleClose = () => onClose();
+  const dropdownRef = useRef<any>(null);
+  useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
+  const groupInfoToast = useToast();
+
+  const groupCreator = groupInfo?.groupCreator;
+  const membersExceptGroupCreator = groupInfo?.members?.filter(
+    (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
+  );
+
+  type UpdateGroupType = {
+    adminList: Array<string>;
+    memberList: Array<string>;
+  };
+
+  const handleUpdateGroup = async (options: UpdateGroupType) => {
+    const { adminList, memberList } = options || {};
+    const updateResponse = await updateGroup({
+      groupInfo,
+      memberList,
+      adminList,
+    });
+    return { updateResponse };
+  };
+
+  const handleAddRemove = async (
+    options: UpdateGroupType & { updateKey: UpdateKeys }
+  ) => {
+    const { adminList, memberList, updateKey } = options || {};
+
+    try {
+      setIsLoading(true);
+      const { updateResponse } = await handleUpdateGroup({
+        adminList,
+        memberList,
+      });
+
+      if (typeof updateResponse !== 'string') {
+        setGroupInfo(updateResponse);
+
+        groupInfoToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: SUCCESS_MESSAGE[updateKey],
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        });
+      } else {
+        groupInfoToast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: updateResponse,
+          toastType: 'ERROR',
+          getToastIcon: (size) => <MdError size={size} color="red" />,
+        });
+      }
+    } catch (error) {
+      console.error('Error', error);
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: 'Please, try again',
+        toastType: 'ERROR',
+        getToastIcon: (size) => <MdError size={size} color="red" />,
+      });
+    } finally {
+      if (updateKey === UPDATE_KEYS.ADD_MEMBER) handleClose();
+      setIsLoading(false);
+      setSelectedMemberAddress(null);
+    }
+  };
+  const removeMember = async () => {
+    const updatedMemberList = getUpdatedMemberList(
+      groupInfo,
+      selectedMemberAddress!
+    );
+    const adminList = getUpdatedAdminList(
+      groupInfo,
+      selectedMemberAddress,
+      true
+    );
+    await handleAddRemove({
+      memberList: updatedMemberList,
+      adminList,
+      updateKey: UPDATE_KEYS.REMOVE_MEMBER,
+    });
+  };
+
+  const addMembers = async () => {
+    //Already Present Members and PendingMembers
+    const groupMemberList = convertToWalletAddressList([
+      ...groupInfo.members,
+      ...groupInfo.pendingMembers,
+    ]);
+
+    //Newly Added Members and alreadyPresent Members in the groupchat
+    const newMembersToAdd = memberList.map((member: any) => member.wallets);
+    const members = [...groupMemberList, ...newMembersToAdd];
+
+    //Admins wallet address from both members and pendingMembers
+    const adminList = getAdminList?.(groupInfo);
+
+    await handleAddRemove({
+      memberList: members,
+      adminList,
+      updateKey: UPDATE_KEYS.ADD_MEMBER,
+    });
+  };
+
+  const updateGroupAdmin = async (updateKey: UpdateKeys) => {
+    const groupMemberList = convertToWalletAddressList([
+      ...groupInfo.members,
+      ...groupInfo.pendingMembers,
+    ]);
+    const newAdminList = getUpdatedAdminList(
+      groupInfo,
+      selectedMemberAddress,
+      !(updateKey === UPDATE_KEYS.ADD_ADMIN)
+    );
+    await handleAddRemove({
+      memberList: groupMemberList,
+      adminList: newAdminList,
+      updateKey,
+    });
+  };
+
+  const onClose = (): void => {
+    setModal(false);
+  };
+
   if (groupInfo) {
     return (
       <Modal clickawayClose={onClose}>
@@ -333,7 +805,7 @@ export const GroupInfoModal = ({
             flexDirection="column"
             padding={isMobile ? '0px auto' : '0px 10px'}
           >
-            <ModalHeader title='Group Info' handleClose={onClose} />
+            <ModalHeader handlePrevious={activeComponent == 2 ? handlePreviousInfo : undefined} title='Group Info' handleClose={onClose} />
 
             <GroupHeader>
               <Image
@@ -356,142 +828,8 @@ export const GroupInfoModal = ({
                 </Span>
               </Section>
             </GroupHeader>
-
-            <GroupDescription>
-              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                Group Description
-              </Span>
-              <Span
-              textAlign='start'
-                fontSize="18px"
-                color={theme.textColor?.modalSubHeadingText}
-              >
-                {groupInfo?.groupDescription}
-              </Span>
-            </GroupDescription>
-
-            <PublicEncrypted theme={theme}>
-              <Image
-                src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
-                height="24px"
-                maxHeight="24px"
-                width={'auto'}
-              />
-
-              <Section flexDirection="column" alignItems="flex-start" gap="5px">
-                <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                  {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
-                </Span>
-                <Span
-                  fontSize="12px"
-                  color={theme.textColor?.modalSubHeadingText}
-                >
-                  {groupInfo?.isPublic
-                    ? 'Chats are not encrypted'
-                    : 'Chats are end-to-end encrypted'}
-                </Span>
-              </Section>
-            </PublicEncrypted>
-            {(groupInfo.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
-              <PublicEncrypted theme={theme}>
-                <Image
-                  src={TokenGatedIcon}
-                  height="24px"
-                  maxHeight="24px"
-                  width={'auto'}
-                />
-
-                <Section flexDirection="column" alignItems="flex-start" gap="5px">
-                  <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                    Gated group
-                  </Span>
-                  <Span
-                    fontSize="12px"
-                    color={theme.textColor?.modalSubHeadingText}
-                  >
-                    Conditions must be true to join
-                  </Span>
-                </Section>
-              </PublicEncrypted>
-            )}
-
-            {isAccountOwnerAdmin(groupInfo, account!) &&
-              groupInfo?.members &&
-              groupInfo?.members?.length < 10 && (
-                <AddWalletContainer
-                  theme={theme}
-                  onClick={() => setShowAddMoreWalletModal(true)}
-                >
-                  <Image
-                    cursor="pointer"
-                    src={addIcon}
-                    height="18px"
-                    maxHeight="18px"
-                    width={'auto'}
-                  />
-
-                  <Span
-                    cursor="pointer"
-                    color={theme.textColor?.modalSubHeadingText}
-                    margin="0px 14px"
-                    fontSize="16px"
-                    fontWeight="400"
-                  >
-                    Add more wallets
-                  </Span>
-                </AddWalletContainer>
-              )}
-
-            <Section borderRadius="16px">
-              {groupInfo?.pendingMembers?.length > 0 && (
-                <PendingMembers
-                  groupInfo={groupInfo}
-                  setShowPendingRequests={setShowPendingRequests}
-                  showPendingRequests={showPendingRequests}
-                  theme={theme}
-                />
-              )}
-            </Section>
-
-            <Section
-              margin="15px 10px"
-              flexDirection="column"
-              flex="1"
-              zIndex="2"
-            >
-              {groupInfo?.members &&
-                groupInfo?.members?.length > 0 &&
-                groupInfo?.members.map((item, index) => (
-                  <MemberProfileCard
-                    key={index}
-                    member={item}
-                    dropdownValues={
-                      item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
-                        ? [removeAdminDropdown, removeMemberDropdown]
-                        : isAccountOwnerAdmin(groupInfo, account!)
-                          ? [addAdminDropdown, removeMemberDropdown]
-                          : []
-                    }
-                    selectedMemberAddress={selectedMemberAddress}
-                    setSelectedMemberAddress={setSelectedMemberAddress}
-                    dropdownRef={dropdownRef}
-                  />
-                ))}
-            </Section>
+            {renderComponent()}
           </Section>
-        )}
-
-        {showAddMoreWalletModal && (
-          <AddWalletContent
-            onSubmit={addMembers}
-            handlePrevious={handlePrevious}
-            onClose={onClose}
-            memberList={memberList}
-            handleMemberList={setMemberList}
-            groupMembers={groupMembers}
-            isLoading={isLoading}
-            modalHeader={'Add More Wallets'}
-          />
         )}
       </Modal>
     );
