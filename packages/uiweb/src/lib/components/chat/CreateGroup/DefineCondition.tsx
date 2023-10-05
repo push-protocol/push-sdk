@@ -11,9 +11,10 @@ import OptionButtons from '../reusables/OptionButtons';
 
 import { device } from '../../../config';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { ConditionArray } from '../exportedTypes';
+import { ConditionArray, IChatTheme } from '../exportedTypes';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
+import styled from 'styled-components';
 
 const dummyConditonsData: ConditionArray[] = [
   [{ operator: 'any' }],
@@ -83,9 +84,9 @@ const dummyConditonsData: ConditionArray[] = [
   ],
 ];
 
-const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map((criteria) => [
-    criteria,
-  ]);
+const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map(
+  (criteria) => [criteria]
+);
 
 export const DefineCondtion = ({
   onClose,
@@ -128,9 +129,10 @@ export const DefineCondtion = ({
               setOperator={setCriteriaOperator}
             />
           </Section>
-          <ConditionsComponent
-            conditionData={dummySingleCondtionData}
-          />
+          <ConditionSection width="100%"  overflow="hidden auto" maxHeight="20rem" theme={theme} padding='0 4px 0 0'>
+
+            <ConditionsComponent conditionData={dummySingleCondtionData} />
+          </ConditionSection>
         </>
       )}
       <Section flexDirection="column" gap="10px">
@@ -150,3 +152,19 @@ export const DefineCondtion = ({
     </Section>
   );
 };
+
+
+const ConditionSection = styled(Section)<{theme:IChatTheme}>`
+&::-webkit-scrollbar-thumb {
+ background: ${(props) => props.theme.scrollbarColor};
+ border-radius: 10px;
+}
+
+&::-webkit-scrollbar-button {
+  height: 40px;
+}
+
+&::-webkit-scrollbar {
+ width: 4px;
+}
+`;

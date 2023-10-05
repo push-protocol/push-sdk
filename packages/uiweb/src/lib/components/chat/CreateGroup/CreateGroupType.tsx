@@ -15,9 +15,10 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import useToast from '../reusables/NewToast';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { ConditionArray } from '../exportedTypes';
+import { ConditionArray, IChatTheme } from '../exportedTypes';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
+import styled from 'styled-components';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -53,7 +54,7 @@ const AddConditionSection = ({
   subHeading,
   handleNext,
 }: AddConditionProps) => {
-    //todo - dummy data to be removed after we get condition data
+  //todo - dummy data to be removed after we get condition data
 
   const dummyConditonsData: ConditionArray[] = [
     [{ operator: 'any' }],
@@ -125,11 +126,9 @@ const AddConditionSection = ({
 
   const dummySingleCondtionData = dummyConditonsData[2];
   const theme = useContext(ThemeContext);
-  const [conditionOperator, setConditionOperator] = useState<string>(dummyConditonsData[0][0]?.operator as string);
-
-
- 
-
+  const [conditionOperator, setConditionOperator] = useState<string>(
+    dummyConditonsData[0][0]?.operator as string
+  );
 
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
@@ -150,13 +149,15 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-      <Section margin='20px 0 10px 0'>
+      <Section margin="20px 0 10px 0">
         <OperatorContainer
           operator={conditionOperator}
           setOperator={setConditionOperator}
         />
       </Section>
-      <ConditionsComponent conditionData={dummyConditonsData} />
+      <ConditionSection width="100%"  overflow="hidden auto" maxHeight="20rem" theme={theme} padding='0 4px 0 0'>
+        <ConditionsComponent conditionData={dummyConditonsData} />
+      </ConditionSection>
 
       <Button
         onClick={handleNext}
@@ -256,3 +257,19 @@ export const CreateGroupType = ({
     </Section>
   );
 };
+
+
+//styles
+ const ConditionSection = styled(Section)<{theme:IChatTheme}>`
+ &::-webkit-scrollbar-thumb {
+  background: ${(props) => props.theme.scrollbarColor};
+  border-radius: 10px;
+}
+&::-webkit-scrollbar-button {
+  height: 40px;
+}
+
+&::-webkit-scrollbar {
+  width: 4px;
+}
+ `;
