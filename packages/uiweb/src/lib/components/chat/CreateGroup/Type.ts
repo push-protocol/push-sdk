@@ -144,7 +144,16 @@ export const useCriteriaState = ():CriteriaStateType=>{
       setSelectedCriteria(entryOptionTypeArray.length)
     }
 
-    setSelectedRule(prev =>[...prev,newRule])
+    if(updateCriteriaIdx !== -1){
+      // update existing
+      const _rulesToUpdate = [...selectedRules]
+      _rulesToUpdate[updateCriteriaIdx] = newRule
+      setSelectedRule(_rulesToUpdate)
+    }else{
+      // add new
+      setSelectedRule(prev =>[...prev,newRule])
+    }
+
   }
 
   const deleteRule = (idx:number)=>{

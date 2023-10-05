@@ -262,9 +262,7 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
-
   const verifyAndDoNext = ()=>{
-
     const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
     const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
       selectedCategoryValue
@@ -301,11 +299,10 @@ const AddCriteria = ({
         // GUILD type
         return {
           id:guildId,
-          role:specificRoleId,
           comparison:guildComparison,
+          role:guildComparison === 'specific' ? specificRoleId : "*",
         }
       }
-
     }
 
     const rule:Rule = {
@@ -315,8 +312,9 @@ const AddCriteria = ({
       data: getData(_type, category),
     }
 
-    // alert(JSON.stringify(rule))
     entryCriteria.addNewRule(rule)
+
+    // alert(`${JSON.stringify(rule)}`)
 
     if(handlePrevious){
       handlePrevious()
@@ -364,19 +362,17 @@ const AddCriteria = ({
       }
     }else{
       // guild condition
+      alert(`${JSON.stringify(oldValue.data)}`)
       setGuildId((oldValue.data as GuildData).id)
       setSpecificRoleId((oldValue.data as GuildData).role)
-      setGuildComparison((oldValue.data as GuildData).comparison)
+      setGuildComparison((oldValue.data as GuildData).comparison) 
     }
     
     setSelectedTypeValue(
       dropdownTypeValues.findIndex(obj => obj.value === oldValue.type) 
     )
-
-    
-    // TODO: reverse the form fill
    } 
-  },[0])
+  },[])
 
   return (
     <Section
@@ -502,12 +498,16 @@ const AddCriteria = ({
               setGuildComparison(newEl)}}
           />
 
-          <TextInput
-            labelName="Specific Role"
-            inputValue={specificRoleId}
-            onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
-            placeholder="e.g. 4687"
-          />
+          {guildComparison === "specific" && 
+            <TextInput
+              labelName="Specific Role"
+              inputValue={specificRoleId}
+              onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+              placeholder="e.g. 4687"
+            />
+          }
+
+          
         </>
       )}
       <Button width="197px" onClick={verifyAndDoNext}>

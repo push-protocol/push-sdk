@@ -7,10 +7,11 @@ import { ModalHeaderProps } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import OptionButtons from '../reusables/OptionButtons';
 import { device } from '../../../config';
-import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { OPERATOR_OPTIONS_INFO } from '../constants';
 import ConditionsComponent from './ConditionsComponent';
+import { OperatorContainer } from './OperatorContainer';
+import { handleDefineCondition } from '../helpers/tokenGatedGroup';
 
 export const DefineCondtion = ({
   onClose,
@@ -33,17 +34,7 @@ export const DefineCondtion = ({
   const isMobile = useMediaQuery(device.mobileL);
 
   const verifyAndDoNext = ()=>{
-    if(entryCriteria.isCondtionUpdateEnabled()){
-      // handle update
-      entryCriteria.updateCondition()
-    }else{
-      // handle insertion
-      entryCriteria.addNewCondtion()
-    }
-
-    if(handlePrevious){
-      handlePrevious()
-    }
+    handleDefineCondition(entryCriteria, handlePrevious)
   }
 
   const getRules = ()=>{
@@ -53,6 +44,7 @@ export const DefineCondtion = ({
     ]
   }
 
+  // set state for edit condition
   useEffect(()=>{
     if(entryCriteria.isCondtionUpdateEnabled()){
       entryCriteria.setEntryRuleTypeCondition(
@@ -65,7 +57,7 @@ export const DefineCondtion = ({
         ])
       }
     }
-  },[0])
+  },[])
 
 
   return (
@@ -81,30 +73,12 @@ export const DefineCondtion = ({
       />
       {isCriteriaAdded && (
         <Section flexDirection="column" gap="16px">
-          <OptionButtons
-            options={OPERATOR_OPTIONS}
-            selectedValue={
-              entryCriteria.entryRuleTypeCondition
-            }
-            handleClick={(newEl: string) => {
+          <OperatorContainer 
+            operator={entryCriteria.entryRuleTypeCondition} 
+            setOperator={(newEl: string) => {
               entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
             }}
           />
-          <Span fontSize="14px">
-            {
-              OPERATOR_OPTIONS_INFO[
-                entryCriteria.entryRuleTypeCondition as keyof typeof OPERATOR_OPTIONS_INFO
-              ].head
-            } 
-            <Span color={theme.textColor?.modalSubHeadingText}>
-              {' '}
-              {
-                OPERATOR_OPTIONS_INFO[
-                  entryCriteria.entryRuleTypeCondition as keyof typeof OPERATOR_OPTIONS_INFO
-                ].tail
-              }
-            </Span>
-          </Span>{' '}
           <ConditionsComponent
             conditionData={getRules()}
             deleteFunction={(idx)=>{

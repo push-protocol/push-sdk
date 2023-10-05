@@ -10,9 +10,9 @@ import { GroupTypeState } from './CreateGroupModal';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import {ConditionType, CriteriaStateType, Rule, } from './Type'
-import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import {ConditionType, CriteriaStateType,} from './Type'
 import ConditionsComponent from './ConditionsComponent';
+import { OperatorContainer } from './OperatorContainer';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -84,28 +84,13 @@ const AddConditionSection = ({
 
       {/* todo - check later if this etire section can be optimised for define condtion page too */}
       <Section flexDirection="column" gap="16px">
-        <OptionButtons
-          options={OPERATOR_OPTIONS}
-          selectedValue={criteriaState.entryRootCondition}
-          handleClick={(newEl: string) => {
-            criteriaState.setEntryRootCondition(newEl as ConditionType);
-          }}
-        />
-        <Span fontSize="14px">
-          {
-            OPERATOR_OPTIONS_INFO[
-              criteriaState.entryRootCondition as keyof typeof OPERATOR_OPTIONS_INFO
-            ].head
-          }
-          <Span color={theme.textColor?.modalSubHeadingText}>
-            {' '}
-            {
-              OPERATOR_OPTIONS_INFO[
-                criteriaState.entryRootCondition as keyof typeof OPERATOR_OPTIONS_INFO
-              ].tail
-            }
-          </Span>
-        </Span>
+      
+      <OperatorContainer 
+        operator={criteriaState.entryRootCondition} 
+        setOperator={(newEl: string) => {
+          criteriaState.setEntryRootCondition(newEl as ConditionType);
+        }}
+      />
       
       <ConditionsComponent 
         conditionData={[
@@ -204,7 +189,6 @@ export const CreateGroupType = ({
         selectedValue={groupEncryptionType}
         handleClick={(newEl: string) => {
           setGroupEncryptionType(newEl);
-          console.log('we called it');
         }}
       />
 
@@ -221,10 +205,6 @@ export const CreateGroupType = ({
             criteriaState={entryCriteria}
             handleNext={
               ()=>{
-                // add new condtion
-                // entryCriteria.
-
-
                 if(handleNext){
                   handleNext()
                 }
