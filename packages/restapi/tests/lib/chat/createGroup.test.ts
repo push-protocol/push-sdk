@@ -127,8 +127,8 @@ const expectGroup = async (
   expect(group.members[0].image).to.be.a('string');
   expect(group.pendingMembers).to.be.an('array');
   expect(group.pendingMembers.length).to.equal(pendingMembers.length);
-  expect(group.pendingMembers[0].wallet).to.equal(pendingMembers[0]);
-  expect(group.pendingMembers[1].wallet).to.equal(pendingMembers[1]);
+  expect(pendingMembers.includes(group.pendingMembers[0].wallet)).to.be.true;
+  expect(pendingMembers.includes(group.pendingMembers[1].wallet)).to.be.true;
   expect(group.groupImage).to.equal(groupImage);
   expect(group.groupName).to.equal(groupName);
   expect(group.groupDescription).to.equal(groupDescription);

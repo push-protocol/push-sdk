@@ -51,25 +51,30 @@ export const allowedNetworks = {
     1, //for ethereum mainnet
     137, //for polygon mainnet
     56, // for bnb mainnet
-    // 10 // for optimism mainnet
+    10, // for optimism mainnet
+    42161 // for arbitrum mainnet
   ],
   'dev' : [
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'staging' :  [
     // 42, //for kovan
     5, // for goerli
     80001, //for mumbai polygon
-    97 // bnb testnet
+    97, // bnb testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'local' :[
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ]
 }
 

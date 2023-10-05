@@ -24,7 +24,7 @@ export interface StartSpaceType extends EnvOptionsType {
 import type Space from './Space';
 import { produce } from 'immer';
 import { pCAIP10ToWallet } from '../helpers';
-import { META_ACTION } from '../types/messageTypes';
+import { CHAT } from '../types/messageTypes';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
 
 type StartType = {
@@ -94,7 +94,7 @@ export async function start(this: Space): Promise<void> {
 
     await sendLiveSpaceData({
       liveSpaceData,
-      action: META_ACTION.CREATE_SPACE,
+      action: CHAT.META.SPACE.CREATE,
       spaceId: this.spaceSpecificData.spaceId,
       signer: this.signer,
       pgpPrivateKey: this.pgpPrivateKey,
