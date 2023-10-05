@@ -3,9 +3,15 @@ import PolygonSvg from "./polygonSVG";
 import GraphSvg from "./thegraphSVG";
 import BscSvg from "./bscSVG";
 import OptimismSvg from "./optimismSVG"
-import PolygonZKEVMSvg from "./polygonZKEVMSVG";
+import PolygonZKEVMSvg from "./polygonZkEVMSVG";
+import ArbitrumSvgComponent from "./arbitrumSVG";
 
-export default {
+type Network = {
+    label: string;
+    Icon: any;
+};
+
+const networks: Record<string, Network> = {
     ETH_TEST_GOERLI: { label: "ETHEREUM GOERLI", Icon: EthereumSvg },
     ETH_MAINNET: { label: "ETHEREUM MAINNET", Icon: EthereumSvg },
     POLYGON_TEST_MUMBAI: { label: "POLYGON MUMBAI", Icon: PolygonSvg },
@@ -16,5 +22,9 @@ export default {
     OPTIMISM_MAINNET: { label: "OPTIMISM MAINNET", Icon: OptimismSvg },
     POLYGON_ZK_EVM_TESTNET: {label:"POLYGON_ZK_EVM_TESTNET",Icon: PolygonZKEVMSvg},
     POLYGON_ZK_EVM_MAINNET: {label:"POLYGON_ZK_EVM_MAINNET",Icon: PolygonZKEVMSvg},
+    ARBITRUM_TESTNET: {label:"ARBITRUM_TESTNET",Icon: ArbitrumSvgComponent},
+    ARBITRUMONE_MAINNET: {label: "ARBITRUMONE_MAINNET", Icon: ArbitrumSvgComponent},
     THE_GRAPH: { label: "THE GRAPH", Icon: GraphSvg },
 };
+
+export default networks

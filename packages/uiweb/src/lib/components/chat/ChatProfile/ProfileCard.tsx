@@ -96,7 +96,7 @@ export const ProfileCard = ({
             }}
             style={{ cursor: 'pointer' }}
           >
-            {theme ? <MoreLightIcon /> : <MoreDarkIcon />}
+             <MoreLightIcon fill={theme.iconColor?.groupSettings}/>
           </Section>
         )}
       </Section>

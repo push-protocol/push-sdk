@@ -132,6 +132,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     // await spacesObjectRef?.current?.createAudioStream?.();
     await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
     setPromotedListener(requesterAddress);
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {

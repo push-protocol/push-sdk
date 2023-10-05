@@ -7,6 +7,7 @@ import { useRef, useContext } from 'react';
 import styled from 'styled-components'
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
+import { IChatTheme } from '../theme';
 
 // import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -16,6 +17,7 @@ interface IModalProps {
     width?: string;
     clickawayClose?: () => void;
     children: any;
+    theme?:IChatTheme
 }
 
 const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) => {
@@ -65,7 +67,7 @@ const ModalOverlay = styled.div<IModalProps>`
     height: 100%;
     background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
     display: flex;
-    color: ${props => props.theme.textColorPrimary ?? '#000'};
+    color: ${(props) => props.theme.modalBackgroundColor?? '#000'};
     justify-content: center;
     align-items: center;
     z-index: 2000;
@@ -86,7 +88,7 @@ const ModalParent = styled.div<IModalProps>`
     align-items: center;
     padding: 24px 20px;
 
-    background: ${(props => props.theme.bgColorPrimary)};
+    background: ${(props) => props.theme.modalBackgroundColor};
     border-radius: 12px;
 
     width: ${(props => props.width ? props.width : 'auto')};

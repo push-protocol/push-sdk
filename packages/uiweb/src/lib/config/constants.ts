@@ -17,6 +17,9 @@ export const Constants = {
   
 };
 
+export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
+export const RAINBOW_PROJECT_ID = 'e22146926e005c4e513b24024521ef51';
+export const RAINBOW_APP_NAME = 'Push-sdk';
 export const NETWORK_DETAILS = {
   5: {
     network: "goerli",
@@ -48,27 +51,34 @@ export const allowedNetworks = {
     1, //for ethereum mainnet
     137, //for polygon mainnet
     56, // for bnb mainnet
-    // 10 // for optimism mainnet
+    10, // for optimism mainnet
+    42161 // for arbitrum mainnet
   ],
   'dev' : [
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'staging' :  [
     // 42, //for kovan
     5, // for goerli
     80001, //for mumbai polygon
-    97 // bnb testnet
+    97, // bnb testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'local' :[
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ]
 }
+
+export const blockNativeApikey = 'f55f3a76-8510-4af8-9833-b7f85255de83'
 
 export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 

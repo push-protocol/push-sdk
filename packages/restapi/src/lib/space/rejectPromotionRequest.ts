@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/messageTypes';
+import { CHAT } from '../types/messageTypes';
 import { pCAIP10ToWallet } from '../helpers';
 
 import type Space from './Space';
@@ -41,6 +41,6 @@ export async function rejectPromotionRequest(
     env: this.env,
     spaceId: this.spaceSpecificData.spaceId,
     signer: this.signer,
-    action: META_ACTION.USER_INTERACTION, // TODO: Add a reject request type
+    action: CHAT.META.GROUP.USER.INTERACTION, // TODO: Add a reject request type
   });
 }
