@@ -21,14 +21,14 @@ const videoSetData: (
 let videoObject: any = null;
 const videoLocalStream = null; // get the local stream
 const videoSenderAddress = process.env.VIDEO_SENDER_ADDRESS;
-const videoRecipientAddress = process.env.VIDEO_RECIPEINT_ADDRESS;
+const videoRecipientAddress = process.env.VIDEO_RECIPIENT_ADDRESS;
 const videoChatId = process.env.VIDEO_CHAT_ID;
 let videoSignalData_1: any = null;
 
 const skipExample = () => {
   const requiredEnvVars = [
     'VIDEO_SENDER_ADDRESS',
-    'VIDEO_RECIPEINT_ADDRESS',
+    'VIDEO_RECIPIENT_ADDRESS',
     'VIDEO_CHAT_ID',
     'VIDEO_CHAIN_ID',
   ];

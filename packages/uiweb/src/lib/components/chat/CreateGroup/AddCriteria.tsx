@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react';
-
+import { useContext, useEffect, useState } from 'react';
 import {
   Button,
   DropDownInput,
@@ -7,7 +6,7 @@ import {
   ModalHeader,
   TextInput,
 } from '../reusables';
-import { Section, Span } from '../../reusables';
+import { Section, } from '../../reusables';
 import EthereumSvg from '../../../icons/ethereum.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import BSCSvg from '../../../icons/bsc.svg';
@@ -19,7 +18,6 @@ import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
-import styled from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
@@ -34,11 +32,12 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
+import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
 
 
 const AddCriteria = ({
   handlePrevious,
-  //handle add criteria
+  entryCriteria,
   handleNext,
   onClose,
 }: ModalHeaderProps) => {
@@ -246,8 +245,6 @@ const AddCriteria = ({
     return false;
   };
 
-  console.log(checkIfPushInvite());
-
   const getSubCategoryDropdownValues = () => {
     const category = getCategoryDropdownValues();
     console.log(category);
@@ -265,6 +262,118 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
+  const verifyAndDoNext = ()=>{
+    const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
+    const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
+      selectedCategoryValue
+    ].value || CATEGORY.ERC20 : "ROLES"
+
+    let subCategory = "DEFAULT"
+    if(_type === "PUSH"){ 
+      if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+        subCategory = tokenCategoryValues[selectedSubCategoryValue].value
+      } 
+    }
+    
+    const getData = (type:string, category:string):Data=>{
+      if(type === "PUSH"){
+        if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+          const selectedChain = dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+          return {
+            contract: `${selectedChain}:${contract}`,
+            amount: quantity.value,
+            decimals: 18,
+          }
+        }else if(category === CATEGORY.INVITE){
+          return{
+            inviterRoles: inviteCheckboxes.admin ? "ADMIN" : "OWNER"
+          }
+        }else{
+          // CATEGORY.CustomEndpoint
+          // TODO: validate url
+          return{
+            url:url
+          }
+        }
+      }else{
+        // GUILD type
+        return {
+          id:guildId,
+          comparison:guildComparison,
+          role:guildComparison === 'specific' ? specificRoleId : "*",
+        }
+      }
+    }
+
+    const rule:Rule = {
+      type: _type,
+      category: category,
+      subcategory: subCategory,
+      data: getData(_type, category),
+    }
+
+    entryCriteria.addNewRule(rule)
+
+    // alert(`${JSON.stringify(rule)}`)
+
+    if(handlePrevious){
+      handlePrevious()
+    }
+
+  }
+
+  // Autofill the form for the update
+  useEffect(()=>{
+   if(entryCriteria.isUpdateCriteriaEnabled()){
+    //Load the states
+    const oldValue = entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate][entryCriteria.updateCriteriaIdx]
+    
+    if(oldValue.type === 'PUSH'){
+      
+      // category
+      setSelectedCategoryValue(
+        (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(obj => obj.value === oldValue.category) 
+      )
+
+      const pushData = oldValue.data as PushData
+
+      // sub category
+      if(oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721){
+        setSelectedSubCategoryValue(
+          tokenCategoryValues.findIndex(obj => obj.value === oldValue.subcategory)
+        )
+
+        const contractAndChain:string[] = (pushData.contract || "eip155:1:0x").split(':')
+        setSelectedChainValue(
+          dropdownChainsValues.findIndex(
+            obj => obj.value === contractAndChain[0]+":"+contractAndChain[1]
+          ) 
+        )
+        setContract(contractAndChain.length === 3 ? contractAndChain[2]: "") 
+        setQuantity({value:pushData.amount || 0, range:0})
+      }else if(oldValue.category === CATEGORY.INVITE){
+        setInviteCheckboxes({
+          admin:pushData.inviterRoles === "ADMIN",
+          owner:pushData.inviterRoles === "OWNER", 
+        })
+      }else{
+        // invite
+        setUrl(pushData.url || "") 
+      }
+    }else{
+      // guild condition
+      alert(`${JSON.stringify(oldValue.data)}`)
+      setGuildId((oldValue.data as GuildData).id)
+      setSpecificRoleId((oldValue.data as GuildData).role)
+      setGuildComparison((oldValue.data as GuildData).comparison) 
+    }
+    
+    setSelectedTypeValue(
+      dropdownTypeValues.findIndex(obj => obj.value === oldValue.type) 
+    )
+   } 
+  },[])
+
   return (
     <Section
       flexDirection="column"
@@ -275,7 +384,7 @@ const AddCriteria = ({
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title="Add Criteria"
+          title={entryCriteria.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
         />
       </Section>
       <DropDownInput
@@ -389,16 +498,20 @@ const AddCriteria = ({
               setGuildComparison(newEl)}}
           />
 
-          <TextInput
-            labelName="Specific Role"
-            inputValue={specificRoleId}
-            onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
-            placeholder="e.g. 4687"
-          />
+          {guildComparison === "specific" && 
+            <TextInput
+              labelName="Specific Role"
+              inputValue={specificRoleId}
+              onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+              placeholder="e.g. 4687"
+            />
+          }
+
+          
         </>
       )}
-      <Button width="197px" onClick={handleNext}>
-        Add
+      <Button width="197px" onClick={verifyAndDoNext}>
+        {entryCriteria.isUpdateCriteriaEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>
@@ -407,4 +520,3 @@ const AddCriteria = ({
 
 export default AddCriteria;
 
-//styles
