@@ -1,11 +1,27 @@
 import { PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { ethers } from 'ethers';
+import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
 
-export const runPushAPIChannelCases = async (): Promise<void> => {
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const eventlistener = async (
+  pushAPI: PushAPI,
+  eventName: string
+): Promise<void> => {
+  pushAPI.stream.on(eventName, (data: any) => {
+    if (showAPIResponse) {
+      console.log('Stream Event Received');
+      console.log(data);
+      console.log('\n');
+    }
+  });
+};
+
+export const runNotificationClassUseCases = async (): Promise<void> => {
   if (!process.env.WALLET_PRIVATE_KEY) {
     console.log(
       'skipping PushAPI.channel examples, no private key passed in .env'
@@ -27,6 +43,13 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   const userAlice = await PushAPI.initialize(signer, { env });
+
+  // Listen Stream Events for getting websocket events
+  console.log(`Listening ${STREAM.NOTIF} Events`);
+  eventlistener(userAlice, STREAM.NOTIF);
+  console.log(`Listening ${STREAM.NOTIF_OPS} Events`);
+  eventlistener(userAlice, STREAM.NOTIF_OPS);
+  console.log('\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.info');
@@ -63,14 +86,16 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
         body: 'test',
       },
     });
-    const targetedNotif = await userAlice.channel.send([randomWallet1], {
+    await delay(3000); // Delay added to log the events in order
+    const targetedNotif = await userAlice.channel.send([signer.address], {
       notification: {
         title: 'test',
         body: 'test',
       },
     });
+    await delay(3000); // Delay added to log the events in order
     const subsetNotif = await userAlice.channel.send(
-      [randomWallet1, randomWallet2],
+      [randomWallet1, randomWallet2, signer.address],
       {
         notification: {
           title: 'test',
@@ -78,6 +103,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
         },
       }
     );
+    await delay(3000); // Delay added to log the events in order
     if (showAPIResponse) {
       console.log(broadcastNotif, targetedNotif, subsetNotif);
     }
@@ -189,4 +215,43 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
     console.log(aliasInfo);
   }
   console.log('PushAPI.channel.alias.info | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.notification.list');
+  const inboxNotifications = await userAlice.notification.list('INBOX');
+  const spamNotifications = await userAlice.notification.list('SPAM');
+  if (showAPIResponse) {
+    console.log(inboxNotifications, spamNotifications);
+  }
+  console.log('PushAPI.notification.list | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.notification.subscribe');
+  const subscribeResponse = await userAlice.notification.subscribe(
+    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
+  );
+  if (showAPIResponse) {
+    console.log(subscribeResponse);
+  }
+  console.log('PushAPI.notification.subscribe | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.notification.subscriptions');
+  const aliceSubscriptions = await userAlice.notification.subscriptions();
+  if (showAPIResponse) {
+    console.log(aliceSubscriptions);
+  }
+  console.log('PushAPI.notification.subscriptions | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  console.log('PushAPI.notification.unsubscribe');
+  const unsubscribeResponse = await userAlice.notification.unsubscribe(
+    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
+  );
+  if (showAPIResponse) {
+    console.log(unsubscribeResponse);
+  }
+  console.log('PushAPI.notification.unsubscribe | Response - 200 OK\n\n');
+  // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
 };

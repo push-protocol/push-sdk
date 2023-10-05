@@ -74,15 +74,7 @@ const skipExample = () => {
 };
 
 // Push Chat - Run Chat Use cases
-export const runNFTChatUseCases = async (): Promise<void> => {
-  console.log(`
-    ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████
-    ████   ██ ██         ██      ██      ██   ██ ██   ██    ██
-    ██ ██  ██ █████      ██      ██      ███████ ███████    ██
-    ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██
-    ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██
-    `);
-
+export const runNFTChatLowLevelUseCases = async (): Promise<void> => {
   if (skipExample()) {
     console.log('Skipping examples as required env vars are missing');
     return;
