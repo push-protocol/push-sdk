@@ -78,10 +78,22 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetch Encryption Info](#fetch-encryption-info)
     - [Update Encryption](#update-encryption)
   - [PushNotification Class](#pushnotification-class)
-    - [Fetch Inbox /Spam notifications](#fetch-inbox/spam-notifications)
+    - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
     - [Fetch user subscriptions](#fetch-user-subscriptions)
     - [Subscribe to a channel](#subscribe-to-a-channel)
-    - [Unsubscribe to a channel]
+    - [Unsubscribe to a channel](#unsubscribe-to-a-channel)
+    - [Channel information](#channel-information)
+    - [Search Channels](#search-channels)
+    - [Get Subscribers Of A Channel](#get-subscribers-of-a-channel)
+    - [Send a notification](#send-a-notification)
+    - [Create a channel](#create-a-channel)
+    - [Update channel information](#update-channel-information)
+    - [Verify a channel](#verify-a-channel)
+    - [Create channel Setting (WIP)](#create-channel-setting-(wip))
+    - [Get delegators information](#get-delegators-information)
+    - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
+    - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
+    - [Alias Information](#alias-information)
 
 # How to use in your app?
 
@@ -4988,7 +5000,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 
 ## PushNotification Class
 
-### **Fetch Inbox /Spam notifications**
+### **Fetch Inbox Or Spam notifications**
 
 ```tsx
 // lists feeds
@@ -5180,6 +5192,7 @@ const  aliceInfo = await  userAlice.notification.list();
 ```
 
 </details>
+
 ---
 
 ### **Fetch user subscriptions**
@@ -5189,6 +5202,19 @@ const  aliceInfo = await  userAlice.notification.list();
 const subscriptions = await userAlice.notification.subscriptions();
 
 ```
+
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| options* | object | - | An object containing additional options for subscriptions. |
+| options.account* | string | - | Account in CAIP . |
+| options.page* | number | - | page of results to retrieve. |
+| options.limit* | number | - | represents the maximum number of subscriptions to retrieve per page. |
+
+\* - Optional
+
 <details>
   <summary><b>Expected response (Fetching user opted in channels / subscriptions)</b></summary>
 
@@ -5229,17 +5255,6 @@ const subscriptions = await userAlice.notification.subscriptions();
 ```
 
 </details>
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| options* | object | - | An object containing additional options for subscriptions. |
-| options.account* | string | - | Account in CAIP . |
-| options.page* | number | - | page of results to retrieve. |
-| options.limit* | number | - | represents the maximum number of subscriptions to retrieve per page. |
-
-\* - Optional
 
 ---
 
@@ -5350,6 +5365,7 @@ const channelInfo = await userAlice.channel.info(pushChannelInCAIP)
 }
 ```
 </details>
+
 ---
 
 ### **Search Channels**
@@ -5948,6 +5964,7 @@ const createChannelRes = await userAlice.channel.create({name: channelName, desc
 ```
 
 </details>
+
 ---
 
 ### **Update a channel's information**
@@ -5981,6 +5998,7 @@ const updateChannelRes = await userAlice.channel.update({name: newChannelName, d
   }
 ```
 </details>
+
 ---
 
 ### **Verify a channel**
@@ -6004,6 +6022,7 @@ const verifyChannelRes = await userAlice.channel.verify(channelToBeVerified)
   }
 ```
 </details>
+
 ---
 
 ### **Create channel Setting (WIP)**
@@ -6084,13 +6103,14 @@ const addDelegatorRes = userAlice.channel.delegate.add(delegatorAddressInCAIP)
 | Note: Support for contract interaction via viem is coming soon |  |  |  |
 
 <details>
-  <summary><b>Expected response (Create Channel Setting)</b></summary>
+  <summary><b>Expected response (Add Delegate)</b></summary>
 
 ```typescript
   { transactionHash:   "0xee8055ffb8ce35268900c64a57ae28fa5f7ab56879311bb467640c0e7af79d4a" 
   }
 ```
 </details>
+
 ---
 
 ### **Remove delegator from a channel/alias**
@@ -6108,6 +6128,15 @@ const removeDelegatorRes = userAlice.channel.delegate.remove(delegatorAddressInC
 | delegate | string | - | delegator address in CAIP |
 | Note: Support for contract interaction via viem is coming soon |  |  |  |
 
+<details>
+  <summary><b>Expected response (Remove Delegate)</b></summary>
+
+```typescript
+  { transactionHash:   "0xee8055ffb8ce35268900c64a57ae28fa5f7ab56879311bb467640c0e7af79d4a" 
+  }
+```
+</details>
+
 ---
 
 ### **Alias Information**
@@ -6123,3 +6152,17 @@ const aliasInfo = userAlice.channel.alias.info({alias: '0xABC', aliasChain:'POLY
 | options | AliasOptions | - | Configuration options for retrieving alias information. |
 | options.alias | string | - | The alias address |
 | options.aliasChain | ALIAS_CHAIN | - | The name of the alias chain, which can be 'POLYGON' or 'BSC' or 'OPTIMISM' or 'POLYGONZKEVM' |
+
+<details>
+  <summary><b>Expected response (Alias Info)</b></summary>
+
+```typescript
+{
+  channel: '0x0A087Fb5CC25F156115c8193Ef8116b77B9421F7',
+  alias_address: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+  is_alias_verified: 1,
+  blocked: 0,
+  activation_status: 1
+}
+```
+</details>
