@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 import { AiTwotoneCamera } from 'react-icons/ai';
@@ -23,6 +23,8 @@ import AddCriteria from './AddCriteria';
 import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ToastContainer } from 'react-toastify';
+import { CriteriaStateType} from '../types/tokenGatedGroupCreationType';
+import { useCriteriaState } from '../../../hooks/chat/useCriteriaState';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -50,13 +52,23 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   );
 
   const handleNext = () => {
-    console.log('active')
       setActiveComponent(activeComponent+1 as CreateGroupStepKeys);
-      console.log(activeComponent)
   };
   const handlePrevious = () => {
     setActiveComponent(activeComponent-1 as CreateGroupStepKeys);
   };
+  
+  const entryCriteria = useCriteriaState()
+
+  useEffect(()=>{
+    // reset update rules
+    if(activeComponent === 2){
+      entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
+      entryCriteria.setSelectedRule([])
+    }else if(activeComponent === 3){
+      entryCriteria.setUpdateCriteriaIdx(-1)
+    }
+  },[activeComponent])
 
   const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
     groupName:'',
@@ -64,23 +76,25 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     groupImage:null
   })
 
+
   const renderComponent = () => {
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return <CreateGroupDetail 
+          entryCriteria={entryCriteria}
           handleNext={handleNext} 
           onClose={onClose} 
           groupInputDetails={groupInputDetails} 
           setGroupInputDetails={setGroupInputDetails}
         />;
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
-        return <CreateGroupType  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
+        return <CreateGroupType entryCriteria={entryCriteria}  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
-        return <DefineCondtion handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
+        return <DefineCondtion entryCriteria={entryCriteria} handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
       case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
-        return <AddCriteria handlePrevious={handlePrevious} onClose={onClose} />
+        return <AddCriteria entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose} />
       default:
-        return <CreateGroupDetail handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
+        return <CreateGroupDetail entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
         setGroupInputDetails={setGroupInputDetails}/>;
     }
   };
@@ -92,6 +106,7 @@ export interface ModalHeaderProps {
   handleNext?: () => void;
   handlePrevious?:() =>void;
   onClose: () => void;
+  entryCriteria:CriteriaStateType;
 }
 
 interface GroupDetailState{
@@ -142,22 +157,26 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
   }
 
   const verifyAndHandelNext = ()=>{
-    // verify name
-    if (groupName.trim().length === 0){
-      showError("Group Name is empty")
-      return
-    }
+    const skipVerify = true;
 
-    // verify description
-    if (groupDescription.trim().length === 0){
-      showError("Group Description is empty")
-      return
-    }
+    if(!skipVerify){
+      // verify name
+      if (groupName.trim().length === 0){
+        showError("Group Name is empty")
+        return
+      }
 
-    // verify description 
-    if (!groupImage){
-      showError("Group image can't be empty")
-      return
+      // verify description
+      if (groupDescription.trim().length === 0){
+        showError("Group Description is empty")
+        return
+      }
+
+      // verify description 
+      if (!groupImage){
+        showError("Group image can't be empty")
+        return
+      }
     }
     
     if(handleNext){
