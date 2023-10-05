@@ -32,7 +32,7 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { Data, Rule } from './Type';
+import { Data, GuildData, PushData, Rule } from './Type';
 
 
 const AddCriteria = ({
@@ -266,11 +266,16 @@ const AddCriteria = ({
   const verifyAndDoNext = ()=>{
 
     const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
-    
-    const subCategory = getSelectedSubCategoryValue() as "owner" | "holder"
     const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
       selectedCategoryValue
     ].value || CATEGORY.ERC20 : "ROLES"
+
+    let subCategory = "DEFAULT"
+    if(_type === "PUSH"){ 
+      if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+        subCategory = tokenCategoryValues[selectedSubCategoryValue].value
+      } 
+    }
     
     const getData = (type:string, category:string):Data=>{
       if(type === "PUSH"){
@@ -319,10 +324,55 @@ const AddCriteria = ({
 
   }
 
+  // Autofill the form for the update
   useEffect(()=>{
    if(entryCriteria.isUpdateCriteriaEnabled()){
     //Load the states
     const oldValue = entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate][entryCriteria.updateCriteriaIdx]
+    
+    if(oldValue.type === 'PUSH'){
+      
+      // category
+      setSelectedCategoryValue(
+        (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(obj => obj.value === oldValue.category) 
+      )
+
+      const pushData = oldValue.data as PushData
+
+      // sub category
+      if(oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721){
+        setSelectedSubCategoryValue(
+          tokenCategoryValues.findIndex(obj => obj.value === oldValue.subcategory)
+        )
+
+        const contractAndChain:string[] = (pushData.contract || "eip155:1:0x").split(':')
+        setSelectedChainValue(
+          dropdownChainsValues.findIndex(
+            obj => obj.value === contractAndChain[0]+":"+contractAndChain[1]
+          ) 
+        )
+        setContract(contractAndChain.length === 3 ? contractAndChain[2]: "") 
+        setQuantity({value:pushData.amount || 0, range:0})
+      }else if(oldValue.category === CATEGORY.INVITE){
+        setInviteCheckboxes({
+          admin:pushData.inviterRoles === "ADMIN",
+          owner:pushData.inviterRoles === "OWNER", 
+        })
+      }else{
+        // invite
+        setUrl(pushData.url || "") 
+      }
+    }else{
+      // guild condition
+      setGuildId((oldValue.data as GuildData).id)
+      setSpecificRoleId((oldValue.data as GuildData).role)
+      setGuildComparison((oldValue.data as GuildData).comparison)
+    }
+    
+    setSelectedTypeValue(
+      dropdownTypeValues.findIndex(obj => obj.value === oldValue.type) 
+    )
+
     
     // TODO: reverse the form fill
    } 

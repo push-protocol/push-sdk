@@ -127,7 +127,13 @@ const AddConditionSection = ({
       /> 
 
       <Button
-        onClick={handleNext}
+        onClick={()=>{
+          if(handleNext){
+            criteriaState.setSelectedRule([])
+            criteriaState.setSelectedCriteria(-1)
+            handleNext()
+          }
+        }}
         customStyle={{
           color: `${theme.backgroundColor?.buttonBackground}`,
           fontSize: '15px',

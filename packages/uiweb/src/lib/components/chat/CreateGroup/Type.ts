@@ -20,7 +20,7 @@ export interface Rule {
   type: 'PUSH' | 'GUILD';
   // category: 'ERC20' | 'ERC721';
   category: string;
-  subcategory: 'holder' | 'owner' | 'DEFAULT';
+  subcategory:string;
   data: Data;
 }
 
@@ -143,7 +143,8 @@ export const useCriteriaState = ():CriteriaStateType=>{
     if (selectedCriteria === -1){
       setSelectedCriteria(entryOptionTypeArray.length)
     }
-    setSelectedRule((prev)=>[...prev,newRule])
+
+    setSelectedRule(prev =>[...prev,newRule])
   }
 
   const deleteRule = (idx:number)=>{

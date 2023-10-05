@@ -11,7 +11,7 @@ export const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
       value: 'all',
     },
     {
-      heading: 'ALL',
+      heading: 'ANY',
       value: 'any',
     },
     {

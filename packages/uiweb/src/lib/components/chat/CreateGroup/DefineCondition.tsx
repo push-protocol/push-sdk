@@ -59,9 +59,11 @@ export const DefineCondtion = ({
         entryCriteria.entryOptionTypeArray[entryCriteria.entryOptionsDataArrayUpdate]
       )
 
-      entryCriteria.setSelectedRule([
-        ...entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate]
-      ])
+      if(entryCriteria.selectedRules.length === 0){
+        entryCriteria.setSelectedRule([
+          ...entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate],
+        ])
+      }
     }
   },[0])
 
