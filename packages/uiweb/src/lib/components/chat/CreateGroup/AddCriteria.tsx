@@ -32,7 +32,7 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { Data, GuildData, PushData, Rule } from './Type';
+import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
 
 
 const AddCriteria = ({

@@ -1,4 +1,4 @@
-import { CriteriaStateType, Data } from '../CreateGroup/Type';
+import { CriteriaStateType, Data } from '../types';
 import { DropdownValueType } from '../reusables';
 import { CATEGORY, DropdownCategoryValuesType } from '../types';
 

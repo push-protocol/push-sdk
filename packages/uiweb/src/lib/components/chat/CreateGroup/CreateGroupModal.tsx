@@ -23,7 +23,8 @@ import AddCriteria from './AddCriteria';
 import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ToastContainer } from 'react-toastify';
-import { CriteriaStateType, useCriteriaState } from './Type';
+import { CriteriaStateType} from '../types/tokenGatedGroupCreationType';
+import { useCriteriaState } from '../../../hooks/chat/useCriteriaState';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,

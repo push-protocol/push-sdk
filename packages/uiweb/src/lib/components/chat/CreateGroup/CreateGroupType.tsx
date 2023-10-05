@@ -10,7 +10,7 @@ import { GroupTypeState } from './CreateGroupModal';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import {ConditionType, CriteriaStateType,} from './Type'
+import {ConditionType, CriteriaStateType,} from '../types/tokenGatedGroupCreationType'
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 
