@@ -46,7 +46,7 @@ describe('PushAPI.alias functionality', () => {
         alias: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         aliasChain: 'POLYGON',
       });
-        console.log(res)
+        // console.log(res)
       expect(res).not.null;
     });
   });
