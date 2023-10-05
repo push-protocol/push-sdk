@@ -40,13 +40,13 @@ export const getSubscriptionMessageV2 = (
       [actionTypeKey]: userAddress,
       action: action,
       userSetting: userSetting?? '',
-    });
+    }, null, 4);
   } else {
     return JSON.stringify({
       channel,
       [actionTypeKey]: userAddress,
       action: action,
-    });
+    }, null, 4);
   }
 };
 

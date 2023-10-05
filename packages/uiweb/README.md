@@ -330,3 +330,4 @@ Allowed Options (props with * are mandatory)
 | activeChat    | string  | -       | to open a particular chat when modal first opens               |
 | onClose     | () => void  | -       | function to execute when modal is minimised   |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+

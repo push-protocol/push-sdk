@@ -70,11 +70,13 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
     const typeInformation = getTypeInformationV2();
 
     // get message
-    const messageInformation = getSubscriptionMessageV2(
-      channelCAIPDetails.address,
-      userCAIPDetails.address,
-      'Unsubscribe'
-    );
+    const messageInformation = {
+      data: getSubscriptionMessageV2(
+        channelCAIPDetails.address,
+        userCAIPDetails.address,
+        'Unsubscribe'
+      ),
+    };
 
     // sign a message using EIP712
     const signature = await signTypedData(
@@ -89,9 +91,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
 
     const body = {
       verificationProof: `eip712v2:${verificationProof}`,
-      message: {
-        messageInformation,
-      },
+      message: messageInformation.data,
     };
 
     await axios.post(requestUrl, body);

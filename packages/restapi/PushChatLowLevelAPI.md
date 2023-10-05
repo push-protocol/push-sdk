@@ -1681,7 +1681,7 @@ const response = await PushAPI.chat.createGroup({
   groupImage: &lt;group image link&gt; ,
   admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
   rules: {
-    'groupAccess': {
+    'entry': {
       'conditions': [
         {
           'any': [
@@ -1717,7 +1717,7 @@ const response = await PushAPI.chat.createGroup({
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -1803,10 +1803,10 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
+  entry?: {
     conditions: Array<Condition | ConditionBase>;
   };
-  chatAccess?: {
+  chat?: {
     conditions: Array<Condition | ConditionBase>;
   };
 }
@@ -1814,7 +1814,7 @@ export interface Rules {
 
 #### Rules Object Description
 
-The rules object consists of two main sections: `groupAccess` and `chatAccess`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
+The rules object consists of two main sections: `entry` and `chat`, both of which contain conditions to manage access and permissions within a chat application. These conditions may involve different criteria related to token holdings or guild membership.
 
 #### Conditions
 
@@ -1995,7 +1995,7 @@ This structure governs user permissions within a guild. The subcategory dictates
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
   chatId: '0364908cbaef95a5a3124c394ada868177c158a4d677cedd6fd1e42db1852386',
   rules: {
-    'groupAccess': {
+    'entry': {
       'conditions': [
         {
           'any': [
@@ -2030,7 +2030,7 @@ This structure governs user permissions within a guild. The subcategory dictates
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -2100,10 +2100,10 @@ Allowed Options (params with \_ are mandatory)
 ```typescript
 // PushAPI_chat_getGroupAccess | Response - 200 OK
 {
-    'groupAccess': true,
-    'chatAccess': false,
+    'entry': true,
+    'chat': false,
     'rules': {
-        'groupAccess': {
+        'entry': {
             'conditions': [
                 {
                     'any': [
@@ -2142,7 +2142,7 @@ Allowed Options (params with \_ are mandatory)
                 }
             ]
         },
-        'chatAccess': {
+        'chat': {
             'conditions': [
                 {
                     'all': [
@@ -2227,7 +2227,7 @@ const response = await PushAPI.chat.updateGroup({
     groupImage: &lt;group image link&gt; ,
     admins: ['0x3829E53A15856d1846e1b52d3Bdf5839705c29e5'],
     rules: {
-    'groupAccess': {
+    'entry': {
       'conditions': [
         {
           'any': [
@@ -2254,7 +2254,7 @@ const response = await PushAPI.chat.updateGroup({
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [
@@ -2431,7 +2431,7 @@ Allowed Options (params with _ are mandatory)
   groupCreator: 'eip155:0xb340E384FC4549591bc7994b0f90074753dEC72a',
   chatId: '870cbb20f0b116d5e461a154dc723dc1485976e97f61a673259698aa7f48371c',
   rules: {
-    'groupAccess': {
+    'entry': {
       'conditions': [
         {
           'any': [
@@ -2458,7 +2458,7 @@ Allowed Options (params with _ are mandatory)
         }
       ]
     },
-    'chatAccess': {
+    'chat': {
       'conditions': [
         {
           'all': [

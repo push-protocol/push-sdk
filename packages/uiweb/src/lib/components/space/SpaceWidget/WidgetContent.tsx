@@ -74,6 +74,7 @@ export const WidgetContent: React.FC<WidgetContentProps> = ({
           spaceData={spaceData}
           isHost={isHost}
           setSpaceStatusState={setSpaceStatusState}
+          account={account}
         />
       ) : spaceStatusState === SpaceStatus.Scheduled ? (
         <ScheduledWidgetContent
