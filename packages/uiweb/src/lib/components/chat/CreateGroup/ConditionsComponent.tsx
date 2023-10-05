@@ -47,7 +47,7 @@ const MoreOptionsContainer = ({
   const dropdownRef = useRef<any>(null);
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
-
+console.log('in dropdown')
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}>
       <MoreDarkIcon color={theme.iconColor?.groupSettings} />
@@ -125,6 +125,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
   const handleMoreOptionsClick = (row: number, col: number) => {
+    console.log('in click')
     setSelectedIndex([row, col]);
   };
 
