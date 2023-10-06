@@ -34,7 +34,7 @@ export const getAliasInfo = async (
   const aliasChainId:number = ALIAS_CHAIN_ID[aliasChain][env];
 
   const _alias = getCAIPWithChainId(alias, aliasChainId, 'Alias');
-  console.log(_alias)
+  // console.log(_alias)
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/alias`;
   const requestUrl = `${apiEndpoint}/${_alias}/channel`;

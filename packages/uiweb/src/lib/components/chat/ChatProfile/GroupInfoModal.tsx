@@ -21,7 +21,7 @@ import { AddWalletContent } from './AddWalletContent'
 import ArrowIcon from '../../../icons/CaretDown.svg'
 import { Modal } from "../helpers/Modal";
 import { device } from "../../../config";
-import useMediaQuery from "../helpers/useMediaQuery";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 import useToast from "../helpers/NewToast";
 import { MdCheckCircle, MdError } from "react-icons/md";
 
@@ -47,7 +47,7 @@ const PendingMembers = ({ groupInfo, setShowPendingRequests, showPendingRequests
              <GroupPendingMembers theme={theme}>
                     <Image src={item?.image} height="36px" maxHeight="36px" width={'auto'} borderRadius='100%' />
 
-                    <Span margin='0 0 0 10px'>
+                    <Span margin='0 0 0 10px' color={theme.modalProfileTextColor}>
                          {shortenText(item?.wallet?.split(':')[1] ?? '', 6, true)}
                     </Span>
 
@@ -400,7 +400,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
 
         <div></div>
 
-        <Span textAlign='center' fontSize='20px' color={theme.textColorPrimary}>Group Info</Span>
+        <Span textAlign='center' fontSize='20px' color={theme.modalProfileTextColor}>Group Info</Span>
 
         <Image src={CloseIcon} height="24px" maxHeight="24px" width={'auto'}  onClick={()=>onClose()} cursor='pointer' />
         </Section>
@@ -409,7 +409,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
             <Image src={groupInfo?.groupImage ?? ''} height="64px" maxHeight="64px" width={'auto'} borderRadius="16px" />
 
             <Section flexDirection='column' alignItems='flex-start' gap='5px'>
-                <Span fontSize='20px' color={theme.textColorPrimary}>{groupInfo?.groupName}</Span>
+                <Span fontSize='20px' color={theme.modalProfileTextColor}>{groupInfo?.groupName}</Span>
                 <Span fontSize='16px' color={theme.modalDescriptionTextColor}>{groupInfo?.members?.length} Members</Span>
             </Section>
         </GroupHeader>
@@ -423,7 +423,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
             <Image src={groupInfo?.isPublic ? LockIcon : LockSlashIcon} height="24px" maxHeight="24px" width={'auto'} />
 
             <Section flexDirection='column' alignItems='flex-start' gap='5px'>
-                <Span fontSize='18px' color={theme.textColorPrimary}>{groupInfo?.isPublic ? 'Public' : 'Private'}</Span>
+                <Span fontSize='18px' color={theme.textColor?.chatReceivedBubbleText}>{groupInfo?.isPublic ? 'Public' : 'Private'}</Span>
                 <Span fontSize='12px' color={theme.modalIconColor}>{groupInfo?.isPublic ? 'Chats are not encrypted' : 'Chats are encrypted'}</Span>
             </Section>
         </PublicEncrypted>
@@ -435,7 +435,7 @@ export const GroupInfoModal = ({ theme, modal, setModal, groupInfo, setGroupInfo
               <Image src={addIcon} height="18px" maxHeight="18px" width={'auto'} />
 
               <Span
-                color={theme.textColorSecondary}
+          color={theme.modalProfileTextColor}
                 margin="0px 14px"
                 fontSize="16px"
                 fontWeight="400"

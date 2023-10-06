@@ -74,15 +74,7 @@ const skipExample = () => {
 };
 
 // Push Chat - Run Chat Use cases
-export const runNFTChatUseCases = async (): Promise<void> => {
-  console.log(`
-    ███    ██ ███████ ████████   ██████  ██   ██  █████  ████████
-    ████   ██ ██         ██      ██      ██   ██ ██   ██    ██
-    ██ ██  ██ █████      ██      ██      ███████ ███████    ██
-    ██  ██ ██ ██         ██      ██      ██   ██ ██   ██    ██
-    ██   ████ ██         ██      ██████  ██   ██ ██   ██    ██
-    `);
-
+export const runNFTChatLowLevelUseCases = async (): Promise<void> => {
   if (skipExample()) {
     console.log('Skipping examples as required env vars are missing');
     return;
@@ -526,9 +518,9 @@ async function PushAPI_nft_chat_updateGroup(
     chatId,
     groupName: updatedNftGroupName,
     groupDescription,
-    members: [nftAccount2, nftAccount3],
+    members: [nftAccount2, nftAccount3, nftAccount1],
     groupImage,
-    admins: [nftAccount2],
+    admins: [nftAccount1],
     account: nftAccount1,
     signer: nftSigner1,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
