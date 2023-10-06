@@ -78,6 +78,7 @@ export const DefineCondtion = ({
             setOperator={(newEl: string) => {
               entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
             }}
+            numRules={entryCriteria.selectedRules.length}
           />
           <ConditionsComponent
             conditionData={getRules()}

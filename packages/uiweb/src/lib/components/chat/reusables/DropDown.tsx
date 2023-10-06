@@ -13,7 +13,6 @@ export type DropdownValueType = {
   invertedIcon?: any;
   id: number | string;
   link?: string;
-
   value?: string;
   title: string;
   icon?: string;
@@ -214,7 +213,7 @@ const A = styled.a`
 
   background: ${(props) => props.color};
   z-index: 11;
-  &. hover {
+  &:hover {
     background: transparent !important;
   }
 `;

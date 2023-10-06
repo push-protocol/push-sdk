@@ -2,7 +2,8 @@ export interface PushData {
   contract?: string;
   amount?: number;
   decimals?: number;
-  inviterRoles?: 'OWNER' | 'ADMIN';
+  inviterRoles?: string[];
+  comparison?:string;
   url?: string;
 }
 
@@ -15,7 +16,7 @@ export interface GuildData {
 export type Data = PushData | GuildData;
 
 export interface Rule {
-  type: 'PUSH' | 'GUILD';
+  type: string;
   // category: 'ERC20' | 'ERC721';
   category: string;
   subcategory: string;

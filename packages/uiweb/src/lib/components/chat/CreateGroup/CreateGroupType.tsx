@@ -90,6 +90,7 @@ const AddConditionSection = ({
         setOperator={(newEl: string) => {
           criteriaState.setEntryRootCondition(newEl as ConditionType);
         }}
+        numRules={criteriaState.entryOptionsDataArray.length}
       />
       
       <ConditionsComponent 
