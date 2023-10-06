@@ -51,7 +51,7 @@ const AddCriteria = ({
   const [inviteCheckboxes, setInviteCheckboxes] = useState<{
     admin: boolean;
     owner: boolean;
-  }>({ admin: false, owner: false });
+  }>({ admin: true, owner: true });
   const [url, setUrl] = useState<string>('');
   const [guildId, setGuildId] = useState<string>('');
   const [specificRoleId, setSpecificRoleId] = useState<string>('');
@@ -77,15 +77,39 @@ const AddCriteria = ({
   const dropdownQuantityRangeValues: Array<DropdownValueType> = [
     {
       id: 0,
-      title: 'Minimum',
-      value: 'MINIMUM',
+      title: 'Greater than',
+      value: '>',
       function: () => setQuantity({ ...quantity, range: 0 }),
     },
     {
       id: 1,
-      title: 'Maximum',
-      value: 'MAXIMUM',
+      title: 'Greater or equal to',
+      value: '>=',
       function: () => setQuantity({ ...quantity, range: 1 }),
+    },
+    {
+      id: 2,
+      title: 'Less than',
+      value: '<',
+      function: () => setQuantity({ ...quantity, range: 2 }),
+    },
+    {
+      id: 3,
+      title: 'Less or equal to',
+      value: '<=',
+      function: () => setQuantity({ ...quantity, range: 3 }),
+    },
+    {
+      id: 4,
+      title: 'Equal to',
+      value: '==',
+      function: () => setQuantity({ ...quantity, range: 4 }),
+    },
+    {
+      id: 5,
+      title: 'Not equal to',
+      value: '!=',
+      function: () => setQuantity({ ...quantity, range: 5 }),
     },
   ];
   const dropdownTypeValues: Array<DropdownValueType> = [
@@ -291,11 +315,20 @@ const AddCriteria = ({
           return {
             contract: `${selectedChain}:${contract}`,
             amount: quantity.value,
+            comparison:dropdownQuantityRangeValues[quantity.range].value,
             decimals: 18,
           }
         }else if(category === CATEGORY.INVITE){
+          const _inviteRoles = []
+          if(inviteCheckboxes.admin){
+            _inviteRoles.push("ADMIN")
+          }
+          if(inviteCheckboxes.owner){
+            _inviteRoles.push("OWNER")
+          }
+
           return{
-            inviterRoles: inviteCheckboxes.admin ? "ADMIN" : "OWNER"
+            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN']
           }
         }else{
           // CATEGORY.CustomEndpoint
@@ -322,8 +355,6 @@ const AddCriteria = ({
     }
 
     entryCriteria.addNewRule(rule)
-
-    // alert(`${JSON.stringify(rule)}`)
 
     if(handlePrevious){
       handlePrevious()
@@ -359,11 +390,16 @@ const AddCriteria = ({
           ) 
         )
         setContract(contractAndChain.length === 3 ? contractAndChain[2]: "") 
-        setQuantity({value:pushData.amount || 0, range:0})
+        setQuantity({
+          value:pushData.amount || 0, 
+          range:dropdownQuantityRangeValues.findIndex(
+            obj => obj.value === oldValue.data
+          )
+        })
       }else if(oldValue.category === CATEGORY.INVITE){
         setInviteCheckboxes({
-          admin:pushData.inviterRoles === "ADMIN",
-          owner:pushData.inviterRoles === "OWNER", 
+          admin:true,
+          owner:true, 
         })
       }else{
         // invite
@@ -371,7 +407,6 @@ const AddCriteria = ({
       }
     }else{
       // guild condition
-      alert(`${JSON.stringify(oldValue.data)}`)
       setGuildId((oldValue.data as GuildData).id)
       setSpecificRoleId((oldValue.data as GuildData).role)
       setGuildComparison((oldValue.data as GuildData).comparison) 
@@ -476,11 +511,8 @@ const AddCriteria = ({
               }
               onToggle={() =>
                 setInviteCheckboxes({
-                  ...inviteCheckboxes,
-                  [key]:
-                    !inviteCheckboxes[
-                      key as keyof typeof INVITE_CHECKBOX_LABEL
-                    ],
+                  admin:true,
+                  owner:true
                 })
               }
               checked={

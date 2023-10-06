@@ -13,9 +13,18 @@ export const useCriteriaState = (): CriteriaStateType => {
   const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<
     ConditionType[]
   >([]);
-  const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>(
-    []
-  );
+  const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>([
+    [
+      {
+        type: 'PUSH',
+        category: 'INVITE',
+        subcategory: 'DEFAULT',
+        data: {
+          inviterRoles: ['ADMIN', 'OWNER'],
+        },
+      },
+    ],
+  ]);
 
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([]);
@@ -47,8 +56,10 @@ export const useCriteriaState = (): CriteriaStateType => {
   };
 
   const addNewCondtion = () => {
-    setEntryOptionTypeArray((prev) => [...prev, entryRuleTypeCondition]);
-    setEntryOptionsDataArray((prev) => [...prev, [...selectedRules]]);
+    if(selectedRules.length > 0){
+      setEntryOptionTypeArray((prev) => [...prev, entryRuleTypeCondition]);
+      setEntryOptionsDataArray((prev) => [...prev, [...selectedRules]]);
+    }
     setSelectedRule([]);
   };
 

@@ -86,7 +86,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions = true }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );

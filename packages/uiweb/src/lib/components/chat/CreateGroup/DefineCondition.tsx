@@ -82,14 +82,13 @@ export const DefineCondtion = ({
       {isCriteriaAdded && (
         <>
           <Section margin="20px 0 10px 0">
-            <OperatorContainer
-              operator={entryCriteria.entryRuleTypeCondition}
-              setOperator={(newEl: string) => {
-                entryCriteria.setEntryRuleTypeCondition(
-                  newEl as keyof typeof OPERATOR_OPTIONS_INFO
-                );
-              }}
-            />
+          <OperatorContainer 
+            operator={entryCriteria.entryRuleTypeCondition} 
+            setOperator={(newEl: string) => {
+              entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
+            }}
+            numRules={entryCriteria.selectedRules.length}
+          />
           </Section>
           <ConditionSection
             width="100%"

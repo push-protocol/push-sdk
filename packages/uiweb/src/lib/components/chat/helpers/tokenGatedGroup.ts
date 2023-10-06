@@ -1,6 +1,4 @@
 import { CriteriaStateType, Data } from '../types';
-import { DropdownValueType } from '../reusables';
-import { CATEGORY, DropdownCategoryValuesType } from '../types';
 
 const handleDefineCondition = (
   entryCriteria: CriteriaStateType,

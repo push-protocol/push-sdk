@@ -78,12 +78,13 @@ const AddConditionSection = ({
       </Section>
 
       <Section margin="20px 0 10px 0">
-        <OperatorContainer
-          operator={criteriaState.entryRootCondition}
-          setOperator={(newEl: string) => {
-            criteriaState.setEntryRootCondition(newEl as ConditionType);
-          }}
-        />
+       <OperatorContainer 
+        operator={criteriaState.entryRootCondition} 
+        setOperator={(newEl: string) => {
+          criteriaState.setEntryRootCondition(newEl as ConditionType);
+        }}
+        numRules={criteriaState.entryOptionsDataArray.length}
+      />
       </Section>
       <ConditionSection
         width="100%"
