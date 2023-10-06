@@ -21,6 +21,7 @@ export type CriteraValueType = {
 
 interface CriteriaProps {
   conditionData: ConditionArray[];
+  moreOptions?: boolean;
 }
 
 interface MoreOptionsContainerProps {
@@ -86,7 +87,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -123,13 +124,13 @@ const ConditionsComponent = ({ conditionData }: CriteriaProps) => {
   const handleMoreOptionsClick = (row: number, col: number) => {
     setSelectedIndex([row, col]);
   };
-console.log(conditionData)
+  console.log(conditionData)
   return (
     <Section flexDirection='column' >
       {/* we can reuse the code by creating a reusable component for it */}
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
-          <Section  flexDirection="column" gap="8px" margin='0 0 8px 0' position='relative'>
+          <Section flexDirection="column" gap="8px" margin='0 0 8px 0' position='relative'>
             {criteria.length === 1 &&
               criteria.map((singleCriteria, col) => (
                 <>
@@ -141,14 +142,18 @@ console.log(conditionData)
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
-                      <MoreOptionsContainer
-                        handleMoreOptionsClick={handleMoreOptionsClick}
-                        row={row}
-                        col={col}
-                        dropDownValues={dropDownValues}
-                        setSelectedIndex={setSelectedIndex}
-                        selectedIndex={selectedIndex}
-                      />
+                      {
+                        moreOptions && (
+                          <MoreOptionsContainer
+                            handleMoreOptionsClick={handleMoreOptionsClick}
+                            row={row}
+                            col={col}
+                            dropDownValues={dropDownValues}
+                            setSelectedIndex={setSelectedIndex}
+                            selectedIndex={selectedIndex}
+                          />
+                        )
+                      }
                     </Section>
                   )}
                 </>
@@ -197,14 +202,16 @@ console.log(conditionData)
                       )}
                     </>
                   ))}
-                  <MoreOptionsContainer
-                    handleMoreOptionsClick={handleMoreOptionsClick}
-                    row={row}
-                    col={0}
-                    dropDownValues={dropDownValues}
-                    setSelectedIndex={setSelectedIndex}
-                    selectedIndex={selectedIndex}
-                  />
+                  {moreOptions && (
+                    <MoreOptionsContainer
+                      handleMoreOptionsClick={handleMoreOptionsClick}
+                      row={row}
+                      col={0}
+                      dropDownValues={dropDownValues}
+                      setSelectedIndex={setSelectedIndex}
+                      selectedIndex={selectedIndex}
+                    />
+                  )}
                 </Section>
               </Section>
             )}
@@ -251,6 +258,7 @@ const DropdownContainer = styled.div`
 
 const OperatorSpan = styled.span<{ theme: IChatTheme }>`
   padding: 4px 8px;
+  margin: 0 8px 0px 0px;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};

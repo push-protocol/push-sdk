@@ -210,9 +210,9 @@ export const ConditionsInformation = ({ theme, groupInfo }: ConditionsInformatio
           )
         }
         <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Join</Span>
-      <ConditionsComponent conditionData={dummyConditonsData} />
+      <ConditionsComponent moreOptions={false} conditionData={dummyConditonsData} />
       <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Chat</Span>
-      <ConditionsComponent conditionData={dummyConditonsData} />
+      <ConditionsComponent moreOptions={false} conditionData={dummyConditonsData} />
     </Section>
   )
 }
