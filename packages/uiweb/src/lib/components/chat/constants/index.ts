@@ -41,3 +41,14 @@ export const OPERATOR_OPTIONS_INFO = {
        }
 } ;
 
+
+export const ACCESS_TYPE_TITLE = {
+  ENTRY: {
+    heading: 'Conditions to Join',
+    subHeading: 'Add a condition to join or leave it open for everyone',
+  },
+  CHAT: {
+    heading: 'Conditions to Chat',
+    subHeading: 'Add a condition to join or leave it open for everyone',
+  },
+};

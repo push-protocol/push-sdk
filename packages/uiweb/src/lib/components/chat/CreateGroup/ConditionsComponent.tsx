@@ -126,7 +126,7 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
   };
   console.log(conditionData)
   return (
-    <Section flexDirection='column' >
+    <Section flexDirection='column'  width='100%'>
       {/* we can reuse the code by creating a reusable component for it */}
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (

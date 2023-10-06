@@ -218,7 +218,7 @@ export const GatingRulesInformation = () => {
 
     const theme = useContext(ThemeContext);
     return (
-      <Section gap="4px">
+      <Section gap="6px">
         <SpamIcon />
         <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
           Learn more about gating rules

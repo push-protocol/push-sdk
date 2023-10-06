@@ -14,7 +14,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import useToast from '../reusables/NewToast';
-import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
 import { ConditionArray } from '../exportedTypes';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
@@ -32,16 +32,7 @@ const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   },
 ];
 
-const ACCESS_TYPE_TITLE = {
-  ENTRY: {
-    heading: 'Conditions to Join',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-  CHAT: {
-    heading: 'Conditions to Chat',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-};
+
 
 interface AddConditionProps {
   heading: string;
@@ -156,6 +147,7 @@ const AddConditionSection = ({
           setOperator={setConditionOperator}
         />
       </Section>
+      
       <ConditionsComponent conditionData={dummyConditonsData} />
 
       <Button

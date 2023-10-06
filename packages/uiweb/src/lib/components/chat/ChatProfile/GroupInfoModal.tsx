@@ -7,7 +7,7 @@ import { useChatData, useClickAway } from '../../../hooks';
 import { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
-import { Modal, ModalHeader, } from '../reusables';
+import { Modal, ModalHeader } from '../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
@@ -27,16 +27,15 @@ import {
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import ArrowIcon from '../../../icons/CaretUp.svg';
-import CloseIcon from '../../../icons/close.svg';
 import addIcon from '../../../icons/addicon.svg';
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { shortenText } from '../../../helpers';
-import TokenGatedIcon from "../../../icons/TokenGatedIcon.svg";
-import { DefineCondtion } from '../CreateGroup/DefineCondition';
+import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ConditionArray } from '../exportedTypes';
+import { ACCESS_TYPE_TITLE } from '../constants';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -45,7 +44,7 @@ const UPDATE_KEYS = {
   ADD_ADMIN: 'ADD_ADMIN',
 } as const;
 
-type UpdateKeys = (typeof UPDATE_KEYS)[keyof typeof UPDATE_KEYS];
+type UpdateKeys = typeof UPDATE_KEYS[keyof typeof UPDATE_KEYS];
 const SUCCESS_MESSAGE = {
   REMOVE_MEMBER: 'Removed Member successfully',
   ADD_MEMBER: 'Group Invitation sent',
@@ -62,7 +61,7 @@ type PendingMembersProps = {
 
 interface ShadowedProps {
   setPosition: boolean;
-};
+}
 
 const PendingMembers = ({
   groupInfo,
@@ -192,58 +191,101 @@ const dummyConditonsData: ConditionArray[] = [
   // ],
 ];
 
-const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map((criteria) => [
-  criteria,
-]);
+const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map(
+  (criteria) => [criteria]
+);
 
 interface ConditionsInformationProps {
   theme: IChatTheme;
   groupInfo?: IGroup | null;
 }
 
-export const ConditionsInformation = ({ theme, groupInfo }: ConditionsInformationProps) => {
+export const ConditionsInformation = ({
+  theme,
+  groupInfo,
+}: ConditionsInformationProps) => {
   return (
-    <Section margin='15px 0px 0px 0px' gap='15px 0px' flexDirection='column'>
-        {
-          (groupInfo?.rules?.chat?.conditions || groupInfo?.rules?.entry?.conditions) && (
-          <GroupTypeBadge theme={theme} Icon={TokenGatedIcon} header={'Gated group'} subheader={'Conditions must be true to join'} />
-          )
-        }
-        <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Join</Span>
-      <ConditionsComponent moreOptions={false} conditionData={dummyConditonsData} />
-      <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Chat</Span>
-      <ConditionsComponent moreOptions={false} conditionData={dummyConditonsData} />
+    <Section
+      margin="15px 0px 0px 0px"
+      gap="20px"
+      flexDirection="column"
+      width="100%"
+    >
+      {(groupInfo?.rules?.chat?.conditions ||
+        groupInfo?.rules?.entry?.conditions) && (
+        <GroupTypeBadge
+          theme={theme}
+          icon={TokenGatedIcon}
+          header={'Gated group'}
+          subheader={'Conditions must be true to join'}
+        />
+      )}
+      {Object.keys(ACCESS_TYPE_TITLE).map((key) => (
+        <>
+          <Span fontSize="16px" fontWeight="500" alignSelf="start">
+            {  ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]?.heading}
+          </Span>
+          <ConditionSection
+            width="100%"
+            overflow="hidden auto"
+            maxHeight="10rem"
+            theme={theme}
+            padding="0 4px 0 0"
+          >
+            <ConditionsComponent
+              moreOptions={false}
+              conditionData={dummyConditonsData}
+            />
+          </ConditionSection>
+        </>
+      ))}
     </Section>
-  )
-}
+  );
+};
 
 interface GroupTypeProps {
   theme: IChatTheme;
-  Icon: string;
+  icon: string;
   header: string;
   subheader: string;
   cursor?: string;
   handleNextInformation?: () => void;
 }
 
-const GroupTypeBadge = ({ theme, Icon, header, subheader, handleNextInformation, cursor }: GroupTypeProps) => {
+const GroupTypeBadge = ({
+  theme,
+  icon,
+  header,
+  subheader,
+  handleNextInformation,
+  cursor,
+}: GroupTypeProps) => {
   return (
     <Section cursor={cursor}>
       <PublicEncrypted onClick={handleNextInformation} theme={theme}>
         <Image
-        cursor={cursor}
-          src={Icon}
+          cursor={cursor}
+          src={icon}
           height="24px"
           maxHeight="24px"
           width={'auto'}
         />
 
-        <Section cursor={cursor} flexDirection="column" alignItems="flex-start" gap="5px">
-          <Span cursor={cursor} fontSize="18px" color={theme.textColor?.modalHeadingText}>
+        <Section
+          cursor={cursor}
+          flexDirection="column"
+          alignItems="flex-start"
+          gap="5px"
+        >
+          <Span
+            cursor={cursor}
+            fontSize="18px"
+            color={theme.textColor?.modalHeadingText}
+          >
             {header}
           </Span>
           <Span
-          cursor={cursor}
+            cursor={cursor}
             fontSize="12px"
             color={theme.textColor?.modalSubHeadingText}
           >
@@ -252,14 +294,13 @@ const GroupTypeBadge = ({ theme, Icon, header, subheader, handleNextInformation,
         </Section>
       </PublicEncrypted>
     </Section>
-  )
-}
+  );
+};
 
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
-  handlePreviousInformation: () => void;
-}
-
+  handlePreviousInformation?: () => void;
+};
 
 type GroupInfoModalProps = {
   theme: IChatTheme;
@@ -273,13 +314,16 @@ export const GROUPINFO_STEPS = {
   CRITERIA: 2,
 } as const;
 
-export type GROUP_INFO_TYPE = (typeof GROUPINFO_STEPS)[keyof typeof GROUPINFO_STEPS];
+export type GROUP_INFO_TYPE =
+  typeof GROUPINFO_STEPS[keyof typeof GROUPINFO_STEPS];
 
-const GroupInformation = ({ theme,
+const GroupInformation = ({
+  theme,
   setModal,
   groupInfo,
-  setGroupInfo, handleNextInformation, handlePreviousInformation }: GroupSectionProps) => {
-
+  setGroupInfo,
+  handleNextInformation,
+}: GroupSectionProps) => {
   const { account } = useChatData();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
@@ -462,7 +506,6 @@ const GroupInformation = ({ theme,
     function: () => updateGroupAdmin(UPDATE_KEYS.ADD_ADMIN),
   };
 
-
   const handlePrevious = () => {
     setShowAddMoreWalletModal(false);
   };
@@ -472,34 +515,42 @@ const GroupInformation = ({ theme,
   };
 
   return (
-    <Section
-      width={isMobile ? '100%' : '410px'}
-      flexDirection="column"
-    >
-
+    <Section width={isMobile ? '100%' : '410px'} flexDirection="column">
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Group Description
         </Span>
         <Span
-          textAlign='start'
+          textAlign="start"
           fontSize="18px"
           color={theme.textColor?.modalSubHeadingText}
         >
           {groupInfo?.groupDescription}
         </Span>
       </GroupDescription>
-      <GroupTypeBadge theme={theme} Icon={groupInfo?.isPublic ? LockIcon : LockSlashIcon} header={groupInfo?.isPublic ? 'Open' : 'Encrypted'} subheader={groupInfo?.isPublic
-        ? 'Chats are not encrypted'
-        : 'Chats are end-to-end encrypted'} />
-      {
-        (groupInfo.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
-          <GroupTypeBadge cursor='pointer' handleNextInformation={handleNextInformation} theme={theme} Icon={TokenGatedIcon} header={'Gated group'} subheader={'Conditions must be true to join'} />
-        )
-      }
+      <GroupTypeBadge
+        theme={theme}
+        icon={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+        header={groupInfo?.isPublic ? 'Open' : 'Encrypted'}
+        subheader={
+          groupInfo?.isPublic
+            ? 'Chats are not encrypted'
+            : 'Chats are end-to-end encrypted'
+        }
+      />
+      {(groupInfo.rules?.chat?.conditions ||
+        groupInfo.rules?.entry?.conditions) && (
+        <GroupTypeBadge
+          cursor="pointer"
+          handleNextInformation={handleNextInformation}
+          theme={theme}
+          icon={TokenGatedIcon}
+          header={'Gated group'}
+          subheader={'Conditions must be true to join'}
+        />
+      )}
 
-      {
-        isAccountOwnerAdmin(groupInfo, account!) &&
+      {isAccountOwnerAdmin(groupInfo, account!) &&
         groupInfo?.members &&
         groupInfo?.members?.length < 10 && (
           <AddWalletContainer
@@ -524,8 +575,7 @@ const GroupInformation = ({ theme,
               Add more wallets
             </Span>
           </AddWalletContainer>
-        )
-      }
+        )}
 
       <Section borderRadius="16px">
         {groupInfo?.pendingMembers?.length > 0 && (
@@ -538,12 +588,7 @@ const GroupInformation = ({ theme,
         )}
       </Section>
 
-      <Section
-        margin="15px 10px"
-        flexDirection="column"
-        flex="1"
-        zIndex="2"
-      >
+      <Section margin="15px 10px" flexDirection="column" flex="1" zIndex="2">
         {groupInfo?.members &&
           groupInfo?.members?.length > 0 &&
           groupInfo?.members.map((item, index) => (
@@ -554,8 +599,8 @@ const GroupInformation = ({ theme,
                 item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
                   ? [removeAdminDropdown, removeMemberDropdown]
                   : isAccountOwnerAdmin(groupInfo, account!)
-                    ? [addAdminDropdown, removeMemberDropdown]
-                    : []
+                  ? [addAdminDropdown, removeMemberDropdown]
+                  : []
               }
               selectedMemberAddress={selectedMemberAddress}
               setSelectedMemberAddress={setSelectedMemberAddress}
@@ -576,8 +621,8 @@ const GroupInformation = ({ theme,
         />
       )}
     </Section>
-  )
-}
+  );
+};
 
 export const GroupInfoModal = ({
   theme,
@@ -585,27 +630,46 @@ export const GroupInfoModal = ({
   groupInfo,
   setGroupInfo,
 }: GroupInfoModalProps) => {
-  const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(GROUPINFO_STEPS.GROUP_INFO);
+  const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(
+    GROUPINFO_STEPS.GROUP_INFO
+  );
   const handleNextInfo = () => {
-    console.log("criteria")
-    setActiveComponent(activeComponent + 1 as GROUP_INFO_TYPE);
+    console.log('criteria');
+    setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
     console.log(activeComponent);
   };
 
   const handlePreviousInfo = () => {
-    setActiveComponent(activeComponent - 1 as GROUP_INFO_TYPE);
+    setActiveComponent((activeComponent - 1) as GROUP_INFO_TYPE);
   };
 
   const renderComponent = () => {
     switch (activeComponent) {
       case GROUPINFO_STEPS.GROUP_INFO:
-        return <GroupInformation handleNextInformation={handleNextInfo} handlePreviousInformation={handlePreviousInfo} theme={theme} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />;
+        return (
+          <GroupInformation
+            handleNextInformation={handleNextInfo}
+            theme={theme}
+            setModal={setModal}
+            groupInfo={groupInfo}
+            setGroupInfo={setGroupInfo}
+          />
+        );
       case GROUPINFO_STEPS.CRITERIA:
         return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
+
       default:
-        return <GroupInformation handleNextInformation={handleNextInfo} handlePreviousInformation={handlePreviousInfo} theme={theme} setModal={setModal} groupInfo={groupInfo} setGroupInfo={setGroupInfo} />;
+        return (
+          <GroupInformation
+            handleNextInformation={handleNextInfo}
+            theme={theme}
+            setModal={setModal}
+            groupInfo={groupInfo}
+            setGroupInfo={setGroupInfo}
+          />
+        );
     }
-  }
+  };
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
   useState<boolean>(false);
@@ -753,7 +817,13 @@ export const GroupInfoModal = ({
             flexDirection="column"
             padding={isMobile ? '0px auto' : '0px 10px'}
           >
-            <ModalHeader handlePrevious={activeComponent == 2 ? handlePreviousInfo : undefined} title='Group Info' handleClose={onClose} />
+            <ModalHeader
+              handlePrevious={
+                activeComponent == 2 ? handlePreviousInfo : undefined
+              }
+              title="Group Info"
+              handleClose={onClose}
+            />
 
             <GroupHeader>
               <Image
@@ -867,7 +937,7 @@ const PendingSection = styled.div`
   box-sizing: border-box;
 `;
 
-const ArrowImage = styled(Image) <ShadowedProps>`
+const ArrowImage = styled(Image)<ShadowedProps>`
   margin-left: auto;
   transform: ${(props) =>
     props?.setPosition ? 'rotate(0)' : 'rotate(180deg)'};
@@ -883,6 +953,17 @@ const Badge = styled.div`
   font-weight: 700;
 `;
 
-//auto update members when an user accepts not done
+const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+`;
 
-//make the profile reusable
+//auto update members when an user accepts not done
