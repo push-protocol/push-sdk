@@ -77,6 +77,8 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Reject Group Joining Request](#reject-group-joining-request)
     - [Fetch Encryption Info](#fetch-encryption-info)
     - [Update Encryption](#update-encryption)
+    - [Stream Chat Events](#stream-chat-events)
+    - [Stream Chat Ops Events](#stream-chat-ops-events)
   - [PushNotification Class](#pushnotification-class)
     - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
     - [Fetch user subscriptions](#fetch-user-subscriptions)
@@ -94,6 +96,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
     - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
     - [Alias Information](#alias-information)
+    - [Stream Notifications](#stream-notifications)
 
 # How to use in your app?
 
@@ -4998,6 +5001,468 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 
 ---
 
+### **Stream Chat Events**
+
+```tsx
+    // recevive stream related to chat
+    userAlice.stream.on(STREAM.CHAT, (data: any) => {
+        console.log(data)
+    })
+```
+
+<details>
+  <summary><b>Expected response (Chat Request Stream)</b></summary>
+
+  ```tsx
+  {
+    "event": "chat.request",
+    "origin": "other",
+    "timestamp": "1696576961629",
+    "chatId": "b6f53ac38d0698ea64e6c4b0f024437ac2271ca869413d5f779d7cda75de1aaa",
+    "from": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+    "to": [
+        "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899"
+    ],
+    "message": {
+        "type": "Text",
+        "content": "Hey There!!!"
+    },
+    "meta": {
+        "group": false
+    },
+    "reference": "bafyreid7b7m5ub3ouybgp2nzu733vle73bem5jcz5lg5u2epknncfhfeuy",
+    "raw": {
+        "fromCAIP10": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "toCAIP10": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "fromDID": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "toDID": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "encType": "pgp",
+        "encryptedSecret": "-----BEGIN PGP MESSAGE-----\n\nwcBMAyaG8qwtJd4vAQf+JbzXYRQZ4Tm+8P+igfgH5kHFxMdd6XD11+UgyX3o\nhvxIaH43AjtpAuhNCvVVnmmIjWHAnCye7IDrT5BFEYVI03FaxxMyAwxvROTe\nb1xn4R5TmXPzuZ2N0AGbD1iTAqvPjLj3UvHJJihilOOAs5rqUNmWns4+xWr6\n8Znl5J2RyyqxJ3+LnHn4N6Spwm1gFzJ0alS2gwp+Tdi7OEPRiiWTkIcrdRcw\nKUv1i3aJw4Jyd9wDz6jldNBsa3L8RHUf47Oo4b/17dEqeFkioKCuWyH/DlKO\nkxZRsZEGUDR8ILKCRxbQw7RwWjxQnUeP+4oRuGC6P34zxZEJofHFz/8VWjlG\necHATAOhR72eaWLr8wEIAJEP2F/ocesJWKafpUzIN33fTTIFBjIvVB5GXb/V\nRvtwgRqsrKoudQLUf3ybsH2jw5JOmA8nV4Kc/aB/DVtvSyfObLxxngXe4HnD\n4OlUBGH80Z/RC2p6egrxIQUu1AMhTpu9SJ3HApTHHkDtGetp9Lnax5AxEV2t\ntFQWgkfwYy0xz2UuU+f85skTDgHBn7cW4Hb8WAaXWptpoGIlxMaVQYcHzA8A\ny7opcoPJPlE7AtRVQDmrQDLMZTRjxPwu9+vOYSh9bC3QFXE8PQeaseK379BG\no8wL6lnfX9mOdX3xaXRBuccm5akT61UGHnFH1zZv+rhyM67/bVCsIHEsG2Mt\nSHrSQAG/I7P/KleW2A4iEKPW8LAV1hGFkZZj1YumMGqHocTLncC8QwKzzHzi\nKyO4PxEL0qhgP16ya+vzT0PazgQnYtA=\n=AmIG\n-----END PGP MESSAGE-----\n",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XBCRCfItQMnVG/eBYhBKTq6JYHJG7fZv5Yop8i1Ayd\nUb94AACmjgf/XGx0k/OMCg7XNIb5DjPMtiDuSU9Gm5KSUGhoBDIatNhrgZsj\nhULiKdk0DG1tk6G6a1/IpxM17obw4q3OI6QrT5TdgNS5c4kNRJ65xN0smxLl\nZC9fM5GEoTNI9CMIghH+zTesmVxkq6cS5iwzFJNgV05MoCa+HBCSHR3oLKFU\nH2muI7veUj1/yF93OEqtsqUjsgVr+bsqSVhwD8hcjS4AlRmHgBCLdwMWSOnK\nqFFV/0X/SZXnq0Jy2NULGFGTuQSV6NhB448HMEToxGrVbkYhPxRazBbEaSxD\nDrYQ+8b6EQBSJlPCKO3MAV8CNMNbfwwGo1RtXm6+xZj3DCHEdiU96w==\n=BRdW\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgpv2",
+        "verificationProof": "pgpv2:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XBCRCfItQMnVG/eBYhBKTq6JYHJG7fZv5Yop8i1Ayd\nUb94AAClEggAxIFP9BJNwHzqUlEB8UD7gK+wNJxx5Nc7b31y0edUiSL6MWGL\n/b82efqACFNi2yc8/3xreJZr5ZuyHHSuCAb6zRamBS4QYTD+cMhNwpUTPiQE\ngyGZejVP8o+ko4N//itioi43BC619iSs7OTCvXkWS+gLFvOeRrBBPfp/15NG\nbeTavruBfiIUBR3YGtlcY296LLmo2YCEz49B1q/nQ+Ant1UNdhmuVhqU6W5l\nBzV3mLkxnlxpey9JNnNjC6tiKDB34OI06aYc863mLphk0R3obzGyt3XQqgL2\noteUPdkfPsJb3DCdq9F/XRNNJtypnAWeuMk8T5OK44FfLnjo26lwHQ==\n=QPQd\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+```
+
+</details>
+
+
+---
+
+<details>
+  <summary><b>Expected response (Chat Request Stream)</b></summary>
+
+  ```tsx
+
+{
+    "event": "chat.accept",
+    "origin": "self",
+    "timestamp": "1696576962016",
+    "chatId": "b6f53ac38d0698ea64e6c4b0f024437ac2271ca869413d5f779d7cda75de1aaa",
+    "from": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+    "to": [
+        "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05"
+    ],
+    "message": {
+        "type": null,
+        "content": null
+    },
+    "meta": {
+        "group": false
+    },
+    "reference": null,
+    "raw": {
+        "fromCAIP10": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "toCAIP10": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "fromDID": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "toDID": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "encType": "",
+        "encryptedSecret": null,
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XBCRAMkuwWk00HQxYhBKHMQtCl0iVWLJla7QyS7BaT\nTQdDAAAE+Af/U8h9c2tBPq6PjvDvjjs+yL/qTadagegzLZN0Gd9pT1kAmZ50\n+J1+f05oLCFdFcVTFz8dFZpueh+0s/8daXJ1uKVTBPPpfvWRInkD2KxlRrMu\n6gry3Tr2Fb1k8nIulIB/GSs7A85jJZQaG5WShZmfvg03bMadNIYmgl3ACmEe\nX3VovLFM5VLzuzKJGTn+7OM1VrZlZdsMRa7nfIdMKafMEEJcr41bmXCeYfzN\nw24kEO9/tAGaHzSRLsoNYxYDjby45OU1AJUHaLwjInk0klugcw7GWfMM3r2u\nE8qDuDZ0eveI6yArosK9amBlGF26l4UhEVPbCpumMrBBoItU03MPRw==\n=InOB\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgp",
+        "verificationProof": "pgp-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XBCRAMkuwWk00HQxYhBKHMQtCl0iVWLJla7QyS7BaT\nTQdDAAAE+Af/U8h9c2tBPq6PjvDvjjs+yL/qTadagegzLZN0Gd9pT1kAmZ50\n+J1+f05oLCFdFcVTFz8dFZpueh+0s/8daXJ1uKVTBPPpfvWRInkD2KxlRrMu\n6gry3Tr2Fb1k8nIulIB/GSs7A85jJZQaG5WShZmfvg03bMadNIYmgl3ACmEe\nX3VovLFM5VLzuzKJGTn+7OM1VrZlZdsMRa7nfIdMKafMEEJcr41bmXCeYfzN\nw24kEO9/tAGaHzSRLsoNYxYDjby45OU1AJUHaLwjInk0klugcw7GWfMM3r2u\nE8qDuDZ0eveI6yArosK9amBlGF26l4UhEVPbCpumMrBBoItU03MPRw==\n=InOB\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+  ```
+</details>
+
+---
+<details>
+  <summary><b>Expected response (Chat Message Stream)</b></summary>
+```tsx
+{
+    "event": "chat.message",
+    "origin": "other",
+    "timestamp": "1696576962232",
+    "chatId": "b6f53ac38d0698ea64e6c4b0f024437ac2271ca869413d5f779d7cda75de1aaa",
+    "from": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+    "to": [
+        "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899"
+    ],
+    "message": {
+        "type": "Text",
+        "content": "Hey There!!!"
+    },
+    "meta": {
+        "group": false
+    },
+    "reference": "bafyreich6wtnzojmgqft6eudx43y4xir2emfnhxqlvyy7rq6a73w7szywe",
+    "raw": {
+        "fromCAIP10": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "toCAIP10": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "fromDID": "eip155:0x0aF73cF3b072E39A46D78E6c4fbaA058A138Bc05",
+        "toDID": "eip155:0x52C6050536a77A405F03b6Da3F98Db9Ca69ad899",
+        "encType": "pgp",
+        "encryptedSecret": "-----BEGIN PGP MESSAGE-----\n\nwcBMAyaG8qwtJd4vAQf9Fg4udBKFN/Pqd9+bi5dqGnLr/PJbRHaIljRlzt5R\nm+6sPUeGyVkXcFdGbSnUKG0M7rtwKVOg0LiCX/oFx//k6ULJWJNVpuZsy4QT\nGYZevcU6dEPMMw4KSG/KJb+sdTAqlRPegibfrfg7YK/Mr9xd0DbN8K9CFsqC\nW/CYz0AkgZS/wN2099cy9WEgesv9yHMd1tU+59A/gAjmI5qk1ge3PvReKGP/\ncSWCX4wz0lioviib7g9zdw79ecpJThmWXKWaW/dPikcNYUTCbK31gY9TuRsy\nS+z+7AdddGj0hqgQvZIfj4XHgHbpQrRisddbgc1AE1xV7eiiT2jtNPswtsat\n48HATAOhR72eaWLr8wEIAJ06+SdpAuQT6mdlIAo/Kttiyd71UkxgMlappQKQ\nM5e2aei/H/C93EFYIitVHobeH/Q8Y89k4E+Plopo23OS6TGGbWIUl0PSJkyg\nxAIyC8J4RfqylCp+k/d9ZxZP/l0WrrXo9SqGOfXnAVm/IITLl8hlG7dvSztI\ng8ndUrk8Af3Jwq4vbrbUOMr2ophzV027HVWQl53Dez/e+DfpuyvT2uDAevTw\nf82H0+2DIz3jzj3rNfkvyA6C3InhW37K4JNh+T3XlL7qWV77XTWFN0yLzZwP\nrW0hLWV5YGAj0kqpup5oY4H1ANPknRiNxP6hUrQH5ZkHPahEUo78gpP70qgc\nZafSQAHfRbVWZC7J+0OF15W+dR3iM8Ngrz/PjYEchVo73a8uBtNk4mSai8o7\nv1A2hx74RVX6yN05D8Bxpf6u7wQMXB8=\n=T81R\n-----END PGP MESSAGE-----\n",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XCCRCfItQMnVG/eBYhBKTq6JYHJG7fZv5Yop8i1Ayd\nUb94AAB/NQf/bwUkzVHV6/ODTtnjeA0y0kqEv3OAzbYoG60QdgNf3zAEmFbk\nf4ULNghzvl3Nt3S7TYsF06xu4gzzsjaOt8glPxJCiZUa3lXdJH53X5+VCbZV\nSWJuip9tdljAv4zg27+ZAGrwyC4NrTHE8t1b8mDHLTgJeqae6dJHjScmCXKZ\ngBZb2mNeVYWklg1mpCuXxB8YJpeFKDgSYeZ3C+YNSGAmoCyICRpYvxYo038P\nDehkFMS3HHvSGjFslcDN0D9l8gWY/4H520Rfer4GHJoFMSZeKlyWkQRCNPNz\nFY3fjmPLuimbEnnzd9Nxw1kbx4P9SBEEa4xhEjJnxx/sAnQxJX72RQ==\n=1zuZ\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgpv2",
+        "verificationProof": "pgpv2:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7XCCRCfItQMnVG/eBYhBKTq6JYHJG7fZv5Yop8i1Ayd\nUb94AACE2wf9GQq+/lkGQ7HVVmLF3SnSRI0IM9s4OvLckwjyd1i3D1lLnwu5\nVaPj+VxKZSBe+GHHukd/gQ+qYr9fhfHNMQ019AfHfz81kCCai6KhExH3YVbE\nsrL+j2bwttfcRjRWy/MoHo1T6M9F8PR4jm4aaktTSliApRE0k92Igm8Gw5it\nUaP1/qDIOQRjlofa7wAyDz7Kf83/WkbS78+MJZP0JWL9znhdFH5em8RvVYpS\nMa7/Skl8BnCr46BIfcd4Urd9q/RECKA4WJaxpOosH42MJQ4DLJ2iRnzZKkyr\nyZBfXXyiMA5goy+uzJzVhA5tlsHZp3jUFEZSvofaMX6a5UopweHMGw==\n=Wp+E\n-----END PGP SIGNATURE-----\n",
+        "previousReference": "bafyreid7b7m5ub3ouybgp2nzu733vle73bem5jcz5lg5u2epknncfhfeuy"
+    }
+}
+```
+</details>
+---
+
+<details>
+  <summary><b>Expected response (Chat Rejection Stream)</b></summary>
+  ```tsx
+  {
+    "event": "chat.reject",
+    "origin": "self",
+    "timestamp": "1696577053528",
+    "chatId": "e819ff24ee06d44927bdc0c0967bd55b6410d389c29c72c329dcce4dca9f413d",
+    "from": "eip155:0xd49F5038C4baA79DF1f1191d6B18FF55D06a4648",
+    "to": [
+        "eip155:0x1fd48A2697Bdfd5A63436cEf5548e095649B65a7"
+    ],
+    "message": {
+        "type": null,
+        "content": null
+    },
+    "meta": {
+        "group": false
+    },
+    "reference": null,
+    "raw": {
+        "fromCAIP10": "eip155:0xd49F5038C4baA79DF1f1191d6B18FF55D06a4648",
+        "toCAIP10": "eip155:0x1fd48A2697Bdfd5A63436cEf5548e095649B65a7",
+        "fromDID": "eip155:0xd49F5038C4baA79DF1f1191d6B18FF55D06a4648",
+        "toDID": "eip155:0x1fd48A2697Bdfd5A63436cEf5548e095649B65a7",
+        "encType": "",
+        "encryptedSecret": null,
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7YdCRCAVGEKwfvuDBYhBDuMv0sczhcV+XqGZYBUYQrB\n++4MAACNGQf/UM17dLBNzMLEmhfThqnxdXo1w1n4U/1DCSmzavvJ2CmCXvTU\nfekuTaxEEGQ83yKeI85KEkHdKgYpNmNa7O5OfOekjum4kRLi8qo4yVH6uard\nEiV+r4i52gWAqdrZOuFqWOLpbtWzMXF3gl6f+Sq5VT/SIi2/g5lO/bYd4QFX\n7cm/J+M5MzDJvxDht29bwDMylJVJXYr93xsEsLUAG0xo71mzsnEc7aSCxY71\nGw+4/KstoSDT40pvoZLw7qRidmHOt5QLHI6wpcztdo8ALDByYpIifV/J7lao\ns4bDS0TOXCb8/F6MQt2SXRKD8pIvzQ3CZBBZSKg+29Muq7Gw8hDq/A==\n=lcfd\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgp",
+        "verificationProof": "pgp-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7YdCRCAVGEKwfvuDBYhBDuMv0sczhcV+XqGZYBUYQrB\n++4MAACNGQf/UM17dLBNzMLEmhfThqnxdXo1w1n4U/1DCSmzavvJ2CmCXvTU\nfekuTaxEEGQ83yKeI85KEkHdKgYpNmNa7O5OfOekjum4kRLi8qo4yVH6uard\nEiV+r4i52gWAqdrZOuFqWOLpbtWzMXF3gl6f+Sq5VT/SIi2/g5lO/bYd4QFX\n7cm/J+M5MzDJvxDht29bwDMylJVJXYr93xsEsLUAG0xo71mzsnEc7aSCxY71\nGw+4/KstoSDT40pvoZLw7qRidmHOt5QLHI6wpcztdo8ALDByYpIifV/J7lao\ns4bDS0TOXCb8/F6MQt2SXRKD8pIvzQ3CZBBZSKg+29Muq7Gw8hDq/A==\n=lcfd\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+  ```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Greoup Chat Message)</b></summary>
+
+  ```tsx
+  {
+    "event": "chat.message",
+    "origin": "self",
+    "timestamp": "1696576220066",
+    "chatId": "a64abd4256a607e7bd2ab4068d9024ddb0d355687267c0e39eb31a3a7d245ab0",
+    "from": "eip155:0x9d57759F2D0cbf19D6cfAf72C5A4c4B1A2443500",
+    "to": [
+        "a64abd4256a607e7bd2ab4068d9024ddb0d355687267c0e39eb31a3a7d245ab0"
+    ],
+    "message": {
+        "type": "Text",
+        "content": "Hello"
+    },
+    "meta": {
+        "group": true
+    },
+    "reference": "bafyreidheq2764lxdi2plbp4mik24ohtjfyvfbmkde2wsb2ahvwdjrwygq",
+    "raw": {
+        "fromCAIP10": "eip155:0x9d57759F2D0cbf19D6cfAf72C5A4c4B1A2443500",
+        "toCAIP10": "a64abd4256a607e7bd2ab4068d9024ddb0d355687267c0e39eb31a3a7d245ab0",
+        "fromDID": "eip155:0x9d57759F2D0cbf19D6cfAf72C5A4c4B1A2443500",
+        "toDID": "a64abd4256a607e7bd2ab4068d9024ddb0d355687267c0e39eb31a3a7d245ab0",
+        "encType": "PlainText",
+        "encryptedSecret": "",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7LcCRBG3kV4UbDyWhYhBPyPo+yD4wbsNV5YNkbeRXhR\nsPJaAABWfAf+MQFE/qy3X8R19wQeQ90eu6rYtK1h5aVlLwezo4z8F/8KqK1S\nwr8tlrtlQ9TieNH6Q5xebM2K356R44QnmE3qZB52Ukww2hiyrrCu7+x55KzK\na1+P8bQh1bGiesBYOa3LqnFlnFyQgBFJvGQqI0m2QBDbkM5OTkQGUYSi4tnO\nYIxVplb/lhEYHt/ZRGu1xg0XMhgycsRESidNLldKRx+AooeGfWgNIws97Yaq\nBbGTEgNOul8XV8b7y2ORL74Dl18UMPRF91dyktm/y8FJp30rWHaeNMAgKzlX\nr/nSgXFtCkfxclQgbBlSit1PBHmhB/Sr0amZKelpiYdRT+lVluknLg==\n=/QXX\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgpv2",
+        "verificationProof": "pgpv2:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7LcCRBG3kV4UbDyWhYhBPyPo+yD4wbsNV5YNkbeRXhR\nsPJaAAAHQQf/eb4aaRUTbcAwLRWlI+55Ddd1PBeWXhTyDIZgsiFYUwSmtLLd\n/bFHnQzyplo+Tp8BuUB+wO5dH112ousWxOeTj8yAGUve6OhbP/8g9nJmHecJ\nmZwAHPhr4BVYomQRQChLp8FstLLjiI3CNdfarIYzBmlWGhrurXltjx69e+Ef\nyxtxRZ6zZavG56IHhOJru0p3y1nsbNI5eGsXG9Wq3FdAUXhbsOizxDCAdqN/\nfzOmqnZGMKsk6DNQ1471txAGujbg29i9o41lxYGcuNYYMal0CEceawfMXDH8\n8T2fbILXRZzpX/I+dlArPMDHqLdfNu2uLwYOmq+aTv7qUm3t1SkR0w==\n=+0T5\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+  ```
+</details>
+
+
+---
+
+<details>
+  <summary><b>Expected response (Group Chat Request)</b></summary>
+
+  ```tsx
+  {
+    "origin": "self",
+    "timestamp": 1696576021653,
+    "chatId": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+    "from": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+    "to": [
+        "eip155:0x3AD7cf4Ef82dd7f4f040c5eD7352f12C662F21db",
+        "eip155:0x1b77273e527Ec5948995f395e3ADa41E708d617e",
+        "eip155:0x7711FED1Bc6B1E461aE7869959bdBf529335db5A"
+    ],
+    "event": "chat.request",
+    "meta": {
+        "group": true
+    },
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7IVCRAxpSc3atCeoBYhBGHp9Ifk8vvLrMzkYTGlJzdq\n0J6gAAD//wf/bTrC0LnwzcUIE10d3XQ2Y56jK6kRVGWKR/7i6CC+hGs5PGKu\nzefIGdtLVjAqTeKn6PbNnb1t2niLhmMeTbN+knGCzSqx/FN8OodLLmunLNAx\nWJ5thFyjZWNyIF7IoH2zUdc8zbsjXHzfd70yoxMZSwd5C7EPj/e17kyYHdj2\nzPQecbTsnCIjJKzi0PBa2YMNoF5fExP3hwTnP0k693r8oC5ivxj7Ht3Hwmu0\njsv+sGXk+XZPC/JQQfEEviEh3j9dEiNIeHutk/7cFdEnDfEy5dFMxubjf6oH\nY6vt0q2V2CZJHHw99JYeTHN/d3YDXc4RggoUINo1cysR904owgEsVw==\n=QTX8\n-----END PGP SIGNATURE-----\n:0x136E326b22ED48dbB665733eC024407d4fAA4F12"
+    }
+}
+  ```
+
+</details>
+
+---
+<details>
+  <summary><b>Expected response (Group Chat Request Accepted)</b></summary>
+
+```tsx
+    {
+    "event": "chat.accept",
+    "origin": "other",
+    "timestamp": "1696576021843",
+    "chatId": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+    "from": "eip155:0x3AD7cf4Ef82dd7f4f040c5eD7352f12C662F21db",
+    "to": null,
+    "message": {
+        "type": null,
+        "content": null
+    },
+    "meta": {
+        "group": true
+    },
+    "reference": null,
+    "raw": {
+        "fromCAIP10": "eip155:0x3AD7cf4Ef82dd7f4f040c5eD7352f12C662F21db",
+        "toCAIP10": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+        "fromDID": "eip155:0x3AD7cf4Ef82dd7f4f040c5eD7352f12C662F21db",
+        "toDID": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+        "encType": "",
+        "encryptedSecret": null,
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7IVCRA1c2iyC1q/7RYhBH5kgFyUQlfGEgbg0jVzaLIL\nWr/tAABinQf9E+7UUlPnAVu9VifNHS6GJuf/o1RJdE8gL4mi27+rdfr+Y2+Y\nzZaZbBEJK3BTJgT4op1yJKtg2GZDZUIMWSbkcouE+2YyyYsANS89z/blq/05\nYf6RFuUeHr3pGIyzkeb7Aj7VEHbUhrK5nHheTkO7K6Gpa9blNEYVrhsYrHbs\n7UhYKlq6tsoo1E8XXFWBhd+2rVPKF4zhIt9jPdqNPYTQSn7K7hjVvZueWd0Z\nD7Vr4RO4Af3a/5EiVAvOtxVGLpwhw+FKDOGJhRdNCNLqEc8gZ0q+l1cvglKp\nfAiqSZpnnTzIUloszJvNFAeQSR/nZQ9wjEihosDztVOOz5uyQ3XhZw==\n=kX/p\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgp",
+        "verificationProof": "pgp-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7IVCRA1c2iyC1q/7RYhBH5kgFyUQlfGEgbg0jVzaLIL\nWr/tAABinQf9E+7UUlPnAVu9VifNHS6GJuf/o1RJdE8gL4mi27+rdfr+Y2+Y\nzZaZbBEJK3BTJgT4op1yJKtg2GZDZUIMWSbkcouE+2YyyYsANS89z/blq/05\nYf6RFuUeHr3pGIyzkeb7Aj7VEHbUhrK5nHheTkO7K6Gpa9blNEYVrhsYrHbs\n7UhYKlq6tsoo1E8XXFWBhd+2rVPKF4zhIt9jPdqNPYTQSn7K7hjVvZueWd0Z\nD7Vr4RO4Af3a/5EiVAvOtxVGLpwhw+FKDOGJhRdNCNLqEc8gZ0q+l1cvglKp\nfAiqSZpnnTzIUloszJvNFAeQSR/nZQ9wjEihosDztVOOz5uyQ3XhZw==\n=kX/p\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Group Chat Request Rejected)</b></summary>
+
+```tsx
+
+{
+    "event": "chat.reject",
+    "origin": "other",
+    "timestamp": "1696576601599",
+    "chatId": "7a200d55cc76428e9938e935b604e993c5f6cb2f3e9a1dd7108a07dd32de0791",
+    "from": "eip155:0x15d8a67c0B1eb61dA5901109DB4CA382E989aA13",
+    "to": null,
+    "message": {
+        "type": null,
+        "content": null
+    },
+    "meta": {
+        "group": true
+    },
+    "reference": null,
+    "raw": {
+        "fromCAIP10": "eip155:0x15d8a67c0B1eb61dA5901109DB4CA382E989aA13",
+        "toCAIP10": "7a200d55cc76428e9938e935b604e993c5f6cb2f3e9a1dd7108a07dd32de0791",
+        "fromDID": "eip155:0x15d8a67c0B1eb61dA5901109DB4CA382E989aA13",
+        "toDID": "7a200d55cc76428e9938e935b604e993c5f6cb2f3e9a1dd7108a07dd32de0791",
+        "encType": "",
+        "encryptedSecret": null,
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7RZCRA8vrXKPfPlwRYhBECQe8HJcpH3IRX27jy+tco9\n8+XBAADl0Af7BumEnrIcSj/1H3LvxaqG4wK/G6iTP3iTvXUca0n7UBplXS8P\nbKV7XFhjollN6jJVZ53mmUHgNDAbfaQTvutm3SRJlFVJxV4zV9uL7UMZW+k4\nYAJM5XNbqqyn7+KjcLIwBpJ3YLMmmLfdrO4+WJAYswAAJGiS+KPDsU+oOsfm\nHMWc5aRqis0Epf3FLWELO0uDyydm75575bBe60FxfPjnd5GhUgmMWydNCZH1\ngeGMLZbhuQ+bvnLjTuWSmnW64cl+jlRCzs2Mpgwvrh0ZQIcPWjVDjNevNohu\n3l9VXhHuYPUCyGGIyhcPG3tubRcudY+U/uavhQ6XXgWPVdKZ/qwfAw==\n=0jOy\n-----END PGP SIGNATURE-----\n",
+        "sigType": "pgp",
+        "verificationProof": "pgp-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7RZCRA8vrXKPfPlwRYhBECQe8HJcpH3IRX27jy+tco9\n8+XBAADl0Af7BumEnrIcSj/1H3LvxaqG4wK/G6iTP3iTvXUca0n7UBplXS8P\nbKV7XFhjollN6jJVZ53mmUHgNDAbfaQTvutm3SRJlFVJxV4zV9uL7UMZW+k4\nYAJM5XNbqqyn7+KjcLIwBpJ3YLMmmLfdrO4+WJAYswAAJGiS+KPDsU+oOsfm\nHMWc5aRqis0Epf3FLWELO0uDyydm75575bBe60FxfPjnd5GhUgmMWydNCZH1\ngeGMLZbhuQ+bvnLjTuWSmnW64cl+jlRCzs2Mpgwvrh0ZQIcPWjVDjNevNohu\n3l9VXhHuYPUCyGGIyhcPG3tubRcudY+U/uavhQ6XXgWPVdKZ/qwfAw==\n=0jOy\n-----END PGP SIGNATURE-----\n",
+        "previousReference": null
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Participant is Removed from a Group)</b></summary>
+
+```tsx
+{
+    "origin": "other",
+    "timestamp": 1696576219688,
+    "chatId": "a64abd4256a607e7bd2ab4068d9024ddb0d355687267c0e39eb31a3a7d245ab0",
+    "from": "eip155:0x50bbFA4833e89389FE00a62D14E6eDDf1c155855",
+    "to": [
+        "eip155:0x50bbFA4833e89389FE00a62D14E6eDDf1c155855"
+    ],
+    "event": "chat.group.participant.remove",
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7LbCRByYd40HdgiDBYhBLSq7nZZRBYzsnezMXJh3jQd\n2CIMAADNoAf/UxniQM/ZtzDuSmhIuvWiuGzl8vkeFbN2dOLW1a2yJO2Z8jDa\nDDuxyTcSt9d9YyCO/NojhbxmScE73gBysVt9OLdUn9hXlAKclYjXu4r7KvLk\nmrQyMlN3akDjpzH1gGiiCSi18vll07KRGSgWt3P13cA9vGpT+YV3A6uiCGUS\nE3CV16wdYTd0FUPJHckTJVVu3se1K3NfzzELMwIeN9bPJLxaZD3u3t074dN/\nc+jwUS1OC0sUQ5ptHCgfNIMgtueutKSPPZO6MKVBE/qQauKh81PHgzrhW0OE\n6gMkSDPjVbncjBSumofTWga7udk65RhwysCxx9qa3O/u6skBH0N+bg==\n=oqeR\n-----END PGP SIGNATURE-----\n:0x50bbFA4833e89389FE00a62D14E6eDDf1c155855"
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Participant Joins a Group)</b></summary>
+
+```tsx
+{
+    "origin": "other",
+    "timestamp": 1696576531987,
+    "chatId": "1032596dea9f24a7a0ee419668f7d39da32a2fb32003a27c6b293cc6668d2a82",
+    "from": "eip155:0x8c1EAB3227250526f133681630c2B191969f8581",
+    "to": null,
+    "event": "chat.group.participant.join",
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7QTCRCI26TZ8c3OJBYhBNDtmDIWimjDn9MUIIjbpNnx\nzc4kAAAfFwgAgQkKBS/W7e53maVOne1lob2Qk14gWfUQm/LaRlP0iO5YwPlg\njckyQaX0Ient3PmLSqUoykuKWH2wR53YJ6Wgb//EkOxdywkrDbAZCGnQgxaO\nakTU30mDaV06HLQjDQmRTHdeozwV+6PF+i71vZPNmsCSI8x/VSex/gMrs2nk\nhSAHnuhUcuEWHshc+FXEO70acz8nkhH7Pw0icDwb50yFZNuekrK4rjUPmXb2\nwBzwFDjpfS6n8JMQz4//jYXyFuDfzYlr97ymWdltR5h8QKs1iZsN++X/5FsA\nO2EltMRqhxcpPApcHB9QQe6CAZFG+1fB8FKOXx6MZMwHqjyEtrL27Q==\n=bDP5\n-----END PGP SIGNATURE-----\n:0x8c1EAB3227250526f133681630c2B191969f8581"
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Participant Leaves a Group)</b></summary>
+
+```tsx
+{
+    "origin": "other",
+    "timestamp": 1696576531987,
+    "chatId": "1032596dea9f24a7a0ee419668f7d39da32a2fb32003a27c6b293cc6668d2a82",
+    "from": "eip155:0x8c1EAB3227250526f133681630c2B191969f8581",
+    "to": null,
+    "event": "chat.group.participant.leave",
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7QTCRCI26TZ8c3OJBYhBNDtmDIWimjDn9MUIIjbpNnx\nzc4kAAAfFwgAgQkKBS/W7e53maVOne1lob2Qk14gWfUQm/LaRlP0iO5YwPlg\njckyQaX0Ient3PmLSqUoykuKWH2wR53YJ6Wgb//EkOxdywkrDbAZCGnQgxaO\nakTU30mDaV06HLQjDQmRTHdeozwV+6PF+i71vZPNmsCSI8x/VSex/gMrs2nk\nhSAHnuhUcuEWHshc+FXEO70acz8nkhH7Pw0icDwb50yFZNuekrK4rjUPmXb2\nwBzwFDjpfS6n8JMQz4//jYXyFuDfzYlr97ymWdltR5h8QKs1iZsN++X/5FsA\nO2EltMRqhxcpPApcHB9QQe6CAZFG+1fB8FKOXx6MZMwHqjyEtrL27Q==\n=bDP5\n-----END PGP SIGNATURE-----\n:0x8c1EAB3227250526f133681630c2B191969f8581"
+    }
+}
+```
+</details>
+
+---
+
+### **Stream Chat Ops Events**
+
+```tsx
+    // recevive stream realated to group creation and updation
+    userAlice.stream.on(STREAM.CHAT_OPS, (data: any) => {
+        console.log(data)
+    })
+```
+
+<details>
+  <summary><b>Expected response (Group Created)</b></summary>
+
+```tsx
+
+{
+    "event": "chat.group.create",
+    "origin": "self",
+    "timestamp": 1696576020848,
+    "chatId": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+    "from": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+    "meta": {
+        "name": "test",
+        "description": "test",
+        "image": "test",
+        "owner": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+        "members": [],
+        "admins": [
+            {
+                "address": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+                "profile": {
+                    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA30lEQVR4AcXBsa2DMBSG0S+/3LJBKkZgjUzADi4sJEoqSkvIBSNEYhtG8BIMkNdeGqd4iu45j+f79aHh7HasY91oGZcJa7giLcKZcCacBb441g1rXCZajnXjJtEknAlnwlk4u52WIUWsfEWaEjdnt9MinAlnwlk41g0rp4o1l57/GFLEmkuPJZwJZ8JZ4IucKr8knAlnwlnIqWLNpcfKqWKd3U7LcEWsufRYOVUs4Uw4E87CXHqscZmwRu6GK9Jydjs3C3frhiWcCWfC2eP5fn0w5tLzSzlVLOFMOBPO/gCOGzPC9wXXhQAAAABJRU5ErkJggg==",
+                    "publicKey": "-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nxsBNBGUfshMBCADOFCC0uSjbBGbjJi5QWaEtDpv7PMGqA0kU+e2mHBvZgGM2\nimibNukifrDArM+oJL3/OnjQHwkF5L6W3oCnKwe1hwSiceLDf3uR0F5E+wWA\nEeFv3xPdYYpqbT9tdYXlOCJpoSJH2TM7mcvSECltpSOIYAWpD2E450kTTHCJ\nYDrnrMdPifrCTSrfh4X1pKkbdSDJIrHHeqVTDcUPZhZlbXdEypqK4u5wjEqe\nLc/AprwDyeDx+ltGAo4hmD3ojHGkckk7ctW9RmdqGBGCB/VaK35JT0Tp6AQ8\nrmKOejF4nxbH5eCzUX4vC6xz666gWGj2eGDnS5XCGaBtfWfvYvTCoe4HABEB\nAAHNAMLAigQQAQgAPgUCZR+yEwQLCQcICRAxpSc3atCeoAMVCAoEFgACAQIZ\nAQIbAwIeARYhBGHp9Ifk8vvLrMzkYTGlJzdq0J6gAABuBwgAvNkpwWQCoB8D\nFC56ir7s2tRlzpIUb+nnK5ygqpxp/Wvo1+TpFoWGkdUOC0ng9H98MrJmEh1k\nhLkaBv1VPQN6l+O7tjAyvWNA+JfKLaefxc6EB0KFUOZH1E/gFWc8b6+cciXZ\npAINmBW8+PPSlt1EYuo2UAXqEAOW4dlez8Z6OCf7c4L7+MZKVv2a5r3Cqfl2\nNHaI4lHQYabWt1tsoVyN7kyfZkENXQQv3LsJ7o98WK0FnfFEM/hA1I5jM8Ww\nf0qBukDmzOTxtgYDE7mo3xHNDpjptr8lk5oOFPsHCpOwgksAVKK4yHqy4aQe\nqXPBjBMmUBUuSlB/8KwI6FtX2JFm9s7ATQRlH7ITAQgAySkQBm6drDe5FJI1\nUe5QhoUXX8ugfXyCR7SoL4JMxVmhaO9/Fj/Swy1UoagONZYJZzcamJWnPzAR\nvfYBEzSEFGrkPKVdrJAM7Zf1sX5v+wpUtLTE6/gSCzAJMnK11pdgTHqEn+Rc\nfPuTnGYFZw3EybYMbhr/wBCyvFd49ES+8q3jrjHbMGS5lFCnVFYE/gyN9nqp\nSG0biMS7pl+w51bjIfJ9bRiUzrxpk5yvr9WDqMTVJA0N6ZRsD+xtkipc7XFe\nnsY0caCVVYFOH9YCiwuytC4ShU2VHjEPXcgzLTk9k5ecfE8AdwiYgLsWOHTn\nbz1JpwqYJx5Rndkb4vXdV6Pi7wARAQABwsB2BBgBCAAqBQJlH7ITCRAxpSc3\natCeoAIbDBYhBGHp9Ifk8vvLrMzkYTGlJzdq0J6gAACZvQgAyJrLhQ9/MsBU\n6E1ZwdKlKBWi62A4SBXRZJpRl2hBwagyNq7zbsX/yO7D7fW1FVLfcT28cmCe\nCUD6aa904dQ8GVDyuUqRsSXZZvZqFdddgNT7O8fCbIbMCihfz9Gg6mbxVHcy\nOby7nkOBbrKDBpIPab9yMHHYsycsPDo8/8cGI9RNZz06aAgOVGjfcMTuw8RR\nXWINBmTWn9I4xrylEtH7SQU9b0Alj2SxfV9N/+mMGGv/Zo3E99/a/p2DLExY\n/+dk0I9kxjxHkjtq49/tT00JYLDkHVtMgGxjl9n8Uv7KXFHkuGFg7gV9ivdN\n1phi4oalkdY5sqbd5GkUxM7M1VN6Xg==\n=nCF5\n-----END PGP PUBLIC KEY BLOCK-----\n"
+                }
+            }
+        ],
+        "pending": {
+            "members": [],
+            "admins": []
+        },
+        "private": false,
+        "rules": {}
+    },
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7IUCRAxpSc3atCeoBYhBGHp9Ifk8vvLrMzkYTGlJzdq\n0J6gAADrLAgAgDSQ7CJ3ZVOPye++rkpyR4Q9XSGnV3Z0bqO+HCqFDW/hTmJ+\n12kjrAQV43Q1fQviIMqh+RTA9WJHPA14vu/ZYHjmCM/HfPSxbY4zV/7FJF9C\nCaEgq+wGs+2vhixHX4Zoo4qrxdXQ6q8Wl4XXW3SVaw1sGxfIh+uMje54Tsil\nnaLNK+lIPdSAJDw1hOHIM3iMWaSzZasLaXkJ6KY9KefW52mhg112BZI94FxJ\n/wFQtlIaXGZHhCbaqiigjRPKo17KyW7PX6I0rTAQJlwHyIKS/vIH8Uahi2x3\ndzjonpXjjtsgcP+VhzEP1jxQkpo4mG47Fxkxzp/Q7ztdSGHnJGlXkQ==\n=HydQ\n-----END PGP SIGNATURE-----\n"
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Group Updated)</b></summary>
+
+```tsx
+
+{
+    "event": "chat.group.update",
+    "origin": "self",
+    "timestamp": 1696576021192,
+    "chatId": "3781b4193166ec8f0a1fabe162ef3f2458cac28516d4d20f8dd7faf446815900",
+    "from": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+    "meta": {
+        "name": "test",
+        "description": "Updated Description",
+        "image": "test",
+        "owner": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+        "members": [],
+        "admins": [
+            {
+                "address": "eip155:0x136E326b22ED48dbB665733eC024407d4fAA4F12",
+                "profile": {
+                    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA30lEQVR4AcXBsa2DMBSG0S+/3LJBKkZgjUzADi4sJEoqSkvIBSNEYhtG8BIMkNdeGqd4iu45j+f79aHh7HasY91oGZcJa7giLcKZcCacBb441g1rXCZajnXjJtEknAlnwlk4u52WIUWsfEWaEjdnt9MinAlnwlk41g0rp4o1l57/GFLEmkuPJZwJZ8JZ4IucKr8knAlnwlnIqWLNpcfKqWKd3U7LcEWsufRYOVUs4Uw4E87CXHqscZmwRu6GK9Jydjs3C3frhiWcCWfC2eP5fn0w5tLzSzlVLOFMOBPO/gCOGzPC9wXXhQAAAABJRU5ErkJggg==",
+                    "publicKey": "-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nxsBNBGUfshMBCADOFCC0uSjbBGbjJi5QWaEtDpv7PMGqA0kU+e2mHBvZgGM2\nimibNukifrDArM+oJL3/OnjQHwkF5L6W3oCnKwe1hwSiceLDf3uR0F5E+wWA\nEeFv3xPdYYpqbT9tdYXlOCJpoSJH2TM7mcvSECltpSOIYAWpD2E450kTTHCJ\nYDrnrMdPifrCTSrfh4X1pKkbdSDJIrHHeqVTDcUPZhZlbXdEypqK4u5wjEqe\nLc/AprwDyeDx+ltGAo4hmD3ojHGkckk7ctW9RmdqGBGCB/VaK35JT0Tp6AQ8\nrmKOejF4nxbH5eCzUX4vC6xz666gWGj2eGDnS5XCGaBtfWfvYvTCoe4HABEB\nAAHNAMLAigQQAQgAPgUCZR+yEwQLCQcICRAxpSc3atCeoAMVCAoEFgACAQIZ\nAQIbAwIeARYhBGHp9Ifk8vvLrMzkYTGlJzdq0J6gAABuBwgAvNkpwWQCoB8D\nFC56ir7s2tRlzpIUb+nnK5ygqpxp/Wvo1+TpFoWGkdUOC0ng9H98MrJmEh1k\nhLkaBv1VPQN6l+O7tjAyvWNA+JfKLaefxc6EB0KFUOZH1E/gFWc8b6+cciXZ\npAINmBW8+PPSlt1EYuo2UAXqEAOW4dlez8Z6OCf7c4L7+MZKVv2a5r3Cqfl2\nNHaI4lHQYabWt1tsoVyN7kyfZkENXQQv3LsJ7o98WK0FnfFEM/hA1I5jM8Ww\nf0qBukDmzOTxtgYDE7mo3xHNDpjptr8lk5oOFPsHCpOwgksAVKK4yHqy4aQe\nqXPBjBMmUBUuSlB/8KwI6FtX2JFm9s7ATQRlH7ITAQgAySkQBm6drDe5FJI1\nUe5QhoUXX8ugfXyCR7SoL4JMxVmhaO9/Fj/Swy1UoagONZYJZzcamJWnPzAR\nvfYBEzSEFGrkPKVdrJAM7Zf1sX5v+wpUtLTE6/gSCzAJMnK11pdgTHqEn+Rc\nfPuTnGYFZw3EybYMbhr/wBCyvFd49ES+8q3jrjHbMGS5lFCnVFYE/gyN9nqp\nSG0biMS7pl+w51bjIfJ9bRiUzrxpk5yvr9WDqMTVJA0N6ZRsD+xtkipc7XFe\nnsY0caCVVYFOH9YCiwuytC4ShU2VHjEPXcgzLTk9k5ecfE8AdwiYgLsWOHTn\nbz1JpwqYJx5Rndkb4vXdV6Pi7wARAQABwsB2BBgBCAAqBQJlH7ITCRAxpSc3\natCeoAIbDBYhBGHp9Ifk8vvLrMzkYTGlJzdq0J6gAACZvQgAyJrLhQ9/MsBU\n6E1ZwdKlKBWi62A4SBXRZJpRl2hBwagyNq7zbsX/yO7D7fW1FVLfcT28cmCe\nCUD6aa904dQ8GVDyuUqRsSXZZvZqFdddgNT7O8fCbIbMCihfz9Gg6mbxVHcy\nOby7nkOBbrKDBpIPab9yMHHYsycsPDo8/8cGI9RNZz06aAgOVGjfcMTuw8RR\nXWINBmTWn9I4xrylEtH7SQU9b0Alj2SxfV9N/+mMGGv/Zo3E99/a/p2DLExY\n/+dk0I9kxjxHkjtq49/tT00JYLDkHVtMgGxjl9n8Uv7KXFHkuGFg7gV9ivdN\n1phi4oalkdY5sqbd5GkUxM7M1VN6Xg==\n=nCF5\n-----END PGP PUBLIC KEY BLOCK-----\n"
+                }
+            }
+        ],
+        "pending": {
+            "members": [],
+            "admins": []
+        },
+        "private": false,
+        "rules": {}
+    },
+    "raw": {
+        "verificationProof": "pgp:-----BEGIN PGP SIGNATURE-----\n\nwsBzBAEBCAAnBQJlH7IVCRAxpSc3atCeoBYhBGHp9Ifk8vvLrMzkYTGlJzdq\n0J6gAACfBQgAgDYEX8fSjArginDEbjDmMxQxmieIMt3/N2wTjWU/r8muAnNb\nIpijtAvftEkCoVnefXH9rlILr0rUGLwFXTsc6YYO6u9Tr1iODQQZopD8Bqtc\ntKE5RzRT6qS6QUQQP8YNlh/iqtTWCzdY7aYKGNWkrSOUKhu+iHKLIsEqNSf2\nYV9S9qksGWhK9xfsExkHjR0Df3yo/BUwpDKW/duiwBPgl99aUYunjAQyRRun\njlXmX6W+bEAlEmJABq5C9Tw+M/+j4AiBy57kdrxAQ6aKHnfGJafH7Xo8/BuN\nG6XJdNELJKug/5Xb+eWjO3JggGOD90fetTKcVdzGJPhXaVyIhL0e/A==\n=+sdF\n-----END PGP SIGNATURE-----\n:0x136E326b22ED48dbB665733eC024407d4fAA4F12"
+    }
+}
+
+```
+  </details>
+
+---
+
 ## PushNotification Class
 
 ### **Fetch Inbox Or Spam notifications**
@@ -5007,6 +5472,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 const  aliceInfo = await  userAlice.notification.list();
 
 ```
+
 
 **Parameters:**
 
@@ -5024,6 +5490,7 @@ const  aliceInfo = await  userAlice.notification.list();
 
 <details>
   <summary><b>Expected response (Fetching user notifications)</b></summary>
+
 
 ```typescript
 // PushAPI.user.getFeeds | Response - 200 OK
@@ -6163,6 +6630,116 @@ const aliasInfo = userAlice.channel.alias.info({alias: '0xABC', aliasChain:'POLY
   is_alias_verified: 1,
   blocked: 0,
   activation_status: 1
+}
+```
+</details>
+
+
+### **Stream Notifications**
+
+```tsx
+    // recevive stream of notification
+    userAlice.stream.on(STREAM.NOTIF, (data: any) => {
+        console.log(data)
+    })
+```
+
+<details>
+  <summary><b>Expected response (Inbox)</b></summary>
+
+```typescript
+{
+    "event": "notification.inbox",
+    "origin": "other",
+    "timestamp": "2023-10-06T01:55:51.000Z",
+    "from": "0xfFA1aF9E558B68bBC09ad74058331c100C135280",
+    "to": [
+        "eip155:0xffa1af9e558b68bbc09ad74058331c100c135280"
+    ],
+    "notifID": "1676",
+    "channel": {
+        "name": "Testing Goerli",
+        "icon": "https://gateway.ipfs.io/ipfs/bafybeifu3tisz7cntfnoolwe6tthi554b2cdl46jzcr5amo6swucyautzq/QmYZZnnEuTnzjkhhnRZWaHgYTeHsohLZEme9LomWRYQAZ5",
+        "url": "https://dev.push.org/"
+    },
+    "meta": {
+        "type": "NOTIFICATION.BROADCAST"
+    },
+    "message": {
+        "notification": {
+            "title": "Testing Goerli - notification TITLE:",
+            "body": "notification BODY"
+        },
+        "payload": {
+            "title": "payload title",
+            "body": "sample msg body",
+            "cta": "",
+            "embed": "",
+            "meta": {
+                "domain": "push.org"
+            }
+        }
+    },
+    "config": {
+        "expiry": null,
+        "silent": false,
+        "hidden": false
+    },
+    "source": "ETH_TEST_GOERLI",
+    "raw": {
+        "verificationProof": "eip712v2:0xf2b50f07c7cdae4a493860554301dc017dd6f819f92db3aba534dffde210bfaa0f545818e919c42c3bb51181339af33ad83e3bc691ada7fcccdcbc7fb3b3abd91b::uid::feaa2d31-85ec-47d2-b38c-6f797f637de7"
+    }
+}
+```
+</details>
+
+---
+
+<details>
+  <summary><b>Expected response (Spam)</b></summary>
+
+```typescript
+{
+    "event": "notification.spam",
+    "origin": "other",
+    "timestamp": "2023-10-06T01:55:51.000Z",
+    "from": "0xfFA1aF9E558B68bBC09ad74058331c100C135280",
+    "to": [
+        "eip155:0x1f1a304af17f22cac91eeca5f31a0f814d752377"
+    ],
+    "notifID": "1677",
+    "channel": {
+        "name": "Testing Goerli",
+        "icon": "https://gateway.ipfs.io/ipfs/bafybeifu3tisz7cntfnoolwe6tthi554b2cdl46jzcr5amo6swucyautzq/QmYZZnnEuTnzjkhhnRZWaHgYTeHsohLZEme9LomWRYQAZ5",
+        "url": "https://dev.push.org/"
+    },
+    "meta": {
+        "type": "NOTIFICATION.TARGETTED"
+    },
+    "message": {
+        "notification": {
+            "title": "Testing Goerli - notification TITLE:",
+            "body": "notification BODY"
+        },
+        "payload": {
+            "title": "payload title",
+            "body": "sample msg body",
+            "cta": "",
+            "embed": "",
+            "meta": {
+                "domain": "push.org"
+            }
+        }
+    },
+    "config": {
+        "expiry": null,
+        "silent": false,
+        "hidden": false
+    },
+    "source": "ETH_TEST_GOERLI",
+    "raw": {
+        "verificationProof": "eip712v2:0x6b903f16d0ce87483643e1502e7416203cb7ecef0e947a497f0fb6fbe1c43c3511f2f602b757ab02c1be7daa07f3872ee14e4d05134f1ecb3d11fe58324422c01c::uid::6c0fad10-d1eb-4779-84d3-3a96bd96263f"
+    }
 }
 ```
 </details>
