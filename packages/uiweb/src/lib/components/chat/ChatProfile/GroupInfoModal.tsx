@@ -228,7 +228,7 @@ export const ConditionsInformation = ({
           <ConditionSection
             width="100%"
             overflow="hidden auto"
-            maxHeight="10rem"
+            maxHeight="12rem"
             theme={theme}
             padding="0 4px 0 0"
           >
@@ -959,7 +959,7 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
     border-radius: 10px;
   }
   &::-webkit-scrollbar-button {
-    height: 40px;
+    height: 20px;
   }
   &::-webkit-scrollbar {
     width: 4px;

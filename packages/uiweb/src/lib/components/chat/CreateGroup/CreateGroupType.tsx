@@ -1,7 +1,5 @@
-import React, { useContext, useState } from 'react';
-
+import { useContext, useState } from 'react';
 import { MdError } from 'react-icons/md';
-
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 import { Section, Span } from '../../reusables';
@@ -11,13 +9,16 @@ import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 
 import { ThemeContext } from '../theme/ThemeProvider';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
 import useToast from '../reusables/NewToast';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { ConditionArray } from '../exportedTypes';
+import { ConditionArray, IChatTheme } from '../exportedTypes';
+import {
+  ConditionType,
+  CriteriaStateType,
+} from '../types/tokenGatedGroupCreationType';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
+import styled from 'styled-components';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -38,89 +39,24 @@ interface AddConditionProps {
   heading: string;
   subHeading: string;
   handleNext?: () => void;
+  criteriaState: CriteriaStateType;
 }
+
 const AddConditionSection = ({
   heading,
   subHeading,
   handleNext,
+  criteriaState,
 }: AddConditionProps) => {
-    //todo - dummy data to be removed after we get condition data
-
-  const dummyConditonsData: ConditionArray[] = [
-    [{ operator: 'any' }],
-    [
-      {
-        type: 'PUSH',
-        category: 'ERC20',
-        subcategory: 'holder',
-        data: {
-          contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
-          amount: 1,
-          decimals: 18,
-        },
-      },
-    ],
-    [
-      { operator: 'all' },
-      {
-        type: 'PUSH',
-        category: 'ERC20',
-        subcategory: 'holder',
-        data: {
-          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-          amount: 1,
-          decimals: 18,
-        },
-      },
-      {
-        type: 'PUSH',
-        category: 'ERC721',
-        subcategory: 'holder',
-        data: {
-          contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-          amount: 1,
-          decimals: 18,
-        },
-      },
-      {
-        type: 'GUILD',
-        category: 'ROLES',
-        subcategory: 'DEFAULT',
-        data: {
-          id: '1',
-          role: '346243',
-          comparison: 'all',
-        },
-      },
-    ],
-    [
-      { operator: 'any' },
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: 'ADMIN',
-        },
-      },
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: 'OWNER',
-        },
-      },
-    ],
-  ];
-
-  const dummySingleCondtionData = dummyConditonsData[2];
   const theme = useContext(ThemeContext);
-  const [conditionOperator, setConditionOperator] = useState<string>(dummyConditonsData[0][0]?.operator as string);
+  //todo - dummy data to be removed after we get condition data
 
-
- 
-
+  const generateMapping = () => {
+    return criteriaState.entryOptionsDataArray.map((rule, idx) => [
+      { operator: criteriaState.entryOptionTypeArray[idx] },
+      ...rule.map((el) => el),
+    ]);
+  };
 
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
@@ -141,17 +77,46 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-      <Section margin='20px 0 10px 0'>
+      <Section margin="20px 0 10px 0">
         <OperatorContainer
-          operator={conditionOperator}
-          setOperator={setConditionOperator}
+          operator={criteriaState.entryRootCondition}
+          setOperator={(newEl: string) => {
+            criteriaState.setEntryRootCondition(newEl as ConditionType);
+          }}
         />
       </Section>
-      
-      <ConditionsComponent conditionData={dummyConditonsData} />
+      <ConditionSection
+        width="100%"
+        overflow="hidden auto"
+        maxHeight="20rem"
+        theme={theme}
+        padding="0 4px 0 0"
+      >
+        <ConditionsComponent
+          conditionData={[
+            [{ operator: criteriaState.entryRootCondition }],
+            ...generateMapping(),
+          ]}
+          deleteFunction={(idx) => {
+            criteriaState.deleteEntryOptionsDataArray(idx);
+          }}
+          updateFunction={(idx) => {
+            criteriaState.selectEntryOptionsDataArrayForUpdate(idx);
+            if (handleNext) {
+              handleNext();
+            }
+          }}
+        />
+      </ConditionSection>
 
       <Button
-        onClick={handleNext}
+        onClick={() => {
+          if (handleNext) {
+            criteriaState.setSelectedRule([]);
+            criteriaState.setSelectedCriteria(-1);
+            handleNext();
+          }
+        }}
         customStyle={{
           color: `${theme.backgroundColor?.buttonBackground}`,
           fontSize: '15px',
@@ -171,11 +136,13 @@ export const CreateGroupType = ({
   handlePrevious,
   groupInputDetails,
   handleNext,
+  entryCriteria,
 }: ModalHeaderProps & GroupTypeState) => {
-  const [checked, setChecked] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(true);
   const [groupEncryptionType, setGroupEncryptionType] = useState('');
-  const theme = useContext(ThemeContext);
-  const isMobile = useMediaQuery(device.mobileL);
+
+  // const theme = useContext(ThemeContext);
+  // const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
@@ -217,7 +184,6 @@ export const CreateGroupType = ({
         selectedValue={groupEncryptionType}
         handleClick={(newEl: string) => {
           setGroupEncryptionType(newEl);
-          console.log('we called it');
         }}
       />
 
@@ -231,13 +197,18 @@ export const CreateGroupType = ({
       {checked && (
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
-            handleNext={handleNext}
+            criteriaState={entryCriteria}
+            handleNext={() => {
+              if (handleNext) {
+                handleNext();
+              }
+            }}
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
-          <AddConditionSection
+          {/* <AddConditionSection
             handleNext={handleNext}
             {...ACCESS_TYPE_TITLE.CHAT}
-          />
+          /> */}
         </Section>
       )}
 
@@ -248,3 +219,18 @@ export const CreateGroupType = ({
     </Section>
   );
 };
+
+//styles
+const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+`;

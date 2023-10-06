@@ -11,7 +11,7 @@ export const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
       value: 'all',
     },
     {
-      heading: 'ALL',
+      heading: 'ANY',
       value: 'any',
     },
     {
@@ -33,12 +33,14 @@ export const INVITE_CHECKBOX_LABEL: { owner: string; admin: string } = {
 
 
 export const OPERATOR_OPTIONS_INFO = {
-    any:{ head:'Any one',
-    tail:'of the following criteria must be true'
-       },
-    all:{ head:'All',
-    tail:'of the following criteria must be true'
-       }
+    any:{ 
+      head:'Any one',
+      tail:'of the following criteria must be true'
+    },
+    all:{ 
+      head:'All',
+      tail:'of the following criteria must be true'
+    }
 } ;
 
 

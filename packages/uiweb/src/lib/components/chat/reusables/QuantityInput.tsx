@@ -6,6 +6,7 @@ import { IChatTheme } from '../theme';
 import { DropdownValueType } from './DropDown';
 import { Section, Span } from '../../reusables';
 import { DropDownInput } from './DropDownInput';
+import { device } from '../../../config';
 
 export type InputType = { value: number; range: number };
 export interface IQuantityInputProps {
@@ -30,12 +31,14 @@ export const QuantityInput = (props: IQuantityInputProps) => {
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-        <Section gap="4px" alignItems="center">
+        <Section gap="4px" alignItems="center" justifyContent='space-between'>
+          <Section >
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}
           />
-          <Section alignItems="baseline">
+          </Section>
+          <Section alignItems="baseline" >
             <Input
               type="number"
               theme={theme}
@@ -43,14 +46,16 @@ export const QuantityInput = (props: IQuantityInputProps) => {
               onChange={handleChange}
               placeholder={props.placeholder}
             />
-            <Span
+            <Unit
+
               borderRadius="0 12px 12px 0"
               background={theme.backgroundColor?.modalHoverBackground}
-              padding="16px"
               border={theme.border?.modalInnerComponents}
+              width='20%'
+             
             >
               {props.unit}
-            </Span>
+            </Unit>
           </Section>
         </Section>
       </QuantityInputContainer>
@@ -84,9 +89,20 @@ const Input = styled.input<IChatTheme>`
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-width: 1px 0px 1px 1px;
   border-radius: 12px 0 0 12px;
-
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
-
+  width:80%;
   font-weight: 500;
+`;
+
+const Unit = styled(Span)<IChatTheme>`
+font-size:16px;
+font-weight:700;
+padding:16px;
+@media ${device.mobileL} {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 18.5px 19px 16.5px 13px;
+}
 `;

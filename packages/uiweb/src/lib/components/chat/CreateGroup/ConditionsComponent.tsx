@@ -22,6 +22,8 @@ export type CriteraValueType = {
 interface CriteriaProps {
   conditionData: ConditionArray[];
   moreOptions?: boolean;
+  deleteFunction?:(idx:number)=>void;
+  updateFunction?:(idx:number)=>void;
 }
 
 interface MoreOptionsContainerProps {
@@ -46,15 +48,12 @@ const MoreOptionsContainer = ({
   const dropdownRef = useRef<any>(null);
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
-
+console.log('in dropdown')
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}>
-      <MoreDarkIcon />
+      <MoreDarkIcon color={theme.iconColor?.groupSettings} />
       {selectedIndex?.length && selectedIndex[0] === row && (
-        <DropdownContainer
-          ref={dropdownRef}
-          theme={theme}
-        >
+        <DropdownContainer ref={dropdownRef} theme={theme}>
           <Dropdown
             dropdownValues={dropDownValues}
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
@@ -87,7 +86,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -101,7 +100,11 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
       title: 'Edit',
       icon: EditSvg,
       function: () => {
-        console.log('function to edit');
+        if(updateFunction){
+          if(selectedIndex){
+            updateFunction(selectedIndex[0])
+          }
+        }
       },
     },
     {
@@ -110,7 +113,11 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
       title: 'Remove',
       icon: RemoveSvg,
       function: () => {
-        console.log('function to remove');
+        if(deleteFunction){
+          if(selectedIndex){
+            deleteFunction(selectedIndex[0])
+          }
+        }
       },
     },
   ];
@@ -118,25 +125,22 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
-
-  //fix the theming
-
   const handleMoreOptionsClick = (row: number, col: number) => {
+    console.log('in click')
     setSelectedIndex([row, col]);
   };
-  console.log(conditionData)
+
   return (
-    <Section flexDirection='column'  width='100%'>
-      {/* we can reuse the code by creating a reusable component for it */}
+    <Section flexDirection="column" width="100%" height='100%' >
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
-          <Section flexDirection="column" gap="8px" margin='0 0 8px 0' position='relative'>
+          <Section flexDirection="column"  >
             {criteria.length === 1 &&
               criteria.map((singleCriteria, col) => (
                 <>
                   {singleCriteria.type && (
                     <Section
-                      borderRadius="12px"
+                      borderRadius={theme.borderRadius?.modalInnerComponents}
                       background={theme.backgroundColor?.modalHoverBackground}
                       padding="10px 4px 10px 12px"
                       justifyContent="space-between"
@@ -160,14 +164,12 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
               ))}
 
             {criteria.length > 1 && (
-              <Section
+              <CriteriaGroup
+                theme={theme}
                 flexDirection="row"
-                borderWidth="1px"
                 justifyContent="space-between"
                 alignItems="center"
-                borderColor="#E6E7EE"
-                borderRadius="12px"
-                borderStyle="solid"
+                borderRadius={theme.borderRadius?.modalInnerComponents}
                 padding="8px 0px 8px 8px"
                 gap="25px"
               >
@@ -177,7 +179,9 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
                       {singleCriteria.type && (
                         <>
                           <Section
-                            borderRadius="12px"
+                            borderRadius={
+                              theme.borderRadius?.modalInnerComponents
+                            }
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
@@ -213,7 +217,7 @@ const ConditionsComponent = ({ conditionData, moreOptions = true }: CriteriaProp
                     />
                   )}
                 </Section>
-              </Section>
+              </CriteriaGroup>
             )}
             {conditionData &&
               row < conditionData.length - 2 &&
@@ -234,32 +238,35 @@ export default ConditionsComponent;
 const DropdownContainer = styled.div`
   position: absolute;
   left: 48%;
-  top: 69%;
+  top: 10%;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  padding: 14px 8px;
+
+  padding: 6px 32px 6px 12px;
   z-index: 999999999999 !important;
   display: flex;
   flex-direction: column !important;
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
 
-  @media ${device.mobileL} {
-    left: 27%;
-    z-index: 999999999999 !important;
-  }
-  @media (min-width: 426px) and (max-width: 1150px) {
-    left: 48%;
-  }
-  @media (max-width: 674px) {
-    left: 25%;
-    margin-left: -130px;
-  }
+  // @media ${device.mobileL} {
+  //   left: 27%;
+  // }
+  // @media (min-width: 426px) and (max-width: 1150px) {
+  //   left: 48%;
+  // }
+  // @media (max-width: 480px) {
+  //   left: 25%;
+  // }
 `;
 
-const OperatorSpan = styled.span<{ theme: IChatTheme }>`
+const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
-  margin: 0 8px 0px 0px;
+  margin:8px 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
+`;
+
+const CriteriaGroup = styled(Section)<{ theme: IChatTheme }>`
+  border: ${(props) => props.theme.border?.modalInnerComponents};
 `;

@@ -44,3 +44,5 @@ export type DropdownCategoryValuesType = {
 export type DropdownSubCategoryValuesType = {
   [key in SubCategoryKeys]: InputType;
 };
+
+export * from './tokenGatedGroupCreationType'
