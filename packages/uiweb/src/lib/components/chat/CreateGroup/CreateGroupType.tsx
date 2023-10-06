@@ -10,7 +10,7 @@ import { GroupTypeState } from './CreateGroupModal';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
 import { ConditionArray, IChatTheme } from '../exportedTypes';
 import {
   ConditionType,
@@ -33,16 +33,7 @@ const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   },
 ];
 
-const ACCESS_TYPE_TITLE = {
-  ENTRY: {
-    heading: 'Conditions to Join',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-  CHAT: {
-    heading: 'Conditions to Chat',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-};
+
 
 interface AddConditionProps {
   heading: string;

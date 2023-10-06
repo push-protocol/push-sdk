@@ -21,6 +21,7 @@ export type CriteraValueType = {
 
 interface CriteriaProps {
   conditionData: ConditionArray[];
+  moreOptions?: boolean;
   deleteFunction?:(idx:number)=>void;
   updateFunction?:(idx:number)=>void;
 }
@@ -85,7 +86,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -145,14 +146,18 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
-                      <MoreOptionsContainer
-                        handleMoreOptionsClick={handleMoreOptionsClick}
-                        row={row}
-                        col={col}
-                        dropDownValues={dropDownValues}
-                        setSelectedIndex={setSelectedIndex}
-                        selectedIndex={selectedIndex}
-                      />
+                      {
+                        moreOptions && (
+                          <MoreOptionsContainer
+                            handleMoreOptionsClick={handleMoreOptionsClick}
+                            row={row}
+                            col={col}
+                            dropDownValues={dropDownValues}
+                            setSelectedIndex={setSelectedIndex}
+                            selectedIndex={selectedIndex}
+                          />
+                        )
+                      }
                     </Section>
                   )}
                 </>
@@ -201,14 +206,16 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       )}
                     </>
                   ))}
-                  <MoreOptionsContainer
-                    handleMoreOptionsClick={handleMoreOptionsClick}
-                    row={row}
-                    col={0}
-                    dropDownValues={dropDownValues}
-                    setSelectedIndex={setSelectedIndex}
-                    selectedIndex={selectedIndex}
-                  />
+                  {moreOptions && (
+                    <MoreOptionsContainer
+                      handleMoreOptionsClick={handleMoreOptionsClick}
+                      row={row}
+                      col={0}
+                      dropDownValues={dropDownValues}
+                      setSelectedIndex={setSelectedIndex}
+                      selectedIndex={selectedIndex}
+                    />
+                  )}
                 </Section>
               </CriteriaGroup>
             )}
