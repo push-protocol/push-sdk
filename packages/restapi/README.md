@@ -80,6 +80,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Stream Chat Events](#stream-chat-events)
     - [Stream Chat Ops Events](#stream-chat-ops-events)
   - [PushNotification Class](#pushnotification-class)
+    - [Initialize](#initialize)
     - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
     - [Fetch user subscriptions](#fetch-user-subscriptions)
     - [Subscribe to a channel](#subscribe-to-a-channel)
@@ -5464,6 +5465,29 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ---
 
 ## PushNotification Class
+
+### **Initialize**
+
+```typescript
+// Initialize PushAPI class instance
+const userAlice = await PushAPI.initialize(signer);
+```
+
+| Param                    | Type                                   | Default       | Remarks                                                                                |
+| ------------------------ | -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `signer`                 | `SignerType`                           | -             | EthersV5 or Viem Signer                                                                |
+| `options` \*             | `PushAPIInitializeProps`               | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.env` \*         | `ENV`                                  | `staging`     | API env - 'prod', 'staging', 'dev'                                                     |
+| `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
+| `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
+| `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
+| `options.versionMeta` \* | `{ NFTPGP_V1 ?: password: string }`    | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.autoUpgrade` \* | `boolean`                              | `true`        | If `true`, upgrades encryption keys to latest encryption version                       |
+| `options.origin` \*      | `string`                               | -             | Specify origin or source while creating a Push Profile                                 |
+
+\* - Optional
+
+---
 
 ### **Fetch Inbox Or Spam notifications**
 
