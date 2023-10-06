@@ -171,65 +171,47 @@ const dummyConditonsData: ConditionArray[] = [
       },
     },
   ],
-  [
-    { operator: 'any' },
-    {
-      type: 'PUSH',
-      category: 'INVITE',
-      subcategory: 'DEFAULT',
-      data: {
-        inviterRoles: 'ADMIN',
-      },
-    },
-    {
-      type: 'PUSH',
-      category: 'INVITE',
-      subcategory: 'DEFAULT',
-      data: {
-        inviterRoles: 'OWNER',
-      },
-    },
-  ],
+  // [
+  //   { operator: 'any' },
+  //   {
+  //     type: 'PUSH',
+  //     category: 'INVITE',
+  //     subcategory: 'DEFAULT',
+  //     data: {
+  //       inviterRoles: 'ADMIN',
+  //     },
+  //   },
+  //   {
+  //     type: 'PUSH',
+  //     category: 'INVITE',
+  //     subcategory: 'DEFAULT',
+  //     data: {
+  //       inviterRoles: 'OWNER',
+  //     },
+  //   },
+  // ],
 ];
 
 const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map((criteria) => [
   criteria,
 ]);
 
-interface ConditionsInformationProps{
+interface ConditionsInformationProps {
   theme: IChatTheme;
   groupInfo?: IGroup | null;
 }
 
-export const ConditionsInformation = ({theme, groupInfo}: ConditionsInformationProps) => {
+export const ConditionsInformation = ({ theme, groupInfo }: ConditionsInformationProps) => {
   return (
-    <Section margin='15px 0px 0px 0px' flexDirection='column'>
-      <Section margin='0px 0px 15px 0px'>
-      {
-        (groupInfo?.rules?.chat?.conditions || groupInfo?.rules?.entry?.conditions) && (
-          <PublicEncrypted theme={theme}>
-            <Image
-              src={TokenGatedIcon}
-              height="24px"
-              maxHeight="24px"
-              width={'auto'}
-            />
-
-            <Section flexDirection="column" alignItems="flex-start" gap="5px">
-              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                Gated group
-              </Span>
-              <Span
-                fontSize="12px"
-                color={theme.textColor?.modalSubHeadingText}
-              >
-                Conditions must be true to join
-              </Span>
-            </Section>
-          </PublicEncrypted>
-        )
-      }
-      </Section>
+    <Section margin='15px 0px 0px 0px' gap='15px 0px' flexDirection='column'>
+        {
+          (groupInfo?.rules?.chat?.conditions || groupInfo?.rules?.entry?.conditions) && (
+          <GroupTypeBadge theme={theme} Icon={TokenGatedIcon} header={'Gated group'} subheader={'Conditions must be true to join'} />
+          )
+        }
+        <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Join</Span>
+      <ConditionsComponent conditionData={dummyConditonsData} />
+      <Span fontSize='16px' fontWeight='500' alignSelf='start'>Conditions to Chat</Span>
       <ConditionsComponent conditionData={dummyConditonsData} />
     </Section>
   )
@@ -240,31 +222,32 @@ interface GroupTypeProps {
   Icon: string;
   header: string;
   subheader: string;
-  groupInfo?: IGroup | null;
+  cursor?: string;
+  handleNextInformation?: () => void;
 }
 
-const GroupTypeBadge = ({ theme, Icon, header, subheader, groupInfo }: GroupTypeProps) => {
+const GroupTypeBadge = ({ theme, Icon, header, subheader, handleNextInformation, cursor }: GroupTypeProps) => {
   return (
-    <Section>
-      <PublicEncrypted theme={theme}>
+    <Section cursor={cursor}>
+      <PublicEncrypted onClick={handleNextInformation} theme={theme}>
         <Image
-          src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+        cursor={cursor}
+          src={Icon}
           height="24px"
           maxHeight="24px"
           width={'auto'}
         />
 
-        <Section flexDirection="column" alignItems="flex-start" gap="5px">
-          <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-            {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
+        <Section cursor={cursor} flexDirection="column" alignItems="flex-start" gap="5px">
+          <Span cursor={cursor} fontSize="18px" color={theme.textColor?.modalHeadingText}>
+            {header}
           </Span>
           <Span
+          cursor={cursor}
             fontSize="12px"
             color={theme.textColor?.modalSubHeadingText}
           >
-            {groupInfo?.isPublic
-              ? 'Chats are not encrypted'
-              : 'Chats are end-to-end encrypted'}
+            {subheader}
           </Span>
         </Section>
       </PublicEncrypted>
@@ -272,13 +255,17 @@ const GroupTypeBadge = ({ theme, Icon, header, subheader, groupInfo }: GroupType
   )
 }
 
+type GroupSectionProps = GroupInfoModalProps & {
+  handleNextInformation: () => void;
+  handlePreviousInformation: () => void;
+}
+
+
 type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: IGroup;
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-  handleNextInformation: () => void;
-  handlePreviousInformation: () => void;
 };
 
 export const GROUPINFO_STEPS = {
@@ -291,7 +278,7 @@ export type GROUP_INFO_TYPE = (typeof GROUPINFO_STEPS)[keyof typeof GROUPINFO_ST
 const GroupInformation = ({ theme,
   setModal,
   groupInfo,
-  setGroupInfo, handleNextInformation, handlePreviousInformation }: GroupInfoModalProps) => {
+  setGroupInfo, handleNextInformation, handlePreviousInformation }: GroupSectionProps) => {
 
   const { account } = useChatData();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
@@ -502,51 +489,12 @@ const GroupInformation = ({ theme,
           {groupInfo?.groupDescription}
         </Span>
       </GroupDescription>
-
-      <PublicEncrypted theme={theme}>
-        <Image
-          src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
-          height="24px"
-          maxHeight="24px"
-          width={'auto'}
-        />
-
-        <Section flexDirection="column" alignItems="flex-start" gap="5px">
-          <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-            {groupInfo?.isPublic ? 'Open' : 'Encrypted'}
-          </Span>
-          <Span
-            fontSize="12px"
-            color={theme.textColor?.modalSubHeadingText}
-          >
-            {groupInfo?.isPublic
-              ? 'Chats are not encrypted'
-              : 'Chats are end-to-end encrypted'}
-          </Span>
-        </Section>
-      </PublicEncrypted>
+      <GroupTypeBadge theme={theme} Icon={groupInfo?.isPublic ? LockIcon : LockSlashIcon} header={groupInfo?.isPublic ? 'Open' : 'Encrypted'} subheader={groupInfo?.isPublic
+        ? 'Chats are not encrypted'
+        : 'Chats are end-to-end encrypted'} />
       {
         (groupInfo.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
-          <PublicEncrypted onClick={handleNextInformation} theme={theme}>
-            <Image
-              src={TokenGatedIcon}
-              height="24px"
-              maxHeight="24px"
-              width={'auto'}
-            />
-
-            <Section flexDirection="column" alignItems="flex-start" gap="5px">
-              <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-                Gated group
-              </Span>
-              <Span
-                fontSize="12px"
-                color={theme.textColor?.modalSubHeadingText}
-              >
-                Conditions must be true to join
-              </Span>
-            </Section>
-          </PublicEncrypted>
+          <GroupTypeBadge cursor='pointer' handleNextInformation={handleNextInformation} theme={theme} Icon={TokenGatedIcon} header={'Gated group'} subheader={'Conditions must be true to join'} />
         )
       }
 
