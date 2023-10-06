@@ -1,4 +1,4 @@
-import React, {  useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -22,47 +22,54 @@ export const DropDownInput = (props: IDropDownInputProps) => {
 
   const { selectedValue, dropdownValues, labelName } = props;
 
-    // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
+  // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
 
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);
   };
-console.log(dropdownValues)
-console.log(selectedValue)
+  console.log(dropdownValues);
+  console.log(selectedValue);
   return (
     <ThemeProvider theme={theme}>
-      <DropdownContainer>
+      <DropdownContainer >
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-         {!showDropdown && <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
-          <Span  margin='0 7px 0 0'>{dropdownValues[selectedValue].title} </Span>
-          <ArrowImage
-            src={ArrowIcon}
-            width={'auto'}
-            setPosition={!showDropdown}
-            borderRadius="100%"
-           
-          />
-        </DropdownDiv>}
-        {showDropdown && (
-          <DropdownListContainer theme={theme} onClick={closeDropdown} >
-            <Dropdown
-              dropdownValues={dropdownValues}
-              hoverBGColor={theme.backgroundColor?.modalHoverBackground}
-            />
-          </DropdownListContainer>
-        )}
+        <Section width="100%" zIndex='10'>
+    
+            <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
+              <Span margin="0 7px 0 0">
+                {dropdownValues[selectedValue].title}{' '}
+              </Span>
+              <ArrowImage
+                src={ArrowIcon}
+                width={'auto'}
+                setPosition={!showDropdown}
+                borderRadius="100%"
+              />
+            </DropdownDiv>
+ 
+          {showDropdown && (
+            <DropdownListContainer theme={theme} onClick={closeDropdown}>
+              <Dropdown
+                dropdownValues={dropdownValues}
+                hoverBGColor={theme.backgroundColor?.modalHoverBackground}
+              />
+            </DropdownListContainer>
+          )}
+        </Section>
       </DropdownContainer>
     </ThemeProvider>
   );
 };
 
 //style
-const DropdownContainer = styled.div`
+const DropdownContainer = styled(Section)`
   display: flex;
   flex-direction: column;
   width: 100%;
+  z-index:10;
+  align-items:flex-start;
   font-family: ${(props) => props.theme.fontFamily};
   gap: 8px;
 `;
@@ -70,12 +77,15 @@ const DropdownContainer = styled.div`
 const LabelContainer = styled.div`
   font-weight: 400;
   font-size: 16px;
+  z-index:10;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const DropdownDiv = styled.div<IChatTheme>`
+const DropdownDiv = styled(Section)<IChatTheme>`
   padding: 16px;
+  width: 100%;
   display: flex;
+  z-index:10;
   justify-content: space-between;
   align-items: center;
 
@@ -95,9 +105,10 @@ const ArrowImage = styled(Image)<{ setPosition: boolean }>`
 `;
 
 const DropdownListContainer = styled(Section)<IChatTheme>`
-
+  position: absolute;
+  width: 100%;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  padding:  8px;
+  padding: 8px;
   z-index: 9999999 !important;
   display: flex;
   flex-direction: column !important;

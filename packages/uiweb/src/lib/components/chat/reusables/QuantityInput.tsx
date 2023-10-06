@@ -32,7 +32,7 @@ export const QuantityInput = (props: IQuantityInputProps) => {
           <label>{props.labelName}</label>
         </LabelContainer>
         <Section gap="4px" alignItems="center" justifyContent='space-between'>
-          <Section >
+          <Section  zIndex='500'>
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}

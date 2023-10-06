@@ -62,6 +62,15 @@ const AddCriteria = ({
   });
   const { env } = useChatData();
   const theme = useContext(ThemeContext);
+  const [disableButton, setDisableButton] = useState<boolean>(true);
+  const customButtonStyle = {
+    background: disableButton
+      ? theme.backgroundColor?.buttonDisableBackground
+      : theme.backgroundColor?.buttonBackground,
+    color: disableButton
+      ? theme.textColor?.buttonDisableText
+      : theme.textColor?.buttonText,
+  };
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -510,7 +519,7 @@ const AddCriteria = ({
           
         </>
       )}
-      <Button width="197px" onClick={verifyAndDoNext}>
+      <Button width="197px" onClick={verifyAndDoNext} customStyle={customButtonStyle}>
         {entryCriteria.isUpdateCriteriaEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
