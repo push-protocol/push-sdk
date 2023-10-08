@@ -129,7 +129,7 @@ export interface CriteriaStateManagerType {
   getSelectedCriteria: () => CriteriaStateType;
   resetRules: () => void;
   resetCriteriaIdx: () => void;
-  generateRule: () => any;
+  generateRule: () => TokenGatedRule;
 }
 
 export const useCriteriaStateManager = (): CriteriaStateManagerType => {
@@ -170,7 +170,7 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
     chatCriteria.setUpdateCriteriaIdx(-1);
   };
 
-  const generate = (rules: Rule[][], conditionTypes: ConditionType[]):Condition[] => {
+  const _generate = (rules: Rule[][], conditionTypes: ConditionType[]):Condition[] => {
     return conditionTypes.map((el, idx) => ({
       [el]: rules[idx].map((_el) => _el),
     })) as any;
@@ -180,7 +180,7 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
     return {
       entry:{
         conditions: {
-          [chatCriteria.entryRootCondition]: generate(
+          [chatCriteria.entryRootCondition]: _generate(
             chatCriteria.entryOptionsDataArray,
             chatCriteria.entryOptionTypeArray
           ),
@@ -188,7 +188,7 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
       },
       chat: {
         conditions: {
-          [entryCriteria.entryRootCondition]: generate(
+          [entryCriteria.entryRootCondition]: _generate(
             entryCriteria.entryOptionsDataArray,
             entryCriteria.entryOptionTypeArray
           ),
