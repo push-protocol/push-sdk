@@ -157,6 +157,9 @@ export const CreateGroupType = ({
       groupInfo: { ...groupInputDetails },
       groupType: groupEncryptionType,
     };
+
+    const rules = criteriaStateManager.generateRule()
+    console.log("rules are", JSON.stringify(rules));
     console.log('created group with', groupInfo);
     onClose();
   };
@@ -231,7 +234,7 @@ export const CreateGroupType = ({
       )}
 
       <Section gap="20px" flexDirection="column">
-        <Button width="197px">Create Group</Button>
+        <Button width="197px" onClick={verifyAndCreateGroup}>Create Group</Button>
         <GatingRulesInformation />
       </Section>
     </Section>

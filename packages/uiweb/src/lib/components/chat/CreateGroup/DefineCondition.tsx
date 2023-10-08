@@ -58,9 +58,10 @@ export const DefineCondtion = ({
           ...criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate],
         ])
       }
+    }else{
+      //
     }
   },[])
-
 
   return (
     <Section

@@ -360,7 +360,9 @@ const AddCriteria = ({
   useEffect(()=>{
    if(criteriaState.isUpdateCriteriaEnabled()){
     //Load the states
-    const oldValue = criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate][criteriaState.updateCriteriaIdx]
+    const oldValue = criteriaState.selectedRules[criteriaState.updateCriteriaIdx] 
+    // alert(`old value ${JSON.stringify(oldValue)}`)
+    // const oldValue = criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate][criteriaState.updateCriteriaIdx]
     
     if(oldValue.type === 'PUSH'){
       
@@ -387,7 +389,7 @@ const AddCriteria = ({
         setQuantity({
           value:pushData.amount || 0, 
           range:dropdownQuantityRangeValues.findIndex(
-            obj => obj.value === oldValue.data
+            obj => obj.value === pushData.comparison
           )
         })
       }else if(oldValue.category === CATEGORY.INVITE){
@@ -439,7 +441,7 @@ const AddCriteria = ({
       ) : (
         <TextInput
           labelName="Gating category"
-          inputValue={(getCategoryDropdownValues() as ReadonlyInputType).title}
+          inputValue={(getCategoryDropdownValues() as ReadonlyInputType)?.title}
           disabled={true}
           customStyle={{
             background: theme.backgroundColor?.modalHoverBackground,

@@ -22,7 +22,6 @@ export const OperatorContainer = ({
     )
   }
 
-
   return (
     <Section flexDirection="column" gap="16px">
       <OptionButtons

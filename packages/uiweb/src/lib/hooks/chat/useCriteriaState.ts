@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import {
+  Condition,
   ConditionType,
   CriteriaStateType,
   Rule,
+  TokenGatedRule,
 } from '../../components/chat/types';
 
-export const useCriteriaState = (): CriteriaStateType => {
+export const useCriteriaState = (defaultRules: Rule[][]): CriteriaStateType => {
   const [entryRootCondition, setEntryRootCondition] =
     useState<ConditionType>('all');
   const [entryRuleTypeCondition, setEntryRuleTypeCondition] =
@@ -13,18 +15,8 @@ export const useCriteriaState = (): CriteriaStateType => {
   const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<
     ConditionType[]
   >([]);
-  const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>([
-    [
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: ['ADMIN', 'OWNER'],
-        },
-      },
-    ],
-  ]);
+  const [entryOptionsDataArray, setEntryOptionsDataArray] =
+    useState<Rule[][]>(defaultRules);
 
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([]);
@@ -135,14 +127,28 @@ export interface CriteriaStateManagerType {
   seletedCriteria: SelectedCriteria;
   setSelectedCriteria: React.Dispatch<React.SetStateAction<SelectedCriteria>>;
   getSelectedCriteria: () => CriteriaStateType;
+  resetRules: () => void;
+  resetCriteriaIdx: () => void;
+  generateRule: () => any;
 }
 
 export const useCriteriaStateManager = (): CriteriaStateManagerType => {
   const [seletedCriteria, setSelectedCriteria] = useState<SelectedCriteria>(
     SelectedCriteria.CHAT
   );
-  const entryCriteria = useCriteriaState();
-  const chatCriteria = useCriteriaState();
+  const entryCriteria = useCriteriaState([
+    [
+      {
+        type: 'PUSH',
+        category: 'INVITE',
+        subcategory: 'DEFAULT',
+        data: {
+          inviterRoles: ['ADMIN', 'OWNER'],
+        },
+      },
+    ],
+  ]);
+  const chatCriteria = useCriteriaState([]);
 
   const getSelectedCriteria = () => {
     if (seletedCriteria === SelectedCriteria.CHAT) {
@@ -152,11 +158,53 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
     }
   };
 
+  const resetRules = () => {
+    entryCriteria.selectEntryOptionsDataArrayForUpdate(-1);
+    entryCriteria.setSelectedRule([]);
+    chatCriteria.selectEntryOptionsDataArrayForUpdate(-1);
+    chatCriteria.setSelectedRule([]);
+  };
+
+  const resetCriteriaIdx = () => {
+    entryCriteria.setUpdateCriteriaIdx(-1);
+    chatCriteria.setUpdateCriteriaIdx(-1);
+  };
+
+  const generate = (rules: Rule[][], conditionTypes: ConditionType[]):Condition[] => {
+    return conditionTypes.map((el, idx) => ({
+      [el]: rules[idx].map((_el) => _el),
+    })) as any;
+  };
+
+  const generateRule = ():TokenGatedRule => {
+    return {
+      entry:{
+        conditions: {
+          [chatCriteria.entryRootCondition]: generate(
+            chatCriteria.entryOptionsDataArray,
+            chatCriteria.entryOptionTypeArray
+          ),
+        },
+      },
+      chat: {
+        conditions: {
+          [entryCriteria.entryRootCondition]: generate(
+            entryCriteria.entryOptionsDataArray,
+            entryCriteria.entryOptionTypeArray
+          ),
+        },
+      },
+    } as any;
+  };
+
   return {
     entryCriteria,
     chatCriteria,
     seletedCriteria,
     setSelectedCriteria,
     getSelectedCriteria,
+    resetRules,
+    resetCriteriaIdx,
+    generateRule
   };
 };

@@ -37,6 +37,11 @@ export interface ChatConditions {
   conditions: AllCondition | AnyCondition;
 }
 
+export interface TokenGatedRule{
+  chat:ChatConditions,
+  entry:ChatConditions
+}
+
 export type ConditionType = 'any' | 'all';
 
 export interface CriteriaStateType {

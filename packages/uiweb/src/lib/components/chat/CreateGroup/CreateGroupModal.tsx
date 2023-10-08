@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { AiTwotoneCamera } from 'react-icons/ai';
 
-//spaces things shouldnot be used
 import { ModalHeader } from '../reusables/Modal';
 import { Modal } from '../reusables/Modal';
 import { TextInput } from '../reusables/TextInput';
@@ -64,10 +63,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   useEffect(()=>{
     // reset update rules
     if(activeComponent === 2){
-      criteriaStateManager.entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
-      criteriaStateManager.entryCriteria.setSelectedRule([])
+      criteriaStateManager.resetRules()
     }else if(activeComponent === 3){
-      criteriaStateManager.entryCriteria.setUpdateCriteriaIdx(-1)
+      criteriaStateManager.resetCriteriaIdx()
     }
   },[activeComponent])
 
