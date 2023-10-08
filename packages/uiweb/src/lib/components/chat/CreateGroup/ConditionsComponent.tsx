@@ -248,15 +248,7 @@ const DropdownContainer = styled.div`
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
 
-  // @media ${device.mobileL} {
-  //   left: 27%;
-  // }
-  // @media (min-width: 426px) and (max-width: 1150px) {
-  //   left: 48%;
-  // }
-  // @media (max-width: 480px) {
-  //   left: 25%;
-  // }
+  
 `;
 
 const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`

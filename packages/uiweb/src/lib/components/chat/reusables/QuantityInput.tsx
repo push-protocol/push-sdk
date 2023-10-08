@@ -4,7 +4,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import { DropdownValueType } from './DropDown';
-import { Section, Span } from '../../reusables';
+import { Div, Section, Span } from '../../reusables';
 import { DropDownInput } from './DropDownInput';
 import { device } from '../../../config';
 
@@ -31,14 +31,14 @@ export const QuantityInput = (props: IQuantityInputProps) => {
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-        <Section gap="4px" alignItems="center" justifyContent='space-between'>
+        <Section gap="4px" alignItems="center" >
           <Section  zIndex='500'>
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}
           />
           </Section>
-          <Section alignItems="baseline" >
+          <Section alignItems="baseline" width='fit-content'>
             <Input
               type="number"
               theme={theme}
@@ -47,14 +47,15 @@ export const QuantityInput = (props: IQuantityInputProps) => {
               placeholder={props.placeholder}
             />
             <Unit
-
-              borderRadius="0 12px 12px 0"
+              alignSelf='auto'
               background={theme.backgroundColor?.modalHoverBackground}
-              border={theme.border?.modalInnerComponents}
-              width='20%'
+              width='fit-content'
+              height='fit-content'
              
             >
+              <Span>
               {props.unit}
+              </Span>
             </Unit>
           </Section>
         </Section>
@@ -91,18 +92,26 @@ const Input = styled.input<IChatTheme>`
   border-radius: 12px 0 0 12px;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
-  width:80%;
+  width:60%;
   font-weight: 500;
 `;
 
-const Unit = styled(Span)<IChatTheme>`
-font-size:16px;
-font-weight:700;
-padding:16px;
-@media ${device.mobileL} {
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  padding: 18.5px 19px 16.5px 13px;
+const Unit = styled(Section)<IChatTheme>`
+span{
+  font-size:14px;
+  font-weight:700;
 }
+border-radius:0 12px 12px 0;
+
+padding:17.2px;
+border: ${(props) => props.theme.border.modalInnerComponents};
+@media ${device.mobileL} {
+
+  padding:19.5px 5px;
+  span{
+    font-size: 10px;
+    font-weight:400
+  }
+}
+
 `;

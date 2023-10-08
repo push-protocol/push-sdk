@@ -35,7 +35,6 @@ export const DropDownInput = (props: IDropDownInputProps) => {
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-        <Section width="100%" zIndex='10'>
     
             <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
               <Span margin="0 7px 0 0">
@@ -57,7 +56,6 @@ export const DropDownInput = (props: IDropDownInputProps) => {
               />
             </DropdownListContainer>
           )}
-        </Section>
       </DropdownContainer>
     </ThemeProvider>
   );
@@ -68,7 +66,7 @@ const DropdownContainer = styled(Section)`
   display: flex;
   flex-direction: column;
   width: 100%;
-  z-index:10;
+  z-index:unset;
   align-items:flex-start;
   font-family: ${(props) => props.theme.fontFamily};
   gap: 8px;
@@ -77,15 +75,12 @@ const DropdownContainer = styled(Section)`
 const LabelContainer = styled.div`
   font-weight: 400;
   font-size: 16px;
-  z-index:10;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
 const DropdownDiv = styled(Section)<IChatTheme>`
   padding: 16px;
-  width: 100%;
   display: flex;
-  z-index:10;
   justify-content: space-between;
   align-items: center;
 
@@ -95,7 +90,9 @@ const DropdownDiv = styled(Section)<IChatTheme>`
 
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
-
+  span {
+    text-wrap: nowrap;
+  }
   font-weight: 500;
 `;
 const ArrowImage = styled(Image)<{ setPosition: boolean }>`
@@ -107,9 +104,11 @@ const ArrowImage = styled(Image)<{ setPosition: boolean }>`
 const DropdownListContainer = styled(Section)<IChatTheme>`
   position: absolute;
   width: 100%;
+  top:30%;
+  right:-9px;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 8px;
-  z-index: 9999999 !important;
+  z-index: 100;
   display: flex;
   flex-direction: column !important;
   background: ${(props) => props.theme.backgroundColor.modalBackground};

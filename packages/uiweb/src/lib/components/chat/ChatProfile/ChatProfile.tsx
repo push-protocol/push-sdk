@@ -66,14 +66,14 @@ const Options = ({
         gap="10px"
         margin="0 20px 0 auto"
       >
-        {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
+        {/* {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
           <Image
             src={TokenGatedIcon}
             height="24px"
             maxHeight="24px"
             width={'auto'}
           />
-        )}
+        )} */}
         <Image
           src={groupInfo?.isPublic ? PublicChatIcon : TokenGatedIcon}
           height="28px"
