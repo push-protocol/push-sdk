@@ -1,0 +1,37 @@
+name: 💡 General Feature Request
+description: Have a new idea? Please suggest!
+title: '[FEATURE] <description>'
+labels: [feature]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A brief description of the enhancement you propose, also include what you tried and what worked.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Please add screenshots if applicable
+    validations:
+      required: false
+  - type: textarea
+    id: extrainfo
+    attributes:
+      label: Additional information
+      description: Is there anything else we should know about this idea?
+    validations:
+      required: false
+  - type: dropdown
+    id: assignee
+    attributes:
+      label: Do you want to work on this issue?
+      multiple: false
+      options:
+        - 'No'
+        - 'Yes'
+      default: 0
+    validations:
+      required: false
