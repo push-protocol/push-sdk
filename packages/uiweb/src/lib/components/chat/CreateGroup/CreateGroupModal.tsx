@@ -24,7 +24,7 @@ import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ToastContainer } from 'react-toastify';
 import { CriteriaStateType} from '../types/tokenGatedGroupCreationType';
-import { useCriteriaState } from '../../../hooks/chat/useCriteriaState';
+import { CriteriaStateManagerType, useCriteriaState, useCriteriaStateManager } from '../../../hooks/chat/useCriteriaState';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -43,6 +43,7 @@ interface GroupInputDetailsType{
   groupImage:string|null; 
 }
 
+
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
 }) => {
@@ -58,15 +59,15 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     setActiveComponent(activeComponent-1 as CreateGroupStepKeys);
   };
   
-  const entryCriteria = useCriteriaState()
+  const criteriaStateManager = useCriteriaStateManager();
 
   useEffect(()=>{
     // reset update rules
     if(activeComponent === 2){
-      entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
-      entryCriteria.setSelectedRule([])
+      criteriaStateManager.entryCriteria.selectEntryOptionsDataArrayForUpdate(-1)
+      criteriaStateManager.entryCriteria.setSelectedRule([])
     }else if(activeComponent === 3){
-      entryCriteria.setUpdateCriteriaIdx(-1)
+      criteriaStateManager.entryCriteria.setUpdateCriteriaIdx(-1)
     }
   },[activeComponent])
 
@@ -81,20 +82,20 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return <CreateGroupDetail 
-          entryCriteria={entryCriteria}
+          criteriaStateManager={criteriaStateManager}
           handleNext={handleNext} 
           onClose={onClose} 
           groupInputDetails={groupInputDetails} 
           setGroupInputDetails={setGroupInputDetails}
         />;
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
-        return <CreateGroupType entryCriteria={entryCriteria}  groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
+        return <CreateGroupType criteriaStateManager={criteriaStateManager} groupInputDetails={groupInputDetails}  handleNext={handleNext} onClose={onClose} handlePrevious={handlePrevious}/>;
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
-        return <DefineCondtion entryCriteria={entryCriteria} handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
+        return <DefineCondtion criteriaStateManager={criteriaStateManager} handleNext={handleNext} handlePrevious={handlePrevious} onClose={onClose}/>
       case CREATE_GROUP_STEP_KEYS.ADD_CRITERIA:
-        return <AddCriteria entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose} />
+        return <AddCriteria criteriaStateManager={criteriaStateManager} handlePrevious={handlePrevious} onClose={onClose} />
       default:
-        return <CreateGroupDetail entryCriteria={entryCriteria} handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
+        return <CreateGroupDetail criteriaStateManager={criteriaStateManager} handlePrevious={handlePrevious} onClose={onClose}   groupInputDetails={groupInputDetails} 
         setGroupInputDetails={setGroupInputDetails}/>;
     }
   };
@@ -106,7 +107,7 @@ export interface ModalHeaderProps {
   handleNext?: () => void;
   handlePrevious?:() =>void;
   onClose: () => void;
-  entryCriteria:CriteriaStateType;
+  criteriaStateManager:CriteriaStateManagerType
 }
 
 interface GroupDetailState{

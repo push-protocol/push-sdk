@@ -56,7 +56,7 @@ export const useCriteriaState = (): CriteriaStateType => {
   };
 
   const addNewCondtion = () => {
-    if(selectedRules.length > 0){
+    if (selectedRules.length > 0) {
       setEntryOptionTypeArray((prev) => [...prev, entryRuleTypeCondition]);
       setEntryOptionsDataArray((prev) => [...prev, [...selectedRules]]);
     }
@@ -121,5 +121,42 @@ export const useCriteriaState = (): CriteriaStateType => {
     updateCriteriaIdx,
     setUpdateCriteriaIdx,
     isUpdateCriteriaEnabled,
+  };
+};
+
+export enum SelectedCriteria {
+  ENTRY,
+  CHAT,
+}
+
+export interface CriteriaStateManagerType {
+  entryCriteria: CriteriaStateType;
+  chatCriteria: CriteriaStateType;
+  seletedCriteria: SelectedCriteria;
+  setSelectedCriteria: React.Dispatch<React.SetStateAction<SelectedCriteria>>;
+  getSelectedCriteria: () => CriteriaStateType;
+}
+
+export const useCriteriaStateManager = (): CriteriaStateManagerType => {
+  const [seletedCriteria, setSelectedCriteria] = useState<SelectedCriteria>(
+    SelectedCriteria.CHAT
+  );
+  const entryCriteria = useCriteriaState();
+  const chatCriteria = useCriteriaState();
+
+  const getSelectedCriteria = () => {
+    if (seletedCriteria === SelectedCriteria.CHAT) {
+      return chatCriteria;
+    } else {
+      return entryCriteria;
+    }
+  };
+
+  return {
+    entryCriteria,
+    chatCriteria,
+    seletedCriteria,
+    setSelectedCriteria,
+    getSelectedCriteria,
   };
 };

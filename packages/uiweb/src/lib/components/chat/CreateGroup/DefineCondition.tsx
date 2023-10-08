@@ -17,7 +17,7 @@ export const DefineCondtion = ({
   onClose,
   handlePrevious,
   handleNext,
-  entryCriteria
+  criteriaStateManager
 }: ModalHeaderProps) => {
   
   const theme = useContext(ThemeContext);
@@ -33,27 +33,29 @@ export const DefineCondtion = ({
   const [isCriteriaAdded, setIsCriteriaAdded] = useState<boolean>(true);
   const isMobile = useMediaQuery(device.mobileL);
 
+  const criteriaState = criteriaStateManager.getSelectedCriteria()
+
   const verifyAndDoNext = ()=>{
-    handleDefineCondition(entryCriteria, handlePrevious)
+    handleDefineCondition(criteriaState, handlePrevious)
   }
 
   const getRules = ()=>{
     return[
-      [{ operator: entryCriteria.entryRuleTypeCondition}],
-      ...entryCriteria.selectedRules.map(el => [el]) 
+      [{ operator: criteriaState.entryRuleTypeCondition}],
+      ...criteriaState.selectedRules.map(el => [el]) 
     ]
   }
 
   // set state for edit condition
   useEffect(()=>{
-    if(entryCriteria.isCondtionUpdateEnabled()){
-      entryCriteria.setEntryRuleTypeCondition(
-        entryCriteria.entryOptionTypeArray[entryCriteria.entryOptionsDataArrayUpdate]
+    if(criteriaState.isCondtionUpdateEnabled()){
+      criteriaState.setEntryRuleTypeCondition(
+        criteriaState.entryOptionTypeArray[criteriaState.entryOptionsDataArrayUpdate]
       )
 
-      if(entryCriteria.selectedRules.length === 0){
-        entryCriteria.setSelectedRule([
-          ...entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate],
+      if(criteriaState.selectedRules.length === 0){
+        criteriaState.setSelectedRule([
+          ...criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate],
         ])
       }
     }
@@ -67,26 +69,26 @@ export const DefineCondtion = ({
       width={isMobile ? '300px' : '400px'}
     >
       <ModalHeader
-        title={entryCriteria.isCondtionUpdateEnabled() ? "Update Condition" : "Define Condition"}
+        title={criteriaState.isCondtionUpdateEnabled() ? "Update Condition" : "Define Condition"}
         handleClose={onClose}
         handlePrevious={handlePrevious}
       />
       {isCriteriaAdded && (
         <Section flexDirection="column" gap="16px">
           <OperatorContainer 
-            operator={entryCriteria.entryRuleTypeCondition} 
+            operator={criteriaState.entryRuleTypeCondition} 
             setOperator={(newEl: string) => {
-              entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
+              criteriaState.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
             }}
-            numRules={entryCriteria.selectedRules.length}
+            numRules={criteriaState.selectedRules.length}
           />
           <ConditionsComponent
             conditionData={getRules()}
             deleteFunction={(idx)=>{
-              entryCriteria.deleteRule(idx)
+              criteriaState.deleteRule(idx)
             }}
             updateFunction={(idx)=>{
-              entryCriteria.setUpdateCriteriaIdx(idx)
+              criteriaState.setUpdateCriteriaIdx(idx)
               if(handleNext){
                 handleNext()
               }
@@ -105,7 +107,7 @@ export const DefineCondtion = ({
         </Span>
       </Section>
       <Button onClick={verifyAndDoNext} customStyle={customButtonStyle} width="158px">
-        {entryCriteria.isCondtionUpdateEnabled() ? "Update" : "Add"}
+        {criteriaState.isCondtionUpdateEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>

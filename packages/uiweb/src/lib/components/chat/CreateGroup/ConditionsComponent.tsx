@@ -131,6 +131,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
     setSelectedIndex([row, col]);
   };
 
+
   return (
     <Section flexDirection='column' >
       {/* we can reuse the code by creating a reusable component for it */}
@@ -196,7 +197,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                 <Section>
                   {criteria.map((singleCriteria) => (
                     <>
-                      {singleCriteria.operator && !singleCriteria.type && (
+                      {criteria.length > 2 && singleCriteria.operator && !singleCriteria.type && (
                         <OperatorSpan theme={theme}>
                           {singleCriteria.operator}
                         </OperatorSpan>

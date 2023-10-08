@@ -37,9 +37,9 @@ import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreatio
 
 const AddCriteria = ({
   handlePrevious,
-  entryCriteria,
   handleNext,
   onClose,
+  criteriaStateManager
 }: ModalHeaderProps) => {
   const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
   const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
@@ -345,7 +345,7 @@ const AddCriteria = ({
       data: getData(_type, category),
     }
 
-    entryCriteria.addNewRule(rule)
+    criteriaState.addNewRule(rule)
 
     if(handlePrevious){
       handlePrevious()
@@ -353,11 +353,14 @@ const AddCriteria = ({
 
   }
 
+  const criteriaState = criteriaStateManager.getSelectedCriteria()
+
+
   // Autofill the form for the update
   useEffect(()=>{
-   if(entryCriteria.isUpdateCriteriaEnabled()){
+   if(criteriaState.isUpdateCriteriaEnabled()){
     //Load the states
-    const oldValue = entryCriteria.entryOptionsDataArray[entryCriteria.entryOptionsDataArrayUpdate][entryCriteria.updateCriteriaIdx]
+    const oldValue = criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate][criteriaState.updateCriteriaIdx]
     
     if(oldValue.type === 'PUSH'){
       
@@ -419,7 +422,7 @@ const AddCriteria = ({
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title={entryCriteria.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
+          title={criteriaState.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
         />
       </Section>
       <DropDownInput
@@ -543,7 +546,7 @@ const AddCriteria = ({
         </>
       )}
       <Button width="197px" onClick={verifyAndDoNext}>
-        {entryCriteria.isUpdateCriteriaEnabled() ? "Update" : "Add"}
+        {criteriaState.isUpdateCriteriaEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>

@@ -13,6 +13,7 @@ import useToast from '../reusables/NewToast';
 import {ConditionType, CriteriaStateType,} from '../types/tokenGatedGroupCreationType'
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
+import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -142,7 +143,7 @@ export const CreateGroupType = ({
   handlePrevious,
   groupInputDetails,
   handleNext,
-  entryCriteria
+  criteriaStateManager
 }: ModalHeaderProps & GroupTypeState) => {
   const [checked, setChecked] = useState<boolean>(true);
   const [groupEncryptionType, setGroupEncryptionType] = useState('');
@@ -203,20 +204,29 @@ export const CreateGroupType = ({
       {checked && (
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
-            criteriaState={entryCriteria}
+            criteriaState={criteriaStateManager.entryCriteria}
             handleNext={
               ()=>{
                 if(handleNext){
+                  criteriaStateManager.setSelectedCriteria(SelectedCriteria.ENTRY)
                   handleNext()
                 }
               }
             }
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
-          {/* <AddConditionSection
-            handleNext={handleNext}
+          <AddConditionSection
+            handleNext={
+              ()=>{
+                if(handleNext){
+                  criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT)
+                  handleNext()
+                } 
+              }
+            }
+            criteriaState={criteriaStateManager.chatCriteria}
             {...ACCESS_TYPE_TITLE.CHAT}
-          /> */}
+          />
         </Section>
       )}
 
