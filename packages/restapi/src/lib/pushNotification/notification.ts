@@ -121,7 +121,7 @@ export class Notification extends PushNotificationBaseClass {
     options?: SubscribeUnsubscribeOptions
   ) => {
     try {
-      const { onSuccess, onError } = options || {};
+      const { onSuccess, onError, settings } = options || {};
       // Vaidatiions
       // validates if signer object is present
       this.checkSignerObjectExists();
@@ -142,11 +142,14 @@ export class Notification extends PushNotificationBaseClass {
         this.account!,
         parseInt(caipDetail?.networkId as string)
       );
-      return await PUSH_CHANNEL.subscribe({
+      // convert the setting to minimal version
+      const minimalSetting = this.getMinimalUserSetting(settings!)
+      return await PUSH_CHANNEL.subscribeV2({
         signer: this.signer!,
         channelAddress: channel,
         userAddress: userAddressInCaip,
         env: this.env,
+        settings: settings? '' : minimalSetting,
         onSuccess: onSuccess,
         onError: onError,
       });
@@ -188,7 +191,7 @@ export class Notification extends PushNotificationBaseClass {
         this.account!,
         parseInt(caipDetail?.networkId as string)
       );
-      return await PUSH_CHANNEL.unsubscribe({
+      return await PUSH_CHANNEL.unsubscribeV2({
         signer: this.signer!,
         channelAddress: channel,
         userAddress: userAddressInCaip,

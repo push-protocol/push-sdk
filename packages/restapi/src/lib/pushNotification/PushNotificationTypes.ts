@@ -1,8 +1,6 @@
 import { ProgressHookType } from '../types';
 import { GetAliasInfoOptionsType } from '../alias';
-import {
-  ADDITIONAL_META_TYPE,
-} from '../../lib/payloads/constants';
+import { ADDITIONAL_META_TYPE } from '../../lib/payloads/constants';
 
 export type SubscriptionOptions = {
   account?: string;
@@ -16,6 +14,12 @@ export type ChannelInfoOptions = {
 export type SubscribeUnsubscribeOptions = {
   onSuccess?: () => void;
   onError?: (err: Error) => void;
+  settings?: UserSetting[];
+};
+
+export type UserSetting = {
+  enabled: boolean;
+  value?: number;
 };
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
@@ -50,6 +54,10 @@ export type IPayload = {
   body?: string;
   cta?: string;
   embed?: string;
+  index?: {
+    index: number;
+    value?: number;
+  };
   meta?: {
     domain?: string;
     type: `${ADDITIONAL_META_TYPE}+${number}`;
@@ -92,13 +100,13 @@ export type CreateChannelOptions = {
 };
 
 export type NotificationSetting = {
-  type: number,
-  default: number,
-  description: string,
+  type: number;
+  default: number;
+  description: string;
   data?: {
     upper: number;
     lower: number;
-  }
-}
+  };
+};
 
-export type NotificationSettings = NotificationSetting[]
+export type NotificationSettings = NotificationSetting[];
