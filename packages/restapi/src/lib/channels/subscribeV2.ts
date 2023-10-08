@@ -12,11 +12,12 @@ import {
 } from './signature.helpers';
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
+
 export type SubscribeOptionsV2Type = {
   signer: SignerType;
   channelAddress: string;
   userAddress: string;
-  userSetting?: string;
+  settings?: string;
   verifyingContractAddress?: string;
   env?: ENV;
   onSuccess?: () => void;
@@ -28,7 +29,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     signer,
     channelAddress,
     userAddress,
-    userSetting = undefined,
+    settings = undefined,
     verifyingContractAddress,
     env = Constants.ENV.PROD,
     onSuccess,
@@ -72,7 +73,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
         channelCAIPDetails.address,
         userCAIPDetails.address,
         'Subscribe',
-        userSetting
+        settings
       ),
     };
     // sign a message using EIP712

@@ -4,6 +4,7 @@ import {
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
+  UserSetting,
 } from './PushNotificationTypes';
 import CONFIG, * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
@@ -27,6 +28,8 @@ const LENGTH_UPPER_LIMIT = 125;
 const LENGTH_LOWER_LIMTI = 1;
 const SETTING_DELIMITER = '-';
 const SETTING_SEPARATOR = '+';
+const SLIDER_TYPE = 2;
+const BOOLEAN_TYPE = 1;
 
 export const FEED_MAP = {
   INBOX: false,
@@ -142,6 +145,20 @@ export class PushNotificationBaseClass {
     }
     const notificationType = this.getNotificationType(recipients, channel);
     const identityType = IDENTITY_TYPE.DIRECT_PAYLOAD;
+    // fetch the minimal version based on conifg that was passed
+    let index;
+    if (options.payload?.index) {
+      if (options.payload?.index.value) {
+        index =
+          options.payload.index.index +
+          SETTING_DELIMITER +
+          SLIDER_TYPE +
+          SETTING_DELIMITER +
+          options.payload.index.value;
+      } else {
+        index = options.payload.index.index + SETTING_DELIMITER + BOOLEAN_TYPE;
+      }
+    }
     const notificationPayload: ISendNotificationInputOptions = {
       signer: signer,
       channel: channel,
@@ -157,6 +174,7 @@ export class PushNotificationBaseClass {
         etime: options.config?.expiry,
         silent: options.config?.silent,
         additionalMeta: options.payload?.meta,
+        index: options.payload?.index ? index : '',
       },
       recipients: notificationType.recipient,
       graph: options.advanced?.graph,
@@ -680,5 +698,31 @@ export class PushNotificationBaseClass {
       setting: notificationSetting.replace(/^\+/, ''),
       description: notificationSettingDescription.replace(/^\+/, ''),
     };
+  }
+
+  protected getMinimalUserSetting(setting: UserSetting[]) {
+    let userSetting = '';
+    let numberOfSettings = 0;
+    for (let i = 0; i < setting.length; i++) {
+      const ele = setting[i];
+      const enabled = ele.enabled ? 1 : 0;
+      if (ele.enabled) numberOfSettings++;
+      // slider type
+      if (Object.keys(ele).includes('value')) {
+        userSetting =
+          userSetting +
+          SLIDER_TYPE +
+          SETTING_DELIMITER +
+          enabled +
+          SETTING_DELIMITER +
+          ele.value;
+      } else {
+        // boolean type
+        userSetting = userSetting + BOOLEAN_TYPE + SETTING_DELIMITER + enabled;
+      }
+      if (i != setting.length - 1)
+        userSetting = userSetting + SETTING_SEPARATOR;
+    }
+    return numberOfSettings + SETTING_SEPARATOR + userSetting;
   }
 }
