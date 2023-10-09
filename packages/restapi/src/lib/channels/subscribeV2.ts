@@ -17,7 +17,7 @@ export type SubscribeOptionsV2Type = {
   signer: SignerType;
   channelAddress: string;
   userAddress: string;
-  settings?: string;
+  settings?: string | null;
   verifyingContractAddress?: string;
   env?: ENV;
   onSuccess?: () => void;

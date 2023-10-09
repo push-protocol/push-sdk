@@ -701,6 +701,9 @@ export class PushNotificationBaseClass {
   }
 
   protected getMinimalUserSetting(setting: UserSetting[]) {
+    if(!setting){
+      return null;
+    }
     let userSetting = '';
     let numberOfSettings = 0;
     for (let i = 0; i < setting.length; i++) {
