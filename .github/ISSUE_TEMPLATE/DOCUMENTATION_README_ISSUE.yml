@@ -1,0 +1,36 @@
+name: "✏️ Documentation/Readme Enhancement"
+description: Suggest an enhancement in documentation/readme.
+title: "✏️ [Documentation/Readme Enhancement] - <title>"
+labels: [
+  "documentation"
+]
+body:
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: "Expected Behaviour"
+      description: Please describe the behavior you are expecting
+      placeholder: Short and explicit description of your desired behaviour...
+    validations:
+      required: false
+  - type: textarea
+    id: current-behaviour
+    attributes:
+      label: "Current Behaviour"
+      description: Please describe the current behavior
+      placeholder: What is the current behavior?...
+    validations:
+      required: false
+  - type: textarea
+    id: reprod
+    attributes:
+      label: "Steps to Reproduce"
+      description: Please enter an explicit description of your issue
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See it
+      render: bash
+    validations:
+      required: false
