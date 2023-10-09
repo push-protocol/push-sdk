@@ -23,7 +23,7 @@ import { isValidETHAddress } from '../helpers/helper';
 import { IChatProfile, IChatTheme } from '../exportedTypes';
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
-import TokenGatedIcon from '../../../icons/Token-Gated.svg';
+import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
@@ -66,6 +66,14 @@ const Options = ({
         gap="10px"
         margin="0 20px 0 auto"
       >
+        {/* {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
+          <Image
+            src={TokenGatedIcon}
+            height="24px"
+            maxHeight="24px"
+            width={'auto'}
+          />
+        )} */}
         <Image
           src={groupInfo?.isPublic ? PublicChatIcon : TokenGatedIcon}
           height="28px"
@@ -156,7 +164,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       return isGroup
         ? groupInfo?.groupImage ?? GreyImage
         : chatInfo?.profile?.picture ??
-            createBlockie?.(chatId)?.toDataURL()?.toString();
+        createBlockie?.(chatId)?.toDataURL()?.toString();
     } else {
       return createBlockie?.(chatId)?.toDataURL()?.toString();
     }
@@ -166,14 +174,13 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     return isGroup
       ? groupInfo?.groupName
       : ensName
-      ? `${ensName} (${
-          isMobile
-            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
-            : chatId
+        ? `${ensName} (${isMobile
+          ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
+          : chatId
         })`
-      : chatInfo
-      ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
-      : shortenText(chatId, 6, true);
+        : chatInfo
+          ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
+          : shortenText(chatId, 6, true);
   };
 
   useEffect(() => {
@@ -187,7 +194,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
         <ProfileContainer
           theme={theme}
           member={{ wallet: getProfileName() as string, image: getImage() }}
-          customStyle={{fontSize:'17px'}}
+          customStyle={{ fontSize: '17px' }}
         />
 
         <Options

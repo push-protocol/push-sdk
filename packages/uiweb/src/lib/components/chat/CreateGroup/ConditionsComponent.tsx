@@ -21,6 +21,7 @@ export type CriteraValueType = {
 
 interface CriteriaProps {
   conditionData: ConditionArray[];
+  moreOptions?: boolean;
   deleteFunction?:(idx:number)=>void;
   updateFunction?:(idx:number)=>void;
 }
@@ -47,15 +48,12 @@ const MoreOptionsContainer = ({
   const dropdownRef = useRef<any>(null);
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
-
+console.log('in dropdown')
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}>
-      <MoreDarkIcon color={theme.iconColor?.groupSettings}/>
+      <MoreDarkIcon color={theme.iconColor?.groupSettings} />
       {selectedIndex?.length && selectedIndex[0] === row && (
-        <DropdownContainer
-          ref={dropdownRef}
-          theme={theme}
-        >
+        <DropdownContainer ref={dropdownRef} theme={theme}>
           <Dropdown
             dropdownValues={dropDownValues}
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
@@ -88,7 +86,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   );
 };
 // fix  dropdown ui 
-const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: CriteriaProps) => {
+const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions = true }: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -105,6 +103,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
         if(updateFunction){
           if(selectedIndex){
             updateFunction(selectedIndex[0])
+            setSelectedIndex(null)
           }
         }
       },
@@ -118,6 +117,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
         if(deleteFunction){
           if(selectedIndex){
             deleteFunction(selectedIndex[0])
+            setSelectedIndex(null);
           }
         }
       },
@@ -128,16 +128,16 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
   const handleMoreOptionsClick = (row: number, col: number) => {
+    console.log('in click')
     setSelectedIndex([row, col]);
   };
 
-
+console.log(conditionData)
   return (
-    <Section flexDirection='column' >
-      {/* we can reuse the code by creating a reusable component for it */}
+    <Section flexDirection="column" width="100%" height='100%' >
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
-          <Section  flexDirection="column" gap="8px" margin='0 0 8px 0' position='relative'>
+          <Section flexDirection="column"  >
             {criteria.length === 1 &&
               criteria.map((singleCriteria, col) => (
                 <>
@@ -149,14 +149,18 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
-                      <MoreOptionsContainer
-                        handleMoreOptionsClick={handleMoreOptionsClick}
-                        row={row}
-                        col={col}
-                        dropDownValues={dropDownValues}
-                        setSelectedIndex={setSelectedIndex}
-                        selectedIndex={selectedIndex}
-                      />
+                      {
+                        moreOptions && (
+                          <MoreOptionsContainer
+                            handleMoreOptionsClick={handleMoreOptionsClick}
+                            row={row}
+                            col={col}
+                            dropDownValues={dropDownValues}
+                            setSelectedIndex={setSelectedIndex}
+                            selectedIndex={selectedIndex}
+                          />
+                        )
+                      }
                     </Section>
                   )}
                 </>
@@ -164,11 +168,10 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
 
             {criteria.length > 1 && (
               <CriteriaGroup
-              theme={theme}
+                theme={theme}
                 flexDirection="row"
                 justifyContent="space-between"
                 alignItems="center"
-           
                 borderRadius={theme.borderRadius?.modalInnerComponents}
                 padding="8px 0px 8px 8px"
                 gap="25px"
@@ -179,7 +182,9 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       {singleCriteria.type && (
                         <>
                           <Section
-                            borderRadius={theme.borderRadius?.modalInnerComponents}
+                            borderRadius={
+                              theme.borderRadius?.modalInnerComponents
+                            }
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
@@ -204,14 +209,16 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
                       )}
                     </>
                   ))}
-                  <MoreOptionsContainer
-                    handleMoreOptionsClick={handleMoreOptionsClick}
-                    row={row}
-                    col={0}
-                    dropDownValues={dropDownValues}
-                    setSelectedIndex={setSelectedIndex}
-                    selectedIndex={selectedIndex}
-                  />
+                  {moreOptions && (
+                    <MoreOptionsContainer
+                      handleMoreOptionsClick={handleMoreOptionsClick}
+                      row={row}
+                      col={0}
+                      dropDownValues={dropDownValues}
+                      setSelectedIndex={setSelectedIndex}
+                      selectedIndex={selectedIndex}
+                    />
+                  )}
                 </Section>
               </CriteriaGroup>
             )}
@@ -219,7 +226,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction }: Cr
               row < conditionData.length - 2 &&
               conditionData[0][0]?.operator && (
                 // this can be reused
-                <OperatorSpan theme={theme}>
+                <OperatorSpan theme={theme} zIndex='-2'>
                   {conditionData[0][0].operator}
                 </OperatorSpan>
               )}
@@ -233,10 +240,11 @@ export default ConditionsComponent;
 
 const DropdownContainer = styled.div`
   position: absolute;
-  left: 48%;
-  top: 69%;
+  // left: 48%;
+  top:0;
+  right: 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
- 
+
   padding: 6px 32px 6px 12px;
   z-index: 999999999999 !important;
   display: flex;
@@ -244,25 +252,17 @@ const DropdownContainer = styled.div`
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
 
-  @media ${device.mobileL} {
-    left: 27%;
-  }
-  @media (min-width: 426px) and (max-width: 1150px) {
-    left: 48%;
-  }
-  @media (max-width: 480px) {
-    left: 25%;
-  }
+  
 `;
 
 const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
+  margin:8px 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
 `;
 
 const CriteriaGroup = styled(Section)<{ theme: IChatTheme }>`
- 
   border: ${(props) => props.theme.border?.modalInnerComponents};
 `;

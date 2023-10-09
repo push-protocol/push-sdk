@@ -4,8 +4,9 @@ import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import { DropdownValueType } from './DropDown';
-import { Section, Span } from '../../reusables';
+import { Div, Section, Span } from '../../reusables';
 import { DropDownInput } from './DropDownInput';
+import { device } from '../../../config';
 
 export type InputType = { value: number; range: number };
 export interface IQuantityInputProps {
@@ -30,12 +31,14 @@ export const QuantityInput = (props: IQuantityInputProps) => {
         <LabelContainer>
           <label>{props.labelName}</label>
         </LabelContainer>
-        <Section gap="4px" alignItems="center">
+        <Section gap="4px" alignItems="center" >
+          <Section  zIndex='500'>
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}
           />
-          <Section alignItems="baseline">
+          </Section>
+          <Section alignItems="baseline" width='fit-content'>
             <Input
               type="number"
               theme={theme}
@@ -43,14 +46,17 @@ export const QuantityInput = (props: IQuantityInputProps) => {
               onChange={handleChange}
               placeholder={props.placeholder}
             />
-            <Span
-              borderRadius="0 12px 12px 0"
+            <Unit
+              alignSelf='auto'
               background={theme.backgroundColor?.modalHoverBackground}
-              padding="16px"
-              border={theme.border?.modalInnerComponents}
+              width='fit-content'
+              height='fit-content'
+             
             >
+              <Span>
               {props.unit}
-            </Span>
+              </Span>
+            </Unit>
           </Section>
         </Section>
       </QuantityInputContainer>
@@ -84,9 +90,28 @@ const Input = styled.input<IChatTheme>`
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-width: 1px 0px 1px 1px;
   border-radius: 12px 0 0 12px;
-
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
-
+  width:60%;
   font-weight: 500;
+`;
+
+const Unit = styled(Section)<IChatTheme>`
+span{
+  font-size:14px;
+  font-weight:700;
+}
+border-radius:0 12px 12px 0;
+
+padding:17.2px;
+border: ${(props) => props.theme.border.modalInnerComponents};
+@media ${device.mobileL} {
+
+  padding:19.5px 5px;
+  span{
+    font-size: 10px;
+    font-weight:400
+  }
+}
+
 `;

@@ -195,11 +195,15 @@ const DropdownItemContainer = styled(Section) <{ hoverBGColor?: string }>`
   justify-content: flex-start;
   flex-wrap: nowrap;
   margin: 1px 0;
+// width:100%;
   padding: 2px 8px;
   border-radius: 12px;
   cursor: pointer;
   text-align: left;
 
+  span {
+    text-wrap: nowrap;
+  }
   &:hover {
     background-color: ${(props) => props.hoverBGColor || 'none'};
   }
@@ -217,5 +221,6 @@ const A = styled.a`
     background: transparent !important;
   }
 `;
+
 
 export default Dropdown;

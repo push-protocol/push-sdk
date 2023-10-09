@@ -10,10 +10,16 @@ import { GroupTypeState } from './CreateGroupModal';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import {ConditionType, CriteriaStateType,} from '../types/tokenGatedGroupCreationType'
+import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
+import { ConditionArray, IChatTheme } from '../exportedTypes';
+import {
+  ConditionType,
+  CriteriaStateType,
+} from '../types/tokenGatedGroupCreationType';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
+import styled from 'styled-components';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -28,16 +34,7 @@ const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   },
 ];
 
-const ACCESS_TYPE_TITLE = {
-  ENTRY: {
-    heading: 'Conditions to Join',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-  CHAT: {
-    heading: 'Conditions to Chat',
-    subHeading: 'Add a condition to join or leave it open for everyone',
-  },
-};
+
 
 interface AddConditionProps {
   heading: string;
@@ -53,16 +50,14 @@ const AddConditionSection = ({
   criteriaState,
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
-    //todo - dummy data to be removed after we get condition data
+  //todo - dummy data to be removed after we get condition data
 
-  const generateMapping =()=>{
-    return criteriaState.entryOptionsDataArray.map((rule,idx)=>(
-      [
-        {operator: criteriaState.entryOptionTypeArray[idx]},
-        ...rule.map(el => el)
-      ]
-    ))
-  }
+  const generateMapping = () => {
+    return criteriaState.entryOptionsDataArray.map((rule, idx) => [
+      { operator: criteriaState.entryOptionTypeArray[idx] },
+      ...rule.map((el) => el),
+    ]);
+  };
 
   return (
     <Section alignItems="start" flexDirection="column" gap="10px">
@@ -83,42 +78,44 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-      {/* todo - check later if this etire section can be optimised for define condtion page too */}
-      <Section flexDirection="column" gap="16px">
-      
-      <OperatorContainer 
+     {criteriaState.entryOptionsDataArray.length>1 &&  <Section margin="20px 0 10px 0">
+       <OperatorContainer 
         operator={criteriaState.entryRootCondition} 
         setOperator={(newEl: string) => {
           criteriaState.setEntryRootCondition(newEl as ConditionType);
         }}
-        numRules={criteriaState.entryOptionsDataArray.length}
       />
-      
-      <ConditionsComponent 
-        conditionData={[
-          [{ operator:  criteriaState.entryRootCondition }],
-          ...generateMapping()
-        ]}
-        
-        deleteFunction={(idx)=>{
-          criteriaState.deleteEntryOptionsDataArray(idx)
-        }}
-
-        updateFunction={(idx)=>{
-          criteriaState.selectEntryOptionsDataArrayForUpdate(idx)
-          if(handleNext){
-            handleNext()
-          }
-        }}
-      
-      /> 
+      </Section>}
+      <ConditionSection
+        width="100%"
+        overflow="hidden auto"
+        maxHeight="20rem"
+        theme={theme}
+        padding="0 4px 0 0"
+      >
+        <ConditionsComponent
+          conditionData={[
+            [{ operator: criteriaState.entryRootCondition }],
+            ...generateMapping(),
+          ]}
+          deleteFunction={(idx) => {
+            criteriaState.deleteEntryOptionsDataArray(idx);
+          }}
+          updateFunction={(idx) => {
+            criteriaState.selectEntryOptionsDataArrayForUpdate(idx);
+            if (handleNext) {
+              handleNext();
+            }
+          }}
+        />
+      </ConditionSection>
 
       <Button
-        onClick={()=>{
-          if(handleNext){
-            criteriaState.setSelectedRule([])
-            criteriaState.setSelectedCriteria(-1)
-            handleNext()
+        onClick={() => {
+          if (handleNext) {
+            criteriaState.setSelectedRule([]);
+            criteriaState.setSelectedCriteria(-1);
+            handleNext();
           }
         }}
         customStyle={{
@@ -132,11 +129,8 @@ const AddConditionSection = ({
         + Add conditions
       </Button>
     </Section>
-    </Section>
   );
 };
-
-
 
 export const CreateGroupType = ({
   onClose,
@@ -147,7 +141,7 @@ export const CreateGroupType = ({
 }: ModalHeaderProps & GroupTypeState) => {
   const [checked, setChecked] = useState<boolean>(true);
   const [groupEncryptionType, setGroupEncryptionType] = useState('');
-  
+
   // const theme = useContext(ThemeContext);
   // const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
@@ -240,3 +234,18 @@ export const CreateGroupType = ({
     </Section>
   );
 };
+
+//styles
+const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+`;

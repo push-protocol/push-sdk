@@ -6,12 +6,13 @@ import {
   Rule,
   TokenGatedRule,
 } from '../../components/chat/types';
+import { OPERATOR_OPTIONS } from '../../components/chat/constants';
 
 export const useCriteriaState = (defaultRules: Rule[][]): CriteriaStateType => {
   const [entryRootCondition, setEntryRootCondition] =
-    useState<ConditionType>('all');
+    useState<ConditionType>(OPERATOR_OPTIONS[1]?.value as ConditionType);
   const [entryRuleTypeCondition, setEntryRuleTypeCondition] =
-    useState<ConditionType>('all');
+    useState<ConditionType>(OPERATOR_OPTIONS[1]?.value as ConditionType);
   const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<
     ConditionType[]
   >([]);

@@ -33,6 +33,8 @@ import {
   ReadonlyInputType,
 } from '../types';
 import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
+import styled from 'styled-components';
+import { IChatTheme } from '../theme';
 
 
 const AddCriteria = ({
