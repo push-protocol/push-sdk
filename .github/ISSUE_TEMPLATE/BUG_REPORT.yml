@@ -29,7 +29,7 @@ body:
       value: |
         1. Go to '...'
         2. Invoke function '...'
-        3. See it
+        3. See error
       render: bash
     validations:
       required: true
