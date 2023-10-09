@@ -168,8 +168,8 @@ const ConditionsComponent = ({
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
           <Section flexDirection="column">
-            {(criteria[0]?.operator ||
-              (criteria.length <= 2 && criteria.length >= 1)) &&
+            {
+              ((criteria.length <= 2 )&& (criteria.length >= 1)) &&
               criteria.map((singleCriteria, col) => (
                 <>
                   {singleCriteria.type && (
@@ -195,7 +195,7 @@ const ConditionsComponent = ({
                 </>
               ))}
 
-            {criteria[0]?.operator && criteria.length > 2 && (
+            {(criteria[0]?.operator) && (criteria.length > 2) && (
               <CriteriaGroup
                 theme={theme}
                 flexDirection="row"

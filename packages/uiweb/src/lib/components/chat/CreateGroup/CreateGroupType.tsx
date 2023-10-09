@@ -91,7 +91,7 @@ const AddConditionSection = ({
         overflow="hidden auto"
         maxHeight="20rem"
         theme={theme}
-        padding="0 4px 0 0"
+        padding="5px 4px 5px 0"
       >
         <ConditionsComponent
           conditionData={[
@@ -147,6 +147,7 @@ export const CreateGroupType = ({
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
+    
     const groupInfo = {
       groupInfo: { ...groupInputDetails },
       groupType: groupEncryptionType,

@@ -363,8 +363,6 @@ const AddCriteria = ({
    if(criteriaState.isUpdateCriteriaEnabled()){
     //Load the states
     const oldValue = criteriaState.selectedRules[criteriaState.updateCriteriaIdx] 
-    // alert(`old value ${JSON.stringify(oldValue)}`)
-    // const oldValue = criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate][criteriaState.updateCriteriaIdx]
     
     if(oldValue.type === 'PUSH'){
       

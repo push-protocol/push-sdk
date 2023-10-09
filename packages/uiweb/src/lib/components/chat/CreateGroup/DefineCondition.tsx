@@ -100,7 +100,7 @@ console.log(criteriaState)
             overflow="hidden auto"
             maxHeight="20rem"
             theme={theme}
-            padding="0 4px 0 0"
+            padding="5px 4px 5px 0"
           >
             <ConditionsComponent
               conditionData={getRules()}
