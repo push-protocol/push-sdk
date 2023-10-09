@@ -293,11 +293,13 @@ const AddCriteria = ({
     const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
       selectedCategoryValue
     ].value || CATEGORY.ERC20 : "ROLES"
-
+ 
     let subCategory = "DEFAULT"
     if(_type === "PUSH"){ 
       if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
         subCategory = tokenCategoryValues[selectedSubCategoryValue].value
+      }else if(category === CATEGORY.CustomEndpoint){
+        subCategory = "GET"
       } 
     }
     

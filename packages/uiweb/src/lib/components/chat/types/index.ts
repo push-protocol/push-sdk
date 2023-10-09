@@ -1,5 +1,12 @@
 import { DropdownValueType } from '../reusables';
 
+export interface GrouInfoType{
+  groupName: string;
+  groupDescription:string;
+  groupImage:string;
+  isPublic: boolean;
+}
+
 export const TYPE = {
   PUSH: 'PUSH',
   GUILD: 'GUILD',
