@@ -27,10 +27,9 @@ body:
       label: "Reproduction steps"
       description: Please enter an explicit description of your issue
       value: |
-        1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
-        4. See error
+         1. Go to '...'
+        2. Invoke function '...'
+        3. See error
       render: bash
     validations:
       required: true
