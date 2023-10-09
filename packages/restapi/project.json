@@ -35,7 +35,7 @@
       "options": {
         "preset": "angular",
         "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
-        "postTargets": ["restapi:build", "restapi:ci-publish"]
+        "postTargets": ["socket:build", "restapi:build", "restapi:ci-publish"]
       }
     },
     "ci-version-beta": {
