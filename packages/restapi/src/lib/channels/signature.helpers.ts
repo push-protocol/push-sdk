@@ -30,7 +30,7 @@ export const getSubscriptionMessageV2 = (
   channel: string,
   userAddress: string,
   action: channelActionType,
-  userSetting?: string
+  userSetting?: string | null
 ) => {
   const actionTypeKey =
     action === 'Unsubscribe' ? 'unsubscriber' : 'subscriber';
