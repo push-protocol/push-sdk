@@ -147,6 +147,7 @@ export const CreateGroupType = ({
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
+    
     const groupInfo = {
       groupInfo: { ...groupInputDetails },
       groupType: groupEncryptionType,
