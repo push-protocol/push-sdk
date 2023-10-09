@@ -45,4 +45,15 @@ export type DropdownSubCategoryValuesType = {
   [key in SubCategoryKeys]: InputType;
 };
 
+export const TOKEN_NFT_COMPARISION = {
+'>':'or more',
+'>=': 'equal or more',
+'<': 'or less',
+'<=': 'equal or less',
+'==': '',
+'!=':'not'
+} as const;
+
+export type TokenNftComparision = keyof typeof TOKEN_NFT_COMPARISION;
+
 export * from './tokenGatedGroupCreationType'
