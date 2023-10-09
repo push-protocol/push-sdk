@@ -27,7 +27,7 @@ body:
       label: "Reproduction steps"
       description: Please enter an explicit description of your issue
       value: |
-         1. Go to '...'
+        1. Go to '...'
         2. Invoke function '...'
         3. See it
       render: bash
