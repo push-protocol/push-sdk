@@ -52,7 +52,6 @@ const AddConditionSection = ({
   criteriaState,
 }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
-  //todo - dummy data to be removed after we get condition data
 
   const generateMapping = () => {
     return criteriaState.entryOptionsDataArray.map((rule, idx) => [
@@ -151,31 +150,41 @@ export const CreateGroupType = ({
   const { createGatedGroup, loading } = useCreateGatedGroup();
   const groupInfoToast = useToast();
 
+  const getEncryptionType = () =>{
+    if(groupEncryptionType === "encrypted"){
+      return false
+    }
+    return true
+  }
+
   const createGroupService = async () => {
-    // TODO:use actual data instead of dummy data
     const groupInfo:GroupInfoType = {
       groupName:groupInputDetails.groupName,
       groupDescription:groupInputDetails.groupDescription,
       groupImage:groupInputDetails.groupImage,
-      isPublic: true //groupEncryptionType,
+      isPublic: getEncryptionType(),
     };
-    const rules: any = criteriaStateManager.generateRule();
-    await createGatedGroup(groupInfo, rules);
-    groupInfoToast.showMessageToast({
-      toastTitle: 'Success',
-      toastMessage: 'Group created successfully',
-      toastType: 'SUCCESS',
-      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
-    });
+    const rules: any = checked ? criteriaStateManager.generateRule() : {};
+    const isSuccess = await createGatedGroup(groupInfo, rules);
+    if(isSuccess === true){
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Success',
+        toastMessage: 'Group created successfully',
+        toastType: 'SUCCESS',
+        getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+      });
+    }else{
+      showError('Group creation failed'); 
+    }
+    
     onClose();
   };
 
   const verifyAndCreateGroup = async () => {
-    // TODO:validate the fields
-    // if (groupEncryptionType.trim() === '') {
-    //   showError('Group encryption type is not selected');
-    //   return;
-    // }
+    if (groupEncryptionType.trim() === '') {
+      showError('Group encryption type is not selected');
+      return;
+    }
 
     await createGroupService();
   };
