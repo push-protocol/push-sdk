@@ -2,6 +2,28 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.18](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.17...uiweb-0.0.1-alpha.18) (2023-10-10)
+
+
+### Bug Fixes
+
+* merge alpha ([e476962](https://github.com/ethereum-push-notification-service/push-sdk/commit/e476962f26070e0dfd20e5334514eee930eeeaad))
+* Merge branch 'alpha' into alpha-deployment ([6d965a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/6d965a97a2486e8f4d32f7ae0c4391e4d788935f))
+* merge main ([16dd007](https://github.com/ethereum-push-notification-service/push-sdk/commit/16dd007772a4c5104e336eef318f0056de7a5cfb))
+* merge main ([902194c](https://github.com/ethereum-push-notification-service/push-sdk/commit/902194cd30f9b83891b6e3dde8c39ddddacc876e))
+
+
+
+## [1.1.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.15...uiweb-1.1.14) (2023-10-03)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([afdc6f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/afdc6f8669dd0cd9ece859f4c8f6dc4181872e2c))
+* Merge branch 'main' into deployment ([f9bb113](https://github.com/ethereum-push-notification-service/push-sdk/commit/f9bb113702f47132dc512910e5060286e985f4bf))
+
+
+
 ## [0.0.1-alpha.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.16...uiweb-0.0.1-alpha.17) (2023-10-05)
 
 
