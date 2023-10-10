@@ -22,7 +22,8 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { CriteriaStateManagerType, useCriteriaStateManager } from '../../../hooks/chat/useCriteriaState';
 
 import {Image} from "../../../config/styles"
-import { device } from '../../../config';
+import { ProfilePicture, device } from '../../../config';
+
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -38,7 +39,7 @@ export type CreateGroupStepKeys =
 interface GroupInputDetailsType{
   groupName:string; 
   groupDescription:string; 
-  groupImage:string|null; 
+  groupImage:string; 
 }
 
 
@@ -69,9 +70,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   },[activeComponent])
 
   const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
-    groupName:'',
-    groupDescription:'',
-    groupImage:null
+    groupName:'Push Group Chat',
+    groupDescription:'This is the oficial group for Push Protocol',
+    groupImage:ProfilePicture
   })
 
 
@@ -155,7 +156,7 @@ const CreateGroupDetail = ({handleNext, onClose, groupInputDetails, setGroupInpu
   }
 
   const verifyAndHandelNext = ()=>{
-    const skipVerify = true;
+    const skipVerify = false;
 
     if(!skipVerify){
       // verify name
