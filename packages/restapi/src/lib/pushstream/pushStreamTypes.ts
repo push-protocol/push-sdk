@@ -25,6 +25,12 @@ export enum STREAM {
   CHAT_OPS = 'STREAM.CHAT_OPS',
 }
 
+export enum NotificationEventType {
+  INBOX = 'notification.inbox',
+  SPAM = 'notification.spam',
+}
+
+
 export enum MessageOrigin {
   Other = 'other',
   Self = 'self',
@@ -153,6 +159,64 @@ export interface MessageEvent {
   };
   reference: string;
   raw?: MessageRawData;
+}
+
+export const NOTIFICATION = {
+  TYPE: {
+    BROADCAST: 1,
+    TARGETTED: 3,
+    SUBSET: 4,
+  },
+} as const;
+
+export type NotificationType = keyof typeof NOTIFICATION.TYPE;
+
+
+
+export interface NotificationEvent {
+  event: NotificationEventType;
+  origin: 'other' | 'self';
+  timestamp: string;
+  from: string;
+  to: string[];
+  notifID: string;
+  channel: {
+    name: string;
+    icon: string;
+    url: string;
+  };
+  meta: {
+    type: string;
+  };
+  message: {
+    notification: {
+      title: string;
+      body: string;
+    };
+    payload?: {
+      title?: string;
+      body?: string;
+      cta?: string;
+      embed?: string;
+      meta?: {
+        domain?: string;
+        type: string;
+        data: string;
+      };
+    };
+  };
+  config?: {
+    expiry?: number;
+    silent?: boolean;
+    hidden?: boolean;
+  };
+  advanced?: {
+    chatid?: string;
+  };
+  source: string;
+  raw?: {
+    verificationProof: string;
+  };
 }
 
 export interface MessageRawData {

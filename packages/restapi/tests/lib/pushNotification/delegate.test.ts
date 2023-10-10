@@ -112,7 +112,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.remove(
         'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-        console.log(res);
+      console.log(res);
       expect(res).not.null;
     }, 100000000);
 
@@ -124,7 +124,7 @@ describe('PushAPI.delegate functionality', () => {
       ).to.Throw;
     });
 
-    it.only('With viem signer: Should remove delegate', async () => {
+    it('With viem signer: Should remove delegate', async () => {
       // create polygon mumbai provider
       const provider = new ethers.providers.JsonRpcProvider(
         'https://rpc-mumbai.maticvigil.com'
@@ -138,7 +138,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.remove(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-        // console.log(res);
+      // console.log(res);
       expect(res).not.null;
     }, 10000000);
   });

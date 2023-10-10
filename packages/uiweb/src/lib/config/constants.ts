@@ -49,25 +49,30 @@ export const allowedNetworks = {
     1, //for ethereum mainnet
     137, //for polygon mainnet
     56, // for bnb mainnet
-    // 10 // for optimism mainnet
+    10, // for optimism mainnet
+    42161 // for arbitrum mainnet
   ],
   'dev' : [
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'staging' :  [
     // 42, //for kovan
     5, // for goerli
     80001, //for mumbai polygon
-    97 // bnb testnet
+    97, // bnb testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ],
   'local' :[
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
-    420 // optimism goerli testnet
+    420, // optimism goerli testnet
+    421613 // for arbitrum testnet
   ]
 }
 
@@ -95,3 +100,8 @@ export const notificationLimit = 5;
 
 export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;
+
+// Livekit Server URLs
+export const LIVEKIT_SERVER_URL = "https://spacev2-demo-17wvllxz.livekit.cloud";
+export const LIVEKIT_SERVER_WEBSOCKET_URL = "wss://spacev2-demo-17wvllxz.livekit.cloud";
+export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = "https://ms-lk-server.onrender.com";

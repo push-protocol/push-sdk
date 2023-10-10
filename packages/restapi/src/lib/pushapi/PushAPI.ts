@@ -82,10 +82,10 @@ export class PushAPI {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-    
-          version: Constants.ENC_TYPE_V3,
-          autoUpgrade: true,
-        
+
+        version: Constants.ENC_TYPE_V3,
+        autoUpgrade: true,
+
         account: null,
         streamOptions: {
           enabled: true, // Default value
@@ -97,6 +97,10 @@ export class PushAPI {
       const settings = {
         ...defaultOptions,
         ...options,
+        version: version || defaultOptions.version,
+        versionMeta: versionMeta || defaultOptions.versionMeta,
+        autoUpgrade:
+          autoUpgrade !== undefined ? autoUpgrade : defaultOptions.autoUpgrade,
         streamOptions: {
           ...defaultOptions.streamOptions,
           ...(options?.streamOptions ?? {}),
