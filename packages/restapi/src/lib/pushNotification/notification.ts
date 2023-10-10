@@ -1,7 +1,5 @@
 import Constants, { ENV } from '../constants';
-import {
-  SignerType,
-} from '../types';
+import { SignerType } from '../types';
 import {
   SubscribeUnsubscribeOptions,
   SubscriptionOptions,
@@ -143,13 +141,13 @@ export class Notification extends PushNotificationBaseClass {
         parseInt(caipDetail?.networkId as string)
       );
       // convert the setting to minimal version
-      const minimalSetting = this.getMinimalUserSetting(settings!)
+      const minimalSetting = this.getMinimalUserSetting(settings!);
       return await PUSH_CHANNEL.subscribeV2({
         signer: this.signer!,
         channelAddress: channel,
         userAddress: userAddressInCaip,
         env: this.env,
-        settings: settings? '' : minimalSetting,
+        settings: minimalSetting ?? '',
         onSuccess: onSuccess,
         onError: onError,
       });
