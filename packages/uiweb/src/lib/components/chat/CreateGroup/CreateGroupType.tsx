@@ -24,6 +24,7 @@ import { GrouInfoType as GroupInfoType } from '../types';
 
 import { ACCESS_TYPE_TITLE } from '../constants';
 import { IChatTheme } from '../exportedTypes';
+import { ProfilePicture } from '../../../config';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -161,7 +162,7 @@ export const CreateGroupType = ({
     const groupInfo:GroupInfoType = {
       groupName:groupInputDetails.groupName,
       groupDescription:groupInputDetails.groupDescription,
-      groupImage:groupInputDetails.groupImage,
+      groupImage:groupInputDetails.groupImage || ProfilePicture,
       isPublic: getEncryptionType(),
     };
     const rules: any = checked ? criteriaStateManager.generateRule() : {};
