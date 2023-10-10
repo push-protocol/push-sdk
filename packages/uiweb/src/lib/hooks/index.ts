@@ -9,3 +9,5 @@ export * from './useDivOffsetWidth';
 export * from './useDeviceWidthCheck';
 export * from './useGetChatProfile';
 export * from './useMediaQuery';
+export * from './useCreateChatProfile';
+export * from './useDecryptPGPKey';
