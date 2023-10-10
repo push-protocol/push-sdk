@@ -1,14 +1,19 @@
 import React, { useContext, useRef, useState } from 'react';
+
+import styled from 'styled-components';
+
 import { Section, Span } from '../../reusables';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
-import styled from 'styled-components';
-import { device } from '../../../config';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
-import EditSvg from '../../../icons/EditSvg.svg';
-import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
 import { useClickAway } from '../../../hooks';
+import { CATEGORY, CRITERIA_TYPE, CriteriaType, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+
+import EditSvg from '../../../icons/EditSvg.svg';
+import RemoveSvg from '../../../icons/RemoveSvg.svg';
+import { shortenText } from '../../../helpers';
+import { GUILD_COMPARISON_OPTIONS } from '../constants';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -22,8 +27,8 @@ export type CriteraValueType = {
 interface CriteriaProps {
   conditionData: ConditionArray[];
   moreOptions?: boolean;
-  deleteFunction?:(idx:number)=>void;
-  updateFunction?:(idx:number)=>void;
+  deleteFunction?: (idx: number) => void;
+  updateFunction?: (idx: number) => void;
 }
 
 interface MoreOptionsContainerProps {
@@ -48,9 +53,8 @@ const MoreOptionsContainer = ({
   const dropdownRef = useRef<any>(null);
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
-console.log('in dropdown')
   return (
-    <Section onClick={() => handleMoreOptionsClick(row, col)}>
+    <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
       <MoreDarkIcon color={theme.iconColor?.groupSettings} />
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer ref={dropdownRef} theme={theme}>
@@ -63,30 +67,82 @@ console.log('in dropdown')
     </Section>
   );
 };
+
 const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   const theme = useContext(ThemeContext);
 
+  const getTokenNftComparisionLabel = () => {
+    return TOKEN_NFT_COMPARISION[
+      criteria?.data?.['comparison'] as TokenNftComparision
+    ];
+  };
+  const checkIfNftToken = () => {
+    if (
+      criteria?.category === CATEGORY.ERC721 ||
+      criteria?.category === CATEGORY.ERC20
+    )
+      return true;
+    return false;
+  };
+
+  const getGuildRole  = () =>{
+    return (GUILD_COMPARISON_OPTIONS.find(option => option.value === criteria?.data?.['comparison']))?.heading;
+ 
+  }
   return (
     <Section gap="8px">
       <Span
         alignSelf="center"
         background="#657795"
         borderRadius="4px"
-        fontSize="13px"
+        fontSize="10px"
         color={theme.textColor?.buttonText}
         padding="4px 8px 4px 8px"
       >
-        {criteria.category}
+        {CRITERIA_TYPE[criteria.category as CriteriaType]}
       </Span>
-      <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
-        {criteria.type}{' '}
-        <Span color={theme.textColor?.modalSubHeadingText}>or more</Span>
+      {checkIfNftToken() && (
+        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
+          <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+            {getTokenNftComparisionLabel()}{' '}
+          </Span>
+          {/* need to fetch token symbol */}
+          {criteria?.data?.['amount']} {criteria.category}
+        </Span>
+      )}
+      {criteria.category === CATEGORY.INVITE && (
+        <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+          Owner and Admin can invite
+        </Span>
+      )}
+      {criteria.category === CATEGORY.CustomEndpoint && (
+        <Span
+          fontWeight="500"
+          fontSize="14px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
+          {shortenText(criteria.data?.['url'],30)}
+        </Span>
+      )}
+         {criteria.category === CATEGORY.ROLES && (
+        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}> 
+        {criteria?.data?.['id']} {' '}
+        <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+         with {' '}
+        </Span>
+        {getGuildRole()} role
       </Span>
+      )}
     </Section>
   );
 };
-// fix  dropdown ui 
-const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreOptions = true }: CriteriaProps) => {
+// fix  dropdown ui
+const ConditionsComponent = ({
+  conditionData,
+  deleteFunction,
+  updateFunction,
+  moreOptions = true,
+}: CriteriaProps) => {
   const [selectedIndex, setSelectedIndex] = useState<Array<number> | null>(
     null
   );
@@ -100,9 +156,10 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
       title: 'Edit',
       icon: EditSvg,
       function: () => {
-        if(updateFunction){
-          if(selectedIndex){
-            updateFunction(selectedIndex[0])
+        if (updateFunction) {
+          if (selectedIndex) {
+            updateFunction(selectedIndex[0]);
+            setSelectedIndex(null);
           }
         }
       },
@@ -113,9 +170,10 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
       title: 'Remove',
       icon: RemoveSvg,
       function: () => {
-        if(deleteFunction){
-          if(selectedIndex){
-            deleteFunction(selectedIndex[0])
+        if (deleteFunction) {
+          if (selectedIndex) {
+            deleteFunction(selectedIndex[0]);
+            setSelectedIndex(null);
           }
         }
       },
@@ -126,16 +184,16 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
   const handleMoreOptionsClick = (row: number, col: number) => {
-    console.log('in click')
     setSelectedIndex([row, col]);
   };
 
   return (
-    <Section flexDirection="column" width="100%" height='100%' >
+    <Section flexDirection="column" width="100%" height="100%">
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
           <Section flexDirection="column"  >
-            {criteria.length === 1 &&
+            {criteria.length <= 2 &&
+              criteria.length >= 1 &&
               criteria.map((singleCriteria, col) => (
                 <>
                   {singleCriteria.type && (
@@ -146,24 +204,22 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
-                      {
-                        moreOptions && (
-                          <MoreOptionsContainer
-                            handleMoreOptionsClick={handleMoreOptionsClick}
-                            row={row}
-                            col={col}
-                            dropDownValues={dropDownValues}
-                            setSelectedIndex={setSelectedIndex}
-                            selectedIndex={selectedIndex}
-                          />
-                        )
-                      }
+                      {moreOptions && (
+                        <MoreOptionsContainer
+                          handleMoreOptionsClick={handleMoreOptionsClick}
+                          row={row}
+                          col={col}
+                          dropDownValues={dropDownValues}
+                          setSelectedIndex={setSelectedIndex}
+                          selectedIndex={selectedIndex}
+                        />
+                      )}
                     </Section>
                   )}
                 </>
               ))}
 
-            {criteria.length > 1 && (
+            {criteria[0]?.operator && criteria.length > 2 && (
               <CriteriaGroup
                 theme={theme}
                 flexDirection="row"
@@ -196,14 +252,17 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
                     </>
                   ))}
                 </Section>
-                <Section>
+                <Section 
+                >
                   {criteria.map((singleCriteria) => (
                     <>
-                      {singleCriteria.operator && !singleCriteria.type && (
-                        <OperatorSpan theme={theme}>
-                          {singleCriteria.operator}
-                        </OperatorSpan>
-                      )}
+                      {criteria.length > 2 &&
+                        singleCriteria.operator &&
+                        !singleCriteria.type && (
+                          <OperatorSpan theme={theme}>
+                            {singleCriteria.operator}
+                          </OperatorSpan>
+                        )}
                     </>
                   ))}
                   {moreOptions && (
@@ -223,7 +282,7 @@ const ConditionsComponent = ({ conditionData,deleteFunction,updateFunction,moreO
               row < conditionData.length - 2 &&
               conditionData[0][0]?.operator && (
                 // this can be reused
-                <OperatorSpan theme={theme}>
+                <OperatorSpan theme={theme} zIndex="-2">
                   {conditionData[0][0].operator}
                 </OperatorSpan>
               )}
@@ -237,8 +296,9 @@ export default ConditionsComponent;
 
 const DropdownContainer = styled.div`
   position: absolute;
-  left: 48%;
-  top: 10%;
+  // left: 48%;
+  top: 0;
+  right: 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
   padding: 6px 32px 6px 12px;
@@ -247,13 +307,11 @@ const DropdownContainer = styled.div`
   flex-direction: column !important;
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
-
-  
 `;
 
 const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
-  margin:8px 0;
+  margin: 8px 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};

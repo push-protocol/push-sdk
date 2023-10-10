@@ -7,20 +7,14 @@ import { ThemeContext } from '../theme/ThemeProvider';
 interface OperatorContainerProps {
   operator: string;
   setOperator: any;
-  numRules:number;
+
 }
 export const OperatorContainer = ({
   operator,
   setOperator,
-  numRules,
 }: OperatorContainerProps) => {
   const theme = useContext(ThemeContext);
 
-  if(numRules <= 1){
-    return (
-      <div></div>
-    )
-  }
 
 
   return (

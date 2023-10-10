@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+
 import { Section, Span } from '../../reusables';
 import { Button, ModalHeader } from '../reusables';
 import { AddButtons } from './AddButtons';
@@ -7,60 +9,66 @@ import { ModalHeaderProps } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
-import { OPERATOR_OPTIONS_INFO } from '../constants';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { handleDefineCondition } from '../helpers/tokenGatedGroup';
 import { IChatTheme } from '../theme';
-import styled from 'styled-components';
+
+import { device } from '../../../config';
+import { OPERATOR_OPTIONS_INFO } from '../constants';
+
 
 export const DefineCondtion = ({
   onClose,
   handlePrevious,
   handleNext,
-  entryCriteria,
+  criteriaStateManager,
 }: ModalHeaderProps) => {
   const theme = useContext(ThemeContext);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
-  const customButtonStyle = {
-    background: disableButton
-      ? theme.backgroundColor?.buttonDisableBackground
-      : theme.backgroundColor?.buttonBackground,
-    color: disableButton
-      ? theme.textColor?.buttonDisableText
-      : theme.textColor?.buttonText,
-  };
+ 
   const [isCriteriaAdded, setIsCriteriaAdded] = useState<boolean>(true);
   const isMobile = useMediaQuery(device.mobileL);
 
+  const criteriaState = criteriaStateManager.getSelectedCriteria();
+
+  const customButtonStyle = {
+    background: (criteriaState.selectedRules.length<1 )
+      ? theme.backgroundColor?.buttonDisableBackground
+      : theme.backgroundColor?.buttonBackground,
+    color: (criteriaState.selectedRules.length<1 )
+      ? theme.textColor?.buttonDisableText
+      : theme.textColor?.buttonText,
+  };
+
   const verifyAndDoNext = () => {
-    handleDefineCondition(entryCriteria, handlePrevious);
+    handleDefineCondition(criteriaState, handlePrevious);
   };
 
   const getRules = () => {
     return [
-      [{ operator: entryCriteria.entryRuleTypeCondition }],
-      ...entryCriteria.selectedRules.map((el) => [el]),
+      [{ operator: criteriaState.entryRuleTypeCondition }],
+      ...criteriaState.selectedRules.map((el) => [el]),
     ];
   };
 
   // set state for edit condition
   useEffect(() => {
-    if (entryCriteria.isCondtionUpdateEnabled()) {
-      entryCriteria.setEntryRuleTypeCondition(
-        entryCriteria.entryOptionTypeArray[
-          entryCriteria.entryOptionsDataArrayUpdate
+    if (criteriaState.isCondtionUpdateEnabled()) {
+      criteriaState.setEntryRuleTypeCondition(
+        criteriaState.entryOptionTypeArray[
+          criteriaState.entryOptionsDataArrayUpdate
         ]
       );
 
-      if (entryCriteria.selectedRules.length === 0) {
-        entryCriteria.setSelectedRule([
-          ...entryCriteria.entryOptionsDataArray[
-            entryCriteria.entryOptionsDataArrayUpdate
+      if (criteriaState.selectedRules.length === 0) {
+        criteriaState.setSelectedRule([
+          ...criteriaState.entryOptionsDataArray[
+            criteriaState.entryOptionsDataArrayUpdate
           ],
         ]);
       }
+    } else {
+      //
     }
   }, []);
 
@@ -72,7 +80,7 @@ export const DefineCondtion = ({
     >
       <ModalHeader
         title={
-          entryCriteria.isCondtionUpdateEnabled()
+          criteriaState.isCondtionUpdateEnabled()
             ? 'Update Condition'
             : 'Define Condition'
         }
@@ -81,29 +89,30 @@ export const DefineCondtion = ({
       />
       {isCriteriaAdded && (
         <>
-          <Section margin="20px 0 10px 0">
-          <OperatorContainer 
-            operator={entryCriteria.entryRuleTypeCondition} 
-            setOperator={(newEl: string) => {
-              entryCriteria.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
-            }}
-            numRules={entryCriteria.selectedRules.length}
-          />
-          </Section>
+         {criteriaState.selectedRules.length>1 &&   <Section margin="20px 0 10px 0">
+            <OperatorContainer
+              operator={criteriaState.entryRuleTypeCondition}
+              setOperator={(newEl: string) => {
+                criteriaState.setEntryRuleTypeCondition(
+                  newEl as keyof typeof OPERATOR_OPTIONS_INFO
+                );
+              }}
+            />
+          </Section>}
           <ConditionSection
             width="100%"
             overflow="hidden auto"
             maxHeight="20rem"
             theme={theme}
-            padding="0 4px 0 0"
+            padding="5px 4px 10px 0"
           >
             <ConditionsComponent
               conditionData={getRules()}
               deleteFunction={(idx) => {
-                entryCriteria.deleteRule(idx);
+                criteriaState.deleteRule(idx);
               }}
               updateFunction={(idx) => {
-                entryCriteria.setUpdateCriteriaIdx(idx);
+                criteriaState.setUpdateCriteriaIdx(idx);
                 if (handleNext) {
                   handleNext();
                 }
@@ -127,7 +136,7 @@ export const DefineCondtion = ({
         customStyle={customButtonStyle}
         width="158px"
       >
-        {entryCriteria.isCondtionUpdateEnabled() ? 'Update' : 'Add'}
+        {criteriaState.isCondtionUpdateEnabled() ? 'Update' : 'Add'}
       </Button>
       <GatingRulesInformation />
     </Section>

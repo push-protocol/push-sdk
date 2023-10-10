@@ -1,24 +1,29 @@
 import { useContext, useState } from 'react';
-import { MdError } from 'react-icons/md';
+
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
+
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
-import { Section, Span } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import { ToggleInput } from '../reusables';
 import { Button } from '../reusables';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
-
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { ConditionArray, IChatTheme } from '../exportedTypes';
 import {
   ConditionType,
   CriteriaStateType,
 } from '../types/tokenGatedGroupCreationType';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
-import styled from 'styled-components';
+import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
+import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
+import { GrouInfoType as GroupInfoType } from '../types';
+
+import { ACCESS_TYPE_TITLE } from '../constants';
+import { IChatTheme } from '../exportedTypes';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -32,8 +37,6 @@ const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
     value: 'encrypted',
   },
 ];
-
-
 
 interface AddConditionProps {
   heading: string;
@@ -77,21 +80,22 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-      <Section margin="20px 0 10px 0">
-       <OperatorContainer 
-        operator={criteriaState.entryRootCondition} 
-        setOperator={(newEl: string) => {
-          criteriaState.setEntryRootCondition(newEl as ConditionType);
-        }}
-        numRules={criteriaState.entryOptionsDataArray.length}
-      />
-      </Section>
+      {criteriaState.entryOptionsDataArray.length > 1 && (
+        <Section margin="20px 0 10px 0">
+          <OperatorContainer
+            operator={criteriaState.entryRootCondition}
+            setOperator={(newEl: string) => {
+              criteriaState.setEntryRootCondition(newEl as ConditionType);
+            }}
+          />
+        </Section>
+      )}
       <ConditionSection
         width="100%"
         overflow="hidden auto"
         maxHeight="20rem"
         theme={theme}
-        padding="0 4px 0 0"
+        padding="5px 4px 5px 0"
       >
         <ConditionsComponent
           conditionData={[
@@ -137,29 +141,41 @@ export const CreateGroupType = ({
   handlePrevious,
   groupInputDetails,
   handleNext,
-  entryCriteria,
+  criteriaStateManager,
 }: ModalHeaderProps & GroupTypeState) => {
   const [checked, setChecked] = useState<boolean>(true);
-  const [groupEncryptionType, setGroupEncryptionType] = useState('');
+  const [groupEncryptionType, setGroupEncryptionType] = useState(
+    GROUP_TYPE_OPTIONS[0].value
+  );
 
-  // const theme = useContext(ThemeContext);
-  // const isMobile = useMediaQuery(device.mobileL);
+  const { createGatedGroup, loading } = useCreateGatedGroup();
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
-    const groupInfo = {
-      groupInfo: { ...groupInputDetails },
-      groupType: groupEncryptionType,
+    // TODO:use actual data instead of dummy data
+    const groupInfo:GroupInfoType = {
+      groupName:groupInputDetails.groupName,
+      groupDescription:groupInputDetails.groupDescription,
+      groupImage:groupInputDetails.groupImage,
+      isPublic: true //groupEncryptionType,
     };
-    console.log('created group with', groupInfo);
+    const rules: any = criteriaStateManager.generateRule();
+    await createGatedGroup(groupInfo, rules);
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Success',
+      toastMessage: 'Group created successfully',
+      toastType: 'SUCCESS',
+      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+    });
     onClose();
   };
 
   const verifyAndCreateGroup = async () => {
-    if (groupEncryptionType.trim() === '') {
-      showError('Group encryption type is not selected');
-      return;
-    }
+    // TODO:validate the fields
+    // if (groupEncryptionType.trim() === '') {
+    //   showError('Group encryption type is not selected');
+    //   return;
+    // }
 
     await createGroupService();
   };
@@ -198,23 +214,35 @@ export const CreateGroupType = ({
       {checked && (
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
-            criteriaState={entryCriteria}
+            criteriaState={criteriaStateManager.entryCriteria}
             handleNext={() => {
               if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(
+                  SelectedCriteria.ENTRY
+                );
                 handleNext();
               }
             }}
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
-          {/* <AddConditionSection
-            handleNext={handleNext}
+          <AddConditionSection
+            handleNext={() => {
+              if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT);
+                handleNext();
+              }
+            }}
+            criteriaState={criteriaStateManager.chatCriteria}
             {...ACCESS_TYPE_TITLE.CHAT}
-          /> */}
+          />
         </Section>
       )}
 
       <Section gap="20px" flexDirection="column">
-        <Button width="197px">Create Group</Button>
+        <Button width="197px" onClick={verifyAndCreateGroup}>
+          {!loading && 'Create Group'}
+          {loading && <Spinner size="20" color="#fff" />}
+        </Button>
         <GatingRulesInformation />
       </Section>
     </Section>

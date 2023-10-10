@@ -1,30 +1,27 @@
 import { useState } from 'react';
 import {
+  Condition,
   ConditionType,
   CriteriaStateType,
   Rule,
+  TokenGatedRule,
 } from '../../components/chat/types';
+import { OPERATOR_OPTIONS } from '../../components/chat/constants';
 
-export const useCriteriaState = (): CriteriaStateType => {
-  const [entryRootCondition, setEntryRootCondition] =
-    useState<ConditionType>('all');
+export const useCriteriaState = (
+  defaultRules: Rule[][],
+  defaultConditionTypes: ConditionType[]
+): CriteriaStateType => {
+  const [entryRootCondition, setEntryRootCondition] = useState<ConditionType>(
+    OPERATOR_OPTIONS[1]?.value as ConditionType
+  );
   const [entryRuleTypeCondition, setEntryRuleTypeCondition] =
-    useState<ConditionType>('all');
+    useState<ConditionType>(OPERATOR_OPTIONS[1]?.value as ConditionType);
   const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<
     ConditionType[]
-  >([]);
-  const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>([
-    [
-      {
-        type: 'PUSH',
-        category: 'INVITE',
-        subcategory: 'DEFAULT',
-        data: {
-          inviterRoles: ['ADMIN', 'OWNER'],
-        },
-      },
-    ],
-  ]);
+  >(defaultConditionTypes);
+  const [entryOptionsDataArray, setEntryOptionsDataArray] =
+    useState<Rule[][]>(defaultRules);
 
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([]);
@@ -56,7 +53,7 @@ export const useCriteriaState = (): CriteriaStateType => {
   };
 
   const addNewCondtion = () => {
-    if(selectedRules.length > 0){
+    if (selectedRules.length > 0) {
       setEntryOptionTypeArray((prev) => [...prev, entryRuleTypeCondition]);
       setEntryOptionsDataArray((prev) => [...prev, [...selectedRules]]);
     }
@@ -121,5 +118,111 @@ export const useCriteriaState = (): CriteriaStateType => {
     updateCriteriaIdx,
     setUpdateCriteriaIdx,
     isUpdateCriteriaEnabled,
+  };
+};
+
+export enum SelectedCriteria {
+  ENTRY,
+  CHAT,
+}
+
+export interface CriteriaStateManagerType {
+  entryCriteria: CriteriaStateType;
+  chatCriteria: CriteriaStateType;
+  seletedCriteria: SelectedCriteria;
+  setSelectedCriteria: React.Dispatch<React.SetStateAction<SelectedCriteria>>;
+  getSelectedCriteria: () => CriteriaStateType;
+  resetRules: () => void;
+  resetCriteriaIdx: () => void;
+  generateRule: () => TokenGatedRule;
+}
+
+export const useCriteriaStateManager = (): CriteriaStateManagerType => {
+  const [seletedCriteria, setSelectedCriteria] = useState<SelectedCriteria>(
+    SelectedCriteria.CHAT
+  );
+  const entryCriteria = useCriteriaState(
+    [
+      [
+        {
+          type: 'PUSH',
+          category: 'INVITE',
+          subcategory: 'DEFAULT',
+          data: {
+            inviterRoles: ['ADMIN', 'OWNER'],
+          },
+        },
+      ],
+    ],
+    ['all']
+  );
+  const chatCriteria = useCriteriaState([], []);
+
+  const getSelectedCriteria = () => {
+    if (seletedCriteria === SelectedCriteria.CHAT) {
+      return chatCriteria;
+    } else {
+      return entryCriteria;
+    }
+  };
+
+  const resetRules = () => {
+    entryCriteria.selectEntryOptionsDataArrayForUpdate(-1);
+    entryCriteria.setSelectedRule([]);
+    chatCriteria.selectEntryOptionsDataArrayForUpdate(-1);
+    chatCriteria.setSelectedRule([]);
+  };
+
+  const resetCriteriaIdx = () => {
+    entryCriteria.setUpdateCriteriaIdx(-1);
+    chatCriteria.setUpdateCriteriaIdx(-1);
+  };
+
+  const _generate = (
+    rules: Rule[][],
+    conditionTypes: ConditionType[]
+  ): Condition[] => {
+    if(rules.length === 0){
+      return []
+    }
+    
+    console.log(`Generating for ${JSON.stringify(rules)}`)
+    console.log("condition type",conditionTypes);
+    
+    return conditionTypes.map((el, idx) => ({
+      [el]: rules[idx].map((_el) => _el),
+    })) as any;
+  };
+
+  const generateRule = (): TokenGatedRule => {
+    return {
+      entry: {
+        conditions: {
+          [entryCriteria.entryRootCondition]: _generate(
+            entryCriteria.entryOptionsDataArray,
+            entryCriteria.entryOptionTypeArray
+          ),
+        },
+      },
+      chat: {
+        conditions: {
+          [chatCriteria.entryRootCondition]: _generate(
+            chatCriteria.entryOptionsDataArray,
+            chatCriteria.entryOptionTypeArray
+          ),
+        },
+      },
+    } as any;
+  };
+
+  return {
+    entryCriteria,
+    chatCriteria,
+    seletedCriteria,
+    setSelectedCriteria,
+    getSelectedCriteria,
+    resetRules,
+    resetCriteriaIdx,
+    generateRule,
   };
 };

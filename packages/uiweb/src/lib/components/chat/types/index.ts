@@ -1,5 +1,12 @@
 import { DropdownValueType } from '../reusables';
 
+export interface GrouInfoType{
+  groupName: string;
+  groupDescription:string;
+  groupImage:string;
+  isPublic: boolean;
+}
+
 export const TYPE = {
   PUSH: 'PUSH',
   GUILD: 'GUILD',
@@ -44,5 +51,26 @@ export type DropdownCategoryValuesType = {
 export type DropdownSubCategoryValuesType = {
   [key in SubCategoryKeys]: InputType;
 };
+
+export const TOKEN_NFT_COMPARISION = {
+'>':'more than',
+'>=': 'equal or more than',
+'<': 'less than',
+'<=': 'equal or less than',
+'==': 'equal to',
+'!=':'not equal to'
+} as const;
+
+export type TokenNftComparision = keyof typeof TOKEN_NFT_COMPARISION;
+
+export const CRITERIA_TYPE = {
+  ERC20:'Token',
+  ERC721: 'NFT',
+  INVITE: 'Invite',
+  CustomEndpoint: 'URL',
+  ROLES: 'Guild ID',
+  } as const;
+  
+  export type CriteriaType = keyof typeof CRITERIA_TYPE;
 
 export * from './tokenGatedGroupCreationType'

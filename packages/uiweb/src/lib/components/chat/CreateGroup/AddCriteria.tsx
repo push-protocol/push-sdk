@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+
 import {
   Button,
   DropDownInput,
@@ -6,21 +7,20 @@ import {
   ModalHeader,
   TextInput,
 } from '../reusables';
-import { Section } from '../../reusables';
-import EthereumSvg from '../../../icons/ethereum.svg';
-import PolygonSvg from '../../../icons/polygon.svg';
-import BSCSvg from '../../../icons/bsc.svg';
-import OptimismSvg from '../../../icons/optimisim.svg';
-
+import { Section, } from '../../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-
-import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
+
+import EthereumSvg from '../../../icons/ethereum.svg';
+import PolygonSvg from '../../../icons/polygon.svg';
+import BSCSvg from '../../../icons/bsc.svg';
+import OptimismSvg from '../../../icons/optimisim.svg';
+import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
 import {
   CATEGORY,
@@ -32,24 +32,21 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import {
-  Data,
-  GuildData,
-  PushData,
-  Rule,
-} from '../types/tokenGatedGroupCreationType';
+import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
+
+
 
 const AddCriteria = ({
   handlePrevious,
-  entryCriteria,
   handleNext,
   onClose,
+  criteriaStateManager
 }: ModalHeaderProps) => {
   const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
   const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
   const [selectedSubCategoryValue, setSelectedSubCategoryValue] =
     useState<number>(0);
-  const [guildComparison, setGuildComparison] = useState('');
+    const [guildComparison, setGuildComparison] = useState('')
   const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
   const [contract, setContract] = useState<string>('');
   const [inviteCheckboxes, setInviteCheckboxes] = useState<{
@@ -66,15 +63,6 @@ const AddCriteria = ({
   });
   const { env } = useChatData();
   const theme = useContext(ThemeContext);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
-  const customButtonStyle = {
-    background: disableButton
-      ? theme.backgroundColor?.buttonDisableBackground
-      : theme.backgroundColor?.buttonBackground,
-    color: disableButton
-      ? theme.textColor?.buttonDisableText
-      : theme.textColor?.buttonText,
-  };
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -284,9 +272,6 @@ const AddCriteria = ({
 
   const getSubCategoryDropdownValues = () => {
     const category = getCategoryDropdownValues();
-    console.log(category);
-    console.log(selectedCategoryValue);
-    console.log((category as DropdownValueType[])[selectedCategoryValue]);
     if (Array.isArray(category))
       return dropdownSubCategoryValues[
         (category as DropdownValueType[])[selectedCategoryValue]
@@ -299,145 +284,133 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
-  const verifyAndDoNext = () => {
-    const _type = dropdownTypeValues[selectedTypeValue].value as
-      | 'PUSH'
-      | 'GUILD';
-    const category: string =
-      _type === 'PUSH'
-        ? (dropdownCategoryValues[_type] as DropdownValueType[])[
-            selectedCategoryValue
-          ].value || CATEGORY.ERC20
-        : 'ROLES';
-
-    let subCategory = 'DEFAULT';
-    if (_type === 'PUSH') {
-      if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-        subCategory = tokenCategoryValues[selectedSubCategoryValue].value;
-      }
+  const verifyAndDoNext = ()=>{
+    const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
+    const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
+      selectedCategoryValue
+    ].value || CATEGORY.ERC20 : "ROLES"
+ 
+    let subCategory = "DEFAULT"
+    if(_type === "PUSH"){ 
+      if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+        subCategory = tokenCategoryValues[selectedSubCategoryValue].value
+      }else if(category === CATEGORY.CustomEndpoint){
+        subCategory = "GET"
+      } 
     }
-
-    const getData = (type: string, category: string): Data => {
-      if (type === 'PUSH') {
-        if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-          const selectedChain =
-            dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+    
+    const getData = (type:string, category:string):Data=>{
+      if(type === "PUSH"){
+        if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
+          const selectedChain = dropdownChainsValues[selectedChainValue].value || 'eip155:1';
           return {
             contract: `${selectedChain}:${contract}`,
             amount: quantity.value,
-            comparison: dropdownQuantityRangeValues[quantity.range].value,
+            comparison:dropdownQuantityRangeValues[quantity.range].value,
             decimals: 18,
-          };
-        } else if (category === CATEGORY.INVITE) {
-          const _inviteRoles = [];
-          if (inviteCheckboxes.admin) {
-            _inviteRoles.push('ADMIN');
           }
-          if (inviteCheckboxes.owner) {
-            _inviteRoles.push('OWNER');
+        }else if(category === CATEGORY.INVITE){
+          const _inviteRoles = []
+          if(inviteCheckboxes.admin){
+            _inviteRoles.push("ADMIN")
+          }
+          if(inviteCheckboxes.owner){
+            _inviteRoles.push("OWNER")
           }
 
-          return {
-            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN'],
-          };
-        } else {
+          return{
+            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN']
+          }
+        }else{
           // CATEGORY.CustomEndpoint
           // TODO: validate url
-          return {
-            url: url,
-          };
+          return{
+            url:url
+          }
         }
-      } else {
+      }else{
         // GUILD type
         return {
-          id: guildId,
-          comparison: guildComparison,
-          role: guildComparison === 'specific' ? specificRoleId : '*',
-        };
+          id:guildId,
+          comparison:guildComparison,
+          role:guildComparison === 'specific' ? specificRoleId : "*",
+        }
       }
-    };
+    }
 
-    const rule: Rule = {
+    const rule:Rule = {
       type: _type,
       category: category,
       subcategory: subCategory,
       data: getData(_type, category),
-    };
-
-    entryCriteria.addNewRule(rule);
-
-    if (handlePrevious) {
-      handlePrevious();
     }
-  };
+
+    criteriaState.addNewRule(rule)
+
+    if(handlePrevious){
+      handlePrevious()
+    }
+
+  }
+
+  const criteriaState = criteriaStateManager.getSelectedCriteria()
+
 
   // Autofill the form for the update
-  useEffect(() => {
-    if (entryCriteria.isUpdateCriteriaEnabled()) {
-      //Load the states
-      const oldValue =
-        entryCriteria.entryOptionsDataArray[
-          entryCriteria.entryOptionsDataArrayUpdate
-        ][entryCriteria.updateCriteriaIdx];
+  useEffect(()=>{
+   if(criteriaState.isUpdateCriteriaEnabled()){
+    //Load the states
+    const oldValue = criteriaState.selectedRules[criteriaState.updateCriteriaIdx] 
+    
+    if(oldValue.type === 'PUSH'){
+      
+      // category
+      setSelectedCategoryValue(
+        (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(obj => obj.value === oldValue.category) 
+      )
 
-      if (oldValue.type === 'PUSH') {
-        // category
-        setSelectedCategoryValue(
-          (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(
-            (obj) => obj.value === oldValue.category
+      const pushData = oldValue.data as PushData
+
+      // sub category
+      if(oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721){
+        setSelectedSubCategoryValue(
+          tokenCategoryValues.findIndex(obj => obj.value === oldValue.subcategory)
+        )
+
+        const contractAndChain:string[] = (pushData.contract || "eip155:1:0x").split(':')
+        setSelectedChainValue(
+          dropdownChainsValues.findIndex(
+            obj => obj.value === contractAndChain[0]+":"+contractAndChain[1]
+          ) 
+        )
+        setContract(contractAndChain.length === 3 ? contractAndChain[2]: "") 
+        setQuantity({
+          value:pushData.amount || 0, 
+          range:dropdownQuantityRangeValues.findIndex(
+            obj => obj.value === pushData.comparison
           )
-        );
-
-        const pushData = oldValue.data as PushData;
-
-        // sub category
-        if (
-          oldValue.category === CATEGORY.ERC20 ||
-          oldValue.category === CATEGORY.ERC721
-        ) {
-          setSelectedSubCategoryValue(
-            tokenCategoryValues.findIndex(
-              (obj) => obj.value === oldValue.subcategory
-            )
-          );
-
-          const contractAndChain: string[] = (
-            pushData.contract || 'eip155:1:0x'
-          ).split(':');
-          setSelectedChainValue(
-            dropdownChainsValues.findIndex(
-              (obj) =>
-                obj.value === contractAndChain[0] + ':' + contractAndChain[1]
-            )
-          );
-          setContract(contractAndChain.length === 3 ? contractAndChain[2] : '');
-          setQuantity({
-            value: pushData.amount || 0,
-            range: dropdownQuantityRangeValues.findIndex(
-              (obj) => obj.value === oldValue.data
-            ),
-          });
-        } else if (oldValue.category === CATEGORY.INVITE) {
-          setInviteCheckboxes({
-            admin: true,
-            owner: true,
-          });
-        } else {
-          // invite
-          setUrl(pushData.url || '');
-        }
-      } else {
-        // guild condition
-        setGuildId((oldValue.data as GuildData).id);
-        setSpecificRoleId((oldValue.data as GuildData).role);
-        setGuildComparison((oldValue.data as GuildData).comparison);
+        })
+      }else if(oldValue.category === CATEGORY.INVITE){
+        setInviteCheckboxes({
+          admin:true,
+          owner:true, 
+        })
+      }else{
+        // invite
+        setUrl(pushData.url || "") 
       }
-
-      setSelectedTypeValue(
-        dropdownTypeValues.findIndex((obj) => obj.value === oldValue.type)
-      );
+    }else{
+      // guild condition
+      setGuildId((oldValue.data as GuildData).id)
+      setSpecificRoleId((oldValue.data as GuildData).role)
+      setGuildComparison((oldValue.data as GuildData).comparison) 
     }
-  }, []);
+    
+    setSelectedTypeValue(
+      dropdownTypeValues.findIndex(obj => obj.value === oldValue.type) 
+    )
+   } 
+  },[])
 
   return (
     <Section
@@ -449,11 +422,7 @@ const AddCriteria = ({
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title={
-            entryCriteria.isUpdateCriteriaEnabled()
-              ? 'Update Criteria'
-              : 'Add Criteria'
-          }
+          title={criteriaState.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
         />
       </Section>
       <DropDownInput
@@ -461,44 +430,39 @@ const AddCriteria = ({
         selectedValue={selectedTypeValue}
         dropdownValues={dropdownTypeValues}
       />
-        {Array.isArray(getCategoryDropdownValues()) ? (
-          <DropDownInput
-            labelName="Gating Category"
-            selectedValue={selectedCategoryValue}
-            dropdownValues={getCategoryDropdownValues() as DropdownValueType[]}
-          />
-        ) : (
-          <TextInput
-            labelName="Gating category"
-            inputValue={
-              (getCategoryDropdownValues() as ReadonlyInputType).title
-            }
-            disabled={true}
-            customStyle={{
-              background: theme.backgroundColor?.modalHoverBackground,
-            }}
-          />
-        )}
-        {Array.isArray(getSubCategoryDropdownValues()) ? (
-          <DropDownInput
-            labelName="Sub-Category"
-            selectedValue={selectedSubCategoryValue}
-            dropdownValues={
-              getSubCategoryDropdownValues() as DropdownValueType[]
-            }
-          />
-        ) : (
-          <TextInput
-            labelName="Sub-category"
-            inputValue={
-              (getSubCategoryDropdownValues() as ReadonlyInputType)?.title
-            }
-            disabled={true}
-            customStyle={{
-              background: theme.backgroundColor?.modalHoverBackground,
-            }}
-          />
-        )}
+      {Array.isArray(getCategoryDropdownValues()) ? (
+        <DropDownInput
+          labelName="Gating Category"
+          selectedValue={selectedCategoryValue}
+          dropdownValues={getCategoryDropdownValues() as DropdownValueType[]}
+        />
+      ) : (
+        <TextInput
+          labelName="Gating category"
+          inputValue={(getCategoryDropdownValues() as ReadonlyInputType)?.title}
+          disabled={true}
+          customStyle={{
+            background: theme.backgroundColor?.modalHoverBackground,
+          }}
+        />
+      )}
+
+      {Array.isArray(getSubCategoryDropdownValues()) ? (
+        <DropDownInput
+          labelName="Sub-Category"
+          selectedValue={selectedSubCategoryValue}
+          dropdownValues={getSubCategoryDropdownValues() as DropdownValueType[]}
+        />
+      ) : (
+        <TextInput
+          labelName="Sub-category"
+          inputValue={(getSubCategoryDropdownValues()  as ReadonlyInputType)?.title}
+          disabled={true}
+          customStyle={{
+            background: theme.backgroundColor?.modalHoverBackground,
+          }}
+        />
+      )}
       {/* shift to minor components  leave for now*/}
       {checkIfTokenNFT() && (
         <>
@@ -541,8 +505,8 @@ const AddCriteria = ({
               }
               onToggle={() =>
                 setInviteCheckboxes({
-                  admin: true,
-                  owner: true,
+                  admin:true,
+                  owner:true
                 })
               }
               checked={
@@ -565,27 +529,24 @@ const AddCriteria = ({
             options={GUILD_COMPARISON_OPTIONS}
             totalWidth="410px"
             selectedValue={guildComparison}
-            handleClick={(newEl: string) => {
-              setGuildComparison(newEl);
-            }}
+            handleClick={(newEl:string)=>{
+              setGuildComparison(newEl)}}
           />
 
-          {guildComparison === 'specific' && (
+          {guildComparison === "specific" && 
             <TextInput
               labelName="Specific Role"
               inputValue={specificRoleId}
               onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
               placeholder="e.g. 4687"
             />
-          )}
+          }
+
+          
         </>
       )}
-      <Button
-        width="197px"
-        onClick={verifyAndDoNext}
-        customStyle={customButtonStyle}
-      >
-        {entryCriteria.isUpdateCriteriaEnabled() ? 'Update' : 'Add'}
+      <Button width="197px" onClick={verifyAndDoNext}>
+        {criteriaState.isUpdateCriteriaEnabled() ? "Update" : "Add"}
       </Button>
       <GatingRulesInformation />
     </Section>
@@ -593,3 +554,4 @@ const AddCriteria = ({
 };
 
 export default AddCriteria;
+
