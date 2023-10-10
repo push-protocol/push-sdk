@@ -20,11 +20,11 @@ const handleDefineCondition = (
 
 const validateGUILDData = async (condition: Rule): Promise<string[]> => {
   const { data } = condition;
-  const errors: string[] = [];
+  let errors: any = {};
 
   // Check for guild ID presence
   if (!(data as GuildData).id) {
-    errors.push('Guild ID is missing');
+    errors = { ...errors, id: 'Guild ID is missing' };
   } else {
     try {
       const response = await axios.get(
@@ -32,12 +32,12 @@ const validateGUILDData = async (condition: Rule): Promise<string[]> => {
       );
 
       if (response.status !== 200) {
-        errors.push('Invalid Guild ID');
+        errors = { ...errors, id: 'Guild ID is missing' };
       } else {
         // Validate the role values
         if ((data as GuildData).role === '*') {
           if (data.comparison !== 'all' && data.comparison !== 'any') {
-            errors.push('Invalid comparison value');
+            errors = { ...errors, comparison: 'Invalid comparison value' };
           }
         } else if ((data as GuildData).role) {
           const roleExists = response.data.roles.some(
@@ -45,19 +45,22 @@ const validateGUILDData = async (condition: Rule): Promise<string[]> => {
               role.id.toString() === (data as GuildData).role
           );
           if (!roleExists) {
-            errors.push('Invalid Guild Role ID');
+            errors = { ...errors, role: 'Invalid Guild Role ID' };
           }
 
           // For specific role, comparison can be null or empty
           if (data.comparison) {
-            errors.push('Comparison should be empty for specific role');
+            errors = {
+              ...errors,
+              comparison: 'Comparison should be empty for specific role',
+            };
           }
         } else {
-          errors.push('Invalid role value');
+          errors = { ...errors, role: 'Invalid role value' };
         }
       }
     } catch (error) {
-      errors.push('Error validating Guild ID');
+      errors = { ...errors, id: 'Error validating Guild ID' };
     }
   }
 

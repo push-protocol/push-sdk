@@ -159,15 +159,25 @@ export const CreateGroupType = ({
       groupImage:groupInputDetails.groupImage,
       isPublic: true //groupEncryptionType,
     };
-    const rules: any = criteriaStateManager.generateRule();
-    await createGatedGroup(groupInfo, rules);
-    groupInfoToast.showMessageToast({
-      toastTitle: 'Success',
-      toastMessage: 'Group created successfully',
-      toastType: 'SUCCESS',
-      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
-    });
-    onClose();
+    const rules: any = checked? criteriaStateManager.generateRule():{};
+    try{
+      const response = await createGatedGroup(groupInfo, rules);
+      if(response ) {
+        groupInfoToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'Group created successfully',
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        });
+      }
+     
+      onClose();
+    }
+    catch(error){
+      console.log(error);
+    }
+   
+
   };
 
   const verifyAndCreateGroup = async () => {

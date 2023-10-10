@@ -33,6 +33,7 @@ import {
   ReadonlyInputType,
 } from '../types';
 import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
+import { validateGUILDData } from '../helpers';
 
 
 
@@ -345,6 +346,12 @@ const AddCriteria = ({
       data: getData(_type, category),
     }
 
+    //guild data validation
+    if(rule.type === TYPE.GUILD)
+    {
+     const errors =  validateGUILDData(rule);
+
+    }
     criteriaState.addNewRule(rule)
 
     if(handlePrevious){

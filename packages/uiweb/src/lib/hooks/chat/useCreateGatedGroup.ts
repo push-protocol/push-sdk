@@ -26,6 +26,7 @@ export const useCreateGatedGroup = () => {
         };
         const response = await PushAPI.chat.createGroup(payload);
         setLoading(false);
+        console.log(response)
         if (!response) {
           return false;
         }

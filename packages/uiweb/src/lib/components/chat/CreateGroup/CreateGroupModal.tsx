@@ -215,7 +215,7 @@ const CreateGroupDetail = ({
         return;
       }
 
-      // verify description
+     // verify description
       if (!groupImage) {
         showError("Group image can't be empty");
         return;
