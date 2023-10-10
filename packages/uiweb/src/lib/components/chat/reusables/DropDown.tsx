@@ -13,7 +13,6 @@ export type DropdownValueType = {
   invertedIcon?: any;
   id: number | string;
   link?: string;
-
   value?: string;
   title: string;
   icon?: string;
@@ -41,8 +40,8 @@ function Dropdown({
     return dropdownValue.textColor
       ? dropdownValue.textColor
       : textColor
-      ? textColor
-      : theme.textColor?.modalSubHeadingText;
+        ? textColor
+        : theme.textColor?.modalSubHeadingText;
   };
 
   const copyToClipboard = (address: string) => {
@@ -57,6 +56,7 @@ function Dropdown({
       document.body.removeChild(el);
     }
   };
+  console.log(dropdownValues)
   return (
     <>
       {dropdownValues.map((dropdownValue) =>
@@ -70,7 +70,10 @@ function Dropdown({
             margin="0px 0 8px 0"
             width="100%"
             style={{ cursor: 'pointer' }}
-            onClick={() => dropdownValue?.function()}
+            onClick={() => {
+              dropdownValue?.function()
+              // setshowDropdown?(false): true
+            }}
           >
             <Span
               margin="11px 22px 11px 2px"
@@ -95,7 +98,7 @@ function Dropdown({
                 cursor="pointer"
                 filter="brightness(0) invert(1)"
                 onClick={() => {
-                  copyToClipboard(dropdownValue?.value||'');
+                  copyToClipboard(dropdownValue?.value || '');
                 }}
               />
             )}
@@ -188,15 +191,19 @@ const DesktopAddress = styled(SpanAddress)`
   }
 `;
 
-const DropdownItemContainer = styled(Section)<{ hoverBGColor?: string }>`
+const DropdownItemContainer = styled(Section) <{ hoverBGColor?: string }>`
   justify-content: flex-start;
   flex-wrap: nowrap;
   margin: 1px 0;
+// width:100%;
   padding: 2px 8px;
   border-radius: 12px;
   cursor: pointer;
   text-align: left;
 
+  span {
+    text-wrap: nowrap;
+  }
   &:hover {
     background-color: ${(props) => props.hoverBGColor || 'none'};
   }
@@ -210,9 +217,10 @@ const A = styled.a`
 
   background: ${(props) => props.color};
   z-index: 11;
-  &. hover {
+  &:hover {
     background: transparent !important;
   }
 `;
+
 
 export default Dropdown;

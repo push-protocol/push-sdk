@@ -16,8 +16,8 @@ interface ILabelProps {
   textColor?: string;
 }
 export const ToggleInput = (props: IToggleInputProps) => {
-  const theme = useContext(ThemeContext);
 
+  const theme = useContext(ThemeContext);
 
   return (
     <ThemeProvider theme={theme}>
@@ -38,7 +38,8 @@ export const ToggleInput = (props: IToggleInputProps) => {
           <input type="checkbox" id="checkbox" checked={props.checked} onChange={()=>props.onToggle()} />
           <div className="slider round"></div>
         </ToggleLabel>
-
+        {/* <input type="checkbox" id="checkbox" />
+    <div class="slider round"></div> */}
       </ToggleContainer>
     </ThemeProvider>
   );
@@ -48,10 +49,10 @@ export const ToggleInput = (props: IToggleInputProps) => {
 const ToggleContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width:100%;
   gap:10px;
   font-family: ${props => props.theme.fontFamily};
     align-items:center;
-    width:100%;
 `;
 
 const LabelContainer = styled.div`

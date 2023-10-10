@@ -12,6 +12,7 @@ export interface OptionDescription {
 }
 interface OptionButtonsProps {
   options: Array<OptionDescription>;
+  totalWidth?:string;
   selectedValue: string;
   handleClick: (el:string)=>void;
 }
@@ -20,6 +21,8 @@ interface ButtonSectionProps {
   borderWidth: string;
   borderRadius: string;
   borderColor: string;
+  totalWidth:string;
+  noOfOptions:number;
   // background:string;
 }
 
@@ -32,7 +35,7 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
           // selectedValue === value?
           // theme.textColor?.modalHeadingText
           // :
-          theme.textColor?.modalSubHeadingText
+          theme.textColor?.modalHeadingText
         }
         fontSize="18px"
         fontWeight="500"
@@ -51,18 +54,38 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
 };
 
 
-const OptionButtons = ({ options,selectedValue,handleClick}: OptionButtonsProps) => {
+export const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',}: OptionButtonsProps) => {
   const theme = useContext(ThemeContext);
+
+const getBorderWidth = (index:number) =>{
+  if(index === 0)
+  return '1px 1px 1px 1px';
+ if(index >0 && index <(options.length -1))
+    return '1px 1px 1px 0px';
+  return '1px 1px 1px 0px';
+
+}
+const getBorderRadius = (index:number) =>{
+  if(index === 0)
+  return '12px 0px 0px 12px';
+ if(index >0 && index <(options.length -1))
+    return '0px';
+  return '0px 12px 12px 0px';
+
+}
+
   return (
     <ThemeProvider theme={theme}>
       <ButtonContainer>
         {options.map((option, index) => (
           <ButtonSection
+            totalWidth={totalWidth}
+            noOfOptions={options.length}
             borderRadius={
-              index === 0 ? '12px 0px 0px 12px' : '0px 12px 12px 0px'
+              getBorderRadius(index)
             }
             borderColor={theme.border!.modalInnerComponents!}
-            borderWidth={index === 0 ? '1px 0px 1px 1px' : '1px'}
+            borderWidth={getBorderWidth(index)}
             background={selectedValue === option.value ? theme.backgroundColor?.modalHoverBackground : 'none'}
             onClick={()=>{handleClick(option.value)}}
           >
@@ -85,9 +108,9 @@ const ButtonSection = styled(Section)<ButtonSectionProps>`
   justify-content: center;
   align-items: center;
   gap: 3px;
-  width:160px;
+  width: ${(props) => `calc((${props.totalWidth} - 80px) / ${props.noOfOptions})`};
   @media ${device.mobileL} {
-    width:130px;
+    width: ${(props) => `calc(((${props.totalWidth} - 80px) / ${props.noOfOptions}) - 30px)`};
   }
   padding: 10px;
   border: ${(props) => props.borderColor};
