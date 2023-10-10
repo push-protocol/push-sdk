@@ -33,6 +33,8 @@ import {
   ReadonlyInputType,
 } from '../types';
 import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
+import { ethers } from "ethers";
+import { tokenFetchHandler } from '../helpers/tokenHelpers';
 
 
 
@@ -56,6 +58,8 @@ const AddCriteria = ({
   const [url, setUrl] = useState<string>('');
   const [guildId, setGuildId] = useState<string>('');
   const [specificRoleId, setSpecificRoleId] = useState<string>('');
+  const [unit, setUnit] = useState('TOKEN')
+  const [decimals, setDecimals] = useState(18)
 
   const [quantity, setQuantity] = useState<{ value: number; range: number }>({
     value: 0,
@@ -307,7 +311,7 @@ const AddCriteria = ({
             contract: `${selectedChain}:${contract}`,
             amount: quantity.value,
             comparison:dropdownQuantityRangeValues[quantity.range].value,
-            decimals: 18,
+            decimals: decimals,
           }
         }else if(category === CATEGORY.INVITE){
           const _inviteRoles = []
@@ -355,6 +359,21 @@ const AddCriteria = ({
 
   const criteriaState = criteriaStateManager.getSelectedCriteria()
 
+  const getSeletedType = ()=>{
+    return dropdownTypeValues[selectedTypeValue].value || "PUSH" 
+  }
+
+  const getSelectedCategory =()=>{
+    const category:string = (dropdownCategoryValues["PUSH"] as DropdownValueType[])[
+      selectedCategoryValue
+    ].value || CATEGORY.ERC20 
+
+    return category
+  }
+
+  const getSelectedChain = () =>{
+   return dropdownChainsValues[selectedChainValue].value || "eip155:1" 
+  }
 
   // Autofill the form for the update
   useEffect(()=>{
@@ -411,6 +430,26 @@ const AddCriteria = ({
     )
    } 
   },[])
+
+  // Fetch the contract info
+  useEffect(()=>{
+    // TODO: optimize to reduce this call call when user is typing
+    (async()=>{
+      const _type = getSeletedType();
+      const _category:string = getSelectedCategory()
+      const _chainInfo = getSelectedChain()
+      
+      await tokenFetchHandler(
+        contract,
+        _type,
+        _category,
+        _chainInfo,
+        setUnit,
+        setDecimals,
+      )
+      
+    })()
+  },[contract,selectedCategoryValue,selectedChainValue])
 
   return (
     <Section
@@ -483,7 +522,7 @@ const AddCriteria = ({
             inputValue={quantity}
             onInputChange={onQuantityChange}
             placeholder="e.g. 1.45678"
-            unit={'TOKEN'}
+            unit={unit}
           />
         </>
       )}
