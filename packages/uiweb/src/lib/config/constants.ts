@@ -1,4 +1,4 @@
-import { PushSubTabs } from "../types";
+import { PushSubTabs } from '../types';
 
 export enum ENV {
   PROD = 'prod',
@@ -13,55 +13,73 @@ export const Constants = {
   ENV,
   DEFAULT_TITLE: 'Chat with us!',
   DEFAULT_GREETING_MSG: 'Hi there!',
-  DEFAULT_PROFILE_PICTURE: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
-  
+  DEFAULT_PROFILE_PICTURE:
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
 };
 
 export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
-export const RAINBOW_PROJECT_ID = 'e22146926e005c4e513b24024521ef51';
-export const RAINBOW_APP_NAME = 'Push-sdk';
 export const NETWORK_DETAILS = {
   5: {
-    network: "goerli",
-  }, 
+    network: 'goerli',
+  },
   80001: {
-    network: "polygon-mumbai",
+    network: 'polygon-mumbai',
   },
   1: {
-    network: "mainnet",
-  }, 
+    network: 'mainnet',
+  },
   137: {
-    network: "polygon-mainnet",
+    network: 'polygon-mainnet',
   },
-  97: {
-  },
-  420: {
-  }
-}
+  97: {},
+  420: {},
+};
 
 export const CoreContractChainId = {
-  'prod' : 1,
-  'dev' : 5,
-  'staging' :  5,
-  'local' :5
-}
+  prod: 1,
+  dev: 5,
+  staging: 5,
+  local: 5,
+};
+
+const TESTNET_NETWORK = {
+  ETHEREUM: 'eip155:5',
+  POLYGON: 'eip155:80001',
+  BSC: 'eip155:97',
+  OPTIMISM: 'eip155:420',
+  POLYGON_ZK_EVM: 'eip155:1442',
+};
+const MAINET_NETWORK = {
+  ETHEREUM: 'eip155:1',
+  POLYGON: 'eip155:137',
+  BSC: 'eip155:56',
+  OPTIMISM: 'eip155:10',
+  POLYGON_ZK_EVM: 'eip155:1101',
+};
+
+export const BLOCKCHAIN_NETWORK = {
+  prod: MAINET_NETWORK,
+  dev: TESTNET_NETWORK,
+  staging: TESTNET_NETWORK,
+  local: TESTNET_NETWORK,
+};
 
 export const allowedNetworks = {
-  'prod': [
+  prod: [
     1, //for ethereum mainnet
     137, //for polygon mainnet
     56, // for bnb mainnet
     10, // for optimism mainnet
     42161 // for arbitrum mainnet
   ],
-  'dev' : [
+  dev: [
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
     421613 // for arbitrum testnet
   ],
-  'staging' :  [
+  staging: [
     // 42, //for kovan
     5, // for goerli
     80001, //for mumbai polygon
@@ -69,7 +87,7 @@ export const allowedNetworks = {
     420, // optimism goerli testnet
     421613 // for arbitrum testnet
   ],
-  'local' :[
+  local: [
     5, // for eth goerli
     80001, //for mumbai polygon
     97, // bnb testnet
@@ -78,7 +96,7 @@ export const allowedNetworks = {
   ]
 }
 
-export const blockNativeApikey = 'f55f3a76-8510-4af8-9833-b7f85255de83'
+export const BLOCKNATIVE_PROJECT_ID = '64a44a0fb537407bfe97d24330e4109c';
 
 export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 
@@ -86,14 +104,13 @@ export const PUBLIC_GOOGLE_TOKEN = 'AIzaSyBhUBnCia6zpxY7KcqjghRS1IphinAvKXs';
 
 export const ProfilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
 
-
 export const PushSubTabTitle = {
   REQUESTS: {
     title: 'Chat request',
   },
   SPAM: {
     title: 'Spam',
-  }
+  },
 };
 
 export const chatLimit = 10;

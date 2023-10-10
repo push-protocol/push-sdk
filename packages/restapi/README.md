@@ -176,6 +176,8 @@ Binance Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Binance Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Optimism Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 Optimism Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Arbitrum Mainnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
+Arbitrum One Testnet - 0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa
 ```
 
 # SDK Features
@@ -3101,15 +3103,14 @@ const aliceMessagesBob = await userAlice.chat.send(bobAddress, {
 });
 ```
 
-| Param                  | Type                                                                         | Default | Remarks                                                                            |
-| ---------------------- | ---------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------- |
-| `recipient`            | `string`                                                                     | -       | Recipient ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
-| `options`              | `object`                                                                     | -       | Configuration for message to be sent                                               |
-| `options.type` \*      | `Text` or `Image` or `File` or `MediaEmbed` or `GIF` or `Meta` or `Reaction` | -       | Type of message Content                                                            |
-| `options.content`      | `string`                                                                     | -       | Message Content                                                                    |
-| `options.action` \*    | `string`                                                                     | -       | Message action ( Only available for Meta & Reaction Messages )                     |
-| `options.reference` \* | `string` or `null`                                                           | -       | Message reference hash ( Only available for Reaction Messages )                    |
-| `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                | -       | Message reference hash ( Only available for Meta Messages )                        |
+| Param                  | Type                                                                                                                                                                                                                               | Default | Remarks                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `recipient`            | `string`                                                                                                                                                                                                                           | -       | Recipient ( For Group Chats target is chatId, for 1 To 1 chat target is Push DID ) |
+| `options`              | `object`                                                                                                                                                                                                                           | -       | Configuration for message to be sent                                               |
+| `options.type` \*      | `Text` or `Image` or `Audio` or `Video` or `File` or `MediaEmbed` or `GIF` or `Meta` or `Reaction` or `Receipt` or `Intent` or `Reply` or `Composite`                                                                              | -       | Type of message Content                                                            |
+| `options.content`      | `string` or `{type: `Text`or`Image`or`Audio`or`Video`or`File`or`MediaEmbed`or`GIF` ; content: string}` [For Reply] or `{type: `Text`or`Image`or`Audio`or`Video`or`File`or`MediaEmbed`or`GIF` ; content: string}[]` [For Composite] | -       | Message Content                                                                    |
+| `options.reference` \* | `string`                                                                                                                                                                                                                           | -       | Message reference hash ( Only available for Reaction & Reply Messages )            |
+| `options.info` \*      | `{ affected : string[]: arbitrary?: { [key: string]: any } }`                                                                                                                                                                      | -       | Message reference hash ( Only available for Meta & UserActivity Messages )         |
 
 \* - Optional
 
