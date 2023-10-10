@@ -9,7 +9,9 @@ import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
 import { useClickAway } from '../../../hooks';
-import { CATEGORY, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+import { CATEGORY, CRITERIA_TYPE, CriteriaType, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+import { shortenText } from '../../../helpers';
+import { GUILD_COMPARISON_OPTIONS } from '../constants';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -51,7 +53,7 @@ const MoreOptionsContainer = ({
   useClickAway(dropdownRef, () => setSelectedIndex(null));
   console.log('in dropdown');
   return (
-    <Section onClick={() => handleMoreOptionsClick(row, col)}>
+    <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
       <MoreDarkIcon color={theme.iconColor?.groupSettings} />
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer ref={dropdownRef} theme={theme}>
@@ -68,7 +70,6 @@ const MoreOptionsContainer = ({
 const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   const theme = useContext(ThemeContext);
 
-
   const getTokenNftComparisionLabel = () => {
     return TOKEN_NFT_COMPARISION[
       criteria?.data?.['comparison'] as TokenNftComparision
@@ -82,30 +83,54 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
       return true;
     return false;
   };
+
+  const getGuildRole  = () =>{
+    return (GUILD_COMPARISON_OPTIONS.find(option => option.value === criteria?.data?.['comparison']))?.heading;
+ 
+  }
   return (
     <Section gap="8px">
       <Span
         alignSelf="center"
         background="#657795"
         borderRadius="4px"
-        fontSize="13px"
+        fontSize="10px"
         color={theme.textColor?.buttonText}
         padding="4px 8px 4px 8px"
       >
-        {criteria.category}
+        {CRITERIA_TYPE[criteria.category as CriteriaType]}
       </Span>
       {checkIfNftToken() && (
         <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
-          {criteria?.data?.['amount']} {criteria.type}{' '}
           <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
-            {getTokenNftComparisionLabel()}
+            {getTokenNftComparisionLabel()}{' '}
           </Span>
+          {/* need to fetch token symbol */}
+          {criteria?.data?.['amount']} {criteria.category}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (
         <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
           Owner and Admin can invite
         </Span>
+      )}
+      {criteria.category === CATEGORY.CustomEndpoint && (
+        <Span
+          fontWeight="500"
+          fontSize="14px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
+          {shortenText(criteria.data?.['url'],30)}
+        </Span>
+      )}
+         {criteria.category === CATEGORY.ROLES && (
+        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}> 
+        {criteria?.data?.['id']} {' '}
+        <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+         with {' '}
+        </Span>
+        {getGuildRole()} role
+      </Span>
       )}
     </Section>
   );
@@ -167,9 +192,9 @@ const ConditionsComponent = ({
     <Section flexDirection="column" width="100%" height="100%">
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
-          <Section flexDirection="column">
-            {
-              ((criteria.length <= 2 )&& (criteria.length >= 1)) &&
+          <Section flexDirection="column"  >
+            {criteria.length <= 2 &&
+              criteria.length >= 1 &&
               criteria.map((singleCriteria, col) => (
                 <>
                   {singleCriteria.type && (
@@ -195,7 +220,7 @@ const ConditionsComponent = ({
                 </>
               ))}
 
-            {(criteria[0]?.operator) && (criteria.length > 2) && (
+            {criteria[0]?.operator && criteria.length > 2 && (
               <CriteriaGroup
                 theme={theme}
                 flexDirection="row"
@@ -228,7 +253,8 @@ const ConditionsComponent = ({
                     </>
                   ))}
                 </Section>
-                <Section>
+                <Section 
+                >
                   {criteria.map((singleCriteria) => (
                     <>
                       {criteria.length > 2 &&
