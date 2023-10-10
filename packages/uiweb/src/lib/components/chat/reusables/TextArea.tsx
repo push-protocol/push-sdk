@@ -69,6 +69,9 @@ const Input = styled.textarea<IChatTheme>`
 
     font-family: ${(props) => props.theme.fontFamily};
     font-size: 14px;
+    &:focus {
+        border: 1px solid #ffdbf0;
+      }
 `;
 
 const CharCounter = styled.div<IChatTheme>`

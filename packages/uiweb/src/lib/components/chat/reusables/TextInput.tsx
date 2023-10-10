@@ -8,25 +8,29 @@ export interface ITextInputProps {
   charCount?: number;
   labelName?: string;
   inputValue: string;
-  onInputChange: any;
+  placeholder?: string;
+  onInputChange?: any;
+  disabled?: boolean;
+  customStyle?: CustomStyleParamsType;
 }
+type CustomStyleParamsType = {
+  background?: string;
+};
 
 export const TextInput = (props: ITextInputProps) => {
   const theme = useContext(ThemeContext);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if(props.charCount){
-        const newText = event.target.value;
-        const count = newText.length;
-    
-        if (count <= props.charCount) {
-          props.onInputChange(event);
-        }
+    if (props.charCount) {
+      const newText = event.target.value;
+      const count = newText.length;
+
+      if (count <= props.charCount) {
+        props.onInputChange(event);
+      }
+    } else {
+      props.onInputChange(event);
     }
-    else{
-        props.onInputChange(event);  
-    }
-  
   };
 
   return (
@@ -34,11 +38,20 @@ export const TextInput = (props: ITextInputProps) => {
       <InputContainer>
         <LabelContainer>
           <label>{props.labelName}</label>
-          {props.charCount &&<CharCounter theme={theme}>
-            {props.inputValue.length} / {props.charCount}
-          </CharCounter>}
+          {props.charCount && (
+            <CharCounter theme={theme}>
+              {props.inputValue.length} / {props.charCount}
+            </CharCounter>
+          )}
         </LabelContainer>
-        <Input theme={theme} value={props.inputValue} onChange={handleChange} />
+        <Input
+          customStyle={props.customStyle!}
+          disabled={!!props.disabled}
+          theme={theme}
+          value={props.inputValue}
+          onChange={handleChange}
+          placeholder={props.placeholder}
+        />
       </InputContainer>
     </ThemeProvider>
   );
@@ -62,12 +75,14 @@ const LabelContainer = styled.div`
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const Input = styled.input<IChatTheme>`
+const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType}>`
   padding: 16px;
   margin-top: 8px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
-
-  background: ${(props) => props.theme.backgroundColor.modalInputBackground};
+  background: ${(props) =>
+    props.customStyle?.background
+      ? props.customStyle.background
+      : props.theme.backgroundColor.modalInputBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
@@ -75,6 +90,13 @@ const Input = styled.input<IChatTheme>`
   font-size: 16px;
 
   font-weight: 500;
+  [readonly='readonly'] {
+    pointer-events: none;
+  }
+  &:focus {
+    border: 1px solid #ffdbf0;
+  }
+ 
 `;
 
 const CharCounter = styled.div<IChatTheme>`

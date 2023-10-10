@@ -1,65 +1,69 @@
+import { useContext, useState } from 'react';
 
-import React, { useContext,useState } from 'react';
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
-import { Section, Span } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import { ToggleInput } from '../reusables';
 import { Button } from '../reusables';
-import { GroupTypeState, ModalHeaderProps } from './CreateGroupModal';
-
-import { SpamIcon } from '../../../icons/SpamIcon';
-
+import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
+import { GroupTypeState } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
 import useToast from '../reusables/NewToast';
-import { MdError } from 'react-icons/md';
+import {
+  ConditionType,
+  CriteriaStateType,
+} from '../types/tokenGatedGroupCreationType';
+import ConditionsComponent from './ConditionsComponent';
+import { OperatorContainer } from './OperatorContainer';
+import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
+import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
+import { GrouInfoType as GroupInfoType } from '../types';
 
-
+import { ACCESS_TYPE_TITLE } from '../constants';
+import { IChatTheme } from '../exportedTypes';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
-    {
-      heading: 'Open',
-      subHeading: 'Anyone can join',
-      value: 'open',
-    },
-    {
-      heading: 'Encrypted',
-      subHeading: 'Users must join group to view',
-      value: 'encrypted',
-    },
-  ];
-  
-  const ACCESS_TYPE_TITLE = {
-     ENTRY: {
-        heading: 'Conditions to Join',
-        subHeading: 'Add a condition to join or leave it open for everyone',
-        
-      },
-      CHAT:{
-        heading: 'Conditions to Chat',
-        subHeading: 'Add a condition to join or leave it open for everyone',
-       
-      },
-  };
-
-  
+  {
+    heading: 'Open',
+    subHeading: 'Anyone can join',
+    value: 'open',
+  },
+  {
+    heading: 'Encrypted',
+    subHeading: 'Users must join group to view',
+    value: 'encrypted',
+  },
+];
 
 interface AddConditionProps {
-    heading: string;
-    subHeading: string;
-  }
-  const AddConditionSection = ({ heading, subHeading }: AddConditionProps) => {
-    const theme = useContext(ThemeContext);
-  
-    return (
-      <Section
-        // margin="20px 0px 10px 0px"
-        alignItems="start"
-        flexDirection="column"
-        gap='5px'
-      >
+  heading: string;
+  subHeading: string;
+  handleNext?: () => void;
+  criteriaState: CriteriaStateType;
+}
+
+const AddConditionSection = ({
+  heading,
+  subHeading,
+  handleNext,
+  criteriaState,
+}: AddConditionProps) => {
+  const theme = useContext(ThemeContext);
+  //todo - dummy data to be removed after we get condition data
+
+  const generateMapping = () => {
+    return criteriaState.entryOptionsDataArray.map((rule, idx) => [
+      { operator: criteriaState.entryOptionTypeArray[idx] },
+      ...rule.map((el) => el),
+    ]);
+  };
+
+  return (
+    <Section alignItems="start" flexDirection="column" gap="10px">
+      <Section flexDirection="column" alignItems="start" gap="5px">
         <Span
           color={theme.textColor?.modalHeadingText}
           fontSize="16px"
@@ -74,86 +78,188 @@ interface AddConditionProps {
         >
           {subHeading}
         </Span>
-        <Button
-          customStyle={{
-            color: `${theme.backgroundColor?.buttonBackground}`,
-            fontSize: '15px',
-            fontWeight: '500',
-            border: `${theme.border?.modalInnerComponents}`,
-            background: 'transparent',
-          }}
-        >
-          + Add conditions
-        </Button>
       </Section>
-    );
-  };
-  
-export const CreateGroupType = ({ onClose,handlePrevious,groupInputDetails }: ModalHeaderProps & GroupTypeState) => {
-    const [checked, setChecked] = useState<boolean>(false);
-    const [groupEncryptionType, setGroupEncryptionType] = useState('')
-    const theme = useContext(ThemeContext);
-    const isMobile = useMediaQuery(device.mobileL);
-    const groupInfoToast = useToast();
 
-
-    const createGroupService = async()=>{
-      const groupInfo = {
-        groupInfo:{...groupInputDetails},
-        groupType:groupEncryptionType
-      }
-      console.log("created group with", groupInfo);
-      onClose()      
-    }
-
-    const verifyAndCreateGroup = async()=>{
-      if(groupEncryptionType.trim() === ""){
-        showError("Group encryption type is not selected")
-        return
-      }
-
-      await createGroupService();
-    }
-
-    const showError =(errorMessage:string)=>{
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: errorMessage,
-        toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
-      });
-    }
-
-    return (
-        <Section flexDirection="column" gap="32px" >
-          <ModalHeader title="Create Group" handleClose={onClose} handlePrevious={handlePrevious} />
-          <OptionButtons options={GROUP_TYPE_OPTIONS} selectedValue={groupEncryptionType} handleClick={(newEl:string)=>{
-            setGroupEncryptionType(newEl)
-            console.log("we called it");
-          }}/>
-  
-          <ToggleInput
-            labelHeading="Gated Group"
-            labelSubHeading="Turn this on for Token/NFT gating options"
-            checked={checked}
-            onToggle={() => setChecked(!checked)}
+      {criteriaState.entryOptionsDataArray.length > 1 && (
+        <Section margin="20px 0 10px 0">
+          <OperatorContainer
+            operator={criteriaState.entryRootCondition}
+            setOperator={(newEl: string) => {
+              criteriaState.setEntryRootCondition(newEl as ConditionType);
+            }}
           />
-  
-          {checked && (
-            <Section flexDirection="column" gap='32px'>
-              <AddConditionSection {...ACCESS_TYPE_TITLE.ENTRY}/>
-              <AddConditionSection {...ACCESS_TYPE_TITLE.CHAT}/>
-            </Section>
-          )}
-          <Section gap="20px" flexDirection="column">
-            <Button width="197px" onClick={verifyAndCreateGroup}>Create Group</Button>
-            <Section gap="4px">
-              <SpamIcon />
-              <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-                Learn more about gating rules
-              </Span>
-            </Section>
-          </Section>
         </Section>
-    );
+      )}
+      <ConditionSection
+        width="100%"
+        overflow="hidden auto"
+        maxHeight="20rem"
+        theme={theme}
+        padding="5px 4px 5px 0"
+      >
+        <ConditionsComponent
+          conditionData={[
+            [{ operator: criteriaState.entryRootCondition }],
+            ...generateMapping(),
+          ]}
+          deleteFunction={(idx) => {
+            criteriaState.deleteEntryOptionsDataArray(idx);
+          }}
+          updateFunction={(idx) => {
+            criteriaState.selectEntryOptionsDataArrayForUpdate(idx);
+            if (handleNext) {
+              handleNext();
+            }
+          }}
+        />
+      </ConditionSection>
+
+      <Button
+        onClick={() => {
+          if (handleNext) {
+            criteriaState.setSelectedRule([]);
+            criteriaState.setSelectedCriteria(-1);
+            handleNext();
+          }
+        }}
+        customStyle={{
+          color: `${theme.backgroundColor?.buttonBackground}`,
+          fontSize: '15px',
+          fontWeight: '500',
+          border: `${theme.border?.modalInnerComponents}`,
+          background: 'transparent',
+        }}
+      >
+        + Add conditions
+      </Button>
+    </Section>
+  );
+};
+
+export const CreateGroupType = ({
+  onClose,
+  handlePrevious,
+  groupInputDetails,
+  handleNext,
+  criteriaStateManager,
+}: ModalHeaderProps & GroupTypeState) => {
+  const [checked, setChecked] = useState<boolean>(true);
+  const [groupEncryptionType, setGroupEncryptionType] = useState(
+    GROUP_TYPE_OPTIONS[0].value
+  );
+
+  const { createGatedGroup, loading } = useCreateGatedGroup();
+  const groupInfoToast = useToast();
+
+  const createGroupService = async () => {
+    // TODO:use actual data instead of dummy data
+    const groupInfo:GroupInfoType = {
+      groupName:groupInputDetails.groupName,
+      groupDescription:groupInputDetails.groupDescription,
+      groupImage:groupInputDetails.groupImage,
+      isPublic: true //groupEncryptionType,
+    };
+    const rules: any = criteriaStateManager.generateRule();
+    await createGatedGroup(groupInfo, rules);
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Success',
+      toastMessage: 'Group created successfully',
+      toastType: 'SUCCESS',
+      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+    });
+    onClose();
   };
+
+  const verifyAndCreateGroup = async () => {
+    // TODO:validate the fields
+    // if (groupEncryptionType.trim() === '') {
+    //   showError('Group encryption type is not selected');
+    //   return;
+    // }
+
+    await createGroupService();
+  };
+
+  const showError = (errorMessage: string) => {
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  };
+
+  return (
+    <Section flexDirection="column" gap="32px">
+      <ModalHeader
+        title="Create Group"
+        handleClose={onClose}
+        handlePrevious={handlePrevious}
+      />
+      <OptionButtons
+        options={GROUP_TYPE_OPTIONS}
+        selectedValue={groupEncryptionType}
+        handleClick={(newEl: string) => {
+          setGroupEncryptionType(newEl);
+        }}
+      />
+
+      <ToggleInput
+        labelHeading="Gated Group"
+        labelSubHeading="Turn this on for Token/NFT gating options"
+        checked={checked}
+        onToggle={() => setChecked(!checked)}
+      />
+
+      {checked && (
+        <Section flexDirection="column" gap="32px">
+          <AddConditionSection
+            criteriaState={criteriaStateManager.entryCriteria}
+            handleNext={() => {
+              if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(
+                  SelectedCriteria.ENTRY
+                );
+                handleNext();
+              }
+            }}
+            {...ACCESS_TYPE_TITLE.ENTRY}
+          />
+          <AddConditionSection
+            handleNext={() => {
+              if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT);
+                handleNext();
+              }
+            }}
+            criteriaState={criteriaStateManager.chatCriteria}
+            {...ACCESS_TYPE_TITLE.CHAT}
+          />
+        </Section>
+      )}
+
+      <Section gap="20px" flexDirection="column">
+        <Button width="197px" onClick={verifyAndCreateGroup}>
+          {!loading && 'Create Group'}
+          {loading && <Spinner size="20" color="#fff" />}
+        </Button>
+        <GatingRulesInformation />
+      </Section>
+    </Section>
+  );
+};
+
+//styles
+const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+`;

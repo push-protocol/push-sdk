@@ -11,7 +11,7 @@ interface SendMessageParams {
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
-const usePushSendMessage = () => {
+const usePushSendMessage = () => { 
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 

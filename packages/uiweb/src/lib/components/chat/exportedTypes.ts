@@ -126,3 +126,13 @@ export interface ModalButtonProps {
 
 
 export {IChatTheme} from './theme';
+
+export interface ConditionData {
+  operator?: string;
+  type?: string;
+  category?: string;
+  subcategory?: string;
+  data?: Record<string, any>;
+}
+
+export type ConditionArray = ConditionData[];

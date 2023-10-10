@@ -72,7 +72,7 @@ export const ModalHeader = ({
 }: IModalHeader) => {
   const theme = useContext(ThemeContext);
   return (
-    <Section justifyContent="center" alignItems="center">
+    <Section justifyContent="center" alignItems="center" width='100%'>
       {handlePrevious && (
         <Span onClick={() => handlePrevious()} cursor="pointer">
           <BackIcon />
