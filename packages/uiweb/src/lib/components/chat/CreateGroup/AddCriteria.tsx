@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+
 import {
   Button,
   DropDownInput,
@@ -7,20 +8,19 @@ import {
   TextInput,
 } from '../reusables';
 import { Section, } from '../../reusables';
-import EthereumSvg from '../../../icons/ethereum.svg';
-import PolygonSvg from '../../../icons/polygon.svg';
-import BSCSvg from '../../../icons/bsc.svg';
-import OptimismSvg from '../../../icons/optimisim.svg';
-
 import useMediaQuery from '../../../hooks/useMediaQuery';
-
-import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
+
+import EthereumSvg from '../../../icons/ethereum.svg';
+import PolygonSvg from '../../../icons/polygon.svg';
+import BSCSvg from '../../../icons/bsc.svg';
+import OptimismSvg from '../../../icons/optimisim.svg';
+import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
 import {
   CATEGORY,
@@ -33,8 +33,7 @@ import {
   ReadonlyInputType,
 } from '../types';
 import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
-import styled from 'styled-components';
-import { IChatTheme } from '../theme';
+
 
 
 const AddCriteria = ({
@@ -273,9 +272,6 @@ const AddCriteria = ({
 
   const getSubCategoryDropdownValues = () => {
     const category = getCategoryDropdownValues();
-    console.log(category);
-    console.log(selectedCategoryValue);
-    console.log((category as DropdownValueType[])[selectedCategoryValue]);
     if (Array.isArray(category))
       return dropdownSubCategoryValues[
         (category as DropdownValueType[])[selectedCategoryValue]
@@ -293,11 +289,13 @@ const AddCriteria = ({
     const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
       selectedCategoryValue
     ].value || CATEGORY.ERC20 : "ROLES"
-
+ 
     let subCategory = "DEFAULT"
     if(_type === "PUSH"){ 
       if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
         subCategory = tokenCategoryValues[selectedSubCategoryValue].value
+      }else if(category === CATEGORY.CustomEndpoint){
+        subCategory = "GET"
       } 
     }
     

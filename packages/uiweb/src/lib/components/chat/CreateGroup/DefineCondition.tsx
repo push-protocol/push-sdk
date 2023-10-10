@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+
 import { Section, Span } from '../../reusables';
 import { Button, ModalHeader } from '../reusables';
 import { AddButtons } from './AddButtons';
@@ -7,13 +9,14 @@ import { ModalHeaderProps } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { device } from '../../../config';
-import { OPERATOR_OPTIONS_INFO } from '../constants';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { handleDefineCondition } from '../helpers/tokenGatedGroup';
 import { IChatTheme } from '../theme';
-import styled from 'styled-components';
+
+import { device } from '../../../config';
+import { OPERATOR_OPTIONS_INFO } from '../constants';
+
 
 export const DefineCondtion = ({
   onClose,
@@ -22,19 +25,20 @@ export const DefineCondtion = ({
   criteriaStateManager,
 }: ModalHeaderProps) => {
   const theme = useContext(ThemeContext);
-  const [disableButton, setDisableButton] = useState<boolean>(true);
-  const customButtonStyle = {
-    background: disableButton
-      ? theme.backgroundColor?.buttonDisableBackground
-      : theme.backgroundColor?.buttonBackground,
-    color: disableButton
-      ? theme.textColor?.buttonDisableText
-      : theme.textColor?.buttonText,
-  };
+ 
   const [isCriteriaAdded, setIsCriteriaAdded] = useState<boolean>(true);
   const isMobile = useMediaQuery(device.mobileL);
 
   const criteriaState = criteriaStateManager.getSelectedCriteria();
+
+  const customButtonStyle = {
+    background: (criteriaState.selectedRules.length<1 )
+      ? theme.backgroundColor?.buttonDisableBackground
+      : theme.backgroundColor?.buttonBackground,
+    color: (criteriaState.selectedRules.length<1 )
+      ? theme.textColor?.buttonDisableText
+      : theme.textColor?.buttonText,
+  };
 
   const verifyAndDoNext = () => {
     handleDefineCondition(criteriaState, handlePrevious);
@@ -67,7 +71,7 @@ export const DefineCondtion = ({
       //
     }
   }, []);
-console.log(criteriaState)
+
   return (
     <Section
       flexDirection="column"
@@ -100,7 +104,7 @@ console.log(criteriaState)
             overflow="hidden auto"
             maxHeight="20rem"
             theme={theme}
-            padding="5px 4px 5px 0"
+            padding="5px 4px 10px 0"
           >
             <ConditionsComponent
               conditionData={getRules()}

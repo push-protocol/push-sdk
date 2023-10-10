@@ -1,17 +1,17 @@
 import { useContext, useState } from 'react';
-import { MdError } from 'react-icons/md';
+
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
+
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
-import { Section, Span } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import { ToggleInput } from '../reusables';
 import { Button } from '../reusables';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
-
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
-import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { ConditionArray, IChatTheme } from '../exportedTypes';
 import {
   ConditionType,
   CriteriaStateType,
@@ -19,7 +19,11 @@ import {
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
-import styled from 'styled-components';
+import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
+import { GrouInfoType as GroupInfoType } from '../types';
+
+import { ACCESS_TYPE_TITLE } from '../constants';
+import { IChatTheme } from '../exportedTypes';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
@@ -33,8 +37,6 @@ const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
     value: 'encrypted',
   },
 ];
-
-
 
 interface AddConditionProps {
   heading: string;
@@ -78,14 +80,16 @@ const AddConditionSection = ({
         </Span>
       </Section>
 
-     {criteriaState.entryOptionsDataArray.length>1 &&  <Section margin="20px 0 10px 0">
-       <OperatorContainer 
-        operator={criteriaState.entryRootCondition} 
-        setOperator={(newEl: string) => {
-          criteriaState.setEntryRootCondition(newEl as ConditionType);
-        }}
-      />
-      </Section>}
+      {criteriaState.entryOptionsDataArray.length > 1 && (
+        <Section margin="20px 0 10px 0">
+          <OperatorContainer
+            operator={criteriaState.entryRootCondition}
+            setOperator={(newEl: string) => {
+              criteriaState.setEntryRootCondition(newEl as ConditionType);
+            }}
+          />
+        </Section>
+      )}
       <ConditionSection
         width="100%"
         overflow="hidden auto"
@@ -137,33 +141,47 @@ export const CreateGroupType = ({
   handlePrevious,
   groupInputDetails,
   handleNext,
-  criteriaStateManager
+  criteriaStateManager,
 }: ModalHeaderProps & GroupTypeState) => {
   const [checked, setChecked] = useState<boolean>(true);
-  const [groupEncryptionType, setGroupEncryptionType] = useState('');
+  const [groupEncryptionType, setGroupEncryptionType] = useState(
+    GROUP_TYPE_OPTIONS[0].value
+  );
 
-  // const theme = useContext(ThemeContext);
-  // const isMobile = useMediaQuery(device.mobileL);
+  const { createGatedGroup, loading } = useCreateGatedGroup();
   const groupInfoToast = useToast();
 
   const createGroupService = async () => {
-    
-    const groupInfo = {
-      groupInfo: { ...groupInputDetails },
-      groupType: groupEncryptionType,
+    // TODO:use actual data instead of dummy data
+    // const groupInfo = {
+    //   groupInfo: { ...groupInputDetails },
+    //   groupType: groupEncryptionType,
+    // };
+    const dummyGrouInfo: GroupInfoType = {
+      groupName: 'Push Group Chat 3',
+      groupDescription: 'This is the oficial group for Push Protocol',
+      groupImage:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=',
+      isPublic: true,
     };
 
-    const rules = criteriaStateManager.generateRule()
-    console.log("rules are", JSON.stringify(rules));
-    console.log('created group with', groupInfo);
+    const rules: any = criteriaStateManager.generateRule();
+    await createGatedGroup(dummyGrouInfo, rules);
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Success',
+      toastMessage: 'Group created successfully',
+      toastType: 'SUCCESS',
+      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+    });
     onClose();
   };
 
   const verifyAndCreateGroup = async () => {
-    if (groupEncryptionType.trim() === '') {
-      showError('Group encryption type is not selected');
-      return;
-    }
+    // TODO:validate the fields
+    // if (groupEncryptionType.trim() === '') {
+    //   showError('Group encryption type is not selected');
+    //   return;
+    // }
 
     await createGroupService();
   };
@@ -203,25 +221,23 @@ export const CreateGroupType = ({
         <Section flexDirection="column" gap="32px">
           <AddConditionSection
             criteriaState={criteriaStateManager.entryCriteria}
-            handleNext={
-              ()=>{
-                if(handleNext){
-                  criteriaStateManager.setSelectedCriteria(SelectedCriteria.ENTRY)
-                  handleNext()
-                }
+            handleNext={() => {
+              if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(
+                  SelectedCriteria.ENTRY
+                );
+                handleNext();
               }
-            }
+            }}
             {...ACCESS_TYPE_TITLE.ENTRY}
           />
           <AddConditionSection
-            handleNext={
-              ()=>{
-                if(handleNext){
-                  criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT)
-                  handleNext()
-                } 
+            handleNext={() => {
+              if (handleNext) {
+                criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT);
+                handleNext();
               }
-            }
+            }}
             criteriaState={criteriaStateManager.chatCriteria}
             {...ACCESS_TYPE_TITLE.CHAT}
           />
@@ -229,7 +245,10 @@ export const CreateGroupType = ({
       )}
 
       <Section gap="20px" flexDirection="column">
-        <Button width="197px" onClick={verifyAndCreateGroup}>Create Group</Button>
+        <Button width="197px" onClick={verifyAndCreateGroup}>
+          {!loading && 'Create Group'}
+          {loading && <Spinner size="20" color="#fff" />}
+        </Button>
         <GatingRulesInformation />
       </Section>
     </Section>

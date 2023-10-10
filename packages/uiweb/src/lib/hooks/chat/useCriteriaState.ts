@@ -182,6 +182,13 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
     rules: Rule[][],
     conditionTypes: ConditionType[]
   ): Condition[] => {
+    if(rules.length === 0){
+      return []
+    }
+    
+    console.log(`Generating for ${JSON.stringify(rules)}`)
+    console.log("condition type",conditionTypes);
+    
     return conditionTypes.map((el, idx) => ({
       [el]: rules[idx].map((_el) => _el),
     })) as any;
@@ -191,17 +198,17 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
     return {
       entry: {
         conditions: {
-          [chatCriteria.entryRootCondition]: _generate(
-            chatCriteria.entryOptionsDataArray,
-            chatCriteria.entryOptionTypeArray
+          [entryCriteria.entryRootCondition]: _generate(
+            entryCriteria.entryOptionsDataArray,
+            entryCriteria.entryOptionTypeArray
           ),
         },
       },
       chat: {
         conditions: {
-          [entryCriteria.entryRootCondition]: _generate(
-            entryCriteria.entryOptionsDataArray,
-            entryCriteria.entryOptionTypeArray
+          [chatCriteria.entryRootCondition]: _generate(
+            chatCriteria.entryOptionsDataArray,
+            chatCriteria.entryOptionTypeArray
           ),
         },
       },

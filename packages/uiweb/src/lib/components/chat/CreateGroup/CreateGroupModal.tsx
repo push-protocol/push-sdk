@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
+import { ToastContainer } from 'react-toastify';
 import { AiTwotoneCamera } from 'react-icons/ai';
+import { MdError } from 'react-icons/md';
 
 import { ModalHeader } from '../reusables/Modal';
 import { Modal } from '../reusables/Modal';
@@ -11,19 +13,16 @@ import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
 import { CreateGroupType } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
-import { MdError } from 'react-icons/md';
-
-import {Image} from "../../../config/styles"
-import { device } from '../../../config';
 import { CreateGroupModalProps, IChatTheme } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
 import { SpamIcon } from '../../../icons/SpamIcon';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { ToastContainer } from 'react-toastify';
-import { CriteriaStateType} from '../types/tokenGatedGroupCreationType';
-import { CriteriaStateManagerType, useCriteriaState, useCriteriaStateManager } from '../../../hooks/chat/useCriteriaState';
+import { CriteriaStateManagerType, useCriteriaStateManager } from '../../../hooks/chat/useCriteriaState';
+
+import {Image} from "../../../config/styles"
+import { device } from '../../../config';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,

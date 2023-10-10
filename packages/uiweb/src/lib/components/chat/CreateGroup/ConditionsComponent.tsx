@@ -1,15 +1,17 @@
 import React, { useContext, useRef, useState } from 'react';
+
+import styled from 'styled-components';
+
 import { Section, Span } from '../../reusables';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
-import styled from 'styled-components';
-import { device } from '../../../config';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
-import EditSvg from '../../../icons/EditSvg.svg';
-import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
 import { useClickAway } from '../../../hooks';
 import { CATEGORY, CRITERIA_TYPE, CriteriaType, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+
+import EditSvg from '../../../icons/EditSvg.svg';
+import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { shortenText } from '../../../helpers';
 import { GUILD_COMPARISON_OPTIONS } from '../constants';
 
@@ -51,7 +53,6 @@ const MoreOptionsContainer = ({
   const dropdownRef = useRef<any>(null);
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
-  console.log('in dropdown');
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
       <MoreDarkIcon color={theme.iconColor?.groupSettings} />
@@ -183,11 +184,9 @@ const ConditionsComponent = ({
   useClickAway(dropdownRef, () => setSelectedIndex(null));
 
   const handleMoreOptionsClick = (row: number, col: number) => {
-    console.log('in click');
     setSelectedIndex([row, col]);
   };
 
-  console.log(conditionData);
   return (
     <Section flexDirection="column" width="100%" height="100%">
       {conditionData &&
