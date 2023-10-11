@@ -63,7 +63,7 @@ export interface CriteriaStateType {
   selectedRules: Rule[];
   setSelectedRule: React.Dispatch<React.SetStateAction<Rule[]>>;
   addNewCondtion: () => void;
-  addNewRule: (newRule: Rule) => void;
+  addNewRule: (newRule: Rule) => boolean;
   deleteRule: (idx: number) => void;
   deleteEntryOptionsDataArray: (idx: number) => void;
   selectEntryOptionsDataArrayForUpdate: (idx: number) => void;

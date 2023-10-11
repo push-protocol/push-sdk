@@ -32,7 +32,8 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { ethers } from "ethers";
+import { MdError } from 'react-icons/md';
+import useToast from '../reusables/NewToast';
 import { tokenFetchHandler } from '../helpers/tokenHelpers';
 
 
@@ -78,6 +79,7 @@ const AddCriteria = ({
   });
   const { env } = useChatData();
   const theme = useContext(ThemeContext);
+  const groupInfoToast = useToast()
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -374,7 +376,11 @@ const AddCriteria = ({
     if (Object.keys(errors).length) {
       setValidationErrors(errors);
     } else {
-      criteriaState.addNewRule(rule);
+      const isSuccess = criteriaState.addNewRule(rule);
+      if(!isSuccess){
+        showError("Selected Criteria was already added")  
+        return
+      }
       if (handlePrevious) {
         handlePrevious();
       }
@@ -495,6 +501,15 @@ const AddCriteria = ({
     })()
   },[contract,selectedCategoryValue,selectedChainValue])
 
+  const showError = (errorMessage: string) => {
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  };
+  
   return (
     <Section
       flexDirection="column"
