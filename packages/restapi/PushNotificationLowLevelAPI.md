@@ -435,37 +435,37 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 // PushAPI.user.getSubscriptions | Response - 200 OK
 [
-  { channel: '0x0000000000000000000000000000000000000000' },
-  { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00' },
-  { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1' },
-  { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029' },
-  { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD' },
-  { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34' },
-  { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7' },
-  { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93' },
-  { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23' },
-  { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78' },
-  { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330' },
-  { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D' },
-  { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7' },
-  { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A' },
-  { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7' },
-  { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349' },
-  { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D' },
-  { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224' },
-  { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54' },
-  { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb' },
-  { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7' },
-  { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe' },
-  { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7' },
-  { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924' },
-  { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a' },
-  { channel: '0x025846389950A13292E63e4794C7D148FF57F995' },
-  { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77' },
-  { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681' },
-  { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52' },
-  { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7' },
-];
+  { channel: '0x0000000000000000000000000000000000000000',user_settings: null },
+  { channel: '0xa3B6712fB922cdbbdce9AB22571e75d0d81B3b00',user_settings: '[{"type": 1, "user": false, "index": 1, "default": false, "description": "test1"}, {"type": 2, "user": 25, "index": 2, "default": 25, "enabled": 1, "lowerLimit": 23, "upperLimit": 35, "description": "test3"}, {"type": 2, "user": 64, "index": 3, "default": 56, "enabled": 1, "lowerLimit": 43, "upperLimit": 78, "description": "test5"}]' },
+  { channel: '0xde3aEA26fDC3ADdC1dB32baf1a058Cf0878FEac1',user_settings: null },
+  { channel: '0x69e666767Ba3a661369e1e2F572EdE7ADC926029',user_settings: null },
+  { channel: '0x466AEEf0943C5F098dBcEf3c1eEC03322E1F97eD',user_settings: null },
+  { channel: '0xcE98113b998380729B04596e3eA0255fbA138D34',user_settings: null },
+  { channel: '0xa89523351BE1e2De64937AA9AF61Ae06eAd199C7',user_settings: null },
+  { channel: '0x0a651cF7A9b60082fecdb5f30DB7914Fd7d2cf93',user_settings: null },
+  { channel: '0x0b5E9fa12C4C1946fA2f14b7271cC60541508f23',user_settings: null },
+  { channel: '0x2AEcb6DeE3652dA1dD6b54D5fd4f7D8F43DaEb78',user_settings: null },
+  { channel: '0xcB6C7b2E340D50701d45d55507f19A5cE5d72330',user_settings: null },
+  { channel: '0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D',user_settings: null },
+  { channel: '0xA5E269eec042Bf61183DEf9911D03359597494b7',user_settings: null },
+  { channel: '0x6bf1ee9DE5D11Fa558c1FA8D8855E26C38Fa582A',user_settings: null },
+  { channel: '0x72Ac64A3aE0ab60D725980b73Ef460ED9e742cc7',user_settings: null },
+  { channel: '0xEc6CbD318CB7BA8a0fBbffF697681C0a4ADA0349',user_settings: null },
+  { channel: '0xAb9415961F58eBD6d79029bC76F261Fa65a80D3D',user_settings: null },
+  { channel: '0x08D77bD7500a07d791dD1323919C22e1FDb72224',user_settings: null },
+  { channel: '0xa1016081D6Da53b4246178eD83922C55F7171e54',user_settings: null },
+  { channel: '0x6A06014AC6BdE2906D194e63ec3b1B5B4c9C2Abb',user_settings: null },
+  { channel: '0xf69389475E082f4BeFDb9dee4a1E9fe6cd29f6e7',user_settings: null },
+  { channel: '0x9601f08b9EcB981D273B72e7f33964Cb98f977fe',user_settings: null },
+  { channel: '0x47A2910432016CA9f62B20dCE09b89d357d0c3d7',user_settings: null },
+  { channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924',user_settings: null },
+  { channel: '0x14c0157f9eEA7AEe61ba2606E75716E210b4697a',user_settings: null },
+  { channel: '0x025846389950A13292E63e4794C7D148FF57F995',user_settings: null },
+  { channel: '0x2aecb6dee3652da1dd6b54d5fd4f7d8f43daeb77',user_settings: null },
+  { channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',user_settings: null },
+  { channel: '0x19fB80f16EAFCfb5BBFa07451CC5694E8932EA52',user_settings: null },
+  { channel: '0x94c3016ef3e503774630fC71F59B8Da9f7D470B7',user_settings: null },
+]
 ```
 
 </details>
@@ -1027,8 +1027,8 @@ Allowed Options (params with _ are mandatory)
   <summary><b>Expected response (Opt in to channel)</b></summary>
 
 ```typescript
-// PushAPI.channels.subscribe | Response - 200 OK
-{ status: 'success', message: 'successfully opted into channel' }
+// PushAPI.channels.subscribe | Response - 204
+{ status: 204, message: 'successfully opted into channel' }
 
 ```
 
@@ -1068,8 +1068,8 @@ Allowed Options (params with _ are mandatory)
   <summary><b>Expected response (Opt out of a channel)</b></summary>
 
 ```typescript
-// PushAPI.channels.unsubscribe | Response - 200 OK
-{ status: 'success', message: 'successfully opted out channel' }
+// PushAPI.channels.unsubscribe | Response - 204
+{ status: 204, message: 'successfully opted out channel' }
 ```
 
 </details>
