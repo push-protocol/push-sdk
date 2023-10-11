@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CriteriaStateType, Data, GuildData, Rule } from '../types';
+import { CriteriaStateType, CriteriaValidationErrorType, Data, GuildData, Rule, TYPE } from '../types';
 
 const handleDefineCondition = (
   entryCriteria: CriteriaStateType,
@@ -18,13 +18,13 @@ const handleDefineCondition = (
   }
 };
 
-const validateGUILDData = async (condition: Rule): Promise<string[]> => {
+const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErrorType> => {
   const { data } = condition;
   let errors: any = {};
 
   // Check for guild ID presence
   if (!(data as GuildData).id) {
-    errors = { ...errors, id: 'Guild ID is missing' };
+    errors = { ...errors, guildId: 'Guild ID is missing' };
   } else {
     try {
       const response = await axios.get(
@@ -32,12 +32,12 @@ const validateGUILDData = async (condition: Rule): Promise<string[]> => {
       );
 
       if (response.status !== 200) {
-        errors = { ...errors, id: 'Guild ID is missing' };
+        errors = { ...errors, guildId: 'Guild ID is missing' };
       } else {
         // Validate the role values
         if ((data as GuildData).role === '*') {
           if (data.comparison !== 'all' && data.comparison !== 'any') {
-            errors = { ...errors, comparison: 'Invalid comparison value' };
+            errors = { ...errors, guildComparison: 'Invalid comparison value' };
           }
         } else if ((data as GuildData).role) {
           const roleExists = response.data.roles.some(
@@ -45,26 +45,34 @@ const validateGUILDData = async (condition: Rule): Promise<string[]> => {
               role.id.toString() === (data as GuildData).role
           );
           if (!roleExists) {
-            errors = { ...errors, role: 'Invalid Guild Role ID' };
+            errors = { ...errors, guildRole: 'Invalid Guild Role ID' };
           }
 
           // For specific role, comparison can be null or empty
           if (data.comparison) {
             errors = {
               ...errors,
-              comparison: 'Comparison should be empty for specific role',
+              guildComparison: 'Comparison should be empty for specific role',
             };
           }
         } else {
-          errors = { ...errors, role: 'Invalid role value' };
+          errors = { ...errors, guildRole: 'Invalid role value' };
         }
       }
     } catch (error) {
-      errors = { ...errors, id: 'Error validating Guild ID' };
+      errors = { ...errors, guildId: 'Error validating Guild ID' };
     }
   }
 
   return errors;
 };
 
-export { handleDefineCondition, validateGUILDData };
+const validationCriteria =  async (condition: Rule):Promise<CriteriaValidationErrorType> => {
+ if(condition.type === TYPE.GUILD)
+ {
+  return validateGUILDData(condition);
+ }
+
+return {};
+}
+export { handleDefineCondition ,validationCriteria};

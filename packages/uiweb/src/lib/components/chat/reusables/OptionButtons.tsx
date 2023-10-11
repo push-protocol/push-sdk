@@ -15,6 +15,7 @@ interface OptionButtonsProps {
   totalWidth?:string;
   selectedValue: string;
   handleClick: (el:string)=>void;
+  error?:boolean;
 }
 
 interface ButtonSectionProps {
@@ -23,6 +24,7 @@ interface ButtonSectionProps {
   borderColor: string;
   totalWidth:string;
   noOfOptions:number;
+  error:boolean;
   // background:string;
 }
 
@@ -54,7 +56,7 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
 };
 
 
-export const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',}: OptionButtonsProps) => {
+export const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',error}: OptionButtonsProps) => {
   const theme = useContext(ThemeContext);
 
 const getBorderWidth = (index:number) =>{
@@ -84,6 +86,7 @@ const getBorderRadius = (index:number) =>{
             borderRadius={
               getBorderRadius(index)
             }
+            error={error || false}
             borderColor={theme.border!.modalInnerComponents!}
             borderWidth={getBorderWidth(index)}
             background={selectedValue === option.value ? theme.backgroundColor?.modalHoverBackground : 'none'}
@@ -114,6 +117,8 @@ const ButtonSection = styled(Section)<ButtonSectionProps>`
   }
   padding: 10px;
   border: ${(props) => props.borderColor};
+  border: ${(props) => props.error?'  #ED5858':props.borderColor};
+
   // background: ${(props) => props.background};
   border-width: ${(props) => props.borderWidth};
   border-style: solid;

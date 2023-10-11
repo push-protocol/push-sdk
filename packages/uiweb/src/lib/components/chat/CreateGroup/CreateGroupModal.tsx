@@ -71,9 +71,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
 
   const [groupInputDetails, setGroupInputDetails] =
     useState<GroupInputDetailsType>({
-      groupName: 'Push Group Chat',
-      groupDescription: 'This is the oficial group for Push Protocol',
-      groupImage: ProfilePicture,
+      groupName: '',
+      groupDescription: '',
+      groupImage: '',
     });
 
   const renderComponent = () => {
@@ -215,11 +215,11 @@ const CreateGroupDetail = ({
         return;
       }
 
-     // verify description
-      if (!groupImage) {
-        showError("Group image can't be empty");
-        return;
-      }
+      // verify description
+      // if (!groupImage) {
+      //   showError("Group image can't be empty");
+      //   return;
+      // }
     }
 
     if (handleNext) {

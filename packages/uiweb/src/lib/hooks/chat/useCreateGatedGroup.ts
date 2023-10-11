@@ -30,10 +30,10 @@ export const useCreateGatedGroup = () => {
         if (!response) {
           return false;
         }
+        return true;
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
-        console.log(error);
         return error.message;
       }
     },

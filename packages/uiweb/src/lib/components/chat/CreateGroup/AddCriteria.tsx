@@ -7,7 +7,7 @@ import {
   ModalHeader,
   TextInput,
 } from '../reusables';
-import { Section, } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
@@ -32,22 +32,30 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { Data, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
-import { validateGUILDData } from '../helpers';
-
-
+import {
+  CriteriaValidationErrorType,
+  Data,
+  GuildData,
+  PushData,
+  Rule,
+} from '../types/tokenGatedGroupCreationType';
+import { validationCriteria } from '../helpers';
+import styled from 'styled-components';
 
 const AddCriteria = ({
   handlePrevious,
   handleNext,
   onClose,
-  criteriaStateManager
+  criteriaStateManager,
 }: ModalHeaderProps) => {
   const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
+  const [validationErrors, setValidationErrors] =
+    useState<CriteriaValidationErrorType>({});
   const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
   const [selectedSubCategoryValue, setSelectedSubCategoryValue] =
     useState<number>(0);
-    const [guildComparison, setGuildComparison] = useState('')
+  const [validationLoading, setValidationLoading] = useState<boolean>(false);
+  const [guildComparison, setGuildComparison] = useState('');
   const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
   const [contract, setContract] = useState<string>('');
   const [inviteCheckboxes, setInviteCheckboxes] = useState<{
@@ -285,139 +293,154 @@ const AddCriteria = ({
     setQuantity({ ...quantity, value: e.target.value });
   };
 
-  const verifyAndDoNext = ()=>{
-    const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD'
-    const category:string = _type === "PUSH" ? (dropdownCategoryValues[_type] as DropdownValueType[])[
-      selectedCategoryValue
-    ].value || CATEGORY.ERC20 : "ROLES"
- 
-    let subCategory = "DEFAULT"
-    if(_type === "PUSH"){ 
-      if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
-        subCategory = tokenCategoryValues[selectedSubCategoryValue].value
-      }else if(category === CATEGORY.CustomEndpoint){
-        subCategory = "GET"
-      } 
-    }
-    
-    const getData = (type:string, category:string):Data=>{
-      if(type === "PUSH"){
-        if(category === CATEGORY.ERC20 || category === CATEGORY.ERC721){
-          const selectedChain = dropdownChainsValues[selectedChainValue].value || 'eip155:1';
-          return {
-            contract: `${selectedChain}:${contract}`,
-            amount: quantity.value,
-            comparison:dropdownQuantityRangeValues[quantity.range].value,
-            decimals: 18,
-          }
-        }else if(category === CATEGORY.INVITE){
-          const _inviteRoles = []
-          if(inviteCheckboxes.admin){
-            _inviteRoles.push("ADMIN")
-          }
-          if(inviteCheckboxes.owner){
-            _inviteRoles.push("OWNER")
-          }
+  const verifyAndDoNext = async () => {
+    setValidationLoading(true);
+    const _type = dropdownTypeValues[selectedTypeValue].value as
+      | 'PUSH'
+      | 'GUILD';
+    const category: string =
+      _type === 'PUSH'
+        ? (dropdownCategoryValues[_type] as DropdownValueType[])[
+            selectedCategoryValue
+          ].value || CATEGORY.ERC20
+        : 'ROLES';
 
-          return{
-            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN']
-          }
-        }else{
-          // CATEGORY.CustomEndpoint
-          // TODO: validate url
-          return{
-            url:url
-          }
-        }
-      }else{
-        // GUILD type
-        return {
-          id:guildId,
-          comparison:guildComparison,
-          role:guildComparison === 'specific' ? specificRoleId : "*",
-        }
+    let subCategory = 'DEFAULT';
+    if (_type === 'PUSH') {
+      if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
+        subCategory = tokenCategoryValues[selectedSubCategoryValue].value;
+      } else if (category === CATEGORY.CustomEndpoint) {
+        subCategory = 'GET';
       }
     }
 
-    const rule:Rule = {
+    const getData = (type: string, category: string): Data => {
+      if (type === 'PUSH') {
+        if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
+          const selectedChain =
+            dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+          return {
+            contract: `${selectedChain}:${contract}`,
+            amount: quantity.value,
+            comparison: dropdownQuantityRangeValues[quantity.range].value,
+            decimals: 18,
+          };
+        } else if (category === CATEGORY.INVITE) {
+          const _inviteRoles = [];
+          if (inviteCheckboxes.admin) {
+            _inviteRoles.push('ADMIN');
+          }
+          if (inviteCheckboxes.owner) {
+            _inviteRoles.push('OWNER');
+          }
+
+          return {
+            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN'],
+          };
+        } else {
+          // CATEGORY.CustomEndpoint
+          // TODO: validate url
+          return {
+            url: url,
+          };
+        }
+      } else {
+        // GUILD type
+        return {
+          id: guildId,
+          comparison: guildComparison === 'specific' ? '' : guildComparison,
+          role: guildComparison === 'specific' ? specificRoleId : '*',
+        };
+      }
+    };
+
+    const rule: Rule = {
       type: _type,
       category: category,
       subcategory: subCategory,
       data: getData(_type, category),
+    };
+
+    //guild validation added
+    const errors = await validationCriteria(rule);
+    setValidationLoading(false);
+    if (Object.keys(errors).length) {
+      setValidationErrors(errors);
+    } else {
+      criteriaState.addNewRule(rule);
+      if (handlePrevious) {
+        handlePrevious();
+      }
     }
+  };
 
-    //guild data validation
-    if(rule.type === TYPE.GUILD)
-    {
-     const errors =  validateGUILDData(rule);
-
-    }
-    criteriaState.addNewRule(rule)
-
-    if(handlePrevious){
-      handlePrevious()
-    }
-
-  }
-
-  const criteriaState = criteriaStateManager.getSelectedCriteria()
-
+  const criteriaState = criteriaStateManager.getSelectedCriteria();
 
   // Autofill the form for the update
-  useEffect(()=>{
-   if(criteriaState.isUpdateCriteriaEnabled()){
-    //Load the states
-    const oldValue = criteriaState.selectedRules[criteriaState.updateCriteriaIdx] 
-    
-    if(oldValue.type === 'PUSH'){
-      
-      // category
-      setSelectedCategoryValue(
-        (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(obj => obj.value === oldValue.category) 
-      )
+  useEffect(() => {
+    if (criteriaState.isUpdateCriteriaEnabled()) {
+      //Load the states
+      const oldValue =
+        criteriaState.selectedRules[criteriaState.updateCriteriaIdx];
 
-      const pushData = oldValue.data as PushData
-
-      // sub category
-      if(oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721){
-        setSelectedSubCategoryValue(
-          tokenCategoryValues.findIndex(obj => obj.value === oldValue.subcategory)
-        )
-
-        const contractAndChain:string[] = (pushData.contract || "eip155:1:0x").split(':')
-        setSelectedChainValue(
-          dropdownChainsValues.findIndex(
-            obj => obj.value === contractAndChain[0]+":"+contractAndChain[1]
-          ) 
-        )
-        setContract(contractAndChain.length === 3 ? contractAndChain[2]: "") 
-        setQuantity({
-          value:pushData.amount || 0, 
-          range:dropdownQuantityRangeValues.findIndex(
-            obj => obj.value === pushData.comparison
+      if (oldValue.type === 'PUSH') {
+        // category
+        setSelectedCategoryValue(
+          (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(
+            (obj) => obj.value === oldValue.category
           )
-        })
-      }else if(oldValue.category === CATEGORY.INVITE){
-        setInviteCheckboxes({
-          admin:true,
-          owner:true, 
-        })
-      }else{
-        // invite
-        setUrl(pushData.url || "") 
+        );
+
+        const pushData = oldValue.data as PushData;
+
+        // sub category
+        if (
+          oldValue.category === CATEGORY.ERC20 ||
+          oldValue.category === CATEGORY.ERC721
+        ) {
+          setSelectedSubCategoryValue(
+            tokenCategoryValues.findIndex(
+              (obj) => obj.value === oldValue.subcategory
+            )
+          );
+
+          const contractAndChain: string[] = (
+            pushData.contract || 'eip155:1:0x'
+          ).split(':');
+          setSelectedChainValue(
+            dropdownChainsValues.findIndex(
+              (obj) =>
+                obj.value === contractAndChain[0] + ':' + contractAndChain[1]
+            )
+          );
+          setContract(contractAndChain.length === 3 ? contractAndChain[2] : '');
+          setQuantity({
+            value: pushData.amount || 0,
+            range: dropdownQuantityRangeValues.findIndex(
+              (obj) => obj.value === pushData.comparison
+            ),
+          });
+        } else if (oldValue.category === CATEGORY.INVITE) {
+          setInviteCheckboxes({
+            admin: true,
+            owner: true,
+          });
+        } else {
+          // invite
+          setUrl(pushData.url || '');
+        }
+      } else {
+        // guild condition
+        setGuildId((oldValue.data as GuildData).id);
+        setSpecificRoleId((oldValue.data as GuildData).role);
+        setGuildComparison((oldValue.data as GuildData).comparison);
       }
-    }else{
-      // guild condition
-      setGuildId((oldValue.data as GuildData).id)
-      setSpecificRoleId((oldValue.data as GuildData).role)
-      setGuildComparison((oldValue.data as GuildData).comparison) 
+
+      setSelectedTypeValue(
+        dropdownTypeValues.findIndex((obj) => obj.value === oldValue.type)
+      );
     }
-    
-    setSelectedTypeValue(
-      dropdownTypeValues.findIndex(obj => obj.value === oldValue.type) 
-    )
-   } 
-  },[])
+  }, []);
 
   return (
     <Section
@@ -429,7 +452,11 @@ const AddCriteria = ({
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title={criteriaState.isUpdateCriteriaEnabled() ? "Update Criteria" : "Add Criteria"}
+          title={
+            criteriaState.isUpdateCriteriaEnabled()
+              ? 'Update Criteria'
+              : 'Add Criteria'
+          }
         />
       </Section>
       <DropDownInput
@@ -463,7 +490,9 @@ const AddCriteria = ({
       ) : (
         <TextInput
           labelName="Sub-category"
-          inputValue={(getSubCategoryDropdownValues()  as ReadonlyInputType)?.title}
+          inputValue={
+            (getSubCategoryDropdownValues() as ReadonlyInputType)?.title
+          }
           disabled={true}
           customStyle={{
             background: theme.backgroundColor?.modalHoverBackground,
@@ -512,8 +541,8 @@ const AddCriteria = ({
               }
               onToggle={() =>
                 setInviteCheckboxes({
-                  admin:true,
-                  owner:true
+                  admin: true,
+                  owner: true,
                 })
               }
               checked={
@@ -526,34 +555,54 @@ const AddCriteria = ({
 
       {checkIfGuild() && (
         <>
-          <TextInput
-            labelName="ID"
-            inputValue={guildId}
-            onInputChange={(e: any) => setGuildId(e.target.value)}
-            placeholder="e.g. 4687"
-          />
-          <OptionButtons
-            options={GUILD_COMPARISON_OPTIONS}
-            totalWidth="410px"
-            selectedValue={guildComparison}
-            handleClick={(newEl:string)=>{
-              setGuildComparison(newEl)}}
-          />
-
-          {guildComparison === "specific" && 
+          <Section gap="10px" flexDirection="column" alignItems="start">
             <TextInput
-              labelName="Specific Role"
-              inputValue={specificRoleId}
-              onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+              labelName="ID"
+              inputValue={guildId}
+              onInputChange={(e: any) => setGuildId(e.target.value)}
               placeholder="e.g. 4687"
+              error={!!validationErrors?.guildId}
             />
-          }
-
-          
+            {!!validationErrors?.guildId && (
+              <ErrorSpan>{validationErrors?.guildId}</ErrorSpan>
+            )}
+          </Section>
+          <Section gap="10px" flexDirection="column" alignItems="start">
+            <OptionButtons
+              options={GUILD_COMPARISON_OPTIONS}
+              totalWidth="410px"
+              selectedValue={
+                guildComparison
+              }
+              error={!!validationErrors?.guildComparison}
+              handleClick={(newEl: string) => {
+                setGuildComparison(newEl);
+              }}
+            />
+            {!!validationErrors?.guildComparison && (
+              <ErrorSpan>{validationErrors?.guildComparison}</ErrorSpan>
+            )}
+          </Section>
+          {guildComparison === 'specific' && (
+            <Section gap="10px" flexDirection="column" alignItems="start">
+              <TextInput
+                labelName="Specific Role"
+                inputValue={specificRoleId}
+                onInputChange={(e: any) => setSpecificRoleId(e.target.value)}
+                placeholder="e.g. 4687"
+                error={!!validationErrors?.guildRole}
+              />
+              {!!validationErrors?.guildRole && (
+                <ErrorSpan>{validationErrors?.guildRole}</ErrorSpan>
+              )}
+            </Section>
+          )}
         </>
       )}
       <Button width="197px" onClick={verifyAndDoNext}>
-        {criteriaState.isUpdateCriteriaEnabled() ? "Update" : "Add"}
+        {!validationLoading &&
+          (criteriaState.isUpdateCriteriaEnabled() ? 'Update' : 'Add')}
+        {validationLoading && <Spinner size="20" color="#fff" />}
       </Button>
       <GatingRulesInformation />
     </Section>
@@ -562,3 +611,8 @@ const AddCriteria = ({
 
 export default AddCriteria;
 
+const ErrorSpan = styled(Span)`
+  font-size: 12px;
+  font-weight: 500;
+  color: #ed5858;
+`;

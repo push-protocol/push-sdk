@@ -73,3 +73,12 @@ export interface CriteriaStateType {
   setUpdateCriteriaIdx: React.Dispatch<React.SetStateAction<number>>;
   isUpdateCriteriaEnabled: () => boolean;
 }
+
+
+export type CriteriaValidationErrorType = {
+
+  guildId?:string,
+  guildComparison?:string;
+  guildRole?:string;
+  
+}
