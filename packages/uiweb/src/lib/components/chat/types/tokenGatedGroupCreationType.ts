@@ -80,5 +80,6 @@ export type CriteriaValidationErrorType = {
   guildId?:string,
   guildComparison?:string;
   guildRole?:string;
-  
+  groupName?:string;
+  groupDescription?:string;
 }
