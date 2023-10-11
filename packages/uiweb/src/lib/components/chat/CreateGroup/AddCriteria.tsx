@@ -555,7 +555,11 @@ const AddCriteria = ({
             inputValue={contract}
             onInputChange={(e: any) => setContract(e.target.value)}
             placeholder="e.g. 0x123..."
+            error={!!validationErrors?.tokenError}
           />
+          {!!validationErrors?.tokenError && (
+            <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>
+          )}
           <QuantityInput
             dropDownValues={dropdownQuantityRangeValues}
             labelName="Quantity"

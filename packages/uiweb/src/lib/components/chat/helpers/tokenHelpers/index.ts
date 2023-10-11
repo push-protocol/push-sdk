@@ -28,7 +28,6 @@ export const tokenFetchHandler = async (
     if (isErr) {
       // handle error
       const errMessage = `${contract} is invalid ERC20 on chain ${_chainId}`;
-      alert(errMessage);
       setUnit('TOKEN');
       setDecimals(18);
 
@@ -46,7 +45,6 @@ export const tokenFetchHandler = async (
     if (isErr) {
       // handle error
       const errMessage = `${contract} is invalid ERC721 on chain ${_chainId}`;
-      alert(errMessage);
       setUnit('TOKEN');
       setDecimals(18);
       return [true, errMessage];
@@ -57,3 +55,5 @@ export const tokenFetchHandler = async (
     }
   }
 };
+
+export {fetchERC20Info, fetchERC721nfo}

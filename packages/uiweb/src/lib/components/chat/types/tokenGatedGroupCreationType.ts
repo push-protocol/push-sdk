@@ -76,10 +76,13 @@ export interface CriteriaStateType {
 
 
 export type CriteriaValidationErrorType = {
-
+  //guild error
   guildId?:string,
   guildComparison?:string;
   guildRole?:string;
   groupName?:string;
   groupDescription?:string;
+
+  //token error
+  tokenError?:string
 }

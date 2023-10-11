@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { CriteriaStateType, CriteriaValidationErrorType, Data, GuildData, Rule, TYPE } from '../types';
+import { CATEGORY, CriteriaStateType, CriteriaValidationErrorType, Data, GuildData, PushData, Rule, TYPE } from '../types';
+import { fetchERC20Info, fetchERC721nfo } from './tokenHelpers';
+import { ethers } from "ethers";
 
 const handleDefineCondition = (
   entryCriteria: CriteriaStateType,
@@ -67,10 +69,45 @@ const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErr
   return errors;
 };
 
+const validateTokenData = async (condition:Rule):Promise<CriteriaValidationErrorType> =>{
+  const data:PushData = condition.data;
+  const _contract = data.contract || ""
+  const _eip155Format = _contract.split(":")
+
+  if(_eip155Format.length !==3){
+    return {tokenError:"Invalid contract"}
+  }
+
+  const [chainId, address] = [parseInt(_eip155Format[1]), _eip155Format[2]]
+
+  if(!ethers.utils.isAddress(address)){
+    return {tokenError:`Invalid contract address`}
+  }
+
+  const [err] = condition.category === CATEGORY.ERC721 ? 
+    await fetchERC721nfo(address, chainId) : await fetchERC20Info(address, chainId);
+
+  if(err){
+   return {tokenError:`Invalid ${condition.category} contract`} 
+  }
+
+  return {}  
+}
+
 const validationCriteria =  async (condition: Rule):Promise<CriteriaValidationErrorType> => {
  if(condition.type === TYPE.GUILD)
  {
   return validateGUILDData(condition);
+ }else{
+  // PUSH type
+  if(condition.category === CATEGORY.INVITE){
+    // validate invite
+  }else if (condition.category === CATEGORY.CustomEndpoint){
+    // custim role
+  }else{
+    // token verifcation
+    return validateTokenData(condition)
+  }
  }
 
 return {};
