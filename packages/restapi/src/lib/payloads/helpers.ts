@@ -67,6 +67,9 @@ export function getPayloadForAPIInput(
         ...(inputOptions?.payload?.additionalMeta && {
           additionalMeta: inputOptions?.payload?.additionalMeta,
         }),
+        ...(inputOptions?.payload?.index && {
+          index: inputOptions?.payload?.index,
+        }),
       },
       recipients: recipients,
     };

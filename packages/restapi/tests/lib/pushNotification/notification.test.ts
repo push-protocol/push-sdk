@@ -140,7 +140,7 @@ describe('PushAPI.notification functionality', () => {
       const res = await userAlice.notification.subscribe(
         'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      console.log(res)
+      // console.log(res)
       expect(res).not.null;
     });
 

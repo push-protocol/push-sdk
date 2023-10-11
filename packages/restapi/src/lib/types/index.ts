@@ -116,6 +116,7 @@ export interface ISendNotificationInputOptions {
      * use additionalMeta instead
      */
     metadata?: any;
+    index?: string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
