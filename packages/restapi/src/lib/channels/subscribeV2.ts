@@ -98,13 +98,13 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return res;
-  } catch (err) {
-    // console.log(err);
+    return { status: res.status, message: 'successfully opted into channel' };
+  } catch (err: any) {
+
     if (typeof onError === 'function') onError(err as Error);
 
     return {
-      status: 'error',
+      status: err?.response?.status?? '' ,
       message: err instanceof Error ? err.message : JSON.stringify(err),
     };
   }
