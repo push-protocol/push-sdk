@@ -666,7 +666,7 @@ export class PushNotificationBaseClass {
     let notificationSettingDescription = '';
     for (let i = 0; i < configuration.length; i++) {
       const ele = configuration[i];
-      if (ele.type == 0) {
+      if (ele.type == BOOLEAN_TYPE) {
         notificationSetting =
           notificationSetting +
           SETTING_SEPARATOR +
