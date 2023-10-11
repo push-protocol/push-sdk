@@ -5,6 +5,7 @@ export interface PushData {
   inviterRoles?: string[];
   comparison?:string;
   url?: string;
+  token?:string;
 }
 
 export interface GuildData {

@@ -329,7 +329,8 @@ const AddCriteria = ({
             contract: `${selectedChain}:${contract}`,
             amount: quantity.value,
             comparison: dropdownQuantityRangeValues[quantity.range].value,
-            decimals: 18,
+            decimals: category === CATEGORY.ERC20 ? decimals : undefined,
+            token:unit
           };
         } else if (category === CATEGORY.INVITE) {
           const _inviteRoles = [];
@@ -410,6 +411,15 @@ const AddCriteria = ({
             )
           );
 
+          if(pushData.token){
+            setUnit(pushData.token)
+          }
+
+          if(pushData.decimals){
+            setDecimals(decimals)
+          }
+
+          // TODO: make helper function for this
           const contractAndChain: string[] = (
             pushData.contract || 'eip155:1:0x'
           ).split(':');

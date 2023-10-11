@@ -75,7 +75,7 @@ const validateTokenData = async (condition:Rule):Promise<CriteriaValidationError
   const _eip155Format = _contract.split(":")
 
   if(_eip155Format.length !==3){
-    return {tokenError:"Invalid contract"}
+    return {tokenError:"Invalid contract address"}
   }
 
   const [chainId, address] = [parseInt(_eip155Format[1]), _eip155Format[2]]
@@ -99,17 +99,14 @@ const validationCriteria =  async (condition: Rule):Promise<CriteriaValidationEr
  {
   return validateGUILDData(condition);
  }else{
-  // PUSH type
   if(condition.category === CATEGORY.INVITE){
-    // validate invite
+    return {}
   }else if (condition.category === CATEGORY.CustomEndpoint){
-    // custim role
+    return {}
   }else{
-    // token verifcation
     return validateTokenData(condition)
   }
  }
 
-return {};
 }
 export { handleDefineCondition ,validationCriteria};
