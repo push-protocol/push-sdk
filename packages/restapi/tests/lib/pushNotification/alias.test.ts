@@ -39,7 +39,7 @@ describe('PushAPI.alias functionality', () => {
     userBob = await PushAPI.initialize(signer1);
   });
 
-  describe.only('alias :: info', () => {
+  describe('alias :: info', () => {
     // TODO: remove skip after signer becomes optional
     it('Should return response', async () => {
       const res = await userBob.channel.alias.info({
