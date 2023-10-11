@@ -86,6 +86,11 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   };
 
   const getGuildRole  = () =>{
+    console.log(criteria?.data?.['comparison'])
+    if(!criteria?.data?.['comparison'])
+    {
+      return 'SPECIFIC';
+    }
     return (GUILD_COMPARISON_OPTIONS.find(option => option.value === criteria?.data?.['comparison']))?.heading;
  
   }
