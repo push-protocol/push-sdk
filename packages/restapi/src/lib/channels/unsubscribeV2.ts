@@ -94,11 +94,11 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
       message: messageInformation.data,
     };
 
-    await axios.post(requestUrl, body);
+    const res = await axios.post(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: 'success', message: 'successfully opted out channel' };
+    return res;
   } catch (err) {
     if (typeof onError === 'function') onError(err as Error);
 

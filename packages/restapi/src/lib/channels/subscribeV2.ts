@@ -94,13 +94,13 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
       
     };
 
-    await axios.post(requestUrl, body);
+    const res = await axios.post(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: 'success', message: 'successfully opted into channel' };
+    return res;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     if (typeof onError === 'function') onError(err as Error);
 
     return {
