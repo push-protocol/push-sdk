@@ -143,7 +143,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.setting');
   const channelSettingTrx = await userAlice.channel.setting([
-    { type: 0, default: 1, description: 'My Notif Settings' },
+    { type: 1, default: 1, description: 'My Notif Settings' },
   ]);
   if (showAPIResponse) {
     console.log(channelSettingTrx);
