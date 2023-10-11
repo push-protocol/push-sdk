@@ -13,6 +13,7 @@ export interface IDropDownInputProps {
   selectedValue: number;
   labelName?: string;
   dropdownValues: DropdownValueType[];
+  error?:boolean;
 }
 
 export const DropDownInput = (props: IDropDownInputProps) => {
@@ -20,15 +21,14 @@ export const DropDownInput = (props: IDropDownInputProps) => {
   const [showDropdown, setshowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<any>(null);
 
-  const { selectedValue, dropdownValues, labelName } = props;
+  const { selectedValue, dropdownValues, labelName ,error} = props;
 
   // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
 
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);
   };
-  console.log(dropdownValues);
-  console.log(selectedValue);
+
   return (
     <ThemeProvider theme={theme}>
       <DropdownContainer >
@@ -36,7 +36,7 @@ export const DropDownInput = (props: IDropDownInputProps) => {
           <label>{props.labelName}</label>
         </LabelContainer>
     
-            <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
+            <DropdownDiv ref={dropdownRef} onClick={closeDropdown} error= {error || false} >
               <Span margin="0 7px 0 0">
                 {dropdownValues[selectedValue].title}{' '}
               </Span>
@@ -78,14 +78,14 @@ const LabelContainer = styled.div`
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const DropdownDiv = styled(Section)<IChatTheme>`
+const DropdownDiv = styled(Section)<IChatTheme & {error:boolean}>`
   padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   background: ${(props) => props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
   font-family: ${(props) => props.theme.fontFamily};
