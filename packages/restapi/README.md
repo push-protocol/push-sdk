@@ -6513,7 +6513,7 @@ const verifyChannelRes = await userAlice.channel.verify(channelToBeVerified)
 
 ```tsx
 // creates channel settings
-const createChannelSettingRes = userAlice.channel.settings([{ type: 0, default: 1, description: 'marketing' }, {type: 2, default: 10, description: 'loan liquidation threshold', data: {upper: 100, lower: 5}}])
+const createChannelSettingRes = userAlice.channel.settings([{ type: 0, default: 1, description: 'marketing' }, {type: 2, default: 10, description: 'loan liquidation threshold', data: {upper: 100, lower: 5, enabled: true, ticker: 5}}])
 
 ```
 
@@ -6526,6 +6526,8 @@ const createChannelSettingRes = userAlice.channel.settings([{ type: 0, default: 
 | description | string | - | A description of the setting. |
 | data.upper* | number | - | Valid for slider type only. The upper limit for the setting. |
 | data.lower* | number | - | Valid for slider type only. The lower limit for the setting. |
+| data.enabled* | boolean | - | Valid for slider type only. If the settting should be enabled by default. |
+| data.ticker* | number | - | Valid for slider type only. Offset for slider values |
 
 <details>
   <summary><b>Expected response (Create Channel Setting)</b></summary>
