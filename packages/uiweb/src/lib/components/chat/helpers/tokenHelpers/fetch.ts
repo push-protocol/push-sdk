@@ -23,6 +23,11 @@ export const tokenFetchHandler = async (
   }
 
   if (!isValid) {
+    if(category === CATEGORY.ERC20){
+      setUnit('TOKEN');
+    }else{
+      setUnit('NFT');
+    }
     return [true, `${contract} is invalid invalid contract address`];
   }
 
