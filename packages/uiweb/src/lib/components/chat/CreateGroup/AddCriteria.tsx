@@ -430,7 +430,7 @@ const AddCriteria = ({
         // guild condition
         setGuildId((oldValue.data as GuildData).id);
         setSpecificRoleId((oldValue.data as GuildData).role);
-        setGuildComparison((oldValue.data as GuildData).comparison);
+        setGuildComparison(((oldValue.data as GuildData).comparison) || GUILD_COMPARISON_OPTIONS[2].value);
       }
 
       setSelectedTypeValue(
