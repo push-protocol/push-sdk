@@ -82,4 +82,7 @@ export type CriteriaValidationErrorType = {
   guildRole?:string;
   groupName?:string;
   groupDescription?:string;
+
+  //custom endpoint errors
+  url?:string;
 }
