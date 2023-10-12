@@ -7,7 +7,7 @@ import {
   SPACE_ACCEPT_REQUEST_TYPE,
   SPACE_INVITE_ROLES,
 } from '../payloads/constants';
-import { META_ACTION } from '../types';
+import { CHAT } from '../types';
 
 export interface IAcceptPromotionRequestType {
   signalData: any;
@@ -43,7 +43,7 @@ export async function acceptPromotionRequest(
     env: this.env,
     signer: this.signer,
     // liveSpaceData: modifiedLiveSpaceData,
-    action: META_ACTION.PROMOTE_TO_SPEAKER,
+    action: CHAT.META.SPACE.SPEAKER.PRVILEGE,
   });
 
   // accept the promotion request
