@@ -26,7 +26,7 @@ const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErr
 
   // Check for guild ID presence
   if (!(data as GuildData).id) {
-    errors = { ...errors, guildId: 'Guild ID is missing' };
+    errors = {  guildId: 'Guild ID is missing' };
   } else {
     try {
       const response = await axios.get(
@@ -34,12 +34,12 @@ const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErr
       );
 
       if (response.status !== 200) {
-        errors = { ...errors, guildId: 'Guild ID is missing' };
+        errors = { guildId: 'Guild ID is missing' };
       } else {
         // Validate the role values
         if ((data as GuildData).role === '*') {
           if (data.comparison !== 'all' && data.comparison !== 'any') {
-            errors = { ...errors, guildComparison: 'Invalid comparison value' };
+            errors = {  guildComparison: 'Invalid comparison value' };
           }
         } else if ((data as GuildData).role) {
           const roleExists = response.data.roles.some(
@@ -58,7 +58,7 @@ const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErr
             };
           }
         } else {
-          errors = { ...errors, guildRole: 'Invalid role value' };
+          errors = {  guildRole: 'Invalid role value' };
         }
       }
     } catch (error) {
@@ -90,7 +90,9 @@ const validateTokenData = async (condition:Rule):Promise<CriteriaValidationError
   if(err){
    return {tokenError:`Invalid ${condition.category} contract`} 
   }
-
+  if(!data.amount){
+    return {tokenAmount:`Amount cannot be 0`}
+  }
   return {}  
 }
 

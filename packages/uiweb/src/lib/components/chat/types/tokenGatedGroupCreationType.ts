@@ -86,4 +86,5 @@ export type CriteriaValidationErrorType = {
 
   //token error
   tokenError?:string
+  tokenAmount?:string;
 }
