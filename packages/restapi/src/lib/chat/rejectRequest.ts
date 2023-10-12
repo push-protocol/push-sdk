@@ -80,7 +80,7 @@ export const reject = async (
     signature
   );
 
-  axios
+  return axios
     .put(apiEndpoint, body)
     .then((response) => {
       return response.data;

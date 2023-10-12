@@ -116,6 +116,7 @@ export interface ISendNotificationInputOptions {
      * use additionalMeta instead
      */
     metadata?: any;
+    index?: string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -315,10 +316,10 @@ export type Data = {
   contract?: string;
   amount?: number;
   decimals?: number;
-  guildId?: string;
-  guildRoleId?: string;
+  id?: string;
+  role?: string;
   url?: string;
-  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=';
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'all' | 'any';
 };
 
 export type ConditionBase = {
@@ -327,6 +328,7 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
+
 };
 
 export type Condition = ConditionBase & {
@@ -335,28 +337,35 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
-  chatAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  chat?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
+
 export interface SpaceRules {
-  spaceAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
 export interface GroupAccess {
-  groupAccess: boolean;
-  chatAccess: boolean;
+  entry: boolean;
+  chat: boolean;
   rules?: Rules;
 }
 
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
+}
+
 export interface SpaceAccess {
-  spaceAccess: boolean;
+  entry: boolean;
   rules?: SpaceRules;
 }
 
@@ -536,7 +545,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-type ethersV5SignerType = {
+export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, Array<TypedDataField>>,
@@ -548,7 +557,7 @@ type ethersV5SignerType = {
   privateKey?: string;
   provider?: providers.Provider;
 };
-type viemSignerType = {
+export type viemSignerType = {
   signTypedData: (args: {
     account: any;
     domain: any;
@@ -565,6 +574,7 @@ type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
+  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;

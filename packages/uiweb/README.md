@@ -149,7 +149,7 @@ where
 | cta      | string | Call To Action Link (given during notification creation)  |
 | image      | string | Any media link (given during notification creation) |
 | url      | string | Channel Link (given during channel setup)   |
-| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "THE_GRAPH" |
+| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "THE_GRAPH" |
 | theme      | string | 'light' or 'dark' (customization to be given by the dApp)  |
 | customTheme      | INotificationItemTheme | custom theme object for the component  |
 | isSpam      | boolean | whether a spam notification or not   |
@@ -330,3 +330,4 @@ Allowed Options (props with * are mandatory)
 | activeChat    | string  | -       | to open a particular chat when modal first opens               |
 | onClose     | () => void  | -       | function to execute when modal is minimised   |
 | env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
+

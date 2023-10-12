@@ -4,12 +4,14 @@ import { IGroup } from '../../types'
 
 export interface IChatViewListProps {
   chatId: string;
+  chatFilterList?: Array<string>;
   limit?: number;
 }
 
 export interface IChatViewComponentProps {
   messageInput?: boolean;
   chatViewList?: boolean;
+  chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
   chatId: string; //need confirmation on this
   limit?: number;
@@ -17,6 +19,8 @@ export interface IChatViewComponentProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
+  autoConnect?:boolean;
+  onGetTokenClick?: () => void;
 }
 
 export interface IChatProfile {
@@ -34,15 +38,6 @@ export interface IToast {
   status: string;
 }
 
-export type OptionProps = {
-  options: boolean;
-  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  isGroup: boolean;
-  chatInfo: any;
-  groupInfo: IGroup | null | undefined , 
-  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-  theme: IChatTheme;
-}
 export type IMessagePayload = IMessageIPFS;
 
 export const CHAT_THEME_OPTIONS = {
@@ -58,36 +53,16 @@ export type GIFType = {
 
 export interface MessageInputProps {
   chatId: string;
-  Emoji?: boolean;
-  GIF?: boolean;
-  File?: boolean;
-  Image?: boolean;
+  emoji?: boolean;
+  gif?: boolean;
+  file?: boolean;
   isConnected?: boolean;
+  autoConnect?:boolean;
+  onGetTokenClick?: () => void;
 }
 
-export type UpdateGroupType = {
-  groupInfo: IGroup,
-  connectedUser: User,
-  adminList: Array<string>,
-  memberList: Array<string>,
-}
 
-export type MemberListContainerType = {
-  key?: number;
-  memberData: User;
-  handleMemberList: (member: User) => void;
-  handleMembers?: (value: User[]) => void;
-  lightIcon: any;
-  darkIcon: any;
-  memberList?: any;
-};
 
-export interface WalletProfileContainerProps {
-  id?: any;
-  background?: any;
-  border?: any;
-
-};
 
 export interface MessageIPFS {
   fromCAIP10: string
@@ -138,9 +113,10 @@ export interface User {
   isAdmin?:boolean;
 }
 
-export interface ShadowedProps {
-   setPosition: boolean;
+export interface CreateGroupModalProps {
+  onClose: ()=>void;
 };
+
 
 export interface ModalButtonProps {
   memberListCount?: boolean;
@@ -150,3 +126,13 @@ export interface ModalButtonProps {
 
 
 export {IChatTheme} from './theme';
+
+export interface ConditionData {
+  operator?: string;
+  type?: string;
+  category?: string;
+  subcategory?: string;
+  data?: Record<string, any>;
+}
+
+export type ConditionArray = ConditionData[];

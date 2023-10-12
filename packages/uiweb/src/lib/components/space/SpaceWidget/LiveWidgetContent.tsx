@@ -68,7 +68,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  // const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -134,6 +134,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     // await spacesObjectRef?.current?.createAudioStream?.();
     await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
     setPromotedListener(requesterAddress);
+    await performAction({ roomId: spaceData?.spaceId, userId: requesterAddress, canPublish: true });
   };
 
   const handleRejectPromotion = async (requesterAddress: any) => {
@@ -461,13 +462,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Item> */}
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {
+                {/* {
                   isHost && numberOfRequests ?
                     <RequestsCount>
                       {numberOfRequests}
                     </RequestsCount>
                     : null
-                }
+                } */}
                 <Image
                   width={'21px'}
                   height={'24px'}

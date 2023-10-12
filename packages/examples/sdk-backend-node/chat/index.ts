@@ -1,2 +1,28 @@
-export { runChatUseCases } from './chat';
-export { runNFTChatUseCases } from './nftChat';
+import { runChatLowlevelUseCases } from './chat.lowlevel';
+import { runNFTChatLowLevelUseCases } from './nftChat.lowlevel';
+import { runChatClassUseCases } from './chat';
+
+export const runChatUseCases = async (): Promise<void> => {
+  console.log(`
+░█████╗░██╗░░██╗░█████╗░████████╗
+██╔══██╗██║░░██║██╔══██╗╚══██╔══╝
+██║░░╚═╝███████║███████║░░░██║░░░
+██║░░██╗██╔══██║██╔══██║░░░██║░░░
+╚█████╔╝██║░░██║██║░░██║░░░██║░░░
+░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░
+        `);
+
+  await runChatClassUseCases();
+  console.log(`
+▒█▀▀█ ▒█░▒█ ░█▀▀█ ▀▀█▀▀ ░ ▒█░░░ ▒█▀▀▀█ ▒█░░▒█ ▒█░░░ ▒█▀▀▀ ▒█░░▒█ ▒█▀▀▀ ▒█░░░ 
+▒█░░░ ▒█▀▀█ ▒█▄▄█ ░▒█░░ ▄ ▒█░░░ ▒█░░▒█ ▒█▒█▒█ ▒█░░░ ▒█▀▀▀ ░▒█▒█░ ▒█▀▀▀ ▒█░░░ 
+▒█▄▄█ ▒█░▒█ ▒█░▒█ ░▒█░░ █ ▒█▄▄█ ▒█▄▄▄█ ▒█▄▀▄█ ▒█▄▄█ ▒█▄▄▄ ░░▀▄▀░ ▒█▄▄▄ ▒█▄▄█
+  `);
+  await runChatLowlevelUseCases();
+  console.log(`
+▒█▄░▒█ ▒█▀▀▀ ▀▀█▀▀ ▒█▀▀█ ▒█░▒█ ░█▀▀█ ▀▀█▀▀ ░ ▒█░░░ ▒█▀▀▀█ ▒█░░▒█ ▒█░░░ ▒█▀▀▀ ▒█░░▒█ ▒█▀▀▀ ▒█░░░ 
+▒█▒█▒█ ▒█▀▀▀ ░▒█░░ ▒█░░░ ▒█▀▀█ ▒█▄▄█ ░▒█░░ ▄ ▒█░░░ ▒█░░▒█ ▒█▒█▒█ ▒█░░░ ▒█▀▀▀ ░▒█▒█░ ▒█▀▀▀ ▒█░░░ 
+▒█░░▀█ ▒█░░░ ░▒█░░ ▒█▄▄█ ▒█░▒█ ▒█░▒█ ░▒█░░ █ ▒█▄▄█ ▒█▄▄▄█ ▒█▄▀▄█ ▒█▄▄█ ▒█▄▄▄ ░░▀▄▀░ ▒█▄▄▄ ▒█▄▄█
+  `);
+  await runNFTChatLowLevelUseCases();
+};

@@ -2,11 +2,10 @@ import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
 import * as PushAPI from '@pushprotocol/restapi';
-import type { IMessageIPFS } from '@pushprotocol/restapi';
-import { isAccountsEqual } from '../../components/space/helpers/account';
+
 import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
-import { getChatId } from '../../helpers';
+import useGetChatProfile from '../useGetChatProfile';
 
 export type PushChatSocketHookOptions = {
   account?: string | null;
@@ -22,10 +21,13 @@ export const usePushChatSocket = () => {
     setIsPushChatSocketConnected,
     isPushChatSocketConnected,
     connectedProfile,
+    setConnectedProfile,
     env,
   } = useChatData();
-
+const {fetchChatProfile} = useGetChatProfile();
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
+    useState<any>({});
+    const [acceptedRequestMessage, setAcceptedRequestMessage] =
     useState<any>({});
   const [
     groupInformationSinceLastConnection,
@@ -48,32 +50,32 @@ export const usePushChatSocket = () => {
     });
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
-      console.log(chat)
-      console.log(connectedProfile)
-      console.log(pgpPrivateKey)
+   
+    
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
-      console.log(chat)
       if (
        ( chat.messageCategory === 'Request') &&
         (chat.messageContent === null) &&
         (chat.messageType === null)
       ) {
-        return;
+        setAcceptedRequestMessage(chat);
       }
-      console.log(chat)
-      const response = await PushAPI.chat.decryptConversation({
-        messages: [chat],
-        connectedUser: connectedProfile,
-        pgpPrivateKey: pgpPrivateKey,
-        env: env,
-      });
-      console.log(chat)
-
-      if (response && response.length) {
-        setMessagesSinceLastConnection(response[0]);
+      else
+      {
+        const response = await PushAPI.chat.decryptConversation({
+          messages: [chat],
+          connectedUser: connectedProfile,
+          pgpPrivateKey: pgpPrivateKey,
+          env: env,
+        });
+  
+        if (response && response.length) {
+          setMessagesSinceLastConnection(response[0]);
+        }
       }
+     
     });
     pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
       /**
@@ -137,12 +139,13 @@ export const usePushChatSocket = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env]);
+  }, [account, env, pgpPrivateKey]);
 
   return {
     pushChatSocket,
     isPushChatSocketConnected,
     messagesSinceLastConnection,
+    acceptedRequestMessage,
     groupInformationSinceLastConnection,
   };
 };

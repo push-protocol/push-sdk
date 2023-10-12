@@ -6,6 +6,14 @@ import { ThemeContext } from "../theme/ThemeProvider";
 import { NoEncryptionIcon } from "../../../icons/NoEncryption";
 import { EncryptionIcon } from "../../../icons/Encryption";
 
+export const ENCRYPTION_KEYS = {
+  ENCRYPTED: 'ENCRYPTED',
+  NO_ENCRYPTED: 'NO_ENCRYPTED',
+  NO_ENCRYPTED_GROUP: 'NO_ENCRYPTED_GROUP'
+} as const;
+
+export type EncryptionKeys = (typeof ENCRYPTION_KEYS)[keyof typeof ENCRYPTION_KEYS];
+
 const EncryptionMessageContent = {
     ENCRYPTED: {
       IconComponent: <EncryptionIcon size="15" />,
@@ -14,10 +22,15 @@ const EncryptionMessageContent = {
     NO_ENCRYPTED: {
       IconComponent: <NoEncryptionIcon size="15" />,
       text: `Messages are not encrypted`,
+
     },
+    NO_ENCRYPTED_GROUP: {
+      IconComponent: <NoEncryptionIcon size="15" />,
+      text: `Messages in this group are not encrypted`,
+    },
+  
   };
- export const EncryptionMessage = ({ id }: { id: 'ENCRYPTED' | 'NO_ENCRYPTED' }) => {
-    console.log(id)
+  export const EncryptionMessage = ({ id }: { id: EncryptionKeys}) => {
     const theme = useContext(ThemeContext);
     const isMobile = useDeviceWidthCheck(771);
     return (
@@ -25,7 +38,7 @@ const EncryptionMessageContent = {
         padding="10px"
         alignSelf="center"
         borderRadius="12px"
-        background={theme.bgColorPrimary}
+        background={theme.backgroundColor?.encryptionMessageBackground}
         margin="10px 10px 0px"
         width={isMobile ? '80%' : 'fit-content'}
       >
@@ -35,7 +48,7 @@ const EncryptionMessageContent = {
           <Span
             fontSize="13px"
             margin="0 0 0 5px"
-            color={theme.textColorSecondary}
+            color={theme.textColor?.encryptionMessageText}
             fontWeight="400"
             textAlign="left"
           >
