@@ -125,7 +125,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             {getTokenNftComparisionLabel()}{' '}
           </Span>
           {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {getTokenSymbol(criteria)}
+          {criteria?.data?.['amount']} {shortenText(getTokenSymbol(criteria)||'',20)}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (

@@ -36,7 +36,6 @@ import { MdError } from 'react-icons/md';
 import useToast from '../reusables/NewToast';
 import { tokenFetchHandler, truncateTokenSymbol } from '../helpers/tokenHelpers';
 
-
 import {
   CriteriaValidationErrorType,
   Data,
@@ -70,8 +69,8 @@ const AddCriteria = ({
   const [url, setUrl] = useState<string>('');
   const [guildId, setGuildId] = useState<string>('');
   const [specificRoleId, setSpecificRoleId] = useState<string>('');
-  const [unit, setUnit] = useState('TOKEN')
-  const [decimals, setDecimals] = useState(18)
+  const [unit, setUnit] = useState('TOKEN');
+  const [decimals, setDecimals] = useState(18);
 
   const [quantity, setQuantity] = useState<{ value: number; range: number }>({
     value: 0,
@@ -79,7 +78,7 @@ const AddCriteria = ({
   });
   const { env } = useChatData();
   const theme = useContext(ThemeContext);
-  const groupInfoToast = useToast()
+  const groupInfoToast = useToast();
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -324,7 +323,7 @@ const AddCriteria = ({
             amount: quantity.value,
             comparison: dropdownQuantityRangeValues[quantity.range].value,
             decimals: category === CATEGORY.ERC20 ? decimals : undefined,
-            token:unit
+            token: unit,
           };
         } else if (category === CATEGORY.INVITE) {
           const _inviteRoles = [];
@@ -369,9 +368,9 @@ const AddCriteria = ({
       setValidationErrors(errors);
     } else {
       const isSuccess = criteriaState.addNewRule(rule);
-      if(!isSuccess){
-        showError("Selected Criteria was already added")  
-        return
+      if (!isSuccess) {
+        showError('Selected Criteria was already added');
+        return;
       }
       if (handlePrevious) {
         handlePrevious();
@@ -408,8 +407,8 @@ const AddCriteria = ({
             setUnit(pushData.token)
           }
 
-          if(pushData.decimals){
-            setDecimals(decimals)
+          if (pushData.decimals) {
+            setDecimals(decimals);
           }
 
           // TODO: make helper function for this
@@ -451,44 +450,43 @@ const AddCriteria = ({
     }
   }, []);
 
-  const getSeletedType = ()=>{
-    return dropdownTypeValues[selectedTypeValue].value || "PUSH" 
-  }
+  const getSeletedType = () => {
+    return dropdownTypeValues[selectedTypeValue].value || 'PUSH';
+  };
 
-  const getSelectedCategory =()=>{
-    const category:string = (dropdownCategoryValues["PUSH"] as DropdownValueType[])[
-      selectedCategoryValue
-    ].value || CATEGORY.ERC20 
+  const getSelectedCategory = () => {
+    const category: string =
+      (dropdownCategoryValues['PUSH'] as DropdownValueType[])[
+        selectedCategoryValue
+      ].value || CATEGORY.ERC20;
 
-    return category
-  }
+    return category;
+  };
 
-  const getSelectedChain = () =>{
-   return dropdownChainsValues[selectedChainValue].value || "eip155:1" 
-  }
-
+  const getSelectedChain = () => {
+    return dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+  };
 
   // Fetch the contract info
-  useEffect(()=>{
+  useEffect(() => {
     // TODO: optimize to reduce this call call when user is typing
     (async()=>{
       setValidationErrors(prev => ({...prev, tokenError:undefined})) 
 
       const _type = getSeletedType();
-      const _category:string = getSelectedCategory()
-      const _chainInfo = getSelectedChain()
-      
+      const _category: string = getSelectedCategory();
+      const _chainInfo = getSelectedChain();
+
       await tokenFetchHandler(
         contract,
         _type,
         _category,
         _chainInfo,
         setUnit,
-        setDecimals,
-      )
-      
-    })()
-  },[contract,selectedCategoryValue,selectedChainValue])
+        setDecimals
+      );
+    })();
+  }, [contract, selectedCategoryValue, selectedChainValue]);
 
   const showError = (errorMessage: string) => {
     groupInfoToast.showMessageToast({
@@ -498,7 +496,7 @@ const AddCriteria = ({
       getToastIcon: (size) => <MdError size={size} color="red" />,
     });
   };
-  
+
   return (
     <Section
       flexDirection="column"
@@ -564,24 +562,32 @@ const AddCriteria = ({
             selectedValue={selectedChainValue}
             dropdownValues={dropdownChainsValues}
           />
-          <TextInput
-            labelName="Contract"
-            inputValue={contract}
-            onInputChange={(e: any) => setContract(e.target.value)}
-            placeholder="e.g. 0x123..."
-            error={!!validationErrors?.tokenError}
-          />
-          {!!validationErrors?.tokenError && (
-            <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>
-          )}
+          <Section gap="10px" flexDirection="column" alignItems="start">
+            <TextInput
+              labelName="Contract"
+              inputValue={contract}
+              onInputChange={(e: any) => setContract(e.target.value)}
+              placeholder="e.g. 0x123..."
+              error={!!validationErrors?.tokenError}
+            />
+            {!!validationErrors?.tokenError && (
+              <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>
+            )}
+          </Section>
+          <Section gap="10px" flexDirection="column" alignItems="start">
           <QuantityInput
             dropDownValues={dropdownQuantityRangeValues}
             labelName="Quantity"
             inputValue={quantity}
+            error={!!validationErrors?.tokenAmount}
             onInputChange={onQuantityChange}
             placeholder="e.g. 1.45678"
             unit={truncateTokenSymbol(unit,16)}
           />
+          {!!validationErrors?.tokenAmount && (
+              <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>
+            )}
+          </Section>
         </>
       )}
 
@@ -632,9 +638,7 @@ const AddCriteria = ({
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
               totalWidth="410px"
-              selectedValue={
-                guildComparison
-              }
+              selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
                 setGuildComparison(newEl);
