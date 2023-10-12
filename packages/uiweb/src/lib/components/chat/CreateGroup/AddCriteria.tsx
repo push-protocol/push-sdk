@@ -34,7 +34,7 @@ import {
 } from '../types';
 import { MdError } from 'react-icons/md';
 import useToast from '../reusables/NewToast';
-import { tokenFetchHandler } from '../helpers/tokenHelpers';
+import { tokenFetchHandler, truncateTokenSymbol } from '../helpers/tokenHelpers';
 
 
 import {
@@ -168,23 +168,15 @@ const AddCriteria = ({
     },
   };
 
-  const tokenCategoryValues = [
-    {
-      id: 0,
+  const dropdownSubCategoryValues: DropdownSubCategoryValuesType = {
+    ERC20: {
       value: SUBCATEGORY.HOLDER,
       title: 'Holder',
-      function: () => setSelectedSubCategoryValue(0),
     },
-    {
-      id: 1,
+    ERC721:{
       value: SUBCATEGORY.OWENER,
       title: 'Owner',
-      function: () => setSelectedSubCategoryValue(1),
     },
-  ];
-  const dropdownSubCategoryValues: DropdownSubCategoryValuesType = {
-    ERC20: tokenCategoryValues,
-    ERC721: tokenCategoryValues,
     INVITE: {
       value: SUBCATEGORY.DEFAULT,
       title: 'Default',
@@ -316,7 +308,7 @@ const AddCriteria = ({
     let subCategory = 'DEFAULT';
     if (_type === 'PUSH') {
       if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-        subCategory = tokenCategoryValues[selectedSubCategoryValue].value;
+        subCategory = category === CATEGORY.ERC20 ? SUBCATEGORY.HOLDER :  SUBCATEGORY.OWENER
       } else if (category === CATEGORY.CustomEndpoint) {
         subCategory = 'GET';
       }
@@ -411,12 +403,7 @@ const AddCriteria = ({
           oldValue.category === CATEGORY.ERC20 ||
           oldValue.category === CATEGORY.ERC721
         ) {
-          setSelectedSubCategoryValue(
-            tokenCategoryValues.findIndex(
-              (obj) => obj.value === oldValue.subcategory
-            )
-          );
-
+          
           if(pushData.token){
             setUnit(pushData.token)
           }
@@ -485,6 +472,8 @@ const AddCriteria = ({
   useEffect(()=>{
     // TODO: optimize to reduce this call call when user is typing
     (async()=>{
+      setValidationErrors(prev => ({...prev, tokenError:undefined})) 
+
       const _type = getSeletedType();
       const _category:string = getSelectedCategory()
       const _chainInfo = getSelectedChain()
@@ -591,7 +580,7 @@ const AddCriteria = ({
             inputValue={quantity}
             onInputChange={onQuantityChange}
             placeholder="e.g. 1.45678"
-            unit={unit}
+            unit={truncateTokenSymbol(unit,16)}
           />
         </>
       )}
