@@ -5201,7 +5201,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ---
 
 <details>
-  <summary><b>Expected response (Greoup Chat Message)</b></summary>
+  <summary><b>Expected response (Group Chat Message)</b></summary>
 
   ```tsx
   {
