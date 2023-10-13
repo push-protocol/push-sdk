@@ -2419,6 +2419,11 @@ set-function-name@^2.0.0:
     functions-have-names "^1.2.3"
     has-property-descriptors "^1.0.0"
 
+shamir-secret-sharing@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/shamir-secret-sharing/-/shamir-secret-sharing-0.0.3.tgz#94f63288ce7c37d899dfaf5f0c77af377f65dd30"
+  integrity sha512-GPIb+QZDyjwwKSlVXEjHoOaBeevmdWz2IM2tz07nQvd0L9eMfLhzEqr7imajjjXCAO/cWgzXCCj0yFNMx6+miQ==
+
 shebang-command@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/shebang-command/-/shebang-command-1.2.0.tgz"

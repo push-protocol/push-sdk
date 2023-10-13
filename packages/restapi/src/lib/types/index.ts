@@ -116,7 +116,6 @@ export interface ISendNotificationInputOptions {
      * use additionalMeta instead
      */
     metadata?: any;
-    index?: string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -328,7 +327,6 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
-
 };
 
 export type Condition = ConditionBase & {
@@ -344,7 +342,6 @@ export interface Rules {
     conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
-
 
 export interface SpaceRules {
   entry?: {
@@ -574,7 +571,6 @@ export type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
-  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;
@@ -588,25 +584,25 @@ export type walletType = {
   signer: SignerType | null;
 };
 
-export type encryptedPrivateKeyTypeV1 = EthEncryptedData;
-
-export type encryptedPrivateKeyTypeV2 = {
-  ciphertext: string;
-  version?: string;
-  salt?: string;
-  nonce: string;
-  preKey?: string;
-  encryptedPassword?: encryptedPrivateKeyTypeV2;
-};
-
 export type encryptedPrivateKeyType = {
-  version?: string;
-  nonce: string;
-  ephemPublicKey?: string;
   ciphertext: string;
+  version?: string;
+  /**  Used in PGP_V1 */
+  ephemPublicKey?: string;
+  /**  Used in PGP_V2 PGP_V3 */
   salt?: string;
+  nonce: string;
   preKey?: string;
-  encryptedPassword?: encryptedPrivateKeyTypeV2;
+  /**  Used in NFTPGP_V1 */
+  encryptedPassword?: encryptedPrivateKeyType;
+  /** Used in PGP_V4 */
+  pushShard?: string;
+  pushEncryptedShard?: encryptedPrivateKeyType;
+  litEncryptedShard?: {
+    encryptedString: Blob;
+    encryptedSymmetricKey: string;
+    chain: string;
+  };
 };
 
 export type ProgressHookType = {

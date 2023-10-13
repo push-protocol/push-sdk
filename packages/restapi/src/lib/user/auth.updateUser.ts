@@ -16,7 +16,6 @@ import {
   IUser,
   ProgressHookType,
   encryptedPrivateKeyType,
-  encryptedPrivateKeyTypeV2,
   ProgressHookTypeFunction,
 } from '../types';
 import { get } from './getUser';
@@ -27,6 +26,7 @@ enum ENCRYPTION_TYPE_VERSION {
   'aes256GcmHkdfSha256' = 'PGP_V2',
   'eip191-aes256-gcm-hkdf-sha256' = 'PGP_V3',
   'pgpv1:nft' = 'NFTPGP_V1',
+  'pgpv4' = 'PGP_V4',
 }
 
 export type AuthUpdateProps = {
@@ -108,7 +108,7 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
       additionalMeta
     );
     if (pgpEncryptionVersion === ENCRYPTION_TYPE.NFTPGP_V1) {
-      const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
+      const encryptedPassword: encryptedPrivateKeyType = await encryptPGPKey(
         ENCRYPTION_TYPE.PGP_V3,
         additionalMeta?.NFTPGP_V1?.password as string,
         wallet,

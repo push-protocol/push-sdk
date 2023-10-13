@@ -14,12 +14,11 @@ import {
   getEip712Signature,
   getEip191Signature,
 } from '../chat/helpers';
-import Constants, { ENV } from '../constants';
+import Constants, { ENCRYPTION_TYPE, ENV } from '../constants';
 import {
   SignerType,
   walletType,
   encryptedPrivateKeyType,
-  encryptedPrivateKeyTypeV2,
   IMessageIPFS,
   ProgressHookType,
   ProgressHookTypeFunction,
@@ -33,6 +32,8 @@ import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
 import { getAddress } from './signer';
+import { split, combine } from 'shamir-secret-sharing';
+// import Lit from './lit';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -236,6 +237,52 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
+      case Constants.ENC_TYPE_V5: {
+        if (!wallet?.signer) {
+          throw new Error(
+            'Cannot Decrypt this encryption version without signer!'
+          );
+        }
+        const { pushShard, pushEncryptedShard, litEncryptedShard } = JSON.parse(
+          encryptedPGPPrivateKey
+        );
+
+        let secret: any;
+        try {
+          // decrypt pushShard
+          const pushDecryptedShard = await decryptPGPKey({
+            encryptedPGPPrivateKey: JSON.stringify(pushEncryptedShard),
+            signer,
+            env,
+          });
+          secret = await combine([
+            hexToBytes(pushShard),
+            hexToBytes(pushDecryptedShard),
+          ]);
+        } catch (err) {
+          // decrypt litShard
+          // const lit = new Lit(
+          //   pCAIP10ToWallet(wallet.account as string),
+          //   litEncryptedShard.chain
+          // );
+          // const litDecryptedShard = await lit.decrypt(
+          //   litEncryptedShard.encryptedString,
+          //   litEncryptedShard.encryptedSymmetricKey
+          // );
+          // secret = await combine([
+          //   hexToBytes(pushShard),
+          //   hexToBytes(litDecryptedShard),
+          // ]);
+        }
+
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          secret
+        );
+        const dec = new TextDecoder();
+        privateKey = dec.decode(encodedPrivateKey);
+        break;
+      }
       default:
         throw new Error('Invalid Encryption Type');
     }
@@ -324,7 +371,7 @@ export const encryptV2 = async (
   data: Uint8Array,
   secret: Uint8Array,
   additionalData?: Uint8Array
-): Promise<encryptedPrivateKeyTypeV2> => {
+): Promise<encryptedPrivateKeyType> => {
   const salt = crypto.getRandomValues(new Uint8Array(KDFSaltSize));
   const nonce = crypto.getRandomValues(new Uint8Array(AESGCMNonceSize));
   const key = await hkdf(secret, salt);
@@ -350,7 +397,7 @@ export const encryptV2 = async (
 
 /** AES-GCM Decryption */
 export const decryptV2 = async (
-  encryptedData: encryptedPrivateKeyTypeV2,
+  encryptedData: encryptedPrivateKeyType,
   secret: Uint8Array,
   additionalData?: Uint8Array
 ): Promise<Uint8Array> => {
@@ -371,7 +418,7 @@ export const decryptV2 = async (
 };
 
 export const encryptPGPKey = async (
-  encryptionType: string,
+  encryptionType: `${ENCRYPTION_TYPE}`,
   privateKey: string,
   wallet: walletType,
   additionalMeta?: {
@@ -382,7 +429,7 @@ export const encryptPGPKey = async (
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
-    case Constants.ENC_TYPE_V1: {
+    case ENCRYPTION_TYPE.PGP_V1: {
       let walletPublicKey: string;
       if (wallet?.signer?.privateKey) {
         // get metamask specific encryption public key
@@ -400,7 +447,7 @@ export const encryptPGPKey = async (
       );
       break;
     }
-    case Constants.ENC_TYPE_V3: {
+    case ENCRYPTION_TYPE.PGP_V3: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
       const enableProfileMessage = 'Enable Push Profile \n' + input;
       const { verificationProof: secret } = await getEip191Signature(
@@ -413,11 +460,11 @@ export const encryptPGPKey = async (
         encodedPrivateKey,
         hexToBytes(secret || '')
       );
-      encryptedPrivateKey.version = Constants.ENC_TYPE_V3;
+      encryptedPrivateKey.version = encryptionType;
       encryptedPrivateKey.preKey = input;
       break;
     }
-    case Constants.ENC_TYPE_V4: {
+    case ENCRYPTION_TYPE.NFTPGP_V1: {
       if (!additionalMeta?.NFTPGP_V1?.password) {
         throw new Error('Password is required!');
       }
@@ -427,8 +474,51 @@ export const encryptPGPKey = async (
         encodedPrivateKey,
         hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
       );
-      encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
+      encryptedPrivateKey.version = encryptionType;
       encryptedPrivateKey.preKey = '';
+      break;
+    }
+    case ENCRYPTION_TYPE.PGP_V4: {
+      // 1. Generate secret to encrypt private key
+      const encryptionSecret = await getRandomValues(new Uint8Array(32));
+      // 2. Split secret into 3 shards ( Combining any 2 shards can decrypt the secret )
+      const PARTS = 3;
+      const QUORUM = 2;
+      const [shard1, shard2, shard3] = await split(
+        encryptionSecret,
+        PARTS,
+        QUORUM
+      );
+      // 3. Encrypt private key with secret
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        encryptionSecret
+      );
+
+      encryptedPrivateKey.version = encryptionType;
+
+      // 4. Store shard1 on Push nodes
+      encryptedPrivateKey.pushShard = bytesToHex(shard1);
+
+      // 5. Encrypt and store shard2 on lit nodes
+      // const chain = await wallet.signer?.provider?.getNetwork();
+      // const lit = new Lit(
+      //   pCAIP10ToWallet(wallet.account as string),
+      //   chain?.name || 'ethereum'
+      // );
+      // const litEncryptedShard = await lit.encrypt(bytesToHex(shard2));
+      // encryptedPrivateKey.litEncryptedShard = litEncryptedShard;
+
+      // 6. Encrypt and stpre shard3 on push nodes
+      const pushEncryptedShard = await encryptPGPKey(
+        ENCRYPTION_TYPE.PGP_V3,
+        bytesToHex(shard3),
+        wallet,
+        additionalMeta
+      );
+      encryptedPrivateKey.pushEncryptedShard = pushEncryptedShard;
       break;
     }
     default:
@@ -438,18 +528,20 @@ export const encryptPGPKey = async (
 };
 
 export const preparePGPPublicKey = async (
-  encryptionType: string,
+  encryptionType: `${ENCRYPTION_TYPE}`,
   publicKey: string,
   wallet: walletType
 ): Promise<string> => {
   let chatPublicKey: string;
   switch (encryptionType) {
-    case Constants.ENC_TYPE_V1: {
+    case ENCRYPTION_TYPE.PGP_V1:
+    case ENCRYPTION_TYPE.PGP_V4: {
       chatPublicKey = publicKey;
       break;
     }
-    case Constants.ENC_TYPE_V3:
-    case Constants.ENC_TYPE_V4: {
+    case ENCRYPTION_TYPE.PGP_V2:
+    case ENCRYPTION_TYPE.PGP_V3:
+    case ENCRYPTION_TYPE.NFTPGP_V1: {
       const verificationProof = 'DEPRECATED';
 
       /**
