@@ -7,6 +7,7 @@ import { DropdownValueType } from './DropDown';
 import { Div, Section, Span } from '../../reusables';
 import { DropDownInput } from './DropDownInput';
 import { device } from '../../../config';
+import { shortenText } from '../../../helpers';
 
 export type InputType = { value: number; range: number };
 export interface IQuantityInputProps {
@@ -16,6 +17,7 @@ export interface IQuantityInputProps {
   unit: string;
   onInputChange: any;
   dropDownValues: DropdownValueType[];
+  error?:boolean;
 }
 
 export const QuantityInput = (props: IQuantityInputProps) => {
@@ -41,6 +43,7 @@ export const QuantityInput = (props: IQuantityInputProps) => {
           <Section alignItems="baseline" width='fit-content'>
             <Input
               type="number"
+              error={props.error ||false}
               theme={theme}
               value={props.inputValue.value}
               onChange={handleChange}
@@ -51,10 +54,11 @@ export const QuantityInput = (props: IQuantityInputProps) => {
               background={theme.backgroundColor?.modalHoverBackground}
               width='fit-content'
               height='fit-content'
+              error={props.error ||false}
              
             >
               <Span>
-              {props.unit}
+              {shortenText(props.unit,15)}
               </Span>
             </Unit>
           </Section>
@@ -81,13 +85,13 @@ const LabelContainer = styled.div`
   font-size: 16px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
-const Input = styled.input<IChatTheme>`
+const Input = styled.input<IChatTheme &{error:boolean}>`
   padding: 16px;
   margin-top: 8px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
   background: ${(props) => props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
   border-width: 1px 0px 1px 1px;
   border-radius: 12px 0 0 12px;
   font-family: ${(props) => props.theme.fontFamily};
@@ -96,18 +100,19 @@ const Input = styled.input<IChatTheme>`
   font-weight: 500;
 `;
 
-const Unit = styled(Section)<IChatTheme>`
+const Unit = styled(Section)<IChatTheme&{error:boolean}>`
 span{
   font-size:14px;
   font-weight:700;
+  text-wrap: nowrap;
 }
 border-radius:0 12px 12px 0;
 
-padding:17.2px;
-border: ${(props) => props.theme.border.modalInnerComponents};
+padding:18.2px 17.2px 17.2px 17.2px;
+border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
 @media ${device.mobileL} {
 
-  padding:19.5px 5px;
+  padding:21.5px 5px 18px 5px;
   span{
     font-size: 10px;
     font-weight:400

@@ -26,6 +26,7 @@ import {
 
 import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
+import { CriteriaValidationErrorType } from '../types';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -69,12 +70,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
   }, [activeComponent]);
 
-  const [groupInputDetails, setGroupInputDetails] =
-    useState<GroupInputDetailsType>({
-      groupName: '',
-      groupDescription: '',
-      groupImage: '',
-    });
+  const useDummyGroupInfo = false;
+  const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
+    groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
+    groupDescription: useDummyGroupInfo ? 'This is dummy group description for testing' : '',
+    groupImage: useDummyGroupInfo ? ProfilePicture : ''
+  })
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -162,7 +163,8 @@ const CreateGroupDetail = ({
   const groupInfoToast = useToast();
   const { groupName, groupDescription, groupImage } = groupInputDetails;
   const theme = useContext(ThemeContext);
-
+  const [validationErrors, setValidationErrors] =
+    useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -205,21 +207,20 @@ const CreateGroupDetail = ({
     if (!skipVerify) {
       // verify name
       if (groupName.trim().length === 0) {
-        showError('Group Name is empty');
+        setValidationErrors({
+          groupName: 'Group name cannot be empty',
+        });
         return;
       }
 
       // verify description
       if (groupDescription.trim().length === 0) {
-        showError('Group Description is empty');
+        setValidationErrors({
+          groupDescription: 'Group Description is empty',
+        });
         return;
       }
 
-      // verify description
-      // if (!groupImage) {
-      //   showError("Group image can't be empty");
-      //   return;
-      // }
     }
 
     if (handleNext) {
@@ -268,31 +269,42 @@ const CreateGroupDetail = ({
           onChange={(e) => handleChange(e as unknown as Event)}
         />
       </UploadContainer>
-      <TextInput
-        labelName="Group Name"
-        charCount={30}
-        inputValue={groupName}
-        onInputChange={(e: any) =>
-          setGroupInputDetails({
-            groupDescription,
-            groupName: e.target.value,
-            groupImage,
-          })
-        }
-      />
-
-      <TextArea
-        labelName="Group Description"
-        charCount={80}
-        inputValue={groupDescription}
-        onInputChange={(e: any) =>
-          setGroupInputDetails({
-            groupDescription: e.target.value,
-            groupName,
-            groupImage,
-          })
-        }
-      />
+      <Section gap="10px" flexDirection="column" alignItems="start">
+        <TextInput
+          labelName="Group Name"
+          charCount={30}
+          inputValue={groupName}
+          onInputChange={(e: any) =>
+            setGroupInputDetails({
+              groupDescription,
+              groupName: e.target.value,
+              groupImage,
+            })
+          }
+          error={!!validationErrors?.groupName}
+        />
+        {!!validationErrors?.groupName && (
+          <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>
+        )}
+      </Section>
+      <Section gap="10px" flexDirection="column" alignItems="start">
+        <TextArea
+          labelName="Group Description"
+          charCount={80}
+          inputValue={groupDescription}
+          onInputChange={(e: any) =>
+            setGroupInputDetails({
+              groupDescription: e.target.value,
+              groupName,
+              groupImage,
+            })
+          }
+          error={!!validationErrors?.groupDescription}
+        />
+        {!!validationErrors?.groupDescription && (
+          <ErrorSpan>{validationErrors?.groupDescription}</ErrorSpan>
+        )}
+      </Section>
       <Button width="197px" onClick={verifyAndHandelNext}>
         Next
       </Button>
@@ -338,4 +350,10 @@ const UpdatedImageContainer = styled.div`
 
 const FileInput = styled.input`
   display: none;
+`;
+
+const ErrorSpan = styled(Span)`
+  font-size: 12px;
+  font-weight: 500;
+  color: #ed5858;
 `;
