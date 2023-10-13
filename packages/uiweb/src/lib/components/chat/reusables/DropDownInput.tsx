@@ -28,7 +28,6 @@ export const DropDownInput = (props: IDropDownInputProps) => {
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);
   };
-
   return (
     <ThemeProvider theme={theme}>
       <DropdownContainer >
@@ -91,7 +90,7 @@ const DropdownDiv = styled(Section)<IChatTheme & {error:boolean}>`
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
   span {
-    text-wrap: nowrap;
+    white-space: nowrap;
   }
   font-weight: 500;
 `;

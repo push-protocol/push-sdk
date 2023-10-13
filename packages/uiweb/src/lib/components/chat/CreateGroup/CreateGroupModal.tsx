@@ -70,7 +70,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
   }, [activeComponent]);
 
-  const useDummyGroupInfo = true;
+  const useDummyGroupInfo = false;
   const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
     groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
     groupDescription: useDummyGroupInfo ? 'This is dummy group description for testing' : '',
