@@ -18,6 +18,50 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Push core contract address](#push-core-contract-address)
     - [Push communicator contract address](#push-communicator-contract-address)
 - [SDK Features](#sdk-features)
+  - [PushNotification Class](#pushnotification-class)
+    - [Initialize](#initialize)
+    - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
+    - [Fetch user subscriptions](#fetch-user-subscriptions)
+    - [Subscribe to a channel](#subscribe-to-a-channel)
+    - [Unsubscribe to a channel](#unsubscribe-to-a-channel)
+    - [Channel information](#channel-information)
+    - [Search Channels](#search-channels)
+    - [Get Subscribers Of A Channel](#get-subscribers-of-a-channel)
+    - [Send a notification](#send-a-notification)
+    - [Create a channel](#create-a-channel)
+    - [Update channel information](#update-channel-information)
+    - [Verify a channel](#verify-a-channel)
+    - [Create channel Setting (WIP)](#create-channel-setting)
+    - [Get delegators information](#get-delegators-information)
+    - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
+    - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
+    - [Alias Information](#alias-information)
+    - [Stream Notifications](#stream-notifications)
+  - [PushChat Class](#pushchat-class)
+    - [Initialize](#initialize)
+    - [Fetch Info](#fetch-info)
+    - [Fetch Profile Info](#fetch-profile-info)
+    - [Update Profile Info](#update-profile-info)
+    - [Fetch Latest Chat](#fetch-latest-chat)
+    - [Fetch Chat History](#fetch-chat-history)
+    - [Send Message](#send-message)
+    - [Accept Chat Request](#accept-chat-request)
+    - [Reject Chat Request](#reject-chat-request)
+    - [Block Chat User](#block-chat-user)
+    - [Unblock Chat User](#unblock-chat-user)
+    - [Create Group](#create-group)
+    - [Fetch Group Info](#fetch-group-info)
+    - [Fetch Group Permission](#fetch-group-permissions)
+    - [Update Group](#update-group)
+    - [Add To Group](#add-to-group)
+    - [Remove From Group](#remove-from-group)
+    - [Join Group](#join-group)
+    - [Leave Group](#leave-group)
+    - [Reject Group Joining Request](#reject-group-joining-request)
+    - [Fetch Encryption Info](#fetch-encryption-info)
+    - [Update Encryption](#update-encryption)
+    - [Stream Chat Events](#stream-chat-events)
+    - [Stream Chat Ops Events](#stream-chat-ops-events)
   - [For Video](#for-video)
     - [Instance Variables](#instance-variables)
       - [peerInstance](#peerinstance)
@@ -54,51 +98,6 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetching list of user spaces](#fetching-list-of-user-spaces)
     - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
     - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
-  - [PushChat Class](#pushapi-class)
-    - [Initialize](#initialize)
-    - [Fetch Info](#fetch-info)
-    - [Fetch Profile Info](#fetch-profile-info)
-    - [Update Profile Info](#update-profile)
-    - [Fetch Latest Chat](#fetch-latest-chat)
-    - [Fetch Chat History](#fetch-chat-history)
-    - [Send Message](#send-message)
-    - [Accept Chat Request](#accept-chat-request)
-    - [Reject Chat Request](#reject-chat-request)
-    - [Block Chat User](#block-chat-user)
-    - [Unblock Chat User](#unblock-chat-user)
-    - [Create Group](#create-group)
-    - [Fetch Group Info](#fetcg-group-info)
-    - [Fetch Group Permission](#fetch-group-permissions)
-    - [Update Group Info](#update-group-info)
-    - [Add To Group](#add-to-group)
-    - [Remove From Group](#remove-from-group)
-    - [Join Group](#join-group)
-    - [Leave Group](#leave-group)
-    - [Reject Group Joining Request](#reject-group-joining-request)
-    - [Fetch Encryption Info](#fetch-encryption-info)
-    - [Update Encryption](#update-encryption)
-    - [Stream Chat Events](#stream-chat-events)
-    - [Stream Chat Ops Events](#stream-chat-ops-events)
-  - [PushNotification Class](#pushnotification-class)
-    - [Initialize](#initialize)
-    - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
-    - [Fetch user subscriptions](#fetch-user-subscriptions)
-    - [Subscribe to a channel](#subscribe-to-a-channel)
-    - [Unsubscribe to a channel](#unsubscribe-to-a-channel)
-    - [Channel information](#channel-information)
-    - [Search Channels](#search-channels)
-    - [Get Subscribers Of A Channel](#get-subscribers-of-a-channel)
-    - [Send a notification](#send-a-notification)
-    - [Create a channel](#create-a-channel)
-    - [Update channel information](#update-channel-information)
-    - [Verify a channel](#verify-a-channel)
-    - [Create channel Setting (WIP)](#create-channel-setting-(wip))
-    - [Get delegators information](#get-delegators-information)
-    - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
-    - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
-    - [Alias Information](#alias-information)
-    - [Stream Notifications](#stream-notifications)
-
 # How to use in your app?
 
 ## Installation
@@ -783,7 +782,7 @@ export interface Rules {
 
 ---
 
-### **To check user access of a token gated group**
+### **To check user access of a token gated space**
 
 ```typescript
 
@@ -2587,22 +2586,62 @@ const spaces = await PushAPI.space.trending({
 
 ```typescript
 // Initialize PushAPI class instance
-const userAlice = await PushAPI.initialize(signer);
+const userAlice = await PushAPI.initialize(signer, {
+      env: ENV.LOCAL,
+       streamOptions: {
+        listen: [STREAM.PROFILE, STREAM.ENCRYPTION, ...Object.values(STREAM)],
+        filter: {
+            channels: ['Channel1', 'Channel2'],
+            chats: ['Chat1', 'Chat2']
+        },
+        connection: {
+            auto: true,
+            retries: 3
+        },
+        raw: true,
+        enabled: true
+    },
+    });
 ```
 
-| Param                    | Type                                   | Default       | Remarks                                                                                |
-| ------------------------ | -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                 | `SignerType`                           | -             | EthersV5 or Viem Signer                                                                |
-| `options` \*             | `PushAPIInitializeProps`               | -             | Optional configuration properties for initializing the PushAPI.                        |
-| `options.env` \*         | `ENV`                                  | `staging`     | API env - 'prod', 'staging', 'dev'                                                     |
-| `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
-| `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
-| `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
-| `options.versionMeta` \* | `{ NFTPGP_V1 ?: password: string }`    | -             | Metadata related to the encryption version, including a password if needed.            |
-| `options.autoUpgrade` \* | `boolean`                              | `true`        | If `true`, upgrades encryption keys to latest encryption version                       |
-| `options.origin` \*      | `string`                               | -             | Specify origin or source while creating a Push Profile                                 |
+
+
+## Parameters
+
+| Param                                   | Type                                              | Default       | Remarks                                                                                |
+| --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
+| `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
+| `options.account` \*                    | `string`                                          | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
+| `options.version` \*                    | `string`                                          | `ENC_TYPE_V3` | The encryption version to use for the PushAPI.                                         |
+| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.autoUpgrade` \*                | `boolean`                                         | `true`        | If `true`, upgrades encryption keys to the latest encryption version.                 |
+| `options.origin` \*                     | `string`                                          | -             | Specify origin or source while creating a Push Profile.                                |
+| `options.streamOptions` \*              | `PushStreamInitializeProps`                       | -             | Configuration options for the stream.                                                  |
+| `options.streamOptions.listen` \*       | `STREAM[]`                                        | -             | Specifies which streams to listen to.                                                  |
+| `options.streamOptions.filter` \*       | `{ channels?: string[]; chats?: string[]; }`      | -             | Specifies which channels or chats to filter for.                                       |
+| `options.streamOptions.connection` \*   | `{ auto?: boolean; retries?: number; }`           | -             | Connection settings, including auto-connect and number of retries.                     |
+| `options.streamOptions.raw` \*          | `boolean`                                         | -             | If set to `true`, will provide raw stream data.                                       |
+| `options.streamOptions.enabled` \*      | `boolean`                                         | -             | Specifies if the stream is enabled or not.                                             |
+
+
+
 
 \* - Optional
+
+## STREAM Options
+
+| Option                | Value                  |
+|-----------------------|------------------------|
+| `PROFILE`             | `STREAM.PROFILE`       |
+| `ENCRYPTION`          | `STREAM.ENCRYPTION`    |
+| `NOTIF`               | `STREAM.NOTIF`         |
+| `NOTIF_OPS`           | `STREAM.NOTIF_OPS`     |
+| `CHAT`                | `STREAM.CHAT`          |
+| `CHAT_OPS`            | `STREAM.CHAT_OPS`      |
+
 
 ---
 
@@ -5088,6 +5127,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ---
 <details>
   <summary><b>Expected response (Chat Message Stream)</b></summary>
+  
 ```tsx
 {
     "event": "chat.message",
@@ -5121,6 +5161,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 }
 ```
 </details>
+
 ---
 
 <details>
@@ -5162,7 +5203,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ---
 
 <details>
-  <summary><b>Expected response (Greoup Chat Message)</b></summary>
+  <summary><b>Expected response (Group Chat Message)</b></summary>
 
   ```tsx
   {
@@ -5465,22 +5506,50 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 
 ```typescript
 // Initialize PushAPI class instance
-const userAlice = await PushAPI.initialize(signer);
+const userAlice = await PushAPI.initialize(signer, {
+      env: ENV.LOCAL,
+      streamOptions: { raw: true },
+    });
 ```
 
-| Param                    | Type                                   | Default       | Remarks                                                                                |
-| ------------------------ | -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                 | `SignerType`                           | -             | EthersV5 or Viem Signer                                                                |
-| `options` \*             | `PushAPIInitializeProps`               | -             | Optional configuration properties for initializing the PushAPI.                        |
-| `options.env` \*         | `ENV`                                  | `staging`     | API env - 'prod', 'staging', 'dev'                                                     |
-| `options.progressHook`\* | `(progress: ProgressHookType) => void` | -             | A callback function to receive progress updates during initialization.                 |
-| `options.account` \*     | `string`                               | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
-| `options.version` \*     | `string`                               | `ENC_TYPE_V3` | The encryption version to use for the PushAPI                                          |
-| `options.versionMeta` \* | `{ NFTPGP_V1 ?: password: string }`    | -             | Metadata related to the encryption version, including a password if needed.            |
-| `options.autoUpgrade` \* | `boolean`                              | `true`        | If `true`, upgrades encryption keys to latest encryption version                       |
-| `options.origin` \*      | `string`                               | -             | Specify origin or source while creating a Push Profile                                 |
+
+
+## Parameters
+
+| Param                                   | Type                                              | Default       | Remarks                                                                                |
+| --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
+| `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
+| `options.account` \*                    | `string`                                          | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
+| `options.version` \*                    | `string`                                          | `ENC_TYPE_V3` | The encryption version to use for the PushAPI.                                         |
+| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.autoUpgrade` \*                | `boolean`                                         | `true`        | If `true`, upgrades encryption keys to the latest encryption version.                 |
+| `options.origin` \*                     | `string`                                          | -             | Specify origin or source while creating a Push Profile.                                |
+| `options.streamOptions` \*              | `PushStreamInitializeProps`                       | -             | Configuration options for the stream.                                                  |
+| `options.streamOptions.listen` \*       | `STREAM[]`                                        | -             | Specifies which streams to listen to.                                                  |
+| `options.streamOptions.filter` \*       | `{ channels?: string[]; chats?: string[]; }`      | -             | Specifies which channels or chats to filter for.                                       |
+| `options.streamOptions.connection` \*   | `{ auto?: boolean; retries?: number; }`           | -             | Connection settings, including auto-connect and number of retries.                     |
+| `options.streamOptions.raw` \*          | `boolean`                                         | -             | If set to `true`, will provide raw stream data.                                       |
+| `options.streamOptions.enabled` \*      | `boolean`                                         | -             | Specifies if the stream is enabled or not.                                             |
+
+
+
 
 \* - Optional
+
+## STREAM Options
+
+| Option                | Value                  |
+|-----------------------|------------------------|
+| `PROFILE`             | `STREAM.PROFILE`       |
+| `ENCRYPTION`          | `STREAM.ENCRYPTION`    |
+| `NOTIF`               | `STREAM.NOTIF`         |
+| `NOTIF_OPS`           | `STREAM.NOTIF_OPS`     |
+| `CHAT`                | `STREAM.CHAT`          |
+| `CHAT_OPS`            | `STREAM.CHAT_OPS`      |
+
 
 ---
 
@@ -6328,7 +6397,7 @@ const searchResult = await userAlice.channel.search("push")
 
 ---
 
-### **Get a channel's subscribers**
+### **Get Subscribers Of A Channel**
 
 ```tsx
 // fetches subscribers of a channel
@@ -6451,7 +6520,7 @@ const createChannelRes = await userAlice.channel.create({name: channelName, desc
 
 ---
 
-### **Update a channel's information**
+### **Update channel information**
 
 ```tsx
 // updates channel info
@@ -6509,7 +6578,7 @@ const verifyChannelRes = await userAlice.channel.verify(channelToBeVerified)
 
 ---
 
-### **Create channel Setting (WIP)**
+### **Create channel Setting**
 
 ```tsx
 // creates channel settings
@@ -6571,7 +6640,7 @@ const delegatorsInfo = userAlice.channel.delegate.get()
 
 ---
 
-### **Add delegator to a channel/alias**
+### **Add delegator to a channel or alias**
 
 ```tsx
 // adds a delegate
@@ -6597,7 +6666,7 @@ const addDelegatorRes = userAlice.channel.delegate.add(delegatorAddressInCAIP)
 
 ---
 
-### **Remove delegator from a channel/alias**
+### **Remove delegator from a channel or alias**
 
 ```tsx
 // removes a delegate
