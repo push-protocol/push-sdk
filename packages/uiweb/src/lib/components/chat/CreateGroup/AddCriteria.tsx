@@ -1,5 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+import { MdError } from 'react-icons/md';
+
 import {
   Button,
   DropDownInput,
@@ -32,6 +35,8 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
+import useToast from '../reusables/NewToast';
+import { tokenFetchHandler } from '../helpers/tokenHelpers';
 import {
   CriteriaValidationErrorType,
   Data,
@@ -40,7 +45,7 @@ import {
   Rule,
 } from '../types/tokenGatedGroupCreationType';
 import { validationCriteria } from '../helpers';
-import styled from 'styled-components';
+
 
 const AddCriteria = ({
   handlePrevious,
@@ -65,6 +70,8 @@ const AddCriteria = ({
   const [url, setUrl] = useState<string>('');
   const [guildId, setGuildId] = useState<string>('');
   const [specificRoleId, setSpecificRoleId] = useState<string>('');
+  const [unit, setUnit] = useState('TOKEN');
+  const [decimals, setDecimals] = useState(18);
 
   const [quantity, setQuantity] = useState<{ value: number; range: number }>({
     value: 0,
@@ -72,6 +79,7 @@ const AddCriteria = ({
   });
   const { env } = useChatData();
   const theme = useContext(ThemeContext);
+  const groupInfoToast = useToast();
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -160,23 +168,15 @@ const AddCriteria = ({
     },
   };
 
-  const tokenCategoryValues = [
-    {
-      id: 0,
+  const dropdownSubCategoryValues: DropdownSubCategoryValuesType = {
+    ERC20: {
       value: SUBCATEGORY.HOLDER,
       title: 'Holder',
-      function: () => setSelectedSubCategoryValue(0),
     },
-    {
-      id: 1,
+    ERC721:{
       value: SUBCATEGORY.OWENER,
       title: 'Owner',
-      function: () => setSelectedSubCategoryValue(1),
     },
-  ];
-  const dropdownSubCategoryValues: DropdownSubCategoryValuesType = {
-    ERC20: tokenCategoryValues,
-    ERC721: tokenCategoryValues,
     INVITE: {
       value: SUBCATEGORY.DEFAULT,
       title: 'Default',
@@ -308,7 +308,7 @@ const AddCriteria = ({
     let subCategory = 'DEFAULT';
     if (_type === 'PUSH') {
       if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-        subCategory = tokenCategoryValues[selectedSubCategoryValue].value;
+        subCategory = category === CATEGORY.ERC20 ? SUBCATEGORY.HOLDER :  SUBCATEGORY.OWENER
       } else if (category === CATEGORY.CustomEndpoint) {
         subCategory = 'GET';
       }
@@ -323,7 +323,8 @@ const AddCriteria = ({
             contract: `${selectedChain}:${contract}`,
             amount: quantity.value,
             comparison: dropdownQuantityRangeValues[quantity.range].value,
-            decimals: 18,
+            decimals: category === CATEGORY.ERC20 ? decimals : undefined,
+            token: unit,
           };
         } else if (category === CATEGORY.INVITE) {
           const _inviteRoles = [];
@@ -364,7 +365,11 @@ const AddCriteria = ({
     if (Object.keys(errors).length) {
       setValidationErrors(errors);
     } else {
-      criteriaState.addNewRule(rule);
+      const isSuccess = criteriaState.addNewRule(rule);
+      if (!isSuccess) {
+        showError('Selected Criteria was already added');
+        return;
+      }
       if (handlePrevious) {
         handlePrevious();
       }
@@ -395,12 +400,16 @@ const AddCriteria = ({
           oldValue.category === CATEGORY.ERC20 ||
           oldValue.category === CATEGORY.ERC721
         ) {
-          setSelectedSubCategoryValue(
-            tokenCategoryValues.findIndex(
-              (obj) => obj.value === oldValue.subcategory
-            )
-          );
+          
+          if(pushData.token){
+            setUnit(pushData.token)
+          }
 
+          if (pushData.decimals) {
+            setDecimals(decimals);
+          }
+
+          // TODO: make helper function for this
           const contractAndChain: string[] = (
             pushData.contract || 'eip155:1:0x'
           ).split(':');
@@ -438,6 +447,53 @@ const AddCriteria = ({
       );
     }
   }, []);
+
+  const getSeletedType = () => {
+    return dropdownTypeValues[selectedTypeValue].value || 'PUSH';
+  };
+
+  const getSelectedCategory = () => {
+    const category: string =
+      (dropdownCategoryValues['PUSH'] as DropdownValueType[])[
+        selectedCategoryValue
+      ].value || CATEGORY.ERC20;
+
+    return category;
+  };
+
+  const getSelectedChain = () => {
+    return dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+  };
+
+  // Fetch the contract info
+  useEffect(() => {
+    // TODO: optimize to reduce this call call when user is typing
+    (async()=>{
+      setValidationErrors(prev => ({...prev, tokenError:undefined})) 
+
+      const _type = getSeletedType();
+      const _category: string = getSelectedCategory();
+      const _chainInfo = getSelectedChain();
+
+      await tokenFetchHandler(
+        contract,
+        _type,
+        _category,
+        _chainInfo,
+        setUnit,
+        setDecimals
+      );
+    })();
+  }, [contract, selectedCategoryValue, selectedChainValue]);
+
+  const showError = (errorMessage: string) => {
+    groupInfoToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  };
 
   return (
     <Section
@@ -504,20 +560,32 @@ const AddCriteria = ({
             selectedValue={selectedChainValue}
             dropdownValues={dropdownChainsValues}
           />
-          <TextInput
-            labelName="Contract"
-            inputValue={contract}
-            onInputChange={(e: any) => setContract(e.target.value)}
-            placeholder="e.g. 0x123..."
-          />
+          <Section gap="10px" flexDirection="column" alignItems="start">
+            <TextInput
+              labelName="Contract"
+              inputValue={contract}
+              onInputChange={(e: any) => setContract(e.target.value)}
+              placeholder="e.g. 0x123..."
+              error={!!validationErrors?.tokenError}
+            />
+            {!!validationErrors?.tokenError && (
+              <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>
+            )}
+          </Section>
+          <Section gap="10px" flexDirection="column" alignItems="start">
           <QuantityInput
             dropDownValues={dropdownQuantityRangeValues}
             labelName="Quantity"
             inputValue={quantity}
+            error={!!validationErrors?.tokenAmount}
             onInputChange={onQuantityChange}
             placeholder="e.g. 1.45678"
-            unit={'TOKEN'}
+            unit={unit}
           />
+          {!!validationErrors?.tokenAmount && (
+              <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>
+            )}
+          </Section>
         </>
       )}
 
@@ -574,9 +642,7 @@ const AddCriteria = ({
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
               totalWidth="410px"
-              selectedValue={
-                guildComparison
-              }
+              selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
                 setGuildComparison(newEl);

@@ -5,6 +5,7 @@ export interface PushData {
   inviterRoles?: string[];
   comparison?:string;
   url?: string;
+  token?:string;
 }
 
 export interface GuildData {
@@ -62,7 +63,7 @@ export interface CriteriaStateType {
   selectedRules: Rule[];
   setSelectedRule: React.Dispatch<React.SetStateAction<Rule[]>>;
   addNewCondtion: () => void;
-  addNewRule: (newRule: Rule) => void;
+  addNewRule: (newRule: Rule) => boolean;
   deleteRule: (idx: number) => void;
   deleteEntryOptionsDataArray: (idx: number) => void;
   selectEntryOptionsDataArrayForUpdate: (idx: number) => void;
@@ -76,13 +77,16 @@ export interface CriteriaStateType {
 
 
 export type CriteriaValidationErrorType = {
-
+  //guild error
   guildId?:string,
   guildComparison?:string;
   guildRole?:string;
   groupName?:string;
   groupDescription?:string;
 
+  //token error
+  tokenError?:string
+  tokenAmount?:string;
   //custom endpoint errors
   url?:string;
 }

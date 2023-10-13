@@ -8,7 +8,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
 import { useClickAway } from '../../../hooks';
-import { CATEGORY, CRITERIA_TYPE, CriteriaType, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+import { CATEGORY, CRITERIA_TYPE, CriteriaType, PushData, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
 
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
@@ -94,11 +94,23 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
     return (GUILD_COMPARISON_OPTIONS.find(option => option.value === criteria?.data?.['comparison']))?.heading;
  
   }
+
+  const getTokenSymbol = (conditionData:ConditionData)=>{
+    if(conditionData.data){
+      const data:PushData = conditionData.data;
+      if(data.token){
+        return shortenText(data.token, 15)
+      }
+    }
+
+    return conditionData.category
+  }
+
   return (
     <Section gap="8px">
       <Span
         alignSelf="center"
-        background="#657795"
+        background={theme.backgroundColor?.criteriaLabelBackground}
         borderRadius="4px"
         fontSize="10px"
         color={theme.textColor?.buttonText}
@@ -112,7 +124,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             {getTokenNftComparisionLabel()}{' '}
           </Span>
           {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {criteria.category}
+          {criteria?.data?.['amount']} {getTokenSymbol(criteria)}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (
