@@ -5127,6 +5127,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ---
 <details>
   <summary><b>Expected response (Chat Message Stream)</b></summary>
+  
 ```tsx
 {
     "event": "chat.message",
@@ -5160,6 +5161,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 }
 ```
 </details>
+
 ---
 
 <details>
