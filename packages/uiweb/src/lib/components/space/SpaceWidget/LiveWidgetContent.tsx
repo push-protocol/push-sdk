@@ -68,7 +68,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  // const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -381,7 +381,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                 room={livekitRoom}
               >
                 <RoomAudioRenderer />
-                <TrackToggleComp source={Track.Source.Microphone} />
+                {/* <TrackToggleComp source={Track.Source.Microphone} /> */}
                 {isHost || isSpeaker
                   ?
                   <TrackToggleComp showIcon={false} source={Track.Source.Microphone} >
@@ -462,13 +462,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Item> */}
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {/* {
+                {
                   isHost && numberOfRequests ?
                     <RequestsCount>
                       {numberOfRequests}
                     </RequestsCount>
                     : null
-                } */}
+                }
                 <Image
                   width={'21px'}
                   height={'24px'}
