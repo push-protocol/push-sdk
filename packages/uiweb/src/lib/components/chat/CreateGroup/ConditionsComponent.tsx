@@ -110,7 +110,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
     <Section gap="8px">
       <Span
         alignSelf="center"
-        background="#657795"
+        background={theme.backgroundColor?.criteriaLabelBackground}
         borderRadius="4px"
         fontSize="10px"
         color={theme.textColor?.buttonText}

@@ -1,5 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 
+import styled from 'styled-components';
+import { MdError } from 'react-icons/md';
+
 import {
   Button,
   DropDownInput,
@@ -32,10 +35,8 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import { MdError } from 'react-icons/md';
 import useToast from '../reusables/NewToast';
 import { tokenFetchHandler } from '../helpers/tokenHelpers';
-
 import {
   CriteriaValidationErrorType,
   Data,
@@ -44,7 +45,7 @@ import {
   Rule,
 } from '../types/tokenGatedGroupCreationType';
 import { validationCriteria } from '../helpers';
-import styled from 'styled-components';
+
 
 const AddCriteria = ({
   handlePrevious,
@@ -338,14 +339,11 @@ const AddCriteria = ({
             inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN'],
           };
         } else {
-          // CATEGORY.CustomEndpoint
-          // TODO: validate url
           return {
             url: url,
           };
         }
       } else {
-        // GUILD type
         return {
           id: guildId,
           comparison: guildComparison === 'specific' ? '' : guildComparison,
@@ -441,7 +439,7 @@ const AddCriteria = ({
         // guild condition
         setGuildId((oldValue.data as GuildData).id);
         setSpecificRoleId((oldValue.data as GuildData).role);
-        setGuildComparison((oldValue.data as GuildData).comparison);
+        setGuildComparison(((oldValue.data as GuildData).comparison) || GUILD_COMPARISON_OPTIONS[2].value);
       }
 
       setSelectedTypeValue(
@@ -592,12 +590,18 @@ const AddCriteria = ({
       )}
 
       {checkIfCustomEndpoint() && (
+         <Section gap="10px" flexDirection="column" alignItems="start">
         <TextInput
           labelName="URL"
           inputValue={url}
           onInputChange={(e: any) => setUrl(e.target.value)}
           placeholder="e.g. abc.com"
+          error={!!validationErrors?.url}
         />
+           {!!validationErrors?.url && (
+              <ErrorSpan>{validationErrors?.url}</ErrorSpan>
+            )}
+        </Section>
       )}
       {checkIfPushInvite() && (
         <Section flexDirection="column" gap="10px">

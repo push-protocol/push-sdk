@@ -87,4 +87,6 @@ export type CriteriaValidationErrorType = {
   //token error
   tokenError?:string
   tokenAmount?:string;
+  //custom endpoint errors
+  url?:string;
 }
