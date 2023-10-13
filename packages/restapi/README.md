@@ -18,6 +18,50 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Push core contract address](#push-core-contract-address)
     - [Push communicator contract address](#push-communicator-contract-address)
 - [SDK Features](#sdk-features)
+  - [PushChat Class](#pushchat-class)
+    - [Initialize](#initialize)
+    - [Fetch Info](#fetch-info)
+    - [Fetch Profile Info](#fetch-profile-info)
+    - [Update Profile Info](#update-profile-info)
+    - [Fetch Latest Chat](#fetch-latest-chat)
+    - [Fetch Chat History](#fetch-chat-history)
+    - [Send Message](#send-message)
+    - [Accept Chat Request](#accept-chat-request)
+    - [Reject Chat Request](#reject-chat-request)
+    - [Block Chat User](#block-chat-user)
+    - [Unblock Chat User](#unblock-chat-user)
+    - [Create Group](#create-group)
+    - [Fetch Group Info](#fetch-group-info)
+    - [Fetch Group Permission](#fetch-group-permissions)
+    - [Update Group](#update-group)
+    - [Add To Group](#add-to-group)
+    - [Remove From Group](#remove-from-group)
+    - [Join Group](#join-group)
+    - [Leave Group](#leave-group)
+    - [Reject Group Joining Request](#reject-group-joining-request)
+    - [Fetch Encryption Info](#fetch-encryption-info)
+    - [Update Encryption](#update-encryption)
+    - [Stream Chat Events](#stream-chat-events)
+    - [Stream Chat Ops Events](#stream-chat-ops-events)
+  - [PushNotification Class](#pushnotification-class)
+    - [Initialize](#initialize)
+    - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
+    - [Fetch user subscriptions](#fetch-user-subscriptions)
+    - [Subscribe to a channel](#subscribe-to-a-channel)
+    - [Unsubscribe to a channel](#unsubscribe-to-a-channel)
+    - [Channel information](#channel-information)
+    - [Search Channels](#search-channels)
+    - [Get Subscribers Of A Channel](#get-subscribers-of-a-channel)
+    - [Send a notification](#send-a-notification)
+    - [Create a channel](#create-a-channel)
+    - [Update channel information](#update-channel-information)
+    - [Verify a channel](#verify-a-channel)
+    - [Create channel Setting (WIP)](#create-channel-setting)
+    - [Get delegators information](#get-delegators-information)
+    - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
+    - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
+    - [Alias Information](#alias-information)
+    - [Stream Notifications](#stream-notifications)
   - [For Video](#for-video)
     - [Instance Variables](#instance-variables)
       - [peerInstance](#peerinstance)
@@ -54,51 +98,6 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Fetching list of user spaces](#fetching-list-of-user-spaces)
     - [Fetching list of user space requests](#fetching-list-of-user-space-requests)
     - [Fetching list of trending spaces](#fetching-list-of-trending-spaces)
-  - [PushChat Class](#pushapi-class)
-    - [Initialize](#initialize)
-    - [Fetch Info](#fetch-info)
-    - [Fetch Profile Info](#fetch-profile-info)
-    - [Update Profile Info](#update-profile)
-    - [Fetch Latest Chat](#fetch-latest-chat)
-    - [Fetch Chat History](#fetch-chat-history)
-    - [Send Message](#send-message)
-    - [Accept Chat Request](#accept-chat-request)
-    - [Reject Chat Request](#reject-chat-request)
-    - [Block Chat User](#block-chat-user)
-    - [Unblock Chat User](#unblock-chat-user)
-    - [Create Group](#create-group)
-    - [Fetch Group Info](#fetcg-group-info)
-    - [Fetch Group Permission](#fetch-group-permissions)
-    - [Update Group Info](#update-group-info)
-    - [Add To Group](#add-to-group)
-    - [Remove From Group](#remove-from-group)
-    - [Join Group](#join-group)
-    - [Leave Group](#leave-group)
-    - [Reject Group Joining Request](#reject-group-joining-request)
-    - [Fetch Encryption Info](#fetch-encryption-info)
-    - [Update Encryption](#update-encryption)
-    - [Stream Chat Events](#stream-chat-events)
-    - [Stream Chat Ops Events](#stream-chat-ops-events)
-  - [PushNotification Class](#pushnotification-class)
-    - [Initialize](#initialize)
-    - [Fetch Inbox Or Spam notifications](#fetch-inbox-or-spam-notifications)
-    - [Fetch user subscriptions](#fetch-user-subscriptions)
-    - [Subscribe to a channel](#subscribe-to-a-channel)
-    - [Unsubscribe to a channel](#unsubscribe-to-a-channel)
-    - [Channel information](#channel-information)
-    - [Search Channels](#search-channels)
-    - [Get Subscribers Of A Channel](#get-subscribers-of-a-channel)
-    - [Send a notification](#send-a-notification)
-    - [Create a channel](#create-a-channel)
-    - [Update channel information](#update-channel-information)
-    - [Verify a channel](#verify-a-channel)
-    - [Create channel Setting (WIP)](#create-channel-setting-(wip))
-    - [Get delegators information](#get-delegators-information)
-    - [Add delegator to a channel or alias](#add-delegator-to-a-channel-or-alias)
-    - [Remove delegator from a channel or alias](#remove-delegator-from-a-channel-or-alias)
-    - [Alias Information](#alias-information)
-    - [Stream Notifications](#stream-notifications)
-
 # How to use in your app?
 
 ## Installation
@@ -783,7 +782,7 @@ export interface Rules {
 
 ---
 
-### **To check user access of a token gated group**
+### **To check user access of a token gated space**
 
 ```typescript
 
@@ -6328,7 +6327,7 @@ const searchResult = await userAlice.channel.search("push")
 
 ---
 
-### **Get a channel's subscribers**
+### **Get Subscribers Of A Channel**
 
 ```tsx
 // fetches subscribers of a channel
@@ -6451,7 +6450,7 @@ const createChannelRes = await userAlice.channel.create({name: channelName, desc
 
 ---
 
-### **Update a channel's information**
+### **Update channel information**
 
 ```tsx
 // updates channel info
@@ -6509,7 +6508,7 @@ const verifyChannelRes = await userAlice.channel.verify(channelToBeVerified)
 
 ---
 
-### **Create channel Setting (WIP)**
+### **Create channel Setting**
 
 ```tsx
 // creates channel settings
@@ -6571,7 +6570,7 @@ const delegatorsInfo = userAlice.channel.delegate.get()
 
 ---
 
-### **Add delegator to a channel/alias**
+### **Add delegator to a channel or alias**
 
 ```tsx
 // adds a delegate
@@ -6597,7 +6596,7 @@ const addDelegatorRes = userAlice.channel.delegate.add(delegatorAddressInCAIP)
 
 ---
 
-### **Remove delegator from a channel/alias**
+### **Remove delegator from a channel or alias**
 
 ```tsx
 // removes a delegate
