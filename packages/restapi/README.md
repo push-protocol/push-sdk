@@ -2588,7 +2588,19 @@ const spaces = await PushAPI.space.trending({
 // Initialize PushAPI class instance
 const userAlice = await PushAPI.initialize(signer, {
       env: ENV.LOCAL,
-      streamOptions: { raw: true },
+       streamOptions: {
+        listen: [STREAM.PROFILE, STREAM.ENCRYPTION, ...Object.values(STREAM)],
+        filter: {
+            channels: ['Channel1', 'Channel2'],
+            chats: ['Chat1', 'Chat2']
+        },
+        connection: {
+            auto: true,
+            retries: 3
+        },
+        raw: true,
+        enabled: true
+    },
     });
 ```
 
