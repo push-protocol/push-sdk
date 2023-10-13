@@ -34,7 +34,7 @@ import {
 } from '../types';
 import { MdError } from 'react-icons/md';
 import useToast from '../reusables/NewToast';
-import { tokenFetchHandler, truncateTokenSymbol } from '../helpers/tokenHelpers';
+import { tokenFetchHandler } from '../helpers/tokenHelpers';
 
 import {
   CriteriaValidationErrorType,
@@ -582,7 +582,7 @@ const AddCriteria = ({
             error={!!validationErrors?.tokenAmount}
             onInputChange={onQuantityChange}
             placeholder="e.g. 1.45678"
-            unit={truncateTokenSymbol(unit,16)}
+            unit={unit}
           />
           {!!validationErrors?.tokenAmount && (
               <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>

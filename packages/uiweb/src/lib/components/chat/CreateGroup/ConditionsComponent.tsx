@@ -14,7 +14,6 @@ import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { shortenText } from '../../../helpers';
 import { GUILD_COMPARISON_OPTIONS } from '../constants';
-import { truncateTokenSymbol } from '../helpers/tokenHelpers';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -100,7 +99,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
     if(conditionData.data){
       const data:PushData = conditionData.data;
       if(data.token){
-        return truncateTokenSymbol(data.token, 25)
+        return shortenText(data.token, 15)
       }
     }
 
@@ -125,7 +124,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             {getTokenNftComparisionLabel()}{' '}
           </Span>
           {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {shortenText(getTokenSymbol(criteria)||'',20)}
+          {criteria?.data?.['amount']} {getTokenSymbol(criteria)}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (
