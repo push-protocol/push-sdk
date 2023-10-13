@@ -230,7 +230,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
-      console.log('inside condition')
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
