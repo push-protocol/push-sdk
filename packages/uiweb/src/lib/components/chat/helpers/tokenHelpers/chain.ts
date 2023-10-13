@@ -1,3 +1,5 @@
+import { InfuraAPIKey } from "packages/uiweb/src/lib/config";
+
 const getInfuraUrlFor = (network: string, key: string) =>
   `https://${network}.infura.io/v3/${key}`;
 
@@ -6,8 +8,8 @@ const getRpcURL = (network: string, key: string) => {
 };
 
 export const getChainRPC = (chainId: number): string => {
-  // TODO: use key as secrect
-  const key = "183499af0dd447c782ffe67f3ef7fa11";
+  const key = InfuraAPIKey; 
+  
   switch (chainId) {
     case 1:
       return getRpcURL("mainnet", key);
