@@ -380,25 +380,26 @@ console.log(checkIfMember(chatFeed, account!))
     }
   };
   
-  return !Object.keys(chatFeed || {}).length ? (
-    <>
-      {!pgpPrivateKey && (isConnected || !!signer) && (
-        <TypebarSection
-          width="100%"
-          overflow="hidden"
-          borderRadius="13px"
-          position="static"
-          padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-          background={`${theme.backgroundColor?.messageInputBackground}`}
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <ConnectButtonSection autoConnect={autoConnect}/>
-        </TypebarSection>
-      )}
-    </>
-  ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
-    Object.keys(chatFeed || {}).length ? (
+  // return !Object.keys(chatFeed || {}).length ? (
+  //   <>
+  //     {!pgpPrivateKey && (isConnected || !!signer) && (
+  //       <TypebarSection
+  //         width="100%"
+  //         overflow="hidden"
+  //         borderRadius="13px"
+  //         position="static"
+  //         padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+  //         background={`${theme.backgroundColor?.messageInputBackground}`}
+  //         alignItems="center"
+  //         justifyContent="space-between"
+  //       >
+  //         <ConnectButtonSection autoConnect={autoConnect}/>
+  //       </TypebarSection>
+  //     )}
+  //   </>
+  // ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
+  //   Object.keys(chatFeed || {}).length ? (
+    return (
     <TypebarSection
       width="100%"
       overflow="hidden"
@@ -410,9 +411,9 @@ console.log(checkIfMember(chatFeed, account!))
       alignItems="center"
       justifyContent="space-between"
     >
-      {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
-        <>
-        {(isJoinGroup() || isNotVerified()) && (
+      {/* {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
+        <> */}
+        {/* {(isJoinGroup() || isNotVerified()) && ( */}
           <Section
             width="100%"
             justifyContent="space-between"
@@ -425,8 +426,8 @@ console.log(checkIfMember(chatFeed, account!))
               fontWeight="500"
               textAlign="start"
             >
-              {isJoinGroup() && 'Click on the button to join the group'}
-              {isNotVerified() && (
+              {/* {isJoinGroup() && 'Click on the button to join the group'}
+              {isNotVerified() && ( */}
                 <>
                   Sending messages requires{' '}
                   <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
@@ -441,7 +442,7 @@ console.log(checkIfMember(chatFeed, account!))
                     Learn More <OpenLink />
                   </Link>
                 </>
-              )}
+              {/* )} */}
             </Span>
             <ConnectWrapper>
               <Connect
@@ -449,7 +450,7 @@ console.log(checkIfMember(chatFeed, account!))
                   isJoinGroup() ? await handleJoinGroup() : await checkVerification()
                 }
               >
-                {isJoinGroup() &&
+                {/* {isJoinGroup() &&
                 <>
                  {approveLoading ? (
                   <Spinner color="#fff" size="24" />
@@ -462,15 +463,15 @@ console.log(checkIfMember(chatFeed, account!))
                 <>
                   {accessLoading ? (
                     <Spinner color="#fff" size="24" />
-                  ) : (
+                  ) : ( */}
                     'Verify Access'
-                  )}
+                  {/* )}
                   </>
-                  }
+                  } */}
               </Connect>
             </ConnectWrapper>
           </Section>
-        )}
+        {/* )} */}
         {(!!pgpPrivateKey && !verificationSuccessfull) && (
           <Modal width="439px">
             <Section
@@ -547,9 +548,9 @@ console.log(checkIfMember(chatFeed, account!))
               </Section>
             </Section>
           </Modal>
-        )}
-      </>
-      ) : null}
+         )}
+      {/* </>
+      ) : null} */}
       {!!pgpPrivateKey &&
         (((isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
@@ -663,10 +664,10 @@ console.log(checkIfMember(chatFeed, account!))
             </SendSection>
           </>
         )}
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </TypebarSection>
-  ) : (
-    <></>
+  // ) : (
+    // <></>
   );
 };
 
