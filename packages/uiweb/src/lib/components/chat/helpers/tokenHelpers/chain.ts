@@ -1,4 +1,4 @@
-import { InfuraAPIKey } from "packages/uiweb/src/lib/config";
+import { InfuraAPIKey } from "../../../../config";
 
 const getInfuraUrlFor = (network: string, key: string) =>
   `https://${network}.infura.io/v3/${key}`;
