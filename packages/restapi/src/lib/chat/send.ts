@@ -13,16 +13,8 @@ import {
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { getGroup } from './getGroup';
-import {
-  MessageObj,
-  REACTION_SYMBOL,
-  ReactionMessage,
-} from '../types/messageTypes';
-import {
-  messageObjSchema,
-  metaMessageObjSchema,
-  reationMessageObjSchema,
-} from '../validations/messageObject';
+import { MessageObj } from '../types/messageTypes';
+import { validateMessageObj } from '../validations/messageObject';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -63,13 +55,17 @@ export const sendCore = async (
         })
       : null;
 
-    // OVERRIDE CONTENT FOR REACTION MESSAGE
-    if (messageType === MessageType.REACTION) {
-      messageObj.content =
-        REACTION_SYMBOL[(messageObj as Omit<ReactionMessage, 'type'>).action];
+    // Not supported by legacy sdk versions, need to override messageContent to avoid parsing errors on legacy sdk versions
+    let messageContent: string;
+    if (
+      messageType === MessageType.REPLY ||
+      messageType === MessageType.COMPOSITE
+    ) {
+      messageContent =
+        'MessageType Not Supported by this sdk version. Plz upgrade !!!';
+    } else {
+      messageContent = messageObj.content as string;
     }
-
-    const messageContent = messageObj.content; // provide backward compatibility & override deprecated field
 
     const conversationResponse = await conversationHash({
       conversationId: receiver,
@@ -148,36 +144,7 @@ const validateOptions = async (options: ComputedOptionsType) => {
     }
   }
 
-  if (
-    messageType === MessageType.TEXT ||
-    messageType === MessageType.IMAGE ||
-    messageType === MessageType.FILE ||
-    messageType === MessageType.MEDIA_EMBED ||
-    messageType === MessageType.GIF
-  ) {
-    const { error } = messageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  }
-
-  if (messageType === MessageType.META) {
-    const { error } = metaMessageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  } else if (messageType === MessageType.REACTION) {
-    const { error } = reationMessageObjSchema.validate(messageObj);
-    if (error) {
-      throw new Error(
-        `Unable to parse this messageType. Please ensure 'messageObj' is properly defined.`
-      );
-    }
-  }
+  validateMessageObj(messageObj, messageType);
 };
 
 const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {
@@ -211,6 +178,36 @@ const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {
     // Remove the 'type' property from messageObj
     const { type, ...rest } = messageObj;
     messageObj = rest;
+  }
+
+  // Parse Reply Message
+  if (messageType === MessageType.REPLY) {
+    if (typeof messageObj.content === 'object') {
+      const { type, ...rest } = messageObj.content;
+      messageObj.content = {
+        messageType: type,
+        messageObj: rest,
+      };
+    } else {
+      throw new Error('Options.message is not properly defined for Reply');
+    }
+  }
+
+  // Parse Composite Message
+  if (messageType === MessageType.COMPOSITE) {
+    if (messageObj.content instanceof Array) {
+      messageObj.content = messageObj.content.map(
+        (obj: { type: string; content: string }) => {
+          const { type, ...rest } = obj;
+          return {
+            messageType: type,
+            messageObj: rest,
+          };
+        }
+      );
+    } else {
+      throw new Error('Options.message is not properly defined for Composite');
+    }
   }
 
   const account = options.account !== undefined ? options.account : null;
