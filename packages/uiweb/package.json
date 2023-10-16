@@ -33,6 +33,6 @@
     "@pushprotocol/restapi": "^1.2.15",
     "@pushprotocol/socket": "^0.5.0",
     "react": ">=16.8.0",
-    "styled-components": "^5.3.5"
+    "styled-components": "^6.0.8"
   }
 }
