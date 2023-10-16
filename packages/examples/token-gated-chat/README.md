@@ -1,11 +1,11 @@
-# About Automated Chat
-Automated chat example shows how you can receive chats when you talk to someone using Push Chat. In this example, we establish a socket connection and then send a message to pushai.eth, which is an automated chat bot that replies back.
+# About Token Gated Chat
+Token gated chat shows you how to create group chats using Push Chat that can gated in various ways including token or NFT gating on entry of the group or when a participant of that group wants to send a message
 
 ## What's the use case
-You can use this example to see the functionality of sockets and how you can respond to messages from backend (server) when a wallet messages you (or a wallet you own). Some use cases are:
+You can use this example to see the functionality of token gating. Some use cases are:
 
-- Creating an automated support bot
-- Creating an AI chat bot
+- Creating your token gated community and hosting that particular chat on your frontend
+- Enabling more token use cases and ensuring that conversations that happen in your group are coming from token holders or from participants that have certain on-chain traits (for example: POAPs, ENS domain names, UD domain names, tec)
 
 ## Install instructions
 1. Navigate to this directory from the terminal
