@@ -10,6 +10,8 @@ export * from './getUsersBatch';
 export * from './upgradeUser';
 export * from './decryptAuth';
 export * from './createUserWithProfile';
+export * from './getFeedsPerChannel';
+
 export const auth = {
   update: authUpdate,
 };

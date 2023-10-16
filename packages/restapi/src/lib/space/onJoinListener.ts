@@ -3,7 +3,7 @@ import { get } from './get';
 import { pCAIP10ToWallet } from '../helpers';
 import { produce } from 'immer';
 
-import { META_ACTION } from '../types/messageTypes';
+import { CHAT } from '../types/messageTypes';
 import type Space from './Space';
 
 export interface OnJoinListenerType {
@@ -43,11 +43,12 @@ export async function onJoinListener(this: Space, options: OnJoinListenerType) {
   const modifiedLiveSpaceData = produce(
     this.spaceSpecificData.liveSpaceData,
     (draft) => {
-      const isListenerAlreadyAdded = this.spaceSpecificData.liveSpaceData.listeners.find(
-        (currentListener) =>
-          pCAIP10ToWallet(currentListener.address) ===
-          pCAIP10ToWallet(receivedAddress)
-      );
+      const isListenerAlreadyAdded =
+        this.spaceSpecificData.liveSpaceData.listeners.find(
+          (currentListener) =>
+            pCAIP10ToWallet(currentListener.address) ===
+            pCAIP10ToWallet(receivedAddress)
+        );
 
       if (isListenerAlreadyAdded) {
         // listener is already added in the meta message
@@ -75,6 +76,6 @@ export async function onJoinListener(this: Space, options: OnJoinListenerType) {
     env: this.env,
     signer: this.signer,
     liveSpaceData: modifiedLiveSpaceData,
-    action: META_ACTION.ADD_LISTENER,
+    action: CHAT.META.SPACE.LISTENER.ADD,
   });
 }

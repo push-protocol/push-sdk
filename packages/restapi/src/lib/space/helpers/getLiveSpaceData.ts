@@ -1,7 +1,7 @@
 import { conversationHash, history } from '../../chat';
 import { MessageType } from '../../constants';
 import { EnvOptionsType, LiveSpaceData } from '../../types';
-import { MetaMessage } from '../../types/messageTypes';
+import { InfoMessage } from '../../types/messageTypes';
 import { initLiveSpaceData } from '../Space';
 
 interface GetLatestMessageType extends EnvOptionsType {
@@ -54,7 +54,7 @@ const getLiveSpaceData = async ({
     latestMetaMessage.messageObj !== null
   ) {
     // found the latest meta message
-    liveSpaceData = (latestMetaMessage.messageObj as Omit<MetaMessage, 'type'>)
+    liveSpaceData = (latestMetaMessage.messageObj as Omit<InfoMessage, 'type'>)
       ?.info?.arbitrary as LiveSpaceData;
   }
 

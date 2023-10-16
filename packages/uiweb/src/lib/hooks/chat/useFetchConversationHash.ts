@@ -18,7 +18,7 @@ const useFetchConversationHash = () => {
       try {
         const response = await PushAPI.chat.conversationHash({
           conversationId,
-          account: account!,
+          account: account ? account : '0xeeE5A266D7cD954bE3Eb99062172E7071E664023',
           env: env,
         });
         setLoading(false);
