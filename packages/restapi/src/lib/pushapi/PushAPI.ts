@@ -167,7 +167,10 @@ export class PushAPI {
           decryptedPGPPrivateKey,
           signer,
           settings.progressHook,
-          settings.streamOptions
+          {
+            ...settings.streamOptions,
+            env: settings.env, // Use the env from the top-level PushAPIInitializeProps
+          }
         );
         if (streamInstance) {
           api.stream = streamInstance;

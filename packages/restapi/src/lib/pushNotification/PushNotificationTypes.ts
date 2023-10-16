@@ -106,6 +106,8 @@ export type NotificationSetting = {
   data?: {
     upper: number;
     lower: number;
+    enabled?: boolean;
+    ticker?: number;
   };
 };
 
