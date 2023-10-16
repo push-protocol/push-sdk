@@ -599,7 +599,7 @@ export type encryptedPrivateKeyType = {
   pushShard?: string;
   pushEncryptedShard?: encryptedPrivateKeyType;
   litEncryptedShard?: {
-    encryptedString: Blob;
+    encryptedString: string;
     encryptedSymmetricKey: string;
     chain: string;
   };

@@ -5,9 +5,9 @@ import { ProgressHookType } from '../../../src/lib/types';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import Constants, { ENCRYPTION_TYPE, ENV } from '../../../src/lib/constants';
+import { ENCRYPTION_TYPE, ENV } from '../../../src/lib/constants';
 
-describe.skip('PushAPI.initialize functionality for Diff Versioned profiles', () => {
+describe('PushAPI.initialize functionality for Diff Versioned profiles', () => {
   let signer: ethers.Wallet;
   const env = ENV.LOCAL;
 
@@ -18,17 +18,71 @@ describe.skip('PushAPI.initialize functionality for Diff Versioned profiles', ()
   });
 
   it('Should initialize PGP_V1 user', async () => {
-    const user = await PushAPI.initialize(signer, {
+    // New user initialization
+    await PushAPI.initialize(signer, {
       version: ENCRYPTION_TYPE.PGP_V1,
       env,
     });
-    console.log(user.info());
+    // Again initialize ( to check decryption is working fine or not )
+    const user = await PushAPI.initialize(signer, {
+      env,
+      autoUpgrade: false,
+    });
+
+    const userInfo = await user.info();
+    expect(userInfo.encryptedPrivateKey).to.contains(
+      `"version":"${ENCRYPTION_TYPE.PGP_V1}"`
+    );
   });
   it('Should initialize PGP_V2 user', async () => {
-    const user = await PushAPI.initialize(signer, {
+    // New user initialization
+    await PushAPI.initialize(signer, {
       version: ENCRYPTION_TYPE.PGP_V2,
       env,
     });
-    console.log(user.info());
+    // Again initialize ( to check decryption is working fine or not )
+    const user = await PushAPI.initialize(signer, {
+      env,
+      autoUpgrade: false,
+    });
+
+    const userInfo = await user.info();
+    expect(userInfo.encryptedPrivateKey).to.contains(
+      `"version":"${ENCRYPTION_TYPE.PGP_V2}"`
+    );
+  });
+  it('Should initialize PGP_V3 user', async () => {
+    // New user initialization
+    await PushAPI.initialize(signer, {
+      version: ENCRYPTION_TYPE.PGP_V3,
+      env,
+    });
+    // Again initialize ( to check decryption is working fine or not )
+    const user = await PushAPI.initialize(signer, {
+      env,
+      autoUpgrade: false,
+    });
+
+    const userInfo = await user.info();
+    expect(userInfo.encryptedPrivateKey).to.contains(
+      `"version":"${ENCRYPTION_TYPE.PGP_V3}"`
+    );
+  });
+  it('Should initialize PGP_V4 user', async () => {
+    // New user initialization
+    await PushAPI.initialize(signer, {
+      version: ENCRYPTION_TYPE.PGP_V4,
+      env,
+    });
+    // Again initialize ( to check decryption is working fine or not )
+    const user = await PushAPI.initialize(signer, {
+      env,
+      autoUpgrade: false,
+    });
+
+    const userInfo = await user.info();
+    expect(userInfo.encryptedPrivateKey).to.contains(
+      `"version":"${ENCRYPTION_TYPE.PGP_V4}"`
+    );
   });
 });

@@ -6,11 +6,8 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { ethers } from 'ethers';
 import {
-  aesDecrypt,
   getAccountAddress,
   getWallet,
-  pgpDecrypt,
-  verifySignature,
   getEip712Signature,
   getEip191Signature,
 } from '../chat/helpers';
@@ -19,7 +16,6 @@ import {
   SignerType,
   walletType,
   encryptedPrivateKeyType,
-  IMessageIPFS,
   ProgressHookType,
   ProgressHookTypeFunction,
 } from '../types';
@@ -33,7 +29,7 @@ import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
 import { getAddress } from './signer';
 import { split, combine } from 'shamir-secret-sharing';
-// import Lit from './lit';
+import Lit from './lit';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -249,6 +245,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
 
         let secret: any;
         try {
+          // throw new Error('Try from Lit Shard');
           // decrypt pushShard
           const pushDecryptedShard = await decryptPGPKey({
             encryptedPGPPrivateKey: JSON.stringify(pushEncryptedShard),
@@ -261,18 +258,19 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
           ]);
         } catch (err) {
           // decrypt litShard
-          // const lit = new Lit(
-          //   pCAIP10ToWallet(wallet.account as string),
-          //   litEncryptedShard.chain
-          // );
-          // const litDecryptedShard = await lit.decrypt(
-          //   litEncryptedShard.encryptedString,
-          //   litEncryptedShard.encryptedSymmetricKey
-          // );
-          // secret = await combine([
-          //   hexToBytes(pushShard),
-          //   hexToBytes(litDecryptedShard),
-          // ]);
+          const lit = new Lit(
+            wallet.signer as SignerType,
+            pCAIP10ToWallet(address),
+            litEncryptedShard.chain
+          );
+          const litDecryptedShard = await lit.decrypt(
+            litEncryptedShard.encryptedString as string,
+            litEncryptedShard.encryptedSymmetricKey as string
+          );
+          secret = await combine([
+            hexToBytes(pushShard),
+            hexToBytes(litDecryptedShard),
+          ]);
         }
 
         const encodedPrivateKey = await decryptV2(
@@ -447,6 +445,24 @@ export const encryptPGPKey = async (
       );
       break;
     }
+    case ENCRYPTION_TYPE.PGP_V2: {
+      const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
+      const enableProfileMessage = 'Enable Push Chat Profile \n' + input;
+      const { verificationProof: secret } = await getEip712Signature(
+        wallet,
+        enableProfileMessage,
+        true
+      );
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        hexToBytes(secret || '')
+      );
+      encryptedPrivateKey.version = encryptionType;
+      encryptedPrivateKey.preKey = input;
+      break;
+    }
     case ENCRYPTION_TYPE.PGP_V3: {
       const input = bytesToHex(await getRandomValues(new Uint8Array(32)));
       const enableProfileMessage = 'Enable Push Profile \n' + input;
@@ -503,13 +519,13 @@ export const encryptPGPKey = async (
       encryptedPrivateKey.pushShard = bytesToHex(shard1);
 
       // 5. Encrypt and store shard2 on lit nodes
-      // const chain = await wallet.signer?.provider?.getNetwork();
-      // const lit = new Lit(
-      //   pCAIP10ToWallet(wallet.account as string),
-      //   chain?.name || 'ethereum'
-      // );
-      // const litEncryptedShard = await lit.encrypt(bytesToHex(shard2));
-      // encryptedPrivateKey.litEncryptedShard = litEncryptedShard;
+      const lit = new Lit(
+        wallet.signer as SignerType,
+        pCAIP10ToWallet(wallet.account as string),
+        'ethereum'
+      );
+      const litEncryptedShard = await lit.encrypt(bytesToHex(shard2));
+      encryptedPrivateKey.litEncryptedShard = litEncryptedShard;
 
       // 6. Encrypt and stpre shard3 on push nodes
       const pushEncryptedShard = await encryptPGPKey(
