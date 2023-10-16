@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.21](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.20...uiweb-0.0.1-alpha.21) (2023-10-16)
+
+
+### Bug Fixes
+
+* fixed lint issues in chat ([#784](https://github.com/ethereum-push-notification-service/push-sdk/issues/784)) ([0c71905](https://github.com/ethereum-push-notification-service/push-sdk/commit/0c719052a873c1c2aceefbd801f672542ba9ec69))
+* Merge branch 'alpha' into alpha-deployment ([ff9e92c](https://github.com/ethereum-push-notification-service/push-sdk/commit/ff9e92c5dda229af26be8f858b05579e7f366057))
+* Merge branch 'alpha' into alpha-deployment ([a996249](https://github.com/ethereum-push-notification-service/push-sdk/commit/a996249be88209d5ff7a2fb228ca56bbe294e9c3))
+
+
+
 ## [0.0.1-alpha.20](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.19...uiweb-0.0.1-alpha.20) (2023-10-13)
 
 
