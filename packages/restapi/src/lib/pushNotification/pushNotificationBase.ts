@@ -30,6 +30,8 @@ const SETTING_DELIMITER = '-';
 const SETTING_SEPARATOR = '+';
 const SLIDER_TYPE = 2;
 const BOOLEAN_TYPE = 1;
+const DEFAULT_ENABLE_VALUE = '1';
+const DEFAULT_TICKER_VALUE = '1';
 
 export const FEED_MAP = {
   INBOX: false,
@@ -664,11 +666,11 @@ export class PushNotificationBaseClass {
     let notificationSettingDescription = '';
     for (let i = 0; i < configuration.length; i++) {
       const ele = configuration[i];
-      if (ele.type == 0) {
+      if (ele.type == BOOLEAN_TYPE) {
         notificationSetting =
           notificationSetting +
           SETTING_SEPARATOR +
-          ele.type +
+          BOOLEAN_TYPE +
           SETTING_DELIMITER +
           ele.default;
         notificationSettingDescription =
@@ -676,16 +678,22 @@ export class PushNotificationBaseClass {
       }
       if (ele.type == 1) {
         if (ele.data) {
+          const enabled = (ele.data && ele.data.enabled != undefined) ? Number(ele.data.enabled).toString() : DEFAULT_ENABLE_VALUE
+          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE
           notificationSetting =
             notificationSetting +
             SETTING_SEPARATOR +
-            ele.type +
+            SLIDER_TYPE +
+            SETTING_DELIMITER+
+            enabled+
             SETTING_DELIMITER +
             ele.default +
             SETTING_DELIMITER +
             ele.data.lower +
             SETTING_DELIMITER +
-            ele.data.upper;
+            ele.data.upper +
+            SETTING_DELIMITER+
+            ticker
 
           notificationSettingDescription =
             notificationSettingDescription +
