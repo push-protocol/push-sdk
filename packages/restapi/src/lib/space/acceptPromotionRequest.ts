@@ -1,3 +1,5 @@
+import { produce } from 'immer';
+
 import type Space from './Space';
 import { addSpeakers } from './addSpeakers';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
@@ -37,12 +39,32 @@ export async function acceptPromotionRequest(
     env: this.env,
   });
 
+  const modifiedLiveSpaceData = produce(
+    this.spaceSpecificData.liveSpaceData,
+    (draft) => {
+      const listenerIndex =
+        this.spaceSpecificData.liveSpaceData.listeners.findIndex(
+          (listener) =>
+            pCAIP10ToWallet(listener.address) ===
+            pCAIP10ToWallet(promoteeAddress)
+        );
+
+      draft.listeners.splice(listenerIndex, 1);
+
+      draft.speakers.push({
+        address: pCAIP10ToWallet(promoteeAddress),
+        emojiReactions: null,
+        audio: null,
+      });
+    }
+  );
+
   await sendLiveSpaceData({
     spaceId: this.spaceSpecificData.spaceId,
     pgpPrivateKey: this.pgpPrivateKey,
     env: this.env,
     signer: this.signer,
-    // liveSpaceData: modifiedLiveSpaceData,
+    liveSpaceData: modifiedLiveSpaceData,
     action: CHAT.META.SPACE.SPEAKER.PRVILEGE,
   });
 
