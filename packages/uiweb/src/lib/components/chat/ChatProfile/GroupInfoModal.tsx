@@ -538,7 +538,7 @@ const GroupInformation = ({
             : 'Chats are end-to-end encrypted'
         }
       />
-      {/* {(groupInfo.rules?.chat?.conditions ||
+      {(groupInfo.rules?.chat?.conditions ||
         groupInfo.rules?.entry?.conditions) && (
         <GroupTypeBadge
           cursor="pointer"
@@ -548,7 +548,7 @@ const GroupInformation = ({
           header={'Gated group'}
           subheader={'Conditions must be true to join'}
         />
-      )} */}
+      )}
 
       {isAccountOwnerAdmin(groupInfo, account!) &&
         groupInfo?.members &&
