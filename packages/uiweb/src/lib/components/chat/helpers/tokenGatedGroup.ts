@@ -34,7 +34,7 @@ const validateCustomEndpointData = async (
   condition: Rule
 ): Promise<CriteriaValidationErrorType> => {
   const { data, type, subcategory } = condition;
-  let errors: CriteriaValidationErrorType = {};
+  const errors: CriteriaValidationErrorType = {};
 
   if (!(data as PushData).url) {
     return { url: 'URL is missing' };
@@ -77,7 +77,7 @@ const validateGUILDData = async (
   condition: Rule
 ): Promise<CriteriaValidationErrorType> => {
   const { data } = condition;
-  let errors: CriteriaValidationErrorType = {};
+  const errors: CriteriaValidationErrorType = {};
 
   // Check for guild ID presence
   if (!(data as GuildData).id) {
