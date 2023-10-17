@@ -48,6 +48,8 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
         color={theme.textColor?.modalSubHeadingText}
         fontWeight="400"
         fontSize="12px"
+        width='132px'
+        lineHeight='130%'
       >
         {subHeading}
       </Span>
