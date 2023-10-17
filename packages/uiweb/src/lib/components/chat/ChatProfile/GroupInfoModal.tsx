@@ -518,6 +518,18 @@ const GroupInformation = ({
     <Section width={isMobile ? '100%' : '410px'} flexDirection="column">
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+          Chat ID
+        </Span>
+        <Span
+          textAlign="start"
+          fontSize="18px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
+          {shortenText(groupInfo?.chatId,8,true)}
+        </Span>
+      </GroupDescription>
+      <GroupDescription>
+        <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Group Description
         </Span>
         <Span
@@ -866,7 +878,7 @@ const GroupHeader = styled.div`
 `;
 
 const GroupDescription = styled.div`
-  margin-top: 34px;
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   width: 100%;
