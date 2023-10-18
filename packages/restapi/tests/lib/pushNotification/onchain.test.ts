@@ -125,30 +125,28 @@
   //     );
   //     console.log(approveRes2);
   //   });
-//   it.only('Should get proper minnimal payload', async() => {
-//     const inputData = [
-//       {
-//         type: 0,
-//         default: 1,
-//         description: 'test1',
-//       },
-//       {
-//         type: 1,
-//         default: 10,
-//         description: 'test2',
-//         data: {
-//           upper: 100,
-//           lower: 1,
-
-//           ticker: 10
-//         },
-//       },
-//     ];
-//     const account2 = await signer2.getAddress();
-//     const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
-//     const minimalSettings = userAlice.getMinimalSetting(inputData);
-//     console.log(minimalSettings);
-//   });
+  // it.only('Should get proper minnimal payload', async() => {
+  //   const inputData = [
+  //     {
+  //       type: 1,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //     {
+  //       type: 2,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //       },
+  //     },
+  //   ];
+  //   const account2 = await signer2.getAddress();
+  //   const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   console.log(minimalSettings);
+  // });
 
 //   it.only('Should get proper minnimal payload', async() => {
 //     const inputData = [

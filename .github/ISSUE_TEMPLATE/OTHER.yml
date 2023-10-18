@@ -1,0 +1,27 @@
+name: "👾 Other"
+description: Something that doesn't belong elsewhere.
+title: "👾 [Other] - <title>"
+labels: [
+  "Other"
+]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please describe something
+      placeholder: Detailed description of what you wanna share...
+    validations:
+      required: true
+  - type: dropdown
+    id: dapp-env
+    attributes:
+      label: "Dapp Env"
+      description: What is the impacted DApp environment ?
+      multiple: true
+      options:
+        - Prod (app.push.org)
+        - Staging (staging.push.org)
+        - Dev (dev.push.org)
+    validations:
+      required: false
