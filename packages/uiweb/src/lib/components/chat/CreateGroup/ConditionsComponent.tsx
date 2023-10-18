@@ -55,7 +55,7 @@ const MoreOptionsContainer = ({
   useClickAway(dropdownRef, () => setSelectedIndex(null));
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
-      <MoreDarkIcon color={theme.iconColor?.groupSettings} />
+      <MoreDarkIcon color={theme.iconColor?.groupSettings} width='24' height='24'/>
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer ref={dropdownRef} theme={theme}>
           <Dropdown
@@ -207,7 +207,7 @@ const ConditionsComponent = ({
                     <Section
                       borderRadius={theme.borderRadius?.modalInnerComponents}
                       background={theme.backgroundColor?.modalHoverBackground}
-                      padding="10px 4px 10px 12px"
+                      padding="15px 4px 15px 12px"
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
@@ -248,7 +248,7 @@ const ConditionsComponent = ({
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
-                            padding="10px 4px 10px 12px"
+                            padding="15px 4px 15px 12px"
                             justifyContent="space-between"
                             width="100%"
                           >
