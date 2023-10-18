@@ -39,7 +39,7 @@ describe('PushAPI.channel functionality', () => {
       LOCAL = 'local',
     }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2)
+    userKate = await PushAPI.initialize(signer2, {env: ENV.DEV})
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer2);
     // TODO: remove signer1 after chat makes signer as optional
@@ -285,11 +285,12 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe.skip('channel :: settings', () => {
+  describe.only('channel :: settings', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
-        { type: 0, default: 1, description: 'My Notif Settings' },
-        {type: 1, default: 5, description: "My notif setting 2", data: {upper:100, lower:5}}
+        {type: 2, default: 5, description: "My notif setting 2", data: {upper:100, lower:5, ticker: 10, enabled: true}},
+        { type: 1, default: 1, description: 'My Notif Settings' },
+
       ]);
       //   console.log(res)
       expect(res).not.null;

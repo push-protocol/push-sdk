@@ -140,7 +140,7 @@ describe('PushAPI.notification functionality', () => {
       const res = await userAlice.notification.subscribe(
         'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      console.log(res)
+      // console.log(res)
       expect(res).not.null;
     });
 
@@ -202,48 +202,6 @@ describe('PushAPI.notification functionality', () => {
   //         await userAlice.uploadToIPFSViaPushNode("test")
   //     })
 
-  // it('Should get proper minnimal payload', () => {
-  //   const inputData = [
-  //     {
-  //       type: 0,
-  //       default: 1,
-  //       description: 'test1',
-  //     },
-  //     {
-  //       type: 1,
-  //       default: 10,
-  //       description: 'test2',
-  //       data: {
-  //         upper: 100,
-  //         lower: 1,
-  //       },
-  //     },
-  //   ];
 
-  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
-  //   console.log(minimalSettings);
-  // });
-
-  // it('Should get proper minnimal payload', () => {
-  //   const inputData = [
-  //     {
-  //       type: 1,
-  //       default: 10,
-  //       description: 'test2',
-  //       data: {
-  //         upper: 100,
-  //         lower: 1,
-  //       },
-  //     },
-  //     {
-  //       type: 0,
-  //       default: 1,
-  //       description: 'test1',
-  //     },
-  //   ];
-
-  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
-  //   console.log(minimalSettings);
-  // });
-  // });
-});
+  });
+// });
