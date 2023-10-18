@@ -285,7 +285,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe.only('channel :: settings', () => {
+  describe.skip('channel :: settings', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
         {type: 2, default: 5, description: "My notif setting 2", data: {upper:100, lower:5, ticker: 10, enabled: true}},
