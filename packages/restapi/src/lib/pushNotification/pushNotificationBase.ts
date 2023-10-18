@@ -676,7 +676,7 @@ export class PushNotificationBaseClass {
         notificationSettingDescription =
           notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
-      if (ele.type == 1) {
+      if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
           const enabled = (ele.data && ele.data.enabled != undefined) ? Number(ele.data.enabled).toString() : DEFAULT_ENABLE_VALUE
           const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE
