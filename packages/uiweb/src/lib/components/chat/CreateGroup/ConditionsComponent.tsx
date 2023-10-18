@@ -7,7 +7,7 @@ import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
-import { useClickAway } from '../../../hooks';
+import { useClickAway, useTokenSymbolLoader } from '../../../hooks';
 import { CATEGORY, CRITERIA_TYPE, CriteriaType, PushData, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
 
 import EditSvg from '../../../icons/EditSvg.svg';
@@ -55,7 +55,7 @@ const MoreOptionsContainer = ({
   useClickAway(dropdownRef, () => setSelectedIndex(null));
   return (
     <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
-      <MoreDarkIcon color={theme.iconColor?.groupSettings} />
+      <MoreDarkIcon color={theme.iconColor?.groupSettings} width='24' height='24'/>
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer ref={dropdownRef} theme={theme}>
           <Dropdown
@@ -86,7 +86,6 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   };
 
   const getGuildRole  = () =>{
-    console.log(criteria?.data?.['comparison'])
     if(!criteria?.data?.['comparison'])
     {
       return 'SPECIFIC';
@@ -95,16 +94,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
  
   }
 
-  const getTokenSymbol = (conditionData:ConditionData)=>{
-    if(conditionData.data){
-      const data:PushData = conditionData.data;
-      if(data.token){
-        return shortenText(data.token, 15)
-      }
-    }
-
-    return conditionData.category
-  }
+  const [tokenSymbol,] = useTokenSymbolLoader(criteria)
 
   return (
     <Section gap="8px">
@@ -124,7 +114,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             {getTokenNftComparisionLabel()}{' '}
           </Span>
           {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {getTokenSymbol(criteria)}
+          {criteria?.data?.['amount']} {tokenSymbol}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (
@@ -217,7 +207,7 @@ const ConditionsComponent = ({
                     <Section
                       borderRadius={theme.borderRadius?.modalInnerComponents}
                       background={theme.backgroundColor?.modalHoverBackground}
-                      padding="10px 4px 10px 12px"
+                      padding="15px 4px 15px 12px"
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
@@ -258,7 +248,7 @@ const ConditionsComponent = ({
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
-                            padding="10px 4px 10px 12px"
+                            padding="15px 4px 15px 12px"
                             justifyContent="space-between"
                             width="100%"
                           >
