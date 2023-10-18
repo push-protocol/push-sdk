@@ -7,7 +7,7 @@ import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
-import { useClickAway } from '../../../hooks';
+import { useClickAway, useTokenSymbolLoader } from '../../../hooks';
 import { CATEGORY, CRITERIA_TYPE, CriteriaType, PushData, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
 
 import EditSvg from '../../../icons/EditSvg.svg';
@@ -95,16 +95,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
  
   }
 
-  const getTokenSymbol = (conditionData:ConditionData)=>{
-    if(conditionData.data){
-      const data:PushData = conditionData.data;
-      if(data.token){
-        return shortenText(data.token, 15)
-      }
-    }
-
-    return conditionData.category
-  }
+  const [tokenSymbol,] = useTokenSymbolLoader(criteria)
 
   return (
     <Section gap="8px">
@@ -124,7 +115,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             {getTokenNftComparisionLabel()}{' '}
           </Span>
           {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {getTokenSymbol(criteria)}
+          {criteria?.data?.['amount']} {tokenSymbol}
         </Span>
       )}
       {criteria.category === CATEGORY.INVITE && (

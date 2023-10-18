@@ -16,7 +16,7 @@ import { ProfileContainer } from '../reusables';
 
 import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
-import { device } from '../../../config';
+import { ENV, device } from '../../../config';
 import {
   convertToWalletAddressList,
   getAdminList,
@@ -36,6 +36,9 @@ import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ConditionArray } from '../exportedTypes';
 import { ACCESS_TYPE_TITLE } from '../constants';
+import * as PushAPI from '@pushprotocol/restapi';
+import { Rule } from '../types';
+import { GroupRulesType, getRuleInfo } from '../helpers/getRulesToCondtionArray';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -123,78 +126,6 @@ const PendingMembers = ({
   }
 };
 
-const dummyConditonsData: ConditionArray[] = [
-  [{ operator: 'any' }],
-  [
-    {
-      type: 'PUSH',
-      category: 'ERC20',
-      subcategory: 'holder',
-      data: {
-        contract: 'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
-        amount: 1,
-        decimals: 18,
-      },
-    },
-  ],
-  [
-    { operator: 'all' },
-    {
-      type: 'PUSH',
-      category: 'ERC20',
-      subcategory: 'holder',
-      data: {
-        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-        amount: 1,
-        decimals: 18,
-      },
-    },
-    {
-      type: 'PUSH',
-      category: 'ERC721',
-      subcategory: 'holder',
-      data: {
-        contract: 'eip155:137:0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1',
-        amount: 1,
-        decimals: 18,
-      },
-    },
-    {
-      type: 'GUILD',
-      category: 'ROLES',
-      subcategory: 'DEFAULT',
-      data: {
-        id: '1',
-        role: '346243',
-        comparison: 'all',
-      },
-    },
-  ],
-  // [
-  //   { operator: 'any' },
-  //   {
-  //     type: 'PUSH',
-  //     category: 'INVITE',
-  //     subcategory: 'DEFAULT',
-  //     data: {
-  //       inviterRoles: 'ADMIN',
-  //     },
-  //   },
-  //   {
-  //     type: 'PUSH',
-  //     category: 'INVITE',
-  //     subcategory: 'DEFAULT',
-  //     data: {
-  //       inviterRoles: 'OWNER',
-  //     },
-  //   },
-  // ],
-];
-
-const dummySingleCondtionData: ConditionArray[] = dummyConditonsData[2].map(
-  (criteria) => [criteria]
-);
-
 interface ConditionsInformationProps {
   theme: IChatTheme;
   groupInfo?: IGroup | null;
@@ -204,6 +135,9 @@ export const ConditionsInformation = ({
   theme,
   groupInfo,
 }: ConditionsInformationProps) => {
+  
+  const groupRules = getRuleInfo(groupInfo?.rules)
+  
   return (
     <Section
       margin="15px 0px 0px 0px"
@@ -220,8 +154,8 @@ export const ConditionsInformation = ({
           subheader={'Conditions must be true to join'}
         />
       )}
-      {Object.keys(ACCESS_TYPE_TITLE).map((key) => (
-        <>
+      {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
+        <div key={idx}>
           <Span fontSize="16px" fontWeight="500" alignSelf="start">
             {  ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]?.heading}
           </Span>
@@ -234,10 +168,10 @@ export const ConditionsInformation = ({
           >
             <ConditionsComponent
               moreOptions={false}
-              conditionData={dummyConditonsData}
+              conditionData={groupRules[(key as keyof typeof groupRules)]}
             />
           </ConditionSection>
-        </>
+        </div>
       ))}
     </Section>
   );
@@ -656,7 +590,7 @@ export const GroupInfoModal = ({
           />
         );
       case GROUPINFO_STEPS.CRITERIA:
-        return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
+        return <ConditionsInformation groupInfo={groupInfo} theme={theme}/>;
 
       default:
         return (
@@ -678,6 +612,7 @@ export const GroupInfoModal = ({
   const [selectedMemberAddress, setSelectedMemberAddress] = useState<
     string | null
   >(null);
+
   const { updateGroup } = useUpdateGroup();
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -807,6 +742,12 @@ export const GroupInfoModal = ({
   const onClose = (): void => {
     setModal(false);
   };
+
+  interface RulesToStateArrayType{
+    conditionToJoin:Rule[][],
+    conditionToChat:Rule[][]
+  }  
+  
 
   if (groupInfo) {
     return (

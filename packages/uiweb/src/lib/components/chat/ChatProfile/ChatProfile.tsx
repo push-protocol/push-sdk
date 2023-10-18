@@ -72,6 +72,9 @@ const Options = ({
             height="24px"
             maxHeight="24px"
             width={'auto'}
+            onClick={()=>{
+              setModal((prev)=> !prev)
+            }}
           />
         )}
         <Image
@@ -107,12 +110,12 @@ const Options = ({
           )}
 
           {modal && (
-            <GroupInfoModal
-              theme={theme}
-              setModal={setModal}
-              groupInfo={groupInfo}
-              setGroupInfo={setGroupInfo}
-            />
+             <GroupInfoModal 
+                theme={theme}
+                setModal={setModal}
+                groupInfo={groupInfo}
+                setGroupInfo={setGroupInfo}
+              />
           )}
         </ImageItem>
       </Section>
