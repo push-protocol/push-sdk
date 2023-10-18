@@ -66,14 +66,17 @@ const Options = ({
         gap="10px"
         margin="0 20px 0 auto"
       >
-        {/* {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
+        {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
           <Image
             src={TokenGatedIcon}
             height="24px"
             maxHeight="24px"
             width={'auto'}
+            onClick={()=>{
+              setModal((prev)=> !prev)
+            }}
           />
-        )} */}
+        )}
         <Image
           src={groupInfo?.isPublic ? PublicChatIcon : TokenGatedIcon}
           height="28px"
@@ -107,12 +110,12 @@ const Options = ({
           )}
 
           {modal && (
-            <GroupInfoModal
-              theme={theme}
-              setModal={setModal}
-              groupInfo={groupInfo}
-              setGroupInfo={setGroupInfo}
-            />
+             <GroupInfoModal 
+                theme={theme}
+                setModal={setModal}
+                groupInfo={groupInfo}
+                setGroupInfo={setGroupInfo}
+              />
           )}
         </ImageItem>
       </Section>

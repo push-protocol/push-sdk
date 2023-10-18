@@ -28,13 +28,13 @@ import { ProfilePicture } from '../../../config';
 
 const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
-    heading: 'Open',
-    subHeading: 'Anyone can join',
+    heading: 'Public',
+    subHeading: 'Anyone can view chats, even without joining',
     value: 'open',
   },
   {
-    heading: 'Encrypted',
-    subHeading: 'Users must join group to view',
+    heading: 'Private',
+    subHeading: 'Encrypted Chats, Users must join group to view',
     value: 'encrypted',
   },
 ];
