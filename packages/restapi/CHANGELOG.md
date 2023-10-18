@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.27](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.26...restapi-1.4.27) (2023-10-18)
+
+
+### Bug Fixes
+
+* merge main ([ecc05d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/ecc05d926a37ccb49ccde60c4ca3012b29d6971a))
+
+
+
 ## [1.4.26](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.25...restapi-1.4.26) (2023-10-16)
 
 
