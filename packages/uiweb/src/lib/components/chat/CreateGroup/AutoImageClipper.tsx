@@ -35,12 +35,15 @@ const AutoImageClipper = (props: { imageSrc: any; onImageCropped: any; width: an
                     const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels!);
                     const image = await resizeFile(croppedImage);
                     onImageCropped(image);
+
                     return;
+
                 } else {
-                    return "Nothing";
+                    return;
                 }
             } catch (e) {
                 console.error(e);
+
                 return;
             }
         }
