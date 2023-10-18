@@ -31,17 +31,11 @@ import addIcon from '../../../icons/addicon.svg';
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import { shortenText } from '../../../helpers';
+import { copyToClipboard, shortenText } from '../../../helpers';
 import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
-import { ConditionArray } from '../exportedTypes';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
-import * as PushAPI from '@pushprotocol/restapi';
-import { Rule } from '../types';
-import {
-  GroupRulesType,
-  getRuleInfo,
-} from '../helpers/getRulesToCondtionArray';
+import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -95,10 +89,14 @@ const PendingMembers = ({
         </PendingSection>
 
         {showPendingRequests && (
-          <Section
-            margin="0px 0px 0px 0px"
+          <ProfileSection
             flexDirection="column"
             flex="1"
+            theme={theme}
+            maxHeight="7rem"
+            height="7rem"
+            justifyContent="start"
+            overflow="hidden auto"
             borderRadius="16px"
           >
             {groupInfo?.pendingMembers &&
@@ -120,7 +118,7 @@ const PendingMembers = ({
                   />
                 </GroupPendingMembers>
               ))}
-          </Section>
+          </ProfileSection>
         )}
       </PendingRequestWrapper>
     );
@@ -148,7 +146,7 @@ export const ConditionsInformation = ({
     return null;
   };
 
-  console.log(groupRules);
+  
   return (
     <Section
       margin="15px 0px 0px 0px"
@@ -167,15 +165,17 @@ export const ConditionsInformation = ({
       )}
       {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
         <Section key={idx} flexDirection="column">
-          <Span
+         {getOperator(key as keyof typeof groupRules) ? (
+          <>
+         <Span
             fontSize="16px"
             fontWeight="500"
             alignSelf="start"
-            margin="0 0 10px 0"
+            margin="0 0 5px 0"
           >
             {ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]?.heading}
           </Span>
-          {getOperator(key as keyof typeof groupRules) ? (
+           
             <Span fontSize="14px" margin="20px 0">
               {
                 OPERATOR_OPTIONS_INFO[
@@ -193,14 +193,17 @@ export const ConditionsInformation = ({
                 }
               </Span>
             </Span>
+            </>
           ) : null}
 
           <ConditionSection
             width="100%"
             overflow="hidden auto"
-            maxHeight="12rem"
+            maxHeight="12.5rem"
             theme={theme}
             padding="0 4px 0 0"
+            justifyContent="start"
+            flexDirection="column"
           >
             <ConditionsComponent
               moreOptions={false}
@@ -301,6 +304,7 @@ const GroupInformation = ({
     useState<boolean>(false);
   const [memberList, setMemberList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [copyText, setCopyText] = useState<string>('');
   const [selectedMemberAddress, setSelectedMemberAddress] = useState<
     string | null
   >(null);
@@ -487,11 +491,54 @@ const GroupInformation = ({
     <Section width={isMobile ? '100%' : '410px'} flexDirection="column">
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
+          Chat ID
+        </Span>
+        <Section
+          gap="5px"
+          alignSelf="start"
+          onClick={() => {
+            copyToClipboard(groupInfo?.chatId);
+            setCopyText('copied');
+          }}
+          onMouseEnter={() => {
+            setCopyText('click to copy');
+          }}
+          onMouseLeave={() => {
+            setCopyText('');
+          }}
+        >
+          <Span
+            textAlign="start"
+            fontSize="16px"
+            fontWeight="400"
+            color={theme.textColor?.modalSubHeadingText}
+          >
+            {shortenText(groupInfo?.chatId, 8, true)}
+          </Span>
+          {!!copyText && (
+            <Span
+              cursor="pointer"
+              position="relative"
+              padding="2px 10px"
+              color={theme.textColor?.modalSubHeadingText}
+              fontSize="14px"
+              fontWeight="400"
+              background={theme.backgroundColor?.modalHoverBackground}
+              borderRadius="16px"
+            >
+              {copyText}
+            </Span>
+          )}
+        </Section>
+      </GroupDescription>
+      <GroupDescription>
+        <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Group Description
         </Span>
         <Span
           textAlign="start"
-          fontSize="18px"
+          fontSize="16px"
+          fontWeight="400"
           color={theme.textColor?.modalSubHeadingText}
         >
           {groupInfo?.groupDescription}
@@ -557,36 +604,35 @@ const GroupInformation = ({
         )}
       </Section>
 
-      <Section
+      <ProfileSection
         margin="15px 10px"
         flexDirection="column"
-        flex="1"
         zIndex="2"
-        maxHeight="10rem"
-        height="100%"
+        maxHeight="9rem"
+        height="9rem"
+        justifyContent="start"
         overflow="hidden auto"
+        theme={theme}
       >
-        <Section flexDirection="column" height="100%">
-          {groupInfo?.members &&
-            groupInfo?.members?.length > 0 &&
-            groupInfo?.members.map((item, index) => (
-              <MemberProfileCard
-                key={index}
-                member={item}
-                dropdownValues={
-                  item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
-                    ? [removeAdminDropdown, removeMemberDropdown]
-                    : isAccountOwnerAdmin(groupInfo, account!)
-                    ? [addAdminDropdown, removeMemberDropdown]
-                    : []
-                }
-                selectedMemberAddress={selectedMemberAddress}
-                setSelectedMemberAddress={setSelectedMemberAddress}
-                dropdownRef={dropdownRef}
-              />
-            ))}
-        </Section>
-      </Section>
+        {groupInfo?.members &&
+          groupInfo?.members?.length > 0 &&
+          groupInfo?.members.map((item, index) => (
+            <MemberProfileCard
+              key={index}
+              member={item}
+              dropdownValues={
+                item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
+                  ? [removeAdminDropdown, removeMemberDropdown]
+                  : isAccountOwnerAdmin(groupInfo, account!)
+                  ? [addAdminDropdown, removeMemberDropdown]
+                  : []
+              }
+              selectedMemberAddress={selectedMemberAddress}
+              setSelectedMemberAddress={setSelectedMemberAddress}
+              dropdownRef={dropdownRef}
+            />
+          ))}
+      </ProfileSection>
       {showAddMoreWalletModal && (
         <AddWalletContent
           onSubmit={addMembers}
@@ -654,26 +700,10 @@ export const GroupInfoModal = ({
     string | null
   >(null);
 
-  const { updateGroup } = useUpdateGroup();
   const isMobile = useMediaQuery(device.mobileL);
 
   const dropdownRef = useRef<any>(null);
   useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-
-  type UpdateGroupType = {
-    adminList: Array<string>;
-    memberList: Array<string>;
-  };
-
-  const handleUpdateGroup = async (options: UpdateGroupType) => {
-    const { adminList, memberList } = options || {};
-    const updateResponse = await updateGroup({
-      groupInfo,
-      memberList,
-      adminList,
-    });
-    return { updateResponse };
-  };
 
   const onClose = (): void => {
     setModal(false);
@@ -706,11 +736,16 @@ export const GroupInfoModal = ({
               />
 
               <Section flexDirection="column" alignItems="flex-start" gap="5px">
-                <Span fontSize="20px" color={theme.textColor?.modalHeadingText}>
+                <Span
+                  fontSize="20px"
+                  fontWeight="500"
+                  color={theme.textColor?.modalHeadingText}
+                >
                   {groupInfo?.groupName}
                 </Span>
                 <Span
                   fontSize="16px"
+                  fontWeight="500"
                   color={theme.textColor?.modalSubHeadingText}
                 >
                   {groupInfo?.members?.length} Members
@@ -737,7 +772,7 @@ const GroupHeader = styled.div`
 `;
 
 const GroupDescription = styled.div`
-  margin-top: 34px;
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -832,6 +867,20 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-button {
     height: 20px;
   }
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+`;
+
+const ProfileSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
   &::-webkit-scrollbar {
     width: 4px;
   }

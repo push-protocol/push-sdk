@@ -18,8 +18,8 @@ export const getRuleInfo = (
   }
 
   const [chatRules, entryRules] = [
-    getRulesToCondtionArray(rules.entry),
     getRulesToCondtionArray(rules.chat),
+    getRulesToCondtionArray(rules.entry),
   ];
 
   return {

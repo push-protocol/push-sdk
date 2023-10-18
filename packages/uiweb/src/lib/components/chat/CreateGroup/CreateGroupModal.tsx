@@ -27,6 +27,7 @@ import {
 import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
+import AutoImageClipper from './AutoImageClipper';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -71,11 +72,14 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   }, [activeComponent]);
 
   const useDummyGroupInfo = false;
-  const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
-    groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
-    groupDescription: useDummyGroupInfo ? 'This is dummy group description for testing' : '',
-    groupImage: useDummyGroupInfo ? ProfilePicture : ''
-  })
+  const [groupInputDetails, setGroupInputDetails] =
+    useState<GroupInputDetailsType>({
+      groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
+      groupDescription: useDummyGroupInfo
+        ? 'This is dummy group description for testing'
+        : '',
+      groupImage: useDummyGroupInfo ? ProfilePicture : '',
+    });
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -167,6 +171,8 @@ const CreateGroupDetail = ({
     useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
+  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
+  const [imageSrc, setImageSrc] = useState<string | null>();
 
   const handleChange = (e: Event) => {
     if (!(e.target instanceof HTMLInputElement)) {
@@ -179,15 +185,22 @@ const CreateGroupDetail = ({
       (e.target as HTMLInputElement).files &&
       ((e.target as HTMLInputElement).files as FileList).length
     ) {
+      setIsImageUploaded(true);
+      setGroupInputDetails({
+        groupDescription,
+        groupName,
+        groupImage: '',
+      });
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
 
       reader.onloadend = function () {
-        setGroupInputDetails({
-          groupDescription,
-          groupName,
-          groupImage: reader.result as string,
-        });
+        setImageSrc(reader.result as string);
+        // setGroupInputDetails({
+        //   groupDescription,
+        //   groupName,
+        //   groupImage: reader.result as string,
+        // });
       };
     }
   };
@@ -220,7 +233,6 @@ const CreateGroupDetail = ({
         });
         return;
       }
-
     }
 
     if (handleNext) {
@@ -245,22 +257,37 @@ const CreateGroupDetail = ({
       <ModalHeader title="Create Group" handleClose={onClose} />
 
       <UploadContainer onClick={handleUpload}>
-        {!groupImage && (
+        {isImageUploaded ? (
+          groupImage ? (
+            <UpdatedImageContainer>
+              <Image
+                src={groupImage}
+                objectFit="contain"
+                alt="group image"
+                width="100%"
+                height="100%"
+              />
+            </UpdatedImageContainer>
+          ) : (
+            <AutoImageClipper
+              imageSrc={imageSrc}
+              onImageCropped={(croppedImage: string) =>
+                setGroupInputDetails({
+                  groupDescription,
+                  groupName,
+                  groupImage: croppedImage,
+                })
+              }
+              width={undefined}
+              height={undefined}
+            />
+          )
+        ) : (
           <ImageContainer theme={theme}>
             <AiTwotoneCamera fontSize={40} color={'rgba(87, 93, 115, 1)'} />
           </ImageContainer>
         )}
-        {groupImage && (
-          <UpdatedImageContainer>
-            <Image
-              src={groupImage}
-              objectFit="contain"
-              alt="group image"
-              width="100%"
-              height="100%"
-            />
-          </UpdatedImageContainer>
-        )}
+      
         <FileInput
           type="file"
           accept="image/*"
@@ -327,24 +354,32 @@ export const GatingRulesInformation = () => {
 //use the theme
 const UploadContainer = styled.div`
   width: fit-content;
+  min-width:128px;
+  min-height:128px;
   cursor: pointer;
   align-self: center;
 `;
 
 const ImageContainer = styled.div<{ theme: IChatTheme }>`
   margin-top: 10px;
-  width: fit-content;
   cursor: pointer;
   border-radius: 32px;
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
-  padding: 40px;
+  width: 128px;
+  cursor: pointer;
+  height: 128px;
+  max-height: 128px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 `;
 const UpdatedImageContainer = styled.div`
   margin-top: 10px;
-  width: 112px;
+  width: 128px;
   cursor: pointer;
-  height: 112px;
+  height: 128px;
   overflow: hidden;
+  max-height: 128px;
   border-radius: 32px;
 `;
 
