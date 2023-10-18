@@ -2,8 +2,8 @@ import * as openpgp from 'openpgp';
 
 export const generateKeyPair = async (): Promise<{ privateKeyArmored: string; publicKeyArmored: string }> => {
   const keys = await openpgp.generateKey({
-    // type: 'rsa',
-    // rsaBits: 2048,
+    type: 'rsa',
+    rsaBits: 2048,
     userIDs: [{ name: '', email: '' }]
   })
   return {

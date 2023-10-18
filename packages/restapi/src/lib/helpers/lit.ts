@@ -33,6 +33,18 @@ class Lit {
         },
       },
     ];
+
+    // Need : Supress LIT Node Client crypto definitions
+    if (typeof window !== 'undefined' && window.crypto) {
+      globalThis.crypto = window.crypto;
+    } else if (typeof require !== 'undefined') {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        globalThis.crypto = require('crypto').webcrypto;
+      } catch (e) {
+        throw new Error('Unable To load crypto');
+      }
+    }
   }
 
   private async connect() {

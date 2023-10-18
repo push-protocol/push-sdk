@@ -6,6 +6,10 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct im
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { ENCRYPTION_TYPE, ENV } from '../../../src/lib/constants';
+import { Blob } from 'node:buffer'; // SDK uses blob (due to lit) and Blob is only supported after node18 ( This is done for versions < node18 )
+
+globalThis.Blob = Blob as any;
+globalThis.crypto = require('crypto');
 
 describe('PushAPI.initialize functionality for Diff Versioned profiles', () => {
   let signer: ethers.Wallet;
