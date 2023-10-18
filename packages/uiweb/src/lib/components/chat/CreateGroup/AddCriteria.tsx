@@ -174,8 +174,8 @@ const AddCriteria = ({
       title: 'Holder',
     },
     ERC721:{
-      value: SUBCATEGORY.OWENER,
-      title: 'Owner',
+      value: SUBCATEGORY.HOLDER,
+      title: 'Holder',
     },
     INVITE: {
       value: SUBCATEGORY.DEFAULT,
@@ -308,7 +308,7 @@ const AddCriteria = ({
     let subCategory = 'DEFAULT';
     if (_type === 'PUSH') {
       if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-        subCategory = category === CATEGORY.ERC20 ? SUBCATEGORY.HOLDER :  SUBCATEGORY.OWENER
+        subCategory = SUBCATEGORY.HOLDER
       } else if (category === CATEGORY.CustomEndpoint) {
         subCategory = 'GET';
       }
