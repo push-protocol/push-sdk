@@ -86,7 +86,6 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   };
 
   const getGuildRole  = () =>{
-    console.log(criteria?.data?.['comparison'])
     if(!criteria?.data?.['comparison'])
     {
       return 'SPECIFIC';

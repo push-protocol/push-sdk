@@ -568,9 +568,7 @@ export const GroupInfoModal = ({
     GROUPINFO_STEPS.GROUP_INFO
   );
   const handleNextInfo = () => {
-    console.log('criteria');
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
-    console.log(activeComponent);
   };
 
   const handlePreviousInfo = () => {

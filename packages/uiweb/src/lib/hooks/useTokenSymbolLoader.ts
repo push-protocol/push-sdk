@@ -20,11 +20,8 @@ export const useTokenSymbolLoader = (
 
   useEffect(() => {
     (async () => {
-        console.log("wwww");
         
       if (isContract) {
-        console.log("****this was called");
-        
         const data = conditionData.data as PushData;
         const contract = data.contract;
         const category = conditionData.category;
@@ -61,8 +58,6 @@ export const useTokenSymbolLoader = (
 };
 
 const isTokenType = (conditionData: ConditionData): boolean => {
-  console.log("git ", conditionData);
-  
   if (conditionData.type === 'PUSH') {
     if (
       conditionData.category === CATEGORY.ERC20 ||
