@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-native-randombytes/index.js b/node_modules/react-native-randombytes/index.js
+index 7478cb3..bd2ecbd 100644
+--- a/node_modules/react-native-randombytes/index.js
++++ b/node_modules/react-native-randombytes/index.js
+@@ -12,11 +12,13 @@ function toBuffer (nativeStr) {
+ }
+ 
+ function init () {
+-  if (RNRandomBytes.seed) {
+-    let seedBuffer = toBuffer(RNRandomBytes.seed)
+-    addEntropy(seedBuffer)
+-  } else {
+-    seedSJCL()
++  if(RNRandomBytes){
++    if (RNRandomBytes.seed) {
++      let seedBuffer = toBuffer(RNRandomBytes.seed)
++      addEntropy(seedBuffer)
++    } else {
++      seedSJCL()
++    }
+   }
+ }
+ 

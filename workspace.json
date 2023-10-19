@@ -5,7 +5,6 @@
     "demonative": "apps/demonative",
     "examples-sdk-frontend-react": "packages/examples/sdk-frontend-react",
     "ledgerlive": "packages/ledgerlive",
-    "reactnative": "packages/reactnative",
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiembed": "packages/uiembed",
