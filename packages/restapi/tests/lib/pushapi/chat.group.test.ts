@@ -30,7 +30,24 @@ describe('PushAPI.chat.group functionality', () => {
     userBob = await PushAPI.initialize(signer2, { env });
   });
 
-  it.only('Should update Group ', async () => {
+  it('Should thorw error on update Group By Non-Admin', async () => {
+    const createdGroup = await userAlice.chat.group.create('Test Grp', {
+      description: 'Test Desc',
+      image:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==',
+      members: [account2],
+      admins: [],
+      private: false,
+    });
+
+    await expect(
+      userBob.chat.group.update(createdGroup.chatId, {
+        description: 'Updated Test Grp Description',
+      })
+    ).to.be.rejectedWith(`Address eip155:${account2} is not a group admin`);
+  });
+
+  it('Should update Group By Admin', async () => {
     const createdGroup = await userAlice.chat.group.create('Test Grp', {
       description: 'Test Desc',
       image:
