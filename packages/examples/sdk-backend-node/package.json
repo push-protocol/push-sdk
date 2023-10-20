@@ -1,0 +1,17 @@
+{
+  "name": "sdk-backend-node",
+  "version": "1.0.0",
+  "description": "Welcome to the SDK Backend Node Example project, a hands-on guide demonstrating how to leverage the power of Push Protocol in a backend environment using Node.js. This resource is an invaluable companion for developers keen to integrate Push Protocol into their backend services. Dive into the code to gain a comprehensive understanding of how to deploy various features of the Push Protocol in a Node.js backend.",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node main.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pushprotocol/restapi": "0.0.1-alpha.44",
+    "@pushprotocol/socket": "^0.5.2"
+  }
+}

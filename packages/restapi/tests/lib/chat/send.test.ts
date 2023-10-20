@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import Constants, { MessageType } from '../../../src/lib/constants';
 import { upgrade } from '../../../src/lib/user/upgradeUser';
 import { decryptPGPKey } from '../../../src/lib/helpers';
-import { createGroup, send } from '../../../src/lib/chat';
+import { approve, createGroup, send } from '../../../src/lib/chat';
 import { MessageWithCID, SignerType } from '../../../src/lib/types';
 import { decryptAndVerifyMessage } from '../../../src/lib/chat/helpers';
 import {
@@ -15,10 +15,7 @@ import {
   colors,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
-import {
-  REACTION_SYMBOL,
-  REACTION_TYPE,
-} from '../../../src/lib/types/metaTypes';
+import { CHAT } from '../../../src/lib/types/messageTypes';
 
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
@@ -346,13 +343,14 @@ describe('PushAPI.chat.send', () => {
   describe('Text Message', () => {
     const MESSAGE_TYPE = MessageType.TEXT;
     const MESSAGE = 'hey There!!!';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using action or info', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -360,7 +358,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -378,25 +376,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -420,7 +400,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -438,6 +436,46 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -449,13 +487,14 @@ describe('PushAPI.chat.send', () => {
     const MESSAGE_TYPE = MessageType.IMAGE;
     const MESSAGE =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4gg==';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -463,7 +502,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -481,25 +520,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -523,7 +544,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -541,6 +580,272 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Video Message', () => {
+    const MESSAGE_TYPE = MessageType.VIDEO;
+    const MESSAGE = '{"content":"data:application/mp4;base64,JVBERi0xLjQKJ}';
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            action: 1,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    // Video message was not supported in v1 & v2
+    it('should throw error for deprecated V1', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Audio Message', () => {
+    const MESSAGE_TYPE = MessageType.AUDIO;
+    const MESSAGE = '{"content":"data:application/mp3;base64,JVBERi0xLjQKJ}';
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            action: 1,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    // Audio message was not supported in v1 & v2
+    it('should throw error for deprecated V1', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -551,13 +856,14 @@ describe('PushAPI.chat.send', () => {
   describe('File Message', () => {
     const MESSAGE_TYPE = MessageType.FILE;
     const MESSAGE = '{"content":"data:application/pdf;base64,JVBERi0xLjQKJ}';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -565,7 +871,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -583,25 +889,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -625,7 +913,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -649,62 +955,24 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-  });
-  describe('MediaEmbed Message', () => {
-    const MESSAGE_TYPE = MessageType.MEDIA_EMBED;
-    const MESSAGE =
-      'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
-    it('should throw error using messageObj.meta', async () => {
-      await expect(
-        send({
-          messageType: MESSAGE_TYPE,
-          messageObj: {
-            content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
-          },
-          receiverAddress: account2,
-          signer: _signer1,
-          env: _env,
-        })
-      ).to.be.rejected;
-    });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('V3 | EncType - Plaintext', async () => {
       const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageContent: MESSAGE,
-        receiverAddress: account2,
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
         signer: _signer1,
         env: _env,
       });
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        MESSAGE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('V3 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -712,40 +980,15 @@ describe('PushAPI.chat.send', () => {
         version: Constants.ENC_TYPE_V1,
       });
       const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageContent: MESSAGE,
-        receiverAddress: account2,
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
         signer: _signer1,
         env: _env,
       });
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'pgp'
-      );
-    });
-    it('EncType - pgp', async () => {
-      await create({
-        account: account2,
-        env: _env,
-        signer: _signer2,
-        version: Constants.ENC_TYPE_V1,
-      });
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -757,13 +1000,14 @@ describe('PushAPI.chat.send', () => {
     const MESSAGE_TYPE = MessageType.GIF;
     const MESSAGE =
       'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
-    it('should throw error using messageObj.meta', async () => {
+    it('should throw error using wrong messageObj', async () => {
       await expect(
         send({
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            action: 1,
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -771,7 +1015,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('Depreacted | EncType - PlainText', async () => {
+    it('Depreacted V1 | EncType - PlainText', async () => {
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageContent: MESSAGE,
@@ -789,25 +1033,7 @@ describe('PushAPI.chat.send', () => {
         'PlainText'
       );
     });
-    it('EncType - Plaintext', async () => {
-      const msg = await send({
-        messageType: MESSAGE_TYPE,
-        messageObj: { content: MESSAGE },
-        receiverAddress: walletAddress2,
-        signer: _signer1,
-        env: _env,
-      });
-      await expectMsg(
-        msg,
-        MESSAGE_TYPE,
-        MESSAGE,
-        account1,
-        _signer1,
-        account2,
-        'PlainText'
-      );
-    });
-    it('Deprecated | EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -831,7 +1057,25 @@ describe('PushAPI.chat.send', () => {
         'pgp'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
@@ -849,6 +1093,190 @@ describe('PushAPI.chat.send', () => {
         msg,
         MESSAGE_TYPE,
         MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('MediaEmbed Message', () => {
+    const MESSAGE_TYPE = MessageType.MEDIA_EMBED;
+    const MESSAGE =
+      'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            action: 1,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Depreacted V1 | EncType - PlainText', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageContent: MESSAGE,
+        receiverAddress: account2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageContent: MESSAGE,
+        receiverAddress: account2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('Deprecated V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V3 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V3 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
         account1,
         _signer1,
         account2,
@@ -858,7 +1286,7 @@ describe('PushAPI.chat.send', () => {
   });
   describe('Meta Message', () => {
     const MESSAGE_TYPE = MessageType.META;
-    const MESSAGE = 'xyz created group PUSH';
+    const MESSAGE = CHAT.META.GROUP.CREATE;
     it('should throw error using messageContent or wrong MessageObject', async () => {
       await expect(
         send({
@@ -889,6 +1317,61 @@ describe('PushAPI.chat.send', () => {
           env: _env,
         })
       ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, action: 1 }, // no info
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, action: 1, info: { affected: [] } }, // action is not allowed
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for invalid content', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          message: {
+            type: MESSAGE_TYPE,
+            content: 'INVALID CONTENT',
+            info: { affected: [] },
+          },
+          receiverAddress: group.chatId,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
     });
     it('should throw error for non-group', async () => {
       await expect(
@@ -896,7 +1379,7 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            info: { affected: [] },
           },
           receiverAddress: account2,
           signer: _signer1,
@@ -929,7 +1412,7 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            info: { affected: [] },
           },
           receiverAddress: group.chatId,
           signer: _signer2,
@@ -962,7 +1445,7 @@ describe('PushAPI.chat.send', () => {
           messageType: MESSAGE_TYPE,
           messageObj: {
             content: MESSAGE,
-            meta: { action: 1, info: { affected: [] } },
+            info: { affected: [] },
           },
           receiverAddress: group.chatId,
           signer: _signer2,
@@ -970,7 +1453,7 @@ describe('PushAPI.chat.send', () => {
         })
       ).to.be.rejected;
     });
-    it('EncType - PlainText ( Public Grp )', async () => {
+    it('Deprecated V1 | EncType - PlainText ( Public Grp )', async () => {
       const groupName = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
@@ -994,7 +1477,7 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: 1, info: { affected: [] } },
+          info: { affected: [] },
         },
         receiverAddress: group.chatId,
         signer: _signer1,
@@ -1003,14 +1486,14 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        { content: MESSAGE, meta: { action: 1, info: { affected: [] } } },
+        { content: MESSAGE, info: { affected: [] } },
         account1,
         _signer1,
         group.chatId,
         'PlainText'
       );
     });
-    it('EncType - pgp ( Private Grp )', async () => {
+    it('Deprecated V1 | EncType - pgp ( Private Grp )', async () => {
       const groupName = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
@@ -1034,7 +1517,7 @@ describe('PushAPI.chat.send', () => {
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: 1, info: { affected: [] } },
+          info: { affected: [] },
         },
         receiverAddress: group.chatId,
         signer: _signer1,
@@ -1043,7 +1526,87 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        { content: MESSAGE, meta: { action: 1, info: { affected: [] } } },
+        { content: MESSAGE, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText ( Public Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          info: { affected: [] },
+        },
+        to: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp ( Private Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: false,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          info: { affected: [] },
+        },
+        to: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
         account1,
         _signer1,
         group.chatId,
@@ -1053,7 +1616,335 @@ describe('PushAPI.chat.send', () => {
   });
   describe('Reaction Message', () => {
     const MESSAGE_TYPE = MessageType.REACTION;
-    const MESSAGE = '';
+    const MESSAGE = CHAT.REACTION.CLAP;
+    it('should throw error using messageContent on wrong MessageObject', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, info: { affected: [] } },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error on wrong content', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: 'Invalid Symbol',
+            reference:
+              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - PlainText', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText', async () => {
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Receipt Message', () => {
+    const MESSAGE_TYPE = MessageType.RECEIPT;
+    const MESSAGE = CHAT.RECEIPT.READ;
+    it('should throw error using messageContent on wrong MessageObject', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, info: { affected: [] } },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error on wrong content', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: 'Invalid Message Content',
+            reference:
+              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - PlainText', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText', async () => {
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: MESSAGE, // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('User Activity Message', () => {
+    const MESSAGE_TYPE = MessageType.USER_ACTIVITY;
+    const MESSAGE = CHAT.UA.LISTENER.JOIN;
     it('should throw error using messageContent or wrong MessageObject', async () => {
       await expect(
         send({
@@ -1074,14 +1965,323 @@ describe('PushAPI.chat.send', () => {
           env: _env,
         })
       ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE },
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, action: 1 }, // no info
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: { content: MESSAGE, action: 1, info: { affected: [] } }, // action is not allowed
+          messageContent: MESSAGE,
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
     });
-    it('EncType - PlainText', async () => {
+    it('should throw error for invalid content', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          message: {
+            type: MESSAGE_TYPE,
+            content: 'INVALID CONTENT',
+            info: { affected: [] },
+          },
+          receiverAddress: group.chatId,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for non-group', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            info: { affected: [] },
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for non member of group', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            info: { affected: [] },
+          },
+          receiverAddress: group.chatId,
+          signer: _signer2,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - PlainText ( Public Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+      // approve intent
+      await approve({
+        senderAddress: group.chatId,
+        status: 'Approved',
+        account: account2,
+        signer: _signer2,
+        env: _env,
+      });
+      // send message
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: REACTION_TYPE.THUMBS_UP },
+          info: { affected: [] },
         },
+        receiverAddress: group.chatId,
+        signer: _signer2,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
+        account2,
+        _signer2,
+        group.chatId,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp ( Private Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: false,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          info: { affected: [] },
+        },
+        receiverAddress: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - PlainText ( Public Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: true,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          info: { affected: [] },
+        },
+        to: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp ( Private Grp )', async () => {
+      const groupName = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupDescription = uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      });
+      const groupImage =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+      const group = await createGroup({
+        groupName,
+        groupDescription,
+        members: [_nftAccount1, _nftAccount2, account2],
+        groupImage,
+        admins: [], // takes signer as admin automatically, add more if you want to
+        isPublic: false,
+        signer: _signer1,
+        env: _env,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          info: { affected: [] },
+        },
+        to: group.chatId,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE, info: { affected: [] } },
+        account1,
+        _signer1,
+        group.chatId,
+        'pgp'
+      );
+    });
+  });
+  describe('Intent Message', () => {
+    const MESSAGE_TYPE = MessageType.INTENT;
+    const MESSAGE = CHAT.INTENT.ACCEPT;
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            info: { affected: [] }, // not supported for intent
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error using wrong content', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: 'Invalid Message',
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
         receiverAddress: walletAddress2,
         signer: _signer1,
         env: _env,
@@ -1089,24 +2289,193 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL
+        MESSAGE,
         account1,
         _signer1,
         account2,
         'PlainText'
       );
     });
-    it('EncType - pgp', async () => {
+    it('Deprecated V1 | EncType - pgp', async () => {
       await create({
         account: account2,
         env: _env,
         signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: { content: MESSAGE },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        MESSAGE,
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: { type: MESSAGE_TYPE, content: MESSAGE },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        { content: MESSAGE },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Reply Message', () => {
+    const MESSAGE_TYPE = MessageType.REPLY;
+    const MESSAGE = {
+      type: MessageType.TEXT,
+      content: 'Replying to prev message',
+    };
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            // Adding content is legacy format is not allowed for reply
+            content: {
+              messageType: MessageType.TEXT,
+              messageObj: {
+                content: 'Hey',
+              },
+            },
+            reference:
+              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error using wrong content', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: 'Invalid Message',
+            reference:
+              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for unsupported messageType reply', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: {
+              type: MessageType.RECEIPT,
+              content: CHAT.RECEIPT.READ,
+            },
+            reference:
+              'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+          },
+          receiverAddress: walletAddress2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: {
+            messageType: MESSAGE.type,
+            messageObj: { content: MESSAGE.content },
+          },
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
       });
       const msg = await send({
         messageType: MESSAGE_TYPE,
         messageObj: {
           content: MESSAGE,
-          meta: { action: REACTION_TYPE.THUMBS_UP },
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
         },
         receiverAddress: walletAddress2,
         signer: _signer1,
@@ -1115,7 +2484,253 @@ describe('PushAPI.chat.send', () => {
       await expectMsg(
         msg,
         MESSAGE_TYPE,
-        REACTION_SYMBOL[REACTION_TYPE.THUMBS_UP], // REACTION OVERRIDES THE MESSAGE CONTENT TO THE SYMBOL,
+        {
+          content: {
+            messageType: MESSAGE.type,
+            messageObj: { content: MESSAGE.content },
+          },
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: {
+            messageType: MESSAGE.type,
+            messageObj: { content: MESSAGE.content },
+          },
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: {
+            messageType: MESSAGE.type,
+            messageObj: { content: MESSAGE.content },
+          },
+          reference:
+            'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae',
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+  });
+  describe('Composite Message', () => {
+    const MESSAGE_TYPE = MessageType.COMPOSITE;
+    const MESSAGE = [
+      {
+        type: MessageType.TEXT as string,
+        content: 'Replying to prev message',
+      },
+    ];
+    it('should throw error using wrong messageObj', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: MESSAGE,
+            info: { affected: [] }, // not supported for composite
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error using wrong content', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: 'Invalid Message',
+          },
+          receiverAddress: account2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('should throw error for unsupported messageType composite', async () => {
+      await expect(
+        send({
+          messageType: MESSAGE_TYPE,
+          messageObj: {
+            content: [
+              {
+                type: MessageType.READ_RECEIPT,
+                content: CHAT.READ_RECEIPT,
+              },
+            ],
+          },
+          receiverAddress: walletAddress2,
+          signer: _signer1,
+          env: _env,
+        })
+      ).to.be.rejected;
+    });
+    it('Deprecated V1 | EncType - Plaintext', async () => {
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('Deprecated V1 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        messageType: MESSAGE_TYPE,
+        messageObj: {
+          content: MESSAGE,
+        },
+        receiverAddress: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
+        },
+        account1,
+        _signer1,
+        account2,
+        'pgp'
+      );
+    });
+    it('V2 | EncType - Plaintext', async () => {
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
+        },
+        account1,
+        _signer1,
+        account2,
+        'PlainText'
+      );
+    });
+    it('V2 | EncType - pgp', async () => {
+      await create({
+        account: account2,
+        env: _env,
+        signer: _signer2,
+        version: Constants.ENC_TYPE_V1,
+      });
+      const msg = await send({
+        message: {
+          type: MESSAGE_TYPE,
+          content: MESSAGE,
+        },
+        to: walletAddress2,
+        signer: _signer1,
+        env: _env,
+      });
+      await expectMsg(
+        msg,
+        MESSAGE_TYPE,
+        {
+          content: [
+            {
+              messageType: MESSAGE[0].type,
+              messageObj: { content: MESSAGE[0].content },
+            },
+          ],
+        },
         account1,
         _signer1,
         account2,
@@ -1126,7 +2741,7 @@ describe('PushAPI.chat.send', () => {
 });
 
 /**
- * HELPER FUNCTIONS
+ * HELPER FUNCTION
  */
 const expectMsg = async (
   msg: MessageWithCID,
@@ -1147,6 +2762,9 @@ const expectMsg = async (
   expect(msg.sigType).to.equal(msg.verificationProof?.split(':')[0]);
   //Backward Compatibility check ( signature signs messageContent and will be diff from vProof )
   expect(msg.signature).not.to.equal(msg.verificationProof?.split(':')[1]);
+
+  const unsupportedContent =
+    'MessageType Not Supported by this sdk version. Plz upgrade !!!';
   try {
     if (encType && encType === 'pgp') {
       throw new Error('Should be encrypted');
@@ -1156,11 +2774,14 @@ const expectMsg = async (
     if (typeof content === 'string') {
       expect((msg.messageObj as { content: string }).content).to.equal(content);
       //Backward Compatibility check
-      expect(msg.messageContent).to.equal(content);
+      expect(msg.messageContent).to.be.oneOf([content, unsupportedContent]);
     } else {
       expect(msg.messageObj).to.eql(content);
       //Backward Compatibility check
-      expect(msg.messageContent).to.equal((content as any).content);
+      expect(msg.messageContent).to.be.oneOf([
+        (content as any).content,
+        unsupportedContent,
+      ]);
     }
   } catch (err) {
     if (encType && encType === 'PlainText') {
@@ -1186,11 +2807,17 @@ const expectMsg = async (
         content
       );
       //Backward Compatibility check
-      expect(decryptedMsg.messageContent).to.equal(content);
+      expect(decryptedMsg.messageContent).to.be.oneOf([
+        content,
+        unsupportedContent,
+      ]);
     } else {
       expect(decryptedMsg.messageObj).to.eql(content);
       //Backward Compatibility check
-      expect(decryptedMsg.messageContent).to.equal((content as any).content);
+      expect(decryptedMsg.messageContent).to.be.oneOf([
+        (content as any).content,
+        unsupportedContent,
+      ]);
     }
   }
 };

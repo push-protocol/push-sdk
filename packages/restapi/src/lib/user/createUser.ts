@@ -1,6 +1,7 @@
 import {
+  IPGPHelper,
+  PGPHelper,
   createUserService,
-  generateKeyPair,
   generateRandomSecret,
   getAccountAddress,
   getWallet,
@@ -35,14 +36,20 @@ export type CreateUserProps = {
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
+  origin? : string | null
 };
 
 interface ICreateUser extends IUser {
   decryptedPrivateKey?: string;
 }
-export const create = async (
-  options: CreateUserProps
-): Promise<ICreateUser> => {
+
+
+export const create = async (options:CreateUserProps):Promise<ICreateUser>=>{
+  return await createUserCore(options, PGPHelper)
+}
+
+export const createUserCore = async ( options: CreateUserProps,
+  pgpHelper: IPGPHelper): Promise<ICreateUser> => {
   const passPrefix = '$0Pc'; //password prefix to ensure password validation
   const {
     env = Constants.ENV.PROD,
@@ -55,6 +62,7 @@ export const create = async (
       },
     },
     progressHook,
+    origin
   } = options || {};
 
   try {
@@ -85,7 +93,7 @@ export const create = async (
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
-    const keyPairs = await generateKeyPair();
+    const keyPairs = await pgpHelper.generateKeyPair();
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
@@ -121,6 +129,7 @@ export const create = async (
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),
       env,
+      origin: origin
     };
     const createdUser: ICreateUser = await createUserService(body);
 

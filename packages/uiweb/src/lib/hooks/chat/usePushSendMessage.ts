@@ -1,8 +1,9 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-
+import useVerifyAccessControl from './useVerifyAccessControl';
 import { useChatData } from '..';
 import { ENV } from '../../config';
+import { setAccessControl } from '../../helpers';
 
 interface SendMessageParams {
   message: string;
@@ -10,7 +11,7 @@ interface SendMessageParams {
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
-const usePushSendMessage = () => {
+const usePushSendMessage = () => { 
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -33,15 +34,16 @@ const usePushSendMessage = () => {
         if (!response) {
           return false;
         }
-        return;
+        return response;
       } catch (error: Error | any) {
+       
         setLoading(false);
         setError(error.message);
         console.log(error);
-        return;
+        return error.message;
       }
     },
-    [pgpPrivateKey, account]
+    [pgpPrivateKey, account,env]
   );
 
   return { sendMessage, error, loading };

@@ -8,7 +8,7 @@ import * as space from './space';
 import * as video from "./video"
 
 export * from './types';
-
+export { PushAPI } from './pushapi/PushAPI';
 export {
   alias,
   channels,

@@ -1,0 +1,40 @@
+name: "😈 Improvement Proposal"
+description: Suggest improvement,whether new or built upon existing features.
+title: "😈 [Improvement Proposal] - <title>"
+labels: [
+  "Improvement proposal"
+]
+body:
+  - type: input
+    id: proposal-name
+    attributes:
+      label: "Proposal name"
+      description: Brief title or summary of the proposed improvement.
+      placeholder: Summary of the proposal improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Describe the Proposal"
+      description: Please describe detailed description of the improvement, including the problem it solves and the benefits it brings.
+      placeholder: Detailed description of your desired proposal...
+    validations:
+      required: true
+  - type: textarea
+    id: usecase
+    attributes:
+      label: "Use Case"
+      description: Please explain the specific use cases or scenarios where this improvement would be valuable..
+      placeholder: List down the use case.
+    validations:
+      required: true
+  - type: textarea
+    id: current-limitations
+    attributes:
+      label: "Current Limitations"
+      description: Any existing limitations, issues, or challenges with the SDK that the proposed improvement aims to address.
+      placeholder: Overview for the current problem/limitations.
+    validations:
+      required: true
+  

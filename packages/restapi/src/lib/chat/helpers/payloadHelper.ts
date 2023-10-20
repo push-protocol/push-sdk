@@ -1,22 +1,30 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
-import { IConnectedUser, GroupDTO, SpaceDTO, ChatStatus, Rules, SpaceRules } from '../../types';
+import { getEncryptedRequestCore } from './crypto';
+import {
+  IConnectedUser,
+  GroupDTO,
+  SpaceDTO,
+  ChatStatus,
+  Rules,
+  SpaceRules,
+  GroupAccess,
+  SpaceAccess,
+} from '../../types';
 import { getEncryptedRequest } from './crypto';
-import { ENV, MessageType } from '../../constants';
+import { ENV } from '../../constants';
+import { IPGPHelper, PGPHelper } from './pgp';
 import * as AES from './aes';
-import { MessageTypeSpecificMeta } from '../../types/metaTypes';
 import { sign } from './pgp';
+import { MessageObj } from '../../types/messageTypes';
+
+
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
   fromCAIP10: string;
   toCAIP10: string;
-  messageObj:
-    | {
-        content: string;
-        meta?: MessageTypeSpecificMeta[MessageType];
-      }
-    | string;
+  messageObj: MessageObj | string;
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
@@ -39,16 +47,22 @@ export interface IApproveRequestPayload {
   fromDID: string;
   toDID: string;
   signature: string;
-  status: 'Approved';
+  status: 'Approved' | 'Reproved';
   sigType: string;
+  verificationProof?: string | null | undefined;
+}
+
+export interface IRejectRequestPayload {
+  fromDID: string;
+  toDID: string;
   verificationProof?: string | null | undefined;
 }
 
 export interface ICreateGroupRequestPayload {
   groupName: string;
-  groupDescription: string | null;
+  groupDescription?: string | null;
   members: Array<string>;
-  groupImage: string | null;
+  groupImage?: string | null;
   admins: Array<string>;
   isPublic: boolean;
   contractAddressNFT?: string;
@@ -63,7 +77,7 @@ export interface ICreateGroupRequestPayload {
 
 export interface IUpdateGroupRequestPayload {
   groupName: string;
-  groupImage: string | null;
+  groupImage?: string | null;
   members: Array<string>;
   admins: Array<string>;
   address: string;
@@ -73,41 +87,63 @@ export interface IUpdateGroupRequestPayload {
 export const sendMessagePayload = async (
   receiverAddress: string,
   senderCreatedUser: IConnectedUser,
-  messageObj: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  },
+  messageObj: MessageObj,
   messageContent: string,
   messageType: string,
   group: GroupDTO | null,
   env: ENV
+): Promise<ISendMessagePayload> => {
+  return await sendMessagePayloadCore(
+    receiverAddress,
+    senderCreatedUser,
+    messageObj,
+    messageContent,
+    messageType,
+    group,
+    env,
+    PGPHelper,
+  );
+};
+
+
+export const sendMessagePayloadCore = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  messageObj: MessageObj | string,
+  messageContent: string,
+  messageType: string,
+  group: GroupDTO | null,
+  env: ENV,
+  pgpHelper: IPGPHelper,
 ): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
 
   const secretKey: string = AES.generateRandomSecret(15);
 
   const { message: encryptedMessageContent, signature: deprecatedSignature } =
-    await getEncryptedRequest(
+    await getEncryptedRequestCore(
       receiverAddress,
       senderCreatedUser,
       messageContent,
       isGroup,
       env,
       group,
-      secretKey
+      secretKey,
+      pgpHelper
     );
   const {
     message: encryptedMessageObj,
     encryptionType,
     aesEncryptedSecret,
-  } = await getEncryptedRequest(
+  } = await getEncryptedRequestCore(
     receiverAddress,
     senderCreatedUser,
     JSON.stringify(messageObj),
     isGroup,
     env,
     group,
-    secretKey
+    secretKey,
+    pgpHelper
   );
 
   const body: ISendMessagePayload = {
@@ -137,7 +173,7 @@ export const sendMessagePayload = async (
     encryptedSecret: body.encryptedSecret,
   };
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: senderCreatedUser.privateKey!,
   });
@@ -148,7 +184,7 @@ export const sendMessagePayload = async (
 export const approveRequestPayload = (
   fromDID: string,
   toDID: string,
-  status: 'Approved',
+  status: 'Approved' | 'Reproved',
   sigType: string,
   signature: string
 ): IApproveRequestPayload => {
@@ -163,15 +199,29 @@ export const approveRequestPayload = (
   return body;
 };
 
+export const rejectRequestPayload = (
+  fromDID: string,
+  toDID: string,
+  sigType: string,
+  signature: string
+): IRejectRequestPayload => {
+  const body = {
+    fromDID,
+    toDID,
+    verificationProof: sigType + ':' + signature,
+  };
+  return body;
+};
+
 export const createGroupPayload = (
   groupName: string,
-  groupDescription: string | null,
   members: Array<string>,
-  groupImage: string | null,
   admins: Array<string>,
   isPublic: boolean,
   groupCreator: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   contractAddressNFT?: string,
   numberOfNFTs?: number,
   contractAddressERC20?: string,
@@ -180,7 +230,7 @@ export const createGroupPayload = (
   groupType?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
-  rules?: Rules | null,
+  rules?: Rules | null
 ): ICreateGroupRequestPayload => {
   const body = {
     groupName: groupName,
@@ -199,7 +249,7 @@ export const createGroupPayload = (
     groupType: groupType,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
-    rules: rules
+    rules: rules,
   };
   return body;
 };
@@ -232,38 +282,57 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     scheduleAt: groupDto.scheduleAt,
     scheduleEnd: groupDto.scheduleEnd,
     status: groupDto.status ?? null,
-    meta: groupDto.meta
+    meta: groupDto.meta,
   };
 
-    if (groupDto.rules) {
-      spaceDto.rules = {
-        spaceAccess: groupDto.rules.groupAccess,
-      };
-    }
+  if (groupDto.rules) {
+    spaceDto.rules = {
+      entry: groupDto.rules.entry,
+    };
+  }
 
   return spaceDto;
 };
 
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
-    groupAccess: spaceRules.spaceAccess,
-    chatAccess: undefined,
+    entry: spaceRules.entry,
+    chat: undefined,
   };
-}
+};
+
+export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
+  return {
+    entry: rules.entry,
+  };
+};
+
+export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
+  const spaceAccess: SpaceAccess = {
+    entry: group.entry,
+  };
+
+  // If rules are present in the entry, map them to the spaceAccess
+  if (group.rules) {
+    spaceAccess.rules = convertRulesToSpaceRules(group.rules);
+  }
+
+  return spaceAccess;
+};
 
 export const updateGroupPayload = (
   groupName: string,
-  groupImage: string | null,
-  groupDescription: string | null,
   members: Array<string>,
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  groupDescription?: string | null,
+  groupImage?: string | null,
   scheduleAt?: Date | null,
   scheduleEnd?: Date | null,
   status?: ChatStatus | null,
   meta?: string | null,
-  rules? : Rules | null
+  rules?: Rules | null
 ): IUpdateGroupRequestPayload => {
   const body = {
     groupName: groupName,

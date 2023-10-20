@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
+import { SignerType } from '@pushprotocol/restapi';
 
 /**
  * 
@@ -25,10 +26,14 @@ export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
 };
 
 export const walletToPCAIP10 = (account:string): string => {
-  if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
-    return account
+  if(account){
+    if(isValidCAIP10NFTAddress(account) || account.includes('eip155:')){
+      return account
+    }
+    return 'eip155:' + account
   }
-  return 'eip155:' + account
+  return account;
+ 
 }
 
 export const pCAIP10ToWallet = (wallet: string): string => {
@@ -97,4 +102,12 @@ export const resolveNewEns = async (address: string, provider: InfuraProvider) =
 export const isPCAIP = (id: string) => {
   const prefix = `eip155:`;
   return id?.startsWith(prefix);
+};
+
+export const getAddressFromSigner = async (signer: SignerType): Promise<string> => {
+  if ('getAddress' in signer) {
+    return await signer.getAddress();
+  } else {
+    return signer.account['address'] ?? '';
+  }
 };

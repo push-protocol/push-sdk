@@ -10,7 +10,8 @@ import {
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
-import { META_MESSAGE_META, MessageTypeSpecificMeta } from './metaTypes';
+import { Message, MessageObj } from './messageTypes';
+export * from './messageTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -115,6 +116,7 @@ export interface ISendNotificationInputOptions {
      * use additionalMeta instead
      */
     metadata?: any;
+    index?: string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
@@ -162,12 +164,7 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageObj | string;
   /**
    * @deprecated - Use messageObj.content instead
    */
@@ -247,6 +244,7 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+  origin?: string | null;
 
   /**
    * @deprecated Use `profile.name` instead.
@@ -315,19 +313,22 @@ export enum ConditionType {
 }
 
 export type Data = {
-  address?: string;
+  contract?: string;
   amount?: number;
   decimals?: number;
-  guildId?: string;
-  roleId?: string;
+  id?: string;
+  role?: string;
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'all' | 'any';
 };
 
 export type ConditionBase = {
-  type: ConditionType;
+  type?: ConditionType;
   category?: string;
   subcategory?: string;
-  data: Data;
+  data?: Data;
   access?: boolean;
+
 };
 
 export type Condition = ConditionBase & {
@@ -336,20 +337,37 @@ export type Condition = ConditionBase & {
 };
 
 export interface Rules {
-  groupAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
-  chatAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  chat?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
+
 
 export interface SpaceRules {
-  spaceAccess?: {
-    conditions: Array<Condition | ConditionBase>;
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
 
+export interface GroupAccess {
+  entry: boolean;
+  chat: boolean;
+  rules?: Rules;
+}
+
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
+}
+
+export interface SpaceAccess {
+  entry: boolean;
+  rules?: SpaceRules;
+}
 
 export interface GroupDTO {
   members: {
@@ -467,10 +485,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
 
 export interface ChatStartOptionsType {
   messageType: `${MessageType}`;
-  messageObj: {
-    content: string;
-    meta?: META_MESSAGE_META;
-  };
+  messageObj: MessageObj | string;
   /**
    * @deprecated - To be used for now to provide backward compatibility
    */
@@ -484,23 +499,37 @@ export interface ChatStartOptionsType {
  * EXPORTED ( Chat.send )
  */
 export interface ChatSendOptionsType {
-  messageType?: `${MessageType}`;
-  messageObj?: {
-    content: string;
-    meta?: MessageTypeSpecificMeta[MessageType];
-  };
+  /** Message to be send */
+  message?: Message;
   /**
-   * @deprecated - Use messageObj.content instead
+   * Message Sender's Account ( DID )
+   * In case account is not provided, it will be derived from signer
    */
-  messageContent?: string;
-  receiverAddress: string;
-  pgpPrivateKey?: string;
   account?: string;
-  signer?: SignerType;
-  env?: ENV;
+  /** Message Receiver's Account ( DID ) */
+  to?: string;
   /**
-   * @deprecated APIkey is not needed now
+   * Message Sender's ethers signer or viem walletClient
+   * Used for deriving account if not provided
+   * Used for decrypting pgpPrivateKey if not provided
    */
+  signer?: SignerType;
+  /**
+   * Message Sender's decrypted pgp private key
+   * Used for signing message
+   */
+  pgpPrivateKey?: string;
+  /** Enironment - prod, staging, dev */
+  env?: ENV;
+  /** @deprecated - Use message instead */
+  messageObj?: MessageObj;
+  /** @deprecated - Use message.content instead */
+  messageContent?: string;
+  /** @deprecated - Use message.type instead */
+  messageType?: `${MessageType}`;
+  /** @deprecated - Use to instead */
+  receiverAddress?: string;
+  /** @deprecated Not needed anymore */
   apiKey?: string;
 }
 
@@ -516,7 +545,7 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-type ethersV5SignerType = {
+export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, Array<TypedDataField>>,
@@ -528,7 +557,7 @@ type ethersV5SignerType = {
   privateKey?: string;
   provider?: providers.Provider;
 };
-type viemSignerType = {
+export type viemSignerType = {
   signTypedData: (args: {
     account: any;
     domain: any;
@@ -545,6 +574,7 @@ type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
+  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;
@@ -596,12 +626,7 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
-  messageObj?:
-    | {
-        content: string;
-        meta?: META_MESSAGE_META;
-      }
-    | string;
+  messageObj?: MessageObj | string;
   /**
    * @deprecated - Use messageObj.content instead
    */

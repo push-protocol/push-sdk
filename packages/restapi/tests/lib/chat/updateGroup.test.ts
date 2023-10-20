@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
-import { createGroup, updateGroup } from '../../../src/lib/chat';
+import { createGroup, updateGroup, removeMembers } from '../../../src/lib/chat';
 import { GroupDTO } from '../../../src/lib/types';
 import {
   adjectives,
@@ -150,12 +150,8 @@ describe('Update Group', () => {
     const updatedMembers = [
       'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
     ];
-    const updatedGroup = await updateGroup({
-      groupName,
-      groupDescription,
-      members: [...updatedMembers, account],
-      groupImage,
-      admins: [account],
+    const updatedGroup = await removeMembers({
+      members: [account2], // account to be removed
       chatId: group.chatId,
       signer: signer2, //acount2
       env: _env,
@@ -183,7 +179,7 @@ const expectGroup = async (
   expect(group.pendingMembers).to.be.an('array');
   expect(group.pendingMembers.length).to.equal(pendingMembers.length);
   for (let i = 0; i < pendingMembers.length; i++) {
-    expect(group.pendingMembers[i].wallet).to.equal(pendingMembers[i]);
+    expect(pendingMembers.includes(group.pendingMembers[i].wallet)).to.be.true;
   }
   expect(group.groupImage).to.equal(groupImage);
   expect(group.groupName).to.equal(groupName);
@@ -195,7 +191,6 @@ const expectGroup = async (
   expect(group.scheduleEnd).to.be.null;
   expect(group.groupType).to.equal('default');
   expect((group as any).status).to.be.null;
-  expect((group as any).eventType).to.equal('update');
   if (!HasMeta) {
     expect((group as any).meta).to.be.null;
   } else {

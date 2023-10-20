@@ -5,3 +5,5 @@ export * from './subscribe';
 export * from './unsubscribe';
 export * from './_getSubscribers';
 export * from './getSubscribers';
+export * from './subscribeV2';
+export * from './unsubscribeV2';

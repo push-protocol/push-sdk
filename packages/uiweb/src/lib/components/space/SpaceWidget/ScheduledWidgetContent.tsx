@@ -68,6 +68,18 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     setIsStarted(true);
   };
 
+  const handleStartSpaceLiveKit = async () => {
+    setIsLoading(!isLoading);
+    console.log(spaceStatusState)
+
+    await initSpaceObject?.(spaceData?.spaceId as string);
+
+    setIsLoading(!isLoading);
+    setIsStarted(true);
+
+    console.log(spaceStatusState)
+  }
+
   const handleShareTweet = () => {
     if (!shareUrl) return;
     const url = shareUrl;
@@ -141,17 +153,34 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
     return { icon, alt };
   };
 
+  // useEffect(() => {
+  //   async function startSpace() {
+  //     if (spaceStatusState === SpaceStatus.Live) return;
+  //     if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
+  //     console.log('SPACE STARTING');
+  //     await spacesObjectRef?.current?.start?.({
+  //       livepeerApiKey: 'ac9d3e33-56c2-4a22-a328-a08a46fd9356',
+  //     });
+  //     console.log('SPACE STARTED');
+  //     setIsStarted(false);
+  //     setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
+  //   }
+  //   startSpace();
+  // }, [isStarted]);
+
   useEffect(() => {
     async function startSpace() {
       if (spaceStatusState === SpaceStatus.Live) return;
-      if (!spaceObjectData?.connectionData?.local?.stream || !isStarted) return;
-      console.log('SPACE STARTING');
-      await spacesObjectRef?.current?.start?.({
-        livepeerApiKey: 'ac9d3e33-56c2-4a22-a328-a08a46fd9356',
-      });
+      if (!isStarted) return;
+
+      await spacesObjectRef?.current?.start?.();
+
       console.log('SPACE STARTED');
+
       setIsStarted(false);
+
       setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
+      console.log(spaceStatusState)
     }
     startSpace();
   }, [isStarted]);
@@ -195,7 +224,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
             background={`${theme.btnColorPrimary}`}
             border={`1px solid ${theme.btnOutline}`}
             cursor={'pointer'}
-            onClick={handleStartSpace}
+            onClick={handleStartSpaceLiveKit}
           >
             <Text fontSize="14px" fontWeight={600} color="#fff">
               {isLoading ? <CircularProgressSpinner /> : 'Start this Space'}

@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import ConnectButton from './components/Connect';
+import ConnectButtonComp from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
 import {
@@ -58,6 +58,8 @@ import RemoveSpeakersFromSpaceTest from './SpaceTest/RemoveSpeakersFromSpaceTest
 import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
+import GetSpaceAccessTest from './SpaceTest/GetSpaceAccessTest';
+
 import SpaceUITest from './SpaceUITest/SpaceUITest';
 import {
   SpaceWidget,
@@ -82,6 +84,11 @@ import ChatViewListTest from './ChatUITest/ChatViewListTest';
 import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import { lightChatTheme } from '@pushprotocol/uiweb';
+import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
+import SearchGroupTest from './ChatTest/SearchGroupTest';
+import RejectRequestTest from './ChatTest/RejectRequestTest';
+import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
+
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -214,6 +221,7 @@ export function App() {
   const { account, library, active, chainId } = useWeb3React();
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
+  const [signer, setSigner] = useState();
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
@@ -241,6 +249,7 @@ export function App() {
       const user = await PushAPI.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
+      setSigner(librarySigner);
       if (user?.encryptedPrivateKey) {
         pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -253,7 +262,6 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
-
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
@@ -272,7 +280,7 @@ export function App() {
         <h1>SDK Demo React App</h1>
       </Link>
 
-      <ConnectButton />
+      <ConnectButtonComp />
 
       <Dropdown
         label="ENV"
@@ -305,7 +313,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={env} theme={darkChatTheme}>
+                <ChatUIProvider  env={env} theme={darkChatTheme} account={account} pgpPrivateKey={pgpPrivateKey} signer={signer}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
@@ -441,6 +449,7 @@ export function App() {
                     />
                     <Route path="/send" element={<SendMessageTest />} />
                     <Route path="/approve" element={<ApproveRequestTest />} />
+                    <Route path="/reject" element={<RejectRequestTest />} />
                     <Route path="/chats" element={<GetChatsTest />} />
                     <Route path="/hash" element={<ConversationHashTest />} />
                     <Route path="/history" element={<HistoryTest />} />
@@ -448,6 +457,8 @@ export function App() {
                     <Route path="/createGroup" element={<CreateGroupTest />} />
                     <Route path="/getGroup" element={<GetGroupTest />} />
                     <Route path="/getGroupAccess" element={<GetGroupAccessTest />} />
+                    <Route path="/getGroupMemberStatus" element={<GetGroupMemberStatusTest />} />
+
                     <Route
                       path="/addMembersToGroup"
                       element={<AddMembersToGroupTest />}
@@ -466,6 +477,10 @@ export function App() {
                     />
                     <Route path="/updateGroup" element={<UpdateGroupTest />} />
 
+                    <Route
+                      path="/searchGroups"
+                      element={<SearchGroupTest />}
+                    />
                     {/* spaces method  routes */}
                     <Route path="/createSpace" element={<CreateSpaceTest />} />
                     <Route path="/updateSpace" element={<UpdateSpaceTest />} />
@@ -505,7 +520,15 @@ export function App() {
                       path="/getSpacesTrending"
                       element={<GetSpacesTrendingTest />}
                     />
-                    
+                    <Route
+                      path="/getSpaceAccess"
+                      element={<GetSpaceAccessTest />}
+                    />
+
+                    <Route
+                      path="/searchSpaces"
+                      element={<SearchSpaceTest />}
+                    />
 
                       {/* spaces ui components routes */}
                       <Route path="spaceWidget" element={<SpaceWidget />} />
