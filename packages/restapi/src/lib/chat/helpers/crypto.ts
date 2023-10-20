@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import * as PGP from './pgp';
 import * as AES from './aes';
 import * as CryptoJS from 'crypto-js';
@@ -51,11 +53,13 @@ export const encryptAndSign = async ({
   keys,
   privateKeyArmored,
   secretKey,
+  encryptSecret = true
 }: {
   plainText: string;
   keys: Array<string>;
   privateKeyArmored: string;
   secretKey: string;
+  encryptSecret: boolean
 }): Promise<{
   cipherText: string;
   encryptedSecret: string;
@@ -64,10 +68,13 @@ export const encryptAndSign = async ({
   encType: string;
 }> => {
   const cipherText: string = AES.aesEncrypt({ plainText, secretKey });
-  const encryptedSecret = await PGP.pgpEncrypt({
-    plainText: secretKey,
-    keys: keys,
-  });
+  let encryptedSecret: string | null = null
+  if (encryptSecret) {
+    encryptedSecret = await PGP.pgpEncrypt({
+      plainText: secretKey,
+      keys: keys,
+    });
+  }
   const signature: string = await PGP.sign({
     message: cipherText,
     signingKey: privateKeyArmored,
@@ -284,6 +291,7 @@ export const getEncryptedRequest = async (
         keys: publicKeys,
         privateKeyArmored: senderCreatedUser.privateKey!,
         secretKey,
+        encryptSecret: false
       });
       let encryptionType: 'PlainText' | 'pgp' | 'group-v1';
       if (newGroupEncryption) encryptionType = 'group-v1';

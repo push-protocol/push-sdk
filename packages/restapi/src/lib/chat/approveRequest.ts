@@ -64,11 +64,14 @@ export const approve = async (
 
   const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
-  let fromDID = await getUserDID(senderAddress, env);
-  let toDID = await getUserDID(address, env);
+  let fromDID: string;
+  let toDID: string;
   if (isGroup) {
     fromDID = await getUserDID(address, env);
     toDID = await getUserDID(senderAddress, env);
+  } else {
+    fromDID = await getUserDID(senderAddress, env);
+    toDID = await getUserDID(address, env);
   }
 
   const bodyToBeHashed = {

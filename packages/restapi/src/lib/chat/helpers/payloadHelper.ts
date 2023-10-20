@@ -112,31 +112,28 @@ export const sendMessagePayload = async (
     secretKey = AES.generateRandomSecret(15);
   }
 
-  const { message: encryptedMessageContent, signature: deprecatedSignature } =
-    await getEncryptedRequest(
-      receiverAddress,
-      senderCreatedUser,
-      messageContent,
-      isGroup,
-      env,
-      group,
-      secretKey,
-      newGroupEncryption
-    );
-  const {
-    message: encryptedMessageObj,
-    encryptionType,
-    aesEncryptedSecret,
-  } = await getEncryptedRequest(
-    receiverAddress,
+  const promise1= getEncryptedRequest(receiverAddress,
+    senderCreatedUser,
+    messageContent,
+    isGroup,
+    env,
+    group,
+    secretKey,
+    newGroupEncryption)
+  const promise2= getEncryptedRequest(receiverAddress,
     senderCreatedUser,
     JSON.stringify(messageObj),
     isGroup,
     env,
     group,
     secretKey,
-    newGroupEncryption
-  );
+    newGroupEncryption)
+  const result = await Promise.all([promise1, promise2])
+  const encryptedMessageContent = result[0].message
+  const deprecatedSignature = result[0].signature
+  const encryptedMessageObj = result[1].message
+  const encryptionType = result[1].encryptionType
+  const aesEncryptedSecret = result[1].aesEncryptedSecret
 
   const body: ISendMessagePayload = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
