@@ -73,6 +73,7 @@ export const encryptAndSign = async ({
     privateKeyArmored,
     secretKey,
     pgpHelper: PGP.PGPHelper,
+    encryptSecret,
   });
 };
 
@@ -82,12 +83,14 @@ export const encryptAndSignCore = async ({
   privateKeyArmored,
   secretKey,
   pgpHelper,
+  encryptSecret,
 }: {
   plainText: string;
   keys: Array<string>;
   privateKeyArmored: string;
   secretKey: string;
   pgpHelper: PGP.IPGPHelper;
+  encryptSecret: boolean;
 }): Promise<{
   cipherText: string;
   encryptedSecret: string;
@@ -250,7 +253,8 @@ export const getEncryptedRequest = async (
     env,
     group,
     secretKey,
-    PGP.PGPHelper
+    PGP.PGPHelper,
+    newGroupEncryption
   );
 };
 
@@ -262,7 +266,8 @@ export const getEncryptedRequestCore = async (
   env: ENV,
   group: GroupDTO | null,
   secretKey: string,
-  pgpHelper: PGP.IPGPHelper
+  pgpHelper: PGP.IPGPHelper,
+  newGroupEncryption: boolean
 ): Promise<IEncryptedRequest> => {
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
