@@ -29,7 +29,7 @@ import {
 } from '../types';
 import { VIDEO_CALL_TYPE } from '../payloads/constants';
 import sendLiveSpaceData from './helpers/sendLiveSpaceData';
-import { META_ACTION } from '../types/messageTypes';
+import { CHAT } from '../types/messageTypes';
 import { broadcastRaisedHand } from './broadcastRaisedHand';
 import { onReceiveMetaMessage } from './onReceiveMetaMessage';
 import { onJoinListener } from './onJoinListener';
@@ -157,7 +157,7 @@ export class Space extends Video {
             env: this.env,
             spaceId: this.spaceSpecificData.spaceId,
             signer: this.signer,
-            action: META_ACTION.PROMOTE_TO_ADMIN, // TODO: Add a meta action for SPEAKER_JOINED
+            action: CHAT.META.GROUP.ADMIN.PRVILEGE, // TODO: Add a meta action for SPEAKER_JOINED
           });
         }
       },

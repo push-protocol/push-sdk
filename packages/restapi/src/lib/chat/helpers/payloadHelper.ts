@@ -1,4 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
+import { getEncryptedRequestCore } from './crypto';
 import {
   IConnectedUser,
   GroupDTO,
@@ -11,9 +12,11 @@ import {
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import Constants, { ENV } from '../../constants';
-import * as AES from './aes';
 import { pgpDecrypt, sign } from './pgp';
+import { IPGPHelper, PGPHelper } from './pgp';
+import * as AES from './aes';
 import { MessageObj } from '../../types/messageTypes';
+
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
@@ -94,6 +97,28 @@ export const sendMessagePayload = async (
   group: GroupDTO | null,
   env: ENV
 ): Promise<ISendMessagePayload> => {
+  return await sendMessagePayloadCore(
+    receiverAddress,
+    senderCreatedUser,
+    messageObj,
+    messageContent,
+    messageType,
+    group,
+    env,
+    PGPHelper
+  );
+};
+
+export const sendMessagePayloadCore = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  messageObj: MessageObj | string,
+  messageContent: string,
+  messageType: string,
+  group: GroupDTO | null,
+  env: ENV,
+  pgpHelper: IPGPHelper
+): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
   let secretKey: string;
   let newGroupEncryption = false;
@@ -112,28 +137,32 @@ export const sendMessagePayload = async (
     secretKey = AES.generateRandomSecret(15);
   }
 
-  const promise1= getEncryptedRequest(receiverAddress,
+  const promise1 = getEncryptedRequest(
+    receiverAddress,
     senderCreatedUser,
     messageContent,
     isGroup,
     env,
     group,
     secretKey,
-    newGroupEncryption)
-  const promise2= getEncryptedRequest(receiverAddress,
+    newGroupEncryption
+  );
+  const promise2 = getEncryptedRequest(
+    receiverAddress,
     senderCreatedUser,
     JSON.stringify(messageObj),
     isGroup,
     env,
     group,
     secretKey,
-    newGroupEncryption)
-  const result = await Promise.all([promise1, promise2])
-  const encryptedMessageContent = result[0].message
-  const deprecatedSignature = result[0].signature
-  const encryptedMessageObj = result[1].message
-  const encryptionType = result[1].encryptionType
-  const aesEncryptedSecret = result[1].aesEncryptedSecret
+    newGroupEncryption
+  );
+  const result = await Promise.all([promise1, promise2]);
+  const encryptedMessageContent = result[0].message;
+  const deprecatedSignature = result[0].signature;
+  const encryptedMessageObj = result[1].message;
+  const encryptionType = result[1].encryptionType;
+  const aesEncryptedSecret = result[1].aesEncryptedSecret;
 
   const body: ISendMessagePayload = {
     fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
@@ -163,7 +192,7 @@ export const sendMessagePayload = async (
     encryptedSecret: body.encryptedSecret,
   };
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: senderCreatedUser.privateKey!,
   });
@@ -281,7 +310,7 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
   if (groupDto.rules) {
     spaceDto.rules = {
-      spaceAccess: groupDto.rules.groupAccess,
+      entry: groupDto.rules.entry,
     };
   }
 
@@ -290,23 +319,23 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
 
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
-    groupAccess: spaceRules.spaceAccess,
-    chatAccess: undefined,
+    entry: spaceRules.entry,
+    chat: undefined,
   };
 };
 
 export const convertRulesToSpaceRules = (rules: Rules): SpaceRules => {
   return {
-    spaceAccess: rules.groupAccess,
+    entry: rules.entry,
   };
 };
 
 export const groupAccessToSpaceAccess = (group: GroupAccess): SpaceAccess => {
   const spaceAccess: SpaceAccess = {
-    spaceAccess: group.groupAccess,
+    entry: group.entry,
   };
 
-  // If rules are present in the groupAccess, map them to the spaceAccess
+  // If rules are present in the entry, map them to the spaceAccess
   if (group.rules) {
     spaceAccess.rules = convertRulesToSpaceRules(group.rules);
   }

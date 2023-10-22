@@ -53,13 +53,41 @@ export const encryptAndSign = async ({
   keys,
   privateKeyArmored,
   secretKey,
-  encryptSecret = true
+  encryptSecret = true,
 }: {
   plainText: string;
   keys: Array<string>;
   privateKeyArmored: string;
   secretKey: string;
-  encryptSecret: boolean
+  encryptSecret: boolean;
+}): Promise<{
+  cipherText: string;
+  encryptedSecret: string;
+  signature: string;
+  sigType: string;
+  encType: string;
+}> => {
+  return await encryptAndSignCore({
+    plainText,
+    keys,
+    privateKeyArmored,
+    secretKey,
+    pgpHelper: PGP.PGPHelper,
+  });
+};
+
+export const encryptAndSignCore = async ({
+  plainText,
+  keys,
+  privateKeyArmored,
+  secretKey,
+  pgpHelper,
+}: {
+  plainText: string;
+  keys: Array<string>;
+  privateKeyArmored: string;
+  secretKey: string;
+  pgpHelper: PGP.IPGPHelper;
 }): Promise<{
   cipherText: string;
   encryptedSecret: string;
@@ -68,7 +96,7 @@ export const encryptAndSign = async ({
   encType: string;
 }> => {
   const cipherText: string = AES.aesEncrypt({ plainText, secretKey });
-  let encryptedSecret: string | null = null
+  let encryptedSecret: string | null = null;
   if (encryptSecret) {
     encryptedSecret = await PGP.pgpEncrypt({
       plainText: secretKey,
@@ -98,7 +126,26 @@ export const signMessageWithPGP = async ({
   signature: string;
   sigType: string;
 }> => {
-  const signature: string = await PGP.sign({
+  return await signMessageWithPGPCore({
+    message,
+    privateKeyArmored,
+    pgpHelper: PGP.PGPHelper,
+  });
+};
+
+export const signMessageWithPGPCore = async ({
+  message,
+  privateKeyArmored,
+  pgpHelper,
+}: {
+  message: string;
+  privateKeyArmored: string;
+  pgpHelper: PGP.IPGPHelper;
+}): Promise<{
+  signature: string;
+  sigType: string;
+}> => {
+  const signature: string = await pgpHelper.sign({
     message: message,
     signingKey: privateKeyArmored,
   });
@@ -195,6 +242,28 @@ export const getEncryptedRequest = async (
   secretKey: string,
   newGroupEncryption: boolean
 ): Promise<IEncryptedRequest> => {
+  return await getEncryptedRequestCore(
+    receiverAddress,
+    senderCreatedUser,
+    message,
+    isGroup,
+    env,
+    group,
+    secretKey,
+    PGP.PGPHelper
+  );
+};
+
+export const getEncryptedRequestCore = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  message: string,
+  isGroup: boolean,
+  env: ENV,
+  group: GroupDTO | null,
+  secretKey: string,
+  pgpHelper: PGP.IPGPHelper
+): Promise<IEncryptedRequest> => {
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
       account: receiverAddress,
@@ -212,9 +281,10 @@ export const getEncryptedRequest = async (
       });
       // If the user is being created here, that means that user don't have a PGP keys. So this intent will be in plaintext
 
-      const { signature } = await signMessageWithPGP({
+      const { signature } = await signMessageWithPGPCore({
         message: message,
         privateKeyArmored: senderCreatedUser.privateKey!,
+        pgpHelper: pgpHelper,
       });
 
       return {
@@ -231,9 +301,10 @@ export const getEncryptedRequest = async (
           '-----BEGIN PGP PUBLIC KEY BLOCK-----'
         )
       ) {
-        const { signature } = await signMessageWithPGP({
+        const { signature } = await signMessageWithPGPCore({
           message: message,
           privateKeyArmored: senderCreatedUser.privateKey!,
+          pgpHelper: pgpHelper,
         });
 
         return {
@@ -243,14 +314,14 @@ export const getEncryptedRequest = async (
           signature: signature,
         };
       } else {
-        const { cipherText, encryptedSecret, signature } = await encryptAndSign(
-          {
+        const { cipherText, encryptedSecret, signature } =
+          await encryptAndSignCore({
             plainText: message,
             keys: [receiverCreatedUser.publicKey, senderCreatedUser.publicKey],
             privateKeyArmored: senderCreatedUser.privateKey!,
             secretKey,
-          }
-        );
+            pgpHelper: pgpHelper,
+          });
         return {
           message: cipherText,
           encryptionType: 'pgp',
@@ -261,9 +332,10 @@ export const getEncryptedRequest = async (
     }
   } else if (group) {
     if (group.isPublic) {
-      const { signature } = await signMessageWithPGP({
+      const { signature } = await signMessageWithPGPCore({
         message: message,
         privateKeyArmored: senderCreatedUser.privateKey!,
+        pgpHelper: pgpHelper,
       });
       return {
         message: message,
@@ -291,7 +363,7 @@ export const getEncryptedRequest = async (
         keys: publicKeys,
         privateKeyArmored: senderCreatedUser.privateKey!,
         secretKey,
-        encryptSecret: false
+        encryptSecret: false,
       });
       let encryptionType: 'PlainText' | 'pgp' | 'group-v1';
       if (newGroupEncryption) encryptionType = 'group-v1';

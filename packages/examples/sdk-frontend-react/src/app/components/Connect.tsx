@@ -19,10 +19,12 @@ const NETWORK_MAPPING: NwMappingType = {
   10: 'OPTIMISM_MAINNET',
   1442: 'POLYGON_ZK_EVM_TESTNET',
   1101: 'POLYGON_ZK_EVM_MAINNET',
+  421613: "ARBITRUM_TESTNET",
+  42161: "ARBITRUMONE_MAINNET"
 };
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101],
+  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
 });
 
 const ConnectWrapper = styled.div`
@@ -65,7 +67,7 @@ const Disconnect = styled(StyledButton)`
   background: rgb(226, 8, 128);
 `;
 
-const ConnectButton = () => {
+const ConnectButtonComp = () => {
   const { active, account, activate, deactivate, chainId } = useWeb3React();
 
   async function connect() {
@@ -119,4 +121,4 @@ const ConnectButton = () => {
   );
 };
 
-export default ConnectButton;
+export default ConnectButtonComp;

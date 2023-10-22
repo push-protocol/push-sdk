@@ -1,11 +1,10 @@
 import { send } from '../../chat';
 import { MessageType } from '../../constants';
 import { EnvOptionsType, LiveSpaceData, SignerType } from '../../types';
-import { META_ACTION } from '../../types/messageTypes';
 
 interface SendLiveSpaceData extends EnvOptionsType {
   liveSpaceData?: LiveSpaceData;
-  action: META_ACTION;
+  action: string;
   spaceId: string;
   pgpPrivateKey: string;
   signer: SignerType;
@@ -26,8 +25,7 @@ const sendLiveSpaceData = async ({
     signer,
     messageType: MessageType.META,
     messageObj: {
-      content: 'PUSH SPACE META MESSAGE',
-      action,
+      content: action,
       info: {
         affected: [],
         arbitrary: liveSpaceData,

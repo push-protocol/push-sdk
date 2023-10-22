@@ -27,21 +27,20 @@ export enum ENCRYPTION_TYPE {
 export enum MessageType {
   TEXT = 'Text',
   IMAGE = 'Image',
+  VIDEO = 'Video',
+  AUDIO = 'Audio',
   FILE = 'File',
+  /** @deprecated - Use `MediaEmbed` Instead */
+  GIF = 'GIF',
   MEDIA_EMBED = 'MediaEmbed',
   META = 'Meta',
   REACTION = 'Reaction',
-  /**
-   * @deprecated - Use MediaEmbed Instead
-   */
-  GIF = 'GIF',
-
-  // TODO
-  // AUDIO = 'Audio',
-  // VIDEO = 'Video',
-  // PAYMENT = 'Payment',
-  // REPLY = 'Reply',
-  // COMPOSITE = 'Composite',
+  RECEIPT = 'Receipt',
+  USER_ACTIVITY = 'UserActivity',
+  INTENT = 'Intent',
+  REPLY = 'Reply',
+  COMPOSITE = 'Composite',
+  PAYMENT = 'Payment',
 }
 
 const Constants = {
@@ -55,7 +54,7 @@ const Constants = {
   },
   DEFAULT_CHAIN_ID: 5,
   DEV_CHAIN_ID: 99999,
-  NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101],
+  NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
   ETH_CHAINS: [1, 5],
   ENC_TYPE_V1: 'x25519-xsalsa20-poly1305',
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',

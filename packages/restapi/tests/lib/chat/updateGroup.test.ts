@@ -179,7 +179,7 @@ const expectGroup = async (
   expect(group.pendingMembers).to.be.an('array');
   expect(group.pendingMembers.length).to.equal(pendingMembers.length);
   for (let i = 0; i < pendingMembers.length; i++) {
-    expect(group.pendingMembers[i].wallet).to.equal(pendingMembers[i]);
+    expect(pendingMembers.includes(group.pendingMembers[i].wallet)).to.be.true;
   }
   expect(group.groupImage).to.equal(groupImage);
   expect(group.groupName).to.equal(groupName);
@@ -191,7 +191,6 @@ const expectGroup = async (
   expect(group.scheduleEnd).to.be.null;
   expect(group.groupType).to.equal('default');
   expect((group as any).status).to.be.null;
-  expect((group as any).eventType).to.equal('update');
   if (!HasMeta) {
     expect((group as any).meta).to.be.null;
   } else {

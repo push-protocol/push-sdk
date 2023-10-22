@@ -1,183 +1,201 @@
-import { useContext, useRef, useState } from "react";
-import { ThemeContext } from "../theme/ThemeProvider";
-import { useClickAway } from "../../../hooks";
-import Dropdown, { DropdownValueType } from "./DropDown";
+import { useContext, useRef, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { ThemeContext } from '../theme/ThemeProvider';
+import { useClickAway } from '../../../hooks';
+import Dropdown, { DropdownValueType } from '../reusables/DropDown';
+import { Section, Span } from '../../reusables/sharedStyling';
+
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import styled from "styled-components";
-import { Section, Image, Span } from "../../reusables/sharedStyling";
-import { MemberListContainerType, WalletProfileContainerProps } from "../exportedTypes";
-import { findObject } from "../helpers/helper";
-import { device } from "../../../config";
-import { shortenText } from "../../../helpers";
+import { IChatTheme, User } from '../exportedTypes';
+import { findObject } from '../helpers/helper';
+import { device } from '../../../config';
+import { shortenText } from '../../../helpers';
+import { ProfileContainer } from '../reusables';
 
-export const MemberListContainer = ({ key, memberData, handleMembers, handleMemberList, lightIcon, darkIcon, memberList }: MemberListContainerType) => {
-    const theme = useContext(ThemeContext);
-   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+
+type MemberListContainerType = {
+  key?: number;
+  memberData: User;
+  handleMemberList: (member: User) => void;
+  handleMembers?: (value: User[]) => void;
+  darkIcon: any;
+  memberList?: any;
+};
+
+export interface WalletProfileContainerProps {
+  id?: any;
+  background?: any;
+  border?: string;
+};
+
+export const MemberListContainer = ({
+  key,
+  memberData,
+  handleMembers,
+  handleMemberList,
+  darkIcon,
+  memberList,
+}: MemberListContainerType) => {
+  const theme = useContext(ThemeContext);
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
   const dropdownRef = useRef<any>(null);
 
-
   useClickAway(dropdownRef, () => setSelectedWallet(null));
 
-  const removeAdminDropdown: DropdownValueType =
-    { id: 'dismiss_admin', title: 'Dismiss as admin', icon: DismissAdmin, function: () => dismissGroupAdmin() }
-
-  const addAdminDropdown: DropdownValueType =
-    { id: 'dismiss_admin', title: 'Make group admin', icon: AddAdmin, function: () => makeGroupAdmin() }
-
-  const removeUserDropdown: DropdownValueType =
-    { id: 'remove_user', title: 'Remove', icon: Remove, function: () => removeUser() }
-
-  const dismissGroupAdmin = () => {
-    const updatedMembers = memberList.map((member:any) => member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? ({ ...member, isAdmin: false }) : member)
-    handleMembers?.(updatedMembers)
-    setSelectedWallet(null)
-  }
-
-  const makeGroupAdmin = () => {
-    const updatedMembers = memberList.map((member: any) => member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? ({ ...member, isAdmin: true }) : member)
-    handleMembers?.(updatedMembers)
-    setSelectedWallet(null)
-  }
-
-  const removeUser = () => {
-    handleMemberList(memberData)
-    setSelectedWallet(null)
-  }
-
-
-  const handleHeight = (id: any) => {
-    const containerHeight = document.getElementById(id)?.getBoundingClientRect();
-    setDropdownHeight(containerHeight?.top);
+  const removeAdminDropdown: DropdownValueType = {
+    id: 'dismiss_admin',
+    title: 'Dismiss as admin',
+    icon: DismissAdmin,
+    function: () => dismissGroupAdmin(),
   };
 
+  const addAdminDropdown: DropdownValueType = {
+    id: 'dismiss_admin',
+    title: 'Make group admin',
+    icon: AddAdmin,
+    function: () => makeGroupAdmin(),
+  };
 
-    return (
-    <WalletProfileContainer id={memberData?.wallets} background = { memberList ? 'transparent' : theme.groupSearchProfilBackground } 
-    border={memberList ? `${theme.modalBorderColor}`: 'none'}
+  const removeUserDropdown: DropdownValueType = {
+    id: 'remove_user',
+    title: 'Remove',
+    icon: Remove,
+    function: () => removeUser(),
+  };
+
+  const dismissGroupAdmin = () => {
+    const updatedMembers = memberList.map((member: any) =>
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
+        ? { ...member, isAdmin: false }
+        : member
+    );
+    handleMembers?.(updatedMembers);
+    setSelectedWallet(null);
+  };
+
+  const makeGroupAdmin = () => {
+    const updatedMembers = memberList.map((member: any) =>
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
+        ? { ...member, isAdmin: true }
+        : member
+    );
+    handleMembers?.(updatedMembers);
+    setSelectedWallet(null);
+  };
+
+  const removeUser = () => {
+    handleMemberList(memberData);
+    setSelectedWallet(null);
+  };
+
+  const handleHeight = (id: any) => {
+    const containerHeight = document
+      .getElementById(id)
+      ?.getBoundingClientRect();
+    setDropdownHeight(containerHeight?.top);
+  };
+  return (
+    <WalletProfileContainer
+      id={memberData?.wallets}
+      background={
+        memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground
+      }
+      border={
+        memberList ? theme.border?.modalInnerComponents:'none' 
+      }
+      borderRadius={theme.borderRadius?.modalInnerComponents}
     >
-      <WalletProfile>
-        <Section
-          width="48px"
-          maxWidth="48px"
-          borderRadius="100%"
-          overflow="auto"
-          margin="0px 12px 0px 0px"
-        >
-          <Image src={memberData?.profilePicture ?? ''} height="48px" maxHeight="48px" width={'auto'} cursor='pointer' />
-        </Section>
-        
-        <Span fontSize="18px" fontWeight="400" color={theme.modalPrimaryTextColor}>{shortenText(memberData?.wallets?.split(':')[1], 8, true)}</Span>
-        </WalletProfile>  
-
-        <Section justifyContent="flex-end">
-        {memberData?.isAdmin && (
-            <Span
-                background="#F4DCEA"
-                color="#D53A94"
-                borderRadius="8px"
-                padding="6px"
-                fontWeight="500"
-                fontSize="10px"
-            >
-            Admin
-            </Span>
-        )}
-      <Section
-        maxWidth='fit-content'
-        onClick={() => {
-          handleHeight(memberData?.wallets);
-          setSelectedWallet(null)
-          memberList
-            ? findObject(memberData, memberList, 'wallets')
-              ? setSelectedWallet(memberData?.wallets)
-              : handleMemberList(memberData)
-            : handleMemberList(memberData)
+      <ProfileContainer
+        theme={theme}
+        member={{
+          wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          image: memberData.profilePicture || '',
         }}
-      >
-        {/* {theme === 'light' ? lightIcon : darkIcon} */}
-        {darkIcon}
-      </Section>
+      />
+
+      <Section justifyContent="flex-end">
+        {memberData?.isAdmin && (
+          <Span
+            background="#F4DCEA"
+            color="#D53A94"
+            borderRadius="8px"
+            padding="6px"
+            fontWeight="500"
+            fontSize="10px"
+          >
+            Admin
+          </Span>
+        )}
+        <Section
+          maxWidth="fit-content"
+          onClick={() => {
+            handleHeight(memberData?.wallets);
+            setSelectedWallet(null);
+            memberList
+              ? findObject(memberData, memberList, 'wallets')
+                ? setSelectedWallet(memberData?.wallets)
+                : handleMemberList(memberData)
+              : handleMemberList(memberData);
+          }}
+        >
+          {darkIcon}
+        </Section>
       </Section>
 
       {selectedWallet?.toLowerCase() == memberData?.wallets?.toLowerCase() && (
-        <DropdownContainer style={{ top: dropdownHeight! > 500 ? '30%' : "45%" }} ref={dropdownRef} theme={theme}>
+        <DropdownContainer
+          style={{ top: dropdownHeight! > 500 ? '30%' : '45%' }}
+          ref={dropdownRef}
+          theme={theme}
+        >
           <Dropdown
-            dropdownValues={memberData?.isAdmin ? [removeAdminDropdown,removeUserDropdown] : [addAdminDropdown, removeUserDropdown]}
-            hoverBGColor={theme.snapFocusBg}
+            dropdownValues={
+              memberData?.isAdmin
+                ? [removeAdminDropdown, removeUserDropdown]
+                : [addAdminDropdown, removeUserDropdown]
+            }
+            hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
         </DropdownContainer>
       )}
-
-    </ WalletProfileContainer>
-    )
-}
-
+    </WalletProfileContainer>
+  );
+};
 
 const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
-    // position: relative;
-    // padding: 5px 16px;
-    // margin: 8px 0px;
-    // justify-content: space-between;
-    // // min-width: 450px;
-    // min-width: 100%;
-    // box-sizing: border-box;
-    // align-items: center;
-    // border-radius: 16px;
-
-    // @media (max-width: 480px) {
-    // // min-width: 300px;
-    // }
-
-    justify-content: space-between;
-    padding: 8px 16px;
-    border-radius: 16px;
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    // background-color: ${(props) => props.theme.snapFocusBg};
-    max-height: 64px;
-    align-self: stretch;
-    display: flex;
-    height: auto;
-    z-index: auto;
-    flex: 1;
-    @media (max-width: 480px) {
-      max-width: 100%;
-    }
-
-`;
-
-const WalletProfile = styled(Section)`
-  justify-content: flex-start;
+  justify-content: space-between;
+  padding: 8px 16px;
+    border: ${(props) => props.border};
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 64px;
+  align-self: stretch;
+  display: flex;
+  height: auto;
+  z-index: auto;
+  flex: 1;
+  @media (max-width: 480px) {
+    max-width: 100%;
+  }
 `;
 
 const DropdownContainer = styled.div`
-  // position: absolute;
-  // left: 48%;
-  // border-radius: 16px;
-  // padding: 14px 8px;
-  // background: ${(props) => props.theme.modalContentBackground};
-  // border: 1px solid ${(props) => props.theme.modalBorderColor};
-  // z-index: 400;
-  // @media ${device.mobileL} {
-  //   left: 27%;
-  // }
-  // @media (min-width: 426px) and (max-width: 1150px) {
-  //   left: 47%;
-  // }
   position: absolute;
   left: 48%;
   top: 69%;
-  border-radius: 16px;
+  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 14px 8px;
   z-index: 999999999999 !important;
   display: flex;
   flex-direction: column !important;
-  background: ${(props) => props.theme.modalContentBackground};
-  border: 1px solid ${(props) => props.theme.modalBorderColor};
+  background: ${(props) => props.theme.backgroundColor.modalBackground};
+  border: ${(props) => props.theme.border.modalInnerComponents};
 
   @media ${device.mobileL} {
     left: 27%;
@@ -185,7 +203,7 @@ const DropdownContainer = styled.div`
   @media (min-width: 426px) and (max-width: 1150px) {
     left: 48%;
   }
-  @media (max-width: 480px){
+  @media (max-width: 480px) {
     left: 25%;
   }
 `;

@@ -13,8 +13,11 @@ import {
 import {
   IUpdateGroupRequestPayload,
   updateGroupPayload,
-  sign,
   getWallet,
+  IPGPHelper,
+  PGPHelper,
+  getConnectedUserV2Core,
+  sign,
   getAccountAddress,
   getUserDID,
   getConnectedUserV2,
@@ -46,8 +49,16 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
 /**
  * Update Group information
  */
+
 export const updateGroup = async (
   options: ChatUpdateGroupType
+) => {
+  return await updateGroupCore(options, PGPHelper);
+}
+
+export const updateGroupCore = async (
+  options: ChatUpdateGroupType,
+  pgpHelper: IPGPHelper
 ): Promise<GroupDTO> => {
   const {
     chatId,
@@ -81,8 +92,7 @@ export const updateGroup = async (
       address,
       groupDescription
     );
-
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
     const convertedMembersPromise = members.map(async (each) => {
       return getUserDID(each, env);
     });
@@ -120,7 +130,7 @@ export const updateGroup = async (
       chatId: chatId,
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-    const signature: string = await sign({
+    const signature: string = await pgpHelper.sign({
       message: hash,
       signingKey: connectedUser.privateKey!,
     });

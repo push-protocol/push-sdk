@@ -5,18 +5,19 @@ import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
   approveRequestPayload,
-  sign,
-  getConnectedUserV2,
   IApproveRequestPayload,
   getAccountAddress,
   getWallet,
   getUserDID,
+  getConnectedUserV2Core,
+  PGPHelper,
+  IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import * as AES from '../chat/helpers/aes';
 import { getGroup } from './getGroup';
 
-interface ApproveRequestOptionsType extends EnvOptionsType {
+export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
    * Chat request sender address
    */
@@ -37,6 +38,13 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
  */
 export const approve = async (
   options: ApproveRequestOptionsType
+): Promise<string> => {
+  return await approveCore(options, PGPHelper);
+};
+
+export const approveCore = async (
+  options: ApproveRequestOptionsType,
+  pgpHelper: IPGPHelper
 ): Promise<string> => {
   const {
     status = 'Approved',
@@ -62,7 +70,12 @@ export const approve = async (
     isGroup = false;
   }
 
-  const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+  const connectedUser = await getConnectedUserV2Core(
+    wallet,
+    pgpPrivateKey,
+    env,
+    pgpHelper
+  );
 
   let fromDID: string;
   let toDID: string;
@@ -81,7 +94,7 @@ export const approve = async (
   };
 
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: connectedUser.privateKey!,
   });
