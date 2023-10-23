@@ -16,6 +16,7 @@ import {
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { getGroup } from './getGroup';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
@@ -72,6 +73,11 @@ export const updateGroupProfile = async (
       groupDescription
     );
 
+    const group = await getGroup({
+      chatId,
+      env,
+    });
+
     /**
      * CREATE PROFILE VERIFICATION PROOF
      */
@@ -85,7 +91,10 @@ export const updateGroupProfile = async (
       scheduleEnd: scheduleEnd,
       rules: rules,
       status: status,
+      isPublic: group.isPublic,
+      groupType: group.groupType,
     };
+
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const signature: string = await sign({
@@ -103,7 +112,12 @@ export const updateGroupProfile = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}/profile`;
 
-    const { chatId: chat_id, ...body } = bodyToBeHashed;
+    const {
+      chatId: chat_id,
+      isPublic: is_public,
+      groupType: group_type,
+      ...body
+    } = bodyToBeHashed;
     (body as any).verificationProof = verificationProof;
 
     return axios
