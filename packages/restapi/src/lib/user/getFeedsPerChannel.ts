@@ -35,7 +35,7 @@ export const getFeedsPerChannel = async (options: FeedsPerChannelOptionsType) =>
     throw new Error('channels cannot be empty');
   }
   const _channel = await getCAIPAddress(env, channels[0], 'Channel');
-  const apiEndpoint = `${API_BASE_URL}/v1/users/${_channel}/channels/${_user}/feeds`;
+  const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/channels/${_channel}/feeds`;
   const queryObj = {
     page,
     limit: getLimit(limit),
