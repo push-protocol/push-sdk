@@ -27,11 +27,11 @@ import { Delegate } from './delegate';
 import { Alias } from './alias';
 
 export class Channel extends PushNotificationBaseClass {
-  public delegate!: Delegate
-  public alias!: Alias
+  public delegate!: Delegate;
+  public alias!: Alias;
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
-    this.delegate = new Delegate(signer, env, account)
+    this.delegate = new Delegate(signer, env, account);
     this.alias = new Alias(env!);
   }
 
@@ -93,9 +93,11 @@ export class Channel extends PushNotificationBaseClass {
       if (!validateCAIP(channel!)) {
         throw new Error('Invalid CAIP');
       }
-      return await PUSH_CHANNEL._getSubscribers({
+      return await PUSH_CHANNEL.getSubscribers({
         channel: channel!,
         env: this.env,
+        page: options?.page,
+        limit: options?.limit,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::subscribers : ${error}`);
@@ -257,12 +259,15 @@ export class Channel extends PushNotificationBaseClass {
       );
       const balance = await this.fetchBalance(pushTokenContract, this.account!);
       // get counter
-      const counter = await this.fetchUpdateCounter(this.coreContract, this.account!);
+      const counter = await this.fetchUpdateCounter(
+        this.coreContract,
+        this.account!
+      );
       const fees = ethers.utils.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      const totalFees = fees.mul(counter)
+      const totalFees = fees.mul(counter);
       if (totalFees.gte(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
@@ -353,8 +358,8 @@ export class Channel extends PushNotificationBaseClass {
         throw new Error('Invalid channel address');
       }
       const channelDetails = await this.info(this.account);
-      if(channelDetails?.verified_status == 0){
-        throw new Error("Only verified channel can verify other channel")
+      if (channelDetails?.verified_status == 0) {
+        throw new Error('Only verified channel can verify other channel');
       }
       // if valid, continue with it
       const res = await this.verifyChannel(

@@ -9,6 +9,8 @@ export type SubscriptionOptions = {
 };
 export type ChannelInfoOptions = {
   channel?: string;
+  page?: number;
+  limit?: number;
 };
 
 export type SubscribeUnsubscribeOptions = {
