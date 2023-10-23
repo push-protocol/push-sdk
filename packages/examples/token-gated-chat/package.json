@@ -1,20 +1,20 @@
 {
-  "name": "automated-chat",
+  "name": "token-gated-chat",
   "version": "1.0.0",
-  "description": "Example of Push Chat from backend, auto-responding to messages sent",
-  "main": "src/index.js",
+  "description": "Example of Push Chat token gated group in action",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start": "nodemon",
-    "inspect": "nodemon --inspect src/index.js",
-    "dev": "node-dev --respawn --transpile-only src/index.js",
+    "inspect": "nodemon --inspect index.js",
+    "dev": "node-dev --respawn --transpile-only index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pushprotocol/restapi": "1.4.19",
+    "@pushprotocol/restapi": "latest",
     "@pushprotocol/socket": "0.5.2",
     "ethers": "5.7.2"
   },
