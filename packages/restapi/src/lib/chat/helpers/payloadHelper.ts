@@ -1,4 +1,5 @@
 import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
+import { getEncryptedRequestCore } from './crypto';
 import {
   IConnectedUser,
   GroupDTO,
@@ -11,9 +12,12 @@ import {
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
+import { IPGPHelper, PGPHelper } from './pgp';
 import * as AES from './aes';
-import { MessageObj } from '../../types/messageTypes';
 import { sign } from './pgp';
+import { MessageObj } from '../../types/messageTypes';
+
+
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
@@ -89,32 +93,57 @@ export const sendMessagePayload = async (
   group: GroupDTO | null,
   env: ENV
 ): Promise<ISendMessagePayload> => {
+  return await sendMessagePayloadCore(
+    receiverAddress,
+    senderCreatedUser,
+    messageObj,
+    messageContent,
+    messageType,
+    group,
+    env,
+    PGPHelper,
+  );
+};
+
+
+export const sendMessagePayloadCore = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  messageObj: MessageObj | string,
+  messageContent: string,
+  messageType: string,
+  group: GroupDTO | null,
+  env: ENV,
+  pgpHelper: IPGPHelper,
+): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
 
   const secretKey: string = AES.generateRandomSecret(15);
 
   const { message: encryptedMessageContent, signature: deprecatedSignature } =
-    await getEncryptedRequest(
+    await getEncryptedRequestCore(
       receiverAddress,
       senderCreatedUser,
       messageContent,
       isGroup,
       env,
       group,
-      secretKey
+      secretKey,
+      pgpHelper
     );
   const {
     message: encryptedMessageObj,
     encryptionType,
     aesEncryptedSecret,
-  } = await getEncryptedRequest(
+  } = await getEncryptedRequestCore(
     receiverAddress,
     senderCreatedUser,
     JSON.stringify(messageObj),
     isGroup,
     env,
     group,
-    secretKey
+    secretKey,
+    pgpHelper
   );
 
   const body: ISendMessagePayload = {
@@ -144,7 +173,7 @@ export const sendMessagePayload = async (
     encryptedSecret: body.encryptedSecret,
   };
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: senderCreatedUser.privateKey!,
   });

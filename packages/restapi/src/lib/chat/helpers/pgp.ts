@@ -1,5 +1,47 @@
 import * as openpgp from 'openpgp';
 
+interface IPGPHelper{
+  generateKeyPair(): Promise<{ privateKeyArmored: string; publicKeyArmored: string }>;
+  sign ({ message, signingKey }: { message: string; signingKey: string }): Promise<string>;
+  pgpEncrypt ({ plainText, keys }: { plainText: string; keys: Array<string> }): Promise<string>;
+}
+
+const PGPHelper:IPGPHelper = {
+  async generateKeyPair(){
+    const keys = await openpgp.generateKey({
+      type: 'rsa',
+      rsaBits: 2048,
+      userIDs: [{ name: '', email: '' }]
+    })
+    return {
+      privateKeyArmored: keys.privateKey,
+      publicKeyArmored: keys.publicKey
+    }
+  },
+
+  async sign ({ message, signingKey }): Promise<string> {
+    const messageObject: openpgp.Message<string> = await openpgp.createMessage({ text: message })
+    const privateKey: openpgp.PrivateKey = await openpgp.readPrivateKey({ armoredKey: signingKey })
+    return <string>await openpgp.sign({ message: messageObject, signingKeys: privateKey, detached: true })
+  },
+
+  async pgpEncrypt ({ plainText, keys }): Promise<string> {
+    const pgpKeys: openpgp.Key[] = [];
+  
+    for(let i = 0; i < keys.length; i++) {
+      pgpKeys.push(await openpgp.readKey({ armoredKey: keys[i] }));
+    }
+    const message: openpgp.Message<string> = await openpgp.createMessage({ text: plainText });
+    const encrypted: string = <string>await openpgp.encrypt({
+      message: message,
+      encryptionKeys: pgpKeys,
+    });
+    return encrypted;
+  },
+}
+
+export {IPGPHelper, PGPHelper}
+
 export const generateKeyPair = async (): Promise<{ privateKeyArmored: string; publicKeyArmored: string }> => {
   const keys = await openpgp.generateKey({
     type: 'rsa',

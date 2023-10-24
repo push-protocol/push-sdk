@@ -207,6 +207,10 @@ describe('PushAPI.channel functionality', () => {
             body: 'testing with random body',
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+            index: {
+              index: 1,
+              value: 10 // for slider type and omit it for boolean type
+            }
           },
         }
       );

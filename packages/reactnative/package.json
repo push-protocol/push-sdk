@@ -1,25 +1,219 @@
 {
-  "name": "@pushprotocol/reactnative",
-  "version": "0.2.0",
+  "name": "@push/react-native-sdk",
+  "version": "0.1.0",
+  "description": "test",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": {
+    "lib/commonjs/index": "src/index",
+    "crypto": "react-native-crypto",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
+  },
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "*.podspec",
+    "!lib/typescript/example",
+    "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "prepack": "bob build",
+    "release": "release-it",
+    "example": "yarn --cwd example",
+    "bootstrap": "yarn example && yarn install && yarn example pods",
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build",
+    "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && patch-package"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "repository": "https://github.com/ethereum-push-notification-service/push-sdk",
+  "author": "Push Protocol <support@push.org> (https://www.push.org)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ethereum-push-notification-service/push-sdk/issues"
+  },
+  "homepage": "https://github.com/ethereum-push-notification-service/push-sdk#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "peerDependencies": {
-    "@react-native-masked-view/masked-view": "^0.2.7",
-    "expo": "^45.0.0",
-    "expo-file-system": "^14.0.0",
-    "expo-linear-gradient": "^11.3.0",
-    "react": "^17.0.2 || ^18.0.0",
-    "react-native": "^0.68.2",
-    "react-native-svg": "^12.3.0",
-    "react-native-video": "^5.2.0",
-    "react-native-youtube": "^2.0.2"
-  },
   "dependencies": {
-    "moment": "^2.29.4",
-    "react-native-device-detection": "^0.2.1",
-    "react-native-modal": "^13.0.1",
-    "react-native-parsed-text": "^0.0.22",
-    "react-native-progress-circle": "^2.1.0"
+    "@pushprotocol/restapi": "../../dist/packages/restapi",
+    "@tradle/react-native-http": "^2.0.1",
+    "assert": "^1.5.0",
+    "crypto": "^1.0.1",
+    "crypto-js": "3.1.9-1",
+    "ethers": "^5.7.1",
+    "events": "^3.3.0",
+    "https-browserify": "^0.0.1",
+    "process": "^0.11.10",
+    "react-native-crypto": "^2.2.0",
+    "react-native-fast-openpgp": "^2.6.0",
+    "react-native-get-random-values": "^1.9.0",
+    "react-native-level-fs": "^3.0.1",
+    "react-native-os": "^1.2.6",
+    "react-native-randombytes": "^3.6.1",
+    "react-native-tcp": "^3.3.2",
+    "react-native-webview": "^11.26.1",
+    "react-native-webview-crypto": "^0.0.25",
+    "readable-stream": "^1.0.33",
+    "stream": "^0.0.2",
+    "stream-browserify": "^1.0.0",
+    "text-encoding": "0.7.0",
+    "url": "^0.10.3"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^17.0.2",
+    "@evilmartians/lefthook": "^1.2.2",
+    "@react-native-community/eslint-config": "^3.0.2",
+    "@release-it/conventional-changelog": "^5.0.0",
+    "@types/jest": "^28.1.2",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "0.70.0",
+    "commitlint": "^17.0.2",
+    "del-cli": "^5.0.0",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.1",
+    "patch-package": "^7.0.0",
+    "pod-install": "^0.1.0",
+    "postinstall-postinstall": "^2.1.0",
+    "prettier": "^2.0.5",
+    "react": "18.2.0",
+    "react-native": "0.71.11",
+    "react-native-builder-bob": "^0.20.4",
+    "release-it": "^15.0.0",
+    "rn-nodeify": "^10.3.0",
+    "typescript": "^4.5.2"
+  },
+  "resolutions": {
+    "@types/react": "17.0.21"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-fast-openpgp": "^2.6.0"
+  },
+  "engines": {
+    "node": ">= 16.0.0"
+  },
+  "packageManager": "^yarn@1.22.15",
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native-community",
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "browser": {
+    "lib/commonjs/index": "src/index",
+    "crypto": "react-native-crypto",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }
