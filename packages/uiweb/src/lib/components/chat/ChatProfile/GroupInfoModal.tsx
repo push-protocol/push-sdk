@@ -488,7 +488,7 @@ const GroupInformation = ({
   };
 
   return (
-    <Section width={isMobile ? '100%' : '410px'} flexDirection="column">
+    <Section margin="auto" width={isMobile ? '100%' : '410px'} flexDirection="column">
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Chat ID
@@ -714,6 +714,7 @@ export const GroupInfoModal = ({
       <Modal clickawayClose={onClose}>
         {!showAddMoreWalletModal && (
           <Section
+            margin='auto'
             width={isMobile ? '100%' : '410px'}
             flexDirection="column"
             padding={isMobile ? '0px auto' : '0px 10px'}
