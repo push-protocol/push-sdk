@@ -488,7 +488,7 @@ const GroupInformation = ({
   };
 
   return (
-    <Section margin="auto" width={isMobile ? '100%' : '410px'} flexDirection="column">
+    <Section margin="auto" width='100%' flexDirection="column">
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Chat ID
