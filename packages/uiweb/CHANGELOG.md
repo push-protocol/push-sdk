@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.24](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.23...uiweb-0.0.1-alpha.24) (2023-10-25)
+
+
+### Bug Fixes
+
+* fixed horizontal alignment of group info and fixed icon on connect button modal ([#804](https://github.com/ethereum-push-notification-service/push-sdk/issues/804)) ([982da0d](https://github.com/ethereum-push-notification-service/push-sdk/commit/982da0de8826380ce6c048ce9689c1ecb7c8efbc))
+* Merge branch 'alpha' into alpha-deployment ([11edd78](https://github.com/ethereum-push-notification-service/push-sdk/commit/11edd786f40bd7cfc69d9a859901b03625d410fb))
+
+
+
 ## [0.0.1-alpha.23](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.22...uiweb-0.0.1-alpha.23) (2023-10-24)
 
 
