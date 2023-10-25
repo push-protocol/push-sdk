@@ -134,7 +134,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   return (
-    <Modal>
+    <Modal clickawayClose={onClose}>
       {renderComponent()} <ToastContainer />
     </Modal>
   );
