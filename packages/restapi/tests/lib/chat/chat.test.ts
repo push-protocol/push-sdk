@@ -1,33 +1,66 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-import { chat } from '../../../src/lib/chat/chat';
-import { ethers } from 'ethers';
+
+import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
-import Constants from '../../../src/lib/constants';
+import { ethers } from 'ethers';
+import { MessageType } from '../../../src/lib/constants';
 
-const WALLET_PRIVATE_KEY = process.env['WALLET_PRIVATE_KEY'];
-const _env = Constants.ENV.DEV;
+describe('PushAPI.chat functionality', () => {
+  let userAlice: PushAPI;
+  let userBob: PushAPI;
+  let signer1: any;
+  let account1: string;
+  let signer2: any;
+  let account2: string;
+  const MESSAGE = 'Hey There!!!';
 
-describe('Get chat', () => {
-  it('Should return {} when not chat between users', async () => {
-    try {
-      const provider = ethers.getDefaultProvider(5);
-      const Pkey = `0x${WALLET_PRIVATE_KEY}`;
-      const _signer = new ethers.Wallet(Pkey, provider);
-      const walletAddress = _signer.address;
-      const account = `eip155:${walletAddress}`;
-      const inbox = await chat({
-        account: account,
-        env: _env,
-        toDecrypt: true,
-        recipient: '0xDAFEA492D9c6733ae3d56b7Ed1ADB60692c98Bc5',
-      });
-      expect(inbox).not.to.be.null;
-      expect(inbox).not.to.be.undefined;
-      expect(inbox).not.to.be.equal({});
-    } catch (error) {
-      console.log(error);
-    }
+  beforeEach(async () => {
+    const WALLET1 = ethers.Wallet.createRandom();
+    signer1 = new ethers.Wallet(WALLET1.privateKey);
+    account1 = WALLET1.address;
+
+    const WALLET2 = ethers.Wallet.createRandom();
+    signer2 = new ethers.Wallet(WALLET2.privateKey);
+    account2 = WALLET2.address;
+
+    userAlice = await PushAPI.initialize(signer1);
+    userBob = await PushAPI.initialize(signer2);
+  });
+
+  it('Should list request ', async () => {
+    await userAlice.chat.send(account2, { content: MESSAGE });
+    const response = await userBob.chat.list('REQUESTS', {
+      page: 1,
+      limit: 10,
+    });
+    expect(response).to.be.an('array');
+    expect(response.length).to.equal(1);
+  });
+  it('Should list chats ', async () => {
+    const response = await userAlice.chat.list('CHATS', {
+      page: 1,
+      limit: 10,
+    });
+    expect(response).to.be.an('array');
+  });
+  it('Should send message ', async () => {
+    const response = await userAlice.chat.send(account2, {
+      content: 'Hello',
+      type: MessageType.TEXT,
+    });
+    expect(response).to.be.an('object');
+  });
+  it('Should decrypt message ', async () => {
+    await userAlice.chat.send(account2, {
+      content: 'Hello',
+      type: MessageType.TEXT,
+    });
+    const messagePayloads = await userAlice.chat.history(account2);
+    const decryptedMessagePayloads = await userBob.chat.decrypt(
+      messagePayloads
+    );
+    expect(decryptedMessagePayloads).to.be.an('array');
   });
 });
