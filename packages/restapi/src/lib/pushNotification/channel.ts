@@ -110,12 +110,18 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
+      const info = await this.info(options.channel?? this.account);
+      let settings = null;
+      if(info && info.channel_settings){
+        settings = JSON.parse(info.channel_settings);
+      }
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
         signer: this.signer!,
         env: this.env!,
         recipients: recipients,
         options: options,
         channel: options.channel ?? this.account,
+        settings: settings,
       });
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {
