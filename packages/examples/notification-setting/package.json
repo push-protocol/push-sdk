@@ -1,0 +1,23 @@
+{
+  "name": "notification-setting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "start": "nodemon",
+    "inspect": "nodemon --inspect index.js",
+    "dev": "node-dev --respawn --transpile-only index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pushprotocol/restapi": "^1.4.30"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
