@@ -11,6 +11,34 @@ function renderStyles(matchingString:string) {
     return `${match?match[2]:""}`;
 }
 
+function renderTextStyles(matchingString: string) {
+    const pattern = /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/i;
+    const match = matchingString.match(pattern);
+
+    if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      switch (colorName) {
+          case 'primary':
+              color = COLORS.PRIMARY;
+              break;
+          case 'secondary':
+              color = COLORS.GRADIENT_SECONDARY;
+              break;
+          case 'white':
+              color = COLORS.WHITE;
+              break;
+          // can add more custom color names if needed, couldn't find the tertiary color
+          default:
+              color = colorName;
+      }
+      const textContent = match[2];
+      return `<span style="color: ${color}">${textContent}</span>`;
+  }
+
+    return matchingString;
+}
+
 // -------- Define the required colors
 const COLORS = {
     PRIMARY: 'rgba(27.0, 150.0, 227.0, 1.0)',
@@ -141,6 +169,11 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         renderText: renderStyles
       },
       {
+        pattern: /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/gi,
+        style: {}, // we can add aditional styles here if needed
+        renderText: renderTextStyles
+    },
+      {
         pattern: /\[(up):([^\]]+)\]/i, // url
         style: {
             ...styles.primary,
@@ -188,10 +221,17 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         renderText: renderStyles
       },
       {
-        pattern: /\[(i):([^\]]+)\]/i, // italics
-        style: styles.italics,
-        renderText: renderStyles
+        pattern: /\*\*(.*?)\*\*/g, // bold **text**
+        style: styles.bold,
+        renderText: (matchingString) => matchingString.replace(/\*\*(.*?)\*\*/g, '$1'),
       },
+      {
+        pattern: /\*(.*?)\*/g, // italic *some text*
+        style: {
+            ...styles.italics,
+        },
+        renderText: (matchingString) => matchingString.replace(/\*(.*?)\*/g, '$1'),
+    },
       {
         pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
         style: {
