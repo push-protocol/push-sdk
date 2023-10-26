@@ -135,12 +135,14 @@ export class PushNotificationBaseClass {
     recipients,
     options,
     channel,
+    settings,
   }: {
     signer: SignerType;
     env: ENV;
     recipients: string[];
     options: NotificationOptions;
     channel?: string;
+    settings: any | null;
   }): ISendNotificationInputOptions {
     if (!channel) {
       channel = `${this.account}`;
@@ -148,17 +150,18 @@ export class PushNotificationBaseClass {
     const notificationType = this.getNotificationType(recipients, channel);
     const identityType = IDENTITY_TYPE.DIRECT_PAYLOAD;
     // fetch the minimal version based on conifg that was passed
-    let index;
-    if (options.payload?.index) {
-      if (options.payload?.index.value) {
+    let index = '';
+    if (options.payload?.category && settings) {
+      if (settings[options.payload.category - 1].type == 2) {
         index =
-          options.payload.index.index +
+          options.payload.category +
           SETTING_DELIMITER +
           SLIDER_TYPE +
           SETTING_DELIMITER +
-          options.payload.index.value;
-      } else {
-        index = options.payload.index.index + SETTING_DELIMITER + BOOLEAN_TYPE;
+          settings[options.payload.category - 1].default;
+      }
+      if (settings[options.payload.category - 1].type == 1) {
+        index = options.payload.category + SETTING_DELIMITER + BOOLEAN_TYPE;
       }
     }
     const notificationPayload: ISendNotificationInputOptions = {
@@ -176,7 +179,7 @@ export class PushNotificationBaseClass {
         etime: options.config?.expiry,
         silent: options.config?.silent,
         additionalMeta: options.payload?.meta,
-        index: options.payload?.index ? index : '',
+        index: options.payload?.category ? index : '',
       },
       recipients: notificationType.recipient,
       graph: options.advanced?.graph,
@@ -678,22 +681,25 @@ export class PushNotificationBaseClass {
       }
       if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
-          const enabled = (ele.data && ele.data.enabled != undefined) ? Number(ele.data.enabled).toString() : DEFAULT_ENABLE_VALUE
-          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE
+          const enabled =
+            ele.data && ele.data.enabled != undefined
+              ? Number(ele.data.enabled).toString()
+              : DEFAULT_ENABLE_VALUE;
+          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
           notificationSetting =
             notificationSetting +
             SETTING_SEPARATOR +
             SLIDER_TYPE +
-            SETTING_DELIMITER+
-            enabled+
+            SETTING_DELIMITER +
+            enabled +
             SETTING_DELIMITER +
             ele.default +
             SETTING_DELIMITER +
             ele.data.lower +
             SETTING_DELIMITER +
             ele.data.upper +
-            SETTING_DELIMITER+
-            ticker
+            SETTING_DELIMITER +
+            ticker;
 
           notificationSettingDescription =
             notificationSettingDescription +
@@ -709,7 +715,7 @@ export class PushNotificationBaseClass {
   }
 
   protected getMinimalUserSetting(setting: UserSetting[]) {
-    if(!setting){
+    if (!setting) {
       return null;
     }
     let userSetting = '';

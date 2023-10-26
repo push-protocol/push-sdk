@@ -207,6 +207,7 @@ describe('PushAPI.channel functionality', () => {
             body: 'testing with random body',
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+            category: 2
           },
         }
       );
