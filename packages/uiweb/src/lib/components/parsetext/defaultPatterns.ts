@@ -39,6 +39,37 @@ function renderTextStyles(matchingString: string) {
     return matchingString;
 }
 
+function renderLinkWithColor(matchingString: string) {
+  const pattern = /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/i;
+  const match = matchingString.match(pattern);
+
+  if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      // Map custom color names to specific values
+      switch (colorName) {
+          case 'primary':
+              color = COLORS.PRIMARY;
+              break;
+          case 'secondary':
+              color = COLORS.GRADIENT_SECONDARY;
+              break;
+          case 'white':
+              color = COLORS.WHITE;
+              break;
+          // Add more custom color names if needed
+          default:
+              color = colorName;
+      }
+      const link = match[2];
+      const textContent = match[3];
+      return `<a href="${link}" target="_blank" style="color: ${color}">${textContent}</a>`;
+  }
+
+  return matchingString;
+}
+
+
 // -------- Define the required colors
 const COLORS = {
     PRIMARY: 'rgba(27.0, 150.0, 227.0, 1.0)',
@@ -173,6 +204,11 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         style: {}, // we can add aditional styles here if needed
         renderText: renderTextStyles
     },
+    {
+      pattern: /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/gi,
+      style: {}, // can Add additional styles here if needed
+      renderText: renderLinkWithColor
+  },
       {
         pattern: /\[(up):([^\]]+)\]/i, // url
         style: {
