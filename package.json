@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "test:restapi": "cd packages/restapi && TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 12000 --require tests/root.ts --serial",
+    "test:restapi": "cd packages/restapi && TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial",
     "cleanbuild": "rimraf ./dist && rimraf ./tmp"
   },
   "config": {

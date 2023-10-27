@@ -181,7 +181,8 @@ export interface IMessageIPFS {
   link: string | null;
   timestamp?: number;
   encType: string;
-  encryptedSecret: string;
+  encryptedSecret: string | null;
+  sessionKey?: string;
   /**
    * scope only at sdk level
    */
@@ -328,7 +329,6 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
-
 };
 
 export type Condition = ConditionBase & {
@@ -344,7 +344,6 @@ export interface Rules {
     conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
-
 
 export interface SpaceRules {
   entry?: {
@@ -399,6 +398,7 @@ export interface GroupDTO {
   status?: ChatStatus | null;
   rules?: Rules | null;
   meta?: string | null;
+  sessionKey?: string;
 }
 
 export interface SpaceDTO {
@@ -574,7 +574,6 @@ export type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
-  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;
@@ -641,8 +640,9 @@ export type MessageWithCID = {
   sigType: string;
   timestamp?: number;
   encType: string;
-  encryptedSecret: string;
+  encryptedSecret: string | null;
   verificationProof?: string;
+  sessionKey?: string;
 };
 
 export type IMediaStream = MediaStream | null;

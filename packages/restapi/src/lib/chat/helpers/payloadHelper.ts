@@ -17,7 +17,6 @@ import * as AES from './aes';
 import { sign } from './pgp';
 import { MessageObj } from '../../types/messageTypes';
 
-
 import * as CryptoJS from 'crypto-js';
 export interface ISendMessagePayload {
   fromDID: string;
@@ -41,15 +40,6 @@ export interface ISendMessagePayload {
    * @deprecated - Use messageObj instead
    */
   sigType: string | null | undefined;
-}
-
-export interface IApproveRequestPayload {
-  fromDID: string;
-  toDID: string;
-  signature: string;
-  status: 'Approved' | 'Reproved';
-  sigType: string;
-  verificationProof?: string | null | undefined;
 }
 
 export interface IRejectRequestPayload {
@@ -82,6 +72,8 @@ export interface IUpdateGroupRequestPayload {
   admins: Array<string>;
   address: string;
   verificationProof: string;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
 }
 
 export const sendMessagePayload = async (
@@ -101,10 +93,9 @@ export const sendMessagePayload = async (
     messageType,
     group,
     env,
-    PGPHelper,
+    PGPHelper
   );
 };
-
 
 export const sendMessagePayloadCore = async (
   receiverAddress: string,
@@ -114,7 +105,7 @@ export const sendMessagePayloadCore = async (
   messageType: string,
   group: GroupDTO | null,
   env: ENV,
-  pgpHelper: IPGPHelper,
+  pgpHelper: IPGPHelper
 ): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
 
@@ -158,7 +149,7 @@ export const sendMessagePayloadCore = async (
     encryptedSecret: aesEncryptedSecret!,
     messageContent: encryptedMessageContent,
     signature: deprecatedSignature, //for backward compatibility
-    sigType: 'pgpv2',
+    sigType: 'pgpv3',
   };
 
   //build verificationProof
@@ -178,24 +169,6 @@ export const sendMessagePayloadCore = async (
     signingKey: senderCreatedUser.privateKey!,
   });
   body.verificationProof = `pgpv2:${signature}`;
-  return body;
-};
-
-export const approveRequestPayload = (
-  fromDID: string,
-  toDID: string,
-  status: 'Approved' | 'Reproved',
-  sigType: string,
-  signature: string
-): IApproveRequestPayload => {
-  const body = {
-    fromDID,
-    toDID,
-    signature,
-    status,
-    sigType,
-    verificationProof: sigType + ':' + signature,
-  };
   return body;
 };
 
@@ -326,6 +299,8 @@ export const updateGroupPayload = (
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  sessionKey: string | null,
+  encryptedSecret: string | null,
   groupDescription?: string | null,
   groupImage?: string | null,
   scheduleAt?: Date | null,
@@ -342,6 +317,8 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    sessionKey: sessionKey,
+    encryptedSecret: encryptedSecret,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
     status: status,

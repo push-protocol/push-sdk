@@ -116,6 +116,8 @@ export const updateGroupProfile = async (
       convertedAdmins,
       connectedUser.did,
       verificationProof,
+      null,
+      null,
       groupDescription,
       groupImage,
       scheduleAt,
