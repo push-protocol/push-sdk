@@ -11,6 +11,7 @@ import { ProfileContainer } from '../../reusables/ProfileContainer';
 import { ThemeContext } from '../../theme/ThemeProvider';
 import { Spinner } from '../../reusables/Spinner';
 import { createIcon } from '../../helpers/blockies';
+import { getAddress } from '../../../../helpers/chat/search'
 
 import CircularProgressSpinner from '../../../loader/loader';
 
@@ -65,7 +66,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     const [invitedMember, setInvitedMember] = useState('')
     const [loadingAccount, setLoadingAccount] = useState(false)
 
-    const [searchedUser, setSearchedUser]= useState<any>({});
+    const [searchedUser, setSearchedUser] = useState<any>({});
     const [errorMsg, setErrorMsg] = useState<string>('');
 
     const searchMember = async (event: any) => {
@@ -84,7 +85,7 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 return keys.length < 4 && keys[0] === uniqueKey;
             }
 
-            if(hasAccount(customUserResponse, 'account')) {
+            if (hasAccount(customUserResponse, 'account')) {
                 const icon = createIcon({
                     seed: customUserResponse.account,
                     size: 10,
@@ -107,35 +108,66 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
 
         try {
             setLoadingAccount(true);
-            const response = await PushAPI.user.get({
-                account: event.target.value,
-                env,
-            });
+            const ENSaddress = await getAddress(event.target.value, env);
 
-            if(response === null) {
+            if (ENSaddress) {
                 const icon = createIcon({
-                    seed: event.target.value,
+                    seed: ENSaddress,
                     size: 10,
                     scale: 3,
                 });
 
                 const nullUser = {
                     handle: event.target.value,
-                    name: event.target.value,
+                    name: ENSaddress,
                     image: icon.toDataURL(),
                 };
 
-                setSearchedUser(nullUser)
-            } else {
-                setSearchedUser(response);
+                setSearchedUser(nullUser);
+                setErrorMsg('');
+                return;
             }
-            setErrorMsg('');
-        } catch (e:any) {
+        } catch (e: any) {
             console.error(e.message);
             setSearchedUser({});
             setErrorMsg(e.message);
         } finally {
             setLoadingAccount(false);
+        }
+
+        if (Object.keys(searchedUser).length !== 0) {
+            try {
+                setLoadingAccount(true);
+                const response = await PushAPI.user.get({
+                    account: event.target.value,
+                    env,
+                });
+
+                if (response === null) {
+                    const icon = createIcon({
+                        seed: event.target.value,
+                        size: 10,
+                        scale: 3,
+                    });
+
+                    const nullUser = {
+                        handle: event.target.value,
+                        name: event.target.value,
+                        image: icon.toDataURL(),
+                    };
+
+                    setSearchedUser(nullUser)
+                } else {
+                    setSearchedUser(response);
+                }
+                setErrorMsg('');
+            } catch (e: any) {
+                console.error(e.message);
+                setSearchedUser({});
+                setErrorMsg(e.message);
+            } finally {
+                setLoadingAccount(false);
+            }
         }
     }
 
@@ -153,8 +185,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
     }
 
     const handleInviteMember = (user: any) => {
-        if(
-            (invitedAddressList.length !== 0 && adminsAddressList.length !== 0)
+        if (
+            (invitedAddressList.length !== 0 || adminsAddressList.length !== 0)
             && (invitedAddressList.includes(user.did.substring(7)) || adminsAddressList.includes(user.did.substring(7)))
         ) {
             handleError('Already Invited');
@@ -245,113 +277,113 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                     {loadingAccount && <Spinner />}
                     {
                         Object.keys(searchedUser).length === 0 ?
-                        null
-                        : searchedUser.hasOwnProperty('handle') ?
-                        <ProfileContainer
-                            imageHeight='48px'
-                            handle={searchedUser.handle}
-                            name={searchedUser.name}
-                            imageUrl={searchedUser.image}
-                            contBtn={<ContBtn>Add +</ContBtn>}
-                            btnCallback={() => handleInviteMember(searchedUser)}
-                            border
-                        />
-                        : <ProfileContainer
-                            imageHeight='48px'
-                            handle={searchedUser.did.substring(7)}
-                            name={searchedUser.profile.name ?? searchedUser.did.substring(7)}
-                            imageUrl={searchedUser.profile.picture}
-                            contBtn={<ContBtn>Add +</ContBtn>}
-                            btnCallback={() => handleInviteMember(searchedUser)}
-                            border
-                        />
+                            null
+                            : searchedUser.hasOwnProperty('handle') ?
+                                <ProfileContainer
+                                    imageHeight='48px'
+                                    handle={searchedUser.handle}
+                                    name={searchedUser.name}
+                                    imageUrl={searchedUser.image}
+                                    contBtn={<ContBtn>Add +</ContBtn>}
+                                    btnCallback={() => handleInviteMember(searchedUser)}
+                                    border
+                                />
+                                : <ProfileContainer
+                                    imageHeight='48px'
+                                    handle={searchedUser.did.substring(7)}
+                                    name={searchedUser.profile.name ?? searchedUser.did.substring(7)}
+                                    imageUrl={searchedUser.profile.picture}
+                                    contBtn={<ContBtn>Add +</ContBtn>}
+                                    btnCallback={() => handleInviteMember(searchedUser)}
+                                    border
+                                />
                     }
                 </MembersList>
 
                 {
                     invitedMembersList.length ?
-                    <InvitedList>
-                        <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
-                        {
-                            invitedMembersList.map((item: any) => {
-                                if (item.hasOwnProperty('handle')) {
-                                    return <ProfileContainer
-                                        imageHeight='48px'
-                                        handle={item.handle}
-                                        name={item.name}
-                                        imageUrl={item.image}
-                                        contBtn={
-                                            <SettingsCont>
-                                              <SettingsLogo color={theme.textColorPrimary} />
-                                            </SettingsCont>
-                                        }
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
-                                        promoteCallback={() => handlePromoteToAdmin(item)}
-                                        border
-                                    />
-                                } else {
-                                    return <ProfileContainer
-                                        imageHeight='48px'
-                                        handle={item.did.substring(7)}
-                                        name={item.profile.name ?? item.did.substring(7)}
-                                        imageUrl={item.profile.picture}
-                                        contBtn={
-                                            <SettingsCont>
-                                              <SettingsLogo color={theme.textColorPrimary} />
-                                            </SettingsCont>
-                                        }
-                                        removeCallback={() => handleDeleteInvitedUser(item)}
-                                        promoteCallback={() => handlePromoteToAdmin(item)}
-                                        border
-                                    />
-                                }
-                            })
-                        }
-                    </InvitedList>
-                    : null
+                        <InvitedList>
+                            <Heading>Invited Members <PendingCount theme={theme}>{invitedMembersList.length}</PendingCount></Heading>
+                            {
+                                invitedMembersList.map((item: any) => {
+                                    if (item.hasOwnProperty('handle')) {
+                                        return <ProfileContainer
+                                            imageHeight='48px'
+                                            handle={item.handle}
+                                            name={item.name}
+                                            imageUrl={item.image}
+                                            contBtn={
+                                                <SettingsCont>
+                                                    <SettingsLogo color={theme.textColorPrimary} />
+                                                </SettingsCont>
+                                            }
+                                            removeCallback={() => handleDeleteInvitedUser(item)}
+                                            promoteCallback={() => handlePromoteToAdmin(item)}
+                                            border
+                                        />
+                                    } else {
+                                        return <ProfileContainer
+                                            imageHeight='48px'
+                                            handle={item.did.substring(7)}
+                                            name={item.profile.name ?? item.did.substring(7)}
+                                            imageUrl={item.profile.picture}
+                                            contBtn={
+                                                <SettingsCont>
+                                                    <SettingsLogo color={theme.textColorPrimary} />
+                                                </SettingsCont>
+                                            }
+                                            removeCallback={() => handleDeleteInvitedUser(item)}
+                                            promoteCallback={() => handlePromoteToAdmin(item)}
+                                            border
+                                        />
+                                    }
+                                })
+                            }
+                        </InvitedList>
+                        : null
                 }
 
                 {
                     adminsList.length ?
-                    <InvitedList>
-                        <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
-                        {
-                            adminsList.map((item: any) => {
-                                if (item.hasOwnProperty('handle')) {
-                                    return <ProfileContainer
-                                        imageHeight='48px'
-                                        handle={item.handle}
-                                        name={item.name}
-                                        imageUrl={item.image}
-                                        contBtn={
-                                            <SettingsCont>
-                                              <SettingsLogo color={theme.textColorPrimary} />
-                                            </SettingsCont>
-                                        }
-                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
-                                        // promoteCallback={() => handlePromoteToAdmin(item)}
-                                        border
-                                    />
-                                } else {
-                                    return <ProfileContainer
-                                        imageHeight='48px'
-                                        handle={item.did.substring(7)}
-                                        name={item.profile.name ?? item.did.substring(7)}
-                                        imageUrl={item.profile.picture}
-                                        contBtn={
-                                            <SettingsCont>
-                                              <SettingsLogo color={theme.textColorPrimary} />
-                                            </SettingsCont>
-                                        }
-                                        removeCallback={() => handleDeleteInvitedAdmin(item)}
-                                        // promoteCallback={() => handlePromoteToAdmin(item)}
-                                        border
-                                    />
-                                }
-                            })
-                        }
-                    </InvitedList>
-                    : null
+                        <InvitedList>
+                            <Heading>Speakers <PendingCount theme={theme}>{adminsList.length}</PendingCount></Heading>
+                            {
+                                adminsList.map((item: any) => {
+                                    if (item.hasOwnProperty('handle')) {
+                                        return <ProfileContainer
+                                            imageHeight='48px'
+                                            handle={item.handle}
+                                            name={item.name}
+                                            imageUrl={item.image}
+                                            contBtn={
+                                                <SettingsCont>
+                                                    <SettingsLogo color={theme.textColorPrimary} />
+                                                </SettingsCont>
+                                            }
+                                            removeCallback={() => handleDeleteInvitedAdmin(item)}
+                                            // promoteCallback={() => handlePromoteToAdmin(item)}
+                                            border
+                                        />
+                                    } else {
+                                        return <ProfileContainer
+                                            imageHeight='48px'
+                                            handle={item.did.substring(7)}
+                                            name={item.profile.name ?? item.did.substring(7)}
+                                            imageUrl={item.profile.picture}
+                                            contBtn={
+                                                <SettingsCont>
+                                                    <SettingsLogo color={theme.textColorPrimary} />
+                                                </SettingsCont>
+                                            }
+                                            removeCallback={() => handleDeleteInvitedAdmin(item)}
+                                            // promoteCallback={() => handlePromoteToAdmin(item)}
+                                            border
+                                        />
+                                    }
+                                })
+                            }
+                        </InvitedList>
+                        : null
                 }
 
                 <Button
@@ -360,8 +392,8 @@ export const SCWInviteModal: React.FC<ISCWIModalProps> = (props) => {
                 >
                     {
                         isLoading ?
-                        <CircularProgressSpinner />
-                        : btnString ?? 'Create Space'
+                            <CircularProgressSpinner />
+                            : btnString ?? 'Create Space'
                     }
                 </Button>
             </Modal>

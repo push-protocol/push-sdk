@@ -1,6 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled, { keyframes, ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { formatCryptoAddress } from '../helpers/account';
 
 export interface IProfileContainerProps {
     name?: string;
@@ -52,50 +53,50 @@ export const ProfileContainer: React.FC<IProfileContainerProps> = ({
     }, []);
 
     return (
-    <ThemeProvider theme={theme}>
-        <ParentContainer
-            border={border}
-        >
-            <PfpContainer>
-                <Pfp src={imageUrl} alt="host pfp" imageHeight={imageHeight} />
-            </PfpContainer>
-            <HostContainer>
-                <ProfileDetails>
-                    <HostName>
-                        <Name>{name}</Name>
-                    </HostName>
-                    {handle &&
-                        <HostHandle theme={theme}>
-                        {/* Fetch the handle from Lenster */}@{handle}
-                        </HostHandle>
-                    }
-                </ProfileDetails>
-                { tag ? <Host>{tag}</Host> : null }
-                { contBtn ? <div onClick={btnCallback ?? handleDDState}>{contBtn}</div> : null }
-            </HostContainer>
+        <ThemeProvider theme={theme}>
+            <ParentContainer
+                border={border}
+            >
+                <PfpContainer>
+                    <Pfp src={imageUrl} alt="host pfp" imageHeight={imageHeight} />
+                </PfpContainer>
+                <HostContainer>
+                    <ProfileDetails>
+                        <HostName>
+                            <Name>{formatCryptoAddress(name, 10)}</Name>
+                        </HostName>
+                        {handle &&
+                            <HostHandle theme={theme}>
+                                {/* Fetch the handle from Lenster */}@{handle}
+                            </HostHandle>
+                        }
+                    </ProfileDetails>
+                    {tag ? <Host>{tag}</Host> : null}
+                    {contBtn ? <div onClick={btnCallback ?? handleDDState}>{contBtn}</div> : null}
+                </HostContainer>
 
-            {
-                isDDOpen && (removeCallback || promoteCallback) ?
-                <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
-                    {
-                        removeCallback ?
-                        <DDItem onClick={removeCallback}>
-                            Remove
-                        </DDItem>
+                {
+                    isDDOpen && (removeCallback || promoteCallback) ?
+                        <DropDown theme={theme} ref={dropdownRef} isDDOpen={isDDOpen}>
+                            {
+                                removeCallback ?
+                                    <DDItem onClick={removeCallback}>
+                                        Remove
+                                    </DDItem>
+                                    : null
+                            }
+                            {
+                                promoteCallback ?
+                                    <DDItem onClick={promoteCallback}>
+                                        Make Admin
+                                    </DDItem>
+                                    : null
+                            }
+                        </DropDown>
                         : null
-                    }
-                    {
-                        promoteCallback ?
-                        <DDItem onClick={promoteCallback}>
-                            Make Admin
-                        </DDItem>
-                        : null
-                    }
-                </DropDown>
-                : null
-            }
-        </ParentContainer>
-    </ThemeProvider>
+                }
+            </ParentContainer>
+        </ThemeProvider>
     );
 };
 
@@ -109,7 +110,7 @@ const ParentContainer = styled.div<{ border?: boolean }>`
 
     padding: 8px 16px;
 
-    border: ${(props => props.border ? '1px solid #E4E4E7' : 'none')};
+    border: ${(props => props.border ? '1px solid #71717A' : 'none')};
     color: ${props => props.theme.textColorPrimary ?? '#000'};
     border-radius: 16px;
 `;

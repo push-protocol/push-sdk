@@ -21,19 +21,19 @@ export const SearchInput = (props: ISearchInputProps) => {
     };
 
     return (
-      <ThemeProvider theme={theme}>
-        <InputContainer>
-            <LabelContainer>
-                <label>{props.labelName}</label>
-            </LabelContainer>
-            <InputWrapper>
-                <Input theme={theme} value={props.inputValue} onChange={handleChange} placeholder='Search...'/>
-                <CloseBtn onClick={props.clearInput}>
-                    <CloseSvg />
-                </CloseBtn>
-            </InputWrapper>
-        </InputContainer>
-      </ThemeProvider>
+        <ThemeProvider theme={theme}>
+            <InputContainer>
+                <LabelContainer>
+                    <label>{props.labelName}</label>
+                </LabelContainer>
+                <InputWrapper>
+                    <Input theme={theme} value={props.inputValue} onChange={handleChange} placeholder='Search...' />
+                    <CloseBtn onClick={props.clearInput}>
+                        <CloseSvg />
+                    </CloseBtn>
+                </InputWrapper>
+            </InputContainer>
+        </ThemeProvider>
     );
 };
 
@@ -72,7 +72,7 @@ const InputWrapper = styled.div`
 
 const CloseBtn = styled.div`
     position: absolute;
-    right: 0;
-    top: 0;
-    padding: 1.75rem 0.75rem;
+    right: 8px;
+    top: 28px;
+    background-color: white;
 `;

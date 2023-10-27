@@ -10,6 +10,7 @@ import { Image, Item, Text } from '../../../config';
 import HandIcon from '../../../icons/hand.svg';
 import MicOffIcon from '../../../icons/micoff.svg';
 import MicOnIcon from '../../../icons/micon.svg';
+import { formatCryptoAddress } from '../helpers/account';
 
 export interface ILiveSpaceProfileContainerProps {
   wallet: string;
@@ -75,7 +76,7 @@ export const LiveSpaceProfileContainer = (
           onClick={handleDDState}
         />
         <Text fontSize={'16px'} marginTop={'12px'} fontWeight={600} color={`${theme.textColorPrimary}`}>
-          {wallet.replace('eip155:', '').slice(0, -36) + '...'}
+          {formatCryptoAddress(wallet.replace('eip155:', ''))}
           {stream && <VideoPlayer videoCallData={stream} />}
         </Text>
         {requested ? (

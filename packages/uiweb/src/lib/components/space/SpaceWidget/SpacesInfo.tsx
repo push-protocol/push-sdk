@@ -117,7 +117,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                             {spaceData?.pendingMembers &&
                                 spaceData.pendingMembers.map((item: any) => {
                                     return <ProfileContainer
-                                        tag={item?.isSpeaker ? 'Co-Host' : undefined}
+                                        tag={item?.isSpeaker ? 'Speaker' : undefined}
                                         imageHeight='48px'
                                         handle={item?.wallet?.substring(7)}
                                         name={item?.wallet?.substring(7)}
@@ -134,7 +134,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
                         adminsArray.slice(1).map((item: any) => {
                             return <ProfileContainer
                                 border
-                                tag="Co-Host"
+                                tag="Speaker"
                                 imageHeight='48px'
                                 handle={item?.wallet?.substring(7)}
                                 name={item?.wallet?.substring(7)}
@@ -194,4 +194,22 @@ const AdminsList = styled.div`
     flex-direction: column;
     gap: 8px;
     margin-top: 8px;
+    margin-left: 8px;
+
+    overflow-y: scroll;
+    max-height: 200px;
+
+    &::-webkit-scrollbar {
+        margin-left: 8px;
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        -webkit-appearance: none;
+        width: 4px;
+        height: auto;
+        background: ${(props) => props.theme.bgColorSecondary};
+        border-radius: 99px;
+    }
 `;

@@ -26,3 +26,15 @@ export const isAccountsEqual = (account: string | undefined | null, userProfileW
 
   return account.toUpperCase() === userProfileWallet.toUpperCase();
 };
+
+export const formatCryptoAddress = (account: string, length?: number) => {
+  if (account.length < 11) {
+      return account; // Not enough characters to format
+  }
+
+  if (!length) length = 5;
+
+  const first5Chars = account.slice(0, length);
+  const last5Chars = account.slice(-length);
+  return `${first5Chars}...${last5Chars}`;
+}
