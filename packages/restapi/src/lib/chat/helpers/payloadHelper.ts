@@ -27,6 +27,7 @@ export interface ISendMessagePayload {
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
+  sessionKey: string | null | undefined;
   verificationProof?: string;
   /**
    * @deprecated - Use messageObj instead
@@ -146,6 +147,10 @@ export const sendMessagePayloadCore = async (
     messageObj:
       encryptionType === 'PlainText' ? messageObj : encryptedMessageObj,
     encType: encryptionType!,
+    sessionKey:
+      group && !group.isPublic && encryptionType === 'pgpv1:group'
+        ? group.sessionKey
+        : null,
     encryptedSecret: aesEncryptedSecret!,
     messageContent: encryptedMessageContent,
     signature: deprecatedSignature, //for backward compatibility
@@ -161,6 +166,7 @@ export const sendMessagePayloadCore = async (
     messageObj: body.messageObj,
     messageType: body.messageType,
     encType: body.encType,
+    sessionKey: body.sessionKey,
     encryptedSecret: body.encryptedSecret,
   };
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
@@ -168,7 +174,7 @@ export const sendMessagePayloadCore = async (
     message: hash,
     signingKey: senderCreatedUser.privateKey!,
   });
-  body.verificationProof = `pgpv2:${signature}`;
+  body.verificationProof = `pgpv3:${signature}`;
   return body;
 };
 

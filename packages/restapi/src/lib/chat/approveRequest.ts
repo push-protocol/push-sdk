@@ -98,6 +98,7 @@ export const approveCore = async (
       const publicKeys: string[] = group.members.map(
         (member) => member.publicKey
       );
+      publicKeys.push(connectedUser.publicKey);
       encryptedSecret = await pgpHelper.pgpEncrypt({
         plainText: secretKey,
         keys: publicKeys,

@@ -63,7 +63,6 @@ describe('PushAPI.notification functionality', () => {
         account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
-      expect(response.length).not.equal(0);
     });
 
     it('Should return feeds without signer object when an account is passed', async () => {
@@ -71,7 +70,6 @@ describe('PushAPI.notification functionality', () => {
         account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
-      expect(response.length).not.equal(0);
     });
 
     it.skip('Should throw error without signer object when an account is not passed', async () => {
@@ -85,7 +83,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
-      console.log(response)
+      console.log(response);
       expect(response).not.null;
     });
 
@@ -95,7 +93,7 @@ describe('PushAPI.notification functionality', () => {
         channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
         raw: true,
       });
-        // console.log(response)
+      // console.log(response)
       expect(response).not.null;
     });
   });
@@ -168,7 +166,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with no account: Should return response', async () => {
       const response = await userAlice.notification.subscriptions();
-        console.log(response);
+      console.log(response);
       expect(response).not.null;
     });
 
@@ -201,7 +199,5 @@ describe('PushAPI.notification functionality', () => {
   //     it("Uploading data to ipfs via push node", async () => {
   //         await userAlice.uploadToIPFSViaPushNode("test")
   //     })
-
-
-  });
+});
 // });

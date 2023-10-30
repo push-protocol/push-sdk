@@ -120,27 +120,31 @@ export const updateGroupCore = async (
     const sameMembers = groupChat.members.every((element) =>
       updatedParticipants.has(element.wallet.toLowerCase())
     );
-    // const sameMembers = groupChat.members.every(
-    //   (val, index) =>
-    //     val.wallet.toLowerCase() === convertedMembers[index].toLowerCase()
-    // );
-
-    // console.log(convertedMembers);
-    // console.log(convertedAdmins);
-    // console.log(groupChat.members);
 
     let sessionKey: string | null = null;
     let encryptedSecret: string | null = null;
     if ((!sameMembers || !participantStatus.isMember) && !groupChat.isPublic) {
       const secretKey = AES.generateRandomSecret(15);
+
+      const publicKeys: string[] = [];
+      // This will now only take keys of non-removed members
+      groupChat.members.every((element) => {
+        if (updatedParticipants.has(element.wallet.toLowerCase())) {
+          publicKeys.push(element.publicKey);
+        }
+      });
+
+      // This is autoJoin Case
+      if (!participantStatus.isMember) {
+        publicKeys.push(connectedUser.publicKey);
+      }
+
       // Encrypt secret key with group members public keys
-      const publicKeys: string[] = groupChat.members.map(
-        (member) => member.publicKey
-      );
       encryptedSecret = await pgpHelper.pgpEncrypt({
         plainText: secretKey,
         keys: publicKeys,
       });
+
       sessionKey = CryptoJS.SHA256(encryptedSecret).toString();
     }
 

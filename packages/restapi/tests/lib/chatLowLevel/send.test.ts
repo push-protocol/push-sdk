@@ -2757,7 +2757,11 @@ const expectMsg = async (
   expect(msg.toDID).to.include(receiver);
   expect(msg.toCAIP10).to.include(receiver);
   expect(msg.messageType).to.equal(messageType);
-  expect(msg.verificationProof?.split(':')[0]).to.be.oneOf(['pgpv2', 'pgp']);
+  expect(msg.verificationProof?.split(':')[0]).to.be.oneOf([
+    'pgpv3',
+    'pgpv2',
+    'pgp',
+  ]);
   //Backward Compatibility check
   expect(msg.sigType).to.equal(msg.verificationProof?.split(':')[0]);
   //Backward Compatibility check ( signature signs messageContent and will be diff from vProof )
@@ -2800,7 +2804,8 @@ const expectMsg = async (
     const decryptedMsg = await decryptAndVerifyMessage(
       msg,
       senderProfile.publicKey,
-      senderPGPPrivateKey
+      senderPGPPrivateKey,
+      _env
     );
     if (typeof content === 'string') {
       expect((decryptedMsg.messageObj as { content: string }).content).to.equal(
