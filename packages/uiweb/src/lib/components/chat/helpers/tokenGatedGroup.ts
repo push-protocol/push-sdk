@@ -148,6 +148,11 @@ const validateTokenData = async (condition:Rule):Promise<CriteriaValidationError
   if(!data.amount){
     return {tokenAmount:`Amount cannot be 0`}
   }
+  else{
+    if(data.amount<0){
+      return {tokenAmount:`Amount cannot be in negative`}
+    }
+  }
   return {}  
 }
 

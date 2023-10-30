@@ -14,6 +14,7 @@ import { Section, Span, Image } from '../../reusables';
 import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
 import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
+import { device } from '../../../config';
 
 interface IModalProps {
   width?: string;
@@ -128,7 +129,9 @@ const ModalParent = styled.div<IModalProps>`
   align-items: center;
   padding: 24px 20px;
   max-height: 75vh;
-
+  // @media ${device.mobileL} {
+  //   max-height: 70vh;
+  // }
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border-radius: ${(props) => props.theme.borderRadius.modal};
 
