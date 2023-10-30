@@ -51,14 +51,13 @@ import {
   fetchContractInfo,
   getCategoryDropdownValues,
   getCriteriaData,
-
   getSubCategoryDropdownValues,
   validationCriteria,
 } from '../helpers';
+import { IChatTheme } from '../exportedTypes';
 
 const AddCriteria = ({
   handlePrevious,
-  handleNext,
   onClose,
   criteriaStateManager,
 }: ModalHeaderProps) => {
@@ -403,12 +402,16 @@ const AddCriteria = ({
   };
 
   return (
-    <Section
+    <ScrollSection
+      theme={theme}
       flexDirection="column"
-      gap="25px"
+      gap="12px"
+      overflow="hidden scroll"
+      justifyContent="start"
+      padding='0 4px 0 6px'
       width={isMobile ? '300px' : '400px'}
     >
-      <Section margin="0 0 10px 0">
+      <Section margin="0 0 5px 0">
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
@@ -424,88 +427,97 @@ const AddCriteria = ({
         selectedValue={selectedTypeValue}
         dropdownValues={dropdownTypeValues}
       />
-      {Array.isArray(
-        getCategoryDropdownValues({
-          dropdownCategoryValues,
-          dropdownTypeValues,
-          selectedTypeValue,
-        })
-      ) ? (
-        <DropDownInput
-          labelName="Gating Category"
-          selectedValue={selectedCategoryValue}
-          dropdownValues={
+      <Section
+        zIndex="unset"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Section width="48%">
+          {Array.isArray(
             getCategoryDropdownValues({
               dropdownCategoryValues,
               dropdownTypeValues,
-              selectedCategoryValue,
-
               selectedTypeValue,
-            }) as DropdownValueType[]
-          }
-        />
-      ) : (
-        <TextInput
-          labelName="Gating category"
-          inputValue={
-            (
-              getCategoryDropdownValues({
-                dropdownCategoryValues,
-                dropdownTypeValues,
-                selectedCategoryValue,
-                selectedTypeValue,
-              }) as ReadonlyInputType
-            )?.title
-          }
-          disabled={true}
-          customStyle={{
-            background: theme.backgroundColor?.modalHoverBackground,
-          }}
-        />
-      )}
+            })
+          ) ? (
+            <DropDownInput
+              labelName="Gating Category"
+              selectedValue={selectedCategoryValue}
+              dropdownValues={
+                getCategoryDropdownValues({
+                  dropdownCategoryValues,
+                  dropdownTypeValues,
+                  selectedCategoryValue,
 
-      {Array.isArray(
-        getSubCategoryDropdownValues({
-          dropdownCategoryValues,
-          dropdownTypeValues,
-          selectedCategoryValue,
-          dropdownSubCategoryValues,
-          selectedTypeValue,
-        })
-      ) ? (
-        <DropDownInput
-          labelName="Sub-Category"
-          selectedValue={selectedSubCategoryValue}
-          dropdownValues={
+                  selectedTypeValue,
+                }) as DropdownValueType[]
+              }
+            />
+          ) : (
+            <TextInput
+              labelName="Gating category"
+              inputValue={
+                (
+                  getCategoryDropdownValues({
+                    dropdownCategoryValues,
+                    dropdownTypeValues,
+                    selectedCategoryValue,
+                    selectedTypeValue,
+                  }) as ReadonlyInputType
+                )?.title
+              }
+              disabled={true}
+              customStyle={{
+                background: theme.backgroundColor?.modalHoverBackground,
+              }}
+            />
+          )}
+        </Section>
+        <Section width="48%">
+          {Array.isArray(
             getSubCategoryDropdownValues({
               dropdownCategoryValues,
               dropdownTypeValues,
               selectedCategoryValue,
               dropdownSubCategoryValues,
               selectedTypeValue,
-            }) as DropdownValueType[]
-          }
-        />
-      ) : (
-        <TextInput
-          labelName="Sub-category"
-          inputValue={
-            (
-              getSubCategoryDropdownValues({
-                dropdownCategoryValues,
-                dropdownTypeValues,
-                selectedCategoryValue,
-                dropdownSubCategoryValues,
-                selectedTypeValue,
-              }) as ReadonlyInputType
-            )?.title
-          }
-          disabled={true}
-          customStyle={{
-            background: theme.backgroundColor?.modalHoverBackground,
-          }}
-        />
-      )}
+            })
+          ) ? (
+            <DropDownInput
+              labelName="Sub-Category"
+              selectedValue={selectedSubCategoryValue}
+              dropdownValues={
+                getSubCategoryDropdownValues({
+                  dropdownCategoryValues,
+                  dropdownTypeValues,
+                  selectedCategoryValue,
+                  dropdownSubCategoryValues,
+                  selectedTypeValue,
+                }) as DropdownValueType[]
+              }
+            />
+          ) : (
+            <TextInput
+              labelName="Sub-category"
+              inputValue={
+                (
+                  getSubCategoryDropdownValues({
+                    dropdownCategoryValues,
+                    dropdownTypeValues,
+                    selectedCategoryValue,
+                    dropdownSubCategoryValues,
+                    selectedTypeValue,
+                  }) as ReadonlyInputType
+                )?.title
+              }
+              disabled={true}
+              customStyle={{
+                background: theme.backgroundColor?.modalHoverBackground,
+              }}
+            />
+          )}
+        </Section>
+      </Section>
       {/* shift to minor components  leave for now*/}
       {checkIfTokenNFT({
         dropdownCategoryValues,
@@ -610,7 +622,7 @@ const AddCriteria = ({
           <Section gap="10px" flexDirection="column" alignItems="start">
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
-              totalWidth="410px"
+              totalWidth={isMobile?'400px':'410px'}
               selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
@@ -643,7 +655,7 @@ const AddCriteria = ({
         {validationLoading && <Spinner size="20" color="#fff" />}
       </Button>
       <GatingRulesInformation />
-    </Section>
+    </ScrollSection>
   );
 };
 
@@ -653,4 +665,18 @@ const ErrorSpan = styled(Span)`
   font-size: 12px;
   font-weight: 500;
   color: #ed5858;
+`;
+
+const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
 `;

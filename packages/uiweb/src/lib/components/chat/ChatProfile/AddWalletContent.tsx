@@ -44,7 +44,6 @@ export const AddWalletContent = ({
   handleMemberList,
   groupMembers,
   isLoading,
-  modalHeader,
 }: AddWalletContentProps) => {
   const theme = useContext(ThemeContext);
 
