@@ -118,6 +118,7 @@ export const AddWalletContent = ({
 
   return (
     <Section
+      margin="auto"
       width={isMobile ? '100%' : '410px'}
       flexDirection="column"
       padding={isMobile ? '0px auto' : '0px 10px'}

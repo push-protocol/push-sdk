@@ -397,7 +397,8 @@ const GroupInformation = ({
 
   return (
     <ScrollSection
-      width={isMobile ? '100%' : '410px'}
+      margin="auto" 
+      width='100%' 
       flexDirection="column"
       gap="16px"
       maxHeight={isMobile ? '59vh' : '61vh'}
@@ -721,6 +722,7 @@ export const GroupInfoModal = ({
       >
         {!showAddMoreWalletModal && (
           <Section
+            margin='auto'
             width={isMobile ? '100%' : '410px'}
             flexDirection="column"
             gap="16px"
