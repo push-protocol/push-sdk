@@ -62,8 +62,8 @@ const AddConditionSection = ({
   };
 
   return (
-    <Section alignItems="start" flexDirection="column" gap="10px">
-      <Section flexDirection="column" alignItems="start" gap="5px">
+    <Section alignItems="start" flexDirection="column" gap="0px">
+      <Section flexDirection="column" alignItems="start" gap="5px" margin='0 0 5px 0'>
         <Span
           color={theme.textColor?.modalHeadingText}
           fontSize="16px"
@@ -81,7 +81,7 @@ const AddConditionSection = ({
       </Section>
 
       {criteriaState.entryOptionsDataArray.length > 1 && (
-        <Section margin="20px 0 10px 0">
+        <Section margin="10px" >
           <OperatorContainer
             operator={criteriaState.entryRootCondition}
             setOperator={(newEl: string) => {
@@ -194,7 +194,7 @@ export const CreateGroupType = ({
   };
 
   return (
-    <Section flexDirection="column" gap="32px">
+    <Section flexDirection="column" gap="16px">
       <ModalHeader
         title="Create Group"
         handleClose={onClose}
@@ -203,11 +203,11 @@ export const CreateGroupType = ({
       <ScrollSection
         width="100%"
         overflow="hidden auto"
-        maxHeight="calc(100vh - 16rem)"
+        maxHeight="53vh"
         theme={theme}
         padding="5px 4px 5px 0"
       >
-        <Section gap="32px" flexDirection="column" height="100%">
+        <Section gap="20px" flexDirection="column" height="100%">
           <OptionButtons
             options={GROUP_TYPE_OPTIONS}
             selectedValue={groupEncryptionType}
@@ -224,7 +224,7 @@ export const CreateGroupType = ({
           />
 
           {checked && (
-            <Section flexDirection="column" gap="32px">
+            <Section flexDirection="column" gap="20px">
               <AddConditionSection
                 criteriaState={criteriaStateManager.entryCriteria}
                 handleNext={() => {
@@ -253,7 +253,7 @@ export const CreateGroupType = ({
           )}
         </Section>
       </ScrollSection>
-      <Section gap="20px" flexDirection="column">
+      <Section gap="16px" flexDirection="column">
         <Button width="197px" onClick={verifyAndCreateGroup}>
           {!loading && 'Create Group'}
           {loading && <Spinner size="20" color="#fff" />}

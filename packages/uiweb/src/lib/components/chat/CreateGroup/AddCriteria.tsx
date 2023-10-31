@@ -36,7 +36,6 @@ import {
   ReadonlyInputType,
 } from '../types';
 import useToast from '../reusables/NewToast';
-import { tokenFetchHandler } from '../helpers/tokenHelpers';
 import {
   CriteriaValidationErrorType,
   Data,
@@ -44,12 +43,21 @@ import {
   PushData,
   Rule,
 } from '../types/tokenGatedGroupCreationType';
-import { validationCriteria } from '../helpers';
-
+import {
+  checkIfCustomEndpoint,
+  checkIfGuild,
+  checkIfPushInvite,
+  checkIfTokenNFT,
+  fetchContractInfo,
+  getCategoryDropdownValues,
+  getCriteriaData,
+  getSubCategoryDropdownValues,
+  validationCriteria,
+} from '../helpers';
+import { IChatTheme } from '../exportedTypes';
 
 const AddCriteria = ({
   handlePrevious,
-  handleNext,
   onClose,
   criteriaStateManager,
 }: ModalHeaderProps) => {
@@ -173,7 +181,7 @@ const AddCriteria = ({
       value: SUBCATEGORY.HOLDER,
       title: 'Holder',
     },
-    ERC721:{
+    ERC721: {
       value: SUBCATEGORY.HOLDER,
       title: 'Holder',
     },
@@ -226,69 +234,6 @@ const AddCriteria = ({
     },
   ];
 
-  const getCategoryDropdownValues = () => {
-    return dropdownCategoryValues[
-      dropdownTypeValues[selectedTypeValue].value as TypeKeys
-    ];
-  };
-
-  const getSelectedCategoryValue = () => {
-    const category = getCategoryDropdownValues();
-    if (Array.isArray(category))
-      return (category as DropdownValueType[])[selectedCategoryValue].value!;
-    else return category.value! as SubCategoryKeys;
-  };
-
-  const getSelectedSubCategoryValue = () => {
-    const subCategory = getSubCategoryDropdownValues();
-    if (Array.isArray(subCategory))
-      return (subCategory as DropdownValueType[])[selectedCategoryValue].value!;
-    else return subCategory.value! as SubCategoryKeys;
-  };
-
-  const checkIfTokenNFT = () => {
-    const category = getSelectedCategoryValue();
-    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721)
-      return true;
-
-    return false;
-  };
-
-  const checkIfCustomEndpoint = () => {
-    const category = getSelectedCategoryValue();
-    if (category === CATEGORY.CustomEndpoint) return true;
-    return false;
-  };
-
-  const checkIfPushInvite = () => {
-    const accessType = dropdownTypeValues[selectedTypeValue].value;
-    if (accessType === TYPE.PUSH) {
-      const category = getSelectedCategoryValue();
-      if (category === CATEGORY.INVITE) return true;
-    }
-
-    return false;
-  };
-
-  const checkIfGuild = () => {
-    const accessType = dropdownTypeValues[selectedTypeValue].value;
-    if (accessType === TYPE.GUILD) {
-      return true;
-    }
-
-    return false;
-  };
-
-  const getSubCategoryDropdownValues = () => {
-    const category = getCategoryDropdownValues();
-    if (Array.isArray(category))
-      return dropdownSubCategoryValues[
-        (category as DropdownValueType[])[selectedCategoryValue]
-          .value as SubCategoryKeys
-      ];
-    else return dropdownSubCategoryValues[category.value as SubCategoryKeys];
-  };
-
   const onQuantityChange = (e: any) => {
     setQuantity({ ...quantity, value: e.target.value });
   };
@@ -308,55 +253,32 @@ const AddCriteria = ({
     let subCategory = 'DEFAULT';
     if (_type === 'PUSH') {
       if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-        subCategory = SUBCATEGORY.HOLDER
+        subCategory = SUBCATEGORY.HOLDER;
       } else if (category === CATEGORY.CustomEndpoint) {
         subCategory = 'GET';
       }
     }
 
-    const getData = (type: string, category: string): Data => {
-      if (type === 'PUSH') {
-        if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-          const selectedChain =
-            dropdownChainsValues[selectedChainValue].value || 'eip155:1';
-          return {
-            contract: `${selectedChain}:${contract}`,
-            amount: quantity.value,
-            comparison: dropdownQuantityRangeValues[quantity.range].value,
-            decimals: category === CATEGORY.ERC20 ? decimals : undefined,
-            token: unit,
-          };
-        } else if (category === CATEGORY.INVITE) {
-          const _inviteRoles = [];
-          if (inviteCheckboxes.admin) {
-            _inviteRoles.push('ADMIN');
-          }
-          if (inviteCheckboxes.owner) {
-            _inviteRoles.push('OWNER');
-          }
-
-          return {
-            inviterRoles: _inviteRoles as ['OWNER' | 'ADMIN'],
-          };
-        } else {
-          return {
-            url: url,
-          };
-        }
-      } else {
-        return {
-          id: guildId,
-          comparison: guildComparison === 'specific' ? '' : guildComparison,
-          role: guildComparison === 'specific' ? specificRoleId : '*',
-        };
-      }
-    };
-
     const rule: Rule = {
       type: _type,
       category: category,
       subcategory: subCategory,
-      data: getData(_type, category),
+      data: getCriteriaData({
+        type: _type,
+        category,
+        contract,
+        quantity,
+        decimals,
+        unit,
+        url,
+        inviteCheckboxes,
+        guildComparison,
+        specificRoleId,
+        guildId,
+        dropdownQuantityRangeValues,
+        selectedChainValue,
+        dropdownChainsValues,
+      }),
     };
 
     //guild validation added
@@ -400,9 +322,8 @@ const AddCriteria = ({
           oldValue.category === CATEGORY.ERC20 ||
           oldValue.category === CATEGORY.ERC721
         ) {
-          
-          if(pushData.token){
-            setUnit(pushData.token)
+          if (pushData.token) {
+            setUnit(pushData.token);
           }
 
           if (pushData.decimals) {
@@ -439,7 +360,10 @@ const AddCriteria = ({
         // guild condition
         setGuildId((oldValue.data as GuildData).id);
         setSpecificRoleId((oldValue.data as GuildData).role);
-        setGuildComparison(((oldValue.data as GuildData).comparison) || GUILD_COMPARISON_OPTIONS[2].value);
+        setGuildComparison(
+          (oldValue.data as GuildData).comparison ||
+            GUILD_COMPARISON_OPTIONS[2].value
+        );
       }
 
       setSelectedTypeValue(
@@ -448,42 +372,24 @@ const AddCriteria = ({
     }
   }, []);
 
-  const getSeletedType = () => {
-    return dropdownTypeValues[selectedTypeValue].value || 'PUSH';
-  };
-
-  const getSelectedCategory = () => {
-    const category: string =
-      (dropdownCategoryValues['PUSH'] as DropdownValueType[])[
-        selectedCategoryValue
-      ].value || CATEGORY.ERC20;
-
-    return category;
-  };
-
-  const getSelectedChain = () => {
-    return dropdownChainsValues[selectedChainValue].value || 'eip155:1';
-  };
-
-  // Fetch the contract info
   useEffect(() => {
-    // TODO: optimize to reduce this call call when user is typing
-    (async()=>{
-      setValidationErrors(prev => ({...prev, tokenError:undefined})) 
-
-      const _type = getSeletedType();
-      const _category: string = getSelectedCategory();
-      const _chainInfo = getSelectedChain();
-
-      await tokenFetchHandler(
+    // Debouncing
+    // Fetch the contract info
+    const getData = setTimeout(async () => {
+      await fetchContractInfo({
+        setValidationErrors,
+        selectedCategoryValue,
+        selectedTypeValue,
+        dropdownCategoryValues,
+        dropdownTypeValues,
         contract,
-        _type,
-        _category,
-        _chainInfo,
         setUnit,
-        setDecimals
-      );
-    })();
+        setDecimals,
+        selectedChainValue,
+        dropdownChainsValues,
+      });
+    }, 2000);
+    return () => clearTimeout(getData);
   }, [contract, selectedCategoryValue, selectedChainValue]);
 
   const showError = (errorMessage: string) => {
@@ -496,12 +402,16 @@ const AddCriteria = ({
   };
 
   return (
-    <Section
+    <ScrollSection
+      theme={theme}
       flexDirection="column"
-      gap="25px"
+      gap="12px"
+      overflow="hidden scroll"
+      justifyContent="start"
+      padding='0 2px 0 10px'
       width={isMobile ? '300px' : '400px'}
     >
-      <Section margin="0 0 10px 0">
+      <Section margin="0 0 5px 0">
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
@@ -517,43 +427,104 @@ const AddCriteria = ({
         selectedValue={selectedTypeValue}
         dropdownValues={dropdownTypeValues}
       />
-      {Array.isArray(getCategoryDropdownValues()) ? (
-        <DropDownInput
-          labelName="Gating Category"
-          selectedValue={selectedCategoryValue}
-          dropdownValues={getCategoryDropdownValues() as DropdownValueType[]}
-        />
-      ) : (
-        <TextInput
-          labelName="Gating category"
-          inputValue={(getCategoryDropdownValues() as ReadonlyInputType)?.title}
-          disabled={true}
-          customStyle={{
-            background: theme.backgroundColor?.modalHoverBackground,
-          }}
-        />
-      )}
+      <Section
+        zIndex="unset"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Section width="48%" zIndex='unset'>
+          {Array.isArray(
+            getCategoryDropdownValues({
+              dropdownCategoryValues,
+              dropdownTypeValues,
+              selectedTypeValue,
+            })
+          ) ? (
+            <DropDownInput
+              labelName="Gating Category"
+              selectedValue={selectedCategoryValue}
+              dropdownValues={
+                getCategoryDropdownValues({
+                  dropdownCategoryValues,
+                  dropdownTypeValues,
+                  selectedCategoryValue,
 
-      {Array.isArray(getSubCategoryDropdownValues()) ? (
-        <DropDownInput
-          labelName="Sub-Category"
-          selectedValue={selectedSubCategoryValue}
-          dropdownValues={getSubCategoryDropdownValues() as DropdownValueType[]}
-        />
-      ) : (
-        <TextInput
-          labelName="Sub-category"
-          inputValue={
-            (getSubCategoryDropdownValues() as ReadonlyInputType)?.title
-          }
-          disabled={true}
-          customStyle={{
-            background: theme.backgroundColor?.modalHoverBackground,
-          }}
-        />
-      )}
+                  selectedTypeValue,
+                }) as DropdownValueType[]
+              }
+            />
+          ) : (
+            <TextInput
+              labelName="Gating category"
+              inputValue={
+                (
+                  getCategoryDropdownValues({
+                    dropdownCategoryValues,
+                    dropdownTypeValues,
+                    selectedCategoryValue,
+                    selectedTypeValue,
+                  }) as ReadonlyInputType
+                )?.title
+              }
+              disabled={true}
+              customStyle={{
+                background: theme.backgroundColor?.modalHoverBackground,
+              }}
+            />
+          )}
+        </Section>
+        <Section width="48%">
+          {Array.isArray(
+            getSubCategoryDropdownValues({
+              dropdownCategoryValues,
+              dropdownTypeValues,
+              selectedCategoryValue,
+              dropdownSubCategoryValues,
+              selectedTypeValue,
+            })
+          ) ? (
+            <DropDownInput
+              labelName="Sub-Category"
+              selectedValue={selectedSubCategoryValue}
+              dropdownValues={
+                getSubCategoryDropdownValues({
+                  dropdownCategoryValues,
+                  dropdownTypeValues,
+                  selectedCategoryValue,
+                  dropdownSubCategoryValues,
+                  selectedTypeValue,
+                }) as DropdownValueType[]
+              }
+            />
+          ) : (
+            <TextInput
+              labelName="Sub-category"
+              inputValue={
+                (
+                  getSubCategoryDropdownValues({
+                    dropdownCategoryValues,
+                    dropdownTypeValues,
+                    selectedCategoryValue,
+                    dropdownSubCategoryValues,
+                    selectedTypeValue,
+                  }) as ReadonlyInputType
+                )?.title
+              }
+              disabled={true}
+              customStyle={{
+                background: theme.backgroundColor?.modalHoverBackground,
+              }}
+            />
+          )}
+        </Section>
+      </Section>
       {/* shift to minor components  leave for now*/}
-      {checkIfTokenNFT() && (
+      {checkIfTokenNFT({
+        dropdownCategoryValues,
+        dropdownTypeValues,
+        selectedCategoryValue,
+        selectedTypeValue,
+      }) && (
         <>
           <DropDownInput
             labelName="Blockchain"
@@ -573,37 +544,47 @@ const AddCriteria = ({
             )}
           </Section>
           <Section gap="10px" flexDirection="column" alignItems="start">
-          <QuantityInput
-            dropDownValues={dropdownQuantityRangeValues}
-            labelName="Quantity"
-            inputValue={quantity}
-            error={!!validationErrors?.tokenAmount}
-            onInputChange={onQuantityChange}
-            placeholder="e.g. 1.45678"
-            unit={unit}
-          />
-          {!!validationErrors?.tokenAmount && (
+            <QuantityInput
+              dropDownValues={dropdownQuantityRangeValues}
+              labelName="Quantity"
+              inputValue={quantity}
+              error={!!validationErrors?.tokenAmount}
+              onInputChange={onQuantityChange}
+              placeholder="e.g. 1.45678"
+              unit={unit}
+            />
+            {!!validationErrors?.tokenAmount && (
               <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>
             )}
           </Section>
         </>
       )}
 
-      {checkIfCustomEndpoint() && (
-         <Section gap="10px" flexDirection="column" alignItems="start">
-        <TextInput
-          labelName="URL"
-          inputValue={url}
-          onInputChange={(e: any) => setUrl(e.target.value)}
-          placeholder="e.g. abc.com"
-          error={!!validationErrors?.url}
-        />
-           {!!validationErrors?.url && (
-              <ErrorSpan>{validationErrors?.url}</ErrorSpan>
-            )}
+      {checkIfCustomEndpoint({
+        dropdownCategoryValues,
+        dropdownTypeValues,
+        selectedCategoryValue,
+        selectedTypeValue,
+      }) && (
+        <Section gap="10px" flexDirection="column" alignItems="start">
+          <TextInput
+            labelName="URL"
+            inputValue={url}
+            onInputChange={(e: any) => setUrl(e.target.value)}
+            placeholder="e.g. abc.com"
+            error={!!validationErrors?.url}
+          />
+          {!!validationErrors?.url && (
+            <ErrorSpan>{validationErrors?.url}</ErrorSpan>
+          )}
         </Section>
       )}
-      {checkIfPushInvite() && (
+      {checkIfPushInvite({
+        dropdownCategoryValues,
+        dropdownTypeValues,
+        selectedCategoryValue,
+        selectedTypeValue,
+      }) && (
         <Section flexDirection="column" gap="10px">
           {Object.keys(INVITE_CHECKBOX_LABEL).map((key) => (
             <Checkbox
@@ -624,7 +605,7 @@ const AddCriteria = ({
         </Section>
       )}
 
-      {checkIfGuild() && (
+      {checkIfGuild(dropdownTypeValues, selectedTypeValue) && (
         <>
           <Section gap="10px" flexDirection="column" alignItems="start">
             <TextInput
@@ -641,7 +622,7 @@ const AddCriteria = ({
           <Section gap="10px" flexDirection="column" alignItems="start">
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
-              totalWidth="410px"
+              totalWidth={isMobile?'400px':'410px'}
               selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
@@ -674,7 +655,7 @@ const AddCriteria = ({
         {validationLoading && <Spinner size="20" color="#fff" />}
       </Button>
       <GatingRulesInformation />
-    </Section>
+    </ScrollSection>
   );
 };
 
@@ -684,4 +665,18 @@ const ErrorSpan = styled(Span)`
   font-size: 12px;
   font-weight: 500;
   color: #ed5858;
+`;
+
+const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.scrollbarColor};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
 `;

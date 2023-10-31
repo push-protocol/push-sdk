@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 import { IGroup } from '../../../types';
 import { isValidETHAddress } from '../helpers/helper';
-import { IChatProfile, IChatTheme } from '../exportedTypes';
+import { IChatProfile, IChatTheme, MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
 import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
@@ -37,6 +37,7 @@ type OptionProps = {
   groupInfo: IGroup | null | undefined;
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   theme: IChatTheme;
+  groupInfoModalBackground: ModalBackgroundType;
 };
 
 const Options = ({
@@ -45,6 +46,7 @@ const Options = ({
   isGroup,
   groupInfo,
   setGroupInfo,
+  groupInfoModalBackground,
   theme,
 }: OptionProps) => {
   const DropdownRef = useRef(null);
@@ -115,6 +117,7 @@ const Options = ({
                 setModal={setModal}
                 groupInfo={groupInfo}
                 setGroupInfo={setGroupInfo}
+                groupInfoModalBackground={groupInfoModalBackground}
               />
           )}
         </ImageItem>
@@ -128,9 +131,7 @@ const Options = ({
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
   style,
-}: {
-  chatId: string;
-  style: 'Info' | 'Preview';
+  groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
 }) => {
   const theme = useContext(ThemeContext);
   const { account, env } = useChatData();
@@ -207,6 +208,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           groupInfo={groupInfo}
           setGroupInfo={setGroupInfo}
           theme={theme}
+          groupInfoModalBackground = {groupInfoModalBackground}
         />
 
         {/* {!isGroup && 

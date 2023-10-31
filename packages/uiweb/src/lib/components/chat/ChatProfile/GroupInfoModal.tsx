@@ -36,6 +36,7 @@ import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
+import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -45,6 +46,11 @@ const UPDATE_KEYS = {
 } as const;
 
 type UpdateKeys = typeof UPDATE_KEYS[keyof typeof UPDATE_KEYS];
+type UpdateGroupType = {
+  adminList: Array<string>;
+  memberList: Array<string>;
+};
+
 const SUCCESS_MESSAGE = {
   REMOVE_MEMBER: 'Removed Member successfully',
   ADD_MEMBER: 'Group Invitation sent',
@@ -92,11 +98,8 @@ const PendingMembers = ({
           <ProfileSection
             flexDirection="column"
             flex="1"
-            theme={theme}
-            maxHeight="7rem"
-            height="7rem"
+    
             justifyContent="start"
-            overflow="hidden auto"
             borderRadius="16px"
           >
             {groupInfo?.pendingMembers &&
@@ -137,6 +140,7 @@ export const ConditionsInformation = ({
   groupInfo,
 }: ConditionsInformationProps) => {
   const groupRules = getRuleInfo(groupInfo?.rules);
+  const isMobile = useMediaQuery(device.mobileL);
 
   const getOperator = (key: keyof typeof groupRules) => {
     if (groupRules[key as keyof typeof groupRules].length) {
@@ -145,12 +149,11 @@ export const ConditionsInformation = ({
     }
     return null;
   };
-
   
   return (
     <Section
-      margin="15px 0px 0px 0px"
-      gap="20px"
+      margin="5px 0px 0px 0px"
+      gap="16px"
       flexDirection="column"
       width="100%"
     >
@@ -163,20 +166,31 @@ export const ConditionsInformation = ({
           subheader={'Conditions must be true to join and chat'}
         />
       )}
+      <ConditionSection
+        overflow="hidden auto"
+        maxHeight={isMobile ? '46vh' : '49vh'}
+        justifyContent="start"
+        flexDirection="column"
+        padding="0 2px 0 0"
+        theme={theme}
+      >
       {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
-        <Section key={idx} flexDirection="column">
-         {getOperator(key as keyof typeof groupRules) ? (
           <>
+            {getOperator(key as keyof typeof groupRules) ? (
+              <Section key={idx} flexDirection="column">
          <Span
             fontSize="16px"
             fontWeight="500"
             alignSelf="start"
-            margin="0 0 5px 0"
+                  margin="5px 0"
           >
-            {ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]?.heading}
+                  {
+                    ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]
+                      ?.heading
+                  }
           </Span>
            
-            <Span fontSize="14px" margin="20px 0">
+                <Span fontSize="14px" margin="15px 0">
               {
                 OPERATOR_OPTIONS_INFO[
                   groupRules[key as keyof typeof groupRules][0][0]
@@ -193,15 +207,10 @@ export const ConditionsInformation = ({
                 }
               </Span>
             </Span>
-            </>
-          ) : null}
-
-          <ConditionSection
+          <Section
             width="100%"
-            overflow="hidden auto"
-            maxHeight="12.5rem"
-            theme={theme}
-            padding="0 4px 0 0"
+          
+        
             justifyContent="start"
             flexDirection="column"
           >
@@ -209,9 +218,13 @@ export const ConditionsInformation = ({
               moreOptions={false}
               conditionData={groupRules[key as keyof typeof groupRules]}
             />
-          </ConditionSection>
+             
+          </Section>
         </Section>
+            ) : null}
+          </>
       ))}
+      </ConditionSection>
     </Section>
   );
 };
@@ -273,6 +286,15 @@ const GroupTypeBadge = ({
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
+  handleAddRemove: ({
+    adminList,
+    memberList,
+    updateKey,
+  }: UpdateGroupType & { updateKey: UpdateKeys }) => void;
+  setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedMemberAddress:string | null;
+  setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
+
 };
 
 type GroupInfoModalProps = {
@@ -280,6 +302,7 @@ type GroupInfoModalProps = {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: IGroup;
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
+  groupInfoModalBackground?: ModalBackgroundType;
 };
 
 export const GROUPINFO_STEPS = {
@@ -292,98 +315,26 @@ export type GROUP_INFO_TYPE =
 
 const GroupInformation = ({
   theme,
-  setModal,
   groupInfo,
-  setGroupInfo,
   handleNextInformation,
+  handleAddRemove,
+  setShowAddMoreWalletModal,
+  selectedMemberAddress,
+  setSelectedMemberAddress
 }: GroupSectionProps) => {
   const { account } = useChatData();
-  const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
-    useState<boolean>(false);
+
   const [showPendingRequests, setShowPendingRequests] =
     useState<boolean>(false);
-  const [memberList, setMemberList] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [copyText, setCopyText] = useState<string>('');
-  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
-    string | null
-  >(null);
-  const { updateGroup } = useUpdateGroup();
+
+
   const isMobile = useMediaQuery(device.mobileL);
 
-  const handleClose = () => onClose();
   const dropdownRef = useRef<any>(null);
   useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-  const groupInfoToast = useToast();
 
-  const groupCreator = groupInfo?.groupCreator;
-  const membersExceptGroupCreator = groupInfo?.members?.filter(
-    (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
-  );
-
-  const groupMembers = [
-    ...membersExceptGroupCreator,
-    ...groupInfo.pendingMembers,
-  ];
-
-  type UpdateGroupType = {
-    adminList: Array<string>;
-    memberList: Array<string>;
-  };
-
-  const handleUpdateGroup = async (options: UpdateGroupType) => {
-    const { adminList, memberList } = options || {};
-    const updateResponse = await updateGroup({
-      groupInfo,
-      memberList,
-      adminList,
-    });
-    return { updateResponse };
-  };
-
-  const handleAddRemove = async (
-    options: UpdateGroupType & { updateKey: UpdateKeys }
-  ) => {
-    const { adminList, memberList, updateKey } = options || {};
-
-    try {
-      setIsLoading(true);
-      const { updateResponse } = await handleUpdateGroup({
-        adminList,
-        memberList,
-      });
-
-      if (typeof updateResponse !== 'string') {
-        setGroupInfo(updateResponse);
-
-        groupInfoToast.showMessageToast({
-          toastTitle: 'Success',
-          toastMessage: SUCCESS_MESSAGE[updateKey],
-          toastType: 'SUCCESS',
-          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
-        });
-      } else {
-        groupInfoToast.showMessageToast({
-          toastTitle: 'Error',
-          toastMessage: updateResponse,
-          toastType: 'ERROR',
-          getToastIcon: (size) => <MdError size={size} color="red" />,
-        });
-      }
-    } catch (error) {
-      console.error('Error', error);
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: 'Please, try again',
-        toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
-      });
-    } finally {
-      if (updateKey === UPDATE_KEYS.ADD_MEMBER) handleClose();
-      setIsLoading(false);
-      setSelectedMemberAddress(null);
-    }
-  };
   const removeMember = async () => {
     const updatedMemberList = getUpdatedMemberList(
       groupInfo,
@@ -398,27 +349,6 @@ const GroupInformation = ({
       memberList: updatedMemberList,
       adminList,
       updateKey: UPDATE_KEYS.REMOVE_MEMBER,
-    });
-  };
-
-  const addMembers = async () => {
-    //Already Present Members and PendingMembers
-    const groupMemberList = convertToWalletAddressList([
-      ...groupInfo.members,
-      ...groupInfo.pendingMembers,
-    ]);
-
-    //Newly Added Members and alreadyPresent Members in the groupchat
-    const newMembersToAdd = memberList.map((member: any) => member.wallets);
-    const members = [...groupMemberList, ...newMembersToAdd];
-
-    //Admins wallet address from both members and pendingMembers
-    const adminList = getAdminList?.(groupInfo);
-
-    await handleAddRemove({
-      memberList: members,
-      adminList,
-      updateKey: UPDATE_KEYS.ADD_MEMBER,
     });
   };
 
@@ -466,29 +396,19 @@ const GroupInformation = ({
     textColor: '#ED5858',
   };
 
-  //remove all testing things
-
-  const a1: DropdownValueType = {
-    id: 'dismiss_admin',
-    title: 'Dismiss as admin',
-    function: () => updateGroupAdmin(UPDATE_KEYS.REMOVE_ADMIN),
-  };
-  const a2: DropdownValueType = {
-    id: 'add_admin',
-    title: 'Make group admin',
-    function: () => updateGroupAdmin(UPDATE_KEYS.ADD_ADMIN),
-  };
-
-  const handlePrevious = () => {
-    setShowAddMoreWalletModal(false);
-  };
-
-  const onClose = (): void => {
-    setModal(false);
-  };
-
   return (
-    <Section margin="auto" width='100%' flexDirection="column">
+    <ScrollSection
+      margin="auto" 
+      width='100%' 
+      flexDirection="column"
+      gap="16px"
+      maxHeight={isMobile ? '59vh' : '61vh'}
+      height={isMobile ? '59vh' : '61vh'}
+      overflow="hidden auto"
+      justifyContent="start"
+      padding="0 2px 0 0"
+      theme={theme}
+    >
       <GroupDescription>
         <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
           Chat ID
@@ -605,14 +525,11 @@ const GroupInformation = ({
       </Section>
 
       <ProfileSection
-        margin="15px 10px"
+        // margin="15px 10px"
         flexDirection="column"
         zIndex="2"
-        maxHeight="9rem"
-        height="9rem"
         justifyContent="start"
-        overflow="hidden auto"
-        theme={theme}
+      
       >
         {groupInfo?.members &&
           groupInfo?.members?.length > 0 &&
@@ -633,19 +550,7 @@ const GroupInformation = ({
             />
           ))}
       </ProfileSection>
-      {showAddMoreWalletModal && (
-        <AddWalletContent
-          onSubmit={addMembers}
-          handlePrevious={handlePrevious}
-          onClose={onClose}
-          memberList={memberList}
-          handleMemberList={setMemberList}
-          groupMembers={groupMembers}
-          isLoading={isLoading}
-          modalHeader={'Add More Wallets'}
-        />
-      )}
-    </Section>
+    </ScrollSection>
   );
 };
 
@@ -654,10 +559,33 @@ export const GroupInfoModal = ({
   setModal,
   groupInfo,
   setGroupInfo,
+  groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
 }: GroupInfoModalProps) => {
   const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(
     GROUPINFO_STEPS.GROUP_INFO
   );
+  const [memberList, setMemberList] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
+    useState<boolean>(false);
+  useState<boolean>(false);
+  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
+    string | null
+  >(null);
+
+  const isMobile = useMediaQuery(device.mobileL);
+  const groupInfoToast = useToast();
+  const { updateGroup } = useUpdateGroup();
+  const groupCreator = groupInfo?.groupCreator;
+  const membersExceptGroupCreator = groupInfo?.members?.filter(
+    (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
+  );
+  const groupMembers = [
+    ...membersExceptGroupCreator,
+    ...groupInfo.pendingMembers,
+  ];
+  const dropdownRef = useRef<any>(null);
+
   const handleNextInfo = () => {
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
   };
@@ -676,6 +604,10 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             setGroupInfo={setGroupInfo}
+            handleAddRemove={handleAddRemove}
+            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            selectedMemberAddress={selectedMemberAddress}
+            setSelectedMemberAddress={setSelectedMemberAddress}
           />
         );
       case GROUPINFO_STEPS.CRITERIA:
@@ -689,34 +621,112 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             setGroupInfo={setGroupInfo}
+            handleAddRemove={handleAddRemove}
+            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            selectedMemberAddress={selectedMemberAddress}
+            setSelectedMemberAddress={setSelectedMemberAddress}
           />
         );
     }
   };
-  const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
-    useState<boolean>(false);
-  useState<boolean>(false);
-  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
-    string | null
-  >(null);
 
-  const isMobile = useMediaQuery(device.mobileL);
-
-  const dropdownRef = useRef<any>(null);
   useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
 
   const onClose = (): void => {
     setModal(false);
   };
 
+  const handleUpdateGroup = async (options: UpdateGroupType) => {
+    const { adminList, memberList } = options || {};
+    const updateResponse = await updateGroup({
+      groupInfo,
+      memberList,
+      adminList,
+    });
+    return { updateResponse };
+  };
+
+  const handleClose = () => onClose();
+  const handleAddRemove = async (
+    options: UpdateGroupType & { updateKey: UpdateKeys }
+  ) => {
+    const { adminList, memberList, updateKey } = options || {};
+
+    try {
+      setIsLoading(true);
+      const { updateResponse } = await handleUpdateGroup({
+        adminList,
+        memberList,
+      });
+
+      if (typeof updateResponse !== 'string') {
+        setGroupInfo(updateResponse);
+
+        groupInfoToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: SUCCESS_MESSAGE[updateKey],
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        });
+      } else {
+        groupInfoToast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: updateResponse,
+          toastType: 'ERROR',
+          getToastIcon: (size) => <MdError size={size} color="red" />,
+        });
+      }
+    } catch (error) {
+      console.error('Error', error);
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: 'Please, try again',
+        toastType: 'ERROR',
+        getToastIcon: (size) => <MdError size={size} color="red" />,
+      });
+    } finally {
+      if (updateKey === UPDATE_KEYS.ADD_MEMBER) handleClose();
+      setIsLoading(false);
+      setSelectedMemberAddress(null);
+    }
+  };
+
+  const addMembers = async () => {
+    //Already Present Members and PendingMembers
+    const groupMemberList = convertToWalletAddressList([
+      ...groupInfo.members,
+      ...groupInfo.pendingMembers,
+    ]);
+
+    //Newly Added Members and alreadyPresent Members in the groupchat
+    const newMembersToAdd = memberList.map((member: any) => member.wallets);
+    const members = [...groupMemberList, ...newMembersToAdd];
+
+    //Admins wallet address from both members and pendingMembers
+    const adminList = getAdminList?.(groupInfo);
+
+    await handleAddRemove({
+      memberList: members,
+      adminList,
+      updateKey: UPDATE_KEYS.ADD_MEMBER,
+    });
+  };
+  const handlePrevious = () => {
+    setShowAddMoreWalletModal(false);
+  };
+
   if (groupInfo) {
     return (
-      <Modal clickawayClose={onClose}>
+      <Modal
+        clickawayClose={onClose}
+        modalBackground={groupInfoModalBackground}
+      >
         {!showAddMoreWalletModal && (
           <Section
             margin='auto'
             width={isMobile ? '100%' : '410px'}
             flexDirection="column"
+            gap="16px"
             padding={isMobile ? '0px auto' : '0px 10px'}
           >
             <ModalHeader
@@ -756,6 +766,18 @@ export const GroupInfoModal = ({
             {renderComponent()}
           </Section>
         )}
+        {showAddMoreWalletModal && (
+          <AddWalletContent
+            onSubmit={addMembers}
+            handlePrevious={handlePrevious}
+            onClose={onClose}
+            memberList={memberList}
+            handleMemberList={setMemberList}
+            groupMembers={groupMembers}
+            isLoading={isLoading}
+            modalHeader={'Add More Wallets'}
+          />
+        )}
       </Modal>
     );
   } else {
@@ -765,7 +787,7 @@ export const GroupInfoModal = ({
 
 //styles
 const GroupHeader = styled.div`
-  margin-top: 34px;
+  // margin-top: 34px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -773,7 +795,7 @@ const GroupHeader = styled.div`
 `;
 
 const GroupDescription = styled.div`
-  margin-top: 25px;
+  // margin-top: 25px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -782,7 +804,7 @@ const GroupDescription = styled.div`
 `;
 
 const PublicEncrypted = styled.div`
-  margin-top: 20px;
+  // margin-top: 20px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -790,13 +812,13 @@ const PublicEncrypted = styled.div`
   align-items: center;
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  padding: 16px;
+  padding: 12px 16px;
   box-sizing: border-box;
   background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
 `;
 
 const AddWalletContainer = styled.div`
-  margin-top: 20px;
+  // margin-top: 20px;
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   width: 100%;
@@ -826,7 +848,7 @@ const GroupPendingMembers = styled.div`
 
 const PendingRequestWrapper = styled.div`
   width: 100%;
-  margin-top: 20px;
+  // margin-top: 20px;
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 0px 0px;
@@ -873,7 +895,11 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   }
 `;
 
-const ProfileSection = styled(Section)<{ theme: IChatTheme }>`
+const ProfileSection = styled(Section)`
+  height: fit-content;
+
+`;
+const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;

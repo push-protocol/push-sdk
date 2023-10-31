@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps, MODAL_BACKGROUND_TYPE } from '../exportedTypes';
 
 import { Section, Span } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
@@ -36,6 +36,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     isConnected = true,
     autoConnect = false,
     onGetTokenClick,
+    groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY
   } = options || {};
 
   const { env, signer, account, pgpPrivateKey } = useChatData();
@@ -58,7 +59,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-      {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
+      {chatProfile && <ChatProfile chatId={chatId} style="Info" groupInfoModalBackground={groupInfoModalBackground} />}
       <Section
         flex="1 1 auto"
         overflow="hidden"

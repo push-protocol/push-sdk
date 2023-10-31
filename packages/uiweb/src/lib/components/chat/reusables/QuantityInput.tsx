@@ -34,7 +34,7 @@ export const QuantityInput = (props: IQuantityInputProps) => {
           <label>{props.labelName}</label>
         </LabelContainer>
         <Section gap="4px" alignItems="center" >
-          <Section  zIndex='500'>
+          <Section  zIndex='500' >
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}
@@ -52,14 +52,14 @@ export const QuantityInput = (props: IQuantityInputProps) => {
             <Unit
               alignSelf='auto'
               background={theme.backgroundColor?.modalHoverBackground}
-              width='fit-content'
+              width='40%'
               height='fit-content'
               error={props.error ||false}
              
             >
-              <Span>
+              {/* <Span> */}
               {shortenText(props.unit,15)}
-              </Span>
+              {/* </Span> */}
             </Unit>
           </Section>
         </Section>
@@ -101,22 +101,22 @@ const Input = styled.input<IChatTheme &{error:boolean}>`
 `;
 
 const Unit = styled(Section)<IChatTheme&{error:boolean}>`
-span{
+
   font-size:14px;
-  font-weight:700;
-  text-wrap: nowrap;
-}
+  font-weight:600;
+  white-space: nowrap;
+
 border-radius:0 12px 12px 0;
 
-padding:18.2px 17.2px 17.2px 17.2px;
+padding:18px 17.2px 16.5px 17.2px;
 border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
 @media ${device.mobileL} {
 
-  padding:21.5px 5px 18px 5px;
-  span{
+  padding:21px 17.2px 17.5px 17.2px;
+  
     font-size: 10px;
     font-weight:400
-  }
+  
 }
 
 `;

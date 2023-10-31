@@ -13,12 +13,15 @@ import { IChatTheme } from '../theme';
 import { Section, Span, Image } from '../../reusables';
 import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
+import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
+import { device } from '../../../config';
 
 interface IModalProps {
   width?: string;
   clickawayClose?: () => void;
   children: any;
   theme?: IChatTheme;
+  modalBackground?: ModalBackgroundType;
 }
 
 interface IModalHeader {
@@ -48,10 +51,10 @@ const ClickawayCloseModal = ({
   );
 };
 
-export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
+export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY }: IModalProps) => {
   const theme = useContext(ThemeContext);
   return (
-    <ModalOverlay theme={theme}>
+    <ModalOverlay theme={theme} modalBackground={modalBackground}>
       {clickawayClose ? (
         <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>
           {children}
@@ -99,7 +102,7 @@ export const ModalHeader = ({
 };
 /* styling */
 
-const ModalOverlay = styled.div<IModalProps>`
+const ModalOverlay = styled.div<IModalProps & {modalBackground:ModalBackgroundType}>`
   position: fixed;
   top: 0;
   left: 0;
@@ -107,9 +110,10 @@ const ModalOverlay = styled.div<IModalProps>`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
+  backdrop-filter:${(props) =>  props.modalBackground === MODAL_BACKGROUND_TYPE.BLUR? 'blur(3px)':'none'};
+  background-color: ${(props) => props.modalBackground === MODAL_BACKGROUND_TYPE.OVERLAY? 'rgba(0, 0, 0, 0.5)':' transparent'}; /* Black with 40% opacity */
   display: flex;
-  color: ${(props) => props.theme.textColor.modalHeadingText ?? '#000'};
+  color: ${(props) => props.theme.textColor!.modalHeadingText ?? '#000'};
   justify-content: center;
   align-items: center;
   z-index: 2000;
@@ -124,15 +128,18 @@ const ModalParent = styled.div<IModalProps>`
   flex-direction: column;
   align-items: center;
   padding: 24px 20px;
-
-  background: ${(props) => props.theme.backgroundColor.modalBackground};
-  border-radius: ${(props) => props.theme.borderRadius.modal};
+  max-height: 75vh;
+  // @media ${device.mobileL} {
+  //   max-height: 70vh;
+  // }
+  background: ${(props) => props.theme.backgroundColor?.modalBackground};
+  border-radius: ${(props) => props.theme.borderRadius?.modal};
 
   width: ${(props) => (props.width ? props.width : 'auto')};
   margin: auto !important;
 
   @media (max-width: 425px) {
     min-width: 300px;
-    max-width: 300px;
+    // max-width: 306px;
   }
 `;
