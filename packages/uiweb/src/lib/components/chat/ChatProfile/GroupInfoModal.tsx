@@ -218,6 +218,7 @@ export const ConditionsInformation = ({
               moreOptions={false}
               conditionData={groupRules[key as keyof typeof groupRules]}
             />
+             
           </Section>
         </Section>
             ) : null}

@@ -408,7 +408,7 @@ const AddCriteria = ({
       gap="12px"
       overflow="hidden scroll"
       justifyContent="start"
-      padding='0 4px 0 6px'
+      padding='0 2px 0 10px'
       width={isMobile ? '300px' : '400px'}
     >
       <Section margin="0 0 5px 0">
@@ -432,7 +432,7 @@ const AddCriteria = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Section width="48%">
+        <Section width="48%" zIndex='unset'>
           {Array.isArray(
             getCategoryDropdownValues({
               dropdownCategoryValues,

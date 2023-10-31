@@ -367,7 +367,7 @@ const ImageContainer = styled.div<{ theme: IChatTheme }>`
   margin-top: 10px;
   cursor: pointer;
   border-radius: 32px;
-  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
+  background: ${(props) => props.theme.backgroundColor!.modalHoverBackground};
   width: 128px;
   cursor: pointer;
   height: 128px;
