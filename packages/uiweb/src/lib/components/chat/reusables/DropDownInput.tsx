@@ -102,9 +102,9 @@ const ArrowImage = styled(Image)<{ setPosition: boolean }>`
 
 const DropdownListContainer = styled(Section)<IChatTheme>`
   position: absolute;
-  width: 100%;
+  width: 96%;
   top:30%;
-  right:-9px;
+  right:0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 8px;
   z-index: 100;

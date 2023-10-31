@@ -108,8 +108,8 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   width: fit-content;
  
   button{
-    background: ${(props) => `${props.theme.backgroundColor.buttonBackground}!important`};
-    color: ${(props) => `${props.theme.textColor.buttonText}!important`};
+    background: ${(props) => `${props.theme.backgroundColor?.buttonBackground}!important`};
+    color: ${(props) => `${props.theme.textColor?.buttonText}!important`};
     text-align:center;
     font-size: 1em;
     cursor:pointer;

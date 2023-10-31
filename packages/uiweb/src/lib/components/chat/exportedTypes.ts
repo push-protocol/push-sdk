@@ -20,12 +20,14 @@ export interface IChatViewComponentProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
+  groupInfoModalBackground?: ModalBackgroundType;
   onGetTokenClick?: () => void;
 }
 
 export interface IChatProfile {
   chatId: string;
   style: "Info" | "Preview";
+  groupInfoModalBackground?: ModalBackgroundType;
 }
 
 export interface TwitterFeedReturnType {
@@ -113,8 +115,17 @@ export interface User {
   isAdmin?:boolean;
 }
 
+export const MODAL_BACKGROUND_TYPE = {
+  OVERLAY:'OVERLAY',
+  BLUR: 'BLUR',
+  TRANSPARENT: 'TRANSPARENT',
+
+  } as const;
+  
+  export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
 export interface CreateGroupModalProps {
   onClose: ()=>void;
+  modalBackground?: ModalBackgroundType;
 };
 
 

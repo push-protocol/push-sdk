@@ -18,7 +18,7 @@ export const OperatorContainer = ({
 
 
   return (
-    <Section flexDirection="column" gap="16px">
+    <Section flexDirection="column" gap="12px">
       <OptionButtons
         options={OPERATOR_OPTIONS}
         selectedValue={operator}

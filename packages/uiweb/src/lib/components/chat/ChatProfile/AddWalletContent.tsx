@@ -17,7 +17,7 @@ import useToast from '../reusables/NewToast';
 import {
   getNewChatUser,
 } from '../../../helpers';
-import { ModalButtonProps, User } from '../exportedTypes';
+import { IChatTheme, ModalButtonProps, User } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
 import { device } from '../../../config';
 import CloseIcon from '../../../icons/close.svg';
@@ -44,7 +44,6 @@ export const AddWalletContent = ({
   handleMemberList,
   groupMembers,
   isLoading,
-  modalHeader,
 }: AddWalletContentProps) => {
   const theme = useContext(ThemeContext);
 
@@ -242,15 +241,15 @@ const MultipleMemberList = styled.div`
   }
 `;
 
-const ModalConfirmButton = styled.button<ModalButtonProps>`
+const ModalConfirmButton = styled.button<ModalButtonProps & { theme: IChatTheme } >`
   margin: 60px 0 0 0;
   width: 197px;
   background: ${(props) =>
-    props.memberListCount ? props.theme.backgroundColor.buttonBackground : props.theme.backgroundColor.buttonDisableBackground};
+    props.memberListCount ? props.theme.backgroundColor!.buttonBackground : props.theme.backgroundColor!.buttonDisableBackground};
   color: ${(props) =>
-    props.memberListCount ? props.theme.textColor.buttonText : props.theme.textColor.buttonDisableText};
+    props.memberListCount ? props.theme.textColor!.buttonText : props.theme.textColor!.buttonDisableText};
   border: ${(props) =>
-    props.memberListCount ? 'none' : props.theme.border.modal};
+    props.memberListCount ? 'none' : props.theme.border!.modal};
   min-width: 50%;
   box-sizing: border-box;
   cursor: pointer;
