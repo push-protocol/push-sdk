@@ -187,15 +187,15 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   return (
     <Container
       timestamp={timeStamp}
-      theme={theme}
+ 
       offsetWidth={offsetWidth}
       ref={divRef}
       themeObject={themeObject!}
     >
       {/* header that only pops up on small devices */}
-      <MobileHeader theme={theme} themeObject={themeObject!}>
-        <HeaderButton theme={theme} themeObject={themeObject!}>
-          <ImageContainer theme={theme}  offsetWidth={offsetWidth}>
+      <MobileHeader themeObject={themeObject!}>
+        <HeaderButton themeObject={themeObject!}>
+          <ImageContainer  offsetWidth={offsetWidth} theme={theme}>
             <IPFSIcon icon={icon} />
           </ImageContainer>
           <ChannelName onClick={goToURL}>{app}</ChannelName>
@@ -209,14 +209,15 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* header that only pops up on small devices */}
 
       {/* content of the component */}
-      <ContentSection themeObject={themeObject!}  offsetWidth={offsetWidth} onClick={isCtaURLValid ? gotToCTA : undefined} theme={theme} cta={isCtaURLValid}>
+      <ContentSection themeObject={themeObject!}  offsetWidth={offsetWidth} onClick={isCtaURLValid ? gotToCTA : undefined} cta={isCtaURLValid}>
         {/* section for media content */}
         {notifImage &&
           // if its an image then render this
           (!MediaHelper.isMediaSupportedVideo(notifImage) ? (
             <MobileImage
+            theme={theme}
             offsetWidth={offsetWidth}
-              theme={theme}
+    
               style={{ cursor: 'pointer' }}
               onClick={() => setImageOverlay(notifImage || '')}
             >
@@ -225,7 +226,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           ) : // if its a youtube url, RENDER THIS
           MediaHelper.isMediaYoutube(notifImage) ? (
             <MobileImage 
-            offsetWidth={offsetWidth} theme={theme}>
+            offsetWidth={offsetWidth} >
               <iframe
                 id="ytplayer"
                 width="640"
@@ -237,7 +238,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </MobileImage>
           ) : (
             // if its aN MP4 url, RENDER THIS
-            <MobileImage theme={theme}  offsetWidth={offsetWidth}>
+            <MobileImage offsetWidth={offsetWidth}>
               <video width="360" height="100%" controls>
                 <source src={notifImage} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -252,7 +253,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           themeObject={themeObject!}
             cta={isCtaURLValid}
             offsetWidth={offsetWidth}
-            theme={theme}
+       
           >
             <ChannelTitleText themeObject={themeObject!}>
               {notifTitle}
@@ -270,7 +271,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             }
           </ChannelTitle>
           <ChannelDesc themeObject={themeObject!}>
-            <ChannelDescLabel  themeObject={themeObject!} cta={isCtaURLValid} theme={theme} >
+            <ChannelDescLabel  themeObject={themeObject!} cta={isCtaURLValid} >
               <ParseMarkdownText text={notifBody} />
             </ChannelDescLabel>
           </ChannelDesc>
@@ -312,7 +313,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           ) : null}
 
           {timeStamp ? (
-            <TimestampLabel themeObject={themeObject!} theme={theme}>
+            <TimestampLabel themeObject={themeObject!} >
               {convertTimeStamp(timeStamp)}
             </TimestampLabel>
           ) : null}
@@ -416,7 +417,7 @@ const ChainIconSVG = styled.div<OffsetWidthType>`
  
 `;
 
-const MobileImage = styled.div<OffsetWidthType>`
+const MobileImage = styled.div<OffsetWidthType & {theme?:string}>`
   overflow:hidden;
   img,
   iframe,
@@ -431,11 +432,11 @@ const MobileImage = styled.div<OffsetWidthType>`
 
 
 
-  ${(props: any) =>
+  ${(props: OffsetWidthType & {theme?:string}) =>
     props.offsetWidth>461 &&
     css`
     @media (min-width: ${SM_BREAKPOINT}) {
-      border: 1px solid ${props => props.theme === 'light' ? '#ededed' : '#444'};
+      border: 1px solid ${props => (props.theme as unknown as string)  === 'light' ? '#ededed' : '#444'};
       border-radius: 10px;
       min-width: 220px;
       width: 220px;
@@ -477,7 +478,7 @@ const MobileImage = styled.div<OffsetWidthType>`
   
 `;
 
-const ImageContainer = styled.span<OffsetWidthType>`
+const ImageContainer = styled.span<OffsetWidthType & {theme?:string}>`
   background: ${(props) => (props.theme === "light" ? "#ededed" : "#444")};
   display: inline-block;
   margin-right: 10px;

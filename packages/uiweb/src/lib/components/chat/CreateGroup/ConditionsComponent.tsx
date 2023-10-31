@@ -319,8 +319,8 @@ const DropdownContainer = styled.div`
 const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
   margin: 8px 0;
-  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
+  border-radius: ${(props) => props.theme.borderRadius?.modalInnerComponents};
+  background: ${(props) => props.theme.backgroundColor?.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
 `;
 

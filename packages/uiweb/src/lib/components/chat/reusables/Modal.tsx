@@ -113,7 +113,7 @@ const ModalOverlay = styled.div<IModalProps & {modalBackground:ModalBackgroundTy
   backdrop-filter:${(props) =>  props.modalBackground === MODAL_BACKGROUND_TYPE.BLUR? 'blur(3px)':'none'};
   background-color: ${(props) => props.modalBackground === MODAL_BACKGROUND_TYPE.OVERLAY? 'rgba(0, 0, 0, 0.5)':' transparent'}; /* Black with 40% opacity */
   display: flex;
-  color: ${(props) => props.theme.textColor.modalHeadingText ?? '#000'};
+  color: ${(props) => props.theme.textColor!.modalHeadingText ?? '#000'};
   justify-content: center;
   align-items: center;
   z-index: 2000;
@@ -132,8 +132,8 @@ const ModalParent = styled.div<IModalProps>`
   // @media ${device.mobileL} {
   //   max-height: 70vh;
   // }
-  background: ${(props) => props.theme.backgroundColor.modalBackground};
-  border-radius: ${(props) => props.theme.borderRadius.modal};
+  background: ${(props) => props.theme.backgroundColor?.modalBackground};
+  border-radius: ${(props) => props.theme.borderRadius?.modal};
 
   width: ${(props) => (props.width ? props.width : 'auto')};
   margin: auto !important;
