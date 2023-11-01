@@ -257,10 +257,18 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         renderText: renderStyles
       },
       {
+        pattern: /\*\*\*(.*?)\*\*\*/g, // bold ***text***
+        style: {
+          ...styles.bold,
+          ...styles.italics
+        },
+        renderText: (matchingString) => matchingString.replace(/\*\*\*(.*?)\*\*\*/g, '$1'),
+      },
+      {
         pattern: /\*\*(.*?)\*\*/g, // bold **text**
         style: styles.bold,
         renderText: (matchingString) => matchingString.replace(/\*\*(.*?)\*\*/g, '$1'),
-      },
+      },        
       {
         pattern: /\*(.*?)\*/g, // italic *some text*
         style: {
