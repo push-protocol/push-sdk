@@ -39,8 +39,8 @@ const PGPHelper: IPGPHelper = {
   },
 
   async sign({ message, signingKey }) {
-    const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
-    const signature = await OpenPGP.sign(message, publicKey, signingKey, '');
+    // const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
+    const signature = await OpenPGP.sign(message, signingKey, '');
     return signature.replace('\nVersion: openpgp-mobile', '');
   },
 

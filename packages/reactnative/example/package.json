@@ -13,7 +13,7 @@
     "react": "18.2.0",
     "react-native": "0.71.11",
     "react-native-dotenv": "^3.4.9",
-    "react-native-fast-openpgp": "^2.6.0",
+    "react-native-fast-openpgp": "^2.7.0",
     "react-native-webview": "^13.2.2",
     "react-native-webview-crypto": "^0.0.25"
   },
