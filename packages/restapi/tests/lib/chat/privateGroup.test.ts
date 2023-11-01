@@ -10,6 +10,7 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
+import { GroupDTO, MessageWithCID } from '../../../src/lib/types';
 
 const _env = Constants.ENV.DEV;
 let groupName: string;
@@ -21,10 +22,11 @@ let userAlice: PushAPI;
 let userBob: PushAPI;
 let userJohn: PushAPI;
 
-describe('Private Groups With Session Keys', () => {
+describe('Private Groups', () => {
   let account1: string;
   let account2: string;
   let account3: string;
+  let group: GroupDTO;
   beforeEach(async () => {
     groupName = uniqueNamesGenerator({
       dictionaries: [adjectives, colors, animals],
@@ -47,203 +49,558 @@ describe('Private Groups With Session Keys', () => {
     const signer3 = new ethers.Wallet(WALLET3.privateKey);
     account3 = `eip155:${signer3.address}`;
     userJohn = await PushAPI.initialize(signer3, { env: _env });
-  });
-  it('Session Key should be null on Group Creation', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
+
+    group = await userAlice.chat.group.create(groupName, {
       description: groupDescription,
       image: groupImage,
       members: [],
       admins: [],
       private: true,
     });
+  });
+  describe('Private Group Session Keys', () => {
+    it('Session Key should be null on Group Creation', async () => {
+      expect(group.sessionKey).to.be.null;
+    });
+    it('Session Key should be null on Adding Members', async () => {
+      const updatedGroup = await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      expect(updatedGroup.sessionKey).to.be.null;
+    });
+    it('Session Key should be null on Adding Admins', async () => {
+      const updatedGroup = await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      expect(updatedGroup.sessionKey).to.be.null;
+    });
+    it('Session Key should be null on Removing Pending Members', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
 
-    expect(group.sessionKey).to.be.null;
-  });
-  it('Session Key should be null on Adding Members', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [],
-      private: true,
+      const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      expect(updatedGroup.sessionKey).to.be.null;
     });
-    const updatedGroup = await userAlice.chat.group.add(group.chatId, {
-      role: 'MEMBER',
-      accounts: [account2],
-    });
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it('Session Key should be null on Adding Admins', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [],
-      private: true,
-    });
-    const updatedGroup = await userAlice.chat.group.add(group.chatId, {
-      role: 'ADMIN',
-      accounts: [account2],
-    });
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it('Session Key should be null on Removing Pending Members', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [account2],
-      admins: [],
-      private: true,
-    });
+    it('Session Key should be null on Removing Pending Admins', async () => {
+      // Added Pending Admin
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
 
-    const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
-      role: 'MEMBER',
-      accounts: [account2],
+      const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      expect(updatedGroup.sessionKey).to.be.null;
     });
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it('Session Key should be null on Removing Pending Admins', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [account2],
-      private: true,
-    });
+    it('Session Key should not be null and should update on Pending Member Approving Intent', async () => {
+      // Added Pending Members
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2, account3],
+      });
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      expect(updatedGroup1.sessionKey).to.not.be.null;
 
-    const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
-      role: 'ADMIN',
-      accounts: [account2],
-    });
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it('Session Key should not be null and should update on Pending Member Approving Intent', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [account2, account3],
-      admins: [],
-      private: true,
-    });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    expect(updatedGroup1.sessionKey).to.not.be.null;
+      const updatedGroup2 = await userJohn.chat.group.join(group.chatId);
+      expect(updatedGroup2.sessionKey).to.not.be.null;
 
-    const updatedGroup2 = await userJohn.chat.group.join(group.chatId);
-    expect(updatedGroup2.sessionKey).to.not.be.null;
+      expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
+    });
+    it('Session Key should not be null and should update on Pending Admin Approving Intent', async () => {
+      // Added Pending Admins
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2, account3],
+      });
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      expect(updatedGroup1.sessionKey).to.not.be.null;
 
-    expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
-  });
-  it('Session Key should not be null and should update on Pending Admin Approving Intent', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [account2, account3],
-      private: true,
-    });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    expect(updatedGroup1.sessionKey).to.not.be.null;
+      const updatedGroup2 = await userJohn.chat.group.join(group.chatId);
+      expect(updatedGroup2.sessionKey).to.not.be.null;
 
-    const updatedGroup2 = await userJohn.chat.group.join(group.chatId);
-    expect(updatedGroup2.sessionKey).to.not.be.null;
+      expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
+    });
+    it('Session Key should not be null and should update on Removing Non-Pending Member', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      // Accept Invite
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      expect(updatedGroup1.sessionKey).to.not.be.null;
 
-    expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
-  });
-  it('Session Key should not be null and should update on Removing Non-Pending Member', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [account2],
-      admins: [],
-      private: true,
-    });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    expect(updatedGroup1.sessionKey).to.not.be.null;
+      const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      expect(updatedGroup2.sessionKey).to.not.be.null;
 
-    const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
-      role: 'MEMBER',
-      accounts: [account2],
+      expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
     });
-    expect(updatedGroup2.sessionKey).to.not.be.null;
+    it('Session Key should not be null and should update on Removing Non-Pending Admin', async () => {
+      // Added Pending Admin
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      // Accept Invite
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      expect(updatedGroup1.sessionKey).to.not.be.null;
 
-    expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
-  });
-  it('Session Key should not be null and should update on Removing Non-Pending Admin', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [account2],
-      private: true,
-    });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    expect(updatedGroup1.sessionKey).to.not.be.null;
+      const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      expect(updatedGroup2.sessionKey).to.not.be.null;
 
-    const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
-      role: 'ADMIN',
-      accounts: [account2],
+      expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
     });
-    expect(updatedGroup2.sessionKey).to.not.be.null;
+    it('Session Key should not be null on AutoJoin', async () => {
+      const updatedGroup = await userBob.chat.group.join(group.chatId);
+      expect(updatedGroup.sessionKey).to.not.be.null;
+    });
+    it('Session Key should be null on AutoLeave Pending Member', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      // Reject Invite
+      const updatedGroup = await userBob.chat.group.leave(group.chatId);
+      expect(updatedGroup.sessionKey).to.be.null;
+    });
+    it.skip('Session Key should be null on AutoLeave Pending Admin', async () => {
+      // Added Pending Admin
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      // Reject Invite
+      const updatedGroup = await userBob.chat.group.leave(group.chatId);
+      expect(updatedGroup.sessionKey).to.be.null;
+    });
+    it('Session Key should not be null on AutoLeave Non-Pending Member', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      // Accept Invite
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      const updatedGroup = await userBob.chat.group.leave(group.chatId);
+      expect(updatedGroup.sessionKey).to.not.be.null;
+      expect(updatedGroup.sessionKey).to.not.equal(updatedGroup1.sessionKey);
+    });
+    it('Session Key should not be null on AutoLeave Non-Pending Admin', async () => {
+      // Added Pending Admin
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      // Accept Invite
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      const updatedGroup = await userBob.chat.group.leave(group.chatId);
+      expect(updatedGroup.sessionKey).to.not.be.null;
+      expect(updatedGroup.sessionKey).to.not.equal(updatedGroup1.sessionKey);
+    });
+  });
 
-    expect(updatedGroup2.sessionKey).to.not.equal(updatedGroup1.sessionKey);
-  });
-  it('Session Key should not be null on AutoJoin', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [],
-      private: true,
+  describe('Private Group Send Message', () => {
+    const Content = 'Sending Message to Private Group';
+    it('Send Message should have pgp encryption on Create Group', async () => {
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      // Non member should not be able to decrypt
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
     });
-    const updatedGroup = await userBob.chat.group.join(group.chatId);
-    expect(updatedGroup.sessionKey).to.not.be.null;
-  });
-  it('Session Key should be null on AutoLeave Pending Member', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [account2],
-      admins: [],
-      private: true,
+    it('Send Message should have pgpv1:group encryption on new member joining Group', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      const updatedGrp = await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
     });
-    const updatedGroup = await userBob.chat.group.leave(group.chatId);
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it.skip('Session Key should be null on AutoLeave Pending Admin', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [account2],
-      private: true,
+    it('Pending Menbers should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
     });
-    const updatedGroup = await userBob.chat.group.leave(group.chatId);
-    expect(updatedGroup.sessionKey).to.be.null;
-  });
-  it('Session Key should not be null on AutoLeave Non-Pending Member', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [account2],
-      admins: [],
-      private: true,
+    it('Pending Admins should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
     });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    const updatedGroup = await userBob.chat.group.leave(group.chatId);
-    expect(updatedGroup.sessionKey).to.not.be.null;
-    expect(updatedGroup.sessionKey).to.not.equal(updatedGroup1.sessionKey);
-  });
-  it('Session Key should not be null on AutoLeave Non-Pending Admin', async () => {
-    const group = await userAlice.chat.group.create(groupName, {
-      description: groupDescription,
-      image: groupImage,
-      members: [],
-      admins: [account2],
-      private: true,
+    it('Pending Menbers who left should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      // Reject Intent
+      await userBob.chat.group.leave(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
     });
-    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
-    const updatedGroup = await userBob.chat.group.leave(group.chatId);
-    expect(updatedGroup.sessionKey).to.not.be.null;
-    expect(updatedGroup.sessionKey).to.not.equal(updatedGroup1.sessionKey);
+    it('Pending Admins who left should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+    });
+    it('Pending Menbers who were removed should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+    });
+    it('Pending Admins who were removed should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+    });
+    it('Non-Pending Menbers should be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+    });
+    it('Non-Pending Admins should be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+    });
+    it('Non-Pending Menbers who left should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+      // Leave Group
+      await userBob.chat.group.leave(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+    it('Non-Pending Admins who left should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+      // Leave Group
+      await userBob.chat.group.leave(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+    it('Non-Pending Menbers who were removed should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+    it('Non-Pending Admins who were removed should not be able to decrypt message', async () => {
+      // Added Pending Member
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      // Accept Intent
+      await userBob.chat.group.join(group.chatId);
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+    it('Autojoin Members should be able to decrypt message', async () => {
+      // Autojoin
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+    });
+    it('Autojoin Members who left should not be able to decrypt message', async () => {
+      // Autojoin
+      await userBob.chat.group.join(group.chatId);
+      // Leave
+      await userBob.chat.group.leave(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+    it('Autojoin Members who were removed should not be able to decrypt message', async () => {
+      // Autojoin
+      await userBob.chat.group.join(group.chatId);
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+
+      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
   });
 });
+
+/**
+ * HELPER FUNCTION
+ */
+const expectMsg = (
+  msg: MessageWithCID,
+  expectedContent: string | { [key: string]: any },
+  expectedSender: string,
+  expectedReceiver: string,
+  expectedEncType: 'pgp' | 'pgpv1:group',
+  ableToDecrypt: boolean
+): void => {
+  expect(msg.fromDID).to.include(expectedSender);
+  expect(msg.fromCAIP10).to.include(expectedSender);
+  expect(msg.toDID).to.include(expectedReceiver);
+  expect(msg.toCAIP10).to.include(expectedReceiver);
+  expect(msg.messageType).to.equal('Text');
+  expect(msg.verificationProof?.split(':')[0]).to.equal('pgpv3');
+  //Backward Compatibility check
+  expect(msg.sigType).to.equal(msg.verificationProof?.split(':')[0]);
+  //Backward Compatibility check ( signature signs messageContent and will be diff from vProof )
+  expect(msg.signature).not.to.equal(msg.verificationProof?.split(':')[1]);
+  expect(msg.encType).to.equal(expectedEncType);
+  if (expectedEncType === 'pgpv1:group') {
+    expect(msg.encryptedSecret).to.be.null;
+  } else {
+    expect(msg.encryptedSecret).not.to.be.null;
+  }
+  if (ableToDecrypt) {
+    expect((msg.messageObj as { content: string }).content).to.be.equal(
+      expectedContent
+    );
+  } else {
+    expect(msg.messageObj).to.be.equal('Unable to Decrypt Message');
+  }
+};

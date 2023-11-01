@@ -117,9 +117,13 @@ export const updateGroupCore = async (
       env,
     });
 
-    const sameMembers = groupChat.members.every((element) =>
-      updatedParticipants.has(element.wallet.toLowerCase())
-    );
+    let sameMembers = true;
+
+    groupChat.members.map((element) => {
+      if (!updatedParticipants.has(element.wallet.toLowerCase())) {
+        sameMembers = false;
+      }
+    });
 
     let sessionKey: string | null = null;
     let encryptedSecret: string | null = null;
@@ -128,7 +132,7 @@ export const updateGroupCore = async (
 
       const publicKeys: string[] = [];
       // This will now only take keys of non-removed members
-      groupChat.members.every((element) => {
+      groupChat.members.map((element) => {
         if (updatedParticipants.has(element.wallet.toLowerCase())) {
           publicKeys.push(element.publicKey);
         }
