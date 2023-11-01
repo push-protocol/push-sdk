@@ -22,3 +22,7 @@ export * from './getGroupAccess';
 export * from './searchGroups';
 export * from './rejectRequest';
 export * from './getGroupMemberStatus';
+export * from './getGroupMembers';
+export * from './getGroupInfo';
+export * from './getChatMemberCount';
+;

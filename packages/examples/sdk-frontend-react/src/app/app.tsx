@@ -88,6 +88,9 @@ import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
 import SearchGroupTest from './ChatTest/SearchGroupTest';
 import RejectRequestTest from './ChatTest/RejectRequestTest';
 import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
+import GetChatMemberCountTest from './ChatTest/GetChatMemberCountTest';
+import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
+import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -458,6 +461,9 @@ export function App() {
                     <Route path="/getGroup" element={<GetGroupTest />} />
                     <Route path="/getGroupAccess" element={<GetGroupAccessTest />} />
                     <Route path="/getGroupMemberStatus" element={<GetGroupMemberStatusTest />} />
+                    <Route path="/getChatMemberCountTest" element={<GetChatMemberCountTest />} />
+                    <Route path="/getGroupInfoTest" element={<GetGroupInfoTest />} />
+                    <Route path="/getGroupMembersTest" element={<GetGroupMembersTest />} />
 
                     <Route
                       path="/addMembersToGroup"

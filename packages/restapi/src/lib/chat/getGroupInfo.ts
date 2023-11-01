@@ -2,15 +2,12 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO, GroupInfoDTO } from '../types';
+import { GetGroupType } from './getGroup';
 
 /**
  *  GET /v2/chat/groups/:chatId
  */
 
-export interface GetGroupType {
-  chatId: string;
-  env?: ENV;
-}
 
 // TODO: Currently this is not exported from the SDK
 export const getGroupInfo = async (

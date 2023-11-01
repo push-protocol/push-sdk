@@ -368,6 +368,45 @@ export interface SpaceAccess {
   rules?: SpaceRules;
 }
 
+export interface ChatMemberCounts {
+  overallCount: number;
+  adminsCount: number;
+  membersCount: number;
+  pendingCount: number;
+}
+
+export interface ChatMemberProfile {
+  address: string;
+  intent: boolean;
+  role: string;
+  profile: UserV2;
+}
+
+export interface GroupMembersInfo {
+  totalMembersCount: number;
+  members: ChatMemberProfile[];
+}
+
+export interface UserProfile {
+  name: string | null;
+  desc: string | null;
+  picture: string | null;
+  blockedUsersList: Array<string> | null;
+  profileVerificationProof: string | null;
+}
+
+export interface UserV2 {
+  msgSent: number;
+  maxMsgPersisted: number;
+  did: string;
+  wallets: string;
+  profile: UserProfile;
+  encryptedPrivateKey: string | null;
+  publicKey: string | null;
+  verificationProof: string | null;
+  origin?: string | null;
+}
+
 export interface GroupDTO {
   members: {
     wallet: string;
