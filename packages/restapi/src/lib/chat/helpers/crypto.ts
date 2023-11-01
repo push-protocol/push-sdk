@@ -9,6 +9,7 @@ import {
   GroupDTO,
   walletType,
   IMessageIPFS,
+  GroupInfoDTO,
 } from '../../types';
 import { get } from '../../user';
 import {
@@ -26,6 +27,7 @@ import { getDomainInformation, getTypeInformation } from './signature';
 import { pgpDecrypt, verifySignature } from './pgp';
 import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
+import { getGroup } from '../getGroup';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -192,7 +194,7 @@ export const getEncryptedRequest = async (
   message: string,
   isGroup: boolean,
   env: ENV,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   secretKey: string
 ): Promise<IEncryptedRequest> => {
   return await getEncryptedRequestCore(
@@ -213,7 +215,7 @@ export const getEncryptedRequestCore = async (
   message: string,
   isGroup: boolean,
   env: ENV,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   secretKey: string,
   pgpHelper: PGP.IPGPHelper
 ): Promise<IEncryptedRequest> => {
@@ -297,18 +299,10 @@ export const getEncryptedRequestCore = async (
         signature: signature,
       };
     } else {
-      if (group.sessionKey) {
-        // Get encryptedSecret from Backend using sessionKey
-        const encryptedSecret = await getEncryptedSecret({
-          sessionKey: group.sessionKey,
-          env,
-        });
+      // Private Groups
 
-        const secretKey = await pgpDecrypt({
-          cipherText: encryptedSecret,
-          toPrivateKeyArmored: senderCreatedUser.privateKey!,
-        });
-
+      // 1. Private Groups with session keys
+      if (group.sessionKey && group.encryptedSecret) {
         const cipherText: string = AES.aesEncrypt({
           plainText: message,
           secretKey,
@@ -326,7 +320,13 @@ export const getEncryptedRequestCore = async (
           signature: signature,
         };
       } else {
-        const publicKeys: string[] = group.members.map(
+        // do a getGroupCall to get keys of all members
+        const groupWithMembers: GroupDTO = await getGroup({
+          chatId: group.chatId,
+          env: env,
+        });
+
+        const publicKeys: string[] = groupWithMembers.members.map(
           (member) => member.publicKey
         );
         const { cipherText, encryptedSecret, signature } =

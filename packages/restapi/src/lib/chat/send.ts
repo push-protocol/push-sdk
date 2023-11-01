@@ -12,9 +12,9 @@ import {
 } from './helpers';
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
-import { getGroup } from './getGroup';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
+import { getGroupInfo } from './getGroupInfo';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -55,7 +55,7 @@ export const sendCore = async (
     const isGroup = isValidETHAddress(to) ? false : true;
 
     const group = isGroup
-      ? await getGroup({
+      ? await getGroupInfo({
           chatId: to,
           env: env,
         })

@@ -9,10 +9,11 @@ import {
   SpaceRules,
   GroupAccess,
   SpaceAccess,
+  GroupInfoDTO,
 } from '../../types';
 import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
-import { IPGPHelper, PGPHelper } from './pgp';
+import { IPGPHelper, PGPHelper, pgpDecrypt } from './pgp';
 import * as AES from './aes';
 import { sign } from './pgp';
 import { MessageObj } from '../../types/messageTypes';
@@ -83,7 +84,7 @@ export const sendMessagePayload = async (
   messageObj: MessageObj,
   messageContent: string,
   messageType: string,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   env: ENV
 ): Promise<ISendMessagePayload> => {
   return await sendMessagePayloadCore(
@@ -104,14 +105,21 @@ export const sendMessagePayloadCore = async (
   messageObj: MessageObj | string,
   messageContent: string,
   messageType: string,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   env: ENV,
   pgpHelper: IPGPHelper
 ): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
 
-  const secretKey: string = AES.generateRandomSecret(15);
-
+  let secretKey: string;
+  if (isGroup && group?.encryptedSecret && group.sessionKey) {
+    secretKey = await pgpDecrypt({
+      cipherText: group.encryptedSecret,
+      toPrivateKeyArmored: senderCreatedUser.privateKey!,
+    });
+  } else {
+    secretKey = AES.generateRandomSecret(15);
+  }
   const { message: encryptedMessageContent, signature: deprecatedSignature } =
     await getEncryptedRequestCore(
       receiverAddress,

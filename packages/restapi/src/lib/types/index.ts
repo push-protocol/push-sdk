@@ -399,6 +399,24 @@ export interface GroupDTO {
   rules?: Rules | null;
   meta?: string | null;
   sessionKey?: string;
+  encryptedSecret?: string;
+}
+
+export interface GroupInfoDTO {
+  groupName: string;
+  groupImage: string | null;
+  groupDescription: string;
+  isPublic: boolean;
+  groupCreator: string;
+  chatId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  groupType?: string;
+  status?: ChatStatus | null;
+  rules?: Rules | null;
+  meta?: string | null;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
 }
 
 export interface SpaceDTO {
