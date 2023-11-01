@@ -236,15 +236,17 @@ interface GroupTypeProps {
   subheader: string;
   cursor?: string;
   handleNextInformation?: () => void;
+  alert?: boolean;
 }
 
-const GroupTypeBadge = ({
+export const GroupTypeBadge = ({
   theme,
   icon,
   header,
   subheader,
   handleNextInformation,
   cursor,
+  alert
 }: GroupTypeProps) => {
   return (
     <Section cursor={cursor}>

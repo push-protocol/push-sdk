@@ -21,6 +21,7 @@ import TokenGatedIcon from '../../../icons/Token-Gated.svg';
 import { Modal } from '../reusables/Modal';
 import { Image } from '../../reusables';
 import { ConnectButtonComp } from '../ConnectButton';
+import { Info } from '../../../icons/Info';
 import {
   checkIfIntent,
   getDefaultFeedObject,
@@ -38,11 +39,16 @@ import {
   usePushChatSocket,
 } from '../../../hooks';
 
-import type { FileMessageContent } from '../../../types';
+import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import useToast from '../reusables/NewToast';
+import { GroupTypeBadge } from '../ChatProfile/GroupInfoModal';
+import ConditionsComponent from '../CreateGroup/ConditionsComponent';
+import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
+import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
+import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 
 /**
  * @interface IThemeProps
@@ -52,7 +58,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-const ConnectButtonSection = ({autoConnect}:{autoConnect:boolean}) => {
+const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
   const { signer } = useChatData();
   return (
     <Section
@@ -234,8 +240,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
   }, [chatId, chatFeed, account, env]);
-console.log(isMember)
-console.log(checkIfMember(chatFeed, account!))
+  console.log(isMember)
+  console.log(checkIfMember(chatFeed, account!))
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -257,7 +263,8 @@ console.log(checkIfMember(chatFeed, account!))
         chatId,
       });
       if (response) {
-        await updateChatFeed();}
+        await updateChatFeed();
+      }
     } else {
       const sendTextMessage = await sendMessage({
         message: `Hello, please let me join this group, my wallet address is ${account}`,
@@ -378,7 +385,17 @@ console.log(checkIfMember(chatFeed, account!))
       setChatFeed(chat as IFeeds);
     }
   };
-  
+
+  const groupRules = getRuleInfo(chatFeed?.groupInformation?.rules);
+
+  const getOperator = (key: keyof typeof groupRules) => {
+    if (groupRules[key as keyof typeof groupRules].length) {
+      return groupRules[key as keyof typeof groupRules][0][0]
+        ?.operator as keyof typeof OPERATOR_OPTIONS_INFO;
+    }
+    return null;
+  };
+
   return !Object.keys(chatFeed || {}).length ? (
     <>
       {!pgpPrivateKey && (isConnected || !!signer) && (
@@ -392,7 +409,7 @@ console.log(checkIfMember(chatFeed, account!))
           alignItems="center"
           justifyContent="space-between"
         >
-          <ConnectButtonSection autoConnect={autoConnect}/>
+          <ConnectButtonSection autoConnect={autoConnect} />
         </TypebarSection>
       )}
     </>
@@ -411,143 +428,155 @@ console.log(checkIfMember(chatFeed, account!))
     >
       {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
         <>
-        {(isJoinGroup() || isNotVerified()) && (
-          <Section
-            width="100%"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Span
-              padding="8px 8px 8px 16px"
-              color={theme.textColor?.chatReceivedBubbleText}
-              fontSize="15px"
-              fontWeight="500"
-              textAlign="start"
-            >
-              {isJoinGroup() && 'Click on the button to join the group'}
-              {isNotVerified() && (
-                <>
-                  Sending messages requires{' '}
-                  <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-                    1 PUSH Token
-                  </Span>{' '}
-                  for participation.{' '}
-                  <Link
-                    href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
-                    target="_blank"
-                    color={theme.backgroundColor?.chatSentBubbleBackground}
-                  >
-                    Learn More <OpenLink />
-                  </Link>
-                </>
-              )}
-            </Span>
-            <ConnectWrapper>
-              <Connect
-                onClick={async() =>
-                  isJoinGroup() ? await handleJoinGroup() : await checkVerification()
-                }
-              >
-                {isJoinGroup() &&
-                <>
-                 {approveLoading ? (
-                  <Spinner color="#fff" size="24" />
-                ) : (
-                  ' Join Group '
-                )}
-                </>
-                }
-                {isNotVerified() &&
-                <>
-                  {accessLoading ? (
-                    <Spinner color="#fff" size="24" />
-                  ) : (
-                    'Verify Access'
-                  )}
-                  </>
-                  }
-              </Connect>
-            </ConnectWrapper>
-          </Section>
-        )}
-        {(!!pgpPrivateKey && !verificationSuccessfull) && (
-          <Modal width="439px">
+          {(isJoinGroup() || isNotVerified()) && (
             <Section
-              padding="10px"
-              theme={theme}
-              gap="32px"
-              flexDirection="column"
+              width="100%"
+              justifyContent="space-between"
+              alignItems="center"
             >
               <Span
+                padding="8px 8px 8px 16px"
+                color={theme.textColor?.chatReceivedBubbleText}
+                fontSize="15px"
                 fontWeight="500"
-                fontSize="24px"
-                color={theme.textColor?.encryptionMessageText}
+                textAlign="start"
               >
-                Verification Failed
-              </Span>
-              <Span
-                color={theme.textColor?.encryptionMessageText}
-                fontSize="16px"
-              >
-                Please ensure the following conditions are met to participate and
-                send messages.
-              </Span>
-              <Section gap="8px" alignItems="start">
-                <Image
-                  verticalAlign="start"
-                  height="24"
-                  width="24"
-                  src={TokenGatedIcon}
-                  alt="token-gated"
-                />
-                <Section flexDirection="column">
-                  {' '}
-                  <Span
-                    color={theme.textColor?.encryptionMessageText}
-                    textAlign="start"
-                    alignSelf="start"
-                  >
-                    Token Gated
-                  </Span>
-                  <Span
-                    fontWeight="500"
-                    textAlign="start"
-                    color={theme.textColor?.encryptionMessageText}
-                  >
-                    You need to have{' '}
+                {isJoinGroup() && 'Click on the button to join the group'}
+                {isNotVerified() && (
+                  <>
+                    Sending messages requires{' '}
                     <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
                       1 PUSH Token
                     </Span>{' '}
-                    in your wallet to be able to send messages.
-                  </Span>
+                    for participation.{' '}
+                    <Link
+                      href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+                      target="_blank"
+                      color={theme.backgroundColor?.chatSentBubbleBackground}
+                    >
+                      Learn More <OpenLink />
+                    </Link>
+                  </>
+                )}
+              </Span>
+              <ConnectWrapper>
+                <Connect
+                  onClick={async () =>
+                    isJoinGroup() ? await handleJoinGroup() : await checkVerification()
+                  }
+                >
+                  {isJoinGroup() &&
+                    <>
+                      {approveLoading ? (
+                        <Spinner color="#fff" size="24" />
+                      ) : (
+                        ' Join Group '
+                      )}
+                    </>
+                  }
+                  {isNotVerified() &&
+                    <>
+                      {accessLoading ? (
+                        <Spinner color="#fff" size="24" />
+                      ) : (
+                        'Verify Access'
+                      )}
+                    </>
+                  }
+                </Connect>
+              </ConnectWrapper>
+            </Section>
+          )}
+          {(!!pgpPrivateKey && !verificationSuccessfull) && (
+            <Modal width="631px">
+              <Section
+                padding="10px"
+                theme={theme}
+                gap="32px"
+                flexDirection="column"
+              >
+                <Span
+                  fontWeight="500"
+                  fontSize="24px"
+                  color={theme.textColor?.encryptionMessageText}
+                >
+                  Access Failed
+                </Span>
+                <GroupTypeBadge
+                  cursor="pointer"
+                  // handleNextInformation={handleNextInformation}
+                  theme={theme}
+                  icon={TokenGatedIcon}
+                  header={'Gated group'}
+                  subheader={'Conditions must be true to join'}
+                />
+                {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
+          <>
+            {getOperator(key as keyof typeof groupRules) ? (
+              <Section key={idx} flexDirection="column">
+         <Span
+            fontSize="16px"
+            fontWeight="500"
+            alignSelf="start"
+                  margin="5px 0"
+          >
+                  {
+                    ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]
+                      ?.heading
+                  }
+          </Span>
+           
+                <Span fontSize="14px" margin="15px 0">
+              {
+                OPERATOR_OPTIONS_INFO[
+                  groupRules[key as keyof typeof groupRules][0][0]
+                    ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                ]?.head
+              }
+              <Span color={theme.textColor?.modalSubHeadingText}>
+                {' '}
+                {
+                  OPERATOR_OPTIONS_INFO[
+                    groupRules[key as keyof typeof groupRules][0][0]
+                      ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                  ]?.tail
+                }
+              </Span>
+            </Span>
+          <Section
+            width="100%"
+          
+        
+            justifyContent="start"
+            flexDirection="column"
+          >
+            <ConditionsComponent
+              moreOptions={false}
+              conditionData={groupRules[key as keyof typeof groupRules]}
+            />
+             
+          </Section>
+        </Section>
+            ) : null}
+          </>
+      ))}
+                <Section gap="8px" flexDirection='column'>
+                  <ConnectWrapperClose
+                    onClick={() => {
+                      setVerificationSuccessfull(true);
+                    }}
+                  >
+                    <ConnectClose>Cancel</ConnectClose>
+                  </ConnectWrapperClose>
+                  <Section flexDirection='row' gap='7px'>
+                    <Info />
+                  <Span fontSize='15px' color='#657795' fontWeight='400' >Learn more about getting rules</Span>
+                  </Section>
                 </Section>
               </Section>
-              <Section gap="8px">
-                <TokenWrapper
-                  onClick={() => {
-                    if (onGetTokenClick) {
-                      onGetTokenClick();
-                    }
-                    setVerificationSuccessfull(true);
-                  }}
-                >
-                  <TokenGet>
-                    Get Free Tokens
-                    <OpenLink height="12" width="12" />
-                  </TokenGet>
-                </TokenWrapper>
-                <ConnectWrapperClose
-                  onClick={() => {
-                    setVerificationSuccessfull(true);
-                  }}
-                >
-                  <ConnectClose>Close</ConnectClose>
-                </ConnectWrapperClose>
-              </Section>
-            </Section>
-          </Modal>
-        )}
-      </>
+            </Modal>
+          )}
+        </>
       ) : null}
       {!!pgpPrivateKey &&
         (((isRules ? verified : true) && isMember) ||
@@ -669,7 +698,7 @@ console.log(checkIfMember(chatFeed, account!))
   );
 };
 
-const TypebarSection = styled(Section)<{ border?: string }>`
+const TypebarSection = styled(Section) <{ border?: string }>`
   gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
