@@ -21,7 +21,7 @@ export interface IChatViewComponentProps {
   isConnected?: boolean;
   autoConnect?:boolean;
   groupInfoModalBackground?: ModalBackgroundType;
-  onGetTokenClick?: () => void;
+  onVerificationFail?: () => void;
 }
 
 export interface IChatProfile {
@@ -60,7 +60,7 @@ export interface MessageInputProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
-  onGetTokenClick?: () => void;
+  onVerificationFail?: () => void;
 }
 
 

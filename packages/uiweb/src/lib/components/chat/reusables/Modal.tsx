@@ -26,7 +26,7 @@ interface IModalProps {
 
 interface IModalHeader {
   handlePrevious?: () => void;
-  handleClose: () => void;
+  handleClose?: () => void;
   title: string;
 }
 
@@ -89,14 +89,14 @@ export const ModalHeader = ({
       >
         {title}
       </Span>
-      <Image
+      {handleClose && ( <Image
         src={CloseIcon}
         height="24px"
         maxHeight="24px"
         width={'auto'}
         onClick={() => handleClose()}
         cursor="pointer"
-      />{' '}
+      />)}{' '}
     </Section>
   );
 };

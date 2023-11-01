@@ -303,7 +303,6 @@ export default ConditionsComponent;
 
 const DropdownContainer = styled.div`
   position: absolute;
-  // left: 48%;
   top: 0;
   right: 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};

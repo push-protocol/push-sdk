@@ -17,11 +17,10 @@ import { Spinner } from '../../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import OpenLink from '../../../icons/OpenLink';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
-import TokenGatedIcon from '../../../icons/Token-Gated.svg';
-import { Modal } from '../reusables/Modal';
-import { Image } from '../../reusables';
+import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
-import { Info } from '../../../icons/Info';
+import useToast from '../reusables/NewToast';
+import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
 import {
   checkIfIntent,
   getDefaultFeedObject,
@@ -43,12 +42,7 @@ import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
-import useToast from '../reusables/NewToast';
-import { GroupTypeBadge } from '../ChatProfile/GroupInfoModal';
-import ConditionsComponent from '../CreateGroup/ConditionsComponent';
-import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
-import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
+import { InfoContainer } from '../reusables';
 
 /**
  * @interface IThemeProps
@@ -90,7 +84,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
-  onGetTokenClick,
+  onVerificationFail,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -232,16 +226,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
-    console.log('in useEffect')
-    console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
   }, [chatId, chatFeed, account, env]);
-  console.log(isMember)
-  console.log(checkIfMember(chatFeed, account!))
+
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -377,23 +368,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const updateChatFeed = async () => {
-
     const chat = await fetchChat({ chatId });
 
     if (Object.keys(chat || {}).length) {
-
       setChatFeed(chat as IFeeds);
     }
-  };
-
-  const groupRules = getRuleInfo(chatFeed?.groupInformation?.rules);
-
-  const getOperator = (key: keyof typeof groupRules) => {
-    if (groupRules[key as keyof typeof groupRules].length) {
-      return groupRules[key as keyof typeof groupRules][0][0]
-        ?.operator as keyof typeof OPERATOR_OPTIONS_INFO;
-    }
-    return null;
   };
 
   return !Object.keys(chatFeed || {}).length ? (
@@ -445,7 +424,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {isNotVerified() && (
                   <>
                     Sending messages requires{' '}
-                    <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+                    <Span
+                      color={theme.backgroundColor?.chatSentBubbleBackground}
+                    >
                       1 PUSH Token
                     </Span>{' '}
                     for participation.{' '}
@@ -462,10 +443,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               <ConnectWrapper>
                 <Connect
                   onClick={async () =>
-                    isJoinGroup() ? await handleJoinGroup() : await checkVerification()
+                    isJoinGroup()
+                      ? await handleJoinGroup()
+                      : await checkVerification()
                   }
                 >
-                  {isJoinGroup() &&
+                  {isJoinGroup() && (
                     <>
                       {approveLoading ? (
                         <Spinner color="#fff" size="24" />
@@ -473,8 +456,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                         ' Join Group '
                       )}
                     </>
-                  }
-                  {isNotVerified() &&
+                  )}
+                  {isNotVerified() && (
                     <>
                       {accessLoading ? (
                         <Spinner color="#fff" size="24" />
@@ -482,98 +465,40 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                         'Verify Access'
                       )}
                     </>
-                  }
+                  )}
                 </Connect>
               </ConnectWrapper>
             </Section>
           )}
-          {(!!pgpPrivateKey && !verificationSuccessfull) && (
-            <Modal width="631px">
+          {!!pgpPrivateKey && !verificationSuccessfull && (
+            <Modal width="550px">
               <Section
-                padding="10px"
-                theme={theme}
-                gap="32px"
+                margin="5px 0px 0px 0px"
+                gap="16px"
                 flexDirection="column"
+                width="100%"
               >
-                <Span
-                  fontWeight="500"
-                  fontSize="24px"
-                  color={theme.textColor?.encryptionMessageText}
-                >
-                  Access Failed
-                </Span>
-                <GroupTypeBadge
-                  cursor="pointer"
-                  // handleNextInformation={handleNextInformation}
+                <ModalHeader title="Access Failed" />
+                <ConditionsInformation
                   theme={theme}
-                  icon={TokenGatedIcon}
-                  header={'Gated group'}
-                  subheader={'Conditions must be true to join'}
+                  groupInfo={chatFeed?.groupInformation}
+                  subheader="Please make sure the following conditions
+                   are met to pariticpate and send messages."
+                   alert={true}
                 />
-                {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
-          <>
-            {getOperator(key as keyof typeof groupRules) ? (
-              <Section key={idx} flexDirection="column">
-         <Span
-            fontSize="16px"
-            fontWeight="500"
-            alignSelf="start"
-                  margin="5px 0"
-          >
-                  {
-                    ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]
-                      ?.heading
-                  }
-          </Span>
-           
-                <Span fontSize="14px" margin="15px 0">
-              {
-                OPERATOR_OPTIONS_INFO[
-                  groupRules[key as keyof typeof groupRules][0][0]
-                    ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
-                ]?.head
-              }
-              <Span color={theme.textColor?.modalSubHeadingText}>
-                {' '}
-                {
-                  OPERATOR_OPTIONS_INFO[
-                    groupRules[key as keyof typeof groupRules][0][0]
-                      ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
-                  ]?.tail
-                }
-              </Span>
-            </Span>
-          <Section
-            width="100%"
-          
-        
-            justifyContent="start"
-            flexDirection="column"
-          >
-            <ConditionsComponent
-              moreOptions={false}
-              conditionData={groupRules[key as keyof typeof groupRules]}
-            />
-             
-          </Section>
-        </Section>
-            ) : null}
-          </>
-      ))}
-                <Section gap="8px" flexDirection='column'>
-                  <ConnectWrapperClose
-                    onClick={() => {
-                      setVerificationSuccessfull(true);
-                    }}
-                  >
-                    <ConnectClose>Cancel</ConnectClose>
-                  </ConnectWrapperClose>
-                  <Section flexDirection='row' gap='7px'>
-                    <Info />
-                  <Span fontSize='15px' color='#657795' fontWeight='400' >Learn more about getting rules</Span>
-                  </Section>
-                </Section>
+                <ConnectWrapperClose
+                  onClick={() => {
+                    if (onVerificationFail) {
+                      onVerificationFail();
+                    }
+                    setVerificationSuccessfull(true);
+                  }}
+                >
+                  <ConnectClose>Cancel</ConnectClose>
+                </ConnectWrapperClose>
+                <InfoContainer label="Learn more about gating rules" cta="" />
               </Section>
+              {/* </Section> */}
             </Modal>
           )}
         </>
@@ -698,7 +623,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   );
 };
 
-const TypebarSection = styled(Section) <{ border?: string }>`
+const TypebarSection = styled(Section)<{ border?: string }>`
   gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {

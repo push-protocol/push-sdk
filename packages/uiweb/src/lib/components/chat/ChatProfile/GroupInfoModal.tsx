@@ -32,11 +32,11 @@ import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
-import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
+import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -98,7 +98,6 @@ const PendingMembers = ({
           <ProfileSection
             flexDirection="column"
             flex="1"
-    
             justifyContent="start"
             borderRadius="16px"
           >
@@ -133,11 +132,17 @@ const PendingMembers = ({
 interface ConditionsInformationProps {
   theme: IChatTheme;
   groupInfo?: IGroup | null;
+  alert?: boolean;
+  header?: string;
+  subheader?: string;
 }
 
 export const ConditionsInformation = ({
   theme,
   groupInfo,
+  alert,
+  header,
+  subheader,
 }: ConditionsInformationProps) => {
   const groupRules = getRuleInfo(groupInfo?.rules);
   const isMobile = useMediaQuery(device.mobileL);
@@ -149,7 +154,7 @@ export const ConditionsInformation = ({
     }
     return null;
   };
-  
+
   return (
     <Section
       margin="5px 0px 0px 0px"
@@ -161,9 +166,10 @@ export const ConditionsInformation = ({
         groupInfo?.rules?.entry?.conditions) && (
         <GroupTypeBadge
           theme={theme}
-          icon={TokenGatedIcon}
-          header={'Gated group'}
-          subheader={'Conditions must be true to join and chat'}
+          icon={<TokenGatedSvg color={alert?'#E93636':undefined}/>}
+          header={header ?? 'Gated group'}
+          subheader={subheader ?? 'Conditions must be true to join and chat'}
+          alert={alert}
         />
       )}
       <ConditionSection
@@ -174,56 +180,53 @@ export const ConditionsInformation = ({
         padding="0 2px 0 0"
         theme={theme}
       >
-      {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
+        {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
           <>
             {getOperator(key as keyof typeof groupRules) ? (
               <Section key={idx} flexDirection="column">
-         <Span
-            fontSize="16px"
-            fontWeight="500"
-            alignSelf="start"
+                <Span
+                  fontSize="16px"
+                  fontWeight="500"
+                  alignSelf="start"
                   margin="5px 0"
-          >
+                >
                   {
                     ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]
                       ?.heading
                   }
-          </Span>
-           
+                </Span>
+
                 <Span fontSize="14px" margin="15px 0">
-              {
-                OPERATOR_OPTIONS_INFO[
-                  groupRules[key as keyof typeof groupRules][0][0]
-                    ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
-                ]?.head
-              }
-              <Span color={theme.textColor?.modalSubHeadingText}>
-                {' '}
-                {
-                  OPERATOR_OPTIONS_INFO[
-                    groupRules[key as keyof typeof groupRules][0][0]
-                      ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
-                  ]?.tail
-                }
-              </Span>
-            </Span>
-          <Section
-            width="100%"
-          
-        
-            justifyContent="start"
-            flexDirection="column"
-          >
-            <ConditionsComponent
-              moreOptions={false}
-              conditionData={groupRules[key as keyof typeof groupRules]}
-            />
-             
-          </Section>
-        </Section>
+                  {
+                    OPERATOR_OPTIONS_INFO[
+                      groupRules[key as keyof typeof groupRules][0][0]
+                        ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                    ]?.head
+                  }
+                  <Span color={theme.textColor?.modalSubHeadingText}>
+                    {' '}
+                    {
+                      OPERATOR_OPTIONS_INFO[
+                        groupRules[key as keyof typeof groupRules][0][0]
+                          ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                      ]?.tail
+                    }
+                  </Span>
+                </Span>
+                <Section
+                  width="100%"
+                  justifyContent="start"
+                  flexDirection="column"
+                >
+                  <ConditionsComponent
+                    moreOptions={false}
+                    conditionData={groupRules[key as keyof typeof groupRules]}
+                  />
+                </Section>
+              </Section>
             ) : null}
           </>
-      ))}
+        ))}
       </ConditionSection>
     </Section>
   );
@@ -231,7 +234,7 @@ export const ConditionsInformation = ({
 
 interface GroupTypeProps {
   theme: IChatTheme;
-  icon: string;
+  icon: React.ReactNode;
   header: string;
   subheader: string;
   cursor?: string;
@@ -246,42 +249,50 @@ export const GroupTypeBadge = ({
   subheader,
   handleNextInformation,
   cursor,
-  alert
+  alert,
 }: GroupTypeProps) => {
   return (
-    <Section cursor={cursor}>
-      <PublicEncrypted onClick={handleNextInformation} theme={theme}>
-        <Image
+    // <Section cursor={cursor} justifyContent='start' alignItems='start'>
+    <PublicEncrypted
+      onClick={handleNextInformation}
+      theme={theme}
+      alert={alert}
+      cursor="pointer"
+      justifyContent="start"
+    >
+      {/* <Image
           cursor={cursor}
           src={icon}
           height="24px"
           maxHeight="24px"
           width={'auto'}
-        />
-
-        <Section
+        /> */}
+      {icon}
+      <Section
+        cursor={cursor}
+        flexDirection="column"
+        alignItems="flex-start"
+        gap="5px"
+      >
+        <Span
           cursor={cursor}
-          flexDirection="column"
-          alignItems="flex-start"
-          gap="5px"
+          fontSize="18px"
+          textAlign="left"
+          color={theme.textColor?.modalHeadingText}
         >
-          <Span
-            cursor={cursor}
-            fontSize="18px"
-            color={theme.textColor?.modalHeadingText}
-          >
-            {header}
-          </Span>
-          <Span
-            cursor={cursor}
-            fontSize="12px"
-            color={theme.textColor?.modalSubHeadingText}
-          >
-            {subheader}
-          </Span>
-        </Section>
-      </PublicEncrypted>
-    </Section>
+          {header}
+        </Span>
+        <Span
+          cursor={cursor}
+          textAlign="left"
+          fontSize="12px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
+          {subheader}
+        </Span>
+      </Section>
+    </PublicEncrypted>
+    // </Section>
   );
 };
 
@@ -294,9 +305,8 @@ type GroupSectionProps = GroupInfoModalProps & {
     updateKey,
   }: UpdateGroupType & { updateKey: UpdateKeys }) => void;
   setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMemberAddress:string | null;
+  selectedMemberAddress: string | null;
   setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
-
 };
 
 type GroupInfoModalProps = {
@@ -322,7 +332,7 @@ const GroupInformation = ({
   handleAddRemove,
   setShowAddMoreWalletModal,
   selectedMemberAddress,
-  setSelectedMemberAddress
+  setSelectedMemberAddress,
 }: GroupSectionProps) => {
   const { account } = useChatData();
 
@@ -330,7 +340,6 @@ const GroupInformation = ({
     useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
-
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -400,8 +409,8 @@ const GroupInformation = ({
 
   return (
     <ScrollSection
-      margin="auto" 
-      width='100%' 
+      margin="auto"
+      width="100%"
       flexDirection="column"
       gap="16px"
       maxHeight={isMobile ? '59vh' : '61vh'}
@@ -468,7 +477,15 @@ const GroupInformation = ({
       </GroupDescription>
       <GroupTypeBadge
         theme={theme}
-        icon={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+        icon={
+          <Image
+            cursor="default"
+            src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+            height="24px"
+            maxHeight="24px"
+            width={'auto'}
+          />
+        }
         header={groupInfo?.isPublic ? 'Open' : 'Encrypted'}
         subheader={
           groupInfo?.isPublic
@@ -482,7 +499,7 @@ const GroupInformation = ({
           cursor="pointer"
           handleNextInformation={handleNextInformation}
           theme={theme}
-          icon={TokenGatedIcon}
+          icon={<TokenGatedSvg/>}
           header={'Gated group'}
           subheader={'Conditions must be true to join'}
         />
@@ -531,7 +548,6 @@ const GroupInformation = ({
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
-      
       >
         {groupInfo?.members &&
           groupInfo?.members?.length > 0 &&
@@ -725,7 +741,7 @@ export const GroupInfoModal = ({
       >
         {!showAddMoreWalletModal && (
           <Section
-            margin='auto'
+            margin="auto"
             width={isMobile ? '100%' : '410px'}
             flexDirection="column"
             gap="16px"
@@ -789,7 +805,6 @@ export const GroupInfoModal = ({
 
 //styles
 const GroupHeader = styled.div`
-  // margin-top: 34px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -797,7 +812,6 @@ const GroupHeader = styled.div`
 `;
 
 const GroupDescription = styled.div`
-  // margin-top: 25px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -805,14 +819,16 @@ const GroupDescription = styled.div`
   gap: 5px;
 `;
 
-const PublicEncrypted = styled.div`
-  // margin-top: 20px;
+const PublicEncrypted = styled(Section)<{ alert?: boolean }>`
   display: flex;
   flex-direction: row;
   width: 100%;
   gap: 12px;
   align-items: center;
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) =>
+    props?.alert
+      ? '1px solid #E93636'
+      : props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 12px 16px;
   box-sizing: border-box;
@@ -820,7 +836,6 @@ const PublicEncrypted = styled.div`
 `;
 
 const AddWalletContainer = styled.div`
-  // margin-top: 20px;
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   width: 100%;
@@ -850,7 +865,6 @@ const GroupPendingMembers = styled.div`
 
 const PendingRequestWrapper = styled.div`
   width: 100%;
-  // margin-top: 20px;
   border: ${(props) => props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 0px 0px;
@@ -899,7 +913,6 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
 
 const ProfileSection = styled(Section)`
   height: fit-content;
-
 `;
 const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {

@@ -58,7 +58,7 @@ const OptionDescripton = ({ heading, subHeading,value }: OptionDescription) => {
 };
 
 
-export const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',error}: OptionButtonsProps) => {
+ const OptionButtons = ({ options,selectedValue,handleClick,  totalWidth = '400px',error}: OptionButtonsProps) => {
   const theme = useContext(ThemeContext);
 
 const getBorderWidth = (index:number) =>{
