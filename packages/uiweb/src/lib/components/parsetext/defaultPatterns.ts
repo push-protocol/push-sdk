@@ -94,6 +94,17 @@ function renderLinkWithColor(matchingString: string) {
   return matchingString;
 }
 
+function convertEpochToHumanReadable(matchingString: string) {
+  const match = matchingString.match(/\[ts: (\d+)\]/);
+  if (match) {
+      const epochTimestamp = parseInt(match[1], 10); // Extracting the epoch timestamp
+      const humanReadableDate = new Date(epochTimestamp * 1000).toLocaleString();
+      return humanReadableDate;
+  }
+  return matchingString;
+}
+
+
 
 // -------- Define the required colors
 const COLORS = {
@@ -314,6 +325,11 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         },
         renderText: renderStyles
       },
+      {
+        pattern: /\[ts: (\d+)\]/g, // Match [ts: timestamp_in_epoch]
+        style: {},
+        renderText: convertEpochToHumanReadable,
+    },
       {
         pattern: /\[(w):([^\]]+)\]/i, // white
         style: styles.white,
