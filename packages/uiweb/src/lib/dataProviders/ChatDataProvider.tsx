@@ -8,7 +8,7 @@ import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
-import { getAddressFromSigner } from '../helpers';
+import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 
 
 export interface IChatUIProviderProps {
@@ -28,7 +28,7 @@ export const ChatUIProvider = ({
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
-  const [accountVal, setAccountVal] = useState<string | null>(account);
+  const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
   const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
    const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
 
