@@ -379,7 +379,7 @@ export interface ChatMemberProfile {
   address: string;
   intent: boolean;
   role: string;
-  profile: UserV2;
+  userInfo: UserV2;
 }
 
 export interface GroupMembersInfo {
