@@ -9,6 +9,20 @@ function renderStyles(matchingString:string) {
     const match = matchingString.match(pattern);
 
     return `${match?match[2]:""}`;
+
+}
+
+function newLinestyles(matchingString:string) {
+  const pattern = /\\n/g;
+  const match = matchingString.match(pattern);
+  console.log(match, "Match");
+  if(match?.includes('\\n')) {
+    console.log("New Line");
+    const replacedString = matchingString.replace(/\\n/g, "<br/>");
+    return `<div>${replacedString}</div>`;
+  } else {
+    return `<div>${matchingString}</div>`;
+  }
 }
 
 function renderTextStyles(matchingString: string) {
@@ -32,7 +46,10 @@ function renderTextStyles(matchingString: string) {
           default:
               color = colorName;
       }
-      const textContent = match[2];
+      let textContent = match[2];
+      if(textContent.includes('\\n')) {
+        textContent = match[2].replace('\\n', "<br/>");
+      }
       return `<span style="color: ${color}">${textContent}</span>`;
   }
 
@@ -54,6 +71,9 @@ function renderLinkWithColor(matchingString: string) {
           case 'secondary':
               color = COLORS.GRADIENT_SECONDARY;
               break;
+          case 'tertiary':
+              color = COLORS.GRADIENT_THIRD;
+              break;
           case 'white':
               color = COLORS.WHITE;
               break;
@@ -62,7 +82,12 @@ function renderLinkWithColor(matchingString: string) {
               color = colorName;
       }
       const link = match[2];
-      const textContent = match[3];
+      let textContent;
+      if(match[3].includes('\\n')) {
+        textContent = match[3].replace('\\n', "<br/>");
+      } else {
+        textContent = match[3];
+      }
       return `<a href="${link}" target="_blank" style="color: ${color}">${textContent}</a>`;
   }
 
@@ -268,7 +293,12 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         pattern: /\*\*(.*?)\*\*/g, // bold **text**
         style: styles.bold,
         renderText: (matchingString) => matchingString.replace(/\*\*(.*?)\*\*/g, '$1'),
-      },        
+      },
+      {
+        pattern: /\\n/g,
+        style: {},
+        renderText: newLinestyles,
+    },          
       {
         pattern: /\*(.*?)\*/g, // italic *some text*
         style: {
