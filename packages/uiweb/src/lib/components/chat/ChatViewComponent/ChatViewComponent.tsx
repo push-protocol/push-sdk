@@ -35,7 +35,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     gif = true,
     isConnected = true,
     autoConnect = false,
-    onGetTokenClick,
+    onVerificationFail,
     groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY
   } = options || {};
 
@@ -88,7 +88,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       {(messageInput && (!!signer || (!!account && !!pgpPrivateKey) || isConnected )) && (
         <Section flex="0 1 auto">
           <MessageInput
-            onGetTokenClick={onGetTokenClick}
+            onVerificationFail={onVerificationFail}
             chatId={chatId}
             file={file}
             emoji={emoji}
