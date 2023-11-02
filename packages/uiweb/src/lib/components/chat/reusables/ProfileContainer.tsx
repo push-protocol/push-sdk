@@ -15,7 +15,7 @@ type ProfileProps = {
   export const ProfileContainer = ({ theme, member, customStyle }: ProfileProps) => {
    
     return (
-      <Section justifyContent="flex-start" position="relative" zIndex="2">
+      <Section justifyContent="flex-start" >
         <Section
           height={customStyle?.imgHeight ?? '48px'}
           maxWidth="48px"
@@ -23,7 +23,7 @@ type ProfileProps = {
           overflow="hidden"
           margin="0px 12px 0px 0px"
           position="relative"
-          zIndex="2"
+   
         >
           <Image
             height={customStyle?.imgHeight ?? '48px'}
@@ -38,7 +38,7 @@ type ProfileProps = {
           fontWeight={customStyle?.fontWeight ?? '400'}
           color={theme.textColor?.modalSubHeadingText}
           position="relative"
-          zIndex="2"
+ 
         >
           {member.wallet}
         </Span>

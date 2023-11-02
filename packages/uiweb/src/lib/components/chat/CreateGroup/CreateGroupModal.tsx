@@ -342,17 +342,6 @@ const CreateGroupDetail = ({
   );
 };
 
-export const GatingRulesInformation = () => {
-  const theme = useContext(ThemeContext);
-  return (
-    <Section gap="6px" zIndex="-1">
-      <SpamIcon />
-      <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-        Learn more about gating rules
-      </Span>
-    </Section>
-  );
-};
 
 //use the theme
 const UploadContainer = styled.div`

@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import { ModalHeader } from '../reusables/Modal';
 import OptionButtons, { OptionDescription } from '../reusables/OptionButtons';
 import { Section, Span, Spinner } from '../../reusables';
-import { ToggleInput } from '../reusables';
+import { InfoContainer, ToggleInput } from '../reusables';
 import { Button } from '../reusables';
-import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
+import {  ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
 import useToast from '../reusables/NewToast';
@@ -258,7 +258,7 @@ export const CreateGroupType = ({
           {!loading && 'Create Group'}
           {loading && <Spinner size="20" color="#fff" />}
         </Button>
-        <GatingRulesInformation />
+        <InfoContainer label='Learn more about gating rules' cta='' />
       </Section>
     </Section>
   );

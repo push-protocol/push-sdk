@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Section, Span } from '../../reusables';
 import { OPERATOR_OPTIONS, OPERATOR_OPTIONS_INFO } from '../constants';
-import { OptionButtons } from '../reusables';
+import  OptionButtons  from '../reusables/OptionButtons';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 interface OperatorContainerProps {

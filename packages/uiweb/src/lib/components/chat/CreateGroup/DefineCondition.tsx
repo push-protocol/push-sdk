@@ -3,11 +3,10 @@ import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Section, Span } from '../../reusables';
-import { Button, ModalHeader } from '../reusables';
+import { Button, InfoContainer, ModalHeader } from '../reusables';
 import { AddButtons } from './AddButtons';
 import { ModalHeaderProps } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { GatingRulesInformation } from './CreateGroupModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
@@ -141,8 +140,7 @@ export const DefineCondtion = ({
         {criteriaState.isCondtionUpdateEnabled() ? 'Update' : 'Add'}
       </Button>
 
-      <GatingRulesInformation />
-   
+      <InfoContainer label='Learn more about gating rules' cta='' />
     </Section>
   );
 };

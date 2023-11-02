@@ -7,12 +7,13 @@ import {
   Button,
   DropDownInput,
   DropdownValueType,
+  InfoContainer,
   ModalHeader,
   TextInput,
 } from '../reusables';
 import { Section, Span, Spinner } from '../../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { GatingRulesInformation, ModalHeaderProps } from './CreateGroupModal';
+import {  ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -56,7 +57,7 @@ import {
 } from '../helpers';
 import { IChatTheme } from '../exportedTypes';
 
-const AddCriteria = ({
+const AddCriteria = ({ 
   handlePrevious,
   onClose,
   criteriaStateManager,
@@ -654,7 +655,7 @@ const AddCriteria = ({
           (criteriaState.isUpdateCriteriaEnabled() ? 'Update' : 'Add')}
         {validationLoading && <Spinner size="20" color="#fff" />}
       </Button>
-      <GatingRulesInformation />
+      <InfoContainer label={'Learn more about gating rules'} cta='' />
     </ScrollSection>
   );
 };
