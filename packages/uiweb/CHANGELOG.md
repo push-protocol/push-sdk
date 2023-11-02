@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.26](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.25...uiweb-0.0.1-alpha.26) (2023-11-02)
+
+
+### Bug Fixes
+
+* merge alpha ([745c3d6](https://github.com/ethereum-push-notification-service/push-sdk/commit/745c3d6fdffce621c0e14252c1d926384d959246))
+* Merge branch 'alpha' into alpha-deployment ([394010d](https://github.com/ethereum-push-notification-service/push-sdk/commit/394010d5b0d947abea5efa4fab1de332c621d9b7))
+* replaced hardcoded access failed msg with actual conditions ([#812](https://github.com/ethereum-push-notification-service/push-sdk/issues/812)) ([035c784](https://github.com/ethereum-push-notification-service/push-sdk/commit/035c784d649f878f76b4b56ef7f4a908bd33b419))
+
+
+
 ## [0.0.1-alpha.25](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.24...uiweb-0.0.1-alpha.25) (2023-10-31)
 
 
