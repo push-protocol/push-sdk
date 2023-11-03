@@ -258,7 +258,7 @@ export const CreateGroupType = ({
           {!loading && 'Create Group'}
           {loading && <Spinner size="20" color="#fff" />}
         </Button>
-        <InfoContainer label='Learn more about gating rules' cta='' />
+        <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
       </Section>
     </Section>
   );

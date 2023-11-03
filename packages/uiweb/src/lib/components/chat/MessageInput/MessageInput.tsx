@@ -496,7 +496,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 >
                   <ConnectClose>Cancel</ConnectClose>
                 </ConnectWrapperClose>
-                <InfoContainer label="Learn more about gating rules" cta="" />
+                <InfoContainer cta='https://push.org/docs/chat/build/conditional-rules-for-group/' label="Learn more about access gating rules" />
               </Section>
               {/* </Section> */}
             </Modal>
