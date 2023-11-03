@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.28](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.27...uiweb-0.0.1-alpha.28) (2023-11-03)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([bf0510a](https://github.com/ethereum-push-notification-service/push-sdk/commit/bf0510aa1a299e2d90af01735882fac1e7821f5d))
+
+
+### Features
+
+* added some more default patterns for markdown ([#817](https://github.com/ethereum-push-notification-service/push-sdk/issues/817)) ([838b5f2](https://github.com/ethereum-push-notification-service/push-sdk/commit/838b5f242ab92fb958a8da30ead6bed034e5525c))
+
+
+
 ## [0.0.1-alpha.27](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.26...uiweb-0.0.1-alpha.27) (2023-11-03)
 
 
