@@ -3,17 +3,18 @@ import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
-  approveRequestPayload,
-  sign,
-  getConnectedUserV2,
-  IApproveRequestPayload,
   getAccountAddress,
   getWallet,
   getUserDID,
+  getConnectedUserV2Core,
+  PGPHelper,
+  IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { getGroup } from './getGroup';
+import * as AES from '../chat/helpers/aes';
 
-interface ApproveRequestOptionsType extends EnvOptionsType {
+export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
    * Chat request sender address
    */
@@ -35,9 +36,15 @@ interface ApproveRequestOptionsType extends EnvOptionsType {
 export const approve = async (
   options: ApproveRequestOptionsType
 ): Promise<string> => {
+  return await approveCore(options, PGPHelper);
+};
+
+export const approveCore = async (
+  options: ApproveRequestOptionsType,
+  pgpHelper: IPGPHelper
+): Promise<string> => {
   const {
     status = 'Approved',
-    // sigType = 'sigType',
     account = null,
     signer = null,
     senderAddress,
@@ -45,50 +52,114 @@ export const approve = async (
     pgpPrivateKey = null,
   } = options || {};
 
+  /**
+   * VALIDATIONS
+   */
   if (account == null && signer == null) {
     throw new Error(`At least one from account or signer is necessary!`);
   }
-
+  /**
+   * INITIALIZATIONS
+   */
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
+  const isGroup = !isValidETHAddress(senderAddress);
 
-  const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
+  const connectedUser = await getConnectedUserV2Core(
+    wallet,
+    pgpPrivateKey,
+    env,
+    pgpHelper
+  );
+  const fromDID: string = isGroup
+    ? await getUserDID(address, env)
+    : await getUserDID(senderAddress, env);
 
-  let isGroup = true;
-  if (isValidETHAddress(senderAddress)) {
-    isGroup = false;
-  }
+  const toDID: string = isGroup
+    ? await getUserDID(senderAddress, env)
+    : await getUserDID(address, env);
 
-  const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+  let sessionKey: string | null = null;
+  let encryptedSecret: string | null = null;
+  /**
+   * GENERATE VERIFICATION PROOF
+   */
 
-  let fromDID = await getUserDID(senderAddress, env);
-  let toDID = await getUserDID(address, env);
+  // pgp is used for public grps & w2w
+  // pgpv2 is used for private grps
+  let sigType: 'pgp' | 'pgpv2' = 'pgp';
   if (isGroup) {
-    fromDID = await getUserDID(address, env);
-    toDID = await getUserDID(senderAddress, env);
+    const group = await getGroup({ chatId: senderAddress, env });
+
+    if (group && !group.isPublic) {
+      sigType = 'pgpv2';
+      const secretKey = AES.generateRandomSecret(15);
+      // Encrypt secret key with group members public keys
+      const publicKeys: string[] = group.members.map(
+        (member) => member.publicKey
+      );
+      publicKeys.push(connectedUser.publicKey);
+      encryptedSecret = await pgpHelper.pgpEncrypt({
+        plainText: secretKey,
+        keys: publicKeys,
+      });
+
+      sessionKey = CryptoJS.SHA256(encryptedSecret).toString();
+    }
   }
 
-  const bodyToBeHashed = {
-    fromDID,
-    toDID,
-    status,
+  let bodyToBeHashed: {
+    fromDID: string;
+    toDID: string;
+    status: string;
+    sessionKey?: string | null;
+    encryptedSecret?: string | null;
   };
 
+  switch (sigType) {
+    case 'pgp': {
+      bodyToBeHashed = {
+        fromDID,
+        toDID,
+        status,
+      };
+      break;
+    }
+    case 'pgpv2': {
+      bodyToBeHashed = {
+        fromDID,
+        toDID,
+        status,
+        sessionKey: sessionKey,
+        encryptedSecret: encryptedSecret,
+      };
+      break;
+    }
+  }
+
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-  const signature: string = await sign({
+  const signature: string = await pgpHelper.sign({
     message: hash,
     signingKey: connectedUser.privateKey!,
   });
+  const verificationProof = `${sigType}:${signature}`;
 
-  const body: IApproveRequestPayload = approveRequestPayload(
+  const body = {
     fromDID,
     toDID,
+    signature,
     status,
-    'pgp',
-    signature
-  );
+    sigType,
+    verificationProof,
+    sessionKey,
+    encryptedSecret,
+  };
 
+  /**
+   * API CALL TO PUSH NODES
+   */
+  const API_BASE_URL = getAPIBaseUrls(env);
+  const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
   return axios
     .put(apiEndpoint, body)
     .then((response) => {

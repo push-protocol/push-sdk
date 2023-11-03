@@ -3,22 +3,31 @@ import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { MessageType, ENV } from '../constants';
 import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
 import {
+  IPGPHelper,
+  PGPHelper,
   getAccountAddress,
-  getConnectedUserV2,
+  getConnectedUserV2Core,
   getUserDID,
   getWallet,
 } from './helpers';
 import { conversationHash } from './conversationHash';
-import { ISendMessagePayload, sendMessagePayload } from './helpers';
-import { getGroup } from './getGroup';
+import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
+import { getGroupInfo } from './getGroupInfo';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
  */
 export const send = async (
   options: ChatSendOptionsType
+): Promise<MessageWithCID> => {
+  return await sendCore(options, PGPHelper);
+};
+
+export const sendCore = async (
+  options: ChatSendOptionsType,
+  pgpHelper: IPGPHelper
 ): Promise<MessageWithCID> => {
   try {
     /**
@@ -35,12 +44,18 @@ export const send = async (
     await validateOptions(computedOptions);
 
     const wallet = getWallet({ account, signer });
-    const sender = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const sender = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
     const receiver = await getUserDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
     const isGroup = isValidETHAddress(to) ? false : true;
+
     const group = isGroup
-      ? await getGroup({
+      ? await getGroupInfo({
           chatId: to,
           env: env,
         })
@@ -71,14 +86,15 @@ export const send = async (
       apiEndpoint = `${API_BASE_URL}/v1/chat/message`;
     }
 
-    const body: ISendMessagePayload = await sendMessagePayload(
+    const body: ISendMessagePayload = await sendMessagePayloadCore(
       receiver,
       sender,
       messageObj,
       messageContent,
       messageType,
       group,
-      env
+      env,
+      pgpHelper
     );
     return (await axios.post(apiEndpoint, body)).data;
   } catch (err) {
@@ -119,19 +135,6 @@ const validateOptions = async (options: ComputedOptionsType) => {
     throw new Error(
       `Invalid sender. Please ensure that either 'account' or 'signer' is properly defined.`
     );
-  }
-
-  const isGroup = isValidETHAddress(to) ? false : true;
-  if (isGroup) {
-    const group = await getGroup({
-      chatId: to,
-      env: env,
-    });
-    if (!group) {
-      throw new Error(
-        `Invalid receiver. Please ensure 'receiver' is a valid DID or ChatId in case of Group.`
-      );
-    }
   }
 
   validateMessageObj(messageObj, messageType);

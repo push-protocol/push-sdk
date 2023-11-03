@@ -1,0 +1,17 @@
+diff --git a/node_modules/micro-ftch/index.js b/node_modules/micro-ftch/index.js
+index 7f00c3d..da4a27f 100644
+--- a/node_modules/micro-ftch/index.js
++++ b/node_modules/micro-ftch/index.js
+@@ -51,9 +51,9 @@ function detectType(b, type) {
+ let agents = {};
+ function fetchNode(url, _options) {
+     let options = { ...DEFAULT_OPT, ..._options };
+-    const http = require('http');
+-    const https = require('https');
+-    const zlib = require('zlib');
++    const http = {};
++    const https = {};
++    const zlib = {};
+     const { promisify } = require('util');
+     const { resolve: urlResolve } = require('url');
+     const isSecure = !!/^https/.test(url);

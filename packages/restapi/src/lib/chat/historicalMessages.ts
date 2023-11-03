@@ -3,6 +3,8 @@ import { pCAIP10ToWallet } from '../helpers';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { get } from '../user';
 import {
+  IPGPHelper,
+  PGPHelper,
   addDeprecatedInfoToMessages,
   decryptConversation,
   getMessagesService,
@@ -27,8 +29,14 @@ export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
 /**
  * Get all the messages exchanged between users after the threadhash.
  */
-export const history = async (
-  options: HistoricalMessagesOptionsType
+
+export const history = async(options: HistoricalMessagesOptionsType) => {
+  return await historyCore(options, PGPHelper);
+}
+
+export const historyCore = async (
+  options: HistoricalMessagesOptionsType,
+  pgpHelper: IPGPHelper
 ): Promise<IMessageIPFS[]> => {
   const {
     threadhash,

@@ -207,6 +207,7 @@ describe('PushAPI.channel functionality', () => {
             body: 'testing with random body',
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+            category: 2
           },
         }
       );
@@ -288,8 +289,9 @@ describe('PushAPI.channel functionality', () => {
   describe.skip('channel :: settings', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
+        {type: 2, default: 5, description: "My notif setting 2", data: {upper:100, lower:5, ticker: 10, enabled: true}},
         { type: 1, default: 1, description: 'My Notif Settings' },
-        {type: 2, default: 5, description: "My notif setting 2", data: {upper:100, lower:5, ticker: 10}}
+
       ]);
       //   console.log(res)
       expect(res).not.null;
