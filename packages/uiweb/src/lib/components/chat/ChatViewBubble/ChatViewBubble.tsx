@@ -336,18 +336,18 @@ const TwitterCard = ({
   );
 };
 
-export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
+export const ChatViewBubble = ({ decryptedMessagePayload }: { decryptedMessagePayload: IMessagePayload }) => {
   const { account } = useChatData();
   const position =
-    pCAIP10ToWallet(chat.fromDID).toLowerCase() !== account?.toLowerCase()
+    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== account?.toLowerCase()
       ? 0
       : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
-    message: chat?.messageContent,
+    message: decryptedMessagePayload?.messageContent,
   });
   const [isGroup, setIsGroup] = useState<boolean>(false);
   useEffect(() => {
-    if (chat.toDID.split(':')[0] === 'eip155') {
+    if (decryptedMessagePayload.toDID.split(':')[0] === 'eip155') {
       if (isGroup) {
         setIsGroup(false);
       }
@@ -356,32 +356,32 @@ export const ChatViewBubble = ({ chat }: { chat: IMessagePayload }) => {
         setIsGroup(true);
       }
     }
-  }, [chat.toDID, isGroup]);
+  }, [decryptedMessagePayload.toDID, isGroup]);
 
   if (messageType === 'TwitterFeedLink') {
-    chat.messageType = 'TwitterFeedLink';
+    decryptedMessagePayload.messageType = 'TwitterFeedLink';
   }
 
-  if (chat.messageType === 'GIF') {
-    return <GIFCard isGroup={isGroup} chat={chat} position={position} />;
+  if (decryptedMessagePayload.messageType === 'GIF') {
+    return <GIFCard isGroup={isGroup} chat={decryptedMessagePayload} position={position} />;
   }
-  if (chat.messageType === 'Image') {
-    return <ImageCard isGroup={isGroup} chat={chat} position={position} />;
+  if (decryptedMessagePayload.messageType === 'Image') {
+    return <ImageCard isGroup={isGroup} chat={decryptedMessagePayload} position={position} />;
   }
-  if (chat.messageType === 'File') {
-    return <FileCard isGroup={isGroup} chat={chat} position={position} />;
+  if (decryptedMessagePayload.messageType === 'File') {
+    return <FileCard isGroup={isGroup} chat={decryptedMessagePayload} position={position} />;
   }
-  if (chat.messageType === 'TwitterFeedLink') {
+  if (decryptedMessagePayload.messageType === 'TwitterFeedLink') {
     return (
       <TwitterCard
         tweetId={tweetId}
         isGroup={isGroup}
-        chat={chat}
+        chat={decryptedMessagePayload}
         position={position}
       />
     );
   }
-  return <MessageCard isGroup={isGroup} chat={chat} position={position} />;
+  return <MessageCard isGroup={isGroup} chat={decryptedMessagePayload} position={position} />;
 };
 
 const FileDownloadIcon = styled.i`
