@@ -9,7 +9,102 @@ function renderStyles(matchingString:string) {
     const match = matchingString.match(pattern);
 
     return `${match?match[2]:""}`;
+
 }
+
+function newLinestyles(matchingString:string) {
+  const pattern = /\\n/g;
+  const match = matchingString.match(pattern);
+  console.log(match, "Match");
+  if(match?.includes('\\n')) {
+    console.log("New Line");
+    const replacedString = matchingString.replace('\\n', "<br/>");
+    return `<div>${replacedString}</div>`;
+  } else {
+    return `<div>${matchingString}</div>`;
+  }
+}
+
+function renderTextStyles(matchingString: string) {
+    const pattern = /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/i;
+    const match = matchingString.match(pattern);
+
+    if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      switch (colorName) {
+          case 'primary':
+              color = COLORS.PRIMARY;
+              break;
+          case 'secondary':
+              color = COLORS.GRADIENT_SECONDARY;
+              break;
+          case 'white':
+              color = COLORS.WHITE;
+              break;
+          // can add more custom color names if needed, couldn't find the tertiary color
+          default:
+              color = colorName;
+      }
+      let textContent = match[2];
+      if(textContent.includes('\\n')) {
+        textContent = match[2].replace('\\n', "<br/>");
+      }
+      return `<span style="color: ${color}">${textContent}</span>`;
+  }
+
+    return matchingString;
+}
+
+function renderLinkWithColor(matchingString: string) {
+  const pattern = /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/i;
+  const match = matchingString.match(pattern);
+
+  if (match) {
+      const colorName = match[1].toLowerCase();
+      let color;
+      // Map custom color names to specific values
+      switch (colorName) {
+          case 'primary':
+              color = COLORS.PRIMARY;
+              break;
+          case 'secondary':
+              color = COLORS.GRADIENT_SECONDARY;
+              break;
+          case 'tertiary':
+              color = COLORS.GRADIENT_THIRD;
+              break;
+          case 'white':
+              color = COLORS.WHITE;
+              break;
+          // Add more custom color names if needed
+          default:
+              color = colorName;
+      }
+      const link = match[2];
+      let textContent;
+      if(match[3].includes('\\n')) {
+        textContent = match[3].replace('\\n', "<br/>");
+      } else {
+        textContent = match[3];
+      }
+      return `<a href="${link}" target="_blank" style="color: ${color}">${textContent}</a>`;
+  }
+
+  return matchingString;
+}
+
+function convertEpochToHumanReadable(matchingString: string) {
+  const match = matchingString.match(/\[ts: (\d+)\]/);
+  if (match) {
+      const epochTimestamp = parseInt(match[1], 10); // Extracting the epoch timestamp
+      const humanReadableDate = new Date(epochTimestamp * 1000).toLocaleString();
+      return humanReadableDate;
+  }
+  return matchingString;
+}
+
+
 
 // -------- Define the required colors
 const COLORS = {
@@ -141,6 +236,16 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         renderText: renderStyles
       },
       {
+        pattern: /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/gi,
+        style: {}, // we can add aditional styles here if needed
+        renderText: renderTextStyles
+    },
+    {
+      pattern: /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/gi,
+      style: {}, // can Add additional styles here if needed
+      renderText: renderLinkWithColor
+  },
+      {
         pattern: /\[(up):([^\]]+)\]/i, // url
         style: {
             ...styles.primary,
@@ -188,10 +293,30 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         renderText: renderStyles
       },
       {
-        pattern: /\[(i):([^\]]+)\]/i, // italics
-        style: styles.italics,
-        renderText: renderStyles
+        pattern: /\*\*\*(.*?)\*\*\*/g, // bold ***text***
+        style: {
+          ...styles.bold,
+          ...styles.italics
+        },
+        renderText: (matchingString) => matchingString.replace(/\*\*\*(.*?)\*\*\*/g, '$1'),
       },
+      {
+        pattern: /\*\*(.*?)\*\*/g, // bold **text**
+        style: styles.bold,
+        renderText: (matchingString) => matchingString.replace(/\*\*(.*?)\*\*/g, '$1'),
+      },
+      {
+        pattern: /\\n/g,
+        style: {},
+        renderText: newLinestyles,
+    },          
+      {
+        pattern: /\*(.*?)\*/g, // italic *some text*
+        style: {
+            ...styles.italics,
+        },
+        renderText: (matchingString) => matchingString.replace(/\*(.*?)\*/g, '$1'),
+    },
       {
         pattern: /\[(bi):([^\]]+)\]/i, // bolditalics
         style: {
@@ -200,6 +325,11 @@ const DEFAULT_PATTERNS:CustomParseShape[] = [
         },
         renderText: renderStyles
       },
+      {
+        pattern: /\[ts: (\d+)\]/g, // Match [ts: timestamp_in_epoch]
+        style: {},
+        renderText: convertEpochToHumanReadable,
+    },
       {
         pattern: /\[(w):([^\]]+)\]/i, // white
         style: styles.white,
