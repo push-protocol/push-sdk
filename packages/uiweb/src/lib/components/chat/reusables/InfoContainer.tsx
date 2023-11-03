@@ -8,16 +8,15 @@ import styled from "styled-components";
 
 interface InfoContainerProps {
   label: string;
-  cta: string;
-  link?: string;
+  cta?: string;
 }
 
 
-export const InfoContainer = ({ label, cta, link }: InfoContainerProps) => {
+export const InfoContainer = ({ label, cta }: InfoContainerProps) => {
   const theme = useContext(ThemeContext);
   return (
     <Section zIndex="-1" cursor='pointer'>
-      <Link href={link} target={link ? '_target' : ''}>
+      <Link href={cta} target={cta ? '_target' : ''}>
         <SpamIcon />
         {label && <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px" cursor='pointer'>
           {label}
