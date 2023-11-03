@@ -140,7 +140,7 @@ export const DefineCondtion = ({
         {criteriaState.isCondtionUpdateEnabled() ? 'Update' : 'Add'}
       </Button>
 
-      <InfoContainer label='Learn more about gating rules' cta='' />
+      <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
     </Section>
   );
 };
