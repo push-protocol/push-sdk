@@ -23,12 +23,6 @@ crypto.getRandomValues = (input) => {
   return input;
 };
 
-// const randomBytes = new Uint8Array(8);
-// console.log('inital', randomBytes);
-// //@ts-ignore
-// let res = crypto.getRandomValues(randomBytes);
-// console.log('got res', res);
-
 const PGPHelper: IPGPHelper = {
   async generateKeyPair() {
     let keys = await OpenPGP.generate({ keyOptions: { rsaBits: 2048 } });
@@ -39,7 +33,6 @@ const PGPHelper: IPGPHelper = {
   },
 
   async sign({ message, signingKey }) {
-    // const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
     const signature = await OpenPGP.sign(message, signingKey, '');
     return signature.replace('\nVersion: openpgp-mobile', '');
   },
@@ -47,6 +40,24 @@ const PGPHelper: IPGPHelper = {
   async pgpEncrypt({ keys, plainText }) {
     const encryptedSecret = await OpenPGP.encrypt(plainText, keys.join('\n'));
     return encryptedSecret;
+  },
+
+  async pgpDecrypt({
+    cipherText,
+    toPrivateKeyArmored,
+  }: {
+    cipherText: any;
+    toPrivateKeyArmored: string;
+  }): Promise<string> {
+    return await OpenPGP.decrypt(cipherText, toPrivateKeyArmored, '');
+  },
+
+  async verifySignature({}: {
+    messageContent: string;
+    signatureArmored: string;
+    publicKeyArmored: string;
+  }): Promise<void> {
+    // TODO: add verification
   },
 };
 
@@ -78,6 +89,8 @@ const conversationHash = async (
 };
 
 const chats = async (options: ChatsOptionsType) => {
+  console.log('chats...');
+
   let chatsList = await PushApi.chat.chatsCore(options, PGPHelper);
   return chatsList;
 };

@@ -19,7 +19,7 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { getUserDID } from '../chat/helpers';
+import { PGPHelper, getUserDID } from '../chat/helpers';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
@@ -135,6 +135,7 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
+      pgpHelper:PGPHelper,
       connectedUser: await this.userInstance.info(),
     });
   }

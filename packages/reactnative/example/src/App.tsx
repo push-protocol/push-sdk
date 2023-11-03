@@ -4,16 +4,7 @@ import { ethers } from 'ethers';
 import WebViewCrypto from 'react-native-webview-crypto';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import OpenPGP from 'react-native-fast-openpgp';
-import {
-  NFT_CHAIN_ID_1,
-  NFT_CHAIN_ID_2,
-  NFT_CONTRACT_ADDRESS_1,
-  NFT_CONTRACT_ADDRESS_2,
-  NFT_HOLDER_WALLET_PRIVATE_KEY_1,
-  NFT_HOLDER_WALLET_PRIVATE_KEY_2,
-  NFT_TOKEN_ID_1,
-  NFT_TOKEN_ID_2,
-} from '@env';
+
 import {
   PGPHelper,
   genRandomAddress,
@@ -277,117 +268,24 @@ export default function App() {
     return upgradedProfile;
   };
 
+  const handleInbox = async () => {
+    //
+  };
+
   const handleSend = async () => {
-    const _nftSigner1 = new ethers.Wallet(
-      `0x${NFT_HOLDER_WALLET_PRIVATE_KEY_1}`
-    );
-    const _nftWalletAddress1 = _nftSigner1.address;
-    console.log('sending...');
-    console.log({
-      NFT_CHAIN_ID: NFT_CHAIN_ID_1,
-      NFT_CONTRACT_ADDRESS: NFT_CONTRACT_ADDRESS_1,
-      NFT_TOKEN_ID: NFT_TOKEN_ID_1,
-    });
-    const _nftAccount1 = `nft:eip155:${NFT_CHAIN_ID_1}:${NFT_CONTRACT_ADDRESS_1}:${NFT_TOKEN_ID_1}`;
-    const _nftSigner2 = new ethers.Wallet(
-      `0x${NFT_HOLDER_WALLET_PRIVATE_KEY_2}`
-    );
-    const _nftWalletAddress2 = _nftSigner2.address;
-    const _nftAccount2 = `nft:eip155:${NFT_CHAIN_ID_2}:${NFT_CONTRACT_ADDRESS_2}:${NFT_TOKEN_ID_2}`;
-
-    const pk1 = generatePrivateKey();
-    const WALLET1 = new ethers.Wallet(pk1);
-    const _signer1 = new ethers.Wallet(WALLET1.privateKey);
-    const walletAddress1 = _signer1.address;
-    const account1 = `eip155:${walletAddress1}`;
-
-    const pk2 = generatePrivateKey();
-    const WALLET2 = new ethers.Wallet(pk2);
-    const _signer2 = new ethers.Wallet(WALLET2.privateKey);
-    const walletAddress2 = _signer2.address;
-    const account2 = `eip155:${walletAddress2}`;
-
-    const MESSAGE = 'Hey There!!!';
-    const MESSAGE2 = 'Hey There Upgraded User!!!';
-    const MESSAGE3 = 'Hey There from Upgraded User!!!';
-
-    const _env = Constants.ENV.DEV;
-
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: _nftAccount1,
-      account: account1,
-      signer: _signer1,
-      env: _env,
-    });
-
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: account1,
-      account: _nftAccount1,
-      signer: _nftSigner1,
-      env: _env,
-    });
-
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: _nftAccount2,
-      account: _nftAccount1,
-      signer: _nftSigner1,
-      env: _env,
-    });
     console.log('sent message!');
   };
 
   const handleApproveRequest = async () => {
-    console.log('sending request...');
-
-    const pk1 = generatePrivateKey();
-    const pk2 = generatePrivateKey();
-
-    const signer1 = new ethers.Wallet(pk1);
-    const signer2 = new ethers.Wallet(pk2);
-
-    const account1 = `eip155:${signer1.address}`;
-    const account2 = `eip155:${signer2.address}`;
-
-    const MESSAGE = 'Hey There!!!';
-
-    await createUser({
-      account: account1,
-      signer: signer1,
-      env: Constants.ENV.DEV,
-    });
-
-    await createUser({
-      account: account2,
-      signer: signer2,
-      env: Constants.ENV.DEV,
-    });
-
-    await send({
-      messageContent: MESSAGE,
-      receiverAddress: signer2.address,
-      account: account1,
-      signer: signer1,
-      env: Constants.ENV.DEV,
-    });
-
-    console.log('approving request...');
-    await approve({
-      senderAddress: signer1.address,
-      status: 'Approved',
-      account: account2,
-      signer: signer2,
-      env: Constants.ENV.DEV,
-    });
-
     console.log('successfully approved request!');
   };
 
   return (
     <ScrollView style={styles.container} overScrollMode="never">
       <WebViewCrypto />
+      <Text style={styles.button} onPress={handleInbox}>
+        Inbox
+      </Text>
       <Text style={styles.button} onPress={handleUserCreate}>
         New User
       </Text>

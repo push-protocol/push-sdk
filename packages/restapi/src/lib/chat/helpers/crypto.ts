@@ -23,7 +23,7 @@ import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
-import { pgpDecrypt, verifySignature } from './pgp';
+import { IPGPHelper, pgpDecrypt, verifySignature } from './pgp';
 import { aesDecrypt } from './aes';
 
 const SIG_TYPE_V2 = 'eip712v2';
@@ -41,6 +41,7 @@ interface IDecryptMessage {
   chainId: number;
   currentChat: IFeeds;
   inbox: IFeeds[];
+  pgpHelper:IPGPHelper;
 }
 
 export const encryptAndSign = async ({
@@ -150,11 +151,13 @@ export const decryptFeeds = async ({
   feeds,
   connectedUser,
   pgpPrivateKey,
+  pgpHelper,
   env = Constants.ENV.PROD,
 }: {
   feeds: IFeeds[];
   connectedUser: IUser;
   pgpPrivateKey?: string;
+  pgpHelper: PGP.IPGPHelper
   env: ENV;
 }): Promise<IFeeds[]> => {
   let otherPeer: IUser;
@@ -177,7 +180,8 @@ export const decryptFeeds = async ({
       feed.msg = await decryptAndVerifyMessage(
         feed.msg,
         signatureValidationPubliKey,
-        pgpPrivateKey
+        pgpPrivateKey,
+        pgpHelper
       );
     }
   }
@@ -190,6 +194,7 @@ export const decryptMessages = async ({
   account,
   currentChat,
   inbox,
+  pgpHelper,
 }: IDecryptMessage): Promise<IMessageIPFSWithCID> => {
   if (connectedUser.privateKey) {
     if (savedMsg.encType !== 'PlainText' && savedMsg.encType !== null) {
@@ -212,7 +217,8 @@ export const decryptMessages = async ({
       savedMsg = (await decryptAndVerifyMessage(
         savedMsg,
         signatureValidationPubliKey,
-        connectedUser.privateKey
+        connectedUser.privateKey,
+        pgpHelper,
       )) as IMessageIPFSWithCID;
     }
   }
@@ -435,7 +441,9 @@ export async function getDecryptedPrivateKey(
 export const decryptAndVerifyMessage = async (
   message: IMessageIPFS | IMessageIPFSWithCID,
   pgpPublicKey: string,
-  pgpPrivateKey: string
+  pgpPrivateKey: string,
+  pgpHelper: IPGPHelper
+
 ): Promise<IMessageIPFS | IMessageIPFSWithCID> => {
   /**
    * VERIFICATION
@@ -457,7 +465,7 @@ export const decryptAndVerifyMessage = async (
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature = message.verificationProof.split(':')[1];
-    await verifySignature({
+    await pgpHelper.verifySignature({
       messageContent: hash,
       signatureArmored: signature,
       publicKeyArmored: pgpPublicKey,
@@ -472,20 +480,20 @@ export const decryptAndVerifyMessage = async (
       };
       const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
       try {
-        await verifySignature({
+        await pgpHelper.verifySignature({
           messageContent: hash,
           signatureArmored: message.signature,
           publicKeyArmored: pgpPublicKey,
         });
       } catch (err) {
-        await verifySignature({
+        await pgpHelper.verifySignature({
           messageContent: message.messageContent,
           signatureArmored: message.signature,
           publicKeyArmored: pgpPublicKey,
         });
       }
     } else {
-      await verifySignature({
+      await pgpHelper.verifySignature({
         messageContent: message.messageContent,
         signatureArmored: message.signature,
         publicKeyArmored: pgpPublicKey,
@@ -500,7 +508,7 @@ export const decryptAndVerifyMessage = async (
    */
   const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
   try {
-    const secretKey: string = await pgpDecrypt({
+    const secretKey: string = await pgpHelper.pgpDecrypt({
       cipherText: message.encryptedSecret,
       toPrivateKeyArmored: pgpPrivateKey,
     });

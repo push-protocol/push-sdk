@@ -63,6 +63,7 @@ export const historyCore = async (
         messages: updatedMessages,
         connectedUser,
         pgpPrivateKey,
+        pgpHelper,
         env,
       });
     }
