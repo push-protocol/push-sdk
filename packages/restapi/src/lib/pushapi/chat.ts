@@ -282,17 +282,17 @@ export class Chat {
       const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
         chatId: chatId,
         groupName: options.name ? options.name : group.groupName,
-        groupImage: options.image ? options.image : group.groupImage,
         groupDescription: options.description
           ? options.description
           : group.groupDescription,
+        groupImage: options.image ? options.image : group.groupImage,
+        meta: options.meta ? options.meta : group.meta,
         scheduleAt: options.scheduleAt ? options.scheduleAt : group.scheduleAt,
         scheduleEnd: options.scheduleEnd
           ? options.scheduleEnd
           : group.scheduleEnd,
-        status: options.status ? options.status : group.status,
-        meta: options.meta ? options.meta : group.meta,
         rules: options.rules ? options.rules : group.rules,
+        status: options.status ? options.status : group.status,
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,

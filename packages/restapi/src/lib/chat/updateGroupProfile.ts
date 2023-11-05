@@ -9,19 +9,14 @@ import {
   SignerType,
 } from '../types';
 import {
-  IUpdateGroupRequestPayload,
-  updateGroupPayload,
   sign,
   getWallet,
   getAccountAddress,
   getConnectedUserV2,
   updateGroupRequestValidator,
-  getAdminsList,
-  getMembersList,
 } from './helpers';
-
-import { getGroup } from './getGroup';
 import * as CryptoJS from 'crypto-js';
+import { getGroup } from './getGroup';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
@@ -34,9 +29,6 @@ export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
   status?: ChatStatus | null;
-  // If meta is not passed, old meta is not affected
-  // If passed as null will update to null
-  // If passed as string will update to that value
   meta?: string | null;
   rules?: Rules | null;
 }
@@ -63,6 +55,9 @@ export const updateGroupProfile = async (
     rules,
   } = options || {};
   try {
+    /**
+     * VALIDATIONS
+     */
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
@@ -78,54 +73,52 @@ export const updateGroupProfile = async (
       groupDescription
     );
 
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
-
     const group = await getGroup({
-      chatId: chatId,
-      env: env,
+      chatId,
+      env,
     });
 
-    // TODO: look at user did in updateGroup
-    const convertedMembers = getMembersList(
-      group.members,
-      group.pendingMembers
-    );
-
-    const convertedAdmins = getAdminsList(group.members, group.pendingMembers);
-
+    /**
+     * CREATE PROFILE VERIFICATION PROOF
+     */
     const bodyToBeHashed = {
+      chatId: chatId,
       groupName: groupName,
       groupDescription: groupDescription,
       groupImage: groupImage,
-      members: convertedMembers,
-      admins: convertedAdmins,
-      chatId: chatId,
+      meta: meta,
+      scheduleAt: scheduleAt,
+      scheduleEnd: scheduleEnd,
+      rules: rules,
+      status: status,
+      isPublic: group.isPublic,
+      groupType: group.groupType,
     };
+
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
     const signature: string = await sign({
       message: hash,
       signingKey: connectedUser.privateKey!,
     });
-    const sigType = 'pgp';
-    const verificationProof: string = sigType + ':' + signature + ':' + account;
+    const sigType = 'pgpv2';
+    // Account is need to verify the signature at any future point
+    const verificationProof: string =
+      sigType + ':' + signature + ':' + connectedUser.did;
+
+    /**
+     * API CALL TO PUSH NODES
+     */
     const API_BASE_URL = getAPIBaseUrls(env);
-    const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
-    const body: IUpdateGroupRequestPayload = updateGroupPayload(
-      groupName,
-      convertedMembers,
-      convertedAdmins,
-      connectedUser.did,
-      verificationProof,
-      null,
-      null,
-      groupDescription,
-      groupImage,
-      scheduleAt,
-      scheduleEnd,
-      status,
-      meta,
-      rules
-    );
+    const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}/profile`;
+
+    const {
+      chatId: chat_id,
+      isPublic: is_public,
+      groupType: group_type,
+      ...body
+    } = bodyToBeHashed;
+    (body as any).verificationProof = verificationProof;
 
     return axios
       .put(apiEndpoint, body)
