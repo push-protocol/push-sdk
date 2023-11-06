@@ -13,9 +13,9 @@ import type { ENV} from '../../config';
 import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
-
+import { getAddressFromSigner } from '../../helpers';
 export type ChatProps = {
-  account: string;
+
   signer: SignerType;
   supportAddress: string;
   greetingMsg?: string;
@@ -29,8 +29,8 @@ export type ButtonStyleProps = {
   bgColor: string;
 };
 
-export const Chat: React.FC<ChatProps> = ({
-  account,
+const Chat: React.FC<ChatProps> = ({
+
   signer = null,
   supportAddress,
   greetingMsg = Constants.DEFAULT_GREETING_MSG,
@@ -46,7 +46,7 @@ export const Chat: React.FC<ChatProps> = ({
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
-
+  const [account, setAccount] = useState<string | null>()
   const setChatsSorted = (chats: IMessageIPFS[]) => {
     const uniqueChats = [
       ...new Map(chats.map((item) => [item['timestamp'], item])).values(),
@@ -73,6 +73,18 @@ export const Chat: React.FC<ChatProps> = ({
     apiKey,
     env,
   };
+
+  useEffect(() => {
+    (async () => {
+      if(signer) {
+     
+      const address = await getAddressFromSigner(signer);
+      setAccount(address);
+    }
+    })();
+  },[signer])
+
+  
 
   useEffect(() => {
     setChats([]);
@@ -120,7 +132,7 @@ export const Chat: React.FC<ChatProps> = ({
   );
 };
 
-//styles
+export const SupportChat = Chat;
 
 const Container = styled.div`
   font-family: 'Strawford';

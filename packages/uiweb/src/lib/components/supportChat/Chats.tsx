@@ -21,7 +21,7 @@ type MessageWrapperType = {
 //   size: number;
 // };
 
-export const Chats: React.FC<ChatsPropType> = ({
+export const Chats : React.FC<ChatsPropType> = ({
   msg,
   caip10,
   messageBeingSent,

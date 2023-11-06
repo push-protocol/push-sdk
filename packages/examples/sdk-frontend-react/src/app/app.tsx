@@ -59,7 +59,7 @@ import GetSpacesTest from './SpaceTest/GetSpacesTest';
 import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
 import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
 import GetSpaceAccessTest from './SpaceTest/GetSpaceAccessTest';
-
+import { ChatSupportTest } from './ChatSupportTest';
 import SpaceUITest from './SpaceUITest/SpaceUITest';
 import {
   SpaceWidget,
@@ -559,6 +559,11 @@ export function App() {
                       <Route
                         path="ChatProfile"
                         element={<ChatProfileTest />}
+                      />
+
+                      <Route
+                        path="ChatSupport"
+                        element={<ChatSupportTest />}
                       />
                   </Routes>
                   {/* <ChatWidgetTest/> */}
