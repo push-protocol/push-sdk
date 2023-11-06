@@ -165,7 +165,7 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gte(balance)) {
+      if (!fees.gte(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -269,7 +269,7 @@ export class Channel extends PushNotificationBaseClass {
         18
       );
       const totalFees = fees.mul(counter)
-      if (totalFees.gte(balance)) {
+      if (!totalFees.gte(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -402,7 +402,7 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gte(balance)) {
+      if (!fees.gte(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       const allowanceAmount = await this.fetchAllownace(
