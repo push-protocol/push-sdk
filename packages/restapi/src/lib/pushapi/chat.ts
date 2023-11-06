@@ -10,6 +10,7 @@ import {
   ProgressHookType,
   IUser,
   IMessageIPFS,
+  GroupInfoDTO,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -378,7 +379,7 @@ export class Chat {
       }
     },
 
-    join: async (target: string): Promise<GroupDTO> => {
+    join: async (target: string): Promise<GroupInfoDTO> => {
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,
@@ -404,13 +405,13 @@ export class Chat {
         });
       }
 
-      return await PUSH_CHAT.getGroup({
+      return await PUSH_CHAT.getGroupInfo({
         chatId: target,
         env: this.env,
       });
     },
 
-    leave: async (target: string): Promise<GroupDTO> => {
+    leave: async (target: string): Promise<GroupInfoDTO> => {
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,

@@ -216,7 +216,7 @@ describe('Private Groups', () => {
     });
   });
 
-  describe('Private Group Send Message', () => {
+  describe('Private Group Message Encryption', () => {
     const Content = 'Sending Message to Private Group';
     it('Send Message should have pgp encryption on Create Group', async () => {
       await userAlice.chat.send(group.chatId, {
@@ -235,7 +235,7 @@ describe('Private Groups', () => {
         role: 'MEMBER',
         accounts: [account2],
       });
-      const updatedGrp = await userBob.chat.group.join(group.chatId);
+      await userBob.chat.group.join(group.chatId);
 
       await userAlice.chat.send(group.chatId, {
         content: 'Sending Message to Private Group',
@@ -396,6 +396,9 @@ describe('Private Groups', () => {
 
       const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
     });
     it('Non-Pending Admins should be able to decrypt message', async () => {
       // Added Pending Member
@@ -417,6 +420,9 @@ describe('Private Groups', () => {
 
       const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+
+      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
     });
     it('Non-Pending Menbers who left should not be able to decrypt message', async () => {
       // Added Pending Member
