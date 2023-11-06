@@ -197,7 +197,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     {
       chatFeed?.groupInformation?.members.forEach((acc) => {
         if (
-          acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+          acc.wallet.toLowerCase() === account.toLowerCase()
         ) {
           setIsMember(true);
         }

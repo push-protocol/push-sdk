@@ -12,7 +12,7 @@ import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
-
+import { walletToPCAIP10 } from '../../../helpers';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -49,7 +49,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
         setSigner(signer)
-        setAccount(newAdd);
+        setAccount(walletToPCAIP10(newAdd));
       })()
     } else if (!wallet) {
       setAccount('')

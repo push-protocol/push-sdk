@@ -9,7 +9,7 @@ import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner } from '../helpers';
-
+import { walletToPCAIP10 } from '../helpers';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -28,7 +28,7 @@ export const ChatUIProvider = ({
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
-  const [accountVal, setAccountVal] = useState<string | null>(account);
+  const [accountVal, setAccountVal] = useState<string | null>( walletToPCAIP10(account!));
   const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
    const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
 
@@ -49,10 +49,10 @@ export const ChatUIProvider = ({
       if (signer) {
         if (!account) {
           const address = await getAddressFromSigner(signer);
-          setAccountVal(address);
+          setAccountVal( walletToPCAIP10(address));
         }
         else{
-          setAccountVal(account);
+          setAccountVal(walletToPCAIP10(account));
         }
       } 
       setSignerVal(signer);
