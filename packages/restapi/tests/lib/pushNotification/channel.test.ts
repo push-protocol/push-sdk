@@ -14,6 +14,9 @@ describe('PushAPI.channel functionality', () => {
   let account1: string;
   let signer2: any;
   let account2: string;
+  let userNoChannel: PushAPI;
+  let noChannelSigner: any;
+  let noChannelAddress: string;
 
   beforeEach(async () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
@@ -29,6 +32,11 @@ describe('PushAPI.channel functionality', () => {
       provider
     );
     account2 = await signer2.getAddress();
+
+    const WALLET = ethers.Wallet.createRandom();
+    noChannelSigner = new ethers.Wallet(WALLET.privateKey);
+    noChannelAddress = await noChannelSigner.getAddress();
+
     enum ENV {
       PROD = 'prod',
       STAGING = 'staging',
@@ -39,12 +47,14 @@ describe('PushAPI.channel functionality', () => {
       LOCAL = 'local',
     }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, {env: ENV.DEV})
+    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer2);
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
     userBob = await PushAPI.initialize(signer1);
+    // initialisation with a signer that has no channel
+    userNoChannel = await PushAPI.initialize(noChannelSigner);
   });
 
   describe('channel :: info', () => {
@@ -65,7 +75,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.info(
         'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
       );
-        // console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
   });
@@ -73,7 +83,7 @@ describe('PushAPI.channel functionality', () => {
   describe('channel :: search', () => {
     it('Without signer and account : Should return response', async () => {
       const res = await userBob.channel.search(' ');
-        // console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
 
@@ -207,14 +217,7 @@ describe('PushAPI.channel functionality', () => {
             body: 'testing with random body',
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
-<<<<<<< HEAD
-            index: {
-              index: 1,
-              value: 10 // for slider type and omit it for boolean type
-            }
-=======
-            category: 2
->>>>>>> 4c342a19abe3a192cd5555749e224f80188032a4
+            category: 2,
           },
         }
       );
@@ -265,6 +268,41 @@ describe('PushAPI.channel functionality', () => {
       );
       expect(res.status).to.equal(204);
     });
+
+    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+      const res = await userAlice.channel.send(
+        [
+          'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:97:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        ],
+        {
+          notification: {
+            title: 'hi',
+            body: 'test-subset',
+          },
+          payload: {
+            title: 'testing first subset notification',
+            body: 'testing with random body',
+            cta: 'https://google.com/',
+            embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+          },
+          channel: 'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
+    it('With signer : SIMULATED  : Should send notification with title and body', async () => {
+      const res = await userNoChannel.channel.send(
+        [`eip155:5:${noChannelAddress}`],
+        {
+          notification: {
+            title: 'hi',
+            body: 'test-targeted-simulated',
+          },
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
   });
 
   describe.skip('channel :: update', () => {
@@ -293,12 +331,16 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe.only('channel :: settings', () => {
+  describe('channel :: settings', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
-        {type: 2, default: 5, description: "My notif setting 2", data: {upper:100, lower:5, ticker: 10, enabled: true}},
+        {
+          type: 2,
+          default: 5,
+          description: 'My notif setting 2',
+          data: { upper: 100, lower: 5, ticker: 10, enabled: true },
+        },
         { type: 1, default: 1, description: 'My Notif Settings' },
-
       ]);
       //   console.log(res)
       expect(res).not.null;

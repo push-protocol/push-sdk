@@ -17,9 +17,14 @@ import {
   isValidCAIP10NFTAddress,
   isValidETHAddress,
 } from '../helpers';
-import { IDENTITY_TYPE, DEFAULT_DOMAIN } from './constants';
+import {
+  IDENTITY_TYPE,
+  DEFAULT_DOMAIN,
+  NOTIFICATION_TYPE,
+  SOURCE_TYPES,
+} from './constants';
 import { ENV } from '../constants';
-
+import { getChannel } from '../channels/getChannel';
 /**
  * Validate options for some scenarios
  */
@@ -50,6 +55,35 @@ function validateOptions(options: any) {
     if (!options.payload) {
       throw '[Push SDK] - Error - sendNotification() - "payload" mandatory for Identity Type: Direct Payload, Minimal!';
     }
+  }
+}
+
+/**
+ *
+ * @param payloadOptions channel, recipient and type tp verify whether it is a simulate type
+ * @returns boolean
+ */
+async function checkSimulateNotification(payloadOptions: {
+  channel: string;
+  recipient: string | string[] | undefined;
+  type: NOTIFICATION_TYPE;
+  env: ENV | undefined;
+}): Promise<boolean> {
+  const { channel, recipient, type, env } = payloadOptions || {};
+  // fetch channel info
+  const channelInfo = await getChannel({
+    channel: channel,
+    env: env,
+  });
+  // check if channel exists, if it does then its not simulate type
+  if (channelInfo) return false;
+  else {
+    // if no channel info found, check if channel address = recipient and notification type is targeted
+    const convertedRecipient =
+      typeof recipient == 'string' && recipient?.split(':').length == 3
+        ? recipient.split(':')[2]
+        : recipient;
+    return channel == convertedRecipient && type == NOTIFICATION_TYPE.TARGETTED;
   }
 }
 
@@ -133,7 +167,14 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
     });
 
-    const source = getSource(chainId, identityType, senderType);
+    const source = (await checkSimulateNotification({
+      channel: options.channel,
+      recipient: options.recipients,
+      type: options.type,
+      env: options.env,
+    }))
+      ? SOURCE_TYPES.SIMULATE
+      : getSource(chainId, identityType, senderType);
 
     const apiPayload = {
       verificationProof,

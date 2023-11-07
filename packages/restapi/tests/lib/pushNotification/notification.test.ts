@@ -24,7 +24,7 @@ describe('PushAPI.notification functionality', () => {
       `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
     );
     account1 = await signer1.getAddress();
-
+    
     const provider = new ethers.providers.JsonRpcProvider(
       'https://goerli.blockpi.network/v1/rpc/public'
     );
@@ -138,7 +138,14 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer object: Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', {
+          settings: [{
+            enabled: false
+          },{
+            enabled: false,
+            value: 0
+          }, ]
+        }
       );
       // console.log(res)
       expect(res).not.null;
