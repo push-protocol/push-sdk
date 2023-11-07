@@ -77,9 +77,14 @@ export type ButtonStyleProps = {
   useEffect(() => {
     (async () => {
       if(signer) {
+        if (!account) {
+          const address = await getAddressFromSigner(signer);
+          setAccount(address);
+        }
+        else{
+          setAccount(account);
+        }
      
-      const address = await getAddressFromSigner(signer);
-      setAccount(address);
     }
     })();
   },[signer])
