@@ -24,7 +24,7 @@ describe('PushAPI.notification functionality', () => {
       `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
     );
     account1 = await signer1.getAddress();
-
+    
     const provider = new ethers.providers.JsonRpcProvider(
       'https://goerli.blockpi.network/v1/rpc/public'
     );
