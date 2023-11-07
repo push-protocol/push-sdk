@@ -11,11 +11,17 @@ import {
   pgpEncrypt,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import { EnvOptionsType, GroupInfoDTO, SignerType } from '../types';
+import {
+  ChatMemberProfile,
+  EnvOptionsType,
+  GroupInfoDTO,
+  SignerType,
+} from '../types';
 import { getGroupInfo } from './getGroupInfo';
-import { getGroup } from './getGroup';
+import { getGroupMembers } from './getGroupMembers';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
+import { Chat } from '../pushapi/chat';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -82,29 +88,50 @@ export const updateGroupMembers = async (
         env,
       });
 
-      const groupChat = await getGroup({ chatId, env });
+      // Fetch All Group Members
+      const groupMembers: ChatMemberProfile[] = [];
+      let page = 1;
+      const limit = 5000;
+      const MAX_LIMIT = 4;
+      while (page <= MAX_LIMIT) {
+        const { members: fetchMembers } = await getGroupMembers({
+          chatId,
+          env,
+          page,
+          limit,
+        });
+        if (fetchMembers.length === 0) break;
+        else {
+          groupMembers.push(...fetchMembers);
+          page++;
+        }
+      }
+
       const removeParticipantSet = new Set(
         convertedRemove.map((participant) => participant.toLowerCase())
       );
       let sameMembers = true;
 
-      groupChat.members.map((element) => {
-        if (removeParticipantSet.has(element.wallet.toLowerCase())) {
+      groupMembers.map((element) => {
+        if (
+          element.intent &&
+          removeParticipantSet.has(element.address.toLowerCase())
+        ) {
           sameMembers = false;
         }
       });
-
-      // console.log(groupChat.members);
-      // console.log(removeParticipantSet);
 
       if (!sameMembers || !isMember) {
         const secretKey = AES.generateRandomSecret(15);
 
         const publicKeys: string[] = [];
         // This will now only take keys of non-removed members
-        groupChat.members.map((element) => {
-          if (!removeParticipantSet.has(element.wallet.toLowerCase())) {
-            publicKeys.push(element.publicKey);
+        groupMembers.map((element) => {
+          if (
+            element.intent &&
+            !removeParticipantSet.has(element.address.toLowerCase())
+          ) {
+            publicKeys.push(element.userInfo.publicKey as string);
           }
         });
 

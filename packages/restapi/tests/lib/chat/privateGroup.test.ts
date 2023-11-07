@@ -180,7 +180,7 @@ describe('Private Groups', () => {
       const updatedGroup = await userBob.chat.group.leave(group.chatId);
       expect(updatedGroup.sessionKey).to.be.null;
     });
-    it.skip('Session Key should be null on AutoLeave Pending Admin', async () => {
+    it('Session Key should be null on AutoLeave Pending Admin', async () => {
       // Added Pending Admin
       await userAlice.chat.group.add(group.chatId, {
         role: 'ADMIN',
@@ -214,8 +214,215 @@ describe('Private Groups', () => {
       expect(updatedGroup.sessionKey).to.not.be.null;
       expect(updatedGroup.sessionKey).to.not.equal(updatedGroup1.sessionKey);
     });
+    it('Session Key should not change on promotion of Pending member to admin', async () => {
+      // Added Pending Member
+      const updatedGroup1 = await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      // Promote to Admin
+      const updatedGroup2 = await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      expect(updatedGroup1.sessionKey).to.be.null;
+      expect(updatedGroup1.sessionKey).to.equal(updatedGroup2.sessionKey);
+    });
+    it('Session Key should not change on promotion of Pending admin to member', async () => {
+      // Added Pending Member
+      const updatedGroup1 = await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      // Promote to Admin
+      const updatedGroup2 = await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      expect(updatedGroup1.sessionKey).to.be.null;
+      expect(updatedGroup1.sessionKey).to.equal(updatedGroup2.sessionKey);
+    });
+    it('Session Key should not change on promotion of Non-Pending member to admin', async () => {
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      // Promote to Admin
+      const updatedGroup2 = await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      expect(updatedGroup1.sessionKey).to.not.be.null;
+      expect(updatedGroup1.sessionKey).to.equal(updatedGroup2.sessionKey);
+    });
+    it('Session Key should not change on promotion of Non-Pending admin to member', async () => {
+      // Added Pending Admin
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      // Accept Invite
+      const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+      // Promote to Admin
+      const updatedGroup2 = await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      expect(updatedGroup1.sessionKey).to.not.be.null;
+      expect(updatedGroup1.sessionKey).to.equal(updatedGroup2.sessionKey);
+    });
   });
-
+  describe('Private Group Send Message Permissions', () => {
+    const Content = 'Sending Message to Private Group';
+    it('Non-Member should not be able to send messages', async () => {
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Pending-Member should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Pending-Admin should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Pending-Member who left should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      await userBob.chat.group.leave(group.chatId);
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Pending-Admin who left should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      await userBob.chat.group.leave(group.chatId);
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Member who left should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2],
+      });
+      await userBob.chat.group.join(group.chatId);
+      await userBob.chat.group.leave(group.chatId);
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Admin who left should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      await userBob.chat.group.join(group.chatId);
+      await userBob.chat.group.leave(group.chatId);
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Member who were removed should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2, account3],
+      });
+      await userBob.chat.group.join(group.chatId);
+      await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: [account2, account3],
+      });
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+      await expect(
+        userJohn.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Admin who were removed should not be able to send messages', async () => {
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2, account3],
+      });
+      await userBob.chat.group.join(group.chatId);
+      await userBob.chat.group.remove(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2, account3],
+      });
+      await expect(
+        userBob.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+      await expect(
+        userJohn.chat.send(group.chatId, {
+          content: 'Sending Message to Private Group',
+          type: 'Text',
+        })
+      ).to.be.rejected;
+    });
+    it('Member should be able to send messages', async () => {
+      await userBob.chat.group.join(group.chatId);
+      const msg = await userBob.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+    });
+    it('Admin should be able to send messages', async () => {
+      await userBob.chat.group.join(group.chatId);
+      // Promotion
+      await userAlice.chat.group.add(group.chatId, {
+        role: 'ADMIN',
+        accounts: [account2],
+      });
+      const msg = await userBob.chat.send(group.chatId, {
+        content: 'Sending Message to Private Group',
+        type: 'Text',
+      });
+    });
+  });
   describe('Private Group Message Encryption', () => {
     const Content = 'Sending Message to Private Group';
     it('Send Message should have pgp encryption on Create Group', async () => {

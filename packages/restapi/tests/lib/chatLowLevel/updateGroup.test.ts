@@ -152,6 +152,9 @@ describe('Update Group', () => {
       env: _env,
     });
 
+    // timeout for 1 sec
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const updatedMembers = [
       'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
     ];

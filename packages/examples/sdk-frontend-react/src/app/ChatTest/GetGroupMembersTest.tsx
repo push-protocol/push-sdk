@@ -30,8 +30,8 @@ const GetGroupMembersTest = () => {
     try {
       const result = await PushAPI.chat.getGroupMembers({
         chatId,
-        pageNumber,
-        pageSize,
+        page: pageNumber,
+        limit: pageSize,
         env,
       });
       setSendResponse(result);
