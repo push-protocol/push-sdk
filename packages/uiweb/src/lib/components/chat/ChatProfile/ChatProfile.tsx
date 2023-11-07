@@ -183,7 +183,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           customStyle={{ fontSize: '17px' }}
         />
         <Section
-          zIndex="300"
+          zIndex="unset"
           flexDirection="row"
           gap="10px"
           margin="0 20px 0 auto"

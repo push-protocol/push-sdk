@@ -375,23 +375,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
-  return !Object.keys(chatFeed || {}).length ? (
-    <>
-      {!pgpPrivateKey && (isConnected || !!signer) && (
-        <TypebarSection
-          width="100%"
-          overflow="hidden"
-          borderRadius="13px"
-          position="static"
-          padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-          background={`${theme.backgroundColor?.messageInputBackground}`}
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <ConnectButtonSection autoConnect={autoConnect} />
-        </TypebarSection>
-      )}
-    </>
+  return !(pgpPrivateKey && account) && isConnected ? (
+    <TypebarSection
+      width="100%"
+      overflow="hidden"
+      borderRadius="13px"
+      position="static"
+      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      background={`${theme.backgroundColor?.messageInputBackground}`}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <ConnectButtonSection autoConnect={autoConnect} />
+    </TypebarSection>
   ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
     <TypebarSection
@@ -484,7 +480,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   groupInfo={chatFeed?.groupInformation}
                   subheader="Please make sure the following conditions
                    are met to pariticpate and send messages."
-                   alert={true}
+                  alert={true}
                 />
                 <ConnectWrapperClose
                   onClick={() => {
@@ -496,7 +492,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 >
                   <ConnectClose>Cancel</ConnectClose>
                 </ConnectWrapperClose>
-                <InfoContainer cta='https://push.org/docs/chat/build/conditional-rules-for-group/' label="Learn more about access gating rules" />
+                <InfoContainer
+                  cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                  label="Learn more about access gating rules"
+                />
               </Section>
               {/* </Section> */}
             </Modal>
