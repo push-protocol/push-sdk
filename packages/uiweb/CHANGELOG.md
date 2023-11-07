@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.29](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.28...uiweb-0.0.1-alpha.29) (2023-11-07)
+
+
+### Bug Fixes
+
+* added alias to support chat ([#821](https://github.com/ethereum-push-notification-service/push-sdk/issues/821)) ([cbd0bbd](https://github.com/ethereum-push-notification-service/push-sdk/commit/cbd0bbd15d9269c3dee9b257e6a3c6adafc7e206))
+* Merge branch 'alpha' into alpha-deployment ([247f0f2](https://github.com/ethereum-push-notification-service/push-sdk/commit/247f0f22bd7b814807ba4b98d11351c114e156f6))
+
+
+
 ## [0.0.1-alpha.28](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.27...uiweb-0.0.1-alpha.28) (2023-11-03)
 
 
