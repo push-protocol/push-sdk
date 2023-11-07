@@ -9,8 +9,8 @@ import { ChatMemberCounts, ChatMemberProfile } from '../types';
 
 export interface FetchChatGroupInfoType {
   chatId: string;
-  pageNumber?: number;
-  pageSize?: number;
+  page?: number;
+  limit?: number;
   env?: ENV;
 }
 
@@ -20,12 +20,7 @@ export const getGroupMembers = async (
   totalMembersCount: ChatMemberCounts;
   members: ChatMemberProfile[];
 }> => {
-  const {
-    chatId,
-    pageNumber = 1,
-    pageSize = 20,
-    env = Constants.ENV.PROD,
-  } = options;
+  const { chatId, page = 1, limit = 20, env = Constants.ENV.PROD } = options;
 
   try {
     if (!chatId) {
@@ -33,7 +28,7 @@ export const getGroupMembers = async (
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/${chatId}/members?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/${chatId}/members?pageNumber=${page}&pageSize=${limit}`;
 
     const response = await axios.get(requestUrl);
     return response.data;

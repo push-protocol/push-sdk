@@ -3,7 +3,12 @@ import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
-import { createGroup, updateGroup, removeMembers } from '../../../src/lib/chat';
+import {
+  createGroup,
+  updateGroup,
+  removeMembers,
+  getGroup,
+} from '../../../src/lib/chat';
 import { GroupDTO } from '../../../src/lib/types';
 import {
   adjectives,
@@ -147,15 +152,21 @@ describe('Update Group', () => {
       env: _env,
     });
 
+    // timeout for 1 sec
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const updatedMembers = [
       'eip155:0xDB0Bb1C25e36a5Ec9d199688bB01eADa4e70225E',
     ];
-    const updatedGroup = await removeMembers({
+
+    await removeMembers({
       members: [account2], // account to be removed
       chatId: group.chatId,
       signer: signer2, //acount2
       env: _env,
     });
+
+    const updatedGroup = await getGroup({ chatId: group.chatId, env: _env });
     await expectGroup(updatedGroup, true, admins, updatedMembers, false);
   });
 });

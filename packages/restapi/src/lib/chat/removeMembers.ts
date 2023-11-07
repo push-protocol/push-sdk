@@ -1,27 +1,20 @@
-import {  isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, SignerType, GroupDTO } from '../types';
+import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import {
-  getMembersList,
-  getAdminsList
-} from './helpers';
-import {
-  getGroup
-} from './getGroup';
-import {
-  updateGroup
-} from './updateGroup';
+  GroupMemberUpdateOptions,
+  updateGroupMembers,
+} from './updateGroupMembers';
 export interface RemoveMembersFromGroupType extends EnvOptionsType {
   chatId: string;
   members: Array<string>;
   account?: string | null;
   signer?: SignerType | null;
-  pgpPrivateKey?: string | null; 
+  pgpPrivateKey?: string | null;
 }
 
 export const removeMembers = async (
   options: RemoveMembersFromGroupType
-): Promise<GroupDTO> => {
+): Promise<GroupInfoDTO> => {
   const {
     chatId,
     members,
@@ -34,59 +27,21 @@ export const removeMembers = async (
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
-  
+
     if (!members || members.length === 0) {
-      throw new Error("Member address array cannot be empty!");
+      throw new Error('Member address array cannot be empty!');
     }
-  
-    members.forEach((member) => {
-      if (!isValidETHAddress(member)) {
-        throw new Error(`Invalid member address: ${member}`);
-      }
-    });
 
-    const group = await getGroup({
-        chatId: chatId,
-        env,
-    })
-
-    let convertedMembers = getMembersList(
-        group.members, group.pendingMembers
-    );
-
-    const membersToBeRemoved = members.map((member) => walletToPCAIP10(member));
-
-    membersToBeRemoved.forEach((member) => {
-      if (!convertedMembers.includes(member)) {
-        throw new Error(`Member ${member} not present in the list`);
-      }
-    });
-
-    convertedMembers = convertedMembers.filter(
-      (member) => !membersToBeRemoved.includes(member)
-    );
-
-    const convertedAdmins = getAdminsList(
-        group.members, group.pendingMembers
-    );
-    
-    return await updateGroup({
+    const groupMemberUpdateOptions: GroupMemberUpdateOptions = {
       chatId: chatId,
-      groupName: group.groupName,
-      groupImage: group.groupImage,
-      groupDescription: group.groupDescription,
-      members: convertedMembers,
-      admins: convertedAdmins,
-      scheduleAt: group.scheduleAt,
-      scheduleEnd: group.scheduleEnd,
-      status: group.status,
-      rules: group.rules,
-      meta: group.meta,
+      upsert: {},
+      remove: members,
       account: account,
       signer: signer,
+      pgpPrivateKey: pgpPrivateKey,
       env: env,
-      pgpPrivateKey: pgpPrivateKey
-  });
+    };
+    return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${removeMembers.name} -:  `,

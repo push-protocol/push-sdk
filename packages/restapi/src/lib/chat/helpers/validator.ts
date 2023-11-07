@@ -1,4 +1,5 @@
 import { isValidETHAddress, isValidNFTCAIP10Address } from '../../helpers';
+import { GroupMemberUpdateOptions } from '../updateGroupMembers';
 
 export const createGroupRequestValidator = (
   groupName: string,
@@ -207,4 +208,43 @@ export const updateGroupRequestValidator = (
   if (address != null && !isValidETHAddress(address)) {
     throw new Error(`Invalid address field!`);
   }
+};
+
+export const validateGroupMemberUpdateOptions = (
+  options: GroupMemberUpdateOptions
+): void => {
+  const { chatId, upsert, remove, } = options;
+
+  if (!chatId || chatId.trim().length === 0) {
+    throw new Error('Chat ID cannot be null or empty.');
+  }
+
+  // Validating upsert object
+  const allowedRoles = ['members', 'admins']; // Define allowed roles
+  Object.keys(upsert).forEach((role) => {
+    if (!allowedRoles.includes(role)) {
+      throw new Error(
+        `Invalid role: ${role}. Allowed roles are ${allowedRoles.join(', ')}.`
+      );
+    }
+    if (upsert[role] && upsert[role].length > 1000) {
+      throw new Error(`${role} array cannot have more than 1000 addresses.`);
+    }
+    // Assuming you have a function `isValidETHAddress` to validate Ethereum addresses
+    upsert[role].forEach((address) => {
+      if (!isValidETHAddress(address)) {
+        throw new Error(`Invalid address found in ${role} list.`);
+      }
+    });
+  });
+
+  // Validating remove array
+  if (remove && remove.length > 1000) {
+    throw new Error('Remove array cannot have more than 1000 addresses.');
+  }
+  remove.forEach((address) => {
+    if (!isValidETHAddress(address)) {
+      throw new Error('Invalid address found in remove list.');
+    }
+  });
 };
