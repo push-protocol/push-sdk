@@ -10,15 +10,15 @@ import {
   GroupAccess,
   SpaceAccess,
   GroupInfoDTO,
+  ChatMemberProfile,
 } from '../../types';
-import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
 import { IPGPHelper, PGPHelper, pgpDecrypt } from './pgp';
 import * as AES from './aes';
-import { sign } from './pgp';
 import { MessageObj } from '../../types/messageTypes';
 
 import * as CryptoJS from 'crypto-js';
+import { getAllGroupMembers } from '../getAllGroupMembers';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
@@ -260,6 +260,58 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
     contractAddressNFT: groupDto.contractAddressNFT,
     numberOfNFTTokens: groupDto.numberOfNFTTokens,
     verificationProof: groupDto.verificationProof,
+    spaceImage: groupDto.groupImage,
+    spaceName: groupDto.groupName,
+    isPublic: groupDto.isPublic,
+    spaceDescription: groupDto.groupDescription,
+    spaceCreator: groupDto.groupCreator,
+    spaceId: groupDto.chatId,
+    scheduleAt: groupDto.scheduleAt,
+    scheduleEnd: groupDto.scheduleEnd,
+    status: groupDto.status ?? null,
+    meta: groupDto.meta,
+  };
+
+  if (groupDto.rules) {
+    spaceDto.rules = {
+      entry: groupDto.rules.entry,
+    };
+  }
+
+  return spaceDto;
+};
+
+export const groupDtoToSpaceDtoV2 = async (
+  groupDto: GroupInfoDTO,
+  env: ENV = ENV.PROD
+): Promise<SpaceDTO> => {
+  const members = await getAllGroupMembers({
+    chatId: groupDto.chatId,
+    env: env,
+  });
+
+  const spaceDto: SpaceDTO = {
+    members: members
+      .filter((member) => member.intent)
+      .map((member) => ({
+        wallet: member.address,
+        publicKey: member.userInfo.publicKey ?? '',
+        isSpeaker: member.role === 'admin',
+        image: member.userInfo.profile.picture ?? '',
+      })),
+    pendingMembers: members
+      .filter((member) => !member.intent)
+      .map((pendingMember) => ({
+        wallet: pendingMember.address,
+        publicKey: pendingMember.userInfo.publicKey ?? '',
+        isSpeaker: pendingMember.role === 'admin',
+        image: pendingMember.userInfo.profile.picture ?? '',
+      })),
+    contractAddressERC20: null,
+    numberOfERC20: 0,
+    contractAddressNFT: null,
+    numberOfNFTTokens: 0,
+    verificationProof: 'a',
     spaceImage: groupDto.groupImage,
     spaceName: groupDto.groupName,
     isPublic: groupDto.isPublic,

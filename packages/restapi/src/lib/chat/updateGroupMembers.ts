@@ -5,23 +5,20 @@ import {
   getWallet,
   PGPHelper,
   getConnectedUserV2Core,
-  getAccountAddress,
   getUserDID,
   validateGroupMemberUpdateOptions,
   pgpEncrypt,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import {
-  ChatMemberProfile,
   EnvOptionsType,
   GroupInfoDTO,
   SignerType,
 } from '../types';
 import { getGroupInfo } from './getGroupInfo';
-import { getGroupMembers } from './getGroupMembers';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
-import { Chat } from '../pushapi/chat';
+import { getAllGroupMembers } from './getAllGroupMembers';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -49,7 +46,6 @@ export const updateGroupMembers = async (
   try {
     validateGroupMemberUpdateOptions(options);
     const wallet = getWallet({ account, signer });
-    const address = await getAccountAddress(wallet);
 
     const connectedUser = await getConnectedUserV2Core(
       wallet,
@@ -88,24 +84,7 @@ export const updateGroupMembers = async (
         env,
       });
 
-      // Fetch All Group Members
-      const groupMembers: ChatMemberProfile[] = [];
-      let page = 1;
-      const limit = 5000;
-      const MAX_LIMIT = 4;
-      while (page <= MAX_LIMIT) {
-        const { members: fetchMembers } = await getGroupMembers({
-          chatId,
-          env,
-          page,
-          limit,
-        });
-        if (fetchMembers.length === 0) break;
-        else {
-          groupMembers.push(...fetchMembers);
-          page++;
-        }
-      }
+      const groupMembers = await getAllGroupMembers({ chatId, env });
 
       const removeParticipantSet = new Set(
         convertedRemove.map((participant) => participant.toLowerCase())
