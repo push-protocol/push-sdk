@@ -39,7 +39,7 @@ import {
 } from '../../../hooks';
 
 import type { FileMessageContent, IGroup } from '../../../types';
-import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
+import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import { InfoContainer } from '../reusables';
@@ -84,6 +84,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
+  verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
   onVerificationFail,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
@@ -467,7 +469,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </Section>
           )}
           {!!pgpPrivateKey && !verificationSuccessfull && (
-            <Modal width="550px">
+            <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
               <Section
                 margin="5px 0px 0px 0px"
                 gap="16px"

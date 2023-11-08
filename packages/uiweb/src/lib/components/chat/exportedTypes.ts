@@ -21,6 +21,9 @@ export interface IChatViewComponentProps {
   isConnected?: boolean;
   autoConnect?:boolean;
   groupInfoModalBackground?: ModalBackgroundType;
+  groupInfoModalPositionType?: ModalPositionType;
+  verificationFailModalBackground?: ModalBackgroundType;
+  verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
 }
 
@@ -28,6 +31,7 @@ export interface IChatProfile {
   chatId: string;
   style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
+  groupInfoModalPositionType?: ModalPositionType;
 }
 
 export interface TwitterFeedReturnType {
@@ -60,6 +64,8 @@ export interface MessageInputProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?:boolean;
+  verificationFailModalBackground?: ModalBackgroundType;
+  verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
 }
 
@@ -123,9 +129,17 @@ export const MODAL_BACKGROUND_TYPE = {
   } as const;
   
   export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
+
+  export const MODAL_POSITION_TYPE = {
+    RELATIVE:'RELATIVE',
+    GLOBAL: 'GLOBAL',
+    } as const;
+    
+  export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;
 export interface CreateGroupModalProps {
   onClose: ()=>void;
   modalBackground?: ModalBackgroundType;
+  modalPositionType?: ModalPositionType;
 };
 
 

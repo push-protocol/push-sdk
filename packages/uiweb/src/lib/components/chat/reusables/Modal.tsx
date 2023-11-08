@@ -13,7 +13,7 @@ import { IChatTheme } from '../theme';
 import { Section, Span, Image } from '../../reusables';
 import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
-import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { device } from '../../../config';
 
 interface IModalProps {
@@ -22,6 +22,7 @@ interface IModalProps {
   children: any;
   theme?: IChatTheme;
   modalBackground?: ModalBackgroundType;
+  modalPositionType?: ModalPositionType;
 }
 
 interface IModalHeader {
@@ -51,10 +52,10 @@ const ClickawayCloseModal = ({
   );
 };
 
-export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY }: IModalProps) => {
+export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,modalPositionType = MODAL_POSITION_TYPE.GLOBAL }: IModalProps) => {
   const theme = useContext(ThemeContext);
   return (
-    <ModalOverlay theme={theme} modalBackground={modalBackground}>
+    <ModalOverlay theme={theme} modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {clickawayClose ? (
         <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>
           {children}
@@ -102,11 +103,11 @@ export const ModalHeader = ({
 };
 /* styling */
 
-const ModalOverlay = styled.div<IModalProps & {modalBackground:ModalBackgroundType}>`
-  position: fixed;
+const ModalOverlay = styled.div<IModalProps>`
+  position:${(props) =>  props.modalPositionType === MODAL_POSITION_TYPE.GLOBAL? 'fixed':'absolute'};
   top: 0;
   left: 0;
-  right: 0;
+  right: 0;  
   bottom: 0;
   width: 100%;
   height: 100%;

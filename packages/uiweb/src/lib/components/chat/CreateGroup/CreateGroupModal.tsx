@@ -13,7 +13,7 @@ import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
 import { CreateGroupType } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
-import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE } from '../exportedTypes';
+import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
@@ -47,7 +47,8 @@ interface GroupInputDetailsType {
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
-  modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY
+  modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  modalPositionType = MODAL_POSITION_TYPE.GLOBAL
 }) => {
   const [activeComponent, setActiveComponent] = useState<CreateGroupStepKeys>(
     // replace it with info one
@@ -135,7 +136,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   return (
-    <Modal clickawayClose={onClose} modalBackground={modalBackground}>
+    <Modal clickawayClose={onClose} modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {renderComponent()} <ToastContainer />
     </Modal>
   );
