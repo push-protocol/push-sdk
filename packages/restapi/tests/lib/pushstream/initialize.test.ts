@@ -22,7 +22,6 @@ describe('PushStream.initialize functionality', () => {
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
       env: ENV.LOCAL,
-      streamOptions: { raw: true },
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
@@ -122,7 +121,22 @@ describe('PushStream.initialize functionality', () => {
       rules: {},
     };
 
-    const stream = user.stream;
+    const stream = await user.initStream({
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
+      listen: [STREAM.CHAT],
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: false, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    });
+
+    await stream.connect();
 
     const createEventPromise = (
       expectedEvent: string,
@@ -166,7 +180,11 @@ describe('PushStream.initialize functionality', () => {
 
     const onDataReceived = createEventPromise('CHAT_OPS', STREAM.CHAT_OPS, 5);
     const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 4);
-    const onNoitificationsReceived = createEventPromise('NOTIF', STREAM.NOTIF, 4);
+    const onNoitificationsReceived = createEventPromise(
+      'NOTIF',
+      STREAM.NOTIF,
+      4
+    );
 
     // Create and update group
     const createdGroup = await user.chat.group.create(
@@ -174,20 +192,16 @@ describe('PushStream.initialize functionality', () => {
       CREATE_GROUP_REQUEST_2
     );
 
-     const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
-       description: 'Updated Description',
-     });
+    const updatedGroup = await user.chat.group.update(createdGroup.chatId, {
+      description: 'Updated Description',
+    });
 
-       const updatedGroup2 = await user.chat.group.add(createdGroup.chatId, {
-         role: 'ADMIN',
-         accounts: [signer2.address, signer3.address, signer4.address],
-       });
+    const updatedGroup2 = await user.chat.group.add(createdGroup.chatId, {
+      role: 'ADMIN',
+      accounts: [signer2.address, signer3.address, signer4.address],
+    });
 
-      const w2wRejectRequest = await user2.chat.group.join(
-         createdGroup.chatId
-       );
-
-
+    const w2wRejectRequest = await user2.chat.group.join(createdGroup.chatId);
 
     /*const w2wMessageResponse = await user2.chat.send(signer.address, {
       content: MESSAGE,

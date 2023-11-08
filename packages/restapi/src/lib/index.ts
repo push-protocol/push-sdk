@@ -8,6 +8,10 @@ import * as space from './space';
 import * as video from "./video"
 
 export * from './types';
+export * from './pushNotification/PushNotificationTypes';
+export * from './pushstream/pushStreamTypes';
+export * from './pushapi/pushAPITypes';
+
 export { PushAPI } from './pushapi/PushAPI';
 export {
   alias,

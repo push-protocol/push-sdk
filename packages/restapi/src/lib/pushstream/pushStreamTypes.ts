@@ -2,7 +2,7 @@ import { Rules } from "../types";
 import Constants, { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
-  listen?: STREAM[];
+  listen: STREAM[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -13,7 +13,6 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
-  enabled?: boolean;
 };
 
 export enum STREAM {
@@ -69,14 +68,14 @@ export interface Profile {
   publicKey: string;
 }
 
-export interface Member {
+export interface GroupMember {
   address: string;
   profile: Profile;
 }
 
 export interface Pending {
-  members: Member[];
-  admins: Member[];
+  members: GroupMember[];
+  admins: GroupMember[];
 }
 
 export interface GroupMeta {
@@ -84,8 +83,8 @@ export interface GroupMeta {
   description: string;
   image: string;
   owner: string;
-  members: Member[];
-  admins: Member[];
+  members: GroupMember[];
+  admins: GroupMember[];
   pending: Pending;
   private: boolean;
   rules: Rules;

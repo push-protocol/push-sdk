@@ -11,6 +11,10 @@ import { User } from './user';
 import { PushStream } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
+import {
+  PushStreamInitializeProps,
+  STREAM,
+} from '../pushstream/pushStreamTypes';
 
 export class PushAPI {
   private signer: SignerType;
@@ -79,14 +83,9 @@ export class PushAPI {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-
         version: Constants.ENC_TYPE_V3,
         autoUpgrade: true,
-
         account: null,
-        streamOptions: {
-          enabled: true, // Default value
-        },
       };
 
       // Settings object
@@ -100,10 +99,6 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
-        streamOptions: {
-          ...defaultOptions.streamOptions,
-          ...(options?.streamOptions ?? {}),
-        },
       };
 
       // Get account
@@ -161,29 +156,57 @@ export class PushAPI {
         settings.progressHook
       );
 
-      if (settings.streamOptions.enabled) {
-        const streamInstance = await PushStream.initialize(
-          api.account,
-          decryptedPGPPrivateKey,
-          signer,
-          settings.progressHook,
-          {
-            ...settings.streamOptions,
-            env: settings.env, // Use the env from the top-level PushAPIInitializeProps
-          }
-        );
-        if (streamInstance) {
-          api.stream = streamInstance;
-        } else {
-          throw new Error('Failed to initialize PushStream.');
-        }
-      }
-
       return api;
     } catch (error) {
       console.error('Error initializing PushAPI:', error);
       throw error; // or handle it more gracefully if desired
     }
+  }
+
+  async initStream(
+    options: PushStreamInitializeProps,
+    account?: string
+  ): Promise<PushStream> {
+    if (this.stream) {
+      throw new Error('Stream is already initialized.');
+    }
+
+    if (!options.listen || options.listen.length === 0) {
+      throw new Error(
+        'The listen property must have at least one STREAM type.'
+      );
+    }
+
+    // Default stream options
+    const defaultStreamOptions: PushStreamInitializeProps = {
+      listen: options.listen,
+      env: this.env,
+      raw: false,
+      connection: {
+        auto: true,
+        retries: 3,
+      },
+    };
+
+    // Merge provided options with defaults
+    const streamOptions = {
+      ...defaultStreamOptions,
+      ...options,
+    };
+
+    // Use the passed account if present, otherwise use this.account
+    const accountToUse = account || this.account;
+
+    // Use the static initialize method to create and possibly initialize the stream
+    this.stream = await PushStream.initialize(
+      accountToUse,
+      this.decryptedPgpPvtKey,
+      this.signer,
+      this.progressHook,
+      streamOptions
+    );
+
+    return this.stream;
   }
 
   async info() {
