@@ -54,3 +54,5 @@ export const ACCESS_TYPE_TITLE = {
     subHeading: 'Add a condition to join or leave it open for everyone',
   },
 };
+
+export * from './chainDetails';

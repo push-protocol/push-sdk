@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { Signer, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
-import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
-import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
+
 
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
@@ -20,26 +18,17 @@ import { device } from '../../../config';
 interface IThemeProps {
   theme?: IChatTheme;
 }
-interface IConnectButtonProps {
-  autoConnect?: boolean;
-}
+
 
 export const ConnectButtonSub = ({autoConnect = false})  => {
   const {wallet, connecting , connect, disconnect} = useAccount();
 
   const {
     signer,
-    pgpPrivateKey,
-    account,
-    env,
-    setPgpPrivateKey,
     setAccount,
     setSigner,
   } = useChatData();
   const theme = useContext(ThemeContext);
-  const {fetchChatProfile} = useGetChatProfile();
-  const {creteChatProfile} = useCreateChatProfile();
-  const {decryptPGPKey} = useDecryptPGPKey();
 
 
   const setUserData = () => {
@@ -54,7 +43,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     } else if (!wallet) {
       setAccount('')
       setSigner(undefined)
-      setPgpPrivateKey(null)
     }
   }
   useEffect(() => {
@@ -63,37 +51,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setUserData()
   }, [wallet])
 
-  useEffect(() => {
-    (async () => {
-      if (account && signer) {
-        if (!pgpPrivateKey) await handleUserCreation();
-      }
-    })();
-  }, [account, signer]);
-
-
-  const handleUserCreation = async () => {
-    if (!account && !env) return;
-    try {
-      let user  = await fetchChatProfile({ profileId: account! ,env});
-      if (!user) {
-        if (!signer) return;
-        user = await creteChatProfile({ signer: signer ,env});
-      }
-      if (user?.encryptedPrivateKey && !pgpPrivateKey) {
-        const decryptPgpKey = await decryptPGPKey({
-          encryptedPrivateKey: user.encryptedPrivateKey,
-          account: account!,
-          signer: signer,
-          env: env,
-        });
-        if(decryptPgpKey)
-        setPgpPrivateKey(decryptPgpKey);
-      }
-    } catch (e: any) {
-      console.log(e);
-    }
-  };
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
       <button onClick={() => (wallet ? disconnect(wallet) : connect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
@@ -108,8 +65,8 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   width: fit-content;
  
   button{
-    background: ${(props) => `${props.theme.backgroundColor.buttonBackground}!important`};
-    color: ${(props) => `${props.theme.textColor.buttonText}!important`};
+    background: ${(props) => `${props.theme.backgroundColor?.buttonBackground}!important`};
+    color: ${(props) => `${props.theme.textColor?.buttonText}!important`};
     text-align:center;
     font-size: 1em;
     cursor:pointer;

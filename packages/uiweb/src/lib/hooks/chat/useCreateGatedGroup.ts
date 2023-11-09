@@ -19,13 +19,14 @@ export const useCreateGatedGroup = () => {
           isPublic: groupInfoType.isPublic,
           members: [],
           admins: [],
-          account: account || '',
+          account: account || undefined,
           env: env,
-          pgpPrivateKey: pgpPrivateKey,
+          pgpPrivateKey: pgpPrivateKey || undefined,
           rules: rules,
         };
         const response = await PushAPI.chat.createGroup(payload);
         setLoading(false);
+        console.log(response)
         if (!response) {
           return false;
         }
