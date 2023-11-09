@@ -14,9 +14,7 @@ function renderStyles(matchingString: string) {
 function newLinestyles(matchingString: string) {
   const pattern = /\\n/g;
   const match = matchingString.match(pattern);
-  console.log(match, 'Match');
   if (match?.includes('\\n')) {
-    console.log('New Line');
     const replacedString = matchingString.replace('\\n', '<br/>');
     return `<div>${replacedString}</div>`;
   } else {
