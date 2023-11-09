@@ -227,9 +227,7 @@ export const validateGroupMemberUpdateOptions = (
         `Invalid role: ${role}. Allowed roles are ${allowedRoles.join(', ')}.`
       );
     }
-    if (upsert[role] && upsert[role].length > 100) {
-      throw new Error(`${role} array cannot have more than 100 addresses.`);
-    }
+   
     // Assuming you have a function `isValidETHAddress` to validate Ethereum addresses
     upsert[role].forEach((address) => {
       if (!isValidETHAddress(address)) {

@@ -9,7 +9,7 @@ const _env = Constants.ENV.LOCAL;
  * THIS TEST GROUP IS FOR BENCHMARKING SEND MESSAGE FOR PRIVATE GROUP
  * These tests will be skipped
  */
-describe.only('Private Groups', () => {
+describe('Private Groups', () => {
   let account: string;
   let account2: string;
   let userAlice: PushAPI;
@@ -341,16 +341,21 @@ describe.only('Private Groups', () => {
       console.log('Duration in ms : ', duration);
     });
     it('5000 Members', async () => {
+      await createGroupAndSendMessages(userAlice, 5000);
+    });
+    it('10000 Members', async () => {
+      await createGroupAndSendMessages(userAlice, 10000);
+    });
+    it('15000 Members', async () => {
+      await createGroupAndSendMessages(userAlice, 15000);
+    });
+  });
+
+  describe('Update Group with Pending members', () => {
+    it.only('10 Members', async () => {
       const chatId =
-        '33c9295913786a8c446ceca46af8ee29a3a7144ba63071c24e5f05a5407bccdf';
-      const startTime = new Date();
-      await userAlice.chat.send(chatId, {
-        content: 'Sending Message to Private Grp',
-        type: 'Text',
-      });
-      const endTime = new Date();
-      const duration = endTime.getTime() - startTime.getTime();
-      console.log('Duration in ms : ', duration);
+        'd8892a41ccbb7d0c627d1e3976f3a0bd64540d1d535b1a339680f2ce5b0fbcf0';
+      await updateGroupWithPendingMembers(userAlice, chatId, 500);
     });
   });
 
@@ -464,6 +469,90 @@ const createGroupWithPendingMembers = async (
   console.log('Added Members to Group : ', currentMemberCount);
   return createdGroup.chatId;
 };
+
+
+/**
+ * CREATE GROUP WITH GIVEN MEMBERS COUNT PENDING MEMBERS
+ * @dev - Added members are pending members
+ */
+const updateGroupWithPendingMembers = async (
+  user: PushAPI,
+  chatId: string,
+  memberCount: number
+): Promise<string> => {
+  /**
+   * STEP 1: Generate ENOUGH USERS
+   */
+  console.log('Generating Users');
+ const users = await generateUsers(memberCount);
+
+  /**
+   * STEP 2: Add Members to Group
+   * Note - At max 100 members can be added at once
+   */
+  console.log('Adding Members to Group');
+  let currentMemberCount = 1;
+  while (currentMemberCount < memberCount) {
+    const currentUsersIndex = currentMemberCount - 1;
+    if (currentMemberCount + 100 > memberCount) {
+      currentMemberCount = memberCount;
+    } else {
+      currentMemberCount += 100;
+    }
+    const nextUsersIndex = currentMemberCount - 1;
+
+    const membersToBeAdded = [];
+    for (let i = currentUsersIndex; i <= nextUsersIndex; i++) {
+      membersToBeAdded.push(users[i]);
+    }
+    await user.chat.group.add(chatId, {
+      role: 'MEMBER',
+      accounts: membersToBeAdded,
+    });
+  }
+  console.log('Added Members to Group : ', currentMemberCount);
+  return chatId;
+};
+
+const generateUsers = async (memberCount: number): Promise<string[]> => {
+  let users: string[] = []; // Now 'users' is explicitly typed as an array of strings
+  let generationCount = 0;
+  const batchSize = 20;
+
+  while (generationCount < memberCount) {
+    const userPromises: Promise<string>[] = []; // An array to hold the promises which will resolve to strings
+    for (let i = 0; i < batchSize && generationCount < memberCount; i++) {
+      userPromises.push(
+        (async () => {
+          const WALLET = ethers.Wallet.createRandom();
+          const signer = new ethers.Wallet(WALLET.privateKey);
+          const account = `eip155:${signer.address}`;
+          // Assume that PushAPI.initialize resolves successfully and you don't need anything from the resolved value
+          await PushAPI.initialize(signer, {
+            env: _env,
+            streamOptions: { enabled: false },
+          });
+          return account; // This resolves to a string
+        })()
+      );
+      generationCount++;
+    }
+
+    // Wait for all promises in the batch to resolve, and then spread their results into the 'users' array
+    const batchResults = await Promise.all(userPromises);
+    users = [...users, ...batchResults];
+
+    if (generationCount % 100 == 0) {
+      console.log('Generated Users : ', generationCount);
+    }
+  }
+
+  console.log(
+    `User Generation Completed, users generated : ${generationCount}`
+  );
+  return users; // 'users' is an array of strings representing accounts
+};
+
 
 /**
  * CREATE GROUP WITH GIVEN MEMBERS COUNT NON-PENDING MEMBERS

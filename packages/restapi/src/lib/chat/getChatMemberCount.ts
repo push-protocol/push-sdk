@@ -23,7 +23,7 @@ export const getChatMemberCount = async (
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/${chatId}/members/count`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/count`;
 
     const response = await axios.get(requestUrl);
     const { totalMembersCount } = response.data;

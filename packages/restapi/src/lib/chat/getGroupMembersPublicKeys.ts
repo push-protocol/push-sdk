@@ -2,19 +2,13 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ChatMemberCounts, ChatMemberProfile } from '../types';
+import { FetchChatGroupInfoType } from './getGroupMembers';
 
 /**
- * GET /v1/chat/:chatId/members
+ * GET /v1/chat/:chatId/members/public/keys
  */
 
-export interface FetchChatGroupInfoType {
-  chatId: string;
-  page?: number;
-  limit?: number;
-  env?: ENV;
-}
-
-export const getGroupMembers = async (
+export const getGroupMembersPublicKeys = async (
   options: FetchChatGroupInfoType
 ): Promise<{
   totalMembersCount: ChatMemberCounts;
@@ -28,17 +22,17 @@ export const getGroupMembers = async (
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members?pageNumber=${page}&pageSize=${limit}`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/public/keys?pageNumber=${page}&pageSize=${limit}`;
 
     const response = await axios.get(requestUrl);
     return response.data;
   } catch (error) {
     console.error(
-      `[Push SDK] - API - Error - API ${getGroupMembers.name} -: `,
+      `[Push SDK] - API - Error - API ${getGroupMembersPublicKeys.name} -: `,
       error
     );
     throw new Error(
-      `[Push SDK] - API - Error - API ${getGroupMembers.name} -: ${error}`
+      `[Push SDK] - API - Error - API ${getGroupMembersPublicKeys.name} -: ${error}`
     );
   }
 };

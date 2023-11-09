@@ -26,3 +26,4 @@ export * from './getGroupMemberStatus';
 export * from './getGroupMembers';
 export * from './getGroupInfo';
 export * from './getChatMemberCount';
+export * from './getGroupMembersPublicKeys';
