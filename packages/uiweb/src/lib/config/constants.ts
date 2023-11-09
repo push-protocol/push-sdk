@@ -42,12 +42,15 @@ export const CoreContractChainId = {
   local: 5,
 };
 
+
+
 const TESTNET_NETWORK = {
   ETHEREUM: 'eip155:5',
   POLYGON: 'eip155:80001',
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:420',
   POLYGON_ZK_EVM: 'eip155:1442',
+  ARBITRUM:'eip155:421613'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -55,6 +58,7 @@ const MAINET_NETWORK = {
   BSC: 'eip155:56',
   OPTIMISM: 'eip155:10',
   POLYGON_ZK_EVM: 'eip155:1101',
+  ARBITRUM:'eip155:42161'
 };
 
 export const BLOCKCHAIN_NETWORK = {

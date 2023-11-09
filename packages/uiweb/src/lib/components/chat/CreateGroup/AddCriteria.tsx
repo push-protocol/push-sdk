@@ -22,6 +22,7 @@ import OptionButtons from '../reusables/OptionButtons';
 
 import EthereumSvg from '../../../icons/ethereum.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
+import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
 import OptimismSvg from '../../../icons/optimisim.svg';
 import { BLOCKCHAIN_NETWORK, device } from '../../../config';
@@ -232,6 +233,13 @@ const AddCriteria = ({
       title: 'Optimism',
       icon: OptimismSvg,
       function: () => setSelectedChainValue(3),
+    },
+    {
+      id: 4,
+      value: BLOCKCHAIN_NETWORK[env].ARBITRUM,
+      title: 'Arbitrim',
+      icon: ArbitrumSvg,
+      function: () => setSelectedChainValue(4),
     },
   ];
 
