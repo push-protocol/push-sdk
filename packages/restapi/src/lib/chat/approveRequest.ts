@@ -79,7 +79,6 @@ export const approveCore = async (
     ? await getUserDID(senderAddress, env)
     : await getUserDID(address, env);
 
-  let sessionKey: string | null = null;
   let encryptedSecret: string | null = null;
   /**
    * GENERATE VERIFICATION PROOF
@@ -103,8 +102,6 @@ export const approveCore = async (
         plainText: secretKey,
         keys: publicKeys,
       });
-
-      sessionKey = CryptoJS.SHA256(encryptedSecret).toString();
     }
   }
 
@@ -130,7 +127,6 @@ export const approveCore = async (
         fromDID,
         toDID,
         status,
-        sessionKey: sessionKey,
         encryptedSecret: encryptedSecret,
       };
       break;
@@ -151,7 +147,6 @@ export const approveCore = async (
     status,
     sigType,
     verificationProof,
-    sessionKey,
     encryptedSecret,
   };
 

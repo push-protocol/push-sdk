@@ -44,7 +44,7 @@ describe('PushAPI.chat.group functionality', () => {
       userBob.chat.group.update(createdGroup.chatId, {
         description: 'Updated Test Grp Description',
       })
-    ).to.be.rejectedWith(`Address eip155:${account2} is not a group admin`);
+    ).to.be.rejectedWith(`eip155:${account2} is not a group admin`);
   });
 
   it('Should update Group By Admin', async () => {

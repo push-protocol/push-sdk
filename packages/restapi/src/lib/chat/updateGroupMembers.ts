@@ -10,11 +10,7 @@ import {
   pgpEncrypt,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import {
-  EnvOptionsType,
-  GroupInfoDTO,
-  SignerType,
-} from '../types';
+import { EnvOptionsType, GroupInfoDTO, SignerType } from '../types';
 import { getGroupInfo } from './getGroupInfo';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
@@ -69,7 +65,6 @@ export const updateGroupMembers = async (
       remove.map((userDID) => getUserDID(userDID, env))
     );
 
-    let sessionKey: string | null = null;
     let encryptedSecret: string | null = null;
 
     const group = await getGroupInfo({ chatId, env });
@@ -124,15 +119,12 @@ export const updateGroupMembers = async (
           plainText: secretKey,
           keys: publicKeys,
         });
-
-        sessionKey = CryptoJS.SHA256(encryptedSecret).toString();
       }
     }
 
     const bodyToBeHashed = {
       upsert: convertedUpsert,
       remove: convertedRemove,
-      sessionKey,
       encryptedSecret,
     };
 
@@ -142,24 +134,24 @@ export const updateGroupMembers = async (
       signingKey: connectedUser.privateKey!,
     });
     const sigType = 'pgpv2';
-    const verificationProof = `${sigType}:${signature}:${connectedUser.did}`;
+    const deltaVerificationProof = `${sigType}:${signature}:${connectedUser.did}`;
     const API_BASE_URL = getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}/members`;
 
     const body = {
       upsert: convertedUpsert,
       remove: convertedRemove,
-      sessionKey,
       encryptedSecret,
-      verificationProof,
+      deltaVerificationProof,
     };
     return axios
-      .post(apiEndpoint, body)
+      .put(apiEndpoint, body)
       .then((response) => {
         return response.data;
       })
       .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
+        if (err?.response?.data)
+          throw new Error(JSON.stringify(err.response.data));
         throw new Error(err);
       });
   } catch (err) {

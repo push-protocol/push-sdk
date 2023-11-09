@@ -7,7 +7,7 @@ export interface AddMembersToGroupType extends EnvOptionsType {
   members: Array<string>;
   account?: string | null;
   signer?: SignerType | null;
-  pgpPrivateKey?: string | null; 
+  pgpPrivateKey?: string | null;
 }
 
 /**
@@ -35,6 +35,7 @@ export const addMembers = async (
 
     const upsertPayload = {
       members: members,
+      admins: [],
     };
 
     const groupMemberUpdateOptions: GroupMemberUpdateOptions = {
