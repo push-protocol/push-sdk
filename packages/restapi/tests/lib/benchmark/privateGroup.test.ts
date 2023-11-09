@@ -31,44 +31,6 @@ describe.only('Private Groups', () => {
     userBob = await PushAPI.initialize(signer2, { env: _env });
   });
 
-  describe.skip('Private Group Join', () => {
-    it('10 Members', async () => {
-      const chatId =
-        '8fa6560d68ee168febee36edf92323a60b493add15be3abf3437f6558a513a19';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('50 Members', async () => {
-      const chatId =
-        '57a0236f7d8630611804548e7121add271378f9a817e261eb36888e6ef3e9b2b';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('100 Members', async () => {
-      const chatId =
-        'bd70ad676cd287156743db927de3c87383f5e9b57e569a90864c610c5472098e';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('300 Members', async () => {
-      const chatId =
-        '66be638ff021e4eacb0f882655e43d8f065361dc4d27122d3cceaf60bb1481ea';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('500 Members', async () => {
-      const chatId =
-        '100290378de50a9c790df42ea4cd99f563a9fbf0ff7d06b3630e88c91e582af3';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('1000 Members', async () => {
-      const chatId =
-        '222290378de50a9c790df42ea4cd99f563a9fbf0ff7d06b3630e88c91e582af3';
-      await JoinGroupTime(chatId, userBob);
-    });
-    it('3000 Members', async () => {
-      const chatId =
-        '333290378de50a9c790df42ea4cd99f563a9fbf0ff7d06b3630e88c91e582af3';
-      await JoinGroupTime(chatId, userBob);
-    });
-  });
-
   // describe.skip('Private Group Send Message', () => {
   //   it('10 Members', async () => {
   //     const chatId =
@@ -177,38 +139,238 @@ describe.only('Private Groups', () => {
   //   });
   // });
 
-  describe('Private Group Send Message', () => {
+  /**
+   * STEP 1 - RUN THIS TO CREATE GRPS ON DB
+   * THIS IS A 1 TIME THING
+   */
+  // describe('Create Group Data', () => {
+  //   it('10 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 10);
+  //   });
+  //   it('50 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 50);
+  //   });
+  //   it('100 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 100);
+  //   });
+  //   it('250 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 250);
+  //   });
+  //   it('500 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 500);
+  //   });
+  //   it('1000 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 1000);
+  //   });
+  //   it('2500 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 2500);
+  //   });
+  //   it('5000 Members', async () => {
+  //     await createGroupWithPendingMembers(userAlice, 5000);
+  //   });
+  // });
+
+  /**
+   * STEP 2 - RUN THESE QUERIES
+   * UPDATE chat_members set intent = 1
+   * UPDATE W2W SET intent = REPLACE(combined_did, '_', '+');
+   */
+
+  /**
+   * STEP 3 - AUTOJOIN
+   * This is imp for generating session keys so , do skip this test
+   */
+  describe.skip('Private Group AutoJoin', () => {
     it('10 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 10);
+      const chatId =
+        '9e8bea378b4e4860956c177146786c2e96a0db8aa7c4156299181b3e56290a57';
+      await JoinGroupTime(chatId, userBob);
     });
     it('50 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 50);
+      const chatId =
+        '822349a63cbf1423f46bda0bc2beadc91bce7a56c3217e3112c8b44393755fb3';
+      await JoinGroupTime(chatId, userBob);
     });
     it('100 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 100);
+      const chatId =
+        '6c5713714fbad5cf768f401d338f2d75fbe9aec78f5276a3d381706dea66f916';
+      await JoinGroupTime(chatId, userBob);
     });
     it('250 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 250);
+      const chatId =
+        'c1c80ecd0aade64d8dd2427699cb395e41391ab6c37d6acca49f449876fd00d5';
+      await JoinGroupTime(chatId, userBob);
     });
     it('500 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 500);
+      const chatId =
+        '0994f7f8782c2880476bb775ceeb07e042c8b3550750a9cc0c1cb2b2b7b252c8';
+      await JoinGroupTime(chatId, userBob);
     });
     it('1000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 1000);
+      const chatId =
+        'edb1d9a2930aca2dbf51e4dcb03c2dee3e4ba4dd8a467a8a1eaedb38d0b6eebd';
+      await JoinGroupTime(chatId, userBob);
     });
     it('2500 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 2500);
+      const chatId =
+        'fc905114348630e30e25b36559b5b3e57035c45bf01549c67727148eef0761cf';
+      await JoinGroupTime(chatId, userBob);
     });
     it('5000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 5000);
-    });
-    it('10000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 10000);
-    });
-    it('15000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 15000);
+      const chatId =
+        '33c9295913786a8c446ceca46af8ee29a3a7144ba63071c24e5f05a5407bccdf';
+      await JoinGroupTime(chatId, userBob);
     });
   });
+
+  // describe('Private Group AutoJoin', () => {
+  //   it('10 Members', async () => {
+  //     await createGroupAndAutoJoin(userAlice, userBob, 10);
+  //   });
+  //   it('50 Members', async () => {
+  //     await createGroupAndAutoJoin(userAlice, userBob, 50);
+  //   });
+  //   it('100 Members', async () => {
+  //     await createGroupAndAutoJoin(userAlice, userBob, 100);
+  //   });
+  //   it('250 Members', async () => {
+  //     await createGroupAndAutoJoin(userAlice, userBob, 250);
+  //   });
+  //   it('500 Members', async () => {
+  //     await createGroupAndAutoJoin(userAlice, userBob, 500);
+  //   });
+  // });
+
+  describe('Private Group Send Message', () => {
+    it('10 Members', async () => {
+      const chatId =
+        '9e8bea378b4e4860956c177146786c2e96a0db8aa7c4156299181b3e56290a57';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('50 Members', async () => {
+      const chatId =
+        '822349a63cbf1423f46bda0bc2beadc91bce7a56c3217e3112c8b44393755fb3';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('100 Members', async () => {
+      /* DO THIS MANNUALY ON PUSH NODES
+          UPDATE w2w
+          SET intent = (SELECT GROUP_CONCAT(did SEPARATOR '+') FROM w2w_meta LIMIT 100)
+          WHERE chat_id = '7b00afa19c56bc89c6e6497192fda6b9d8d9dcd1cdc206da15e6f926170b5b43';
+
+          UPDATE w2w
+          SET combined_did = (SELECT GROUP_CONCAT(did SEPARATOR '_') FROM w2w_meta LIMIT 100)
+          WHERE chat_id = '7b00afa19c56bc89c6e6497192fda6b9d8d9dcd1cdc206da15e6f926170b5b43';
+
+          Also add userAlice to combed_did and intent
+      */
+      const chatId =
+        '6c5713714fbad5cf768f401d338f2d75fbe9aec78f5276a3d381706dea66f916';
+
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('250 Members', async () => {
+      const chatId =
+        'c1c80ecd0aade64d8dd2427699cb395e41391ab6c37d6acca49f449876fd00d5';
+
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('500 Members', async () => {
+      const chatId =
+        '0994f7f8782c2880476bb775ceeb07e042c8b3550750a9cc0c1cb2b2b7b252c8';
+
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('1000 Members', async () => {
+      const chatId =
+        'edb1d9a2930aca2dbf51e4dcb03c2dee3e4ba4dd8a467a8a1eaedb38d0b6eebd';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('2500 Members', async () => {
+      const chatId =
+        'fc905114348630e30e25b36559b5b3e57035c45bf01549c67727148eef0761cf';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+    it('5000 Members', async () => {
+      const chatId =
+        '33c9295913786a8c446ceca46af8ee29a3a7144ba63071c24e5f05a5407bccdf';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
+    });
+  });
+
+  // describe('Private Group Send Message', () => {
+  //   it('10 Members', async () => {
+  //     await createGroupAndSendMessages(userAlice, 10);
+  //   });
+  //   it('50 Members', async () => {
+  //     await createGroupAndSendMessages(userAlice, 50);
+  //   });
+  //   it('100 Members', async () => {
+  //     await createGroupAndSendMessages(userAlice, 100);
+  //   });
+  //   it('250 Members', async () => {
+  //     await createGroupAndSendMessages(userAlice, 250);
+  //   });
+  //   it('500 Members', async () => {
+  //     await createGroupAndSendMessages(userAlice, 500);
+  //   });
+  // });
 });
 
 /**
@@ -283,15 +445,15 @@ const createGroupWithPendingMembers = async (
   let currentMemberCount = 1;
   while (currentMemberCount < memberCount) {
     const currentUsersIndex = currentMemberCount - 1;
-    if (currentMemberCount + 100 > memberCount) {
+    if (currentMemberCount + 1000 > memberCount) {
       currentMemberCount = memberCount;
     } else {
-      currentMemberCount += 100;
+      currentMemberCount += 1000;
     }
     const nextUsersIndex = currentMemberCount - 1;
 
-    const membersToBeAdded = [];
-    for (let i = currentUsersIndex; i <= nextUsersIndex; i++) {
+    const membersToBeAdded: string[] = [];
+    for (let i = currentUsersIndex; i < nextUsersIndex; i++) {
       membersToBeAdded.push(users[i].account);
     }
     await user.chat.group.add(createdGroup.chatId, {
@@ -374,6 +536,19 @@ const createGroupAndSendMessages = async (
     content: 'Sending Message to Private Grp',
     type: 'Text',
   });
+  const endTime = new Date();
+  const duration = endTime.getTime() - startTime.getTime();
+  console.log('Duration in ms : ', duration);
+};
+
+const createGroupAndAutoJoin = async (
+  user1: PushAPI,
+  user2: PushAPI,
+  memberCount: number
+): Promise<void> => {
+  const chatId = await createGroupWithNonPendingMembers(user1, memberCount);
+  const startTime = new Date();
+  await user2.chat.group.join(chatId);
   const endTime = new Date();
   const duration = endTime.getTime() - startTime.getTime();
   console.log('Duration in ms : ', duration);
