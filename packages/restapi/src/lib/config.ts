@@ -105,6 +105,9 @@ export const CHAIN_NAME: { [key: number]: string } = {
   // plygonzkevm
   1101: 'POLYGONZKEVM',
   1442: 'POLYGONZKEVM',
+  // arbitrun
+  421613:'ARBITRUN',
+  42161:'ARBITRUM'
 };
 export interface ConfigType {
   API_BASE_URL: string;

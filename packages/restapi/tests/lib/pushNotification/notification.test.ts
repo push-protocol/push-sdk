@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
@@ -26,7 +26,7 @@ describe('PushAPI.notification functionality', () => {
     account1 = await signer1.getAddress();
     
     const provider = new ethers.providers.JsonRpcProvider(
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
@@ -38,7 +38,7 @@ describe('PushAPI.notification functionality', () => {
       account: privateKeyToAccount(
         `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
       ),
-      chain: goerli,
+      chain: sepolia,
       transport: http(),
     });
     // initialisation with signer and provider

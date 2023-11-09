@@ -11,14 +11,14 @@ chai.use(chaiAsPromised);
 
 describe('Create Push Profile with Profile update', () => {
   const _env = Constants.ENV.DEV;
-  let provider = ethers.getDefaultProvider(5);
+  let provider = ethers.getDefaultProvider(11155111);
   let _signer: any;
   let walletAddress: string;
   let account: string;
 
  
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     _signer = new ethers.Wallet(WALLET.privateKey, provider);
     walletAddress = _signer.address;

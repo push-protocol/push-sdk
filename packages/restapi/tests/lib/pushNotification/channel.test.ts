@@ -24,7 +24,7 @@ describe('PushAPI.channel functionality', () => {
 
     const provider = new ethers.providers.JsonRpcProvider(
       // PUBLIC RPC
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
@@ -318,7 +318,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe.skip('channel :: create', () => {
+  describe('channel :: create', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.create({
         name: 'SDK Test',

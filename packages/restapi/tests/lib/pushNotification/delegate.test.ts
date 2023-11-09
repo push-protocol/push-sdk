@@ -20,7 +20,7 @@ describe('PushAPI.delegate functionality', () => {
     account1 = await signer1.getAddress();
 
     const provider = new ethers.providers.JsonRpcProvider(
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(

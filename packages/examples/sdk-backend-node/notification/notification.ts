@@ -32,7 +32,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // Signer Generation
   const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public' // Goerli Provider
+    'https://rpc.sepolia.org' // Goerli Provider
   );
   const signer = new ethers.Wallet(
     `0x${process.env.WALLET_PRIVATE_KEY}`,

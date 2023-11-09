@@ -6,7 +6,7 @@ dotenv.config();
 // initialise the provider
 const provider = new ethers.providers.JsonRpcProvider(
   // PUBLIC RPC
-  process.env?.RPC?? 'https://goerli.blockpi.network/v1/rpc/public'
+  process.env?.RPC?? 'https://rpc.sepolia.org'
 );
 
 let signer;
