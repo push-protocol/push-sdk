@@ -22,10 +22,7 @@
             "output": "."
           }
         ],
-        "format": [
-          "esm",
-          "cjs"
-        ]
+        "format": ["esm", "cjs"]
       }
     },
     "lint": {
@@ -49,6 +46,16 @@
         "preset": "angular",
         "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
         "postTargets": ["uiweb:build", "uiweb:ci-publish"]
+      }
+    },
+    "ci-version-beta": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular",
+        "commitMessageFormat": "ci(${projectName}): 🎉 cut beta release to ${projectName}-v${version}",
+        "postTargets": ["uiweb:build", "uiweb:ci-publish"],
+        "version": "prerelease",
+        "preid": "alpha"
       }
     },
     "ci-publish": {

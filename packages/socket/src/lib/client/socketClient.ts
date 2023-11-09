@@ -8,10 +8,14 @@ export function createSocketConnection({
   env,
   socketType = 'notification',
   apiKey,
-  socketOptions
-}: SocketInputOptions
-) {
-  const { autoConnect = true, reconnectionAttempts = 5, } = socketOptions || {};
+  socketOptions,
+}: SocketInputOptions) {
+  const {
+    autoConnect = true,
+    reconnectionAttempts = 5,
+    reconnectionDelay,
+    reconnectionDelayMax,
+  } = socketOptions || {};
 
   const pushWSUrl = API_URLS[env];
 
@@ -26,12 +30,18 @@ export function createSocketConnection({
     let query;
     if (socketType === 'notification') query = { address: userAddressInCAIP };
     else query = { mode: 'chat', did: userAddressInCAIP };
-    pushSocket = io(pushWSUrl, {
+
+    // Build options object
+    const options = {
       transports,
       query,
       autoConnect,
       reconnectionAttempts,
-    });
+      ...(reconnectionDelay !== undefined && { reconnectionDelay }),
+      ...(reconnectionDelayMax !== undefined && { reconnectionDelayMax }),
+    };
+
+    pushSocket = io(pushWSUrl, options);
   } catch (e) {
     console.error('[PUSH-SDK] - Socket connection error: ');
     console.error(e);

@@ -1,0 +1,15 @@
+name: "❓ Question or Support Request"
+description: Questions and requests for support.
+title: "❓ [Question/Support] - <title>"
+labels: [
+  "support"
+]
+body:
+  - type: textarea
+    id: support-request
+    attributes:
+      label: "Question or Support Request"
+      description: Describe your question or ask for support.
+      placeholder: Detailed description of your question/support request...
+    validations:
+      required: true

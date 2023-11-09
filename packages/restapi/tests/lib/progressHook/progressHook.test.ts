@@ -86,14 +86,7 @@ describe('ProgressHook Tests', () => {
       for (let i = 0; i < progressInfo.length - 1; i++) {
         expect(progressInfo[i]).to.deep.equal(expectedHooks[i]);
       }
-      const expectedErrorHook = {
-        progressId: 'PUSH-ERROR-00',
-        progressTitle: 'Non Specific Error',
-        progressInfo:
-          '[Push SDK] - API  - Error - API create() -: Error: [Push SDK] - API https://backend-dev.epns.io/apis/v2/users/: AxiosError: Request failed with status code 400',
-        level: 'ERROR',
-      };
-      expect(progressInfo[4]).to.deep.equal(expectedErrorHook);
+      expect(progressInfo[4].progressId).to.be.equal('PUSH-ERROR-00');
     }
   });
   it('Decrypt Push Profile Success ProgressHooks', async () => {

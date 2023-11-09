@@ -32,6 +32,7 @@ import {
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
+import { getAddress } from './signer';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -51,7 +52,8 @@ if (typeof window !== 'undefined' && window.crypto) {
 /** DEPRECATED */
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
-  const address: string = account || (await signer?.getAddress()) || '';
+  const address: string =
+    account || (await getAddress(signer as SignerType)) || '';
   const metamaskProvider = new ethers.providers.Web3Provider(
     (window as any).ethereum
   );
@@ -266,95 +268,6 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
   }
 };
 
-export const decryptMessage = async ({
-  encryptedPGPPrivateKey,
-  encryptionType,
-  encryptedSecret,
-  pgpPrivateKey,
-  signature,
-  signatureValidationPubliKey,
-  message,
-}: {
-  encryptedPGPPrivateKey: string;
-  encryptionType: string;
-  encryptedSecret: string;
-  pgpPrivateKey: string;
-  signature: string;
-  signatureValidationPubliKey: string;
-  message: IMessageIPFS;
-}): Promise<string> => {
-  let plainText: string;
-  if (encryptionType !== 'PlainText' && encryptionType !== null) {
-    plainText = await decryptAndVerifySignature({
-      cipherText: encryptedPGPPrivateKey,
-      encryptedSecretKey: encryptedSecret,
-      privateKeyArmored: pgpPrivateKey,
-      publicKeyArmored: signatureValidationPubliKey,
-      signatureArmored: signature,
-      message: message,
-    });
-  } else {
-    plainText = encryptedPGPPrivateKey;
-  }
-
-  return plainText;
-};
-
-export const decryptAndVerifySignature = async ({
-  cipherText,
-  encryptedSecretKey,
-  publicKeyArmored,
-  signatureArmored,
-  privateKeyArmored,
-  message,
-}: {
-  cipherText: string;
-  encryptedSecretKey: string;
-  publicKeyArmored: string;
-  signatureArmored: string;
-  privateKeyArmored: string;
-  message: IMessageIPFS;
-}): Promise<string> => {
-  try {
-    // const privateKeyArmored: string = await DIDHelper.decrypt(JSON.parse(encryptedPrivateKeyArmored), did)
-    const secretKey: string = await pgpDecrypt({
-      cipherText: encryptedSecretKey,
-      toPrivateKeyArmored: privateKeyArmored,
-    });
-    if (message.link == null) {
-      const bodyToBeHashed = {
-        fromDID: message.fromDID,
-        toDID: message.toDID,
-        messageContent: message.messageContent,
-        messageType: message.messageType,
-      };
-      const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-      try {
-        await verifySignature({
-          messageContent: hash,
-          signatureArmored,
-          publicKeyArmored,
-        });
-      } catch (err) {
-        await verifySignature({
-          messageContent: cipherText,
-          signatureArmored,
-          publicKeyArmored,
-        });
-      }
-    } else {
-      await verifySignature({
-        messageContent: cipherText,
-        signatureArmored,
-        publicKeyArmored,
-      });
-    }
-    return aesDecrypt({ cipherText, secretKey });
-  } catch (err) {
-    return 'Unable to decrypt message';
-  }
-};
-
 export const generateHash = (message: any): string => {
   const hash = CryptoJS.SHA256(JSON.stringify(message)).toString(
     CryptoJS.enc.Hex
@@ -535,26 +448,24 @@ export const preparePGPPublicKey = async (
       chatPublicKey = publicKey;
       break;
     }
-    case Constants.ENC_TYPE_V3: {
-      const createProfileMessage =
-        'Create Push Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getEip191Signature(
-        wallet,
-        createProfileMessage
-      );
-      chatPublicKey = JSON.stringify({
-        key: publicKey,
-        signature: verificationProof,
-      });
-      break;
-    }
+    case Constants.ENC_TYPE_V3:
     case Constants.ENC_TYPE_V4: {
-      const createProfileMessage =
-        'Create Push Profile \n' + generateHash(publicKey);
-      const { verificationProof } = await getEip191Signature(
-        wallet,
-        createProfileMessage
-      );
+      const verificationProof = 'DEPRECATED';
+
+      /**
+       * @deprecated
+       * PUSH CHAT PROFILE CREATION DOES NOT SIGN PGP PUBLIC KEY
+       * VERIFICATION PROOF SIGNATURE SHOULD BE USED FOR VERIFICATION OF PUSH PROFILE KEYS
+       */
+
+      // const createProfileMessage =
+      //   'Create Push Profile \n' + generateHash(publicKey);
+      // const { verificationProof } = await getEip191Signature(
+      //   wallet,
+      //   createProfileMessage
+      // );
+
+      // TODO - Change JSON Structure to string ie equivalent to ENC_TYPE_V1 ( would be done after PUSH Node changes )
       chatPublicKey = JSON.stringify({
         key: publicKey,
         signature: verificationProof,
@@ -567,35 +478,69 @@ export const preparePGPPublicKey = async (
   return chatPublicKey;
 };
 
-export const verifyPGPPublicKey = (
+/**
+ * Checks the Push Profile keys using verificationProof
+ * @param encryptedPrivateKey
+ * @param publicKey
+ * @param did
+ * @param caip10
+ * @param verificationProof
+ * @returns PGP Public Key
+ */
+export const verifyProfileKeys = async (
   encryptedPrivateKey: string,
   publicKey: string,
-  did: string
-): string => {
+  did: string,
+  caip10: string,
+  verificationProof: string
+): Promise<string> => {
+  let parsedPublicKey: string;
   try {
-    if (publicKey !== '' && publicKey.includes('signature')) {
-      const { key, signature: verificationProof } = JSON.parse(publicKey);
-      publicKey = key;
-      let signedData: string;
-      if (verificationProof.includes('eip712'))
-        signedData = 'Create Push Chat Profile \n' + generateHash(key);
-      else signedData = 'Create Push Profile \n' + generateHash(key);
-      if (
-        verifyProfileSignature(
-          verificationProof,
-          signedData,
-          isValidCAIP10NFTAddress(did)
-            ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
-            : pCAIP10ToWallet(did)
-        )
-      )
-        return publicKey;
-      else throw new Error('Cannot Verify this publicKey Owner!!!');
+    parsedPublicKey = JSON.parse(publicKey).key;
+    if (parsedPublicKey === undefined) {
+      throw new Error('Invalid Public Key');
     }
-    return publicKey;
   } catch (err) {
-    console.warn('Cannot Verify this publicKey Owner!!!');
-    return publicKey;
+    parsedPublicKey = publicKey;
+  }
+
+  try {
+    if (publicKey && publicKey.length > 0 && verificationProof) {
+      const data = {
+        caip10,
+        did,
+        publicKey,
+        encryptedPrivateKey,
+      };
+
+      if (isValidCAIP10NFTAddress(did)) {
+        const keyToRemove = 'owner';
+        const parsedEncryptedPrivateKey = JSON.parse(encryptedPrivateKey);
+        if (keyToRemove in parsedEncryptedPrivateKey) {
+          delete parsedEncryptedPrivateKey[keyToRemove];
+        }
+        data.encryptedPrivateKey = JSON.stringify(parsedEncryptedPrivateKey);
+      }
+
+      const signedData = generateHash(data);
+
+      const isValidSig: boolean = await verifyProfileSignature(
+        verificationProof,
+        signedData,
+        isValidCAIP10NFTAddress(did)
+          ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
+          : pCAIP10ToWallet(did)
+      );
+      if (isValidSig) {
+        return parsedPublicKey;
+      } else {
+        throw new Error('Invalid Signature');
+      }
+    }
+    return parsedPublicKey;
+  } catch (err) {
+    console.warn(`Cannot Verify keys for DID : ${did} !!!`);
+    return parsedPublicKey;
   }
 };
 

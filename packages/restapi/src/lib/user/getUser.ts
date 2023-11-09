@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AccountEnvOptionsType, IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
-import { getAPIBaseUrls, verifyPGPPublicKey } from '../helpers';
+import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
 
@@ -15,12 +15,14 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const requestUrl = `${API_BASE_URL}/v2/users/?caip10=${caip10}`;
   return axios
     .get(requestUrl)
-    .then((response) => {
+    .then(async (response) => {
       if (response.data) {
-        response.data.publicKey = verifyPGPPublicKey(
+        response.data.publicKey = await verifyProfileKeys(
           response.data.encryptedPrivateKey,
           response.data.publicKey,
-          response.data.did
+          response.data.did,
+          response.data.wallets,
+          response.data.verificationProof
         );
       }
       return populateDeprecatedUser(response.data);

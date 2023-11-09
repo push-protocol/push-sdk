@@ -1,13 +1,19 @@
-import { ethers } from 'ethers';
+import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
   NOTIFICATION_TYPE,
+  SPACE_ACCEPT_REQUEST_TYPE,
+  SPACE_DISCONNECT_TYPE,
+  SPACE_INVITE_ROLES,
+  SPACE_REQUEST_TYPE,
 } from '../../lib/payloads/constants';
-import { ENV } from '../constants';
+import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
+import { Message, MessageObj } from './messageTypes';
+export * from './messageTypes';
 
-export type Env = (typeof ENV)[keyof typeof ENV];
+export type Env = typeof ENV[keyof typeof ENV];
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -91,7 +97,9 @@ export interface ISendNotificationInputOptions {
     body: string;
     cta: string;
     img: string;
-    metadata?: any;
+    hidden?: boolean;
+    etime?: number;
+    silent?: boolean;
     additionalMeta?:
       | {
           /**
@@ -103,10 +111,24 @@ export interface ISendNotificationInputOptions {
           domain?: string;
         }
       | string;
+    /**
+     * @deprecated
+     * use additionalMeta instead
+     */
+    metadata?: any;
+    index?: string;
   };
   recipients?: string | string[]; // CAIP or plain ETH
   channel: string; // CAIP or plain ETH
+  /**
+   * @deprecated
+   * use payload.etime instead
+   */
   expiry?: number;
+  /**
+   * @deprecated
+   * use payload.hidden instead
+   */
   hidden?: boolean;
   graph?: {
     id: string;
@@ -142,15 +164,32 @@ export interface IMessageIPFS {
   fromDID: string;
   toDID: string;
   messageType: string;
+  messageObj?: MessageObj | string;
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent: string;
+  verificationProof?: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   sigType: string;
   link: string | null;
   timestamp?: number;
   encType: string;
   encryptedSecret: string;
-  deprecated?: boolean; // scope only at sdk level
-  deprecatedCode?: string; // scope only at sdk level
+  /**
+   * scope only at sdk level
+   */
+  deprecated?: boolean;
+  /**
+   * scope only at sdk level
+   */
+  deprecatedCode?: string;
 }
 export interface IFeeds {
   msg: IMessageIPFS;
@@ -171,6 +210,25 @@ export interface IFeeds {
   deprecated?: boolean; // scope only at sdk level
   deprecatedCode?: string; // scope only at sdk level
 }
+
+export interface SpaceIFeeds {
+  msg: IMessageIPFS;
+  did: string;
+  wallets: string;
+  profilePicture: string | null;
+  name: string | null;
+  publicKey: string | null;
+  about: string | null;
+  threadhash: string | null;
+  intent: string | null;
+  intentSentBy: string | null;
+  intentTimestamp: Date;
+  combinedDID: string;
+  cid?: string;
+  spaceId?: string;
+  spaceInformation?: SpaceDTO;
+}
+
 export interface IUser {
   msgSent: number;
   maxMsgPersisted: number;
@@ -186,6 +244,7 @@ export interface IUser {
   encryptedPrivateKey: string;
   publicKey: string;
   verificationProof: string;
+  origin?: string | null;
 
   /**
    * @deprecated Use `profile.name` instead.
@@ -242,6 +301,74 @@ export interface Member {
   publicKey: string;
 }
 
+export enum ChatStatus {
+  ACTIVE = 'ACTIVE',
+  PENDING = 'PENDING',
+  ENDED = 'ENDED',
+}
+
+export enum ConditionType {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+}
+
+export type Data = {
+  contract?: string;
+  amount?: number;
+  decimals?: number;
+  id?: string;
+  role?: string;
+  url?: string;
+  comparison?: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'all' | 'any';
+};
+
+export type ConditionBase = {
+  type?: ConditionType;
+  category?: string;
+  subcategory?: string;
+  data?: Data;
+  access?: boolean;
+
+};
+
+export type Condition = ConditionBase & {
+  any?: ConditionBase[];
+  all?: ConditionBase[];
+};
+
+export interface Rules {
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
+  };
+  chat?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
+  };
+}
+
+
+export interface SpaceRules {
+  entry?: {
+    conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
+  };
+}
+
+export interface GroupAccess {
+  entry: boolean;
+  chat: boolean;
+  rules?: Rules;
+}
+
+export interface GroupMemberStatus {
+  isMember: boolean;
+  isPending: boolean;
+  isAdmin: boolean;
+}
+
+export interface SpaceAccess {
+  entry: boolean;
+  rules?: SpaceRules;
+}
+
 export interface GroupDTO {
   members: {
     wallet: string;
@@ -263,12 +390,78 @@ export interface GroupDTO {
   groupImage: string | null;
   groupName: string;
   isPublic: boolean;
-  groupDescription: string | null;
+  groupDescription: string;
   groupCreator: string;
   chatId: string;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
-  groupType: string;
+  groupType?: string;
+  status?: ChatStatus | null;
+  rules?: Rules | null;
+  meta?: string | null;
+}
+
+export interface SpaceDTO {
+  members: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[];
+  pendingMembers: {
+    wallet: string;
+    publicKey: string;
+    isSpeaker: boolean;
+    image: string;
+  }[];
+  contractAddressERC20: string | null;
+  numberOfERC20: number;
+  contractAddressNFT: string | null;
+  numberOfNFTTokens: number;
+  verificationProof: string;
+  spaceImage: string | null;
+  spaceName: string;
+  isPublic: boolean;
+  spaceDescription: string;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status: ChatStatus | null;
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
+  rules?: SpaceRules | null;
+  meta?: string | null;
+}
+
+export interface Peer {
+  address: string;
+  emojiReactions: {
+    emoji: string;
+    expiresIn: string;
+  } | null;
+}
+
+export interface ListenerPeer extends Peer {
+  handRaised: boolean;
+}
+
+export interface AdminPeer extends Peer {
+  audio: boolean | null;
+}
+
+export interface LiveSpaceData {
+  host: AdminPeer;
+  coHosts: AdminPeer[];
+  speakers: AdminPeer[];
+  listeners: ListenerPeer[];
+}
+
+export interface SpaceSpecificData extends SpaceDTO {
+  liveSpaceData: LiveSpaceData;
+}
+
+export interface SpaceData extends SpaceSpecificData {
+  connectionData: VideoCallData;
 }
 
 export interface Subscribers {
@@ -290,30 +483,54 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
   account: string;
 }
 
-export interface ChatOptionsType extends AccountEnvOptionsType {
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
-  receiverAddress: string;
-  pgpPrivateKey?: string;
-  connectedUser: IConnectedUser;
+export interface ChatStartOptionsType {
+  messageType: `${MessageType}`;
+  messageObj: MessageObj | string;
   /**
-   * Api key is now optional
+   * @deprecated - To be used for now to provide backward compatibility
    */
-  apiKey?: string;
+  messageContent: string;
+  receiverAddress: string;
+  connectedUser: IConnectedUser;
+  env: ENV;
 }
 
+/**
+ * EXPORTED ( Chat.send )
+ */
 export interface ChatSendOptionsType {
-  messageContent?: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaURL';
-  receiverAddress: string;
-  pgpPrivateKey?: string;
+  /** Message to be send */
+  message?: Message;
   /**
-   * Api key is now optional
+   * Message Sender's Account ( DID )
+   * In case account is not provided, it will be derived from signer
    */
-  apiKey?: string;
-  env?: ENV;
   account?: string;
+  /** Message Receiver's Account ( DID ) */
+  to?: string;
+  /**
+   * Message Sender's ethers signer or viem walletClient
+   * Used for deriving account if not provided
+   * Used for decrypting pgpPrivateKey if not provided
+   */
   signer?: SignerType;
+  /**
+   * Message Sender's decrypted pgp private key
+   * Used for signing message
+   */
+  pgpPrivateKey?: string;
+  /** Enironment - prod, staging, dev */
+  env?: ENV;
+  /** @deprecated - Use message instead */
+  messageObj?: MessageObj;
+  /** @deprecated - Use message.content instead */
+  messageContent?: string;
+  /** @deprecated - Use message.type instead */
+  messageType?: `${MessageType}`;
+  /** @deprecated - Use to instead */
+  receiverAddress?: string;
+  /** @deprecated Not needed anymore */
+  apiKey?: string;
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {
@@ -328,10 +545,39 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
-export type SignerType = ethers.Signer & {
-  _signTypedData?: (domain: any, types: any, value: any) => Promise<string>;
+export type ethersV5SignerType = {
+  _signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getChainId: () => Promise<number>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Bytes | string) => Promise<string>;
   privateKey?: string;
+  provider?: providers.Provider;
 };
+export type viemSignerType = {
+  signTypedData: (args: {
+    account: any;
+    domain: any;
+    types: any;
+    primaryType: any;
+    message: any;
+  }) => Promise<`0x${string}`>;
+  getChainId: () => Promise<number>;
+  signMessage: (args: {
+    message: any;
+    account: any;
+    [key: string]: any;
+  }) => Promise<`0x${string}`>;
+  account: { [key: string]: any };
+  privateKey?: string;
+  provider?: providers.Provider;
+  
+};
+
+export type SignerType = ethersV5SignerType | viemSignerType;
 
 export type EnvOptionsType = {
   env?: ENV;
@@ -380,8 +626,18 @@ export type MessageWithCID = {
   fromDID: string;
   toDID: string;
   messageType: string;
+  messageObj?: MessageObj | string;
+  /**
+   * @deprecated - Use messageObj.content instead
+   */
   messageContent: string;
+  /**
+   * @deprecated - Use verificationProof instead
+   */
   signature: string;
+  /**
+   * @deprecated - Use VerificationProof instead
+   */
   sigType: string;
   timestamp?: number;
   encType: string;
@@ -420,7 +676,7 @@ export type VideoCallData = {
     broadcast?: {
       livepeerInfo: any;
       hostAddress: string;
-      coHostAddress: string;
+      coHostAddress?: string;
     };
   };
   local: {
@@ -429,7 +685,7 @@ export type VideoCallData = {
     video: boolean | null;
     address: string;
   };
-  incoming: [PeerData];
+  incoming: PeerData[];
 };
 
 export type VideoCreateInputOptions = {
@@ -440,10 +696,14 @@ export type VideoCreateInputOptions = {
 
 export type VideoRequestInputOptions = {
   senderAddress: string;
-  recipientAddress: string;
+  recipientAddress: string | string[];
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoAcceptRequestInputOptions = {
@@ -453,11 +713,24 @@ export type VideoAcceptRequestInputOptions = {
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
+  details?: {
+    type: SPACE_ACCEPT_REQUEST_TYPE;
+    data: Record<string, unknown>;
+  };
 };
 
 export type VideoConnectInputOptions = {
   signalData: any;
+  peerAddress?: string;
 };
+
+export type VideoDisconnectOptions = {
+  peerAddress: string;
+  details?: {
+    type: SPACE_DISCONNECT_TYPE;
+    data: Record<string, unknown>;
+  };
+} | null;
 
 export type EnableVideoInputOptions = {
   state: boolean;

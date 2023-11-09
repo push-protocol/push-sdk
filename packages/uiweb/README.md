@@ -149,8 +149,9 @@ where
 | cta      | string | Call To Action Link (given during notification creation)  |
 | image      | string | Any media link (given during notification creation) |
 | url      | string | Channel Link (given during channel setup)   |
-| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "THE_GRAPH" |
+| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_SEPOLIA", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "THE_GRAPH" |
 | theme      | string | 'light' or 'dark' (customization to be given by the dApp)  |
+| customTheme      | INotificationItemTheme | custom theme object for the component  |
 | isSpam      | boolean | whether a spam notification or not   |
 | subscribeFn  | Promise | Function to subscribe to the channel  |
 | isSubscribedFn  | Promise | Function that returns the subscription status of a channel   |
@@ -158,7 +159,50 @@ where
 
 
 <br/>
+<br/>
 
+Theming in NotificationItem component
+
+```typescript
+import { INotificationItemTheme,notificationLightTheme } from '@pushprotocol/uiweb';
+
+const customTheme: INotificationItemTheme = {...notificationLightTheme,...{
+  borderRadius:{
+    ...notificationLightTheme.borderRadius,
+    modal:'12px',
+  },
+  color:{
+    ...notificationLightTheme.color,
+      channelNameText:'#62626A',
+      notificationTitleText:'#000',
+      notificationContentText:'#62626A',
+      modalBorder:'#C8C8CB',
+      timestamp:'#62626A',
+  },
+  fontWeight:{
+    ...notificationLightTheme.fontWeight,
+    channelNameText:600,
+    notificationTitleText:600,
+    notificationContentText:500,
+    timestamp:400
+  },
+  fontSize:{
+    ...notificationLightTheme.fontSize,
+    channelNameText:'16px',
+    notificationTitleText:'16px',
+    notificationContentText:'16px',
+    timestamp:'12px'
+  },
+  modalDivider:'none'
+}};
+```
+<br/>
+
+#### List of all theme variables
+![Notification SDK Diagram](https://github.com/ethereum-push-notification-service/push-sdk/assets/42746736/bed4504a-0051-45f8-a57c-c083e4f2ae95)
+
+
+<br/>
 
 ### Support Chat Item component
 
@@ -228,4 +272,62 @@ export const ChatSupportTest = () => {
 
 #### List of all theme variables
 ![image](https://user-images.githubusercontent.com/42746736/219010647-32013301-a260-4426-8034-16ecd88bad32.png)
+
+
+
+<br/>
+
+### Chat and Notification Widget 
+
+Import the SDK package in the component file where you want to render the chat and notification component.
+```typescript
+import { ChatAndNotificationWidget,PUSH_TABS } from "@pushprotocol/uiweb";
+import * as PushAPI from '@pushprotocol/restapi';
+import { ChatAndNotificationWidget } from '@pushprotocol/uiweb';
+import { IUser } from '@pushprotocol/restapi';
+
+```
+To use this component, we need to have our PGP keys created.
+Then decrypt the encrypted pgp private key.
+
+```typescript
+const account = 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681';
+  const pvtkey = null;
+  const user = await PushAPI.user.get({ account: account, env });
+        if (user?.encryptedPrivateKey) {
+            const response = await PushAPI.chat.decryptPGPKey({
+                encryptedPGPPrivateKey: (user as IUser).encryptedPrivateKey,
+                account: account,
+                signer: signer_,
+                env,
+                toUpgrade: true,
+              });
+         pvtkey= response;
+        }
+  });
+```
+
+Render the ChaChatAndNotificationWidget Component as follows
+```typescript
+<ChatAndNotificationWidget
+    account={account}
+    signer={signer_}
+    env={'staging'}
+    activeTab={PUSH_TABS.APP_NOTIFICATIONS}
+    decryptedPgpPvtKey={pvtKey}
+ />
+```
+<br/>
+
+Allowed Options (props with * are mandatory)
+
+| Prop    | Type    | Default | Remarks                                    |
+|----------|---------|---------|--------------------------------------------|
+| account*    | string  | -       | user address(sender)                |
+| signer_    | -  | -       |  signer object(not passing signer would not show opt-in functionality in spam notifications)              |
+| decryptedPgpPvtKey*    | string  | -       | decrypted pgp private key              |
+| activeTab    | PushTabs | PUSH_TABS.CHATS  | set active tab when modal first opens  |
+| activeChat    | string  | -       | to open a particular chat when modal first opens               |
+| onClose     | () => void  | -       | function to execute when modal is minimised   |
+| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
 

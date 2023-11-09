@@ -13,6 +13,8 @@ export const CHAIN_ID_TO_SOURCE: ChainIdToSourceType = {
   420: 'OPTIMISM_TESTNET',
   1442: 'POLYGON_ZK_EVM_TESTNET',
   1101: 'POLYGON_ZK_EVM_MAINNET',
+  421613: "ARBITRUM_TESTNET",
+  42161: "ARBITRUMONE_MAINNET"
 };
 
 export const SOURCE_TYPES = {
@@ -26,8 +28,11 @@ export const SOURCE_TYPES = {
   OPTIMISM_TESTNET: 'OPTIMISM_TESTNET',
   POLYGON_ZK_EVM_TESTNET: 'POLYGON_ZK_EVM_TESTNET',
   POLYGON_ZK_EVM_MAINNET: 'POLYGON_ZK_EVM_MAINNET',
+  ARBITRUM_TESTNET: "ARBITRUM_TESTNET",
+  ARBITRUMONE_MAINNET: "ARBITRUMONE_MAINNET",
   THE_GRAPH: 'THE_GRAPH',
   PUSH_VIDEO: 'PUSH_VIDEO',
+  SIMULATE: 'SIMULATE'
 };
 
 export enum IDENTITY_TYPE {
@@ -46,6 +51,43 @@ export enum NOTIFICATION_TYPE {
 export enum ADDITIONAL_META_TYPE {
   CUSTOM = 0,
   PUSH_VIDEO = 1,
+  PUSH_SPACE = 2,
+}
+
+// Subset of ADDITIONAL_META_TYPE, to be used exclusively for Push Video, Spaces
+export enum VIDEO_CALL_TYPE {
+  PUSH_VIDEO = 1,
+  PUSH_SPACE = 2,
+}
+
+export enum SPACE_REQUEST_TYPE {
+  JOIN_SPEAKER, // space has started, join as a speaker
+  ESTABLISH_MESH, // request to establish mesh connection
+  INVITE_TO_PROMOTE, // host invites someone to be promoted as the speaker
+  REQUEST_TO_PROMOTE, // someone requests the host to be promoted to a spaeker
+}
+
+export enum SPACE_ACCEPT_REQUEST_TYPE {
+  ACCEPT_JOIN_SPEAKER,
+  ACCEPT_INVITE,
+  ACCEPT_PROMOTION,
+}
+
+export enum SPACE_DISCONNECT_TYPE {
+  STOP, // space is stopped/ended
+  LEAVE // speaker leaves a space
+}
+
+export enum SPACE_INVITE_ROLES {
+  CO_HOST,
+  SPEAKER,
+}
+
+export enum SPACE_ROLES {
+  HOST,
+  CO_HOST,
+  SPEAKER,
+  LISTENER
 }
 
 export const DEFAULT_DOMAIN = 'push.org';

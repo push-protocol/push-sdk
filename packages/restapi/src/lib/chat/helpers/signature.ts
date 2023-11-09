@@ -4,6 +4,7 @@ import {
 } from '@metamask/eth-sig-util';
 import * as ethers from 'ethers';
 import { hashMessage } from 'ethers/lib/utils';
+import { verifyMessage } from '@ambire/signature-validator';
 
 /**
  *
@@ -82,19 +83,21 @@ export const getTypedData = (
  * @param chainId
  * @returns
  */
-export const verifyProfileSignature = (
+export const verifyProfileSignature = async (
   verificationProof: string,
   signedData: string,
   address: string
-): boolean => {
+): Promise<boolean> => {
   const SIG_TYPE_V2 = 'eip712v2';
   const SIG_TYPE_V3 = 'eip191';
+  const SIG_TYPE_V4 = 'eip191v2';
   let chainId: number | null = null;
   let signature: string;
   const sigType = verificationProof.split(':')[0];
-
   if (
-    (sigType !== SIG_TYPE_V2 && sigType !== SIG_TYPE_V3) ||
+    (sigType !== SIG_TYPE_V2 &&
+      sigType !== SIG_TYPE_V3 &&
+      sigType !== SIG_TYPE_V4) ||
     verificationProof.split(':').length > 3
   ) {
     return false;
@@ -133,12 +136,28 @@ export const verifyProfileSignature = (
     }
   } else {
     // EIP191 sig validation
-    const recoveredAddress = ethers.utils.recoverAddress(
-      hashMessage(signedData),
-      signature
-    );
-    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-      return true;
-    } else return false;
+    try {
+      // EOA Wallet
+      const recoveredAddress = ethers.utils.recoverAddress(
+        hashMessage(signedData),
+        signature
+      );
+      if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+        return true;
+      } else return false;
+    } catch (err) {
+      try {
+        // SCW Wallet
+        const verificationResult: boolean = await verifyMessage({
+          signer: address.toLowerCase(),
+          message: signedData,
+          signature: signature,
+          provider: ethers.getDefaultProvider(1),
+        });
+        return verificationResult;
+      } catch (err) {
+        return false;
+      }
+    }
   }
 };

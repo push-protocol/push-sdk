@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
-import { getCAIPAddress } from '../helpers';
+import { getCAIPAddress, signTypedData } from '../helpers';
 import * as CryptoJS from 'crypto-js';
 
 import {
@@ -44,16 +44,31 @@ export function getPayloadForAPIInput(
         amsg: inputOptions?.payload?.body || '',
         asub: inputOptions?.payload?.title || '',
         type: inputOptions?.type?.toString() || '',
+        //deprecated
         ...(inputOptions?.expiry && { etime: inputOptions?.expiry }),
+        ...(inputOptions?.payload?.etime && {
+          etime: inputOptions?.payload?.etime,
+        }),
+        //deprecated
         ...(inputOptions?.hidden && { hidden: inputOptions?.hidden }),
+        ...(inputOptions?.payload?.hidden && {
+          hidden: inputOptions?.payload?.hidden,
+        }),
+        ...(inputOptions?.payload?.silent && {
+          silent: inputOptions?.payload?.silent,
+        }),
         ...(inputOptions?.payload?.sectype && {
           sectype: inputOptions?.payload?.sectype,
         }),
+        //deprecated
         ...(inputOptions?.payload?.metadata && {
           metadata: inputOptions?.payload?.metadata,
         }),
         ...(inputOptions?.payload?.additionalMeta && {
           additionalMeta: inputOptions?.payload?.additionalMeta,
+        }),
+        ...(inputOptions?.payload?.index && {
+          index: inputOptions?.payload?.index,
         }),
       },
       recipients: recipients,
@@ -240,7 +255,13 @@ export async function getVerificationProof({
         chainId: chainId,
         verifyingContract: verifyingContract,
       };
-      const signature = await signer._signTypedData(domain, type, message);
+      const signature = await signTypedData(
+        signer,
+        domain,
+        type,
+        message,
+        'Data'
+      );
       verificationProof = `eip712v2:${signature}::uid::${uuid}`;
       break;
     }
@@ -304,7 +325,7 @@ export function getSource(
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
   if (
-    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101].includes(chainId)
+    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161].includes(chainId)
   ) {
     return `eip155:${chainId}:${address}`;
   }
