@@ -9,7 +9,7 @@ const _env = Constants.ENV.LOCAL;
  * THIS TEST GROUP IS FOR BENCHMARKING SEND MESSAGE FOR PRIVATE GROUP
  * These tests will be skipped
  */
-describe('Private Groups', () => {
+describe.skip('Private Groups', () => {
   let account: string;
   let account2: string;
   let userAlice: PushAPI;
@@ -180,7 +180,7 @@ describe('Private Groups', () => {
    * STEP 3 - AUTOJOIN
    * This is imp for generating session keys so , do skip this test
    */
-  describe.skip('Private Group AutoJoin', () => {
+  describe('Private Group AutoJoin', () => {
     it('10 Members', async () => {
       const chatId =
         '9e8bea378b4e4860956c177146786c2e96a0db8aa7c4156299181b3e56290a57';
@@ -341,18 +341,21 @@ describe('Private Groups', () => {
       console.log('Duration in ms : ', duration);
     });
     it('5000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 5000);
-    });
-    it('10000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 10000);
-    });
-    it('15000 Members', async () => {
-      await createGroupAndSendMessages(userAlice, 15000);
+      const chatId =
+        '33c9295913786a8c446ceca46af8ee29a3a7144ba63071c24e5f05a5407bccdf';
+      const startTime = new Date();
+      await userAlice.chat.send(chatId, {
+        content: 'Sending Message to Private Grp',
+        type: 'Text',
+      });
+      const endTime = new Date();
+      const duration = endTime.getTime() - startTime.getTime();
+      console.log('Duration in ms : ', duration);
     });
   });
 
-  describe('Update Group with Pending members', () => {
-    it.only('10 Members', async () => {
+  describe.skip('Update Group with Pending members', () => {
+    it('10 Members', async () => {
       const chatId =
         'd8892a41ccbb7d0c627d1e3976f3a0bd64540d1d535b1a339680f2ce5b0fbcf0';
       await updateGroupWithPendingMembers(userAlice, chatId, 500);
@@ -470,7 +473,6 @@ const createGroupWithPendingMembers = async (
   return createdGroup.chatId;
 };
 
-
 /**
  * CREATE GROUP WITH GIVEN MEMBERS COUNT PENDING MEMBERS
  * @dev - Added members are pending members
@@ -484,7 +486,7 @@ const updateGroupWithPendingMembers = async (
    * STEP 1: Generate ENOUGH USERS
    */
   console.log('Generating Users');
- const users = await generateUsers(memberCount);
+  const users = await generateUsers(memberCount);
 
   /**
    * STEP 2: Add Members to Group
@@ -552,7 +554,6 @@ const generateUsers = async (memberCount: number): Promise<string[]> => {
   );
   return users; // 'users' is an array of strings representing accounts
 };
-
 
 /**
  * CREATE GROUP WITH GIVEN MEMBERS COUNT NON-PENDING MEMBERS

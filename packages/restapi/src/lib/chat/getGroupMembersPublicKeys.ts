@@ -10,10 +10,7 @@ import { FetchChatGroupInfoType } from './getGroupMembers';
 
 export const getGroupMembersPublicKeys = async (
   options: FetchChatGroupInfoType
-): Promise<{
-  totalMembersCount: ChatMemberCounts;
-  members: ChatMemberProfile[];
-}> => {
+): Promise<{ members: [{ did: string; publicKey: string }] }> => {
   const { chatId, page = 1, limit = 20, env = Constants.ENV.PROD } = options;
 
   try {

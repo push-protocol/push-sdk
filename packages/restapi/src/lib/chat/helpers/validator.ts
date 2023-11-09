@@ -227,7 +227,11 @@ export const validateGroupMemberUpdateOptions = (
         `Invalid role: ${role}. Allowed roles are ${allowedRoles.join(', ')}.`
       );
     }
-   
+
+    if (upsert[role] && upsert[role].length > 1000) {
+      throw new Error(`${role} array cannot have more than 1000 addresses.`);
+    }
+
     // Assuming you have a function `isValidETHAddress` to validate Ethereum addresses
     upsert[role].forEach((address) => {
       if (!isValidETHAddress(address)) {
@@ -237,8 +241,8 @@ export const validateGroupMemberUpdateOptions = (
   });
 
   // Validating remove array
-  if (remove && remove.length > 100) {
-    throw new Error('Remove array cannot have more than 100 addresses.');
+  if (remove && remove.length > 1000) {
+    throw new Error('Remove array cannot have more than 1000 addresses.');
   }
   remove.forEach((address) => {
     if (!isValidETHAddress(address)) {
