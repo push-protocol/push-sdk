@@ -40,7 +40,6 @@ import {
 import useToast from '../reusables/NewToast';
 import {
   CriteriaValidationErrorType,
-  Data,
   GuildData,
   PushData,
   Rule,

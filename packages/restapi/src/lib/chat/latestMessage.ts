@@ -1,5 +1,6 @@
 import Constants from '../constants';
 import { AccountEnvOptionsType } from '../types';
+import { IPGPHelper, PGPHelper } from './helpers';
 import { history } from './historicalMessages';
 
 export interface LatestMessagesOptionsType extends AccountEnvOptionsType {
@@ -11,7 +12,11 @@ export interface LatestMessagesOptionsType extends AccountEnvOptionsType {
 /**
  * Get the latest chat message
  */
+
 export const latest = async (options: LatestMessagesOptionsType) => {
+  return await latestCore(options, PGPHelper)
+}
+export const latestCore = async (options: LatestMessagesOptionsType, pgpHelper: IPGPHelper) => {
   const {
     threadhash,
     pgpPrivateKey = '',

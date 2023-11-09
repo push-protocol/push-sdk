@@ -110,12 +110,18 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
+      const info = await this.info(options.channel?? this.account);
+      let settings = null;
+      if(info && info.channel_settings){
+        settings = JSON.parse(info.channel_settings);
+      }
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
         signer: this.signer!,
         env: this.env!,
         recipients: recipients,
         options: options,
         channel: options.channel ?? this.account,
+        settings: settings,
       });
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {
@@ -159,7 +165,7 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gte(balance)) {
+      if (fees.gt(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -263,7 +269,7 @@ export class Channel extends PushNotificationBaseClass {
         18
       );
       const totalFees = fees.mul(counter)
-      if (totalFees.gte(balance)) {
+      if (totalFees.gt(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -396,7 +402,7 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gte(balance)) {
+      if (fees.gt(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
       const allowanceAmount = await this.fetchAllownace(

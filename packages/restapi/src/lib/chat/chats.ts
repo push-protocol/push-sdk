@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists, getUserDID, addDeprecatedInfo } from './helpers';
+import { getInboxLists, getUserDID, addDeprecatedInfo, IPGPHelper, PGPHelper } from './helpers';
 
 export type ChatsOptionsType = {
   account: string;
@@ -28,7 +28,12 @@ export type ChatsOptionsType = {
 /**
  * Return the latest message from all wallet addresses you have talked to. This can be used when building the inbox page.
  */
+
 export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
+  return await chatsCore(options,PGPHelper)
+}
+
+export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper): Promise<IFeeds[]> => {
   const {
     account,
     pgpPrivateKey,

@@ -73,10 +73,7 @@ export class PushAPI {
 
   static async initialize(
     signer: SignerType,
-    options?: PushAPIInitializeProps,
-    version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3,
-    versionMeta?: { NFTPGP_V1?: { password: string } },
-    autoUpgrade?: boolean
+    options?: PushAPIInitializeProps
   ): Promise<PushAPI> {
     try {
       // Default options
@@ -97,10 +94,12 @@ export class PushAPI {
       const settings = {
         ...defaultOptions,
         ...options,
-        version: version || defaultOptions.version,
-        versionMeta: versionMeta || defaultOptions.versionMeta,
+        version: options?.version || defaultOptions.version,
+        versionMeta: options?.versionMeta || defaultOptions.versionMeta,
         autoUpgrade:
-          autoUpgrade !== undefined ? autoUpgrade : defaultOptions.autoUpgrade,
+          options?.autoUpgrade !== undefined
+            ? options?.autoUpgrade
+            : defaultOptions.autoUpgrade,
         streamOptions: {
           ...defaultOptions.streamOptions,
           ...(options?.streamOptions ?? {}),
@@ -168,7 +167,10 @@ export class PushAPI {
           decryptedPGPPrivateKey,
           signer,
           settings.progressHook,
-          settings.streamOptions
+          {
+            ...settings.streamOptions,
+            env: settings.env, // Use the env from the top-level PushAPIInitializeProps
+          }
         );
         if (streamInstance) {
           api.stream = streamInstance;

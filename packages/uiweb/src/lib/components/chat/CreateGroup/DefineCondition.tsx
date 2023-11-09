@@ -23,7 +23,6 @@ export const DefineCondtion = ({
   criteriaStateManager,
 }: ModalHeaderProps) => {
   const theme = useContext(ThemeContext);
-
   const isMobile = useMediaQuery(device.mobileL);
 
   const criteriaState = criteriaStateManager.getSelectedCriteria();

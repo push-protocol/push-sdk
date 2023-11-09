@@ -1,4 +1,4 @@
-import { ConnectButtonComp } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -7,7 +7,7 @@ const Index: NextPage = () => {
   return (
     <Container>
       <h1>Hello Next.js 👋</h1>
-      <ConnectButtonComp />
+      <ConnectButton />
       <Button>
         <Link href="/video">Video</Link>
       </Button>

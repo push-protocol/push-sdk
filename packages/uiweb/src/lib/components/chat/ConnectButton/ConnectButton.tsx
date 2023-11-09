@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { Signer, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
-import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
-import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
+
 
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
@@ -20,19 +18,13 @@ import { device } from '../../../config';
 interface IThemeProps {
   theme?: IChatTheme;
 }
-interface IConnectButtonProps {
-  autoConnect?: boolean;
-}
+
 
 export const ConnectButtonSub = ({autoConnect = false})  => {
   const {wallet, connecting , connect, disconnect} = useAccount();
 
   const {
     signer,
-    pgpPrivateKey,
-    account,
-    env,
-    setPgpPrivateKey,
     setAccount,
     setSigner,
   } = useChatData();
@@ -58,7 +50,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     disconnect(wallet);
     setUserData()
   }, [wallet])
-
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>

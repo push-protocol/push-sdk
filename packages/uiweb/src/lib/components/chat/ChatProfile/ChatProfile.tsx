@@ -22,11 +22,9 @@ import { IGroup } from '../../../types';
 import { isValidETHAddress } from '../helpers/helper';
 import {
   IChatProfile,
-  IChatTheme,
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
-  ModalBackgroundType,
-  ModalPositionType,
+
 } from '../exportedTypes';
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
@@ -37,77 +35,6 @@ import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 
-type OptionProps = {
-  options: boolean;
-  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  isGroup: boolean;
-  groupInfo: IGroup | null | undefined;
-  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-  theme: IChatTheme;
-  groupInfoModalBackground: ModalBackgroundType;
-};
-
-const Options = ({
-  options,
-  setOptions,
-  isGroup,
-  groupInfo,
-  setGroupInfo,
-  groupInfoModalBackground,
-  theme,
-}: OptionProps) => {
-  const DropdownRef = useRef(null);
-  const [modal, setModal] = useState(false);
-
-  useClickAway(DropdownRef, () => {
-    setOptions(false);
-  });
-
-  const ShowModal = () => {
-    setModal(true);
-  };
-
-  if (groupInfo && isGroup) {
-    return (
-      <ImageItem onClick={() => setOptions(true)}>
-        <Image
-          src={VerticalEllipsisIcon}
-          height="21px"
-          maxHeight="32px"
-          width={'auto'}
-          cursor="pointer"
-        />
-
-        {options && (
-          <DropDownBar theme={theme} ref={DropdownRef}>
-            <DropDownItem cursor="pointer" onClick={ShowModal}>
-              <Image
-                src={InfoIcon}
-                height="21px"
-                maxHeight="21px"
-                width={'auto'}
-                cursor="pointer"
-              />
-
-              <TextItem cursor="pointer">Group Info</TextItem>
-            </DropDownItem>
-          </DropDownBar>
-        )}
-        {modal && (
-          <GroupInfoModal
-            theme={theme}
-            setModal={setModal}
-            groupInfo={groupInfo}
-            setGroupInfo={setGroupInfo}
-            groupInfoModalBackground={groupInfoModalBackground}
-          />
-        )}
-      </ImageItem>
-    );
-  } else {
-    return null;
-  }
-};
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
@@ -239,15 +166,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             </ImageItem>
           )}
          
-          {/* <Options
-            options={options}
-            setOptions={setOptions}
-            isGroup={isGroup}
-            groupInfo={groupInfo}
-            setGroupInfo={setGroupInfo}
-            theme={theme}
-            groupInfoModalBackground={groupInfoModalBackground}
-          /> */}
+        
         </Section>
         {modal && (
             <GroupInfoModal

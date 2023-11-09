@@ -54,10 +54,7 @@ export type IPayload = {
   body?: string;
   cta?: string;
   embed?: string;
-  index?: {
-    index: number;
-    value?: number;
-  };
+  category?: number;
   meta?: {
     domain?: string;
     type: `${ADDITIONAL_META_TYPE}+${number}`;
@@ -106,6 +103,8 @@ export type NotificationSetting = {
   data?: {
     upper: number;
     lower: number;
+    enabled?: boolean;
+    ticker?: number;
   };
 };
 

@@ -56,6 +56,7 @@ function Dropdown({
       document.body.removeChild(el);
     }
   };
+  console.log(dropdownValues)
   return (
     <>
       {dropdownValues.map((dropdownValue) =>
@@ -195,6 +196,7 @@ const DropdownItemContainer = styled(Section) <{ hoverBGColor?: string }>`
   flex-wrap: nowrap;
   white-space: nowrap;
   margin: 1px 0;
+// width:100%;
   padding: 2px 8px;
   border-radius: 12px;
   cursor: pointer;

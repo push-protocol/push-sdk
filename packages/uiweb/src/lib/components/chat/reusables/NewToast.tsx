@@ -72,7 +72,6 @@ const useToast = (
 
   const showLoaderToast: ShowLoaderToastType = ({ loaderMessage }) => {
     isLoaderToastShown = true;
-
     return (toastId.current = toast(
       <ThemeProvider theme={theme}>
         <LoaderToast

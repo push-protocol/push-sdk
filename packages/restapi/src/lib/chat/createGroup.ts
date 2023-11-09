@@ -5,12 +5,13 @@ import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
 import {
   ICreateGroupRequestPayload,
   createGroupPayload,
-  sign,
   createGroupRequestValidator,
   getWallet,
   getUserDID,
-  getConnectedUserV2,
+  IPGPHelper,
+  PGPHelper,
   validateScheduleDates,
+  getConnectedUserV2Core,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 
@@ -35,8 +36,13 @@ export interface ChatCreateGroupType extends EnvOptionsType {
   rules?: Rules | null;
 }
 
-export const createGroup = async (
-  options: ChatCreateGroupType
+export const createGroup = async (options: ChatCreateGroupType) => {
+  return await createGroupCore(options, PGPHelper);
+};
+
+export const createGroupCore = async (
+  options: ChatCreateGroupType,
+  pgpHelper: IPGPHelper
 ): Promise<GroupDTO> => {
   const {
     account = null,
@@ -89,7 +95,12 @@ export const createGroup = async (
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
 
-    const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
+    const connectedUser = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
 
     const bodyToBeHashed = {
       groupName: groupName,
@@ -108,7 +119,7 @@ export const createGroup = async (
     };
 
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
-    const signature: string = await sign({
+    const signature: string = await pgpHelper.sign({
       message: hash,
       signingKey: connectedUser.privateKey!,
     });
