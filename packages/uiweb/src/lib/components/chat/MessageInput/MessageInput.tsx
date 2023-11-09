@@ -39,7 +39,7 @@ import {
 } from '../../../hooks';
 
 import type { FileMessageContent, IGroup } from '../../../types';
-import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
+import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import { InfoContainer } from '../reusables';
@@ -84,6 +84,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
+  verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
   onVerificationFail,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
@@ -375,23 +377,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
-  return !Object.keys(chatFeed || {}).length ? (
-    <>
-      {!pgpPrivateKey && (isConnected || !!signer) && (
-        <TypebarSection
-          width="100%"
-          overflow="hidden"
-          borderRadius="13px"
-          position="static"
-          padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-          background={`${theme.backgroundColor?.messageInputBackground}`}
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <ConnectButtonSection autoConnect={autoConnect} />
-        </TypebarSection>
-      )}
-    </>
+  return !(pgpPrivateKey && account) && isConnected ? (
+    <TypebarSection
+      width="100%"
+      overflow="hidden"
+      borderRadius="13px"
+      position="static"
+      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      background={`${theme.backgroundColor?.messageInputBackground}`}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <ConnectButtonSection autoConnect={autoConnect} />
+    </TypebarSection>
   ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
     <TypebarSection
@@ -471,7 +469,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </Section>
           )}
           {!!pgpPrivateKey && !verificationSuccessfull && (
-            <Modal width="550px">
+            <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
               <Section
                 margin="5px 0px 0px 0px"
                 gap="16px"
@@ -484,7 +482,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   groupInfo={chatFeed?.groupInformation}
                   subheader="Please make sure the following conditions
                    are met to pariticpate and send messages."
-                   alert={true}
+                  alert={true}
                 />
                 <ConnectWrapperClose
                   onClick={() => {
@@ -496,7 +494,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 >
                   <ConnectClose>Cancel</ConnectClose>
                 </ConnectWrapperClose>
-                <InfoContainer cta='https://push.org/docs/chat/build/conditional-rules-for-group/' label="Learn more about access gating rules" />
+                <InfoContainer
+                  cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                  label="Learn more about access gating rules"
+                />
               </Section>
               {/* </Section> */}
             </Modal>

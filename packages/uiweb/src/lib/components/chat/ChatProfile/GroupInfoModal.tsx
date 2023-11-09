@@ -35,7 +35,7 @@ import { copyToClipboard, shortenText } from '../../../helpers';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { MODAL_BACKGROUND_TYPE, ModalBackgroundType } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 
 const UPDATE_KEYS = {
@@ -315,6 +315,7 @@ type GroupInfoModalProps = {
   groupInfo: IGroup;
   setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   groupInfoModalBackground?: ModalBackgroundType;
+  groupInfoModalPositionType?: ModalPositionType;
 };
 
 export const GROUPINFO_STEPS = {
@@ -578,6 +579,7 @@ export const GroupInfoModal = ({
   groupInfo,
   setGroupInfo,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: GroupInfoModalProps) => {
   const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(
     GROUPINFO_STEPS.GROUP_INFO
@@ -738,6 +740,7 @@ export const GroupInfoModal = ({
       <Modal
         clickawayClose={onClose}
         modalBackground={groupInfoModalBackground}
+        modalPositionType={groupInfoModalPositionType}
       >
         {!showAddMoreWalletModal && (
           <Section

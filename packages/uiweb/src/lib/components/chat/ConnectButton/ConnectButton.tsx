@@ -37,9 +37,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setSigner,
   } = useChatData();
   const theme = useContext(ThemeContext);
-  const {fetchChatProfile} = useGetChatProfile();
-  const {creteChatProfile} = useCreateChatProfile();
-  const {decryptPGPKey} = useDecryptPGPKey();
 
 
   const setUserData = () => {
@@ -54,7 +51,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     } else if (!wallet) {
       setAccount('')
       setSigner(undefined)
-      setPgpPrivateKey(null)
     }
   }
   useEffect(() => {
@@ -63,37 +59,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setUserData()
   }, [wallet])
 
-  useEffect(() => {
-    (async () => {
-      if (account && signer) {
-        if (!pgpPrivateKey) await handleUserCreation();
-      }
-    })();
-  }, [account, signer]);
 
-
-  const handleUserCreation = async () => {
-    if (!account && !env) return;
-    try {
-      let user  = await fetchChatProfile({ profileId: account! ,env});
-      if (!user) {
-        if (!signer) return;
-        user = await creteChatProfile({ signer: signer ,env});
-      }
-      if (user?.encryptedPrivateKey && !pgpPrivateKey) {
-        const decryptPgpKey = await decryptPGPKey({
-          encryptedPrivateKey: user.encryptedPrivateKey,
-          account: account!,
-          signer: signer,
-          env: env,
-        });
-        if(decryptPgpKey)
-        setPgpPrivateKey(decryptPgpKey);
-      }
-    } catch (e: any) {
-      console.log(e);
-    }
-  };
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
       <button onClick={() => (wallet ? disconnect(wallet) : connect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
