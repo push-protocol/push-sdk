@@ -138,7 +138,14 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer object: Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', {
+          settings: [{
+            enabled: false
+          },{
+            enabled: false,
+            value: 0
+          }, ]
+        }
       );
       // console.log(res)
       expect(res).not.null;

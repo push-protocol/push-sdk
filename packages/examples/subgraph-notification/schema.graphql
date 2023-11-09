@@ -1,0 +1,49 @@
+type User @entity {
+  id: ID!
+  address: String!
+  balance: BigInt!
+  transactionCount: Int!
+}
+
+type Minter @entity {
+  id: ID!
+  address: String!
+  totalMinted: BigInt!
+  totalBurned: BigInt!
+}
+
+type UserCounter @entity {
+  id: ID!
+  count: Int!
+}
+
+type MinterCounter @entity {
+  id: ID!
+  count: Int!
+}
+
+type TransferCounter @entity {
+  id: ID!
+  count: Int!
+  totalTransferred: BigInt!
+}
+
+type TotalSupply @entity {
+  id: ID!
+  supply: BigInt!
+  minted: BigInt!
+  burned: BigInt!
+}
+
+type EpnsNotificationCounter @entity {
+  id: ID!
+  totalCount: BigInt!
+}
+
+type EpnsPushNotification @entity {
+  id: ID!
+  notificationNumber: BigInt!
+  recipient: String!
+  notification: String!
+}
+
