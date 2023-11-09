@@ -9,7 +9,7 @@
     "strict": true,
     "noImplicitOverride": true,
     // "importsNotUsedAsValues": "error",
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     // "isolatedModules": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true

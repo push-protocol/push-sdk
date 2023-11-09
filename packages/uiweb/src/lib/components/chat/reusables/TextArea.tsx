@@ -9,6 +9,7 @@ export interface ITextAreaProps {
     labelName?: string;
     inputValue: string;
     onInputChange: any;
+    error?:boolean;
 
 }
 
@@ -31,7 +32,7 @@ export const TextArea = (props: ITextAreaProps) => {
             <label>{props.labelName}</label>
             <CharCounter theme={theme}>{props.inputValue.length} / {props.charCount}</CharCounter>
         </LabelContainer>
-        <Input  theme={theme} value={props.inputValue} onChange={handleChange} />
+        <Input error={props.error || false} theme={theme} value={props.inputValue} onChange={handleChange} />
         </InputContainer>
     </ThemeProvider>
   )
@@ -55,7 +56,7 @@ const LabelContainer = styled.div`
     color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const Input = styled.textarea<IChatTheme>`
+const Input = styled.textarea<IChatTheme & {error:boolean}>`
     padding: 16px;
     margin-top: 8px;
 
@@ -64,7 +65,7 @@ const Input = styled.textarea<IChatTheme>`
     color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
     background: ${(props) => props.theme.backgroundColor.modalInputBackground};
-    border: ${(props) => props.theme.border.modalInnerComponents};
+    border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
     border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
     font-family: ${(props) => props.theme.fontFamily};

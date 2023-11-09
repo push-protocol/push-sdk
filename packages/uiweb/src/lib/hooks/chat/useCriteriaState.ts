@@ -30,7 +30,40 @@ export const useCriteriaState = (
     useState(-1);
   const [updateCriteriaIdx, setUpdateCriteriaIdx] = useState(-1);
 
+  
+  const isDuplicateRule = (rule:Rule)=>{
+    const newRule = JSON.stringify(rule)
+
+    // check on current conditions
+    for(let i=0; i<selectedRules.length;i++){
+      const selectedRule = JSON.stringify(selectedRules[i])
+      if (newRule === selectedRule){
+        console.log(newRule, " equals ", selectedRule);
+        
+        return true
+      }
+    }
+
+    // check on already selected condtions
+    for (let i = 0; i < entryOptionsDataArray.length; i++) {
+      const _rules = entryOptionsDataArray[i]
+      for (let j = 0;  j < _rules.length; j++) {
+        const selectedRule = JSON.stringify(_rules[j])
+        if (newRule === selectedRule){
+          console.log(newRule, " equals ", selectedRule);
+          return true
+        }
+      }
+    }    
+
+    return false
+  }
+
   const addNewRule = (newRule: Rule) => {
+    if(isDuplicateRule(newRule)){
+      return false
+    }
+
     if (selectedCriteria === -1) {
       setSelectedCriteria(entryOptionTypeArray.length);
     }
@@ -44,6 +77,8 @@ export const useCriteriaState = (
       // add new
       setSelectedRule((prev) => [...prev, newRule]);
     }
+
+    return true
   };
 
   const deleteRule = (idx: number) => {
