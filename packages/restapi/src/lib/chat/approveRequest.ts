@@ -13,6 +13,8 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { getGroup } from './getGroup';
 import * as AES from '../chat/helpers/aes';
+import { getGroupInfo } from './getGroupInfo';
+import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -88,13 +90,18 @@ export const approveCore = async (
   // pgpv2 is used for private grps
   let sigType: 'pgp' | 'pgpv2' = 'pgp';
   if (isGroup) {
-    const group = await getGroup({ chatId: senderAddress, env });
+    const group = await getGroupInfo({ chatId: senderAddress, env });
 
     if (group && !group.isPublic) {
       sigType = 'pgpv2';
       const secretKey = AES.generateRandomSecret(15);
+
+      const groupMembers = await getAllGroupMembersPublicKeys({
+        chatId: group.chatId,
+        env,
+      });
       // Encrypt secret key with group members public keys
-      const publicKeys: string[] = group.members.map(
+      const publicKeys: string[] = groupMembers.map(
         (member) => member.publicKey
       );
       publicKeys.push(connectedUser.publicKey);

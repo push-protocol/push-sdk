@@ -14,7 +14,7 @@ import { EnvOptionsType, GroupInfoDTO, SignerType } from '../types';
 import { getGroupInfo } from './getGroupInfo';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
-import { getAllGroupMembers } from './getAllGroupMembers';
+import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -79,7 +79,7 @@ export const updateGroupMembers = async (
         env,
       });
 
-      const groupMembers = await getAllGroupMembers({ chatId, env });
+      const groupMembers = await getAllGroupMembersPublicKeys({ chatId, env });
 
       const removeParticipantSet = new Set(
         convertedRemove.map((participant) => participant.toLowerCase())
@@ -87,10 +87,7 @@ export const updateGroupMembers = async (
       let sameMembers = true;
 
       groupMembers.map((element) => {
-        if (
-          element.intent &&
-          removeParticipantSet.has(element.address.toLowerCase())
-        ) {
+        if (removeParticipantSet.has(element.did.toLowerCase())) {
           sameMembers = false;
         }
       });
@@ -101,11 +98,8 @@ export const updateGroupMembers = async (
         const publicKeys: string[] = [];
         // This will now only take keys of non-removed members
         groupMembers.map((element) => {
-          if (
-            element.intent &&
-            !removeParticipantSet.has(element.address.toLowerCase())
-          ) {
-            publicKeys.push(element.userInfo.publicKey as string);
+          if (!removeParticipantSet.has(element.did.toLowerCase())) {
+            publicKeys.push(element.publicKey as string);
           }
         });
 

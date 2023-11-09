@@ -373,6 +373,7 @@ export interface ChatMemberCounts {
   adminsCount: number;
   membersCount: number;
   pendingCount: number;
+  approvedCount: number;
 }
 
 export interface ChatMemberProfile {
