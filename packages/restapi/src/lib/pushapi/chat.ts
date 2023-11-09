@@ -27,6 +27,7 @@ import {
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
 import { User } from './user';
+import { updateGroupConfig } from '../chat/updateGroupConfig';
 export class Chat {
   private userInstance: User;
 
@@ -237,20 +238,30 @@ export class Chat {
 
   group = {
     create: async (name: string, options?: GroupCreationOptions) => {
-      const groupParams: PUSH_CHAT.ChatCreateGroupType = {
-        groupName: name,
-        groupDescription: options?.description,
-        members: options?.members ? options.members : [],
-        groupImage: options?.image,
-        admins: options?.admins ? options.admins : [],
-        rules: options?.rules,
-        isPublic: !options?.private,
+      const groupParams: PUSH_CHAT.ChatCreateGroupTypeV2 = {
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
+
+        groupName: name,
+        groupDescription: options?.description ?? null,
+        groupImage: options?.image ?? null,
+        rules: options?.rules ?? {},
+        isPublic: !options?.private,
+        groupType: 'default',
+
+        config: {
+          meta: null,
+          scheduleAt: null,
+          scheduleEnd: null,
+          status: null,
+        },
+
+        members: options?.members ? options.members : [],
+        admins: options?.admins ? options.admins : [],
       };
 
-      return await PUSH_CHAT.createGroup(groupParams);
+      return await PUSH_CHAT.createGroupV2(groupParams);
     },
 
     permissions: async (chatId: string): Promise<GroupAccess> => {
@@ -271,7 +282,7 @@ export class Chat {
     update: async (
       chatId: string,
       options: GroupUpdateOptions
-    ): Promise<GroupDTO> => {
+    ): Promise<GroupInfoDTO> => {
       const group = await PUSH_CHAT.getGroup({
         chatId: chatId,
         env: this.env,
@@ -287,18 +298,25 @@ export class Chat {
           ? options.description
           : group.groupDescription,
         groupImage: options.image ? options.image : group.groupImage,
+        rules: options.rules ? options.rules : group.rules,
+        account: this.account,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        env: this.env,
+      };
+      const updateGroupConfigOptions = {
+        chatId: chatId,
         meta: options.meta ? options.meta : group.meta,
         scheduleAt: options.scheduleAt ? options.scheduleAt : group.scheduleAt,
         scheduleEnd: options.scheduleEnd
           ? options.scheduleEnd
           : group.scheduleEnd,
-        rules: options.rules ? options.rules : group.rules,
         status: options.status ? options.status : group.status,
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
       };
-      return await updateGroupProfile(updateGroupProfileOptions);
+      await updateGroupProfile(updateGroupProfileOptions);
+      return await updateGroupConfig(updateGroupConfigOptions);
     },
 
     add: async (chatId: string, options: ManageGroupOptions) => {

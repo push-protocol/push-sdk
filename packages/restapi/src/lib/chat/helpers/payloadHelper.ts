@@ -74,7 +74,6 @@ export interface IUpdateGroupRequestPayload {
   admins: Array<string>;
   address: string;
   verificationProof: string;
-  sessionKey: string | null;
   encryptedSecret: string | null;
 }
 
@@ -365,7 +364,6 @@ export const updateGroupPayload = (
   admins: Array<string>,
   address: string,
   verificationProof: string,
-  sessionKey: string | null,
   encryptedSecret: string | null,
   groupDescription?: string | null,
   groupImage?: string | null,
@@ -383,7 +381,6 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
-    sessionKey: sessionKey,
     encryptedSecret: encryptedSecret,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,

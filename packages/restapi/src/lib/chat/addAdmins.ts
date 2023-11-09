@@ -33,6 +33,7 @@ export const addAdmins = async (
     }
 
     const upsertPayload = {
+      members: [],
       admins: admins,
     };
 

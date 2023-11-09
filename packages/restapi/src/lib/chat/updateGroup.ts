@@ -125,7 +125,6 @@ export const updateGroupCore = async (
       }
     });
 
-    let sessionKey: string | null = null;
     let encryptedSecret: string | null = null;
     if ((!sameMembers || !participantStatus.isMember) && !groupChat.isPublic) {
       const secretKey = AES.generateRandomSecret(15);
@@ -148,8 +147,6 @@ export const updateGroupCore = async (
         plainText: secretKey,
         keys: publicKeys,
       });
-
-      sessionKey = CryptoJS.SHA256(encryptedSecret).toString();
     }
 
     const bodyToBeHashed = {
@@ -175,7 +172,6 @@ export const updateGroupCore = async (
       convertedAdmins,
       connectedUser.did,
       verificationProof,
-      sessionKey,
       encryptedSecret,
       groupDescription,
       groupImage,
@@ -192,7 +188,8 @@ export const updateGroupCore = async (
         return response.data;
       })
       .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
+        if (err?.response?.data)
+          throw new Error(JSON.stringify(err.response.data));
         throw new Error(err);
       });
   } catch (err) {

@@ -2,9 +2,9 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
-  ChatStatus,
   EnvOptionsType,
   GroupDTO,
+  GroupInfoDTO,
   Rules,
   SignerType,
 } from '../types';
@@ -16,43 +16,35 @@ import {
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import { getGroup } from './getGroup';
+import { getGroupInfo } from './getGroupInfo';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   chatId: string;
   groupName: string;
-  groupImage?: string | null;
-  groupDescription?: string | null;
-  pgpPrivateKey?: string | null;
-  scheduleAt?: Date | null;
-  scheduleEnd?: Date | null;
-  status?: ChatStatus | null;
-  meta?: string | null;
+  groupDescription: string | null;
+  groupImage: string | null;
   rules?: Rules | null;
+  pgpPrivateKey?: string | null;
 }
 
 /**
- * Update Group information
+ * Update Group Profile
  */
 export const updateGroupProfile = async (
   options: ChatUpdateGroupProfileType
-): Promise<GroupDTO> => {
+): Promise<GroupInfoDTO> => {
   const {
     chatId,
     groupName,
     groupImage,
     groupDescription,
+    rules,
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
-    scheduleAt,
-    scheduleEnd,
-    status,
-    meta,
-    rules,
   } = options || {};
   try {
     /**
@@ -73,7 +65,7 @@ export const updateGroupProfile = async (
       groupDescription
     );
 
-    const group = await getGroup({
+    const group = await getGroupInfo({
       chatId,
       env,
     });
@@ -82,15 +74,10 @@ export const updateGroupProfile = async (
      * CREATE PROFILE VERIFICATION PROOF
      */
     const bodyToBeHashed = {
-      chatId: chatId,
       groupName: groupName,
       groupDescription: groupDescription,
       groupImage: groupImage,
-      meta: meta,
-      scheduleAt: scheduleAt,
-      scheduleEnd: scheduleEnd,
-      rules: rules,
-      status: status,
+      rules: rules ?? {},
       isPublic: group.isPublic,
       groupType: group.groupType,
     };
@@ -103,7 +90,7 @@ export const updateGroupProfile = async (
     });
     const sigType = 'pgpv2';
     // Account is need to verify the signature at any future point
-    const verificationProof: string =
+    const profileVerificationProof: string =
       sigType + ':' + signature + ':' + connectedUser.did;
 
     /**
@@ -113,12 +100,11 @@ export const updateGroupProfile = async (
     const apiEndpoint = `${API_BASE_URL}/v1/chat/groups/${chatId}/profile`;
 
     const {
-      chatId: chat_id,
       isPublic: is_public,
       groupType: group_type,
       ...body
     } = bodyToBeHashed;
-    (body as any).verificationProof = verificationProof;
+    (body as any).profileVerificationProof = profileVerificationProof;
 
     return axios
       .put(apiEndpoint, body)

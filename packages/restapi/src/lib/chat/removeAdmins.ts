@@ -38,7 +38,10 @@ export const removeAdmins = async (
 
     const groupMemberUpdateOptions: GroupMemberUpdateOptions = {
       chatId: chatId,
-      upsert: {},
+      upsert: {
+        members: [],
+        admins: [],
+      },
       remove: admins,
       account: account,
       signer: signer,
