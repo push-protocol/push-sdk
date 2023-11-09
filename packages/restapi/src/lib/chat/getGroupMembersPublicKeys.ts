@@ -19,7 +19,7 @@ export const getGroupMembersPublicKeys = async (
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/publickeys?pageNumber=${page}&pageSize=${limit}`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/publicKeys?pageNumber=${page}&pageSize=${limit}`;
 
     const response = await axios.get(requestUrl);
     return response.data;
