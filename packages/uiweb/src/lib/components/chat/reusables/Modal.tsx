@@ -13,17 +13,21 @@ import { IChatTheme } from '../theme';
 import { Section, Span, Image } from '../../reusables';
 import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
+import { device } from '../../../config';
 
 interface IModalProps {
   width?: string;
   clickawayClose?: () => void;
   children: any;
   theme?: IChatTheme;
+  modalBackground?: ModalBackgroundType;
+  modalPositionType?: ModalPositionType;
 }
 
 interface IModalHeader {
   handlePrevious?: () => void;
-  handleClose: () => void;
+  handleClose?: () => void;
   title: string;
 }
 
@@ -48,10 +52,10 @@ const ClickawayCloseModal = ({
   );
 };
 
-export const Modal = ({ clickawayClose, children, width }: IModalProps) => {
+export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,modalPositionType = MODAL_POSITION_TYPE.GLOBAL }: IModalProps) => {
   const theme = useContext(ThemeContext);
   return (
-    <ModalOverlay theme={theme}>
+    <ModalOverlay theme={theme} modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {clickawayClose ? (
         <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>
           {children}
@@ -86,30 +90,31 @@ export const ModalHeader = ({
       >
         {title}
       </Span>
-      <Image
+      {handleClose && ( <Image
         src={CloseIcon}
         height="24px"
         maxHeight="24px"
         width={'auto'}
         onClick={() => handleClose()}
         cursor="pointer"
-      />{' '}
+      />)}{' '}
     </Section>
   );
 };
 /* styling */
 
 const ModalOverlay = styled.div<IModalProps>`
-  position: fixed;
+  position:${(props) =>  props.modalPositionType === MODAL_POSITION_TYPE.GLOBAL? 'fixed':'absolute'};
   top: 0;
   left: 0;
-  right: 0;
+  right: 0;  
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Black with 40% opacity */
+  backdrop-filter:${(props) =>  props.modalBackground === MODAL_BACKGROUND_TYPE.BLUR? 'blur(3px)':'none'};
+  background-color: ${(props) => props.modalBackground === MODAL_BACKGROUND_TYPE.OVERLAY? 'rgba(0, 0, 0, 0.5)':' transparent'}; /* Black with 40% opacity */
   display: flex;
-  color: ${(props) => props.theme.textColor.modalHeadingText ?? '#000'};
+  color: ${(props) => props.theme.textColor!.modalHeadingText ?? '#000'};
   justify-content: center;
   align-items: center;
   z-index: 2000;
@@ -124,15 +129,18 @@ const ModalParent = styled.div<IModalProps>`
   flex-direction: column;
   align-items: center;
   padding: 24px 20px;
-
-  background: ${(props) => props.theme.backgroundColor.modalBackground};
-  border-radius: ${(props) => props.theme.borderRadius.modal};
+  max-height: 75vh;
+  // @media ${device.mobileL} {
+  //   max-height: 70vh;
+  // }
+  background: ${(props) => props.theme.backgroundColor?.modalBackground};
+  border-radius: ${(props) => props.theme.borderRadius?.modal};
 
   width: ${(props) => (props.width ? props.width : 'auto')};
   margin: auto !important;
 
   @media (max-width: 425px) {
     min-width: 300px;
-    max-width: 300px;
+    // max-width: 306px;
   }
 `;

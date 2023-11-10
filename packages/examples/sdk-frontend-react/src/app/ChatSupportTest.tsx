@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
-import { Chat, ITheme } from '@pushprotocol/uiweb';
+import { SupportChat, ITheme } from '@pushprotocol/uiweb';
 import { lightTheme } from '@pushprotocol/uiweb';
 import { EnvContext, Web3Context } from './context';
 
@@ -31,10 +31,11 @@ export const ChatSupportTest = () => {
   };
 
   return (
-    <Chat
-      account={account}
+    //works as Chat as well as Support Chat
+    <SupportChat
+  
       signer={librarySigner}
-      supportAddress="0xD2A371cAFBE09333F6668229E4BD33196583c325"
+      supportAddress="0x6F7919412318E65109c5698bd0E640fc33DE2337"
       apiKey="tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"
       env={env}
       greetingMsg="How can i help you?"
