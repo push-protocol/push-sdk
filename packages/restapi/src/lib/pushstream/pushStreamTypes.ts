@@ -84,9 +84,6 @@ export interface GroupMeta {
   description: string;
   image: string;
   owner: string;
-  members: Member[];
-  admins: Member[];
-  pending: Pending;
   private: boolean;
   rules: Rules;
 }
