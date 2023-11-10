@@ -27,15 +27,21 @@ SET time_zone = "+00:00";
 -- Table structure for table `chat_members`
 --
 
-CREATE TABLE `chat_members` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `chat_members` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
   `role` varchar(255) NOT NULL,
   `intent` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `chat_address_unique` (`chat_id`,`address`),
+  KEY `chat_id_idx` (`chat_id`),
+  KEY `address_idx` (`address`),
+  KEY `idx_chat_id_intent` (`chat_id`,`intent`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Dumping data for table `chat_members`

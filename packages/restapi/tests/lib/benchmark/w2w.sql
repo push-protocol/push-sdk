@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `w2w`
 --
 
-CREATE TABLE `w2w` (
+CREATE TABLE IF NOT EXISTS `w2w` (
   `id` int(11) UNSIGNED NOT NULL,
   `combined_did` mediumtext NOT NULL,
   `threadhash` varchar(255) DEFAULT NULL,
