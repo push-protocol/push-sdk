@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
-import { groupDtoToSpaceDto } from '../chat/helpers';
+import { groupDtoToSpaceDto, groupDtoToSpaceDtoV2 } from '../chat/helpers';
 import { removeAdmins } from '../chat/removeAdmins';
 export interface RemoveSpeakersFromSpaceType extends EnvOptionsType {
   spaceId: string;
@@ -28,7 +28,7 @@ export const removeSpeakers = async (
       pgpPrivateKey: pgpPrivateKey,
     });
 
-    return groupDtoToSpaceDto(group);
+    return groupDtoToSpaceDtoV2(group, env);
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${removeSpeakers.name} -:  `,

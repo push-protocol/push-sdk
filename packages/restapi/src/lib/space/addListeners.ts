@@ -1,7 +1,7 @@
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
 import {
-  groupDtoToSpaceDto
+  groupDtoToSpaceDto, groupDtoToSpaceDtoV2
 } from '../chat/helpers';
 
 
@@ -36,7 +36,7 @@ export const addListeners = async (
       pgpPrivateKey: pgpPrivateKey
     });
 
-    return groupDtoToSpaceDto(group);
+  return groupDtoToSpaceDtoV2(group, env);
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${addListeners.name} -:  `,

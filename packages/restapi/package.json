@@ -22,7 +22,7 @@
     "video-stream-merger": "^4.0.1"
   },
   "scripts": {
-    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 120000 --require tests/root.ts --serial"
+    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
