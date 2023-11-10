@@ -574,14 +574,19 @@ export function App() {
                       <Route
                         path="messageContainer"
                         element={<ChatViewComponentTest />}
-                      />
-                      <Route path="ChatProfile" element={<ChatProfileTest />} />{' '}
-                      <Route path="ChatSupport" element={<ChatSupportTest />} />
-                    </Routes>
-                    {/* <ChatWidgetTest/> */}
-                    {/* <ChatWidgetTest /> */}
-                    <SpaceWidgetComponent spaceId={spaceId} />
-                  </SpacesUIProvider>
+                        />
+                      <Route
+                        path="ChatProfile"
+                        element={<ChatProfileTest />}
+                      /> <Route
+                      path="ChatSupport"
+                      element={<ChatSupportTest />}
+                    />
+                  </Routes>
+                  {/* <ChatWidgetTest/> */}
+                  {/* <ChatWidgetTest /> */}
+                  <SpaceWidgetComponent spaceId={spaceId} />
+                </SpacesUIProvider>
                 </ChatUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>
