@@ -7,6 +7,7 @@ import { DropdownValueType } from './DropDown';
 import { Div, Section, Span } from '../../reusables';
 import { DropDownInput } from './DropDownInput';
 import { device } from '../../../config';
+import { shortenText } from '../../../helpers';
 
 export type InputType = { value: number; range: number };
 export interface IQuantityInputProps {
@@ -16,6 +17,7 @@ export interface IQuantityInputProps {
   unit: string;
   onInputChange: any;
   dropDownValues: DropdownValueType[];
+  error?:boolean;
 }
 
 export const QuantityInput = (props: IQuantityInputProps) => {
@@ -32,7 +34,7 @@ export const QuantityInput = (props: IQuantityInputProps) => {
           <label>{props.labelName}</label>
         </LabelContainer>
         <Section gap="4px" alignItems="center" >
-          <Section  zIndex='500'>
+          <Section  zIndex='500' >
           <DropDownInput
             selectedValue={props.inputValue.range}
             dropdownValues={props.dropDownValues}
@@ -41,6 +43,7 @@ export const QuantityInput = (props: IQuantityInputProps) => {
           <Section alignItems="baseline" width='fit-content'>
             <Input
               type="number"
+              error={props.error ||false}
               theme={theme}
               value={props.inputValue.value}
               onChange={handleChange}
@@ -49,13 +52,14 @@ export const QuantityInput = (props: IQuantityInputProps) => {
             <Unit
               alignSelf='auto'
               background={theme.backgroundColor?.modalHoverBackground}
-              width='fit-content'
+              width='40%'
               height='fit-content'
+              error={props.error ||false}
              
             >
-              <Span>
-              {props.unit}
-              </Span>
+              {/* <Span> */}
+              {shortenText(props.unit,15)}
+              {/* </Span> */}
             </Unit>
           </Section>
         </Section>
@@ -81,13 +85,13 @@ const LabelContainer = styled.div`
   font-size: 16px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
-const Input = styled.input<IChatTheme>`
+const Input = styled.input<IChatTheme &{error:boolean}>`
   padding: 16px;
   margin-top: 8px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
   background: ${(props) => props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
   border-width: 1px 0px 1px 1px;
   border-radius: 12px 0 0 12px;
   font-family: ${(props) => props.theme.fontFamily};
@@ -96,22 +100,23 @@ const Input = styled.input<IChatTheme>`
   font-weight: 500;
 `;
 
-const Unit = styled(Section)<IChatTheme>`
-span{
+const Unit = styled(Section)<IChatTheme&{error:boolean}>`
+
   font-size:14px;
-  font-weight:700;
-}
+  font-weight:600;
+  white-space: nowrap;
+
 border-radius:0 12px 12px 0;
 
-padding:17.2px;
-border: ${(props) => props.theme.border.modalInnerComponents};
+padding:18px 17.2px 16.5px 17.2px;
+border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
 @media ${device.mobileL} {
 
-  padding:19.5px 5px;
-  span{
+  padding:21px 17.2px 17.5px 17.2px;
+  
     font-size: 10px;
     font-weight:400
-  }
+  
 }
 
 `;

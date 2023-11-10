@@ -42,7 +42,7 @@ const EncryptionMessageContent = {
         margin="10px 10px 0px"
         width={isMobile ? '80%' : 'fit-content'}
       >
-        <EncryptionMessageDiv textAlign="center">
+        <EncryptionMessageDiv textAlign="center" >
           {EncryptionMessageContent[id].IconComponent}
   
           <Span
@@ -61,6 +61,7 @@ const EncryptionMessageContent = {
 
   //styles
   const EncryptionMessageDiv = styled(Div)`
+  display:flex;
   text-align: center;
   svg {
     vertical-align: middle;

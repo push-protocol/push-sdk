@@ -55,7 +55,7 @@ export const usePushSpaceSocket = ({
 
     pushSpaceSocket?.on('SPACES_MESSAGES', async (message: any) => {
       console.log('SPACES_MESSAGES RECEIVED', message);
-      if (message?.messageCategory === 'Request') {
+      if (message?.messageCategory === 'Request' || message?.messageCategory === 'Approve') {
         /*
           - Will be executed on host's end of a live space
           - When a listener joins this fires a meta message telling everyone the same

@@ -11,3 +11,4 @@ export * from './useGetChatProfile';
 export * from './useMediaQuery';
 export * from './useCreateChatProfile';
 export * from './useDecryptPGPKey';
+export * from './useTokenSymbolLoader';

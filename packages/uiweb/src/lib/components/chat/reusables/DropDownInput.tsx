@@ -13,6 +13,7 @@ export interface IDropDownInputProps {
   selectedValue: number;
   labelName?: string;
   dropdownValues: DropdownValueType[];
+  error?:boolean;
 }
 
 export const DropDownInput = (props: IDropDownInputProps) => {
@@ -20,15 +21,13 @@ export const DropDownInput = (props: IDropDownInputProps) => {
   const [showDropdown, setshowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<any>(null);
 
-  const { selectedValue, dropdownValues, labelName } = props;
+  const { selectedValue, dropdownValues, labelName ,error} = props;
 
   // useClickAway(dropdownRef, ()=> setshowDropdown(!showDropdown));
 
   const closeDropdown = () => {
     setshowDropdown(!showDropdown);
   };
-  console.log(dropdownValues);
-  console.log(selectedValue);
   return (
     <ThemeProvider theme={theme}>
       <DropdownContainer >
@@ -36,7 +35,7 @@ export const DropDownInput = (props: IDropDownInputProps) => {
           <label>{props.labelName}</label>
         </LabelContainer>
     
-            <DropdownDiv ref={dropdownRef} onClick={closeDropdown}>
+            <DropdownDiv ref={dropdownRef} onClick={closeDropdown} error= {error || false} >
               <Span margin="0 7px 0 0">
                 {dropdownValues[selectedValue].title}{' '}
               </Span>
@@ -78,20 +77,20 @@ const LabelContainer = styled.div`
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const DropdownDiv = styled(Section)<IChatTheme>`
+const DropdownDiv = styled(Section)<IChatTheme & {error:boolean}>`
   padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   background: ${(props) => props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 16px;
   span {
-    text-wrap: nowrap;
+    white-space: nowrap;
   }
   font-weight: 500;
 `;
@@ -103,9 +102,9 @@ const ArrowImage = styled(Image)<{ setPosition: boolean }>`
 
 const DropdownListContainer = styled(Section)<IChatTheme>`
   position: absolute;
-  width: 100%;
+  width: 96%;
   top:30%;
-  right:-9px;
+  right:0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 8px;
   z-index: 100;

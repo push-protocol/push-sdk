@@ -13,6 +13,7 @@ import { SpaceMembersSectionModal } from './SpaceMembersSectionModal';
 
 import { createBlockie } from '../helpers/blockies';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { Spinner } from '../reusables/Spinner';
 
 import CircularProgressSpinner from '../../loader/loader';
 
@@ -63,11 +64,12 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
+  console.log("🚀 ~ file: LiveWidgetContent.tsx:66 ~ spaceObjectData:", spaceObjectData)
   console.log("🚀 ~ file: LiveWidgetContent.tsx:66 ~ raisedHandInfo:", raisedHandInfo)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
-  // const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
+  const numberOfRequests = spaceObjectData.liveSpaceData.listeners.filter((listener: any) => listener.handRaised).length;
 
   const handleMicState = async () => {
     await spacesObjectRef?.current?.enableAudio?.({ state: !isMicOn });
@@ -89,7 +91,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   }, [isListener, isHost, spaceData]);
 
   useEffect(() => {
-    if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
+    // if (!spaceObjectData?.connectionData?.local?.stream || !isRequestedForMic)
+    if (!isRequestedForMic)
       return;
 
     const requestedForMicFromEffect = async () => {
@@ -183,8 +186,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       console.log('isListner', isListener);
       if (
         isListener &&
-        !isHost &&
-        spaceObjectData.connectionData.local.address
+        !isHost
+        // && spaceObjectData.connectionData.local.address
       ) {
         console.log('joining as a listener');
         await spacesObjectRef?.current?.join?.();
@@ -212,7 +215,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   // joining as a speaker
   useEffect(() => {
     if (
-      !spaceObjectData?.connectionData?.local?.stream ||
+      // !spaceObjectData?.connectionData?.local?.stream ||
       !isSpeaker ||
       (spaceObjectData?.connectionData?.incoming?.length ?? 0) > 1
     )
@@ -299,6 +302,22 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                     </div>
                   ))}
 
+              {/* details of peer connected via webRTC if speaker or host */}
+              {(isHost) &&
+                spaceObjectData?.liveSpaceData.speakers.map((profile) => (
+                  <div style={{ position: 'relative' }}>
+                    <LiveSpaceProfileContainer
+                      isHost={false}
+                      isSpeaker={true}
+                      wallet={profile?.address}
+                      mic={profile?.audio}
+                      image={createBlockie?.(profile?.address)
+                        ?.toDataURL()
+                        ?.toString()}
+                    />
+                  </div>
+                ))}
+
               {/* details of host in the space if listener */}
               {isListener && !isHost && (
                 <div style={{ position: 'relative' }}>
@@ -372,14 +391,14 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
             justifyContent={'space-between'}
             padding={'6px 8px'}
           >
-            {livekitToken && (
+            {livekitToken ? (
               <LiveKitRoom
                 serverUrl={LIVEKIT_SERVER_URL}
                 token={livekitToken}
                 room={livekitRoom}
               >
                 <RoomAudioRenderer />
-                <TrackToggleComp source={Track.Source.Microphone} />
+                {/* <TrackToggleComp source={Track.Source.Microphone} /> */}
                 {isHost || isSpeaker
                   ?
                   <TrackToggleComp showIcon={false} source={Track.Source.Microphone} >
@@ -418,7 +437,25 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
                   </Item>
                 }
               </LiveKitRoom>
-            )}
+            )
+              :
+              <Item
+                cursor={'pointer'}
+                display={'flex'}
+                alignItems={'center'}
+                gap={'8px'}
+                padding={'10px'}
+              >
+                <Spinner size="20" />
+                <Text
+                  color={`${theme.btnOutline}`}
+                  fontSize={'14px'}
+                  fontWeight={600}
+                >
+                  Connecting
+                </Text>
+              </Item>
+            }
             {/* <Item
                 cursor={'pointer'}
                 display={'flex'}
@@ -460,13 +497,13 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
               </Item> */}
             <Item display={'flex'} alignItems={'center'} gap={'16px'}>
               <MembersContainer>
-                {/* {
+                {
                   isHost && numberOfRequests ?
                     <RequestsCount>
                       {numberOfRequests}
                     </RequestsCount>
                     : null
-                } */}
+                }
                 <Image
                   width={'21px'}
                   height={'24px'}

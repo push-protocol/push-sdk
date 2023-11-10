@@ -7,13 +7,19 @@ import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { ThemeContext } from '../theme/ThemeProvider';
 import Dropdown, { DropdownValueType } from '../reusables/DropDown';
 import { ConditionArray, ConditionData, IChatTheme } from '../exportedTypes';
-import { useClickAway } from '../../../hooks';
-import { CATEGORY, CRITERIA_TYPE, CriteriaType, TOKEN_NFT_COMPARISION, TokenNftComparision } from '../types';
+import { useClickAway, useTokenSymbolLoader } from '../../../hooks';
+import {
+  CATEGORY,
+  CRITERIA_TYPE,
+  CriteriaType,
+  TOKEN_NFT_COMPARISION,
+  TokenNftComparision,
+} from '../types';
 
 import EditSvg from '../../../icons/EditSvg.svg';
 import RemoveSvg from '../../../icons/RemoveSvg.svg';
 import { shortenText } from '../../../helpers';
-import { GUILD_COMPARISON_OPTIONS } from '../constants';
+import { GUILD_COMPARISON_OPTIONS, NETWORK_ICON_DETAILS } from '../constants';
 
 export type CriteraValueType = {
   invertedIcon?: any;
@@ -54,8 +60,12 @@ const MoreOptionsContainer = ({
 
   useClickAway(dropdownRef, () => setSelectedIndex(null));
   return (
-    <Section onClick={() => handleMoreOptionsClick(row, col)}  position='static'>
-      <MoreDarkIcon color={theme.iconColor?.groupSettings} />
+    <Section onClick={() => handleMoreOptionsClick(row, col)} position="static">
+      <MoreDarkIcon
+        color={theme.iconColor?.groupSettings}
+        width="24"
+        height="24"
+      />
       {selectedIndex?.length && selectedIndex[0] === row && (
         <DropdownContainer ref={dropdownRef} theme={theme}>
           <Dropdown
@@ -85,15 +95,21 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
     return false;
   };
 
-  const getGuildRole  = () =>{
-    return (GUILD_COMPARISON_OPTIONS.find(option => option.value === criteria?.data?.['comparison']))?.heading;
- 
-  }
+  const getGuildRole = () => {
+    if (!criteria?.data?.['comparison']) {
+      return 'SPECIFIC';
+    }
+    return GUILD_COMPARISON_OPTIONS.find(
+      (option) => option.value === criteria?.data?.['comparison']
+    )?.heading;
+  };
+
+  const [tokenSymbol] = useTokenSymbolLoader(criteria);
   return (
-    <Section gap="8px">
+    <Section gap="8px" width="100%">
       <Span
         alignSelf="center"
-        background="#657795"
+        background={theme.backgroundColor?.criteriaLabelBackground}
         borderRadius="4px"
         fontSize="10px"
         color={theme.textColor?.buttonText}
@@ -102,13 +118,27 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
         {CRITERIA_TYPE[criteria.category as CriteriaType]}
       </Span>
       {checkIfNftToken() && (
-        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
-          <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
-            {getTokenNftComparisionLabel()}{' '}
+        <Section
+          width="100%"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
+            <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+              {getTokenNftComparisionLabel()}{' '}
+            </Span>
+            {criteria?.data?.['amount']} {tokenSymbol}
           </Span>
-          {/* need to fetch token symbol */}
-          {criteria?.data?.['amount']} {criteria.category}
-        </Span>
+          <ChainIconSVG padding="0 6px 0 0" >
+            {
+              NETWORK_ICON_DETAILS[
+                criteria?.data?.['contract'].split(
+                  ':'
+                )[1] as keyof typeof NETWORK_ICON_DETAILS
+              ].icon
+            }
+          </ChainIconSVG>
+        </Section>
       )}
       {criteria.category === CATEGORY.INVITE && (
         <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
@@ -121,17 +151,17 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
           fontSize="14px"
           color={theme.textColor?.modalSubHeadingText}
         >
-          {shortenText(criteria.data?.['url'],30)}
+          {shortenText(criteria.data?.['url'], 30)}
         </Span>
       )}
-         {criteria.category === CATEGORY.ROLES && (
-        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}> 
-        {criteria?.data?.['id']} {' '}
-        <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
-         with {' '}
+      {criteria.category === CATEGORY.ROLES && (
+        <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
+          {criteria?.data?.['id']}{' '}
+          <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+            with{' '}
+          </Span>
+          {getGuildRole()} role
         </Span>
-        {getGuildRole()} role
-      </Span>
       )}
     </Section>
   );
@@ -191,7 +221,7 @@ const ConditionsComponent = ({
     <Section flexDirection="column" width="100%" height="100%">
       {conditionData &&
         conditionData.slice(1).map((criteria, row) => (
-          <Section flexDirection="column"  >
+          <Section flexDirection="column">
             {criteria.length <= 2 &&
               criteria.length >= 1 &&
               criteria.map((singleCriteria, col) => (
@@ -200,7 +230,7 @@ const ConditionsComponent = ({
                     <Section
                       borderRadius={theme.borderRadius?.modalInnerComponents}
                       background={theme.backgroundColor?.modalHoverBackground}
-                      padding="10px 4px 10px 12px"
+                      padding="15px 4px 15px 12px"
                       justifyContent="space-between"
                     >
                       <CriteriaSection criteria={singleCriteria} />
@@ -241,7 +271,7 @@ const ConditionsComponent = ({
                             background={
                               theme.backgroundColor?.modalHoverBackground
                             }
-                            padding="10px 4px 10px 12px"
+                            padding="15px 4px 15px 12px"
                             justifyContent="space-between"
                             width="100%"
                           >
@@ -252,8 +282,7 @@ const ConditionsComponent = ({
                     </>
                   ))}
                 </Section>
-                <Section 
-                >
+                <Section>
                   {criteria.map((singleCriteria) => (
                     <>
                       {criteria.length > 2 &&
@@ -296,7 +325,6 @@ export default ConditionsComponent;
 
 const DropdownContainer = styled.div`
   position: absolute;
-  // left: 48%;
   top: 0;
   right: 0;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
@@ -312,11 +340,23 @@ const DropdownContainer = styled.div`
 const OperatorSpan = styled(Span)<{ theme: IChatTheme }>`
   padding: 4px 8px;
   margin: 8px 0;
-  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
+  border-radius: ${(props) => props.theme.borderRadius?.modalInnerComponents};
+  background: ${(props) => props.theme.backgroundColor?.modalHoverBackground};
   color: ${(props) => props.theme.textColor?.modalSubHeadingText};
 `;
 
 const CriteriaGroup = styled(Section)<{ theme: IChatTheme }>`
   border: ${(props) => props.theme.border?.modalInnerComponents};
+`;
+
+const ChainIconSVG = styled(Section)`
+  width: 20px;
+  height: 20px;
+
+  svg,
+  svg image,
+  img {
+    width: 100%;
+    height: 100%;
+  }
 `;
