@@ -4,13 +4,15 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { create, get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
+
 import { upgrade } from '../../../src/lib/user/upgradeUser';
 import { decryptPGPKey } from '../../../src/lib/helpers';
 chai.use(chaiAsPromised);
 
 describe('Upgrade user keys', () => {
   const upgradationVersion = Constants.ENC_TYPE_V3;
-  const _env = Constants.ENV.DEV;
+  const _env = CONSTANTS.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
   let walletAddress: string;

@@ -6,13 +6,11 @@ import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { sendNotification } from '../../../src/lib/payloads/sendNotifications';
 import { subscribe, unsubscribe } from '../../../src/lib/channels';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
-import { ENV } from '../../../src/lib/constants';
-import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
-import { ConditionType } from '../../../src/lib';
 
-describe.only('PushStream.initialize functionality', () => {
+describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
@@ -21,25 +19,25 @@ describe.only('PushStream.initialize functionality', () => {
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
-      env: ENV.LOCAL,
+      env: CONSTANTS.ENV.LOCAL,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
     const user2 = await PushAPI.initialize(signer2, {
-      env: ENV.LOCAL,
+      env: CONSTANTS.ENV.LOCAL,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
     const user3 = await PushAPI.initialize(signer3, {
-      env: ENV.LOCAL,
+      env: CONSTANTS.ENV.LOCAL,
     });
 
     const WALLET4 = ethers.Wallet.createRandom();
     const signer4 = new ethers.Wallet(WALLET4.privateKey, provider);
     const user4 = await PushAPI.initialize(signer4, {
-      env: ENV.LOCAL,
+      env: CONSTANTS.ENV.LOCAL,
     });
 
     const GROUP_RULES = {
@@ -48,9 +46,9 @@ describe.only('PushStream.initialize functionality', () => {
           {
             any: [
               {
-                type: 'PUSH',
-                category: 'CustomEndpoint',
-                subcategory: 'GET',
+                type: CONSTANTS.CHAT.GROUP.RULES.CONDITION_TYPE.PUSH,
+                category: CONSTANTS.CHAT.GROUP.RULES.CATEGORY.CUSTOM_ENDPOINT,
+                subcategory: CONSTANTS.CHAT.GROUP.RULES.SUBCATEGORY.GET,
                 data: {
                   url: 'https://api.ud-staging.com/profile/badges/dead_pixel/validate/{{user_address}}?rule=join',
                 },
@@ -64,9 +62,9 @@ describe.only('PushStream.initialize functionality', () => {
           {
             any: [
               {
-                type: 'PUSH',
-                category: 'CustomEndpoint',
-                subcategory: 'GET',
+                type: CONSTANTS.CHAT.GROUP.RULES.CONDITION_TYPE.PUSH,
+                category: CONSTANTS.CHAT.GROUP.RULES.CATEGORY.CUSTOM_ENDPOINT,
+                subcategory: CONSTANTS.CHAT.GROUP.RULES.SUBCATEGORY.GET,
                 data: {
                   url: 'https://api.ud-staging.com/profile/badges/dead_pixel/validate/{{user_address}}?rule=chat',
                 },
@@ -88,9 +86,9 @@ describe.only('PushStream.initialize functionality', () => {
           conditions: {
             any: [
               {
-                type: ConditionType.PUSH,
-                category: 'ERC20',
-                subcategory: 'holder',
+                type: CONSTANTS.CHAT.GROUP.RULES.CONDITION_TYPE.PUSH,
+                category: CONSTANTS.CHAT.GROUP.RULES.CATEGORY.ERC20,
+                subcategory: CONSTANTS.CHAT.GROUP.RULES.SUBCATEGORY.HOLDER,
                 data: {
                   contract:
                     'eip155:1:0xf418588522d5dd018b425E472991E52EBBeEEEEE',
@@ -99,11 +97,14 @@ describe.only('PushStream.initialize functionality', () => {
                 },
               },
               {
-                type: ConditionType.PUSH,
-                category: 'INVITE',
-                subcategory: 'DEFAULT',
+                type: CONSTANTS.CHAT.GROUP.RULES.CONDITION_TYPE.PUSH,
+                category: CONSTANTS.CHAT.GROUP.RULES.CATEGORY.INVITE,
+                subcategory: CONSTANTS.CHAT.GROUP.RULES.SUBCATEGORY.DEFAULT,
                 data: {
-                  inviterRoles: ['ADMIN', 'OWNER'],
+                  inviterRoles: [
+                    CONSTANTS.CHAT.GROUP.RULES.INVITER_ROLE.ADMIN,
+                    CONSTANTS.CHAT.GROUP.RULES.INVITER_ROLE.OWNER,
+                  ],
                 },
               },
             ],
@@ -121,20 +122,23 @@ describe.only('PushStream.initialize functionality', () => {
       rules: {},
     };
 
-    const stream = await user.stream([STREAM.CHAT, STREAM.CHAT_OPS], {
-      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
-      // more info can be found at push.org/docs/chat
+    const stream = await user.stream(
+      [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
+      {
+        // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+        // more info can be found at push.org/docs/chat
 
-      filter: {
-        channels: ['*'],
-        chats: ['*'],
-      },
-      connection: {
-        auto: false, // should connection be automatic, else need to call stream.connect();
-        retries: 3, // number of retries in case of error
-      },
-      raw: true, // enable true to show all data
-    });
+        filter: {
+          channels: ['*'],
+          chats: ['*'],
+        },
+        connection: {
+          auto: false, // should connection be automatic, else need to call stream.connect();
+          retries: 3, // number of retries in case of error
+        },
+        raw: true, // enable true to show all data
+      }
+    );
 
     await stream.connect();
 
@@ -178,11 +182,19 @@ describe.only('PushStream.initialize functionality', () => {
     //  leave admin bug
     //  group creator check remove add
 
-    const onDataReceived = createEventPromise('CHAT_OPS', STREAM.CHAT_OPS, 5);
-    const onMessageReceived = createEventPromise('CHAT', STREAM.CHAT, 4);
+    const onDataReceived = createEventPromise(
+      'CHAT_OPS',
+      CONSTANTS.STREAM.CHAT_OPS,
+      5
+    );
+    const onMessageReceived = createEventPromise(
+      'CHAT',
+      CONSTANTS.STREAM.CHAT,
+      4
+    );
     const onNoitificationsReceived = createEventPromise(
       'NOTIF',
-      STREAM.NOTIF,
+      CONSTANTS.STREAM.NOTIF,
       4
     );
 

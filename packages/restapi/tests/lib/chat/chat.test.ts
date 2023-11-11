@@ -4,10 +4,10 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { chat } from '../../../src/lib/chat/chat';
 import { ethers } from 'ethers';
 import { expect } from 'chai';
-import Constants from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
 const WALLET_PRIVATE_KEY = process.env['WALLET_PRIVATE_KEY'];
-const _env = Constants.ENV.DEV;
+const _env = CONSTANTS.ENV.DEV;
 
 describe('Get chat', () => {
   it('Should return {} when not chat between users', async () => {
