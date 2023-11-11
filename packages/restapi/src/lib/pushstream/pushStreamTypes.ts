@@ -2,7 +2,6 @@ import { Rules } from "../types";
 import Constants, { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
-  listen: STREAM[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -13,6 +12,7 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
+  overrideAccount?: string;
 };
 
 export enum STREAM {

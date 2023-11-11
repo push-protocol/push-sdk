@@ -22,11 +22,13 @@ export class PushStream extends EventEmitter {
   private raw: boolean;
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
+  private listen: STREAM[];
 
   constructor(
     account: string,
     private decryptedPgpPvtKey: string,
     private signer: SignerType,
+    private _listen: STREAM[],
     options: PushStreamInitializeProps,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
@@ -36,6 +38,7 @@ export class PushStream extends EventEmitter {
 
     this.raw = options.raw ?? false;
     this.options = options;
+    this.listen = _listen;
 
     this.chatInstance = new Chat(
       this.account,
@@ -50,28 +53,38 @@ export class PushStream extends EventEmitter {
     account: string,
     decryptedPgpPvtKey: string,
     signer: SignerType,
+    listen: STREAM[],
+    env: ENV,
     progressHook?: (progress: ProgressHookType) => void,
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     const defaultOptions: PushStreamInitializeProps = {
-      listen: [],
-      env: ENV.LOCAL,
       raw: false,
       connection: {
         auto: true,
         retries: 3,
       },
+      env: env,
     };
+
+    if (!listen || listen.length === 0) {
+      throw new Error(
+        'The listen property must have at least one STREAM type.'
+      );
+    }
 
     const settings = {
       ...defaultOptions,
       ...options,
     };
 
+    const accountToUse = settings.overrideAccount || account;
+
     const stream = new PushStream(
-      account,
+      accountToUse,
       decryptedPgpPvtKey,
       signer,
+      listen,
       settings,
       progressHook
     );
@@ -150,15 +163,15 @@ export class PushStream extends EventEmitter {
 
   public async connect(): Promise<void> {
     const shouldInitializeChatSocket =
-      !this.options?.listen ||
-      this.options.listen.length === 0 ||
-      this.options.listen.includes(STREAM.CHAT) ||
-      this.options.listen.includes(STREAM.CHAT_OPS);
+      !this.listen ||
+      this.listen.length === 0 ||
+      this.listen.includes(STREAM.CHAT) ||
+      this.listen.includes(STREAM.CHAT_OPS);
     const shouldInitializeNotifSocket =
-      !this.options?.listen ||
-      this.options.listen.length === 0 ||
-      this.options.listen.includes(STREAM.NOTIF) ||
-      this.options.listen.includes(STREAM.NOTIF_OPS);
+      !this.listen ||
+      this.listen.length === 0 ||
+      this.listen.includes(STREAM.NOTIF) ||
+      this.listen.includes(STREAM.NOTIF_OPS);
 
     if (shouldInitializeChatSocket && !this.pushChatSocket) {
       this.pushChatSocket = createSocketConnection({
@@ -174,7 +187,7 @@ export class PushStream extends EventEmitter {
       if (!this.pushChatSocket) {
         throw new Error('Push chat socket not connected');
       }
-    } 
+    }
 
     if (shouldInitializeNotifSocket && !this.pushNotificationSocket) {
       this.pushNotificationSocket = createSocketConnection({
@@ -192,10 +205,10 @@ export class PushStream extends EventEmitter {
     }
 
     const shouldEmit = (eventType: STREAM): boolean => {
-      if (!this.options.listen || this.options.listen.length === 0) {
+      if (!this.listen || this.listen.length === 0) {
         return true;
       }
-      return this.options.listen.includes(eventType);
+      return this.listen.includes(eventType);
     };
 
     if (this.pushChatSocket) {

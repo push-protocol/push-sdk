@@ -12,7 +12,7 @@ import { STREAM } from '../../../src/lib/pushstream/pushStreamTypes';
 import * as util from 'util';
 import { ConditionType } from '../../../src/lib';
 
-describe('PushStream.initialize functionality', () => {
+describe.only('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
@@ -121,10 +121,10 @@ describe('PushStream.initialize functionality', () => {
       rules: {},
     };
 
-    const stream = await user.initStream({
+    const stream = await user.stream([STREAM.CHAT, STREAM.CHAT_OPS], {
       // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
       // more info can be found at push.org/docs/chat
-      listen: [STREAM.CHAT],
+
       filter: {
         channels: ['*'],
         chats: ['*'],
