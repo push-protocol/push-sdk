@@ -380,7 +380,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                             justifyContent={position ? 'end' : 'start'}
                             margin="7px"
                           >
-                            <ChatViewBubble chat={chat} key={index} />
+                            <ChatViewBubble decryptedMessagePayload={chat} key={index} />
                           </Section>
                         </>
                       );

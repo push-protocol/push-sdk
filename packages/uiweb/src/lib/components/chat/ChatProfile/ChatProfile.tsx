@@ -20,114 +20,27 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 import { IGroup } from '../../../types';
 import { isValidETHAddress } from '../helpers/helper';
-import { IChatProfile, IChatTheme } from '../exportedTypes';
+import {
+  IChatProfile,
+  MODAL_BACKGROUND_TYPE,
+  MODAL_POSITION_TYPE,
+
+} from '../exportedTypes';
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
-import TokenGatedIcon from '../../../icons/TokenGatedIcon.svg';
+
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
+import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 
-
-type OptionProps = {
-  options: boolean;
-  setOptions: React.Dispatch<React.SetStateAction<boolean>>;
-  isGroup: boolean;
-  groupInfo: IGroup | null | undefined;
-  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
-  theme: IChatTheme;
-};
-
-const Options = ({
-  options,
-  setOptions,
-  isGroup,
-  groupInfo,
-  setGroupInfo,
-  theme,
-}: OptionProps) => {
-  const DropdownRef = useRef(null);
-  const [modal, setModal] = useState(false);
-
-  useClickAway(DropdownRef, () => {
-    setOptions(false);
-  });
-
-  const ShowModal = () => {
-    setModal(true);
-  };
-
-  if (groupInfo && isGroup) {
-    return (
-      <Section
-        zIndex="300"
-        flexDirection="row"
-        gap="10px"
-        margin="0 20px 0 auto"
-      >
-        {/* {(groupInfo?.rules?.chat?.conditions || groupInfo.rules?.entry?.conditions) && (
-          <Image
-            src={TokenGatedIcon}
-            height="24px"
-            maxHeight="24px"
-            width={'auto'}
-          />
-        )} */}
-        <Image
-          src={groupInfo?.isPublic ? PublicChatIcon : TokenGatedIcon}
-          height="28px"
-          maxHeight="32px"
-          width={'auto'}
-        />
-
-        <ImageItem onClick={() => setOptions(true)}>
-          <Image
-            src={VerticalEllipsisIcon}
-            height="21px"
-            maxHeight="32px"
-            width={'auto'}
-            cursor="pointer"
-          />
-
-          {options && (
-            <DropDownBar theme={theme} ref={DropdownRef}>
-              <DropDownItem cursor="pointer" onClick={ShowModal}>
-                <Image
-                  src={InfoIcon}
-                  height="21px"
-                  maxHeight="21px"
-                  width={'auto'}
-                  cursor="pointer"
-                />
-
-                <TextItem cursor="pointer">Group Info</TextItem>
-              </DropDownItem>
-            </DropDownBar>
-          )}
-
-          {modal && (
-            <GroupInfoModal
-              theme={theme}
-              setModal={setModal}
-              groupInfo={groupInfo}
-              setGroupInfo={setGroupInfo}
-            />
-          )}
-        </ImageItem>
-      </Section>
-    );
-  } else {
-    return null;
-  }
-};
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
   style,
-}: {
-  chatId: string;
-  style: 'Info' | 'Preview';
+  groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }) => {
   const theme = useContext(ThemeContext);
   const { account, env } = useChatData();
@@ -142,6 +55,16 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const isMobile = useMediaQuery(device.tablet);
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
   const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
+  const DropdownRef = useRef(null);
+  const [modal, setModal] = useState(false);
+
+  useClickAway(DropdownRef, () => {
+    setOptions(false);
+  });
+
+  const ShowModal = () => {
+    setModal(true);
+  };
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
@@ -164,7 +87,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       return isGroup
         ? groupInfo?.groupImage ?? GreyImage
         : chatInfo?.profile?.picture ??
-        createBlockie?.(chatId)?.toDataURL()?.toString();
+            createBlockie?.(chatId)?.toDataURL()?.toString();
     } else {
       return createBlockie?.(chatId)?.toDataURL()?.toString();
     }
@@ -174,13 +97,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     return isGroup
       ? groupInfo?.groupName
       : ensName
-        ? `${ensName} (${isMobile
-          ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
-          : chatId
+      ? `${ensName} (${
+          isMobile
+            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
+            : chatId
         })`
-        : chatInfo
-          ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
-          : shortenText(chatId, 6, true);
+      : chatInfo
+      ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
+      : shortenText(chatId, 6, true);
   };
 
   useEffect(() => {
@@ -196,16 +120,64 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           member={{ wallet: getProfileName() as string, image: getImage() }}
           customStyle={{ fontSize: '17px' }}
         />
+        <Section
+          zIndex="unset"
+          flexDirection="row"
+          gap="10px"
+          margin="0 20px 0 auto"
+          alignSelf="center"
+        >
+          {(groupInfo?.rules?.chat?.conditions ||
+            groupInfo?.rules?.entry?.conditions) && <TokenGatedSvg />}
+          {!!groupInfo?.isPublic && (
+            <Image
+              src={PublicChatIcon}
+              height="28px"
+              maxHeight="32px"
+              width={'auto'}
+            />
+          )}
 
-        <Options
-          options={options}
-          setOptions={setOptions}
-          isGroup={isGroup}
-          groupInfo={groupInfo}
-          setGroupInfo={setGroupInfo}
-          theme={theme}
-        />
+          {!!groupInfo && isGroup && (
+            <ImageItem onClick={() => setOptions(true)}>
+              <Image
+                src={VerticalEllipsisIcon}
+                height="21px"
+                maxHeight="32px"
+                width={'auto'}
+                cursor="pointer"
+              />
 
+              {options && (
+                <DropDownBar theme={theme} ref={DropdownRef}>
+                  <DropDownItem cursor="pointer" onClick={ShowModal}>
+                    <Image
+                      src={InfoIcon}
+                      height="21px"
+                      maxHeight="21px"
+                      width={'auto'}
+                      cursor="pointer"
+                    />
+
+                    <TextItem cursor="pointer">Group Info</TextItem>
+                  </DropDownItem>
+                </DropDownBar>
+              )}
+            </ImageItem>
+          )}
+         
+        
+        </Section>
+        {modal && (
+            <GroupInfoModal
+              theme={theme}
+              setModal={setModal}
+              groupInfo={groupInfo!}
+              setGroupInfo={setGroupInfo}
+              groupInfoModalBackground={groupInfoModalBackground}
+              groupInfoModalPositionType={groupInfoModalPositionType}
+            />
+          )}
         {/* {!isGroup && 
                     <VideoChatSection>
                         <Image src={VideoChatIcon} height="18px" maxHeight="18px" width={'auto'} />
@@ -230,7 +202,6 @@ const Container = styled.div`
   align-items: center;
   padding: 6px;
   box-sizing: border-box;
-  position: relative;
 `;
 
 const ImageItem = styled.div`
@@ -241,6 +212,7 @@ const DropDownBar = styled.div`
   position: absolute;
   top: 30px;
   left: -130px;
+  cursor: pointer;
   display: block;
   min-width: 140px;
   color: rgb(101, 119, 149);

@@ -99,9 +99,9 @@ const Button = styled.button<IThemeProps>`
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  background: ${(props) => props.theme.backgroundColor.buttonBackground};
+  background: ${(props) => props.theme.backgroundColor!.buttonBackground};
   border: none;
-  color:  ${(props) => props.theme.textColor.buttonText};
+  color:  ${(props) => props.theme.textColor!.buttonText};
   width: 100%;
   font-size: 16px;
   font-weight: 600;

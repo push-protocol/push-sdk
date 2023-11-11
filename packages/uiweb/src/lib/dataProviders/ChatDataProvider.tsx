@@ -8,7 +8,9 @@ import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
-import { getAddressFromSigner } from '../helpers';
+import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
+import useCreateChatProfile from '../hooks/useCreateChatProfile';
+import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
 
 
 export interface IChatUIProviderProps {
@@ -28,7 +30,7 @@ export const ChatUIProvider = ({
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
-  const [accountVal, setAccountVal] = useState<string | null>(account);
+  const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
   const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
    const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
 
@@ -40,6 +42,8 @@ export const ChatUIProvider = ({
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
   useState<boolean>(false);
+  const {createChatProfile} = useCreateChatProfile();
+  const {decryptPGPKey} = useDecryptPGPKey();
 
   useEffect(() => {
     (async()=>{
@@ -59,9 +63,40 @@ export const ChatUIProvider = ({
       setPgpPrivateKeyVal(pgpPrivateKey);
     })()
     
-  }, [env,account,pgpPrivateKey,signer])
+  }, [env,account,signer,pgpPrivateKey])
 
 
+  useEffect(() => {
+    (async () => {
+      if (accountVal && signerVal) {
+        if (!pgpPrivateKeyVal) await handleUserCreation();
+      }
+    })();
+  }, [accountVal, signerVal]);
+
+
+  const handleUserCreation = async () => {
+    if (!accountVal && !envVal) return;
+    try {
+      let user  = await fetchChatProfile({ profileId: accountVal! ,env:envVal});
+      if (!user) {
+        if (!signerVal) return;
+        user = await createChatProfile({ signer: signerVal ,env:envVal});
+      }
+      if (user?.encryptedPrivateKey && !pgpPrivateKey) {
+        const decryptedPgpKey = await decryptPGPKey({
+          encryptedPrivateKey: user.encryptedPrivateKey,
+          account: accountVal!,
+          signer: signerVal,
+          env: envVal,
+        });
+        if(decryptedPgpKey)
+        setPgpPrivateKeyVal(decryptedPgpKey);
+      }
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
 
 
 

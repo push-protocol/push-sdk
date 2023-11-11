@@ -7,10 +7,12 @@ import { Web3OnboardProvider } from '@web3-onboard/react';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
+import PushIcon from "../../../icons/Bell.svg"
 
 const APP_META_DATA = {
   name: 'Push Protocol',
-  icon: 'https://files.slack.com/files-pri/T011WQBLH39-F05QWQA0MSR/pushlogoblocknative.png',
+  logo: PushIcon,
+  icon: PushIcon,
   description: 'Example showcasing how to connect a wallet.',
 
   recommendedInjectedWallets: [

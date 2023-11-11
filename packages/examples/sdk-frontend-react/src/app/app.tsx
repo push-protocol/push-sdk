@@ -88,6 +88,10 @@ import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
 import SearchGroupTest from './ChatTest/SearchGroupTest';
 import RejectRequestTest from './ChatTest/RejectRequestTest';
 import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
+import { ChatSupportTest } from './ChatSupportTest';
+import GetChatMemberCountTest from './ChatTest/GetChatMemberCountTest';
+import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
+import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -313,7 +317,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider  env={env} theme={darkChatTheme} account={account} pgpPrivateKey={pgpPrivateKey} signer={signer}>
+                <ChatUIProvider  env={env} theme={lightChatTheme} >
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
@@ -367,24 +371,16 @@ export function App() {
                         path="/secret"
                         element={<SecretNotificationsTest />}
                       />
-
                       <Route path="/channels" element={<ChannelsTest />} />
-
                       <Route path="/alias" element={<AliasTest />} />
-
                       <Route path="/delegations" element={<DelegationTest />} />
-
                       <Route path="/payloads" element={<PayloadsTest />} />
-
                       <Route path="/socket" element={<SocketTest />} />
-
                       <Route path="/embed" element={<EmbedTest />} />
-
                       <Route path="/chat" element={<ChatTest />} />
                       <Route path="/space" element={<SpaceTest />} />
                       <Route path="/chatUI" element={<ChatUITest />} />
                       <Route path="/spaceUI" element={<SpaceUITest />} />
-
                       {/* chat method  routes */}
                       <Route path="/get" element={<GetUserTest />} />
                       <Route
@@ -431,105 +427,130 @@ export function App() {
                         path="/updateGroup"
                         element={<UpdateGroupTest />}
                       />
-
-                    {/* chat method  routes */}
-                    <Route path="/get" element={<GetUserTest />} />
-                    <Route
-                      path="/getUsersBatch"
-                      element={<GetUsersBatchTest />}
-                    />
-                    <Route path="/create" element={<CreateUserTest />} />
-                    <Route
-                      path="/updateUserprofile"
-                      element={<UpdateUserProfile />}
-                    />
-                    <Route
-                      path="/authUpdate"
-                      element={<AuthUpdateUserTest />}
-                    />
-                    <Route path="/send" element={<SendMessageTest />} />
-                    <Route path="/approve" element={<ApproveRequestTest />} />
-                    <Route path="/reject" element={<RejectRequestTest />} />
-                    <Route path="/chats" element={<GetChatsTest />} />
-                    <Route path="/hash" element={<ConversationHashTest />} />
-                    <Route path="/history" element={<HistoryTest />} />
-                    <Route path="/requests" element={<GetRequestsTest />} />
-                    <Route path="/createGroup" element={<CreateGroupTest />} />
-                    <Route path="/getGroup" element={<GetGroupTest />} />
-                    <Route path="/getGroupAccess" element={<GetGroupAccessTest />} />
-                    <Route path="/getGroupMemberStatus" element={<GetGroupMemberStatusTest />} />
-
-                    <Route
-                      path="/addMembersToGroup"
-                      element={<AddMembersToGroupTest />}
-                    />
-                    <Route
-                      path="/addAdminsToGroup"
-                      element={<AddAdminsToGroupTest />}
-                    />
-                    <Route
-                      path="/removeMembersFromGroup"
-                      element={<RemoveMembersFromGroupTest />}
-                    />
-                    <Route
-                      path="/removeAdminsFromGroup"
-                      element={<RemoveAdminsFromGroupTest />}
-                    />
-                    <Route path="/updateGroup" element={<UpdateGroupTest />} />
-
-                    <Route
-                      path="/searchGroups"
-                      element={<SearchGroupTest />}
-                    />
-                    {/* spaces method  routes */}
-                    <Route path="/createSpace" element={<CreateSpaceTest />} />
-                    <Route path="/updateSpace" element={<UpdateSpaceTest />} />
-                    <Route path="/getSpace" element={<GetSpaceTest />} />
-                    <Route
-                      path="/getSpaceInfo"
-                      element={<GetSpaceInfoTest />}
-                    />
-                    <Route
-                      path="/approveSpace"
-                      element={<ApproveSpaceRequestTest />}
-                    />
-                    <Route path="/startSpace" element={<StartSpaceTest />} />
-                    <Route path="/stopSpace" element={<StopSpaceTest />} />
-                    <Route
-                      path="/addSpeakersToSpace"
-                      element={<AddSpeakersToSpaceTest />}
-                    />
-                    <Route
-                      path="/addListenersToSpace"
-                      element={<AddListenersToSpaceTest />}
-                    />
-                    <Route
-                      path="/removeListenersFromSpace"
-                      element={<RemoveListenersFromSpaceTest />}
-                    />
-                    <Route
-                      path="/removeSpeakersFromSpace"
-                      element={<RemoveSpeakersFromSpaceTest />}
-                    />
-                    <Route path="/getSpaces" element={<GetSpacesTest />} />
-                    <Route
-                      path="/getSpacesRequests"
-                      element={<GetSpacesRequestsTest />}
-                    />
-                    <Route
-                      path="/getSpacesTrending"
-                      element={<GetSpacesTrendingTest />}
-                    />
-                    <Route
-                      path="/getSpaceAccess"
-                      element={<GetSpaceAccessTest />}
-                    />
-
-                    <Route
-                      path="/searchSpaces"
-                      element={<SearchSpaceTest />}
-                    />
-
+                      {/* chat method  routes */}
+                      <Route path="/get" element={<GetUserTest />} />
+                      <Route
+                        path="/getUsersBatch"
+                        element={<GetUsersBatchTest />}
+                      />
+                      <Route path="/create" element={<CreateUserTest />} />
+                      <Route
+                        path="/updateUserprofile"
+                        element={<UpdateUserProfile />}
+                      />
+                      <Route
+                        path="/authUpdate"
+                        element={<AuthUpdateUserTest />}
+                      />
+                      <Route path="/send" element={<SendMessageTest />} />
+                      <Route path="/approve" element={<ApproveRequestTest />} />
+                      <Route path="/reject" element={<RejectRequestTest />} />
+                      <Route path="/chats" element={<GetChatsTest />} />
+                      <Route path="/hash" element={<ConversationHashTest />} />
+                      <Route path="/history" element={<HistoryTest />} />
+                      <Route path="/requests" element={<GetRequestsTest />} />
+                      <Route
+                        path="/createGroup"
+                        element={<CreateGroupTest />}
+                      />
+                      <Route path="/getGroup" element={<GetGroupTest />} />
+                      <Route
+                        path="/getGroupAccess"
+                        element={<GetGroupAccessTest />}
+                      />
+                      <Route
+                        path="/getGroupMemberStatus"
+                        element={<GetGroupMemberStatusTest />}
+                      />
+                      <Route
+                        path="/getChatMemberCountTest"
+                        element={<GetChatMemberCountTest />}
+                      />
+                      <Route
+                        path="/getGroupInfoTest"
+                        element={<GetGroupInfoTest />}
+                      />
+                      <Route
+                        path="/getGroupMembersTest"
+                        element={<GetGroupMembersTest />}
+                      />
+                      <Route
+                        path="/addMembersToGroup"
+                        element={<AddMembersToGroupTest />}
+                      />
+                      <Route
+                        path="/addAdminsToGroup"
+                        element={<AddAdminsToGroupTest />}
+                      />
+                      <Route
+                        path="/removeMembersFromGroup"
+                        element={<RemoveMembersFromGroupTest />}
+                      />
+                      <Route
+                        path="/removeAdminsFromGroup"
+                        element={<RemoveAdminsFromGroupTest />}
+                      />
+                      <Route
+                        path="/updateGroup"
+                        element={<UpdateGroupTest />}
+                      />
+                      <Route
+                        path="/searchGroups"
+                        element={<SearchGroupTest />}
+                      />
+                      {/* spaces method  routes */}
+                      <Route
+                        path="/createSpace"
+                        element={<CreateSpaceTest />}
+                      />
+                      <Route
+                        path="/updateSpace"
+                        element={<UpdateSpaceTest />}
+                      />
+                      <Route path="/getSpace" element={<GetSpaceTest />} />
+                      <Route
+                        path="/getSpaceInfo"
+                        element={<GetSpaceInfoTest />}
+                      />
+                      <Route
+                        path="/approveSpace"
+                        element={<ApproveSpaceRequestTest />}
+                      />
+                      <Route path="/startSpace" element={<StartSpaceTest />} />
+                      <Route path="/stopSpace" element={<StopSpaceTest />} />
+                      <Route
+                        path="/addSpeakersToSpace"
+                        element={<AddSpeakersToSpaceTest />}
+                      />
+                      <Route
+                        path="/addListenersToSpace"
+                        element={<AddListenersToSpaceTest />}
+                      />
+                      <Route
+                        path="/removeListenersFromSpace"
+                        element={<RemoveListenersFromSpaceTest />}
+                      />
+                      <Route
+                        path="/removeSpeakersFromSpace"
+                        element={<RemoveSpeakersFromSpaceTest />}
+                      />
+                      <Route path="/getSpaces" element={<GetSpacesTest />} />
+                      <Route
+                        path="/getSpacesRequests"
+                        element={<GetSpacesRequestsTest />}
+                      />
+                      <Route
+                        path="/getSpacesTrending"
+                        element={<GetSpacesTrendingTest />}
+                      />
+                      <Route
+                        path="/getSpaceAccess"
+                        element={<GetSpaceAccessTest />}
+                      />
+                      <Route
+                        path="/searchSpaces"
+                        element={<SearchSpaceTest />}
+                      />
                       {/* spaces ui components routes */}
                       <Route path="spaceWidget" element={<SpaceWidget />} />
                       <Route path="spaceFeed" element={<SpaceFeed />} />
@@ -542,7 +563,6 @@ export function App() {
                         path="createSpaceUI"
                         element={<CreateSpaceComponent />}
                       />
-
                       {/* chat ui components routes */}
                       <Route
                         path="messageBubble"
@@ -559,7 +579,10 @@ export function App() {
                       <Route
                         path="ChatProfile"
                         element={<ChatProfileTest />}
-                      />
+                      /> <Route
+                      path="ChatSupport"
+                      element={<ChatSupportTest />}
+                    />
                   </Routes>
                   {/* <ChatWidgetTest/> */}
                   {/* <ChatWidgetTest /> */}
@@ -569,17 +592,19 @@ export function App() {
               </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>
-        ) :
-          <ChatUIProvider account={account!} pgpPrivateKey={pgpPrivateKey} env={ENV.STAGING} theme={darkChatTheme}>
+        ) : (
+          <ChatUIProvider
+            account={account!}
+            pgpPrivateKey={pgpPrivateKey}
+            env={ENV.STAGING}
+            theme={darkChatTheme}
+          >
             <Routes>
               <Route path="/chatUI" element={<ChatUITest />} />
-              <Route
-                path="messageList"
-                element={<ChatViewListTest />}
-              />
+              <Route path="messageList" element={<ChatViewListTest />} />
             </Routes>
           </ChatUIProvider>
-        }
+        )}
       </EnvContext.Provider>
     </StyledApp>
   );
