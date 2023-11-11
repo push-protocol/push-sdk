@@ -88,10 +88,11 @@ import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
 import SearchGroupTest from './ChatTest/SearchGroupTest';
 import RejectRequestTest from './ChatTest/RejectRequestTest';
 import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
+import { ChatSupportTest } from './ChatSupportTest';
 import GetChatMemberCountTest from './ChatTest/GetChatMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
-import { ChatSupportTest } from './ChatSupportTest';
+
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -316,7 +317,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider env={env} theme={lightChatTheme}>
+                <ChatUIProvider  env={env} theme={lightChatTheme} >
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
