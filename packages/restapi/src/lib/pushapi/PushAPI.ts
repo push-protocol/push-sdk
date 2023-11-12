@@ -11,6 +11,10 @@ import { User } from './user';
 import { PushStream } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
+import {
+  PushStreamInitializeProps,
+  STREAM,
+} from '../pushstream/pushStreamTypes';
 
 export class PushAPI {
   private signer: SignerType;
@@ -24,7 +28,7 @@ export class PushAPI {
   public profile: Profile;
   public encryption: Encryption;
   private user: User;
-  public stream!: PushStream;
+  public _stream!: PushStream;
   // Notification
   public channel!: Channel;
   public notification!: Notification;
@@ -79,14 +83,9 @@ export class PushAPI {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-
         version: Constants.ENC_TYPE_V3,
         autoUpgrade: true,
-
         account: null,
-        streamOptions: {
-          enabled: true, // Default value
-        },
       };
 
       // Settings object
@@ -100,10 +99,6 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
-        streamOptions: {
-          ...defaultOptions.streamOptions,
-          ...(options?.streamOptions ?? {}),
-        },
       };
 
       // Get account
@@ -161,29 +156,32 @@ export class PushAPI {
         settings.progressHook
       );
 
-      if (settings.streamOptions.enabled) {
-        const streamInstance = await PushStream.initialize(
-          api.account,
-          decryptedPGPPrivateKey,
-          signer,
-          settings.progressHook,
-          {
-            ...settings.streamOptions,
-            env: settings.env, // Use the env from the top-level PushAPIInitializeProps
-          }
-        );
-        if (streamInstance) {
-          api.stream = streamInstance;
-        } else {
-          throw new Error('Failed to initialize PushStream.');
-        }
-      }
-
       return api;
     } catch (error) {
       console.error('Error initializing PushAPI:', error);
       throw error; // or handle it more gracefully if desired
     }
+  }
+
+  async stream(
+    listen: STREAM[],
+    options?: PushStreamInitializeProps
+  ): Promise<PushStream> {
+    if (this._stream) {
+      throw new Error('Stream is already initialized.');
+    }
+
+    this._stream = await PushStream.initialize(
+      this.account,
+      this.decryptedPgpPvtKey,
+      this.signer,
+      listen,
+      this.env,
+      this.progressHook,
+      options
+    );
+
+    return this._stream;
   }
 
   async info() {
