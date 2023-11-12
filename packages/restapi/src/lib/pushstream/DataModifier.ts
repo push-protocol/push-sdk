@@ -6,7 +6,7 @@ import {
   MessageRawData,
   MessageEvent,
   MessageEventType,
-  Member,
+  GroupMember,
   GroupEventType,
   LeaveGroupEvent,
   JoinGroupEvent,
