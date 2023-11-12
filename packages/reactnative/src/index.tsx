@@ -89,10 +89,12 @@ const conversationHash = async (
 };
 
 const chats = async (options: ChatsOptionsType) => {
-  console.log('chats...');
-
   let chatsList = await PushApi.chat.chatsCore(options, PGPHelper);
   return chatsList;
+};
+
+const requests = async (options: ChatsOptionsType) => {
+  return await PushApi.chat.requestsCore(options, PGPHelper);
 };
 
 const latest = async (options: LatestMessagesOptionsType) => {
@@ -145,6 +147,7 @@ export {
   createGroup,
   updateGroup,
   chats,
+  requests,
   decryptPGPKey,
   profileUpgrade,
   send,
