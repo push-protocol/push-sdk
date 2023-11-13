@@ -89,7 +89,7 @@ import SearchGroupTest from './ChatTest/SearchGroupTest';
 import RejectRequestTest from './ChatTest/RejectRequestTest';
 import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
 import { ChatSupportTest } from './ChatSupportTest';
-import GetChatMemberCountTest from './ChatTest/GetChatMemberCountTest';
+import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 
@@ -463,8 +463,8 @@ export function App() {
                         element={<GetGroupMemberStatusTest />}
                       />
                       <Route
-                        path="/getChatMemberCountTest"
-                        element={<GetChatMemberCountTest />}
+                        path="/getGroupMemberCountTest"
+                        element={<GetGroupMemberCountTest />}
                       />
                       <Route
                         path="/getGroupInfoTest"

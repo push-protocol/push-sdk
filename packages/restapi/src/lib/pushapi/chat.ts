@@ -11,12 +11,16 @@ import {
   IUser,
   IMessageIPFS,
   GroupInfoDTO,
+  ChatMemberProfile,
+  ChatMemberCounts,
 } from '../types';
 import {
   GroupUpdateOptions,
   ChatListType,
   GroupCreationOptions,
   ManageGroupOptions,
+  RemoveFromGroupOptions,
+  GetGroupParticipantsOptions,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -264,6 +268,25 @@ export class Chat {
       return await PUSH_CHAT.createGroupV2(groupParams);
     },
 
+    participants: async (
+      chatId: string,
+      options?: GetGroupParticipantsOptions
+    ): Promise<{ count: ChatMemberCounts; members: ChatMemberProfile[] }> => {
+      const { page = 1, limit = 20 } = options ?? {};
+      const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
+        chatId,
+        page,
+        limit,
+        env: this.env,
+      };
+      const count = await PUSH_CHAT.getGroupMemberCount({
+        chatId,
+        env: this.env,
+      });
+      const members = await PUSH_CHAT.getGroupMembers(getGroupMembersOptions);
+      return { count, members };
+    },
+
     permissions: async (chatId: string): Promise<GroupAccess> => {
       const getGroupAccessOptions: PUSH_CHAT.GetGroupAccessType = {
         chatId,
@@ -358,7 +381,60 @@ export class Chat {
       }
     },
 
-    remove: async (chatId: string, options: ManageGroupOptions) => {
+    remove: async (chatId: string, options: RemoveFromGroupOptions) => {
+      const { accounts } = options;
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('Accounts array cannot be empty!');
+      }
+
+      accounts.forEach((account) => {
+        if (!isValidETHAddress(account)) {
+          throw new Error(`Invalid account address: ${account}`);
+        }
+      });
+
+      const adminsToRemove = [];
+      const membersToRemove = [];
+
+      for (const account of accounts) {
+        const status = await PUSH_CHAT.getGroupMemberStatus({
+          chatId: chatId,
+          did: account,
+          env: this.env,
+        });
+
+        if (status.isAdmin) {
+          adminsToRemove.push(account);
+        } else if (status.isMember) {
+          membersToRemove.push(account);
+        }
+      }
+
+      if (adminsToRemove.length > 0) {
+        await PUSH_CHAT.removeAdmins({
+          chatId: chatId,
+          admins: adminsToRemove,
+          env: this.env,
+          account: this.account,
+          signer: this.signer,
+          pgpPrivateKey: this.decryptedPgpPvtKey,
+        });
+      }
+
+      if (membersToRemove.length > 0) {
+        await PUSH_CHAT.removeMembers({
+          chatId: chatId,
+          members: membersToRemove,
+          env: this.env,
+          account: this.account,
+          signer: this.signer,
+          pgpPrivateKey: this.decryptedPgpPvtKey,
+        });
+      }
+    },
+
+    modify: async (chatId: string, options: ManageGroupOptions) => {
       const { role, accounts } = options;
 
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -376,25 +452,15 @@ export class Chat {
         }
       });
 
-      if (role === 'ADMIN') {
-        return await PUSH_CHAT.removeAdmins({
-          chatId: chatId,
-          admins: accounts,
-          env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
-        });
-      } else {
-        return await PUSH_CHAT.removeMembers({
-          chatId: chatId,
-          members: accounts,
-          env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
-        });
-      }
+      return await PUSH_CHAT.modifyRoles({
+        chatId: chatId,
+        newRole: role,
+        members: accounts,
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+      });
     },
 
     join: async (target: string): Promise<GroupInfoDTO> => {

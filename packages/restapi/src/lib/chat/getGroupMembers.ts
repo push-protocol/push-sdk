@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
-import { ChatMemberCounts, ChatMemberProfile } from '../types';
+import {ChatMemberProfile } from '../types';
 
 /**
  * GET /v1/chat/:chatId/members
@@ -16,10 +16,7 @@ export interface FetchChatGroupInfoType {
 
 export const getGroupMembers = async (
   options: FetchChatGroupInfoType
-): Promise<{
-  totalMembersCount: ChatMemberCounts;
-  members: ChatMemberProfile[];
-}> => {
+): Promise<ChatMemberProfile[]> => {
   const { chatId, page = 1, limit = 20, env = Constants.ENV.PROD } = options;
 
   try {
@@ -31,7 +28,7 @@ export const getGroupMembers = async (
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members?pageNumber=${page}&pageSize=${limit}`;
 
     const response = await axios.get(requestUrl);
-    return response.data;
+    return response.data.members;
   } catch (error) {
     console.error(
       `[Push SDK] - API - Error - API ${getGroupMembers.name} -: `,
@@ -42,3 +39,4 @@ export const getGroupMembers = async (
     );
   }
 };
+

@@ -74,8 +74,8 @@ const ChatTest = () => {
           <Link to="/getGroupMemberStatus" className="nav-button">
             CHAT.GETGROUPMEMBERSTATUS
           </Link>
-          <Link to="/getChatMemberCountTest" className="nav-button">
-            CHAT.GetChatMemberCountTest
+          <Link to="/getGroupMemberCountTest" className="nav-button">
+            CHAT.GetGroupMemberCountTest
           </Link>
           <Link to="/getGroupInfoTest" className="nav-button">
             CHAT.GetGroupInfoTest

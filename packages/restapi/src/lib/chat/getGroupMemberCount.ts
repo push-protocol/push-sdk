@@ -12,7 +12,7 @@ export interface FetchChatMemberCountType {
   env?: ENV;
 }
 
-export const getChatMemberCount = async (
+export const getGroupMemberCount = async (
   options: FetchChatMemberCountType
 ): Promise<ChatMemberCounts> => {
   const { chatId, env = Constants.ENV.PROD } = options;
@@ -31,11 +31,11 @@ export const getChatMemberCount = async (
     return totalMembersCount;
   } catch (error) {
     console.error(
-      `[Push SDK] - API - Error - API ${getChatMemberCount.name} -: `,
+      `[Push SDK] - API - Error - API ${getGroupMemberCount.name} -: `,
       error
     );
     throw new Error(
-      `[Push SDK] - API - Error - API ${getChatMemberCount.name} -: ${error}`
+      `[Push SDK] - API - Error - API ${getGroupMemberCount.name} -: ${error}`
     );
   }
 };

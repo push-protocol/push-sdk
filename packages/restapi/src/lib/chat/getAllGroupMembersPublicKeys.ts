@@ -1,4 +1,4 @@
-import { getChatMemberCount } from './getChatMemberCount';
+import { getGroupMemberCount } from './getGroupMemberCount';
 import { EnvOptionsType } from '../types';
 import { getGroupMembersPublicKeys } from './getGroupMembersPublicKeys';
 
@@ -7,7 +7,7 @@ export const getAllGroupMembersPublicKeys = async (options: {
   env: EnvOptionsType['env'];
 }): Promise<{ did: string; publicKey: string }[]> => {
   const { chatId, env } = options;
-  const count = await getChatMemberCount({ chatId, env });
+  const count = await getGroupMemberCount({ chatId, env });
   const overallCount = count.approvedCount;
   const limit = 5000;
   const totalPages = Math.ceil(overallCount / limit);

@@ -25,5 +25,6 @@ export * from './rejectRequest';
 export * from './getGroupMemberStatus';
 export * from './getGroupMembers';
 export * from './getGroupInfo';
-export * from './getChatMemberCount';
+export * from './getGroupMemberCount';
 export * from './getGroupMembersPublicKeys';
+export * from './modifyRole';

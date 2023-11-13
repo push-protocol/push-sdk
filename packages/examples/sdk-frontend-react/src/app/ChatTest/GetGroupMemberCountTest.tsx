@@ -4,7 +4,7 @@ import Loader from '../components/Loader';
 import { EnvContext } from '../context';
 import * as PushAPI from '@pushprotocol/restapi';
 
-const GetChatMemberCountTest = () => {
+const GetGroupMemberCountTest = () => {
   const { env } = useContext<any>(EnvContext);
   const [isLoading, setLoading] = useState(false);
   const [chatId, setChatId] = useState<string>('');
@@ -17,7 +17,7 @@ const GetChatMemberCountTest = () => {
   const fetchMemberCount = async () => {
     try {
       setLoading(true);
-      const counts = await PushAPI.chat.getChatMemberCount({ chatId, env });
+      const counts = await PushAPI.chat.getGroupMemberCount({ chatId, env });
       setTotalMembersCount(counts);
     } catch (error) {
       console.error('Failed to fetch chat member count:', error);
@@ -57,4 +57,4 @@ const GetChatMemberCountTest = () => {
   );
 };
 
-export default GetChatMemberCountTest;
+export default GetGroupMemberCountTest;
