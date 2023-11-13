@@ -56,7 +56,7 @@ function renderTextStyles(matchingString: string) {
 
 function renderLinkWithColor(matchingString: string) {
   const pattern =
-    /<a color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+href=["'](https?:\/\/[^"']+)["']>(.*?)<\/a>/i;
+    /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/i;
     const linkPattern = /\[([^\]]+)]\((https?:\/\/[^)]+)/;
   const match = matchingString.match(pattern);
   const markdownLinkPattern = matchingString.match(linkPattern);
@@ -250,7 +250,7 @@ const DEFAULT_PATTERNS: CustomParseShape[] = [
   },
   {
     pattern:
-      /<a color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+href=["'](https?:\/\/[^"']+)["']>(.*?)<\/a>/gi,
+      /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/gi,
     style: {}, // can Add additional styles here if needed
     renderText: renderLinkWithColor,
   },
