@@ -1,5 +1,4 @@
 import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
-import { EVENTS, createSocketConnection } from '@pushprotocol/socket';
 import { ethers } from 'ethers';
 
 // Creating a random signer from a wallet, ideally this is the wallet you will connect
@@ -15,18 +14,22 @@ const pushAIWalletAddress = '0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666';
 // Checkout all chat stream listen options - https://push.org/docs/chat/build/stream-chats/
 // Alternatively, just initialize userAlice.stream.initialize() without any listen options to listen to all events
 const stream = await userAlice.stream({
-  listen: [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CONNECT, CONSTANTS.STREAM.DISCONNECT], 
+  listen: [
+    CONSTANTS.STREAM.CHAT,
+    CONSTANTS.STREAM.CONNECT,
+    CONSTANTS.STREAM.DISCONNECT,
+  ],
+  options: {},
 });
 
 stream.on(CONSTANTS.STREAM.CONNECT, () => {
   console.log('Stream Connected');
-  
+
   // Send a message to Bob after socket connection so that messages as an example
   console.log('Sending message to PushAI Bot');
   userAlice.chat.send(pushAIWalletAddress, {
     content: "Gm gm! It's a me... Mario",
   });
-  
 });
 
 stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
@@ -37,6 +40,6 @@ stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
 stream.on(CONSTANTS.STREAM.CHAT, (message) => {
   console.log('Encrypted Message Received');
   console.log(message);
-  
-  pushSDKSocket.disconnect();
+
+  stream.disconnect();
 });
