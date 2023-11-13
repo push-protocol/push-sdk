@@ -24,7 +24,7 @@ function newLinestyles(matchingString: string) {
 
 function renderTextStyles(matchingString: string) {
   const pattern =
-    /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/i;
+    /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/i;
   const match = matchingString.match(pattern);
 
   if (match) {
@@ -56,7 +56,7 @@ function renderTextStyles(matchingString: string) {
 
 function renderLinkWithColor(matchingString: string) {
   const pattern =
-    /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/i;
+    /<a color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+href=["'](https?:\/\/[^"']+)["']>(.*?)<\/a>/i;
     const linkPattern = /\[([^\]]+)]\((https?:\/\/[^)]+)/;
   const match = matchingString.match(pattern);
   const markdownLinkPattern = matchingString.match(linkPattern);
@@ -244,13 +244,13 @@ const DEFAULT_PATTERNS: CustomParseShape[] = [
   },
   {
     pattern:
-      /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/gi,
+      /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/gi,
     style: {}, // we can add aditional styles here if needed
     renderText: renderTextStyles,
   },
   {
     pattern:
-      /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+link=["'](https?:\/\/[^"']+)["']>(.*?)<\/PUSHText>/gi,
+      /<a color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?\s+href=["'](https?:\/\/[^"']+)["']>(.*?)<\/a>/gi,
     style: {}, // can Add additional styles here if needed
     renderText: renderLinkWithColor,
   },
