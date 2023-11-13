@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.54](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.53...restapi-0.0.1-alpha.54) (2023-11-13)
+
+
+### Bug Fixes
+
+* group members and modify role high level functions function ([c274bae](https://github.com/ethereum-push-notification-service/push-sdk/commit/c274bae5d5e6050a0d8faaec61aa13e067862011))
+
+
+
 ## [0.0.1-alpha.53](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.52...restapi-0.0.1-alpha.53) (2023-11-12)
 
 
