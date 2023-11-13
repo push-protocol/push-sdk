@@ -10,12 +10,17 @@ import {
   ProgressHookType,
   IUser,
   IMessageIPFS,
+  GroupInfoDTO,
+  ChatMemberProfile,
+  ChatMemberCounts,
 } from '../types';
 import {
   GroupUpdateOptions,
   ChatListType,
   GroupCreationOptions,
   ManageGroupOptions,
+  RemoveFromGroupOptions,
+  GetGroupParticipantsOptions,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -26,6 +31,7 @@ import {
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
 import { User } from './user';
+import { updateGroupConfig } from '../chat/updateGroupConfig';
 export class Chat {
   private userInstance: User;
 
@@ -236,20 +242,49 @@ export class Chat {
 
   group = {
     create: async (name: string, options?: GroupCreationOptions) => {
-      const groupParams: PUSH_CHAT.ChatCreateGroupType = {
-        groupName: name,
-        groupDescription: options?.description,
-        members: options?.members ? options.members : [],
-        groupImage: options?.image,
-        admins: options?.admins ? options.admins : [],
-        rules: options?.rules,
-        isPublic: !options?.private,
+      const groupParams: PUSH_CHAT.ChatCreateGroupTypeV2 = {
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
+
+        groupName: name,
+        groupDescription: options?.description ?? null,
+        groupImage: options?.image ?? null,
+        rules: options?.rules ?? {},
+        isPublic: !options?.private,
+        groupType: 'default',
+
+        config: {
+          meta: null,
+          scheduleAt: null,
+          scheduleEnd: null,
+          status: null,
+        },
+
+        members: options?.members ? options.members : [],
+        admins: options?.admins ? options.admins : [],
       };
 
-      return await PUSH_CHAT.createGroup(groupParams);
+      return await PUSH_CHAT.createGroupV2(groupParams);
+    },
+
+    participants: async (
+      chatId: string,
+      options?: GetGroupParticipantsOptions
+    ): Promise<{ count: ChatMemberCounts; members: ChatMemberProfile[] }> => {
+      const { page = 1, limit = 20 } = options ?? {};
+      const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
+        chatId,
+        page,
+        limit,
+        env: this.env,
+      };
+      const count = await PUSH_CHAT.getGroupMemberCount({
+        chatId,
+        env: this.env,
+      });
+      const members = await PUSH_CHAT.getGroupMembers(getGroupMembersOptions);
+      return { count, members };
     },
 
     permissions: async (chatId: string): Promise<GroupAccess> => {
@@ -270,7 +305,7 @@ export class Chat {
     update: async (
       chatId: string,
       options: GroupUpdateOptions
-    ): Promise<GroupDTO> => {
+    ): Promise<GroupInfoDTO> => {
       const group = await PUSH_CHAT.getGroup({
         chatId: chatId,
         env: this.env,
@@ -282,22 +317,29 @@ export class Chat {
       const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
         chatId: chatId,
         groupName: options.name ? options.name : group.groupName,
-        groupImage: options.image ? options.image : group.groupImage,
         groupDescription: options.description
           ? options.description
           : group.groupDescription,
-        scheduleAt: options.scheduleAt ? options.scheduleAt : group.scheduleAt,
-        scheduleEnd: options.scheduleEnd
-          ? options.scheduleEnd
-          : group.scheduleEnd,
-        status: options.status ? options.status : group.status,
-        meta: options.meta ? options.meta : group.meta,
+        groupImage: options.image ? options.image : group.groupImage,
         rules: options.rules ? options.rules : group.rules,
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
       };
-      return await updateGroupProfile(updateGroupProfileOptions);
+      const updateGroupConfigOptions = {
+        chatId: chatId,
+        meta: options.meta ? options.meta : group.meta,
+        scheduleAt: options.scheduleAt ? options.scheduleAt : group.scheduleAt,
+        scheduleEnd: options.scheduleEnd
+          ? options.scheduleEnd
+          : group.scheduleEnd,
+        status: options.status ? options.status : group.status,
+        account: this.account,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+        env: this.env,
+      };
+      await updateGroupProfile(updateGroupProfileOptions);
+      return await updateGroupConfig(updateGroupConfigOptions);
     },
 
     add: async (chatId: string, options: ManageGroupOptions) => {
@@ -339,7 +381,60 @@ export class Chat {
       }
     },
 
-    remove: async (chatId: string, options: ManageGroupOptions) => {
+    remove: async (chatId: string, options: RemoveFromGroupOptions) => {
+      const { accounts } = options;
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('Accounts array cannot be empty!');
+      }
+
+      accounts.forEach((account) => {
+        if (!isValidETHAddress(account)) {
+          throw new Error(`Invalid account address: ${account}`);
+        }
+      });
+
+      const adminsToRemove = [];
+      const membersToRemove = [];
+
+      for (const account of accounts) {
+        const status = await PUSH_CHAT.getGroupMemberStatus({
+          chatId: chatId,
+          did: account,
+          env: this.env,
+        });
+
+        if (status.isAdmin) {
+          adminsToRemove.push(account);
+        } else if (status.isMember) {
+          membersToRemove.push(account);
+        }
+      }
+
+      if (adminsToRemove.length > 0) {
+        await PUSH_CHAT.removeAdmins({
+          chatId: chatId,
+          admins: adminsToRemove,
+          env: this.env,
+          account: this.account,
+          signer: this.signer,
+          pgpPrivateKey: this.decryptedPgpPvtKey,
+        });
+      }
+
+      if (membersToRemove.length > 0) {
+        await PUSH_CHAT.removeMembers({
+          chatId: chatId,
+          members: membersToRemove,
+          env: this.env,
+          account: this.account,
+          signer: this.signer,
+          pgpPrivateKey: this.decryptedPgpPvtKey,
+        });
+      }
+    },
+
+    modify: async (chatId: string, options: ManageGroupOptions) => {
       const { role, accounts } = options;
 
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -357,28 +452,18 @@ export class Chat {
         }
       });
 
-      if (role === 'ADMIN') {
-        return await PUSH_CHAT.removeAdmins({
-          chatId: chatId,
-          admins: accounts,
-          env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
-        });
-      } else {
-        return await PUSH_CHAT.removeMembers({
-          chatId: chatId,
-          members: accounts,
-          env: this.env,
-          account: this.account,
-          signer: this.signer,
-          pgpPrivateKey: this.decryptedPgpPvtKey,
-        });
-      }
+      return await PUSH_CHAT.modifyRoles({
+        chatId: chatId,
+        newRole: role,
+        members: accounts,
+        env: this.env,
+        account: this.account,
+        signer: this.signer,
+        pgpPrivateKey: this.decryptedPgpPvtKey,
+      });
     },
 
-    join: async (target: string): Promise<GroupDTO> => {
+    join: async (target: string): Promise<GroupInfoDTO> => {
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,
@@ -404,13 +489,13 @@ export class Chat {
         });
       }
 
-      return await PUSH_CHAT.getGroup({
+      return await PUSH_CHAT.getGroupInfo({
         chatId: target,
         env: this.env,
       });
     },
 
-    leave: async (target: string): Promise<GroupDTO> => {
+    leave: async (target: string): Promise<GroupInfoDTO> => {
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,

@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { MessageType } from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
 describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
@@ -48,14 +48,14 @@ describe('PushAPI.chat functionality', () => {
   it('Should send message ', async () => {
     const response = await userAlice.chat.send(account2, {
       content: 'Hello',
-      type: MessageType.TEXT,
+      type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
     });
     expect(response).to.be.an('object');
   });
   it('Should decrypt message ', async () => {
     await userAlice.chat.send(account2, {
       content: 'Hello',
-      type: MessageType.TEXT,
+      type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
     });
     const messagePayloads = await userAlice.chat.history(account2);
     const decryptedMessagePayloads = await userBob.chat.decrypt(

@@ -115,7 +115,8 @@ export const MemberProfileCard = ({
 const ProfileCardItem = styled(Section)<{ id: any; key: any; background: any }>`
   justify-content: space-between;
   padding: 8px 8px;
-  border-radius: 16px;
+  // border-radius: 16px;
+  border-bottom: ${(props) => props.theme.border.modalInnerComponents};
   position: relative;
   box-sizing: border-box;
   width: 100%;

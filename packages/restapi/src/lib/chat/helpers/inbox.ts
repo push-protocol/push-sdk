@@ -193,7 +193,8 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         messages[i] = await decryptAndVerifyMessage(
           message,
           signatureValidationPubliKey,
-          pgpPrivateKey
+          pgpPrivateKey,
+          env
         );
       }
     }

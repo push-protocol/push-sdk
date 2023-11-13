@@ -13,7 +13,7 @@ import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
 import { CreateGroupType } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
-import { CreateGroupModalProps, IChatTheme } from '../exportedTypes';
+import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
@@ -26,6 +26,8 @@ import {
 
 import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
+import { CriteriaValidationErrorType } from '../types';
+import AutoImageClipper from './AutoImageClipper';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -45,6 +47,8 @@ interface GroupInputDetailsType {
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
+  modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  modalPositionType = MODAL_POSITION_TYPE.GLOBAL
 }) => {
   const [activeComponent, setActiveComponent] = useState<CreateGroupStepKeys>(
     // replace it with info one
@@ -69,11 +73,14 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
   }, [activeComponent]);
 
+  const useDummyGroupInfo = false;
   const [groupInputDetails, setGroupInputDetails] =
     useState<GroupInputDetailsType>({
-      groupName: '',
-      groupDescription: '',
-      groupImage: '',
+      groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
+      groupDescription: useDummyGroupInfo
+        ? 'This is dummy group description for testing'
+        : '',
+      groupImage: useDummyGroupInfo ? ProfilePicture : '',
     });
 
   const renderComponent = () => {
@@ -129,7 +136,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   return (
-    <Modal>
+    <Modal clickawayClose={onClose} modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {renderComponent()} <ToastContainer />
     </Modal>
   );
@@ -162,9 +169,12 @@ const CreateGroupDetail = ({
   const groupInfoToast = useToast();
   const { groupName, groupDescription, groupImage } = groupInputDetails;
   const theme = useContext(ThemeContext);
-
+  const [validationErrors, setValidationErrors] =
+    useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
+  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
+  const [imageSrc, setImageSrc] = useState<string | null>();
 
   const handleChange = (e: Event) => {
     if (!(e.target instanceof HTMLInputElement)) {
@@ -177,15 +187,22 @@ const CreateGroupDetail = ({
       (e.target as HTMLInputElement).files &&
       ((e.target as HTMLInputElement).files as FileList).length
     ) {
+      setIsImageUploaded(true);
+      setGroupInputDetails({
+        groupDescription,
+        groupName,
+        groupImage: '',
+      });
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
 
       reader.onloadend = function () {
-        setGroupInputDetails({
-          groupDescription,
-          groupName,
-          groupImage: reader.result as string,
-        });
+        setImageSrc(reader.result as string);
+        // setGroupInputDetails({
+        //   groupDescription,
+        //   groupName,
+        //   groupImage: reader.result as string,
+        // });
       };
     }
   };
@@ -205,21 +222,19 @@ const CreateGroupDetail = ({
     if (!skipVerify) {
       // verify name
       if (groupName.trim().length === 0) {
-        showError('Group Name is empty');
+        setValidationErrors({
+          groupName: 'Group name cannot be empty',
+        });
         return;
       }
 
       // verify description
       if (groupDescription.trim().length === 0) {
-        showError('Group Description is empty');
+        setValidationErrors({
+          groupDescription: 'Group Description is empty',
+        });
         return;
       }
-
-      // verify description
-      // if (!groupImage) {
-      //   showError("Group image can't be empty");
-      //   return;
-      // }
     }
 
     if (handleNext) {
@@ -238,28 +253,45 @@ const CreateGroupDetail = ({
     <Section
       flexDirection="column"
       alignItems="center"
-      gap="20px"
+      gap="16px"
+      overflow='hidden auto'
+       justifyContent='start'
       width={!isMobile ? '400px' : '300px'}
     >
       <ModalHeader title="Create Group" handleClose={onClose} />
 
       <UploadContainer onClick={handleUpload}>
-        {!groupImage && (
+        {isImageUploaded ? (
+          groupImage ? (
+            <UpdatedImageContainer>
+              <Image
+                src={groupImage}
+                objectFit="contain"
+                alt="group image"
+                width="100%"
+                height="100%"
+              />
+            </UpdatedImageContainer>
+          ) : (
+            <AutoImageClipper
+              imageSrc={imageSrc}
+              onImageCropped={(croppedImage: string) =>
+                setGroupInputDetails({
+                  groupDescription,
+                  groupName,
+                  groupImage: croppedImage,
+                })
+              }
+              width={undefined}
+              height={undefined}
+            />
+          )
+        ) : (
           <ImageContainer theme={theme}>
             <AiTwotoneCamera fontSize={40} color={'rgba(87, 93, 115, 1)'} />
           </ImageContainer>
         )}
-        {groupImage && (
-          <UpdatedImageContainer>
-            <Image
-              src={groupImage}
-              objectFit="contain"
-              alt="group image"
-              width="100%"
-              height="100%"
-            />
-          </UpdatedImageContainer>
-        )}
+      
         <FileInput
           type="file"
           accept="image/*"
@@ -268,31 +300,42 @@ const CreateGroupDetail = ({
           onChange={(e) => handleChange(e as unknown as Event)}
         />
       </UploadContainer>
-      <TextInput
-        labelName="Group Name"
-        charCount={30}
-        inputValue={groupName}
-        onInputChange={(e: any) =>
-          setGroupInputDetails({
-            groupDescription,
-            groupName: e.target.value,
-            groupImage,
-          })
-        }
-      />
-
-      <TextArea
-        labelName="Group Description"
-        charCount={80}
-        inputValue={groupDescription}
-        onInputChange={(e: any) =>
-          setGroupInputDetails({
-            groupDescription: e.target.value,
-            groupName,
-            groupImage,
-          })
-        }
-      />
+      <Section gap="10px" flexDirection="column" alignItems="start">
+        <TextInput
+          labelName="Group Name"
+          charCount={30}
+          inputValue={groupName}
+          onInputChange={(e: any) =>
+            setGroupInputDetails({
+              groupDescription,
+              groupName: e.target.value,
+              groupImage,
+            })
+          }
+          error={!!validationErrors?.groupName}
+        />
+        {!!validationErrors?.groupName && (
+          <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>
+        )}
+      </Section>
+      <Section gap="10px" flexDirection="column" alignItems="start">
+        <TextArea
+          labelName="Group Description"
+          charCount={80}
+          inputValue={groupDescription}
+          onInputChange={(e: any) =>
+            setGroupInputDetails({
+              groupDescription: e.target.value,
+              groupName,
+              groupImage,
+            })
+          }
+          error={!!validationErrors?.groupDescription}
+        />
+        {!!validationErrors?.groupDescription && (
+          <ErrorSpan>{validationErrors?.groupDescription}</ErrorSpan>
+        )}
+      </Section>
       <Button width="197px" onClick={verifyAndHandelNext}>
         Next
       </Button>
@@ -300,42 +343,45 @@ const CreateGroupDetail = ({
   );
 };
 
-export const GatingRulesInformation = () => {
-  const theme = useContext(ThemeContext);
-  return (
-    <Section gap="6px" zIndex="-1">
-      <SpamIcon />
-      <Span color={theme.textColor?.modalSubHeadingText} fontSize="15px">
-        Learn more about gating rules
-      </Span>
-    </Section>
-  );
-};
 
 //use the theme
 const UploadContainer = styled.div`
   width: fit-content;
+  min-width:128px;
+  min-height:128px;
   cursor: pointer;
   align-self: center;
 `;
 
 const ImageContainer = styled.div<{ theme: IChatTheme }>`
   margin-top: 10px;
-  width: fit-content;
   cursor: pointer;
   border-radius: 32px;
-  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
-  padding: 40px;
+  background: ${(props) => props.theme.backgroundColor!.modalHoverBackground};
+  width: 128px;
+  cursor: pointer;
+  height: 128px;
+  max-height: 128px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 `;
 const UpdatedImageContainer = styled.div`
   margin-top: 10px;
-  width: 112px;
+  width: 128px;
   cursor: pointer;
-  height: 112px;
+  height: 128px;
   overflow: hidden;
+  max-height: 128px;
   border-radius: 32px;
 `;
 
 const FileInput = styled.input`
   display: none;
+`;
+
+const ErrorSpan = styled(Span)`
+  font-size: 12px;
+  font-weight: 500;
+  color: #ed5858;
 `;

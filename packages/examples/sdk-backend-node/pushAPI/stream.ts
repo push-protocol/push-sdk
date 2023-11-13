@@ -1,9 +1,10 @@
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
 import { goerli } from 'viem/chains';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
+import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -33,10 +34,10 @@ const thirdSignerAddress = thirdSigner.account.address;
 const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
 
 const eventlistener = async (
-  pushAPI: PushAPI,
+  stream: PushStream,
   eventName: string
 ): Promise<void> => {
-  pushAPI.stream.on(eventName, (data: any) => {
+  stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
       console.log(data);
     }
@@ -49,20 +50,42 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(signer, { env });
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
+
+
+     const stream = await userAlice.stream(
+       [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
+       {
+         // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+         // more info can be found at push.org/docs/chat
+
+         filter: {
+           channels: ['*'],
+           chats: ['*'],
+         },
+         connection: {
+           auto: false, // should connection be automatic, else need to call stream.connect();
+           retries: 3, // number of retries in case of error
+         },
+         raw: true, // enable true to show all data
+       }
+     );
+
+     await stream.connect();
+
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log(`Listening ${STREAM.PROFILE} Events`);
-  eventlistener(userAlice, STREAM.PROFILE);
+  eventlistener(stream, STREAM.PROFILE);
   console.log(`Listening ${STREAM.ENCRYPTION} Events`);
-  eventlistener(userAlice, STREAM.ENCRYPTION);
+  eventlistener(stream, STREAM.ENCRYPTION);
   console.log(`Listening ${STREAM.NOTIF} Events`);
-  eventlistener(userAlice, STREAM.NOTIF);
+  eventlistener(stream, STREAM.NOTIF);
   console.log(`Listening ${STREAM.NOTIF_OPS} Events`);
-  eventlistener(userAlice, STREAM.NOTIF_OPS);
+  eventlistener(stream, STREAM.NOTIF_OPS);
   console.log(`Listening ${STREAM.CHAT} Events`);
-  eventlistener(userAlice, STREAM.CHAT);
+  eventlistener(stream, STREAM.CHAT);
   console.log(`Listening ${STREAM.CHAT_OPS} Events`);
-  eventlistener(userAlice, STREAM.CHAT_OPS);
+  eventlistener(stream, STREAM.CHAT_OPS);
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('\n\nNew Chat Request, Expected Events:\n1. chat.request');

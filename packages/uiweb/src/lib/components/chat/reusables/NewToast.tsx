@@ -72,7 +72,6 @@ const useToast = (
 
   const showLoaderToast: ShowLoaderToastType = ({ loaderMessage }) => {
     isLoaderToastShown = true;
-    console.log("in here")
     return (toastId.current = toast(
       <ThemeProvider theme={theme}>
         <LoaderToast
@@ -101,7 +100,6 @@ const useToast = (
   };
 
   const showMessageToast: ShowMessageToastType = ({ toastTitle, toastMessage, toastType, getToastIcon }) => {
-    console.log('show message toast')
     const toastUI = (
       <Toast>
         <ToastIcon>{getToastIcon ? getToastIcon(30) : ''}</ToastIcon>

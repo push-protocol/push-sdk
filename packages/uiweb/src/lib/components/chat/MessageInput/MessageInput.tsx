@@ -17,10 +17,10 @@ import { Spinner } from '../../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import OpenLink from '../../../icons/OpenLink';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
-import TokenGatedIcon from '../../../icons/Token-Gated.svg';
-import { Modal } from '../reusables/Modal';
-import { Image } from '../../reusables';
+import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
+import useToast from '../reusables/NewToast';
+import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
 import {
   checkIfIntent,
   getDefaultFeedObject,
@@ -38,11 +38,11 @@ import {
   usePushChatSocket,
 } from '../../../hooks';
 
-import type { FileMessageContent } from '../../../types';
-import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
+import type { FileMessageContent, IGroup } from '../../../types';
+import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
-import useToast from '../reusables/NewToast';
+import { InfoContainer } from '../reusables';
 
 /**
  * @interface IThemeProps
@@ -52,7 +52,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-const ConnectButtonSection = ({autoConnect}:{autoConnect:boolean}) => {
+const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
   const { signer } = useChatData();
   return (
     <Section
@@ -84,7 +84,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
-  onGetTokenClick,
+  verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
+  onVerificationFail,
 }) => {
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -230,7 +232,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
-      console.log('inside condition')
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
@@ -258,7 +259,8 @@ console.log(checkIfMember(chatFeed, account!))
         chatId,
       });
       if (response) {
-        await updateChatFeed();}
+        await updateChatFeed();
+      }
     } else {
       const sendTextMessage = await sendMessage({
         message: `Hello, please let me join this group, my wallet address is ${account}`,
@@ -379,24 +381,20 @@ console.log(checkIfMember(chatFeed, account!))
       setChatFeed(chat as IFeeds);
     }
   };
-  
-  return !Object.keys(chatFeed || {}).length ? (
-    <>
-      {!pgpPrivateKey && (isConnected || !!signer) && (
-        <TypebarSection
-          width="100%"
-          overflow="hidden"
-          borderRadius="13px"
-          position="static"
-          padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
-          background={`${theme.backgroundColor?.messageInputBackground}`}
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <ConnectButtonSection autoConnect={autoConnect}/>
-        </TypebarSection>
-      )}
-    </>
+
+  return !(pgpPrivateKey && account) && isConnected ? (
+    <TypebarSection
+      width="100%"
+      overflow="hidden"
+      borderRadius="13px"
+      position="static"
+      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      background={`${theme.backgroundColor?.messageInputBackground}`}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <ConnectButtonSection autoConnect={autoConnect} />
+    </TypebarSection>
   ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
     <TypebarSection
@@ -412,143 +410,104 @@ console.log(checkIfMember(chatFeed, account!))
     >
       {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
         <>
-        {(isJoinGroup() || isNotVerified()) && (
-          <Section
-            width="100%"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Span
-              padding="8px 8px 8px 16px"
-              color={theme.textColor?.chatReceivedBubbleText}
-              fontSize="15px"
-              fontWeight="500"
-              textAlign="start"
-            >
-              {isJoinGroup() && 'Click on the button to join the group'}
-              {isNotVerified() && (
-                <>
-                  Sending messages requires{' '}
-                  <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
-                    1 PUSH Token
-                  </Span>{' '}
-                  for participation.{' '}
-                  <Link
-                    href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
-                    target="_blank"
-                    color={theme.backgroundColor?.chatSentBubbleBackground}
-                  >
-                    Learn More <OpenLink />
-                  </Link>
-                </>
-              )}
-            </Span>
-            <ConnectWrapper>
-              <Connect
-                onClick={async() =>
-                  isJoinGroup() ? await handleJoinGroup() : await checkVerification()
-                }
-              >
-                {isJoinGroup() &&
-                <>
-                 {approveLoading ? (
-                  <Spinner color="#fff" size="24" />
-                ) : (
-                  ' Join Group '
-                )}
-                </>
-                }
-                {isNotVerified() &&
-                <>
-                  {accessLoading ? (
-                    <Spinner color="#fff" size="24" />
-                  ) : (
-                    'Verify Access'
-                  )}
-                  </>
-                  }
-              </Connect>
-            </ConnectWrapper>
-          </Section>
-        )}
-        {(!!pgpPrivateKey && !verificationSuccessfull) && (
-          <Modal width="439px">
+          {(isJoinGroup() || isNotVerified()) && (
             <Section
-              padding="10px"
-              theme={theme}
-              gap="32px"
-              flexDirection="column"
+              width="100%"
+              justifyContent="space-between"
+              alignItems="center"
             >
               <Span
+                padding="8px 8px 8px 16px"
+                color={theme.textColor?.chatReceivedBubbleText}
+                fontSize="15px"
                 fontWeight="500"
-                fontSize="24px"
-                color={theme.textColor?.encryptionMessageText}
+                textAlign="start"
               >
-                Verification Failed
-              </Span>
-              <Span
-                color={theme.textColor?.encryptionMessageText}
-                fontSize="16px"
-              >
-                Please ensure the following conditions are met to participate and
-                send messages.
-              </Span>
-              <Section gap="8px" alignItems="start">
-                <Image
-                  verticalAlign="start"
-                  height="24"
-                  width="24"
-                  src={TokenGatedIcon}
-                  alt="token-gated"
-                />
-                <Section flexDirection="column">
-                  {' '}
-                  <Span
-                    color={theme.textColor?.encryptionMessageText}
-                    textAlign="start"
-                    alignSelf="start"
-                  >
-                    Token Gated
-                  </Span>
-                  <Span
-                    fontWeight="500"
-                    textAlign="start"
-                    color={theme.textColor?.encryptionMessageText}
-                  >
-                    You need to have{' '}
-                    <Span color={theme.backgroundColor?.chatSentBubbleBackground}>
+                {isJoinGroup() && 'Click on the button to join the group'}
+                {isNotVerified() && (
+                  <>
+                    Sending messages requires{' '}
+                    <Span
+                      color={theme.backgroundColor?.chatSentBubbleBackground}
+                    >
                       1 PUSH Token
                     </Span>{' '}
-                    in your wallet to be able to send messages.
-                  </Span>
-                </Section>
-              </Section>
-              <Section gap="8px">
-                <TokenWrapper
+                    for participation.{' '}
+                    <Link
+                      href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+                      target="_blank"
+                      color={theme.backgroundColor?.chatSentBubbleBackground}
+                    >
+                      Learn More <OpenLink />
+                    </Link>
+                  </>
+                )}
+              </Span>
+              <ConnectWrapper>
+                <Connect
+                  onClick={async () =>
+                    isJoinGroup()
+                      ? await handleJoinGroup()
+                      : await checkVerification()
+                  }
+                >
+                  {isJoinGroup() && (
+                    <>
+                      {approveLoading ? (
+                        <Spinner color="#fff" size="24" />
+                      ) : (
+                        ' Join Group '
+                      )}
+                    </>
+                  )}
+                  {isNotVerified() && (
+                    <>
+                      {accessLoading ? (
+                        <Spinner color="#fff" size="24" />
+                      ) : (
+                        'Verify Access'
+                      )}
+                    </>
+                  )}
+                </Connect>
+              </ConnectWrapper>
+            </Section>
+          )}
+          {!!pgpPrivateKey && !verificationSuccessfull && (
+            <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
+              <Section
+                margin="5px 0px 0px 0px"
+                gap="16px"
+                flexDirection="column"
+                width="100%"
+              >
+                <ModalHeader title="Access Failed" />
+                <ConditionsInformation
+                  theme={theme}
+                  groupInfo={chatFeed?.groupInformation}
+                  subheader="Please make sure the following conditions
+                   are met to pariticpate and send messages."
+                  alert={true}
+                />
+                <ConnectWrapperClose
                   onClick={() => {
-                    if (onGetTokenClick) {
-                      onGetTokenClick();
+                    if (onVerificationFail) {
+                      onVerificationFail();
                     }
                     setVerificationSuccessfull(true);
                   }}
                 >
-                  <TokenGet>
-                    Get Free Tokens
-                    <OpenLink height="12" width="12" />
-                  </TokenGet>
-                </TokenWrapper>
-                <ConnectWrapperClose
-                  onClick={() => {
-                    setVerificationSuccessfull(true);
-                  }}
-                >
-                  <ConnectClose>Close</ConnectClose>
+                  <ConnectClose>Cancel</ConnectClose>
                 </ConnectWrapperClose>
+                <InfoContainer
+                  cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                  label="Learn more about access gating rules"
+                />
               </Section>
-            </Section>
-          </Modal>
-        )}
-      </>
+              {/* </Section> */}
+            </Modal>
+          )}
+        </>
       ) : null}
       {!!pgpPrivateKey &&
         (((isRules ? verified : true) && isMember) ||

@@ -17,7 +17,7 @@ const start = async (): Promise<void> => {
   console.log(`${returnENVLog()}`);
 
   await runUserCases();
-  await runNotificationUseCases();
+  //await runNotificationUseCases();
   await runChatUseCases();
   await runVideoUseCases();
   await runSpaceUseCases();

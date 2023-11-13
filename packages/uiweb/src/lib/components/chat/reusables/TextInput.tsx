@@ -12,6 +12,7 @@ export interface ITextInputProps {
   onInputChange?: any;
   disabled?: boolean;
   customStyle?: CustomStyleParamsType;
+  error?:boolean;
 }
 type CustomStyleParamsType = {
   background?: string;
@@ -48,6 +49,7 @@ export const TextInput = (props: ITextInputProps) => {
           customStyle={props.customStyle!}
           disabled={!!props.disabled}
           theme={theme}
+          error={props.error || false}
           value={props.inputValue}
           onChange={handleChange}
           placeholder={props.placeholder}
@@ -75,7 +77,7 @@ const LabelContainer = styled.div`
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType}>`
+const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType,error:boolean}>`
   padding: 16px;
   margin-top: 8px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
@@ -83,7 +85,7 @@ const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType}>`
     props.customStyle?.background
       ? props.customStyle.background
       : props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.theme.border.modalInnerComponents};
+  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
   font-family: ${(props) => props.theme.fontFamily};

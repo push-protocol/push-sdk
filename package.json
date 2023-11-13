@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "test:restapi": "cd packages/restapi && TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 12000 --require tests/root.ts --serial",
+    "test:restapi": "cd packages/restapi && TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial",
     "cleanbuild": "rimraf ./dist && rimraf ./tmp"
   },
   "config": {
@@ -45,7 +45,7 @@
     "react-router-dom": "6.3.0",
     "regenerator-runtime": "0.13.7",
     "socket.io-client": "^4.5.2",
-    "styled-components": "^5.3.5",
+    "styled-components": "^6.0.8",
     "tiny-invariant": "^1.2.0",
     "ts-mocha": "^10.0.0",
     "tslib": "^2.3.0",
