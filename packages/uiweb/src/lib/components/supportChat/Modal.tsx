@@ -59,15 +59,30 @@ export const Modal: React.FC = () => {
     timestamp: undefined,
     icon: <HandWaveSvg fill={theme.btnColorPrimary}/>,
   };
-  const onScroll = () => {
+  const onScroll = async () => {
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
-        // This will be triggered after hitting the first element.
-        // pagination
-        getChatCall();
+        const content = listInnerRef.current;
+        const curScrollPos = content.scrollTop;
+        const oldScroll = content.scrollHeight - content.clientHeight;
+
+        await getChatCall();
+
+        const newScroll = content.scrollHeight - content.clientHeight;
+        content.scrollTop = curScrollPos + (newScroll - oldScroll);
       }
     }
+  };
+
+  const scrollToBottom = () => {
+    setTimeout(()=>{
+      if (listInnerRef.current) {
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
+
+      }
+    },0)
+  
   };
 
   const getChatCall = async () => {
@@ -86,6 +101,7 @@ export const Modal: React.FC = () => {
     setLastThreadHashFetched(lastThreadHash);
     setWasLastListPresent(lastListPresent);
     setLoading(false);
+    scrollToBottom();
   };
 
   const connectUser = async () => {
@@ -109,6 +125,7 @@ export const Modal: React.FC = () => {
       const chat = await decryptChat({ message, connectedUser, env });
       socketData.messagesSinceLastConnection.decrypted = true;
       setChatsSorted([...chats, chat]);
+      scrollToBottom();
     }
   }
 
@@ -120,7 +137,11 @@ export const Modal: React.FC = () => {
 
   useEffect(() => {
     getChatCall();
-  }, [connectedUser]);
+  }, [connectedUser, env, account]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [connectedUser, env, account, lastThreadHashFetched]);
 
   return (
     <Container theme={theme}>

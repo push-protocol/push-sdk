@@ -58,7 +58,7 @@ export type ButtonStyleProps = {
     setChats(uniqueChats);
   };
   const socketData = useSDKSocket({
-    account: account,
+    account: accountadd,
     env,
     apiKey,
   });
