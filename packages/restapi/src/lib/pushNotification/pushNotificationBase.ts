@@ -28,6 +28,7 @@ const LENGTH_UPPER_LIMIT = 125;
 const LENGTH_LOWER_LIMTI = 1;
 const SETTING_DELIMITER = '-';
 const SETTING_SEPARATOR = '+';
+const RANGE_TYPE = 3;
 const SLIDER_TYPE = 2;
 const BOOLEAN_TYPE = 1;
 const DEFAULT_ENABLE_VALUE = '1';
@@ -705,6 +706,31 @@ export class PushNotificationBaseClass {
             notificationSettingDescription +
             SETTING_SEPARATOR +
             ele.description;
+        }
+      }
+      if (ele.type == RANGE_TYPE) {
+        if ((ele.default && typeof ele.default == 'object') && ele.data) {
+          const enabled =
+            ele.data && ele.data.enabled != undefined
+              ? Number(ele.data.enabled).toString()
+              : DEFAULT_ENABLE_VALUE;
+          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
+          notificationSetting =
+            notificationSetting +
+            SETTING_SEPARATOR +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.default.lower +
+            SETTING_DELIMITER +
+            ele.default.upper +
+            SETTING_DELIMITER +
+            ele.data.lower +
+            SETTING_DELIMITER +
+            ele.data.upper +
+            SETTING_DELIMITER +
+            ticker;
         }
       }
     }
