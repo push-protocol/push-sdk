@@ -7,10 +7,12 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { create } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
+
 chai.use(chaiAsPromised);
 
 describe('Create Push Profile', () => {
-  const _env = Constants.ENV.DEV;
+  const _env = CONSTANTS.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
   let walletAddress: string;

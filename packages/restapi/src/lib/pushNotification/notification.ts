@@ -15,8 +15,7 @@ import {
   validateCAIP,
   getFallbackETHCAIPAddress,
 } from '../helpers';
-import PROGRESSHOOK from '../progressHook';
-import { ethers } from 'ethers';
+
 
 import { PushNotificationBaseClass } from './pushNotificationBase';
 // ERROR CONSTANTS

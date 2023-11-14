@@ -2,7 +2,6 @@ import { Rules } from "../types";
 import Constants, { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
-  listen?: STREAM[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -13,7 +12,7 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
-  enabled?: boolean;
+  overrideAccount?: string;
 };
 
 export enum STREAM {
@@ -23,6 +22,8 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  CONNECT = 'STREAM.CONNECT',
+  DISCONNECT = 'STREAM.DISCONNECT',
 }
 
 export enum NotificationEventType {
@@ -69,14 +70,14 @@ export interface Profile {
   publicKey: string;
 }
 
-export interface Member {
+export interface GroupMember {
   address: string;
   profile: Profile;
 }
 
 export interface Pending {
-  members: Member[];
-  admins: Member[];
+  members: GroupMember[];
+  admins: GroupMember[];
 }
 
 export interface GroupMeta {
