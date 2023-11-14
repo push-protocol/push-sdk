@@ -1,9 +1,10 @@
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
-import type { ParsedResponseType, IFeeds, Rules, } from '@pushprotocol/restapi';
+import type { ParsedResponseType, IFeeds, Rules, PushAPI, } from '@pushprotocol/restapi';
 import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
+  cid? : string;
   fromCAIP10: string;
   toCAIP10: string;
   fromDID: string;
@@ -23,6 +24,7 @@ export interface AccountEnvOptionsType {
   env?: ENV;
   account: string;
   signer: SignerType;
+  userAlice: PushAPI;
 }
 
 export interface ITheme {

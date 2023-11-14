@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { PushAPI } from '@pushprotocol/restapi';
 import { ChatIcon } from '../../icons/ChatIcon';
 import { Modal } from './Modal';
 import styled from 'styled-components';
@@ -47,6 +48,7 @@ export type ButtonStyleProps = {
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
   const [accountadd, setAccount] = useState<string | null>(account)
+  const [userAlice, setUserAlice] = useState<PushAPI | null>(null);
   const setChatsSorted = (chats: IMessageIPFS[]) => {
     const uniqueChats = [
       ...new Map(chats.map((item) => [item['timestamp'], item])).values(),
@@ -58,14 +60,16 @@ export type ButtonStyleProps = {
     setChats(uniqueChats);
   };
   const socketData = useSDKSocket({
-    account: account,
+    account: accountadd,
     env,
     apiKey,
+    userAlice
   });
 
   const chatPropsData = {
     account : accountadd,
     signer,
+    userAlice,
     supportAddress,
     greetingMsg,
     modalTitle,
@@ -77,6 +81,8 @@ export type ButtonStyleProps = {
   useEffect(() => {
     (async () => {
       if(signer) {
+        const userAlice = await PushAPI.initialize(signer, {env: env}); 
+        setUserAlice(userAlice)
         if (!account) {
           const address = await getAddressFromSigner(signer);
           setAccount(address);

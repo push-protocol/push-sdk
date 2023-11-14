@@ -4,6 +4,7 @@ import {
   EVENTS
 } from '@pushprotocol/socket';
 import {  ENV } from '../config';
+import { PushAPI } from '@pushprotocol/restapi';
 
 
 export type SDKSocketHookOptions = {
@@ -11,9 +12,10 @@ export type SDKSocketHookOptions = {
   env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
+  userAlice: PushAPI
 };
 
-export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
+export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice }: SDKSocketHookOptions) => {
   
   const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
