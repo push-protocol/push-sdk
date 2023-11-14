@@ -172,9 +172,9 @@ describe('PushStream.initialize functionality', () => {
         content: "Gm gm! It's a me... Mario",
       });
     });
-    
+
     await stream.connect();
-    
+
     stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
       console.log('Stream Disconnected');
     });
