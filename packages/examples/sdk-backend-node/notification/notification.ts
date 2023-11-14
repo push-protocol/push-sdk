@@ -45,19 +45,38 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   const userAlice = await PushAPI.initialize(signer, { env });
 
-  const stream = await userAlice.stream([CONSTANTS.STREAM.NOTIF], {
-    // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
-    // more info can be found at push.org/docs/chat
+  const stream = await userAlice.initStream(
+    [
+      CONSTANTS.STREAM.NOTIF,
+      CONSTANTS.STREAM.CHAT_OPS,
+      CONSTANTS.STREAM.CHAT,
+      CONSTANTS.STREAM.CONNECT,
+      CONSTANTS.STREAM.DISCONNECT,
+    ],
+    {
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
 
-    filter: {
-      channels: ['*'],
-      chats: ['*'],
-    },
-    connection: {
-      auto: true, // should connection be automatic, else need to call stream.connect();
-      retries: 3, // number of retries in case of error
-    },
-    raw: true, // enable true to show all data
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: true, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    }
+  );
+
+  stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+    console.log('Stream Connected');
+  });
+
+  await stream.connect();
+
+  stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+    console.log('Stream Disconnected');
   });
 
   // Listen Stream Events for getting websocket events
