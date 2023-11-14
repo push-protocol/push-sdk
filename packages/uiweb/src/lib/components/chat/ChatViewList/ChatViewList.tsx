@@ -51,7 +51,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
+  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -78,12 +78,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
+      // console.log("get userrr", signer, alias)
+      if (!alias && signer) {
+        // console.log("get userrr", signer, alias)
+        const user = await fetchChatProfile({ env, signer: signer });
+        if (user) setAlias(user);
       }
     })();
-  }, [account]);
+  }, [account, signer, alias]);
 
   useEffect(() => {
     setMessages(undefined);
@@ -93,41 +95,45 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (!account && !env) return;
-      const chat = await fetchChat({ chatId });
-      if (Object.keys(chat || {}).length) {
-        setConversationHash(chat?.threadhash as string);
-        setChatFeed(chat as IFeeds);
-      }
-      else {
-        let newChatFeed;
-        let group;
-        const result = await getNewChatUser({
-          searchText: chatId,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          newChatFeed = getDefaultFeedObject({ user: result });
+      if (alias) {
+        // console.log('chatss');
+        // console.log(account, env, 'chatss')
+        const chat = await fetchChat();
+        // console.log(chat, 'chatss calling main', alias)
+        if (chat) {
+          setConversationHash(chat?.threadhash as string);
+          setChatFeed(chat as IFeeds);
         } else {
-          group = await getGroup({ searchText: chatId });
-          if (group) {
-            newChatFeed = getDefaultFeedObject({ groupInformation: group });
+          console.log('chatss calling elsez')
+          let newChatFeed;
+          let group;
+          const result = await getNewChatUser({
+            searchText: chatId,
+            fetchChatProfile,
+            env,
+          });
+          if (result) {
+            newChatFeed = getDefaultFeedObject({ user: result });
+          } else {
+            group = await getGroup({ searchText: chatId });
+            if (group) {
+              newChatFeed = getDefaultFeedObject({ groupInformation: group });
+            }
+          }
+          if (newChatFeed) {
+            if (!newChatFeed?.groupInformation) {
+              setChatStatusText(ChatStatus.FIRST_CHAT);
+            }
+            setConversationHash(newChatFeed.threadhash as string);
+            setChatFeed(newChatFeed);
+          } else {
+            setChatStatusText(ChatStatus.INVALID_CHAT);
           }
         }
-        if (newChatFeed) {
-          if (!newChatFeed?.groupInformation) {
-            setChatStatusText(ChatStatus.FIRST_CHAT);
-          }
-          setConversationHash(newChatFeed.threadhash as string);
-          setChatFeed(newChatFeed);
-        } else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
-        }
+        setLoading(false);
       }
-      setLoading(false);
     })();
-  }, [chatId, pgpPrivateKey, account, env]);
+  }, [chatId, pgpPrivateKey, account, env, alias]);
 
   //moniters socket changes
   useEffect(() => {
@@ -138,7 +144,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setFilteredMessages([
           messagesSinceLastConnection,
         ] as IMessageIPFSWithCID[]);
-     
+
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
         const newChatViewList = appendUniqueMessages(
@@ -173,7 +179,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account, env,chatFeed]);
+  }, [conversationHash, pgpPrivateKey, account, env, chatFeed]);
 
   useEffect(() => {
     scrollToBottom();
@@ -191,10 +197,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [messages]);
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
-    {
+    if (chatFeed && !chatFeed?.groupInformation?.isPublic && account) {
       chatFeed?.groupInformation?.members.forEach((acc) => {
         if (
           acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
@@ -203,17 +208,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         }
       });
     }
-  },[account,chatFeed])
+  }, [account, chatFeed])
 
   //methods
   const scrollToBottom = () => {
-    setTimeout(()=>{
+    setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
 
       }
-    },0)
-  
+    }, 0)
+
   };
 
   const onScroll = async () => {
@@ -239,13 +244,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-  
+
     if (
       threadHash &&
-      ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
+      ((account && pgpPrivateKey && chatFeed && !chatFeed?.groupInformation) ||
         (chatFeed && chatFeed?.groupInformation))
     ) {
-      
+
       const chatHistory = await historyMessages({
         limit: limit,
         threadHash,
@@ -279,7 +284,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   };
 
-  const ifBlurChat = () =>{
+  const ifBlurChat = () => {
     return !!(
       chatFeed &&
       chatFeed?.groupInformation &&
@@ -328,9 +333,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       {!loading && (
         <>
           {chatFeed &&
-          (chatFeed.publicKey ||
-            (chatFeed?.groupInformation &&
-              !chatFeed?.groupInformation?.isPublic)) ? (
+            (chatFeed.publicKey ||
+              (chatFeed?.groupInformation &&
+                !chatFeed?.groupInformation?.isPublic)) ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
             <EncryptionMessage
@@ -368,7 +373,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                       const dateNum = moment(chat.timestamp).format('L');
                       const position =
                         pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-                        account?.toLowerCase()
+                          account?.toLowerCase()
                           ? 0
                           : 1;
                       return (
@@ -387,7 +392,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                     }
                   )}
               </Section>
-              {chatFeed &&
+              {/* {chatFeed &&
                 account &&
                 checkIfIntent({
                   chat: chatFeed as IFeeds,
@@ -398,7 +403,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                     chatId={chatId}
                     setChatFeed={setChatFeed}
                   />
-                )}
+                )} */}
             </>
           )}
         </>
@@ -408,7 +413,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 };
 
 //styles
-const ChatViewListCard = styled(Section)<IThemeProps>`
+const ChatViewListCard = styled(Section) <IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;

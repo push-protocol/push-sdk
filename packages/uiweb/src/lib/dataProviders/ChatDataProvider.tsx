@@ -31,6 +31,7 @@ export const ChatUIProvider = ({
   const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
   const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
    const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
+   const [alias, setAlias] = useState<any>(null);
 
   const [pgpPrivateKeyVal, setPgpPrivateKeyVal] =
     useState<string | null>(pgpPrivateKey);
@@ -77,11 +78,15 @@ useEffect(() => {
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account,env });
-        if (user) setConnectedProfile(user);
+        user = await fetchChatProfile({ env, signer: signer! });
+        console.log("userrr",user);
+        if (user) {
+          setAlias(user);  
+          setConnectedProfile(user);
+        } 
       }
     })();
-  }, [account,env,pgpPrivateKey]);
+  }, [account,env,pgpPrivateKey, signer]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
@@ -97,7 +102,9 @@ useEffect(() => {
     isPushChatSocketConnected,
     setIsPushChatSocketConnected,
     connectedProfile,
-    setConnectedProfile
+    setConnectedProfile,
+    alias,
+    setAlias
   };
 
 

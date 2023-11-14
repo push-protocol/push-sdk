@@ -66,7 +66,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
   useEffect(() => {
     (async () => {
       if (account && signer) {
-        if (!pgpPrivateKey) await handleUserCreation();
+        if (!pgpPrivateKey) await fetchChatProfile({signer: signer, env});
       }
     })();
   }, [account, signer]);

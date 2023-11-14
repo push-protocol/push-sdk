@@ -5,26 +5,22 @@ import { useChatData } from './useChatData';
 
 
 interface fetchChat {
-  chatId: string;
+  chatId?: string;
 }
 
 const useFetchChat = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,pgpPrivateKey } = useChatData();
+  const { account, env,pgpPrivateKey, alias } = useChatData();
 
 
   const fetchChat = useCallback(
-    async ({ chatId}: fetchChat) => {
+    async () => {
       setLoading(true);
       try {
-        const chat = await PushAPI.chat.chat({
-          account: account? account : '0xeeE5A266D7cD954bE3Eb99062172E7071E664023',
-          toDecrypt: pgpPrivateKey ? true : false,
-          pgpPrivateKey: String(pgpPrivateKey),
-          recipient: chatId,
-          env: env
-        });
+        console.log("chatss calling in hook before", alias);
+        const chat = await alias.chat.list("CHATS")
+        console.log('chatss in hook', chat);
         return chat;
       } catch (error: Error | any) {
         setLoading(false);
@@ -36,7 +32,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [pgpPrivateKey,env,account]
+    [pgpPrivateKey,env,account, alias]
   );
 
   return { fetchChat, error, loading };

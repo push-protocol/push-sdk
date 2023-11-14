@@ -17,7 +17,7 @@ const ChatViewComponentTest = () => {
       <ChatViewComponentCard>
         <ChatViewComponent 
         onVerificationFail={() => console.log("BOIIII RETURNNNSSSSS")} 
-        chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' 
+        chatId='0xfD8D06740291E7F2675Bc584fC6021d488B37c4f' 
         limit={10}
          isConnected={true} 
          groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
