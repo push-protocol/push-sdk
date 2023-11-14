@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.30](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.29...uiweb-0.0.1-alpha.30) (2023-11-13)
+
+
+### Bug Fixes
+
+* added alias for chatview ([#820](https://github.com/ethereum-push-notification-service/push-sdk/issues/820)) ([2940242](https://github.com/ethereum-push-notification-service/push-sdk/commit/2940242425b5bdd41901135419efe2e917f167b9))
+* fixed font awesome ([#799](https://github.com/ethereum-push-notification-service/push-sdk/issues/799)) ([282dc1c](https://github.com/ethereum-push-notification-service/push-sdk/commit/282dc1cf0e52627c2e854912d6b15acc5716ccaa))
+* fixed merge conflicts with main ([040cd67](https://github.com/ethereum-push-notification-service/push-sdk/commit/040cd6798da69ed6bf5c8de2e068788606b4a385))
+
+
+### Features
+
+* added default link markdown support in default patterns ([#825](https://github.com/ethereum-push-notification-service/push-sdk/issues/825)) ([54f6ee4](https://github.com/ethereum-push-notification-service/push-sdk/commit/54f6ee49abdc038e5bb58bdebc93f3c6f71f6887))
+
+
+
 ## [0.0.1-alpha.29](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.28...uiweb-0.0.1-alpha.29) (2023-11-07)
 
 

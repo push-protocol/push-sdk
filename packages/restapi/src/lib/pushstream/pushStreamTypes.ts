@@ -22,6 +22,8 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  CONNECT = 'STREAM.CONNECT',
+  DISCONNECT = 'STREAM.DISCONNECT',
 }
 
 export enum NotificationEventType {

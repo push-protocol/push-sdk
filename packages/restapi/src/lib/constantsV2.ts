@@ -5,6 +5,10 @@ import { ConditionType, GROUP_INVITER_ROLE, GROUP_RULES_CATEGORY, GROUP_RULES_PE
 
 
 
+// TODO: Change this do . type
+// TODO: Add Notif type.
+// TODO: Add Notif settings, boolean and slider
+// TODO: Notification alias chain
 const CONSTANTS = {
   ENV: ENV,
   STREAM: STREAM,

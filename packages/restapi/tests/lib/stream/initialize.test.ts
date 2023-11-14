@@ -11,7 +11,7 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import * as util from 'util';
 
 describe('PushStream.initialize functionality', () => {
-  it('Should initialize new stream and listen to events', async () => {
+  it.only('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
     const provider = ethers.getDefaultProvider();
@@ -122,7 +122,7 @@ describe('PushStream.initialize functionality', () => {
       rules: {},
     };
 
-    const stream = await user.stream(
+    /*const stream = await user.stream(
       [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
       {
         // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
@@ -140,7 +140,51 @@ describe('PushStream.initialize functionality', () => {
       }
     );
 
+    await stream.connect();*/
+
+    // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
+    const userAlice = await PushAPI.initialize(signer, {
+      env: CONSTANTS.ENV.STAGING,
+    });
+
+    // This will be the wallet address of the recipient
+    const pushAIWalletAddress = '0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666';
+
+    // Listen for stream
+    // Checkout all chat stream listen options - https://push.org/docs/chat/build/stream-chats/
+    // Alternatively, just initialize userAlice.stream.initialize() without any listen options to listen to all events
+    const stream = await userAlice.initStream(
+      [
+        CONSTANTS.STREAM.CHAT,
+        CONSTANTS.STREAM.NOTIF,
+        CONSTANTS.STREAM.CONNECT,
+        CONSTANTS.STREAM.DISCONNECT,
+      ],
+      {}
+    );
+
+    stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+      console.log('Stream Connected');
+
+      // Send a message to Bob after socket connection so that messages as an example
+      console.log('Sending message to PushAI Bot');
+      userAlice.chat.send(pushAIWalletAddress, {
+        content: "Gm gm! It's a me... Mario",
+      });
+    });
+    
     await stream.connect();
+    
+    stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+      console.log('Stream Disconnected');
+    });
+
+    // React to message payload getting recieved
+    stream.on(CONSTANTS.STREAM.CHAT, (message) => {
+      console.log('Encrypted Message Received');
+      console.log(message);
+      stream.disconnect();
+    });
 
     const createEventPromise = (
       expectedEvent: string,

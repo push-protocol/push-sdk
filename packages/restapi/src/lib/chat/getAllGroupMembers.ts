@@ -20,8 +20,8 @@ export const getAllGroupMembers = async (options: {
 
   const membersResults = await Promise.all(memberFetchPromises);
   membersResults.forEach((result) => {
-    if (result.members.length > 0) {
-      groupMembers.push(...result.members);
+    if (result.length > 0) {
+      groupMembers.push(...result);
     }
   });
 
