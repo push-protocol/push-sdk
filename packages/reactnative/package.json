@@ -49,7 +49,7 @@
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build",
-    "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && patch-package"
+    "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && npx patch-package"
   },
   "keywords": [
     "react-native",
@@ -67,9 +67,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@pushprotocol/restapi": "../../dist/packages/restapi",
+    "@kalashshah/restapi": "0.1.2",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
+    "axios": "^0.27.2",
     "crypto": "^1.0.1",
     "crypto-js": "3.1.9-1",
     "ethers": "^5.7.1",
@@ -83,13 +84,16 @@
     "react-native-os": "^1.2.6",
     "react-native-randombytes": "^3.6.1",
     "react-native-tcp": "^3.3.2",
-    "react-native-webview": "^11.26.1",
+    "react-native-webview": "^13.2.2",
     "react-native-webview-crypto": "^0.0.25",
     "readable-stream": "^1.0.33",
+    "rn-nodeify": "^10.3.0",
     "stream": "^0.0.2",
     "stream-browserify": "^1.0.0",
     "text-encoding": "0.7.0",
-    "url": "^0.10.3"
+    "url": "^0.10.3",
+    "uuid": "^9.0.0",
+    "viem": "^1.3.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
@@ -113,7 +117,6 @@
     "react-native": "0.71.11",
     "react-native-builder-bob": "^0.20.4",
     "release-it": "^15.0.0",
-    "rn-nodeify": "^10.3.0",
     "typescript": "^4.5.2"
   },
   "resolutions": {
