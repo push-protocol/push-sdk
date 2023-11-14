@@ -11,7 +11,7 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import * as util from 'util';
 
 describe('PushStream.initialize functionality', () => {
-  it.only('Should initialize new stream and listen to events', async () => {
+  it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
     const provider = ethers.getDefaultProvider();
