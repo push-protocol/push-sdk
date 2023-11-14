@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.55](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.54...restapi-0.0.1-alpha.55) (2023-11-14)
+
+
+### Bug Fixes
+
+* fix getAllGroupMembers ([75f1729](https://github.com/ethereum-push-notification-service/push-sdk/commit/75f1729299fc31c22073bb4064852af4860485df))
+* stream review changes ([a417c0d](https://github.com/ethereum-push-notification-service/push-sdk/commit/a417c0d38521a40c90c13079d4bef926ec25ae2c))
+
+
+
 ## [0.0.1-alpha.54](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.53...restapi-0.0.1-alpha.54) (2023-11-13)
 
 
