@@ -5,7 +5,6 @@ import {
   GroupEventType,
   MessageEventType,
   NotificationEventType,
-  ProposedEventNames,
   PushStreamInitializeProps,
   STREAM,
 } from './pushStreamTypes';
@@ -88,77 +87,7 @@ export class PushStream extends EventEmitter {
       settings,
       progressHook
     );
-
-    if (settings.connection?.auto) {
-      await stream.connect();
-    }
     return stream;
-  }
-
-  private convertToProposedName(currentEventName: string): ProposedEventNames {
-    switch (currentEventName) {
-      case 'message':
-        return ProposedEventNames.Message;
-      case 'request':
-        return ProposedEventNames.Request;
-      case 'accept':
-        return ProposedEventNames.Accept;
-      case 'reject':
-        return ProposedEventNames.Reject;
-      case 'leaveGroup':
-        return ProposedEventNames.LeaveGroup;
-      case 'joinGroup':
-        return ProposedEventNames.JoinGroup;
-      case 'createGroup':
-        return ProposedEventNames.CreateGroup;
-      case 'updateGroup':
-        return ProposedEventNames.UpdateGroup;
-      case 'remove':
-        return ProposedEventNames.Remove;
-      default:
-        throw new Error(`Unknown current event name: ${currentEventName}`);
-    }
-  }
-
-  private handleToField(data: any): void {
-    switch (data.event) {
-      case ProposedEventNames.LeaveGroup:
-      case ProposedEventNames.JoinGroup:
-        data.to = null;
-        break;
-
-      case ProposedEventNames.Accept:
-      case ProposedEventNames.Reject:
-        if (data.meta?.group) {
-          data.to = null;
-        }
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  private shouldEmitChat(dataChatId: string): boolean {
-    if (
-      !this.options.filter?.chats ||
-      this.options.filter.chats.length === 0 ||
-      this.options.filter.chats.includes('*')
-    ) {
-      return true;
-    }
-    return this.options.filter.chats.includes(dataChatId);
-  }
-
-  private shouldEmitChannel(dataChannelId: string): boolean {
-    if (
-      !this.options.filter?.channels ||
-      this.options.filter.channels.length === 0 ||
-      this.options.filter.channels.includes('*')
-    ) {
-      return true;
-    }
-    return this.options.filter.channels.includes(dataChannelId);
   }
 
   public async connect(): Promise<void> {
@@ -173,34 +102,103 @@ export class PushStream extends EventEmitter {
       this.listen.includes(STREAM.NOTIF) ||
       this.listen.includes(STREAM.NOTIF_OPS);
 
-    if (shouldInitializeChatSocket && !this.pushChatSocket) {
-      this.pushChatSocket = createSocketConnection({
-        user: walletToPCAIP10(this.account),
-        socketType: 'chat',
-        socketOptions: {
-          autoConnect: true,
-          reconnectionAttempts: this.options?.connection?.retries ?? 3,
-        },
-        env: this.options?.env as ENV,
-      });
+    let isChatSocketConnected = false;
+    let isNotifSocketConnected = false;
 
+    // Function to check and emit the STREAM.CONNECT event
+    const checkAndEmitConnectEvent = () => {
+      if (
+        ((shouldInitializeChatSocket && isChatSocketConnected) ||
+          !shouldInitializeChatSocket) &&
+        ((shouldInitializeNotifSocket && isNotifSocketConnected) ||
+          !shouldInitializeNotifSocket)
+      ) {
+        this.emit(STREAM.CONNECT);
+        console.log('Emitted STREAM.CONNECT');
+      }
+    };
+
+    const handleSocketDisconnection = async (socketType: 'chat' | 'notif') => {
+      //console.log(`${socketType.toUpperCase()} Socket Disconnected`);
+
+      if (socketType === 'chat') {
+        isChatSocketConnected = false;
+        if (isNotifSocketConnected) {
+          if (
+            this.pushNotificationSocket &&
+            this.pushNotificationSocket.connected
+          ) {
+            //console.log('Disconnecting Notification Socket...');
+            this.pushNotificationSocket.disconnect();
+          }
+        } else {
+          // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
+          this.emit(STREAM.DISCONNECT);
+          console.log('Emitted STREAM.DISCONNECT ');
+        }
+      } else if (socketType === 'notif') {
+        isNotifSocketConnected = false;
+        if (isChatSocketConnected) {
+          if (this.pushChatSocket && this.pushChatSocket.connected) {
+            //console.log('Disconnecting Chat Socket...');
+            this.pushChatSocket.disconnect();
+          }
+        } else {
+          // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
+          this.emit(STREAM.DISCONNECT);
+          console.log('Emitted STREAM.DISCONNECT');
+        }
+      }
+    };
+
+    if (shouldInitializeChatSocket) {
       if (!this.pushChatSocket) {
-        throw new Error('Push chat socket not connected');
+        // If pushChatSocket does not exist, create a new socket connection
+        this.pushChatSocket = createSocketConnection({
+          user: walletToPCAIP10(this.account),
+          socketType: 'chat',
+          socketOptions: {
+            autoConnect: this.options?.connection?.auto ?? true,
+            reconnectionAttempts: this.options?.connection?.retries ?? 3,
+          },
+          env: this.options?.env as ENV,
+        });
+
+        if (!this.pushChatSocket) {
+          throw new Error('Push chat socket not connected');
+        }
+      } else if (!this.pushChatSocket.connected) {
+        // If pushChatSocket exists but is not connected, attempt to reconnect
+        console.log('Attempting to reconnect push chat socket...');
+        this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
+      } else {
+        // If pushChatSocket is already connected
+        console.log('Push chat socket already connected');
       }
     }
 
-    if (shouldInitializeNotifSocket && !this.pushNotificationSocket) {
-      this.pushNotificationSocket = createSocketConnection({
-        user: pCAIP10ToWallet(this.account),
-        env: this.options?.env as ENV,
-        socketOptions: {
-          autoConnect: true,
-          reconnectionAttempts: this.options?.connection?.retries ?? 3,
-        },
-      });
-
+    if (shouldInitializeNotifSocket) {
       if (!this.pushNotificationSocket) {
-        throw new Error('Push notification socket not connected');
+        // If pushNotificationSocket does not exist, create a new socket connection
+        this.pushNotificationSocket = createSocketConnection({
+          user: pCAIP10ToWallet(this.account),
+          env: this.options?.env as ENV,
+          socketOptions: {
+            autoConnect: this.options?.connection?.auto ?? true,
+            reconnectionAttempts: this.options?.connection?.retries ?? 3,
+          },
+        });
+
+        if (!this.pushNotificationSocket) {
+          throw new Error('Push notification socket not connected');
+        }
+      } else if (!this.pushNotificationSocket.connected) {
+        // If pushNotificationSocket exists but is not connected, attempt to reconnect
+        console.log('Attempting to reconnect push notification socket...');
+        this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
+      } else {
+        // If pushNotificationSocket is already connected
+        console.log('Push notification socket already connected');
       }
     }
 
@@ -212,15 +210,27 @@ export class PushStream extends EventEmitter {
     };
 
     if (this.pushChatSocket) {
+      this.pushChatSocket.on(EVENTS.CONNECT, async () => {
+        isChatSocketConnected = true;
+        checkAndEmitConnectEvent();
+        console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
+      });
+
+      this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
+        await handleSocketDisconnection('chat');
+        //console.log(`Chat Socket Disconnected`);
+      });
+
       this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
         try {
-          console.log(data);
           const modifiedData = DataModifier.handleChatGroupEvent(
             data,
             this.raw
           );
-          modifiedData.event = this.convertToProposedName(modifiedData.event);
-          this.handleToField(modifiedData);
+          modifiedData.event = DataModifier.convertToProposedName(
+            modifiedData.event
+          );
+          DataModifier.handleToField(modifiedData);
           if (this.shouldEmitChat(data.chatId)) {
             if (
               data.eventType === GroupEventType.JoinGroup ||
@@ -260,8 +270,10 @@ export class PushStream extends EventEmitter {
             }
 
             const modifiedData = DataModifier.handleChatEvent(data, this.raw);
-            modifiedData.event = this.convertToProposedName(modifiedData.event);
-            this.handleToField(modifiedData);
+            modifiedData.event = DataModifier.convertToProposedName(
+              modifiedData.event
+            );
+            DataModifier.handleToField(modifiedData);
             if (this.shouldEmitChat(data.chatId)) {
               if (shouldEmit(STREAM.CHAT)) {
                 this.emit(STREAM.CHAT, modifiedData);
@@ -280,6 +292,19 @@ export class PushStream extends EventEmitter {
     }
 
     if (this.pushNotificationSocket) {
+      this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
+        console.log(
+          `Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
+        );
+        isNotifSocketConnected = true;
+        checkAndEmitConnectEvent();
+      });
+
+      this.pushNotificationSocket.on(EVENTS.DISCONNECT, async () => {
+        await handleSocketDisconnection('notif');
+        //console.log(`Notification Socket Disconnected`);
+      });
+
       this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
         try {
           const modifiedData = DataModifier.mapToNotificationEvent(
@@ -335,19 +360,35 @@ export class PushStream extends EventEmitter {
     // Disconnect push chat socket if connected
     if (this.pushChatSocket) {
       this.pushChatSocket.disconnect();
-      this.pushChatSocket = null;
-      console.log('Push chat socket disconnected.');
-    } else {
-      console.log('Push chat socket was not connected.');
+      //console.log('Push chat socket disconnected.');
     }
 
     // Disconnect push notification socket if connected
     if (this.pushNotificationSocket) {
       this.pushNotificationSocket.disconnect();
-      this.pushNotificationSocket = null;
-      console.log('Push notification socket disconnected.');
-    } else {
-      console.log('Push notification socket was not connected.');
+      //console.log('Push notification socket disconnected.');
     }
+  }
+
+  private shouldEmitChat(dataChatId: string): boolean {
+    if (
+      !this.options.filter?.chats ||
+      this.options.filter.chats.length === 0 ||
+      this.options.filter.chats.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.chats.includes(dataChatId);
+  }
+
+  private shouldEmitChannel(dataChannelId: string): boolean {
+    if (
+      !this.options.filter?.channels ||
+      this.options.filter.channels.length === 0 ||
+      this.options.filter.channels.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.channels.includes(dataChannelId);
   }
 }

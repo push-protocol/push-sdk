@@ -28,7 +28,7 @@ export class PushAPI {
   public profile: Profile;
   public encryption: Encryption;
   private user: User;
-  public _stream!: PushStream;
+  public stream!: PushStream;
   // Notification
   public channel!: Channel;
   public notification!: Notification;
@@ -163,15 +163,15 @@ export class PushAPI {
     }
   }
 
-  async stream(
+  async initStream(
     listen: STREAM[],
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
-    if (this._stream) {
+    if (this.stream) {
       throw new Error('Stream is already initialized.');
     }
 
-    this._stream = await PushStream.initialize(
+    this.stream = await PushStream.initialize(
       this.account,
       this.decryptedPgpPvtKey,
       this.signer,
@@ -181,7 +181,7 @@ export class PushAPI {
       options
     );
 
-    return this._stream;
+    return this.stream;
   }
 
   async info() {
