@@ -125,7 +125,7 @@ export class DataModifier {
     meta: GroupMeta;
     raw?: GroupEventRawData;
   } {
-    const mapMembersAdmins = (arr: any[]): Member[] => {
+    const mapMembersAdmins = (arr: any[]): GroupMember[] => {
       return arr.map((item) => ({
         address: item.wallet,
         profile: {
@@ -135,7 +135,7 @@ export class DataModifier {
       }));
     };
 
-    const mapPendingMembersAdmins = (arr: any[]): Member[] => {
+    const mapPendingMembersAdmins = (arr: any[]): GroupMember[] => {
       return arr.map((item) => ({
         address: item.wallet,
         profile: {
