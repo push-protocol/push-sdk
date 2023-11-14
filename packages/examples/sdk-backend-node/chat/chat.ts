@@ -72,7 +72,7 @@ const eventlistener = async (
 export const runChatClassUseCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(signer, { env });
 
-    const stream = await userAlice.stream(
+    const stream = await userAlice.initStream(
       [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
       {
         // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
@@ -90,6 +90,8 @@ export const runChatClassUseCases = async (): Promise<void> => {
       }
     );
     
+      await stream.connect();
+
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
 
