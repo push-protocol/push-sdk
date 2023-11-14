@@ -36,7 +36,7 @@ const eventlistener = async (
   pushAPI: PushAPI,
   eventName: string
 ): Promise<void> => {
-  pushAPI.stream.on(eventName, (data: any) => {
+  pushAPI._stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
       console.log(data);
     }
