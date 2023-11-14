@@ -42,7 +42,7 @@ export const Modal: React.FC = () => {
     setToastType,
     socketData
   } = useContext<any>(SupportChatMainStateContext);
-  const listInnerRef = useChatScroll(chats.length);
+  const listInnerRef = useChatScroll(0);
 
   const greetingMsgObject = {
     fromDID: walletToPCAIP10(supportAddress),
@@ -101,7 +101,7 @@ export const Modal: React.FC = () => {
     setLastThreadHashFetched(lastThreadHash);
     setWasLastListPresent(lastListPresent);
     setLoading(false);
-    scrollToBottom();
+
   };
 
   const connectUser = async () => {
@@ -125,14 +125,16 @@ export const Modal: React.FC = () => {
       const chat = await decryptChat({ message, connectedUser, env });
       socketData.messagesSinceLastConnection.decrypted = true;
       setChatsSorted([...chats, chat]);
-      scrollToBottom();
+      
     }
+    scrollToBottom();
   }
 
   useEffect(() => {
     if(socketData.messagesSinceLastConnection && !socketData.messagesSinceLastConnection.decrypted){
       getUpdatedChats(socketData.messagesSinceLastConnection);
     }
+    scrollToBottom();
   }, [socketData.messagesSinceLastConnection]);
 
   useEffect(() => {
@@ -141,7 +143,7 @@ export const Modal: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [connectedUser, env, account, lastThreadHashFetched]);
+  }, [connectedUser, env, account, lastThreadHashFetched, socketData]);
 
   return (
     <Container theme={theme}>
