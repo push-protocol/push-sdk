@@ -6,7 +6,7 @@ import {
   darkTheme,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { goerli } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 import '@rainbow-me/rainbowkit/styles.css';
@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 // import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
 import { AccountContext } from '../contexts';
 
-const { chains, provider } = configureChains([goerli], [publicProvider()]);
+const { chains, provider } = configureChains([sepolia], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: 'Connect',

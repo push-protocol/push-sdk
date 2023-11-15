@@ -1,7 +1,7 @@
 {
-  "name": "automated-chat",
+  "name": "stream-notifications",
   "version": "1.0.0",
-  "description": "Example of Push Chat from backend, auto-responding to messages sent",
+  "description": "Example of Push Notifications streaming notifications using the Push Protocol",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -15,8 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "@pushprotocol/restapi": "1.4.35",
-    "@pushprotocol/socket": "0.5.2",
-    "ethers": "5.7.2"
+    "ethers": "5.7.2",
+    "input": "1.0.1"
   },
   "devDependencies": {
     "nodemon": "3.0.1"

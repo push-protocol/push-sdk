@@ -12,7 +12,7 @@ describe('Get user', () => {
   let walletAddress: string;
   let account: string;
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     Pkey = WALLET.privateKey;
     _signer = new ethers.Wallet(Pkey, provider);

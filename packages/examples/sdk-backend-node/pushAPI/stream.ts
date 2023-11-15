@@ -2,7 +2,7 @@ import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 
 // CONFIGS
@@ -13,19 +13,19 @@ const { env, showAPIResponse } = config;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const signerAddress = signer.account.address;
 const secondSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const secondSignerAddress = secondSigner.account.address;
 const thirdSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const thirdSignerAddress = thirdSigner.account.address;
@@ -206,12 +206,12 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
     // create signer
     const channelSigner = createWalletClient({
       account: privateKeyToAccount(`0x${process.env.WALLET_PRIVATE_KEY}`),
-      chain: goerli,
+      chain: sepolia,
       transport: http(),
     });
 
     await userAlice.notification.subscribe(
-      `eip155:5:${channelSigner.account.address}` // channel to subscribe
+      `eip155:11155111:${channelSigner.account.address}` // channel to subscribe
     );
 
     const channelUser = await PushAPI.initialize(channelSigner, { env });
@@ -227,7 +227,7 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
     await delay(3000);
 
     await userAlice.notification.unsubscribe(
-      `eip155:5:${channelSigner.account.address}` // channel to subscribe
+      `eip155:11155111:${channelSigner.account.address}` // channel to subscribe
     );
   } else {
     console.log(
