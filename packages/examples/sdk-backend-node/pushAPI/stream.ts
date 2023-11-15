@@ -1,4 +1,4 @@
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
@@ -47,11 +47,46 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const runPushAPIStreamCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(signer, { env });
+
+  const stream = await userAlice.initStream(
+    [
+      CONSTANTS.STREAM.NOTIF,
+      CONSTANTS.STREAM.CHAT_OPS,
+      CONSTANTS.STREAM.CHAT,
+      CONSTANTS.STREAM.CONNECT,
+      CONSTANTS.STREAM.DISCONNECT,
+    ],
+    {
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
+
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: true, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    }
+  );
+
+  stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+    console.log('Stream Connected');
+  });
+
+  await stream.connect();
+
+  stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+    console.log('Stream Disconnected');
+  });
+
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log(`Listening ${STREAM.PROFILE} Events`);
+  console.log(`Listening ${CONSTANTS.STREAM.PROFILE} Events`);
   eventlistener(userAlice, STREAM.PROFILE);
   console.log(`Listening ${STREAM.ENCRYPTION} Events`);
   eventlistener(userAlice, STREAM.ENCRYPTION);

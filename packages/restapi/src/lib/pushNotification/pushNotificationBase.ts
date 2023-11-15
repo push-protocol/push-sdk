@@ -6,7 +6,7 @@ import {
   NotificationSettings,
   UserSetting,
 } from './PushNotificationTypes';
-import CONFIG, * as config from '../config';
+import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
 import { ethers, Signer, BigNumber } from 'ethers';

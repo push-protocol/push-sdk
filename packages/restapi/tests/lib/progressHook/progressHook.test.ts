@@ -7,6 +7,8 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { create, decryptAuth, get } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants, { ENCRYPTION_TYPE } from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
+
 import { ProgressHookType, ProgressHookTypeFunction } from '../../../src';
 chai.use(chaiAsPromised);
 import PROGRESSHOOK from './progressHookData';
@@ -15,7 +17,7 @@ import { profileUpdate } from '../../../src/lib/user/profile.updateUser';
 import { authUpdate } from '../../../src/lib/user/auth.updateUser';
 
 describe('ProgressHook Tests', () => {
-  const _env = Constants.ENV.DEV;
+  const _env = CONSTANTS.ENV.DEV;
   let provider = ethers.getDefaultProvider(11155111);
   let _signer: any;
   let walletAddress: string;

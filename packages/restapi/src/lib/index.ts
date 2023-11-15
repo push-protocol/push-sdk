@@ -6,8 +6,14 @@ import * as payloads from './payloads';
 import * as chat from './chat';
 import * as space from './space';
 import * as video from "./video"
+import CONSTANTS from './constantsV2';
 
 export * from './types';
+export * from './pushNotification/PushNotificationTypes';
+export * from './pushstream/pushStreamTypes';
+export * from './pushapi/pushAPITypes';
+export { CONSTANTS };
+
 export { PushAPI } from './pushapi/PushAPI';
 export {
   alias,

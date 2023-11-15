@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import * as PUSH_PAYLOAD from '../../../src/lib/payloads';
 import { expect } from 'chai';
-import Constants from '../../../src/lib/constants';
 import { ethers } from 'ethers';
 
 describe('PUSH_PAYLOAD.sendNotification functionality', () => {

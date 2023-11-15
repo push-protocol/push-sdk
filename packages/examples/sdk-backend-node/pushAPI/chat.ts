@@ -1,4 +1,4 @@
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import {
   adjectives,
   animals,
@@ -91,7 +91,7 @@ export const runPushAPIChatCases = async (): Promise<void> => {
   console.log('PushAPI.chat.send');
   const aliceMessagesBob = await userAlice.chat.send(secondSignerAddress, {
     content: 'Hello Bob!',
-    type: 'Text',
+    type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   if (showAPIResponse) {
     console.log(aliceMessagesBob);
@@ -110,7 +110,7 @@ export const runPushAPIChatCases = async (): Promise<void> => {
   console.log('PushAPI.chat.reject');
   await tempUser.chat.send(secondSignerAddress, {
     content: 'Sending malicious message',
-    type: 'Text',
+    type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   const bobRejectsRequest = await userBob.chat.reject(thirdSignerAddress);
   if (showAPIResponse) {
