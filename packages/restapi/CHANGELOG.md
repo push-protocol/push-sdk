@@ -2,6 +2,24 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.35...restapi-1.4.36) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
+## [1.4.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.35...restapi-1.4.36) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
 ## [1.4.35](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.34...restapi-1.4.35) (2023-11-14)
 
 
