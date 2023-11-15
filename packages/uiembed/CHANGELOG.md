@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.3.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiembed-0.2.0...uiembed-0.3.0) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+### Features
+
+* added Optimism Chain ([#221](https://github.com/ethereum-push-notification-service/push-sdk/issues/221)) ([a9f6e56](https://github.com/ethereum-push-notification-service/push-sdk/commit/a9f6e56f51ac6eb089ddeffd6c47f144b9b28dd8))
+
+
+
 # [0.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiembed-0.1.3...uiembed-0.2.0) (2023-01-13)
 
 
