@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.16...uiweb-1.1.17) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
 ## [1.1.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.15...uiweb-1.1.16) (2023-11-09)
 
 
