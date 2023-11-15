@@ -47,7 +47,7 @@ export const createUserIfNecessary = async (
     connectedUser = await userAlice.info();
   }
 
-  return { ...connectedUser, privateKey: connectedUser.encryptedPrivateKey };
+  return { ...connectedUser, privateKey: connectedUser!.encryptedPrivateKey };
 };
 
 type GetChatsResponseType = {

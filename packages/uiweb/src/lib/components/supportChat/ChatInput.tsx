@@ -46,7 +46,7 @@ export const ChatInput: React.FC = () => {
         content: message,
       
       });
-      console.log(sendResponse);
+     
       if (!sendResponse) {
         setToastMessage(sendResponse);
         setToastType('error');

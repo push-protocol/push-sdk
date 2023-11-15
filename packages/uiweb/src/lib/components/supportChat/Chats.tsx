@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import type { IMessageIPFS } from '../../types';
+import { formatTime } from '../../helpers/timestamp';
 
 type ChatsPropType = {
   msg: IMessageIPFS;
@@ -32,22 +33,9 @@ export const Chats: React.FC<ChatsPropType> = ({
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
 
-let date;
-let timestamp;
 
-if (typeof msg.timestamp === "string") {
-  timestamp = parseInt(msg.timestamp);
-}else{
-  timestamp = msg.timestamp
-}
-  const time = new Date(timestamp!);
+const date = formatTime(msg.timestamp)
 
-  if (!isNaN(time.getTime())){
-  
-  const time1 = time.toLocaleTimeString('en-US');
-
-  date = time1.slice(0, -6) + time1.slice(-2);
-  }
 
 
   return (

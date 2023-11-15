@@ -119,17 +119,6 @@ export const Modal: React.FC = () => {
     }
   };
 
-  // const getUpdatedChats = (message:IMessageIPFS) =>{
-  //   console.log(message)
-  //   if (message && (supportAddress === pCAIP10ToWallet(message?.from))) {
-      // const chat = await decryptChat({ message, connectedUser, env });
-      // socketData.messagesSinceLastConnection.decrypted = true;
-
-  //     setChatsSorted([...chats, message]);
-  //   }
-  // }
-
-
   
   useEffect(() => {
 
