@@ -1,3 +1,4 @@
+
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
@@ -30,29 +31,48 @@ export const Chats: React.FC<ChatsPropType> = ({
   const { connectedUser } = useContext<any>(SupportChatMainStateContext);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
-  const time: Date = new Date(msg.timestamp!);
+
+let date;
+let timestamp;
+
+if (typeof msg.timestamp === "string") {
+  timestamp = parseInt(msg.timestamp);
+}else{
+  timestamp = msg.timestamp
+}
+  const time = new Date(timestamp!);
+
+  if (!isNaN(time.getTime())){
+  
   const time1 = time.toLocaleTimeString('en-US');
-  const date = time1.slice(0, -6) + time1.slice(-2);
+
+  date = time1.slice(0, -6) + time1.slice(-2);
+  }
+
+
   return (
     <Container>
       <>
-        {msg.messageType === 'Text' ? (
+        {msg.messageType === 'Text' || msg.message?.type ? (
           <>
-            {msg.fromCAIP10 === caip10 ? (
+            {(msg.fromCAIP10 === caip10 || msg.from === caip10 ) ? (
               <MessageWrapper align="row-reverse">
                 <SenderMessage theme={theme}>
-                  <TextMessage>{msg.messageContent}</TextMessage>
+                  {console.log("woiiii" , msg.messageContent)}
+                  <TextMessage>{msg.messageContent || msg.message?.content}</TextMessage>
                   {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
                 </SenderMessage>
               </MessageWrapper>
             ) : (
               <MessageWrapper align="row">
-                <ReceivedMessage theme={theme}>
-                  {msg?.icon && msg.icon}
-                  <TextMessage>{msg.messageContent}</TextMessage>
-                  {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
-                </ReceivedMessage>
-              </MessageWrapper>
+              <ReceivedMessage theme={theme}>
+                {msg?.icon && msg.icon}
+                {console.log("insideee",msg.message?.content)}
+                <TextMessage>{ msg.message?.content || msg.messageContent}</TextMessage>
+                {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
+              </ReceivedMessage>
+            </MessageWrapper> 
+
             )}
           </>
         ) : // : msg.messageType === 'Image' ? (

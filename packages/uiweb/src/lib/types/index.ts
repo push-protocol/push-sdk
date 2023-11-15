@@ -5,6 +5,14 @@ import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
   cid? : string;
+  chatId? :string;
+  event? :string;
+  from?:string;
+  message?: IMessage;
+  meta?: any;
+  origin?:string;
+  reference? :string;
+  to?: string[];
   fromCAIP10: string;
   toCAIP10: string;
   fromDID: string;
@@ -18,6 +26,11 @@ export interface IMessageIPFS {
   encType: string;
   encryptedSecret: string;
   icon?: ReactElement<string | any>;
+}
+
+interface IMessage {
+  content: string | undefined;
+  type: string | undefined;
 }
 
 export interface AccountEnvOptionsType {

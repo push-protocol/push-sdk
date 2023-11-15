@@ -66,6 +66,7 @@ export type ButtonStyleProps = {
     userAlice
   });
 
+  console.log("chanecing", socketData)
   const chatPropsData = {
     account : accountadd,
     signer,

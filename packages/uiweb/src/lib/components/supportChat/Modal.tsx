@@ -120,15 +120,18 @@ export const Modal: React.FC = () => {
   };
 
   const getUpdatedChats = async (message:IMessageIPFS) =>{
-    if (message && (supportAddress === pCAIP10ToWallet(message?.fromCAIP10))) {
+ 
+    if (message && (supportAddress === pCAIP10ToWallet(message?.from))) {
       // const chat = await decryptChat({ message, connectedUser, env });
-      socketData.messagesSinceLastConnection.decrypted = true;
+      // socketData.messagesSinceLastConnection.decrypted = true;
+
       setChatsSorted([...chats, message]);
     }
   }
-
+  
   useEffect(() => {
-    if(socketData.messagesSinceLastConnection && !socketData.messagesSinceLastConnection.decrypted){
+
+    if(socketData.messagesSinceLastConnection){
       getUpdatedChats(socketData.messagesSinceLastConnection);
     }
   }, [socketData.messagesSinceLastConnection]);

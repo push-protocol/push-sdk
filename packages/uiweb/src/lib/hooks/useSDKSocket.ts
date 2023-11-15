@@ -4,7 +4,7 @@ import {
   EVENTS
 } from '@pushprotocol/socket';
 import {  ENV } from '../config';
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 
 
 export type SDKSocketHookOptions = {
@@ -12,58 +12,65 @@ export type SDKSocketHookOptions = {
   env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
-  userAlice: PushAPI
+  userAlice: PushAPI | null
 };
 
-export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice }: SDKSocketHookOptions) => {
+export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice }: SDKSocketHookOptions) => {
   
-  const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
+  // const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
-  const [isSDKSocketConnected, setIsSDKSocketConnected] = useState(epnsSDKSocket?.connected);
-
-  const addSocketEvents = () => {
-    console.warn('\n--> addSocketEvents');
-    epnsSDKSocket?.on(EVENTS.CONNECT, () => {
+  const [isSDKSocketConnected, setIsSDKSocketConnected] = useState<boolean>(false);
+  const [stream, setStream] = useState<any>(null);
+  
+  const addSocketEvents = async () => {
+    console.warn('\n--> addChatSocketEvents');
+    stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
       console.log('CONNECTED: ');
       setIsSDKSocketConnected(true);
     });
+    await stream.connect();
 
-    epnsSDKSocket?.on(EVENTS.DISCONNECT, (err:any) => {
+    stream.on(CONSTANTS.STREAM.DISCONNECT, (err:any) => {
       console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
+
+
+
     console.log('\t-->will attach eachMessage event now');
-    epnsSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (chat: any) => {
+    stream.on(CONSTANTS.STREAM.CHAT, (message: any) => {
+      console.log('Encrypted Message Received');
       /**
        * We receive a 1 message.
        */
-      console.log("\n\n\n\neachMessage event: ", chat);
+      console.log("\n\n\n\neachMessage event: ", message);
 
       // do stuff with data
       setMessagesSinceLastConnection((chats: any) => {
-        return {...chat,decrypted:false};
+        return {...message,decrypted:false};
       });
+      // stream.disconnect();
     });
   };
 
+  console.log(messagesSinceLastConnection)
+
   const removeSocketEvents = () => {
-    console.warn('\n--> removeSocketEvents');
-    epnsSDKSocket?.off(EVENTS.CONNECT);
-    epnsSDKSocket?.off(EVENTS.DISCONNECT);
+    stream.disconnect();
   };
 
   useEffect(() => {
-    if (epnsSDKSocket) {
+    if (stream) {
       addSocketEvents();
     }
   
     return () => {
-      if (epnsSDKSocket) {
+      if (stream) {
         removeSocketEvents();
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [epnsSDKSocket]);
+  }, [stream]);
 
 
   /**
@@ -73,21 +80,21 @@ export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiK
    */
   useEffect(() => {
     if (account) {
-      if (epnsSDKSocket) {
+      if (stream) {
         // console.log('=================>>> disconnection in the hook');
-        epnsSDKSocket?.disconnect();
+        stream?.disconnect();
       }
       const main = async () => {
-        const connectionObject = createSocketConnection({
-          user: account,
-          env,
-          apiKey,
-          socketType,
-          socketOptions: { autoConnect: true , reconnectionAttempts: 3}
-        });
-        console.warn('new connection object: ', connectionObject);
-
-        setEpnsSDKSocket(connectionObject);
+        const stream = await userAlice.initStream(
+          [
+            CONSTANTS.STREAM.CHAT,
+          ],
+          {}
+        );
+      
+        console.warn('new connection object: ', stream);
+        setStream(stream);
+        // setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
     }
@@ -96,7 +103,7 @@ export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiK
   }, [account, env]);
 
   return {
-      epnsSDKSocket,
+      stream,
       isSDKSocketConnected,
       messagesSinceLastConnection
   }
