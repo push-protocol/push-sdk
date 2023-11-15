@@ -381,7 +381,10 @@ export class Chat {
       }
     },
 
-    remove: async (chatId: string, options: RemoveFromGroupOptions) => {
+    remove: async (
+      chatId: string,
+      options: RemoveFromGroupOptions
+    ): Promise<GroupInfoDTO> => {
       const { accounts } = options;
 
       if (!accounts || accounts.length === 0) {
@@ -410,9 +413,10 @@ export class Chat {
           membersToRemove.push(account);
         }
       }
+      let response: any;
 
       if (adminsToRemove.length > 0) {
-        await PUSH_CHAT.removeAdmins({
+        response = await PUSH_CHAT.removeAdmins({
           chatId: chatId,
           admins: adminsToRemove,
           env: this.env,
@@ -423,7 +427,7 @@ export class Chat {
       }
 
       if (membersToRemove.length > 0) {
-        await PUSH_CHAT.removeMembers({
+        response = await PUSH_CHAT.removeMembers({
           chatId: chatId,
           members: membersToRemove,
           env: this.env,
@@ -432,6 +436,7 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
         });
       }
+      return response;
     },
 
     modify: async (chatId: string, options: ManageGroupOptions) => {

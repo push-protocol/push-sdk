@@ -30,6 +30,7 @@ export interface ManageGroupOptions {
 }
 
 export interface RemoveFromGroupOptions {
+  role?: 'ADMIN' | 'MEMBER';
   accounts: string[];
 }
 
