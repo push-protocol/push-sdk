@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
 
 import { Section, Span } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
@@ -35,7 +35,11 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     gif = true,
     isConnected = true,
     autoConnect = false,
-    onGetTokenClick,
+    onVerificationFail,
+    groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+    groupInfoModalPositionType =  MODAL_POSITION_TYPE.GLOBAL,
+    verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+    verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
   } = options || {};
 
   const { env, signer, account, pgpPrivateKey } = useChatData();
@@ -58,7 +62,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-      {chatProfile && <ChatProfile chatId={chatId} style="Info" />}
+      {chatProfile && <ChatProfile chatId={chatId} style="Info" groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
       <Section
         flex="1 1 auto"
         overflow="hidden"
@@ -85,14 +89,16 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
         </Section>
       )}
       {(messageInput && (!!signer || (!!account && !!pgpPrivateKey) || isConnected )) && (
-        <Section flex="0 1 auto">
+        <Section flex="0 1 auto" position='static'>
           <MessageInput
-            onGetTokenClick={onGetTokenClick}
+            onVerificationFail={onVerificationFail}
             chatId={chatId}
             file={file}
             emoji={emoji}
             gif={gif}
             isConnected={isConnected}
+            verificationFailModalBackground={verificationFailModalBackground}
+            verificationFailModalPosition={verificationFailModalPosition}
             autoConnect = {autoConnect}
           />
         </Section>

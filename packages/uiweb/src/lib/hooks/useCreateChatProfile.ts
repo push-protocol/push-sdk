@@ -8,7 +8,7 @@ export interface CreateChatProfileParams {
 }
 
 const useCreateChatProfile = () => {
-  const creteChatProfile = useCallback(
+  const createChatProfile = useCallback(
     async ({
       signer,
       env
@@ -27,7 +27,7 @@ const useCreateChatProfile = () => {
     []
   );
 
-  return { creteChatProfile };
+  return { createChatProfile };
 };
 
 export default useCreateChatProfile;
