@@ -15,6 +15,7 @@ import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
+import { sign } from 'crypto';
 export type ChatProps = {
 account?: string;
   signer: SignerType;
@@ -88,26 +89,36 @@ export type ButtonStyleProps = {
     env,
   };
 
+
+
   useEffect(() => {
     (async () => {
       if(signer) {
         if (!account) {
           const address = await getAddressFromSigner(signer);
           setAccountadd(address);
-          const userAlice = await PushAPI.initialize(signer, {env: env , account:address});
-          setUserAlice(userAlice)
+          
         }
         else{
           setAccountadd(account);
-          const userAlice = await PushAPI.initialize(signer, {env: env , account:account}); 
-          setUserAlice(userAlice)
+          
         }
      
     }
     })();
   },[signer])
 
- 
+ useEffect(() => {
+  (
+    async() =>{
+      if(Object.keys(signer || {}).length && accountadd){
+    const userAlice = await PushAPI.initialize(signer!, {env: env , account:accountadd!});
+          setUserAlice(userAlice)
+  }
+    }
+  )()
+  
+ },[signer, accountadd])
 
   useEffect(() => {
     setChats([]);
