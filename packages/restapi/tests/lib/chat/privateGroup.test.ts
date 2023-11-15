@@ -84,7 +84,6 @@ describe('Private Groups', () => {
       });
 
       const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2],
       });
       expect(updatedGroup.sessionKey).to.be.null;
@@ -97,7 +96,6 @@ describe('Private Groups', () => {
       });
 
       const updatedGroup = await userAlice.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2],
       });
       expect(updatedGroup.sessionKey).to.be.null;
@@ -141,7 +139,6 @@ describe('Private Groups', () => {
       expect(updatedGroup1.sessionKey).to.not.be.null;
 
       const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2],
       });
       expect(updatedGroup2.sessionKey).to.not.be.null;
@@ -159,7 +156,6 @@ describe('Private Groups', () => {
       expect(updatedGroup1.sessionKey).to.not.be.null;
 
       const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2],
       });
       expect(updatedGroup2.sessionKey).to.not.be.null;
@@ -364,7 +360,6 @@ describe('Private Groups', () => {
       });
       await userBob.chat.group.join(group.chatId);
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2, account3],
       });
       await expect(
@@ -387,7 +382,6 @@ describe('Private Groups', () => {
       });
       await userBob.chat.group.join(group.chatId);
       await userBob.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2, account3],
       });
       await expect(
@@ -522,7 +516,6 @@ describe('Private Groups', () => {
       });
 
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2],
       });
 
@@ -545,7 +538,6 @@ describe('Private Groups', () => {
       });
 
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2],
       });
 
@@ -568,7 +560,6 @@ describe('Private Groups', () => {
       });
 
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2],
       });
 
@@ -688,7 +679,6 @@ describe('Private Groups', () => {
       await userBob.chat.group.join(group.chatId);
 
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2],
       });
 
@@ -713,7 +703,6 @@ describe('Private Groups', () => {
       // Accept Intent
       await userBob.chat.group.join(group.chatId);
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'ADMIN',
         accounts: [account2],
       });
 
@@ -764,7 +753,6 @@ describe('Private Groups', () => {
       // Autojoin
       await userBob.chat.group.join(group.chatId);
       await userAlice.chat.group.remove(group.chatId, {
-        role: 'MEMBER',
         accounts: [account2],
       });
 
