@@ -70,7 +70,7 @@ export type ButtonStyleProps = {
     account: accountadd,
     env,
     apiKey,
-    userAlice,
+    userAlice: userAlice!,
     supportAddress,
     signer
   });

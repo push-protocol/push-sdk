@@ -4,7 +4,7 @@ import {
   EVENTS
 } from '@pushprotocol/socket';
 import {  ENV } from '../config';
-import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
 
 
 export type SDKSocketHookOptions = {
@@ -14,7 +14,7 @@ export type SDKSocketHookOptions = {
   apiKey: string,
   userAlice: PushAPI ,
   supportAddress: string | null,
-    signer: string | null
+    signer: SignerType | null
 };
 
 export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice, supportAddress, signer }: SDKSocketHookOptions) => {
