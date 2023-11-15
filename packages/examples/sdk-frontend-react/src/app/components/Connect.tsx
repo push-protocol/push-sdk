@@ -9,7 +9,7 @@ interface NwMappingType {
 
 const NETWORK_MAPPING: NwMappingType = {
   1: 'ETH_MAIN_NET',
-  5: 'ETH_GOERLI',
+  11155111: 'ETH_SEPOLIA',
   3: 'ETH_ROPSTEN',
   137: 'POLYGON_MAINNET',
   80001: 'POLYGON_MUMBAI',
@@ -24,8 +24,8 @@ const NETWORK_MAPPING: NwMappingType = {
 };
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
-});
+  supportedChainIds: [1, 3, 4, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
+})
 
 const ConnectWrapper = styled.div`
   display: flex;

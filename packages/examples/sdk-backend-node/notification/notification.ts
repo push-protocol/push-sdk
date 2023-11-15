@@ -33,7 +33,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // Signer Generation
   const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public' // Goerli Provider
+    'https://rpc.sepolia.org' // Goerli Provider
   );
   const signer = new ethers.Wallet(
     `0x${process.env.WALLET_PRIVATE_KEY}`,
@@ -214,7 +214,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.add');
   const addedDelegate = await userAlice.channel.delegate.add(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
 
   if (showAPIResponse) {
@@ -233,7 +233,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.remove');
   const removedDelegate = await userAlice.channel.delegate.remove(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
   if (showAPIResponse) {
     console.log(removedDelegate);
@@ -263,7 +263,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.subscribe');
   const subscribeResponse = await userAlice.notification.subscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
   );
   if (showAPIResponse) {
     console.log(subscribeResponse);
@@ -281,7 +281,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.unsubscribe');
   const unsubscribeResponse = await userAlice.notification.unsubscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
   );
   if (showAPIResponse) {
     console.log(unsubscribeResponse);
