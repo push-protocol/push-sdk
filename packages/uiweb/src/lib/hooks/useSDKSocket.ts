@@ -12,10 +12,12 @@ export type SDKSocketHookOptions = {
   env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
-  userAlice: PushAPI | null
+  userAlice: PushAPI ,
+  supportAddress: string | null,
+    signer: string | null
 };
 
-export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice }: SDKSocketHookOptions) => {
+export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, userAlice, supportAddress, signer }: SDKSocketHookOptions) => {
   
   // const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
@@ -24,13 +26,13 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
   
   const addSocketEvents = async () => {
     console.warn('\n--> addChatSocketEvents');
-    stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
-      console.log('CONNECTED: ');
+    stream.on(CONSTANTS.STREAM.CONNECT, (err:Error) => {
+      console.log('CONNECTED: ', err);
       setIsSDKSocketConnected(true);
     });
     await stream.connect();
 
-    stream.on(CONSTANTS.STREAM.DISCONNECT, (err:any) => {
+    stream.on(CONSTANTS.STREAM.DISCONNECT, (err:Error) => {
       console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
@@ -39,24 +41,19 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
 
     console.log('\t-->will attach eachMessage event now');
     stream.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-      console.log('Encrypted Message Received');
-      /**
-       * We receive a 1 message.
-       */
-      console.log("\n\n\n\neachMessage event: ", message);
 
       // do stuff with data
       setMessagesSinceLastConnection((chats: any) => {
-        return {...message,decrypted:false};
+        return {...message};
       });
       // stream.disconnect();
     });
   };
 
-  console.log(messagesSinceLastConnection)
+ 
 
   const removeSocketEvents = () => {
-    stream.disconnect();
+    stream?.disconnect();
   };
 
   useEffect(() => {
@@ -80,27 +77,27 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
    */
   useEffect(() => {
     if (account) {
-      if (stream) {
+      if (!stream) {
         // console.log('=================>>> disconnection in the hook');
         stream?.disconnect();
       }
       const main = async () => {
-        const stream = await userAlice.initStream(
+        const newstream = await userAlice.initStream(
           [
             CONSTANTS.STREAM.CHAT,
           ],
           {}
         );
       
-        console.warn('new connection object: ', stream);
-        setStream(stream);
+        console.warn('new connection object: ', newstream);
+        setStream(newstream);
         // setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env]);
+  }, [account, env, userAlice, supportAddress, signer, isSDKSocketConnected]);
 
   return {
       stream,

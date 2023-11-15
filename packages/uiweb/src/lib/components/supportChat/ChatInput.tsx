@@ -47,13 +47,20 @@ export const ChatInput: React.FC = () => {
       
       });
       console.log(sendResponse);
+      if (!sendResponse) {
+        setToastMessage(sendResponse);
+        setToastType('error');
+        setLoading(false);
+        
+      }
 
       if (typeof sendResponse !== 'string') {
-        sendResponse.messageContent = message;
-        setChatsSorted([...chats, sendResponse]);
+        // sendResponse.messageContent = message;
+        // setChatsSorted([...chats, sendResponse]);
         setMessage('');
         setLoading(false);
-      } else {
+      } 
+      else {
         setToastMessage(sendResponse);
         setToastType('error');
         setLoading(false);

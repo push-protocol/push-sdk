@@ -14,11 +14,14 @@ export const AddressInfo: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const user = await userAlice.info();
+if(userAlice){
+  const user = await userAlice.info();
       setUser(user);
+}
+      
     };
     getUser();
-  }, [supportAddress]);
+  }, [supportAddress, userAlice]);
 
   return (
     <Container theme={theme}>

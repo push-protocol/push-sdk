@@ -18,6 +18,9 @@ type HandleOnChatIconClickProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
 
+
+
+
 type GetChatsType = {
   pgpPrivateKey?: string;
   supportAddress: string;
@@ -39,9 +42,10 @@ export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser> => {
   const { account, signer, env = Constants.ENV.PROD, userAlice } = options || {};
-  const connectedUser = await userAlice.info();
-  
-  
+  let connectedUser;
+  if(userAlice){
+    connectedUser = await userAlice.info();
+  }
 
   return { ...connectedUser, privateKey: connectedUser.encryptedPrivateKey };
 };
@@ -247,7 +251,7 @@ export const checkIfSameChat = (
       return true;
     }
   }
-  console.log(chatId);
+
 
   return false;
 };

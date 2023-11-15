@@ -47,14 +47,21 @@ export type ButtonStyleProps = {
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
-  const [accountadd, setAccount] = useState<string | null>(account)
+  const [accountadd, setAccountadd] = useState<string | null>(account)
   const [userAlice, setUserAlice] = useState<PushAPI | null>(null);
   const setChatsSorted = (chats: IMessageIPFS[]) => {
+
+    const chatsWithNumericTimestamps = chats.map(item => ({
+      ...item,
+      timestamp: typeof item.timestamp === 'string' ? parseInt(item.timestamp) : item.timestamp
+    }));
+
     const uniqueChats = [
-      ...new Map(chats.map((item) => [item['timestamp'], item])).values(),
+      ...new Map(chatsWithNumericTimestamps.map((item) => [item.timestamp, item])).values(),
     ];
 
     uniqueChats.sort((a, b) => {
+      
       return a.timestamp! > b.timestamp! ? 1 : -1;
     });
     setChats(uniqueChats);
@@ -63,10 +70,12 @@ export type ButtonStyleProps = {
     account: accountadd,
     env,
     apiKey,
-    userAlice
+    userAlice,
+    supportAddress,
+    signer
   });
 
-  console.log("chanecing", socketData)
+  
   const chatPropsData = {
     account : accountadd,
     signer,
@@ -82,19 +91,23 @@ export type ButtonStyleProps = {
   useEffect(() => {
     (async () => {
       if(signer) {
-        const userAlice = await PushAPI.initialize(signer, {env: env}); 
-        setUserAlice(userAlice)
         if (!account) {
           const address = await getAddressFromSigner(signer);
-          setAccount(address);
+          setAccountadd(address);
+          const userAlice = await PushAPI.initialize(signer, {env: env , account:address});
+          setUserAlice(userAlice)
         }
         else{
-          setAccount(account);
+          setAccountadd(account);
+          const userAlice = await PushAPI.initialize(signer, {env: env , account:account}); 
+          setUserAlice(userAlice)
         }
      
     }
     })();
   },[signer])
+
+ 
 
   useEffect(() => {
     setChats([]);

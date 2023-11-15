@@ -58,7 +58,7 @@ if (typeof msg.timestamp === "string") {
             {(msg.fromCAIP10 === caip10 || msg.from === caip10 ) ? (
               <MessageWrapper align="row-reverse">
                 <SenderMessage theme={theme}>
-                  {console.log("woiiii" , msg.messageContent)}
+                
                   <TextMessage>{msg.messageContent || msg.message?.content}</TextMessage>
                   {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
                 </SenderMessage>
@@ -67,7 +67,7 @@ if (typeof msg.timestamp === "string") {
               <MessageWrapper align="row">
               <ReceivedMessage theme={theme}>
                 {msg?.icon && msg.icon}
-                {console.log("insideee",msg.message?.content)}
+              
                 <TextMessage>{ msg.message?.content || msg.messageContent}</TextMessage>
                 {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
               </ReceivedMessage>

@@ -91,7 +91,7 @@ export const Modal: React.FC = () => {
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
       userAlice,
-      pgpPrivateKey: connectedUser.privateKey,
+      // pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
       threadHash: lastThreadHashFetched!,
       limit: chatsFetchedLimit,
@@ -119,30 +119,36 @@ export const Modal: React.FC = () => {
     }
   };
 
-  const getUpdatedChats = async (message:IMessageIPFS) =>{
- 
-    if (message && (supportAddress === pCAIP10ToWallet(message?.from))) {
+  // const getUpdatedChats = (message:IMessageIPFS) =>{
+  //   console.log(message)
+  //   if (message && (supportAddress === pCAIP10ToWallet(message?.from))) {
       // const chat = await decryptChat({ message, connectedUser, env });
       // socketData.messagesSinceLastConnection.decrypted = true;
 
-      setChatsSorted([...chats, message]);
-    }
-  }
+  //     setChatsSorted([...chats, message]);
+  //   }
+  // }
+
+
   
   useEffect(() => {
 
     if(socketData.messagesSinceLastConnection){
-      getUpdatedChats(socketData.messagesSinceLastConnection);
-    }
+      const message: IMessageIPFS = socketData.messagesSinceLastConnection
+      if (message ) {
+        setChatsSorted([...chats, message]);
+    }}
   }, [socketData.messagesSinceLastConnection]);
 
   useEffect(() => {
+    
     getChatCall();
-  }, [connectedUser, env, account,signer, supportAddress ]);
+  }, [connectedUser, env, account,signer, supportAddress, userAlice]);
 
   useEffect(() => {
     scrollToBottom();
   }, [connectedUser, env, account, socketData]);
+
 
   return (
     <Container theme={theme}>
