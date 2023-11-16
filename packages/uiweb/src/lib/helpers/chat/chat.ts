@@ -172,24 +172,23 @@ export const getDefaultFeedObject = ({
 };
 
 type CheckIfIntentType = {
-  chat: any;
+  chat: IFeeds;
   account: string;
 };
 export const checkIfIntent = ({
   chat,
   account,
 }: CheckIfIntentType): boolean => {
-  const ChatObject = chat[0];
   if (account) {
     if (
-      Object.keys(ChatObject || {}).length &&
-      ChatObject.combinedDID
+      Object.keys(chat || {}).length &&
+      chat.combinedDID
         .toLowerCase()
         .includes(walletToPCAIP10(account).toLowerCase())
     ) {
       if (
-        ChatObject.intent &&
-        ChatObject.intent
+        chat.intent &&
+        chat.intent
           .toLowerCase()
           .includes(walletToPCAIP10(account).toLowerCase())
       )

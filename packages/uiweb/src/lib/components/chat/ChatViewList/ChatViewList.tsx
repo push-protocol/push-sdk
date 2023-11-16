@@ -383,7 +383,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
               {chatFeed &&
                 account &&
                 checkIfIntent({
-                  chat: chatFeed,
+                  chat: chatFeed as IFeeds,
                   account: account!,
                 }) && (
                   <ApproveRequestBubble

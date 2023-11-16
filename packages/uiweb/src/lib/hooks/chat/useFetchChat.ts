@@ -21,7 +21,7 @@ const useFetchChat = () => {
         console.log("chatss calling in hook before", alias);
         const chat = await alias.chat.list("CHATS")
         console.log('chatss in hook', chat);
-        return chat;
+        return chat[0];
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
