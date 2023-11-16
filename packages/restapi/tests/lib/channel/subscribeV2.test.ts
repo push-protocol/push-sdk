@@ -43,6 +43,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
     expect(res.status).to.be.equal('success');
   });
 
+
 //   it('Should subscribe to the channel via V2 with settings', async () => {
 //     const res = await PUSH_CHANNEL.subscribeV2({
 //       signer: signer1,
