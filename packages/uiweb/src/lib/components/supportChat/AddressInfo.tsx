@@ -6,7 +6,7 @@ import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env, theme, userAlice } = useContext<any>(SupportChatPropsContext);
+  const { supportAddress, env, theme, pushUser } = useContext<any>(SupportChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -14,14 +14,14 @@ export const AddressInfo: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-if(userAlice){
-  const user = await userAlice.info();
+if(pushUser){
+  const user = await pushUser.info();
       setUser(user);
 }
       
     };
     getUser();
-  }, [supportAddress, userAlice]);
+  }, [supportAddress, pushUser]);
 
   return (
     <Container theme={theme}>

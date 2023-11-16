@@ -13,7 +13,7 @@ export const ChatInput: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env, supportAddress, apiKey, theme, userAlice } =
+  const { account, env, supportAddress, apiKey, theme, pushUser } =
     useContext<any>(SupportChatPropsContext);
 
   const {
@@ -40,7 +40,7 @@ export const ChatInput: React.FC = () => {
     setLoading(true);
     if (message.trim() !== '' && connectedUser) {
       
-      const sendResponse = await userAlice.chat.send(supportAddress ,{
+      const sendResponse = await pushUser.chat.send(supportAddress ,{
         
         type: 'Text',
         content: message,
