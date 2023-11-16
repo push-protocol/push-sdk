@@ -27,11 +27,11 @@ import { Delegate } from './delegate';
 import { Alias } from './alias';
 
 export class Channel extends PushNotificationBaseClass {
-  public delegate!: Delegate
-  public alias!: Alias
+  public delegate!: Delegate;
+  public alias!: Alias;
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
-    this.delegate = new Delegate(signer, env, account)
+    this.delegate = new Delegate(signer, env, account);
     this.alias = new Alias(env!);
   }
 
@@ -110,9 +110,11 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
-      const info = await this.info(options.channel?? this.account);
+      const info = await this.getChannelOrAliasInfo(
+        options.channel! ?? this.account
+      );
       let settings = null;
-      if(info && info.channel_settings){
+      if (info && info.channel_settings) {
         settings = JSON.parse(info.channel_settings);
       }
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
@@ -263,12 +265,15 @@ export class Channel extends PushNotificationBaseClass {
       );
       const balance = await this.fetchBalance(pushTokenContract, this.account!);
       // get counter
-      const counter = await this.fetchUpdateCounter(this.coreContract, this.account!);
+      const counter = await this.fetchUpdateCounter(
+        this.coreContract,
+        this.account!
+      );
       const fees = ethers.utils.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      const totalFees = fees.mul(counter)
+      const totalFees = fees.mul(counter);
       if (totalFees.gt(balance)) {
         throw new Error('Insufficient PUSH balance');
       }
@@ -359,8 +364,8 @@ export class Channel extends PushNotificationBaseClass {
         throw new Error('Invalid channel address');
       }
       const channelDetails = await this.info(this.account);
-      if(channelDetails?.verified_status == 0){
-        throw new Error("Only verified channel can verify other channel")
+      if (channelDetails?.verified_status == 0) {
+        throw new Error('Only verified channel can verify other channel');
       }
       // if valid, continue with it
       const res = await this.verifyChannel(
