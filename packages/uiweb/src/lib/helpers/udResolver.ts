@@ -6,11 +6,13 @@ import type { Env } from '@pushprotocol/restapi';
 export const getUdResolver = (env:Env): Resolution => {
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
   const l2ChainId = allowedNetworks[env].includes(137) ? 137 : 80001;
+  // ToDo: Enable for sepolia chainId once UD supports it
+  // const l1ChainId = appConfig.allowedNetworks.includes(1) ? 1 : 11155111;
   return Resolution.fromEthersProvider({
     uns: {
       locations: {
         Layer1: {
-          network: NETWORK_DETAILS[l1ChainId].network,
+          network: "mainnet", // add config for sepolia once it's supported by UD
           provider: new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey),
         },
         Layer2: {
