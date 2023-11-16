@@ -26,7 +26,7 @@ export const ApproveRequestBubble = ({
   chatId,
   setChatFeed,
 }: IApproveRequestBubbleProps) => {
-  const { pgpPrivateKey, alias } = useChatData();
+  const { alias } = useChatData();
 
   const ApproveRequestText = {
     GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,

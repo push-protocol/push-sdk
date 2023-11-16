@@ -115,9 +115,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const {
     account,
     env,
-    connectedProfile,
-    setConnectedProfile,
-    pgpPrivateKey,
     signer,
     alias,
     setAlias
@@ -229,21 +226,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     })();
-  }, [chatId, pgpPrivateKey, account, env, alias]);
+  }, [chatId, account, env, alias]);
 
   useEffect(() => {
-    console.log('in useEffect')
-    console.log(((isRules ? verified : true) && isMember) ||
-    (chatFeed && !chatFeed?.groupInformation), "letsseee")
-    console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
   }, [chatId, chatFeed, account, env, alias]);
-console.log(isMember)
-console.log(checkIfMember(chatFeed, account!))
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -392,7 +383,7 @@ console.log(checkIfMember(chatFeed, account!))
       overflow="hidden"
       borderRadius="13px"
       position="static"
-      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      padding={'13px 16px'}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
@@ -400,7 +391,7 @@ console.log(checkIfMember(chatFeed, account!))
       <ConnectButtonSection autoConnect={autoConnect} />
     </TypebarSection>
   ) : 
-  // !checkIfIntent({ chat: chatFeed, account: account! }) &&
+  !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
     <TypebarSection
       width="100%"
@@ -408,7 +399,7 @@ console.log(checkIfMember(chatFeed, account!))
       borderRadius={theme.borderRadius?.messageInput}
       position="static"
       border={theme.border?.messageInput}
-      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      padding={`13px 16px`}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
@@ -518,7 +509,7 @@ console.log(checkIfMember(chatFeed, account!))
         (((isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
-            <Section padding='8px' gap="8px" flex="1" position="static">
+            <Section gap="8px" flex="1" position="static">
               {emoji && (
                 <Div
                   width="25px"

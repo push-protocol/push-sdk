@@ -24,7 +24,6 @@ export const ChatUIProvider = ({
   children,
   account = null,
   theme,
-  pgpPrivateKey = null,
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
@@ -32,9 +31,6 @@ export const ChatUIProvider = ({
   const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
    const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
    const [alias, setAlias] = useState<any>(null);
-
-  const [pgpPrivateKeyVal, setPgpPrivateKeyVal] =
-    useState<string | null>(pgpPrivateKey);
   const [envVal, setEnvVal] = useState<ENV>(env);
   const {fetchChatProfile} = useGetChatProfile();
   const [connectedProfile,setConnectedProfile]=useState<IUser | undefined>(undefined);
@@ -57,7 +53,6 @@ export const ChatUIProvider = ({
         }
       } 
       setSignerVal(signer);
-      setPgpPrivateKeyVal(pgpPrivateKey);
     })()
     
   }, [env,account, alias,signer])
@@ -91,8 +86,6 @@ useEffect(() => {
     signer:signerVal,
     setSigner:setSignerVal,
     setAccount: setAccountVal,
-    pgpPrivateKey: pgpPrivateKeyVal,
-    setPgpPrivateKey: setPgpPrivateKeyVal,
     env: envVal,
     setEnv: setEnvVal,
     pushChatSocket,

@@ -19,7 +19,7 @@ const useFetchHistoryMessages
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { account, env,pgpPrivateKey, alias } = useChatData();
+  const { account, env, alias } = useChatData();
 
   const historyMessages = useCallback(async ({chatId}: HistoryMessagesParams) => {
 
@@ -46,7 +46,7 @@ const useFetchHistoryMessages
     } finally {
       setLoading(false);
     }
-  }, [pgpPrivateKey,account,env, alias]);
+  }, [account,env, alias]);
 
   return { historyMessages, error, loading };
 };

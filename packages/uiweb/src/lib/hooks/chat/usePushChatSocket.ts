@@ -14,7 +14,6 @@ export type PushChatSocketHookOptions = {
 export const usePushChatSocket = () => {
   const {
     account,
-    pgpPrivateKey,
     pushChatSocket,
     setPushChatSocket,
     setIsPushChatSocketConnected,

@@ -15,7 +15,7 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { pgpPrivateKey, env, account, alias } = useChatData();
+  const { env, account, alias } = useChatData();
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
@@ -39,7 +39,7 @@ const usePushSendMessage = () => {
         return error.message;
       }
     },
-    [pgpPrivateKey, account, env, alias]
+    [ account, env, alias]
   );
 
   return { sendMessage, error, loading };

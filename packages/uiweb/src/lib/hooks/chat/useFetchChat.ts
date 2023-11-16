@@ -11,7 +11,7 @@ interface fetchChat {
 const useFetchChat = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,pgpPrivateKey, alias } = useChatData();
+  const { account, env, alias } = useChatData();
 
 
   const fetchChat = useCallback(
@@ -32,7 +32,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [pgpPrivateKey,env,account, alias]
+    [env,account, alias]
   );
 
   return { fetchChat, error, loading };

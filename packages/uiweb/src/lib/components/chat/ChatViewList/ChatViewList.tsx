@@ -52,7 +52,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
+  const { account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -80,7 +80,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     setMessages(undefined);
     setConversationHash(undefined);
-  }, [chatId, account, pgpPrivateKey, env]);
+  }, [chatId, account, env]);
 
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
@@ -123,7 +123,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setLoading(false);
       }
     })();
-  }, [chatId, pgpPrivateKey, account, env, alias]);
+  }, [chatId, account, env, alias]);
 
   //moniters socket changes
   useEffect(() => {
@@ -171,7 +171,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     // }
-  }, [conversationHash, pgpPrivateKey, account, env, chatFeed, alias]);
+  }, [conversationHash, account, env, chatFeed, alias]);
 
   useEffect(() => {
     scrollToBottom();
@@ -277,7 +277,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       chatFeed &&
       chatFeed?.groupInformation &&
       !chatFeed?.groupInformation?.isPublic &&
-      ((!isMember && pgpPrivateKey) || (!pgpPrivateKey))
+      (!isMember)
     );
   }
 
@@ -383,7 +383,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
               {chatFeed &&
                 account &&
                 checkIfIntent({
-                  chat: chatFeed as any,
+                  chat: chatFeed,
                   account: account!,
                 }) && (
                   <ApproveRequestBubble

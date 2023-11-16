@@ -29,10 +29,8 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
 
   const {
     signer,
-    pgpPrivateKey,
     account,
     env,
-    setPgpPrivateKey,
     setAccount,
     setSigner,
     alias,
@@ -55,7 +53,6 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     } else if (!wallet) {
       setAccount('')
       setSigner(undefined)
-      setPgpPrivateKey(null)
     }
   }
   useEffect(() => {

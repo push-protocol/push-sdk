@@ -6,8 +6,6 @@ import { createContext } from "react";
 export interface IChatDataContextValues {
     account: string | null;
     setAccount: React.Dispatch<React.SetStateAction<string| null>>;
-    pgpPrivateKey: string | null;
-    setPgpPrivateKey: React.Dispatch<React.SetStateAction<string | null>>;
     signer: SignerType | undefined;
     setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
     env: Env;
@@ -29,10 +27,6 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     },
     signer: undefined,
     setSigner: () => {
-      /**/
-    },
-    pgpPrivateKey: '',
-    setPgpPrivateKey: () => {
       /**/
     },
     env: Constants.ENV.PROD,
