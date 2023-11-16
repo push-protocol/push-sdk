@@ -272,6 +272,29 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
       const res = await userAlice.channel.send(
         [
+          'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+          'eip155:80001:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        ],
+        {
+          notification: {
+            title: 'hi',
+            body: 'test-subset',
+          },
+          payload: {
+            title: 'testing first subset notification',
+            body: 'testing with random body',
+            cta: 'https://google.com/',
+            embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+          },
+          channel: 'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+      const res = await userAlice.channel.send(
+        [
           'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
           'eip155:97:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
