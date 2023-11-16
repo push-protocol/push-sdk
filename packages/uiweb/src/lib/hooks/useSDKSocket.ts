@@ -4,6 +4,7 @@ import {
   EVENTS
 } from '@pushprotocol/socket';
 import {  ENV } from '../config';
+import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
 
 
 export type SDKSocketHookOptions = {
@@ -11,57 +12,62 @@ export type SDKSocketHookOptions = {
   env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
+  pushUser: PushAPI ,
+  supportAddress: string | null,
+    signer: SignerType | null
 };
 
-export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiKey }: SDKSocketHookOptions) => {
+export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, pushUser, supportAddress, signer }: SDKSocketHookOptions) => {
   
-  const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
+  // const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
-  const [isSDKSocketConnected, setIsSDKSocketConnected] = useState(epnsSDKSocket?.connected);
-
-  const addSocketEvents = () => {
-    console.warn('\n--> addSocketEvents');
-    epnsSDKSocket?.on(EVENTS.CONNECT, () => {
-      console.log('CONNECTED: ');
+  const [isSDKSocketConnected, setIsSDKSocketConnected] = useState<boolean>(false);
+  const [stream, setStream] = useState<any>(null);
+  
+  const addSocketEvents = async () => {
+    console.warn('\n--> addChatSocketEvents');
+    stream.on(CONSTANTS.STREAM.CONNECT, (err:Error) => {
+      console.log('CONNECTED: ', err);
       setIsSDKSocketConnected(true);
     });
+    await stream.connect();
 
-    epnsSDKSocket?.on(EVENTS.DISCONNECT, (err:any) => {
+    stream.on(CONSTANTS.STREAM.DISCONNECT, (err:Error) => {
       console.log('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
+
+
+
     console.log('\t-->will attach eachMessage event now');
-    epnsSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (chat: any) => {
-      /**
-       * We receive a 1 message.
-       */
-      console.log("\n\n\n\neachMessage event: ", chat);
+    stream.on(CONSTANTS.STREAM.CHAT, (message: any) => {
 
       // do stuff with data
       setMessagesSinceLastConnection((chats: any) => {
-        return {...chat,decrypted:false};
+        return {...message};
       });
+      // stream.disconnect();
     });
   };
 
+ 
+
   const removeSocketEvents = () => {
-    console.warn('\n--> removeSocketEvents');
-    epnsSDKSocket?.off(EVENTS.CONNECT);
-    epnsSDKSocket?.off(EVENTS.DISCONNECT);
+    stream?.disconnect();
   };
 
   useEffect(() => {
-    if (epnsSDKSocket) {
+    if (stream) {
       addSocketEvents();
     }
   
     return () => {
-      if (epnsSDKSocket) {
+      if (stream) {
         removeSocketEvents();
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [epnsSDKSocket]);
+  }, [stream]);
 
 
   /**
@@ -71,30 +77,30 @@ export const useSDKSocket = ({ account, env = ENV.PROD, socketType = 'chat',apiK
    */
   useEffect(() => {
     if (account) {
-      if (epnsSDKSocket) {
+      if (!stream) {
         // console.log('=================>>> disconnection in the hook');
-        epnsSDKSocket?.disconnect();
+        stream?.disconnect();
       }
       const main = async () => {
-        const connectionObject = createSocketConnection({
-          user: account,
-          env,
-          apiKey,
-          socketType,
-          socketOptions: { autoConnect: true , reconnectionAttempts: 3}
-        });
-        console.warn('new connection object: ', connectionObject);
-
-        setEpnsSDKSocket(connectionObject);
+        const newstream = await pushUser.initStream(
+          [
+            CONSTANTS.STREAM.CHAT,
+          ],
+          {}
+        );
+      
+        console.warn('new connection object: ', newstream);
+        setStream(newstream);
+        // setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => console.error(err));
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env]);
+  }, [account, env, pushUser, supportAddress, signer, isSDKSocketConnected]);
 
   return {
-      epnsSDKSocket,
+      stream,
       isSDKSocketConnected,
       messagesSinceLastConnection
   }

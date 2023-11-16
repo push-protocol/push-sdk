@@ -1,7 +1,9 @@
+
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import type { IMessageIPFS } from '../../types';
+import { formatTime } from '../../helpers/timestamp';
 
 type ChatsPropType = {
   msg: IMessageIPFS;
@@ -30,29 +32,35 @@ export const Chats: React.FC<ChatsPropType> = ({
   const { connectedUser } = useContext<any>(SupportChatMainStateContext);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>('');
-  const time: Date = new Date(msg.timestamp!);
-  const time1 = time.toLocaleTimeString('en-US');
-  const date = time1.slice(0, -6) + time1.slice(-2);
+
+
+const date = formatTime(msg.timestamp)
+
+
+
   return (
     <Container>
       <>
-        {msg.messageType === 'Text' ? (
+        {msg.messageType === 'Text' || msg.message?.type ? (
           <>
-            {msg.fromCAIP10 === caip10 ? (
+            {(msg.fromCAIP10 === caip10 || msg.from === caip10 ) ? (
               <MessageWrapper align="row-reverse">
                 <SenderMessage theme={theme}>
-                  <TextMessage>{msg.messageContent}</TextMessage>
+                
+                  <TextMessage>{msg.messageContent || msg.message?.content}</TextMessage>
                   {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
                 </SenderMessage>
               </MessageWrapper>
             ) : (
               <MessageWrapper align="row">
-                <ReceivedMessage theme={theme}>
-                  {msg?.icon && msg.icon}
-                  <TextMessage>{msg.messageContent}</TextMessage>
-                  {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
-                </ReceivedMessage>
-              </MessageWrapper>
+              <ReceivedMessage theme={theme}>
+                {msg?.icon && msg.icon}
+              
+                <TextMessage>{ msg.message?.content || msg.messageContent}</TextMessage>
+                {msg.timestamp !== undefined && <TimeStamp>{date}</TimeStamp>}
+              </ReceivedMessage>
+            </MessageWrapper> 
+
             )}
           </>
         ) : // : msg.messageType === 'Image' ? (
