@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.37...restapi-1.4.38) (2023-11-16)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([bdc9c95](https://github.com/ethereum-push-notification-service/push-sdk/commit/bdc9c9509334d809a2cfc67ac979e61c66591950))
+* **video:** fix recurring video calls bug, rpc in example app ([#850](https://github.com/ethereum-push-notification-service/push-sdk/issues/850)) ([7012721](https://github.com/ethereum-push-notification-service/push-sdk/commit/70127211572fbc9b30cad86165348c06cd388684))
+
+
+
 ## [1.4.37](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.36...restapi-1.4.37) (2023-11-16)
 
 
