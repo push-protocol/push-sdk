@@ -8,6 +8,7 @@ import {
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { infuraProvider } from 'wagmi/providers/infura';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import '../styles/globals.css';
@@ -16,7 +17,13 @@ import { useEffect, useState } from 'react';
 // import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
 import { AccountContext } from '../contexts';
 
-const { chains, provider } = configureChains([sepolia], [publicProvider()]);
+const { chains, provider } = configureChains(
+  [sepolia],
+  [
+    infuraProvider({ apiKey: '5524d420b29f4f7a8d8d2f582a0d43f7' }),
+    publicProvider(),
+  ]
+);
 
 const { connectors } = getDefaultWallets({
   appName: 'Connect',
@@ -43,7 +50,7 @@ const SpacesComponentProvider = ({ children }: ISpacesComponentProps) => {
 
   return (
     // <SpacesUIProvider spaceUI={spaceUI} theme={customtheme}>
-      {children}
+    { children }
     // </SpacesUIProvider>
   );
 };
@@ -62,11 +69,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       {loadWagmi ? (
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider theme={darkTheme()} chains={chains}>
-          <AccountContext.Provider value={{ pgpPrivateKey, setPgpPrivateKey }}>
+            <AccountContext.Provider
+              value={{ pgpPrivateKey, setPgpPrivateKey }}
+            >
               {/* <SpacesComponentProvider> */}
-                <Component {...pageProps} />
+              <Component {...pageProps} />
               {/* </SpacesComponentProvider> */}
-          </AccountContext.Provider>
+            </AccountContext.Provider>
           </RainbowKitProvider>
         </WagmiConfig>
       ) : null}

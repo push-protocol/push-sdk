@@ -375,13 +375,20 @@ export class Video {
                   this.peerInstances[connectedAddress]?.destroy();
                   this.peerInstances[connectedAddress] = null;
                 }
+
+                // destroy the local stream
+                if (this.data.local.stream) {
+                  endStream(this.data.local.stream);
+                }
+
+                // reset the state
+                this.setData(() => initVideoCallData);
               }
 
-              if (
-                this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO ||
-                (this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
-                  parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP)
-              ) {
+              if (this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO) {
+                this.peerInstances[recipientAddress]?.destroy();
+                this.peerInstances[recipientAddress] = null;
+
                 // destroy the local stream
                 if (this.data.local.stream) {
                   endStream(this.data.local.stream);
@@ -444,6 +451,19 @@ export class Video {
         return Promise.resolve();
       }
 
+      // fetching the iceServers config
+      const iceServerConfig = await getIceServerConfig(this.env);
+
+      // creating peer instance
+      this.peerInstances[recipientAddress] = new Peer({
+        initiator: false,
+        trickle: false,
+        stream: this.data.local.stream,
+        config: {
+          iceServers: iceServerConfig,
+        },
+      });
+
       // set videoCallInfo state with status 2 (call received)
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
@@ -475,18 +495,6 @@ export class Video {
             draft.incoming[incomingIndex].retryCount += retry ? 1 : 0;
           }
         });
-      });
-
-      // fetching the iceServers config
-      const iceServerConfig = await getIceServerConfig(this.env);
-
-      this.peerInstances[recipientAddress] = new Peer({
-        initiator: false,
-        trickle: false,
-        stream: this.data.local.stream,
-        config: {
-          iceServers: iceServerConfig,
-        },
       });
 
       // setup error handler
@@ -678,13 +686,20 @@ export class Video {
                 this.peerInstances[connectedAddress]?.destroy();
                 this.peerInstances[connectedAddress] = null;
               }
+
+              // destroy the local stream
+              if (this.data.local.stream) {
+                endStream(this.data.local.stream);
+              }
+
+              // reset the state
+              this.setData(() => initVideoCallData);
             }
 
-            if (
-              this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO ||
-              (this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
-                parsedData?.details?.type === SPACE_DISCONNECT_TYPE.STOP)
-            ) {
+            if (this.callType === VIDEO_CALL_TYPE.PUSH_VIDEO) {
+              this.peerInstances[recipientAddress]?.destroy();
+              this.peerInstances[recipientAddress] = null;
+
               // destroy the local stream
               if (this.data.local.stream) {
                 endStream(this.data.local.stream);
@@ -905,31 +920,34 @@ export class Video {
 
       // Signal all the connected peers that the local peer has changed their audio state
       for (const incomingPeer of this.data.incoming) {
-        if (incomingPeer.status === VideoCallStatus.CONNECTED && this.peerInstances[incomingPeer.address]) {
-            try {
-                this.peerInstances[incomingPeer.address].send(
-                    JSON.stringify({ type: 'isAudioOn', value: state })
-                );
-            } catch (error) {
-                console.error("Error sending data:", error);
-            }
+        if (
+          incomingPeer.status === VideoCallStatus.CONNECTED &&
+          this.peerInstances[incomingPeer.address]
+        ) {
+          try {
+            this.peerInstances[incomingPeer.address].send(
+              JSON.stringify({ type: 'isAudioOn', value: state })
+            );
+          } catch (error) {
+            console.error('Error sending data:', error);
+          }
         }
       }
 
-        if (this.data.local.stream) {
-            if (state) {
-                restartAudioStream(this.data.local.stream);
-            } else {
-                stopAudioStream(this.data.local.stream);
-            }
-            this.setData((oldData) => {
-                return produce(oldData, (draft) => {
-                    draft.local.audio = state;
-                });
-            });
+      if (this.data.local.stream) {
+        if (state) {
+          restartAudioStream(this.data.local.stream);
+        } else {
+          stopAudioStream(this.data.local.stream);
         }
+        this.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.local.audio = state;
+          });
+        });
+      }
     }
-}
+  }
 
   // helper functions
 
