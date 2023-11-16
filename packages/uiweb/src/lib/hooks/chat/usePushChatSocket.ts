@@ -1,11 +1,10 @@
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
-import * as PushAPI from '@pushprotocol/restapi';
-
 import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
 import useGetChatProfile from '../useGetChatProfile';
+import { CONSTANTS } from '@pushprotocol/restapi';
 
 export type PushChatSocketHookOptions = {
   account?: string | null;
@@ -23,95 +22,93 @@ export const usePushChatSocket = () => {
     connectedProfile,
     setConnectedProfile,
     env,
+    alias
   } = useChatData();
-const {fetchChatProfile} = useGetChatProfile();
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
     useState<any>({});
-    const [acceptedRequestMessage, setAcceptedRequestMessage] =
+  const [acceptedRequestMessage, setAcceptedRequestMessage] =
     useState<any>({});
+  const [stream, setStream] = useState<any>();
   const [
     groupInformationSinceLastConnection,
     setGroupInformationSinceLastConnection,
   ] = useState<any>({});
 
-  // useEffect(() => {
-  //   // console.log(pgpPrivateKey, "pgppppppppp")
-  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
-  // }, [pgpPrivateKey, connectedProfile])
-
-  const addSocketEvents = useCallback(() => {
+  const addSocketEvents = useCallback(async () => {
     console.log('addSocketEvents');
-    pushChatSocket?.on(EVENTS.CONNECT, () => {
+    // if (!stre/z
+    stream.on(CONSTANTS.STREAM.CONNECT, () => {
+      // console.log(err,"errr");
+      // console.log(connected,"connected");÷
+      console.log('connecteddddd');
       setIsPushChatSocketConnected(true);
-    });
+    })
 
-    pushChatSocket?.on(EVENTS.DISCONNECT, (reason: string) => {
+    stream.on(CONSTANTS.STREAM.DISCONNECT, (reason: string) => {
       setIsPushChatSocketConnected(false);
     });
 
-    pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
-   
-    
-      if (!connectedProfile || !pgpPrivateKey) {
-        return;
-      }
+    stream.on(CONSTANTS.STREAM.CHAT, async (chat: any) => {
+      console.log('chat', chat);
       if (
-       ( chat.messageCategory === 'Request') &&
+        (chat.messageCategory === 'Request') &&
         (chat.messageContent === null) &&
         (chat.messageType === null)
       ) {
         setAcceptedRequestMessage(chat);
-      }
-      else
-      {
-        const response = await PushAPI.chat.decryptConversation({
-          messages: [chat],
-          connectedUser: connectedProfile,
-          pgpPrivateKey: pgpPrivateKey,
-          env: env,
+      } else {
+        // Extract 'from' and 'to' from the 'message' property
+        const fromDID = chat.from;
+        const toDID = chat.to.join(', '); // Use the appropriate separator if needed
+        // Create a new object with modified properties
+        const messageContent = chat.message.content;
+        const modifiedChat = {
+          ...chat,
+          fromDID: fromDID,
+          toDID: toDID,
+          messageContent: messageContent,
+        };
+        delete modifiedChat.from;
+        delete modifiedChat.to;
+        console.log('modifiedChat', modifiedChat);
+
+        setMessagesSinceLastConnection((chats: any) => {
+          return modifiedChat;
         });
-  
-        if (response && response.length) {
-          setMessagesSinceLastConnection(response[0]);
-        }
       }
-     
     });
-    pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
-      /**
-       * We receive a group creation or updated event.
-       */
-      setGroupInformationSinceLastConnection(groupInfo);
-    });
+
+
+    // pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
+    //   /**
+    //    * We receive a group creation or updated event.
+    //    */
+    //   setGroupInformationSinceLastConnection(groupInfo);
+    // });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    pushChatSocket,
-    account,
-    pgpPrivateKey,
     messagesSinceLastConnection,
     env,
-    connectedProfile,
+    alias,
+    stream
   ]);
 
   const removeSocketEvents = useCallback(() => {
-    pushChatSocket?.off(EVENTS.CONNECT);
-    pushChatSocket?.off(EVENTS.DISCONNECT);
-    pushChatSocket?.off(EVENTS.CHAT_GROUPS);
-    pushChatSocket?.off(EVENTS.CHAT_RECEIVED_MESSAGE);
-  }, [pushChatSocket]);
+    stream?.disconnect();
+  }, [stream]);
 
   useEffect(() => {
-    if (pushChatSocket) {
+    if (stream) {
       addSocketEvents();
     }
 
     return () => {
-      if (pushChatSocket) {
+      if (stream) {
         removeSocketEvents();
       }
     };
-  }, [pushChatSocket, pgpPrivateKey, connectedProfile]);
+  }, [stream, alias]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -119,30 +116,27 @@ const {fetchChatProfile} = useGetChatProfile();
    *  - create a new connection object
    */
   useEffect(() => {
-    if (account) {
-      if (pushChatSocket && pushChatSocket.connected) {
-        // pushChatSocket?.disconnect();
-      } else {
-        const main = async () => {
-          const connectionObject = createSocketConnection({
-            user: account,
-            env,
-            socketType: SOCKET_TYPE.CHAT,
-            socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
-          });
-          console.warn('new connection object: ', connectionObject);
+    if (!stream) {
+      const main = async () => {
 
-          setPushChatSocket(connectionObject);
-        };
-        main().catch((err) => console.error(err));
-      }
+        const stream = await alias.initStream(
+          [
+            CONSTANTS.STREAM.CHAT,
+          ],
+          {}
+        );
+        setStream(stream);
+        await stream.connect();
+        console.warn('new connection object: ', stream);
+      };
+      main().catch((err) => console.error(err));
     }
+    // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env, pgpPrivateKey]);
+  }, [alias, env, stream]);
 
   return {
-    pushChatSocket,
     isPushChatSocketConnected,
     messagesSinceLastConnection,
     acceptedRequestMessage,

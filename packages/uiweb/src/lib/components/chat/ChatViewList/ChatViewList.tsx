@@ -33,6 +33,7 @@ import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
+import { formatTime } from '../../../helpers/timestamp';
 
 /**
  * @interface IThemeProps
@@ -51,7 +52,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
+  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -77,15 +78,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, env]);
 
   useEffect(() => {
-    (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
-      }
-    })();
-  }, [account]);
-
-  useEffect(() => {
     setMessages(undefined);
     setConversationHash(undefined);
   }, [chatId, account, pgpPrivateKey, env]);
@@ -93,44 +85,49 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (!account && !env) return;
-      const chat = await fetchChat({ chatId });
-      if (Object.keys(chat || {}).length) {
-        setConversationHash(chat?.threadhash as string);
-        setChatFeed(chat as IFeeds);
-      }
-      else {
-        let newChatFeed;
-        let group;
-        const result = await getNewChatUser({
-          searchText: chatId,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          newChatFeed = getDefaultFeedObject({ user: result });
+      if (alias) {
+        // console.log('chatss');
+        // console.log(account, env, 'chatss')
+        const chat = await fetchChat();
+        // console.log(chat, 'chatss calling main', alias)
+        if (chat) {
+          setConversationHash(chat?.threadhash as string);
+          setChatFeed(chat as IFeeds);
         } else {
-          group = await getGroup({ searchText: chatId });
-          if (group) {
-            newChatFeed = getDefaultFeedObject({ groupInformation: group });
+          console.log('chatss calling elsez')
+          let newChatFeed;
+          let group;
+          const result = await getNewChatUser({
+            searchText: chatId,
+            fetchChatProfile,
+            env,
+          });
+          if (result) {
+            newChatFeed = getDefaultFeedObject({ user: result });
+          } else {
+            group = await getGroup({ searchText: chatId });
+            if (group) {
+              newChatFeed = getDefaultFeedObject({ groupInformation: group });
+            }
+          }
+          if (newChatFeed) {
+            if (!newChatFeed?.groupInformation) {
+              setChatStatusText(ChatStatus.FIRST_CHAT);
+            }
+            setConversationHash(newChatFeed.threadhash as string);
+            setChatFeed(newChatFeed);
+          } else {
+            setChatStatusText(ChatStatus.INVALID_CHAT);
           }
         }
-        if (newChatFeed) {
-          if (!newChatFeed?.groupInformation) {
-            setChatStatusText(ChatStatus.FIRST_CHAT);
-          }
-          setConversationHash(newChatFeed.threadhash as string);
-          setChatFeed(newChatFeed);
-        } else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
-        }
+        setLoading(false);
       }
-      setLoading(false);
     })();
-  }, [chatId, pgpPrivateKey, account, env]);
+  }, [chatId, pgpPrivateKey, account, env, alias]);
 
   //moniters socket changes
   useEffect(() => {
+    console.log('messagesSinceLastConnection', account, messagesSinceLastConnection, checkIfSameChat(messagesSinceLastConnection, account!, chatId))
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
@@ -138,9 +135,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setFilteredMessages([
           messagesSinceLastConnection,
         ] as IMessageIPFSWithCID[]);
-     
+
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
+        console.log('messagesSinceLastConnection in group')
         const newChatViewList = appendUniqueMessages(
           messages as Messagetype,
           [messagesSinceLastConnection],
@@ -168,12 +166,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
-    if (conversationHash) {
+    // if (conversationHash) {
       (async function () {
         await getMessagesCall();
       })();
-    }
-  }, [conversationHash, pgpPrivateKey, account, env,chatFeed]);
+    // }
+  }, [conversationHash, pgpPrivateKey, account, env, chatFeed, alias]);
 
   useEffect(() => {
     scrollToBottom();
@@ -191,10 +189,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [messages]);
 
-  useEffect(()=>{
+  console.log('chatHistory')
 
-    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
-    {
+  useEffect(() => {
+
+    if (chatFeed && !chatFeed?.groupInformation?.isPublic && account) {
       chatFeed?.groupInformation?.members.forEach((acc) => {
         if (
           acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
@@ -203,17 +202,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         }
       });
     }
-  },[account,chatFeed])
+  }, [account, chatFeed])
 
   //methods
   const scrollToBottom = () => {
-    setTimeout(()=>{
+    setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
 
       }
-    },0)
-  
+    }, 0)
+
   };
 
   const onScroll = async () => {
@@ -233,23 +232,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   const getMessagesCall = async () => {
-    let threadHash = null;
-    if (!messages) {
-      threadHash = conversationHash;
-    } else {
-      threadHash = messages?.lastThreadHash;
-    }
-  
-    if (
-      threadHash &&
-      ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
-        (chatFeed && chatFeed?.groupInformation))
-    ) {
-      
-      const chatHistory = await historyMessages({
-        limit: limit,
-        threadHash,
-      });
+    // if (!messages) {
+    //   threadHash = conversationHash;
+    // } else {
+    //   threadHash = messages?.lastThreadHash;
+    // }
+
+    if (alias && chatId) {
+      console.log('chatHistory')
+
+      const chatHistory = await historyMessages({chatId});
+      console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
@@ -279,7 +272,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   };
 
-  const ifBlurChat = () =>{
+  const ifBlurChat = () => {
     return !!(
       chatFeed &&
       chatFeed?.groupInformation &&
@@ -293,7 +286,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     dateNum: string;
   };
   const renderDate = ({ chat, dateNum }: RenderDataType) => {
-    const timestampDate = dateToFromNowDaily(chat.timestamp as number);
+    const timestampDate = formatTime(chat.timestamp);
     dates.add(dateNum);
     return (
       <Span
@@ -328,9 +321,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       {!loading && (
         <>
           {chatFeed &&
-          (chatFeed.publicKey ||
-            (chatFeed?.groupInformation &&
-              !chatFeed?.groupInformation?.isPublic)) ? (
+            (chatFeed.publicKey ||
+              (chatFeed?.groupInformation &&
+                !chatFeed?.groupInformation?.isPublic)) ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
             <EncryptionMessage
@@ -365,17 +358,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                 {messages?.messages &&
                   messages?.messages?.map(
                     (chat: IMessageIPFS, index: number) => {
-                      const dateNum = moment(chat.timestamp).format('L');
+                      const dateNum = formatTime(chat.timestamp);
                       const position =
                         pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-                        account?.toLowerCase()
+                          account?.toLowerCase()
                           ? 0
                           : 1;
                       return (
                         <>
                           {dates.has(dateNum)
                             ? null
-                            : renderDate({ chat, dateNum })}
+                            : dateNum ? renderDate({ chat, dateNum }) : null}
                           <Section
                             justifyContent={position ? 'end' : 'start'}
                             margin="7px"
@@ -390,7 +383,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
               {chatFeed &&
                 account &&
                 checkIfIntent({
-                  chat: chatFeed as IFeeds,
+                  chat: chatFeed as any,
                   account: account!,
                 }) && (
                   <ApproveRequestBubble
@@ -408,7 +401,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 };
 
 //styles
-const ChatViewListCard = styled(Section)<IThemeProps>`
+const ChatViewListCard = styled(Section) <IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
@@ -425,4 +418,3 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   overscroll-behavior: contain;
   scroll-behavior: smooth;
 `;
-

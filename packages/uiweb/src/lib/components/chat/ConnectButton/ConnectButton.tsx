@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { ethers } from 'ethers';
+import { Signer, ethers } from 'ethers';
 
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-
+import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
+import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
 
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
@@ -18,17 +20,27 @@ import { device } from '../../../config';
 interface IThemeProps {
   theme?: IChatTheme;
 }
-
+interface IConnectButtonProps {
+  autoConnect?: boolean;
+}
 
 export const ConnectButtonSub = ({autoConnect = false})  => {
   const {wallet, connecting , connect, disconnect} = useAccount();
 
   const {
     signer,
+    pgpPrivateKey,
+    account,
+    env,
+    setPgpPrivateKey,
     setAccount,
     setSigner,
+    alias,
+    setAlias
   } = useChatData();
   const theme = useContext(ThemeContext);
+  const {fetchChatProfile} = useGetChatProfile();
+  const {decryptPGPKey} = useDecryptPGPKey();
 
 
   const setUserData = () => {
@@ -43,6 +55,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     } else if (!wallet) {
       setAccount('')
       setSigner(undefined)
+      setPgpPrivateKey(null)
     }
   }
   useEffect(() => {
@@ -50,6 +63,18 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     disconnect(wallet);
     setUserData()
   }, [wallet])
+
+  useEffect(() => {
+    (async () => {
+      if (!alias && signer) {
+        const user = await fetchChatProfile({signer: signer, env});
+        console.log("calllingggg in connect button")
+        if (user) {
+          setAlias(user);
+        }
+      }
+    })();
+  }, [alias, signer]);
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>

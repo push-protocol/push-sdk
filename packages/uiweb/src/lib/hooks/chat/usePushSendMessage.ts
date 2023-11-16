@@ -11,39 +11,35 @@ interface SendMessageParams {
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
-const usePushSendMessage = () => { 
+const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { pgpPrivateKey, env, account } = useChatData();
+  const { pgpPrivateKey, env, account, alias } = useChatData();
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
       const { chatId, message, messageType } = options || {};
       setLoading(true);
       try {
-        const response = await PushAPI.chat.send({
-          messageContent: message,
-          messageType: messageType,
-          receiverAddress: chatId,
-          account: account ? account : undefined,
-          pgpPrivateKey: pgpPrivateKey ? pgpPrivateKey : undefined,
-          env: env,
-        });
+        const response = await alias.chat.send(chatId, {
+          type: messageType,
+          content: message,
+        })
         setLoading(false);
         if (!response) {
           return false;
         }
         return response;
       } catch (error: Error | any) {
-       
+
         setLoading(false);
         setError(error.message);
         console.log(error);
         return error.message;
       }
     },
-    [pgpPrivateKey, account,env]
+    [pgpPrivateKey, account, env, alias]
   );
 
   return { sendMessage, error, loading };

@@ -18,6 +18,8 @@ export interface IChatDataContextValues {
     setIsPushChatSocketConnected: React.Dispatch<React.SetStateAction<boolean>>;
     connectedProfile: IUser | undefined;
     setConnectedProfile: (connectedProfile: IUser) => void;
+    alias: any;
+    setAlias: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {
@@ -48,7 +50,11 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     connectedProfile: undefined,
     setConnectedProfile: () => {
         /**  */
-    }
+    },
+    alias: null,
+    setAlias: () => {
+      /** */
+    },
 
 }
 

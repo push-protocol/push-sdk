@@ -119,6 +119,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setConnectedProfile,
     pgpPrivateKey,
     signer,
+    alias,
+    setAlias
   } = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
@@ -145,12 +147,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
+      if (!alias && signer) {
+        const user = await fetchChatProfile({ signer: signer, env });
+        console.log("calllingggg in message input")
+        if (user) setAlias(user);
       }
     })();
-  }, [account]);
+  }, [alias]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
@@ -183,6 +186,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setChatFeed(updateChatFeed);
       }
     }
+    console.log(chatFeed)
   }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
@@ -201,7 +205,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       if (!account && !env) return;
       if (account && env) {
-        const chat = await fetchChat({ chatId });
+        const chat = await fetchChat();
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
           let newChatFeed;
@@ -225,17 +229,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     })();
-  }, [chatId, pgpPrivateKey, account, env]);
+  }, [chatId, pgpPrivateKey, account, env, alias]);
 
   useEffect(() => {
     console.log('in useEffect')
+    console.log(((isRules ? verified : true) && isMember) ||
+    (chatFeed && !chatFeed?.groupInformation), "letsseee")
     console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
-  }, [chatId, chatFeed, account, env]);
+  }, [chatId, chatFeed, account, env, alias]);
 console.log(isMember)
 console.log(checkIfMember(chatFeed, account!))
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
@@ -255,9 +261,7 @@ console.log(checkIfMember(chatFeed, account!))
 
   const handleJoinGroup = async () => {
     if (chatFeed && chatFeed?.groupInformation?.isPublic) {
-      const response = await approveChatRequest({
-        chatId,
-      });
+      const response = await alias.chat.accept(chatId);
       if (response) {
         await updateChatFeed();
       }
@@ -332,11 +336,11 @@ console.log(checkIfMember(chatFeed, account!))
   };
 
   const isJoinGroup = () => {
-    return !!pgpPrivateKey && !isMember;
+    return !isMember;
   };
 
   const isNotVerified = () => {
-    return !!pgpPrivateKey && !verified && isMember && isRules;
+    return !verified && isMember && isRules;
   };
 
   const sendPushMessage = async (content: string, type: string) => {
@@ -374,7 +378,7 @@ console.log(checkIfMember(chatFeed, account!))
 
   const updateChatFeed = async () => {
 
-    const chat = await fetchChat({ chatId });
+    const chat = await fetchChat();
 
     if (Object.keys(chat || {}).length) {
 
@@ -382,7 +386,7 @@ console.log(checkIfMember(chatFeed, account!))
     }
   };
 
-  return !(pgpPrivateKey && account) && isConnected ? (
+  return !(account) && isConnected ? (
     <TypebarSection
       width="100%"
       overflow="hidden"
@@ -395,7 +399,8 @@ console.log(checkIfMember(chatFeed, account!))
     >
       <ConnectButtonSection autoConnect={autoConnect} />
     </TypebarSection>
-  ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
+  ) : 
+  // !checkIfIntent({ chat: chatFeed, account: account! }) &&
     Object.keys(chatFeed || {}).length ? (
     <TypebarSection
       width="100%"
@@ -473,7 +478,7 @@ console.log(checkIfMember(chatFeed, account!))
               </ConnectWrapper>
             </Section>
           )}
-          {!!pgpPrivateKey && !verificationSuccessfull && (
+          {!verificationSuccessfull && (
             <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
               <Section
                 margin="5px 0px 0px 0px"
@@ -509,11 +514,11 @@ console.log(checkIfMember(chatFeed, account!))
           )}
         </>
       ) : null}
-      {!!pgpPrivateKey &&
+      {
         (((isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
-            <Section gap="8px" flex="1" position="static">
+            <Section padding='8px' gap="8px" flex="1" position="static">
               {emoji && (
                 <Div
                   width="25px"

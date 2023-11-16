@@ -25,13 +25,14 @@ import {
   pCAIP10ToWallet,
   shortenText,
 } from '../../../helpers';
+import { formatTime } from '../../../helpers/timestamp';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { account } = useContext(ChatDataContext);
   const theme = useContext(ThemeContext);
   return (
     <>
-      {chat.fromCAIP10.split(':')[1] !== account && (
+      {(chat.fromDID).split(':')[1] !== account && (
         <Span
           theme={theme}
           alignSelf="start"
@@ -53,7 +54,7 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   const [pfp, setPfp] = useState<string>('');
   const getUserPfp = async () => {
     const pfp = await getPfp({
-      account: chat.fromCAIP10.split(':')[1],
+      account: chat.fromDID.split(':')[1],
       env: env,
     });
     if (pfp) {
@@ -62,10 +63,10 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   };
   useEffect(() => {
     getUserPfp();
-  }, [account, chat.fromCAIP10]);
+  }, [account, chat.fromDID]);
   return (
     <Section justifyContent="start" alignItems="start">
-      {chat.fromCAIP10.split(':')[1] !== account && (
+      {(chat.fromDID || chat.fromDID).split(':')[1] !== account && (
         <Section alignItems="start">
           {pfp && (
             <Image
@@ -123,7 +124,7 @@ const MessageCard = ({
   isGroup: boolean;
 }) => {
   const theme = useContext(ThemeContext);
-  const time = moment(chat.timestamp).format('hh:mm a');
+  const time = formatTime(chat.timestamp)
   return (
     <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="70%">
       <Section
@@ -347,7 +348,7 @@ export const ChatViewBubble = ({ decryptedMessagePayload }: { decryptedMessagePa
   });
   const [isGroup, setIsGroup] = useState<boolean>(false);
   useEffect(() => {
-    if (decryptedMessagePayload.toDID.split(':')[0] === 'eip155') {
+    if ((decryptedMessagePayload.toDID).split(':')[0] === 'eip155') {
       if (isGroup) {
         setIsGroup(false);
       }

@@ -1,7 +1,7 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import type { ENV } from '../../config';
 import { Constants } from '../../config';
-import type {
+import type { 
   AccountEnvOptionsType,
   IGroup,
   IMessageIPFS,
@@ -179,6 +179,7 @@ export const checkIfIntent = ({
   chat,
   account,
 }: CheckIfIntentType): boolean => {
+  console.log(chat, account, 'checkIfIntent');
   if (account) {
     if (
       Object.keys(chat || {}).length &&
@@ -253,19 +254,19 @@ export const checkIfSameChat = (
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase()) &&
+      (((chatId.toLowerCase() === (msg.fromDID?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
-          msg.toCAIP10?.toLowerCase())) ||
-        ((chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()) &&
+          msg.toDID?.toLowerCase())) ||
+        ((chatId.toLowerCase() === (msg.toDID?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
-            msg.fromCAIP10?.toLowerCase())))
+            msg.fromDID?.toLowerCase())))
     ) {
       return true;
     }
   } else {
     if (
       Object.keys(msg || {}).length &&
-      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
+      (chatId.toLowerCase() === msg.toDID?.toLowerCase())
     ) {
       return true;
     }

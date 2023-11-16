@@ -26,7 +26,7 @@ export const ApproveRequestBubble = ({
   chatId,
   setChatFeed,
 }: IApproveRequestBubbleProps) => {
-  const { pgpPrivateKey } = useChatData();
+  const { pgpPrivateKey, alias } = useChatData();
 
   const ApproveRequestText = {
     GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,
@@ -39,13 +39,7 @@ export const ApproveRequestBubble = ({
 
   const handleApproveChatRequest = async () => {
     try {
-      if (!pgpPrivateKey) {
-        return;
-      }
-
-      const response = await approveChatRequest({
-        chatId,
-      });
+      const response = await alias.chat.accept(chatId);
       if (response) {
         const updatedChatFeed = { ...(chatFeed as IFeeds) };
         updatedChatFeed.intent = response;
