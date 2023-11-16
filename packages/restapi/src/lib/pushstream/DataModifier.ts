@@ -6,7 +6,7 @@ import {
   MessageRawData,
   MessageEvent,
   MessageEventType,
-  Member,
+  GroupMember,
   GroupEventType,
   LeaveGroupEvent,
   JoinGroupEvent,
@@ -16,6 +16,7 @@ import {
   NotificationEventType,
   NotificationType,
   NOTIFICATION,
+  ProposedEventNames,
 } from './pushStreamTypes';
 
 export class DataModifier {
@@ -124,7 +125,7 @@ export class DataModifier {
     meta: GroupMeta;
     raw?: GroupEventRawData;
   } {
-    const mapMembersAdmins = (arr: any[]): Member[] => {
+    const mapMembersAdmins = (arr: any[]): GroupMember[] => {
       return arr.map((item) => ({
         address: item.wallet,
         profile: {
@@ -134,7 +135,7 @@ export class DataModifier {
       }));
     };
 
-    const mapPendingMembersAdmins = (arr: any[]): Member[] => {
+    const mapPendingMembersAdmins = (arr: any[]): GroupMember[] => {
       return arr.map((item) => ({
         address: item.wallet,
         profile: {
@@ -317,16 +318,15 @@ export class DataModifier {
         (key) => NOTIFICATION.TYPE[key] === data.payload.data.type
       ) || 'BROADCAST'; // Assuming 'BROADCAST' as the default
 
+    let recipients: string[];
 
-       let recipients: string[];
-
-       if (Array.isArray(data.payload.recipients)) {
-         recipients = data.payload.recipients;
-       } else if (typeof data.payload.recipients === 'string') {
-         recipients = [data.payload.recipients];
-       } else {
-         recipients = Object.keys(data.payload.recipients);
-       }
+    if (Array.isArray(data.payload.recipients)) {
+      recipients = data.payload.recipients;
+    } else if (typeof data.payload.recipients === 'string') {
+      recipients = [data.payload.recipients];
+    } else {
+      recipients = Object.keys(data.payload.recipients);
+    }
 
     const notificationEvent: NotificationEvent = {
       event: notificationEventType,
@@ -375,5 +375,51 @@ export class DataModifier {
     }
 
     return notificationEvent;
+  }
+
+  public static convertToProposedName(
+    currentEventName: string
+  ): ProposedEventNames {
+    switch (currentEventName) {
+      case 'message':
+        return ProposedEventNames.Message;
+      case 'request':
+        return ProposedEventNames.Request;
+      case 'accept':
+        return ProposedEventNames.Accept;
+      case 'reject':
+        return ProposedEventNames.Reject;
+      case 'leaveGroup':
+        return ProposedEventNames.LeaveGroup;
+      case 'joinGroup':
+        return ProposedEventNames.JoinGroup;
+      case 'createGroup':
+        return ProposedEventNames.CreateGroup;
+      case 'updateGroup':
+        return ProposedEventNames.UpdateGroup;
+      case 'remove':
+        return ProposedEventNames.Remove;
+      default:
+        throw new Error(`Unknown current event name: ${currentEventName}`);
+    }
+  }
+
+  public static handleToField(data: any): void {
+    switch (data.event) {
+      case ProposedEventNames.LeaveGroup:
+      case ProposedEventNames.JoinGroup:
+        data.to = null;
+        break;
+
+      case ProposedEventNames.Accept:
+      case ProposedEventNames.Reject:
+        if (data.meta?.group) {
+          data.to = null;
+        }
+        break;
+
+      default:
+        break;
+    }
   }
 }

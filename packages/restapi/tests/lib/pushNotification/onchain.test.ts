@@ -45,20 +45,20 @@
 //     provider
 //   );
 
-//   it.only('Test minimal conversion', async () => {
-//     const account2 = await signer2.getAddress();
-//     const viemUser = new PushNotificationBaseClass(
-//       signer,
-//       ENV.STAGING,
-//       account2
-//     );
-//     viemUser.getMinimalUserSetting([
-//       { enabled: true },
-//       { enabled: false, value: 10 },
-//       { enabled: false },
-//       { enabled: true, value: 10 },
-//     ]);
-//   });
+  // it.only('Test minimal conversion', async () => {
+  //   const account2 = await signer2.getAddress();
+  //   const viemUser = new PushNotificationBaseClass(
+  //     signer,
+  //     ENV.STAGING,
+  //     account2
+  //   );
+  //   viemUser.getMinimalUserSetting([
+  //     { enabled: true },
+  //     { enabled: false, value: 10 },
+  //     { enabled: false },
+  //     { enabled: true, value: 10 },
+  //   ]);
+  // });
   //   it('testing with viem', async () => {
   //     const account2 = await signer2.getAddress();
   //       const viemUser = new PushNotificationBaseClass(signer, ENV.STAGING, account2)
@@ -148,29 +148,29 @@
   //   console.log(minimalSettings);
   // });
 
-//   it.only('Should get proper minnimal payload', async() => {
-//     const inputData = [
-//       {
-//         type: 1,
-//         default: 10,
-//         description: 'test2',
-//         data: {
-//           upper: 100,
-//           lower: 1,
-//           enabled: false
-//         },
-//       },
-//       {
-//         type: 0,
-//         default: 1,
-//         description: 'test1',
-//       },
-//     ];
-//     const account2 = await signer2.getAddress();
-//     const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
-//     const minimalSettings = userAlice.getMinimalSetting(inputData);
-//     console.log(minimalSettings);
-//   });
+  // it.only('Should get proper minnimal payload', async() => {
+  //   const inputData = [
+  //     {
+  //       type: 1,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //         enabled: false
+  //       },
+  //     },
+  //     {
+  //       type: 0,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //   ];
+  //   const account2 = await signer2.getAddress();
+  //   const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   console.log(minimalSettings);
+  // });
   //   it('testing with viem', async () => {
   //     const account2 = await signer2.getAddress();
   //       const viemUser = new PushNotificationBaseClass(signer, ENV.STAGING, account2)
@@ -237,4 +237,15 @@
   //     );
   //     console.log(approveRes2);
   //   });
+  // it.only('Test for channel info', async() => {
+  //   const account2 = await signer2.getAddress();
+  //   const userEthers = new PushNotificationBaseClass(
+  //     signer2,
+  //     ENV.STAGING,
+  //     account2
+  //   );
+
+  //   const res = await userEthers.getChannelOrAliasInfo("eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024")
+  //   console.log(res)
+  // });
 // });

@@ -1,4 +1,4 @@
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import {
   adjectives,
   animals,
@@ -8,7 +8,7 @@ import {
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -18,19 +18,19 @@ const { env, showAPIResponse } = config;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const signerAddress = signer.account.address;
 const secondSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const secondSignerAddress = secondSigner.account.address;
 const thirdSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const thirdSignerAddress = thirdSigner.account.address;
@@ -91,7 +91,7 @@ export const runPushAPIChatCases = async (): Promise<void> => {
   console.log('PushAPI.chat.send');
   const aliceMessagesBob = await userAlice.chat.send(secondSignerAddress, {
     content: 'Hello Bob!',
-    type: 'Text',
+    type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   if (showAPIResponse) {
     console.log(aliceMessagesBob);
@@ -110,7 +110,7 @@ export const runPushAPIChatCases = async (): Promise<void> => {
   console.log('PushAPI.chat.reject');
   await tempUser.chat.send(secondSignerAddress, {
     content: 'Sending malicious message',
-    type: 'Text',
+    type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   const bobRejectsRequest = await userBob.chat.reject(thirdSignerAddress);
   if (showAPIResponse) {

@@ -1,9 +1,12 @@
-import * as chai from 'chai';
 import { expect } from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
 import { ethers } from 'ethers';
-import Constants from '../../../src/lib/constants';
-import { createGroup, updateGroup, removeMembers } from '../../../src/lib/chat';
+import CONSTANTS from '../../../src/lib/constantsV2';
+import {
+  createGroup,
+  updateGroup,
+  removeMembers,
+  getGroup,
+} from '../../../src/lib/chat';
 import { GroupDTO } from '../../../src/lib/types';
 import {
   adjectives,
@@ -11,7 +14,7 @@ import {
   colors,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
-const _env = Constants.ENV.DEV;
+const _env = CONSTANTS.ENV.DEV;
 let account: string;
 let signer: any;
 let account2: string;

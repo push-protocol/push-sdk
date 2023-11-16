@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import * as PUSH_PAYLOAD from '../../../src/lib/payloads';
 import { expect } from 'chai';
-import Constants from '../../../src/lib/constants';
 import { ethers } from 'ethers';
 
 describe('PUSH_PAYLOAD.sendNotification functionality', () => {
@@ -63,7 +62,7 @@ describe('PUSH_PAYLOAD.sendNotification functionality', () => {
         img: '',
         index: '1-2-10',
       },
-      channel: `eip155:5:${account1}`,
+      channel: `eip155:11155111:${account1}`,
     });
     expect(res.status).to.be.equal(204);
   });

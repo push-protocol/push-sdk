@@ -5,7 +5,7 @@ import { config } from '../config';
 
 import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 
 enum ENV {
   PROD = 'prod',
@@ -30,7 +30,7 @@ const channelPrivateKey = process.env.WALLET_PRIVATE_KEY;
 const signerChannel = channelPrivateKey
   ? createWalletClient({
       account: privateKeyToAccount(`0x${channelPrivateKey}`),
-      chain: goerli,
+      chain: sepolia,
       transport: http(),
     })
   : undefined;
@@ -40,7 +40,7 @@ const channelAddress = signerChannel
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const signerAddress = signer.account.address;
@@ -123,7 +123,7 @@ export const runNotificaitonsLowLevelUseCases = async (): Promise<void> => {
 // Push Notification - PushAPI.user.getFeeds
 async function PushAPI_user_getFeeds(silent = !showAPIResponse) {
   const notifications = await PushAPI.user.getFeeds({
-    user: `eip155:5:${signerAddress}`, // user address in CAIP
+    user: `eip155:11155111:${signerAddress}`, // user address in CAIP
     env: env as ENV,
   });
 
@@ -136,7 +136,7 @@ async function PushAPI_user_getFeeds(silent = !showAPIResponse) {
 // Push Notification - PushAPI.user.getFeeds - Spam
 async function PushAPI_user_getFeeds__spam(silent = !showAPIResponse) {
   const notifications = await PushAPI.user.getFeeds({
-    user: `eip155:5:${signerAddress}`, // user address in CAIP
+    user: `eip155:11155111:${signerAddress}`, // user address in CAIP
     spam: true,
     env: env as ENV,
   });
@@ -150,7 +150,7 @@ async function PushAPI_user_getFeeds__spam(silent = !showAPIResponse) {
 // Push Notification - PushAPI.user.getSubscriptions
 async function PushAPI_user_getSubscriptions(silent = !showAPIResponse) {
   const subscriptions = await PushAPI.user.getSubscriptions({
-    user: `eip155:5:${signerAddress}`, // user address in CAIP
+    user: `eip155:11155111:${signerAddress}`, // user address in CAIP
     env: env as ENV,
   });
 
@@ -192,8 +192,8 @@ async function PushAPI_channels_search(silent = !showAPIResponse) {
 async function PushAPI_channels_subscribe(silent = !showAPIResponse) {
   const response = await PushAPI.channels.subscribe({
     signer: signer,
-    channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
-    userAddress: `eip155:5:${signerAddress}`, // user address in CAIP
+    channelAddress: `eip155:11155111:${channelAddress}`, // channel address in CAIP
+    userAddress: `eip155:11155111:${signerAddress}`, // user address in CAIP
     onSuccess: () => {
       console.log('opt in success');
     },
@@ -213,8 +213,8 @@ async function PushAPI_channels_subscribe(silent = !showAPIResponse) {
 async function PushAPI_channels_unsubscribe(silent = !showAPIResponse) {
   const response = await PushAPI.channels.unsubscribe({
     signer: signer,
-    channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
-    userAddress: `eip155:5:${signerAddress}`, // user address in CAIP
+    channelAddress: `eip155:11155111:${channelAddress}`, // channel address in CAIP
+    userAddress: `eip155:11155111:${signerAddress}`, // user address in CAIP
     onSuccess: () => {
       console.log('opt out success');
     },
@@ -250,8 +250,8 @@ async function PushAPI_payloads_sendNotification__direct_payload_single_recipien
       cta: '',
       img: '',
     },
-    recipients: `eip155:5:${signerAddress}`, // recipient address
-    channel: `eip155:5:${channelAddress}`, // your channel address
+    recipients: `eip155:11155111:${signerAddress}`, // recipient address
+    channel: `eip155:11155111:${channelAddress}`, // your channel address
     env: env as ENV,
   });
 
@@ -280,8 +280,8 @@ async function PushAPI_payloads_sendNotification__direct_payload_group_of_recipi
       cta: '',
       img: '',
     },
-    recipients: [`eip155:5:${signerAddress}`, `eip155:5:${randomWallet1}`], // recipient addresses
-    channel: `eip155:5:${channelAddress}`, // your channel address
+    recipients: [`eip155:11155111:${signerAddress}`, `eip155:11155111:${randomWallet1}`], // recipient addresses
+    channel: `eip155:11155111:${channelAddress}`, // your channel address
     env: env as ENV,
   });
 
@@ -310,7 +310,7 @@ async function PushAPI_payloads_sendNotification__direct_payload_all_recipients_
       cta: '',
       img: '',
     },
-    channel: `eip155:5:${channelAddress}`, // your channel address
+    channel: `eip155:11155111:${channelAddress}`, // your channel address
     env: env as ENV,
   });
 
@@ -323,7 +323,7 @@ async function PushAPI_payloads_sendNotification__direct_payload_all_recipients_
 // Push Notification - Get Subscribers list from channels (DEPRECATED)
 async function PushAPI_channels_getSubscribers(silent = !showAPIResponse) {
   const subscribers = await PushAPI.channels._getSubscribers({
-    channel: `eip155:5:${channelAddress}`, // channel address in CAIP
+    channel: `eip155:11155111:${channelAddress}`, // channel address in CAIP
     env: env as ENV,
   });
 
@@ -336,7 +336,7 @@ async function PushAPI_channels_getSubscribers(silent = !showAPIResponse) {
 // Push Notification - Socket Connection
 async function PushSDKSocket(silent = !showAPIResponse) {
   const pushSDKSocket = createSocketConnection({
-    user: `eip155:5:${signerAddress}`, // CAIP, see below
+    user: `eip155:11155111:${signerAddress}`, // CAIP, see below
     socketOptions: { autoConnect: false },
     env: env as ENV,
   });

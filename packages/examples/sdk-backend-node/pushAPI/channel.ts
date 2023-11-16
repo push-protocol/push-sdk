@@ -16,7 +16,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // Signer Generation
   const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public' // Goerli Provider
+    'https://rpc.sepolia.org' // Goerli Provider
   );
   const signer = new ethers.Wallet(
     `0x${process.env.WALLET_PRIVATE_KEY}`,
@@ -153,7 +153,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.add');
   const addedDelegate = await userAlice.channel.delegate.add(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
 
   if (showAPIResponse) {
@@ -172,7 +172,7 @@ export const runPushAPIChannelCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.remove');
   const removedDelegate = await userAlice.channel.delegate.remove(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
   if (showAPIResponse) {
     console.log(removedDelegate);
