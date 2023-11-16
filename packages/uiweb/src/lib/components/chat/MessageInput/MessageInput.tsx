@@ -116,8 +116,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     account,
     env,
     signer,
-    alias,
-    setAlias
+    pushUser,
   } = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchUserChatProfile } = useChatProfile();
@@ -146,12 +145,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   
   // useEffect(() => {
   //   (async () => {
-  //     if (!alias && signer) {
+  //     if (!pushUser && signer) {
   //       const user = await fetchUserChatProfile({ profileId: account!,env });
-  //       if (user) setAlias(user);
+  //       if (user) setpushUser(user);
   //     }
   //   })();
-  // }, [alias]);
+  // }, [pushUser]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
@@ -202,7 +201,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      if (account && env) {
+      if (pushUser) {
+        console.log('in fetch message input')
         const chat = await fetchChat();
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
@@ -227,7 +227,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     })();
-  }, [chatId, account, env, alias]);
+  }, [chatId, account, env, pushUser]);
 
   useEffect(() => {
     if (!account && !env && !chatId) return;
@@ -235,7 +235,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
-  }, [chatId, chatFeed, account, env, alias]);
+  }, [chatId, chatFeed, account, env, pushUser]);
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -253,7 +253,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   const handleJoinGroup = async () => {
     if (chatFeed && chatFeed?.groupInformation?.isPublic) {
-      const response = await alias.chat.accept(chatId);
+      const response = await pushUser.chat.accept(chatId);
       if (response) {
         await updateChatFeed();
       }

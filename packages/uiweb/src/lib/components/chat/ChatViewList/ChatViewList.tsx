@@ -53,7 +53,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
+  const { account, pushUser,  } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -86,8 +86,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (alias) {
-
+      if (pushUser) {
         const chat = await fetchChat();
         if (chat) {
           setConversationHash(chat?.threadhash as string);
@@ -121,11 +120,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setLoading(false);
       }
     })();
-  }, [chatId, account, env, alias]);
+  }, [chatId, account, env, pushUser]);
 
   //moniters socket changes
   useEffect(() => {
-    console.log('messagesSinceLastConnection', account, messagesSinceLastConnection, checkIfSameChat(messagesSinceLastConnection, account!, chatId))
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
@@ -136,7 +134,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
-        console.log('messagesSinceLastConnection in group')
         const newChatViewList = appendUniqueMessages(
           messages as Messagetype,
           [messagesSinceLastConnection],
@@ -169,7 +166,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     // }
-  }, [conversationHash, account, env, chatFeed, alias]);
+  }, [conversationHash, account, env, chatFeed, pushUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -187,7 +184,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [messages]);
 
-  console.log('chatHistory')
 
   useEffect(() => {
 
@@ -235,12 +231,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     // } else {
     //   threadHash = messages?.lastThreadHash;
     // }
-
-    if (alias && chatId) {
-      console.log('chatHistory')
-
+console.log('in get message call')
+console.log(pushUser)
+    if (pushUser && chatId) {
+      console.log('push user there')
+     
       const chatHistory = await historyMessages({chatId});
-      console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(

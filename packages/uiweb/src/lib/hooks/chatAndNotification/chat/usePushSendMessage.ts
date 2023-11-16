@@ -4,7 +4,6 @@ import { useCallback, useContext, useState } from 'react';
 import { Constants } from '../../../config';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../context';
 import type { ChatMainStateContextType } from '../../../context/chatAndNotification/chat/chatMainStateContext';
-import useFetchChat from './useFetchChat';
 
 interface SendMessageParams {
   message: string;
@@ -16,12 +15,11 @@ interface SendMessageParams {
 const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { setChatFeed, setChat, chatsFeed, chats, selectedChatId } =
+  const {  setChat,chats, selectedChatId } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { account, env, decryptedPgpPvtKey } =
     useContext<any>(ChatAndNotificationPropsContext);
 
-  const { fetchChat } = useFetchChat();
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
       const { receiver, message, messageType } = options || {};

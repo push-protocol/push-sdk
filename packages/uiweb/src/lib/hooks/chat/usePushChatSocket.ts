@@ -93,7 +93,7 @@ export const usePushChatSocket = () => {
    *  - create a new connection object
    */
   useEffect(() => {
-    if (!stream) {
+    if (!stream && pushUser) {
       const main = async () => {
 
         const stream = await pushUser.initStream(

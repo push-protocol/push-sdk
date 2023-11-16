@@ -17,6 +17,7 @@ const useFetchChat = () => {
       setLoading(true);
       try {
         const chat = await pushUser.chat.list("CHATS")
+        console.log(chat)
         return chat[0];
       } catch (error: Error | any) {
         setLoading(false);
