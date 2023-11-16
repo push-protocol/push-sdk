@@ -174,12 +174,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
-    if (conversationHash) {
+    // if (conversationHash) {
       (async function () {
         await getMessagesCall();
       })();
-    }
-  }, [conversationHash, pgpPrivateKey, account, env, chatFeed]);
+    // }
+  }, [conversationHash, pgpPrivateKey, account, env, chatFeed, alias]);
 
   useEffect(() => {
     scrollToBottom();
@@ -196,6 +196,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       scrollToBottom();
     }
   }, [messages]);
+
+  console.log('chatHistory')
 
   useEffect(() => {
 
@@ -239,22 +241,26 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   const getMessagesCall = async () => {
     let threadHash = null;
-    if (!messages) {
-      threadHash = conversationHash;
-    } else {
-      threadHash = messages?.lastThreadHash;
-    }
+    // if (!messages) {
+    //   threadHash = conversationHash;
+    // } else {
+    //   threadHash = messages?.lastThreadHash;
+    // }
 
-    if (
-      threadHash &&
-      ((account && pgpPrivateKey && chatFeed && !chatFeed?.groupInformation) ||
-        (chatFeed && chatFeed?.groupInformation))
+    if (alias
+      // threadHash &&
+      // ((account && pgpPrivateKey && chatFeed && !chatFeed?.groupInformation) ||
+      //   (chatFeed && chatFeed?.groupInformation))
     ) {
+      console.log('chatHistory')
 
-      const chatHistory = await historyMessages({
-        limit: limit,
-        threadHash,
-      });
+      const chatHistory = await historyMessages(
+        // {
+        // limit: limit,
+        // threadHash,
+      // }
+      );
+      console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
