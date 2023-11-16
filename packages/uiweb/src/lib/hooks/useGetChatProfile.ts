@@ -18,7 +18,7 @@ const useGetChatProfile = () => {
       profileId,
       signer,
       env
-    }: GetProfileParams): Promise<PushAPI | undefined> => {
+    }: GetProfileParams): Promise<any> => {
       try {
         console.log('signerrr', signer);
         console.log("env", env)
