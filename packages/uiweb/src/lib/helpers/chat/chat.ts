@@ -40,14 +40,18 @@ export const handleOnChatIconClick = ({
 
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
-): Promise<IConnectedUser> => {
-  const { account, signer, env = Constants.ENV.PROD, pushUser } = options || {};
-  let connectedUser;
+): Promise<IConnectedUser | undefined> => {
+  const { pushUser } = options || {};
+  let connectedUser:IUser;
   if(pushUser){
     connectedUser = await pushUser.info();
+    return { ...connectedUser, 
+      privateKey: connectedUser!.encryptedPrivateKey,
+     };
   }
+  return;
 
-  return { ...connectedUser, privateKey: connectedUser!.encryptedPrivateKey };
+ 
 };
 
 type GetChatsResponseType = {
@@ -85,18 +89,7 @@ type DecrypteChatType = {
   connectedUser: IConnectedUser;
   env: ENV;
 };
-export const decryptChat = async (
-  options: DecrypteChatType
-): Promise<IMessageIPFS> => {
-  const { message, connectedUser, env = Constants.ENV.PROD } = options || {};
-  const decryptedChat: IMessageIPFS[] = await PushAPI.chat.decryptConversation({
-    messages: [message],
-    connectedUser,
-    pgpPrivateKey: connectedUser.privateKey!,
-    env,
-  });
-  return decryptedChat[0];
-};
+
 
 export const copyToClipboard = (address: string): void => {
   if (navigator && navigator.clipboard) {

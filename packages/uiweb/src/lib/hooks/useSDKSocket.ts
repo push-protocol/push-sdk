@@ -93,7 +93,9 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
         setStream(newstream);
         // setEpnsSDKSocket(connectionObject);
       };
-      main().catch((err) => console.error(err));
+      main().catch((err) => 
+      console.log('')
+      );
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
