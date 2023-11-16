@@ -10,10 +10,8 @@ import { SupportChatMainStateContext, SupportChatPropsContext } from '../../cont
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
-  decryptChat,
   getChats,
   walletToPCAIP10,
-  pCAIP10ToWallet
 } from '../../helpers';
 import type { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
