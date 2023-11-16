@@ -68,7 +68,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchUserChatProfile({ profileId: chatId });
+      const ChatProfile = await fetchUserChatProfile({ profileId: chatId,env });
       const result = await resolveNewEns(chatId, provider);
       setEnsName(result);
       setChatInfo(ChatProfile);

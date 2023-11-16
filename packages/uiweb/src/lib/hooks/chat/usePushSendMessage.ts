@@ -1,9 +1,6 @@
-import * as PushAPI from '@pushprotocol/restapi';
-import { useCallback, useContext, useState } from 'react';
-import useVerifyAccessControl from './useVerifyAccessControl';
+import { useCallback,  useState } from 'react';
 import { useChatData } from '..';
-import { ENV } from '../../config';
-import { setAccessControl } from '../../helpers';
+
 
 interface SendMessageParams {
   message: string;
@@ -15,14 +12,14 @@ const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { env, account, alias } = useChatData();
+  const { env, account, pushUser } = useChatData();
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
       const { chatId, message, messageType } = options || {};
       setLoading(true);
       try {
-        const response = await alias.chat.send(chatId, {
+        const response = await pushUser.chat.send(chatId, {
           type: messageType,
           content: message,
         })
@@ -39,7 +36,7 @@ const usePushSendMessage = () => {
         return error.message;
       }
     },
-    [ account, env, alias]
+    [ account, env, pushUser]
   );
 
   return { sendMessage, error, loading };

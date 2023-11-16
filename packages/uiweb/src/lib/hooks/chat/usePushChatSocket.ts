@@ -1,27 +1,16 @@
-import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
-import { ENV } from '../../config';
 import { useChatData } from './useChatData';
-import { SOCKET_TYPE } from '../../types';
-import useGetChatProfile from '../useGetChatProfile';
+
 import { CONSTANTS } from '@pushprotocol/restapi';
 
-export type PushChatSocketHookOptions = {
-  account?: string | null;
-  env?: ENV;
-};
+
 
 export const usePushChatSocket = () => {
   const {
-    account,
-    pushChatSocket,
-    setPushChatSocket,
     setIsPushChatSocketConnected,
     isPushChatSocketConnected,
-    connectedProfile,
-    setConnectedProfile,
     env,
-    alias
+    pushUser
   } = useChatData();
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
     useState<any>({});
@@ -35,11 +24,8 @@ export const usePushChatSocket = () => {
 
   const addSocketEvents = useCallback(async () => {
     console.log('addSocketEvents');
-    // if (!stre/z
     stream.on(CONSTANTS.STREAM.CONNECT, () => {
-      // console.log(err,"errr");
-      // console.log(connected,"connected");÷
-      console.log('connecteddddd');
+
       setIsPushChatSocketConnected(true);
     })
 
@@ -57,19 +43,19 @@ export const usePushChatSocket = () => {
         setAcceptedRequestMessage(chat);
       } else {
         // Extract 'from' and 'to' from the 'message' property
-        const fromDID = chat.from;
-        const toDID = chat.to.join(', '); // Use the appropriate separator if needed
+        //shfit to a new func
+        const fromCAIP10 = chat.from;
+        const toCAIP10 = chat.to.join(', '); // Use the appropriate separator if needed
         // Create a new object with modified properties
         const messageContent = chat.message.content;
         const modifiedChat = {
           ...chat,
-          fromDID: fromDID,
-          toDID: toDID,
+          fromCAIP10: fromCAIP10,
+          toCAIP10: toCAIP10,
           messageContent: messageContent,
         };
         delete modifiedChat.from;
         delete modifiedChat.to;
-        console.log('modifiedChat', modifiedChat);
 
         setMessagesSinceLastConnection((chats: any) => {
           return modifiedChat;
@@ -77,19 +63,11 @@ export const usePushChatSocket = () => {
       }
     });
 
-
-    // pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
-    //   /**
-    //    * We receive a group creation or updated event.
-    //    */
-    //   setGroupInformationSinceLastConnection(groupInfo);
-    // });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     messagesSinceLastConnection,
     env,
-    alias,
+    pushUser,
     stream
   ]);
 
@@ -107,7 +85,7 @@ export const usePushChatSocket = () => {
         removeSocketEvents();
       }
     };
-  }, [stream, alias]);
+  }, [stream, pushUser]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -118,7 +96,7 @@ export const usePushChatSocket = () => {
     if (!stream) {
       const main = async () => {
 
-        const stream = await alias.initStream(
+        const stream = await pushUser.initStream(
           [
             CONSTANTS.STREAM.CHAT,
           ],
@@ -130,10 +108,9 @@ export const usePushChatSocket = () => {
       };
       main().catch((err) => console.error(err));
     }
-    // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alias, env, stream]);
+  }, [pushUser, env, stream]);
 
   return {
     isPushChatSocketConnected,

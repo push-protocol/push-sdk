@@ -218,10 +218,10 @@ export const getChatId = ({
   msg: IMessageIPFS;
   account: string;
 }) => {
-  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
-    return msg.toDID;
+  if (pCAIP10ToWallet(msg.fromCAIP10).toLowerCase() === account.toLowerCase()) {
+    return msg.toCAIP10;
   }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+  return !isPCAIP(msg.toCAIP10) ? msg.toCAIP10 : msg.fromCAIP10;
 };
 
 export const appendUniqueMessages = (
@@ -253,19 +253,19 @@ export const checkIfSameChat = (
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === (msg.fromDID?.toLowerCase())) &&
+      (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
-          msg.toDID?.toLowerCase())) ||
-        ((chatId.toLowerCase() === (msg.toDID?.toLowerCase())) &&
+          msg.toCAIP10?.toLowerCase())) ||
+        ((chatId.toLowerCase() === (msg.toCAIP10?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
-            msg.fromDID?.toLowerCase())))
+            msg.fromCAIP10?.toLowerCase())))
     ) {
       return true;
     }
   } else {
     if (
       Object.keys(msg || {}).length &&
-      (chatId.toLowerCase() === msg.toDID?.toLowerCase())
+      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
     ) {
       return true;
     }

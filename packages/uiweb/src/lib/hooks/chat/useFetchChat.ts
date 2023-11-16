@@ -4,23 +4,19 @@ import { useCallback, useContext, useState } from 'react';
 import { useChatData } from './useChatData';
 
 
-interface fetchChat {
-  chatId?: string;
-}
+
 
 const useFetchChat = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env, alias } = useChatData();
+  const { account, env, pushUser } = useChatData();
 
 
   const fetchChat = useCallback(
     async () => {
       setLoading(true);
       try {
-        console.log("chatss calling in hook before", alias);
-        const chat = await alias.chat.list("CHATS")
-        console.log('chatss in hook', chat);
+        const chat = await pushUser.chat.list("CHATS")
         return chat[0];
       } catch (error: Error | any) {
         setLoading(false);
@@ -32,7 +28,7 @@ const useFetchChat = () => {
         setLoading(false);
       }
     },
-    [env,account, alias]
+    [env,account, pushUser]
   );
 
   return { fetchChat, error, loading };

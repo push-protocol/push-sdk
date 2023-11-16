@@ -9,11 +9,11 @@ const ChatViewComponentTest = () => {
     'bafyreidesy6f4iu34eqccmqh55g35wu36lvlz42c63ivtmgjjhezlzdqta',
     'bafyreig3gs4tpwxumiz5fxypyt4omlxhvrvuj66kfoyioeshawlau6lgem',
   ];
-
+console.log('in chat view component')
   return (
     <div>
       <h2>Chat UI Test page</h2>
-      {/* <CreateGroupModal onClose={()=>{console.log('in close')}} /> */}
+      <CreateGroupModal onClose={()=>{console.log('in close')}} />
       <ChatViewComponentCard>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
 

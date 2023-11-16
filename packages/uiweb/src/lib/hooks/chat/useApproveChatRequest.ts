@@ -9,15 +9,14 @@ interface ApproveChatParams {
 const useApproveChatRequest = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,pgpPrivateKey,signer, alias } =useChatData();
+  const { account, env,signer, pushUser } =useChatData();
   const approveChatRequest = useCallback(async (options:ApproveChatParams) => {
     const {
-
         chatId,
       } = options || {};
       setLoading(true);
       try {
-        const response = await alias.chat.accept(chatId);
+        const response = await pushUser.chat.accept(chatId);
         setLoading(false);
         return response;
       } catch (error: Error | any) {
@@ -28,7 +27,7 @@ const useApproveChatRequest = () => {
       }
     },
 
-    [account,env,signer,alias]
+    [account,env,signer,pushUser]
 
   );
 

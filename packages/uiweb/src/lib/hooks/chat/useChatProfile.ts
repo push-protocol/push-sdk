@@ -4,13 +4,17 @@ import { useChatData } from './useChatData';
 
 export interface ProfileParams {
   profileId: string;
+  env:PushAPI.Env
 }
+//need to change it to new sdk method
 
 const useChatProfile = () => {
-  const { env } = useChatData();
+  // const { env } = useChatData();
+
   const fetchUserChatProfile = useCallback(
     async ({
-      profileId
+      profileId,
+      env
     }: ProfileParams): Promise<PushAPI.IUser | undefined> => {
       try {
         const profile = await PushAPI.user.get({
@@ -23,7 +27,7 @@ const useChatProfile = () => {
         return;
       }
     },
-    [env]
+    []
   );
 
   return { fetchUserChatProfile };

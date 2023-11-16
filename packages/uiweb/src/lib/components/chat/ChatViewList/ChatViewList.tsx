@@ -34,6 +34,7 @@ import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { formatTime } from '../../../helpers/timestamp';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 
 /**
  * @interface IThemeProps
@@ -64,7 +65,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
+  const { fetchUserChatProfile } = useChatProfile();
   const { getGroup } = useGetGroup();
 
   const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
@@ -86,20 +87,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async () => {
       if (alias) {
-        // console.log('chatss');
-        // console.log(account, env, 'chatss')
+
         const chat = await fetchChat();
-        // console.log(chat, 'chatss calling main', alias)
         if (chat) {
           setConversationHash(chat?.threadhash as string);
           setChatFeed(chat as IFeeds);
         } else {
-          console.log('chatss calling elsez')
           let newChatFeed;
           let group;
           const result = await getNewChatUser({
             searchText: chatId,
-            fetchChatProfile,
+            fetchChatProfile:fetchUserChatProfile,
             env,
           });
           if (result) {

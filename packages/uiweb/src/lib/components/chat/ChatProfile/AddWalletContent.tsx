@@ -24,6 +24,7 @@ import CloseIcon from '../../../icons/close.svg';
 import { ChatSearchInput, CustomStyleParamsType, ModalHeader } from '../reusables';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { BackIcon } from '../../../icons/Back';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 
 
 type AddWalletContentProps = {
@@ -50,7 +51,7 @@ export const AddWalletContent = ({
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
   const { account, env } = useChatData();
   const isMobile = useMediaQuery(device.mobileL);
-  const {fetchChatProfile} = useGetChatProfile();
+  const {fetchUserChatProfile} = useChatProfile();
   const groupInfoToast = useToast();
   const customSearchStyle:CustomStyleParamsType = {
    background:theme.backgroundColor?.modalInputBackground,
@@ -64,7 +65,7 @@ export const AddWalletContent = ({
     //fix ens search 
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
-      fetchChatProfile,
+      fetchChatProfile:fetchUserChatProfile,
       env,
     });
     if(newChatUser){

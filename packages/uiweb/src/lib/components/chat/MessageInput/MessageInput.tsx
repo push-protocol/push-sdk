@@ -28,7 +28,7 @@ import {
   setAccessControl,
 } from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import {
@@ -120,7 +120,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setAlias
   } = useChatData();
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
+  const { fetchUserChatProfile } = useChatProfile();
   const { getGroup } = useGetGroup();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -142,15 +142,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [textAreaRef, typedMessage]);
 
   //need to do something about fetching connectedUser in every component
-  useEffect(() => {
-    (async () => {
-      if (!alias && signer) {
-        const user = await fetchChatProfile({ signer: signer, env });
-        console.log("calllingggg in message input")
-        if (user) setAlias(user);
-      }
-    })();
-  }, [alias]);
+  //initalization not needed here
+  
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!alias && signer) {
+  //       const user = await fetchUserChatProfile({ profileId: account!,env });
+  //       if (user) setAlias(user);
+  //     }
+  //   })();
+  // }, [alias]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
@@ -209,7 +210,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           let group;
           const result = await getNewChatUser({
             searchText: chatId,
-            fetchChatProfile,
+            fetchChatProfile:fetchUserChatProfile,
             env,
           });
           if (result) {

@@ -12,6 +12,7 @@ import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 
 /**
  * @interface IThemeProps
@@ -37,7 +38,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setAlias
   } = useChatData();
   const theme = useContext(ThemeContext);
-  const {fetchChatProfile} = useGetChatProfile();
+  const {fetchUserChatProfile} = useChatProfile();
   const {decryptPGPKey} = useDecryptPGPKey();
 
 
@@ -61,17 +62,18 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setUserData()
   }, [wallet])
 
-  useEffect(() => {
-    (async () => {
-      if (!alias && signer) {
-        const user = await fetchChatProfile({signer: signer, env});
-        console.log("calllingggg in connect button")
-        if (user) {
-          setAlias(user);
-        }
-      }
-    })();
-  }, [alias, signer]);
+  //initialise user hook
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!alias && signer) {
+  //       const user = await fetchChatProfile({signer: signer, env});
+  //       if (user) {
+  //         setAlias(user);
+  //       }
+  //     }
+  //   })();
+  // }, [alias, signer]);
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
