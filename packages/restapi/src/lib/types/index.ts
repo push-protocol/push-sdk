@@ -312,6 +312,32 @@ export enum ConditionType {
   GUILD = 'GUILD',
 }
 
+export enum GROUP_RULES_CATEGORY {
+  PUSH = 'PUSH',
+  GUILD = 'GUILD',
+  ERC721 = 'ERC721',
+  ERC20 = 'ERC20',
+  CUSTOM_ENDPOINT = 'CustomEndpoint',
+  INVITE = 'INVITE',
+}
+
+export enum GROUP_RULES_SUB_CATEGORY {
+  DEFAULT = 'DEFAULT',
+  HOLDER = 'holder',
+  GET = 'GET',
+}
+
+
+export enum GROUP_RULES_PERMISSION {
+  ENTRY = 'Entry',
+  CHAT = 'Chat',
+}
+
+export enum GROUP_INVITER_ROLE {
+  ADMIN = 'ADMIN',
+  OWNER = 'OWNER',
+}
+
 export type Data = {
   contract?: string;
   amount?: number;

@@ -7,10 +7,12 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { create } from '../../../src/lib/user';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
+
 chai.use(chaiAsPromised);
 
 describe('Create Push Profile', () => {
-  const _env = Constants.ENV.DEV;
+  const _env = CONSTANTS.ENV.DEV;
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
   let walletAddress: string;
@@ -24,7 +26,7 @@ describe('Create Push Profile', () => {
   const _nftAccount1 = `nft:eip155:${process.env['NFT_CHAIN_ID_1']}:${process.env['NFT_CONTRACT_ADDRESS_1']}:${process.env['NFT_TOKEN_ID_1']}`;
 
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     _signer = new ethers.Wallet(WALLET.privateKey, provider);
     walletAddress = _signer.address;

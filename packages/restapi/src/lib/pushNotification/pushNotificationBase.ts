@@ -6,7 +6,7 @@ import {
   NotificationSettings,
   UserSetting,
 } from './PushNotificationTypes';
-import CONFIG, * as config from '../config';
+import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
 import { ethers, Signer, BigNumber } from 'ethers';
@@ -18,6 +18,13 @@ import {
   WalletClient,
   Chain,
 } from 'viem';
+import * as PUSH_CHANNEL from '../channels';
+import {
+  getAPIBaseUrls,
+  getFallbackETHCAIPAddress,
+  validateCAIP,
+} from '../helpers';
+import * as PUSH_ALIAS from '../alias';
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -661,7 +668,7 @@ export class PushNotificationBaseClass {
     return 0;
   }
 
-  public getMinimalSetting(configuration: NotificationSettings): {
+  protected getMinimalSetting(configuration: NotificationSettings): {
     setting: string;
     description: string;
   } {
@@ -741,5 +748,36 @@ export class PushNotificationBaseClass {
         userSetting = userSetting + SETTING_SEPARATOR;
     }
     return numberOfSettings + SETTING_SEPARATOR + userSetting;
+  }
+
+  protected async getChannelOrAliasInfo(address: string) {
+    try {
+      address = validateCAIP(address)
+        ? address
+        : getFallbackETHCAIPAddress(this.env!, this.account!);
+      const channelInfo = await PUSH_CHANNEL.getChannel({
+        channel: address as string,
+        env: this.env,
+      });
+      if (channelInfo) return channelInfo;
+      // // TODO: Temp fix, do a more concrete fix later
+      const API_BASE_URL = getAPIBaseUrls(this.env!);
+      const apiEndpoint = `${API_BASE_URL}/v1/alias`;
+      const requestUrl = `${apiEndpoint}/${address}/channel`;
+      const aliasInfo = await axios
+        .get(requestUrl)
+        .then((response) => response.data)
+        .catch((err) => {
+          console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+        });
+      const aliasInfoFromChannel = await PUSH_CHANNEL.getChannel({
+        channel: aliasInfo.channel as string,
+        env: this.env,
+      });
+      if (aliasInfoFromChannel) return aliasInfoFromChannel;
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 }

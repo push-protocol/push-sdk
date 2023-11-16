@@ -53,7 +53,7 @@ In any of the below methods (unless explicitly stated otherwise) we accept eithe
 ### **For notification**
 ```typescript
 const pushSDKSocket = createSocketConnection({
-  user: 'eip155:5:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb', // CAIP, see below
+  user: 'eip155:11155111:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb', // CAIP, see below
   env: 'staging',
   socketOptions: { autoConnect: false }
 });
@@ -131,7 +131,7 @@ import { useState, useEffect } from "react";
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 
 const user = '0xD8634C39BBFd4033c0d3289C4515275102423681';
-const chainId = 5;
+const chainId = 11155111;
 
 const userCAIP = `eip155:${chainId}:${user}`;
 

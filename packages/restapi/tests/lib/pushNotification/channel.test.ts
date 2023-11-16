@@ -24,7 +24,7 @@ describe('PushAPI.channel functionality', () => {
 
     const provider = new ethers.providers.JsonRpcProvider(
       // PUBLIC RPC
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
@@ -73,7 +73,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer and with valid caip account: Should return response', async () => {
       const res = await userBob.channel.info(
-        'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
+        'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
       );
       // console.log(res);
       expect(res).not.null;
@@ -107,7 +107,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer and account : Should return response as address is passed', async () => {
       const res = await userBob.channel.subscribers({
-        channel: 'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        channel: 'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
       });
       // console.log(res)
       expect(res).not.null;
@@ -161,7 +161,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('With signer : targeted  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
-        ['eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'],
+        ['eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'],
         {
           notification: {
             title: 'hi',
@@ -174,7 +174,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('With signer : targeted  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
-        ['eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
+        ['eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
         {
           notification: {
             title: 'hi',
@@ -188,8 +188,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -204,8 +204,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -227,8 +227,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -264,6 +264,29 @@ describe('PushAPI.channel functionality', () => {
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
           },
           channel: 'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+      const res = await userAlice.channel.send(
+        [
+          'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+          'eip155:80001:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        ],
+        {
+          notification: {
+            title: 'hi',
+            body: 'test-subset',
+          },
+          payload: {
+            title: 'testing first subset notification',
+            body: 'testing with random body',
+            cta: 'https://google.com/',
+            embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+          },
+          channel: 'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
         }
       );
       expect(res.status).to.equal(204);
@@ -293,7 +316,7 @@ describe('PushAPI.channel functionality', () => {
     });
     it('With signer : SIMULATED  : Should send notification with title and body', async () => {
       const res = await userNoChannel.channel.send(
-        [`eip155:5:${noChannelAddress}`],
+        [`eip155:11155111:${noChannelAddress}`],
         {
           notification: {
             title: 'hi',
@@ -318,7 +341,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe.skip('channel :: create', () => {
+  describe('channel :: create', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.create({
         name: 'SDK Test',

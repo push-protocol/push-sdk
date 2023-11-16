@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
@@ -26,7 +26,7 @@ describe('PushAPI.notification functionality', () => {
     account1 = await signer1.getAddress();
     
     const provider = new ethers.providers.JsonRpcProvider(
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
@@ -38,7 +38,7 @@ describe('PushAPI.notification functionality', () => {
       account: privateKeyToAccount(
         `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
       ),
-      chain: goerli,
+      chain: sepolia,
       transport: http(),
     });
     // initialisation with signer and provider
@@ -60,7 +60,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds with signer object when an account is passed', async () => {
       const response = await userAlice.notification.list('SPAM', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
       expect(response.length).not.equal(0);
@@ -68,7 +68,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds without signer object when an account is passed', async () => {
       const response = await userBob.notification.list('SPAM', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
       expect(response.length).not.equal(0);
@@ -91,7 +91,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('INBOX', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
         raw: true,
       });
@@ -103,27 +103,27 @@ describe('PushAPI.notification functionality', () => {
   describe('notification :: subscribe', () => {
     beforeEach(async () => {
       await userAlice.notification.unsubscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
 
       await userKate.notification.unsubscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
     });
 
     afterEach(async () => {
       await userAlice.notification.unsubscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
 
       await userKate.notification.unsubscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
     });
     it.skip('Without signer object: should throw error', async () => {
       await expect(() =>
         userBob.notification.subscribe(
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
         )
       ).to.Throw;
     });
@@ -138,7 +138,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer object: Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', {
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', {
           settings: [{
             enabled: false
           },{
@@ -153,7 +153,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer and provider: Should subscribe', async () => {
       const res = await userKate.notification.subscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       // console.log(res)
       expect(res).not.null;
@@ -161,7 +161,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With viem signer and provider: Should subscribe', async () => {
       const res = await userViem.notification.subscribe(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       // console.log(res)
       expect(res).not.null;

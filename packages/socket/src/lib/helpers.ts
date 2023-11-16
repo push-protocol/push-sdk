@@ -1,7 +1,6 @@
 // import * as ethers from 'ethers';
 import { ethers } from 'ethers';
-import * as Constants from './constants';
-import { ENV } from './constants';
+import { ENV, DEFAULT_CHAINS } from './constants';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address }: { address: string }) => boolean;
@@ -52,12 +51,24 @@ export function validateCAIP(addressInCAIP: string) {
 }
 
 export function getFallbackETHCAIPAddress(env: ENV, address: string) {
-  let chainId = 1; // by default PROD
+  let chainId; // by default PROD
 
-  if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING) {
-    chainId = 5;
+  switch (env) {
+    case ENV.PROD:
+      chainId = DEFAULT_CHAINS.PROD;
+      break;
+    case ENV.STAGING:
+      chainId = DEFAULT_CHAINS.STAGING;
+      break;
+    case ENV.DEV:
+      chainId = DEFAULT_CHAINS.DEV;
+      break;
+    case ENV.LOCAL:
+      chainId = DEFAULT_CHAINS.LOCAL;
+      break;
+    default:
+      chainId = DEFAULT_CHAINS.PROD;
   }
-
   return `eip155:${chainId}:${address}`;
 }
 

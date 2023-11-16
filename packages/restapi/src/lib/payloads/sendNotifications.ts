@@ -69,21 +69,27 @@ async function checkSimulateNotification(payloadOptions: {
   type: NOTIFICATION_TYPE;
   env: ENV | undefined;
 }): Promise<boolean> {
-  const { channel, recipient, type, env } = payloadOptions || {};
-  // fetch channel info
-  const channelInfo = await getChannel({
-    channel: channel,
-    env: env,
-  });
-  // check if channel exists, if it does then its not simulate type
-  if (channelInfo) return false;
-  else {
-    // if no channel info found, check if channel address = recipient and notification type is targeted
-    const convertedRecipient =
-      typeof recipient == 'string' && recipient?.split(':').length == 3
-        ? recipient.split(':')[2]
-        : recipient;
-    return channel == convertedRecipient && type == NOTIFICATION_TYPE.TARGETTED;
+  try {
+    const { channel, recipient, type, env } = payloadOptions || {};
+    // fetch channel info
+    const channelInfo = await getChannel({
+      channel: channel,
+      env: env,
+    });
+    // check if channel exists, if it does then its not simulate type
+    if (channelInfo) return false;
+    else {
+      // if no channel info found, check if channel address = recipient and notification type is targeted
+      const convertedRecipient =
+        typeof recipient == 'string' && recipient?.split(':').length == 3
+          ? recipient.split(':')[2]
+          : recipient;
+      return (
+        channel == convertedRecipient && type == NOTIFICATION_TYPE.TARGETTED
+      );
+    }
+  } catch (e) {
+    return true;
   }
 }
 
