@@ -12,6 +12,16 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
+## [1.1.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.18...uiweb-1.1.19) (2023-11-17)
+
+
+### Bug Fixes
+
+* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
+* Merge branch 'main' into deployment ([5baacc7](https://github.com/ethereum-push-notification-service/push-sdk/commit/5baacc705c20d5e92aeac4cd5f1b4fe65cc75827))
+
+
+
 ## [1.1.18](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.17...uiweb-1.1.18) (2023-11-16)
 
 
