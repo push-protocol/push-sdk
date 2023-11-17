@@ -19,12 +19,6 @@ import { ChatsOptionsType } from '@pushprotocol/restapi/src/lib/chat/chats.js';
 import Constants from '@pushprotocol/restapi/src/lib/constants.js';
 import { decryptPGPKey } from '@pushprotocol/restapi/src/lib/helpers/crypto.js';
 
-// TODO:fix this
-//@ts-ignore
-crypto.getRandomValues = (input) => {
-  return input;
-};
-
 const PGPHelper: IPGPHelper = {
   async generateKeyPair() {
     let keys = await OpenPGP.generate({ keyOptions: { rsaBits: 2048 } });
@@ -120,16 +114,9 @@ const updateGroup = async (options: ChatUpdateGroupType) => {
 };
 
 // checking if ethers works
-const genRandomAddress = async () => {
-  const privateKey =
-    '25520e97c3f31af3824ff62e350126299997322ff7d340ffd81faa7f84609ef9';
-
-  // Create an instance of Wallet using the private key
-  const wallet = new ethers.Wallet(privateKey);
-
-  // Get the address from the wallet
+const genRandomAddress = () => {
+  const wallet = ethers.Wallet.createRandom();
   const address = wallet.address;
-
   return address;
 };
 
