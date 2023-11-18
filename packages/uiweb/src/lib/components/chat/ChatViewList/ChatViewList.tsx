@@ -232,16 +232,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   const getMessagesCall = async () => {
-    // if (!messages) {
-    //   threadHash = conversationHash;
-    // } else {
-    //   threadHash = messages?.lastThreadHash;
-    // }
+    let threadHash;
+    console.log('chatHistoryyy', messages)
+    if (!messages) {
+      threadHash = conversationHash;
+    } else {
+      threadHash = messages?.lastThreadHash;
+    }
 
     if (alias && chatId) {
       console.log('chatHistory')
 
-      const chatHistory = await historyMessages({chatId});
+      const chatHistory = await historyMessages({chatId, limit, threadHash});
       console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
