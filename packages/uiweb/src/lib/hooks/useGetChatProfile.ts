@@ -33,7 +33,7 @@ const useGetChatProfile = () => {
         return;
       }
     },
-    []
+    [signer, pushUser, setPushUser, setConnectedProfile]
   );
 
   return { fetchChatProfile };

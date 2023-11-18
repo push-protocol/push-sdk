@@ -85,6 +85,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
+      console.log(signer)
       if (pushUser) {
         const chat = await fetchChat();
         if (chat) {
@@ -120,7 +121,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setLoading(false);
       }
     })();
-  }, [chatId, account, env, pushUser]);
+  }, [chatId, account, env, pushUser, signer]);
 
   //moniters socket changes
   useEffect(() => {
@@ -164,11 +165,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     // if (conversationHash) {
-      (async function () {
-        await getMessagesCall();
-      })();
+    (async function () {
+      console.log('chatHistory', pushUser)
+      await getMessagesCall();
+    })();
     // }
-  }, [conversationHash, account, env, chatFeed, pushUser]);
+  }, [conversationHash, account, env, chatFeed, pushUser, signer]);
 
   useEffect(() => {
     scrollToBottom();
@@ -240,7 +242,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     if (pushUser && chatId) {
       console.log('chatHistory')
 
-      const chatHistory = await historyMessages({chatId, limit, threadHash});
+      const chatHistory = await historyMessages({ chatId, limit, threadHash });
       console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {

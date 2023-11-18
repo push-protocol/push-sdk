@@ -150,7 +150,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         if (user) setPushUser(user);
       }
     })();
-  }, [pushUser]);
+  }, [pushUser, signer]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
@@ -170,7 +170,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
       }
     }
-  }, [chatId, verified, isMember, account, env]);
+  }, [chatId, verified, isMember, account, env, signer]);
 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
@@ -506,7 +506,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         </>
       ) : null}
       {
-        (((isRules ? verified : true) && isMember) ||
+        ((pushUser && (isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
             <Section gap="8px" flex="1" position="static">

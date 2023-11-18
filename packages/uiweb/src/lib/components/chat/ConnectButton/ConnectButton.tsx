@@ -71,7 +71,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
         }
       }
     })();
-  }, [pushUser, signer]);
+  }, [pushUser, signer, env]);
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>

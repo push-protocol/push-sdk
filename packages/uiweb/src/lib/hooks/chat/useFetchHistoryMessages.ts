@@ -14,10 +14,10 @@ const useFetchHistoryMessages
     const [error, setError] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
 
-    const { account, env, pushUser } = useChatData();
+    const { account, env, pushUser, signer, setSigner } = useChatData();
 
     const historyMessages = useCallback(async ({ chatId, limit = 10, threadHash }: HistoryMessagesParams) => {
-
+      console.log("historyMessages", signer);
       setLoading(true);
       try {
         const chatHistory = await pushUser?.chat.history(chatId ? chatId : "", {
@@ -34,7 +34,7 @@ const useFetchHistoryMessages
       } finally {
         setLoading(false);
       }
-    }, [account, env, pushUser]);
+    }, [account, env, pushUser, signer]);
 
     return { historyMessages, error, loading };
   };
