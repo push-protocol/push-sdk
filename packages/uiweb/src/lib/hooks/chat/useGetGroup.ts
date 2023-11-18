@@ -18,6 +18,7 @@ const useGetGroup = () => {
       setLoading(true);
       let group: IGroup;
       try {
+        // need to check if pushUser.chat.group.info will work for this or not
         group = await PushAPI.chat.getGroup({ chatId: searchText, env });
       } catch (error: Error | any) {
         if ((error.message as string).includes('No group with chatId')) {

@@ -11,24 +11,21 @@ interface getGroup {
 const useGetGroupByID = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { env } = useChatData();
+  const { signer, pushUser } = useChatData();
 
   const getGroupByID = useCallback(
     async ({ groupId }: getGroup) => {
       setLoading(true);
-      let group: IGroup;
+      let group: IGroup | undefined;
       try {
-        group = await PushAPI.chat.getGroup({
-          chatId: groupId,
-          env: env,
-        });
+        group = await pushUser?.chat.group.info(groupId);
       } catch (error) {
         console.log(error);
         return;
       }
       return group;
     },
-    [env]
+    [pushUser]
   );
 
   return { getGroupByID, error, loading };

@@ -1,37 +1,34 @@
-import * as PushAPI from '@pushprotocol/restapi';
-import { Env } from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { useChatData } from './useChatData';
 import { IGroup } from '../../types';
 
 
 interface updateGroupParams {
-  groupInfo:IGroup;
-  memberList:Array<string>;
-  adminList:Array<string>;
+  groupInfo: IGroup;
+  memberList: Array<string>;
+  adminList: Array<string>;
 }
 
 const useUpdateGroup = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env,pgpPrivateKey } = useChatData();
+  const { account, env, pushUser } = useChatData();
 
 
   const updateGroup = useCallback(
-    async ({groupInfo,memberList,adminList}: updateGroupParams) => {
+    async ({ groupInfo, memberList, adminList }: updateGroupParams) => {
       setLoading(true);
+      const payload = {
+        groupName: groupInfo?.groupName,
+        groupDescription: groupInfo?.groupDescription ?? '',
+        groupImage: groupInfo?.groupImage,
+        members: memberList,
+        admins: adminList,
+        private: !groupInfo?.isPublic,
+        rules: groupInfo?.rules,
+      }
       try {
-        const updateResponse = await PushAPI.chat.updateGroup({
-            chatId: groupInfo?.chatId,
-            groupName: groupInfo?.groupName,
-            groupDescription: groupInfo?.groupDescription ?? '',
-            groupImage: groupInfo?.groupImage,
-            members: memberList,
-            admins: adminList,
-            account: account,
-            pgpPrivateKey: pgpPrivateKey,
-            env: env,
-          });
+        const updateResponse = await pushUser?.chat.group.update(groupInfo?.chatId, payload);
         return updateResponse;
       } catch (error: Error | any) {
         setLoading(false);
@@ -43,7 +40,7 @@ const useUpdateGroup = () => {
         setLoading(false);
       }
     },
-    [pgpPrivateKey,env,account]
+    [pushUser, env, account]
   );
 
   return { updateGroup, error, loading };

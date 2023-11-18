@@ -43,7 +43,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }) => {
   const theme = useContext(ThemeContext);
-  const { account, env } = useChatData();
+  const { account, env, pushUser } = useChatData();
   const { getGroupByID } = useGetGroupByID();
   const { fetchUserChatProfile } = useChatProfile();
 
@@ -110,7 +110,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   useEffect(() => {
     if (!chatId) return;
     fetchProfileData();
-  }, [chatId, account, env]);
+  }, [chatId, account, pushUser]);
 
   if (chatId && style === 'Info') {
     return (
