@@ -33,8 +33,8 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     env,
     setAccount,
     setSigner,
-    alias,
-    setAlias
+    pushUser,
+    setPushUser
   } = useChatData();
   const theme = useContext(ThemeContext);
   const {fetchChatProfile} = useGetChatProfile();
@@ -63,15 +63,15 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
 
   useEffect(() => {
     (async () => {
-      if (!alias && signer) {
+      if (!pushUser && signer) {
         const user = await fetchChatProfile({signer: signer, env});
         console.log("calllingggg in connect button")
         if (user) {
-          setAlias(user);
+          setPushUser(user);
         }
       }
     })();
-  }, [alias, signer]);
+  }, [pushUser, signer]);
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>

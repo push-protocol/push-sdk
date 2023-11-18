@@ -21,7 +21,7 @@ export const usePushChatSocket = () => {
     connectedProfile,
     setConnectedProfile,
     env,
-    alias
+    pushUser
   } = useChatData();
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] =
     useState<any>({});
@@ -89,7 +89,7 @@ export const usePushChatSocket = () => {
   }, [
     messagesSinceLastConnection,
     env,
-    alias,
+    pushUser,
     stream
   ]);
 
@@ -107,7 +107,7 @@ export const usePushChatSocket = () => {
         removeSocketEvents();
       }
     };
-  }, [stream, alias]);
+  }, [stream, pushUser]);
 
   /**
    * Whenever the required params to create a connection object change
@@ -118,14 +118,14 @@ export const usePushChatSocket = () => {
     if (!stream) {
       const main = async () => {
 
-        const stream = await alias.initStream(
+        const stream = await pushUser?.initStream(
           [
             CONSTANTS.STREAM.CHAT,
           ],
           {}
         );
         setStream(stream);
-        await stream.connect();
+        await stream?.connect();
         console.warn('new connection object: ', stream);
       };
       main().catch((err) => console.error(err));
@@ -133,7 +133,7 @@ export const usePushChatSocket = () => {
     // }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alias, env, stream]);
+  }, [pushUser, env, stream]);
 
   return {
     isPushChatSocketConnected,

@@ -11,7 +11,7 @@ export interface GetProfileParams {
 }
 
 const useGetChatProfile = () => {
-  const { signer, alias, setAlias, setConnectedProfile } = useChatData();
+  const { signer, pushUser, setPushUser, setConnectedProfile } = useChatData();
 
   const fetchChatProfile = useCallback(
     async ({

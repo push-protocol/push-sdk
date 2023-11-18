@@ -1,4 +1,4 @@
-import { Env,IMessageIPFS, IUser, SignerType } from "@pushprotocol/restapi";
+import { Env,IMessageIPFS, IUser, PushAPI, SignerType } from "@pushprotocol/restapi";
 import { Constants } from "../config";
 import { createContext } from "react";
 
@@ -16,8 +16,8 @@ export interface IChatDataContextValues {
     setIsPushChatSocketConnected: React.Dispatch<React.SetStateAction<boolean>>;
     connectedProfile: IUser | undefined;
     setConnectedProfile: (connectedProfile: IUser) => void;
-    alias: any;
-    setAlias: React.Dispatch<React.SetStateAction<any>>;
+    pushUser: PushAPI | undefined;
+    setPushUser: React.Dispatch<React.SetStateAction<PushAPI>>;
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {
@@ -45,8 +45,8 @@ export const initialChatDataContextValues: IChatDataContextValues = {
     setConnectedProfile: () => {
         /**  */
     },
-    alias: null,
-    setAlias: () => {
+    pushUser: undefined,
+    setPushUser: () => {
       /** */
     },
 

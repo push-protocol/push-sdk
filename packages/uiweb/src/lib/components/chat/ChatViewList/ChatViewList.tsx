@@ -52,7 +52,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, connectedProfile, setConnectedProfile, signer, alias, setAlias } =
+  const { account, connectedProfile, setConnectedProfile, signer, pushUser, setPushUser } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -85,11 +85,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (alias) {
-        // console.log('chatss');
-        // console.log(account, env, 'chatss')
+      if (pushUser) {
         const chat = await fetchChat();
-        // console.log(chat, 'chatss calling main', alias)
         if (chat) {
           setConversationHash(chat?.threadhash as string);
           setChatFeed(chat as IFeeds);
@@ -123,7 +120,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setLoading(false);
       }
     })();
-  }, [chatId, account, env, alias]);
+  }, [chatId, account, env, pushUser]);
 
   //moniters socket changes
   useEffect(() => {
@@ -171,7 +168,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     // }
-  }, [conversationHash, account, env, chatFeed, alias]);
+  }, [conversationHash, account, env, chatFeed, pushUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -240,7 +237,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       threadHash = messages?.lastThreadHash;
     }
 
-    if (alias && chatId) {
+    if (pushUser && chatId) {
       console.log('chatHistory')
 
       const chatHistory = await historyMessages({chatId, limit, threadHash});

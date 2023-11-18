@@ -116,8 +116,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     account,
     env,
     signer,
-    alias,
-    setAlias
+    pushUser,
+    setPushUser
   } = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
@@ -144,13 +144,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
-      if (!alias && signer) {
+      if (!pushUser && signer) {
         const user = await fetchChatProfile({ signer: signer, env });
         console.log("calllingggg in message input")
-        if (user) setAlias(user);
+        if (user) setPushUser(user);
       }
     })();
-  }, [alias]);
+  }, [pushUser]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
@@ -226,7 +226,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     })();
-  }, [chatId, account, env, alias]);
+  }, [chatId, account, env, pushUser]);
 
   useEffect(() => {
     if (!account && !env && !chatId) return;
@@ -234,7 +234,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
-  }, [chatId, chatFeed, account, env, alias]);
+  }, [chatId, chatFeed, account, env, pushUser]);
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
@@ -252,7 +252,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   const handleJoinGroup = async () => {
     if (chatFeed && chatFeed?.groupInformation?.isPublic) {
-      const response = await alias.chat.accept(chatId);
+      const response = await pushUser?.chat.accept(chatId);
       if (response) {
         await updateChatFeed();
       }
