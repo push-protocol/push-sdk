@@ -756,7 +756,7 @@ export type VideoDisconnectOptions = {
     type: SPACE_DISCONNECT_TYPE;
     data: Record<string, unknown>;
   };
-} | null;
+};
 
 export type EnableVideoInputOptions = {
   state: boolean;
