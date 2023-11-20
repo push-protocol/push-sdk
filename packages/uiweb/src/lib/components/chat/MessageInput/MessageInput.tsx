@@ -28,7 +28,7 @@ import {
   setAccessControl,
 } from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import {
@@ -120,7 +120,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setPushUser
   } = useChatData();
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
+  const { fetchChatProfile } = useChatProfile();
   const { getGroup } = useGetGroup();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

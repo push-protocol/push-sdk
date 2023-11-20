@@ -5,9 +5,9 @@ import { Signer, ethers } from 'ethers';
 
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
@@ -37,7 +37,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setPushUser
   } = useChatData();
   const theme = useContext(ThemeContext);
-  const {fetchChatProfile} = useGetChatProfile();
+  const {fetchChatProfile} = useChatProfile();
   const {decryptPGPKey} = useDecryptPGPKey();
 
 
@@ -64,7 +64,7 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
   useEffect(() => {
     (async () => {
       if (!pushUser && signer) {
-        const user = await fetchChatProfile({signer: signer, env});
+        const user = await fetchChatProfile({signer: signer, env, account: account!});
         console.log("calllingggg in connect button")
         if (user) {
           setPushUser(user);

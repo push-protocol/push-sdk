@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
 import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
-import useGetChatProfile from '../useGetChatProfile';
 import { CONSTANTS } from '@pushprotocol/restapi';
 
 export type PushChatSocketHookOptions = {

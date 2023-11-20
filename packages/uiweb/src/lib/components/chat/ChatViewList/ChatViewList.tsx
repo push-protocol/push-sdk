@@ -30,7 +30,7 @@ import { IChatTheme } from '../theme';
 
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { formatTime } from '../../../helpers/timestamp';
@@ -64,7 +64,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
+  const { fetchChatProfile } = useChatProfile();
   const { getGroup } = useGetGroup();
 
   const { messagesSinceLastConnection, groupInformationSinceLastConnection } =

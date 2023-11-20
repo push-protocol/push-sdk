@@ -1,32 +1,41 @@
-import * as PushAPI from '@pushprotocol/restapi';
-import { useCallback, useContext } from 'react';
+import { PushAPI, Env } from '@pushprotocol/restapi';
+import { useCallback } from 'react';
 import { useChatData } from './useChatData';
+import { SignerType } from '../../types';
 
-export interface ProfileParams {
-  profileId: string;
+export interface GetProfileParams {
+  profileId?: string;
+  env: Env;
+  signer: SignerType;
+  account?: string;
 }
 
 const useChatProfile = () => {
-  const { env } = useChatData();
-  const fetchUserChatProfile = useCallback(
+  const { signer, pushUser, setPushUser, setConnectedProfile, env } = useChatData();
+
+  const fetchChatProfile = useCallback(
     async ({
-      profileId
-    }: ProfileParams): Promise<PushAPI.IUser | undefined> => {
+      signer,
+      account
+    }: GetProfileParams): Promise<any> => {
       try {
-        const profile = await PushAPI.user.get({
-          env: env,
-          account: profileId,
-        });
-        return profile;
+        const userAlice = await PushAPI.initialize(
+          signer!,
+          {
+            env: env,
+            account: account
+          });
+        console.log("userAlice", userAlice, env);
+        return userAlice;
       } catch (error) {
-        console.log(error);
+        console.log("error", error);
         return;
       }
     },
-    [env]
+    [signer, pushUser, env]
   );
 
-  return { fetchUserChatProfile };
+  return { fetchChatProfile };
 };
 
 export default useChatProfile;

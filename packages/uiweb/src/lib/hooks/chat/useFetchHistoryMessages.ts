@@ -17,7 +17,6 @@ const useFetchHistoryMessages
     const { account, env, pushUser, signer, setSigner } = useChatData();
 
     const historyMessages = useCallback(async ({ chatId, limit = 10, threadHash }: HistoryMessagesParams) => {
-      console.log("historyMessages", signer);
       setLoading(true);
       try {
         const chatHistory = await pushUser?.chat.history(chatId ? chatId : "", {
