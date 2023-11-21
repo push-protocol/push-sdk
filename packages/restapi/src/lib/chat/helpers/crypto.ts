@@ -442,7 +442,7 @@ export const decryptAndVerifyMessage = async (
   message: IMessageIPFS | IMessageIPFSWithCID,
   pgpPublicKey: string,
   pgpPrivateKey: string,
-  pgpHelper: IPGPHelper
+  pgpHelper = PGP.PGPHelper
 
 ): Promise<IMessageIPFS | IMessageIPFSWithCID> => {
   /**
