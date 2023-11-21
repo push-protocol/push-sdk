@@ -61,17 +61,17 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
     setUserData()
   }, [wallet])
 
-  useEffect(() => {
-    (async () => {
-      if (!pushUser && signer) {
-        const user = await fetchChatProfile({signer: signer, env, account: account!});
-        console.log("calllingggg in connect button")
-        if (user) {
-          setPushUser(user);
-        }
-      }
-    })();
-  }, [pushUser, signer, env]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!pushUser && signer) {
+  //       const user = await fetchChatProfile({signer: signer, env, account: account!});
+  //       console.log("calllingggg in connect button")
+  //       if (user) {
+  //         setPushUser(user);
+  //       }
+  //     }
+  //   })();
+  // }, [pushUser, signer, env]);
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>

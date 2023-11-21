@@ -9,7 +9,7 @@ import useGetChatProfile from '../hooks/useGetChatProfile';
 import { IUser, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-
+import useInitializePushUser from '../hooks/chat/useInitializePushUser';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -28,63 +28,70 @@ export const ChatUIProvider = ({
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
-  const [pushChatSocket, setPushChatSocket] = useState<any>(null); 
-   const [signerVal, setSignerVal] = useState<SignerType| undefined>(signer);
-   const [pushUser, setPushUser] = useState<any>(null);
+  const [pushChatSocket, setPushChatSocket] = useState<any>(null);
+  const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
+  const [pushUser, setPushUser] = useState<any>(null);
   const [envVal, setEnvVal] = useState<ENV>(env);
-  const {fetchChatProfile} = useGetChatProfile();
-  const [connectedProfile,setConnectedProfile]=useState<IUser | undefined>(undefined);
+  const { fetchChatProfile } = useGetChatProfile();
+  const [connectedProfile, setConnectedProfile] = useState<IUser | undefined>(undefined);
+  const { initializePushUser } = useInitializePushUser();
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
   useEffect(() => {
-    (async()=>{
+    (async () => {
       resetStates();
       setEnvVal(env);
-    
+
       if (signer) {
         if (!account) {
           const address = await getAddressFromSigner(signer);
           setAccountVal(address);
         }
-        else{
+        else {
           setAccountVal(account);
         }
-      } 
+      }
       setSignerVal(signer);
     })()
-    
-  }, [env,account, pushUser,signer])
+
+  }, [env, account, pushUser, signer])
+
+
+  useEffect(() => {
+      (async() => {
+        if(Object.keys(signerVal || {}).length && accountVal && !(Object.keys(pushUser || {}).length)) {
+          const pushUser = await initializePushUser({signer: signerVal, account: accountVal})
+          setPushUser(pushUser);
+        }
+      })();
+  }, [signerVal, accountVal, env, pushUser])
+
+  const resetStates = () => {
+    setPushChatSocket(null);
+    setIsPushChatSocketConnected(false);
+
+  };
 
 
 
-
-
-const resetStates = () => {
-  setPushChatSocket(null);
-  setIsPushChatSocketConnected(false);
-  
-};
-
-
-
-useEffect(() => {
-    (async () => {
-      let user;
-      if (!pushUser && signer) {
-        console.log("userrr",user);
-        if (user) {
-          setPushUser(user);  
-        } 
-      }
-    })();
-  }, [env, signer, pushUser]);
+  // useEffect(() => {
+  //   (async () => {
+  //     let user;
+  //     if (!pushUser && signer) {
+  //       console.log("userrr", user);
+  //       if (user) {
+  //         setPushUser(user);
+  //       }
+  //     }
+  //   })();
+  // }, [env, signer, pushUser]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
-    signer:signerVal,
-    setSigner:setSignerVal,
+    signer: signerVal,
+    setSigner: setSignerVal,
     setAccount: setAccountVal,
     env: envVal,
     setEnv: setEnvVal,

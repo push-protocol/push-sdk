@@ -142,15 +142,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [textAreaRef, typedMessage]);
 
   //need to do something about fetching connectedUser in every component
-  useEffect(() => {
-    (async () => {
-      if (!pushUser && signer) {
-        const user = await fetchChatProfile({ signer: signer, env });
-        console.log("calllingggg in message input")
-        if (user) setPushUser(user);
-      }
-    })();
-  }, [pushUser, signer]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!pushUser && signer) {
+  //       const user = await fetchChatProfile({ signer: signer, env });
+  //       console.log("calllingggg in message input")
+  //       if (user) setPushUser(user);
+  //     }
+  //   })();
+  // }, [pushUser, signer]);
 
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
