@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
-import { Signer, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';

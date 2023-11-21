@@ -85,7 +85,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      console.log(signer)
       if (pushUser) {
         const chat = await fetchChat();
         if (chat) {
@@ -164,12 +163,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
-    // if (conversationHash) {
     (async function () {
-      console.log('chatHistory', pushUser)
       await getMessagesCall();
     })();
-    // }
   }, [conversationHash, account, env, chatFeed, pushUser, signer]);
 
   useEffect(() => {
@@ -187,8 +183,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       scrollToBottom();
     }
   }, [messages]);
-
-  console.log('chatHistory')
 
   useEffect(() => {
 
@@ -239,11 +233,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       threadHash = messages?.lastThreadHash;
     }
 
-    if (pushUser && chatId) {
-      console.log('chatHistory')
-
+    if (threadHash && ((account && chatFeed && !chatFeed?.groupInformation) || (chatFeed && chatFeed?.groupInformation))) {
       const chatHistory = await historyMessages({ chatId, limit, threadHash });
-      console.log(chatHistory, 'chatHistory')
       if (chatHistory?.length) {
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
@@ -278,7 +269,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       chatFeed &&
       chatFeed?.groupInformation &&
       !chatFeed?.groupInformation?.isPublic &&
-      (!isMember)
+      ((!isMember && Object.keys(pushUser || {}).length) || !(Object.keys(pushUser || {}).length))
     );
   }
 

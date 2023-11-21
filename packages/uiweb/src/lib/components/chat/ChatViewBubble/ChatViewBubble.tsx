@@ -63,7 +63,7 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   };
   useEffect(() => {
     getUserPfp();
-  }, [account, chat.fromDID]);
+  }, [account, chat.fromCAIP10]);
   return (
     <Section justifyContent="start" alignItems="start">
       {(chat.fromDID || chat.fromDID).split(':')[1] !== account && (
