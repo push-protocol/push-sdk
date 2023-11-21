@@ -595,7 +595,7 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  const { updateGroup } = useUpdateGroup();
+  const { updateGroup, addMembersinGroup } = useUpdateGroup();
   const groupCreator = groupInfo?.groupCreator;
   const membersExceptGroupCreator = groupInfo?.members?.filter(
     (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
@@ -656,9 +656,9 @@ export const GroupInfoModal = ({
     setModal(false);
   };
 
-  const handleUpdateGroup = async (options: UpdateGroupType) => {
+  const handelAddMemberInGroup = async (options: UpdateGroupType) => {
     const { adminList, memberList } = options || {};
-    const updateResponse = await updateGroup({
+    const updateResponse = await addMembersinGroup({
       groupInfo,
       memberList,
       adminList,
@@ -674,13 +674,13 @@ export const GroupInfoModal = ({
 
     try {
       setIsLoading(true);
-      const { updateResponse } = await handleUpdateGroup({
+      const { updateResponse } = await handelAddMemberInGroup({
         adminList,
         memberList,
       });
 
       if (typeof updateResponse !== 'string') {
-        setGroupInfo(updateResponse);
+        setGroupInfo(updateResponse!);
 
         groupInfoToast.showMessageToast({
           toastTitle: 'Success',
@@ -720,8 +720,7 @@ export const GroupInfoModal = ({
 
     //Newly Added Members and alreadyPresent Members in the groupchat
     const newMembersToAdd = memberList.map((member: any) => member.wallets);
-    const members = [...groupMemberList, ...newMembersToAdd];
-
+    const members =  newMembersToAdd;
     //Admins wallet address from both members and pendingMembers
     const adminList = getAdminList?.(groupInfo);
 

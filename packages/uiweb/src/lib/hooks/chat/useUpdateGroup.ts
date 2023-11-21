@@ -18,6 +18,7 @@ const useUpdateGroup = () => {
   const updateGroup = useCallback(
     async ({ groupInfo, memberList, adminList }: updateGroupParams) => {
       setLoading(true);
+      console.log("groupInfo", memberList);
       const payload = {
         groupName: groupInfo?.groupName,
         groupDescription: groupInfo?.groupDescription ?? '',
@@ -43,7 +44,27 @@ const useUpdateGroup = () => {
     [pushUser, env, account]
   );
 
-  return { updateGroup, error, loading };
+  const addMembersinGroup = useCallback(
+    async ({ groupInfo, memberList, adminList }: updateGroupParams) => {
+      setLoading(true);
+      console.log("groupInfo", memberList);
+      try {
+        const addMemberTogroup = await pushUser?.chat.group.add(groupInfo?.chatId, {
+          role: adminList.length > 0 ? 'ADMIN' : 'MEMBER',
+          accounts: memberList,
+        });
+        console.log("addMemberTogroup", addMemberTogroup);
+        return addMemberTogroup;
+      } catch(error: Error | any) {
+        console.log("err", error);
+        setError(error.message);
+        return;
+      }
+    },
+    [pushUser, env, account]
+  )
+
+  return { updateGroup, error, loading, addMembersinGroup };
 };
 
 export default useUpdateGroup;
