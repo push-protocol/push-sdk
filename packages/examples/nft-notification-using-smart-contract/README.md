@@ -36,7 +36,7 @@ This repository shows how you can implement Push Notifications in an NFT contrac
    npx hardhat run scripts/deploy.js --network sepolia
    ```
 
-   This command deploys the contract to Sepolia and adds the deployed contract as a delegate in your Push Protocol channel.
+   This command deploys the contract to Sepolia and **adds the deployed contract as a delegate in your Push Protocol channel**.
 
 6. **Mint an NFT:**
 
@@ -50,4 +50,4 @@ This repository shows how you can implement Push Notifications in an NFT contrac
 ## Important Notes
 
 - Ensure that you have created a channel on Push Staging Network at `staging.push.org` before proceeding and are using the private key of the same account in here.
-- If you want to deploy this contract to Mainnet, you must also edit the `EPNS_COMM_ADDRESS` at line number 20 based on the network, please refer here for more details -> [Push Docs](https://push.org/docs/notifications/push-smart-contracts/contract-addresses/)
+- If you want to deploy this contract to Mainnet, you must edit the `EPNS_COMM_ADDRESS` at line number 20 in `MyToken.sol` and  `address` at `./EPNSCOMMPROXY.json` based on the network, please refer here for more details -> [Push Docs](https://push.org/docs/notifications/push-smart-contracts/contract-addresses/).
