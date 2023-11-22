@@ -223,7 +223,7 @@ const checkForWeb3Data = ({
 
 export function App() {
   const { account, library, active, chainId } = useWeb3React();
-  const [env, setEnv] = useState<ENV>(ENV.PROD);
+  const [env, setEnv] = useState<ENV>(ENV.DEV);
   const [isCAIP, setIsCAIP] = useState(false);
   const [signer, setSigner] = useState();
 
@@ -317,7 +317,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider  env={env} theme={lightChatTheme} >
+                <ChatUIProvider  env={env} theme={lightChatTheme} signer={signer}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route

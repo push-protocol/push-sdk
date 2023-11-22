@@ -4,7 +4,6 @@ import { SendIconSvg } from '../../icons/SendIconSvg';
 import SmileyIcon from '../../icons/smiley.svg';
 import AttachmentIcon from '../../icons/attachment.svg';
 import styled from 'styled-components';
-import * as PushAPI from '@pushprotocol/restapi';
 import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { Spinner } from './spinner/Spinner';
 // import Picker from 'emoji-picker-react';
@@ -14,7 +13,7 @@ export const ChatInput: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env, supportAddress, apiKey, theme } =
+  const { account, env, supportAddress, apiKey, theme, pushUser } =
     useContext<any>(SupportChatPropsContext);
 
   const {
@@ -40,22 +39,28 @@ export const ChatInput: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     if (message.trim() !== '' && connectedUser) {
-      const sendResponse = await PushAPI.chat.send({
-        messageContent: message,
-        messageType: 'Text',
-        receiverAddress: supportAddress,
-        account: account,
-        pgpPrivateKey: connectedUser?.privateKey,
-        apiKey,
-        env,
+      
+      const sendResponse = await pushUser.chat.send(supportAddress ,{
+        
+        type: 'Text',
+        content: message,
+      
       });
+     
+      if (!sendResponse) {
+        setToastMessage(sendResponse);
+        setToastType('error');
+        setLoading(false);
+        
+      }
 
       if (typeof sendResponse !== 'string') {
-        sendResponse.messageContent = message;
-        setChatsSorted([...chats, sendResponse]);
+        // sendResponse.messageContent = message;
+        // setChatsSorted([...chats, sendResponse]);
         setMessage('');
         setLoading(false);
-      } else {
+      } 
+      else {
         setToastMessage(sendResponse);
         setToastType('error');
         setLoading(false);

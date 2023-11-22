@@ -33,7 +33,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // Signer Generation
   const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public' // Goerli Provider
+    'https://rpc.sepolia.org' // Goerli Provider
   );
   const signer = new ethers.Wallet(
     `0x${process.env.WALLET_PRIVATE_KEY}`,
@@ -45,19 +45,38 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   const userAlice = await PushAPI.initialize(signer, { env });
 
-  const stream = await userAlice.stream([CONSTANTS.STREAM.NOTIF], {
-    // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
-    // more info can be found at push.org/docs/chat
+  const stream = await userAlice.initStream(
+    [
+      CONSTANTS.STREAM.NOTIF,
+      CONSTANTS.STREAM.CHAT_OPS,
+      CONSTANTS.STREAM.CHAT,
+      CONSTANTS.STREAM.CONNECT,
+      CONSTANTS.STREAM.DISCONNECT,
+    ],
+    {
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
 
-    filter: {
-      channels: ['*'],
-      chats: ['*'],
-    },
-    connection: {
-      auto: true, // should connection be automatic, else need to call stream.connect();
-      retries: 3, // number of retries in case of error
-    },
-    raw: true, // enable true to show all data
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: true, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    }
+  );
+
+  stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+    console.log('Stream Connected');
+  });
+
+  await stream.connect();
+
+  stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+    console.log('Stream Disconnected');
   });
 
   // Listen Stream Events for getting websocket events
@@ -195,7 +214,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.add');
   const addedDelegate = await userAlice.channel.delegate.add(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
 
   if (showAPIResponse) {
@@ -214,7 +233,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.delegate.remove');
   const removedDelegate = await userAlice.channel.delegate.remove(
-    `eip155:5:${randomWallet1}`
+    `eip155:11155111:${randomWallet1}`
   );
   if (showAPIResponse) {
     console.log(removedDelegate);
@@ -244,7 +263,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.subscribe');
   const subscribeResponse = await userAlice.notification.subscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
   );
   if (showAPIResponse) {
     console.log(subscribeResponse);
@@ -262,7 +281,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.unsubscribe');
   const unsubscribeResponse = await userAlice.notification.unsubscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
   );
   if (showAPIResponse) {
     console.log(unsubscribeResponse);
