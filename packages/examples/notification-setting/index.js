@@ -6,7 +6,7 @@ dotenv.config();
 // initialise the provider
 const provider = new ethers.providers.JsonRpcProvider(
   // PUBLIC RPC
-  process.env?.RPC?? 'https://goerli.blockpi.network/v1/rpc/public'
+  process.env?.RPC?? 'https://rpc.sepolia.org'
 );
 
 let signer;
@@ -78,7 +78,7 @@ const main = async () => {
     // make bob and kate subscribe to the channel
     // bob wants to opt in to all the settings
     await userBob.notification.subscribe(
-      `eip155:5:${userAlice.account}`,
+      `eip155:11155111:${userAlice.account}`,
       {
         settings: [
           // enabled for boolean type
@@ -95,7 +95,7 @@ const main = async () => {
     );
     // kate doesnot want to opt in to any settings
     await userKate.notification.subscribe(
-      `eip155:5:${userAlice.account}`,
+      `eip155:11155111:${userAlice.account}`,
       {
         settings: [
           // disabled for boolean type

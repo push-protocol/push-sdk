@@ -37,8 +37,8 @@ function validateConfig(passedConfig : ConfigType) : boolean {
 	return false
   }
 
-  if (![1, 5, 137, 80001, 56, 97, 10, 420, 1442, 1101].includes(passedConfig.chainId)) {
-	console.error(`${Constants.EPNS_SDK_EMBED_NAMESPACE} - config.chainId passed is not in EPNS supported networks [1, 5, 137, 80001, 56, 97, 10, 420, 1442, 1101]!`)
+  if (![1, 11155111, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161].includes(passedConfig.chainId)) {
+	console.error(`${Constants.EPNS_SDK_EMBED_NAMESPACE} - config.chainId passed is not in PUSH supported networks [1, 11155111, 137, 80001, 56, 97, 10, 420, 1442, 1101]!`)
 	return false
   }
   if (!passedConfig.targetID) {

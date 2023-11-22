@@ -20,7 +20,7 @@ describe('Create Push Profile with Profile update', () => {
 
  
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     _signer = new ethers.Wallet(WALLET.privateKey, provider);
     walletAddress = _signer.address;

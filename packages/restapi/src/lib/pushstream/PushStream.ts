@@ -25,11 +25,11 @@ export class PushStream extends EventEmitter {
 
   constructor(
     account: string,
-    private decryptedPgpPvtKey: string,
-    private signer: SignerType,
     private _listen: STREAM[],
     options: PushStreamInitializeProps,
-    private progressHook?: (progress: ProgressHookType) => void
+    private decryptedPgpPvtKey?: string,
+    private progressHook?: (progress: ProgressHookType) => void,
+    private signer?: SignerType
   ) {
     super();
 
@@ -41,8 +41,8 @@ export class PushStream extends EventEmitter {
 
     this.chatInstance = new Chat(
       this.account,
-      this.decryptedPgpPvtKey,
       this.options.env as ENV,
+      this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
     );
@@ -50,11 +50,11 @@ export class PushStream extends EventEmitter {
 
   static async initialize(
     account: string,
-    decryptedPgpPvtKey: string,
-    signer: SignerType,
     listen: STREAM[],
     env: ENV,
+    decryptedPgpPvtKey?: string,
     progressHook?: (progress: ProgressHookType) => void,
+    signer?: SignerType,
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     const defaultOptions: PushStreamInitializeProps = {
@@ -81,11 +81,11 @@ export class PushStream extends EventEmitter {
 
     const stream = new PushStream(
       accountToUse,
-      decryptedPgpPvtKey,
-      signer,
       listen,
       settings,
-      progressHook
+      decryptedPgpPvtKey,
+      progressHook,
+      signer
     );
     return stream;
   }
@@ -265,8 +265,11 @@ export class PushStream extends EventEmitter {
               data.messageCategory == 'Chat' ||
               data.messageCategory == 'Request'
             ) {
-              data = await this.chatInstance.decrypt([data]);
-              data = data[0];
+              // Dont call this if read only mode ?
+              if (this.signer) {
+                data = await this.chatInstance.decrypt([data]);
+                data = data[0];
+              }
             }
 
             const modifiedData = DataModifier.handleChatEvent(data, this.raw);

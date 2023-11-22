@@ -1,9 +1,7 @@
 import { ENCRYPTION_TYPE, ENV } from '../constants';
-import {
-  SignerType,
-  ProgressHookType,
-} from '../types';
+import { SignerType, ProgressHookType } from '../types';
 import * as PUSH_USER from '../user';
+import { PushAPI } from './PushAPI';
 import { User } from './user';
 
 export class Encryption {
@@ -11,10 +9,10 @@ export class Encryption {
 
   constructor(
     private account: string,
-    private decryptedPgpPvtKey: string,
-    private pgpPublicKey: string,
     private env: ENV,
-    private signer: SignerType,
+    private decryptedPgpPvtKey?: string,
+    private pgpPublicKey?: string,
+    private signer?: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
     this.userInstance = new User(this.account, this.env);
@@ -22,19 +20,22 @@ export class Encryption {
 
   async info() {
     const userInfo = await this.userInstance.info();
-    const decryptedPassword = await PUSH_USER.decryptAuth({
-      account: this.account,
-      env: this.env,
-      signer: this.signer,
-      progressHook: this.progressHook,
-      additionalMeta: {
-        NFTPGP_V1: {
-          encryptedPassword: JSON.stringify(
-            JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
-          ),
+    let decryptedPassword;
+    if (this.signer) {
+      decryptedPassword = await PUSH_USER.decryptAuth({
+        account: this.account,
+        env: this.env,
+        signer: this.signer,
+        progressHook: this.progressHook,
+        additionalMeta: {
+          NFTPGP_V1: {
+            encryptedPassword: JSON.stringify(
+              JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
+            ),
+          },
         },
-      },
-    });
+      });
+    }
 
     return {
       decryptedPgpPrivateKey: this.decryptedPgpPvtKey,
@@ -53,6 +54,14 @@ export class Encryption {
       };
     }
   ) {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
+
+    if (!this.decryptedPgpPvtKey || !this.pgpPublicKey) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
+
     return await PUSH_USER.auth.update({
       account: this.account,
       pgpEncryptionVersion: updatedEncryptionType,

@@ -228,16 +228,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [chatId, pgpPrivateKey, account, env]);
 
   useEffect(() => {
-    console.log('in useEffect')
-    console.log(chatFeed)
     if (!account && !env && !chatId) return;
     if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
       setIsMember(checkIfMember(chatFeed, account));
       setIsRules(checkIfAccessVerifiedGroup(chatFeed));
     }
   }, [chatId, chatFeed, account, env]);
-console.log(isMember)
-console.log(checkIfMember(chatFeed, account!))
+
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
     setShowEmojis(false);
