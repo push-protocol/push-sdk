@@ -52,7 +52,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, connectedProfile, setConnectedProfile, signer, pushUser, setPushUser } =
+  const { account, signer, pushUser, setPushUser } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -352,7 +352,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                     (chat: IMessageIPFS, index: number) => {
                       const dateNum = formatTime(chat.timestamp);
                       const position =
-                        pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
+                        pCAIP10ToWallet(chat.fromCAIP10).toLowerCase() !==
                           account?.toLowerCase()
                           ? 0
                           : 1;

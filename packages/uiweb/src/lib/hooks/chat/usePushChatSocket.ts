@@ -17,8 +17,6 @@ export const usePushChatSocket = () => {
     setPushChatSocket,
     setIsPushChatSocketConnected,
     isPushChatSocketConnected,
-    connectedProfile,
-    setConnectedProfile,
     env,
     pushUser
   } = useChatData();
@@ -33,12 +31,7 @@ export const usePushChatSocket = () => {
   ] = useState<any>({});
 
   const addSocketEvents = useCallback(async () => {
-    console.log('addSocketEvents');
-    // if (!stre/z
     stream.on(CONSTANTS.STREAM.CONNECT, () => {
-      // console.log(err,"errr");
-      // console.log(connected,"connected");÷
-      console.log('connecteddddd');
       setIsPushChatSocketConnected(true);
     })
 
@@ -47,7 +40,6 @@ export const usePushChatSocket = () => {
     });
 
     stream.on(CONSTANTS.STREAM.CHAT, async (chat: any) => {
-      console.log('chat', chat);
       if (
         (chat.messageCategory === 'Request') &&
         (chat.messageContent === null) &&
@@ -55,36 +47,23 @@ export const usePushChatSocket = () => {
       ) {
         setAcceptedRequestMessage(chat);
       } else {
-        // Extract 'from' and 'to' from the 'message' property
-        const fromDID = chat.from;
-        const toDID = chat.to.join(', '); // Use the appropriate separator if needed
-        // Create a new object with modified properties
-        const messageContent = chat.message.content;
+        const fromCAIP10 = chat.from;
+        const toCAIP10 = chat.to.join(', ');
+        const messageContent = chat.message ? chat.message.content : ''; 
         const modifiedChat = {
           ...chat,
-          fromDID: fromDID,
-          toDID: toDID,
+          fromCAIP10: fromCAIP10,
+          toCAIP10: toCAIP10,
           messageContent: messageContent,
         };
         delete modifiedChat.from;
         delete modifiedChat.to;
-        console.log('modifiedChat', modifiedChat);
 
         setMessagesSinceLastConnection((chats: any) => {
           return modifiedChat;
         });
       }
     });
-
-
-    // pushChatSocket?.on(EVENTS.CHAT_GROUPS, (groupInfo: any) => {
-    //   /**
-    //    * We receive a group creation or updated event.
-    //    */
-    //   setGroupInformationSinceLastConnection(groupInfo);
-    // });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     messagesSinceLastConnection,
     env,

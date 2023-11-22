@@ -219,9 +219,9 @@ export const getChatId = ({
   account: string;
 }) => {
   if (pCAIP10ToWallet(msg.fromCAIP10).toLowerCase() === account.toLowerCase()) {
-    return msg.toDID;
+    return msg.toCAIP10;
   }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromCAIP10;
+  return !isPCAIP(msg.toCAIP10) ? msg.toCAIP10 : msg.fromCAIP10;
 };
 
 export const appendUniqueMessages = (
@@ -255,8 +255,8 @@ export const checkIfSameChat = (
       Object.keys(msg || {}).length &&
       (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
-          msg.toDID?.toLowerCase())) ||
-        ((chatId.toLowerCase() === (msg.toDID?.toLowerCase())) &&
+          msg.toCAIP10?.toLowerCase())) ||
+        ((chatId.toLowerCase() === (msg.toCAIP10?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
             msg.fromCAIP10?.toLowerCase())))
     ) {
@@ -265,7 +265,7 @@ export const checkIfSameChat = (
   } else {
     if (
       Object.keys(msg || {}).length &&
-      (chatId.toLowerCase() === msg.toDID?.toLowerCase())
+      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
     ) {
       return true;
     }
