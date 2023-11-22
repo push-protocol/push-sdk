@@ -66,7 +66,7 @@ export const ChatUIProvider = ({
           setPushUser(pushUser);
         }
       })();
-  }, [signerVal, accountVal, env, pushUser])
+  }, [signerVal, accountVal, env])
 
   const resetStates = () => {
     setPushChatSocket(null);
@@ -99,8 +99,6 @@ export const ChatUIProvider = ({
     setPushChatSocket,
     isPushChatSocketConnected,
     setIsPushChatSocketConnected,
-    connectedProfile,
-    setConnectedProfile,
     pushUser,
     setPushUser
   };

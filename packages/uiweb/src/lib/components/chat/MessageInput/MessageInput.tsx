@@ -141,17 +141,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   }, [textAreaRef, typedMessage]);
 
-  //need to do something about fetching connectedUser in every component
-  // useEffect(() => {
-  //   (async () => {
-  //     if (!pushUser && signer) {
-  //       const user = await fetchChatProfile({ signer: signer, env });
-  //       console.log("calllingggg in message input")
-  //       if (user) setPushUser(user);
-  //     }
-  //   })();
-  // }, [pushUser, signer]);
-
   useEffect(() => {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
@@ -331,7 +320,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const isNotVerified = () => {
-    return !verified && isMember && isRules;
+    return Object.keys(pushUser || {}).length && !verified && isMember && isRules;
   };
 
   const sendPushMessage = async (content: string, type: string) => {
@@ -469,7 +458,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               </ConnectWrapper>
             </Section>
           )}
-          {!verificationSuccessfull && (
+          {Object.keys(pushUser || {}).length && !verificationSuccessfull && (
             <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
               <Section
                 margin="5px 0px 0px 0px"
@@ -506,7 +495,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         </>
       ) : null}
       {
-        ((pushUser && (isRules ? verified : true) && isMember) ||
+        ((Object.keys(pushUser || {}).length && (isRules ? verified : true) && isMember) ||
           (chatFeed && !chatFeed?.groupInformation)) && (
           <>
             <Section gap="8px" flex="1" position="static">

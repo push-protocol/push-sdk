@@ -11,7 +11,7 @@ export interface GetProfileParams {
 }
 
 const useChatProfile = () => {
-  const { signer, pushUser, setPushUser, setConnectedProfile, env } = useChatData();
+  const { signer, pushUser, setPushUser, env } = useChatData();
 
   const fetchChatProfile = useCallback(
     async ({
@@ -25,7 +25,6 @@ const useChatProfile = () => {
             env: env,
             account: account
           });
-        console.log("userAlice", userAlice, env);
         return userAlice;
       } catch (error) {
         console.log("error", error);

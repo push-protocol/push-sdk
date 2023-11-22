@@ -218,10 +218,10 @@ export const getChatId = ({
   msg: IMessageIPFS;
   account: string;
 }) => {
-  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
+  if (pCAIP10ToWallet(msg.fromCAIP10).toLowerCase() === account.toLowerCase()) {
     return msg.toDID;
   }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromCAIP10;
 };
 
 export const appendUniqueMessages = (
@@ -253,12 +253,12 @@ export const checkIfSameChat = (
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === (msg.fromDID?.toLowerCase())) &&
+      (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
           msg.toDID?.toLowerCase())) ||
         ((chatId.toLowerCase() === (msg.toDID?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
-            msg.fromDID?.toLowerCase())))
+            msg.fromCAIP10?.toLowerCase())))
     ) {
       return true;
     }
