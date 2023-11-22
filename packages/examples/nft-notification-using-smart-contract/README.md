@@ -1,4 +1,4 @@
-# Push Notification for NFT Minting in Sepolia
+# NFT Smart Contract with Push Notifications Example
 
 This repository shows how you can implement Push Notifications in an NFT contract, this contract example uses Push notification powered by Push Protocol to trigger notification to OWNER whenever someone mints an NFT from this contract.
 
