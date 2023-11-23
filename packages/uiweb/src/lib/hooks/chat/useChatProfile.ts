@@ -6,32 +6,26 @@ import { SignerType } from '../../types';
 export interface GetProfileParams {
   profileId?: string;
   env: Env;
-  signer: SignerType;
-  account?: string;
 }
 
 const useChatProfile = () => {
-  const { signer, pushUser, setPushUser, env } = useChatData();
 
   const fetchChatProfile = useCallback(
     async ({
-      signer,
-      account
+      profileId,
+      env
     }: GetProfileParams): Promise<any> => {
       try {
-        const userAlice = await PushAPI.initialize(
-          signer!,
-          {
-            env: env,
-            account: account
-          });
-        return userAlice;
+        // const userReadOnly = await PushAPI.initialize({
+        //   account: profileId!,
+        // });
+        // return userReadOnly;
       } catch (error) {
         console.log("error", error);
         return;
       }
     },
-    [signer, pushUser, env]
+    []
   );
 
   return { fetchChatProfile };

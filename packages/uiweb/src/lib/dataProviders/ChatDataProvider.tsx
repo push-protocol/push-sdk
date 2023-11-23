@@ -5,8 +5,7 @@ import {
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import useGetChatProfile from '../hooks/useGetChatProfile';
-import { IUser, SignerType } from '@pushprotocol/restapi';
+import { SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useInitializePushUser from '../hooks/chat/useInitializePushUser';
@@ -32,8 +31,6 @@ export const ChatUIProvider = ({
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [pushUser, setPushUser] = useState<any>(null);
   const [envVal, setEnvVal] = useState<ENV>(env);
-  const { fetchChatProfile } = useGetChatProfile();
-  const [connectedProfile, setConnectedProfile] = useState<IUser | undefined>(undefined);
   const { initializePushUser } = useInitializePushUser();
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
@@ -70,23 +67,12 @@ export const ChatUIProvider = ({
 
   const resetStates = () => {
     setPushChatSocket(null);
+    setPushUser(null);
     setIsPushChatSocketConnected(false);
 
   };
 
 
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let user;
-  //     if (!pushUser && signer) {
-  //       console.log("userrr", user);
-  //       if (user) {
-  //         setPushUser(user);
-  //       }
-  //     }
-  //   })();
-  // }, [env, signer, pushUser]);
 
   const value: IChatDataContextValues = {
     account: accountVal,
