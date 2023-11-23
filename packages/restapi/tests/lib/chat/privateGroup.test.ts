@@ -424,6 +424,8 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
 
@@ -442,6 +444,8 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
 
@@ -462,6 +466,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -480,6 +485,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -501,6 +507,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -523,6 +530,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -545,6 +553,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -567,6 +576,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
@@ -588,6 +598,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -612,6 +623,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -638,6 +650,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -661,6 +674,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -686,6 +700,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -710,6 +725,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -725,6 +741,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -742,6 +759,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
@@ -760,6 +778,7 @@ describe('Private Groups', () => {
         content: 'Sending Message to Private Group',
         type: 'Text',
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);

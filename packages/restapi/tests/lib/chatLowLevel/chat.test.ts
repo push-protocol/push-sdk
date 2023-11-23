@@ -9,7 +9,7 @@ import Constants from '../../../src/lib/constants';
 const WALLET_PRIVATE_KEY = process.env['WALLET_PRIVATE_KEY'];
 const _env = Constants.ENV.DEV;
 
-describe.skip('Get chat', () => {
+describe('Get chat', () => {
   it('Should return {} when not chat between users', async () => {
     try {
       const provider = ethers.getDefaultProvider(5);
