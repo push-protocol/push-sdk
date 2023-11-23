@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 export const chat = async (options: {
   account: string;
@@ -24,7 +24,7 @@ export const chat = async (options: {
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chat/${recipientWallet}`;
   try {
-    const response = await axios.get(apiEndpoint);
+     const response = await axiosGet(apiEndpoint);
     // If no chat between users, then returns {}
     const chat: IFeeds = response.data;
     if (Object.keys(chat).length !== 0) {

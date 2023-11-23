@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, {ENV} from '../constants';
 import {
  GroupDTO
 } from '../types';
+import { axiosGet } from '../utils/axiosUtil';
 
 
 /**
@@ -29,16 +29,8 @@ export const getGroupByName = async (
 
         const API_BASE_URL = getAPIBaseUrls(env);
         const requestUrl = `${API_BASE_URL}/v1/chat/groups?groupName=${groupName}`;
-        return axios
-            .get(requestUrl)
-            .then((response) => {
-                return response.data;
-            })
-            .catch((err) => {
-                if (err?.response?.data)
-                    throw new Error(err?.response?.data);
-                throw new Error(err);
-            });
+        const response = await axiosGet<GroupDTO>(requestUrl);
+        return response.data;
     } catch (err) {
         console.error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -:  `, err);
         throw Error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -: ${err}`);

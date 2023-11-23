@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ISendNotificationInputOptions } from '../types';
 import {
   getPayloadForAPIInput,
@@ -25,6 +24,7 @@ import {
 } from './constants';
 import { ENV } from '../constants';
 import { getChannel } from '../channels/getChannel';
+import { axiosPost } from '../utils/axiosUtil';
 /**
  * Validate options for some scenarios
  */
@@ -200,7 +200,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    return await axios.post(requestURL, apiPayload, {
+    return await axiosPost(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },

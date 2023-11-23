@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   getCAIPAddress,
   getConfig,
@@ -12,6 +11,7 @@ import {
 } from './signature.helpers';
 import Constants, {ENV} from '../constants';
 import { SignerType } from "../types";
+import { axiosPost } from "../utils/axiosUtil";
 export type SubscribeOptionsType = {
   signer: SignerType;
   channelAddress: string;
@@ -82,7 +82,7 @@ export const subscribe = async (
       },
     };
 
-    await axios.post(requestUrl, body);
+    await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 

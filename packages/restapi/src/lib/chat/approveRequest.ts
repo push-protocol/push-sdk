@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
@@ -13,6 +12,7 @@ import {
   IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -102,8 +102,7 @@ export const approveCore = async (
     signature
   );
 
-  return axios
-    .put(apiEndpoint, body)
+  return axiosPut(apiEndpoint, body)
     .then((response) => {
       return response.data;
     })

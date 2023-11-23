@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { MessageType, ENV } from '../constants';
 import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
@@ -15,6 +14,7 @@ import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { getGroup } from './getGroup';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
+import { axiosPost } from '../utils/axiosUtil';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -44,7 +44,12 @@ export const sendCore = async (
     await validateOptions(computedOptions);
 
     const wallet = getWallet({ account, signer });
-    const sender = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
+    const sender = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
     const receiver = await getUserDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
     const isGroup = isValidETHAddress(to) ? false : true;
@@ -90,7 +95,9 @@ export const sendCore = async (
       env,
       pgpHelper
     );
-    return (await axios.post(apiEndpoint, body)).data;
+
+    const response = await axiosPost<MessageWithCID>(apiEndpoint, body);
+    return response.data;
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);

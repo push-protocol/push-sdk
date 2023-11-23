@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
@@ -22,6 +21,7 @@ import {
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -47,11 +47,9 @@ export interface ChatUpdateGroupType extends EnvOptionsType {
  * Update Group information
  */
 
-export const updateGroup = async (
-  options: ChatUpdateGroupType
-) => {
+export const updateGroup = async (options: ChatUpdateGroupType) => {
   return await updateGroupCore(options, PGPHelper);
-}
+};
 
 export const updateGroupCore = async (
   options: ChatUpdateGroupType,
@@ -89,7 +87,12 @@ export const updateGroupCore = async (
       address,
       groupDescription
     );
-    const connectedUser = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
+    const connectedUser = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
     const convertedMembersPromise = members.map(async (each) => {
       return getUserDID(each, env);
     });
@@ -130,15 +133,8 @@ export const updateGroupCore = async (
       rules
     );
 
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
+    const response = await axiosPut<GroupDTO>(apiEndpoint, body);
+    return response.data;
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${updateGroup.name} -:  `,

@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   getCAIPAddress,
   getConfig,
@@ -12,6 +11,7 @@ import {
 } from './signature.helpers';
 import Constants, {ENV} from '../constants';
 import { SignerType } from "../types";
+import { axiosPost } from "../utils/axiosUtil";
  
 export type UnSubscribeOptionsType = {
   signer: SignerType;
@@ -83,7 +83,7 @@ export const unsubscribe = async (
       },
     };
 
-    await axios.post(requestUrl, body);
+    await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 

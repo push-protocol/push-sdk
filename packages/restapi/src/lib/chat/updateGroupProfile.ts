@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
@@ -22,6 +21,7 @@ import {
 
 import { getGroup } from './getGroup';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
@@ -125,15 +125,8 @@ export const updateGroupProfile = async (
       rules
     );
 
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
+    const response = await axiosPut<GroupDTO>(apiEndpoint, body);
+    return response.data;
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${updateGroupProfile.name} -:  `,
