@@ -174,7 +174,7 @@ export class Chat {
   }
 
   async block(users: Array<string>): Promise<IUser> {
-    if (!this.signer) {
+    if (!this.signer || !this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({
