@@ -151,8 +151,8 @@ export const updateGroupCore = async (
 
     const bodyToBeHashed = {
       groupName: groupName,
-      groupDescription: groupDescription,
-      groupImage: groupImage,
+      groupDescription: groupDescription == undefined ? null : groupDescription,
+      groupImage: groupImage == undefined ? null : groupImage,
       members: convertedMembers,
       admins: convertedAdmins,
       chatId: chatId,
