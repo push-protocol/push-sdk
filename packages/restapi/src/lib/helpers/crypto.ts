@@ -505,7 +505,13 @@ export const verifyProfileKeys = async (
   }
 
   try {
-    if (publicKey && publicKey.length > 0 && verificationProof) {
+    if (
+      publicKey &&
+      publicKey.length > 0 &&
+      verificationProof &&
+      // Allow pgp sig validation after eip191v2 only
+      verificationProof.split(':')[0] === 'eip191v2'
+    ) {
       const data = {
         caip10,
         did,
