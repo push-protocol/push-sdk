@@ -165,6 +165,7 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
+      rules,
       onReceiveMessage = (message: string) => {
         console.log('received a meesage', message);
       },
@@ -173,6 +174,10 @@ export class Video {
     } = options || {};
 
     console.log('request', 'options', options);
+
+    if(!chatId && !rules){
+      throw new Error("Either chatId or rules object is required to send a notification for video or spaces");
+    }
 
     const recipientAddresses = Array.isArray(recipientAddress)
       ? recipientAddress
@@ -184,7 +189,7 @@ export class Video {
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = senderAddress;
-            draft.meta.chatId = chatId;
+            draft.meta.chatId = chatId ?? rules!.access.data;
             draft.meta.initiator.address = senderAddress;
 
             const incomingIndex = getIncomingIndexFromAddress(
@@ -245,6 +250,7 @@ export class Video {
                 ? VideoCallStatus.RETRY_INITIALIZED
                 : VideoCallStatus.INITIALIZED,
               chatId,
+              rules,
               signalData: data,
               env: this.env,
               callType: this.callType,
@@ -313,6 +319,7 @@ export class Video {
                 senderAddress,
                 recipientAddress: connectToAddresses,
                 chatId,
+                rules,
                 details: {
                   type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                   data: {},
@@ -435,6 +442,7 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
+      rules,
       onReceiveMessage = (message: string) => {
         console.log('received a meesage', message);
       },
@@ -444,6 +452,10 @@ export class Video {
 
     try {
       console.log('accept request', 'options', options);
+
+      if(!chatId && !rules){
+        throw new Error("Either chatId or rules object is required to send a notification for video or spaces");
+      }
 
       // if peerInstance is not null -> acceptRequest/request was called before
       if (this.peerInstances[recipientAddress]) {
@@ -468,7 +480,7 @@ export class Video {
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.meta.chatId = chatId;
+          draft.meta.chatId = chatId ?? rules!.access.data;
           draft.meta.initiator.address = senderAddress;
 
           const incomingIndex = getIncomingIndexFromAddress(
@@ -518,6 +530,7 @@ export class Video {
             recipientAddress,
             status: VideoCallStatus.RETRY_INITIALIZED,
             chatId,
+            rules,
             signalData: null,
             callType: this.callType,
             env: this.env,
@@ -547,6 +560,7 @@ export class Video {
               ? VideoCallStatus.RETRY_RECEIVED
               : VideoCallStatus.RECEIVED,
             chatId,
+            rules,
             signalData: data,
             env: this.env,
             callType: this.callType,
@@ -624,6 +638,7 @@ export class Video {
               senderAddress,
               recipientAddress: connectToAddresses,
               chatId,
+              rules,
               details: {
                 type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                 data: {},

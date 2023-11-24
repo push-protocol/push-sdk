@@ -7,6 +7,7 @@ import {
   SPACE_DISCONNECT_TYPE,
   SPACE_INVITE_ROLES,
   SPACE_REQUEST_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
@@ -82,6 +83,16 @@ export type ParsedResponseType = {
   };
 };
 
+export interface VideNotificationRules {
+  access: {
+    type: VIDEO_NOTIFICATION_ACCESS_TYPE;
+    data: string;
+  };
+}
+
+// SendNotificationRules can be extended in the future for other use cases
+export type SendNotificationRules = VideNotificationRules;
+
 export interface ISendNotificationInputOptions {
   senderType?: 0 | 1;
   signer: any;
@@ -136,7 +147,9 @@ export interface ISendNotificationInputOptions {
   };
   ipfsHash?: string;
   env?: ENV;
+  /** @deprecated - Use `rules` object instead */
   chatId?: string;
+  rules?: SendNotificationRules;
   pgpPrivateKey?: string;
 }
 
@@ -327,7 +340,6 @@ export enum GROUP_RULES_SUB_CATEGORY {
   GET = 'GET',
 }
 
-
 export enum GROUP_RULES_PERMISSION {
   ENTRY = 'Entry',
   CHAT = 'Chat',
@@ -354,7 +366,6 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
-
 };
 
 export type Condition = ConditionBase & {
@@ -370,7 +381,6 @@ export interface Rules {
     conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
-
 
 export interface SpaceRules {
   entry?: {
@@ -600,7 +610,6 @@ export type viemSignerType = {
   account: { [key: string]: any };
   privateKey?: string;
   provider?: providers.Provider;
-  
 };
 
 export type SignerType = ethersV5SignerType | viemSignerType;
@@ -723,7 +732,9 @@ export type VideoCreateInputOptions = {
 export type VideoRequestInputOptions = {
   senderAddress: string;
   recipientAddress: string | string[];
-  chatId: string;
+  /** @deprecated - Use `rules` object instead */
+  chatId?: string;
+  rules?: VideNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -736,7 +747,9 @@ export type VideoAcceptRequestInputOptions = {
   signalData: any;
   senderAddress: string;
   recipientAddress: string;
-  chatId: string;
+  /** @deprecated - Use `rules` object instead */
+  chatId?: string;
+  rules?: VideNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
