@@ -125,7 +125,7 @@ describe.only('test', () => {
   //     );
   //     console.log(approveRes2);
   //   });
-  it.only('Should get proper minnimal payload', async() => {
+  it('Should get proper minnimal payload', async() => {
     const inputData = [
       {
         type: 1,
@@ -159,10 +159,11 @@ describe.only('test', () => {
     const account2 = await signer2.getAddress();
     const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
     const minimalSettings = userAlice.getMinimalSetting(inputData);
-    console.log(minimalSettings);
+    // console.log(minimalSettings);
+    expect(minimalSettings).not.null
   });
 
-  it.only('Should get proper minnimal payload', async() => {
+  it('Should get proper minnimal payload', async() => {
     const inputData = [
       {
         type: 1,
@@ -183,7 +184,8 @@ describe.only('test', () => {
     const account2 = await signer2.getAddress();
     const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
     const minimalSettings = userAlice.getMinimalSetting(inputData);
-    console.log(minimalSettings);
+    // console.log(minimalSettings);
+    expect(minimalSettings).not.null
   });
   //   it('testing with viem', async () => {
   //     const account2 = await signer2.getAddress();
