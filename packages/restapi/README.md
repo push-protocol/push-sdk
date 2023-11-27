@@ -324,8 +324,8 @@ const searchResult = await userAlice.channel.search("push")
 ### **Get Subscribers Of A Channel**
 
 ```tsx
-// fetches subscribers of a channel
-const subscribersResult = await userAlice.channel.subscribers()
+// fetches subscribers of a channel in a paginated manner
+const subscribersResult = await userAlice.channel.subscribers({page: 1, limit: 10})
 
 ```
 
@@ -335,7 +335,8 @@ const subscribersResult = await userAlice.channel.subscribers()
 | --- | --- | --- | --- |
 | options* | ChannelInfoOptions | - | Configuration options for retrieving subscribers. |
 | options.channel* | string | - | Channel address in CAIP |
-
+| options.page* | number | - | The page number for pagination |
+| options.limit* | number | - | The maximum number of items to retrieve per page |
 \* - Optional
 
 ---
