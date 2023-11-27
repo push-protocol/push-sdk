@@ -11,12 +11,17 @@ import { User } from './user';
 import { PushStream } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
+import {
+  PushStreamInitializeProps,
+  STREAM,
+} from '../pushstream/pushStreamTypes';
 
 export class PushAPI {
-  private signer: SignerType;
+  private signer?: SignerType;
+  private readMode: boolean;
   private account: string;
-  private decryptedPgpPvtKey: string;
-  private pgpPublicKey: string;
+  private decryptedPgpPvtKey?: string;
+  private pgpPublicKey?: string;
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
 
@@ -30,14 +35,16 @@ export class PushAPI {
   public notification!: Notification;
 
   private constructor(
-    signer: SignerType,
     env: ENV,
     account: string,
-    decryptedPgpPvtKey: string,
-    pgpPublicKey: string,
+    readMode: boolean,
+    decryptedPgpPvtKey?: string,
+    pgpPublicKey?: string,
+    signer?: SignerType,
     progressHook?: (progress: ProgressHookType) => void
   ) {
     this.signer = signer;
+    this.readMode = readMode;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
@@ -49,44 +56,67 @@ export class PushAPI {
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
-      this.decryptedPgpPvtKey,
       this.env,
+      this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
     );
     this.profile = new Profile(
       this.account,
-      this.decryptedPgpPvtKey,
       this.env,
+      this.decryptedPgpPvtKey,
       this.progressHook
     );
     this.encryption = new Encryption(
       this.account,
+      this.env,
       this.decryptedPgpPvtKey,
       this.pgpPublicKey,
-      this.env,
       this.signer,
       this.progressHook
     );
     this.user = new User(this.account, this.env);
   }
-
+  // Overloaded initialize method signatures
   static async initialize(
-    signer: SignerType,
+    signer?: SignerType,
     options?: PushAPIInitializeProps
-  ): Promise<PushAPI> {
+  ): Promise<PushAPI>;
+  static async initialize(options?: PushAPIInitializeProps): Promise<PushAPI>;
+
+  static async initialize(...args: any[]): Promise<PushAPI> {
     try {
+      let signer: SignerType | undefined;
+      let options: PushAPIInitializeProps | undefined;
+
+      if (
+        args.length === 1 &&
+        typeof args[0] === 'object' &&
+        'account' in args[0]
+      ) {
+        // Single options object provided
+        options = args[0];
+      } else if (args.length === 1) {
+        // Only signer provided
+        [signer] = args;
+      } else if (args.length === 2) {
+        // Separate signer and options arguments provided
+        [signer, options] = args;
+      } else {
+        // Handle other cases or throw an error
+        throw new Error('Invalid arguments provided to initialize method.');
+      }
+
+      if (!signer && !options?.account) {
+        throw new Error("Either 'signer' or 'account' must be provided.");
+      }
+
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-
         version: Constants.ENC_TYPE_V3,
         autoUpgrade: true,
-
         account: null,
-        streamOptions: {
-          enabled: true, // Default value
-        },
       };
 
       // Settings object
@@ -100,23 +130,31 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
-        streamOptions: {
-          ...defaultOptions.streamOptions,
-          ...(options?.streamOptions ?? {}),
-        },
       };
+
+      const readMode = !signer;
 
       // Get account
       // Derives account from signer if not provided
-      const derivedAccount = await getAccountAddress(
-        getWallet({
-          account: settings.account as string | null,
-          signer: signer,
-        })
-      );
 
-      let decryptedPGPPrivateKey: string;
-      let pgpPublicKey: string;
+      let derivedAccount;
+      if (signer) {
+        derivedAccount = await getAccountAddress(
+          getWallet({
+            account: settings.account as string | null,
+            signer: signer,
+          })
+        );
+      } else {
+        derivedAccount = options?.account;
+      }
+
+      if (!derivedAccount) {
+        throw new Error('Account could not be derived.');
+      }
+
+      let decryptedPGPPrivateKey;
+      let pgpPublicKey;
 
       /**
        * Decrypt PGP private key
@@ -127,57 +165,43 @@ export class PushAPI {
         account: derivedAccount,
         env: settings.env,
       });
-      if (user && user.encryptedPrivateKey) {
-        decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          signer: signer,
-          toUpgrade: settings.autoUpgrade,
-          additionalMeta: settings.versionMeta,
-          progressHook: settings.progressHook,
-          env: settings.env,
-        });
-        pgpPublicKey = user.publicKey;
-      } else {
-        const newUser = await PUSH_USER.create({
-          env: settings.env,
-          account: derivedAccount,
-          signer,
-          version: settings.version,
-          additionalMeta: settings.versionMeta,
-          origin: settings.origin,
-          progressHook: settings.progressHook,
-        });
-        decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
-        pgpPublicKey = newUser.publicKey;
+
+      if (!readMode) {
+        if (user && user.encryptedPrivateKey) {
+          decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
+            encryptedPGPPrivateKey: user.encryptedPrivateKey,
+            signer: signer,
+            toUpgrade: settings.autoUpgrade,
+            additionalMeta: settings.versionMeta,
+            progressHook: settings.progressHook,
+            env: settings.env,
+          });
+          pgpPublicKey = user.publicKey;
+        } else {
+          const newUser = await PUSH_USER.create({
+            env: settings.env,
+            account: derivedAccount,
+            signer,
+            version: settings.version,
+            additionalMeta: settings.versionMeta,
+            origin: settings.origin,
+            progressHook: settings.progressHook,
+          });
+          decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
+          pgpPublicKey = newUser.publicKey;
+        }
       }
 
       // Initialize PushAPI instance
       const api = new PushAPI(
-        signer,
         settings.env as ENV,
         derivedAccount,
+        readMode,
         decryptedPGPPrivateKey,
         pgpPublicKey,
+        signer,
         settings.progressHook
       );
-
-      if (settings.streamOptions.enabled) {
-        const streamInstance = await PushStream.initialize(
-          api.account,
-          decryptedPGPPrivateKey,
-          signer,
-          settings.progressHook,
-          {
-            ...settings.streamOptions,
-            env: settings.env, // Use the env from the top-level PushAPIInitializeProps
-          }
-        );
-        if (streamInstance) {
-          api.stream = streamInstance;
-        } else {
-          throw new Error('Failed to initialize PushStream.');
-        }
-      }
 
       return api;
     } catch (error) {
@@ -186,10 +210,35 @@ export class PushAPI {
     }
   }
 
+  async initStream(
+    listen: STREAM[],
+    options?: PushStreamInitializeProps
+  ): Promise<PushStream> {
+    if (this.stream) {
+      throw new Error('Stream is already initialized.');
+    }
+
+    this.stream = await PushStream.initialize(
+      this.account,
+      listen,
+      this.env,
+      this.decryptedPgpPvtKey,
+      this.progressHook,
+      this.signer,
+      options
+    );
+
+    return this.stream;
+  }
+
   async info() {
     return await PUSH_USER.get({
       account: this.account,
       env: this.env,
     });
+  }
+
+  static ensureSignerMessage(): string {
+    return 'Operation not allowed in read-only mode. Signer is required.';
   }
 }

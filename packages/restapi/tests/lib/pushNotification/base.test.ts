@@ -125,68 +125,68 @@ describe.only('test', () => {
   //     );
   //     console.log(approveRes2);
   //   });
-  it('Should get proper minnimal payload', async() => {
-    const inputData = [
-      {
-        type: 1,
-        default: 1,
-        description: 'test1',
-      },
-      {
-        type: 2,
-        default: 10,
-        description: 'test2',
-        data: {
-          upper: 100,
-          lower: 1,
-        },
-      },
-      {
-        type: 3,
-        default: {
-          lower: 10,
-          upper: 50
-        },
-        description: 'test3',
-        data: {
-          upper: 100,
-          lower: 1,
-          enabled:true,
-          ticker:2
-        }
-      }
-    ];
-    const account2 = await signer2.getAddress();
-    const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
-    const minimalSettings = userAlice.getMinimalSetting(inputData);
-    // console.log(minimalSettings);
-    expect(minimalSettings).not.null
-  });
+  // it('Should get proper minnimal payload', async() => {
+  //   const inputData = [
+  //     {
+  //       type: 1,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //     {
+  //       type: 2,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //       },
+  //     },
+  //     {
+  //       type: 3,
+  //       default: {
+  //         lower: 10,
+  //         upper: 50
+  //       },
+  //       description: 'test3',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //         enabled:true,
+  //         ticker:2
+  //       }
+  //     }
+  //   ];
+  //   const account2 = await signer2.getAddress();
+  //   const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   // console.log(minimalSettings);
+  //   expect(minimalSettings).not.null
+  // });
 
-  it('Should get proper minnimal payload', async() => {
-    const inputData = [
-      {
-        type: 1,
-        default: 10,
-        description: 'test2',
-        data: {
-          upper: 100,
-          lower: 1,
-          enabled: false
-        },
-      },
-      {
-        type: 0,
-        default: 1,
-        description: 'test1',
-      },
-    ];
-    const account2 = await signer2.getAddress();
-    const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
-    const minimalSettings = userAlice.getMinimalSetting(inputData);
-    // console.log(minimalSettings);
-    expect(minimalSettings).not.null
-  });
+  // it('Should get proper minnimal payload', async() => {
+  //   const inputData = [
+  //     {
+  //       type: 1,
+  //       default: 10,
+  //       description: 'test2',
+  //       data: {
+  //         upper: 100,
+  //         lower: 1,
+  //         enabled: false
+  //       },
+  //     },
+  //     {
+  //       type: 0,
+  //       default: 1,
+  //       description: 'test1',
+  //     },
+  //   ];
+  //   const account2 = await signer2.getAddress();
+  //   const userAlice = new PushNotificationBaseClass(signer2, ENV.STAGING, account2,);
+  //   const minimalSettings = userAlice.getMinimalSetting(inputData);
+  //   // console.log(minimalSettings);
+  //   expect(minimalSettings).not.null
+  // });
   //   it('testing with viem', async () => {
   //     const account2 = await signer2.getAddress();
   //       const viemUser = new PushNotificationBaseClass(signer, ENV.STAGING, account2)

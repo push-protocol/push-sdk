@@ -35,10 +35,10 @@ const CHAINS = [
     rpcUrl: `https://mainnet.infura.io/v3/${InfuraAPIKey}`
   },
   {
-    id: '0x5',
+    id: '0xAA36A7',
     token: 'ETH',
-    label: 'Goerli',
-    rpcUrl: `https://goerli.infura.io/v3/${InfuraAPIKey}`
+    label: 'Sepolia',
+    rpcUrl: `https://sepolia.infura.io/v3/${InfuraAPIKey}`
   },
   {
     id: '0x13881',

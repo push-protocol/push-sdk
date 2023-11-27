@@ -36,7 +36,7 @@ After you get the Notification data from the [API](../restapi/README.md#fetching
 
 ```typescript
 const notifications = await PushAPI.user.getFeeds({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   env: 'staging'
 });
 ```
@@ -79,7 +79,7 @@ For Spam data [API](../restapi/README.md#fetching-user-spam-notifications)
 
 ```typescript
 const spams = await PushAPI.user.getFeeds({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   spam: true,
   env: 'staging'
 });
@@ -149,7 +149,7 @@ where
 | cta      | string | Call To Action Link (given during notification creation)  |
 | image      | string | Any media link (given during notification creation) |
 | url      | string | Channel Link (given during channel setup)   |
-| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_GOERLI", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "THE_GRAPH" |
+| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_SEPOLIA", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "THE_GRAPH" |
 | theme      | string | 'light' or 'dark' (customization to be given by the dApp)  |
 | customTheme      | INotificationItemTheme | custom theme object for the component  |
 | isSpam      | boolean | whether a spam notification or not   |

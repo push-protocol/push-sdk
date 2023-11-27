@@ -132,13 +132,11 @@ const validateTokenData = async (condition:Rule):Promise<CriteriaValidationError
   if(_eip155Format.length !==3){
     return {tokenError:"Invalid contract address"}
   }
-
   const [chainId, address] = [parseInt(_eip155Format[1]), _eip155Format[2]]
 
   if(!ethers.utils.isAddress(address)){
     return {tokenError:`Invalid contract address`}
   }
-
   const [err] = condition.category === CATEGORY.ERC721 ? 
     await fetchERC721nfo(address, chainId) : await fetchERC20Info(address, chainId);
 

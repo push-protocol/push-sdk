@@ -6,7 +6,7 @@ import {
   NotificationSettings,
   UserSetting,
 } from './PushNotificationTypes';
-import CONFIG, * as config from '../config';
+import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
 import { ethers, Signer, BigNumber } from 'ethers';
@@ -18,6 +18,14 @@ import {
   WalletClient,
   Chain,
 } from 'viem';
+import * as PUSH_CHANNEL from '../channels';
+import {
+  getAPIBaseUrls,
+  getFallbackETHCAIPAddress,
+  validateCAIP,
+} from '../helpers';
+import * as PUSH_ALIAS from '../alias';
+import { PushAPI } from '../pushapi/PushAPI';
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -107,7 +115,7 @@ export class PushNotificationBaseClass {
 
   // checks if the signer object is supplied
   protected checkSignerObjectExists() {
-    if (!this.signer) throw new Error(ERROR_SIGNER_NEEDED);
+    if (!this.signer) throw new Error(PushAPI.ensureSignerMessage());
     return true;
   }
 
@@ -153,7 +161,7 @@ export class PushNotificationBaseClass {
     // fetch the minimal version based on conifg that was passed
     let index = '';
     if (options.payload?.category && settings) {
-      if (settings[options.payload.category - 1].type == 2) {
+      if (settings[options.payload.category - 1].type == SLIDER_TYPE) {
         index =
           options.payload.category +
           SETTING_DELIMITER +
@@ -161,8 +169,16 @@ export class PushNotificationBaseClass {
           SETTING_DELIMITER +
           settings[options.payload.category - 1].default;
       }
-      if (settings[options.payload.category - 1].type == 1) {
+      if (settings[options.payload.category - 1].type == BOOLEAN_TYPE) {
         index = options.payload.category + SETTING_DELIMITER + BOOLEAN_TYPE;
+      }
+      if (settings[options.payload.category - 1].type == RANGE_TYPE) {
+        index =
+          options.payload.category +
+          SETTING_DELIMITER +
+          RANGE_TYPE +
+          SETTING_DELIMITER +
+          settings[options.payload.category - 1].default.lower;
       }
     }
     const notificationPayload: ISendNotificationInputOptions = {
@@ -662,7 +678,7 @@ export class PushNotificationBaseClass {
     return 0;
   }
 
-  public getMinimalSetting(configuration: NotificationSettings): {
+  protected getMinimalSetting(configuration: NotificationSettings): {
     setting: string;
     description: string;
   } {
@@ -709,7 +725,7 @@ export class PushNotificationBaseClass {
         }
       }
       if (ele.type == RANGE_TYPE) {
-        if ((ele.default && typeof ele.default == 'object') && ele.data) {
+        if (ele.default && typeof ele.default == 'object' && ele.data) {
           const enabled =
             ele.data && ele.data.enabled != undefined
               ? Number(ele.data.enabled).toString()
@@ -767,5 +783,36 @@ export class PushNotificationBaseClass {
         userSetting = userSetting + SETTING_SEPARATOR;
     }
     return numberOfSettings + SETTING_SEPARATOR + userSetting;
+  }
+
+  protected async getChannelOrAliasInfo(address: string) {
+    try {
+      address = validateCAIP(address)
+        ? address
+        : getFallbackETHCAIPAddress(this.env!, this.account!);
+      const channelInfo = await PUSH_CHANNEL.getChannel({
+        channel: address as string,
+        env: this.env,
+      });
+      if (channelInfo) return channelInfo;
+      // // TODO: Temp fix, do a more concrete fix later
+      const API_BASE_URL = getAPIBaseUrls(this.env!);
+      const apiEndpoint = `${API_BASE_URL}/v1/alias`;
+      const requestUrl = `${apiEndpoint}/${address}/channel`;
+      const aliasInfo = await axios
+        .get(requestUrl)
+        .then((response) => response.data)
+        .catch((err) => {
+          console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
+        });
+      const aliasInfoFromChannel = await PUSH_CHANNEL.getChannel({
+        channel: aliasInfo.channel as string,
+        env: this.env,
+      });
+      if (aliasInfoFromChannel) return aliasInfoFromChannel;
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 }

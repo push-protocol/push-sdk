@@ -10,10 +10,8 @@ import { SupportChatMainStateContext, SupportChatPropsContext } from '../../cont
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
-  decryptChat,
   getChats,
   walletToPCAIP10,
-  pCAIP10ToWallet
 } from '../../helpers';
 import type { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
@@ -29,7 +27,7 @@ export const Modal: React.FC = () => {
     string | null
   >(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
-  const { supportAddress, env, account, signer, greetingMsg, theme } =
+  const { supportAddress, pushUser, env, account, signer, greetingMsg, theme } =
     useContext<any>(SupportChatPropsContext);
   const {
     chats,
@@ -42,7 +40,7 @@ export const Modal: React.FC = () => {
     setToastType,
     socketData
   } = useContext<any>(SupportChatMainStateContext);
-  const listInnerRef = useChatScroll(chats.length);
+  const listInnerRef = useChatScroll(0);
 
   const greetingMsgObject = {
     fromDID: walletToPCAIP10(supportAddress),
@@ -63,11 +61,25 @@ export const Modal: React.FC = () => {
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
-        // This will be triggered after hitting the first element.
-        // pagination
+        const content = listInnerRef.current;
+        const curScrollPos = content.scrollTop;
+        const oldScroll = content.scrollHeight - content.clientHeight;
+
         getChatCall();
+
+        const newScroll = content.scrollHeight - content.clientHeight;
+        content.scrollTop = curScrollPos + (newScroll - oldScroll);
       }
     }
+  };
+  const scrollToBottom = () => {
+    setTimeout(()=>{
+      if (listInnerRef.current) {
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
+
+      }
+    },0)
+  
   };
 
   const getChatCall = async () => {
@@ -76,7 +88,8 @@ export const Modal: React.FC = () => {
     setLoading(true);
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
-      pgpPrivateKey: connectedUser.privateKey,
+      pushUser,
+      // pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
       threadHash: lastThreadHashFetched!,
       limit: chatsFetchedLimit,
@@ -94,7 +107,7 @@ export const Modal: React.FC = () => {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
       }
-      const user = await createUserIfNecessary({ account, signer, env });
+      const user = await createUserIfNecessary({ account, signer, env, pushUser });
       setConnectedUser(user);
       setLoading(false);
     } catch (err:any) {
@@ -104,23 +117,25 @@ export const Modal: React.FC = () => {
     }
   };
 
-  const getUpdatedChats = async (message:IMessageIPFS) =>{
-    if (message && (supportAddress === pCAIP10ToWallet(message?.fromCAIP10))) {
-      const chat = await decryptChat({ message, connectedUser, env });
-      socketData.messagesSinceLastConnection.decrypted = true;
-      setChatsSorted([...chats, chat]);
-    }
-  }
-
+  
   useEffect(() => {
-    if(socketData.messagesSinceLastConnection && !socketData.messagesSinceLastConnection.decrypted){
-      getUpdatedChats(socketData.messagesSinceLastConnection);
-    }
+
+    if(socketData.messagesSinceLastConnection){
+      const message: IMessageIPFS = socketData.messagesSinceLastConnection
+      if (message ) {
+        setChatsSorted([...chats, message]);
+    }}
   }, [socketData.messagesSinceLastConnection]);
 
   useEffect(() => {
+    
     getChatCall();
-  }, [connectedUser]);
+  }, [connectedUser, env, account,signer, supportAddress, pushUser]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [connectedUser, env, account, socketData]);
+
 
   return (
     <Container theme={theme}>

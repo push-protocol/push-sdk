@@ -26,7 +26,7 @@ const deprecationWarning = `
 
 export const _getSubscribers = async (
   options: GetSubscribersOptionsType
-) => {
+) : Promise<string[]> => {
 
   console.warn(deprecationWarning);
 

@@ -19,8 +19,8 @@ export const Constants = {
 
 export const ALCHEMY_API_KEY = 'rtkd-a4JWpnViQBZdNCiFBGTJdp5e0R2';
 export const NETWORK_DETAILS = {
-  5: {
-    network: 'goerli',
+  11155111: {
+    network: 'sepolia',
   },
   80001: {
     network: 'polygon-mumbai',
@@ -35,6 +35,7 @@ export const NETWORK_DETAILS = {
   420: {},
 };
 
+//todo: need to change o sepolia
 export const CoreContractChainId = {
   prod: 1,
   dev: 5,
@@ -45,7 +46,7 @@ export const CoreContractChainId = {
 
 
 const TESTNET_NETWORK = {
-  ETHEREUM: 'eip155:5',
+  ETHEREUM: 'eip155:11155111',
   POLYGON: 'eip155:80001',
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:420',
@@ -77,7 +78,7 @@ export const allowedNetworks = {
     42161 // for arbitrum mainnet
   ],
   dev: [
-    5, // for eth goerli
+    11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
@@ -85,14 +86,14 @@ export const allowedNetworks = {
   ],
   staging: [
     // 42, //for kovan
-    5, // for goerli
+    11155111, // for sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
     421613 // for arbitrum testnet
   ],
   local: [
-    5, // for eth goerli
+    11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet

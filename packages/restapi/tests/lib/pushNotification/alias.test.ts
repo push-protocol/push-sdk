@@ -21,7 +21,7 @@ describe('PushAPI.alias functionality', () => {
 
     const provider = new ethers.providers.JsonRpcProvider(
       // PUBLIC RPC
-      'https://goerli.blockpi.network/v1/rpc/public'
+      'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
