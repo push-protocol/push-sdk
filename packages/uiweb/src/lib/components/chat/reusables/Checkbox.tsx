@@ -12,7 +12,6 @@ export interface ICheckboxProps {
 
 export const Checkbox = (props: ICheckboxProps) => {
   const theme = useContext(ThemeContext);
-console.log(props)
   return (
     <ThemeProvider theme={theme}>
       <CheckboxContainer>

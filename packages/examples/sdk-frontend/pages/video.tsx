@@ -20,7 +20,7 @@ interface VideoCallMetaDataType {
 }
 
 // env which will be used for the video call
-const env = ENV.DEV;
+const env = ENV.STAGING;
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();

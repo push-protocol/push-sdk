@@ -18,9 +18,9 @@ const createSVGIcon = (element:any, chainName: string) => {
 };
 
 export const NETWORK_ICON_DETAILS =  {
-  5: {
-    label: 'ETHEREUM GOERLI',
-    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Goerli'),
+  11155111: {
+    label: 'ETHEREUM SEPOLIA',
+    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Sepolia'),
   },
   1: {
     label: 'ETHEREUM MAINNET',

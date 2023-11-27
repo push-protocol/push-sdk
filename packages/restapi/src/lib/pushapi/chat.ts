@@ -26,14 +26,15 @@ import {
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
 import { User } from './user';
+import { PushAPI } from './PushAPI';
 export class Chat {
   private userInstance: User;
 
   constructor(
     private account: string,
-    private decryptedPgpPvtKey: string,
     private env: ENV,
-    private signer: SignerType,
+    private decryptedPgpPvtKey?: string,
+    private signer?: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
     this.userInstance = new User(this.account, this.env);
@@ -47,15 +48,18 @@ export class Chat {
        */
       page?: number;
       limit?: number;
+      overrideAccount?: string;
     }
   ): Promise<IFeeds[]> {
+    const accountToUse = options?.overrideAccount || this.account;
+
     const listParams = {
-      account: this.account,
+      account: accountToUse,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       page: options?.page,
       limit: options?.limit,
       env: this.env,
-      toDecrypt: true,
+      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
     };
 
     switch (type) {
@@ -77,7 +81,7 @@ export class Chat {
 
     return await PUSH_CHAT.latest({
       threadhash: threadHash,
-      toDecrypt: true,
+      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
@@ -111,12 +115,16 @@ export class Chat {
       env: this.env,
       threadhash: reference,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      toDecrypt: true,
+      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
+
     if (!options.type) {
       options.type = MessageType.TEXT;
     }
@@ -131,6 +139,9 @@ export class Chat {
   }
 
   async decrypt(messagePayloads: IMessageIPFS[]) {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
     return await PUSH_CHAT.decryptConversation({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
@@ -140,6 +151,9 @@ export class Chat {
   }
 
   async accept(target: string): Promise<string> {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
     return await PUSH_CHAT.approve({
       senderAddress: target,
       env: this.env,
@@ -150,6 +164,9 @@ export class Chat {
   }
 
   async reject(target: string): Promise<void> {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
     await PUSH_CHAT.reject({
       senderAddress: target,
       env: this.env,
@@ -160,6 +177,9 @@ export class Chat {
   }
 
   async block(users: Array<string>): Promise<IUser> {
+    if (!this.signer || !this.decryptedPgpPvtKey) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
     const user = await PUSH_USER.get({
       account: this.account,
       env: this.env,
@@ -194,6 +214,9 @@ export class Chat {
   }
 
   async unblock(users: Array<string>): Promise<IUser> {
+    if (!this.signer || !this.decryptedPgpPvtKey) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
     const user = await PUSH_USER.get({
       account: this.account,
       env: this.env,
@@ -236,6 +259,9 @@ export class Chat {
 
   group = {
     create: async (name: string, options?: GroupCreationOptions) => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const groupParams: PUSH_CHAT.ChatCreateGroupType = {
         groupName: name,
         groupDescription: options?.description,
@@ -271,6 +297,9 @@ export class Chat {
       chatId: string,
       options: GroupUpdateOptions
     ): Promise<GroupDTO> => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const group = await PUSH_CHAT.getGroup({
         chatId: chatId,
         env: this.env,
@@ -301,6 +330,9 @@ export class Chat {
     },
 
     add: async (chatId: string, options: ManageGroupOptions) => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const { role, accounts } = options;
 
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -340,6 +372,9 @@ export class Chat {
     },
 
     remove: async (chatId: string, options: ManageGroupOptions) => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const { role, accounts } = options;
 
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -379,6 +414,9 @@ export class Chat {
     },
 
     join: async (target: string): Promise<GroupDTO> => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,
@@ -411,6 +449,9 @@ export class Chat {
     },
 
     leave: async (target: string): Promise<GroupDTO> => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       const status = await PUSH_CHAT.getGroupMemberStatus({
         chatId: target,
         did: this.account,
@@ -438,6 +479,9 @@ export class Chat {
       }
     },
     reject: async (target: string): Promise<void> => {
+      if (!this.signer) {
+        throw new Error(PushAPI.ensureSignerMessage());
+      }
       await PUSH_CHAT.reject({
         senderAddress: target,
         env: this.env,

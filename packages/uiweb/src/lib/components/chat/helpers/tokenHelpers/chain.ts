@@ -19,8 +19,8 @@ export const getChainRPC = (chainId: number): string => {
       return getRpcURL("optimism-mainnet", key);
     case 56:
       return "https://bsc-dataseed.binance.org/";
-    case 5:
-      return getRpcURL("goerli", key);
+    case 11155111:
+      return getRpcURL("sepolia", key);
     case 420:
       return getRpcURL("optimism-goerli", key);
     case 80001:

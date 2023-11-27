@@ -35,6 +35,7 @@ export const NETWORK_DETAILS = {
   420: {},
 };
 
+//todo: need to change o sepolia
 export const CoreContractChainId = {
   prod: 1,
   dev: 5,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { PushAPI } from '@pushprotocol/restapi';
 import { ChatIcon } from '../../icons/ChatIcon';
 import { Modal } from './Modal';
 import styled from 'styled-components';
@@ -14,6 +15,7 @@ import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
+import { sign } from 'crypto';
 export type ChatProps = {
 account?: string;
   signer: SignerType;
@@ -46,26 +48,39 @@ export type ButtonStyleProps = {
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
-  const [accountadd, setAccount] = useState<string | null>(account)
+  const [accountadd, setAccountadd] = useState<string | null>(account)
+  const [pushUser, setPushUser] = useState<PushAPI | null>(null);
   const setChatsSorted = (chats: IMessageIPFS[]) => {
+
+    const chatsWithNumericTimestamps = chats.map(item => ({
+      ...item,
+      timestamp: typeof item.timestamp === 'string' ? parseInt(item.timestamp) : item.timestamp
+    }));
+
     const uniqueChats = [
-      ...new Map(chats.map((item) => [item['timestamp'], item])).values(),
+      ...new Map(chatsWithNumericTimestamps.map((item) => [item.timestamp, item])).values(),
     ];
 
     uniqueChats.sort((a, b) => {
+      
       return a.timestamp! > b.timestamp! ? 1 : -1;
     });
     setChats(uniqueChats);
   };
   const socketData = useSDKSocket({
-    account: account,
+    account: accountadd,
     env,
     apiKey,
+    pushUser: pushUser!,
+    supportAddress,
+    signer
   });
 
+  
   const chatPropsData = {
     account : accountadd,
     signer,
+    pushUser,
     supportAddress,
     greetingMsg,
     modalTitle,
@@ -74,20 +89,36 @@ export type ButtonStyleProps = {
     env,
   };
 
+
+
   useEffect(() => {
     (async () => {
       if(signer) {
         if (!account) {
           const address = await getAddressFromSigner(signer);
-          setAccount(address);
+          setAccountadd(address);
+          
         }
         else{
-          setAccount(account);
+          setAccountadd(account);
+          
         }
      
     }
     })();
   },[signer])
+
+ useEffect(() => {
+  (
+    async() =>{
+      if(Object.keys(signer || {}).length && accountadd){
+    const pushUser = await PushAPI.initialize(signer!, {env: env , account:accountadd!});
+          setPushUser(pushUser)
+  }
+    }
+  )()
+  
+ },[signer, accountadd])
 
   useEffect(() => {
     setChats([]);
