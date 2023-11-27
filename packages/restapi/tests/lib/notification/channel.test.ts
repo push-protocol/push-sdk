@@ -233,6 +233,29 @@ describe('PushAPI.channel functionality', () => {
         {
           notification: {
             title: 'hi',
+            body: 'test-targeted',
+          },
+          payload: {
+            title: 'testing first notification',
+            body: 'testing with random body',
+            cta: 'https://google.com/',
+            embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+            category: 3,
+          },
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
+      const res = await userAlice.channel.send(
+        [
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        ],
+        {
+          notification: {
+            title: 'hi',
             body: 'test-subset',
           },
           payload: {
