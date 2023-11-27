@@ -28,13 +28,17 @@ describe.skip('Public Groups', () => {
     account = `eip155:${signer.address}`;
     userAlice = await PushAPI.initialize(signer, {
       env: _env,
+      featureTag: 'ALPHA',
     });
 
     // UserBob
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     account2 = `eip155:${signer2.address}`;
-    userBob = await PushAPI.initialize(signer2, { env: _env });
+    userBob = await PushAPI.initialize(signer2, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
   });
 
   /**

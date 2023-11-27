@@ -1,6 +1,6 @@
 import Constants, { ENV } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
-import { PushAPIInitializeProps } from './pushAPITypes';
+import { FeatureTag, PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
 import { getAccountAddress, getWallet } from '../chat/helpers';
@@ -19,6 +19,7 @@ import {
 export class PushAPI {
   private signer?: SignerType;
   private readMode: boolean;
+  private featureTag: FeatureTag;
   private account: string;
   private decryptedPgpPvtKey?: string;
   private pgpPublicKey?: string;
@@ -38,6 +39,7 @@ export class PushAPI {
     env: ENV,
     account: string,
     readMode: boolean,
+    featureTag: FeatureTag,
     decryptedPgpPvtKey?: string,
     pgpPublicKey?: string,
     signer?: SignerType,
@@ -45,6 +47,7 @@ export class PushAPI {
   ) {
     this.signer = signer;
     this.readMode = readMode;
+    this.featureTag = featureTag;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
@@ -57,6 +60,7 @@ export class PushAPI {
     this.chat = new Chat(
       this.account,
       this.env,
+      this.featureTag,
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
@@ -130,6 +134,7 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
+        featureTag: options?.featureTag || 'STABLE',
       };
 
       const readMode = !signer;
@@ -197,6 +202,7 @@ export class PushAPI {
         settings.env as ENV,
         derivedAccount,
         readMode,
+        settings.featureTag,
         decryptedPGPPrivateKey,
         pgpPublicKey,
         signer,

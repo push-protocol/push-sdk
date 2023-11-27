@@ -10,6 +10,7 @@ export interface RemoveMembersFromGroupType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 export const removeMembers = async (
@@ -22,6 +23,7 @@ export const removeMembers = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = true,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -43,6 +45,7 @@ export const removeMembers = async (
       signer: signer,
       pgpPrivateKey: pgpPrivateKey,
       env: env,
+      overrideSecretKeyGeneration,
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {

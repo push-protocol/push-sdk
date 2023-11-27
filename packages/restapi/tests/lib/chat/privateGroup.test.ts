@@ -10,7 +10,7 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
-import { GroupDTO, MessageWithCID } from '../../../src/lib/types';
+import { GroupDTO, GroupInfoDTO, MessageWithCID } from '../../../src/lib/types';
 
 const _env = Constants.ENV.DEV;
 let groupName: string;
@@ -26,7 +26,7 @@ describe('Private Groups', () => {
   let account1: string;
   let account2: string;
   let account3: string;
-  let group: GroupDTO;
+  let group: GroupDTO | GroupInfoDTO;
   beforeEach(async () => {
     groupName = uniqueNamesGenerator({
       dictionaries: [adjectives, colors, animals],
@@ -38,17 +38,26 @@ describe('Private Groups', () => {
     const WALLET1 = ethers.Wallet.createRandom();
     const signer1 = new ethers.Wallet(WALLET1.privateKey);
     account1 = `eip155:${signer1.address}`;
-    userAlice = await PushAPI.initialize(signer1, { env: _env });
+    userAlice = await PushAPI.initialize(signer1, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     account2 = `eip155:${signer2.address}`;
-    userBob = await PushAPI.initialize(signer2, { env: _env });
+    userBob = await PushAPI.initialize(signer2, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey);
     account3 = `eip155:${signer3.address}`;
-    userJohn = await PushAPI.initialize(signer3, { env: _env });
+    userJohn = await PushAPI.initialize(signer3, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
 
     group = await userAlice.chat.group.create(groupName, {
       description: groupDescription,

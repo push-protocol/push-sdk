@@ -10,6 +10,7 @@ export interface AddAdminsToGroupType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 export const addAdmins = async (
@@ -22,6 +23,7 @@ export const addAdmins = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = true,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -45,6 +47,7 @@ export const addAdmins = async (
       signer: signer,
       pgpPrivateKey: pgpPrivateKey,
       env: env,
+      overrideSecretKeyGeneration,
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {

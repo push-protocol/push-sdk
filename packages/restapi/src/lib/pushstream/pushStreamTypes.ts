@@ -1,5 +1,6 @@
-import { Rules } from "../types";
+import { Rules } from '../types';
 import Constants, { ENV } from '../constants';
+import { FeatureTag } from '../pushapi/pushAPITypes';
 
 export type PushStreamInitializeProps = {
   filter?: {
@@ -13,6 +14,7 @@ export type PushStreamInitializeProps = {
   raw?: boolean;
   env?: ENV;
   overrideAccount?: string;
+  featureTag: FeatureTag;
 };
 
 export enum STREAM {
@@ -30,7 +32,6 @@ export enum NotificationEventType {
   INBOX = 'notification.inbox',
   SPAM = 'notification.spam',
 }
-
 
 export enum MessageOrigin {
   Other = 'other',
@@ -63,7 +64,6 @@ export enum ProposedEventNames {
   UpdateGroup = 'chat.group.update',
   Remove = 'chat.group.participant.remove',
 }
-
 
 export interface Profile {
   image: string;
@@ -140,7 +140,6 @@ export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
 }
 
-
 export interface MessageEvent {
   event: MessageEventType;
   origin: MessageOrigin;
@@ -168,8 +167,6 @@ export const NOTIFICATION = {
 } as const;
 
 export type NotificationType = keyof typeof NOTIFICATION.TYPE;
-
-
 
 export interface NotificationEvent {
   event: NotificationEventType;

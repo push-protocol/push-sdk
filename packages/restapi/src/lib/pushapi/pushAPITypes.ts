@@ -5,6 +5,7 @@ export enum ChatListType {
   CHATS = 'CHATS',
   REQUESTS = 'REQUESTS',
 }
+export type FeatureTag = 'ALPHA' | 'STABLE';
 export interface PushAPIInitializeProps {
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
@@ -13,6 +14,7 @@ export interface PushAPIInitializeProps {
   versionMeta?: { NFTPGP_V1?: { password: string } };
   autoUpgrade?: boolean;
   origin?: string;
+  featureTag?: FeatureTag;
 }
 
 export interface GroupCreationOptions {

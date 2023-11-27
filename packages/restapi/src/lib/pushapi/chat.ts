@@ -21,6 +21,7 @@ import {
   ManageGroupOptions,
   RemoveFromGroupOptions,
   GetGroupParticipantsOptions,
+  FeatureTag,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -39,6 +40,7 @@ export class Chat {
   constructor(
     private account: string,
     private env: ENV,
+    private featureTag: FeatureTag,
     private decryptedPgpPvtKey?: string,
     private signer?: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
@@ -163,6 +165,7 @@ export class Chat {
       account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
+      overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
     });
   }
 
@@ -265,7 +268,10 @@ export class Chat {
   }
 
   group = {
-    create: async (name: string, options?: GroupCreationOptions) => {
+    create: async (
+      name: string,
+      options?: GroupCreationOptions
+    ): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -292,8 +298,17 @@ export class Chat {
         members: options?.members ? options.members : [],
         admins: options?.admins ? options.admins : [],
       };
+      const response = await PUSH_CHAT.createGroupV2(groupParams);
 
-      return await PUSH_CHAT.createGroupV2(groupParams);
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return response;
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
+      }
     },
 
     participants: async (
@@ -324,21 +339,29 @@ export class Chat {
       return await PUSH_CHAT.getGroupAccess(getGroupAccessOptions);
     },
 
-    info: async (chatId: string): Promise<GroupDTO> => {
-      return await PUSH_CHAT.getGroup({
-        chatId: chatId,
-        env: this.env,
-      });
+    info: async (chatId: string): Promise<GroupDTO | GroupInfoDTO> => {
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return await PUSH_CHAT.getGroupInfo({
+            chatId: chatId,
+            env: this.env,
+          });
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: chatId,
+            env: this.env,
+          });
+      }
     },
     update: async (
       chatId: string,
       options: GroupUpdateOptions
-    ): Promise<GroupInfoDTO> => {
+    ): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
-      const group = await PUSH_CHAT.getGroup({
+      const group = await PUSH_CHAT.getGroupInfo({
         chatId: chatId,
         env: this.env,
       });
@@ -371,10 +394,23 @@ export class Chat {
         env: this.env,
       };
       await updateGroupProfile(updateGroupProfileOptions);
-      return await updateGroupConfig(updateGroupConfigOptions);
+      const response = await updateGroupConfig(updateGroupConfigOptions);
+
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return response;
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
+      }
     },
 
-    add: async (chatId: string, options: ManageGroupOptions) => {
+    add: async (
+      chatId: string,
+      options: ManageGroupOptions
+    ): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -395,31 +431,44 @@ export class Chat {
         }
       });
 
+      let response: GroupInfoDTO;
       if (role === 'ADMIN') {
-        return await PUSH_CHAT.addAdmins({
+        response = await PUSH_CHAT.addAdmins({
           chatId: chatId,
           admins: accounts,
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       } else {
-        return await PUSH_CHAT.addMembers({
+        response = await PUSH_CHAT.addMembers({
           chatId: chatId,
           members: accounts,
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
+      }
+
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return response;
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
       }
     },
 
     remove: async (
       chatId: string,
       options: RemoveFromGroupOptions
-    ): Promise<GroupInfoDTO> => {
+    ): Promise<GroupInfoDTO | GroupDTO> => {
       const { accounts } = options;
 
       if (!this.signer) {
@@ -452,30 +501,41 @@ export class Chat {
           membersToRemove.push(account);
         }
       }
-      let response: any;
-
       if (adminsToRemove.length > 0) {
-        response = await PUSH_CHAT.removeAdmins({
+        await PUSH_CHAT.removeAdmins({
           chatId: chatId,
           admins: adminsToRemove,
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       }
 
       if (membersToRemove.length > 0) {
-        response = await PUSH_CHAT.removeMembers({
+        await PUSH_CHAT.removeMembers({
           chatId: chatId,
           members: membersToRemove,
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       }
-      return response;
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return await PUSH_CHAT.getGroupInfo({
+            chatId: chatId,
+            env: this.env,
+          });
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: chatId,
+            env: this.env,
+          });
+      }
     },
 
     modify: async (chatId: string, options: ManageGroupOptions) => {
@@ -506,10 +566,11 @@ export class Chat {
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
+        overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
       });
     },
 
-    join: async (target: string): Promise<GroupInfoDTO> => {
+    join: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -526,25 +587,34 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       } else if (!status.isMember) {
-        return await PUSH_CHAT.addMembers({
+        await PUSH_CHAT.addMembers({
           chatId: target,
           members: [this.account],
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       }
-
-      return await PUSH_CHAT.getGroupInfo({
-        chatId: target,
-        env: this.env,
-      });
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return await PUSH_CHAT.getGroupInfo({
+            chatId: target,
+            env: this.env,
+          });
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: target,
+            env: this.env,
+          });
+      }
     },
 
-    leave: async (target: string): Promise<GroupInfoDTO> => {
+    leave: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -555,26 +625,41 @@ export class Chat {
         env: this.env,
       });
 
+      let response: GroupInfoDTO;
+
       if (status.isAdmin) {
-        return await PUSH_CHAT.removeAdmins({
+        response = await PUSH_CHAT.removeAdmins({
           chatId: target,
           admins: [this.account],
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       } else {
-        return await PUSH_CHAT.removeMembers({
+        response = await PUSH_CHAT.removeMembers({
           chatId: target,
           members: [this.account],
           env: this.env,
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
+          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
         });
       }
+
+      switch (this.featureTag) {
+        case 'ALPHA':
+          return response;
+        case 'STABLE':
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
+      }
     },
+
     reject: async (target: string): Promise<void> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());

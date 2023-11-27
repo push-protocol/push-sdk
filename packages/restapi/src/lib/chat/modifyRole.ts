@@ -12,6 +12,7 @@ export interface ModifyRolesType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 export const modifyRoles = async (
@@ -25,6 +26,7 @@ export const modifyRoles = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = true,
   } = options || {};
 
   try {
@@ -49,6 +51,7 @@ export const modifyRoles = async (
       signer: signer,
       pgpPrivateKey: pgpPrivateKey,
       env: env,
+      overrideSecretKeyGeneration,
     };
 
     return await updateGroupMembers(groupMemberUpdateOptions);
