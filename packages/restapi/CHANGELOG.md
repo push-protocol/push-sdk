@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.4.39](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.38...restapi-1.4.39) (2023-11-27)
+
+
+### Bug Fixes
+
+* bug fix ([#887](https://github.com/ethereum-push-notification-service/push-sdk/issues/887)) ([d1f0c50](https://github.com/ethereum-push-notification-service/push-sdk/commit/d1f0c50f13b8e50ddf7ff6c78e8b0dfa03ecbbf9))
+* fix depreaction warn of get subscribers using pagination ([#864](https://github.com/ethereum-push-notification-service/push-sdk/issues/864)) ([c9b7f9e](https://github.com/ethereum-push-notification-service/push-sdk/commit/c9b7f9e5394b862e6328107008c68ae82651d92e))
+* fix verification error warn ([#877](https://github.com/ethereum-push-notification-service/push-sdk/issues/877)) ([317ad5f](https://github.com/ethereum-push-notification-service/push-sdk/commit/317ad5f1df92e039a2d8d9592dd7d33385e2557c))
+* Merge branch 'main' into deployment ([116d7ae](https://github.com/ethereum-push-notification-service/push-sdk/commit/116d7ae8e75e9e83b455555acc848994314f2ed9))
+* overrride account options ([#884](https://github.com/ethereum-push-notification-service/push-sdk/issues/884)) ([d3dd7f0](https://github.com/ethereum-push-notification-service/push-sdk/commit/d3dd7f0ac1fb9cd611902520a54bc519b2ce45ff))
+* signature issue ([#876](https://github.com/ethereum-push-notification-service/push-sdk/issues/876)) ([e6ab38d](https://github.com/ethereum-push-notification-service/push-sdk/commit/e6ab38da397b2baa2db2e54b8fdb52ed16100fca))
+
+
+
 ## [1.4.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.37...restapi-1.4.38) (2023-11-16)
 
 
