@@ -26,4 +26,29 @@ describe('PushAPI.profile functionality', () => {
     expect(response.name).to.equal(updatedName);
     expect(response.desc).to.equal(updatedDesc);
   });
+
+  it('Should get profile read only mode', async () => {
+    const updatedName = 'Bob The Builder';
+    const updatedDesc = 'Yes We Can';
+    await userAlice.profile.update({
+      name: updatedName,
+      desc: updatedDesc,
+    });
+
+    const response = await userAlice.profile.update({
+      name: updatedName,
+      desc: updatedDesc,
+    });
+    expect(response.name).to.equal(updatedName);
+    expect(response.desc).to.equal(updatedDesc);
+
+    const account = (await userAlice.info()).did;
+
+    const userAliceReadOnly = await PushAPI.initialize({
+      account: account,
+    });
+
+    expect((await userAliceReadOnly.info()).profile.name).to.equal(updatedName);
+    expect((await userAliceReadOnly.info()).profile.desc).to.equal(updatedDesc);
+  });
 });

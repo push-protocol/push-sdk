@@ -40,3 +40,8 @@ export interface GroupUpdateOptions {
   meta?: string | null;
   rules?: Rules | null;
 }
+
+export interface InfoOptions {
+  overrideAccount?: string;
+}
+

@@ -25,6 +25,7 @@ import {
   validateCAIP,
 } from '../helpers';
 import * as PUSH_ALIAS from '../alias';
+import { PushAPI } from '../pushapi/PushAPI';
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -113,7 +114,7 @@ export class PushNotificationBaseClass {
 
   // checks if the signer object is supplied
   protected checkSignerObjectExists() {
-    if (!this.signer) throw new Error(ERROR_SIGNER_NEEDED);
+    if (!this.signer) throw new Error(PushAPI.ensureSignerMessage());
     return true;
   }
 

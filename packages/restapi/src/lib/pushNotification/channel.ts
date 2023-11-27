@@ -93,10 +93,21 @@ export class Channel extends PushNotificationBaseClass {
       if (!validateCAIP(channel!)) {
         throw new Error('Invalid CAIP');
       }
-      return await PUSH_CHANNEL._getSubscribers({
-        channel: channel!,
-        env: this.env,
-      });
+      if (options && options.page) {
+        return await PUSH_CHANNEL.getSubscribers({
+          channel: channel!,
+          env: this.env,
+          page: options.page,
+          limit: options.limit ?? 10,
+        });
+      } else {
+        /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */
+        /** @notice - This will be removed in V2 Publish */
+        return await PUSH_CHANNEL._getSubscribers({
+          channel: channel!,
+          env: this.env,
+        });
+      }
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::subscribers : ${error}`);
     }

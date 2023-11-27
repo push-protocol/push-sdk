@@ -106,7 +106,7 @@ export const createGroupCore = async (
       groupName: groupName,
       groupDescription: groupDescription == undefined ? null : groupDescription,
       members: convertedMembers,
-      groupImage: groupImage,
+      groupImage: groupImage == undefined ? null : groupImage,
       admins: convertedAdmins,
       isPublic: isPublic,
       contractAddressNFT:
