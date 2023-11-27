@@ -62,7 +62,7 @@ describe('PUSH_PAYLOAD.sendNotification functionality', () => {
         img: '',
         index: '1-2-10',
       },
-      channel: `eip155:5:${account1}`,
+      channel: `eip155:11155111:${account1}`,
     });
     expect(res.status).to.be.equal(204);
   });

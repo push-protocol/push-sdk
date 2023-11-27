@@ -29,11 +29,11 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
-import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { formatTime } from '../../../helpers/timestamp';
+import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
 
 /**
  * @interface IThemeProps
@@ -65,7 +65,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useChatProfile();
-  const { getGroup } = useGetGroup();
+  const { getGroupByID } = useGetGroupByID();
 
   const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
     usePushChatSocket();
@@ -81,17 +81,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setMessages(undefined);
     setConversationHash(undefined);
   }, [chatId, account, env]);
-
+  console.log(pushUser)
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (pushUser) {
+      if (Object.keys(pushUser || {}).length) {
+   console.log('fetch chat' )
         const chat = await fetchChat();
+        console.log(chat)
         if (chat) {
           setConversationHash(chat?.threadhash as string);
           setChatFeed(chat as IFeeds);
         } else {
-          console.log('chatss calling elsez')
           let newChatFeed;
           let group;
           const result = await getNewChatUser({
@@ -102,7 +103,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           if (result) {
             newChatFeed = getDefaultFeedObject({ user: result });
           } else {
-            group = await getGroup({ searchText: chatId });
+            group = await getGroupByID({groupId:chatId});
             if (group) {
               newChatFeed = getDefaultFeedObject({ groupInformation: group });
             }
@@ -120,11 +121,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setLoading(false);
       }
     })();
-  }, [chatId, account, env, pushUser, signer]);
+  }, [chatId, account, env, pushUser]);
 
   //moniters socket changes
   useEffect(() => {
-    console.log('messagesSinceLastConnection', account, messagesSinceLastConnection, checkIfSameChat(messagesSinceLastConnection, account!, chatId))
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
@@ -135,7 +135,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
-        console.log('messagesSinceLastConnection in group')
         const newChatViewList = appendUniqueMessages(
           messages as Messagetype,
           [messagesSinceLastConnection],
@@ -166,7 +165,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     (async function () {
       await getMessagesCall();
     })();
-  }, [conversationHash, account, env, chatFeed, pushUser, signer]);
+  }, [conversationHash, account, env, chatFeed, pushUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -226,13 +225,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   const getMessagesCall = async () => {
     let threadHash;
-    console.log('chatHistoryyy', messages)
     if (!messages) {
       threadHash = conversationHash;
     } else {
       threadHash = messages?.lastThreadHash;
     }
-
+console.log(conversationHash)
     if (threadHash && ((account && chatFeed && !chatFeed?.groupInformation) || (chatFeed && chatFeed?.groupInformation))) {
       const chatHistory = await historyMessages({ chatId, limit, threadHash });
       if (chatHistory?.length) {
@@ -242,7 +240,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             chatHistory,
             true
           );
-
+console.log(newChatViewList)
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
           setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);

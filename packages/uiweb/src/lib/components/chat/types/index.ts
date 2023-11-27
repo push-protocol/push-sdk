@@ -72,5 +72,12 @@ export const CRITERIA_TYPE = {
   } as const;
   
   export type CriteriaType = keyof typeof CRITERIA_TYPE;
+  
+  export const GROUP_ROLES = {
+    ADMIN: 'ADMIN',
+    MEMBER: 'MEMBER',
+  } as const;
+  
+  export type GroupRolesKeys = (typeof GROUP_ROLES)[keyof typeof GROUP_ROLES];
 
 export * from './tokenGatedGroupCreationType'

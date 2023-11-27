@@ -56,6 +56,7 @@ type getNewChatUserParamType = {
   searchText: string;
   fetchChatProfile: ({
     profileId,
+    env
   }: GetProfileParams) => Promise<IUser | undefined>;
   env: Env;
 };
@@ -91,14 +92,19 @@ export const getAddress = async (searchText: string, env: Env) => {
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
-      address =
-        (await udResolver.owner(searchText)) ||
-        (await provider.resolveName(searchText));
-      return address;
+      address = await udResolver.owner(searchText);
     } catch (err) {
       console.log(err);
-      return null;
     }
+    if (!address) {
+      try {
+        address = await provider.resolveName(searchText);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    return address || null;
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
     return searchText;
   } else {

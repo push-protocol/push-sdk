@@ -21,7 +21,7 @@ export interface IChatUIProviderProps {
 
 export const ChatUIProvider = ({
   children,
-  account = null,
+  account = '0x0000000000000000000000000000000000000000',
   theme,
   signer = undefined,
   env = Constants.ENV.PROD,
@@ -42,32 +42,29 @@ export const ChatUIProvider = ({
       setEnvVal(env);
 
       if (signer) {
-        if (!account) {
+     
           const address = await getAddressFromSigner(signer);
           setAccountVal(address);
-        }
-        else {
-          setAccountVal(account);
-        }
+     
       }
       setSignerVal(signer);
     })()
 
   }, [env, account, pushUser, signer])
 
-
   useEffect(() => {
       (async() => {
-        if(Object.keys(signerVal || {}).length && accountVal && !(Object.keys(pushUser || {}).length)) {
-          const pushUser = await initializePushUser({signer: signerVal, account: accountVal})
+        console.log('in here push user')
+        console.log(accountVal)
+          const pushUser = await initializePushUser({signer: signerVal, account: accountVal!})
+          console.log('in set push user 63')
           setPushUser(pushUser);
-        }
+   
       })();
   }, [signerVal, accountVal, env])
 
   const resetStates = () => {
     setPushChatSocket(null);
-    setPushUser(null);
     setIsPushChatSocketConnected(false);
 
   };

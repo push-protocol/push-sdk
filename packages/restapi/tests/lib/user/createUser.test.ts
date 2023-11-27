@@ -26,7 +26,7 @@ describe('Create Push Profile', () => {
   const _nftAccount1 = `nft:eip155:${process.env['NFT_CHAIN_ID_1']}:${process.env['NFT_CONTRACT_ADDRESS_1']}:${process.env['NFT_TOKEN_ID_1']}`;
 
   beforeEach(() => {
-    provider = ethers.getDefaultProvider(5);
+    provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
     _signer = new ethers.Wallet(WALLET.privateKey, provider);
     walletAddress = _signer.address;

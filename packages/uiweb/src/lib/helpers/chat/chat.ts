@@ -1,4 +1,4 @@
-import * as PushAPI from '@pushprotocol/restapi';
+// import * as PushAPI from '@pushprotocol/restapi';
 import type { ENV } from '../../config';
 import { Constants } from '../../config';
 import type { 
@@ -12,15 +12,19 @@ import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getData } from './localStorage';
 import { ethers } from 'ethers';
-
+import { PushAPI } from '@pushprotocol/restapi';
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
 
+
+
+
 type GetChatsType = {
-  pgpPrivateKey: string;
+  pgpPrivateKey?: string;
   supportAddress: string;
+  pushUser: PushAPI;
   limit: number;
   threadHash?: string;
   env?: Env;
@@ -36,23 +40,18 @@ export const handleOnChatIconClick = ({
 
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
-): Promise<IConnectedUser> => {
-  const { account, signer, env = Constants.ENV.PROD } = options || {};
-  let connectedUser = await PushAPI.user.get({ account: account, env });
-  if (!connectedUser?.encryptedPrivateKey) {
-    connectedUser = await PushAPI.user.create({
-      account: account,
-      signer: signer,
-      env,
-    });
+): Promise<IConnectedUser | undefined> => {
+  const { pushUser } = options || {};
+  let connectedUser:IUser;
+  if (Object.keys(pushUser || {}).length) {
+    connectedUser = await pushUser.info();
+    return { ...connectedUser, 
+      privateKey: connectedUser!.encryptedPrivateKey,
+     };
   }
-  const decryptedPrivateKey = await PushAPI.chat.decryptPGPKey({
-    encryptedPGPPrivateKey: connectedUser.encryptedPrivateKey,
-    account,
-    signer,
-    env,
-  });
-  return { ...connectedUser, privateKey: decryptedPrivateKey };
+  return;
+
+ 
 };
 
 type GetChatsResponseType = {
@@ -68,35 +67,21 @@ export const getChats = async (
     account,
     pgpPrivateKey,
     supportAddress,
+    pushUser,
     threadHash = null,
     limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
-  let threadhash: any = threadHash;
-  if (!threadhash) {
-    threadhash = await PushAPI.chat.conversationHash({
-      account: account,
-      conversationId: supportAddress,
-      env,
-    });
-    threadhash = threadhash.threadHash;
-  }
+  
 
-  if (threadhash) {
-    const chats = await PushAPI.chat.history({
-      account: account,
-      pgpPrivateKey: pgpPrivateKey,
-      threadhash: threadhash,
-      toDecrypt: true,
-      limit: limit,
-      env,
-    });
+  const chats = await pushUser?.chat.history(
+    supportAddress
+   );
 
     const lastThreadHash = chats[chats.length - 1]?.link;
     const lastListPresent = chats.length > 0 ? true : false;
     return { chatsResponse: chats, lastThreadHash, lastListPresent };
-  }
-  return { chatsResponse: [], lastThreadHash: null, lastListPresent: false };
+  
 };
 
 type DecrypteChatType = {
@@ -104,18 +89,7 @@ type DecrypteChatType = {
   connectedUser: IConnectedUser;
   env: ENV;
 };
-export const decryptChat = async (
-  options: DecrypteChatType
-): Promise<IMessageIPFS> => {
-  const { message, connectedUser, env = Constants.ENV.PROD } = options || {};
-  const decryptedChat: IMessageIPFS[] = await PushAPI.chat.decryptConversation({
-    messages: [message],
-    connectedUser,
-    pgpPrivateKey: connectedUser.privateKey!,
-    env,
-  });
-  return decryptedChat[0];
-};
+
 
 export const copyToClipboard = (address: string): void => {
   if (navigator && navigator.clipboard) {
@@ -270,7 +244,7 @@ export const checkIfSameChat = (
       return true;
     }
   }
-  console.log(chatId);
+
 
   return false;
 };

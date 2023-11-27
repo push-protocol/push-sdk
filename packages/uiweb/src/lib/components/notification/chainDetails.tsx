@@ -18,9 +18,9 @@ const createSVGIcon = (element:any, chainName: string) => {
 };
 
 export default {
-  ETH_TEST_GOERLI: {
-    label: 'ETHEREUM GOERLI',
-    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Goerli'),
+  ETH_TEST_SEPOLIA: {
+    label: 'ETHEREUM SEPOLIA',
+    icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Sepolia'),
   },
   ETH_MAINNET: {
     label: 'ETHEREUM MAINNET',

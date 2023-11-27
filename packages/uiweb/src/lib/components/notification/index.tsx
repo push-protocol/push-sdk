@@ -24,7 +24,7 @@ export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,
 
 // ================= Define types
 export type chainNameType =
-  | 'ETH_TEST_GOERLI'
+  | 'ETH_TEST_SEPOLIA'
   | 'POLYGON_TEST_MUMBAI'
   | 'ETH_MAINNET'
   | 'POLYGON_MAINNET'

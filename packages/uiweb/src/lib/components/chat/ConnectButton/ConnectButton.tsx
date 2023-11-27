@@ -7,7 +7,6 @@ import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 import useCreateChatProfile from '../../../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../../../hooks/useDecryptPGPKey';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
 
 import { getAddressFromSigner } from '../../../helpers';
 import { IChatTheme } from '../theme';
@@ -29,16 +28,12 @@ export const ConnectButtonSub = ({autoConnect = false})  => {
 
   const {
     signer,
-    account,
-    env,
+  
     setAccount,
     setSigner,
-    pushUser,
-    setPushUser
+    
   } = useChatData();
   const theme = useContext(ThemeContext);
-  const {fetchChatProfile} = useChatProfile();
-  const {decryptPGPKey} = useDecryptPGPKey();
 
 
   const setUserData = () => {

@@ -45,7 +45,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const theme = useContext(ThemeContext);
   const { account, env, pushUser } = useChatData();
   const { getGroupByID } = useGetGroupByID();
-  const { fetchUserChatProfile } = useChatProfile();
+  const { fetchChatProfile } = useChatProfile();
 
   const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
@@ -68,7 +68,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchUserChatProfile({ profileId: chatId });
+      const ChatProfile = await fetchChatProfile({ profileId: chatId ,env});
       const result = await resolveNewEns(chatId, provider);
       setEnsName(result);
       setChatInfo(ChatProfile);

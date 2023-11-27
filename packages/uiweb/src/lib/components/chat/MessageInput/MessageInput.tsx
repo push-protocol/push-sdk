@@ -29,7 +29,6 @@ import {
 } from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
-import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import {
   useChatData,
@@ -43,6 +42,7 @@ import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, Messag
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import { InfoContainer } from '../reusables';
+import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
 
 /**
  * @interface IThemeProps
@@ -117,11 +117,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     env,
     signer,
     pushUser,
-    setPushUser
   } = useChatData();
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useChatProfile();
-  const { getGroup } = useGetGroup();
+  const { getGroupByID } = useGetGroupByID();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -172,9 +171,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setChatFeed(updateChatFeed);
       }
     }
-    console.log(chatFeed)
+  
   }, [groupInformationSinceLastConnection]);
-
   useEffect(() => {
     (async () => {
       if (
@@ -189,9 +187,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   //need to makea common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (!account && !env) return;
-      if (account && env) {
+      
+      if (Object.keys(pushUser || {}).length) {
         const chat = await fetchChat();
+        console.log(chat)
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
           let newChatFeed;
@@ -204,12 +203,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           if (result) {
             newChatFeed = getDefaultFeedObject({ user: result });
           } else {
-            group = await getGroup({ searchText: chatId });
+            group = await getGroupByID({groupId:chatId});
             if (group) {
               newChatFeed = getDefaultFeedObject({ groupInformation: group });
             }
           }
           if (newChatFeed) {
+            console.log(chatFeed)
             setChatFeed(newChatFeed);
           }
         }
@@ -361,7 +361,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     const chat = await fetchChat();
 
     if (Object.keys(chat || {}).length) {
-
+      console.log(chatFeed)
       setChatFeed(chat as IFeeds);
     }
   };

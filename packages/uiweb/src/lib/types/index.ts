@@ -1,9 +1,18 @@
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
-import type { ParsedResponseType, IFeeds, Rules, } from '@pushprotocol/restapi';
+import type { ParsedResponseType, IFeeds, Rules, PushAPI, } from '@pushprotocol/restapi';
 import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
+  cid? : string;
+  chatId? :string;
+  event? :string;
+  from?:string;
+  message?: IMessage;
+  meta?: any;
+  origin?:string;
+  reference? :string;
+  to?: string[];
   fromCAIP10: string;
   toCAIP10: string;
   fromDID: string;
@@ -19,10 +28,16 @@ export interface IMessageIPFS {
   icon?: ReactElement<string | any>;
 }
 
+interface IMessage {
+  content: string | undefined;
+  type: string | undefined;
+}
+
 export interface AccountEnvOptionsType {
   env?: ENV;
   account: string;
   signer: SignerType;
+  pushUser: PushAPI;
 }
 
 export interface ITheme {

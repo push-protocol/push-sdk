@@ -16,12 +16,9 @@ import { ProfileContainer } from '../reusables';
 
 import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
-import { ENV, device } from '../../../config';
+import { device } from '../../../config';
 import {
-  convertToWalletAddressList,
   getAdminList,
-  getUpdatedAdminList,
-  getUpdatedMemberList,
   isAccountOwnerAdmin,
 } from '../helpers/group';
 import LockIcon from '../../../icons/Lock.png';
@@ -37,6 +34,7 @@ import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import { GROUP_ROLES, GroupRolesKeys } from '../types';
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -299,11 +297,6 @@ export const GroupTypeBadge = ({
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
-  handleAddRemove: ({
-    adminList,
-    memberList,
-    updateKey,
-  }: UpdateGroupType & { updateKey: UpdateKeys }) => void;
   setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMemberAddress: string | null;
   setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
@@ -330,7 +323,6 @@ const GroupInformation = ({
   theme,
   groupInfo,
   handleNextInformation,
-  handleAddRemove,
   setShowAddMoreWalletModal,
   selectedMemberAddress,
   setSelectedMemberAddress,
@@ -341,46 +333,31 @@ const GroupInformation = ({
     useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
+  const { addMember, removeMember } = useUpdateGroup();
+
 
   const isMobile = useMediaQuery(device.mobileL);
 
   const dropdownRef = useRef<any>(null);
   useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
 
-  const removeMember = async () => {
-    const updatedMemberList = getUpdatedMemberList(
-      groupInfo,
-      selectedMemberAddress!
-    );
-    const adminList = getUpdatedAdminList(
-      groupInfo,
-      selectedMemberAddress,
-      true
-    );
-    await handleAddRemove({
-      memberList: updatedMemberList,
-      adminList,
-      updateKey: UPDATE_KEYS.REMOVE_MEMBER,
+
+
+  const handleAddMember = async (role: GroupRolesKeys) => {
+    await addMember({
+      memberList: [selectedMemberAddress!],
+      chatId:groupInfo?.chatId,
+      role: role,
     });
   };
 
-  const updateGroupAdmin = async (updateKey: UpdateKeys) => {
-    const groupMemberList = convertToWalletAddressList([
-      ...groupInfo.members,
-      ...groupInfo.pendingMembers,
-    ]);
-    const newAdminList = getUpdatedAdminList(
-      groupInfo,
-      selectedMemberAddress,
-      !(updateKey === UPDATE_KEYS.ADD_ADMIN)
-    );
-    await handleAddRemove({
-      memberList: groupMemberList,
-      adminList: newAdminList,
-      updateKey,
+  const handleRemoveMember = async (role: GroupRolesKeys) => {
+    await removeMember({
+      memberList: [selectedMemberAddress!],
+      chatId:groupInfo?.chatId,
+      role: role,
     });
   };
-
   // const messageUserDropdown: DropdownValueType = {
   //     id: 'message_user',
   //     title: 'Message user',
@@ -392,19 +369,19 @@ const GroupInformation = ({
     id: 'dismiss_admin',
     title: 'Dismiss as admin',
     icon: DismissAdmin,
-    function: () => updateGroupAdmin(UPDATE_KEYS.REMOVE_ADMIN),
+    function: () => handleRemoveMember(GROUP_ROLES.ADMIN),
   };
   const addAdminDropdown: DropdownValueType = {
     id: 'add_admin',
     title: 'Make group admin',
     icon: AddAdmin,
-    function: () => updateGroupAdmin(UPDATE_KEYS.ADD_ADMIN),
+    function: () => handleAddMember(GROUP_ROLES.ADMIN),
   };
   const removeMemberDropdown: DropdownValueType = {
     id: 'remove_member',
     title: 'Remove',
     icon: Remove,
-    function: () => removeMember(),
+    function: () => handleRemoveMember(GROUP_ROLES.MEMBER),
     textColor: '#ED5858',
   };
 
@@ -595,7 +572,6 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  const { updateGroup, addMembersinGroup } = useUpdateGroup();
   const groupCreator = groupInfo?.groupCreator;
   const membersExceptGroupCreator = groupInfo?.members?.filter(
     (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
@@ -604,6 +580,7 @@ export const GroupInfoModal = ({
     ...membersExceptGroupCreator,
     ...groupInfo.pendingMembers,
   ];
+  const {addMember} = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
   const handleNextInfo = () => {
@@ -624,7 +601,6 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             setGroupInfo={setGroupInfo}
-            handleAddRemove={handleAddRemove}
             setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -641,7 +617,6 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             setGroupInfo={setGroupInfo}
-            handleAddRemove={handleAddRemove}
             setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -656,42 +631,40 @@ export const GroupInfoModal = ({
     setModal(false);
   };
 
-  const handelAddMemberInGroup = async (options: UpdateGroupType) => {
-    const { adminList, memberList } = options || {};
-    const updateResponse = await addMembersinGroup({
-      groupInfo,
-      memberList,
-      adminList,
-    });
-    return { updateResponse };
-  };
+
 
   const handleClose = () => onClose();
-  const handleAddRemove = async (
-    options: UpdateGroupType & { updateKey: UpdateKeys }
+  const handleAddMember = async (
+    options: UpdateGroupType
   ) => {
-    const { adminList, memberList, updateKey } = options || {};
+    const { adminList, memberList } = options || {};
 
     try {
       setIsLoading(true);
-      const { updateResponse } = await handelAddMemberInGroup({
-        adminList,
+      const updateAdminResponse  = await addMember({
+        chatId:groupInfo?.chatId,
+        role:GROUP_ROLES.ADMIN,
+        memberList:adminList,
+      });
+      const updateMemberResponse  = await addMember({
+        chatId:groupInfo?.chatId,
+        role:GROUP_ROLES.MEMBER,
         memberList,
       });
 
-      if (typeof updateResponse !== 'string') {
-        setGroupInfo(updateResponse!);
+      if ((typeof updateAdminResponse !== 'string') && (typeof updateMemberResponse !== 'string')) {
+        setGroupInfo(updateMemberResponse!);
 
         groupInfoToast.showMessageToast({
           toastTitle: 'Success',
-          toastMessage: SUCCESS_MESSAGE[updateKey],
+          toastMessage: SUCCESS_MESSAGE[UPDATE_KEYS.ADD_MEMBER],
           toastType: 'SUCCESS',
           getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
         });
       } else {
         groupInfoToast.showMessageToast({
           toastTitle: 'Error',
-          toastMessage: updateResponse,
+          toastMessage: 'Error in adding member',
           toastType: 'ERROR',
           getToastIcon: (size) => <MdError size={size} color="red" />,
         });
@@ -705,18 +678,13 @@ export const GroupInfoModal = ({
         getToastIcon: (size) => <MdError size={size} color="red" />,
       });
     } finally {
-      if (updateKey === UPDATE_KEYS.ADD_MEMBER) handleClose();
+      handleClose();
       setIsLoading(false);
       setSelectedMemberAddress(null);
     }
   };
 
   const addMembers = async () => {
-    //Already Present Members and PendingMembers
-    const groupMemberList = convertToWalletAddressList([
-      ...groupInfo.members,
-      ...groupInfo.pendingMembers,
-    ]);
 
     //Newly Added Members and alreadyPresent Members in the groupchat
     const newMembersToAdd = memberList.map((member: any) => member.wallets);
@@ -724,10 +692,9 @@ export const GroupInfoModal = ({
     //Admins wallet address from both members and pendingMembers
     const adminList = getAdminList?.(groupInfo);
 
-    await handleAddRemove({
+    await handleAddMember({
       memberList: members,
       adminList,
-      updateKey: UPDATE_KEYS.ADD_MEMBER,
     });
   };
   const handlePrevious = () => {

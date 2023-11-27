@@ -12,7 +12,7 @@ const _env = Constants.ENV.DEV;
 describe('Get chat', () => {
   it('Should return {} when not chat between users', async () => {
     try {
-      const provider = ethers.getDefaultProvider(5);
+      const provider = ethers.getDefaultProvider(11155111);
       const Pkey = `0x${WALLET_PRIVATE_KEY}`;
       const _signer = new ethers.Wallet(Pkey, provider);
       const walletAddress = _signer.address;

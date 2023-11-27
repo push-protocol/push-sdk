@@ -1,8 +1,8 @@
-import { PushAPI } from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 
 // CONFIGS
@@ -13,19 +13,19 @@ const { env, showAPIResponse } = config;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const signerAddress = signer.account.address;
 const secondSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const secondSignerAddress = secondSigner.account.address;
 const thirdSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const thirdSignerAddress = thirdSigner.account.address;
@@ -36,7 +36,7 @@ const eventlistener = async (
   pushAPI: PushAPI,
   eventName: string
 ): Promise<void> => {
-  pushAPI._stream.on(eventName, (data: any) => {
+  pushAPI.stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
       console.log(data);
     }
@@ -47,11 +47,46 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const runPushAPIStreamCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(signer, { env });
+
+  const stream = await userAlice.initStream(
+    [
+      CONSTANTS.STREAM.NOTIF,
+      CONSTANTS.STREAM.CHAT_OPS,
+      CONSTANTS.STREAM.CHAT,
+      CONSTANTS.STREAM.CONNECT,
+      CONSTANTS.STREAM.DISCONNECT,
+    ],
+    {
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
+
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: true, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    }
+  );
+
+  stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+    console.log('Stream Connected');
+  });
+
+  await stream.connect();
+
+  stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+    console.log('Stream Disconnected');
+  });
+
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log(`Listening ${STREAM.PROFILE} Events`);
+  console.log(`Listening ${CONSTANTS.STREAM.PROFILE} Events`);
   eventlistener(userAlice, STREAM.PROFILE);
   console.log(`Listening ${STREAM.ENCRYPTION} Events`);
   eventlistener(userAlice, STREAM.ENCRYPTION);
@@ -171,12 +206,12 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
     // create signer
     const channelSigner = createWalletClient({
       account: privateKeyToAccount(`0x${process.env.WALLET_PRIVATE_KEY}`),
-      chain: goerli,
+      chain: sepolia,
       transport: http(),
     });
 
     await userAlice.notification.subscribe(
-      `eip155:5:${channelSigner.account.address}` // channel to subscribe
+      `eip155:11155111:${channelSigner.account.address}` // channel to subscribe
     );
 
     const channelUser = await PushAPI.initialize(channelSigner, { env });
@@ -192,7 +227,7 @@ export const runPushAPIStreamCases = async (): Promise<void> => {
     await delay(3000);
 
     await userAlice.notification.unsubscribe(
-      `eip155:5:${channelSigner.account.address}` // channel to subscribe
+      `eip155:11155111:${channelSigner.account.address}` // channel to subscribe
     );
   } else {
     console.log(

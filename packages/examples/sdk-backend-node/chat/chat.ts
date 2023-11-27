@@ -8,7 +8,7 @@ import {
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 
@@ -20,19 +20,19 @@ const { env, showAPIResponse } = config;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const signerAddress = signer.account.address;
 const secondSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const secondSignerAddress = secondSigner.account.address;
 const thirdSigner = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 const thirdSignerAddress = thirdSigner.account.address;
@@ -60,7 +60,7 @@ const eventlistener = async (
   stream: PushStream,
   eventName: string
 ): Promise<void> => {
-    stream.on(eventName, (data: any) => {
+  stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
       console.log('Stream Event Received');
       console.log(data);
@@ -72,25 +72,33 @@ const eventlistener = async (
 export const runChatClassUseCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(signer, { env });
 
-    const stream = await userAlice.initStream(
-      [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
-      {
-        // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
-        // more info can be found at push.org/docs/chat
+  const stream = await userAlice.initStream(
+    [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS],
+    {
+      // stream supports other products as well, such as STREAM.CHAT, STREAM.CHAT_OPS
+      // more info can be found at push.org/docs/chat
 
-        filter: {
-          channels: ['*'],
-          chats: ['*'],
-        },
-        connection: {
-          auto: true, // should connection be automatic, else need to call stream.connect();
-          retries: 3, // number of retries in case of error
-        },
-        raw: true, // enable true to show all data
-      }
-    );
-    
-      await stream.connect();
+      filter: {
+        channels: ['*'],
+        chats: ['*'],
+      },
+      connection: {
+        auto: true, // should connection be automatic, else need to call stream.connect();
+        retries: 3, // number of retries in case of error
+      },
+      raw: true, // enable true to show all data
+    }
+  );
+
+  stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
+    console.log('Stream Connected');
+  });
+
+  await stream.connect();
+
+  stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+    console.log('Stream Disconnected');
+  });
 
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
@@ -106,7 +114,9 @@ export const runChatClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.chat.list');
   const aliceChats = await userAlice.chat.list(CONSTANTS.CHAT.LIST_TYPE.CHATS);
-  const aliceRequests = await userAlice.chat.list(CONSTANTS.CHAT.LIST_TYPE.REQUESTS);
+  const aliceRequests = await userAlice.chat.list(
+    CONSTANTS.CHAT.LIST_TYPE.REQUESTS
+  );
   if (showAPIResponse) {
     console.log(aliceChats);
     console.log(aliceRequests);

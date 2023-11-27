@@ -19,6 +19,9 @@ const useFetchChat = () => {
       setLoading(true);
       try {
         const chat = await pushUser?.chat.list("CHATS")
+        console.log(pushUser)
+        console.log('in hook',chat);
+        console.log(env)
         if (chat) {
           return chat[0];
         }

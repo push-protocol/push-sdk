@@ -20,7 +20,8 @@ import { CHAT } from '../../../src/lib/types/messageTypes';
 chai.use(chaiAsPromised);
 const _env = Constants.ENV.DEV;
 describe('PushAPI.chat.send', () => {
-  const provider = ethers.getDefaultProvider(5);
+  const _env = Constants.ENV.DEV;
+  const provider = ethers.getDefaultProvider(11155111);
   let _signer1: any;
   let walletAddress1: string;
   let account1: string;

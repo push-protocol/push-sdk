@@ -2,7 +2,7 @@ import { PushAPI } from '@pushprotocol/restapi';
 import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
-import { goerli } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -12,7 +12,7 @@ const { env, showAPIResponse } = config;
 // Random Wallet Signers
 const signer = createWalletClient({
   account: privateKeyToAccount(generatePrivateKey()),
-  chain: goerli,
+  chain: sepolia,
   transport: http(),
 });
 
@@ -31,7 +31,7 @@ export const runPushAPINotificationCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.subscribe');
   const subscribeResponse = await userAlice.notification.subscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
   );
   if (showAPIResponse) {
     console.log(subscribeResponse);
@@ -49,7 +49,7 @@ export const runPushAPINotificationCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   console.log('PushAPI.notification.unsubscribe');
   const unsubscribeResponse = await userAlice.notification.unsubscribe(
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
   );
   if (showAPIResponse) {
     console.log(unsubscribeResponse);

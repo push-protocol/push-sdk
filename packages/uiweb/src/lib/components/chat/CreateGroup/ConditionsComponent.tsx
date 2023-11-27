@@ -106,7 +106,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
 
   const [tokenSymbol] = useTokenSymbolLoader(criteria);
   return (
-    <Section gap="8px" width="100%">
+    <Section gap="8px" width="100%" justifyContent='start'>
       <Span
         alignSelf="center"
         background={theme.backgroundColor?.criteriaLabelBackground}
@@ -129,7 +129,7 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
             </Span>
             {criteria?.data?.['amount']} {tokenSymbol}
           </Span>
-          <ChainIconSVG padding="0 6px 0 0" >
+          <ChainIconSVG padding="3px 6px 0 0" >
             {
               NETWORK_ICON_DETAILS[
                 criteria?.data?.['contract'].split(

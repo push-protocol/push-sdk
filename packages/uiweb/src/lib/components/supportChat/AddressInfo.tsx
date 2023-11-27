@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatPropsContext } from '../../context';
-import * as PushAPI from '@pushprotocol/restapi';
 import { Constants } from '../../config';
 import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env, theme } = useContext<any>(SupportChatPropsContext);
+  const { supportAddress, env, theme, pushUser } = useContext<any>(SupportChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -15,11 +14,14 @@ export const AddressInfo: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const user = await PushAPI.user.get({ account: walletAddress, env });
+      if (Object.keys(pushUser || {}).length) {
+  const user = await pushUser.info();
       setUser(user);
+}
+      
     };
     getUser();
-  }, [supportAddress]);
+  }, [supportAddress, pushUser]);
 
   return (
     <Container theme={theme}>
