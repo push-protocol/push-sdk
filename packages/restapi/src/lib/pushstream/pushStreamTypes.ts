@@ -1,6 +1,5 @@
 import { Rules } from '../types';
-import Constants, { ENV } from '../constants';
-import { FeatureTag } from '../pushapi/pushAPITypes';
+import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   filter?: {
@@ -14,7 +13,6 @@ export type PushStreamInitializeProps = {
   raw?: boolean;
   env?: ENV;
   overrideAccount?: string;
-  featureTag: FeatureTag;
 };
 
 export enum STREAM {

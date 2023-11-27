@@ -1,6 +1,6 @@
 import Constants, { ENV } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
-import { FeatureTag, PushAPIInitializeProps } from './pushAPITypes';
+import { PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
 import { getAccountAddress, getWallet } from '../chat/helpers';
@@ -19,7 +19,7 @@ import {
 export class PushAPI {
   private signer?: SignerType;
   private readMode: boolean;
-  private featureTag: FeatureTag;
+  private alpha: { feature: string[] };
   private account: string;
   private decryptedPgpPvtKey?: string;
   private pgpPublicKey?: string;
@@ -39,7 +39,7 @@ export class PushAPI {
     env: ENV,
     account: string,
     readMode: boolean,
-    featureTag: FeatureTag,
+    alpha: { feature: string[] },
     decryptedPgpPvtKey?: string,
     pgpPublicKey?: string,
     signer?: SignerType,
@@ -47,7 +47,7 @@ export class PushAPI {
   ) {
     this.signer = signer;
     this.readMode = readMode;
-    this.featureTag = featureTag;
+    this.alpha = alpha;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
@@ -60,7 +60,7 @@ export class PushAPI {
     this.chat = new Chat(
       this.account,
       this.env,
-      this.featureTag,
+      this.alpha,
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
@@ -134,7 +134,10 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
-        featureTag: options?.featureTag || 'STABLE',
+        alpha:
+          options?.alpha && options.alpha.feature
+            ? options.alpha
+            : { feature: [] },
       };
 
       const readMode = !signer;
@@ -202,7 +205,7 @@ export class PushAPI {
         settings.env as ENV,
         derivedAccount,
         readMode,
-        settings.featureTag,
+        settings.alpha,
         decryptedPGPPrivateKey,
         pgpPublicKey,
         signer,

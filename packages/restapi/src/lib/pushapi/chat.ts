@@ -1,4 +1,4 @@
-import { ENV, MessageType } from '../constants';
+import { ENV, MessageType, ALPHA_FEATURES } from '../constants';
 import {
   ChatSendOptionsType,
   GroupAccess,
@@ -21,7 +21,6 @@ import {
   ManageGroupOptions,
   RemoveFromGroupOptions,
   GetGroupParticipantsOptions,
-  FeatureTag,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -36,16 +35,22 @@ import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
 export class Chat {
   private userInstance: User;
+  private groupScalabilityTag: 'ALPHA' | 'STABLE';
 
   constructor(
     private account: string,
     private env: ENV,
-    private featureTag: FeatureTag,
+    private alpha: { feature: string[] },
     private decryptedPgpPvtKey?: string,
     private signer?: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
     this.userInstance = new User(this.account, this.env);
+    this.groupScalabilityTag = this.alpha.feature.includes(
+      ALPHA_FEATURES.GROUP_SCALABILITY
+    )
+      ? 'ALPHA'
+      : 'STABLE';
   }
 
   async list(
@@ -165,7 +170,7 @@ export class Chat {
       account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+      overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
     });
   }
 
@@ -299,8 +304,7 @@ export class Chat {
         admins: options?.admins ? options.admins : [],
       };
       const response = await PUSH_CHAT.createGroupV2(groupParams);
-
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return response;
         case 'STABLE':
@@ -340,7 +344,7 @@ export class Chat {
     },
 
     info: async (chatId: string): Promise<GroupDTO | GroupInfoDTO> => {
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return await PUSH_CHAT.getGroupInfo({
             chatId: chatId,
@@ -396,7 +400,7 @@ export class Chat {
       await updateGroupProfile(updateGroupProfileOptions);
       const response = await updateGroupConfig(updateGroupConfigOptions);
 
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return response;
         case 'STABLE':
@@ -440,7 +444,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       } else {
         response = await PUSH_CHAT.addMembers({
@@ -450,11 +454,11 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       }
 
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return response;
         case 'STABLE':
@@ -509,7 +513,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       }
 
@@ -521,10 +525,10 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       }
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return await PUSH_CHAT.getGroupInfo({
             chatId: chatId,
@@ -566,7 +570,7 @@ export class Chat {
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
-        overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+        overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
       });
     },
 
@@ -587,7 +591,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       } else if (!status.isMember) {
         await PUSH_CHAT.addMembers({
@@ -597,10 +601,10 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       }
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return await PUSH_CHAT.getGroupInfo({
             chatId: target,
@@ -635,7 +639,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       } else {
         response = await PUSH_CHAT.removeMembers({
@@ -645,11 +649,11 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.featureTag !== 'ALPHA',
+          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
         });
       }
 
-      switch (this.featureTag) {
+      switch (this.groupScalabilityTag) {
         case 'ALPHA':
           return response;
         case 'STABLE':

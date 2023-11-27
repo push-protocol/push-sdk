@@ -43,6 +43,10 @@ export enum MessageType {
   PAYMENT = 'Payment',
 }
 
+export const ALPHA_FEATURES = {
+  GROUP_SCALABILITY: 'GROUP_SCALABILITY',
+};
+
 const Constants = {
   ENV,
   ENCRYPTION_TYPE,
@@ -60,6 +64,7 @@ const Constants = {
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',
   ENC_TYPE_V3: 'eip191-aes256-gcm-hkdf-sha256',
   ENC_TYPE_V4: 'pgpv1:nft',
+  ALPHA_FEATURES,
 };
 
 export default Constants;

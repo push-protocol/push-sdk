@@ -42,7 +42,7 @@ export class PushStream extends EventEmitter {
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
-      this.options.featureTag,
+      { feature: [] },
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
@@ -65,7 +65,6 @@ export class PushStream extends EventEmitter {
         retries: 3,
       },
       env: env,
-      featureTag: 'STABLE',
     };
 
     if (!listen || listen.length === 0) {
