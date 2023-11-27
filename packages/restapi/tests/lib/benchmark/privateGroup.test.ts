@@ -9,7 +9,7 @@ const _env = Constants.ENV.LOCAL;
  * THIS TEST GROUP IS FOR BENCHMARKING PUBLIC GROUP
  * These tests will be skipped
  */
-describe.only('Private Groups', () => {
+describe.skip('Private Groups', () => {
   let account: string;
   let account2: string;
   let userAlice: PushAPI;
@@ -28,13 +28,17 @@ describe.only('Private Groups', () => {
     account = `eip155:${signer.address}`;
     userAlice = await PushAPI.initialize(signer, {
       env: _env,
+      featureTag: 'ALPHA',
     });
 
     // UserBob
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     account2 = `eip155:${signer2.address}`;
-    userBob = await PushAPI.initialize(signer2, { env: _env });
+    userBob = await PushAPI.initialize(signer2, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
   });
 
   /**
@@ -239,7 +243,7 @@ describe.only('Private Groups', () => {
     });
   });
 
-  it.only('List Chats for User which is participant of large groups', async () => {
+  it('List Chats for User which is participant of large groups', async () => {
     const start = new Date().getTime();
     await userAlice.chat.send(account2, {
       content: 'Hello',

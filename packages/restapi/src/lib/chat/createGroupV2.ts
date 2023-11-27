@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
-import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
+import { EnvOptionsType, GroupInfoDTO, SignerType, Rules } from '../types';
 import {
   getWallet,
   getUserDID,
@@ -40,7 +40,7 @@ export const createGroupV2 = async (options: ChatCreateGroupTypeV2) => {
 export const createGroupCoreV2 = async (
   options: ChatCreateGroupTypeV2,
   pgpHelper: IPGPHelper
-): Promise<GroupDTO> => {
+): Promise<GroupInfoDTO> => {
   const {
     account = null,
     signer = null,

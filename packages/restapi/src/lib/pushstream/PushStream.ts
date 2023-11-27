@@ -42,6 +42,7 @@ export class PushStream extends EventEmitter {
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
+      { feature: [] },
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook

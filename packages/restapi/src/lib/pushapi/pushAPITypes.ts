@@ -13,6 +13,9 @@ export interface PushAPIInitializeProps {
   versionMeta?: { NFTPGP_V1?: { password: string } };
   autoUpgrade?: boolean;
   origin?: string;
+  alpha?: {
+    feature: string[];
+  };
 }
 
 export interface GroupCreationOptions {
