@@ -1,6 +1,6 @@
 import Constants, { ENV } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
-import { PushAPIInitializeProps } from './pushAPITypes';
+import { InfoOptions, PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
 import { getAccountAddress, getWallet } from '../chat/helpers';
@@ -231,9 +231,10 @@ export class PushAPI {
     return this.stream;
   }
 
-  async info() {
+  async info(options?: InfoOptions) {
+    const accountToUse = options?.overrideAccount || this.account;
     return await PUSH_USER.get({
-      account: this.account,
+      account: accountToUse,
       env: this.env,
     });
   }
