@@ -48,10 +48,13 @@ export class Chat {
        */
       page?: number;
       limit?: number;
+      overrideAccount?: string;
     }
   ): Promise<IFeeds[]> {
+    const accountToUse = options?.overrideAccount || this.account;
+
     const listParams = {
-      account: this.account,
+      account: accountToUse,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       page: options?.page,
       limit: options?.limit,
@@ -174,7 +177,7 @@ export class Chat {
   }
 
   async block(users: Array<string>): Promise<IUser> {
-    if (!this.signer) {
+    if (!this.signer || !this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({

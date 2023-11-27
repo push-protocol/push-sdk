@@ -39,7 +39,7 @@ import {
 
 import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
-import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
+import { GUEST_MODE_ACCOUNT, PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import { InfoContainer } from '../reusables';
 import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
@@ -366,7 +366,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
-  return !(account) && isConnected ? (
+  return (!account || (account === GUEST_MODE_ACCOUNT)) && isConnected ? (
     <TypebarSection
       width="100%"
       overflow="hidden"

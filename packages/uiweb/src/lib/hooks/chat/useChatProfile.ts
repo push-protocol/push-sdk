@@ -9,16 +9,16 @@ export interface GetProfileParams {
 }
 
 const useChatProfile = () => {
-// const { env, account, pushUser } = useChatData();
+const { pushUser } = useChatData();
   const fetchChatProfile = useCallback(
     async ({
       profileId,
       env
     }: GetProfileParams): Promise<any> => {
       try {
-        // const userReadOnly = await userAlice.info({ overrideAccount: "sss" });
-        // const userReadOnlyData = (await userReadOnly.info());
-        // return userReadOnlyData;
+        // const userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+        // // const userReadOnlyData = (await userReadOnly.info());
+        // return userReadOnly;
       } catch (error) {
         console.log("error", error);
         return;
