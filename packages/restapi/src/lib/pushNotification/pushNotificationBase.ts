@@ -693,8 +693,6 @@ export class PushNotificationBaseClass {
           BOOLEAN_TYPE +
           SETTING_DELIMITER +
           ele.default;
-        notificationSettingDescription =
-          notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
       if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
@@ -717,11 +715,6 @@ export class PushNotificationBaseClass {
             ele.data.upper +
             SETTING_DELIMITER +
             ticker;
-
-          notificationSettingDescription =
-            notificationSettingDescription +
-            SETTING_SEPARATOR +
-            ele.description;
         }
       }
       if (ele.type == RANGE_TYPE) {
@@ -749,6 +742,9 @@ export class PushNotificationBaseClass {
             ticker;
         }
       }
+
+      notificationSettingDescription =
+        notificationSettingDescription + SETTING_SEPARATOR + ele.description;
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
