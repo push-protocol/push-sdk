@@ -25,25 +25,25 @@ enum ENV {
   LOCAL = 'local',
 }
 describe.only('test', () => {
-  const signer = createWalletClient({
-    account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
-    chain: goerli,
-    transport: http('https://goerli.blockpi.network/v1/rpc/public'),
-  });
+  // const signer = createWalletClient({
+  //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
+  //   chain: goerli,
+  //   transport: http('https://goerli.blockpi.network/v1/rpc/public'),
+  // });
 
-  const signer3 = createWalletClient({
-    account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
-    chain: polygonMumbai,
-    transport: http(),
-  });
+  // const signer3 = createWalletClient({
+  //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
+  //   chain: polygonMumbai,
+  //   transport: http(),
+  // });
 
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public'
-  );
-  const signer2 = new ethers.Wallet(
-    `0x${process.env['WALLET_PRIVATE_KEY']}`,
-    provider
-  );
+  // const provider = new ethers.providers.JsonRpcProvider(
+  //   'https://goerli.blockpi.network/v1/rpc/public'
+  // );
+  // const signer2 = new ethers.Wallet(
+  //   `0x${process.env['WALLET_PRIVATE_KEY']}`,
+  //   provider
+  // );
 
   // it('Test minimal conversion', async () => {
   //   const account2 = await signer2.getAddress();
