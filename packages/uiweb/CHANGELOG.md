@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.31](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.30...uiweb-0.0.1-alpha.31) (2023-11-28)
+
+
+### Bug Fixes
+
+* fixed build for uiweb ([#854](https://github.com/ethereum-push-notification-service/push-sdk/issues/854)) ([7e28d59](https://github.com/ethereum-push-notification-service/push-sdk/commit/7e28d5936899544c5f115c9ff6053c2328964b12))
+* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
+* fixed sepolia ud issues ([#851](https://github.com/ethereum-push-notification-service/push-sdk/issues/851)) ([61979e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/61979e55ac2bc50c4a7674ada0cc5035ff848087))
+* merge main ([48f6c5d](https://github.com/ethereum-push-notification-service/push-sdk/commit/48f6c5d0e53e524cdcc5f09cd5314a791f148e42))
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
 ## [0.0.1-alpha.30](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.29...uiweb-0.0.1-alpha.30) (2023-11-13)
 
 
