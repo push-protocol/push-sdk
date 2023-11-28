@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
-import Constants from '../constants';
+import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
   getAccountAddress,
@@ -11,10 +11,10 @@ import {
   IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
-import { getGroup } from './getGroup';
 import * as AES from '../chat/helpers/aes';
 import { getGroupInfo } from './getGroupInfo';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -30,6 +30,7 @@ export interface ApproveRequestOptionsType extends EnvOptionsType {
   // sigType?: string;
   account?: string | null;
   signer?: SignerType | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 /**
@@ -52,6 +53,9 @@ export const approveCore = async (
     senderAddress,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options || {};
 
   /**
@@ -93,22 +97,27 @@ export const approveCore = async (
     const group = await getGroupInfo({ chatId: senderAddress, env });
 
     if (group && !group.isPublic) {
-      sigType = 'pgpv2';
-      const secretKey = AES.generateRandomSecret(15);
+      /**
+       * Secret Key Gen Override has no effect if an encrypted secret key is already present
+       */
+      if (group.encryptedSecret || !overrideSecretKeyGeneration) {
+        sigType = 'pgpv2';
+        const secretKey = AES.generateRandomSecret(15);
 
-      const groupMembers = await getAllGroupMembersPublicKeys({
-        chatId: group.chatId,
-        env,
-      });
-      // Encrypt secret key with group members public keys
-      const publicKeys: string[] = groupMembers.map(
-        (member) => member.publicKey
-      );
-      publicKeys.push(connectedUser.publicKey);
-      encryptedSecret = await pgpHelper.pgpEncrypt({
-        plainText: secretKey,
-        keys: publicKeys,
-      });
+        const groupMembers = await getAllGroupMembersPublicKeys({
+          chatId: group.chatId,
+          env,
+        });
+        // Encrypt secret key with group members public keys
+        const publicKeys: string[] = groupMembers.map(
+          (member) => member.publicKey
+        );
+        publicKeys.push(connectedUser.publicKey);
+        encryptedSecret = await pgpHelper.pgpEncrypt({
+          plainText: secretKey,
+          keys: publicKeys,
+        });
+      }
     }
   }
 
@@ -116,7 +125,6 @@ export const approveCore = async (
     fromDID: string;
     toDID: string;
     status: string;
-    sessionKey?: string | null;
     encryptedSecret?: string | null;
   };
 

@@ -1,4 +1,5 @@
-import Constants from '../constants';
+import { ALPHA_FEATURE_CONFIG } from '../config';
+import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import {
   GroupMemberUpdateOptions,
@@ -11,6 +12,7 @@ export interface RemoveAdminsFromGroupType extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 /**
@@ -26,6 +28,9 @@ export const removeAdmins = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -47,6 +52,7 @@ export const removeAdmins = async (
       signer: signer,
       pgpPrivateKey: pgpPrivateKey,
       env: env,
+      overrideSecretKeyGeneration,
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {

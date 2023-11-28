@@ -28,13 +28,17 @@ describe.skip('Private Groups', () => {
     account = `eip155:${signer.address}`;
     userAlice = await PushAPI.initialize(signer, {
       env: _env,
+      featureTag: 'ALPHA',
     });
 
     // UserBob
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     account2 = `eip155:${signer2.address}`;
-    userBob = await PushAPI.initialize(signer2, { env: _env });
+    userBob = await PushAPI.initialize(signer2, {
+      env: _env,
+      featureTag: 'ALPHA',
+    });
   });
 
   /**
@@ -237,6 +241,28 @@ describe.skip('Private Groups', () => {
         '08c4e1b96482ed73ce003ed58325e7fd3d8d22ff34267067f36fe600e62b9849';
       await sendMessageTime(chatId, userAlice);
     });
+  });
+
+  it('List Chats for User which is participant of large groups', async () => {
+    const start = new Date().getTime();
+    await userAlice.chat.send(account2, {
+      content: 'Hello',
+      type: 'Text',
+    });
+    // timeout for 1 sec
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const chats = await userAlice.chat.list('CHATS', { page: 1, limit: 1 });
+    console.log(chats);
+    const end = new Date().getTime();
+    const duration = end - start;
+    console.log('Duration in ms : ', duration);
+
+    const start1 = new Date().getTime();
+    const requests = await userBob.chat.list('REQUESTS');
+    console.log(requests);
+    const end1 = new Date().getTime();
+    const duration1 = end1 - start1;
+    console.log('Duration in ms : ', duration1);
   });
 });
 

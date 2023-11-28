@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
-import Constants from '../constants';
+import Constants, { PACKAGE_BUILD } from '../constants';
 import {
   getWallet,
   PGPHelper,
@@ -15,6 +15,7 @@ import { getGroupInfo } from './getGroupInfo';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -25,6 +26,7 @@ export interface GroupMemberUpdateOptions extends EnvOptionsType {
   account?: string | null;
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 export const updateGroupMembers = async (
@@ -38,6 +40,9 @@ export const updateGroupMembers = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options;
   try {
     validateGroupMemberUpdateOptions(options);
@@ -73,46 +78,51 @@ export const updateGroupMembers = async (
     }
 
     if (!group.isPublic) {
-      const { isMember } = await getGroupMemberStatus({
-        chatId,
-        did: connectedUser.did,
-        env,
-      });
+      if (group.encryptedSecret || !overrideSecretKeyGeneration) {
+        const { isMember } = await getGroupMemberStatus({
+          chatId,
+          did: connectedUser.did,
+          env,
+        });
 
-      const groupMembers = await getAllGroupMembersPublicKeys({ chatId, env });
+        const groupMembers = await getAllGroupMembersPublicKeys({
+          chatId,
+          env,
+        });
 
-      const removeParticipantSet = new Set(
-        convertedRemove.map((participant) => participant.toLowerCase())
-      );
-      let sameMembers = true;
+        const removeParticipantSet = new Set(
+          convertedRemove.map((participant) => participant.toLowerCase())
+        );
+        let sameMembers = true;
 
-      groupMembers.map((element) => {
-        if (removeParticipantSet.has(element.did.toLowerCase())) {
-          sameMembers = false;
-        }
-      });
-
-      if (!sameMembers || !isMember) {
-        const secretKey = AES.generateRandomSecret(15);
-
-        const publicKeys: string[] = [];
-        // This will now only take keys of non-removed members
         groupMembers.map((element) => {
-          if (!removeParticipantSet.has(element.did.toLowerCase())) {
-            publicKeys.push(element.publicKey as string);
+          if (removeParticipantSet.has(element.did.toLowerCase())) {
+            sameMembers = false;
           }
         });
 
-        // This is autoJoin Case
-        if (!isMember) {
-          publicKeys.push(connectedUser.publicKey);
-        }
+        if (!sameMembers || !isMember) {
+          const secretKey = AES.generateRandomSecret(15);
 
-        // Encrypt secret key with group members public keys
-        encryptedSecret = await pgpEncrypt({
-          plainText: secretKey,
-          keys: publicKeys,
-        });
+          const publicKeys: string[] = [];
+          // This will now only take keys of non-removed members
+          groupMembers.map((element) => {
+            if (!removeParticipantSet.has(element.did.toLowerCase())) {
+              publicKeys.push(element.publicKey as string);
+            }
+          });
+
+          // This is autoJoin Case
+          if (!isMember) {
+            publicKeys.push(connectedUser.publicKey);
+          }
+
+          // Encrypt secret key with group members public keys
+          encryptedSecret = await pgpEncrypt({
+            plainText: secretKey,
+            keys: publicKeys,
+          });
+        }
       }
     }
 
