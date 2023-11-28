@@ -381,12 +381,47 @@ describe('PushAPI.channel functionality', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
         {
-          type: 2,
-          default: 5,
-          description: 'My notif setting 2',
-          data: { upper: 100, lower: 5, ticker: 10, enabled: true },
+          type: 1,
+          default: 1,
+          description: 'test1',
         },
-        { type: 1, default: 1, description: 'My Notif Settings' },
+        {
+          type: 2,
+          default: 10,
+          description: 'test2',
+          data: {
+            upper: 100,
+            lower: 1,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 10,
+            upper: 50,
+          },
+          description: 'test3',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: true,
+            ticker: 2,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 3,
+            upper: 5,
+          },
+          description: 'test4',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: false,
+            ticker: 2,
+          },
+        },
       ]);
       //   console.log(res)
       expect(res).not.null;
