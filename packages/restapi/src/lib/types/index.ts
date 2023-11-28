@@ -383,6 +383,11 @@ export interface GroupAccess {
   rules?: Rules;
 }
 
+export interface SpaceAccess {
+  entry: boolean;
+  rules?: SpaceRules;
+}
+
 export interface GroupMemberStatus {
   isMember: boolean;
   isPending: boolean;
@@ -483,6 +488,23 @@ export interface GroupInfoDTO {
   meta?: string | null;
   sessionKey: string | null;
   encryptedSecret: string | null;
+}
+
+export interface SpaceInfoDTO {
+  spaceName: string;
+  spaceImage: string | null;
+  spaceDescription: string;
+  isPublic: boolean;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
+  rules?: Rules | null;
+  meta?: string | null;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
 }
 
 export interface SpaceDTO {

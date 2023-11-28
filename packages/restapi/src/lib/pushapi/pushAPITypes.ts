@@ -1,8 +1,14 @@
 import Constants, { ENV } from '../constants';
-import { ChatStatus, ProgressHookType, Rules } from '../types';
+import { ChatStatus, ProgressHookType, Rules, SpaceRules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
+  REQUESTS = 'REQUESTS',
+}
+
+
+export enum SpaceListType {
+  SPACES = 'SPACES',
   REQUESTS = 'REQUESTS',
 }
 export interface PushAPIInitializeProps {
@@ -32,6 +38,15 @@ export interface ManageGroupOptions {
   accounts: string[];
 }
 
+export interface ManageSpaceOptions {
+  role: 'SPEAKER' | 'LISTENER';
+  accounts: string[];
+}
+
+export interface RemoveFromSpaceOptions {
+  accounts: string[];
+}
+
 export interface RemoveFromGroupOptions {
   role?: 'ADMIN' | 'MEMBER';
   accounts: string[];
@@ -53,7 +68,37 @@ export interface GroupUpdateOptions {
   rules?: Rules | null;
 }
 
+export interface SpaceUpdateOptions {
+  name?: string;
+  description?: string;
+  image?: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
+  meta?: string | null;
+  rules?: SpaceRules | null;
+}
+
 export interface InfoOptions {
   overrideAccount?: string;
 }
 
+export interface SpaceCreationOptions {
+  description: string;
+  image: string;
+  participants: {
+    speakers: string[];
+    listeners: string[];
+  };
+  schedule: {
+    start: Date;
+    end?: Date;
+  };
+  rules?: SpaceRules;
+  private: boolean;
+}
+
+export interface SpaceQueryOptions {
+  page: number;
+  limit: number;
+}
