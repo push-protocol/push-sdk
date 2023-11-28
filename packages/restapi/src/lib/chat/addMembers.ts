@@ -1,4 +1,5 @@
-import Constants from '../constants';
+import { ALPHA_FEATURE_CONFIG } from '../config';
+import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import { updateGroupMembers } from './updateGroupMembers';
 import { GroupMemberUpdateOptions } from './updateGroupMembers';
@@ -24,7 +25,9 @@ export const addMembers = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
-    overrideSecretKeyGeneration = true,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options || {};
   try {
     if (account == null && signer == null) {

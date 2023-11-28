@@ -40,7 +40,7 @@ describe('Private Groups', () => {
     account1 = `eip155:${signer1.address}`;
     userAlice = await PushAPI.initialize(signer1, {
       env: _env,
-      alpha: { feature: [Constants.ALPHA_FEATURES.GROUP_SCALABILITY] },
+      alpha: { feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2] },
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
@@ -48,7 +48,7 @@ describe('Private Groups', () => {
     account2 = `eip155:${signer2.address}`;
     userBob = await PushAPI.initialize(signer2, {
       env: _env,
-      alpha: { feature: [Constants.ALPHA_FEATURES.GROUP_SCALABILITY] },
+      alpha: { feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2] },
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
@@ -56,7 +56,7 @@ describe('Private Groups', () => {
     account3 = `eip155:${signer3.address}`;
     userJohn = await PushAPI.initialize(signer3, {
       env: _env,
-      alpha: { feature: [Constants.ALPHA_FEATURES.GROUP_SCALABILITY] },
+      alpha: { feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2] },
     });
 
     group = await userAlice.chat.group.create(groupName, {
