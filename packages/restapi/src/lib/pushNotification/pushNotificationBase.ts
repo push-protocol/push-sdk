@@ -36,6 +36,7 @@ const LENGTH_UPPER_LIMIT = 125;
 const LENGTH_LOWER_LIMTI = 1;
 const SETTING_DELIMITER = '-';
 const SETTING_SEPARATOR = '+';
+const RANGE_TYPE = 3;
 const SLIDER_TYPE = 2;
 const BOOLEAN_TYPE = 1;
 const DEFAULT_ENABLE_VALUE = '1';
@@ -160,7 +161,7 @@ export class PushNotificationBaseClass {
     // fetch the minimal version based on conifg that was passed
     let index = '';
     if (options.payload?.category && settings) {
-      if (settings[options.payload.category - 1].type == 2) {
+      if (settings[options.payload.category - 1].type == SLIDER_TYPE) {
         index =
           options.payload.category +
           SETTING_DELIMITER +
@@ -168,8 +169,16 @@ export class PushNotificationBaseClass {
           SETTING_DELIMITER +
           settings[options.payload.category - 1].default;
       }
-      if (settings[options.payload.category - 1].type == 1) {
+      if (settings[options.payload.category - 1].type == BOOLEAN_TYPE) {
         index = options.payload.category + SETTING_DELIMITER + BOOLEAN_TYPE;
+      }
+      if (settings[options.payload.category - 1].type == RANGE_TYPE) {
+        index =
+          options.payload.category +
+          SETTING_DELIMITER +
+          RANGE_TYPE +
+          SETTING_DELIMITER +
+          settings[options.payload.category - 1].default.lower;
       }
     }
     const notificationPayload: ISendNotificationInputOptions = {
@@ -669,7 +678,7 @@ export class PushNotificationBaseClass {
     return 0;
   }
 
-  protected getMinimalSetting(configuration: NotificationSettings): {
+  public getMinimalSetting(configuration: NotificationSettings): {
     setting: string;
     description: string;
   } {
@@ -684,8 +693,6 @@ export class PushNotificationBaseClass {
           BOOLEAN_TYPE +
           SETTING_DELIMITER +
           ele.default;
-        notificationSettingDescription =
-          notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
       if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
@@ -708,13 +715,36 @@ export class PushNotificationBaseClass {
             ele.data.upper +
             SETTING_DELIMITER +
             ticker;
-
-          notificationSettingDescription =
-            notificationSettingDescription +
-            SETTING_SEPARATOR +
-            ele.description;
         }
       }
+      if (ele.type == RANGE_TYPE) {
+        if (ele.default && typeof ele.default == 'object' && ele.data) {
+          const enabled =
+            ele.data && ele.data.enabled != undefined
+              ? Number(ele.data.enabled).toString()
+              : DEFAULT_ENABLE_VALUE;
+          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
+          notificationSetting =
+            notificationSetting +
+            SETTING_SEPARATOR +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.default.lower +
+            SETTING_DELIMITER +
+            ele.default.upper +
+            SETTING_DELIMITER +
+            ele.data.lower +
+            SETTING_DELIMITER +
+            ele.data.upper +
+            SETTING_DELIMITER +
+            ticker;
+        }
+      }
+
+      notificationSettingDescription =
+        notificationSettingDescription + SETTING_SEPARATOR + ele.description;
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
