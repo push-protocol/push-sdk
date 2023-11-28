@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const packageJson = require('../../package.json');
+
 /**
  * SUPPORTED ENVIRONEMENTS
  */
@@ -44,9 +47,13 @@ export enum MessageType {
 }
 
 export const ALPHA_FEATURES = {
-  GROUP_SCALABILITY: 'GROUP_SCALABILITY',
+  SCALABILITY_V2: 'SCALABILITY_V2',
 };
 
+export const PACKAGE_BUILD = packageJson.version.includes('alpha')
+  ? 'ALPHA'
+  : 'STABLE';
+console.log(PACKAGE_BUILD);
 const Constants = {
   ENV,
   ENCRYPTION_TYPE,

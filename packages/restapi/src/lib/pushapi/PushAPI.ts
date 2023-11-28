@@ -1,4 +1,4 @@
-import Constants, { ENV } from '../constants';
+import Constants, { ENV, PACKAGE_BUILD } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
 import { PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
@@ -15,6 +15,7 @@ import {
   PushStreamInitializeProps,
   STREAM,
 } from '../pushstream/pushStreamTypes';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -137,7 +138,7 @@ export class PushAPI {
         alpha:
           options?.alpha && options.alpha.feature
             ? options.alpha
-            : { feature: [] },
+            : ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       };
 
       const readMode = !signer;

@@ -35,7 +35,7 @@ import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
 export class Chat {
   private userInstance: User;
-  private groupScalabilityTag: 'ALPHA' | 'STABLE';
+  private scalabilityV2Feature: boolean;
 
   constructor(
     private account: string,
@@ -46,11 +46,9 @@ export class Chat {
     private progressHook?: (progress: ProgressHookType) => void
   ) {
     this.userInstance = new User(this.account, this.env);
-    this.groupScalabilityTag = this.alpha.feature.includes(
-      ALPHA_FEATURES.GROUP_SCALABILITY
-    )
-      ? 'ALPHA'
-      : 'STABLE';
+    this.scalabilityV2Feature = this.alpha.feature.includes(
+      ALPHA_FEATURES.SCALABILITY_V2
+    );
   }
 
   async list(
@@ -81,6 +79,7 @@ export class Chat {
         throw new Error('Invalid Chat List Type');
     }
   }
+
   async latest(target: string) {
     const { threadHash } = await PUSH_CHAT.conversationHash({
       conversationId: target,
@@ -170,7 +169,7 @@ export class Chat {
       account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+      overrideSecretKeyGeneration: !this.scalabilityV2Feature,
     });
   }
 
@@ -304,14 +303,14 @@ export class Chat {
         admins: options?.admins ? options.admins : [],
       };
       const response = await PUSH_CHAT.createGroupV2(groupParams);
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return response;
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: response.chatId,
-            env: this.env,
-          });
+
+      if (this.scalabilityV2Feature) {
+        return response;
+      } else {
+        return await PUSH_CHAT.getGroup({
+          chatId: response.chatId,
+          env: this.env,
+        });
       }
     },
 
@@ -344,18 +343,15 @@ export class Chat {
     },
 
     info: async (chatId: string): Promise<GroupDTO | GroupInfoDTO> => {
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return await PUSH_CHAT.getGroupInfo({
+      return this.scalabilityV2Feature
+        ? await PUSH_CHAT.getGroupInfo({
+            chatId: chatId,
+            env: this.env,
+          })
+        : await PUSH_CHAT.getGroup({
             chatId: chatId,
             env: this.env,
           });
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: chatId,
-            env: this.env,
-          });
-      }
     },
     update: async (
       chatId: string,
@@ -400,14 +396,13 @@ export class Chat {
       await updateGroupProfile(updateGroupProfileOptions);
       const response = await updateGroupConfig(updateGroupConfigOptions);
 
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return response;
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: response.chatId,
-            env: this.env,
-          });
+      if (this.scalabilityV2Feature) {
+        return response;
+      } else {
+        return await PUSH_CHAT.getGroup({
+          chatId: response.chatId,
+          env: this.env,
+        });
       }
     },
 
@@ -444,7 +439,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       } else {
         response = await PUSH_CHAT.addMembers({
@@ -454,18 +449,17 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
 
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return response;
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: response.chatId,
-            env: this.env,
-          });
+      if (this.scalabilityV2Feature) {
+        return response;
+      } else {
+        return await PUSH_CHAT.getGroup({
+          chatId: response.chatId,
+          env: this.env,
+        });
       }
     },
 
@@ -513,7 +507,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
 
@@ -525,21 +519,10 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return await PUSH_CHAT.getGroupInfo({
-            chatId: chatId,
-            env: this.env,
-          });
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: chatId,
-            env: this.env,
-          });
-      }
+      return await this.group.info(chatId);
     },
 
     modify: async (chatId: string, options: ManageGroupOptions) => {
@@ -570,7 +553,7 @@ export class Chat {
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
-        overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+        overrideSecretKeyGeneration: !this.scalabilityV2Feature,
       });
     },
 
@@ -591,7 +574,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       } else if (!status.isMember) {
         await PUSH_CHAT.addMembers({
@@ -601,21 +584,10 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return await PUSH_CHAT.getGroupInfo({
-            chatId: target,
-            env: this.env,
-          });
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: target,
-            env: this.env,
-          });
-      }
+      return await this.group.info(target);
     },
 
     leave: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
@@ -639,7 +611,7 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       } else {
         response = await PUSH_CHAT.removeMembers({
@@ -649,18 +621,17 @@ export class Chat {
           account: this.account,
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
-          overrideSecretKeyGeneration: this.groupScalabilityTag !== 'ALPHA',
+          overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
 
-      switch (this.groupScalabilityTag) {
-        case 'ALPHA':
-          return response;
-        case 'STABLE':
-          return await PUSH_CHAT.getGroup({
-            chatId: response.chatId,
-            env: this.env,
-          });
+      if (this.scalabilityV2Feature) {
+        return response;
+      } else {
+        return await PUSH_CHAT.getGroup({
+          chatId: response.chatId,
+          env: this.env,
+        });
       }
     },
 

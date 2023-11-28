@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
-import Constants from '../constants';
+import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
   getAccountAddress,
@@ -14,6 +14,7 @@ import * as CryptoJS from 'crypto-js';
 import * as AES from '../chat/helpers/aes';
 import { getGroupInfo } from './getGroupInfo';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -52,7 +53,9 @@ export const approveCore = async (
     senderAddress,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
-    overrideSecretKeyGeneration = true,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options || {};
 
   /**
