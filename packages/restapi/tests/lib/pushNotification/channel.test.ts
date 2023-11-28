@@ -126,6 +126,11 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
+    it('Without signer and account : Should return response without passing the options', async () => {
+      const res = await userKate.channel.subscribers({page:1, limit:10, category:2});
+      expect(res).not.null;
+    });
+
     it('Without signer and account : Should throw error for invalid caip', async () => {
       await expect(() =>
         userBob.channel.subscribers({
@@ -218,6 +223,29 @@ describe('PushAPI.channel functionality', () => {
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
             category: 2,
+          },
+        }
+      );
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
+      const res = await userAlice.channel.send(
+        [
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        ],
+        {
+          notification: {
+            title: 'hi',
+            body: 'test-targeted',
+          },
+          payload: {
+            title: 'testing first notification',
+            body: 'testing with random body',
+            cta: 'https://google.com/',
+            embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
+            category: 3,
           },
         }
       );
@@ -358,12 +386,47 @@ describe('PushAPI.channel functionality', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.setting([
         {
-          type: 2,
-          default: 5,
-          description: 'My notif setting 2',
-          data: { upper: 100, lower: 5, ticker: 10, enabled: true },
+          type: 1,
+          default: 1,
+          description: 'test1',
         },
-        { type: 1, default: 1, description: 'My Notif Settings' },
+        {
+          type: 2,
+          default: 10,
+          description: 'test2',
+          data: {
+            upper: 100,
+            lower: 1,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 10,
+            upper: 50,
+          },
+          description: 'test3',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: true,
+            ticker: 2,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 3,
+            upper: 5,
+          },
+          description: 'test4',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: false,
+            ticker: 2,
+          },
+        },
       ]);
       //   console.log(res)
       expect(res).not.null;

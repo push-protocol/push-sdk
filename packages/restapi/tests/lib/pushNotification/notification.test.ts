@@ -21,28 +21,37 @@ describe('PushAPI.notification functionality', () => {
   let userViem: PushAPI;
   beforeEach(async () => {
     signer1 = new ethers.Wallet(
-      `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
+      `0x${process.env['WALLET_PRIVATE_KEY']}`
     );
     account1 = await signer1.getAddress();
-    
+
     const provider = new ethers.providers.JsonRpcProvider(
       'https://rpc.sepolia.org'
     );
 
     signer2 = new ethers.Wallet(
-      `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`,
+      `0x${process.env['WALLET_PRIVATE_KEY']}`,
       provider
     );
     account2 = await signer2.getAddress();
     viemSigner = createWalletClient({
       account: privateKeyToAccount(
-        `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
+        `0x${process.env['WALLET_PRIVATE_KEY']}`
       ),
       chain: sepolia,
       transport: http(),
     });
+    enum ENV {
+      PROD = 'prod',
+      STAGING = 'staging',
+      DEV = 'dev',
+      /**
+       * **This is for local development only**
+       */
+      LOCAL = 'local',
+    }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2, {env:ENV.DEV});
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer1);
     // TODO: remove signer1 after signer becomes optional
@@ -85,7 +94,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
-      console.log(response)
+      console.log(response);
       expect(response).not.null;
     });
 
@@ -95,30 +104,30 @@ describe('PushAPI.notification functionality', () => {
         channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
         raw: true,
       });
-        // console.log(response)
+      // console.log(response)
       expect(response).not.null;
     });
   });
 
   describe('notification :: subscribe', () => {
     beforeEach(async () => {
-      await userAlice.notification.unsubscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
+    //   await userAlice.notification.unsubscribe(
+    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+    //   );
 
-      await userKate.notification.unsubscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
-    });
+    //   await userKate.notification.unsubscribe(
+    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+    //   );
+    // });
 
-    afterEach(async () => {
-      await userAlice.notification.unsubscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
+    // afterEach(async () => {
+    //   await userAlice.notification.unsubscribe(
+    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+    //   );
 
-      await userKate.notification.unsubscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
+    //   await userKate.notification.unsubscribe(
+    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+    //   );
     });
     it.skip('Without signer object: should throw error', async () => {
       await expect(() =>
@@ -138,13 +147,17 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer object: Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', {
-          settings: [{
-            enabled: false
-          },{
-            enabled: false,
-            value: 0
-          }, ]
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        {
+          settings: [
+            {
+              enabled: false,
+            },
+            {
+              enabled: false,
+              value: 0,
+            },
+          ],
         }
       );
       // console.log(res)
@@ -156,6 +169,39 @@ describe('PushAPI.notification functionality', () => {
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and provider: Should subscribe', async () => {
+      const res = await userKate.notification.subscribe(
+        'eip155:11155111:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+        {
+          settings: [
+            {
+              enabled: false,
+            },
+            {
+              enabled: true,
+              value: 15,
+            },
+            {
+              enabled: true,
+              value: {
+                lower: 5,
+                upper: 10,
+              },
+            },
+            {
+              enabled: true,
+              value: {
+                lower: 5,
+                upper: 10,
+              },
+            },
+          ],
+        }
+      );
+      console.log(res)
       expect(res).not.null;
     });
 
@@ -175,7 +221,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with no account: Should return response', async () => {
       const response = await userAlice.notification.subscriptions();
-        console.log(response);
+      console.log(response);
       expect(response).not.null;
     });
 
@@ -208,7 +254,5 @@ describe('PushAPI.notification functionality', () => {
   //     it("Uploading data to ipfs via push node", async () => {
   //         await userAlice.uploadToIPFSViaPushNode("test")
   //     })
-
-
-  });
+});
 // });
