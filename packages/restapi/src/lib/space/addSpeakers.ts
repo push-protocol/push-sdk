@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { EnvOptionsType, SignerType, SpaceDTO } from '../types';
-import { groupDtoToSpaceDto } from '../chat/helpers';
+import { groupDtoToSpaceDto, groupDtoToSpaceDtoV2 } from '../chat/helpers';
 import { addAdmins } from '../chat/addAdmins';
 
 export interface AddSpeakersToSpaceType extends EnvOptionsType {
@@ -29,5 +29,5 @@ export const addSpeakers = async (
     pgpPrivateKey: pgpPrivateKey,
   });
 
-  return groupDtoToSpaceDto(group);
+  return groupDtoToSpaceDtoV2(group, env);
 };
