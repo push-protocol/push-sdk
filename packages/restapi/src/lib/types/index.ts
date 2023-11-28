@@ -399,15 +399,36 @@ export interface SpaceAccess {
   rules?: SpaceRules;
 }
 
+export interface RoleCounts {
+  total: number;
+  pending: number;
+}
+
 export interface ChatMemberCounts {
   overallCount: number;
   adminsCount: number;
   membersCount: number;
   pendingCount: number;
   approvedCount: number;
+  roles: {
+    ADMIN: RoleCounts;
+    MEMBER: RoleCounts;
+  };
+}
+
+export interface GroupParticipantCounts {
+  participants: number;
+  pending: number;
 }
 
 export interface ChatMemberProfile {
+  address: string;
+  intent: boolean;
+  role: string;
+  userInfo: UserV2;
+}
+
+export interface SpaceMemberProfile {
   address: string;
   intent: boolean;
   role: string;

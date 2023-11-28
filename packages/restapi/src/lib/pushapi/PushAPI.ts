@@ -16,6 +16,7 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { Space } from './space';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -27,7 +28,9 @@ export class PushAPI {
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
 
-  public chat: Chat; // Public instances to be accessed from outside the class
+  public chat: Chat;
+  public space: Space;
+
   public profile: Profile;
   public encryption: Encryption;
   private user: User;
@@ -62,6 +65,13 @@ export class PushAPI {
       this.account,
       this.env,
       this.alpha,
+      this.decryptedPgpPvtKey,
+      this.signer,
+      this.progressHook
+    );
+    this.space = new Space(
+      this.account,
+      this.env,
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook

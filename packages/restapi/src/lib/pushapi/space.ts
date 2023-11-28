@@ -10,13 +10,17 @@ import {
   Message,
   MessageWithCID,
   IMessageIPFS,
+  GroupParticipantCounts,
+  ChatMemberProfile,
+  SpaceMemberProfile,
 } from '../types';
 import {
-  ChatListType,
+  GetGroupParticipantsOptions,
   ManageSpaceOptions,
   RemoveFromSpaceOptions,
   SpaceCreationOptions,
   SpaceListType,
+  SpaceParticipantStatus,
   SpaceQueryOptions,
   SpaceUpdateOptions,
 } from './pushAPITypes';
@@ -35,7 +39,6 @@ import { isValidETHAddress } from '../helpers';
 import { Chat } from './chat';
 
 export class Space {
-  private userInstance: User;
   private chatInstance: Chat;
 
   constructor(
@@ -45,7 +48,6 @@ export class Space {
     private signer?: SignerType,
     private progressHook?: (progress: ProgressHookType) => void
   ) {
-    this.userInstance = new User(this.account, this.env);
     this.chatInstance = new Chat(
       this.account,
       this.env,
@@ -139,6 +141,65 @@ export class Space {
     });
     return groupInfoDtoToSpaceInfoDto(groupDto);
   }
+
+  participants = {
+    list: async (
+      chatId: string,
+      options?: GetGroupParticipantsOptions
+    ): Promise<{ members: SpaceMemberProfile[] }> => {
+      const { page = 1, limit = 20 } = options ?? {};
+      const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
+        chatId,
+        page,
+        limit,
+        env: this.env,
+      };
+
+      const chatMembers = await PUSH_CHAT.getGroupMembers(
+        getGroupMembersOptions
+      );
+      const members: SpaceMemberProfile[] = chatMembers.map(
+        (member: ChatMemberProfile): SpaceMemberProfile => {
+          return {
+            address: member.address,
+            intent: member.intent,
+            role:
+              member.role.toUpperCase() === 'ADMIN' ? 'SPEAKER' : 'LISTENER',
+            userInfo: member.userInfo,
+          };
+        }
+      );
+      return { members };
+    },
+
+    count: async (chatId: string): Promise<GroupParticipantCounts> => {
+      const count = await PUSH_CHAT.getGroupMemberCount({
+        chatId,
+        env: this.env,
+      });
+      return {
+        participants: count.overallCount - count.pendingCount,
+        pending: count.pendingCount,
+      };
+    },
+
+    status: async (
+      chatId: string,
+      accountId: string
+    ): Promise<SpaceParticipantStatus> => {
+      const status = await PUSH_CHAT.getGroupMemberStatus({
+        chatId: chatId,
+        did: accountId,
+        env: this.env,
+      });
+
+      return {
+        pending: status.isPending,
+        role: status.isAdmin ? 'SPEAKER' : 'LISTENER',
+        participant: status.isMember,
+      };
+    },
+  };
 
   async permissions(spaceId: string): Promise<SpaceAccess> {
     const getGroupAccessOptions: PUSH_CHAT.GetGroupAccessType = {
@@ -417,6 +478,13 @@ export class Space {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     return this.chatInstance.accept(spaceId);
+  }
+
+  async reject(spaceId: string): Promise<void> {
+    if (!this.signer) {
+      throw new Error(PushAPI.ensureSignerMessage());
+    }
+    return this.chatInstance.reject(spaceId);
   }
 
   get chat() {
