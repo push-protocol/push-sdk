@@ -25,39 +25,41 @@ enum ENV {
   LOCAL = 'local',
 }
 describe.only('test', () => {
-  const signer = createWalletClient({
-    account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
-    chain: goerli,
-    transport: http('https://goerli.blockpi.network/v1/rpc/public'),
-  });
+  // const signer = createWalletClient({
+  //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
+  //   chain: goerli,
+  //   transport: http('https://goerli.blockpi.network/v1/rpc/public'),
+  // });
 
-  const signer3 = createWalletClient({
-    account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
-    chain: polygonMumbai,
-    transport: http(),
-  });
+  // const signer3 = createWalletClient({
+  //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
+  //   chain: polygonMumbai,
+  //   transport: http(),
+  // });
 
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://goerli.blockpi.network/v1/rpc/public'
-  );
-  const signer2 = new ethers.Wallet(
-    `0x${process.env['WALLET_PRIVATE_KEY']}`,
-    provider
-  );
+  // const provider = new ethers.providers.JsonRpcProvider(
+  //   'https://goerli.blockpi.network/v1/rpc/public'
+  // );
+  // const signer2 = new ethers.Wallet(
+  //   `0x${process.env['WALLET_PRIVATE_KEY']}`,
+  //   provider
+  // );
 
-  // it.only('Test minimal conversion', async () => {
+  // it('Test minimal conversion', async () => {
   //   const account2 = await signer2.getAddress();
   //   const viemUser = new PushNotificationBaseClass(
   //     signer,
   //     ENV.STAGING,
   //     account2
   //   );
-  //   viemUser.getMinimalUserSetting([
+  //   const res = viemUser.getMinimalUserSetting([
   //     { enabled: true },
   //     { enabled: false, value: 10 },
   //     { enabled: false },
   //     { enabled: true, value: 10 },
+  //     {enabled: true, value: {lower:10, upper:100}}
   //   ]);
+  //   console.log(res)
   // });
   //   it('testing with viem', async () => {
   //     const account2 = await signer2.getAddress();
