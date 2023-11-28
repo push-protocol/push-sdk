@@ -2,6 +2,23 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.57](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.56...restapi-0.0.1-alpha.57) (2023-11-28)
+
+
+### Bug Fixes
+
+* added feature Tag ([#888](https://github.com/ethereum-push-notification-service/push-sdk/issues/888)) ([d04c93a](https://github.com/ethereum-push-notification-service/push-sdk/commit/d04c93aefa3b5ebb921509c799cb5d5ef2cf100e))
+* bug fix ([#887](https://github.com/ethereum-push-notification-service/push-sdk/issues/887)) ([d1f0c50](https://github.com/ethereum-push-notification-service/push-sdk/commit/d1f0c50f13b8e50ddf7ff6c78e8b0dfa03ecbbf9))
+* fix config from package tag ([#893](https://github.com/ethereum-push-notification-service/push-sdk/issues/893)) ([0ca7c59](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ca7c59dd985a50182a3f2f7efb2a1ab35416441))
+* fix verification error warn ([#877](https://github.com/ethereum-push-notification-service/push-sdk/issues/877)) ([317ad5f](https://github.com/ethereum-push-notification-service/push-sdk/commit/317ad5f1df92e039a2d8d9592dd7d33385e2557c))
+* fixed test cases ([8406040](https://github.com/ethereum-push-notification-service/push-sdk/commit/84060404762275ab3beb0c7f6401ce44c2e5a35d))
+* Merge branch 'alpha' into alpha-deployment ([35a13fd](https://github.com/ethereum-push-notification-service/push-sdk/commit/35a13fd9e383e721edb2a0c124138b506ee26e05))
+* merge main ([06d724b](https://github.com/ethereum-push-notification-service/push-sdk/commit/06d724b3ddfddc97eaf02b35c54ccb86ee712bcc))
+* overrride account options ([#884](https://github.com/ethereum-push-notification-service/push-sdk/issues/884)) ([d3dd7f0](https://github.com/ethereum-push-notification-service/push-sdk/commit/d3dd7f0ac1fb9cd611902520a54bc519b2ce45ff))
+* signature issue ([#876](https://github.com/ethereum-push-notification-service/push-sdk/issues/876)) ([e6ab38d](https://github.com/ethereum-push-notification-service/push-sdk/commit/e6ab38da397b2baa2db2e54b8fdb52ed16100fca))
+
+
+
 ## [0.0.1-alpha.56](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.55...restapi-0.0.1-alpha.56) (2023-11-22)
 
 
