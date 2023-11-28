@@ -678,7 +678,7 @@ export class PushNotificationBaseClass {
     return 0;
   }
 
-  public getMinimalSetting(configuration: NotificationSettings): {
+  protected getMinimalSetting(configuration: NotificationSettings): {
     setting: string;
     description: string;
   } {
