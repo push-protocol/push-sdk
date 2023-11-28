@@ -762,15 +762,28 @@ export class PushNotificationBaseClass {
       const ele = setting[i];
       const enabled = ele.enabled ? 1 : 0;
       if (ele.enabled) numberOfSettings++;
-      // slider type
+
       if (Object.keys(ele).includes('value')) {
-        userSetting =
-          userSetting +
-          SLIDER_TYPE +
-          SETTING_DELIMITER +
-          enabled +
-          SETTING_DELIMITER +
-          ele.value;
+        // slider type
+        if (typeof ele.value == 'number')
+          userSetting =
+            userSetting +
+            SLIDER_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value;
+        else {
+          userSetting =
+            userSetting +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value?.lower +
+            SETTING_DELIMITER +
+            ele.value?.upper;
+        }
       } else {
         // boolean type
         userSetting = userSetting + BOOLEAN_TYPE + SETTING_DELIMITER + enabled;
