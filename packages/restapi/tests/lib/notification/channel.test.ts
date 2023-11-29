@@ -126,8 +126,30 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
-    it('Without signer and account : Should return response without passing the options', async () => {
-      const res = await userKate.channel.subscribers({page:1, limit:10, category:2});
+    it('With signer and account : Should return response without passing the options', async () => {
+      const res = await userKate.channel.subscribers({ page: 1, limit: 10 });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and account : Should return response with settings', async () => {
+      const res = await userKate.channel.subscribers({
+        page: 1,
+        limit: 10,
+        setting: true,
+      });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and account : Should return response without settings', async () => {
+      const res = await userKate.channel.subscribers({
+        page: 1,
+        limit: 10,
+        setting: false,
+        category: 1,
+      });
+      // console.log(res)
       expect(res).not.null;
     });
 
