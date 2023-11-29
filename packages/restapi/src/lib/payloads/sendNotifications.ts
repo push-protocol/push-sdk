@@ -209,7 +209,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
 
     const apiPayload = {
       verificationProof,
-      identity, // `2+${payloadJSON}`
+      identity,
       sender:
         senderType === 1 && !isValidCAIP10NFTAddress(_channelAddress)
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
@@ -222,13 +222,21 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         recipients: recipients || '',
         channel: _channelAddress,
       }),
-      rules: rules ?? {
-        // for backwards compatibilty with 'chatId' param
-        access: {
-          data: chatId,
-          type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-        },
-      },
+      /* 
+        - If 'rules' is not provided, check if 'chatId' is available.
+        - If 'chatId' is available, create a new 'rules' object for backwards compatibility.
+        - If neither 'rules' nor 'chatId' is available, do not include 'rules' in the payload.
+      */
+      ...(rules || chatId
+        ? {
+            rules: rules ?? {
+              access: {
+                data: chatId,
+                type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+              },
+            },
+          }
+        : {}),
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;

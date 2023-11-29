@@ -24,7 +24,6 @@ interface CallDetailsType {
 export interface VideoDataType {
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  channelAddress?: string;
   recipientAddress: string;
   senderAddress: string;
   signalData?: any;
