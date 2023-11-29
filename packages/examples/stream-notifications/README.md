@@ -1,11 +1,12 @@
-# About Automated Chat
-Automated chat example shows how you can receive chats when you talk to someone using Push Chat. In this example, we establish a socket connection and then send a message to pushai.eth, which is an automated chat bot that replies back.
+# About Stream Notifications
+Stream notifications shows an example of how streaming notifications works and can be used to listen to notifications for a user and to react if necessary.
 
 ## What's the use case
-You can use this example to see the functionality of sockets and how you can respond to messages from backend (server) when a wallet messages you (or a wallet you own). Some use cases are:
+You can use this example to see the functionality of stream API when a channel sends a notification to you. Some use cases are:
 
-- Creating an automated support bot
-- Creating an AI chat bot
+- Enabling notification experience on your dApp
+- Enabling notifications as an IFTTT logic
+- Enabling notifications on your mobile app
 
 ## Install instructions
 1. Navigate to this directory from the terminal
