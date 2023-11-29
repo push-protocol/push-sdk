@@ -19,6 +19,7 @@ export type GetChannelSubscribersOptionsType = {
     page?: number,
     limit?: number,
     category?: number,
+    setting?: boolean,
     env?: ENV
 }
 
@@ -29,7 +30,8 @@ export const getSubscribers = async (
         channel,
         page = 1,
         limit = 10,
-        category,
+        category = null,
+        setting = false,
         env = Constants.ENV.PROD,
     } = options || {};
 
@@ -51,7 +53,7 @@ export const getSubscribers = async (
         }
         const _channel = await getCAIPAddress(env, channel, 'Channel');
         const API_BASE_URL = getAPIBaseUrls(env);
-        let apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}`;
+        let apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}&setting=${setting}`;
         if(category){
             apiEndpoint = apiEndpoint+`&category=${category}`
         }
