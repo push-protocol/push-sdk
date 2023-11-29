@@ -1,6 +1,35 @@
-import type { IMessageIPFS } from '@pushprotocol/restapi';
+import type { CONSTANTS, IMessageIPFS } from '@pushprotocol/restapi';
+import { IGroup } from '../../types';
 import { IChatTheme } from "./theme";
-import { IGroup } from '../../types'
+
+
+export interface IChatPreviewPayload {
+  chatId: string | undefined;
+  chatPic: string | null;
+  chatSender: string;
+  chatTimestamp: number | undefined;
+  chatMsg?: {
+    messageType: string;
+    messageContent: string | object;
+  }
+}
+
+export interface IChatPreviewProps {
+  selected?: boolean;
+  badge?: {
+    show?: boolean;
+    count?: number;
+    title?: string;
+    type?: 'msg' | 'new';
+  };
+  chatPreviewPayload?: IChatPreviewPayload;
+}
+
+export interface IChatPreviewListProps {
+  overrideAccount?: string;
+  listType?: 'CHATS' | 'REQUESTS';
+  prefillChatPreviewList?: Array<IChatPreviewProps>;
+}
 
 export interface IChatViewListProps {
   chatId: string;
@@ -150,7 +179,7 @@ export interface ModalButtonProps {
 };
 
 
-export {IChatTheme} from './theme';
+export { IChatTheme } from './theme';
 
 export interface ConditionData {
   operator?: string;

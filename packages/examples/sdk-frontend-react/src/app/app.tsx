@@ -1,94 +1,96 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import ConnectButtonComp from './components/Connect';
-import { Checkbox } from './components/Checkbox';
-import Dropdown from './components/Dropdown';
-import {
-  Web3Context,
-  EnvContext,
-  SocketContext,
-  AccountContext,
-} from './context';
-import { useSDKSocket } from './hooks';
-import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
-import NotificationsTest from './NotificationsTest';
-import SecretNotificationsTest from './SecretNotificationsTest';
-import ChannelsTest from './ChannelsTest';
-import AliasTest from './AliasTest';
-import EmbedTest from './EmbedTest';
-import PayloadsTest from './PayloadsTest';
-import SocketTest from './SocketTest';
-import ChatTest from './ChatTest/ChatTest';
-import GetUserTest from './ChatTest/GetUser';
-import CreateUserTest from './ChatTest/CreateUser';
-import SendMessageTest from './ChatTest/SendMessageTest';
-import ApproveRequestTest from './ChatTest/ApproveRequestTest';
-import GetChatsTest from './ChatTest/GetChats';
-import ConversationHashTest from './ChatTest/ConversationHash';
-import HistoryTest from './ChatTest/History';
-import GetRequestsTest from './ChatTest/GetRequests';
-import DelegationTest from './DelegationTest';
-import CreateGroupTest from './ChatTest/CreateGroupTest';
-import AddMembersToGroupTest from './ChatTest/AddMembersToGroupTest';
-import AddAdminsToGroupTest from './ChatTest/AddAdminsToGroupTest';
-import CreateSpaceTest from './SpaceTest/CreateSpaceTest';
-import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
-import GetSpaceTest from './SpaceTest/GetSpaceTest';
-import GetSpaceInfoTest from './SpaceTest/GetSpaceInfoTest';
-import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
-import UpdateGroupTest from './ChatTest/UpdateGroupTest';
-import GetGroupTest from './ChatTest/GetGroupTest';
-import GetGroupAccessTest from './ChatTest/GetGroupAccessTest';
-import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
-import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
-import UpdateUserProfile from './ChatTest/UpdateUserProfile';
 import { Buffer } from 'buffer';
-import { ENV } from './helpers';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
+import styled from 'styled-components';
+import { ReactComponent as PushLogo } from '../assets/pushLogo.svg';
+import AliasTest from './AliasTest';
+import ChannelsTest from './ChannelsTest';
+import AddAdminsToGroupTest from './ChatTest/AddAdminsToGroupTest';
+import AddMembersToGroupTest from './ChatTest/AddMembersToGroupTest';
+import ApproveRequestTest from './ChatTest/ApproveRequestTest';
+import AuthUpdateUserTest from './ChatTest/AuthUpdateUser';
+import ChatTest from './ChatTest/ChatTest';
+import ConversationHashTest from './ChatTest/ConversationHash';
+import CreateGroupTest from './ChatTest/CreateGroupTest';
+import CreateUserTest from './ChatTest/CreateUser';
+import GetChatsTest from './ChatTest/GetChats';
+import GetGroupAccessTest from './ChatTest/GetGroupAccessTest';
+import GetGroupTest from './ChatTest/GetGroupTest';
+import GetRequestsTest from './ChatTest/GetRequests';
+import GetUserTest from './ChatTest/GetUser';
+import GetUsersBatchTest from './ChatTest/GetUsersBatchTest';
+import HistoryTest from './ChatTest/History';
+import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
+import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
+import SendMessageTest from './ChatTest/SendMessageTest';
+import UpdateGroupTest from './ChatTest/UpdateGroupTest';
+import UpdateUserProfile from './ChatTest/UpdateUserProfile';
+import DelegationTest from './DelegationTest';
+import EmbedTest from './EmbedTest';
+import NotificationsTest from './NotificationsTest';
+import PayloadsTest from './PayloadsTest';
+import SecretNotificationsTest from './SecretNotificationsTest';
+import SocketTest from './SocketTest';
+import AddListenersToSpaceTest from './SpaceTest/AddListenersToSpaceTest';
+import AddSpeakersToSpaceTest from './SpaceTest/AddSpeakersToSpaceTest';
+import ApproveSpaceRequestTest from './SpaceTest/ApproveSpaceRequestTest';
+import CreateSpaceTest from './SpaceTest/CreateSpaceTest';
+import GetSpaceAccessTest from './SpaceTest/GetSpaceAccessTest';
+import GetSpaceInfoTest from './SpaceTest/GetSpaceInfoTest';
+import GetSpaceTest from './SpaceTest/GetSpaceTest';
+import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
+import GetSpacesTest from './SpaceTest/GetSpacesTest';
+import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
+import RemoveListenersFromSpaceTest from './SpaceTest/RemoveListenersFromSpaceTest';
+import RemoveSpeakersFromSpaceTest from './SpaceTest/RemoveSpeakersFromSpaceTest';
 import SpaceTest from './SpaceTest/SpaceTest';
 import StartSpaceTest from './SpaceTest/StartSpaceTest';
 import StopSpaceTest from './SpaceTest/StopSpaceTest';
-import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
-import RemoveAdminsFromGroupTest from './ChatTest/RemoveAdminsFromGroupTest';
-import AddSpeakersToSpaceTest from './SpaceTest/AddSpeakersToSpaceTest';
-import AddListenersToSpaceTest from './SpaceTest/AddListenersToSpaceTest';
-import RemoveListenersFromSpaceTest from './SpaceTest/RemoveListenersFromSpaceTest';
-import RemoveSpeakersFromSpaceTest from './SpaceTest/RemoveSpeakersFromSpaceTest';
-import GetSpacesTest from './SpaceTest/GetSpacesTest';
-import GetSpacesRequestsTest from './SpaceTest/GetSpacesRequestsTest';
-import GetSpacesTrendingTest from './SpaceTest/GetSpacesTrendingTest';
-import GetSpaceAccessTest from './SpaceTest/GetSpaceAccessTest';
-
-import SpaceUITest from './SpaceUITest/SpaceUITest';
+import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
+import { Checkbox } from './components/Checkbox';
+import ConnectButtonComp from './components/Connect';
+import Dropdown from './components/Dropdown';
 import {
-  SpaceWidget,
-  SpaceBanner,
-  SpaceFeed,
-  CreateSpaceComponent,
-  SpaceInvitesComponent,
-} from './SpaceUITest';
-import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
+  AccountContext,
+  EnvContext,
+  SocketContext,
+  Web3Context,
+} from './context';
+import { ENV } from './helpers';
+import { useSDKSocket } from './hooks';
+
 import * as PushAPI from '@pushprotocol/restapi';
-import { ChatWidgetTest } from './ChatWidgetTest';
 import {
   CHAT_THEME_OPTIONS,
   ChatUIProvider,
   SpacesUI,
   SpacesUIProvider,
   darkChatTheme,
+  lightChatTheme,
 } from '@pushprotocol/uiweb';
-import ChatUITest from './ChatUITest/ChatUITest';
+import { ChatSupportTest } from './ChatSupportTest';
+import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
+import RejectRequestTest from './ChatTest/RejectRequestTest';
+import SearchGroupTest from './ChatTest/SearchGroupTest';
+import ChatPreviewTest from './ChatUITest/ChatPreview';
+import ChatPreviewListTest from './ChatUITest/ChatPreviewList';
 import { ChatProfileTest } from './ChatUITest/ChatProfile';
-import ChatViewListTest from './ChatUITest/ChatViewListTest';
+import ChatUITest from './ChatUITest/ChatUITest';
 import { ChatViewBubbles } from './ChatUITest/ChatViewBubble';
 import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
-import { lightChatTheme } from '@pushprotocol/uiweb';
+import ChatViewListTest from './ChatUITest/ChatViewListTest';
+import { ChatWidgetTest } from './ChatWidgetTest';
 import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
-import SearchGroupTest from './ChatTest/SearchGroupTest';
-import RejectRequestTest from './ChatTest/RejectRequestTest';
-import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
-import { ChatSupportTest } from './ChatSupportTest';
+import {
+  CreateSpaceComponent,
+  SpaceBanner,
+  SpaceFeed,
+  SpaceInvitesComponent,
+  SpaceWidget,
+} from './SpaceUITest';
+import SpaceUITest from './SpaceUITest/SpaceUITest';
+import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -546,24 +548,33 @@ export function App() {
 
                       {/* chat ui components routes */}
                       <Route
-                        path="messageBubble"
+                        path="ChatViewBubble"
                         element={<ChatViewBubbles />}
                       />
                       <Route
-                        path="messageList"
+                        path="ChatViewList"
                         element={<ChatViewListTest />}
                       />
                       <Route
-                        path="messageContainer"
+                        path="ChatView"
                         element={<ChatViewComponentTest />}
-                        />
+                      />
                       <Route
                         path="ChatProfile"
                         element={<ChatProfileTest />}
-                      /> <Route
-                      path="ChatSupport"
-                      element={<ChatSupportTest />}
-                    />
+                      />
+                      <Route
+                        path="ChatPreview"
+                        element={<ChatPreviewTest />}
+                      /> 
+                      <Route
+                        path="ChatPreviewList"
+                        element={<ChatPreviewListTest />}
+                      /> 
+                      <Route
+                        path="ChatSupport"
+                        element={<ChatSupportTest />}
+                      />
                   </Routes>
                   {/* <ChatWidgetTest/> */}
                   {/* <ChatWidgetTest /> */}
