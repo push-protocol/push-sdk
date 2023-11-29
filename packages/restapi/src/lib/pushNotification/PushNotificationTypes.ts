@@ -11,6 +11,7 @@ export type ChannelInfoOptions = {
   channel?: string;
   page?: number;
   limit?: number;
+  category?: number
 };
 
 export type SubscribeUnsubscribeOptions = {
@@ -21,7 +22,7 @@ export type SubscribeUnsubscribeOptions = {
 
 export type UserSetting = {
   enabled: boolean;
-  value?: number;
+  value?: number | {lower: number, upper: number};
 };
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
@@ -100,7 +101,7 @@ export type CreateChannelOptions = {
 
 export type NotificationSetting = {
   type: number;
-  default: number;
+  default: number | { upper: number; lower: number };
   description: string;
   data?: {
     upper: number;

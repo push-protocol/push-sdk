@@ -1,7 +1,7 @@
 
 import { useCallback, useState } from 'react';
 import { useChatData } from './useChatData';
-import { IGroup } from '../../types';
+import { Group } from '../../components';
 
 interface getGroup {
   groupId: string;
@@ -15,7 +15,7 @@ const useGetGroupByID = () => {
   const getGroupByID = useCallback(
     async ({ groupId }: getGroup) => {
       setLoading(true);
-      let group: IGroup | undefined;
+      let group:Group;
       try {
         group = await pushUser?.chat.group.info(groupId);
         console.log(group)

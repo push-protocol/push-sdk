@@ -54,7 +54,6 @@ export const ChatUIProvider = ({
 
   useEffect(() => {
       (async() => {
-
         if(accountVal && envVal){
           const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
           setPushUser(pushUser);

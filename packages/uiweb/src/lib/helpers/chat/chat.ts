@@ -3,16 +3,14 @@ import type { ENV } from '../../config';
 import { Constants } from '../../config';
 import type { 
   AccountEnvOptionsType,
-  IGroup,
-  IMessageIPFS,
   Messagetype,
 } from '../../types';
-import { ChatFeedsType } from '../../types';
-import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
+import type { Env,  IConnectedUser, IFeeds, IMessageIPFS, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getData } from './localStorage';
 import { ethers } from 'ethers';
 import { PushAPI } from '@pushprotocol/restapi';
+import { Group } from '../../components';
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
@@ -64,8 +62,7 @@ export const getChats = async (
   options: GetChatsType
 ): Promise<GetChatsResponseType> => {
   const {
-    account,
-    pgpPrivateKey,
+
     supportAddress,
     pushUser,
     threadHash = null,
@@ -110,7 +107,7 @@ export const getDefaultFeedObject = ({
   groupInformation,
 }: {
   user?: IUser;
-  groupInformation?: IGroup;
+  groupInformation?: Group;
 }): IFeeds => {
   const feed = {
     msg: {

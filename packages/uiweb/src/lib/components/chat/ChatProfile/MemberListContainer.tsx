@@ -10,18 +10,18 @@ import { Section, Span } from '../../reusables/sharedStyling';
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import { IChatTheme, User } from '../exportedTypes';
 import { findObject } from '../helpers/helper';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
 import { ProfileContainer } from '../reusables';
+import { IUser } from '@pushprotocol/restapi';
 
 
 type MemberListContainerType = {
   key?: number;
-  memberData: User;
-  handleMemberList: (member: User) => void;
-  handleMembers?: (value: User[]) => void;
+  memberData: IUser;
+  handleMemberList: (member: IUser) => void;
+  handleMembers?: (value: IUser[]) => void;
   darkIcon: any;
   memberList?: any;
 };
@@ -118,7 +118,7 @@ export const MemberListContainer = ({
         }}
       />
 
-      <Section justifyContent="flex-end">
+      {/* <Section justifyContent="flex-end">
         {memberData?.isAdmin && (
           <Span
             background="#F4DCEA"
@@ -162,7 +162,7 @@ export const MemberListContainer = ({
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
         </DropdownContainer>
-      )}
+      )} */}
     </WalletProfileContainer>
   );
 };

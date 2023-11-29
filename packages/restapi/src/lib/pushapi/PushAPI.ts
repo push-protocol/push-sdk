@@ -1,4 +1,4 @@
-import Constants, { ENV } from '../constants';
+import Constants, { ENV, PACKAGE_BUILD } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
 import { InfoOptions, PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
@@ -15,10 +15,12 @@ import {
   PushStreamInitializeProps,
   STREAM,
 } from '../pushstream/pushStreamTypes';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export class PushAPI {
   private signer?: SignerType;
   private readMode: boolean;
+  private alpha: { feature: string[] };
   private account: string;
   private decryptedPgpPvtKey?: string;
   private pgpPublicKey?: string;
@@ -38,6 +40,7 @@ export class PushAPI {
     env: ENV,
     account: string,
     readMode: boolean,
+    alpha: { feature: string[] },
     decryptedPgpPvtKey?: string,
     pgpPublicKey?: string,
     signer?: SignerType,
@@ -45,6 +48,7 @@ export class PushAPI {
   ) {
     this.signer = signer;
     this.readMode = readMode;
+    this.alpha = alpha;
     this.env = env;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
@@ -57,6 +61,7 @@ export class PushAPI {
     this.chat = new Chat(
       this.account,
       this.env,
+      this.alpha,
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
@@ -130,6 +135,10 @@ export class PushAPI {
           options?.autoUpgrade !== undefined
             ? options?.autoUpgrade
             : defaultOptions.autoUpgrade,
+        alpha:
+          options?.alpha && options.alpha.feature
+            ? options.alpha
+            : ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       };
 
       const readMode = !signer;
@@ -197,6 +206,7 @@ export class PushAPI {
         settings.env as ENV,
         derivedAccount,
         readMode,
+        settings.alpha,
         decryptedPGPPrivateKey,
         pgpPublicKey,
         signer,

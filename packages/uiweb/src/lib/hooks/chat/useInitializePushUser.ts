@@ -10,12 +10,13 @@ export interface ProfileParams {
 }
 
 const useInitializePushUser = () => {
-    console.log(useChatData())
+    
     const initializePushUser = useCallback(async({signer, account,env}: ProfileParams): Promise<any> => {
         try {
             const pushUser = await PushAPI.initialize(signer!, {
                 env: env,
-                account: account
+                account: account,
+                alpha: { feature: ['SCALABILITY_V2'] },
             })
             return pushUser;
         } catch (error) {

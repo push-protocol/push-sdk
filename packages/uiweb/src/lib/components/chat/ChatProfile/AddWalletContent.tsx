@@ -17,11 +17,12 @@ import useToast from '../reusables/NewToast';
 import {
   getNewChatUser,
 } from '../../../helpers';
-import { IChatTheme, ModalButtonProps, User } from '../exportedTypes';
+import { IChatTheme, ModalButtonProps } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
 import { device } from '../../../config';
 import { ChatSearchInput, CustomStyleParamsType, ModalHeader } from '../reusables';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
+import { IUser } from '@pushprotocol/restapi';
 
 
 type AddWalletContentProps = {
@@ -82,7 +83,7 @@ export const AddWalletContent = ({
     setFilteredUserData(null);
   };
 
-  const addMemberToList = (member: User) => {
+  const addMemberToList = (member: IUser) => {
     let errorMessage = '';
 
     errorMessage = addWalletValidation(
@@ -107,7 +108,7 @@ export const AddWalletContent = ({
     clearInput();
   };
 console.log(memberList)
-  const removeMemberFromList = (member: User) => {
+  const removeMemberFromList = (member: IUser) => {
     const filteredMembers = memberList?.filter(
       (user: any) => user.wallets.toLowerCase() !== member.wallets.toLowerCase()
     );

@@ -15,12 +15,11 @@ import { MemberProfileCard } from './MemberProfileCard';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { PendingMembers } from './PendingMembers';
 
-import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
-import {
-  isAccountOwnerAdmin,
-} from '../helpers/group';
+// import {
+//   isAccountOwnerAdmin,
+// } from '../helpers/group';
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import addIcon from '../../../icons/addicon.svg';
@@ -30,7 +29,7 @@ import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
+import { Group, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import { GROUP_ROLES, GroupRolesKeys } from '../types';
 
@@ -58,7 +57,7 @@ const SUCCESS_MESSAGE = {
 
 interface ConditionsInformationProps {
   theme: IChatTheme;
-  groupInfo?: IGroup | null;
+  groupInfo?: Group | null;
   alert?: boolean;
   header?: string;
   subheader?: string;
@@ -233,7 +232,7 @@ type GroupSectionProps = GroupInfoModalProps & {
 type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
-  groupInfo: IGroup;
+  groupInfo: Group;
   // setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
@@ -274,7 +273,7 @@ const GroupInformation = ({
   const handleAddMember = async (role: GroupRolesKeys) => {
     await addMember({
       memberList: [selectedMemberAddress!],
-      chatId:groupInfo?.chatId,
+      chatId:groupInfo!.chatId!,
       role: role,
     });
   };
@@ -282,7 +281,7 @@ const GroupInformation = ({
   const handleRemoveMember = async (role: GroupRolesKeys) => {
     await removeMember({
       memberList: [selectedMemberAddress!],
-      chatId:groupInfo?.chatId,
+      chatId:groupInfo!.chatId!,
       role: role,
     });
   };
@@ -334,7 +333,7 @@ const GroupInformation = ({
           gap="5px"
           alignSelf="start"
           onClick={() => {
-            copyToClipboard(groupInfo?.chatId);
+            copyToClipboard(groupInfo!.chatId!);
             setCopyText('copied');
           }}
           onMouseEnter={() => {
@@ -350,7 +349,7 @@ const GroupInformation = ({
             fontWeight="400"
             color={theme.textColor?.modalSubHeadingText}
           >
-            {shortenText(groupInfo?.chatId, 8, true)}
+            {shortenText(groupInfo!.chatId!, 8, true)}
           </Span>
           {!!copyText && (
             <Span
@@ -409,7 +408,7 @@ const GroupInformation = ({
           subheader={'Conditions must be true to join'}
         />
       )}
-
+{/* 
       {isAccountOwnerAdmin(groupInfo, account!) &&
         groupInfo?.members &&
         groupInfo?.members?.length < 10 && (
@@ -435,9 +434,9 @@ const GroupInformation = ({
               Add more wallets
             </Span>
           </AddWalletContainer>
-        )}
+        )} */}
 
-      <Section borderRadius="16px">
+      {/* <Section borderRadius="16px">
         {groupInfo?.pendingMembers?.length > 0 && (
           <PendingMembers
             groupInfo={groupInfo}
@@ -446,9 +445,9 @@ const GroupInformation = ({
             theme={theme}
           />
         )}
-      </Section>
+      </Section> */}
 
-      <ProfileSection
+      {/* <ProfileSection
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
@@ -471,7 +470,7 @@ const GroupInformation = ({
               dropdownRef={dropdownRef}
             />
           ))}
-      </ProfileSection>
+      </ProfileSection> */}
     </ScrollSection>
   );
 };
@@ -570,7 +569,7 @@ export const GroupInfoModal = ({
       setIsLoading(true);
   
       const updateMemberResponse  = await addMember({
-        chatId:groupInfo?.chatId,
+        chatId:groupInfo!.chatId!,
         role:GROUP_ROLES.MEMBER,
         memberList,
       });
@@ -639,7 +638,7 @@ console.log(members)
           >
             <ModalHeader
               handlePrevious={
-                activeComponent == 2 ? handlePreviousInfo : undefined
+                activeComponent === 2 ? handlePreviousInfo : undefined
               }
               title="Group Info"
               handleClose={onClose}
@@ -662,13 +661,13 @@ console.log(members)
                 >
                   {groupInfo?.groupName}
                 </Span>
-                <Span
+                {/* <Span
                   fontSize="16px"
                   fontWeight="500"
                   color={theme.textColor?.modalSubHeadingText}
                 >
                   {groupInfo?.members?.length} Members
-                </Span>
+                </Span> */}
               </Section>
             </GroupHeader>
             {renderComponent()}

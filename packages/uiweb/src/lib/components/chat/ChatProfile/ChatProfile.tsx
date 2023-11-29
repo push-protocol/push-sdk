@@ -17,8 +17,8 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { createBlockie } from '../../space/helpers/blockies';
 import { ProfileContainer } from '../reusables';
 import 'react-toastify/dist/ReactToastify.min.css';
-import { IGroup } from '../../../types';
 import {
+  Group,
   IChatProfile,
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
@@ -47,7 +47,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   // const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
   const [chatInfo, setChatInfo] = useState<IUser | null>();
-  const [groupInfo, setGroupInfo] = useState<IGroup | null>();
+  const [groupInfo, setGroupInfo] = useState<Group | null>();
   const [ensName, setEnsName] = useState<string | undefined>('');
   const isMobile = useMediaQuery(device.tablet);
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;

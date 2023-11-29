@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
-import { IGroup } from "../../../types";
 import { IChatTheme } from "../exportedTypes";
 import { ProfileContainer } from '../reusables';
 import ArrowIcon from '../../../icons/CaretUp.svg';
 import { Span,Image, Section } from "../../reusables";
 import { shortenText } from "../../../helpers";
+import { GroupInfoDTO } from "@pushprotocol/restapi";
 
 interface ShadowedProps {
     setPosition: boolean;
   }
 
 type PendingMembersProps = {
-    groupInfo?: IGroup | null;
+    groupInfo?: GroupInfoDTO | null;
     setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
     showPendingRequests: boolean;
     theme: IChatTheme;
@@ -32,7 +32,7 @@ export const PendingMembers = ({
             <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
               Pending Requests
             </Span>
-            <Badge>{groupInfo?.pendingMembers?.length}</Badge>
+            {/* <Badge>{groupInfo?.pendingMembers?.length}</Badge> */}
   
             <ArrowImage
               src={ArrowIcon}
@@ -49,7 +49,7 @@ export const PendingMembers = ({
               justifyContent="start"
               borderRadius="16px"
             >
-              {groupInfo?.pendingMembers &&
+              {/* {groupInfo?.pendingMembers &&
                 groupInfo?.pendingMembers?.length > 0 &&
                 groupInfo?.pendingMembers.map((item) => (
                   <GroupPendingMembers theme={theme}>
@@ -67,7 +67,7 @@ export const PendingMembers = ({
                       }}
                     />
                   </GroupPendingMembers>
-                ))}
+                ))} */}
             </ProfileSection>
           )}
         </PendingRequestWrapper>
