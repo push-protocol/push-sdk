@@ -18,6 +18,7 @@ export type GetChannelSubscribersOptionsType = {
     channel: string; // plain ETH Format only
     page?: number,
     limit?: number,
+    category?: number,
     env?: ENV
 }
 
@@ -28,6 +29,7 @@ export const getSubscribers = async (
         channel,
         page = 1,
         limit = 10,
+        category,
         env = Constants.ENV.PROD,
     } = options || {};
 
@@ -49,7 +51,10 @@ export const getSubscribers = async (
         }
         const _channel = await getCAIPAddress(env, channel, 'Channel');
         const API_BASE_URL = getAPIBaseUrls(env);
-        const apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}`;
+        let apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}`;
+        if(category){
+            apiEndpoint = apiEndpoint+`&category=${category}`
+        }
         return await axios.get(apiEndpoint)
             .then((response) => response.data)
             .catch((err) => {

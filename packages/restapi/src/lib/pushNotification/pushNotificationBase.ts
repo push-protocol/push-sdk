@@ -693,8 +693,6 @@ export class PushNotificationBaseClass {
           BOOLEAN_TYPE +
           SETTING_DELIMITER +
           ele.default;
-        notificationSettingDescription =
-          notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
       if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
@@ -717,11 +715,6 @@ export class PushNotificationBaseClass {
             ele.data.upper +
             SETTING_DELIMITER +
             ticker;
-
-          notificationSettingDescription =
-            notificationSettingDescription +
-            SETTING_SEPARATOR +
-            ele.description;
         }
       }
       if (ele.type == RANGE_TYPE) {
@@ -749,6 +742,9 @@ export class PushNotificationBaseClass {
             ticker;
         }
       }
+
+      notificationSettingDescription =
+        notificationSettingDescription + SETTING_SEPARATOR + ele.description;
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
@@ -766,15 +762,28 @@ export class PushNotificationBaseClass {
       const ele = setting[i];
       const enabled = ele.enabled ? 1 : 0;
       if (ele.enabled) numberOfSettings++;
-      // slider type
+
       if (Object.keys(ele).includes('value')) {
-        userSetting =
-          userSetting +
-          SLIDER_TYPE +
-          SETTING_DELIMITER +
-          enabled +
-          SETTING_DELIMITER +
-          ele.value;
+        // slider type
+        if (typeof ele.value == 'number')
+          userSetting =
+            userSetting +
+            SLIDER_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value;
+        else {
+          userSetting =
+            userSetting +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value?.lower +
+            SETTING_DELIMITER +
+            ele.value?.upper;
+        }
       } else {
         // boolean type
         userSetting = userSetting + BOOLEAN_TYPE + SETTING_DELIMITER + enabled;
