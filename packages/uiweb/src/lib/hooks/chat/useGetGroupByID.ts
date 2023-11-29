@@ -1,6 +1,5 @@
-import * as PushAPI from '@pushprotocol/restapi';
-import { Env } from '@pushprotocol/restapi';
-import { useCallback, useContext, useState } from 'react';
+
+import { useCallback, useState } from 'react';
 import { useChatData } from './useChatData';
 import { IGroup } from '../../types';
 
@@ -11,7 +10,7 @@ interface getGroup {
 const useGetGroupByID = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { signer, pushUser } = useChatData();
+  const { pushUser } = useChatData();
 
   const getGroupByID = useCallback(
     async ({ groupId }: getGroup) => {
@@ -19,6 +18,7 @@ const useGetGroupByID = () => {
       let group: IGroup | undefined;
       try {
         group = await pushUser?.chat.group.info(groupId);
+        console.log(group)
       } catch (error) {
         console.log(error);
         return;

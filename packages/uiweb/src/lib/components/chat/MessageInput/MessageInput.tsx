@@ -17,16 +17,11 @@ import { Spinner } from '../../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import OpenLink from '../../../icons/OpenLink';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
+import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
 import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
 import useToast from '../reusables/NewToast';
 import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
-import {
-  checkIfIntent,
-  getDefaultFeedObject,
-  getNewChatUser,
-  setAccessControl,
-} from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
@@ -37,12 +32,17 @@ import {
   usePushChatSocket,
 } from '../../../hooks';
 
-import type { FileMessageContent, IGroup } from '../../../types';
+import type { FileMessageContent } from '../../../types';
 import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { GUEST_MODE_ACCOUNT, PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
 import { InfoContainer } from '../reusables';
-import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
+import {
+  checkIfIntent,
+  getDefaultFeedObject,
+  getNewChatUser,
+  setAccessControl,
+} from '../../../helpers';
 
 /**
  * @interface IThemeProps
@@ -189,8 +189,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       
       if (Object.keys(pushUser || {}).length) {
-        const chat = await fetchChat();
-        console.log(chat)
+        const chat = await fetchChat({chatId});
         if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
         else {
           let newChatFeed;
@@ -209,7 +208,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             }
           }
           if (newChatFeed) {
-            console.log(chatFeed)
             setChatFeed(newChatFeed);
           }
         }
@@ -358,10 +356,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   const updateChatFeed = async () => {
 
-    const chat = await fetchChat();
+    const chat = await fetchChat({chatId});
 
     if (Object.keys(chat || {}).length) {
-      console.log(chatFeed)
       setChatFeed(chat as IFeeds);
     }
   };

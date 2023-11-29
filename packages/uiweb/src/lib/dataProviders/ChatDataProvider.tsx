@@ -41,27 +41,28 @@ export const ChatUIProvider = ({
       resetStates();
       setEnvVal(env);
 
-      if (signer) {
+      if (Object.keys(signer ||{}).length) {
      
-          const address = await getAddressFromSigner(signer);
+          const address = await getAddressFromSigner(signer!);
           setAccountVal(address);
      
       }
       setSignerVal(signer);
     })()
 
-  }, [env, account, pushUser, signer])
+  }, [env, account, signer])
 
   useEffect(() => {
       (async() => {
-        console.log('in here push user')
-        console.log(accountVal)
-          const pushUser = await initializePushUser({signer: signerVal, account: accountVal!})
-          console.log('in set push user 63')
+
+        if(accountVal && envVal){
+          const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
           setPushUser(pushUser);
+        }
+         
    
       })();
-  }, [signerVal, accountVal, env])
+  }, [signerVal, accountVal, envVal])
 
   const resetStates = () => {
     setPushChatSocket(null);

@@ -5,35 +5,34 @@ import {
   IMessageIPFS,
   IMessageIPFSWithCID,
 } from '@pushprotocol/restapi';
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { IChatViewListProps } from '../exportedTypes';
-import { chatLimit } from '../../../config';
 import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
+import { useChatData, usePushChatSocket } from '../../../hooks';
+import { Messagetype } from '../../../types';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { IChatTheme } from '../theme';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
+import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
+import { ApproveRequestBubble } from './ApproveRequestBubble';
+
+import { formatTime } from '../../../helpers/timestamp';
+import { chatLimit } from '../../../config';
 import {
   appendUniqueMessages,
   checkIfIntent,
   checkIfSameChat,
-  dateToFromNowDaily,
   getDefaultFeedObject,
   getNewChatUser,
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../../../helpers';
-import { useChatData, usePushChatSocket } from '../../../hooks';
-import { Messagetype } from '../../../types';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { IChatTheme } from '../theme';
 
-import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
-import { ApproveRequestBubble } from './ApproveRequestBubble';
-import { formatTime } from '../../../helpers/timestamp';
-import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
 
 /**
  * @interface IThemeProps
@@ -52,7 +51,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, signer, pushUser, setPushUser } =
+  const { account, pushUser } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -81,14 +80,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setMessages(undefined);
     setConversationHash(undefined);
   }, [chatId, account, env]);
-  console.log(pushUser)
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
       if (Object.keys(pushUser || {}).length) {
-   console.log('fetch chat' )
-        const chat = await fetchChat();
-        console.log(chat)
+        const chat = await fetchChat({chatId});
         if (chat) {
           setConversationHash(chat?.threadhash as string);
           setChatFeed(chat as IFeeds);
@@ -230,7 +226,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-console.log(conversationHash)
     if (threadHash && ((account && chatFeed && !chatFeed?.groupInformation) || (chatFeed && chatFeed?.groupInformation))) {
       const chatHistory = await historyMessages({ chatId, limit, threadHash });
       if (chatHistory?.length) {
@@ -240,7 +235,6 @@ console.log(conversationHash)
             chatHistory,
             true
           );
-console.log(newChatViewList)
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
           setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);

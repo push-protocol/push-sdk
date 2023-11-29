@@ -106,7 +106,7 @@ export const AddWalletContent = ({
     setFilteredUserData('');
     clearInput();
   };
-
+console.log(memberList)
   const removeMemberFromList = (member: User) => {
     const filteredMembers = memberList?.filter(
       (user: any) => user.wallets.toLowerCase() !== member.wallets.toLowerCase()

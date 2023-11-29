@@ -1,10 +1,12 @@
-import { IFeeds } from '@pushprotocol/restapi';
-import { ThemeContext } from '../theme/ThemeProvider';
 import { Dispatch, useContext } from 'react';
+
+import { IFeeds } from '@pushprotocol/restapi';
+import styled from 'styled-components';
+
+import { ThemeContext } from '../theme/ThemeProvider';
 import { Section, Span, Spinner } from '../../reusables';
 import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import { useChatData } from '../../../hooks';
-import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 
 /**
@@ -37,6 +39,7 @@ export const ApproveRequestBubble = ({
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
 
+    //need to move it to hook
   const handleApproveChatRequest = async () => {
     try {
       const response = await pushUser?.chat.accept(chatId);

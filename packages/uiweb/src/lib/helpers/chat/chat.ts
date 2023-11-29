@@ -75,7 +75,8 @@ export const getChats = async (
   
 
   const chats = await pushUser?.chat.history(
-    supportAddress
+    supportAddress,
+    {limit}
    );
 
     const lastThreadHash = chats[chats.length - 1]?.link;

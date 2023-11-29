@@ -27,7 +27,7 @@ const useUpdateGroup = () => {
       } catch(error: Error | any) {
         console.log("err", error);
         setError(error.message);
-        return;
+        return error.message;
       }
     },
     [pushUser, env, account]
@@ -44,7 +44,7 @@ const useUpdateGroup = () => {
       } catch(error: Error | any) {
         console.log("err", error);
         setError(error.message);
-        return;
+        return error.message;
       }
     },
     [pushUser, env, account]

@@ -1,12 +1,10 @@
 import {
-  ReactElement,
   ReactNode,
   useContext,
   useEffect,
   useState,
 } from 'react';
 
-import moment from 'moment';
 import styled from 'styled-components';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
 

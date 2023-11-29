@@ -62,7 +62,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-      {chatProfile && <ChatProfile chatId={chatId} style="Info" groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
+      {chatProfile && <ChatProfile chatId={chatId}  groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
       <Section
         flex="1 1 auto"
         overflow="hidden"

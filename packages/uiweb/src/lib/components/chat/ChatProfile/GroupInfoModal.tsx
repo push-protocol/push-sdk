@@ -12,29 +12,28 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
 import { MemberProfileCard } from './MemberProfileCard';
-import { ProfileContainer } from '../reusables';
+import ConditionsComponent from '../CreateGroup/ConditionsComponent';
+import { PendingMembers } from './PendingMembers';
 
 import { IGroup } from '../../../types';
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
 import {
-  getAdminList,
   isAccountOwnerAdmin,
 } from '../helpers/group';
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
-import ArrowIcon from '../../../icons/CaretUp.svg';
 import addIcon from '../../../icons/addicon.svg';
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
-import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import { GROUP_ROLES, GroupRolesKeys } from '../types';
+
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -45,7 +44,6 @@ const UPDATE_KEYS = {
 
 type UpdateKeys = typeof UPDATE_KEYS[keyof typeof UPDATE_KEYS];
 type UpdateGroupType = {
-  adminList: Array<string>;
   memberList: Array<string>;
 };
 
@@ -56,76 +54,7 @@ const SUCCESS_MESSAGE = {
   ADD_ADMIN: 'Removed added successfully',
 };
 
-type PendingMembersProps = {
-  groupInfo?: IGroup | null;
-  setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
-  showPendingRequests: boolean;
-  theme: IChatTheme;
-};
 
-interface ShadowedProps {
-  setPosition: boolean;
-}
-
-const PendingMembers = ({
-  groupInfo,
-  setShowPendingRequests,
-  showPendingRequests,
-  theme,
-}: PendingMembersProps) => {
-  if (groupInfo) {
-    return (
-      <PendingRequestWrapper theme={theme}>
-        <PendingSection
-          onClick={() => setShowPendingRequests(!showPendingRequests)}
-        >
-          <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
-            Pending Requests
-          </Span>
-          <Badge>{groupInfo?.pendingMembers?.length}</Badge>
-
-          <ArrowImage
-            src={ArrowIcon}
-            width={'auto'}
-            setPosition={!showPendingRequests}
-            borderRadius="100%"
-          />
-        </PendingSection>
-
-        {showPendingRequests && (
-          <ProfileSection
-            flexDirection="column"
-            flex="1"
-            justifyContent="start"
-            borderRadius="16px"
-          >
-            {groupInfo?.pendingMembers &&
-              groupInfo?.pendingMembers?.length > 0 &&
-              groupInfo?.pendingMembers.map((item) => (
-                <GroupPendingMembers theme={theme}>
-                  <ProfileContainer
-                    theme={theme}
-                    member={{
-                      wallet: shortenText(item.wallet?.split(':')[1], 6, true),
-                      image: item?.image || '',
-                    }}
-                    customStyle={{
-                      imgHeight: '36px',
-                      imgMaxHeight: '36px',
-                      fontSize: 'inherit',
-                      fontWeight: '300',
-                    }}
-                  />
-                </GroupPendingMembers>
-              ))}
-          </ProfileSection>
-        )}
-      </PendingRequestWrapper>
-    );
-  } else {
-    return null;
-  }
-};
 
 interface ConditionsInformationProps {
   theme: IChatTheme;
@@ -160,8 +89,7 @@ export const ConditionsInformation = ({
       flexDirection="column"
       width="100%"
     >
-      {(groupInfo?.rules?.chat?.conditions ||
-        groupInfo?.rules?.entry?.conditions) && (
+      {!!(Object.keys(groupInfo?.rules||{}).length) && (
         <GroupTypeBadge
           theme={theme}
           icon={<TokenGatedSvg color={alert?'#E93636':undefined}/>}
@@ -306,7 +234,7 @@ type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: IGroup;
-  setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
+  // setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
 };
@@ -471,8 +399,7 @@ const GroupInformation = ({
             : 'Chats are end-to-end encrypted'
         }
       />
-      {(groupInfo.rules?.chat?.conditions ||
-        groupInfo.rules?.entry?.conditions) && (
+      {!!(Object.keys(groupInfo?.rules||{}).length) && (
         <GroupTypeBadge
           cursor="pointer"
           handleNextInformation={handleNextInformation}
@@ -522,7 +449,6 @@ const GroupInformation = ({
       </Section>
 
       <ProfileSection
-        // margin="15px 10px"
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
@@ -554,7 +480,7 @@ export const GroupInfoModal = ({
   theme,
   setModal,
   groupInfo,
-  setGroupInfo,
+  // setGroupInfo,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: GroupInfoModalProps) => {
@@ -572,14 +498,16 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  const groupCreator = groupInfo?.groupCreator;
-  const membersExceptGroupCreator = groupInfo?.members?.filter(
-    (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
-  );
-  const groupMembers = [
-    ...membersExceptGroupCreator,
-    ...groupInfo.pendingMembers,
-  ];
+  // const groupCreator = groupInfo?.groupCreator;
+  // const membersExceptGroupCreator = groupInfo?.members?.filter(
+  //   (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
+  // );
+  console.log(groupInfo)
+  // console.log(membersExceptGroupCreator)
+  // const groupMembers = [
+  //   ...membersExceptGroupCreator,
+  //   ...groupInfo.pendingMembers,
+  // ];
   const {addMember} = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
@@ -600,7 +528,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
-            setGroupInfo={setGroupInfo}
+            // setGroupInfo={setGroupInfo}
             setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -616,7 +544,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
-            setGroupInfo={setGroupInfo}
+            // setGroupInfo={setGroupInfo}
             setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -634,26 +562,20 @@ export const GroupInfoModal = ({
 
 
   const handleClose = () => onClose();
-  const handleAddMember = async (
+  const handleAddMemberToGroup = async (
     options: UpdateGroupType
   ) => {
-    const { adminList, memberList } = options || {};
-
+    const {  memberList } = options || {};
     try {
       setIsLoading(true);
-      const updateAdminResponse  = await addMember({
-        chatId:groupInfo?.chatId,
-        role:GROUP_ROLES.ADMIN,
-        memberList:adminList,
-      });
+  
       const updateMemberResponse  = await addMember({
         chatId:groupInfo?.chatId,
         role:GROUP_ROLES.MEMBER,
         memberList,
       });
-
-      if ((typeof updateAdminResponse !== 'string') && (typeof updateMemberResponse !== 'string')) {
-        setGroupInfo(updateMemberResponse!);
+      if ( (typeof updateMemberResponse !== 'string')) {
+        // setGroupInfo(updateMemberResponse!);
 
         groupInfoToast.showMessageToast({
           toastTitle: 'Success',
@@ -687,14 +609,13 @@ export const GroupInfoModal = ({
   const addMembers = async () => {
 
     //Newly Added Members and alreadyPresent Members in the groupchat
+    console.log(memberList)
     const newMembersToAdd = memberList.map((member: any) => member.wallets);
     const members =  newMembersToAdd;
     //Admins wallet address from both members and pendingMembers
-    const adminList = getAdminList?.(groupInfo);
-
-    await handleAddMember({
+console.log(members)
+    await handleAddMemberToGroup({
       memberList: members,
-      adminList,
     });
   };
   const handlePrevious = () => {
@@ -753,7 +674,7 @@ export const GroupInfoModal = ({
             {renderComponent()}
           </Section>
         )}
-        {showAddMoreWalletModal && (
+        {/* {showAddMoreWalletModal && (
           <AddWalletContent
             onSubmit={addMembers}
             handlePrevious={handlePrevious}
@@ -764,7 +685,7 @@ export const GroupInfoModal = ({
             isLoading={isLoading}
             modalHeader={'Add More Wallets'}
           />
-        )}
+        )} */}
       </Modal>
     );
   } else {
@@ -817,55 +738,6 @@ const AddWalletContainer = styled.div`
   align-items: center;
 `;
 
-const GroupPendingMembers = styled.div`
-  margin-top: 3px;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  background: ${(props) => props.theme.backgroundColor.modalHoverBackground};
-  padding: 10px 15px;
-  box-sizing: border-box;
-
-  &:last-child {
-    border-radius: 0px 0px 16px 16px;
-  }
-`;
-
-const PendingRequestWrapper = styled.div`
-  width: 100%;
-  border: ${(props) => props.theme.border.modalInnerComponents};
-  border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
-  padding: 0px 0px;
-  box-sizing: border-box;
-`;
-
-const PendingSection = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  cursor: pointer;
-  padding: 15px 20px;
-  box-sizing: border-box;
-`;
-
-const ArrowImage = styled(Image)<ShadowedProps>`
-  margin-left: auto;
-  transform: ${(props) =>
-    props?.setPosition ? 'rotate(0)' : 'rotate(180deg)'};
-`;
-
-const Badge = styled.div`
-  margin: 0 0 0 5px;
-  font-size: 13px;
-  background: rgb(207, 28, 132);
-  padding: 4px 8px;
-  border-radius: 7px;
-  color: white;
-  font-weight: 700;
-`;
 
 const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {

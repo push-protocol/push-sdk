@@ -1,7 +1,7 @@
-import { PushAPI, Env } from '@pushprotocol/restapi';
+import { Env } from '@pushprotocol/restapi';
 import { useCallback } from 'react';
 import { useChatData } from './useChatData';
-import { SignerType } from '../../types';
+
 
 export interface GetProfileParams {
   profileId: string;
@@ -13,12 +13,12 @@ const { pushUser } = useChatData();
   const fetchChatProfile = useCallback(
     async ({
       profileId,
+      //note: remove env when chat and notification component is shifted to class based
       env
     }: GetProfileParams): Promise<any> => {
       try {
-        // const userReadOnly = await pushUser!.info({ overrideAccount: profileId });
-        // // const userReadOnlyData = (await userReadOnly.info());
-        // return userReadOnly;
+        const userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+        return userReadOnly;
       } catch (error) {
         console.log("error", error);
         return;
