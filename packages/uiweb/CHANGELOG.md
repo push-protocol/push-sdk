@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.32](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.31...uiweb-0.0.1-alpha.32) (2023-11-29)
+
+
+### Bug Fixes
+
+* fixed arbitrum spelling and logo ([#891](https://github.com/ethereum-push-notification-service/push-sdk/issues/891)) ([55fbcdb](https://github.com/ethereum-push-notification-service/push-sdk/commit/55fbcdb378b18dd4f91df1078789c82b0186a65c))
+* Merge branch 'alpha' into alpha-deployment ([35a13fd](https://github.com/ethereum-push-notification-service/push-sdk/commit/35a13fd9e383e721edb2a0c124138b506ee26e05))
+
+
+
 ## [0.0.1-alpha.31](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.30...uiweb-0.0.1-alpha.31) (2023-11-28)
 
 
