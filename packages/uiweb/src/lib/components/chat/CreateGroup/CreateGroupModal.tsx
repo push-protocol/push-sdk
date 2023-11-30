@@ -11,7 +11,7 @@ import { TextInput } from '../reusables/TextInput';
 import { TextArea } from '../reusables/TextArea';
 import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
-import { CreateGroupType } from './CreateGroupType';
+import { CreateGroupType, GROUP_TYPE_OPTIONS } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
 import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
@@ -33,15 +33,15 @@ import AddWalletsInCreateGroup from './AddWallets';
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
   GROUP_TYPE: 2,
-  ADD_MEMBERS: 3,
-  DEFINITE_CONDITION: 4,
-  ADD_CRITERIA: 5,
+  DEFINITE_CONDITION: 3,
+  ADD_CRITERIA: 4,
+  ADD_MEMBERS: 5,
 } as const;
 
 export type CreateGroupStepKeys =
   typeof CREATE_GROUP_STEP_KEYS[keyof typeof CREATE_GROUP_STEP_KEYS];
 
-interface GroupInputDetailsType {
+export interface GroupInputDetailsType {
   groupName: string;
   groupDescription: string;
   groupImage: string;
@@ -62,6 +62,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const handleNext = () => {
     setActiveComponent((activeComponent + 1) as CreateGroupStepKeys);
   };
+  const handleAddWallets = () => {
+    setActiveComponent((activeComponent + 3) as CreateGroupStepKeys)
+  }
+  const handlePreviousfromAddWallets = () => {
+    setActiveComponent((activeComponent - 3) as CreateGroupStepKeys)
+  }
   const handlePrevious = () => {
     setActiveComponent((activeComponent - 1) as CreateGroupStepKeys);
   };
@@ -80,6 +86,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const useDummyGroupInfo = false;
   const [groupMembers, setGroupMembers] = useState<string[]>([]);
   const [groupAdmins, setGroupAdmins] = useState<string[]>([]);
+  const [checked, setChecked] = useState<boolean>(true);
+  const [groupEncryptionType, setGroupEncryptionType] = useState(
+    GROUP_TYPE_OPTIONS[0].value
+  );
   const [groupInputDetails, setGroupInputDetails] =
     useState<GroupInputDetailsType>({
       groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
@@ -92,8 +102,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     });
   
     useEffect(() => {
-      console.log('group members', groupInputDetails.groupMembers);
-      console.log("nener", groupMembers)
       setGroupInputDetails({
         ...groupInputDetails,
         groupMembers: groupMembers,
@@ -105,6 +113,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return (
           <CreateGroupDetail
+            checked={checked}
+            setChecked={setChecked}
             criteriaStateManager={criteriaStateManager}
             handleNext={handleNext}
             onClose={onClose}
@@ -115,11 +125,16 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
         return (
           <CreateGroupType
+          groupEncryptionType={groupEncryptionType}
+          setGroupEncryptionType={setGroupEncryptionType}
+          checked={checked}
+          setChecked={setChecked}
             criteriaStateManager={criteriaStateManager}
             groupInputDetails={groupInputDetails}
             handleNext={handleNext}
             onClose={onClose}
             handlePrevious={handlePrevious}
+            handleAddWallets={handleAddWallets}
           />
         );
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
@@ -141,7 +156,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         );
       case CREATE_GROUP_STEP_KEYS.ADD_MEMBERS:
         return (
-          <AddWalletsInCreateGroup groupAdmins={groupAdmins} setGroupAdmins={setGroupAdmins} groupInputDetails={groupInputDetails} setGroupInputDetails={setGroupInputDetails} groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
+          <AddWalletsInCreateGroup handlePrevious={handlePreviousfromAddWallets} onClose={onClose} groupEncryptionType={groupEncryptionType} checked={checked} groupAdmins={groupAdmins} criteriaStateManager={criteriaStateManager} groupInputDetails={groupInputDetails} setGroupInputDetails={setGroupInputDetails} groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
         )
       default:
         return (
@@ -168,6 +183,11 @@ export interface ModalHeaderProps {
   handlePrevious?: () => void;
   onClose: () => void;
   criteriaStateManager: CriteriaStateManagerType;
+  checked?: boolean;
+  setChecked?: React.Dispatch<React.SetStateAction<boolean>>;
+  groupEncryptionType?: string;
+  setGroupEncryptionType?: React.Dispatch<React.SetStateAction<string>>;
+  handleAddWallets?: () => void;
 }
 
 interface GroupDetailState {

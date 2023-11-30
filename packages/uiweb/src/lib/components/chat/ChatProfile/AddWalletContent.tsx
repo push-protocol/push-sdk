@@ -185,8 +185,8 @@ export const AddWalletContent = ({
       <Section flex="1" alignSelf="center">
         <ModalConfirmButton
           onClick={() => {
-            console.log(groupMembers);
-            // onSubmit()
+            // console.log(groupMembers);
+            onSubmit()
           }}
           isLoading={isLoading}
           memberListCount={memberList?.length > 0}
