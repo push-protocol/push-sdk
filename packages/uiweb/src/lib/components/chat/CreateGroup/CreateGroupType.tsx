@@ -166,7 +166,7 @@ export const CreateGroupType = ({
             labelHeading="Gated Group"
             labelSubHeading="Turn this on for Token/NFT gating options"
             checked={checked}
-            onToggle={() => setChecked(!checked)}
+            onToggle={() => setChecked ? setChecked(!checked) : null}
           />
 
           {checked && (
