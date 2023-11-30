@@ -262,11 +262,19 @@ const GroupInformation = ({
 
   const [copyText, setCopyText] = useState<string>('');
   const { addMember, removeMember } = useUpdateGroup();
-
+  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
+  const {fetchMembers} = useGroupMemberUtilities();
 
   const isMobile = useMediaQuery(device.mobileL);
 
   const dropdownRef = useRef<any>(null);
+
+  useEffect(()=>{
+    (async () => {
+      const members = await fetchMembers({chatId:groupInfo!.chatId,page:1,});
+      setGroupMembers(members as GroupMembersType);
+    })();
+  },[])
   // useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
 
 
@@ -488,9 +496,7 @@ export const GroupInfoModal = ({
     GROUPINFO_STEPS.GROUP_INFO
   );
   const [memberList, setMemberList] = useState<any>([]);
-  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {fetchMembers} = useGroupMemberUtilities();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
   useState<boolean>(false);
@@ -513,12 +519,6 @@ export const GroupInfoModal = ({
   const {addMember} = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
-  useEffect(()=>{
-    (async () => {
-      const members = await fetchMembers({chatId:groupInfo!.chatId,page:1,});
-      setGroupMembers(members as GroupMembersType);
-    })();
-  },[])
 
   const handleNextInfo = () => {
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
