@@ -13,6 +13,7 @@ import {
   GroupInfoDTO,
   ChatMemberProfile,
   ChatMemberCounts,
+  GroupParticipantCounts,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -21,6 +22,7 @@ import {
   ManageGroupOptions,
   RemoveFromGroupOptions,
   GetGroupParticipantsOptions,
+  ParticipantStatus,
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -33,6 +35,7 @@ import {
 import { User } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
+
 export class Chat {
   private userInstance: User;
   private scalabilityV2Feature: boolean;
@@ -317,23 +320,52 @@ export class Chat {
       }
     },
 
-    participants: async (
-      chatId: string,
-      options?: GetGroupParticipantsOptions
-    ): Promise<{ count: ChatMemberCounts; members: ChatMemberProfile[] }> => {
-      const { page = 1, limit = 20 } = options ?? {};
-      const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
-        chatId,
-        page,
-        limit,
-        env: this.env,
-      };
-      const count = await PUSH_CHAT.getGroupMemberCount({
-        chatId,
-        env: this.env,
-      });
-      const members = await PUSH_CHAT.getGroupMembers(getGroupMembersOptions);
-      return { count, members };
+    participants: {
+      list: async (
+        chatId: string,
+        options?: GetGroupParticipantsOptions
+      ): Promise<{ members: ChatMemberProfile[] }> => {
+        const { page = 1, limit = 20 ,filter = {pending:undefined,role:undefined}} = options ?? {};
+        const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
+          chatId,
+          page,
+          limit,
+          pending:filter?.pending,
+          role:filter?.role,
+          env: this.env,
+        };
+
+        const members = await PUSH_CHAT.getGroupMembers(getGroupMembersOptions);
+        return { members };
+      },
+
+      count: async (chatId: string): Promise<GroupParticipantCounts> => {
+        const count = await PUSH_CHAT.getGroupMemberCount({
+          chatId,
+          env: this.env,
+        });
+         return {
+           participants: count.overallCount - count.pendingCount,
+           pending: count.pendingCount,
+         };
+      },
+
+      status: async (
+        chatId: string,
+        accountId: string
+      ): Promise<ParticipantStatus> => {
+        const status = await PUSH_CHAT.getGroupMemberStatus({
+          chatId: chatId,
+          did: accountId,
+          env: this.env,
+        });
+
+        return {
+          pending: status.isPending,
+          role: status.isAdmin ? 'ADMIN' : 'MEMBER',
+          participant: status.isMember,
+        };
+      },
     },
 
     permissions: async (chatId: string): Promise<GroupAccess> => {

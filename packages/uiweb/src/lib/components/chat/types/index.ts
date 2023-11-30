@@ -94,9 +94,12 @@ export const CRITERIA_TYPE = {
     role: string;
     userInfo: UserV2;
   }
-  export interface GroupMembersType  {
-    count: ChatMemberCounts;
+  export interface FetchGroupMembersResponseType  {
     members: ChatMemberProfile[];
-}
+  }
+  export interface GroupMembersType {
+    pending:ChatMemberProfile[];
+    accepted:ChatMemberProfile[];
+  }
 
 export * from './tokenGatedGroupCreationType'

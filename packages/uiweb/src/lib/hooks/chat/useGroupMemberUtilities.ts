@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useChatData } from './useChatData';
-import { GroupMembersType } from '../../components/chat/types';
+import { FetchGroupMembersResponseType } from '../../components/chat/types';
 
 
 
@@ -8,6 +8,8 @@ interface fetchMembersParams {
   chatId:string;
   page:number,
   limit?:number,
+  pending?:boolean,
+  role?: string
 }
 
 const useGroupMemberUtilities = () => {
@@ -17,10 +19,13 @@ const useGroupMemberUtilities = () => {
 
 
   const fetchMembers = useCallback(
-    async ({ chatId ,page,limit=10 }: fetchMembersParams):Promise<GroupMembersType | undefined> => {
+    async ({ chatId ,page,limit=10,pending = false }: fetchMembersParams):Promise<FetchGroupMembersResponseType | undefined> => {
       setLoading(true);
       try {
-        const response = await pushUser?.chat.group.participants(chatId,{page,limit});
+        console.log(pending)
+        const response = await pushUser?.chat.group.participants.list(chatId,{page,limit, filter: {
+            pending,
+          }});
         return response;
       } catch(error: Error | any) {
         console.log("err", error);

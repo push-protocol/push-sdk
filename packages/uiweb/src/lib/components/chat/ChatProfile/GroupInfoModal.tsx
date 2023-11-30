@@ -29,11 +29,21 @@ import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { Group, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
+import {
+  Group,
+  MODAL_BACKGROUND_TYPE,
+  MODAL_POSITION_TYPE,
+  ModalBackgroundType,
+  ModalPositionType,
+} from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import { GROUP_ROLES, GroupMembersType, GroupRolesKeys } from '../types';
+import {
+  ChatMemberProfile,
+  GROUP_ROLES,
+  GroupMembersType,
+  GroupRolesKeys,
+} from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -53,8 +63,6 @@ const SUCCESS_MESSAGE = {
   REMOVE_ADMIN: 'Admin added successfully',
   ADD_ADMIN: 'Removed added successfully',
 };
-
-
 
 interface ConditionsInformationProps {
   theme: IChatTheme;
@@ -89,10 +97,10 @@ export const ConditionsInformation = ({
       flexDirection="column"
       width="100%"
     >
-      {!!(Object.keys(groupInfo?.rules||{}).length) && (
+      {!!Object.keys(groupInfo?.rules || {}).length && (
         <GroupTypeBadge
           theme={theme}
-          icon={<TokenGatedSvg color={alert?'#E93636':undefined}/>}
+          icon={<TokenGatedSvg color={alert ? '#E93636' : undefined} />}
           header={header ?? 'Gated group'}
           subheader={subheader ?? 'Conditions must be true to join and chat'}
           alert={alert}
@@ -225,6 +233,8 @@ export const GroupTypeBadge = ({
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
+  // groupPendingMembers: ChatMemberProfile[];
+  // groupMembers: ChatMemberProfile[];
   // setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
   // selectedMemberAddress: string | null;
   // setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
@@ -251,10 +261,10 @@ const GroupInformation = ({
   theme,
   groupInfo,
   handleNextInformation,
-  // setShowAddMoreWalletModal,
-  // selectedMemberAddress,
-  // setSelectedMemberAddress,
-}: GroupSectionProps) => {
+}: // setShowAddMoreWalletModal,
+// selectedMemberAddress,
+// setSelectedMemberAddress,
+GroupSectionProps) => {
   const { account } = useChatData();
 
   const [showPendingRequests, setShowPendingRequests] =
@@ -262,22 +272,12 @@ const GroupInformation = ({
 
   const [copyText, setCopyText] = useState<string>('');
   const { addMember, removeMember } = useUpdateGroup();
-  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
-  const {fetchMembers} = useGroupMemberUtilities();
 
   const isMobile = useMediaQuery(device.mobileL);
 
   const dropdownRef = useRef<any>(null);
 
-  useEffect(()=>{
-    (async () => {
-      const members = await fetchMembers({chatId:groupInfo!.chatId,page:1,});
-      setGroupMembers(members as GroupMembersType);
-    })();
-  },[])
   // useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-
-
 
   // const handleAddMember = async (role: GroupRolesKeys) => {
   //   await addMember({
@@ -407,17 +407,17 @@ const GroupInformation = ({
             : 'Chats are end-to-end encrypted'
         }
       />
-      {!!(Object.keys(groupInfo?.rules||{}).length) && (
+      {!!Object.keys(groupInfo?.rules || {}).length && (
         <GroupTypeBadge
           cursor="pointer"
           handleNextInformation={handleNextInformation}
           theme={theme}
-          icon={<TokenGatedSvg/>}
+          icon={<TokenGatedSvg />}
           header={'Gated group'}
           subheader={'Conditions must be true to join'}
         />
       )}
-{/* 
+      {/* 
       {isAccountOwnerAdmin(groupInfo, account!) &&
         groupInfo?.members &&
         groupInfo?.members?.length < 10 && (
@@ -506,19 +506,39 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  const groupCreator = groupInfo?.groupCreator;
+  // const groupCreator = groupInfo?.groupCreator;
+  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
+
+  const { fetchMembers } = useGroupMemberUtilities();
   // const membersExceptGroupCreator = groupInfo?.members?.filter(
   //   (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
   // );
-  console.log(groupInfo)
+  console.log(groupInfo);
   // console.log(membersExceptGroupCreator)
   // const groupMembers = [
   //   ...membersExceptGroupCreator,
   //   ...groupInfo.pendingMembers,
   // ];
-  const {addMember} = useUpdateGroup();
+  const { addMember } = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
+  useEffect(() => {
+    (async () => {
+      const fetchedMembers = await fetchMembers({
+        chatId: groupInfo!.chatId,
+        page: 1,
+      });
+      const fetchedPendingMembers = await fetchMembers({
+        chatId: groupInfo!.chatId,
+        page: 1,
+        pending: true,
+      });
+      setGroupMembers({
+        pending:fetchedPendingMembers ,
+        accepted:fetchedMembers
+      } )     
+    })();
+  }, []);
 
   const handleNextInfo = () => {
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
@@ -568,22 +588,18 @@ export const GroupInfoModal = ({
     setModal(false);
   };
 
-
-
   const handleClose = () => onClose();
-  const handleAddMemberToGroup = async (
-    options: UpdateGroupType
-  ) => {
-    const {  memberList } = options || {};
+  const handleAddMemberToGroup = async (options: UpdateGroupType) => {
+    const { memberList } = options || {};
     try {
       setIsLoading(true);
-  
-      const updateMemberResponse  = await addMember({
-        chatId:groupInfo!.chatId!,
-        role:GROUP_ROLES.MEMBER,
+
+      const updateMemberResponse = await addMember({
+        chatId: groupInfo!.chatId!,
+        role: GROUP_ROLES.MEMBER,
         memberList,
       });
-      if ( (typeof updateMemberResponse !== 'string')) {
+      if (typeof updateMemberResponse !== 'string') {
         // setGroupInfo(updateMemberResponse!);
 
         groupInfoToast.showMessageToast({
@@ -616,13 +632,12 @@ export const GroupInfoModal = ({
   };
 
   const addMembers = async () => {
-
     //Newly Added Members and alreadyPresent Members in the groupchat
-    console.log(memberList)
+    console.log(memberList);
     const newMembersToAdd = memberList.map((member: any) => member.wallets);
-    const members =  newMembersToAdd;
+    const members = newMembersToAdd;
     //Admins wallet address from both members and pendingMembers
-console.log(members)
+    console.log(members);
     await handleAddMemberToGroup({
       memberList: members,
     });
@@ -746,7 +761,6 @@ const AddWalletContainer = styled.div`
   cursor: pointer;
   align-items: center;
 `;
-
 
 const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
