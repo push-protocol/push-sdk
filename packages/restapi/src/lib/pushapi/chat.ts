@@ -35,7 +35,6 @@ import {
 import { User } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
-import { ParticipantsType } from './participant';
 
 export class Chat {
   private userInstance: User;
@@ -326,11 +325,13 @@ export class Chat {
         chatId: string,
         options?: GetGroupParticipantsOptions
       ): Promise<{ members: ChatMemberProfile[] }> => {
-        const { page = 1, limit = 20 } = options ?? {};
+        const { page = 1, limit = 20,filter={pending:undefined,role:undefined} } = options ?? {};
         const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
           chatId,
           page,
           limit,
+          pending:filter.pending,
+          role:filter.role,
           env: this.env,
         };
 
