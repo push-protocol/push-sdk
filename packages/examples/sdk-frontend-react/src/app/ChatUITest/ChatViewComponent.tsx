@@ -15,11 +15,11 @@ const ChatViewComponentTest = () => {
       <h2>Chat UI Test page</h2>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}} /> */}
       <ChatViewComponentCard>
-      {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
+      <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/>
 
         <ChatView 
         onVerificationFail={() => console.log("BOIIII RETURNNNSSSSS")} 
-        chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' 
+        chatId='a5dad31b20c9aaf761221b57f6f0ab96b03a456525159378388e896475b1f943' 
         limit={10}
          isConnected={true} 
          groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}

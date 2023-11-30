@@ -28,12 +28,14 @@ import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
 import AutoImageClipper from './AutoImageClipper';
+import AddWalletsInCreateGroup from './AddWallets';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
   GROUP_TYPE: 2,
-  DEFINITE_CONDITION: 3,
-  ADD_CRITERIA: 4,
+  ADD_MEMBERS: 3,
+  DEFINITE_CONDITION: 4,
+  ADD_CRITERIA: 5,
 } as const;
 
 export type CreateGroupStepKeys =
@@ -43,6 +45,8 @@ interface GroupInputDetailsType {
   groupName: string;
   groupDescription: string;
   groupImage: string;
+  groupMembers: string[];
+  groupAdmins: string[];
 }
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
@@ -74,6 +78,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   }, [activeComponent]);
 
   const useDummyGroupInfo = false;
+  const [groupMembers, setGroupMembers] = useState<string[]>([]);
+  const [groupAdmins, setGroupAdmins] = useState<string[]>([]);
   const [groupInputDetails, setGroupInputDetails] =
     useState<GroupInputDetailsType>({
       groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
@@ -81,7 +87,18 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         ? 'This is dummy group description for testing'
         : '',
       groupImage: useDummyGroupInfo ? ProfilePicture : '',
+      groupMembers: useDummyGroupInfo ? groupMembers : [],
+      groupAdmins: useDummyGroupInfo ? groupAdmins : [],
     });
+  
+    useEffect(() => {
+      console.log('group members', groupInputDetails.groupMembers);
+      console.log("nener", groupMembers)
+      setGroupInputDetails({
+        ...groupInputDetails,
+        groupMembers: groupMembers,
+      });
+    }, [groupMembers])
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -122,6 +139,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
           />
         );
+      case CREATE_GROUP_STEP_KEYS.ADD_MEMBERS:
+        return (
+          <AddWalletsInCreateGroup groupAdmins={groupAdmins} setGroupAdmins={setGroupAdmins} groupInputDetails={groupInputDetails} setGroupInputDetails={setGroupInputDetails} groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
+        )
       default:
         return (
           <CreateGroupDetail
@@ -192,6 +213,8 @@ const CreateGroupDetail = ({
         groupDescription,
         groupName,
         groupImage: '',
+        groupMembers: [],
+        groupAdmins: [],
       });
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
@@ -280,6 +303,8 @@ const CreateGroupDetail = ({
                   groupDescription,
                   groupName,
                   groupImage: croppedImage,
+                  groupMembers: [],
+                  groupAdmins: [],
                 })
               }
               width={undefined}
@@ -310,6 +335,8 @@ const CreateGroupDetail = ({
               groupDescription,
               groupName: e.target.value,
               groupImage,
+              groupMembers: [],
+              groupAdmins: [],
             })
           }
           error={!!validationErrors?.groupName}
@@ -328,6 +355,8 @@ const CreateGroupDetail = ({
               groupDescription: e.target.value,
               groupName,
               groupImage,
+              groupMembers: [],
+              groupAdmins: [],
             })
           }
           error={!!validationErrors?.groupDescription}

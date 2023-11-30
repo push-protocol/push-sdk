@@ -158,6 +158,8 @@ export const CreateGroupType = ({
       groupDescription: groupInputDetails.groupDescription,
       groupImage: groupInputDetails.groupImage || ProfilePicture,
       isPublic: getEncryptionType(),
+      groupMembers: groupInputDetails.groupMembers,
+      groupAdmins: groupInputDetails.groupAdmins,
     };
     const rules: any = checked ? criteriaStateManager.generateRule() : {};
     const isSuccess = await createGatedGroup(groupInfo, rules);
@@ -254,9 +256,10 @@ export const CreateGroupType = ({
         </Section>
       </ScrollSection>
       <Section gap="16px" flexDirection="column">
-        <Button width="197px" onClick={verifyAndCreateGroup}>
-          {!loading && 'Create Group'}
-          {loading && <Spinner size="20" color="#fff" />}
+        <Button width="197px" onClick={handleNext}>
+          {/* {!loading && ''} */}
+          Next
+          {/* {loading && <Spinner size="20" color="#fff" />} */}
         </Button>
         <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
       </Section>
