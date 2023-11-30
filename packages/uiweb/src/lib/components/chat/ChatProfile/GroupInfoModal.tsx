@@ -31,7 +31,8 @@ import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import { Group, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import { GROUP_ROLES, GroupRolesKeys } from '../types';
+import { GROUP_ROLES, GroupMembersType, GroupRolesKeys } from '../types';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 
 
 const UPDATE_KEYS = {
@@ -224,9 +225,9 @@ export const GroupTypeBadge = ({
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
-  setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMemberAddress: string | null;
-  setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  // setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
+  // selectedMemberAddress: string | null;
+  // setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 type GroupInfoModalProps = {
@@ -250,9 +251,9 @@ const GroupInformation = ({
   theme,
   groupInfo,
   handleNextInformation,
-  setShowAddMoreWalletModal,
-  selectedMemberAddress,
-  setSelectedMemberAddress,
+  // setShowAddMoreWalletModal,
+  // selectedMemberAddress,
+  // setSelectedMemberAddress,
 }: GroupSectionProps) => {
   const { account } = useChatData();
 
@@ -266,25 +267,25 @@ const GroupInformation = ({
   const isMobile = useMediaQuery(device.mobileL);
 
   const dropdownRef = useRef<any>(null);
-  useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
+  // useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
 
 
 
-  const handleAddMember = async (role: GroupRolesKeys) => {
-    await addMember({
-      memberList: [selectedMemberAddress!],
-      chatId:groupInfo!.chatId!,
-      role: role,
-    });
-  };
+  // const handleAddMember = async (role: GroupRolesKeys) => {
+  //   await addMember({
+  //     memberList: [selectedMemberAddress!],
+  //     chatId:groupInfo!.chatId!,
+  //     role: role,
+  //   });
+  // };
 
-  const handleRemoveMember = async (role: GroupRolesKeys) => {
-    await removeMember({
-      memberList: [selectedMemberAddress!],
-      chatId:groupInfo!.chatId!,
-      role: role,
-    });
-  };
+  // const handleRemoveMember = async (role: GroupRolesKeys) => {
+  //   await removeMember({
+  //     memberList: [selectedMemberAddress!],
+  //     chatId:groupInfo!.chatId!,
+  //     role: role,
+  //   });
+  // };
   // const messageUserDropdown: DropdownValueType = {
   //     id: 'message_user',
   //     title: 'Message user',
@@ -292,25 +293,25 @@ const GroupInformation = ({
   //     function: () => messageUser(),
   //   };
 
-  const removeAdminDropdown: DropdownValueType = {
-    id: 'dismiss_admin',
-    title: 'Dismiss as admin',
-    icon: DismissAdmin,
-    function: () => handleRemoveMember(GROUP_ROLES.ADMIN),
-  };
-  const addAdminDropdown: DropdownValueType = {
-    id: 'add_admin',
-    title: 'Make group admin',
-    icon: AddAdmin,
-    function: () => handleAddMember(GROUP_ROLES.ADMIN),
-  };
-  const removeMemberDropdown: DropdownValueType = {
-    id: 'remove_member',
-    title: 'Remove',
-    icon: Remove,
-    function: () => handleRemoveMember(GROUP_ROLES.MEMBER),
-    textColor: '#ED5858',
-  };
+  // const removeAdminDropdown: DropdownValueType = {
+  //   id: 'dismiss_admin',
+  //   title: 'Dismiss as admin',
+  //   icon: DismissAdmin,
+  //   function: () => handleRemoveMember(GROUP_ROLES.ADMIN),
+  // };
+  // const addAdminDropdown: DropdownValueType = {
+  //   id: 'add_admin',
+  //   title: 'Make group admin',
+  //   icon: AddAdmin,
+  //   function: () => handleAddMember(GROUP_ROLES.ADMIN),
+  // };
+  // const removeMemberDropdown: DropdownValueType = {
+  //   id: 'remove_member',
+  //   title: 'Remove',
+  //   icon: Remove,
+  //   function: () => handleRemoveMember(GROUP_ROLES.MEMBER),
+  //   textColor: '#ED5858',
+  // };
 
   return (
     <ScrollSection
@@ -487,7 +488,9 @@ export const GroupInfoModal = ({
     GROUPINFO_STEPS.GROUP_INFO
   );
   const [memberList, setMemberList] = useState<any>([]);
+  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {fetchMembers} = useGroupMemberUtilities();
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
   useState<boolean>(false);
@@ -497,7 +500,7 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  // const groupCreator = groupInfo?.groupCreator;
+  const groupCreator = groupInfo?.groupCreator;
   // const membersExceptGroupCreator = groupInfo?.members?.filter(
   //   (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
   // );
@@ -509,6 +512,13 @@ export const GroupInfoModal = ({
   // ];
   const {addMember} = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
+
+  useEffect(()=>{
+    (async () => {
+      const members = await fetchMembers({chatId:groupInfo!.chatId,page:1,});
+      setGroupMembers(members as GroupMembersType);
+    })();
+  },[])
 
   const handleNextInfo = () => {
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
@@ -528,9 +538,9 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             // setGroupInfo={setGroupInfo}
-            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
-            selectedMemberAddress={selectedMemberAddress}
-            setSelectedMemberAddress={setSelectedMemberAddress}
+            // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            // selectedMemberAddress={selectedMemberAddress}
+            // setSelectedMemberAddress={setSelectedMemberAddress}
           />
         );
       case GROUPINFO_STEPS.CRITERIA:
@@ -544,9 +554,9 @@ export const GroupInfoModal = ({
             setModal={setModal}
             groupInfo={groupInfo}
             // setGroupInfo={setGroupInfo}
-            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
-            selectedMemberAddress={selectedMemberAddress}
-            setSelectedMemberAddress={setSelectedMemberAddress}
+            // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            // selectedMemberAddress={selectedMemberAddress}
+            // setSelectedMemberAddress={setSelectedMemberAddress}
           />
         );
     }

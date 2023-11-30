@@ -1,3 +1,4 @@
+import { UserV2 } from '@pushprotocol/restapi';
 import { DropdownValueType } from '../reusables';
 
 export interface GrouInfoType{
@@ -72,12 +73,30 @@ export const CRITERIA_TYPE = {
   } as const;
   
   export type CriteriaType = keyof typeof CRITERIA_TYPE;
-  
+
   export const GROUP_ROLES = {
     ADMIN: 'ADMIN',
     MEMBER: 'MEMBER',
   } as const;
   
   export type GroupRolesKeys = (typeof GROUP_ROLES)[keyof typeof GROUP_ROLES];
+  export interface ChatMemberCounts {
+    overallCount: number;
+    adminsCount: number;
+    membersCount: number;
+    pendingCount: number;
+    approvedCount: number;
+  }
+  
+  export interface ChatMemberProfile {
+    address: string;
+    intent: boolean;
+    role: string;
+    userInfo: UserV2;
+  }
+  export interface GroupMembersType  {
+    count: ChatMemberCounts;
+    members: ChatMemberProfile[];
+}
 
 export * from './tokenGatedGroupCreationType'
