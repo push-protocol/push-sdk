@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { MessageType } from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
 describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
@@ -38,8 +38,39 @@ describe('PushAPI.chat functionality', () => {
     expect(response).to.be.an('array');
     expect(response.length).to.equal(1);
   });
+
+  it('Should list request read only', async () => {
+    await userAlice.chat.send(account2, { content: MESSAGE });
+
+    const account = (await userBob.info()).did;
+
+    const userBobReadOnly = await PushAPI.initialize({
+      account: account,
+    });
+
+    const response = await userBobReadOnly.chat.list('REQUESTS', {
+      page: 1,
+      limit: 10,
+    });
+    expect(response).to.be.an('array');
+    expect(response.length).to.equal(1);
+  });
+
   it('Should list chats ', async () => {
     const response = await userAlice.chat.list('CHATS', {
+      page: 1,
+      limit: 10,
+    });
+    expect(response).to.be.an('array');
+  });
+  it('Should list chats read only', async () => {
+    const account = (await userAlice.info()).did;
+
+    const userAliceReadOnly = await PushAPI.initialize({
+      account: account,
+    });
+
+    const response = await userAliceReadOnly.chat.list('CHATS', {
       page: 1,
       limit: 10,
     });
@@ -48,14 +79,38 @@ describe('PushAPI.chat functionality', () => {
   it('Should send message ', async () => {
     const response = await userAlice.chat.send(account2, {
       content: 'Hello',
-      type: MessageType.TEXT,
+      type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
     });
     expect(response).to.be.an('object');
   });
+  it('Should send message read only', async () => {
+    const account = (await userAlice.info()).did;
+
+    const userAliceReadOnly = await PushAPI.initialize({
+      account: account,
+    });
+
+    let errorCaught: any = null;
+
+    try {
+      await userAliceReadOnly.chat.send(account2, {
+        content: 'Hello',
+        type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
+      });
+    } catch (error) {
+      errorCaught = error;
+    }
+
+    expect(errorCaught).to.be.an('error');
+    expect(errorCaught.message).to.equal(
+      'Operation not allowed in read-only mode. Signer is required.'
+    );
+  });
+
   it('Should decrypt message ', async () => {
     await userAlice.chat.send(account2, {
       content: 'Hello',
-      type: MessageType.TEXT,
+      type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
     });
     const messagePayloads = await userAlice.chat.history(account2);
     const decryptedMessagePayloads = await userBob.chat.decrypt(
