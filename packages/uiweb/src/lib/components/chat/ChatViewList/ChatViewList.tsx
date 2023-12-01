@@ -387,7 +387,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                     }
                   )}
               </Section>
-              {Object.keys(chatFeed || {}).length &&
+              {!!Object.keys(chatFeed || {}).length &&
                 account &&
                 checkIfIntent({
                   chat: chatFeed as IFeeds,
