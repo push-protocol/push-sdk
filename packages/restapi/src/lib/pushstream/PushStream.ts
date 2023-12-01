@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
-import { ENV } from '../constants';
+import { ENV, PACKAGE_BUILD } from '../constants';
 import {
   GroupEventType,
   MessageEventType,
@@ -12,6 +12,7 @@ import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
 import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -42,6 +43,7 @@ export class PushStream extends EventEmitter {
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
+      ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook
