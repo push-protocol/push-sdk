@@ -42,7 +42,6 @@ const AddWalletsInCreateGroup = ({ handlePrevious, onClose,groupInputDetails, gr
     };
 
     const createGroupService = async () => {
-        console.log("in create group service");
         const groupInfo: GroupInfoType = {
             groupName: groupInputDetails.groupName,
             groupDescription: groupInputDetails.groupDescription,
@@ -53,7 +52,6 @@ const AddWalletsInCreateGroup = ({ handlePrevious, onClose,groupInputDetails, gr
         };
         const rules: any = checked ? criteriaStateManager.generateRule() : {};
         const isSuccess = await createGatedGroup(groupInfo, rules);
-        console.log("groupInfo", groupInfo);
         if (isSuccess === true) {
             groupInfoToast.showMessageToast({
                 toastTitle: 'Success',

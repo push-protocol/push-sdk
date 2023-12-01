@@ -201,9 +201,7 @@ export const CreateGroupType = ({
       </ScrollSection>
       <Section gap="16px" flexDirection="column">
         <Button width="197px" onClick={handleAddWallets}>
-          {/* {!loading && ''} */}
-          Nexts
-          {/* {loading && <Spinner size="20" color="#fff" />} */}
+          Next
         </Button>
         <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
       </Section>
