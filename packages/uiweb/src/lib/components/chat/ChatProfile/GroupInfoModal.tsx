@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
-import { useChatData, useClickAway } from '../../../hooks';
+import { useChatData, useClickAway, useIsInViewport } from '../../../hooks';
 import { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
@@ -27,7 +27,12 @@ import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
-import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
+import {
+  ACCEPTED_MEMBERS_LIMIT,
+  ACCESS_TYPE_TITLE,
+  OPERATOR_OPTIONS_INFO,
+  PENDING_MEMBERS_LIMIT,
+} from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import {
   Group,
@@ -37,13 +42,16 @@ import {
   ModalPositionType,
 } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import {
-  ChatMemberProfile,
-  GROUP_ROLES,
-  GroupMembersType,
-  GroupRolesKeys,
-} from '../types';
+import { GROUP_ROLES, GroupMembersType, GroupRolesKeys } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import { ChatMemberProfile } from '@pushprotocol/restapi';
+
+export interface MemberPaginationData {
+  page: number;
+  finishedFetching: boolean;
+  loading: boolean;
+  reset: boolean;
+}
 
 const UPDATE_KEYS = {
   REMOVE_MEMBER: 'REMOVE_MEMBER',
@@ -233,8 +241,15 @@ export const GroupTypeBadge = ({
 type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
-  // groupPendingMembers: ChatMemberProfile[];
-  // groupMembers: ChatMemberProfile[];
+  pendingMemberPaginationData: MemberPaginationData;
+  groupMembers: GroupMembersType;
+  setPendingMemberPaginationData: React.Dispatch<
+    React.SetStateAction<MemberPaginationData>
+  >;
+  acceptedMemberPaginationData: MemberPaginationData;
+  setAcceptedMemberPaginationData: React.Dispatch<
+    React.SetStateAction<MemberPaginationData>
+  >;
   // setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
   // selectedMemberAddress: string | null;
   // setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
@@ -261,6 +276,11 @@ const GroupInformation = ({
   theme,
   groupInfo,
   handleNextInformation,
+  pendingMemberPaginationData,
+  setPendingMemberPaginationData,
+  acceptedMemberPaginationData,
+  setAcceptedMemberPaginationData,
+  groupMembers,
 }: // setShowAddMoreWalletModal,
 // selectedMemberAddress,
 // setSelectedMemberAddress,
@@ -320,7 +340,6 @@ GroupSectionProps) => {
   //   function: () => handleRemoveMember(GROUP_ROLES.MEMBER),
   //   textColor: '#ED5858',
   // };
-
   return (
     <ScrollSection
       margin="auto"
@@ -445,23 +464,25 @@ GroupSectionProps) => {
           </AddWalletContainer>
         )} */}
 
-      {/* <Section borderRadius="16px">
-        {groupInfo?.pendingMembers?.length > 0 && (
-          <PendingMembers
-            groupInfo={groupInfo}
-            setShowPendingRequests={setShowPendingRequests}
-            showPendingRequests={showPendingRequests}
-            theme={theme}
-          />
-        )}
-      </Section> */}
+      <Section borderRadius="16px">
+        {groupMembers &&
+          groupMembers?.pending &&
+          groupMembers?.pending?.length > 0 && (
+            <PendingMembers
+              // groupInfo={groupInfo}
+              pendingMemberPaginationData={pendingMemberPaginationData}
+              setPendingMemberPaginationData={setPendingMemberPaginationData}
+              pendingMembers={groupMembers?.pending}
+              setShowPendingRequests={setShowPendingRequests}
+              showPendingRequests={showPendingRequests}
+              theme={theme}
+            />
+          )}
+        {/* <div ref={pendingMemberPageRef} style={{ padding: '1px' }}></div> */}
+      </Section>
 
-      {/* <ProfileSection
-        flexDirection="column"
-        zIndex="2"
-        justifyContent="start"
-      >
-        {groupInfo?.members &&
+      <ProfileSection flexDirection="column" zIndex="2" justifyContent="start">
+        {/* {groupInfo?.members &&
           groupInfo?.members?.length > 0 &&
           groupInfo?.members.map((item, index) => (
             <MemberProfileCard
@@ -478,8 +499,8 @@ GroupSectionProps) => {
               setSelectedMemberAddress={setSelectedMemberAddress}
               dropdownRef={dropdownRef}
             />
-          ))}
-      </ProfileSection> */}
+          ))} */}
+      </ProfileSection>
     </ScrollSection>
   );
 };
@@ -488,7 +509,6 @@ export const GroupInfoModal = ({
   theme,
   setModal,
   groupInfo,
-  // setGroupInfo,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: GroupInfoModalProps) => {
@@ -504,16 +524,32 @@ export const GroupInfoModal = ({
     string | null
   >(null);
 
+  const [pendingMemberPaginationData, setPendingMemberPaginationData] =
+    useState<MemberPaginationData>({
+      page: 1,
+      finishedFetching: false,
+      loading: false,
+      reset: false,
+    });
+  const [acceptedMemberPaginationData, setAcceptedMemberPaginationData] =
+    useState<MemberPaginationData>({
+      page: 1,
+      finishedFetching: false,
+      loading: false,
+      reset: false,
+    });
+
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  // const groupCreator = groupInfo?.groupCreator;
-  const [groupMembers, setGroupMembers] = useState<GroupMembersType | null>(null);
+  const [groupMembers, setGroupMembers] = useState<GroupMembersType>({
+    accepted: [],
+    pending: [],
+  });
 
   const { fetchMembers } = useGroupMemberUtilities();
   // const membersExceptGroupCreator = groupInfo?.members?.filter(
   //   (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
   // );
-  console.log(groupInfo);
   // console.log(membersExceptGroupCreator)
   // const groupMembers = [
   //   ...membersExceptGroupCreator,
@@ -522,23 +558,126 @@ export const GroupInfoModal = ({
   const { addMember } = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
+  //convert fetchPendingMembers and fetchAcceptedMembers to single method
+  const fetchPendingMembers = async (page: number): Promise<void> => {
+    const fetchedPendingMembers = await fetchMembers({
+      chatId: groupInfo!.chatId,
+      page: page,
+      limit: PENDING_MEMBERS_LIMIT,
+      pending: true,
+    });
+    if (!fetchedPendingMembers?.members.length)
+      setPendingMemberPaginationData((prev: MemberPaginationData) => ({
+        ...prev,
+        finishedFetching: true,
+      }));
+    console.log(page, fetchedPendingMembers);
+    setGroupMembers((prevMembers: GroupMembersType) => ({
+      ...prevMembers,
+      pending: [
+        ...prevMembers!.pending,
+        ...(fetchedPendingMembers!.members as ChatMemberProfile[]),
+      ]
+        .slice()
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        ),
+    }));
+  };
+  console.log(groupMembers);
+  const fetchAcceptedMembers = async (page: number): Promise<void> => {
+    const fetchedAcceptedMembers = await fetchMembers({
+      chatId: groupInfo!.chatId,
+      page: page,
+      limit: ACCEPTED_MEMBERS_LIMIT,
+    });
+    if (!fetchedAcceptedMembers?.members.length)
+      setAcceptedMemberPaginationData((prev: MemberPaginationData) => ({
+        ...prev,
+        finishedFetching: true,
+      }));
+    console.log(page, fetchedAcceptedMembers);
+    setGroupMembers((prevMembers: GroupMembersType) => ({
+      ...prevMembers,
+      accepted: [
+        ...prevMembers!.accepted,
+        ...(fetchedAcceptedMembers!.members as ChatMemberProfile[]),
+      ]
+        .slice()
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        ),
+    }));
+  };
+
+  const initialiseMemberPaginationData = async (
+    property: string,
+    fetchMembers: (page: number) => Promise<void>
+  ) => {
+    if (!groupMembers[property as 'accepted' | 'pending'].length)
+      await fetchMembers(1);
+  };
+
+  //add dependencies
   useEffect(() => {
     (async () => {
-      const fetchedMembers = await fetchMembers({
-        chatId: groupInfo!.chatId,
-        page: 1,
-      });
-      const fetchedPendingMembers = await fetchMembers({
-        chatId: groupInfo!.chatId,
-        page: 1,
-        pending: true,
-      });
-      setGroupMembers({
-        pending:fetchedPendingMembers ,
-        accepted:fetchedMembers
-      } )     
+      await initialiseMemberPaginationData('pending', fetchPendingMembers);
+      await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
     })();
-  }, []);
+  }, [groupInfo]);
+
+  useEffect(() => {
+    (async () => {
+      console.log('in change page', pendingMemberPaginationData?.page);
+      if (pendingMemberPaginationData?.page > 1)
+        await callMembers(
+          pendingMemberPaginationData?.page,
+          setPendingMemberPaginationData,
+          fetchPendingMembers
+        );
+    })();
+  }, [pendingMemberPaginationData?.page]);
+
+  useEffect(() => {
+    (async () => {
+      console.log('in change page', acceptedMemberPaginationData?.page);
+      if (acceptedMemberPaginationData?.page > 1)
+        await callMembers(
+          acceptedMemberPaginationData?.page,
+          setAcceptedMemberPaginationData,
+          fetchAcceptedMembers
+        );
+    })();
+  }, [acceptedMemberPaginationData?.page]);
+  const callMembers = async (
+    page: number,
+    setMemberPaginationData: React.Dispatch<
+      React.SetStateAction<MemberPaginationData>
+    >,
+    fetchMembers: (page: number) => Promise<void>
+  ) => {
+    try {
+      console.log('in new fetch ', page);
+      setMemberPaginationData((prev: MemberPaginationData) => ({
+        ...prev,
+        loading: true,
+      }));
+      await fetchMembers(page);
+    } catch (error) {
+      console.log(error);
+      setMemberPaginationData((prev: MemberPaginationData) => ({
+        ...prev,
+        loading: false,
+      }));
+    } finally {
+      setMemberPaginationData((prev: MemberPaginationData) => ({
+        ...prev,
+        loading: false,
+      }));
+    }
+  };
 
   const handleNextInfo = () => {
     setActiveComponent((activeComponent + 1) as GROUP_INFO_TYPE);
@@ -557,6 +696,11 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            groupMembers={groupMembers}
+            pendingMemberPaginationData={pendingMemberPaginationData}
+            setPendingMemberPaginationData={setPendingMemberPaginationData}
+            acceptedMemberPaginationData={acceptedMemberPaginationData}
+            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
             // setGroupInfo={setGroupInfo}
             // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             // selectedMemberAddress={selectedMemberAddress}
@@ -573,6 +717,11 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            groupMembers={groupMembers}
+            pendingMemberPaginationData={pendingMemberPaginationData}
+            setPendingMemberPaginationData={setPendingMemberPaginationData}
+            acceptedMemberPaginationData={acceptedMemberPaginationData}
+            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
             // setGroupInfo={setGroupInfo}
             // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
             // selectedMemberAddress={selectedMemberAddress}
@@ -633,11 +782,9 @@ export const GroupInfoModal = ({
 
   const addMembers = async () => {
     //Newly Added Members and alreadyPresent Members in the groupchat
-    console.log(memberList);
     const newMembersToAdd = memberList.map((member: any) => member.wallets);
     const members = newMembersToAdd;
     //Admins wallet address from both members and pendingMembers
-    console.log(members);
     await handleAddMemberToGroup({
       memberList: members,
     });

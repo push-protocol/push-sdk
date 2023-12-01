@@ -26,8 +26,10 @@ const useGroupMemberUtilities = () => {
         const response = await pushUser?.chat.group.participants.list(chatId,{page,limit, filter: {
             pending,
           }});
+          setLoading(false);
         return response;
       } catch(error: Error | any) {
+        setLoading(false);
         console.log("err", error);
         setError(error.message);
         return error.message;

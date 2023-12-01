@@ -1,4 +1,4 @@
-import { UserV2 } from '@pushprotocol/restapi';
+import { ChatMemberProfile, UserV2 } from '@pushprotocol/restapi';
 import { DropdownValueType } from '../reusables';
 
 export interface GrouInfoType{
@@ -88,12 +88,7 @@ export const CRITERIA_TYPE = {
     approvedCount: number;
   }
   
-  export interface ChatMemberProfile {
-    address: string;
-    intent: boolean;
-    role: string;
-    userInfo: UserV2;
-  }
+
   export interface FetchGroupMembersResponseType  {
     members: ChatMemberProfile[];
   }

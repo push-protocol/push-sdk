@@ -19,7 +19,7 @@ const ChatViewComponentTest = () => {
 
         <ChatView 
         onVerificationFail={() => console.log("BOIIII RETURNNNSSSSS")} 
-        chatId='083fb969f5fbbc289e145ecc1630a8a253d3f696ee684b1d9fc72543d7db3bad' 
+        chatId='0xFA3F8E79fb9B03e7a04295594785b91588Aa4DC8' 
         // a72832107b8ae7624c1ec997cee8e8b2bc21db708465555c20c4d5e029210cd6
         limit={10}
          isConnected={true} 

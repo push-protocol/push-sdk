@@ -108,9 +108,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     if (!chatId) return;
     fetchProfileData();
   }, [chatId, account, pushUser]);
-  console.log(env)
-  console.log(pushUser)
-  console.log('group info',groupInfo)
+
 
   if (chatId ) {
     return (

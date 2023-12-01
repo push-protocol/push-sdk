@@ -1,84 +1,126 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { IChatTheme } from "../exportedTypes";
+import { IChatTheme } from '../exportedTypes';
 import { ProfileContainer } from '../reusables';
 import ArrowIcon from '../../../icons/CaretUp.svg';
-import { Span,Image, Section } from "../../reusables";
-import { shortenText } from "../../../helpers";
-import { GroupInfoDTO } from "@pushprotocol/restapi";
+import { Span, Image, Section, Spinner } from '../../reusables';
+import { pCAIP10ToWallet, shortenText } from '../../../helpers';
+import { ChatMemberProfile, GroupInfoDTO } from '@pushprotocol/restapi';
+import { MemberPaginationData } from './GroupInfoModal';
+import { useIsInViewport } from '../../../hooks';
+import { useEffect, useRef } from 'react';
 
 interface ShadowedProps {
-    setPosition: boolean;
-  }
+  setPosition: boolean;
+}
 
 type PendingMembersProps = {
-    groupInfo?: GroupInfoDTO | null;
-    setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
-    showPendingRequests: boolean;
-    theme: IChatTheme;
-  };
+  pendingMemberPaginationData: MemberPaginationData;
+  setPendingMemberPaginationData: React.Dispatch<
+    React.SetStateAction<MemberPaginationData>
+  >;
+  pendingMembers: ChatMemberProfile[];
+  setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
+  showPendingRequests: boolean;
+  theme: IChatTheme;
+};
 export const PendingMembers = ({
-    groupInfo,
-    setShowPendingRequests,
-    showPendingRequests,
-    theme,
-  }: PendingMembersProps) => {
-    if (groupInfo) {
-      return (
-        <PendingRequestWrapper theme={theme}>
-          <PendingSection
-            onClick={() => setShowPendingRequests(!showPendingRequests)}
-          >
-            <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
-              Pending Requests
-            </Span>
-            {/* <Badge>{groupInfo?.pendingMembers?.length}</Badge> */}
-  
-            <ArrowImage
-              src={ArrowIcon}
-              width={'auto'}
-              setPosition={!showPendingRequests}
-              borderRadius="100%"
-            />
-          </PendingSection>
-  
-          {showPendingRequests && (
-            <ProfileSection
-              flexDirection="column"
-              flex="1"
-              justifyContent="start"
-              borderRadius="16px"
-            >
-              {/* {groupInfo?.pendingMembers &&
-                groupInfo?.pendingMembers?.length > 0 &&
-                groupInfo?.pendingMembers.map((item) => (
-                  <GroupPendingMembers theme={theme}>
-                    <ProfileContainer
-                      theme={theme}
-                      member={{
-                        wallet: shortenText(item.wallet?.split(':')[1], 6, true),
-                        image: item?.image || '',
-                      }}
-                      customStyle={{
-                        imgHeight: '36px',
-                        imgMaxHeight: '36px',
-                        fontSize: 'inherit',
-                        fontWeight: '300',
-                      }}
-                    />
-                  </GroupPendingMembers>
-                ))} */}
-            </ProfileSection>
-          )}
-        </PendingRequestWrapper>
-      );
-    } else {
-      return null;
-    }
-  };
+  pendingMembers,
+  setShowPendingRequests,
+  setPendingMemberPaginationData,
+  showPendingRequests,
+  pendingMemberPaginationData,
+  theme,
+}: PendingMembersProps) => {
+  const pendingMemberPageRef = useRef<HTMLDivElement>(null);
+  const isInViewportPending = useIsInViewport(pendingMemberPageRef, '1px');
 
-  //styles
-  const GroupPendingMembers = styled.div`
+  useEffect(() => {
+    console.log(isInViewportPending,pendingMemberPaginationData.finishedFetching);
+    if (
+      !isInViewportPending ||
+      pendingMemberPaginationData.loading ||
+      pendingMemberPaginationData.finishedFetching
+    ) {
+      return;
+    }
+
+    const newPage = pendingMemberPaginationData.page + 1;
+    console.log('new page updated', newPage);
+    setPendingMemberPaginationData((prev: MemberPaginationData) => ({
+      ...prev,
+      page: newPage,
+    }));
+    // eslint-disable-next-line no-use-before-define
+  }, [isInViewportPending]);
+
+  if (pendingMembers && pendingMembers.length) {
+    return (
+      <PendingRequestWrapper theme={theme}>
+        <PendingSection
+          onClick={() => setShowPendingRequests(!showPendingRequests)}
+        >
+          <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
+            Pending Requests
+          </Span>
+          {/* <Badge>{groupInfo?.pendingMembers?.length}</Badge> */}
+
+          <ArrowImage
+            src={ArrowIcon}
+            width={'auto'}
+            setPosition={!showPendingRequests}
+            borderRadius="100%"
+          />
+        </PendingSection>
+        {showPendingRequests && (
+          <ProfileSection
+            flexDirection="column"
+            flex="1"
+            overflow="hidden scroll"
+            maxHeight="10rem"
+            justifyContent="start"
+            borderRadius="16px"
+          >
+            {pendingMembers &&
+              pendingMembers?.length > 0 &&
+              pendingMembers.map((item) => (
+                <GroupPendingMembers theme={theme}>
+                  <ProfileContainer
+                    theme={theme}
+                    member={{
+                      wallet: shortenText(
+                        pCAIP10ToWallet(item.address?.split(':')[1]),
+                        6,
+                        true
+                      ),
+                      image: item?.userInfo?.profile?.picture || '',
+                    }}
+                    customStyle={{
+                      imgHeight: '36px',
+                      imgMaxHeight: '36px',
+                      fontSize: 'inherit',
+                      fontWeight: '300',
+                    }}
+                  />
+                </GroupPendingMembers>
+              ))}
+            <div ref={pendingMemberPageRef} style={{ padding: '5px' }}>hello</div>
+            {pendingMemberPaginationData.loading && (
+              <Section>
+                <Spinner size="20" />
+              </Section>
+            )}
+          </ProfileSection>
+        )}
+      </PendingRequestWrapper>
+    );
+  } else {
+    return null;
+  }
+};
+
+//styles
+const GroupPendingMembers = styled.div`
   margin-top: 3px;
   display: flex;
   flex-direction: row;
