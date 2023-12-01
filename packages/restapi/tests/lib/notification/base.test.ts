@@ -24,7 +24,7 @@ enum ENV {
    */
   LOCAL = 'local',
 }
-describe.only('test', () => {
+describe('test', () => {
   // const signer = createWalletClient({
   //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
   //   chain: goerli,

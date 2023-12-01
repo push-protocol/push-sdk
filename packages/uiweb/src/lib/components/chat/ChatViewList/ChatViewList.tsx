@@ -173,11 +173,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account, env,chatFeed]);
+  }, [conversationHash, pgpPrivateKey, account, env,chatFeed, chatId]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversationHash]);
+  }, [conversationHash, account, env, chatId, pgpPrivateKey, chatFeed]);
 
   useEffect(() => {
     if (
@@ -387,7 +387,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                     }
                   )}
               </Section>
-              {chatFeed &&
+              {!!Object.keys(chatFeed || {}).length &&
                 account &&
                 checkIfIntent({
                   chat: chatFeed as IFeeds,

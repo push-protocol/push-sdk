@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ChatStatus, ProgressHookType, Rules } from '../types';
+import { ChatMemberCounts, ChatMemberProfile, ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -40,6 +40,10 @@ export interface RemoveFromGroupOptions {
 export interface GetGroupParticipantsOptions {
   page?: number;
   limit?: number;
+  filter?: {
+    pending?: boolean;
+    role?: string;
+  };
 }
 
 export interface GroupUpdateOptions {
@@ -57,3 +61,9 @@ export interface InfoOptions {
   overrideAccount?: string;
 }
 
+
+export interface ParticipantStatus {
+  pending: boolean;
+  role: 'ADMIN' | 'MEMBER';
+  participant: boolean;
+}
