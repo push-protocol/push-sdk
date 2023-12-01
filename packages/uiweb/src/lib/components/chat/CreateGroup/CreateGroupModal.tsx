@@ -100,6 +100,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       groupMembers: useDummyGroupInfo ? groupMembers : [],
       groupAdmins: useDummyGroupInfo ? groupAdmins : [],
     });
+  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
   
     useEffect(() => {
       setGroupInputDetails({
@@ -120,6 +121,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
             groupInputDetails={groupInputDetails}
             setGroupInputDetails={setGroupInputDetails}
+            isImageUploaded={isImageUploaded}
+            setIsImageUploaded={setIsImageUploaded}
           />
         );
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
@@ -166,6 +169,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
             groupInputDetails={groupInputDetails}
             setGroupInputDetails={setGroupInputDetails}
+            isImageUploaded={isImageUploaded}
+            setIsImageUploaded={setIsImageUploaded}
           />
         );
     }
@@ -188,6 +193,8 @@ export interface ModalHeaderProps {
   groupEncryptionType?: string;
   setGroupEncryptionType?: React.Dispatch<React.SetStateAction<string>>;
   handleAddWallets?: () => void;
+  isImageUploaded?: boolean;
+  setIsImageUploaded?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface GroupDetailState {
@@ -206,15 +213,15 @@ const CreateGroupDetail = ({
   onClose,
   groupInputDetails,
   setGroupInputDetails,
+  isImageUploaded,
+  setIsImageUploaded,
 }: ModalHeaderProps & GroupDetailState) => {
-  const groupInfoToast = useToast();
   const { groupName, groupDescription, groupImage } = groupInputDetails;
   const theme = useContext(ThemeContext);
   const [validationErrors, setValidationErrors] =
     useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
-  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
   const [imageSrc, setImageSrc] = useState<string | null>();
 
   const handleChange = (e: Event) => {
@@ -226,7 +233,8 @@ const CreateGroupDetail = ({
     }
     if (
       (e.target as HTMLInputElement).files &&
-      ((e.target as HTMLInputElement).files as FileList).length
+      ((e.target as HTMLInputElement).files as FileList).length &&
+      setIsImageUploaded
     ) {
       setIsImageUploaded(true);
       setGroupInputDetails({
@@ -248,15 +256,6 @@ const CreateGroupDetail = ({
         // });
       };
     }
-  };
-
-  const showError = (errorMessage: string) => {
-    groupInfoToast.showMessageToast({
-      toastTitle: 'Error',
-      toastMessage: errorMessage,
-      toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
-    });
   };
 
   const verifyAndHandelNext = () => {
@@ -290,7 +289,6 @@ const CreateGroupDetail = ({
       fileUploadInputRef.current.click();
     }
   };
-
   //groupImage and desccription is optional
   return (
     <Section
