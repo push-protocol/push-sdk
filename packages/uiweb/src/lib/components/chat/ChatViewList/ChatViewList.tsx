@@ -177,7 +177,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversationHash, account, env, chatId, pgpPrivateKey, chatFeed,chatFeed ]);
+  }, [conversationHash, account, env, chatId, pgpPrivateKey, chatFeed]);
 
   useEffect(() => {
     if (
