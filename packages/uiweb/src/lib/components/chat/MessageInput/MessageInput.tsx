@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { IFeeds } from '@pushprotocol/restapi';
+import { GroupDTO, IFeeds } from '@pushprotocol/restapi';
 import { ToastContainer } from 'react-toastify';
 
 import { Section, Div, Span } from '../../reusables';
@@ -178,9 +178,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatFeed?.groupInformation?.chatId.toLowerCase() ===
         groupInformationSinceLastConnection.chatId.toLowerCase()
       ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
+        (async()=>{
+          const updateChatFeed = chatFeed;
+          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
+          if (group || !!Object.keys(group || {}).length){
+            updateChatFeed.groupInformation = group! as GroupDTO ;
+          
+            setChatFeed(updateChatFeed);
+          }
+         
+        })();
       }
     }
   }, [groupInformationSinceLastConnection]);
