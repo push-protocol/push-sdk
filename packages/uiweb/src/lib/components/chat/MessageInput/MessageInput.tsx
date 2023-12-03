@@ -41,7 +41,7 @@ import {
 import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
-import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
+import { checkIfAccessVerifiedGroup, checkIfMember, isValidETHAddress } from '../helpers';
 import { InfoContainer } from '../reusables';
 
 /**
@@ -153,6 +153,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [account]);
 
   useEffect(() => {
+    if (!isValidETHAddress(chatId)) {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
     if (storedTimestampJSON) {
@@ -170,6 +171,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
       }
     }
+  }
   }, [chatId, verified, isMember, account, env]);
 
   useEffect(() => {
