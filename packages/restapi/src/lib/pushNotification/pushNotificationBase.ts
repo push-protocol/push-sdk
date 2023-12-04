@@ -824,4 +824,8 @@ export class PushNotificationBaseClass {
       return null;
     }
   }
+
+  protected getAddressFromCaip(caipAddress: string): string {
+    return caipAddress?.split(':')[caipAddress?.split(':').length - 1];
+  }
 }

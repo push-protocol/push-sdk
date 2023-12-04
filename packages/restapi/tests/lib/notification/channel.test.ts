@@ -113,6 +113,24 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
+    it('Without signer and account : Should return response as address is passed', async () => {
+      const res = await userBob.channel.subscribers({
+        channel: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+      });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('Without signer and account : Should return response as address is passed', async () => {
+      const res = await userBob.channel.subscribers({
+        channel: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        page: 1,
+        limit: 10,
+      });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
     it('Without signer and account : Should return response for alias address', async () => {
       const res = await userBob.channel.subscribers({
         channel: 'eip155:80001:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
@@ -126,8 +144,30 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
-    it('Without signer and account : Should return response without passing the options', async () => {
-      const res = await userKate.channel.subscribers({page:1, limit:10, category:2});
+    it('With signer and account : Should return response without passing the options', async () => {
+      const res = await userKate.channel.subscribers({ page: 1, limit: 10 });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and account : Should return response with settings', async () => {
+      const res = await userKate.channel.subscribers({
+        page: 1,
+        limit: 10,
+        setting: true,
+      });
+      // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and account : Should return response without settings', async () => {
+      const res = await userKate.channel.subscribers({
+        page: 1,
+        limit: 10,
+        setting: false,
+        category: 1,
+      });
+      // console.log(res)
       expect(res).not.null;
     });
 

@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ChatMemberCounts, ChatMemberProfile, ChatStatus, ProgressHookType, Rules, SpaceRules } from '../types';
+import { ChatStatus, ProgressHookType, Rules, SpaceRules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',

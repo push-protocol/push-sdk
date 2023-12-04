@@ -325,11 +325,17 @@ export class Chat {
         chatId: string,
         options?: GetGroupParticipantsOptions
       ): Promise<{ members: ChatMemberProfile[] }> => {
-        const { page = 1, limit = 20 } = options ?? {};
+        const {
+          page = 1,
+          limit = 20,
+          filter = { pending: undefined, role: undefined },
+        } = options ?? {};
         const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
           chatId,
           page,
           limit,
+          pending: filter.pending,
+          role: filter.role,
           env: this.env,
         };
 
@@ -342,10 +348,10 @@ export class Chat {
           chatId,
           env: this.env,
         });
-         return {
-           participants: count.overallCount - count.pendingCount,
-           pending: count.pendingCount,
-         };
+        return {
+          participants: count.overallCount - count.pendingCount,
+          pending: count.pendingCount,
+        };
       },
 
       status: async (
@@ -386,7 +392,7 @@ export class Chat {
             env: this.env,
           });
     },
-    
+
     update: async (
       chatId: string,
       options: GroupUpdateOptions
