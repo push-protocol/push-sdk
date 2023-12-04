@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import {
+  GroupDTO,
   IFeeds,
   IMessageIPFS,
   IMessageIPFSWithCID,
@@ -24,7 +25,7 @@ import {
   walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
-import { Messagetype } from '../../../types';
+import { IGroup, Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 
@@ -84,17 +85,19 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       }
     })();
   }, [account]);
-
   useEffect(() => {
-    setMessages(undefined);
     setConversationHash(undefined);
+    setChatFeed({} as IFeeds);
+    setMessages(undefined);
+ 
+   
   }, [chatId, account, pgpPrivateKey, env]);
 
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
       if (!account && !env) return;
-      const chat = await fetchChat({ chatId });
+      const chat = await fetchChat({ chatId:chatId });
       if (Object.keys(chat || {}).length) {
         setConversationHash(chat?.threadhash as string);
         setChatFeed(chat as IFeeds);
@@ -127,6 +130,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       }
       setLoading(false);
     })();
+
   }, [chatId, pgpPrivateKey, account, env]);
 
   //moniters socket changes
@@ -135,10 +139,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
       if (!Object.keys(messages || {}).length) {
+
         setFilteredMessages([
           messagesSinceLastConnection,
         ] as IMessageIPFSWithCID[]);
-     
         setConversationHash(messagesSinceLastConnection.cid);
       } else {
         const newChatViewList = appendUniqueMessages(
@@ -146,6 +150,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           [messagesSinceLastConnection],
           false
         );
+
         setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
       }
       setChatStatusText('');
@@ -154,15 +159,24 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [messagesSinceLastConnection]);
 
+  // remove  fetching group once stream comes 
   useEffect(() => {
     if (Object.keys(groupInformationSinceLastConnection || {}).length) {
       if (
         chatFeed?.groupInformation?.chatId.toLowerCase() ===
         groupInformationSinceLastConnection.chatId.toLowerCase()
       ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
+        (async()=>{
+          const updateChatFeed = chatFeed;
+          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
+          if (group || !!Object.keys(group || {}).length){
+            updateChatFeed.groupInformation = group! as GroupDTO ;
+          
+            setChatFeed(updateChatFeed);
+          }
+         
+        })();
+       
       }
     }
   }, [groupInformationSinceLastConnection]);
@@ -239,7 +253,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     } else {
       threadHash = messages?.lastThreadHash;
     }
-  
     if (
       threadHash &&
       ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
@@ -257,9 +270,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
             chatHistory,
             true
           );
-
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
+
           setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
         }
       }
@@ -280,6 +293,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   const ifBlurChat = () =>{
+  
     return !!(
       chatFeed &&
       chatFeed?.groupInformation &&
