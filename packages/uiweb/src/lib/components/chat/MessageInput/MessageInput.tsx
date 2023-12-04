@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { IFeeds } from '@pushprotocol/restapi';
+import { GroupDTO, IFeeds } from '@pushprotocol/restapi';
 import { ToastContainer } from 'react-toastify';
 
 import { Section, Div, Span } from '../../reusables';
@@ -41,7 +41,7 @@ import {
 import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
-import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
+import { checkIfAccessVerifiedGroup, checkIfMember, isValidETHAddress } from '../helpers';
 import { InfoContainer } from '../reusables';
 
 /**
@@ -153,6 +153,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [account]);
 
   useEffect(() => {
+    if (!isValidETHAddress(chatId)) {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
     if (storedTimestampJSON) {
@@ -170,6 +171,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
       }
     }
+  }
   }, [chatId, verified, isMember, account, env]);
 
   useEffect(() => {
@@ -178,9 +180,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatFeed?.groupInformation?.chatId.toLowerCase() ===
         groupInformationSinceLastConnection.chatId.toLowerCase()
       ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
+        (async()=>{
+          const updateChatFeed = chatFeed;
+          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
+          if (group || !!Object.keys(group || {}).length){
+            updateChatFeed.groupInformation = group! as GroupDTO ;
+          
+            setChatFeed(updateChatFeed);
+          }
+         
+        })();
       }
     }
   }, [groupInformationSinceLastConnection]);
