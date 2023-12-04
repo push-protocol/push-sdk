@@ -53,7 +53,7 @@ export async function createV2(
       isPublic: isPublic,
       env,
       pgpPrivateKey,
-      groupType: 'space',
+      groupType: 'spaces',
       config: {
         meta: null,
         scheduleAt: config.scheduleAt,

@@ -74,7 +74,7 @@ export class Space {
       speakers: options.participants.speakers,
       spaceImage: options.image || null,
       isPublic: !options.private,
-      rules: options.rules || null,
+      rules: options.rules || {},
       config: {
         scheduleAt: options.schedule.start,
         scheduleEnd: options.schedule.end || null,
