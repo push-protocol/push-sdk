@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.22](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.21...uiweb-1.1.22) (2023-12-05)
+
+
+### Bug Fixes
+
+* fixed hardcoded msg for group rules in msg input ([#925](https://github.com/ethereum-push-notification-service/push-sdk/issues/925)) ([4e7000c](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e7000c9cb60f644291b11e99826b0e79d7e0058))
+* Merge branch 'main' into deployment ([c87581c](https://github.com/ethereum-push-notification-service/push-sdk/commit/c87581cbbf825300a86c3cfadb6d0f2157ba3499))
+
+
+
 ## [1.1.21](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.20...uiweb-1.1.21) (2023-12-04)
 
 
