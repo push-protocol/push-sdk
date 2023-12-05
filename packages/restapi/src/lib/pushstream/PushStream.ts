@@ -222,7 +222,6 @@ export class PushStream extends EventEmitter {
       });
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
-        console.log("HOOLA")
         await handleSocketDisconnection('chat');
       });
 
