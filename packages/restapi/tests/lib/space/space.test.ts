@@ -46,8 +46,8 @@ describe('PushAPI.space', () => {
     account3 = `eip155:${signer3.address}`;
     userJohn = await PushAPI.initialize(signer3, { env: _env });
   });
-  describe.only('space', () => {
-    it.only('create space', async () => {
+  describe('space', () => {
+    it('create space', async () => {
       const space = await userAlice.space.create(spaceName, {
         description: spaceDescription,
         image: spaceImage,

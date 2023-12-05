@@ -1,3 +1,4 @@
+import { SpaceRules } from '../types';
 import {
   CreateGroupEvent,
   GroupMeta,
@@ -6,7 +7,6 @@ import {
   MessageRawData,
   MessageEvent,
   MessageEventType,
-  GroupMember,
   GroupEventType,
   LeaveGroupEvent,
   JoinGroupEvent,
@@ -17,6 +17,8 @@ import {
   NotificationType,
   NOTIFICATION,
   ProposedEventNames,
+  SpaceRequestEvent,
+  SpaceRemoveEvent,
 } from './pushStreamTypes';
 
 export class DataModifier {
@@ -370,6 +372,31 @@ export class DataModifier {
     }
   }
 
+  public static convertToProposedNameForSpace(
+    currentEventName: string
+  ): ProposedEventNames {
+    switch (currentEventName) {
+      case 'create':
+        return ProposedEventNames.CreateSpace;
+      case 'update':
+        return ProposedEventNames.UpdateSpace;
+      case 'request':
+        return ProposedEventNames.SpaceRequest;
+      case 'accept':
+        return ProposedEventNames.SpaceAccept;
+      case 'reject':
+        return ProposedEventNames.SpaceReject;
+      case 'leaveSpace':
+        return ProposedEventNames.LeaveSpace;
+      case 'joinSpace':
+        return ProposedEventNames.JoinSpace;
+      case 'remove':
+        return ProposedEventNames.SpaceRemove;
+      default:
+        throw new Error(`Unknown current event name: ${currentEventName}`);
+    }
+  }
+
   public static handleToField(data: any): void {
     switch (data.event) {
       case ProposedEventNames.LeaveGroup:
@@ -387,5 +414,292 @@ export class DataModifier {
       default:
         break;
     }
+  }
+
+  public static handleSpaceEvent(data: any, includeRaw = false): any {
+    // Check the eventType and map accordingly
+    switch (data.eventType) {
+      case 'create':
+        return this.mapToCreateSpaceEvent(data, includeRaw);
+      case 'update':
+        return this.mapToUpdateSpaceEvent(data, includeRaw);
+      case 'request':
+        return this.mapToRequestSpaceEvent(data, includeRaw);
+      case 'remove':
+        return this.mapToRemoveSpaceEvent(data, includeRaw);
+      case 'joinSpace':
+        return this.mapToJoinSpaceEvent(data, includeRaw);
+      case 'leaveSpace':
+        return this.mapToLeaveSpaceEvent(data, includeRaw);
+      default:
+        // If the eventType is unknown, check for known messageCategories
+        switch (data.messageCategory) {
+          case 'Approve':
+            return this.mapToSpaceApproveEvent(data, includeRaw);
+
+          case 'Reject':
+            return this.mapToSpaceRejectEvent(data, includeRaw);
+          // Add other cases as needed for different message categories
+          default:
+            console.warn(
+              'Unknown eventType or messageCategory for space:',
+              data.eventType,
+              data.messageCategory
+            );
+            return data;
+        }
+    }
+  }
+
+  private static mapToCreateSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      meta: {
+        name: string;
+        description: string;
+        image: string;
+        owner: string;
+        private: boolean;
+        rules: SpaceRules;
+      };
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const baseEventData: BaseEventData = {
+      event: data.eventType,
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.spaceCreator,
+      meta: {
+        name: data.spaceName,
+        description: data.spaceDescription,
+        image: data.spaceImage,
+        owner: data.spaceCreator,
+        private: !data.isPublic,
+        rules: data.rules || {},
+      },
+    };
+
+    if (includeRaw) {
+      baseEventData.raw = {
+        verificationProof: data.verificationProof || '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  private static mapToUpdateSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      meta: {
+        name: string;
+        description: string;
+        image: string;
+        owner: string;
+        private: boolean;
+        rules: SpaceRules;
+      };
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const baseEventData: BaseEventData = {
+      event: data.eventType,
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.spaceCreator,
+      meta: {
+        name: data.spaceName,
+        description: data.spaceDescription,
+        image: data.spaceImage,
+        owner: data.spaceCreator,
+        private: !data.isPublic,
+        rules: data.rules || {},
+      },
+    };
+
+    if (includeRaw) {
+      baseEventData.raw = {
+        verificationProof: data.verificationProof || '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  private static mapToRequestSpaceEvent(data: any, includeRaw: boolean): any {
+    const eventData: SpaceRequestEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: data.to,
+      event: MessageEventType.Request,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToSpaceApproveEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: any;
+      spaceId: any;
+      from: any;
+      to: any[];
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const baseEventData: BaseEventData = {
+      event: 'request',
+      origin: data.messageOrigin === 'other' ? 'self' : 'other',
+      timestamp: data.timestamp,
+      spaceId: data.chatId,
+      from: data.fromCAIP10,
+      to: [data.toCAIP10],
+    };
+
+    if (includeRaw) {
+      baseEventData.raw = {
+        verificationProof: data.verificationProof || '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  private static mapToSpaceRejectEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const baseEventData: BaseEventData = {
+      event: 'reject',
+      origin: data.messageOrigin === 'other' ? 'other' : 'self',
+      timestamp: data.timestamp.toString(),
+      spaceId: data.chatId,
+      from: data.fromCAIP10,
+      to: null,
+    };
+
+    if (includeRaw) {
+      baseEventData.raw = {
+        verificationProof: data.verificationProof || '',
+      };
+    }
+
+    return baseEventData;
+  }
+
+  private static mapToRemoveSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const eventData: BaseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: data.to,
+      event: 'remove',
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToJoinSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const eventData: BaseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: data.to,
+      event: data.eventType,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToLeaveSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const eventData: BaseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: data.to,
+      event: data.eventType,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
   }
 }
