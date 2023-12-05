@@ -432,15 +432,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {isJoinGroup() && 'Click on the button to join the group'}
                 {isNotVerified() && (
                   <>
-                    Sending messages requires{' '}
-                    <Span
-                      color={theme.backgroundColor?.chatSentBubbleBackground}
-                    >
-                      1 PUSH Token
-                    </Span>{' '}
-                    for participation.{' '}
+                    Sending messages requires to staisfy the group rules.{' '}
                     <Link
-                      href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+                      href="https://push.org/docs/chat/build/conditional-rules-for-group/"
                       target="_blank"
                       color={theme.backgroundColor?.chatSentBubbleBackground}
                     >
