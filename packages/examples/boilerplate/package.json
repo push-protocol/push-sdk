@@ -1,7 +1,7 @@
 {
-  "name": "notification-setting",
+  "name": "boilerplate",
   "version": "1.0.0",
-  "description": "",
+  "description": "Example boilerplate for testing various features of Push Protocol",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -11,13 +11,14 @@
     "dev": "node-dev --respawn --transpile-only index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pushprotocol/restapi": "latest"
+    "@pushprotocol/restapi": "latest",
+    "ethers": "5.7.2",
+    "input": "1.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "3.0.1"
   }
 }
