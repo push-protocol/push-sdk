@@ -64,8 +64,6 @@ const sendVideoCallNotification = async (
       callDetails
     };
 
-    console.log('sendVideoCallNotification', 'videoData', videoData);
-
     const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
     const recipientAddressInCaip = getCAIPWithChainId(
       recipientAddress,
@@ -102,7 +100,7 @@ const sendVideoCallNotification = async (
       env,
     });
   } catch (err) {
-    console.log('Error occured while sending notification for video call', err);
+    console.error('Error occured while sending notification for video call', err);
   }
 };
 

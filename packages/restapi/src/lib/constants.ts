@@ -53,7 +53,7 @@ export const ALPHA_FEATURES = {
 export const PACKAGE_BUILD = packageJson.version.includes('alpha')
   ? 'ALPHA'
   : 'STABLE';
-console.log(PACKAGE_BUILD);
+
 const Constants = {
   ENV,
   ENCRYPTION_TYPE,
