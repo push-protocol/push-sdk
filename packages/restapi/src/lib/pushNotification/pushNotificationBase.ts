@@ -340,7 +340,7 @@ export class PushNotificationBaseClass {
       }
       return balance;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error(JSON.stringify(error));
     }
   }
@@ -401,7 +401,6 @@ export class PushNotificationBaseClass {
         const approvalTrxPromise = contract!['approve'](spenderAddress, amount);
         const approvalTrx = await approvalTrxPromise;
         await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
-        // console.log(approvalTrx.hash)
       } else if ('signTypedData' in this.signer!) {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
@@ -410,13 +409,12 @@ export class PushNotificationBaseClass {
           args: [spenderAddress, amount],
         });
         const approvalTrxRes = await approvalTrxPromise;
-        // console.log(approvalTrxRes);
       } else {
         throw new Error('Unsupported signer');
       }
       return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return false;
     }
   }
