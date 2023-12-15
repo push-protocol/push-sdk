@@ -15,8 +15,6 @@ export async function broadcastRaisedHand(
 ) {
   const { promoteeAddress } = options || {};
 
-  console.log('BROADCAST RAISE HAND', options);
-
   // update live space info
   const updatedLiveSpaceData = produce(
     this.spaceSpecificData.liveSpaceData,

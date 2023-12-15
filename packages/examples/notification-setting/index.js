@@ -1,6 +1,6 @@
-import { PushAPI } from '@pushprotocol/restapi';
-import { ethers } from 'ethers';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import * as dotenv from 'dotenv';
+import { ethers } from 'ethers';
 dotenv.config();
 
 // initialise the provider
@@ -20,17 +20,17 @@ if (process.env.PRIVATE_KEY) {
 
 // initialise the sdk with the signer and env
 // for channel
-const userAlice = await PushAPI.initialize(signer, { env: 'staging' });
+const userAlice = await PushAPI.initialize(signer, { env: CONSTANTS.ENV.STAGING });
 // for subscribers
 const userBob = await PushAPI.initialize(
   ethers.Wallet.createRandom().connect(provider),
-  { env: 'staging' }
+  { env: CONSTANTS.ENV.STAGING }
 );
 
 
 const userKate = await PushAPI.initialize(
   ethers.Wallet.createRandom().connect(provider),
-  { env: 'staging' }
+  { env: CONSTANTS.ENV.STAGING }
 );
 
 const main = async () => {

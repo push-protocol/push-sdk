@@ -102,7 +102,7 @@ const sendVideoCallNotification = async (
       env,
     });
   } catch (err) {
-    console.log('Error occured while sending notification for video call', err);
+    console.error('Error occured while sending notification for video call', err);
   }
 };
 
