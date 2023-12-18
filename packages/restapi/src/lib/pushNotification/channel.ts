@@ -83,23 +83,23 @@ export class Channel extends PushNotificationBaseClass {
    */
   subscribers = async (options?: ChannelInfoOptions) => {
     try {
-      const {
-        channel = this.account
-          ? getFallbackETHCAIPAddress(this.env!, this.account!)
-          : null,
-      } = options || {};
-
+      let channel = options?.channel
+        ? options.channel
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       this.checkUserAddressExists(channel!);
-      if (!validateCAIP(channel!)) {
-        throw new Error('Invalid CAIP');
-      }
+      channel = validateCAIP(channel!)
+        ? channel
+        : getFallbackETHCAIPAddress(this.env!, channel!);
       if (options && options.page) {
         return await PUSH_CHANNEL.getSubscribers({
           channel: channel!,
           env: this.env,
           page: options.page,
           limit: options.limit ?? 10,
-          category: options.category
+          setting: options.setting ?? false,
+          category: options.category,
         });
       } else {
         /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */

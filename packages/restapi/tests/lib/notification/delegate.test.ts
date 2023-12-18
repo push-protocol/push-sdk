@@ -63,6 +63,14 @@ describe('PushAPI.delegate functionality', () => {
       expect(res).not.null;
     }, 100000000);
 
+    it('With signer and provider :: should add delegate', async () => {
+      const res = await userKate.channel.delegate.add(
+        '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      );
+      console.log(res);
+      expect(res).not.null;
+    }, 100000000);
+
     it('With signer and provider :: should throw error as delegate caip and provider doesnt match', async () => {
       await expect(() =>
         userKate.channel.delegate.add(
@@ -83,9 +91,27 @@ describe('PushAPI.delegate functionality', () => {
       );
       userKate = await PushAPI.initialize(signer2);
       const res = await userKate.channel.delegate.add(
+        '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      );
+      console.log(res);
+      expect(res).not.null;
+    }, 10000000);
+
+    it('With viem signer: Should add delegate', async () => {
+      // create polygon mumbai provider
+      const provider = new ethers.providers.JsonRpcProvider(
+        'https://rpc-mumbai.maticvigil.com'
+      );
+
+      signer2 = new ethers.Wallet(
+        `0x${process.env['WALLET_PRIVATE_KEY']}`,
+        provider
+      );
+      userKate = await PushAPI.initialize(signer2);
+      const res = await userKate.channel.delegate.add(
         'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      //   console.log(res);
+      // console.log(res);
       expect(res).not.null;
     }, 10000000);
   });
@@ -147,19 +173,19 @@ describe('PushAPI.delegate functionality', () => {
     it.skip('Without signer and account : Should throw error', async () => {
       await expect(() => userBob.channel.delegate.get()).to.Throw;
     });
-    it('Without signer : Should throw error for non-caip format', async () => {
-      await expect(() =>
-        userBob.channel.delegate.get({
-          channel: '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924',
-        })
-      ).to.Throw;
+    it('Without signer : Should get delegates', async () => {
+      const res = await userBob.channel.delegate.get({
+        channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      // console.log(res)
+      expect(res).not.null
     });
 
     it('Without signer : Should fetch delegates', async () => {
       const res = await userBob.channel.delegate.get({
         channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
 
