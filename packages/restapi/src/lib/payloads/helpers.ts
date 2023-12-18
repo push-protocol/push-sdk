@@ -7,6 +7,7 @@ import {
   ISendNotificationInputOptions,
   INotificationPayload,
   walletType,
+  VideNotificationRules,
 } from '../types';
 import {
   IDENTITY_TYPE,
@@ -194,6 +195,7 @@ export async function getVerificationProof({
   wallet,
   pgpPrivateKey,
   env,
+  rules
 }: {
   senderType: 0 | 1;
   signer: any;
@@ -210,6 +212,7 @@ export async function getVerificationProof({
   wallet?: walletType;
   pgpPrivateKey?: string;
   env?: ENV;
+  rules?:VideNotificationRules;
 }) {
   let message = null;
   let verificationProof = null;

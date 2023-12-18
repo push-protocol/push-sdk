@@ -165,6 +165,7 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
+      rules,
       onReceiveMessage,
       retry = false,
       details,
@@ -180,7 +181,7 @@ export class Video {
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = senderAddress;
-            draft.meta.chatId = chatId;
+            draft.meta.chatId = chatId ?? rules!.access.data;
             draft.meta.initiator.address = senderAddress;
 
             const incomingIndex = getIncomingIndexFromAddress(
@@ -241,6 +242,7 @@ export class Video {
                 ? VideoCallStatus.RETRY_INITIALIZED
                 : VideoCallStatus.INITIALIZED,
               chatId,
+              rules,
               signalData: data,
               env: this.env,
               callType: this.callType,
@@ -298,6 +300,7 @@ export class Video {
                 senderAddress,
                 recipientAddress: connectToAddresses,
                 chatId,
+                rules,
                 details: {
                   type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                   data: {},
@@ -415,6 +418,7 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
+      rules,
       onReceiveMessage,
       retry = false,
       details,
@@ -444,7 +448,7 @@ export class Video {
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.meta.chatId = chatId;
+          draft.meta.chatId = chatId ?? rules!.access.data;
           draft.meta.initiator.address = senderAddress;
 
           const incomingIndex = getIncomingIndexFromAddress(
@@ -491,6 +495,7 @@ export class Video {
             recipientAddress,
             status: VideoCallStatus.RETRY_INITIALIZED,
             chatId,
+            rules,
             signalData: null,
             callType: this.callType,
             env: this.env,
@@ -520,6 +525,7 @@ export class Video {
               ? VideoCallStatus.RETRY_RECEIVED
               : VideoCallStatus.RECEIVED,
             chatId,
+            rules,
             signalData: data,
             env: this.env,
             callType: this.callType,
@@ -586,6 +592,7 @@ export class Video {
               senderAddress,
               recipientAddress: connectToAddresses,
               chatId,
+              rules,
               details: {
                 type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                 data: {},
