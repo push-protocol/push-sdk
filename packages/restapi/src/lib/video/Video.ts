@@ -754,7 +754,7 @@ export class Video {
     }
   }
 
-  disconnect(options: VideoDisconnectOptions): void {
+  disconnect(options?: VideoDisconnectOptions): void {
     const { peerAddress, details } = options || {};
 
     try {
