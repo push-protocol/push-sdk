@@ -411,6 +411,8 @@ describe('PushAPI.channel functionality', () => {
 
   describe('channel :: create', () => {
     it('Should create channel', async () => {
+      const channelInfo = await userKate.channel.info();
+      if (channelInfo) return; // skip if already exists
       const res = await userKate.channel.create({
         name: 'SDK Test',
         description: 'Testing new description',

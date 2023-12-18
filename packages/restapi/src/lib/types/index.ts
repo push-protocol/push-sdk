@@ -328,7 +328,6 @@ export enum GROUP_RULES_SUB_CATEGORY {
   GET = 'GET',
 }
 
-
 export enum GROUP_RULES_PERMISSION {
   ENTRY = 'Entry',
   CHAT = 'Chat',
@@ -649,12 +648,24 @@ export type ethersV5SignerType = {
     types: Record<string, Array<TypedDataField>>,
     value: Record<string, any>
   ) => Promise<string>;
-  getChainId: () => Promise<number>;
   getAddress: () => Promise<string>;
   signMessage: (message: Bytes | string) => Promise<string>;
   privateKey?: string;
   provider?: providers.Provider;
 };
+
+export type ethersV6SignerType = {
+  signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Bytes | string) => Promise<string>;
+  privateKey?: string;
+  provider?: providers.Provider;
+};
+
 export type viemSignerType = {
   signTypedData: (args: {
     account: any;
@@ -674,7 +685,10 @@ export type viemSignerType = {
   provider?: providers.Provider;
 };
 
-export type SignerType = ethersV5SignerType | viemSignerType;
+export type SignerType =
+  | ethersV5SignerType
+  | ethersV6SignerType
+  | viemSignerType;
 
 export type EnvOptionsType = {
   env?: ENV;
