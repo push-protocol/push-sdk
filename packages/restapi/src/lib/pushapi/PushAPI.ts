@@ -16,6 +16,7 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { Video } from './video';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -28,6 +29,8 @@ export class PushAPI {
   private progressHook?: (progress: ProgressHookType) => void;
 
   public chat: Chat; // Public instances to be accessed from outside the class
+  public video: Video;
+
   public profile: Profile;
   public encryption: Encryption;
   private user: User;
@@ -81,6 +84,11 @@ export class PushAPI {
       this.progressHook
     );
     this.user = new User(this.account, this.env);
+
+    this.video = new Video(this.account,
+      this.env,
+      this.decryptedPgpPvtKey,
+      this.signer)
   }
   // Overloaded initialize method signatures
   static async initialize(

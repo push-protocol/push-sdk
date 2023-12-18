@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ChatMemberCounts, ChatMemberProfile, ChatStatus, ProgressHookType, Rules } from '../types';
+import { ChatStatus, ProgressHookType, Rules, SignerType } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -66,4 +66,18 @@ export interface ParticipantStatus {
   pending: boolean;
   role: 'ADMIN' | 'MEMBER';
   participant: boolean;
+}
+
+export interface VideoInitializeOptions {
+  /*
+    - If the signer and decryptedPgpPvtKey were not provided during the initialization of the PushAPI class,
+    - They can be provided when initializing the video.
+  */
+  signer?: SignerType;
+  decryptedPgpPvtKey?: string;
+  media: {
+    video?: boolean;
+    audio?: boolean;
+  };
+  stream?: MediaStream;
 }
