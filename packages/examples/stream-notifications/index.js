@@ -19,7 +19,7 @@ const signer = pk.length > 0 ? new ethers.Wallet(pk) : ethers.Wallet.createRando
 console.log('Sending notification from Wallet address: ', signer.address);
 
 // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
-const userAlice = await PushAPI.initialize(signer, { env: 'staging' });
+const userAlice = await PushAPI.initialize(signer, { env: CONSTANTS.ENV.STAGING });
 
 // IMPORTANT: Setup stream events before stream.connect()
 const stream = await userAlice.initStream([

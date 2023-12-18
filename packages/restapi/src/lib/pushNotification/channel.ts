@@ -83,23 +83,23 @@ export class Channel extends PushNotificationBaseClass {
    */
   subscribers = async (options?: ChannelInfoOptions) => {
     try {
-      const {
-        channel = this.account
-          ? getFallbackETHCAIPAddress(this.env!, this.account!)
-          : null,
-      } = options || {};
-
+      let channel = options?.channel
+        ? options.channel
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       this.checkUserAddressExists(channel!);
-      if (!validateCAIP(channel!)) {
-        throw new Error('Invalid CAIP');
-      }
+      channel = validateCAIP(channel!)
+        ? channel
+        : getFallbackETHCAIPAddress(this.env!, channel!);
       if (options && options.page) {
         return await PUSH_CHANNEL.getSubscribers({
           channel: channel!,
           env: this.env,
           page: options.page,
           limit: options.limit ?? 10,
-          category: options.category
+          setting: options.setting ?? false,
+          category: options.category,
         });
       } else {
         /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */
@@ -153,17 +153,6 @@ export class Channel extends PushNotificationBaseClass {
       progressHook,
     } = options || {};
     try {
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // create push token instance
       let aliasInfo;
       // validate all the parameters and length
@@ -256,17 +245,6 @@ export class Channel extends PushNotificationBaseClass {
     try {
       // create push token instance
       let aliasInfo;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // validate all the parameters and length
       this.validateChannelParameters(options);
       // check for PUSH balance
@@ -357,17 +335,6 @@ export class Channel extends PushNotificationBaseClass {
   verify = async (channelToBeVerified: string) => {
     try {
       this.checkSignerObjectExists();
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       if (validateCAIP(channelToBeVerified)) {
         channelToBeVerified = channelToBeVerified.split(':')[2];
       }
@@ -396,18 +363,6 @@ export class Channel extends PushNotificationBaseClass {
   setting = async (configuration: NotificationSettings) => {
     try {
       this.checkSignerObjectExists();
-      //TODO: create a separate function later
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // check for PUSH balance
       const pushTokenContract = await this.createContractInstance(
         config.TOKEN[this.env!],

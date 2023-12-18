@@ -5,6 +5,8 @@ export interface GrouInfoType{
   groupDescription:string;
   groupImage:string;
   isPublic: boolean;
+  members: string[];
+  admins: string[];
 }
 
 export const TYPE = {

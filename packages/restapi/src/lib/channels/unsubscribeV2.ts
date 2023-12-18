@@ -1,14 +1,7 @@
 import axios from 'axios';
+import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
-  getCAIPAddress,
-  getConfig,
-  getCAIPDetails,
-  signTypedData,
-} from '../helpers';
-import {
-  getTypeInformation,
   getDomainInformation,
-  getSubscriptionMessage,
   getTypeInformationV2,
   getSubscriptionMessageV2,
 } from './signature.helpers';
@@ -79,8 +72,8 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
     };
 
     // sign a message using EIP712
-    const signature = await signTypedData(
-      signer,
+    const pushSigner = new Signer(signer);
+    const signature = await pushSigner.signTypedData(
       domainInformation,
       typeInformation,
       messageInformation,
@@ -103,7 +96,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
     if (typeof onError === 'function') onError(err as Error);
 
     return {
-      status: err?.response?.status?? '' ,
+      status: err?.response?.status ?? '',
       message: err instanceof Error ? err.message : JSON.stringify(err),
     };
   }

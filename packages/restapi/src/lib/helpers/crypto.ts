@@ -32,7 +32,7 @@ import {
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
-import { getAddress } from './signer';
+import { Signer } from './signer';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -52,8 +52,8 @@ if (typeof window !== 'undefined' && window.crypto) {
 /** DEPRECATED */
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
-  const address: string =
-    account || (await getAddress(signer as SignerType)) || '';
+  const pushSigner = signer ? new Signer(signer) : undefined;
+  const address: string = account || (await pushSigner?.getAddress()) || '';
   const metamaskProvider = new ethers.providers.Web3Provider(
     (window as any).ethereum
   );
