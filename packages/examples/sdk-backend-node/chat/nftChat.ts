@@ -73,7 +73,40 @@ const eventlistener = async (
   });
 };
 
+const skipExample = () => {
+  const requiredEnvVars = [
+    'NFT_CHAIN_ID_1',
+    'NFT_CONTRACT_ADDRESS_1',
+    'NFT_TOKEN_ID_1',
+    'NFT_HOLDER_WALLET_PRIVATE_KEY_1',
+    'NFT_PROFILE_PASSWORD_1',
+    'NFT_CHAIN_ID_2',
+    'NFT_CONTRACT_ADDRESS_2',
+    'NFT_TOKEN_ID_2',
+    'NFT_HOLDER_WALLET_PRIVATE_KEY_2',
+    'NFT_PROFILE_PASSWORD_2',
+    'NFT_CHAIN_ID_3',
+    'NFT_CONTRACT_ADDRESS_3',
+    'NFT_TOKEN_ID_3',
+    'NFT_HOLDER_WALLET_PRIVATE_KEY_3',
+    'NFT_PROFILE_PASSWORD_3',
+  ];
+
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      return true; // Skip the example if any of the required env vars is missing
+    }
+  }
+
+  return false; // All required env vars are present, don't skip the example
+};
+
 export const runNFTChatClassUseCases = async (): Promise<void> => {
+  if (skipExample()) {
+    console.log('Skipping examples as required env vars are missing');
+    return;
+  }
+
   const userAlice = await PushAPI.initialize(nftSigner1, {
     env,
     account: nftAccount1,

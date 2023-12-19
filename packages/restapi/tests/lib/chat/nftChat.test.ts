@@ -10,7 +10,7 @@ import {
   colors,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
-import { PushStream } from 'packages/restapi/src/lib/pushstream/PushStream';
+import { PushStream } from '../../../src/lib/pushstream/PushStream';
 import { ENCRYPTION_TYPE } from '../../../src/lib/constants';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
