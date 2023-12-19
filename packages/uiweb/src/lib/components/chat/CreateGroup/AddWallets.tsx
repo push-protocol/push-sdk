@@ -23,7 +23,7 @@ interface AddWalletsInCreateGroupProps {
 }
 
 const AddWalletsInCreateGroup = ({ handlePrevious, onClose,groupInputDetails, groupEncryptionType, checked, criteriaStateManager, groupMembers, setGroupMembers }: AddWalletsInCreateGroupProps) => {
-    const { createGatedGroup } = useCreateGatedGroup();
+    const { createGatedGroup, loading } = useCreateGatedGroup();
     const groupInfoToast = useToast();
     const getEncryptionType = () => {
         if (groupEncryptionType === 'encrypted') {
@@ -85,7 +85,7 @@ const AddWalletsInCreateGroup = ({ handlePrevious, onClose,groupInputDetails, gr
                 memberList={groupMembers}
                 handleMemberList={setGroupMembers}
                 groupMembers={groupInputDetails.groupMembers}
-                isLoading={false}
+                isLoading={loading}
                 modalHeader="Add Wallets"
             />
         </Section>
