@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ChatMemberCounts, ChatMemberProfile, ChatStatus, ProgressHookType, Rules } from '../types';
+import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -10,7 +10,7 @@ export interface PushAPIInitializeProps {
   progressHook?: (progress: ProgressHookType) => void;
   account?: string | null;
   version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
-  versionMeta?: { NFTPGP_V1?: { password: string } };
+  versionMeta?: { NFTPGP_V1?: { password: string; reset?: boolean } };
   autoUpgrade?: boolean;
   origin?: string;
   alpha?: {
@@ -60,7 +60,6 @@ export interface GroupUpdateOptions {
 export interface InfoOptions {
   overrideAccount?: string;
 }
-
 
 export interface ParticipantStatus {
   pending: boolean;

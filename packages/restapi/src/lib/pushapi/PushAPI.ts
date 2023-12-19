@@ -16,6 +16,7 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { isValidCAIP10NFTAddress } from '../helpers';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -177,7 +178,14 @@ export class PushAPI {
       });
 
       if (!readMode) {
-        if (user && user.encryptedPrivateKey) {
+        const resetNFTAccount =
+          isValidCAIP10NFTAddress(derivedAccount) &&
+          settings.versionMeta?.NFTPGP_V1?.reset &&
+          settings.versionMeta?.NFTPGP_V1?.reset === true
+            ? true
+            : false;
+
+        if (user && user.encryptedPrivateKey && !resetNFTAccount) {
           decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
             encryptedPGPPrivateKey: user.encryptedPrivateKey,
             signer: signer,
