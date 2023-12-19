@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.45...restapi-1.5.0) (2023-12-19)
+
+
+### Bug Fixes
+
+* fix viem signer issue ([#931](https://github.com/ethereum-push-notification-service/push-sdk/issues/931)) ([f905f40](https://github.com/ethereum-push-notification-service/push-sdk/commit/f905f404b4a5992321a27c4019454078a82e74ef))
+* merge main ([a3591b6](https://github.com/ethereum-push-notification-service/push-sdk/commit/a3591b6b15f2d82061ffb7c59cbf830031629ffb))
+* remove unnecessary logs ([#927](https://github.com/ethereum-push-notification-service/push-sdk/issues/927)) ([c717303](https://github.com/ethereum-push-notification-service/push-sdk/commit/c717303914f103085cbed635c31af8b71073e2d7))
+
+
+### Features
+
+* **video:** add rules module to sendNotification() method & push video ([#881](https://github.com/ethereum-push-notification-service/push-sdk/issues/881)) ([df0917b](https://github.com/ethereum-push-notification-service/push-sdk/commit/df0917bd4967a71f237bfc2b7d2a5fd42923b5f2))
+
+
+
 ## [1.4.45](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.44...restapi-1.4.45) (2023-12-04)
 
 
