@@ -18,7 +18,6 @@ describe('Create Push Profile with Profile update', () => {
   let walletAddress: string;
   let account: string;
 
- 
   beforeEach(() => {
     provider = ethers.getDefaultProvider(11155111);
     const WALLET = ethers.Wallet.createRandom();
@@ -27,11 +26,11 @@ describe('Create Push Profile with Profile update', () => {
     account = `eip155:${walletAddress}`;
   });
 
- 
   it('Push Profile V3', async () => {
     const name = 'John';
-    const desc = 'He is web3 dev'
-    const picture =  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvUlEQVR4AcXBsa3CMBiF0Y+rFNarM0Jqi1EoU2QIj+IxPACTuGYEBnAH7Q+FI/SKe87lflxfGAkzYSbMFr7kMoh6TUTb2ph5PHeiXAZRr4lImAkzYbbkMoh6TUTb2vjFtjaiXneiXAaRMBNmwmzhxN9xI+o1MZPL4ENNzAgzYSbMFk70mohyGcz0mviFMBNmwmzhxLY2Pt2Y2dZG9HjuzAgzYSbMLvfj+mIil8F/9JqYEWbCTJgJM2EmzITZG0wkJb/EapQdAAAAAElFTkSuQmCC'
+    const desc = 'He is web3 dev';
+    const picture =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvUlEQVR4AcXBsa3CMBiF0Y+rFNarM0Jqi1EoU2QIj+IxPACTuGYEBnAH7Q+FI/SKe87lflxfGAkzYSbMFr7kMoh6TUTb2ph5PHeiXAZRr4lImAkzYbbkMoh6TUTb2vjFtjaiXneiXAaRMBNmwmzhxN9xI+o1MZPL4ENNzAgzYSbMFk70mohyGcz0mviFMBNmwmzhxLY2Pt2Y2dZG9HjuzAgzYSbMLvfj+mIil8F/9JqYEWbCTJgJM2EmzITZG0wkJb/EapQdAAAAAElFTkSuQmCC';
     const user = await createUserWithProfile({
       account: account,
       env: _env,
@@ -42,7 +41,6 @@ describe('Create Push Profile with Profile update', () => {
         picture: picture,
       },
     });
-    console.log(user)
     expect(user).to.be.an('object');
     expect(user).not.to.be.null;
     expect(user).not.to.be.undefined;
@@ -56,7 +54,7 @@ describe('Create Push Profile with Profile update', () => {
     );
     expect(user.profile.name).to.be.equal(name);
     expect(user.profile.desc).to.be.equal(desc);
-    expect(user.profile.picture).to.be.equal(picture);;
+    expect(user.profile.picture).to.be.equal(picture);
     expect(user.msgSent).to.be.equal(0);
   });
 });
