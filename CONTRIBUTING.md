@@ -3,7 +3,7 @@
 ## Repo Setup
 
 ```
-git clone https://github.com/ethereum-push-notification-service/sdk.git
+git clone https://github.com/ethereum-push-notification-service/push-sdk.git
 
 cd sdk
 ```
