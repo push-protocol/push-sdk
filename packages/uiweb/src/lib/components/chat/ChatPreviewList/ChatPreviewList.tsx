@@ -28,11 +28,12 @@ interface IThemeProps {
 
 interface IChatPreviewList {
   items: IChatPreviewPayload[];
-  page: number;
-  preloading: boolean;
-  loading: boolean;
-  reset: boolean;
-  errored: boolean;
+  page: number; 
+  preloading: boolean; //if wallet is not connected
+  loading: boolean; //when scrolling for more index
+  allChatsLoaded?: boolean;
+  reset: boolean; //if chat has an error & we need to reload everything
+  errored: boolean; 
   errormsg: string;
 }
 
@@ -45,7 +46,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // set state
   const [ user, setUser ] = useState<PushAPI>();
-  const [ chatPreviewList, setChatPreviewList ] = useState<IChatPreviewList>({ items: [], page: 1, preloading: true, loading: false, reset: false, errored: false, errormsg: '' });
+  const [ chatPreviewList, setChatPreviewList ] = useState<IChatPreviewList>({ items: [], page: 1, preloading: true, loading: false, allChatsLoaded: false, reset: false, errored: false, errormsg: '' });
   
   // set theme
   const theme = useContext(ThemeContext);
@@ -101,6 +102,26 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   }
 
+  const onScroll = async () => {
+    const element = listInnerRef.current;
+
+    if (element) {
+      const windowHeight = element.clientHeight;
+      const scrollHeight = element.scrollHeight;
+      const scrollTop = element.scrollTop;
+      const scrollBottom = scrollHeight - scrollTop - windowHeight;
+      if (scrollBottom <= 20 && !chatPreviewList.allChatsLoaded && !chatPreviewList.preloading) {
+        // Load more items when the user is near the bottom
+      
+        setChatPreviewList((prev) => ({ ...prev, preloading: true }));
+          const nextPage = chatPreviewList.page + 1;
+        getChatList(nextPage);
+        
+        
+      }
+    }
+  };
+
   // Effects
   // If account, env or signer changes
   useEffect(() => {
@@ -131,6 +152,41 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   }, [account, signer, env]);
 
   // If pushUser changes
+  const getChatList = async (page : number) => {
+    if(chatPreviewList.allChatsLoaded) return;
+    setChatPreviewList((prev) => ({ ...prev, preloading: true }));
+      const type = options.listType ? options.listType : CONSTANTS.CHAT.LIST_TYPE.CHATS;
+     
+     await user?.chat.list(type, {
+        overrideAccount: options.overrideAccount ? options.overrideAccount : undefined,
+        limit: 10,
+        page: page
+      }).then((chats: IFeeds[]) => {
+
+        console.log(chats)
+        // get and transform chats
+        const transformedChats = transformChatItems(chats);
+        if (chats.length === 0 || transformedChats.length < 10) {
+          setChatPreviewList((prev) => ({ ...prev, allChatsLoaded: true }));
+        }
+       
+        
+        setChatPreviewList((prev) => ({
+          items: [...prev.items, ...transformedChats],
+          page: page,
+          preloading: false,
+          loading: false,
+          reset: false,
+          errored: false,
+          errormsg: '',
+          allChatsLoaded: transformedChats.length < 10 || chats.length === 0,
+        }));
+       
+      }).catch((e) => {
+        setChatPreviewList({ items: [], page: page, preloading: false, loading: false, reset: false, errored: true, errormsg: 'No chats found' });
+      });
+   
+  }
   useEffect(() => {
     if (!user) {
       return;
@@ -193,8 +249,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     <ChatPreviewListContainer
       ref={listInnerRef}
       theme={theme}
+      onScroll={onScroll}
     >
-      {chatPreviewList.preloading ? <Spinner color={theme.spinnerColor} /> : ''}
+      {chatPreviewList.loading && <Spinner color={theme.spinnerColor} />}
       {chatPreviewList.errored && 
         <Section
           padding="10px"
@@ -214,16 +271,18 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
       
       {/* do actual chat previews */}
-      {!chatPreviewList.preloading && 
+      {
         chatPreviewList.items.map((item: IChatPreviewPayload) => {
           return (
             <ChatPreview
+           
               selected={false}
               chatPreviewPayload={item}
             />
           )
         })
       }
+      {chatPreviewList.preloading && <Spinner color={theme.spinnerColor} />}
     </ChatPreviewListContainer>
   );
 };

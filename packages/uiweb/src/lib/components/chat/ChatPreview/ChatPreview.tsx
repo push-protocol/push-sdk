@@ -39,16 +39,31 @@ interface IThemeProps {
 export const ChatPreview: React.FC<IChatPreviewProps> = (
   options: IChatPreviewProps
 ) => {
+
+
+  const checkInput = (name: string) => {
+    if (name.startsWith("eip155:")) {
+      const resultString = name.substring(7);
+      console.log(resultString);
+      return resultString
+    } else {
+      console.log(name);
+      return name;
+    }
+  }
+  console.log(options.chatPreviewPayload?.chatSender)
   return (
+    <ChatViewListCard>
       <Button
         display="flex"
         width="100%"
         height="70px"
         minHeight="70px"
         flexDirection="row"
+        
       >
         <Section
-          justifyContent="flex-start"
+          justifyContent="start"
           flexDirection="row"
           alignItems="center" 
           alignSelf="center"
@@ -60,23 +75,34 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           <Image
             src={options.chatPreviewPayload?.chatPic}
             height="48px"
-            width="auto"
+            width="48px"
           />
         </Section>
         <Section
           justifyContent="flex-start"
-          flexDirection="row"
+          flexDirection="col"
           alignItems="center" 
           alignSelf="stretch"
           overflow='hidden'
-          background='yellow'
+         
         >
-          {options.chatPreviewPayload && 
-            options.chatPreviewPayload.chatMsg.messageContent
+          <InboxContentContainer>
+          <InboxName>
+           { options.chatPreviewPayload && 
+            checkInput(options.chatPreviewPayload?.chatSender)}
+            </InboxName>
+            <LastMessage>
+            {options.chatPreviewPayload && 
+            (options.chatPreviewPayload.chatMsg.messageContent).slice(0, 25) + '...'
           }
+          </LastMessage>
+          {/* <DateText>{options.chatPreviewPayload && options.chatPreviewPayload.chatTimestamp}</DateText> */}
+          </InboxContentContainer>
+          
         </Section>
         
       </Button>
+      </ChatViewListCard>
   );
 };
 
@@ -99,3 +125,25 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   scroll-behavior: smooth;
 `;
 
+const InboxContentContainer = styled.div`
+  flex: 1;
+`;
+
+// Styled component for the name of the person in the inbox
+const InboxName = styled.div`
+  font-weight: bold;
+  font-size: 16px;
+`;
+
+// const DateText = styled.div`
+//   color: #888;
+//   font-size: 12px;
+//   position: absolute;
+//   top:0;
+//   right: 0;
+// `;
+// Styled component for the last message in the inbox
+const LastMessage = styled.div`
+  color: #888;
+  font-size: 14px;
+`;
