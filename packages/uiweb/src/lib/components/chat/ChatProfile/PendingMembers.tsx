@@ -9,6 +9,7 @@ import { ChatMemberProfile, GroupInfoDTO } from '@pushprotocol/restapi';
 import { MemberPaginationData } from './GroupInfoModal';
 import { useIsInViewport } from '../../../hooks';
 import { useEffect, useRef } from 'react';
+import { MemberProfileCard } from './MemberProfileCard';
 
 interface ShadowedProps {
   setPosition: boolean;
@@ -24,6 +25,15 @@ type PendingMembersProps = {
   showPendingRequests: boolean;
   theme: IChatTheme;
 };
+type AcceptedMembersProps = {
+  acceptedMemberPaginationData: MemberPaginationData;
+  setAcceptedMemberPaginationData: React.Dispatch<
+    React.SetStateAction<MemberPaginationData>
+  >;
+  acceptedMembers: ChatMemberProfile[];
+  theme: IChatTheme;
+};
+
 export const PendingMembers = ({
   pendingMembers,
   setShowPendingRequests,
@@ -53,6 +63,7 @@ export const PendingMembers = ({
     }));
     // eslint-disable-next-line no-use-before-define
   }, [isInViewportPending]);
+  console.log(isInViewportPending)
 
   if (pendingMembers && pendingMembers.length) {
     return (
@@ -113,6 +124,65 @@ export const PendingMembers = ({
           </ProfileSection>
         )}
       </PendingRequestWrapper>
+    );
+  } else {
+    return null;
+  }
+};
+
+export const AcceptedMembers = ({
+  acceptedMembers,
+  setAcceptedMemberPaginationData,
+  acceptedMemberPaginationData,
+  theme,
+}: AcceptedMembersProps) => {
+  const acceptedMemberPageRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<any>(null);
+
+  const isInViewportPending = useIsInViewport(acceptedMemberPageRef, '1px');
+
+  useEffect(() => {
+    console.log(isInViewportPending,acceptedMemberPaginationData.finishedFetching);
+    if (
+      !isInViewportPending ||
+      acceptedMemberPaginationData.loading ||
+      acceptedMemberPaginationData.finishedFetching
+    ) {
+      return;
+    }
+
+    const newPage = acceptedMemberPaginationData.page + 1;
+    console.log('new page updated', newPage);
+    setAcceptedMemberPaginationData((prev: MemberPaginationData) => ({
+      ...prev,
+      page: newPage,
+    }));
+    // eslint-disable-next-line no-use-before-define
+  }, [isInViewportPending]);
+  console.log(acceptedMembers,'in hereeeeeee')
+
+  if (acceptedMembers && acceptedMembers.length) {
+    return (
+      <ProfileSection flexDirection="column" zIndex="2" justifyContent="start">
+      {
+        acceptedMembers.map((item, index) => (
+          <MemberProfileCard
+            key={index}
+            member={item}
+            dropdownValues={
+              []
+              // item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
+              //   ? [removeAdminDropdown, removeMemberDropdown]
+              //   : isAccountOwnerAdmin(groupInfo, account!)
+              //   ? [addAdminDropdown, removeMemberDropdown]
+              //   : []
+            }
+            // selectedMemberAddress={selectedMemberAddress}
+            // setSelectedMemberAddress={setSelectedMemberAddress}
+            dropdownRef={dropdownRef}
+          />
+        ))}
+    </ProfileSection>
     );
   } else {
     return null;

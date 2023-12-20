@@ -30,8 +30,8 @@ export const MemberProfileCard = ({
   key,
   member,
   dropdownValues,
-  selectedMemberAddress,
-  setSelectedMemberAddress,
+  // selectedMemberAddress,
+  // setSelectedMemberAddress,
   dropdownRef,
 }: MemberProfileCardProps) => {
   const theme = useContext(ThemeContext);
@@ -49,18 +49,20 @@ export const MemberProfileCard = ({
 
   return (
     <ProfileCardItem
-      background={
-        (member.wallet?.toLowerCase() === selectedMemberAddress?.toLowerCase()) ? theme.backgroundColor?.modalHoverBackground : ''
-      }
-      id={member.wallet}
+      // background={
+      //   (member.wallet?.toLowerCase() === selectedMemberAddress?.toLowerCase()) ? 
+      //   theme.backgroundColor?.modalHoverBackground
+      //    : ''
+      // }
+      id={member?.address}
       key={key}
       theme={theme}
     >
       <ProfileContainer
         theme={theme}
         member={{
-          wallet: shortenText(member?.wallet?.split(':')[1], 6, true),
-          image: member.image,
+          wallet: shortenText(pCAIP10ToWallet(member?.address), 6, true),
+          image: member?.userInfo?.profile?.picture,
         }}
       />
       <Section justifyContent="flex-end" position="relative" zIndex="2">
@@ -86,7 +88,7 @@ export const MemberProfileCard = ({
               zIndex="2"
               onClick={() => {
                 handleHeight(member.wallet);
-                setSelectedMemberAddress(member?.wallet);
+                // setSelectedMemberAddress(member?.wallet);
               }}
               style={{ cursor: 'pointer' }}
             >
@@ -94,7 +96,7 @@ export const MemberProfileCard = ({
             </Section>
        )} 
       </Section>
-      {selectedMemberAddress?.toLowerCase() ==
+      {/* {selectedMemberAddress?.toLowerCase() ==
         member?.wallet?.toLowerCase() && (
         <DropdownContainer
           style={{ top: dropdownHeight! > 570 ? '30%' : '40%' }}
@@ -106,7 +108,7 @@ export const MemberProfileCard = ({
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
         </DropdownContainer>
-      )}
+      )} */}
     </ProfileCardItem>
   );
 };

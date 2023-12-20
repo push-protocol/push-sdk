@@ -13,7 +13,7 @@ import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
 import { MemberProfileCard } from './MemberProfileCard';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
-import { PendingMembers } from './PendingMembers';
+import { AcceptedMembers, PendingMembers } from './PendingMembers';
 
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
@@ -291,11 +291,9 @@ GroupSectionProps) => {
     useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
-  const { addMember, removeMember } = useUpdateGroup();
+  // const { addMember, removeMember } = useUpdateGroup();
 
   const isMobile = useMediaQuery(device.mobileL);
-
-  const dropdownRef = useRef<any>(null);
 
   // useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
 
@@ -481,26 +479,12 @@ GroupSectionProps) => {
         {/* <div ref={pendingMemberPageRef} style={{ padding: '1px' }}></div> */}
       </Section>
 
-      <ProfileSection flexDirection="column" zIndex="2" justifyContent="start">
-        {/* {groupInfo?.members &&
-          groupInfo?.members?.length > 0 &&
-          groupInfo?.members.map((item, index) => (
-            <MemberProfileCard
-              key={index}
-              member={item}
-              dropdownValues={
-                item?.isAdmin && isAccountOwnerAdmin(groupInfo, account!)
-                  ? [removeAdminDropdown, removeMemberDropdown]
-                  : isAccountOwnerAdmin(groupInfo, account!)
-                  ? [addAdminDropdown, removeMemberDropdown]
-                  : []
-              }
-              selectedMemberAddress={selectedMemberAddress}
-              setSelectedMemberAddress={setSelectedMemberAddress}
-              dropdownRef={dropdownRef}
-            />
-          ))} */}
-      </ProfileSection>
+      <AcceptedMembers
+        acceptedMemberPaginationData={acceptedMemberPaginationData}
+        setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
+        acceptedMembers={groupMembers?.accepted}
+        theme={theme}
+      />
     </ScrollSection>
   );
 };
@@ -558,7 +542,7 @@ export const GroupInfoModal = ({
   const { addMember } = useUpdateGroup();
   const dropdownRef = useRef<any>(null);
 
-  //convert fetchPendingMembers and fetchAcceptedMembers to single method
+  //convert fetchPendingMembers and fetchAcceptedMembers to single method and show errors
   const fetchPendingMembers = async (page: number): Promise<void> => {
     const fetchedPendingMembers = await fetchMembers({
       chatId: groupInfo!.chatId,
