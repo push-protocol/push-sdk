@@ -105,7 +105,8 @@ export class PushAPI {
       if (
         args.length === 1 &&
         typeof args[0] === 'object' &&
-        'account' in args[0]
+        'account' in args[0] &&
+        typeof args[0].account === 'string'
       ) {
         // Single options object provided
         options = args[0];
