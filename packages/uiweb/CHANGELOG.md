@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.1.23](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.22...uiweb-1.1.23) (2023-12-20)
+
+
+### Bug Fixes
+
+* fixed create group btn not disabling and added minimum member requirement ([#941](https://github.com/ethereum-push-notification-service/push-sdk/issues/941)) ([9c41c8d](https://github.com/ethereum-push-notification-service/push-sdk/commit/9c41c8d557ff6b8651ac8fa91d2fc6129fad66b8))
+* Merge branch 'main' into deployment ([7adb464](https://github.com/ethereum-push-notification-service/push-sdk/commit/7adb464f1d9a39d95f7292f2636eb1ee5a0642e3))
+
+
+
 ## [1.1.22](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.21...uiweb-1.1.22) (2023-12-05)
 
 
