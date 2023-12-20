@@ -64,14 +64,15 @@ describe('PushAPI.chat functionality For NFT Profile', () => {
       {
         env,
         account: nftAccount1,
-        versionMeta: {
-          NFTPGP_V1: {
-            password: process.env['NFT_PROFILE_PASSWORD_1'] || '',
-            reset: true,
-          },
-        },
       }
     );
+
+    // Reinitialize for fresh start
+    await userAlice.reinitialize({
+      versionMeta: {
+        NFTPGP_V1: { password: process.env['NFT_PROFILE_PASSWORD_1'] || '' },
+      },
+    });
 
     userBob = await PushAPI.initialize(
       new ethers.Wallet(
@@ -80,14 +81,15 @@ describe('PushAPI.chat functionality For NFT Profile', () => {
       {
         env,
         account: nftAccount2,
-        versionMeta: {
-          NFTPGP_V1: {
-            password: process.env['NFT_PROFILE_PASSWORD_2'] || '',
-            reset: true,
-          },
-        },
       }
     );
+
+    // Reinitialize for fresh start
+    await userBob.reinitialize({
+      versionMeta: {
+        NFTPGP_V1: { password: process.env['NFT_PROFILE_PASSWORD_2'] || '' },
+      },
+    });
 
     userKate = await PushAPI.initialize(
       new ethers.Wallet(
@@ -96,14 +98,15 @@ describe('PushAPI.chat functionality For NFT Profile', () => {
       {
         env,
         account: nftAccount3,
-        versionMeta: {
-          NFTPGP_V1: {
-            password: process.env['NFT_PROFILE_PASSWORD_3'] || '',
-            reset: true,
-          },
-        },
       }
     );
+
+    // Reinitialize for fresh start
+    await userKate.reinitialize({
+      versionMeta: {
+        NFTPGP_V1: { password: process.env['NFT_PROFILE_PASSWORD_3'] || '' },
+      },
+    });
 
     // Stream Initialization
     stream = await userAlice.initStream(
