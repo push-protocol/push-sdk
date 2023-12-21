@@ -236,7 +236,7 @@ const AddCriteria = ({
     {
       id: 4,
       value: BLOCKCHAIN_NETWORK[env].ARBITRUM,
-      title: 'Arbitrim',
+      title: 'Arbitrum',
       icon: ArbitrumSvg,
       function: () => setSelectedChainValue(4),
     },

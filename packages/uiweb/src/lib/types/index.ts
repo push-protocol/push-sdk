@@ -24,7 +24,7 @@ export interface IMessageIPFS {
   link: string | null;
   timestamp?: number;
   encType: string;
-  encryptedSecret: string;
+  encryptedSecret: string | null;
   icon?: ReactElement<string | any>;
 }
 

@@ -11,7 +11,7 @@ import { TextInput } from '../reusables/TextInput';
 import { TextArea } from '../reusables/TextArea';
 import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
-import { CreateGroupType } from './CreateGroupType';
+import { CreateGroupType, GROUP_TYPE_OPTIONS } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
 import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
@@ -28,21 +28,25 @@ import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
 import AutoImageClipper from './AutoImageClipper';
+import AddWalletsInCreateGroup from './AddWallets';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
   GROUP_TYPE: 2,
   DEFINITE_CONDITION: 3,
   ADD_CRITERIA: 4,
+  ADD_MEMBERS: 5,
 } as const;
 
 export type CreateGroupStepKeys =
   typeof CREATE_GROUP_STEP_KEYS[keyof typeof CREATE_GROUP_STEP_KEYS];
 
-interface GroupInputDetailsType {
+export interface GroupInputDetailsType {
   groupName: string;
   groupDescription: string;
   groupImage: string;
+  groupMembers: string[];
+  groupAdmins: string[];
 }
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
@@ -58,6 +62,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const handleNext = () => {
     setActiveComponent((activeComponent + 1) as CreateGroupStepKeys);
   };
+  const handleAddWallets = () => {
+    setActiveComponent((activeComponent + 3) as CreateGroupStepKeys)
+  }
+  const handlePreviousfromAddWallets = () => {
+    setActiveComponent((activeComponent - 3) as CreateGroupStepKeys)
+  }
   const handlePrevious = () => {
     setActiveComponent((activeComponent - 1) as CreateGroupStepKeys);
   };
@@ -74,6 +84,12 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   }, [activeComponent]);
 
   const useDummyGroupInfo = false;
+  const [groupMembers, setGroupMembers] = useState<string[]>([]);
+  const [groupAdmins, setGroupAdmins] = useState<string[]>([]);
+  const [checked, setChecked] = useState<boolean>(true);
+  const [groupEncryptionType, setGroupEncryptionType] = useState(
+    GROUP_TYPE_OPTIONS[0].value
+  );
   const [groupInputDetails, setGroupInputDetails] =
     useState<GroupInputDetailsType>({
       groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
@@ -81,28 +97,47 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         ? 'This is dummy group description for testing'
         : '',
       groupImage: useDummyGroupInfo ? ProfilePicture : '',
+      groupMembers: useDummyGroupInfo ? groupMembers : [],
+      groupAdmins: useDummyGroupInfo ? groupAdmins : [],
     });
+  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
+  
+    useEffect(() => {
+      setGroupInputDetails({
+        ...groupInputDetails,
+        groupMembers: groupMembers,
+      });
+    }, [groupMembers])
 
   const renderComponent = () => {
     switch (activeComponent) {
       case CREATE_GROUP_STEP_KEYS.INPUT_DETAILS:
         return (
           <CreateGroupDetail
+            checked={checked}
+            setChecked={setChecked}
             criteriaStateManager={criteriaStateManager}
             handleNext={handleNext}
             onClose={onClose}
             groupInputDetails={groupInputDetails}
             setGroupInputDetails={setGroupInputDetails}
+            isImageUploaded={isImageUploaded}
+            setIsImageUploaded={setIsImageUploaded}
           />
         );
       case CREATE_GROUP_STEP_KEYS.GROUP_TYPE:
         return (
           <CreateGroupType
+          groupEncryptionType={groupEncryptionType}
+          setGroupEncryptionType={setGroupEncryptionType}
+          checked={checked}
+          setChecked={setChecked}
             criteriaStateManager={criteriaStateManager}
             groupInputDetails={groupInputDetails}
             handleNext={handleNext}
             onClose={onClose}
             handlePrevious={handlePrevious}
+            handleAddWallets={handleAddWallets}
           />
         );
       case CREATE_GROUP_STEP_KEYS.DEFINITE_CONDITION:
@@ -122,6 +157,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
           />
         );
+      case CREATE_GROUP_STEP_KEYS.ADD_MEMBERS:
+        return (
+          <AddWalletsInCreateGroup handlePrevious={handlePreviousfromAddWallets} onClose={onClose} groupEncryptionType={groupEncryptionType} checked={checked} groupAdmins={groupAdmins} criteriaStateManager={criteriaStateManager} groupInputDetails={groupInputDetails} setGroupInputDetails={setGroupInputDetails} groupMembers={groupMembers} setGroupMembers={setGroupMembers} />
+        )
       default:
         return (
           <CreateGroupDetail
@@ -130,6 +169,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
             groupInputDetails={groupInputDetails}
             setGroupInputDetails={setGroupInputDetails}
+            isImageUploaded={isImageUploaded}
+            setIsImageUploaded={setIsImageUploaded}
           />
         );
     }
@@ -147,6 +188,13 @@ export interface ModalHeaderProps {
   handlePrevious?: () => void;
   onClose: () => void;
   criteriaStateManager: CriteriaStateManagerType;
+  checked?: boolean;
+  setChecked?: React.Dispatch<React.SetStateAction<boolean>>;
+  groupEncryptionType?: string;
+  setGroupEncryptionType?: React.Dispatch<React.SetStateAction<string>>;
+  handleAddWallets?: () => void;
+  isImageUploaded?: boolean;
+  setIsImageUploaded?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface GroupDetailState {
@@ -165,15 +213,15 @@ const CreateGroupDetail = ({
   onClose,
   groupInputDetails,
   setGroupInputDetails,
+  isImageUploaded,
+  setIsImageUploaded,
 }: ModalHeaderProps & GroupDetailState) => {
-  const groupInfoToast = useToast();
   const { groupName, groupDescription, groupImage } = groupInputDetails;
   const theme = useContext(ThemeContext);
   const [validationErrors, setValidationErrors] =
     useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
-  const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
   const [imageSrc, setImageSrc] = useState<string | null>();
 
   const handleChange = (e: Event) => {
@@ -185,13 +233,16 @@ const CreateGroupDetail = ({
     }
     if (
       (e.target as HTMLInputElement).files &&
-      ((e.target as HTMLInputElement).files as FileList).length
+      ((e.target as HTMLInputElement).files as FileList).length &&
+      setIsImageUploaded
     ) {
       setIsImageUploaded(true);
       setGroupInputDetails({
         groupDescription,
         groupName,
         groupImage: '',
+        groupMembers: [],
+        groupAdmins: [],
       });
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
@@ -205,15 +256,6 @@ const CreateGroupDetail = ({
         // });
       };
     }
-  };
-
-  const showError = (errorMessage: string) => {
-    groupInfoToast.showMessageToast({
-      toastTitle: 'Error',
-      toastMessage: errorMessage,
-      toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
-    });
   };
 
   const verifyAndHandelNext = () => {
@@ -247,7 +289,6 @@ const CreateGroupDetail = ({
       fileUploadInputRef.current.click();
     }
   };
-
   //groupImage and desccription is optional
   return (
     <Section
@@ -280,6 +321,8 @@ const CreateGroupDetail = ({
                   groupDescription,
                   groupName,
                   groupImage: croppedImage,
+                  groupMembers: [],
+                  groupAdmins: [],
                 })
               }
               width={undefined}
@@ -310,6 +353,8 @@ const CreateGroupDetail = ({
               groupDescription,
               groupName: e.target.value,
               groupImage,
+              groupMembers: [],
+              groupAdmins: [],
             })
           }
           error={!!validationErrors?.groupName}
@@ -328,6 +373,8 @@ const CreateGroupDetail = ({
               groupDescription: e.target.value,
               groupName,
               groupImage,
+              groupMembers: [],
+              groupAdmins: [],
             })
           }
           error={!!validationErrors?.groupDescription}

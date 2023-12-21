@@ -1,5 +1,5 @@
-import { Rules } from "../types";
-import Constants, { ENV } from '../constants';
+import { Rules } from '../types';
+import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   filter?: {
@@ -30,7 +30,6 @@ export enum NotificationEventType {
   INBOX = 'notification.inbox',
   SPAM = 'notification.spam',
 }
-
 
 export enum MessageOrigin {
   Other = 'other',
@@ -64,7 +63,6 @@ export enum ProposedEventNames {
   Remove = 'chat.group.participant.remove',
 }
 
-
 export interface Profile {
   image: string;
   publicKey: string;
@@ -85,9 +83,6 @@ export interface GroupMeta {
   description: string;
   image: string;
   owner: string;
-  members: GroupMember[];
-  admins: GroupMember[];
-  pending: Pending;
   private: boolean;
   rules: Rules;
 }
@@ -143,7 +138,6 @@ export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
 }
 
-
 export interface MessageEvent {
   event: MessageEventType;
   origin: MessageOrigin;
@@ -171,8 +165,6 @@ export const NOTIFICATION = {
 } as const;
 
 export type NotificationType = keyof typeof NOTIFICATION.TYPE;
-
-
 
 export interface NotificationEvent {
   event: NotificationEventType;

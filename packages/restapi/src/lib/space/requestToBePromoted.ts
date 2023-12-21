@@ -13,8 +13,6 @@ export async function requestToBePromoted(
 ) {
   const { role, promotorAddress } = options || {};
 
-  console.log("requestToBePromoted", options);
-
   // requesting host to include local computer into the mesh connection
   this.request({
     senderAddress: this.data.local.address,

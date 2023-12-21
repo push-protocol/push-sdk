@@ -125,45 +125,11 @@ export class DataModifier {
     meta: GroupMeta;
     raw?: GroupEventRawData;
   } {
-    const mapMembersAdmins = (arr: any[]): GroupMember[] => {
-      return arr.map((item) => ({
-        address: item.wallet,
-        profile: {
-          image: item.image,
-          publicKey: item.publicKey,
-        },
-      }));
-    };
-
-    const mapPendingMembersAdmins = (arr: any[]): GroupMember[] => {
-      return arr.map((item) => ({
-        address: item.wallet,
-        profile: {
-          image: item.image,
-          publicKey: item.publicKey,
-        },
-      }));
-    };
-
     const meta: GroupMeta = {
       name: incomingData.groupName,
       description: incomingData.groupDescription,
       image: incomingData.groupImage,
       owner: incomingData.groupCreator,
-      members: mapMembersAdmins(
-        incomingData.members.filter((m: any) => !m.isAdmin)
-      ),
-      admins: mapMembersAdmins(
-        incomingData.members.filter((m: any) => m.isAdmin)
-      ),
-      pending: {
-        members: mapPendingMembersAdmins(
-          incomingData.pendingMembers.filter((m: any) => !m.isAdmin)
-        ),
-        admins: mapPendingMembersAdmins(
-          incomingData.pendingMembers.filter((m: any) => m.isAdmin)
-        ),
-      },
       private: !incomingData.isPublic,
       rules: incomingData.rules || {},
     };
