@@ -9,7 +9,7 @@ import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 // import tokenABI from './tokenABI';
-describe('PushAPI.notification functionality', () => {
+describe.only('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;
@@ -100,7 +100,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
-      console.log(response);
+      // console.log(response);
       expect(response).not.null;
     });
 

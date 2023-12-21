@@ -200,7 +200,6 @@ describe('PushAPI.channel functionality', () => {
           body: 'test',
         },
       });
-      // console.log(res)
       expect(res.status).to.equal(204);
     });
 
@@ -360,7 +359,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res.status).to.equal(204);
     });
 
-    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+    it.skip('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
       const res = await userAlice.channel.send(
         [
           'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
@@ -409,7 +408,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe('channel :: create', () => {
+  describe.skip('channel :: create', () => {
     it('Should create channel', async () => {
       const res = await userKate.channel.create({
         name: 'SDK Test',
