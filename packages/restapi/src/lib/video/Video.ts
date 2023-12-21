@@ -35,6 +35,7 @@ import {
   SPACE_REQUEST_TYPE,
   VIDEO_CALL_TYPE,
 } from '../payloads/constants';
+import { validateVideoRules } from './helpers/validateVideoRules';
 
 export const initVideoCallData: VideoCallData = {
   meta: {
@@ -171,6 +172,9 @@ export class Video {
       details,
     } = options || {};
 
+    // If rules object is passed, validate it
+    rules && validateVideoRules(rules);
+
     const recipientAddresses = Array.isArray(recipientAddress)
       ? recipientAddress
       : [recipientAddress];
@@ -181,7 +185,7 @@ export class Video {
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = senderAddress;
-            draft.meta.chatId = chatId ?? rules!.access.data;
+            draft.meta.chatId = chatId ?? rules!.access.data.chatId!;
             draft.meta.initiator.address = senderAddress;
 
             const incomingIndex = getIncomingIndexFromAddress(
@@ -382,7 +386,7 @@ export class Video {
                 this.setData(() => initVideoCallData);
               }
             }
-          } else if(onReceiveMessage) {
+          } else if (onReceiveMessage) {
             onReceiveMessage(data);
           }
         });
@@ -424,6 +428,9 @@ export class Video {
       details,
     } = options || {};
 
+    // If rules object is passed, validate it
+    rules && validateVideoRules(rules);
+
     try {
       // if peerInstance is not null -> acceptRequest/request was called before
       if (this.peerInstances[recipientAddress]) {
@@ -448,7 +455,7 @@ export class Video {
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.meta.chatId = chatId ?? rules!.access.data;
+          draft.meta.chatId = chatId ?? rules!.access.data.chatId!;
           draft.meta.initiator.address = senderAddress;
 
           const incomingIndex = getIncomingIndexFromAddress(
@@ -674,7 +681,7 @@ export class Video {
               this.setData(() => initVideoCallData);
             }
           }
-        } else if(onReceiveMessage) {
+        } else if (onReceiveMessage) {
           onReceiveMessage(data);
         }
       });

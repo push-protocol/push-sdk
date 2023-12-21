@@ -60,7 +60,7 @@ const sendVideoCallNotification = async (
     const videoData: VideoDataType = {
       recipientAddress,
       senderAddress,
-      chatId: rules?.access.data ?? chatId,
+      chatId: rules?.access.data.chatId ?? chatId,
       signalData,
       status,
       callDetails,

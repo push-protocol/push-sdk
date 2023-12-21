@@ -5,7 +5,8 @@ import {
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../helpers';
-import { VideoPeerInfo } from '../types';
+import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
+import { VideNotificationRules, VideoPeerInfo } from '../types';
 import { Video as VideoV1 } from './Video';
 import { validatePeerInfo } from './helpers/validatePeerInfo';
 
@@ -57,15 +58,7 @@ export class VideoV2 {
   async request(
     recipients: string[],
     options?: {
-      rules: {
-        access: {
-          // TODO: Replace type once the initial video PR is merged
-          type: '';
-          data: {
-            chatId?: string;
-          };
-        };
-      };
+      rules: VideNotificationRules;
     }
   ) {
     const { rules } = options || {};
@@ -82,10 +75,9 @@ export class VideoV2 {
       );
     }
 
-    // TODO: Update the rules type after the PR is merged, type should be push chat
     if (
       recipients.length > 1 &&
-      rules?.access.type === '' &&
+      rules?.access.type === VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT &&
       !rules.access.data.chatId
     ) {
       throw new Error(
@@ -148,7 +140,7 @@ export class VideoV2 {
       senderAddress: pCAIP10ToWallet(this.account),
       recipientAddress: pCAIP10ToWallet(address),
       signalData: signal,
-      chatId: meta.rules.access.data,
+      chatId: meta.rules.access.data.chatId,
     });
   }
 
@@ -192,7 +184,7 @@ export class VideoV2 {
   }
 
   /**
-   * Enable or disable media
+   * Enable or disable media (video, audio)
    * @param {object} params - The parameters
    * @param {boolean} params.video - The video state
    * @param {boolean} params.audio - The audio state

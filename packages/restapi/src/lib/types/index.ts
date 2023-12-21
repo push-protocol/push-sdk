@@ -87,7 +87,9 @@ export type ParsedResponseType = {
 export interface VideNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
-    data: string;
+    data: {
+      chatId?: string;
+    };
   };
 }
 

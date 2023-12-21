@@ -1,4 +1,5 @@
 import { isValidETHAddress } from '../../helpers';
+import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../../payloads/constants';
 import { VideoPeerInfo } from '../../types';
 
 export const validatePeerInfo = (peerInfo: VideoPeerInfo) => {
@@ -12,8 +13,10 @@ export const validatePeerInfo = (peerInfo: VideoPeerInfo) => {
     throw new Error('Invalid address received');
   }
 
-  // TODO: comparing type should be PUSH_CHAT
-  if (meta.rules.access.type === '' && !meta.rules.access.data.chatId) {
+  if (
+    meta.rules.access.type === VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT &&
+    !meta.rules.access.data.chatId
+  ) {
     throw new Error('ChatId not found in meta.rules');
   }
 };

@@ -70,11 +70,10 @@ export interface ParticipantStatus {
 
 export interface VideoInitializeOptions {
   /*
-    - If the signer and decryptedPgpPvtKey were not provided during the initialization of the PushAPI class,
-    - They can be provided when initializing the video.
+    - If the signer was not provided during the initialization of the PushAPI class,
+    - It can be provided when initializing video.
   */
   signer?: SignerType;
-  decryptedPgpPvtKey?: string;
   media: {
     video?: boolean;
     audio?: boolean;

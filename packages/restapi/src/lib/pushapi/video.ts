@@ -17,7 +17,7 @@ export class Video {
     setVideoData: (fn: (data: VideoCallData) => VideoCallData) => void,
     options?: VideoInitializeOptions
   ) {
-    const { media, signer, decryptedPgpPvtKey, stream } = options || {};
+    const { media, signer, stream } = options || {};
 
     const chainId = await this.signer?.getChainId();
 
@@ -29,11 +29,10 @@ export class Video {
       throw new Error('Signer is required for push video');
     }
 
-    if (!this.decryptedPgpPvtKey && !decryptedPgpPvtKey) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error('Decrypted PGP private key is required for push video');
     }
 
-    this.decryptedPgpPvtKey ??= decryptedPgpPvtKey;
     this.signer ??= signer;
 
     // Initialize the video instance with the provided options
