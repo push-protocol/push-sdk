@@ -41,6 +41,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   style,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
+  Component,
 }) => {
   const theme = useContext(ThemeContext);
   const { account, env } = useChatData();
@@ -127,6 +128,11 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           margin="0 20px 0 auto"
           alignSelf="center"
         >
+          {(Component && !groupInfo) && (
+            <Section>
+              <Component />
+            </Section>
+          )}
           {(groupInfo?.rules?.chat?.conditions ||
             groupInfo?.rules?.entry?.conditions) && <TokenGatedSvg />}
           {!!groupInfo?.isPublic && (

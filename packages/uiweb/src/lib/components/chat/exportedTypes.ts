@@ -25,6 +25,7 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
+  Component?: React.FC;
 }
 
 export interface IChatProfile {
@@ -32,6 +33,7 @@ export interface IChatProfile {
   style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
+  Component?: React.FC;
 }
 
 export interface TwitterFeedReturnType {

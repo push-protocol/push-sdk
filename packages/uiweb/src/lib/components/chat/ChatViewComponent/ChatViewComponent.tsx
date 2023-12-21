@@ -40,6 +40,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     groupInfoModalPositionType =  MODAL_POSITION_TYPE.GLOBAL,
     verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
     verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
+    Component
   } = options || {};
 
   const { env, signer, account, pgpPrivateKey } = useChatData();
@@ -62,7 +63,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-      {chatProfile && <ChatProfile chatId={chatId} style="Info" groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
+      {chatProfile && <ChatProfile Component={Component} chatId={chatId} style="Info" groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
       <Section
         flex="1 1 auto"
         overflow="hidden"
