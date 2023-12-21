@@ -17,7 +17,12 @@ import {
   NotificationType,
   NOTIFICATION,
   ProposedEventNames,
+  VideoEventType,
+  MessageOrigin,
+  VideoEvent,
 } from './pushStreamTypes';
+import { VideoCallStatus, VideoPeerInfo } from '../types';
+import { VideoDataType } from '../video';
 
 export class DataModifier {
   public static handleChatGroupEvent(data: any, includeRaw = false): any {
@@ -387,5 +392,56 @@ export class DataModifier {
       default:
         break;
     }
+  }
+
+  public static convertToProposedNameForVideo(
+    currentVideoStatus: VideoCallStatus
+  ): VideoEventType {
+    switch (currentVideoStatus) {
+      case VideoCallStatus.INITIALIZED:
+        return VideoEventType.RequestVideo;
+      case VideoCallStatus.RECEIVED:
+        return VideoEventType.ApproveVideo;
+      case VideoCallStatus.DISCONNECTED:
+        return VideoEventType.DenyVideo;
+      default:
+        throw new Error(`Unknown video call status: ${currentVideoStatus}`);
+    }
+  }
+
+  public static mapToVideoEvent(
+    data: any,
+    origin: MessageOrigin,
+    includeRaw = false
+  ): VideoEvent {
+    const { senderAddress, signalData, status }: VideoDataType = JSON.parse(
+      data.payload.data.additionalMeta?.data
+    );
+
+    const peerInfo: VideoPeerInfo = {
+      address: senderAddress,
+      signal: signalData,
+      meta: {
+        rules: data.payload.rules,
+      },
+    };
+
+    const videoEventType: VideoEventType =
+      DataModifier.convertToProposedNameForVideo(status);
+
+    const videoEvent: VideoEvent = {
+      event: videoEventType,
+      origin: origin,
+      timestamp: data.epoch,
+      peerInfo,
+    };
+
+    if (includeRaw) {
+      videoEvent.raw = {
+        verificationProof: data.payload.verificationProof,
+      };
+    }
+
+    return videoEvent;
   }
 }
