@@ -18,7 +18,7 @@ This repository shows how you can implement Push Notifications in an NFT contrac
 
 2. **Configure Hardhat:**
 
-   - Add your private key and RPC URL in the `hardhat.config.js` file.
+   - Add your private key and RPC URL in the `.env` file.
 
 3. **Update Contract Configuration:**
 
@@ -50,4 +50,4 @@ This repository shows how you can implement Push Notifications in an NFT contrac
 ## Important Notes
 
 - Ensure that you have created a channel on Push Staging Network at `staging.push.org` before proceeding and are using the private key of the same account in here.
-- If you want to deploy this contract to Mainnet, you must edit the `EPNS_COMM_ADDRESS` at line number 20 in `MyToken.sol` and  `address` at `./EPNSCOMMPROXY.json` based on the network, please refer here for more details -> [Push Docs](https://push.org/docs/notifications/push-smart-contracts/contract-addresses/).
+- If you want to deploy this contract to Mainnet, you must edit the `EPNS_COMM_ADDRESS` at line number 20 in `MyToken.sol` and `address` at `./EPNSCOMMPROXY.json` based on the network, please refer here for more details -> [Push Docs](https://push.org/docs/notifications/push-smart-contracts/contract-addresses/).
