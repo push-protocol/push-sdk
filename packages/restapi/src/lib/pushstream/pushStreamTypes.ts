@@ -242,3 +242,32 @@ export interface VideoEvent {
   peerInfo: VideoPeerInfo;
   raw?: GroupEventRawData;
 }
+
+export enum EVENTS {
+  // Websocket
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+
+  // Notification
+  USER_FEEDS = 'userFeeds',
+  USER_SPAM_FEEDS = 'userSpamFeeds',
+
+  // Chat
+  CHAT_RECEIVED_MESSAGE = 'CHATS',
+  CHAT_GROUPS = 'CHAT_GROUPS',
+}
+
+export type SocketInputOptions = {
+  user: string;
+  env: ENV;
+  socketType?: 'notification' | 'chat';
+  apiKey?: string;
+  socketOptions?: SocketOptions;
+};
+
+type SocketOptions = {
+  autoConnect: boolean;
+  reconnectionAttempts?: number;
+  reconnectionDelayMax?: number;
+  reconnectionDelay?: number;
+};

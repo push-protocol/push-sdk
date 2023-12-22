@@ -61,10 +61,9 @@ export interface InfoOptions {
   overrideAccount?: string;
 }
 
-
 export interface ParticipantStatus {
   pending: boolean;
-  role: 'ADMIN' | 'MEMBER';
+  role: 'admin' | 'member';
   participant: boolean;
 }
 
