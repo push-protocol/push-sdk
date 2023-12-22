@@ -1,6 +1,10 @@
 {
   "name": "@pushprotocol/restapi",
+<<<<<<< HEAD
   "version": "0.0.1-alpha.54",
+=======
+  "version": "1.5.0",
+>>>>>>> a4d9ba46a7aeb0cb306ea4ec8b01a0c7e4eec754
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -11,7 +15,6 @@
   "dependencies": {
     "@ambire/signature-validator": "^1.3.1",
     "@metamask/eth-sig-util": "^5.0.2",
-    "@pushprotocol/socket": "^0.5.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "immer": "^10.0.2",
@@ -19,6 +22,7 @@
     "livepeer": "^2.5.8",
     "openpgp": "^5.5.0",
     "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.7.2",
     "video-stream-merger": "^4.0.1"
   },
   "scripts": {
