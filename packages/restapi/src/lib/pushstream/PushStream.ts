@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
+import { createSocketConnection } from './socketClient';
 import { ENV, PACKAGE_BUILD } from '../constants';
 import {
   GroupEventType,
@@ -7,6 +7,7 @@ import {
   NotificationEventType,
   PushStreamInitializeProps,
   STREAM,
+  EVENTS,
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
