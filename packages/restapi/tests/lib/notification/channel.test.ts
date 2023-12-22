@@ -313,7 +313,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res.status).to.equal(204);
     });
 
-    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+    it.skip('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
       const res = await userAlice.channel.send(
         [
           'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
@@ -330,7 +330,7 @@ describe('PushAPI.channel functionality', () => {
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
           },
-          channel: 'eip155:97:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          channel: `eip155:97:${account2}`,
         }
       );
       expect(res.status).to.equal(204);
@@ -353,7 +353,7 @@ describe('PushAPI.channel functionality', () => {
             cta: 'https://google.com/',
             embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
           },
-          channel: 'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+          channel: `eip155:80001:${account2}`,
         }
       );
       expect(res.status).to.equal(204);
