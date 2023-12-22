@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.0...restapi-1.5.1) (2023-12-22)
+
+
+### Bug Fixes
+
+* fix case for member Status string ([#954](https://github.com/ethereum-push-notification-service/push-sdk/issues/954)) ([bb658a6](https://github.com/ethereum-push-notification-service/push-sdk/commit/bb658a679d0060871a7b5bd9ef310e139b891e57))
+* Merge branch 'main' into deployment ([a18b345](https://github.com/ethereum-push-notification-service/push-sdk/commit/a18b34508827155b116d0e44c95cc9ed78729761))
+* NFTChat High Level Fixes ([#938](https://github.com/ethereum-push-notification-service/push-sdk/issues/938)) ([a4d9ba4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a4d9ba46a7aeb0cb306ea4ec8b01a0c7e4eec754))
+* remove @pushprotocol/socket dependency from restapi ([#951](https://github.com/ethereum-push-notification-service/push-sdk/issues/951)) ([0c26686](https://github.com/ethereum-push-notification-service/push-sdk/commit/0c2668691fc588273bb2533dfd7520d7515e0319))
+
+
+
 # [1.5.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.4.45...restapi-1.5.0) (2023-12-19)
 
 
