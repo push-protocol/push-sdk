@@ -106,7 +106,10 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.subscribers');
-  const channelSubscribers = await userAlice.channel.subscribers();
+  const channelSubscribers = await userAlice.channel.subscribers({
+    limit: 10,
+    page: 1,
+  });
   if (showAPIResponse) {
     console.log(channelSubscribers);
   }
