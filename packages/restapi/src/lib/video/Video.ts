@@ -34,6 +34,7 @@ import {
   SPACE_DISCONNECT_TYPE,
   SPACE_REQUEST_TYPE,
   VIDEO_CALL_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from '../payloads/constants';
 import { validateVideoRules } from './helpers/validateVideoRules';
 
@@ -756,6 +757,32 @@ export class Video {
           draft.incoming[incomingIndex].status = VideoCallStatus.CONNECTED;
         });
       });
+
+      // Notifying the recipient that the video call is now connected
+      sendVideoCallNotification(
+        {
+          signer: this.signer,
+          chainId: this.chainId,
+          pgpPrivateKey: this.pgpPrivateKey,
+        },
+        {
+          senderAddress: this.data.local.address,
+          recipientAddress: peerAddress
+            ? peerAddress
+            : this.data.incoming[0].address,
+          status: VideoCallStatus.CONNECTED,
+          rules: {
+            access: {
+              type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+              data: {
+                chatId: this.data.meta.chatId,
+              },
+            },
+          },
+          signalData,
+          env: this.env,
+        }
+      );
     } catch (err) {
       console.error('error in connect', err);
     }
@@ -773,36 +800,42 @@ export class Video {
         ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
         : 0;
 
-      if (
-        this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
-      ) {
+      const isCallConnected =
+        this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED;
+
+      if (isCallConnected) {
         this.peerInstances[
           peerAddress ? peerAddress : this.data.incoming[0].address
         ]?.send(JSON.stringify({ type: 'endCall', value: true, details }));
         this.peerInstances[
           peerAddress ? peerAddress : this.data.incoming[0].address
         ]?.destroy();
-      } else {
-        // for disconnecting during status INITIALIZED, RECEIVED, RETRY_INITIALIZED, RETRY_RECEIVED
-        // send a notif to the other user signaling status = DISCONNECTED
-        sendVideoCallNotification(
-          {
-            signer: this.signer,
-            chainId: this.chainId,
-            pgpPrivateKey: this.pgpPrivateKey,
-          },
-          {
-            senderAddress: this.data.local.address,
-            recipientAddress: this.data.incoming[incomingIndex].address,
-            status: VideoCallStatus.DISCONNECTED,
-            chatId: this.data.meta.chatId,
-            signalData: null,
-            env: this.env,
-            callType: this.callType,
-            callDetails: details,
-          }
-        );
       }
+
+      /*
+       * Send a notification to the other user signaling:
+       * status = ENDED if the call was connected
+       * status = DISCONNECTED otherwise.
+       */
+      sendVideoCallNotification(
+        {
+          signer: this.signer,
+          chainId: this.chainId,
+          pgpPrivateKey: this.pgpPrivateKey,
+        },
+        {
+          senderAddress: this.data.local.address,
+          recipientAddress: this.data.incoming[incomingIndex].address,
+          status: isCallConnected
+            ? VideoCallStatus.ENDED
+            : VideoCallStatus.DISCONNECTED,
+          chatId: this.data.meta.chatId,
+          signalData: null,
+          env: this.env,
+          callType: this.callType,
+          callDetails: details,
+        }
+      );
 
       // destroy the peerInstance
       this.peerInstances[

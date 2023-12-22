@@ -766,6 +766,7 @@ export enum VideoCallStatus {
   RECEIVED,
   CONNECTED,
   DISCONNECTED,
+  ENDED,
   RETRY_INITIALIZED,
   RETRY_RECEIVED,
 }

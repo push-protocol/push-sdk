@@ -402,6 +402,10 @@ export class DataModifier {
         return VideoEventType.RequestVideo;
       case VideoCallStatus.RECEIVED:
         return VideoEventType.ApproveVideo;
+      case VideoCallStatus.CONNECTED:
+        return VideoEventType.ConnectVideo;
+      case VideoCallStatus.ENDED:
+        return VideoEventType.DisconnectVideo
       case VideoCallStatus.DISCONNECTED:
         return VideoEventType.DenyVideo;
       default:
