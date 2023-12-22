@@ -47,7 +47,7 @@ describe('PushAPI.notification functionality', () => {
       LOCAL = 'local',
     }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2, {env:ENV.DEV});
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer1);
     // TODO: remove signer1 after signer becomes optional
@@ -226,7 +226,7 @@ describe('PushAPI.notification functionality', () => {
           ],
         }
       );
-      console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
 
