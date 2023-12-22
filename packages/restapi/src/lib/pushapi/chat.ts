@@ -12,7 +12,6 @@ import {
   IMessageIPFS,
   GroupInfoDTO,
   ChatMemberProfile,
-  ChatMemberCounts,
   GroupParticipantCounts,
 } from '../types';
 import {
@@ -146,6 +145,7 @@ export class Chat {
     const sendParams: ChatSendOptionsType = {
       message: options,
       to: recipient,
+      account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
@@ -287,6 +287,7 @@ export class Chat {
       }
 
       const groupParams: PUSH_CHAT.ChatCreateGroupTypeV2 = {
+        account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
@@ -392,6 +393,7 @@ export class Chat {
             env: this.env,
           });
     },
+
     update: async (
       chatId: string,
       options: GroupUpdateOptions
