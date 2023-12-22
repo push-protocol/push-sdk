@@ -69,11 +69,6 @@ export interface ParticipantStatus {
 }
 
 export interface VideoInitializeOptions {
-  /*
-    - If the signer was not provided during the initialization of the PushAPI class,
-    - It can be provided when initializing video.
-  */
-  signer?: SignerType;
   media: {
     video?: boolean;
     audio?: boolean;

@@ -17,7 +17,7 @@ export class Video {
     setVideoData: (fn: (data: VideoCallData) => VideoCallData) => void,
     options?: VideoInitializeOptions
   ) {
-    const { media, signer, stream } = options || {};
+    const { media, stream } = options || {};
 
     const chainId = await this.signer?.getChainId();
 
@@ -25,15 +25,13 @@ export class Video {
       throw new Error('Chain Id not retrievable from signer');
     }
 
-    if (!this.signer && !signer) {
+    if (!this.signer) {
       throw new Error('Signer is required for push video');
     }
 
     if (!this.decryptedPgpPvtKey) {
-      throw new Error('Decrypted PGP private key is required for push video');
+      throw new Error('PushSDK was initialized in readonly mode. Video functionality is not available.');
     }
-
-    this.signer ??= signer;
 
     // Initialize the video instance with the provided options
     const videoV1Instance = new VideoV1({
