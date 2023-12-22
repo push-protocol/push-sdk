@@ -64,6 +64,6 @@ export interface InfoOptions {
 
 export interface ParticipantStatus {
   pending: boolean;
-  role: 'ADMIN' | 'MEMBER';
+  role: 'admin' | 'member';
   participant: boolean;
 }
