@@ -23,6 +23,7 @@ const ChatViewComponentTest = () => {
         // a72832107b8ae7624c1ec997cee8e8b2bc21db708465555c20c4d5e029210cd6
         limit={10}
          isConnected={true} 
+         autoConnect={true}
          groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
          groupInfoModalPositionType={MODAL_POSITION_TYPE.RELATIVE}
          verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}

@@ -1,11 +1,12 @@
 import { useContext, useState } from 'react';
 
 import styled from 'styled-components';
+import { ChatMemberProfile, IUser } from '@pushprotocol/restapi';
+import { MdError } from 'react-icons/md';
+
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks';
-import { MdError } from 'react-icons/md';
-
 import { Spinner } from '../../supportChat/spinner/Spinner';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { Section, Span, Image } from '../../reusables/sharedStyling';
@@ -17,12 +18,12 @@ import useToast from '../reusables/NewToast';
 import {
   getNewChatUser,
 } from '../../../helpers';
-import { IChatTheme, ModalButtonProps } from '../exportedTypes';
+import { Group, IChatTheme, ModalButtonProps } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
 import { device } from '../../../config';
 import { ChatSearchInput, CustomStyleParamsType, ModalHeader } from '../reusables';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
-import { IUser } from '@pushprotocol/restapi';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 
 
 type AddWalletContentProps = {
@@ -31,9 +32,10 @@ type AddWalletContentProps = {
   handlePrevious: () => void;
   memberList: any;
   handleMemberList: any;
-  groupMembers: any;
+  groupMembers: ChatMemberProfile[];
   isLoading?: boolean;
   modalHeader: string;
+  groupInfo: Group;
 };
 export const AddWalletContent = ({
   onSubmit,
@@ -43,11 +45,13 @@ export const AddWalletContent = ({
   handleMemberList,
   groupMembers,
   isLoading,
+  groupInfo
 }: AddWalletContentProps) => {
   const theme = useContext(ThemeContext);
 
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
-  const { account, env } = useChatData();
+  const { env } = useChatData();
+  const { fetchMemberStatus} = useGroupMemberUtilities();
   const isMobile = useMediaQuery(device.mobileL);
   const {fetchChatProfile} = useChatProfile();
   const groupInfoToast = useToast();
@@ -83,14 +87,15 @@ export const AddWalletContent = ({
     setFilteredUserData(null);
   };
 
-  const addMemberToList = (member: IUser) => {
+  const addMemberToList = async(member: IUser) => {
     let errorMessage = '';
-
+    const memberStatus = await fetchMemberStatus({chatId:groupInfo!.chatId!,accountId:member!.wallets});
     errorMessage = addWalletValidation(
       member,
       memberList,
       groupMembers,
-      account
+      memberStatus!,
+      groupInfo?.isPublic?25000:5000
     );
 
     if (errorMessage) {
@@ -107,7 +112,6 @@ export const AddWalletContent = ({
     setFilteredUserData('');
     clearInput();
   };
-console.log(memberList)
   const removeMemberFromList = (member: IUser) => {
     const filteredMembers = memberList?.filter(
       (user: any) => user.wallets.toLowerCase() !== member.wallets.toLowerCase()
@@ -136,8 +140,8 @@ console.log(memberList)
 
         <Span fontSize="14px" color={theme.textColor?.modalSubHeadingText}>
           {groupMembers
-            ? `0${memberList?.length + groupMembers?.length} / 09 Members`
-            : `0${memberList?.length} / 09 Members`}
+            ? `${memberList?.length + groupMembers?.length} / ${groupInfo?.isPublic?'25000':'5000'} Members`
+            : `${memberList?.length} / ${groupInfo?.isPublic?'25000':'5000'} Members`}
         </Span>
       </Section>
 
@@ -160,7 +164,7 @@ console.log(memberList)
         </MemberList>
       ) }
 
-      <MultipleMemberList>
+      <MultipleMemberList flexDirection='column' gap='5px' justifyContent='start' >
         {memberList?.map((member: any, index: any) => (
           <MemberListContainer
             key={index}
@@ -197,9 +201,10 @@ const MemberList = styled.div`
   margin-bottom:40px;
 `;
 
-const MultipleMemberList = styled.div`
+const MultipleMemberList = styled(Section)`
   height: fit-content;
   max-height: 216px;
+  overflow:hidden scroll;
   padding: 0px 2px;
   width: 100%;
 

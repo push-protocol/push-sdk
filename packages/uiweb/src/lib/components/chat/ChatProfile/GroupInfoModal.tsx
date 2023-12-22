@@ -1,31 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
+import {
+  ChatMemberProfile,
+  GroupParticipantCounts,
+  ParticipantStatus,
+} from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
-import { useChatData, useClickAway, useIsInViewport } from '../../../hooks';
-import { DropdownValueType } from '../reusables/DropDown';
-import { Section, Span, Image, Div } from '../../reusables/sharedStyling';
+import { useChatData } from '../../../hooks';
+import { Section, Span, Image } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
 import { Modal, ModalHeader } from '../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
-import { MemberProfileCard } from './MemberProfileCard';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { AcceptedMembers, PendingMembers } from './PendingMembers';
+import { Spinner } from '../../reusables';
 
 import { IChatTheme } from '../theme';
 import { device } from '../../../config';
-// import {
-//   isAccountOwnerAdmin,
-// } from '../helpers/group';
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import addIcon from '../../../icons/addicon.svg';
-import DismissAdmin from '../../../icons/dismissadmin.svg';
-import AddAdmin from '../../../icons/addadmin.svg';
-import Remove from '../../../icons/remove.svg';
 import { copyToClipboard, shortenText } from '../../../helpers';
 import {
   ACCEPTED_MEMBERS_LIMIT,
@@ -42,9 +40,9 @@ import {
   ModalPositionType,
 } from '../exportedTypes';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import { GROUP_ROLES, GroupMembersType, GroupRolesKeys } from '../types';
+import { GROUP_ROLES } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import { ChatMemberProfile } from '@pushprotocol/restapi';
+
 
 export interface MemberPaginationData {
   page: number;
@@ -53,24 +51,11 @@ export interface MemberPaginationData {
   reset: boolean;
 }
 
-const UPDATE_KEYS = {
-  REMOVE_MEMBER: 'REMOVE_MEMBER',
-  ADD_MEMBER: 'ADD_MEMBER',
-  REMOVE_ADMIN: 'REMOVE_ADMIN',
-  ADD_ADMIN: 'ADD_ADMIN',
-} as const;
-
-type UpdateKeys = typeof UPDATE_KEYS[keyof typeof UPDATE_KEYS];
-type UpdateGroupType = {
-  memberList: Array<string>;
-};
-
-const SUCCESS_MESSAGE = {
-  REMOVE_MEMBER: 'Removed Member successfully',
-  ADD_MEMBER: 'Group Invitation sent',
-  REMOVE_ADMIN: 'Admin added successfully',
-  ADD_ADMIN: 'Removed added successfully',
-};
+interface MembersType {
+  accepted: ChatMemberProfile[];
+  pending: ChatMemberProfile[];
+  loading: boolean;
+}
 
 interface ConditionsInformationProps {
   theme: IChatTheme;
@@ -242,7 +227,7 @@ type GroupSectionProps = GroupInfoModalProps & {
   handleNextInformation: () => void;
   handlePreviousInformation?: () => void;
   pendingMemberPaginationData: MemberPaginationData;
-  groupMembers: GroupMembersType;
+  groupMembers: MembersType;
   setPendingMemberPaginationData: React.Dispatch<
     React.SetStateAction<MemberPaginationData>
   >;
@@ -250,16 +235,14 @@ type GroupSectionProps = GroupInfoModalProps & {
   setAcceptedMemberPaginationData: React.Dispatch<
     React.SetStateAction<MemberPaginationData>
   >;
-  // setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
-  // selectedMemberAddress: string | null;
-  // setSelectedMemberAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  membersCount: GroupParticipantCounts;
+  setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: Group;
-  // setGroupInfo: React.Dispatch<React.SetStateAction<IGroup | null | undefined>>;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
 };
@@ -281,71 +264,43 @@ const GroupInformation = ({
   acceptedMemberPaginationData,
   setAcceptedMemberPaginationData,
   groupMembers,
-}: // setShowAddMoreWalletModal,
-// selectedMemberAddress,
-// setSelectedMemberAddress,
-GroupSectionProps) => {
+  setShowAddMoreWalletModal,
+  membersCount,
+}: GroupSectionProps) => {
   const { account } = useChatData();
-
+  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(
+    null
+  );
   const [showPendingRequests, setShowPendingRequests] =
     useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
-  // const { addMember, removeMember } = useUpdateGroup();
-
   const isMobile = useMediaQuery(device.mobileL);
 
-  // useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
+  const { fetchMemberStatus } = useGroupMemberUtilities();
 
-  // const handleAddMember = async (role: GroupRolesKeys) => {
-  //   await addMember({
-  //     memberList: [selectedMemberAddress!],
-  //     chatId:groupInfo!.chatId!,
-  //     role: role,
-  //   });
-  // };
+  useEffect(() => {
+    if (account && groupInfo?.chatId) {
+      (async () => {
+        const status = await fetchMemberStatus({
+          chatId: groupInfo?.chatId,
+          accountId: account,
+        });
+        if (status) {
+          setAccountStatus(status);
+        }
+      })();
+    }
+  }, []);
 
-  // const handleRemoveMember = async (role: GroupRolesKeys) => {
-  //   await removeMember({
-  //     memberList: [selectedMemberAddress!],
-  //     chatId:groupInfo!.chatId!,
-  //     role: role,
-  //   });
-  // };
-  // const messageUserDropdown: DropdownValueType = {
-  //     id: 'message_user',
-  //     title: 'Message user',
-  //     icon: Message,
-  //     function: () => messageUser(),
-  //   };
-
-  // const removeAdminDropdown: DropdownValueType = {
-  //   id: 'dismiss_admin',
-  //   title: 'Dismiss as admin',
-  //   icon: DismissAdmin,
-  //   function: () => handleRemoveMember(GROUP_ROLES.ADMIN),
-  // };
-  // const addAdminDropdown: DropdownValueType = {
-  //   id: 'add_admin',
-  //   title: 'Make group admin',
-  //   icon: AddAdmin,
-  //   function: () => handleAddMember(GROUP_ROLES.ADMIN),
-  // };
-  // const removeMemberDropdown: DropdownValueType = {
-  //   id: 'remove_member',
-  //   title: 'Remove',
-  //   icon: Remove,
-  //   function: () => handleRemoveMember(GROUP_ROLES.MEMBER),
-  //   textColor: '#ED5858',
-  // };
   return (
     <ScrollSection
       margin="auto"
       width="100%"
       flexDirection="column"
       gap="16px"
-      maxHeight={isMobile ? '59vh' : '61vh'}
-      height={isMobile ? '59vh' : '61vh'}
+      maxHeight={isMobile ? '59vh' : '60vh'}
+      height={isMobile ? '59vh' : '60vh'}
       overflow="hidden auto"
       justifyContent="start"
       padding="0 2px 0 0"
@@ -434,10 +389,10 @@ GroupSectionProps) => {
           subheader={'Conditions must be true to join'}
         />
       )}
-      {/* 
-      {isAccountOwnerAdmin(groupInfo, account!) &&
-        groupInfo?.members &&
-        groupInfo?.members?.length < 10 && (
+
+      {accountStatus?.role === GROUP_ROLES.ADMIN &&
+        groupMembers?.accepted &&
+        groupMembers?.accepted?.length < 10 && (
           <AddWalletContainer
             theme={theme}
             onClick={() => setShowAddMoreWalletModal(true)}
@@ -460,31 +415,37 @@ GroupSectionProps) => {
               Add more wallets
             </Span>
           </AddWalletContainer>
-        )} */}
+        )}
 
-      <Section borderRadius="16px">
-        {groupMembers &&
-          groupMembers?.pending &&
-          groupMembers?.pending?.length > 0 && (
-            <PendingMembers
-              // groupInfo={groupInfo}
-              pendingMemberPaginationData={pendingMemberPaginationData}
-              setPendingMemberPaginationData={setPendingMemberPaginationData}
-              pendingMembers={groupMembers?.pending}
-              setShowPendingRequests={setShowPendingRequests}
-              showPendingRequests={showPendingRequests}
-              theme={theme}
+      <Section borderRadius="16px" flexDirection="column" gap="16px">
+        {groupMembers.loading ? (
+          <Spinner size="40" color={theme.spinnerColor} />
+        ) : (
+          <>
+            {groupMembers &&
+              groupMembers?.pending &&
+              groupMembers?.pending?.length > 0 && (
+                <PendingMembers
+                  pendingMemberPaginationData={pendingMemberPaginationData}
+                  setPendingMemberPaginationData={
+                    setPendingMemberPaginationData
+                  }
+                  pendingMembers={groupMembers?.pending}
+                  setShowPendingRequests={setShowPendingRequests}
+                  showPendingRequests={showPendingRequests}
+                  theme={theme}
+                  count={membersCount.pending}
+                />
+              )}
+            <AcceptedMembers
+              acceptedMemberPaginationData={acceptedMemberPaginationData}
+              setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
+              acceptedMembers={groupMembers?.accepted}
+              chatId={groupInfo!.chatId!}
             />
-          )}
-        {/* <div ref={pendingMemberPageRef} style={{ padding: '1px' }}></div> */}
+          </>
+        )}
       </Section>
-
-      <AcceptedMembers
-        acceptedMemberPaginationData={acceptedMemberPaginationData}
-        setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
-        acceptedMembers={groupMembers?.accepted}
-        theme={theme}
-      />
     </ScrollSection>
   );
 };
@@ -501,12 +462,13 @@ export const GroupInfoModal = ({
   );
   const [memberList, setMemberList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [membersCount, setMembersCount] = useState<GroupParticipantCounts>({
+    participants: 0,
+    pending: 0,
+  });
   const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
     useState<boolean>(false);
   useState<boolean>(false);
-  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
-    string | null
-  >(null);
 
   const [pendingMemberPaginationData, setPendingMemberPaginationData] =
     useState<MemberPaginationData>({
@@ -525,22 +487,24 @@ export const GroupInfoModal = ({
 
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
-  const [groupMembers, setGroupMembers] = useState<GroupMembersType>({
+  const [groupMembers, setGroupMembers] = useState<MembersType>({
     accepted: [],
     pending: [],
+    loading: false,
   });
+  const { fetchMembers, loading: membersLoading } = useGroupMemberUtilities();
 
-  const { fetchMembers } = useGroupMemberUtilities();
-  // const membersExceptGroupCreator = groupInfo?.members?.filter(
-  //   (x) => x.wallet?.toLowerCase() !== groupCreator?.toLowerCase()
-  // );
-  // console.log(membersExceptGroupCreator)
-  // const groupMembers = [
-  //   ...membersExceptGroupCreator,
-  //   ...groupInfo.pendingMembers,
-  // ];
   const { addMember } = useUpdateGroup();
-  const dropdownRef = useRef<any>(null);
+  const { fetchMembersCount } = useGroupMemberUtilities();
+
+  useEffect(() => {
+    (async () => {
+      const count = await fetchMembersCount({ chatId: groupInfo!.chatId! });
+      if (count) {
+        setMembersCount(count);
+      }
+    })();
+  }, []);
 
   //convert fetchPendingMembers and fetchAcceptedMembers to single method and show errors
   const fetchPendingMembers = async (page: number): Promise<void> => {
@@ -555,8 +519,7 @@ export const GroupInfoModal = ({
         ...prev,
         finishedFetching: true,
       }));
-    console.log(page, fetchedPendingMembers);
-    setGroupMembers((prevMembers: GroupMembersType) => ({
+    setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
       pending: [
         ...prevMembers!.pending,
@@ -569,7 +532,6 @@ export const GroupInfoModal = ({
         ),
     }));
   };
-  console.log(groupMembers);
   const fetchAcceptedMembers = async (page: number): Promise<void> => {
     const fetchedAcceptedMembers = await fetchMembers({
       chatId: groupInfo!.chatId,
@@ -581,8 +543,7 @@ export const GroupInfoModal = ({
         ...prev,
         finishedFetching: true,
       }));
-    console.log(page, fetchedAcceptedMembers);
-    setGroupMembers((prevMembers: GroupMembersType) => ({
+    setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
       accepted: [
         ...prevMembers!.accepted,
@@ -607,14 +568,15 @@ export const GroupInfoModal = ({
   //add dependencies
   useEffect(() => {
     (async () => {
+      setGroupMembers((prev) => ({ ...prev, loading: true }));
       await initialiseMemberPaginationData('pending', fetchPendingMembers);
       await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
+      setGroupMembers((prev) => ({ ...prev, loading: false }));
     })();
   }, [groupInfo]);
 
   useEffect(() => {
     (async () => {
-      console.log('in change page', pendingMemberPaginationData?.page);
       if (pendingMemberPaginationData?.page > 1)
         await callMembers(
           pendingMemberPaginationData?.page,
@@ -626,7 +588,6 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     (async () => {
-      console.log('in change page', acceptedMemberPaginationData?.page);
       if (acceptedMemberPaginationData?.page > 1)
         await callMembers(
           acceptedMemberPaginationData?.page,
@@ -643,7 +604,6 @@ export const GroupInfoModal = ({
     fetchMembers: (page: number) => Promise<void>
   ) => {
     try {
-      console.log('in new fetch ', page);
       setMemberPaginationData((prev: MemberPaginationData) => ({
         ...prev,
         loading: true,
@@ -670,74 +630,44 @@ export const GroupInfoModal = ({
   const handlePreviousInfo = () => {
     setActiveComponent((activeComponent - 1) as GROUP_INFO_TYPE);
   };
-
-  const renderComponent = () => {
-    switch (activeComponent) {
-      case GROUPINFO_STEPS.GROUP_INFO:
-        return (
-          <GroupInformation
-            handleNextInformation={handleNextInfo}
-            theme={theme}
-            setModal={setModal}
-            groupInfo={groupInfo}
-            groupMembers={groupMembers}
-            pendingMemberPaginationData={pendingMemberPaginationData}
-            setPendingMemberPaginationData={setPendingMemberPaginationData}
-            acceptedMemberPaginationData={acceptedMemberPaginationData}
-            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
-            // setGroupInfo={setGroupInfo}
-            // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
-            // selectedMemberAddress={selectedMemberAddress}
-            // setSelectedMemberAddress={setSelectedMemberAddress}
-          />
-        );
-      case GROUPINFO_STEPS.CRITERIA:
-        return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
-
-      default:
-        return (
-          <GroupInformation
-            handleNextInformation={handleNextInfo}
-            theme={theme}
-            setModal={setModal}
-            groupInfo={groupInfo}
-            groupMembers={groupMembers}
-            pendingMemberPaginationData={pendingMemberPaginationData}
-            setPendingMemberPaginationData={setPendingMemberPaginationData}
-            acceptedMemberPaginationData={acceptedMemberPaginationData}
-            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
-            // setGroupInfo={setGroupInfo}
-            // setShowAddMoreWalletModal={setShowAddMoreWalletModal}
-            // selectedMemberAddress={selectedMemberAddress}
-            // setSelectedMemberAddress={setSelectedMemberAddress}
-          />
-        );
-    }
-  };
-
-  useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-
-  const onClose = (): void => {
-    setModal(false);
-  };
-
-  const handleClose = () => onClose();
-  const handleAddMemberToGroup = async (options: UpdateGroupType) => {
-    const { memberList } = options || {};
+  const handleAddMember = async () => {
     try {
       setIsLoading(true);
+      let adminResponse = {};
+      let memberResponse = {};
+      const admins = memberList
+        .filter((member: any) => member.isAdmin)
+        .map((member: any) => member.wallets);
+      const members = memberList
+        .filter((member: any) => !member.isAdmin)
+        .map((member: any) => member.wallets);
 
-      const updateMemberResponse = await addMember({
-        chatId: groupInfo!.chatId!,
-        role: GROUP_ROLES.MEMBER,
-        memberList,
-      });
-      if (typeof updateMemberResponse !== 'string') {
-        // setGroupInfo(updateMemberResponse!);
+      if (admins.length) {
+        adminResponse = await addMember({
+          memberList: memberList
+            .filter((member: any) => member.isAdmin)
+            .map((member: any) => member.wallets),
+          chatId: groupInfo!.chatId!,
+          role: GROUP_ROLES.ADMIN,
+        });
+      }
+      if (members.length) {
+        memberResponse = await addMember({
+          memberList: memberList
+            .filter((member: any) => !member.isAdmin)
+            .map((member: any) => member.wallets),
+          chatId: groupInfo!.chatId!,
+          role: GROUP_ROLES.MEMBER,
+        });
+      }
 
+      if (
+        typeof adminResponse !== 'string' &&
+        typeof memberResponse !== 'string'
+      ) {
         groupInfoToast.showMessageToast({
           toastTitle: 'Success',
-          toastMessage: SUCCESS_MESSAGE[UPDATE_KEYS.ADD_MEMBER],
+          toastMessage: 'Group Invitation sent',
           toastType: 'SUCCESS',
           getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
         });
@@ -758,23 +688,57 @@ export const GroupInfoModal = ({
         getToastIcon: (size) => <MdError size={size} color="red" />,
       });
     } finally {
-      handleClose();
       setIsLoading(false);
-      setSelectedMemberAddress(null);
+      onClose();
     }
   };
 
-  const addMembers = async () => {
-    //Newly Added Members and alreadyPresent Members in the groupchat
-    const newMembersToAdd = memberList.map((member: any) => member.wallets);
-    const members = newMembersToAdd;
-    //Admins wallet address from both members and pendingMembers
-    await handleAddMemberToGroup({
-      memberList: members,
-    });
+  const renderComponent = () => {
+    switch (activeComponent) {
+      case GROUPINFO_STEPS.GROUP_INFO:
+        return (
+          <GroupInformation
+            handleNextInformation={handleNextInfo}
+            theme={theme}
+            setModal={setModal}
+            groupInfo={groupInfo}
+            groupMembers={groupMembers}
+            pendingMemberPaginationData={pendingMemberPaginationData}
+            setPendingMemberPaginationData={setPendingMemberPaginationData}
+            acceptedMemberPaginationData={acceptedMemberPaginationData}
+            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
+            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            membersCount={membersCount}
+          />
+        );
+      case GROUPINFO_STEPS.CRITERIA:
+        return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
+
+      default:
+        return (
+          <GroupInformation
+            handleNextInformation={handleNextInfo}
+            theme={theme}
+            setModal={setModal}
+            groupInfo={groupInfo}
+            groupMembers={groupMembers}
+            pendingMemberPaginationData={pendingMemberPaginationData}
+            setPendingMemberPaginationData={setPendingMemberPaginationData}
+            acceptedMemberPaginationData={acceptedMemberPaginationData}
+            setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
+            setShowAddMoreWalletModal={setShowAddMoreWalletModal}
+            membersCount={membersCount}
+          />
+        );
+    }
   };
+
   const handlePrevious = () => {
     setShowAddMoreWalletModal(false);
+  };
+
+  const onClose = (): void => {
+    setModal(false);
   };
 
   if (groupInfo) {
@@ -829,18 +793,19 @@ export const GroupInfoModal = ({
             {renderComponent()}
           </Section>
         )}
-        {/* {showAddMoreWalletModal && (
+        {showAddMoreWalletModal && (
           <AddWalletContent
-            onSubmit={addMembers}
+            onSubmit={handleAddMember}
             handlePrevious={handlePrevious}
             onClose={onClose}
             memberList={memberList}
             handleMemberList={setMemberList}
-            groupMembers={groupMembers}
+            groupMembers={[...groupMembers.pending, ...groupMembers.accepted]}
             isLoading={isLoading}
             modalHeader={'Add More Wallets'}
+            groupInfo={groupInfo}
           />
-        )} */}
+        )}
       </Modal>
     );
   } else {
@@ -906,9 +871,6 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   }
 `;
 
-const ProfileSection = styled(Section)`
-  height: fit-content;
-`;
 const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};

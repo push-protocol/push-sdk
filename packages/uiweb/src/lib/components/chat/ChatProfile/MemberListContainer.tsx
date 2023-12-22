@@ -1,6 +1,7 @@
 import { useContext, useRef, useState } from 'react';
 
 import styled from 'styled-components';
+import { IUser } from '@pushprotocol/restapi';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
@@ -14,12 +15,11 @@ import { findObject } from '../helpers/helper';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
 import { ProfileContainer } from '../reusables';
-import { IUser } from '@pushprotocol/restapi';
 
 
 type MemberListContainerType = {
   key?: number;
-  memberData: IUser;
+  memberData: any;
   handleMemberList: (member: IUser) => void;
   handleMembers?: (value: IUser[]) => void;
   darkIcon: any;
@@ -114,11 +114,11 @@ export const MemberListContainer = ({
         theme={theme}
         member={{
           wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          image: memberData.profilePicture || '',
+          image: memberData.profile?.picture || '',
         }}
       />
 
-      {/* <Section justifyContent="flex-end">
+      <Section justifyContent="flex-end">
         {memberData?.isAdmin && (
           <Span
             background="#F4DCEA"
@@ -162,7 +162,7 @@ export const MemberListContainer = ({
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
         </DropdownContainer>
-      )} */}
+      )}
     </WalletProfileContainer>
   );
 };
