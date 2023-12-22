@@ -63,7 +63,7 @@ export const createGroupCore = async (
     groupType,
     scheduleAt,
     scheduleEnd,
-    rules
+    rules,
   } = options || {};
 
   try {
@@ -71,7 +71,7 @@ export const createGroupCore = async (
       throw new Error(`At least one from account or signer is necessary!`);
     }
 
-    validateScheduleDates(scheduleAt, scheduleEnd)
+    validateScheduleDates(scheduleAt, scheduleEnd);
 
     const wallet = getWallet({ account, signer });
 

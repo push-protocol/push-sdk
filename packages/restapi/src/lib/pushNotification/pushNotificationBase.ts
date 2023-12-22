@@ -36,6 +36,7 @@ const LENGTH_UPPER_LIMIT = 125;
 const LENGTH_LOWER_LIMTI = 1;
 const SETTING_DELIMITER = '-';
 const SETTING_SEPARATOR = '+';
+const RANGE_TYPE = 3;
 const SLIDER_TYPE = 2;
 const BOOLEAN_TYPE = 1;
 const DEFAULT_ENABLE_VALUE = '1';
@@ -160,7 +161,7 @@ export class PushNotificationBaseClass {
     // fetch the minimal version based on conifg that was passed
     let index = '';
     if (options.payload?.category && settings) {
-      if (settings[options.payload.category - 1].type == 2) {
+      if (settings[options.payload.category - 1].type == SLIDER_TYPE) {
         index =
           options.payload.category +
           SETTING_DELIMITER +
@@ -168,8 +169,16 @@ export class PushNotificationBaseClass {
           SETTING_DELIMITER +
           settings[options.payload.category - 1].default;
       }
-      if (settings[options.payload.category - 1].type == 1) {
+      if (settings[options.payload.category - 1].type == BOOLEAN_TYPE) {
         index = options.payload.category + SETTING_DELIMITER + BOOLEAN_TYPE;
+      }
+      if (settings[options.payload.category - 1].type == RANGE_TYPE) {
+        index =
+          options.payload.category +
+          SETTING_DELIMITER +
+          RANGE_TYPE +
+          SETTING_DELIMITER +
+          settings[options.payload.category - 1].default.lower;
       }
     }
     const notificationPayload: ISendNotificationInputOptions = {
@@ -331,7 +340,7 @@ export class PushNotificationBaseClass {
       }
       return balance;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error(JSON.stringify(error));
     }
   }
@@ -392,7 +401,6 @@ export class PushNotificationBaseClass {
         const approvalTrxPromise = contract!['approve'](spenderAddress, amount);
         const approvalTrx = await approvalTrxPromise;
         await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
-        // console.log(approvalTrx.hash)
       } else if ('signTypedData' in this.signer!) {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
@@ -401,13 +409,12 @@ export class PushNotificationBaseClass {
           args: [spenderAddress, amount],
         });
         const approvalTrxRes = await approvalTrxPromise;
-        // console.log(approvalTrxRes);
       } else {
         throw new Error('Unsupported signer');
       }
       return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return false;
     }
   }
@@ -684,8 +691,6 @@ export class PushNotificationBaseClass {
           BOOLEAN_TYPE +
           SETTING_DELIMITER +
           ele.default;
-        notificationSettingDescription =
-          notificationSettingDescription + SETTING_SEPARATOR + ele.description;
       }
       if (ele.type == SLIDER_TYPE) {
         if (ele.data) {
@@ -708,13 +713,36 @@ export class PushNotificationBaseClass {
             ele.data.upper +
             SETTING_DELIMITER +
             ticker;
-
-          notificationSettingDescription =
-            notificationSettingDescription +
-            SETTING_SEPARATOR +
-            ele.description;
         }
       }
+      if (ele.type == RANGE_TYPE) {
+        if (ele.default && typeof ele.default == 'object' && ele.data) {
+          const enabled =
+            ele.data && ele.data.enabled != undefined
+              ? Number(ele.data.enabled).toString()
+              : DEFAULT_ENABLE_VALUE;
+          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
+          notificationSetting =
+            notificationSetting +
+            SETTING_SEPARATOR +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.default.lower +
+            SETTING_DELIMITER +
+            ele.default.upper +
+            SETTING_DELIMITER +
+            ele.data.lower +
+            SETTING_DELIMITER +
+            ele.data.upper +
+            SETTING_DELIMITER +
+            ticker;
+        }
+      }
+
+      notificationSettingDescription =
+        notificationSettingDescription + SETTING_SEPARATOR + ele.description;
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
@@ -732,15 +760,28 @@ export class PushNotificationBaseClass {
       const ele = setting[i];
       const enabled = ele.enabled ? 1 : 0;
       if (ele.enabled) numberOfSettings++;
-      // slider type
+
       if (Object.keys(ele).includes('value')) {
-        userSetting =
-          userSetting +
-          SLIDER_TYPE +
-          SETTING_DELIMITER +
-          enabled +
-          SETTING_DELIMITER +
-          ele.value;
+        // slider type
+        if (typeof ele.value == 'number')
+          userSetting =
+            userSetting +
+            SLIDER_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value;
+        else {
+          userSetting =
+            userSetting +
+            RANGE_TYPE +
+            SETTING_DELIMITER +
+            enabled +
+            SETTING_DELIMITER +
+            ele.value?.lower +
+            SETTING_DELIMITER +
+            ele.value?.upper;
+        }
       } else {
         // boolean type
         userSetting = userSetting + BOOLEAN_TYPE + SETTING_DELIMITER + enabled;
@@ -780,5 +821,9 @@ export class PushNotificationBaseClass {
     } catch (error) {
       return null;
     }
+  }
+
+  protected getAddressFromCaip(caipAddress: string): string {
+    return caipAddress?.split(':')[caipAddress?.split(':').length - 1];
   }
 }

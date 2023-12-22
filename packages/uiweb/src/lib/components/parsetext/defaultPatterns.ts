@@ -24,7 +24,7 @@ function newLinestyles(matchingString: string) {
 
 function renderTextStyles(matchingString: string) {
   const pattern =
-    /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/i;
+    /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/i;
   const match = matchingString.match(pattern);
 
   if (match) {
@@ -244,7 +244,7 @@ const DEFAULT_PATTERNS: CustomParseShape[] = [
   },
   {
     pattern:
-      /<PUSHText color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/PUSHText>/gi,
+      /<span color=["']?(#[0-9A-Fa-f]{3,6}|[a-zA-Z]+)["']?>(.*?)<\/span>/gi,
     style: {}, // we can add aditional styles here if needed
     renderText: renderTextStyles,
   },

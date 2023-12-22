@@ -12,9 +12,9 @@ import {
 } from './helpers';
 import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
-import { getGroup } from './getGroup';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
+import { getGroupInfo } from './getGroupInfo';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -44,12 +44,18 @@ export const sendCore = async (
     await validateOptions(computedOptions);
 
     const wallet = getWallet({ account, signer });
-    const sender = await getConnectedUserV2Core(wallet, pgpPrivateKey, env, pgpHelper);
+    const sender = await getConnectedUserV2Core(
+      wallet,
+      pgpPrivateKey,
+      env,
+      pgpHelper
+    );
     const receiver = await getUserDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
     const isGroup = isValidETHAddress(to) ? false : true;
+
     const group = isGroup
-      ? await getGroup({
+      ? await getGroupInfo({
           chatId: to,
           env: env,
         })
@@ -129,19 +135,6 @@ const validateOptions = async (options: ComputedOptionsType) => {
     throw new Error(
       `Invalid sender. Please ensure that either 'account' or 'signer' is properly defined.`
     );
-  }
-
-  const isGroup = isValidETHAddress(to) ? false : true;
-  if (isGroup) {
-    const group = await getGroup({
-      chatId: to,
-      env: env,
-    });
-    if (!group) {
-      throw new Error(
-        `Invalid receiver. Please ensure 'receiver' is a valid DID or ChatId in case of Group.`
-      );
-    }
   }
 
   validateMessageObj(messageObj, messageType);

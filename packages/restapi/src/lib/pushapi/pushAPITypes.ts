@@ -1,5 +1,4 @@
 import Constants, { ENV } from '../constants';
-import { PushStreamInitializeProps } from '../pushstream/pushStreamTypes';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
@@ -14,6 +13,9 @@ export interface PushAPIInitializeProps {
   versionMeta?: { NFTPGP_V1?: { password: string } };
   autoUpgrade?: boolean;
   origin?: string;
+  alpha?: {
+    feature: string[];
+  };
 }
 
 export interface GroupCreationOptions {
@@ -28,6 +30,20 @@ export interface GroupCreationOptions {
 export interface ManageGroupOptions {
   role: 'ADMIN' | 'MEMBER';
   accounts: string[];
+}
+
+export interface RemoveFromGroupOptions {
+  role?: 'ADMIN' | 'MEMBER';
+  accounts: string[];
+}
+
+export interface GetGroupParticipantsOptions {
+  page?: number;
+  limit?: number;
+  filter?: {
+    pending?: boolean;
+    role?: string;
+  };
 }
 
 export interface GroupUpdateOptions {
@@ -45,3 +61,8 @@ export interface InfoOptions {
   overrideAccount?: string;
 }
 
+export interface ParticipantStatus {
+  pending: boolean;
+  role: 'admin' | 'member';
+  participant: boolean;
+}

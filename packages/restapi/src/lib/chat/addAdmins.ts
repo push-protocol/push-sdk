@@ -1,27 +1,22 @@
-import { isValidETHAddress, walletToPCAIP10 } from '../helpers';
-import Constants from '../constants';
-import { EnvOptionsType, SignerType, GroupDTO } from '../types';
+import { ALPHA_FEATURE_CONFIG } from '../config';
+import Constants, { PACKAGE_BUILD } from '../constants';
+import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import {
-  getMembersList,
-  getAdminsList,
-} from './helpers';
-import {
-  getGroup
-} from './getGroup';
-import {
-  updateGroup
-} from './updateGroup';
+  GroupMemberUpdateOptions,
+  updateGroupMembers,
+} from './updateGroupMembers';
 export interface AddAdminsToGroupType extends EnvOptionsType {
   chatId: string;
   admins: Array<string>;
   account?: string | null;
   signer?: SignerType | null;
-  pgpPrivateKey?: string | null; 
+  pgpPrivateKey?: string | null;
+  overrideSecretKeyGeneration?: boolean;
 }
 
 export const addAdmins = async (
   options: AddAdminsToGroupType
-): Promise<GroupDTO> => {
+): Promise<GroupInfoDTO> => {
   const {
     chatId,
     admins,
@@ -29,75 +24,40 @@ export const addAdmins = async (
     signer = null,
     env = Constants.ENV.PROD,
     pgpPrivateKey = null,
+    overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
+      PACKAGE_BUILD
+    ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
   } = options || {};
   try {
     if (account == null && signer == null) {
       throw new Error(`At least one from account or signer is necessary!`);
     }
-  
+
     if (!admins || admins.length === 0) {
-      throw new Error("Admin address array cannot be empty!");
+      throw new Error('Admin address array cannot be empty!');
     }
-  
-    admins.forEach((admin) => {
-      if (!isValidETHAddress(admin)) {
-        throw new Error(`Invalid admin address: ${admin}`);
-      }
-    });
 
-    const group = await getGroup({
-        chatId: chatId,
-        env,
-    })
+    const upsertPayload = {
+      members: [],
+      admins: admins,
+    };
 
-    // TODO: look at user did in updateGroup
-    const convertedMembers = getMembersList(
-        group.members, group.pendingMembers
-    );
-
-    // TODO: look at user did in updateGroup
-    const adminsToBeAdded = admins.map((admin) => walletToPCAIP10(admin));
-
-    adminsToBeAdded.forEach((admin) => {
-      if (!convertedMembers.includes(admin)) {
-        convertedMembers.push(admin);
-      }
-    });
-
-    const convertedAdmins = getAdminsList(
-        group.members, group.pendingMembers
-    );
-
-    adminsToBeAdded.forEach((admin) => {
-      if (convertedAdmins.includes(admin)) {
-        throw new Error(`Admin ${admin} already exists in the list`);
-      }
-    });
-
-    convertedAdmins.push(...adminsToBeAdded);
-
-    return await updateGroup({
-        chatId: chatId,
-        groupName: group.groupName,
-        groupImage: group.groupImage,
-        groupDescription: group.groupDescription,
-        members: convertedMembers,
-        admins: convertedAdmins,
-        scheduleAt: group.scheduleAt,
-        scheduleEnd: group.scheduleEnd,
-        status: group.status,
-        account: account,
-        signer: signer,
-        env: env,
-        pgpPrivateKey: pgpPrivateKey
-    });
+    const groupMemberUpdateOptions: GroupMemberUpdateOptions = {
+      chatId: chatId,
+      upsert: upsertPayload,
+      remove: [], // No members to remove in this case
+      account: account,
+      signer: signer,
+      pgpPrivateKey: pgpPrivateKey,
+      env: env,
+      overrideSecretKeyGeneration,
+    };
+    return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {
     console.error(
       `[Push SDK] - API  - Error - API ${addAdmins.name} -:  `,
       err
     );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${addAdmins.name} -: ${err}`
-    );
+    throw Error(`[Push SDK] - API  - Error - API ${addAdmins.name} -: ${err}`);
   }
 };

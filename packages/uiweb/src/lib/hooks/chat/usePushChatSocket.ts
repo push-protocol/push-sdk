@@ -70,7 +70,7 @@ const {fetchChatProfile} = useGetChatProfile();
           pgpPrivateKey: pgpPrivateKey,
           env: env,
         });
-  
+
         if (response && response.length) {
           setMessagesSinceLastConnection(response[0]);
         }
