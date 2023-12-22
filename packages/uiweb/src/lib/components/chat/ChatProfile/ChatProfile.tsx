@@ -129,7 +129,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           alignSelf="center"
         >
           {(Component && !groupInfo) && (
-            <Section>
+            <Section cursor='pointer' maxHeight='1.75rem' width='1.75rem' maxWidth='1.75rem' minWidth='1.75rem'>
               <Component />
             </Section>
           )}
