@@ -1,4 +1,4 @@
-import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
+import { TypedDataDomain, TypedDataField, Provider } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -662,9 +662,9 @@ export type ethersV5SignerType = {
     value: Record<string, any>
   ) => Promise<string>;
   getAddress: () => Promise<string>;
-  signMessage: (message: Bytes | string) => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: Provider | null;
 };
 
 export type ethersV6SignerType = {
@@ -674,9 +674,9 @@ export type ethersV6SignerType = {
     value: Record<string, any>
   ) => Promise<string>;
   getAddress: () => Promise<string>;
-  signMessage: (message: Bytes | string) => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: Provider | null;
 };
 
 export type viemSignerType = {
@@ -695,7 +695,7 @@ export type viemSignerType = {
   }) => Promise<`0x${string}`>;
   account: { [key: string]: any };
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: Provider | null;
 };
 
 export type SignerType =

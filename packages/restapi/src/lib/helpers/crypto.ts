@@ -4,7 +4,6 @@ import {
   getEncryptionPublicKey,
 } from '@metamask/eth-sig-util';
 import * as CryptoJS from 'crypto-js';
-import { ethers } from 'ethers';
 import {
   aesDecrypt,
   getAccountAddress,
@@ -33,6 +32,8 @@ import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
 import { Signer } from './signer';
+import * as viem from 'viem';
+import { mainnet } from 'viem/chains';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -49,25 +50,29 @@ if (typeof window !== 'undefined' && window.crypto) {
   }
 }
 
-/** DEPRECATED */
+/**
+ * @deprecated
+ */
 export const getPublicKey = async (options: walletType): Promise<string> => {
   const { account, signer } = options || {};
   const pushSigner = signer ? new Signer(signer) : undefined;
   const address: string = account || (await pushSigner?.getAddress()) || '';
-  const metamaskProvider = new ethers.providers.Web3Provider(
-    (window as any).ethereum
-  );
-  const web3Provider: any = signer?.provider || metamaskProvider;
-
-  const keyB64 = await web3Provider.provider.request({
+  const metamaskProvider = viem.createWalletClient({
+    chain: mainnet,
+    transport: viem.custom((window as any).ethereum),
+  });
+  const web3Provider: any = signer?.provider?.provider || metamaskProvider;
+  const keyB64 = await web3Provider.request({
     method: 'eth_getEncryptionPublicKey',
     params: [address],
   });
   return keyB64;
 };
 
-/** DEPRECATED */
-// x25519-xsalsa20-poly1305 enryption
+/**
+ * @deprecated
+ * x25519-xsalsa20-poly1305 enryption
+ */
 export const encryptV1 = (
   text: string,
   encryptionPublicKey: string,
@@ -146,10 +151,12 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             privateKey: wallet?.signer?.privateKey.substring(2),
           });
         } else {
-          const metamaskProvider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-          const web3Provider: any = signer?.provider || metamaskProvider;
+          const metamaskProvider = viem.createWalletClient({
+            chain: mainnet,
+            transport: viem.custom((window as any).ethereum),
+          });
+          const web3Provider: any =
+            signer?.provider?.provider || metamaskProvider;
           privateKey = await web3Provider.provider.request({
             method: 'eth_decrypt',
             params: [encryptedPGPPrivateKey, address],

@@ -22,10 +22,7 @@ describe('PushAPI.channel functionality', () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      // PUBLIC RPC
-      'https://rpc.sepolia.org'
-    );
+    const provider = ethers.getDefaultProvider(11155111);
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,

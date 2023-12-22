@@ -2,9 +2,9 @@ import {
   recoverTypedSignature,
   SignTypedDataVersion,
 } from '@metamask/eth-sig-util';
-import * as ethers from 'ethers';
-import { hashMessage } from 'ethers/lib/utils';
+import * as viem from 'viem';
 import { verifyMessage } from '@ambire/signature-validator';
+import { ethers } from 'ethers';
 
 /**
  *
@@ -138,10 +138,10 @@ export const verifyProfileSignature = async (
     // EIP191 sig validation
     try {
       // EOA Wallet
-      const recoveredAddress = ethers.utils.recoverAddress(
-        hashMessage(signedData),
-        signature
-      );
+      const recoveredAddress = await viem.recoverAddress({
+        hash: viem.hashMessage(signedData),
+        signature: signature as `0x${string}`,
+      });
       if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
         return true;
       } else return false;
