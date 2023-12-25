@@ -7,6 +7,7 @@ import {
   ISendNotificationInputOptions,
   INotificationPayload,
   walletType,
+  VideNotificationRules,
 } from '../types';
 import {
   IDENTITY_TYPE,
@@ -194,6 +195,7 @@ export async function getVerificationProof({
   wallet,
   pgpPrivateKey,
   env,
+  rules
 }: {
   senderType: 0 | 1;
   signer: any;
@@ -210,6 +212,7 @@ export async function getVerificationProof({
   wallet?: walletType;
   pgpPrivateKey?: string;
   env?: ENV;
+  rules?:VideNotificationRules;
 }) {
   let message = null;
   let verificationProof = null;
@@ -325,7 +328,7 @@ export function getSource(
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
   if (
-    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161].includes(chainId)
+    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161, 122, 123].includes(chainId)
   ) {
     return `eip155:${chainId}:${address}`;
   }

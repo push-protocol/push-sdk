@@ -12,6 +12,7 @@ import { config } from '../config';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { createWalletClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
+import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -632,12 +633,17 @@ async function PushAPI_chat_video_call_notification(
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: signer,
   });
-  // get PGP KEy
+
   const apiResponse = await PushAPI.payloads.sendNotification({
     senderType: 1,
-    signer: signer,
+    signer,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
-    chatId: chatId,
+    rules:{
+      access:{
+        type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+        data: chatId
+      }
+    },
     type: 3, // target
     identityType: 2, // direct payload
     notification: {
@@ -651,7 +657,7 @@ async function PushAPI_chat_video_call_notification(
       img: '',
       additionalMeta: {
         type: '1+1',
-        data: 'Random DATA',
+        data: "DATA REQUIRED FOR VIDEO CALL",
         domain: 'push.org',
       },
     },

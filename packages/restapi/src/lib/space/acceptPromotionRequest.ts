@@ -24,13 +24,6 @@ export async function acceptPromotionRequest(
 ) {
   const { signalData, promoteeAddress, spaceId, role } = options || {};
 
-  console.log(
-    'acceptPromotionRequest options',
-    options,
-    'local stream',
-    this.data.local.stream
-  );
-
   await addSpeakers({
     spaceId: this.spaceSpecificData.spaceId,
     signer: this.signer,

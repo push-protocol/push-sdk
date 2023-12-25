@@ -9,16 +9,16 @@ import {
   SpaceRules,
   GroupAccess,
   SpaceAccess,
+  GroupInfoDTO,
+  ChatMemberProfile,
 } from '../../types';
-import { getEncryptedRequest } from './crypto';
 import { ENV } from '../../constants';
-import { IPGPHelper, PGPHelper } from './pgp';
+import { IPGPHelper, PGPHelper, pgpDecrypt } from './pgp';
 import * as AES from './aes';
-import { sign } from './pgp';
 import { MessageObj } from '../../types/messageTypes';
 
-
 import * as CryptoJS from 'crypto-js';
+import { getAllGroupMembers } from '../getAllGroupMembers';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
@@ -28,6 +28,7 @@ export interface ISendMessagePayload {
   messageType: string;
   encType: string;
   encryptedSecret: string | null | undefined;
+  sessionKey: string | null | undefined;
   verificationProof?: string;
   /**
    * @deprecated - Use messageObj instead
@@ -41,15 +42,6 @@ export interface ISendMessagePayload {
    * @deprecated - Use messageObj instead
    */
   sigType: string | null | undefined;
-}
-
-export interface IApproveRequestPayload {
-  fromDID: string;
-  toDID: string;
-  signature: string;
-  status: 'Approved' | 'Reproved';
-  sigType: string;
-  verificationProof?: string | null | undefined;
 }
 
 export interface IRejectRequestPayload {
@@ -82,6 +74,7 @@ export interface IUpdateGroupRequestPayload {
   admins: Array<string>;
   address: string;
   verificationProof: string;
+  encryptedSecret: string | null;
 }
 
 export const sendMessagePayload = async (
@@ -90,7 +83,7 @@ export const sendMessagePayload = async (
   messageObj: MessageObj,
   messageContent: string,
   messageType: string,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   env: ENV
 ): Promise<ISendMessagePayload> => {
   return await sendMessagePayloadCore(
@@ -101,10 +94,9 @@ export const sendMessagePayload = async (
     messageType,
     group,
     env,
-    PGPHelper,
+    PGPHelper
   );
 };
-
 
 export const sendMessagePayloadCore = async (
   receiverAddress: string,
@@ -112,14 +104,21 @@ export const sendMessagePayloadCore = async (
   messageObj: MessageObj | string,
   messageContent: string,
   messageType: string,
-  group: GroupDTO | null,
+  group: GroupInfoDTO | null,
   env: ENV,
-  pgpHelper: IPGPHelper,
+  pgpHelper: IPGPHelper
 ): Promise<ISendMessagePayload> => {
   const isGroup = !isValidETHAddress(receiverAddress);
 
-  const secretKey: string = AES.generateRandomSecret(15);
-
+  let secretKey: string;
+  if (isGroup && group?.encryptedSecret && group.sessionKey) {
+    secretKey = await pgpDecrypt({
+      cipherText: group.encryptedSecret,
+      toPrivateKeyArmored: senderCreatedUser.privateKey!,
+    });
+  } else {
+    secretKey = AES.generateRandomSecret(15);
+  }
   const { message: encryptedMessageContent, signature: deprecatedSignature } =
     await getEncryptedRequestCore(
       receiverAddress,
@@ -155,10 +154,14 @@ export const sendMessagePayloadCore = async (
     messageObj:
       encryptionType === 'PlainText' ? messageObj : encryptedMessageObj,
     encType: encryptionType!,
+    sessionKey:
+      group && !group.isPublic && encryptionType === 'pgpv1:group'
+        ? group.sessionKey
+        : null,
     encryptedSecret: aesEncryptedSecret!,
     messageContent: encryptedMessageContent,
     signature: deprecatedSignature, //for backward compatibility
-    sigType: 'pgpv2',
+    sigType: 'pgpv3',
   };
 
   //build verificationProof
@@ -170,6 +173,7 @@ export const sendMessagePayloadCore = async (
     messageObj: body.messageObj,
     messageType: body.messageType,
     encType: body.encType,
+    sessionKey: body.sessionKey,
     encryptedSecret: body.encryptedSecret,
   };
   const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
@@ -177,25 +181,7 @@ export const sendMessagePayloadCore = async (
     message: hash,
     signingKey: senderCreatedUser.privateKey!,
   });
-  body.verificationProof = `pgpv2:${signature}`;
-  return body;
-};
-
-export const approveRequestPayload = (
-  fromDID: string,
-  toDID: string,
-  status: 'Approved' | 'Reproved',
-  sigType: string,
-  signature: string
-): IApproveRequestPayload => {
-  const body = {
-    fromDID,
-    toDID,
-    signature,
-    status,
-    sigType,
-    verificationProof: sigType + ':' + signature,
-  };
+  body.verificationProof = `pgpv3:${signature}`;
   return body;
 };
 
@@ -294,6 +280,58 @@ export const groupDtoToSpaceDto = (groupDto: GroupDTO): SpaceDTO => {
   return spaceDto;
 };
 
+export const groupDtoToSpaceDtoV2 = async (
+  groupDto: GroupInfoDTO,
+  env: ENV = ENV.PROD
+): Promise<SpaceDTO> => {
+  const members = await getAllGroupMembers({
+    chatId: groupDto.chatId,
+    env: env,
+  });
+
+  const spaceDto: SpaceDTO = {
+    members: members
+      .filter((member) => member.intent)
+      .map((member) => ({
+        wallet: member.address,
+        publicKey: member.userInfo.publicKey ?? '',
+        isSpeaker: member.role === 'admin',
+        image: member.userInfo.profile.picture ?? '',
+      })),
+    pendingMembers: members
+      .filter((member) => !member.intent)
+      .map((pendingMember) => ({
+        wallet: pendingMember.address,
+        publicKey: pendingMember.userInfo.publicKey ?? '',
+        isSpeaker: pendingMember.role === 'admin',
+        image: pendingMember.userInfo.profile.picture ?? '',
+      })),
+    contractAddressERC20: null,
+    numberOfERC20: 0,
+    contractAddressNFT: null,
+    numberOfNFTTokens: 0,
+    verificationProof: 'a',
+    spaceImage: groupDto.groupImage,
+    spaceName: groupDto.groupName,
+    isPublic: groupDto.isPublic,
+    spaceDescription: groupDto.groupDescription,
+    spaceCreator: groupDto.groupCreator,
+    spaceId: groupDto.chatId,
+    scheduleAt: groupDto.scheduleAt,
+    scheduleEnd: groupDto.scheduleEnd,
+    status: groupDto.status ?? null,
+    meta: groupDto.meta,
+  };
+
+  if (groupDto.rules) {
+    spaceDto.rules = {
+      entry: groupDto.rules.entry,
+    };
+  }
+
+  return spaceDto;
+};
+
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {
     entry: spaceRules.entry,
@@ -326,6 +364,7 @@ export const updateGroupPayload = (
   admins: Array<string>,
   address: string,
   verificationProof: string,
+  encryptedSecret: string | null,
   groupDescription?: string | null,
   groupImage?: string | null,
   scheduleAt?: Date | null,
@@ -342,6 +381,7 @@ export const updateGroupPayload = (
     admins: admins,
     address: address,
     verificationProof: verificationProof,
+    encryptedSecret: encryptedSecret,
     scheduleAt: scheduleAt,
     scheduleEnd: scheduleEnd,
     status: status,

@@ -1,6 +1,7 @@
-import Constants, { ENV } from '../../constants';
 import { getCAIPWithChainId } from '../../helpers';
 import { sendNotification } from '../../payloads';
+
+import Constants from '../../constants';
 import {
   NOTIFICATION_TYPE,
   SPACE_ACCEPT_REQUEST_TYPE,
@@ -8,22 +9,31 @@ import {
   SPACE_REQUEST_TYPE,
   VIDEO_CALL_TYPE,
 } from '../../payloads/constants';
-import { SignerType, VideoCallStatus } from '../../types';
+import {
+  EnvOptionsType,
+  SignerType,
+  VideoCallStatus,
+  VideNotificationRules,
+} from '../../types';
 
 interface CallDetailsType {
   type: SPACE_REQUEST_TYPE | SPACE_ACCEPT_REQUEST_TYPE | SPACE_DISCONNECT_TYPE;
   data: Record<string, unknown>;
-};
+}
 
-interface VideoCallInfoType {
+export interface VideoDataType {
+  /** @deprecated - Use `rules` object instead */
+  chatId?: string;
   recipientAddress: string;
   senderAddress: string;
-  chatId: string;
-  signalData: any;
+  signalData?: any;
   status: VideoCallStatus;
-  env?: ENV;
-  callType?: VIDEO_CALL_TYPE;
   callDetails?: CallDetailsType;
+}
+
+interface VideoCallInfoType extends VideoDataType, EnvOptionsType {
+  callType?: VIDEO_CALL_TYPE;
+  rules?: VideNotificationRules;
 }
 
 interface UserInfoType {
@@ -32,39 +42,29 @@ interface UserInfoType {
   pgpPrivateKey: string;
 }
 
-export interface VideoDataType {
-  recipientAddress: string;
-  senderAddress: string;
-  chatId: string;
-  signalData?: any;
-  status: VideoCallStatus;
-  callDetails?: CallDetailsType;
-}
-
 const sendVideoCallNotification = async (
   { signer, chainId, pgpPrivateKey }: UserInfoType,
   {
     recipientAddress,
     senderAddress,
     chatId,
+    rules,
     status,
     signalData = null,
     env = Constants.ENV.PROD,
     callType = VIDEO_CALL_TYPE.PUSH_VIDEO,
-    callDetails
+    callDetails,
   }: VideoCallInfoType
 ) => {
   try {
     const videoData: VideoDataType = {
       recipientAddress,
       senderAddress,
-      chatId,
+      chatId: rules?.access.data ?? chatId,
       signalData,
       status,
-      callDetails
+      callDetails,
     };
-
-    console.log('sendVideoCallNotification', 'videoData', videoData);
 
     const senderAddressInCaip = getCAIPWithChainId(senderAddress, chainId);
     const recipientAddressInCaip = getCAIPWithChainId(
@@ -73,7 +73,6 @@ const sendVideoCallNotification = async (
     );
 
     const notificationText = `Video Call from ${senderAddress}`;
-
     const notificationType = NOTIFICATION_TYPE.TARGETTED;
 
     await sendNotification({
@@ -81,6 +80,7 @@ const sendVideoCallNotification = async (
       signer,
       pgpPrivateKey,
       chatId,
+      rules,
       type: notificationType,
       identityType: 2,
       notification: {
@@ -102,7 +102,7 @@ const sendVideoCallNotification = async (
       env,
     });
   } catch (err) {
-    console.log('Error occured while sending notification for video call', err);
+    console.error('Error occured while sending notification for video call', err);
   }
 };
 
