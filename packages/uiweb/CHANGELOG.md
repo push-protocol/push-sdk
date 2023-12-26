@@ -2,6 +2,23 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.23...uiweb-1.2.0) (2023-12-26)
+
+
+### Bug Fixes
+
+* added styling for the component in chat profile ([d2985ae](https://github.com/ethereum-push-notification-service/push-sdk/commit/d2985aee6f1ae56892b88ad371d08333e22b4880))
+* changed component type and how it is rendered ([de355a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/de355a91e5cc6f91e5e07cf3d68efd7f7f5e4a76))
+* fixed create group btn not disabling and added minimum member requirement ([ea1a3a8](https://github.com/ethereum-push-notification-service/push-sdk/commit/ea1a3a848f646606ffebec50bf4e29b08946f946))
+* Merge branch 'main' into deployment ([af23f82](https://github.com/ethereum-push-notification-service/push-sdk/commit/af23f8282252d18bce1e335a995c750951a970bd))
+
+
+### Features
+
+* implemented option to pass a component in chatprofile ([4eea456](https://github.com/ethereum-push-notification-service/push-sdk/commit/4eea456637c60997ea5f3f5d8a3a917638db946f))
+
+
+
 ## [1.1.23](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.22...uiweb-1.1.23) (2023-12-20)
 
 
