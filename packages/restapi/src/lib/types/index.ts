@@ -84,7 +84,7 @@ export type ParsedResponseType = {
   };
 };
 
-export interface VideNotificationRules {
+export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
     data: {
@@ -94,7 +94,7 @@ export interface VideNotificationRules {
 }
 
 // SendNotificationRules can be extended in the future for other use cases
-export type SendNotificationRules = VideNotificationRules;
+export type SendNotificationRules = VideoNotificationRules;
 
 export interface ISendNotificationInputOptions {
   senderType?: 0 | 1;
@@ -813,7 +813,7 @@ export type VideoRequestInputOptions = {
   recipientAddress: string | string[];
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -828,7 +828,7 @@ export type VideoAcceptRequestInputOptions = {
   recipientAddress: string;
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {

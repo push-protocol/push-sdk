@@ -6,7 +6,7 @@ import {
   walletToPCAIP10,
 } from '../helpers';
 import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
-import { VideNotificationRules, VideoPeerInfo } from '../types';
+import { VideoNotificationRules, VideoPeerInfo } from '../types';
 import { Video as VideoV1 } from './Video';
 import { validatePeerInfo } from './helpers/validatePeerInfo';
 
@@ -58,7 +58,7 @@ export class VideoV2 {
   async request(
     recipients: string[],
     options?: {
-      rules: VideNotificationRules;
+      rules: VideoNotificationRules;
     }
   ) {
     const { rules } = options || {};

@@ -1,9 +1,9 @@
-import { VideNotificationRules } from ".";
+import { VideoNotificationRules } from ".";
 
 export type VideoPeerInfo = {
   address: string;
   signal: any;
   meta: {
-    rules: VideNotificationRules;
+    rules: VideoNotificationRules;
   };
 };
