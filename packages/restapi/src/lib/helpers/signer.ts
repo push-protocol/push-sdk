@@ -1,5 +1,5 @@
 import { SignerType, viemSignerType } from '../types';
-import { Bytes, TypedDataDomain, TypedDataField } from 'ethers';
+import { TypedDataDomain, TypedDataField } from 'ethers';
 
 export class Signer {
   private signer: SignerType;
@@ -20,7 +20,7 @@ export class Signer {
     );
   }
 
-  async signMessage(message: string | Bytes): Promise<string> {
+  async signMessage(message: string | Uint8Array): Promise<string> {
     if (
       'signMessage' in this.signer &&
       typeof this.signer.signMessage === 'function'
@@ -81,7 +81,7 @@ export class Signer {
     } else if ('provider' in this.signer && this.signer.provider) {
       // EthersV5 and EthersV6
       const network = await this.signer.provider.getNetwork();
-      return network.chainId;
+      return Number(network.chainId);
     } else {
       return 1; // Return default chainId
     }

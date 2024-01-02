@@ -18,7 +18,9 @@ describe('PushAPI.alias functionality', () => {
   beforeEach(async () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
-    const provider = ethers.getDefaultProvider(11155111);
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,

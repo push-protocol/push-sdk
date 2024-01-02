@@ -9,7 +9,7 @@ import {
 import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
-import { ethers, Signer as EthersSigner, BigNumber } from 'ethers';
+import { ethers, Signer as EthersSigner } from 'ethers';
 import axios from 'axios';
 import {
   createPublicClient,
@@ -317,14 +317,14 @@ export class PushNotificationBaseClass {
     if (!this.signer) {
       throw new Error('Signer is not provided');
     }
-    let balance: BigNumber;
+    let balance: bigint;
     const pushSigner = new Signer(this.signer);
     try {
       if (pushSigner.isViemSigner(this.signer)) {
         const balanceInBigInt = await contract.read.balanceOf({
           args: [userAddress],
         });
-        balance = ethers.BigNumber.from(balanceInBigInt);
+        balance = BigInt(balanceInBigInt);
       } else {
         balance = await contract.balanceOf(userAddress);
       }
@@ -344,7 +344,7 @@ export class PushNotificationBaseClass {
     }
 
     const pushSigner = new Signer(this.signer);
-    let allowance: BigNumber;
+    let allowance: bigint;
     try {
       if (!pushSigner.isViemSigner(this.signer)) {
         allowance = await contract!['allowance'](userAddress, spenderAddress);
@@ -352,7 +352,7 @@ export class PushNotificationBaseClass {
         const allowanceInBigInt = await contract.read.allowance({
           args: [userAddress, spenderAddress],
         });
-        allowance = ethers.BigNumber.from(allowanceInBigInt);
+        allowance = BigInt(allowanceInBigInt);
       }
       return allowance;
     } catch (error) {
@@ -364,7 +364,7 @@ export class PushNotificationBaseClass {
     if (!this.signer) {
       throw new Error('Signer is not provided');
     }
-    let count: BigNumber;
+    let count: bigint;
     const pushSigner = new Signer(this.signer);
     try {
       if (!pushSigner.isViemSigner(this.signer)) {
@@ -373,10 +373,10 @@ export class PushNotificationBaseClass {
         const countInBigInt = await contract.read.channelUpdateCounter({
           args: [userAddress],
         });
-        count = ethers.BigNumber.from(countInBigInt);
+        count = BigInt(countInBigInt);
       }
       // add one and return the count
-      return count.add(ethers.BigNumber.from(1));
+      return count + BigInt(1);
     } catch (error) {
       throw new Error(JSON.stringify(error));
     }
@@ -385,7 +385,7 @@ export class PushNotificationBaseClass {
   protected async approveToken(
     contract: any,
     spenderAddress: string,
-    amount: string | BigNumber
+    amount: string | bigint
   ) {
     try {
       if (!this.signer) {
@@ -420,7 +420,7 @@ export class PushNotificationBaseClass {
     contract: any,
     channelType: number,
     identityBytes: Uint8Array,
-    fees: BigNumber
+    fees: bigint
   ) {
     let createChannelRes;
     try {
@@ -466,7 +466,7 @@ export class PushNotificationBaseClass {
     contract: any,
     account: string,
     identityBytes: Uint8Array,
-    fees: BigNumber
+    fees: bigint
   ) {
     let updateChannelRes;
     try {
@@ -543,7 +543,7 @@ export class PushNotificationBaseClass {
     numberOfSettings: number,
     settings: string,
     description: string,
-    fees: BigNumber
+    fees: bigint
   ) {
     try {
       if (!this.signer) {

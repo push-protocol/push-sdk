@@ -19,7 +19,9 @@ describe('PushAPI.delegate functionality', () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
 
-    const provider = ethers.getDefaultProvider(11155111);
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -79,8 +81,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
-      const provider = ethers.getDefaultProvider('sepolia');
-
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
@@ -95,7 +102,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
-      const provider = ethers.getDefaultProvider('sepolia');
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
 
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -146,8 +159,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should remove delegate', async () => {
       // create polygon mumbai provider
-      const provider = ethers.getDefaultProvider('sepolia');
-
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
