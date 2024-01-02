@@ -73,7 +73,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     };
     // sign a message using EIP712
     const pushSigner = new Signer(signer);
-    const signature = pushSigner.signTypedData(
+    const signature = await pushSigner.signTypedData(
       domainInformation,
       typeInformation,
       messageInformation,
