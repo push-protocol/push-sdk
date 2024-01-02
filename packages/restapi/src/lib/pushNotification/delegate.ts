@@ -56,7 +56,7 @@ export class Delegate extends PushNotificationBaseClass {
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
-      const networkDetails = await this.getChianId(this.signer!);
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');
@@ -88,7 +88,7 @@ export class Delegate extends PushNotificationBaseClass {
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
-      const networkDetails = await this.getChianId(this.signer!);
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');

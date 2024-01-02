@@ -9,7 +9,7 @@ import {
 import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
-import { ethers, Signer, BigNumber } from 'ethers';
+import { ethers, Signer as EthersSigner } from 'ethers';
 import axios from 'axios';
 import {
   createPublicClient,
@@ -20,6 +20,7 @@ import {
 } from 'viem';
 import * as PUSH_CHANNEL from '../channels';
 import {
+  Signer,
   getAPIBaseUrls,
   getFallbackETHCAIPAddress,
   validateCAIP,
@@ -70,25 +71,12 @@ export class PushNotificationBaseClass {
     let derivedAccount;
     let coreContract;
     if (signer) {
-      if (!('_signTypedData' in signer!) && !('signTypedData' in signer!)) {
-        throw new Error('Unsupported signer type');
-      } else if ('_signTypedData' in signer) {
-        derivedAccount = await getAccountAddress({
-          account: null,
-          signer: signer,
-        });
-        if (signer?.provider) {
-          coreContract = new ethers.Contract(
-            config.CORE_CONFIG[env].EPNS_CORE_CONTRACT,
-            config.ABIS.CORE,
-            signer as unknown as Signer
-          );
-        }
-      } else if ('signTypedData' in signer) {
-        derivedAccount = await getAccountAddress({
-          account: null,
-          signer: signer,
-        });
+      derivedAccount = await getAccountAddress({
+        account: null,
+        signer: signer,
+      });
+      const pushSigner = new Signer(signer);
+      if (pushSigner.isViemSigner(signer)) {
         const client = createPublicClient({
           chain: config.TOKEN_VIEM_NETWORK_MAP[env],
           transport: http(),
@@ -99,6 +87,12 @@ export class PushNotificationBaseClass {
           publicClient: client,
           walletClient: signer as unknown as WalletClient,
         });
+      } else {
+        coreContract = new ethers.Contract(
+          config.CORE_CONFIG[env].EPNS_CORE_CONTRACT,
+          config.ABIS.CORE,
+          signer as unknown as EthersSigner
+        );
       }
     }
 
@@ -293,22 +287,12 @@ export class PushNotificationBaseClass {
     contractABI: any,
     network: Chain
   ) {
+    if (!this.signer) {
+      throw new Error('Signer is not provided');
+    }
     let contract: any;
-    if (
-      !('_signTypedData' in this.signer!) &&
-      !('signTypedData' in this.signer!)
-    ) {
-      throw new Error('Unsupported signer type');
-    } else if ('_signTypedData' in this.signer) {
-      if (!this.signer?.provider) {
-        throw new Error('Provider is required');
-      }
-      contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        this.signer as unknown as Signer
-      );
-    } else if ('signTypedData' in this.signer) {
+    const pushSigner = this.signer ? new Signer(this.signer) : null;
+    if (pushSigner?.isViemSigner(this.signer)) {
       const client = createPublicClient({
         chain: network,
         transport: http(),
@@ -320,28 +304,33 @@ export class PushNotificationBaseClass {
         walletClient: this.signer as unknown as WalletClient,
       });
     } else {
-      throw new Error('Unsupported signer type');
+      contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        this.signer as unknown as EthersSigner
+      );
     }
     return contract;
   }
 
   protected async fetchBalance(contract: any, userAddress: string) {
-    let balance: BigNumber;
+    if (!this.signer) {
+      throw new Error('Signer is not provided');
+    }
+    let balance: bigint;
+    const pushSigner = new Signer(this.signer);
     try {
-      if ('_signTypedData' in this.signer!) {
-        balance = await contract!['balanceOf'](userAddress);
-      } else if ('signTypedData' in this.signer!) {
+      if (pushSigner.isViemSigner(this.signer)) {
         const balanceInBigInt = await contract.read.balanceOf({
           args: [userAddress],
         });
-        balance = ethers.BigNumber.from(balanceInBigInt);
+        balance = BigInt(balanceInBigInt);
       } else {
-        throw new Error('Unsupported signer');
+        balance = await contract.balanceOf(userAddress);
       }
       return balance;
-    } catch (error) {
-      console.error(error);
-      throw new Error(JSON.stringify(error));
+    } catch (err) {
+      throw new Error(JSON.stringify(err));
     }
   }
 
@@ -350,17 +339,20 @@ export class PushNotificationBaseClass {
     userAddress: string,
     spenderAddress: string
   ) {
-    let allowance: BigNumber;
+    if (!this.signer) {
+      throw new Error('Signer is not provided');
+    }
+
+    const pushSigner = new Signer(this.signer);
+    let allowance: bigint;
     try {
-      if ('_signTypedData' in this.signer!) {
+      if (!pushSigner.isViemSigner(this.signer)) {
         allowance = await contract!['allowance'](userAddress, spenderAddress);
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         const allowanceInBigInt = await contract.read.allowance({
           args: [userAddress, spenderAddress],
         });
-        allowance = ethers.BigNumber.from(allowanceInBigInt);
-      } else {
-        throw new Error('Unsupported signer');
+        allowance = BigInt(allowanceInBigInt);
       }
       return allowance;
     } catch (error) {
@@ -369,20 +361,22 @@ export class PushNotificationBaseClass {
   }
 
   protected async fetchUpdateCounter(contract: any, userAddress: string) {
-    let count: BigNumber;
+    if (!this.signer) {
+      throw new Error('Signer is not provided');
+    }
+    let count: bigint;
+    const pushSigner = new Signer(this.signer);
     try {
-      if ('_signTypedData' in this.signer!) {
+      if (!pushSigner.isViemSigner(this.signer)) {
         count = await contract!['channelUpdateCounter'](userAddress);
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         const countInBigInt = await contract.read.channelUpdateCounter({
           args: [userAddress],
         });
-        count = ethers.BigNumber.from(countInBigInt);
-      } else {
-        throw new Error('Unsupported signer');
+        count = BigInt(countInBigInt);
       }
       // add one and return the count
-      return count.add(ethers.BigNumber.from(1));
+      return count + BigInt(1);
     } catch (error) {
       throw new Error(JSON.stringify(error));
     }
@@ -391,17 +385,22 @@ export class PushNotificationBaseClass {
   protected async approveToken(
     contract: any,
     spenderAddress: string,
-    amount: string | BigNumber
+    amount: string | bigint
   ) {
     try {
-      if ('_signTypedData' in this.signer!) {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
+
+      if (!pushSigner.isViemSigner(this.signer)) {
         if (!this.signer || !this.signer.provider) {
           throw new Error('ethers provider/signer is not provided');
         }
         const approvalTrxPromise = contract!['approve'](spenderAddress, amount);
         const approvalTrx = await approvalTrxPromise;
         await this.signer?.provider?.waitForTransaction(approvalTrx.hash);
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -409,8 +408,6 @@ export class PushNotificationBaseClass {
           args: [spenderAddress, amount],
         });
         const approvalTrxRes = await approvalTrxPromise;
-      } else {
-        throw new Error('Unsupported signer');
       }
       return true;
     } catch (error) {
@@ -423,14 +420,15 @@ export class PushNotificationBaseClass {
     contract: any,
     channelType: number,
     identityBytes: Uint8Array,
-    fees: BigNumber
+    fees: bigint
   ) {
     let createChannelRes;
     try {
-      if (!this.signer || !this.signer.provider) {
-        throw new Error('ethers provider/signer is not provided');
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
       }
-      if ('_signTypedData' in this.signer!) {
+      const pushSigner = new Signer(this.signer);
+      if (!pushSigner.isViemSigner(this.signer)) {
         const createChannelPromise = contract!['createChannelWithPUSH'](
           channelType,
           identityBytes,
@@ -449,7 +447,7 @@ export class PushNotificationBaseClass {
           throw new Error('Something Went wrong while creating your channel');
         }
         createChannelRes = createChannelTrx.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -458,7 +456,6 @@ export class PushNotificationBaseClass {
         });
         createChannelRes = await createChannelPromise;
       }
-
       return createChannelRes;
     } catch (error: any) {
       throw new Error(error?.message);
@@ -469,14 +466,15 @@ export class PushNotificationBaseClass {
     contract: any,
     account: string,
     identityBytes: Uint8Array,
-    fees: BigNumber
+    fees: bigint
   ) {
     let updateChannelRes;
     try {
-      if (!this.signer || !this.signer.provider) {
-        throw new Error('ethers provider/signer is not provided');
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
       }
-      if ('_signTypedData' in this.signer!) {
+      const pushSigner = new Signer(this.signer);
+      if (!pushSigner.isViemSigner(this.signer)) {
         const updateChannelPromise = contract!['updateChannelMeta'](
           account,
           identityBytes,
@@ -494,7 +492,7 @@ export class PushNotificationBaseClass {
           throw new Error('Something Went wrong while updating your channel');
         }
         updateChannelRes = updateChannelTrx.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -512,16 +510,20 @@ export class PushNotificationBaseClass {
 
   protected async verifyChannel(contract: any, channelToBeVerified: string) {
     try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
       let verifyTrxRes;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
         }
         const verifyTrxPromise = contract!['verify'](channelToBeVerified);
         const verifyTrx = await verifyTrxPromise;
         await this.signer?.provider?.waitForTransaction(verifyTrx.hash);
         verifyTrxRes = verifyTrx.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -529,8 +531,6 @@ export class PushNotificationBaseClass {
           args: [channelToBeVerified],
         });
         verifyTrxRes = await verifyTrxPromise;
-      } else {
-        throw new Error('Unsupported signer');
       }
       return verifyTrxRes;
     } catch (error: any) {
@@ -543,13 +543,17 @@ export class PushNotificationBaseClass {
     numberOfSettings: number,
     settings: string,
     description: string,
-    fees: BigNumber
+    fees: bigint
   ) {
     try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
       let createSettingsRes;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
         }
         const createSettingsPromise = contract!['createChannelSettings'](
           numberOfSettings,
@@ -560,7 +564,7 @@ export class PushNotificationBaseClass {
         const createSettings = await createSettingsPromise;
         await this.signer?.provider?.waitForTransaction(createSettings.hash);
         createSettingsRes = createSettings.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -568,8 +572,6 @@ export class PushNotificationBaseClass {
           args: [numberOfSettings, settings, description, fees],
         });
         createSettingsRes = await createSettingsTrxPromise;
-      } else {
-        throw new Error('Unsupported signer');
       }
       return createSettingsRes;
     } catch (error: any) {
@@ -579,16 +581,20 @@ export class PushNotificationBaseClass {
 
   protected async addDelegator(contract: any, delegatee: string) {
     try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
       let addDelegateRes;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
         }
         const addDelegateTrxPromise = contract!['addDelegate'](delegatee);
         const addDelegateTrx = await addDelegateTrxPromise;
         await this.signer?.provider?.waitForTransaction(addDelegateTrx.hash);
         addDelegateRes = addDelegateTrx.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -596,8 +602,6 @@ export class PushNotificationBaseClass {
           args: [delegatee],
         });
         addDelegateRes = await addDelegateTrxPromise;
-      } else {
-        throw new Error('Unsupported signer');
       }
       return addDelegateRes;
     } catch (error: any) {
@@ -607,16 +611,20 @@ export class PushNotificationBaseClass {
 
   protected async removeDelegator(contract: any, delegatee: string) {
     try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
       let removeDelegateRes;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
         }
         const removeDelegateTrxPromise = contract!['removeDelegate'](delegatee);
         const removeDelegateTrx = await removeDelegateTrxPromise;
         await this.signer?.provider?.waitForTransaction(removeDelegateTrx.hash);
         removeDelegateRes = removeDelegateTrx.hash;
-      } else if ('signTypedData' in this.signer!) {
+      } else {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
@@ -624,8 +632,6 @@ export class PushNotificationBaseClass {
           args: [delegatee],
         });
         removeDelegateRes = await removeDelegateTrxPromise;
-      } else {
-        throw new Error('Unsupported signer');
       }
       return removeDelegateRes;
     } catch (error: any) {
@@ -633,30 +639,12 @@ export class PushNotificationBaseClass {
     }
   }
 
-  protected async getChianId(signer: SignerType) {
-    let chainId;
-    const isProviderExists = await this.checkProvider(signer);
-    if (!isProviderExists) {
-      throw new Error('Provider doesnt exists');
+  protected async getChainId(signer: SignerType) {
+    if (!this.signer) {
+      throw new Error('Signer is not provided');
     }
-    if ('_signTypedData' in signer!) {
-      const chainDetails = await signer?.provider?.getNetwork();
-      chainId = chainDetails?.chainId;
-    } else if ('signTypedData' in signer!) {
-      chainId = await signer.getChainId();
-    }
-    return chainId;
-  }
-
-  protected async checkProvider(signer: SignerType) {
-    let res = false;
-    if ('_signTypedData' in signer!) {
-      res = signer && signer?.provider ? true : false;
-    } else if ('signTypedData' in signer!) {
-      const chainId = await signer.getChainId();
-      res = !!chainId;
-    }
-    return res;
+    const pushSigner = new Signer(this.signer);
+    return pushSigner.getChainId();
   }
 
   protected async uploadToIPFSViaPushNode(data: string): Promise<string> {

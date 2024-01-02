@@ -13,12 +13,10 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import {
+  Signer,
   decryptPGPKey,
   decryptWithWalletRPCMethod,
   isValidETHAddress,
-  walletToPCAIP10,
-  signTypedData,
-  signMessage,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
@@ -363,7 +361,8 @@ export const getEip191Signature = async (
   const _signer = wallet?.signer;
   // EIP191 signature
 
-  const signature = await signMessage(_signer, message);
+  const pushSigner = new Signer(_signer);
+  const signature = await pushSigner.signMessage(message);
   const sigType = version === 'v1' ? 'eip191' : 'eip191v2';
   return { verificationProof: `${sigType}:${signature}` };
 };
@@ -381,17 +380,17 @@ export const getEip712Signature = async (
 
   const typeInformation = getTypeInformation();
   const _signer = wallet?.signer;
+  const pushSigner = new Signer(_signer);
   let chainId: number;
   try {
-    chainId = await _signer.getChainId();
+    chainId = await pushSigner.getChainId();
   } catch (err) {
     chainId = 1;
   }
   const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  const signedMessage = await signTypedData(
-    _signer,
+  const signedMessage = await pushSigner.signTypedData(
     isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash },
