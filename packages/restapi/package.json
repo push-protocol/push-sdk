@@ -13,7 +13,6 @@
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
-    "ethers": "^6.9.1",
     "immer": "^10.0.2",
     "joi": "^17.9.2",
     "livepeer": "^2.5.8",

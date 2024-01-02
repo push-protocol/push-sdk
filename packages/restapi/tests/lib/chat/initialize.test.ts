@@ -118,7 +118,7 @@ describe('PushAPI.initialize functionality', () => {
       expect(progressInfo[i].progressId).to.deep.equal(expectedHooks[i]);
     }
   });
-  it('Should not initialize on wrong version meta', async () => {
+  it('Should initialize with read Mode on wrong version meta', async () => {
     const nftSigner = new ethers.Wallet(
       `0x${process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1']}`
     );
@@ -129,12 +129,11 @@ describe('PushAPI.initialize functionality', () => {
       progressInfo.push(info);
     };
     // Already Existing NFT User
-    await expect(
-      PushAPI.initialize(nftSigner, {
-        account: nftAccount,
-        progressHook: updateProgressInfo,
-        versionMeta: { NFTPGP_V1: { password: 'wrongpassword' } },
-      })
-    ).to.be.rejected;
+    const userAlice = await PushAPI.initialize(nftSigner, {
+      account: nftAccount,
+      progressHook: updateProgressInfo,
+      versionMeta: { NFTPGP_V1: { password: 'wrongpassword' } },
+    });
+    expect(userAlice.errors.length).to.deep.equal(2);
   });
 });

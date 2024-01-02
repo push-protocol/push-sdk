@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { ChatMemberCounts, ChatMemberProfile, ChatStatus, ProgressHookType, Rules } from '../types';
+import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -61,9 +61,8 @@ export interface InfoOptions {
   overrideAccount?: string;
 }
 
-
 export interface ParticipantStatus {
   pending: boolean;
-  role: 'ADMIN' | 'MEMBER';
+  role: 'admin' | 'member';
   participant: boolean;
 }

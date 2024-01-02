@@ -94,7 +94,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
-      console.log(response);
+      // console.log(response);
       expect(response).not.null;
     });
 
