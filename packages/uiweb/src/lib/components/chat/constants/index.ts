@@ -55,4 +55,7 @@ export const ACCESS_TYPE_TITLE = {
   },
 };
 
+export const PENDING_MEMBERS_LIMIT = 5;
+export const ACCEPTED_MEMBERS_LIMIT = 5;
+
 export * from './chainDetails';
