@@ -638,11 +638,11 @@ async function PushAPI_chat_video_call_notification(
     senderType: 1,
     signer,
     pgpPrivateKey: pgpDecrpyptedPvtKey,
-    rules:{
-      access:{
+    rules: {
+      access: {
         type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-        data: chatId
-      }
+        data: chatId,
+      },
     },
     type: 3, // target
     identityType: 2, // direct payload
@@ -657,7 +657,7 @@ async function PushAPI_chat_video_call_notification(
       img: '',
       additionalMeta: {
         type: '1+1',
-        data: "DATA REQUIRED FOR VIDEO CALL",
+        data: 'DATA REQUIRED FOR VIDEO CALL',
         domain: 'push.org',
       },
     },
