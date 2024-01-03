@@ -11,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pushprotocol/restapi": "1.5.1",
-    "@pushprotocol/socket": "^0.5.2"
+    "@pushprotocol/restapi": "0.0.1-alpha.62",
+    "@pushprotocol/socket": "^0.5.2",
+    "ethers": "^6.9.2"
   }
 }
