@@ -321,12 +321,13 @@ export class PushNotificationBaseClass {
     const pushSigner = new Signer(this.signer);
     try {
       if (pushSigner.isViemSigner(this.signer)) {
-        const balanceInBigInt = await contract.read.balanceOf({
-          args: [userAddress],
-        });
-        balance = BigInt(balanceInBigInt);
+        balance = BigInt(
+          await contract.read.balanceOf({
+            args: [userAddress],
+          })
+        );
       } else {
-        balance = await contract.balanceOf(userAddress);
+        balance = BigInt(await contract.balanceOf(userAddress));
       }
       return balance;
     } catch (err) {
@@ -347,12 +348,15 @@ export class PushNotificationBaseClass {
     let allowance: bigint;
     try {
       if (!pushSigner.isViemSigner(this.signer)) {
-        allowance = await contract!['allowance'](userAddress, spenderAddress);
+        allowance = BigInt(
+          await contract!['allowance'](userAddress, spenderAddress)
+        );
       } else {
-        const allowanceInBigInt = await contract.read.allowance({
-          args: [userAddress, spenderAddress],
-        });
-        allowance = BigInt(allowanceInBigInt);
+        allowance = BigInt(
+          await contract.read.allowance({
+            args: [userAddress, spenderAddress],
+          })
+        );
       }
       return allowance;
     } catch (error) {
@@ -368,12 +372,13 @@ export class PushNotificationBaseClass {
     const pushSigner = new Signer(this.signer);
     try {
       if (!pushSigner.isViemSigner(this.signer)) {
-        count = await contract!['channelUpdateCounter'](userAddress);
+        count = BigInt(await contract!['channelUpdateCounter'](userAddress));
       } else {
-        const countInBigInt = await contract.read.channelUpdateCounter({
-          args: [userAddress],
-        });
-        count = BigInt(countInBigInt);
+        count = BigInt(
+          await contract.read.channelUpdateCounter({
+            args: [userAddress],
+          })
+        );
       }
       // add one and return the count
       return count + BigInt(1);
