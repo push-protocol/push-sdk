@@ -45,7 +45,6 @@ export const Button: React.FC<IButtonProps> = (props) => {
   const theme = useContext(ThemeContext);
 
   const { onClick, width, height, customStyle } = props;
-  console.log(customStyle)
 
   return (
     <ThemeProvider theme={theme}>

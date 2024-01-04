@@ -199,6 +199,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           message,
           signatureValidationPubliKey,
           pgpPrivateKey,
+          env,
           pgpHelper,
         );
       }

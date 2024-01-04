@@ -17,13 +17,20 @@ import {
   isValidCAIP10NFTAddress,
   isValidETHAddress,
 } from '../helpers';
-import { IDENTITY_TYPE, DEFAULT_DOMAIN } from './constants';
+import {
+  IDENTITY_TYPE,
+  DEFAULT_DOMAIN,
+  NOTIFICATION_TYPE,
+  SOURCE_TYPES,
+  VIDEO_CALL_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
+} from './constants';
 import { ENV } from '../constants';
-
+import { getChannel } from '../channels/getChannel';
 /**
  * Validate options for some scenarios
  */
-function validateOptions(options: any) {
+function validateOptions(options: ISendNotificationInputOptions) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
   }
@@ -51,6 +58,61 @@ function validateOptions(options: any) {
       throw '[Push SDK] - Error - sendNotification() - "payload" mandatory for Identity Type: Direct Payload, Minimal!';
     }
   }
+
+  const isAdditionalMetaPayload = options.payload?.additionalMeta;
+
+  const isVideoOrSpaceType =
+    typeof options.payload?.additionalMeta === 'object' &&
+    (options.payload.additionalMeta.type ===
+      `${VIDEO_CALL_TYPE.PUSH_VIDEO}+1` ||
+      options.payload.additionalMeta.type ===
+        `${VIDEO_CALL_TYPE.PUSH_SPACE}+1`);
+
+  if (
+    isAdditionalMetaPayload &&
+    isVideoOrSpaceType &&
+    !options.chatId &&
+    !options.rules
+  ) {
+    throw new Error(
+      '[Push SDK] - Error - sendNotification() - Either chatId or rules object is required to send a additional meta notification for video or spaces'
+    );
+  }
+}
+
+/**
+ *
+ * @param payloadOptions channel, recipient and type tp verify whether it is a simulate type
+ * @returns boolean
+ */
+async function checkSimulateNotification(payloadOptions: {
+  channel: string;
+  recipient: string | string[] | undefined;
+  type: NOTIFICATION_TYPE;
+  env: ENV | undefined;
+}): Promise<boolean> {
+  try {
+    const { channel, recipient, type, env } = payloadOptions || {};
+    // fetch channel info
+    const channelInfo = await getChannel({
+      channel: channel,
+      env: env,
+    });
+    // check if channel exists, if it does then its not simulate type
+    if (channelInfo) return false;
+    else {
+      // if no channel info found, check if channel address = recipient and notification type is targeted
+      const convertedRecipient =
+        typeof recipient == 'string' && recipient?.split(':').length == 3
+          ? recipient.split(':')[2]
+          : recipient;
+      return (
+        channel == convertedRecipient && type == NOTIFICATION_TYPE.TARGETTED
+      );
+    }
+  } catch (e) {
+    return true;
+  }
 }
 
 export async function sendNotification(options: ISendNotificationInputOptions) {
@@ -71,6 +133,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       env = ENV.PROD,
       chatId,
+      rules,
       pgpPrivateKey,
     } = options || {};
 
@@ -121,7 +184,9 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       uuid,
       // for the pgpv2 verfication proof
-      chatId,
+      chatId:
+        rules?.access.data ?? // for backwards compatibilty with 'chatId' param
+        chatId,
       pgpPrivateKey,
     });
 
@@ -133,7 +198,14 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
     });
 
-    const source = getSource(chainId, identityType, senderType);
+    const source = (await checkSimulateNotification({
+      channel: options.channel,
+      recipient: options.recipients,
+      type: options.type,
+      env: options.env,
+    }))
+      ? SOURCE_TYPES.SIMULATE
+      : getSource(chainId, identityType, senderType);
 
     const apiPayload = {
       verificationProof,
@@ -150,6 +222,21 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         recipients: recipients || '',
         channel: _channelAddress,
       }),
+      /* 
+        - If 'rules' is not provided, check if 'chatId' is available.
+        - If 'chatId' is available, create a new 'rules' object for backwards compatibility.
+        - If neither 'rules' nor 'chatId' is available, do not include 'rules' in the payload.
+      */
+      ...(rules || chatId
+        ? {
+            rules: rules ?? {
+              access: {
+                data: chatId,
+                type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+              },
+            },
+          }
+        : {}),
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;

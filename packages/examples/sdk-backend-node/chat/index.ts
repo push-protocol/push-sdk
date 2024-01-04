@@ -1,6 +1,7 @@
 import { runChatLowlevelUseCases } from './chat.lowlevel';
 import { runNFTChatLowLevelUseCases } from './nftChat.lowlevel';
 import { runChatClassUseCases } from './chat';
+import { runNFTChatClassUseCases } from './nftChat';
 
 export const runChatUseCases = async (): Promise<void> => {
   console.log(`
@@ -13,12 +14,25 @@ export const runChatUseCases = async (): Promise<void> => {
         `);
 
   await runChatClassUseCases();
+
+  console.log(`
+███╗░░██╗███████╗████████╗  ░█████╗░██╗░░██╗░█████╗░████████╗
+████╗░██║██╔════╝╚══██╔══╝  ██╔══██╗██║░░██║██╔══██╗╚══██╔══╝
+██╔██╗██║█████╗░░░░░██║░░░  ██║░░╚═╝███████║███████║░░░██║░░░
+██║╚████║██╔══╝░░░░░██║░░░  ██║░░██╗██╔══██║██╔══██║░░░██║░░░
+██║░╚███║██║░░░░░░░░██║░░░  ╚█████╔╝██║░░██║██║░░██║░░░██║░░░
+╚═╝░░╚══╝╚═╝░░░░░░░░╚═╝░░░  ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░
+  `);
+
+  await runNFTChatClassUseCases();
+
   console.log(`
 ▒█▀▀█ ▒█░▒█ ░█▀▀█ ▀▀█▀▀ ░ ▒█░░░ ▒█▀▀▀█ ▒█░░▒█ ▒█░░░ ▒█▀▀▀ ▒█░░▒█ ▒█▀▀▀ ▒█░░░ 
 ▒█░░░ ▒█▀▀█ ▒█▄▄█ ░▒█░░ ▄ ▒█░░░ ▒█░░▒█ ▒█▒█▒█ ▒█░░░ ▒█▀▀▀ ░▒█▒█░ ▒█▀▀▀ ▒█░░░ 
 ▒█▄▄█ ▒█░▒█ ▒█░▒█ ░▒█░░ █ ▒█▄▄█ ▒█▄▄▄█ ▒█▄▀▄█ ▒█▄▄█ ▒█▄▄▄ ░░▀▄▀░ ▒█▄▄▄ ▒█▄▄█
   `);
   await runChatLowlevelUseCases();
+
   console.log(`
 ▒█▄░▒█ ▒█▀▀▀ ▀▀█▀▀ ▒█▀▀█ ▒█░▒█ ░█▀▀█ ▀▀█▀▀ ░ ▒█░░░ ▒█▀▀▀█ ▒█░░▒█ ▒█░░░ ▒█▀▀▀ ▒█░░▒█ ▒█▀▀▀ ▒█░░░ 
 ▒█▒█▒█ ▒█▀▀▀ ░▒█░░ ▒█░░░ ▒█▀▀█ ▒█▄▄█ ░▒█░░ ▄ ▒█░░░ ▒█░░▒█ ▒█▒█▒█ ▒█░░░ ▒█▀▀▀ ░▒█▒█░ ▒█▀▀▀ ▒█░░░ 

@@ -66,7 +66,8 @@ export const ApproveRequestBubble = ({
       borderRadius=" 0px 12px 12px 12px"
       alignSelf="start"
       justifyContent="start"
-      maxWidth="68%"
+      maxWidth="600px"
+      width='40%'
       minWidth="15%"
       position="relative"
       flexDirection="column"
@@ -99,9 +100,9 @@ const Button = styled.button<IThemeProps>`
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  background: ${(props) => props.theme.backgroundColor.buttonBackground};
+  background: ${(props) => props.theme.backgroundColor!.buttonBackground};
   border: none;
-  color:  ${(props) => props.theme.textColor.buttonText};
+  color:  ${(props) => props.theme.textColor!.buttonText};
   width: 100%;
   font-size: 16px;
   font-weight: 600;

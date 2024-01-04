@@ -9,17 +9,17 @@ export enum ENV {
   LOCAL = 'local',
 }
 const Constants = {
-  ENV,
-  PAGINATION: {
-    INITIAL_PAGE: 1,
-    LIMIT: 10,
-    LIMIT_MIN: 1,
-    LIMIT_MAX: 50,
-  },
-  DEFAULT_CHAIN_ID: 5,
-  DEV_CHAIN_ID: 99999,
-  NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
-  ETH_CHAINS: [1, 5],
+    ENV,
+    PAGINATION: {
+      INITIAL_PAGE: 1,
+      LIMIT: 10,
+      LIMIT_MIN: 1,
+      LIMIT_MAX: 50
+    },
+    DEFAULT_CHAIN_ID: 11155111,
+    DEV_CHAIN_ID: 99999,
+    NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
+    ETH_CHAINS: [1, 11155111]
 };
 
 export interface AddressValidatorsType {
@@ -54,7 +54,7 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
   let chainId = 1; // by default PROD
 
   if (env === Constants.ENV.DEV || env === Constants.ENV.STAGING) {
-    chainId = 5;
+    chainId = 11155111;
   }
 
   return `eip155:${chainId}:${address}`;

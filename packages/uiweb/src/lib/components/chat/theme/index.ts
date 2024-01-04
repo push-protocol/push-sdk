@@ -36,6 +36,7 @@ interface IBackgroundColor {
   toastSuccessBackground?: string;
   toastErrorBackground?: string;
   toastShadowBackground?: string;
+  criteriaLabelBackground?:string;
 }
 
 interface ITextColor {
@@ -138,6 +139,7 @@ export const lightChatTheme: IChatTheme = {
   toastErrorBackground:
     'linear-gradient(90.15deg, #FF2070 -125.65%, #FF2D79 -125.63%, #FFF9FB 42.81%)',
   toastShadowBackground: '#ccc',
+  criteriaLabelBackground: '#657795'
   },
 
   fontSize: {
@@ -226,6 +228,7 @@ export const darkChatTheme: IChatTheme = {
     encryptionMessageBackground: 'rgb(64, 70, 80);',
     buttonBackground: 'rgb(202, 89, 155)',
     modalBackground:'rgb(47, 49, 55)',
+    criteriaLabelBackground: 'rgb(47, 49, 55)',
     modalInputBackground:'transparent',
     modalHoverBackground:'rgb(64, 70, 80)',
     buttonDisableBackground:'#787E99',

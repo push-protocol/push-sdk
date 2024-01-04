@@ -17,7 +17,7 @@ import useToast from '../reusables/NewToast';
 import {
   getNewChatUser,
 } from '../../../helpers';
-import { ModalButtonProps, User } from '../exportedTypes';
+import { IChatTheme, ModalButtonProps, User } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
 import { device } from '../../../config';
 import CloseIcon from '../../../icons/close.svg';
@@ -35,6 +35,8 @@ type AddWalletContentProps = {
   groupMembers: any;
   isLoading?: boolean;
   modalHeader: string;
+  title?: string;
+  submitButtonTitle?: string;
 };
 export const AddWalletContent = ({
   onSubmit,
@@ -44,7 +46,8 @@ export const AddWalletContent = ({
   handleMemberList,
   groupMembers,
   isLoading,
-  modalHeader,
+  title,
+  submitButtonTitle,
 }: AddWalletContentProps) => {
   const theme = useContext(ThemeContext);
 
@@ -87,6 +90,10 @@ export const AddWalletContent = ({
 
   const addMemberToList = (member: User) => {
     let errorMessage = '';
+    const isMemberAlreadyAdded = memberList?.find(
+      (user: any) => user.wallets.toLowerCase() === member.wallets.toLowerCase()
+    );
+    console.log('member', member);
 
     errorMessage = addWalletValidation(
       member,
@@ -102,7 +109,7 @@ export const AddWalletContent = ({
         toastType: 'ERROR',
         getToastIcon: (size) => <MdError size={size} color="red" />,
       });
-    } else {
+    } else if(!isMemberAlreadyAdded) {
       handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);
     }
 
@@ -119,11 +126,12 @@ export const AddWalletContent = ({
 
   return (
     <Section
+      margin="auto"
       width={isMobile ? '100%' : '410px'}
       flexDirection="column"
       padding={isMobile ? '0px auto' : '0px 10px'}
     >
-      <ModalHeader title='Add More Wallets' handleClose={onClose} handlePrevious={handlePrevious} />
+      <ModalHeader title={title ? title : 'Add More Wallets'} handleClose={onClose} handlePrevious={handlePrevious} />
 
       <Section
         margin="50px 0 10px 0"
@@ -137,8 +145,8 @@ export const AddWalletContent = ({
 
         <Span fontSize="14px" color={theme.textColor?.modalSubHeadingText}>
           {groupMembers
-            ? `0${memberList?.length + groupMembers?.length} / 09 Members`
-            : `0${memberList?.length} / 09 Members`}
+            ? `0${memberList?.length + groupMembers?.length} / 5000 Members`
+            : `0${memberList?.length} / 5000 Members`}
         </Span>
       </Section>
 
@@ -162,7 +170,7 @@ export const AddWalletContent = ({
       ) }
 
       <MultipleMemberList>
-        {memberList?.map((member: any, index: any) => (
+        {memberList && memberList?.map((member: any, index: any) => (
           <MemberListContainer
             key={index}
             memberList={memberList}
@@ -176,12 +184,15 @@ export const AddWalletContent = ({
 
       <Section flex="1" alignSelf="center">
         <ModalConfirmButton
-          onClick={() => onSubmit()}
+          onClick={() => {
+            onSubmit()
+          }}
           isLoading={isLoading}
           memberListCount={memberList?.length > 0}
           theme={theme}
+          disabled={isLoading || groupMembers.length === 0}
         >
-          {!isLoading && groupMembers ? 'Add To Group' : ''}
+          {!isLoading && groupMembers ? (submitButtonTitle ? submitButtonTitle : 'Add To Group'): ''}
           {isLoading && <Spinner size="30" color="#fff" />}
         </ModalConfirmButton>
       </Section>
@@ -241,15 +252,15 @@ const MultipleMemberList = styled.div`
   }
 `;
 
-const ModalConfirmButton = styled.button<ModalButtonProps>`
+const ModalConfirmButton = styled.button<ModalButtonProps & { theme: IChatTheme } >`
   margin: 60px 0 0 0;
   width: 197px;
   background: ${(props) =>
-    props.memberListCount ? props.theme.backgroundColor.buttonBackground : props.theme.backgroundColor.buttonDisableBackground};
+    props.memberListCount ? props.theme.backgroundColor!.buttonBackground : props.theme.backgroundColor!.buttonDisableBackground};
   color: ${(props) =>
-    props.memberListCount ? props.theme.textColor.buttonText : props.theme.textColor.buttonDisableText};
+    props.memberListCount ? props.theme.textColor!.buttonText : props.theme.textColor!.buttonDisableText};
   border: ${(props) =>
-    props.memberListCount ? 'none' : props.theme.border.modal};
+    props.memberListCount ? 'none' : props.theme.border!.modal};
   min-width: 50%;
   box-sizing: border-box;
   cursor: pointer;

@@ -17,15 +17,16 @@ export const useCreateGatedGroup = () => {
           groupDescription:groupInfoType.groupDescription,
           groupImage:groupInfoType.groupImage,
           isPublic: groupInfoType.isPublic,
-          members: [],
-          admins: [],
-          account: account || '',
+          members: groupInfoType.members,
+          admins: groupInfoType.admins,
+          account: account || undefined,
           env: env,
-          pgpPrivateKey: pgpPrivateKey,
+          pgpPrivateKey: pgpPrivateKey || undefined,
           rules: rules,
         };
         const response = await PushAPI.chat.createGroup(payload);
         setLoading(false);
+        console.log(response)
         if (!response) {
           return false;
         }

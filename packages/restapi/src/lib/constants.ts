@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const packageJson = require('../../package.json');
+
 /**
  * SUPPORTED ENVIRONEMENTS
  */
@@ -43,6 +46,14 @@ export enum MessageType {
   PAYMENT = 'Payment',
 }
 
+export const ALPHA_FEATURES = {
+  SCALABILITY_V2: 'SCALABILITY_V2',
+};
+
+export const PACKAGE_BUILD = packageJson.version.includes('alpha')
+  ? 'ALPHA'
+  : 'STABLE';
+
 const Constants = {
   ENV,
   ENCRYPTION_TYPE,
@@ -52,14 +63,15 @@ const Constants = {
     LIMIT_MIN: 1,
     LIMIT_MAX: 50,
   },
-  DEFAULT_CHAIN_ID: 5,
+  DEFAULT_CHAIN_ID: 11155111,
   DEV_CHAIN_ID: 99999,
   NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
-  ETH_CHAINS: [1, 5],
+  ETH_CHAINS: [1, 11155111],
   ENC_TYPE_V1: 'x25519-xsalsa20-poly1305',
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',
   ENC_TYPE_V3: 'eip191-aes256-gcm-hkdf-sha256',
   ENC_TYPE_V4: 'pgpv1:nft',
+  ALPHA_FEATURES,
 };
 
 export default Constants;

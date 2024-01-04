@@ -155,15 +155,15 @@ const Input = styled.input<IThemeProps>`
   color: ${(props) =>
     props.customStyle?.color
       ? props.customStyle.color
-      : props.theme.textColor.searchInputText};
+      : props.theme.textColor?.searchInputText};
   font-weight: ${(props) =>
     props.customStyle?.fontWeight
       ? props.customStyle.fontWeight
-      : props.theme.fontWeight.searchInputText};
+      : props.theme.fontWeight?.searchInputText};
   font-size: ${(props) =>
     props.customStyle?.fontSize
       ? props.customStyle.fontSize
-      : props.theme.fontSize.searchInputText};
+      : props.theme.fontSize?.searchInputText};
   line-height: 24px;
   &:focus {
     outline: none;
@@ -174,15 +174,15 @@ const Input = styled.input<IThemeProps>`
     color: ${(props) =>
       props.customStyle?.placeholderColor
         ? props.customStyle.placeholderColor
-        : props.theme.textColor.searchPlaceholderText};
+        : props.theme.textColor?.searchPlaceholderText};
     font-weight: ${(props) =>
       props.customStyle?.fontWeight
         ? props.customStyle.fontWeight
-        : props.theme.fontWeight.searchInputText};
+        : props.theme.fontWeight?.searchInputText};
     font-size: ${(props) =>
       props.customStyle?.fontSize
         ? props.customStyle.fontSize
-        : props.theme.fontSize.searchInputText};
+        : props.theme.fontSize?.searchInputText};
   }
 `;
 

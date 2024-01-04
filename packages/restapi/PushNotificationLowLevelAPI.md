@@ -39,7 +39,7 @@ This file documents the usage of Low Level Push Notification Functions. Visit [D
 
 ```typescript
 const notifications = await PushAPI.user.getFeeds({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   env: 'staging',
 });
 ```
@@ -221,7 +221,7 @@ const notifications = await PushAPI.user.getFeeds({
 
 ```typescript
 const spams = await PushAPI.user.getFeeds({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   spam: true,
   env: 'staging',
 });
@@ -414,7 +414,7 @@ PushAPI.user.getFeeds [Spam] | Response - 200 OK
 
 ```typescript
 const subscriptions = await PushAPI.user.getSubscriptions({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
   env: 'staging',
 });
 ```
@@ -476,7 +476,7 @@ Allowed Options (params with _ are mandatory)
 
 ```typescript
 const channelData = await PushAPI.channels.getChannel({
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   env: 'staging',
 });
 ```
@@ -1000,8 +1000,8 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 await PushAPI.channels.subscribe({
   signer: _signer,
-  channelAddress: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
-  userAddress: 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
+  channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
+  userAddress: 'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
     console.log('opt in success');
   },
@@ -1041,8 +1041,8 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 await PushAPI.channels.unsubscribe({
   signer: _signer,
-  channelAddress: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
-  userAddress: 'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
+  channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
+  userAddress: 'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
     console.log('opt out success');
   },
@@ -1154,8 +1154,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  recipients: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // recipient address
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  recipients: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // recipient address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1179,10 +1179,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     img: '',
   },
   recipients: [
-    'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+    'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
   ], // recipients addresses
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1205,7 +1205,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1219,8 +1219,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   type: PushAPI.payloads.NOTIFICATION_TYPE.TARGETTED, // target
   identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
-  recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  recipients: 'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1235,10 +1235,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   identityType: PushAPI.payloads.IDENTITY_TYPE.IPFS, // ipfs payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
   recipients: [
-    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
-    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+    'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
   ], // recipients addresses
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1252,7 +1252,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
   type: PushAPI.payloads.NOTIFICATION_TYPE.BROADCAST, // broadcast
   identityType: PushAPI.payloads.IDENTITY_TYPE.DIRECT_PAYLOAD, // direct payload
   ipfsHash: 'bafkreicuttr5gpbyzyn6cyapxctlr7dk2g6fnydqxy6lps424mcjcn73we', // IPFS hash of the payload
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1275,8 +1275,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  recipients: 'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1300,10 +1300,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     img: '',
   },
   recipients: [
-    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
-    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+    'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
   ], // recipients address
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1326,7 +1326,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     cta: '',
     img: '',
   },
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1345,8 +1345,8 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     id: '_your_graph_id',
     counter: 3,
   },
-  recipients: 'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  recipients: 'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1', // recipient address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1366,10 +1366,10 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     counter: 3,
   },
   recipients: [
-    'eip155:5:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
-    'eip155:5:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
+    'eip155:11155111:0xCdBE6D076e05c5875D90fa35cc85694E1EAFBBd1',
+    'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3',
   ], // recipients addresses
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1388,7 +1388,7 @@ const apiResponse = await PushAPI.payloads.sendNotification({
     id: '_your_graph_id',
     counter: 3,
   },
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // your channel address
   env: 'staging',
 });
 ```
@@ -1413,7 +1413,7 @@ Utils method to parse raw Push Feeds API response into a pre-defined shape as be
 ```typescript
 // fetch some raw feeds data
 const apiResponse = await PushAPI.user.getFeeds({
-  user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address
+  user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address
   raw: true,
   env: 'staging',
 });
@@ -1450,7 +1450,7 @@ _We get the above `keys` after the parsing of the API repsonse._
 
 ```typescript
 const subscribers = await PushAPI.channels.getSubscribers({
-  channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
+  channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   page: 1, // Optional, defaults to 1
   limit : 10 // Optional, defaults to 10
   env: 'staging'

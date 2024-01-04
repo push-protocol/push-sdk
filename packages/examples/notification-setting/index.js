@@ -1,12 +1,12 @@
-import { PushAPI } from '@pushprotocol/restapi';
-import { ethers } from 'ethers';
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import * as dotenv from 'dotenv';
+import { ethers } from 'ethers';
 dotenv.config();
 
 // initialise the provider
 const provider = new ethers.providers.JsonRpcProvider(
   // PUBLIC RPC
-  process.env?.RPC?? 'https://goerli.blockpi.network/v1/rpc/public'
+  process.env?.RPC?? 'https://rpc.sepolia.org'
 );
 
 let signer;
@@ -20,17 +20,17 @@ if (process.env.PRIVATE_KEY) {
 
 // initialise the sdk with the signer and env
 // for channel
-const userAlice = await PushAPI.initialize(signer, { env: 'staging' });
+const userAlice = await PushAPI.initialize(signer, { env: CONSTANTS.ENV.STAGING });
 // for subscribers
 const userBob = await PushAPI.initialize(
   ethers.Wallet.createRandom().connect(provider),
-  { env: 'staging' }
+  { env: CONSTANTS.ENV.STAGING }
 );
 
 
 const userKate = await PushAPI.initialize(
   ethers.Wallet.createRandom().connect(provider),
-  { env: 'staging' }
+  { env: CONSTANTS.ENV.STAGING }
 );
 
 const main = async () => {
@@ -78,7 +78,7 @@ const main = async () => {
     // make bob and kate subscribe to the channel
     // bob wants to opt in to all the settings
     await userBob.notification.subscribe(
-      `eip155:5:${userAlice.account}`,
+      `eip155:11155111:${userAlice.account}`,
       {
         settings: [
           // enabled for boolean type
@@ -95,7 +95,7 @@ const main = async () => {
     );
     // kate doesnot want to opt in to any settings
     await userKate.notification.subscribe(
-      `eip155:5:${userAlice.account}`,
+      `eip155:11155111:${userAlice.account}`,
       {
         settings: [
           // disabled for boolean type

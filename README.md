@@ -154,7 +154,7 @@ import * as PushAPI from "@pushprotocol/restapi";
 // here "getFeeds" gets all the notifications for the user address provided
 const main = async() => {
   const notifications = await PushAPI.user.getFeeds({
-    user: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
+    user: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // user address in CAIP
     env: 'staging'
   });
 
@@ -191,7 +191,8 @@ Push Protocol is an open source Project. We firmly believe in a completely trans
 - Documentation Request: If you're reading the Push documentation and believe that we're missing something, please create a docs request.
 
 
-Read how you can contribute <a href="https://github.com/ethereum-push-notification-service/push-sdk/blob/main/contributing.md">HERE</a>
+Read how you can contribute <a href="https://github.com/ethereum-push-notification-service/push-sdk/blob/main/CONTRIBUTING.md
+">HERE</a>
 
 Not sure where to start? Join our discord and we will help you get started!
 

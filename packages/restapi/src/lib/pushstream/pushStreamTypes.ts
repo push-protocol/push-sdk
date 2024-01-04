@@ -1,8 +1,7 @@
-import { Rules } from "../types";
-import Constants, { ENV } from '../constants';
+import { Rules } from '../types';
+import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
-  listen?: STREAM[];
   filter?: {
     channels?: string[];
     chats?: string[];
@@ -13,7 +12,7 @@ export type PushStreamInitializeProps = {
   };
   raw?: boolean;
   env?: ENV;
-  enabled?: boolean;
+  overrideAccount?: string;
 };
 
 export enum STREAM {
@@ -23,13 +22,14 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  CONNECT = 'STREAM.CONNECT',
+  DISCONNECT = 'STREAM.DISCONNECT',
 }
 
 export enum NotificationEventType {
   INBOX = 'notification.inbox',
   SPAM = 'notification.spam',
 }
-
 
 export enum MessageOrigin {
   Other = 'other',
@@ -63,20 +63,19 @@ export enum ProposedEventNames {
   Remove = 'chat.group.participant.remove',
 }
 
-
 export interface Profile {
   image: string;
   publicKey: string;
 }
 
-export interface Member {
+export interface GroupMember {
   address: string;
   profile: Profile;
 }
 
 export interface Pending {
-  members: Member[];
-  admins: Member[];
+  members: GroupMember[];
+  admins: GroupMember[];
 }
 
 export interface GroupMeta {
@@ -84,9 +83,6 @@ export interface GroupMeta {
   description: string;
   image: string;
   owner: string;
-  members: Member[];
-  admins: Member[];
-  pending: Pending;
   private: boolean;
   rules: Rules;
 }
@@ -142,7 +138,6 @@ export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
 }
 
-
 export interface MessageEvent {
   event: MessageEventType;
   origin: MessageOrigin;
@@ -170,8 +165,6 @@ export const NOTIFICATION = {
 } as const;
 
 export type NotificationType = keyof typeof NOTIFICATION.TYPE;
-
-
 
 export interface NotificationEvent {
   event: NotificationEventType;
@@ -231,3 +224,32 @@ export interface MessageRawData {
   verificationProof: string;
   previousReference: string;
 }
+
+export enum EVENTS {
+  // Websocket
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+
+  // Notification
+  USER_FEEDS = 'userFeeds',
+  USER_SPAM_FEEDS = 'userSpamFeeds',
+
+  // Chat
+  CHAT_RECEIVED_MESSAGE = 'CHATS',
+  CHAT_GROUPS = 'CHAT_GROUPS',
+}
+
+export type SocketInputOptions = {
+  user: string;
+  env: ENV;
+  socketType?: 'notification' | 'chat';
+  apiKey?: string;
+  socketOptions?: SocketOptions;
+};
+
+type SocketOptions = {
+  autoConnect: boolean;
+  reconnectionAttempts?: number;
+  reconnectionDelayMax?: number;
+  reconnectionDelay?: number;
+};
