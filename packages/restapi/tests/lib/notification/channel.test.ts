@@ -422,7 +422,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     }, 10000000000);
 
-    it.only('Should update channel meta', async () => {
+    it('Should update channel meta', async () => {
       const res = await viemUser.channel.update({
         name: 'Updated Name',
         description: 'Testing new description',
