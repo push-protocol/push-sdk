@@ -1,8 +1,13 @@
+# Deprecation Notice
+
+**Important**: This package will be deprecated in future releases. We recommend migrating to [@pushprotocol/restapi](https://www.npmjs.com/package/@pushprotocol/restapi) for continued support and updates. Please refer to the [Stream Documentation](https://push.org/docs/chat/build/stream-chat/) for instructions on transitioning to the new package.
+
 # socket
 
 This package gives access to Push Protocol (Push Nodes) using Websockets built on top of [Socket.IO](https://socket.io/docs/v4/client-api/). Visit [Developer Docs](https://docs.push.org/developers) or [Push.org](https://push.org) to learn more.
 
 # Index
+
 - [How to use in your app?](#how-to-use-in-your-app)
   - [Installation](#installation)
   - [Import SDK](#import-sdk)
@@ -20,85 +25,93 @@ This package gives access to Push Protocol (Push Nodes) using Websockets built o
 # How to use in your app?
 
 ## Installation
+
 ```
   yarn add @pushprotocol/socket@latest ethers@^5.6
 ```
-  or
+
+or
+
 ```
   npm install @pushprotocol/socket@latest ethers@^5.6
 ```
+
 ## Import SDK
+
 ```typescript
-import {
-  createSocketConnection,
-  EVENTS
-} from '@pushprotocol/socket';
+import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 ```
 
 ## **About blockchain agnostic address format**
 
-In any of the below methods (unless explicitly stated otherwise) we accept either - 
-- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses ***We strongly recommend using this address format***. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
-(Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+In any of the below methods (unless explicitly stated otherwise) we accept either -
 
-- ETH address format: only for backwards compatibility. 
-(Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
- 
- ### Chat blockchain agnostic address format
- **Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
+- [CAIP format](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md#test-cases): for any on chain addresses **_We strongly recommend using this address format_**. [Learn more about the format and examples](https://docs.push.org/developers/concepts/web3-notifications).
+  (Example : `eip155:1:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+- ETH address format: only for backwards compatibility.
+  (Example: `0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
+
+### Chat blockchain agnostic address format
+
+**Note** - For chat related apis, the address is in the format: eip155:&lt;address&gt; instead of eip155:&lt;chainId&gt;:&lt;address&gt;, we call this format **Partial CAIP**
 (Example : `eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`)
 
 # Socket SDK Features
+
 ## **Creating a socket connection object**
+
 ### **For notification**
+
 ```typescript
 const pushSDKSocket = createSocketConnection({
   user: 'eip155:11155111:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb', // CAIP, see below
   env: 'staging',
-  socketOptions: { autoConnect: false }
+  socketOptions: { autoConnect: false },
 });
 ```
+
 ### **For chat**
+
 ```typescript
 const pushSDKSocket = createSocketConnection({
-    user: 'eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb',
-    env: 'staging',
-    socketType: 'chat',
-    socketOptions: { autoConnect: true, reconnectionAttempts: 3 }
+  user: 'eip155:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb',
+  env: 'staging',
+  socketType: 'chat',
+  socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
 });
 ```
+
 IMPORTANT: create the connection object in your app only when you have the `user` address available since its mandatory.
 
 **`autoConnect`**: Generally if we don't pass `autoConnect: false` then the socket connection is automatic once the object is created. Now since we may or may not have the account address handy and wish to start the connection during instantiation so this option makes it easier for us to choose when we want to `connect` or not!
 
-Allowed Options (params with * are mandatory)
-| Param    | Type    | Default | Remarks                                    |
+Allowed Options (params with _ are mandatory)
+| Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| user*    | string  | -       | user account address (CAIP)                |
-| env  | string  | 'prod'      | API env - 'prod', 'staging', 'dev'|
-| socketType  | 'notification' &#124;  'chat'  |  'notification'      | socket type  |
-| socketOptions      | object  | -      | supports the same as [SocketIO Options](https://socket.io/docs/v4/client-options/) |
+| user_ | string | - | user account address (CAIP) |
+| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+| socketType | 'notification' &#124; 'chat' | 'notification' | socket type |
+| socketOptions | object | - | supports the same as [SocketIO Options](https://socket.io/docs/v4/client-options/) |
 
 ## **Connect the socket connection object**
+
 ```typescript
 pushSDKSocket.connect();
 ```
 
-
 ## **Disconnect the socket connection object**
+
 ```typescript
 pushSDKSocket.disconnect();
 ```
 
 ## **Subscribing to Socket Events**
+
 ```typescript
-pushSDKSocket.on(EVENTS.CONNECT, () => {
+pushSDKSocket.on(EVENTS.CONNECT, () => {});
 
-});
-
-pushSDKSocket.on(EVENTS.DISCONNECT, () => {
-
-});
+pushSDKSocket.on(EVENTS.DISCONNECT, () => {});
 
 pushSDKSocket.on(EVENTS.USER_FEEDS, (feedItem) => {
   // feedItem is the notification data when that notification was received
@@ -114,16 +127,17 @@ pushSDKSocket.on(EVENT.CHAT_GROUPS, (message) => {
 ```
 
 Supported EVENTS
-| EVENT name | When is it triggered?                      |
+| EVENT name | When is it triggered? |
 |------------|--------------------------------------------|
-| EVENTS.CONNECT    | whenever the socket is connected     | 
-| EVENTS.DISCONNECT | whenever the socket is disconneted   | 
-| EVENTS.USER_FEEDS | whenever a new notification is received by the user after the last socket connection   | 
-| EVENTS.USER_SPAM_FEEDS | whenever a new spam notification is received by the user after the last socket connection   | 
+| EVENTS.CONNECT | whenever the socket is connected |
+| EVENTS.DISCONNECT | whenever the socket is disconneted |
+| EVENTS.USER_FEEDS | whenever a new notification is received by the user after the last socket connection |
+| EVENTS.USER_SPAM_FEEDS | whenever a new spam notification is received by the user after the last socket connection |
 | EVENT.CHAT_RECEIVED_MESSAGE | whenever a new message is received |
 | EVENT.CHAT_GROUPS | whenever a group is created or updated |
 
 # Examples
+
 ## Basic example of using SDK sockets in a React App
 
 ```

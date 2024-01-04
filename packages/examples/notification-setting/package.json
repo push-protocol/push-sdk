@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pushprotocol/restapi": "^1.4.30"
+    "@pushprotocol/restapi": "latest"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
