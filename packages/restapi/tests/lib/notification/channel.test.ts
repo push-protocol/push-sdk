@@ -32,10 +32,9 @@ describe('PushAPI.channel functionality', () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      // PUBLIC RPC
-      'https://rpc.sepolia.org'
-    );
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -426,6 +425,8 @@ describe('PushAPI.channel functionality', () => {
 
   describe.skip('channel :: create', () => {
     it('Should create channel', async () => {
+      const channelInfo = await userKate.channel.info();
+      if (channelInfo) return; // skip if already exists
       const res = await userKate.channel.create({
         name: 'SDK Test',
         description: 'Testing new description',

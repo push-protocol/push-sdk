@@ -1,60 +1,89 @@
-import { SignerType } from '../types';
+import { SignerType, viemSignerType } from '../types';
+import { TypedDataDomain, TypedDataField } from 'ethers';
 
-export const signMessage = async (
-  signer: SignerType,
-  message: string
-): Promise<string> => {
-  // Check the signer type using type guards
-  if ('signMessage' in signer) {
-    // If the signer has a signMessage function with the ethersV5SignerType signature
-    if ('_signTypedData' in signer) {
-      // It's ethersV5SignerType, use its signMessage function
-      const signature = await signer.signMessage(message);
-      return signature;
+export class Signer {
+  private signer: SignerType;
+
+  constructor(signer: SignerType) {
+    this.signer = signer;
+  }
+
+  /**
+   * Determine if the signer is a Viem signer
+   */
+  isViemSigner(signer: SignerType): signer is viemSignerType {
+    return (
+      typeof (signer as any).signTypedData === 'function' &&
+      typeof (signer as any).getChainId === 'function' &&
+      signer.signMessage.length === 1 && // Checking if the function takes one argument
+      (signer as any).signTypedData.length === 1 // Checking if the function takes one argument
+    );
+  }
+
+  async signMessage(message: string | Uint8Array): Promise<string> {
+    if (
+      'signMessage' in this.signer &&
+      typeof this.signer.signMessage === 'function'
+    ) {
+      if (this.isViemSigner(this.signer)) {
+        // Viem signer requires additional arguments
+        return this.signer.signMessage({
+          message,
+          account: this.signer.account,
+        });
+      } else {
+        // EthersV5 and EthersV6
+        return this.signer.signMessage(message);
+      }
     } else {
-      // It's viemSignerType, use its signMessage function
-      const signature = await signer.signMessage({
-        message,
-        account: signer.account,
-      });
-      return signature;
+      throw new Error('Signer does not support signMessage');
     }
-  } else {
-    throw new Error('Invalid signer type provided.');
   }
-};
 
-export const signTypedData = async (
-  signer: SignerType,
-  domain: any,
-  types: any,
-  value: any,
-  primaryType: string
-): Promise<string> => {
-  // Check the signer type using type guards
-  if ('_signTypedData' in signer) {
-    // It's ethersV5SignerType, use its functions
-    const signature = await signer._signTypedData(domain, types, value);
-    return signature;
-  } else if ('signTypedData' in signer) {
-    // It's viemSignerType, use its functions
-    const signature = await signer.signTypedData({
-      account: signer.account,
-      domain,
-      types,
-      primaryType: primaryType,
-      message: value,
-    });
-    return signature;
-  } else {
-    throw new Error('Invalid signer type provided.');
+  async signTypedData(
+    domain: TypedDataDomain,
+    types: Record<string, TypedDataField[]>,
+    value: Record<string, any>,
+    primaryType?: string
+  ): Promise<string> {
+    if (this.isViemSigner(this.signer)) {
+      // Call Viem's signTypedData with its specific structure
+      return this.signer.signTypedData({
+        domain: domain,
+        types: types,
+        primaryType: primaryType,
+        message: value,
+        account: this.signer.account,
+      });
+    } else if ('_signTypedData' in this.signer) {
+      // ethersV5 signer uses _signTypedData
+      return this.signer._signTypedData(domain, types, value);
+    } else if ('signTypedData' in this.signer) {
+      // ethersV6 signer uses signTypedData
+      return this.signer.signTypedData(domain, types, value);
+    } else {
+      throw new Error('Signer does not support signTypedData');
+    }
   }
-};
 
-export const getAddress = async (signer: SignerType): Promise<string> => {
-  if ('getAddress' in signer) {
-    return await signer.getAddress();
-  } else {
-    return signer.account['address'] ?? '';
+  async getAddress(): Promise<string> {
+    if (this.isViemSigner(this.signer)) {
+      return this.signer.account['address'] ?? '';
+    } else {
+      return await this.signer.getAddress();
+    }
   }
-};
+
+  async getChainId(): Promise<number> {
+    if (this.isViemSigner(this.signer)) {
+      // Viem signer has a direct method for getChainId
+      return this.signer.getChainId();
+    } else if ('provider' in this.signer && this.signer.provider) {
+      // EthersV5 and EthersV6
+      const network = await this.signer.provider.getNetwork();
+      return Number(network.chainId);
+    } else {
+      return 1; // Return default chainId
+    }
+  }
+}
