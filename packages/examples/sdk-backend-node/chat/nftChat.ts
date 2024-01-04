@@ -142,7 +142,7 @@ export const runNFTChatClassUseCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(nftSigner1, {
     env,
     account: nftAccount1,
-    versionMeta: { NFTPGP_V1: { password: 'wrongPass' } },
+    // versionMeta: { NFTPGP_V1: { password: nftProfilePassword1 } },
   });
 
   const stream = await userAlice.initStream(
