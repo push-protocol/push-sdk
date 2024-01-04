@@ -135,7 +135,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   //moniters socket changes
   useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
+    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId.includes(":") ? chatId.split(":")[1] : chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
       if (!Object.keys(messages || {}).length) {
@@ -150,7 +150,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           [messagesSinceLastConnection],
           false
         );
-
         setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
       }
       setChatStatusText('');
