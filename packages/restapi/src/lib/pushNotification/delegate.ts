@@ -80,9 +80,6 @@ export class Delegate extends PushNotificationBaseClass {
   remove = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
