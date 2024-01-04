@@ -5,6 +5,14 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+import { goerli, polygonMumbai, sepolia } from 'viem/chains';
+import {
+  createWalletClient,
+  http,
+  getContract,
+  createPublicClient,
+} from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
@@ -17,6 +25,8 @@ describe('PushAPI.channel functionality', () => {
   let userNoChannel: PushAPI;
   let noChannelSigner: any;
   let noChannelAddress: string;
+  let viemUser: any;
+  let viemSigner: any;
 
   beforeEach(async () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
@@ -35,7 +45,11 @@ describe('PushAPI.channel functionality', () => {
     const WALLET = ethers.Wallet.createRandom();
     noChannelSigner = new ethers.Wallet(WALLET.privateKey);
     noChannelAddress = await noChannelSigner.getAddress();
-
+    viemSigner = createWalletClient({
+      account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
+      chain: sepolia,
+      transport: http(),
+    });
     enum ENV {
       PROD = 'prod',
       STAGING = 'staging',
@@ -54,6 +68,8 @@ describe('PushAPI.channel functionality', () => {
     userBob = await PushAPI.initialize(signer1);
     // initialisation with a signer that has no channel
     userNoChannel = await PushAPI.initialize(noChannelSigner);
+    // viem signer
+    viemUser = await PushAPI.initialize(viemSigner);
   });
 
   describe('channel :: info', () => {
@@ -469,6 +485,55 @@ describe('PushAPI.channel functionality', () => {
         },
       ]);
       //   console.log(res)
+      expect(res).not.null;
+    }, 10000000000);
+
+    it.only('Should create channel setting viem signer', async () => {
+      const res = await viemUser.channel.setting([
+        {
+          type: 1,
+          default: 1,
+          description: 'test1',
+        },
+        {
+          type: 2,
+          default: 10,
+          description: 'test2',
+          data: {
+            upper: 100,
+            lower: 1,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 10,
+            upper: 50,
+          },
+          description: 'test3',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: true,
+            ticker: 2,
+          },
+        },
+        {
+          type: 3,
+          default: {
+            lower: 3,
+            upper: 5,
+          },
+          description: 'test4',
+          data: {
+            upper: 100,
+            lower: 1,
+            enabled: false,
+            ticker: 2,
+          },
+        },
+      ]);
+        // console.log(res)
       expect(res).not.null;
     }, 10000000000);
   });

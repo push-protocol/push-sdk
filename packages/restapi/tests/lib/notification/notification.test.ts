@@ -200,7 +200,7 @@ describe('PushAPI.notification functionality', () => {
           ],
         }
       );
-      console.log(res);
+      // console.log(res);
       expect(res).not.null;
     });
 
