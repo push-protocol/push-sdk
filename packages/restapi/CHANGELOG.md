@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.1...restapi-1.5.2) (2024-01-04)
+
+
+### Bug Fixes
+
+* fix unsubscribe with viem signers ([#974](https://github.com/ethereum-push-notification-service/push-sdk/issues/974)) ([2d61da4](https://github.com/ethereum-push-notification-service/push-sdk/commit/2d61da4de5d57ee2bbf8e69393b3064f1d2bce57))
+* Merge branch 'main' into deployment ([90b26dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/90b26dd24a920cf9ea3d5c54d5886fad8f444ece))
+
+
+
 ## [1.5.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.0...restapi-1.5.1) (2023-12-22)
 
 
