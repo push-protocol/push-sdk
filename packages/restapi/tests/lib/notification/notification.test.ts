@@ -109,6 +109,32 @@ describe('PushAPI.notification functionality', () => {
       // console.log(response)
       expect(response).not.null;
     });
+
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('INBOX', {
+        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channels: [
+          '0xD8634C39BBFd4033c0d3289C4515275102423681',
+          '0x53474D90663de06BEf5D0017F450730D83168063',
+        ],
+        raw: true,
+      });
+      // console.log(response)
+      expect(response).not.null;
+    });
+
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('INBOX', {
+        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channels: [
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x53474D90663de06BEf5D0017F450730D83168063',
+        ],
+        raw: true,
+      });
+      // console.log(response);
+      expect(response).not.null;
+    });
   });
 
   describe('notification :: subscribe', () => {

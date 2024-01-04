@@ -11,14 +11,16 @@ import { parseApiResponse } from '../utils';
 export type FeedsPerChannelOptionsType = {
   user: string;
   env?: ENV;
-  channels?: [string];
+  channels?: string[];
   page?: number;
   limit?: number;
   spam?: boolean;
   raw?: boolean;
 };
 
-export const getFeedsPerChannel = async (options: FeedsPerChannelOptionsType) => {
+export const getFeedsPerChannel = async (
+  options: FeedsPerChannelOptionsType
+) => {
   const {
     user,
     env = Constants.ENV.PROD,
