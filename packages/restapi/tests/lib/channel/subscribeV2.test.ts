@@ -29,7 +29,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       userAddress: `eip155:11155111:${account1}`,
       env: CONSTANTS.ENV.STAGING,
     });
-    expect(res.status).to.be.equal('success');
+    expect(res.status).to.be.equal(204);
   });
 
   it('Should unsubscribe to the channel via V2 without settings', async () => {
@@ -39,8 +39,8 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       userAddress: `eip155:11155111:${account1}`,
       env: CONSTANTS.ENV.STAGING,
     });
-    console.log(res)
-    expect(res.status).to.be.equal('success');
+    // console.log(res)
+    expect(res.status).to.be.equal(204);
   });
 
 

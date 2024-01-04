@@ -13,7 +13,7 @@ import {
 } from 'viem';
 import { abi } from './tokenABI';
 import { goerli, polygonMumbai } from 'viem/chains';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 enum ENV {
   PROD = 'prod',

@@ -19,9 +19,9 @@ describe('PushAPI.delegate functionality', () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      'https://rpc.sepolia.org'
-    );
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -81,10 +81,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
-      const provider = new ethers.providers.JsonRpcProvider(
-        'https://rpc-mumbai.maticvigil.com'
-      );
-
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
@@ -99,9 +102,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
-      const provider = new ethers.providers.JsonRpcProvider(
-        'https://rpc-mumbai.maticvigil.com'
-      );
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
 
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -152,10 +159,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should remove delegate', async () => {
       // create polygon mumbai provider
-      const provider = new ethers.providers.JsonRpcProvider(
-        'https://rpc-mumbai.maticvigil.com'
-      );
-
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
         provider
@@ -178,7 +188,7 @@ describe('PushAPI.delegate functionality', () => {
         channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       // console.log(res)
-      expect(res).not.null
+      expect(res).not.null;
     });
 
     it('Without signer : Should fetch delegates', async () => {
