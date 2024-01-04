@@ -410,9 +410,20 @@ describe('PushAPI.channel functionality', () => {
     });
   });
 
-  describe.skip('channel :: update', () => {
+  describe('channel :: update', () => {
     it('Should update channel meta', async () => {
       const res = await userKate.channel.update({
+        name: 'Updated Name',
+        description: 'Testing new description',
+        url: 'https://google.com',
+        icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
+      });
+      //   console.log(res)
+      expect(res).not.null;
+    }, 10000000000);
+
+    it('Should update channel meta', async () => {
+      const res = await viemUser.channel.update({
         name: 'Updated Name',
         description: 'Testing new description',
         url: 'https://google.com',
@@ -488,7 +499,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     }, 10000000000);
 
-    it.only('Should create channel setting viem signer', async () => {
+    it('Should create channel setting viem signer', async () => {
       const res = await viemUser.channel.setting([
         {
           type: 1,
