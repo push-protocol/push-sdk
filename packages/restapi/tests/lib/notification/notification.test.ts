@@ -208,8 +208,14 @@ describe('PushAPI.notification functionality', () => {
       const res = await userViem.notification.subscribe(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      // console.log(res)
-      expect(res).not.null;
+      expect(res.message).to.equal('successfully opted into channel');
+    });
+
+    it('With viem signer and provider: Should unsubscribe', async () => {
+      const res = await userViem.notification.unsubscribe(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      expect(res.message).to.equal('successfully opted out channel');
     });
   });
 
