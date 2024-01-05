@@ -276,6 +276,8 @@ const GroupInformation = ({
 
   const [copyText, setCopyText] = useState<string>('');
   const isMobile = useMediaQuery(device.mobileL);
+  const groupInfoToast = useToast();
+
 
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
@@ -286,8 +288,16 @@ const GroupInformation = ({
           chatId: groupInfo?.chatId,
           accountId: account,
         });
-        if (status) {
+        if (status && typeof status !== 'string') {
           setAccountStatus(status);
+        }
+        else{
+          groupInfoToast.showMessageToast({
+            toastTitle: 'Error',
+            toastMessage: 'Error in fetching member details',
+            toastType: 'ERROR',
+            getToastIcon: (size) => <MdError size={size} color="red" />,
+          });
         }
       })();
     }
