@@ -17,6 +17,7 @@ import {
   getContract,
   WalletClient,
   Chain,
+  toHex,
 } from 'viem';
 import * as PUSH_CHANNEL from '../channels';
 import {
@@ -457,7 +458,7 @@ export class PushNotificationBaseClass {
           throw new Error('viem signer is not provided');
         }
         const createChannelPromise = contract.write.createChannelWithPUSH({
-          args: [channelType, identityBytes, fees, this.getTimeBound()],
+          args: [channelType, toHex(new Uint8Array(identityBytes)), fees, this.getTimeBound()],
         });
         createChannelRes = await createChannelPromise;
       }
@@ -501,8 +502,8 @@ export class PushNotificationBaseClass {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
-        const updateChannelPromise = contract.write.createChannelWithPUSH({
-          args: [account, identityBytes, fees],
+        const updateChannelPromise = contract.write.updateChannelMeta({
+          args: [account, toHex(new Uint8Array(identityBytes)), fees],
         });
         updateChannelRes = await updateChannelPromise;
       }

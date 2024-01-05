@@ -69,15 +69,21 @@ export class Notification extends PushNotificationBaseClass {
           env: this.env,
         });
       } else {
-        return await PUSH_USER.getFeedsPerChannel({
-          user: nonCaipAccount!,
-          page: page,
-          limit: limit,
-          spam: FEED_MAP[spam],
-          raw: raw,
-          env: this.env,
-          channels: channels,
+        const promises = channels.map(async (channel) => {
+          return await PUSH_USER.getFeedsPerChannel({
+            user: nonCaipAccount!,
+            page: page,
+            limit: limit,
+            spam: FEED_MAP[spam],
+            raw: raw,
+            env: this.env,
+            channels: [channel],
+          });
         });
+
+        const results = await Promise.all(promises);
+        const feedRes = results.flat();
+        return feedRes;
       }
     } catch (error) {
       throw new Error(`Push SDK Error: API : notifcaiton::list : ${error}`);
