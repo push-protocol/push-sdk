@@ -32,7 +32,7 @@ export const useCreateGatedGroup = () => {
         return error.message;
       }
     },
-    [account, env]
+    [account, env, pushUser]
   );
 
   return { createGatedGroup, error, loading };
