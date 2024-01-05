@@ -77,7 +77,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
       domainInformation,
       typeInformation,
       messageInformation,
-      'Unsubscribe'
+      'Data'
     );
 
     const verificationProof = signature; // might change
@@ -91,7 +91,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: res.status, message: 'successfully opted into channel' };
+    return { status: res.status, message: 'successfully opted out channel' };
   } catch (err: any) {
     if (typeof onError === 'function') onError(err as Error);
 
