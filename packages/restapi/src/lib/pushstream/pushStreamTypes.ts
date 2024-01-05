@@ -59,6 +59,9 @@ export enum VideoEventType {
   DenyVideo = 'video.deny',
   ConnectVideo = 'video.connect',
   DisconnectVideo = 'video.disconnect',
+  // retry events
+  RetryRequestVideo = 'video.retry.request',
+  RetryApproveVideo = 'video.retry.approve'
 }
 
 export enum ProposedEventNames {
