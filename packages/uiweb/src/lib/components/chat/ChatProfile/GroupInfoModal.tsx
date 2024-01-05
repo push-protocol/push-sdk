@@ -400,7 +400,7 @@ const GroupInformation = ({
         />
       )}
 
-      {accountStatus?.role === GROUP_ROLES.ADMIN &&
+      {accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase() &&
         groupMembers?.accepted &&
         groupMembers?.accepted?.length < 10 && (
           <AddWalletContainer
