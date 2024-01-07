@@ -7,6 +7,7 @@ export interface IChatPreviewPayload {
   chatId: string | undefined;
   chatPic: string | null;
   chatSender: string;
+  chatGroup: boolean;
   chatTimestamp: number | undefined;
   chatMsg?: {
     messageType: string;
@@ -15,14 +16,12 @@ export interface IChatPreviewPayload {
 }
 
 export interface IChatPreviewProps {
-  selected?: boolean;
-  badge?: {
-    show?: boolean;
-    count?: number;
-    title?: string;
-    type?: 'msg' | 'new';
-  };
   chatPreviewPayload?: IChatPreviewPayload;
+  selected?: boolean;
+  setSelected?: (chatId: string) => void;
+  badge?: {
+    count?: number;
+  };
 }
 
 export interface IChatPreviewListProps {
@@ -190,3 +189,13 @@ export interface ConditionData {
 }
 
 export type ConditionArray = ConditionData[];
+
+export enum ChatPreviewListErrorCodes {
+  CHAT_PREVIEW_LIST_PRELOAD_ERROR = 'CPL-001',
+  CHAT_PREVIEW_LIST_LOAD_ERROR = 'CPL-002',
+}
+
+export interface IChatPreviewListError {
+  code: ChatPreviewListErrorCodes;
+  message: string;
+}

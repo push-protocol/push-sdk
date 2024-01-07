@@ -1,28 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import {
-  IFeeds,
-  IMessageIPFS,
-  IMessageIPFSWithCID,
-} from '@pushprotocol/restapi';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { Item, chatLimit } from '../../../config';
-import {
-  appendUniqueMessages,
-  checkIfIntent,
-  checkIfSameChat,
-  dateToFromNowDaily,
-  getDefaultFeedObject,
-  getNewChatUser,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
-import { useChatData, usePushChatSocket } from '../../../hooks';
-import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
-import { Messagetype } from '../../../types';
 import { Button, Image, Section, Span, Spinner } from '../../reusables';
+import { useResolveWeb3Name } from '../../hooks';
+
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -40,18 +23,41 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   options: IChatPreviewProps
 ) => {
 
+  // Format address
+  const formatAddress = () => {
+    let formattedAddress = options.chatPreviewPayload?.chatSender;
 
-  const checkInput = (name: string) => {
-    if (name.startsWith("eip155:")) {
-      const resultString = name.substring(7);
-      console.log(resultString);
-      return resultString
-    } else {
-      console.log(name);
-      return name;
+    if (!options.chatPreviewPayload?.chatGroup) {
+      // check and remove eip155:
+      if (formattedAddress.includes('eip155:')) {
+        formattedAddress = formattedAddress.replace('eip155:', '');
+      }
     }
+    
+    return formattedAddress;
   }
-  console.log(options.chatPreviewPayload?.chatSender)
+
+  // Format date
+  const formatDate = () => {
+    let formattedDate;
+    const today = moment();
+    const timestamp = moment(options.chatPreviewPayload.chatTimestamp);
+
+    if (timestamp.isSame(today, 'day')) {
+      // If the timestamp is from today, show the time
+      formattedDate = timestamp.format('HH:mm');
+    } else if (timestamp.isSame(today.subtract(1, 'day'), 'day')) {
+      // If the timestamp is from yesterday, show 'Yesterday'
+      formattedDate = 'Yesterday';
+    } else {
+      // If the timestamp is from before yesterday, show the date
+      // Use 'L' to format the date based on the locale
+      formattedDate = timestamp.format('L');
+    }
+
+    return formattedDate;
+  };
+
   return (
     <ChatViewListCard>
       <Button
@@ -59,8 +65,15 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         width="100%"
         height="70px"
         minHeight="70px"
+        margin="5px 5px"
+        padding="5px 5px"
+        borderRadius="24px"
         flexDirection="row"
-        
+        background={options.selected ? '#f5f5f5' : '#fff'}
+        onClick={() => {
+          // set chatid as selected
+          options.setSelected(options.chatPreviewPayload?.chatId);
+        }}
       >
         <Section
           justifyContent="start"
@@ -80,25 +93,43 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         </Section>
         <Section
           justifyContent="flex-start"
-          flexDirection="col"
+          flexDirection="column"
           alignItems="center" 
           alignSelf="stretch"
           overflow='hidden'
-         
+          margin='0 5px'
+          flex='1'
         >
-          <InboxContentContainer>
-          <InboxName>
-           { options.chatPreviewPayload && 
-            checkInput(options.chatPreviewPayload?.chatSender)}
-            </InboxName>
-            <LastMessage>
-            {options.chatPreviewPayload && 
-            (options.chatPreviewPayload.chatMsg.messageContent).slice(0, 25) + '...'
-          }
-          </LastMessage>
-          {/* <DateText>{options.chatPreviewPayload && options.chatPreviewPayload.chatTimestamp}</DateText> */}
-          </InboxContentContainer>
-          
+          <Section
+            justifyContent="flex-start"
+            flexDirection="row"
+            alignItems="flex-start" 
+            alignSelf="stretch"
+            overflow='hidden'
+            flex='1'
+          >
+            <Account>
+              {formatAddress()}
+            </Account>
+            <Dated>{formatDate()}</Dated>
+          </Section>
+          <Section
+            justifyContent="flex-start"
+            flexDirection="row"
+            alignItems="flex-start" 
+            alignSelf="stretch"
+            overflow='hidden'
+            flex='1'
+          >
+            <Message>
+              {options.chatPreviewPayload.chatMsg.messageContent}
+            </Message>
+            {!!options.badge.count && 
+              <Badge>
+                {options.badge.count}
+              </Badge>
+            }
+          </Section>
         </Section>
         
       </Button>
@@ -130,20 +161,43 @@ const InboxContentContainer = styled.div`
 `;
 
 // Styled component for the name of the person in the inbox
-const InboxName = styled.div`
+const Account = styled.div`
   font-weight: bold;
   font-size: 16px;
+  flex: 1;
+  align-self: stretch;
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 10px;
 `;
 
-// const DateText = styled.div`
-//   color: #888;
-//   font-size: 12px;
-//   position: absolute;
-//   top:0;
-//   right: 0;
-// `;
+const Dated = styled.div`
+  color: #888;
+  font-size: 12px;
+`;
+
 // Styled component for the last message in the inbox
-const LastMessage = styled.div`
+const Message = styled.div`
   color: #888;
   font-size: 14px;
+  flex: 1;
+  align-self: stretch;
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 10px;
 `;
+
+const Badge = styled.div`
+  background: rgb(226,8,128);
+  color: #fff;
+  padding: 0px 8px;
+  min-height: 24px;
+  border-radius: 24px;
+  align-self: center;
+  font-size: 12px;
+  font-weight: bold;
+`
