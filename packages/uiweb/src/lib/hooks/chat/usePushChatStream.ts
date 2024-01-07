@@ -26,18 +26,17 @@ export const pushChatStream = () => {
     const [chatStream, setChatStream] = useState<any>({}) // to track any new messages
     const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
     const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
+    const [pushChatStream, setPushChatStream] = useState<any>({}); //stream connection
 
-
-    const [pushChatstream, setPushChatStream] = useState<any>({});
     const addSocketEvents = async () => {
         console.warn('\n--> addChatSocketEvents - stream');
-        pushChatstream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
+        pushChatStream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
             console.log('CONNECTED - stream: ', err);
             setIsPushChatStreamConnected(true);
         });
-        await pushChatstream.connect();
+        await pushChatStream.connect();
 
-        pushChatstream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
+        pushChatStream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
             console.log('DIS-CONNECTED: ', err);
             setIsPushChatStreamConnected(false);
         });
@@ -45,7 +44,7 @@ export const pushChatStream = () => {
 
         //Listen for chat messages, your message, request, accept, rejected,
         console.log('\t-->will attach eachMessage event now - stram');
-        pushChatstream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
+        pushChatStream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
 
 
             console.log("at streammm", message)
@@ -60,7 +59,7 @@ export const pushChatStream = () => {
 
             // stream?.disconnect();
         });
-        pushChatstream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
+        pushChatStream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
             console.log('Alice received chat ops - stream', chatops);
             setGroupMetaStream(chatops)
         });
@@ -71,23 +70,23 @@ export const pushChatStream = () => {
 
 
     const removeSocketEvents = () => {
-        pushChatstream?.disconnect();
+        pushChatStream?.disconnect();
     };
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-        if (Object.keys(pushChatstream || {}).length !== 0) {
+        if (Object.keys(pushChatStream || {}).length !== 0) {
             addSocketEvents();
         }
 
         return () => {
-            if (Object.keys(pushChatstream || {}).length !== 0) {
+            if (Object.keys(pushChatStream || {}).length !== 0) {
                 removeSocketEvents();
             }
         }
-    }, [pushChatstream]);
+    }, [pushChatStream]);
 
-    console.log("checkk", pushChatstream)
+    console.log("checkk", pushChatStream)
     /**
      * Whenever the requisite params to create a connection object change
      *  - disconnect the old connection 
@@ -96,9 +95,9 @@ export const pushChatStream = () => {
 
     useEffect(() => {
         if (pushUser) {
-            if (Object.keys(pushChatstream || {}).length !== 0) {
+            if (Object.keys(pushChatStream || {}).length !== 0) {
                 console.log('=================>>> disconnection in the hook');
-                pushChatstream?.disconnect();
+                pushChatStream?.disconnect();
             } else {
                 const main = async () => {
                     console.log("initializngggg....")
@@ -132,7 +131,7 @@ export const pushChatStream = () => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account, env, pushUser, isPushChatStreamConnected, pushChatstream]);
+    }, [account, env, pushUser, isPushChatStreamConnected, pushChatStream]);
 
     return {
         chatStream,
