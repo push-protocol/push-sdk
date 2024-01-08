@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
-import { getCAIPAddress, signTypedData } from '../helpers';
+import { Signer, getCAIPAddress } from '../helpers';
 import * as CryptoJS from 'crypto-js';
 
 import {
@@ -258,8 +258,8 @@ export async function getVerificationProof({
         chainId: chainId,
         verifyingContract: verifyingContract,
       };
-      const signature = await signTypedData(
-        signer,
+      const pushSigner = new Signer(signer);
+      const signature = await pushSigner.signTypedData(
         domain,
         type,
         message,
@@ -328,7 +328,9 @@ export function getSource(
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
   if (
-    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161].includes(chainId)
+    [
+      1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161,
+    ].includes(chainId)
   ) {
     return `eip155:${chainId}:${address}`;
   }

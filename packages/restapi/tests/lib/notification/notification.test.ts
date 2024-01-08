@@ -20,14 +20,12 @@ describe('PushAPI.notification functionality', () => {
   let viemSigner: any;
   let userViem: PushAPI;
   beforeEach(async () => {
-    signer1 = new ethers.Wallet(
-      `0x${process.env['WALLET_PRIVATE_KEY']}`
-    );
+    signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
     account1 = await signer1.getAddress();
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      'https://rpc.sepolia.org'
-    );
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -35,9 +33,7 @@ describe('PushAPI.notification functionality', () => {
     );
     account2 = await signer2.getAddress();
     viemSigner = createWalletClient({
-      account: privateKeyToAccount(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`
-      ),
+      account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
       chain: sepolia,
       transport: http(),
     });
@@ -51,7 +47,7 @@ describe('PushAPI.notification functionality', () => {
       LOCAL = 'local',
     }
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, {env:ENV.DEV});
+    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer1);
     // TODO: remove signer1 after signer becomes optional
@@ -92,7 +88,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('SPAM', {
-        account: "0xD8634C39BBFd4033c0d3289C4515275102423681"
+        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       // console.log(response)
       expect(response).not.null;
@@ -100,7 +96,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
-      console.log(response);
+      // console.log(response);
       expect(response).not.null;
     });
 
@@ -113,27 +109,50 @@ describe('PushAPI.notification functionality', () => {
       // console.log(response)
       expect(response).not.null;
     });
+
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('INBOX', {
+        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channels: [
+          '0xD8634C39BBFd4033c0d3289C4515275102423681',
+          '0x53474D90663de06BEf5D0017F450730D83168063',
+        ],
+        raw: true,
+      });
+      // console.log(response)
+      expect(response).not.null;
+    });
+
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('INBOX', {
+        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channels: [
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x53474D90663de06BEf5D0017F450730D83168063',
+        ],
+        raw: true,
+      });
+      // console.log(response);
+      expect(response).not.null;
+    });
   });
 
   describe('notification :: subscribe', () => {
     beforeEach(async () => {
-    //   await userAlice.notification.unsubscribe(
-    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-    //   );
-
-    //   await userKate.notification.unsubscribe(
-    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-    //   );
-    // });
-
-    // afterEach(async () => {
-    //   await userAlice.notification.unsubscribe(
-    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-    //   );
-
-    //   await userKate.notification.unsubscribe(
-    //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-    //   );
+      //   await userAlice.notification.unsubscribe(
+      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //   );
+      //   await userKate.notification.unsubscribe(
+      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //   );
+      // });
+      // afterEach(async () => {
+      //   await userAlice.notification.unsubscribe(
+      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //   );
+      //   await userKate.notification.unsubscribe(
+      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //   );
     });
     it.skip('Without signer object: should throw error', async () => {
       await expect(() =>
@@ -207,7 +226,7 @@ describe('PushAPI.notification functionality', () => {
           ],
         }
       );
-      console.log(res)
+      // console.log(res);
       expect(res).not.null;
     });
 
@@ -215,8 +234,14 @@ describe('PushAPI.notification functionality', () => {
       const res = await userViem.notification.subscribe(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      // console.log(res)
-      expect(res).not.null;
+      expect(res.message).to.equal('successfully opted into channel');
+    });
+
+    it('With viem signer and provider: Should unsubscribe', async () => {
+      const res = await userViem.notification.unsubscribe(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      expect(res.message).to.equal('successfully opted out channel');
     });
   });
 
@@ -235,17 +260,16 @@ describe('PushAPI.notification functionality', () => {
       const response = await userAlice.notification.subscriptions({
         account: 'eip155:80001:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-        // console.log(response);
+      // console.log(response);
       expect(response).not.null;
       expect(response.lenth).not.equal(0);
     });
-
 
     it('Signer with account: Should return response', async () => {
       const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-        // console.log(response);
+      // console.log(response);
       expect(response).not.null;
       expect(response.lenth).not.equal(0);
     });
