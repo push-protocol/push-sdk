@@ -12,7 +12,6 @@ import {
   IMessageIPFS,
   GroupInfoDTO,
   ChatMemberProfile,
-  ChatMemberCounts,
   GroupParticipantCounts,
 } from '../types';
 import {
@@ -26,7 +25,7 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { getUserDID } from '../chat/helpers';
+import { PGPHelper, getUserDID } from '../chat/helpers';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
@@ -146,6 +145,7 @@ export class Chat {
     const sendParams: ChatSendOptionsType = {
       message: options,
       to: recipient,
+      account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
@@ -161,6 +161,7 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
+      pgpHelper:PGPHelper,
       connectedUser: await this.userInstance.info(),
     });
   }
@@ -287,6 +288,7 @@ export class Chat {
       }
 
       const groupParams: PUSH_CHAT.ChatCreateGroupTypeV2 = {
+        account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
@@ -366,7 +368,7 @@ export class Chat {
 
         return {
           pending: status.isPending,
-          role: status.isAdmin ? 'ADMIN' : 'MEMBER',
+          role: status.isAdmin ? 'admin' : 'member',
           participant: status.isMember,
         };
       },

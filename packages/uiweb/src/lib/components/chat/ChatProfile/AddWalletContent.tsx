@@ -185,12 +185,12 @@ export const AddWalletContent = ({
       <Section flex="1" alignSelf="center">
         <ModalConfirmButton
           onClick={() => {
-            // console.log(groupMembers);
             onSubmit()
           }}
           isLoading={isLoading}
           memberListCount={memberList?.length > 0}
           theme={theme}
+          disabled={isLoading || groupMembers.length === 0}
         >
           {!isLoading && groupMembers ? (submitButtonTitle ? submitButtonTitle : 'Add To Group'): ''}
           {isLoading && <Spinner size="30" color="#fff" />}

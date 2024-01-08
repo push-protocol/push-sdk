@@ -91,3 +91,7 @@ export enum SPACE_ROLES {
 }
 
 export const DEFAULT_DOMAIN = 'push.org';
+
+export enum VIDEO_NOTIFICATION_ACCESS_TYPE {
+  PUSH_CHAT = 'PUSH_CHAT',
+}

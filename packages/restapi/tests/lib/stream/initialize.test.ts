@@ -14,30 +14,32 @@ describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
-    const provider = ethers.getDefaultProvider();
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
     const user2 = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
     const user3 = await PushAPI.initialize(signer3, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET4 = ethers.Wallet.createRandom();
     const signer4 = new ethers.Wallet(WALLET4.privateKey, provider);
     const user4 = await PushAPI.initialize(signer4, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const GROUP_RULES = {
@@ -286,7 +288,7 @@ describe('PushStream.initialize functionality', () => {
       onError: () => {
         console.error('opt in error');
       },
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -305,7 +307,7 @@ describe('PushStream.initialize functionality', () => {
         img: '',
       },
       channel: `eip155:5:${channelAddress}`, // your channel address
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -319,7 +321,7 @@ describe('PushStream.initialize functionality', () => {
       onError: () => {
         console.error('opt out error');
       },
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -339,7 +341,7 @@ describe('PushStream.initialize functionality', () => {
       },
       recipients: `eip155:5:${signer.address}`,
       channel: `eip155:5:${channelAddress}`, // your channel address
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -441,30 +443,32 @@ describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream(readonly) and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
-    const provider = ethers.getDefaultProvider();
+    const provider = (ethers as any).providers
+      ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
+      : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
     const user2 = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
     const user3 = await PushAPI.initialize(signer3, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET4 = ethers.Wallet.createRandom();
     const signer4 = new ethers.Wallet(WALLET4.privateKey, provider);
     const user4 = await PushAPI.initialize(signer4, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const GROUP_RULES = {
@@ -719,7 +723,7 @@ describe('PushStream.initialize functionality', () => {
       onError: () => {
         console.error('opt in error');
       },
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -738,7 +742,7 @@ describe('PushStream.initialize functionality', () => {
         img: '',
       },
       channel: `eip155:5:${channelAddress}`, // your channel address
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -752,7 +756,7 @@ describe('PushStream.initialize functionality', () => {
       onError: () => {
         console.error('opt out error');
       },
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 
@@ -772,7 +776,7 @@ describe('PushStream.initialize functionality', () => {
       },
       recipients: `eip155:5:${signer.address}`,
       channel: `eip155:5:${channelAddress}`, // your channel address
-      env: ENV.LOCAL,
+      env: ENV.DEV,
     });
 
 

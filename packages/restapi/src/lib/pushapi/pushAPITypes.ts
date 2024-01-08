@@ -6,11 +6,11 @@ export enum ChatListType {
   REQUESTS = 'REQUESTS',
 }
 
-
 export enum SpaceListType {
   SPACES = 'SPACES',
   REQUESTS = 'REQUESTS',
 }
+
 export interface PushAPIInitializeProps {
   env?: ENV;
   progressHook?: (progress: ProgressHookType) => void;
@@ -109,7 +109,7 @@ export interface SpaceQueryOptions {
 
 export interface ParticipantStatus {
   pending: boolean;
-  role: 'ADMIN' | 'MEMBER';
+  role: 'admin' | 'member';
   participant: boolean;
 }
 
