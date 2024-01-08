@@ -159,21 +159,6 @@ export class VideoV2 {
   }
 
   /**
-   * Connect to a video call
-   * @param {VideoPeerInfo} peerInfo - The peer information
-   */
-  async connect(peerInfo: VideoPeerInfo) {
-    validatePeerInfo(peerInfo);
-
-    const { signal, address } = peerInfo;
-
-    await this.videoInstance.connect({
-      peerAddress: address,
-      signalData: signal,
-    });
-  }
-
-  /**
    * Disconnect from a video call
    * @param {string} address - The address to disconnect from
    */

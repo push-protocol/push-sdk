@@ -88,7 +88,7 @@ export class Video {
     [key: string]: any;
   } = {};
 
-  protected data: VideoCallData;
+  data: VideoCallData;
   setData: (fn: (data: VideoCallData) => VideoCallData) => void;
 
   constructor({

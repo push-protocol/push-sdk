@@ -1,5 +1,6 @@
 import Constants, { ENV } from '../constants';
-import { ChatStatus, ProgressHookType, Rules, SignerType } from '../types';
+import type { PushStream } from '../pushstream/PushStream';
+import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -68,6 +69,7 @@ export interface ParticipantStatus {
 }
 
 export interface VideoInitializeOptions {
+  socketStream: PushStream;
   media: {
     video?: boolean;
     audio?: boolean;

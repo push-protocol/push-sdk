@@ -405,9 +405,13 @@ export class DataModifier {
       case VideoCallStatus.CONNECTED:
         return VideoEventType.ConnectVideo;
       case VideoCallStatus.ENDED:
-        return VideoEventType.DisconnectVideo
+        return VideoEventType.DisconnectVideo;
       case VideoCallStatus.DISCONNECTED:
         return VideoEventType.DenyVideo;
+      case VideoCallStatus.RETRY_INITIALIZED:
+        return VideoEventType.RetryRequestVideo;
+      case VideoCallStatus.RETRY_RECEIVED:
+        return VideoEventType.RetryApproveVideo;
       default:
         throw new Error(`Unknown video call status: ${currentVideoStatus}`);
     }
