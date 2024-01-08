@@ -19,6 +19,7 @@ import {
   ManageSpaceOptions,
   RemoveFromSpaceOptions,
   SpaceCreationOptions,
+  SpaceInitializeOptions,
   SpaceListType,
   SpaceParticipantStatus,
   SpaceQueryOptions,
@@ -34,9 +35,15 @@ import {
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
-import { groupInfoDtoToSpaceInfoDto, mapSpaceListTypeToChatListType } from '../chat';
+import {
+  groupInfoDtoToSpaceInfoDto,
+  mapSpaceListTypeToChatListType,
+} from '../chat';
 import { isValidETHAddress } from '../helpers';
 import { Chat } from './chat';
+
+import { SpaceV2 } from '../space/SpaceV2';
+import { Space as SpaceV1 } from '../space/Space';
 
 export class Space {
   private chatInstance: Chat;
@@ -511,5 +518,46 @@ export class Space {
         return await this.chatInstance.history(target, options);
       },
     };
+  }
+
+  async initialize(options: SpaceInitializeOptions): Promise<SpaceV2> {
+    const { setSpaceData, spaceId } = options;
+
+    if (!this.signer) {
+      throw new Error('Signer is required for push space');
+    }
+
+    if (!this.decryptedPgpPvtKey) {
+      throw new Error(
+        'PushSDK was initialized in readonly mode. Space functionality is not available.'
+      );
+    }
+
+    const chainId = await this.signer?.getChainId();
+
+    if (!chainId) {
+      throw new Error('Chain Id not retrievable from signer');
+    }
+
+    // Initialize the spacev1 instance with the provided options
+    const spaceV1Instance = new SpaceV1({
+      signer: this.signer!,
+      chainId,
+      pgpPrivateKey: this.decryptedPgpPvtKey!,
+      setSpaceData: setSpaceData,
+      address: this.account,
+      env: this.env,
+    });
+
+    // Call the space v1 initialize() method to populate the space data
+    await spaceV1Instance.initialize({ spaceId });
+
+    const spaceInfo = await this.info(spaceId);
+
+    // Return an instance of the space v2 class
+    return new SpaceV2({
+      spaceV1Instance,
+      spaceInfo,
+    });
   }
 }
