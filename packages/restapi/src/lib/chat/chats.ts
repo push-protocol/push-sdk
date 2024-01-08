@@ -59,7 +59,7 @@ export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper
       toDecrypt,
       pgpPrivateKey,
       env,
-    });
+    },pgpHelper);
     return feeds;
   } catch (err) {
     console.error(`[Push SDK] - API ${chats.name}: `, err);

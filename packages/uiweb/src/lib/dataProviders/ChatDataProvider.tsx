@@ -34,7 +34,6 @@ export const ChatUIProvider = ({
   const { initializePushUser } = useInitializePushUser();
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
-
   useEffect(() => {
     (async () => {
       resetStates();

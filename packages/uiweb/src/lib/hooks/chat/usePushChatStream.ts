@@ -32,10 +32,10 @@ export const usePushChatStream = () => {
             console.log('CONNECTED - stream: ', err);
             setIsPushChatStreamConnected(true);
         });
-        await pushChatStream.connect();
-
+      
+       await  pushChatStream?.connect();
         pushChatStream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
-            console.log('DIS-CONNECTED: ', err);
+            console.log('DIS-CONNECTED: - stream ', err);
             setIsPushChatStreamConnected(false);
         });
 
@@ -73,18 +73,20 @@ export const usePushChatStream = () => {
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-        if (Object.keys(pushChatStream || {}).length !== 0) {
+        if (pushChatStream) {
+
+            console.log("checkk", pushChatStream)
             addSocketEvents();
         }
 
         return () => {
-            if (Object.keys(pushChatStream || {}).length !== 0) {
+            if (pushChatStream) {
                 removeSocketEvents();
             }
         }
     }, [pushChatStream]);
 
-    console.log("checkk", pushChatStream)
+   
     /**
      * Whenever the requisite params to create a connection object change
      *  - disconnect the old connection 
@@ -93,10 +95,12 @@ export const usePushChatStream = () => {
 
     useEffect(() => {
         if (pushUser) {
-            if (Object.keys(pushChatStream || {}).length !== 0) {
+            if (pushChatStream ) {
                 console.log('=================>>> disconnection in the hook');
-                pushChatStream?.disconnect();
+                console.log(pushChatStream)
+                // pushChatStream?.disconnect();
             } else {
+                console.log(pushChatStream)
                 const main = async () => {
                     console.log("initializngggg....")
                     const newstream = await pushUser?.initStream(
@@ -117,6 +121,7 @@ export const usePushChatStream = () => {
                     );
                     // await pushChatStream.connect();
                     console.log('new connection object: ---- ', newstream);
+                    // await newstream?.connect();
                     setPushChatStream(newstream);
 
                 };
@@ -129,12 +134,11 @@ export const usePushChatStream = () => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [account, env, pushUser, isPushChatStreamConnected, pushChatStream]);
+    }, [account, env,pushUser]);
 
     return {
         chatStream,
         groupMetaStream,
         chatRequestStream,
-        isPushChatStreamConnected
     }
 };
