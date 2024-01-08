@@ -29,7 +29,7 @@ import {
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../../../helpers';
-import { useChatData, usePushChatSocket } from '../../../hooks';
+import { useChatData, usePushChatStream } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
@@ -67,8 +67,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByID } = useGetGroupByID();
 
-  const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
-    usePushChatSocket();
+  // const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
+  //   usePushChatSocket();
+   const { chatStream, groupMetaStream } =
+    usePushChatStream();
   const theme = useContext(ThemeContext);
   const dates = new Set();
   const { env } = useChatData();
@@ -121,43 +123,43 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, env, pushUser]);
 
   //moniters socket changes
-  useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
-      const updatedChatFeed = chatFeed;
-      updatedChatFeed.msg = messagesSinceLastConnection;
-      if (!Object.keys(messages || {}).length) {
+  // useEffect(() => {
+  //   if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
+  //     const updatedChatFeed = chatFeed;
+  //     updatedChatFeed.msg = messagesSinceLastConnection;
+  //     if (!Object.keys(messages || {}).length) {
 
-        setFilteredMessages([
-          messagesSinceLastConnection,
-        ] as IMessageIPFSWithCID[]);
-        setConversationHash(messagesSinceLastConnection.cid);
-      } else {
-        const newChatViewList = appendUniqueMessages(
-          messages as Messagetype,
-          [messagesSinceLastConnection],
-          false
-        );
+  //       setFilteredMessages([
+  //         messagesSinceLastConnection,
+  //       ] as IMessageIPFSWithCID[]);
+  //       setConversationHash(messagesSinceLastConnection.cid);
+  //     } else {
+  //       const newChatViewList = appendUniqueMessages(
+  //         messages as Messagetype,
+  //         [messagesSinceLastConnection],
+  //         false
+  //       );
 
-        setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
-      }
-      setChatStatusText('');
-      setChatFeed(updatedChatFeed);
-      scrollToBottom();
-    }
-  }, [messagesSinceLastConnection]);
+  //       setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
+  //     }
+  //     setChatStatusText('');
+  //     setChatFeed(updatedChatFeed);
+  //     scrollToBottom();
+  //   }
+  // }, [messagesSinceLastConnection]);
 
-  useEffect(() => {
-    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
-      if (
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-        groupInformationSinceLastConnection.chatId.toLowerCase()
-      ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
-      }
-    }
-  }, [groupInformationSinceLastConnection]);
+  // useEffect(() => {
+  //   if (Object.keys(groupInformationSinceLastConnection || {}).length) {
+  //     if (
+  //       chatFeed?.groupInformation?.chatId.toLowerCase() ===
+  //       groupInformationSinceLastConnection.chatId.toLowerCase()
+  //     ) {
+  //       const updateChatFeed = chatFeed;
+  //       updateChatFeed.groupInformation = groupInformationSinceLastConnection;
+  //       setChatFeed(updateChatFeed);
+  //     }
+  //   }
+  // }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
     (async function () {

@@ -10,6 +10,8 @@ export interface IChatDataContextValues {
   setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
   env: Env;
   setEnv: React.Dispatch<React.SetStateAction<Env>>;
+  pushChatStream: any;
+  setPushChatStream: React.Dispatch<React.SetStateAction<any>>;
   isPushChatStreamConnected: boolean;
   setIsPushChatStreamConnected: React.Dispatch<React.SetStateAction<boolean>>;
   pushUser: PushAPI | undefined;
@@ -29,6 +31,10 @@ export const initialChatDataContextValues: IChatDataContextValues = {
   env: Constants.ENV.PROD,
   setEnv: () => {
     /**/
+  },
+  pushChatStream: null,
+  setPushChatStream: () => {
+    /** */
   },
   isPushChatStreamConnected: false,
   setIsPushChatStreamConnected: () => {

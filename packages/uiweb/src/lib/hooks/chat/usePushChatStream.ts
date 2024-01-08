@@ -5,16 +5,15 @@ import { ENV } from '../../config';
 import { useChatData } from './useChatData';
 
 
-export type PushChatStream = {
-    account?: string | null;
-    env?: ENV;
-};
 
-export const pushChatStream = () => {
+
+export const usePushChatStream = () => {
 
 
     const {
         account,
+        pushChatStream,
+        setPushChatStream,
         isPushChatStreamConnected,
         setIsPushChatStreamConnected,
         env,
@@ -26,7 +25,6 @@ export const pushChatStream = () => {
     const [chatStream, setChatStream] = useState<any>({}) // to track any new messages
     const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
     const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
-    const [pushChatStream, setPushChatStream] = useState<any>({}); //stream connection
 
     const addSocketEvents = async () => {
         console.warn('\n--> addChatSocketEvents - stream');
