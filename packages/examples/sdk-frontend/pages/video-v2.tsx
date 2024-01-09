@@ -3,15 +3,15 @@ import type { NextPage } from 'next';
 import {
   PushAPI,
   CONSTANTS,
+  VideoCallData,
   VideoEvent,
-  VideoEventType,
 } from '@pushprotocol/restapi';
 import { useAccount, useNetwork, useSigner } from 'wagmi';
 import styled from 'styled-components';
 
 import { useEffect, useRef, useState } from 'react';
 import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
-import { useStream } from '../hooks/useStream';
+import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 
 const VideoV2: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -19,39 +19,67 @@ const VideoV2: NextPage = () => {
   const { data: signer } = useSigner();
 
   const aliceVideoCall = useRef<any>();
-  const [aliceStream, setAliceStream] = useState<any>();
-  const { stream, isPushSocketConnected, latestFeedItem } = useStream({
-    streamObject: aliceStream,
-  });
+  const [latestVideoEvent, setLatestVideoEvent] = useState<VideoEvent | null>(
+    null
+  );
+  const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
-  const [data, setData] = useState();
+  const [data, setData] = useState<VideoCallData>(initVideoCallData);
 
   useEffect(() => {
     if (!signer) return;
+
     const initializePushAPI = async () => {
+      console.log('initializePushAPI');
+
       const userAlice = await PushAPI.initialize(signer, {
         env: CONSTANTS.ENV.DEV,
       });
 
+      const createdStream = await userAlice.initStream([
+        CONSTANTS.STREAM.VIDEO,
+        CONSTANTS.STREAM.CONNECT,
+        CONSTANTS.STREAM.DISCONNECT,
+      ]);
+
+      createdStream.on(CONSTANTS.STREAM.CONNECT, () => {
+        console.log('PUSH STREAM CONNECTED: ');
+        setIsPushStreamConnected(true);
+      });
+
+      createdStream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+        console.log('PUSH STREAM DISCONNECTED: ');
+        setIsPushStreamConnected(false);
+      });
+
+      createdStream.on(CONSTANTS.STREAM.VIDEO, (data: VideoEvent) => {
+        console.log('RECEIVED VIDEO EVENT: ', data);
+        if (data) {
+          setLatestVideoEvent(data);
+        }
+      });
+
+      await createdStream.connect();
+
       aliceVideoCall.current = await userAlice.video.initialize(setData, {
+        socketStream: createdStream,
         media: {
           video: true,
           audio: true,
         },
       });
-      const astream = await userAlice.initStream([CONSTANTS.STREAM.CHAT]);
-      setAliceStream(astream);
     };
 
     initializePushAPI();
   }, [signer]);
+
   useEffect(() => {
-    console.log('stream', stream);
-  }, [stream]);
-  useEffect(() => {
-    isPushSocketConnected;
-    console.log('latestFeedItem', latestFeedItem);
-  }, [isPushSocketConnected, latestFeedItem]);
+    console.log('isPushStreamConnected', isPushStreamConnected);
+    if (isPushStreamConnected) {
+      console.log('latestVideoEvent', latestVideoEvent);
+    }
+  }, [isPushStreamConnected, latestVideoEvent]);
+
   const setRequestVideoCall = async () => {
     await aliceVideoCall.current.request(
       ['0xb73923eCcfbd6975BFd66CD1C76FA6b883E30365'],
@@ -71,7 +99,7 @@ const VideoV2: NextPage = () => {
 
   return (
     <div>
-      <Heading>Push Video SDK Demo</Heading>
+      <Heading>Push Video v2 SDK Demo</Heading>
 
       {isConnected ? (
         <div>
