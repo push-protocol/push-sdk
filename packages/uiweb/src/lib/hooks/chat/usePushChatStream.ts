@@ -33,7 +33,7 @@ export const usePushChatStream = () => {
             setIsPushChatStreamConnected(true);
         });
       
-       await  pushChatStream?.connect();
+    //    await  pushChatStream?.connect();
         pushChatStream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
             console.log('DIS-CONNECTED: - stream ', err);
             setIsPushChatStreamConnected(false);
@@ -121,7 +121,7 @@ export const usePushChatStream = () => {
                     );
                     // await pushChatStream.connect();
                     console.log('new connection object: ---- ', newstream);
-                    // await newstream?.connect();
+                    await newstream?.connect();
                     setPushChatStream(newstream);
 
                 };
