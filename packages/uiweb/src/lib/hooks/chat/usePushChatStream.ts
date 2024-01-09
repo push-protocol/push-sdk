@@ -36,9 +36,7 @@ export const usePushChatStream = () => {
 
 
         //Listen for chat messages, your message, request, accept, rejected,
-        console.log('\t-->will attach eachMessage event now - stream');
         pushChatStream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-
             if ((message.event === "chat.request")) {
                 setChatRequestStream(message);
             } else {
@@ -80,7 +78,10 @@ export const usePushChatStream = () => {
 
     useEffect(() => {
         if (pushUser) {
-            if(!pushChatStream) {
+            if(pushChatStream){
+                pushChatStream?.disconnect();
+            }
+            else {
                 console.log(pushChatStream)
                 const main = async () => {
                     const newstream = await pushUser?.initStream(
@@ -115,6 +116,8 @@ export const usePushChatStream = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, env,pushUser]);
 
+    
+   
     return {
         chatStream,
         groupMetaStream,
