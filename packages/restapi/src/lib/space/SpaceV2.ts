@@ -90,4 +90,14 @@ export class SpaceV2 {
       invitorAddress: this.spaceInfo.spaceCreator,
     });
   }
+
+  media({ video, audio }: { video?: boolean; audio?: boolean }) {
+    if (typeof video === 'boolean') {
+      this.spaceV1Instance.enableVideo({ state: video });
+    }
+
+    if (typeof audio === 'boolean') {
+      this.spaceV1Instance.enableAudio({ state: audio });
+    }
+  }
 }

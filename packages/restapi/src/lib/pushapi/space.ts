@@ -41,6 +41,7 @@ import {
 } from '../chat';
 import { isValidETHAddress } from '../helpers';
 import { Chat } from './chat';
+import { Signer as PushSigner } from '../helpers';
 
 import { SpaceV2 } from '../space/SpaceV2';
 import { Space as SpaceV1 } from '../space/Space';
@@ -533,7 +534,7 @@ export class Space {
       );
     }
 
-    const chainId = await this.signer?.getChainId();
+    const chainId = await new PushSigner(this.signer).getChainId();
 
     if (!chainId) {
       throw new Error('Chain Id not retrievable from signer');
