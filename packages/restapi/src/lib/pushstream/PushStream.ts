@@ -160,7 +160,7 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeChatSocket) {
       if (!this.pushChatSocket) {
         // If pushChatSocket does not exist, create a new socket connection
-        this.pushChatSocket = createSocketConnection({
+        this.pushChatSocket = await createSocketConnection({
           user: walletToPCAIP10(this.account),
           socketType: 'chat',
           socketOptions: {
@@ -186,7 +186,7 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeNotifSocket) {
       if (!this.pushNotificationSocket) {
         // If pushNotificationSocket does not exist, create a new socket connection
-        this.pushNotificationSocket = createSocketConnection({
+        this.pushNotificationSocket = await createSocketConnection({
           user: pCAIP10ToWallet(this.account),
           env: this.options?.env as ENV,
           socketOptions: {
