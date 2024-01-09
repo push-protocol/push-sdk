@@ -1,4 +1,4 @@
-import * as ethers from 'ethers';
+import * as viem from 'viem';
 import Constants, {ENV} from '../constants';
 import { getUserDID } from '../chat/helpers';
 
@@ -11,18 +11,18 @@ export function isValidETHAddress(address: string) {
   if (address.includes('eip155:')) {
     const splittedAddress = address.split(':');
     if(splittedAddress.length === 3){
-     return ethers.utils.isAddress(splittedAddress[2]);
+     return viem.isAddress(splittedAddress[2]);
     }
     if(splittedAddress.length === 2)
-     return ethers.utils.isAddress(splittedAddress[1]); 
+     return viem.isAddress(splittedAddress[1]); 
   }
-  return ethers.utils.isAddress(address);
+  return viem.isAddress(address);
 }
 
 export function  isValidNFTCAIP10Address (realCAIP10: string)  {
         const walletComponent = realCAIP10.split(':');
         if (isNaN(Number(walletComponent[1]))) return false
-        return (walletComponent.length === 3 && walletComponent[0] === 'eip155' && ethers.utils.isAddress(walletComponent[2]))
+        return (walletComponent.length === 3 && walletComponent[0] === 'eip155' && viem.isAddress(walletComponent[2]))
 }
 
 /**
@@ -40,7 +40,7 @@ export const isValidCAIP10NFTAddress = (wallet: string): boolean => {
       Number(walletComponent[4]) > 0 &&
       !isNaN(Number(walletComponent[2])) &&
       Number(walletComponent[2]) > 0 &&
-      ethers.utils.isAddress(walletComponent[3]) &&
+      viem.isAddress(walletComponent[3]) &&
       walletComponent[1] === 'eip155'
     );
   } catch (err) {

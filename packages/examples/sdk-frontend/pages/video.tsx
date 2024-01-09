@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { usePushSocket } from '../hooks/usePushSocket';
 import { useEffect, useRef, useState } from 'react';
 import VideoPlayer from '../components/VideoPlayer';
-import { ADDITIONAL_META_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
+import { ADDITIONAL_META_TYPE, VIDEO_NOTIFICATION_ACCESS_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
 
 interface VideoCallMetaDataType {
   recipientAddress: string;
@@ -20,7 +20,7 @@ interface VideoCallMetaDataType {
 }
 
 // env which will be used for the video call
-const env = ENV.STAGING;
+const env = ENV.DEV;
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -110,7 +110,12 @@ const Home: NextPage = () => {
       signalData: data.meta.initiator.signal,
       senderAddress: data.local.address,
       recipientAddress: data.incoming[0].address,
-      chatId: data.meta.chatId,
+      rules: {
+        access: {
+          type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+          data: data.meta.chatId
+        }
+      }
     });
   };
 
@@ -165,7 +170,12 @@ const Home: NextPage = () => {
         await videoObjectRef.current?.request({
           senderAddress: data.local.address,
           recipientAddress: data.incoming[0].address,
-          chatId: data.meta.chatId,
+          rules: {
+            access: {
+              type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+              data: data.meta.chatId
+            }
+          }
         });
       }
     })();
@@ -218,7 +228,12 @@ const Home: NextPage = () => {
       videoObjectRef.current?.request({
         senderAddress: data.local.address,
         recipientAddress: data.incoming[0].address,
-        chatId: data.meta.chatId,
+        rules: {
+          access: {
+            type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+            data: data.meta.chatId
+          }
+        },
         retry: true,
       });
     } else if (
@@ -229,7 +244,12 @@ const Home: NextPage = () => {
         signalData: videoCallMetaData.signalingData,
         senderAddress: data.local.address,
         recipientAddress: data.incoming[0].address,
-        chatId: data.meta.chatId,
+        rules: {
+          access: {
+            type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+            data: data.meta.chatId
+          }
+        },
         retry: true,
       });
     }

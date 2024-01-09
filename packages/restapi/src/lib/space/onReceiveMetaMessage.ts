@@ -13,8 +13,6 @@ export function onReceiveMetaMessage(
 ) {
   const { receivedMetaMessage } = options || {};
 
-  console.log('ONRECEIVEMETAMESSAGE', receivedMetaMessage);
-
   if (
     receivedMetaMessage.messageType !== MessageType.META ||
     typeof receivedMetaMessage.messageObj !== 'object' ||
@@ -27,8 +25,6 @@ export function onReceiveMetaMessage(
   const receivedLiveSpaceData = (
     receivedMetaMessage.messageObj as Omit<InfoMessage, 'type'>
   ).info.arbitrary as LiveSpaceData;
-
-  console.log('RECEIVED LIVE SPACE DATA', receivedLiveSpaceData);
 
   this.setSpaceSpecificData(() => ({
     ...this.spaceSpecificData,

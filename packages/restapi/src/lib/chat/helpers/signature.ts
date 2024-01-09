@@ -2,9 +2,7 @@ import {
   recoverTypedSignature,
   SignTypedDataVersion,
 } from '@metamask/eth-sig-util';
-import * as ethers from 'ethers';
-import { hashMessage } from 'ethers/lib/utils';
-import { verifyMessage } from '@ambire/signature-validator';
+import * as viem from 'viem';
 
 /**
  *
@@ -138,26 +136,32 @@ export const verifyProfileSignature = async (
     // EIP191 sig validation
     try {
       // EOA Wallet
-      const recoveredAddress = ethers.utils.recoverAddress(
-        hashMessage(signedData),
-        signature
-      );
+      const recoveredAddress = await viem.recoverAddress({
+        hash: viem.hashMessage(signedData),
+        signature: signature as `0x${string}`,
+      });
       if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
         return true;
       } else return false;
     } catch (err) {
-      try {
-        // SCW Wallet
-        const verificationResult: boolean = await verifyMessage({
-          signer: address.toLowerCase(),
-          message: signedData,
-          signature: signature,
-          provider: ethers.getDefaultProvider(1),
-        });
-        return verificationResult;
-      } catch (err) {
-        return false;
-      }
+      return false;
+      // TODO - Add support for SCW Wallet
+
+      /**
+       * @todo - Add support for SCW Wallet
+       * @notice - verifyMessage does not work with EthersV6
+       */
+      // try {
+      //   const verificationResult: boolean = await verifyMessage({
+      //     signer: address.toLowerCase(),
+      //     message: signedData,
+      //     signature: signature,
+      //     provider: ethers.getDefaultProvider(1),
+      //   });
+      //   return verificationResult;
+      // } catch (err) {
+      //   return false;
+      // }
     }
   }
 };

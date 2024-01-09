@@ -156,7 +156,7 @@ export class Video {
         });
       });
     } catch (err) {
-      console.log('error in create', err);
+      console.error('error in create', err);
     }
   }
 
@@ -165,14 +165,11 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
-      onReceiveMessage = (message: string) => {
-        console.log('received a meesage', message);
-      },
+      rules,
+      onReceiveMessage,
       retry = false,
       details,
     } = options || {};
-
-    console.log('request', 'options', options);
 
     const recipientAddresses = Array.isArray(recipientAddress)
       ? recipientAddress
@@ -184,7 +181,7 @@ export class Video {
         this.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = senderAddress;
-            draft.meta.chatId = chatId;
+            draft.meta.chatId = chatId ?? rules!.access.data;
             draft.meta.initiator.address = senderAddress;
 
             const incomingIndex = getIncomingIndexFromAddress(
@@ -245,6 +242,7 @@ export class Video {
                 ? VideoCallStatus.RETRY_INITIALIZED
                 : VideoCallStatus.INITIALIZED,
               chatId,
+              rules,
               signalData: data,
               env: this.env,
               callType: this.callType,
@@ -273,11 +271,6 @@ export class Video {
           const connectedAddresses = getConnectedAddresses({
             incomingPeers: this.data.incoming,
           });
-          console.log(
-            'REQUEST - SENDING THE CONNECTED ADDRESSES',
-            'connectedAddresses',
-            connectedAddresses
-          );
           this.peerInstances[recipientAddress].send(
             JSON.stringify({
               type: 'connectedAddresses',
@@ -291,12 +284,6 @@ export class Video {
             const parsedData = JSON.parse(data);
 
             if (parsedData.type === 'connectedAddresses') {
-              console.log(
-                'REQUEST - RECEIVING CONNECTED ADDRESSES',
-                'CONNECTED ADDRESSES',
-                parsedData.value
-              );
-
               const receivedConnectedAddresses = parsedData.value;
               const localConnectedAddresses = getConnectedAddresses({
                 incomingPeers: this.data.incoming,
@@ -313,6 +300,7 @@ export class Video {
                 senderAddress,
                 recipientAddress: connectToAddresses,
                 chatId,
+                rules,
                 details: {
                   type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                   data: {},
@@ -321,7 +309,6 @@ export class Video {
             }
 
             if (parsedData.type === 'isVideoOn') {
-              console.log('IS VIDEO ON', parsedData.value);
               this.setData((oldData) => {
                 return produce(oldData, (draft) => {
                   const incomingIndex = getIncomingIndexFromAddress(
@@ -334,7 +321,6 @@ export class Video {
             }
 
             if (parsedData.type === 'isAudioOn') {
-              console.log('IS AUDIO ON', parsedData.value);
               this.setData((oldData) => {
                 return produce(oldData, (draft) => {
                   const incomingIndex = getIncomingIndexFromAddress(
@@ -347,8 +333,6 @@ export class Video {
             }
 
             if (parsedData.type === 'endCall') {
-              console.log('END CALL');
-
               if (
                 this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
                 parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
@@ -398,7 +382,7 @@ export class Video {
                 this.setData(() => initVideoCallData);
               }
             }
-          } else {
+          } else if(onReceiveMessage) {
             onReceiveMessage(data);
           }
         });
@@ -406,7 +390,6 @@ export class Video {
         this.peerInstances[recipientAddress].on(
           'stream',
           (currentStream: MediaStream) => {
-            console.log('received incoming stream', currentStream);
             const incomingIndex = getIncomingIndexFromAddress(
               this.data.incoming,
               recipientAddress
@@ -424,7 +407,7 @@ export class Video {
           }
         );
       } catch (err) {
-        console.log('error in request', err);
+        console.error('error in request', err);
       }
     }
   }
@@ -435,16 +418,13 @@ export class Video {
       senderAddress,
       recipientAddress,
       chatId,
-      onReceiveMessage = (message: string) => {
-        console.log('received a meesage', message);
-      },
+      rules,
+      onReceiveMessage,
       retry = false,
       details,
     } = options || {};
 
     try {
-      console.log('accept request', 'options', options);
-
       // if peerInstance is not null -> acceptRequest/request was called before
       if (this.peerInstances[recipientAddress]) {
         // to prevent connection error we stop the exec of acceptRequest
@@ -468,7 +448,7 @@ export class Video {
       this.setData((oldData) => {
         return produce(oldData, (draft) => {
           draft.local.address = senderAddress;
-          draft.meta.chatId = chatId;
+          draft.meta.chatId = chatId ?? rules!.access.data;
           draft.meta.initiator.address = senderAddress;
 
           const incomingIndex = getIncomingIndexFromAddress(
@@ -499,10 +479,7 @@ export class Video {
 
       // setup error handler
       this.peerInstances[recipientAddress].on('error', (err: any) => {
-        console.log('error in accept request', err);
-
         if (this.data.incoming[0].retryCount >= 5) {
-          console.log('Max retries exceeded, please try again.');
           this.disconnect({ peerAddress: recipientAddress });
         }
 
@@ -518,6 +495,7 @@ export class Video {
             recipientAddress,
             status: VideoCallStatus.RETRY_INITIALIZED,
             chatId,
+            rules,
             signalData: null,
             callType: this.callType,
             env: this.env,
@@ -547,6 +525,7 @@ export class Video {
               ? VideoCallStatus.RETRY_RECEIVED
               : VideoCallStatus.RECEIVED,
             chatId,
+            rules,
             signalData: data,
             env: this.env,
             callType: this.callType,
@@ -573,11 +552,6 @@ export class Video {
         const connectedAddresses = getConnectedAddresses({
           incomingPeers: this.data.incoming,
         });
-        console.log(
-          'ACCEPT REQUEST - SENDING THE CONNECTED ADDRESSES',
-          'connectedAddresses',
-          connectedAddresses
-        );
         this.peerInstances[recipientAddress].send(
           JSON.stringify({
             type: 'connectedAddresses',
@@ -602,12 +576,6 @@ export class Video {
           const parsedData = JSON.parse(data);
 
           if (parsedData.type === 'connectedAddresses') {
-            console.log(
-              'ACCEPT REQUEST - RECEIVING CONNECTED ADDRESSES',
-              'CONNECTED ADDRESSES',
-              parsedData.value
-            );
-
             const receivedConnectedAddresses = parsedData.value;
             const localConnectedAddresses = getConnectedAddresses({
               incomingPeers: this.data.incoming,
@@ -624,6 +592,7 @@ export class Video {
               senderAddress,
               recipientAddress: connectToAddresses,
               chatId,
+              rules,
               details: {
                 type: SPACE_REQUEST_TYPE.ESTABLISH_MESH,
                 data: {},
@@ -632,7 +601,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isVideoOn') {
-            console.log('IS VIDEO ON', parsedData.value);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 const incomingIndex = getIncomingIndexFromAddress(
@@ -645,7 +613,6 @@ export class Video {
           }
 
           if (parsedData.type === 'isAudioOn') {
-            console.log('IS AUDIO ON', parsedData.value);
             this.setData((oldData) => {
               return produce(oldData, (draft) => {
                 const incomingIndex = getIncomingIndexFromAddress(
@@ -658,8 +625,6 @@ export class Video {
           }
 
           if (parsedData.type === 'endCall') {
-            console.log('END CALL');
-
             if (
               this.callType === VIDEO_CALL_TYPE.PUSH_SPACE &&
               parsedData?.details?.type === SPACE_DISCONNECT_TYPE.LEAVE
@@ -709,7 +674,7 @@ export class Video {
               this.setData(() => initVideoCallData);
             }
           }
-        } else {
+        } else if(onReceiveMessage) {
           onReceiveMessage(data);
         }
       });
@@ -717,7 +682,6 @@ export class Video {
       this.peerInstances[recipientAddress].on(
         'stream',
         (currentStream: MediaStream) => {
-          console.log('received incoming stream', currentStream);
           const incomingIndex = getIncomingIndexFromAddress(
             this.data.incoming,
             recipientAddress
@@ -735,7 +699,7 @@ export class Video {
         }
       );
     } catch (err) {
-      console.log('error in accept request', err);
+      console.error('error in accept request', err);
     }
   }
 
@@ -743,14 +707,6 @@ export class Video {
     const { peerAddress, signalData } = options || {};
 
     try {
-      console.log(
-        'connect',
-        'options',
-        options,
-        'default',
-        this.data.incoming[0].address
-      );
-
       if (!peerAddress) {
         console.warn('disconnect requires a peer address');
       }
@@ -759,14 +715,11 @@ export class Video {
       this.peerInstances[
         peerAddress ? peerAddress : this.data.incoming[0].address
       ].on('error', (err: any) => {
-        console.log('error in connect', err);
-
         const incomingIndex = peerAddress
           ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
           : 0;
 
         if (this.data.incoming[incomingIndex].retryCount >= 5) {
-          console.log('Max retries exceeded, please try again.');
           this.disconnect({
             peerAddress: peerAddress
               ? peerAddress
@@ -797,21 +750,14 @@ export class Video {
         });
       });
     } catch (err) {
-      console.log('error in connect', err);
+      console.error('error in connect', err);
     }
   }
 
-  disconnect(options: VideoDisconnectOptions): void {
+  disconnect(options?: VideoDisconnectOptions): void {
     const { peerAddress, details } = options || {};
 
     try {
-      console.log(
-        'DISCONNECT OPTIONS',
-        options,
-        'default',
-        this.data.incoming[0].address
-      );
-
       if (!options?.peerAddress) {
         console.warn('disconnect requires a peer address');
       }
@@ -820,13 +766,6 @@ export class Video {
         ? getIncomingIndexFromAddress(this.data.incoming, peerAddress)
         : 0;
 
-      console.log(
-        'disconnect',
-        'options',
-        options,
-        'status',
-        this.data.incoming[incomingIndex]?.status
-      );
       if (
         this.data.incoming[incomingIndex].status === VideoCallStatus.CONNECTED
       ) {
@@ -874,7 +813,7 @@ export class Video {
       // reset the state
       this.setData(() => initVideoCallData);
     } catch (err) {
-      console.log('error in disconnect', err);
+      console.error('error in disconnect', err);
     }
   }
 
