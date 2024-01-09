@@ -119,9 +119,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     env,
     signer,
     pushUser,
-    isPushChatStreamConnected
   } = useChatData();
-  console.log(isPushChatStreamConnected)
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByID } = useGetGroupByID();
