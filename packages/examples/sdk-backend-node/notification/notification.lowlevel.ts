@@ -115,8 +115,11 @@ export const runNotificaitonsLowLevelUseCases = async (): Promise<void> => {
     console.log('PushAPI.channels._getSubscribers()');
     await PushAPI_channels_getSubscribers();
 
-    console.log('Push Notification - PushSDKSocket()');
-    await PushSDKSocket();
+    /**
+     * @notice - can only be used with ethersV5
+     */
+    // console.log('Push Notification - PushSDKSocket()');
+    // await PushSDKSocket();
   }
 };
 
@@ -280,7 +283,10 @@ async function PushAPI_payloads_sendNotification__direct_payload_group_of_recipi
       cta: '',
       img: '',
     },
-    recipients: [`eip155:11155111:${signerAddress}`, `eip155:11155111:${randomWallet1}`], // recipient addresses
+    recipients: [
+      `eip155:11155111:${signerAddress}`,
+      `eip155:11155111:${randomWallet1}`,
+    ], // recipient addresses
     channel: `eip155:11155111:${channelAddress}`, // your channel address
     env: env as ENV,
   });

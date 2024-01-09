@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../config';
 import { getCAIPAddress, walletToPCAIP10 } from '../helpers';
 import { SocketInputOptions } from './pushStreamTypes';
 
-export function createSocketConnection({
+export async function createSocketConnection({
   user,
   env,
   socketType = 'notification',
@@ -16,7 +16,11 @@ export function createSocketConnection({
     reconnectionDelayMax,
   } = socketOptions || {};
 
-  const pushWSUrl = API_BASE_URL[env];
+  let pushWSUrl = API_BASE_URL[env];
+
+  if (pushWSUrl.endsWith('/apis')) {
+    pushWSUrl = pushWSUrl.substring(0, pushWSUrl.length - 5);
+  }
   const transports = ['websocket'];
 
   let pushSocket = null;
@@ -25,7 +29,7 @@ export function createSocketConnection({
     const userAddressInCAIP =
       socketType === 'chat'
         ? walletToPCAIP10(user)
-        : getCAIPAddress(env, user, 'User');
+        : await getCAIPAddress(env, user, 'User');
 
     const query =
       socketType === 'notification'

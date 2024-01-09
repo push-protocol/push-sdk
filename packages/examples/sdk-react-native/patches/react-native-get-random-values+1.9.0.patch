@@ -1,0 +1,13 @@
+
+diff --git a/node_modules/react-native-get-random-values/index.js b/node_modules/react-native-get-random-values/index.jsindex d5a72cc..dacd0f0 100644
+--- a/node_modules/react-native-get-random-values/index.js
++++ b/node_modules/react-native-get-random-values/index.js
+@@ -74,6 +74,6 @@ if (typeof global.crypto !== 'object') {
+   global.crypto = {}
+ }
+ 
+-if (typeof global.crypto.getRandomValues !== 'function') {
++// if (typeof global.crypto.getRandomValues !== 'function') {
+   global.crypto.getRandomValues = getRandomValues
+-}
++// }

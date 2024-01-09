@@ -50,9 +50,6 @@ export class Delegate extends PushNotificationBaseClass {
   add = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
@@ -62,6 +59,7 @@ export class Delegate extends PushNotificationBaseClass {
         throw new Error('Unsupported Chainid');
       }
       const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
+
       const commContract = this.createContractInstance(
         commAddress,
         config.ABIS.COMM,
@@ -82,9 +80,6 @@ export class Delegate extends PushNotificationBaseClass {
   remove = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
