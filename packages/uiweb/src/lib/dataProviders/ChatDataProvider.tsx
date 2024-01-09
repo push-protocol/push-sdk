@@ -48,6 +48,7 @@ export const ChatUIProvider = ({
           setAccountVal(address);
      
       }
+      
       setSignerVal(signer);
       setPushUserVal(pushUser);
     })()
@@ -56,10 +57,11 @@ export const ChatUIProvider = ({
 
   useEffect(() => {
       (async() => {
+        console.log(pushUserVal)
         if(accountVal && envVal && !pushUserVal){
           console.log('in push user creation')
           const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
-          console.log(pushUser)
+          console.log('push user in here',pushUser)
           setPushUserVal(pushUser);
         }
          
@@ -73,6 +75,7 @@ export const ChatUIProvider = ({
 
   };
 
+  console.log(pushUserVal)
 
 
   const value: IChatDataContextValues = {
