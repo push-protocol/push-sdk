@@ -1,5 +1,5 @@
 import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
+import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import {
   ChatDataContext,
   IChatDataContextValues,
@@ -9,6 +9,7 @@ import { PushAPI, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useInitializePushUser from '../hooks/chat/useInitializePushUser';
+import useChatProfile from '../hooks/chat/useChatProfile';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -21,7 +22,7 @@ export interface IChatUIProviderProps {
 
 export const ChatUIProvider = ({
   children,
-  account = '0x0000000000000000000000000000000000000000',
+  account = undefined,
   pushUser = undefined,
   theme,
   signer = undefined,
@@ -33,6 +34,7 @@ export const ChatUIProvider = ({
   const [pushUserVal, setPushUserVal] = useState<PushAPI |undefined>(pushUser);
   const [envVal, setEnvVal] = useState<ENV>(env);
   const { initializePushUser } = useInitializePushUser();
+  const {fetchChatProfile} = useChatProfile();
 
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
     useState<boolean>(false);
@@ -42,11 +44,21 @@ export const ChatUIProvider = ({
       resetStates();
       setEnvVal(env);
 
-      if (Object.keys(signer ||{}).length) {
+      if (Object.keys(signer ||{}).length && !pushUser) {
      
           const address = await getAddressFromSigner(signer!);
           setAccountVal(address);
      
+      }
+
+      else if(!signer && pushUser){
+        const profile = await fetchChatProfile({});
+        setAccountVal(profile?.wallets);
+
+      }
+      else{
+        setAccountVal(GUEST_MODE_ACCOUNT);
+
       }
       
       setSignerVal(signer);
@@ -56,12 +68,11 @@ export const ChatUIProvider = ({
   }, [env, account, signer,pushUser])
 
   useEffect(() => {
+    
       (async() => {
-        console.log(pushUserVal)
+
         if(accountVal && envVal && !pushUserVal){
-          console.log('in push user creation')
           const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
-          console.log('push user in here',pushUser)
           setPushUserVal(pushUser);
         }
          
@@ -75,7 +86,6 @@ export const ChatUIProvider = ({
 
   };
 
-  console.log(pushUserVal)
 
 
   const value: IChatDataContextValues = {

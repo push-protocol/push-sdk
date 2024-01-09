@@ -4,12 +4,12 @@ import { useChatData } from './useChatData';
 
 
 export interface GetProfileParams {
-  profileId: string;
-  env: Env;
+  profileId?: string;
+  env?: Env;
 }
 
 const useChatProfile = () => {
-const { pushUser,account } = useChatData();
+const { pushUser } = useChatData();
   const fetchChatProfile = useCallback(
     async ({
       profileId,
@@ -17,7 +17,11 @@ const { pushUser,account } = useChatData();
       env
     }: GetProfileParams): Promise<any> => {
       try {
-        const userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+        let userReadOnly;
+        if(profileId)
+         userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+        else
+         userReadOnly = await pushUser!.info();
         return userReadOnly;
       } catch (error) {
         console.log("error", error);
