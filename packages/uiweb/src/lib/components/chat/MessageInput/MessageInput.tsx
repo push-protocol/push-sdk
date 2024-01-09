@@ -29,7 +29,7 @@ import {
   useChatData,
   useClickAway,
   useDeviceWidthCheck,
-  usePushChatSocket,
+  usePushChatStream,
 } from '../../../hooks';
 
 import type { FileMessageContent } from '../../../types';
@@ -98,8 +98,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [isMember, setIsMember] = useState<boolean>(false);
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
-  const { acceptedRequestMessage, groupInformationSinceLastConnection } =
-    usePushChatSocket();
+  // const { acceptedRequestMessage, groupInformationSinceLastConnection } =
+  //   usePushChatSocket();
+  const { chatRequestStream, groupMetaStream } =
+    usePushChatStream();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const theme = useContext(ThemeContext);
   const isMobile = useDeviceWidthCheck(425);
@@ -117,7 +119,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     env,
     signer,
     pushUser,
+    isPushChatStreamConnected
   } = useChatData();
+  console.log(isPushChatStreamConnected)
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByID } = useGetGroupByID();
@@ -162,30 +166,30 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [chatId, verified, isMember, account, env, signer]);
 
 
-  useEffect(() => {
-    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
-      if (
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-        groupInformationSinceLastConnection.chatId.toLowerCase()
-      ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
-      }
-    }
+  // useEffect(() => {
+  //   if (Object.keys(groupInformationSinceLastConnection || {}).length) {
+  //     if (
+  //       chatFeed?.groupInformation?.chatId.toLowerCase() ===
+  //       groupInformationSinceLastConnection.chatId.toLowerCase()
+  //     ) {
+  //       const updateChatFeed = chatFeed;
+  //       updateChatFeed.groupInformation = groupInformationSinceLastConnection;
+  //       setChatFeed(updateChatFeed);
+  //     }
+  //   }
   
-  }, [groupInformationSinceLastConnection]);
+  // }, [groupInformationSinceLastConnection]);
 
-  useEffect(() => {
-    (async () => {
-      if (
-        Object.keys(acceptedRequestMessage || {}).length &&
-        Object.keys(chatFeed || {}).length
-      ) {
-        await updateChatFeed();
-      }
-    })();
-  }, [acceptedRequestMessage]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (
+  //       Object.keys(acceptedRequestMessage || {}).length &&
+  //       Object.keys(chatFeed || {}).length
+  //     ) {
+  //       await updateChatFeed();
+  //     }
+  //   })();
+  // }, [acceptedRequestMessage]);
 
   //need to makea common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
