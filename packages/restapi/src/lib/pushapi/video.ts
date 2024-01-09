@@ -1,6 +1,7 @@
 import { ENV } from '../constants';
 import CONSTANTS from '../constantsV2';
 import { SignerType, VideoCallData } from '../types';
+import { Signer as PushSigner } from '../helpers';
 
 import { Video as VideoV1 } from '../video/Video';
 import { VideoV2 } from '../video/VideoV2';
@@ -21,12 +22,6 @@ export class Video {
   ) {
     const { socketStream, media, stream } = options;
 
-    const chainId = await this.signer?.getChainId();
-
-    if (!chainId) {
-      throw new Error('Chain Id not retrievable from signer');
-    }
-
     if (!this.signer) {
       throw new Error('Signer is required for push video');
     }
@@ -35,6 +30,12 @@ export class Video {
       throw new Error(
         'PushSDK was initialized in readonly mode. Video functionality is not available.'
       );
+    }
+
+    const chainId = await new PushSigner(this.signer).getChainId();
+
+    if (!chainId) {
+      throw new Error('Chain Id not retrievable from signer');
     }
 
     // Initialize the video instance with the provided options
