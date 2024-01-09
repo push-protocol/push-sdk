@@ -15,7 +15,7 @@ export interface IChatDataContextValues {
     isPushChatSocketConnected: boolean;
     setIsPushChatSocketConnected: React.Dispatch<React.SetStateAction<boolean>>;
     pushUser: PushAPI | undefined;
-    setPushUser: React.Dispatch<React.SetStateAction<PushAPI>>;
+    setPushUser: React.Dispatch<React.SetStateAction<PushAPI|undefined>>;
 }
 
 export const initialChatDataContextValues: IChatDataContextValues = {

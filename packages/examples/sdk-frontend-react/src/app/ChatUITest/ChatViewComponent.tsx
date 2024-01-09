@@ -10,6 +10,9 @@ const ChatViewComponentTest = () => {
     'bafyreig3gs4tpwxumiz5fxypyt4omlxhvrvuj66kfoyioeshawlau6lgem',
   ];
 
+
+
+
   return (
     <div>
       <h2>Chat UI Test page</h2>
