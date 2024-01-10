@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.5.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.6...restapi-1.5.7) (2024-01-10)
+
+
+### Bug Fixes
+
+* add constant for CONSTANTS.USER.ENCRYPTION_TYPE ([#1009](https://github.com/ethereum-push-notification-service/push-sdk/issues/1009)) ([d579d07](https://github.com/ethereum-push-notification-service/push-sdk/commit/d579d07f7be7fb5b9314a3dd38eccbd88651c018))
+* Merge branch 'main' into deployment ([d5a8045](https://github.com/ethereum-push-notification-service/push-sdk/commit/d5a8045ecd0e1f57c2120491a285aaebfec55a10))
+
+
+
 ## [1.5.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.5...restapi-1.5.6) (2024-01-09)
 
 
