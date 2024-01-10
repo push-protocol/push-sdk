@@ -1,12 +1,14 @@
 import { ENV } from '../constants';
 import CONSTANTS from '../constantsV2';
-import { SignerType, VideoCallData } from '../types';
+import { SignerType, VideoCallData, VideoCallStatus } from '../types';
 import { Signer as PushSigner } from '../helpers';
 
-import { Video as VideoV1 } from '../video/Video';
+import { Video as VideoV1, initVideoCallData } from '../video/Video';
 import { VideoV2 } from '../video/VideoV2';
 import { VideoInitializeOptions } from './pushAPITypes';
 import { VideoEvent, VideoEventType } from '../pushstream/pushStreamTypes';
+import { produce } from 'immer';
+import { endStream } from '../video/helpers/mediaToggle';
 
 export class Video {
   constructor(
@@ -68,9 +70,35 @@ export class Video {
         meta: { rules },
       } = data.peerInfo;
 
+      const chatId = rules.access.data.chatId;
+
+      // If the event is RequestVideo, update the video call 'data' state with the incoming call data
+      if (data.event === VideoEventType.RequestVideo) {
+        videoV1Instance.setData((oldData) => {
+          return produce(oldData, (draft) => {
+            draft.local.address = this.account;
+            draft.incoming[0].address = address;
+            draft.incoming[0].status = VideoCallStatus.RECEIVED;
+            draft.meta.chatId = chatId!;
+            draft.meta.initiator.address = address;
+            draft.meta.initiator.signal = signal;
+          });
+        });
+      }
+
       // Check if the chatId from the incoming video event matches the chatId of the current video instance
-      if (rules.access.data.chatId === videoV1Instance.data.meta.chatId) {
-        // If the event is a ApproveVideo or RetryApproveVideo event, connect to the video
+      if (chatId && chatId === videoV1Instance.data.meta.chatId) {
+        // If the event is DenyVideo, destroy the local stream & reset the video call data
+        if (data.event === VideoEventType.DenyVideo) {
+          // destroy the local stream
+          if (videoV1Instance.data.local.stream) {
+            endStream(videoV1Instance.data.local.stream);
+          }
+
+          videoV1Instance.setData(() => initVideoCallData);
+        }
+
+        // If the event is ApproveVideo or RetryApproveVideo, connect to the video
         if (
           data.event === VideoEventType.ApproveVideo ||
           data.event === VideoEventType.RetryApproveVideo
@@ -78,7 +106,7 @@ export class Video {
           videoV1Instance.connect({ peerAddress: address, signalData: signal });
         }
 
-        // If the event is a RetryRequestVideo event and the current instance is the initiator, send a request
+        // If the event is RetryRequestVideo and the current instance is the initiator, send a request
         if (
           data.event === VideoEventType.RetryRequestVideo &&
           videoV1Instance.isInitiator()
@@ -86,12 +114,12 @@ export class Video {
           videoV1Instance.request({
             senderAddress: this.account,
             recipientAddress: address,
-            chatId: rules.access.data.chatId,
+            rules,
             retry: true,
           });
         }
 
-        // If the event is a RetryRequestVideo event and the current instance is not the initiator, accept the request
+        // If the event is RetryRequestVideo and the current instance is not the initiator, accept the request
         if (
           data.event === VideoEventType.RetryRequestVideo &&
           !videoV1Instance.isInitiator()
@@ -100,7 +128,7 @@ export class Video {
             signalData: signal,
             senderAddress: this.account,
             recipientAddress: address,
-            chatId: rules.access.data.chatId,
+            rules,
             retry: true,
           });
         }

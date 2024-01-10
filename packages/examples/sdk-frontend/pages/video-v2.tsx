@@ -15,7 +15,6 @@ import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import Toast from '../components/Toast';
 import VideoPlayer from '../components/VideoPlayer';
-import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
 
 const VideoV2: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -35,6 +34,7 @@ const VideoV2: NextPage = () => {
     useState(false);
   const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
   const [callEndedReinitialize, setCallEndedReinitialize] = useState(false);
+
   const initializePushAPI = async () => {
     console.log('initializePushAPI');
     setCallEndedReinitialize(false);
@@ -101,18 +101,15 @@ const VideoV2: NextPage = () => {
         audio: true,
       },
     });
+
     await createdStream.connect();
   };
+
   useEffect(() => {
     if (!signer) return;
 
     initializePushAPI();
   }, [callEndedReinitialize]);
-  useEffect(() => {
-    if (!signer) return;
-
-    initializePushAPI();
-  }, [signer]);
 
   useEffect(() => {
     console.log('isPushStreamConnected', isPushStreamConnected);
@@ -166,11 +163,11 @@ const VideoV2: NextPage = () => {
             >
               Request Video Call
             </button>
-            <button onClick={endCall} disabled={!data.incoming[1]}>
+            <button onClick={endCall} disabled={!data.incoming[0]}>
               End Video Call
             </button>
             <button
-              disabled={!data.incoming[1]}
+              disabled={!data.incoming[0]}
               onClick={() => {
                 aliceVideoCall.current?.media({ video: !data.local.video });
               }}
@@ -179,7 +176,7 @@ const VideoV2: NextPage = () => {
             </button>
 
             <button
-              disabled={!data.incoming[1]}
+              disabled={!data.incoming[0]}
               onClick={() => {
                 aliceVideoCall.current?.media({ audio: !data.local.audio });
               }}
@@ -199,12 +196,11 @@ const VideoV2: NextPage = () => {
               <h2>Local Video</h2>
               <VideoPlayer stream={data.local.stream} isMuted={true} />
             </VContainer>
-            {data.incoming[1]?.stream && (
-              <VContainer>
-                <h2>Incoming Video</h2>
-                <VideoPlayer stream={data.incoming[1].stream} isMuted={false} />
-              </VContainer>
-            )}
+
+            <VContainer>
+              <h2>Incoming Video</h2>
+              <VideoPlayer stream={data.incoming[0].stream} isMuted={false} />
+            </VContainer>
           </HContainer>
         </div>
       ) : (
