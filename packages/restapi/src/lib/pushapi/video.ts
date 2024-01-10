@@ -70,9 +70,9 @@ export class Video {
 
       // Check if the chatId from the incoming video event matches the chatId of the current video instance
       if (rules.access.data.chatId === videoV1Instance.data.meta.chatId) {
-        // If the event is a ConnectVideo or RetryApproveVideo event, connect to the video
+        // If the event is a ApproveVideo or RetryApproveVideo event, connect to the video
         if (
-          data.event === VideoEventType.ConnectVideo ||
+          data.event === VideoEventType.ApproveVideo ||
           data.event === VideoEventType.RetryApproveVideo
         ) {
           videoV1Instance.connect({ peerAddress: address, signalData: signal });
