@@ -423,16 +423,16 @@ export class DataModifier {
     origin: MessageOrigin,
     includeRaw = false
   ): VideoEvent {
-    const { senderAddress, signalData, status }: VideoDataType = JSON.parse(
-      data.payload.data.additionalMeta?.data
-    );
+    const { senderAddress, signalData, status, chatId }: VideoDataType =
+      JSON.parse(data.payload.data.additionalMeta?.data);
 
-    // add backward compatibility to rules object
+    // To maintain backward compatibility, if the rules object is not present in the payload, 
+    // we create a new rules object with chatId from additionalMeta.data
     const rules = data.payload.rules ?? {
       access: {
         type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
         data: {
-          chatId: data.payloads.chatId,
+          chatId,
         },
       },
     };
