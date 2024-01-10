@@ -34,82 +34,82 @@ const VideoV2: NextPage = () => {
   const [showCallDisconnectedToast, setShowCallDisconnectedToast] =
     useState(false);
   const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
+  const [callEndedReinitialize, setCallEndedReinitialize] = useState(false);
+  const initializePushAPI = async () => {
+    console.log('initializePushAPI');
+    setCallEndedReinitialize(false);
+    const userAlice = await PushAPI.initialize(signer, {
+      env: CONSTANTS.ENV.DEV,
+    });
+
+    const createdStream = await userAlice.initStream([
+      CONSTANTS.STREAM.VIDEO,
+      CONSTANTS.STREAM.CONNECT,
+      CONSTANTS.STREAM.DISCONNECT,
+    ]);
+
+    createdStream.on(CONSTANTS.STREAM.CONNECT, () => {
+      console.log('PUSH STREAM CONNECTED: ');
+      setIsPushStreamConnected(true);
+    });
+
+    createdStream.on(CONSTANTS.STREAM.DISCONNECT, () => {
+      console.log('PUSH STREAM DISCONNECTED: ');
+      setIsPushStreamConnected(false);
+    });
+
+    createdStream.on(CONSTANTS.STREAM.VIDEO, async (data: VideoEvent) => {
+      // Handle incoming call, when the type is RequestVideo
+      if (data.event === VideoEventType.RequestVideo) {
+        setLatestVideoEvent(data);
+        setShowIncomingVideoModal(true);
+      }
+
+      // If the received status is ApproveVideo that means we can connect the video call
+      if (data.event === VideoEventType.ApproveVideo) {
+        // setLatestVideoEvent(data);
+
+        // // connecting the call using received peerInfo
+        // aliceVideoCall.current.connect(data.peerInfo);
+        console.log('ApproveVideo', data);
+        setShowCallConnectedToast(true);
+      }
+
+      // If the received status is DenyVideo that means the call has ended
+      if (data.event === VideoEventType.DenyVideo) {
+        // here you can do a window reload
+      }
+
+      // If the received status is ConnectVideo that means the call was connected
+      if (data.event === VideoEventType.ConnectVideo) {
+        // can update the ui with a toast or something that the call is connected
+        console.log('ConnectVideo', data);
+        setShowCallConnectedToast(true);
+      }
+
+      // If the received status is DisconnectVideo that means the call has ended/someone hung up after it was connected
+      if (data.event === VideoEventType.DisconnectVideo) {
+        setShowCallDisconnectedToast(true);
+        setCallEndedReinitialize(true);
+      }
+    });
+
+    aliceVideoCall.current = await userAlice.video.initialize(setData, {
+      socketStream: createdStream,
+      media: {
+        video: true,
+        audio: true,
+      },
+    });
+    await createdStream.connect();
+  };
   useEffect(() => {
     if (!signer) return;
 
-    const initializePushAPI = async () => {
-      console.log('initializePushAPI');
-
-      const userAlice = await PushAPI.initialize(signer, {
-        env: CONSTANTS.ENV.DEV,
-      });
-
-      const createdStream = await userAlice.initStream([
-        CONSTANTS.STREAM.VIDEO,
-        CONSTANTS.STREAM.CONNECT,
-        CONSTANTS.STREAM.DISCONNECT,
-      ]);
-
-      createdStream.on(CONSTANTS.STREAM.CONNECT, () => {
-        console.log('PUSH STREAM CONNECTED: ');
-        setIsPushStreamConnected(true);
-      });
-
-      createdStream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-        console.log('PUSH STREAM DISCONNECTED: ');
-        setIsPushStreamConnected(false);
-      });
-
-      createdStream.on(CONSTANTS.STREAM.VIDEO, async (data: VideoEvent) => {
-        // Handle incoming call, when the type is RequestVideo
-        if (data.event === VideoEventType.RequestVideo) {
-          setLatestVideoEvent(data);
-          setShowIncomingVideoModal(true);
-        }
-
-        // If the received status is ApproveVideo that means we can connect the video call
-        if (data.event === VideoEventType.ApproveVideo) {
-          // setLatestVideoEvent(data);
-
-          // // connecting the call using received peerInfo
-          // aliceVideoCall.current.connect(data.peerInfo);
-          console.log('ApproveVideo', data);
-          setShowCallConnectedToast(true);
-        }
-
-        // If the received status is DenyVideo that means the call has ended
-        if (data.event === VideoEventType.DenyVideo) {
-          // here you can do a window reload
-        }
-
-        // If the received status is ConnectVideo that means the call was connected
-        if (data.event === VideoEventType.ConnectVideo) {
-          // can update the ui with a toast or something that the call is connected
-          console.log('ConnectVideo', data);
-          setShowCallConnectedToast(true);
-        }
-
-        // If the received status is DisconnectVideo that means the call has ended/someone hung up after it was connected
-        if (data.event === VideoEventType.DisconnectVideo) {
-          setShowCallDisconnectedToast(true);
-          setTimeout(() => {
-            window.location.reload();
-          }, 5000);
-        }
-      });
-
-      aliceVideoCall.current = await userAlice.video.initialize(setData, {
-        socketStream: createdStream,
-        media: {
-          video: true,
-          audio: true,
-        },
-      });
-      await createdStream.connect();
-    };
+    initializePushAPI();
+  }, [callEndedReinitialize]);
+  useEffect(() => {
+    if (!signer) return;
 
     initializePushAPI();
   }, [signer]);
@@ -134,8 +134,11 @@ const VideoV2: NextPage = () => {
     setShowIncomingVideoModal(false);
   };
   const endCall = async () => {
-    console.log(recipientAddress);
-    await aliceVideoCall.current.disconnect(recipientAddress);
+    console.log(latestVideoEvent?.peerInfo?.address);
+    await aliceVideoCall.current.disconnect(
+      latestVideoEvent?.peerInfo?.address
+    );
+    setCallEndedReinitialize(true);
   };
 
   return (
