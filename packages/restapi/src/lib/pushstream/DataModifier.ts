@@ -23,6 +23,7 @@ import {
 } from './pushStreamTypes';
 import { VideoCallStatus, VideoPeerInfo } from '../types';
 import { VideoDataType } from '../video';
+import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
 
 export class DataModifier {
   public static handleChatGroupEvent(data: any, includeRaw = false): any {
@@ -426,11 +427,21 @@ export class DataModifier {
       data.payload.data.additionalMeta?.data
     );
 
+    // add backward compatibility to rules object
+    const rules = data.payload.rules ?? {
+      access: {
+        type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+        data: {
+          chatId: data.payloads.chatId,
+        },
+      },
+    };
+
     const peerInfo: VideoPeerInfo = {
       address: senderAddress,
       signal: signalData,
       meta: {
-        rules: data.payload.rules,
+        rules,
       },
     };
 
