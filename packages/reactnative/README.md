@@ -79,13 +79,13 @@ without having to write a lot of boilerplate code. All the heavy lifting is done
 #### Install the SDK
 
 ```bash
-yarn add @push/react-native-sdk
+yarn add @pushprotocol/react-native-sdk
 ```
 
 or
 
 ```bash
-npm install @push/react-native-sdk
+npm install @pushprotocol/react-native-sdk
 ```
 
 #### Install the peer dependencies
@@ -111,7 +111,7 @@ Add postinstall script in your `package.json` file if `node_modules` are not nod
 #### Wrap your app with the PushRNWrapper
 
 ```jsx
-import { PushRNWrapper } from '@push/react-native-sdk';
+import { PushRNWrapper } from '@pushprotocol/react-native-sdk';
 
 return (
   <PushRNWrapper>
@@ -123,7 +123,7 @@ return (
 #### Start using the Push SDK in your app
 
 ```jsx
-import { createUser, Constants } from '@push/react-native-sdk';
+import { createUser, Constants } from '@pushprotocol/react-native-sdk';
 
 const user = await createUser({
   account: account,
@@ -139,7 +139,7 @@ const user = await createUser({
 #### Create User
 
 ```jsx
-import { createUser, Constants } from '@push/react-native-sdk';
+import { createUser, Constants } from '@pushprotocol/react-native-sdk';
 
 const user = await createUser({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -151,7 +151,7 @@ const user = await createUser({
 #### Get User
 
 ```jsx
-import { get, Constants } from '@push/react-native-sdk';
+import { get, Constants } from '@pushprotocol/react-native-sdk';
 
 const user = await get({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -162,7 +162,7 @@ const user = await get({
 #### Profile Update
 
 ```jsx
-import { profileUpdate, Constants } from '@push/react-native-sdk';
+import { profileUpdate, Constants } from '@pushprotocol/react-native-sdk';
 
 await profileUpdate({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -178,7 +178,7 @@ await profileUpdate({
 #### Profile Upgrade
 
 ```jsx
-import { profileUpgrade, Constants } from '@push/react-native-sdk';
+import { profileUpgrade, Constants } from '@pushprotocol/react-native-sdk';
 
 const upgradedProfile = await profileUpgrade({
   signer: signer,
@@ -200,7 +200,7 @@ const upgradedProfile = await profileUpgrade({
 #### Decrypt PGP key
 
 ```jsx
-import { PushApi } from '@push/react-native-sdk';
+import { PushApi } from '@pushprotocol/react-native-sdk';
 
 const user = await get({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -216,7 +216,7 @@ const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
 #### Chats
 
 ```jsx
-import { chats, Constants } from '@push/react-native-sdk';
+import { chats, Constants } from '@pushprotocol/react-native-sdk';
 
 const chatList = await chats({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -229,7 +229,7 @@ const chatList = await chats({
 #### Conversation Hash
 
 ```jsx
-import { PushApi, Constants } from '@push/react-native-sdk';
+import { PushApi, Constants } from '@pushprotocol/react-native-sdk';
 
 const hash = await PushApi.chat.conversationHash({
   account: 'eip155:0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -241,7 +241,7 @@ const hash = await PushApi.chat.conversationHash({
 #### Latest Chat message
 
 ```jsx
-import { latest, Constants } from '@push/react-native-sdk';
+import { latest, Constants } from '@pushprotocol/react-native-sdk';
 
 const msg = await latest({
   threadhash: hash,
@@ -254,7 +254,7 @@ const msg = await latest({
 #### Create Group
 
 ```jsx
-import { createGroup, Constants } from '@push/react-native-sdk';
+import { createGroup, Constants } from '@pushprotocol/react-native-sdk';
 
 const res = await createGroup({
   groupName: groupName,
@@ -275,7 +275,7 @@ const res = await createGroup({
 #### Update Group
 
 ```jsx
-import { updateGroup, Constants } from '@push/react-native-sdk';
+import { updateGroup, Constants } from '@pushprotocol/react-native-sdk';
 
 const res = await updateGroup({
   groupName,
@@ -298,10 +298,10 @@ const res = await updateGroup({
 
 All the remaining features of the `restapi` SDK are available in a similar manner to the `restapi` package. You can read more about them <a href="https://github.com/ethereum-push-notification-service/push-sdk/blob/main/packages/restapi/README.md">HERE</a>
 
-These functions can be accessed by simply importing the `PushApi` object from the `@push/react-native-sdk` package.
+These functions can be accessed by simply importing the `PushApi` object from the `@pushprotocol/react-native-sdk` package.
 
 ```jsx
-import { PushApi } from '@push/react-native-sdk';
+import { PushApi } from '@pushprotocol/react-native-sdk';
 
 const response = await PushApi.chat.getGroupByName({
   groupName: 'Push Group Chat 3',

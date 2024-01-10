@@ -1,8 +1,8 @@
 import React from 'react';
-import { ethers } from 'ethers';
+import {ethers} from 'ethers';
 
 import WebViewCrypto from 'react-native-webview-crypto';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import {ScrollView, StyleSheet, Text} from 'react-native';
 import OpenPGP from 'react-native-fast-openpgp';
 
 import {
@@ -23,7 +23,9 @@ import {
   send,
   Constants,
   approve,
-} from '@push/react-native-sdk/src';
+} from '@pushprotocol/react-native-sdk/src';
+
+import {multiply} from '@pushprotocol/uireactnative';
 
 function generatePrivateKey() {
   // Define the set of characters for private key generation
@@ -86,7 +88,7 @@ export default function App() {
 
   const handleUserMsgs = async () => {
     const signer = new ethers.Wallet(
-      '07da77f7471e5cf046ea3793421cbce90fd42a4cfcf520046a490ca1a9b636e0'
+      '07da77f7471e5cf046ea3793421cbce90fd42a4cfcf520046a490ca1a9b636e0',
     );
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
@@ -160,7 +162,7 @@ export default function App() {
   };
 
   const handleUpdateGroup = async () => {
-    const { signer, chatId, groupName } = await handleCreateGroup();
+    const {signer, chatId, groupName} = await handleCreateGroup();
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
 
@@ -318,6 +320,13 @@ export default function App() {
       </Text>
       <Text style={styles.button} onPress={handleApproveRequest}>
         Approve Request
+      </Text>
+      <Text
+        style={styles.button}
+        onPress={() => {
+          console.log('RES is ', multiply(2, 3));
+        }}>
+        Multiply
       </Text>
     </ScrollView>
   );

@@ -11,7 +11,7 @@
     "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs,zlib --hack && npx patch-package"
   },
   "dependencies": {
-    "@push/react-native-sdk": "../../reactnative",
+    "@pushprotocol/react-native-sdk": "../../reactnative",
     "browserify-zlib": "^0.1.4",
     "events": "^1.1.1",
     "react": "18.2.0",
