@@ -2,13 +2,19 @@
 import React from 'react';
 import styled from 'styled-components';
 
+type IncomingVideoModalProps = {
+  callerID: string | undefined;
+  onAccept: () => void;
+  onReject: () => void;
+};
+
 // Styled components for the CallControl component
 const IncomingVideoModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  width: 300px;
+  width: 400px;
   border-radius: 5px;
   background-color: black;
   position: absolute;
@@ -18,7 +24,7 @@ const IncomingVideoModalWrapper = styled.div`
 `;
 
 const CallerID = styled.div`
-  font-size: 18px;
+  font-size: 14px;
   margin-bottom: 20px;
   color: #fff;
 `;
@@ -42,14 +48,23 @@ const RedButton = styled(Button)`
   background-color: #f44336;
   color: #fff;
 `;
-
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
 // CallControl component
-const IncomingVideoModal = ({ callerID, onAccept, onReject }) => {
+const IncomingVideoModal = ({
+  callerID,
+  onAccept,
+  onReject,
+}: IncomingVideoModalProps) => {
   return (
     <IncomingVideoModalWrapper>
       <CallerID>{callerID}</CallerID>
-      <GreenButton onClick={onAccept}>Accept</GreenButton>
-      <RedButton onClick={onReject}>Reject</RedButton>
+      <ButtonContainer>
+        <GreenButton onClick={onAccept}>Accept</GreenButton>
+        <RedButton onClick={onReject}>Reject</RedButton>
+      </ButtonContainer>
     </IncomingVideoModalWrapper>
   );
 };

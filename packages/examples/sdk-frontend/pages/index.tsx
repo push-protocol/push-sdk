@@ -11,6 +11,9 @@ const Index: NextPage = () => {
       <Button>
         <Link href="/video">Video</Link>
       </Button>
+      <Button>
+        <Link href="/video-v2">Video V2 </Link>
+      </Button>
       {/* <Button>
         <Link href="/spaces">Spaces UI</Link>
       </Button> */}

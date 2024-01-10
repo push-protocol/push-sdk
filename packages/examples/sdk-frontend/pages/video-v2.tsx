@@ -33,6 +33,7 @@ const VideoV2: NextPage = () => {
   const [showIncomingVideoModal, setShowIncomingVideoModal] = useState(false);
   const [showCallDisconnectedToast, setShowCallDisconnectedToast] =
     useState(false);
+  const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
   useEffect(() => {
     console.log('data', data);
   }, [data]);
@@ -76,6 +77,7 @@ const VideoV2: NextPage = () => {
           // // connecting the call using received peerInfo
           // aliceVideoCall.current.connect(data.peerInfo);
           console.log('ApproveVideo', data);
+          setShowCallConnectedToast(true);
         }
 
         // If the received status is DenyVideo that means the call has ended
@@ -87,11 +89,15 @@ const VideoV2: NextPage = () => {
         if (data.event === VideoEventType.ConnectVideo) {
           // can update the ui with a toast or something that the call is connected
           console.log('ConnectVideo', data);
+          setShowCallConnectedToast(true);
         }
 
         // If the received status is DisconnectVideo that means the call has ended/someone hung up after it was connected
         if (data.event === VideoEventType.DisconnectVideo) {
           setShowCallDisconnectedToast(true);
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000);
         }
       });
 
@@ -110,43 +116,26 @@ const VideoV2: NextPage = () => {
 
   useEffect(() => {
     console.log('isPushStreamConnected', isPushStreamConnected);
-    if (isPushStreamConnected) {
+    if (isPushStreamConnected)
       console.log('latestVideoEvent', latestVideoEvent);
-    }
   }, [isPushStreamConnected, latestVideoEvent]);
 
   const requestVideoCall = async (recipient: string) => {
-    console.log(recipient);
     await aliceVideoCall.current.request([recipient]);
   };
 
-  // const requestVideoCall = async (recipient: string) => {
-  //   console.log(recipient);
-  //   await aliceVideoCall.current.request([recipient], {
-  //     rules: {
-  //       access: {
-  //         type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-  //         data: {
-  //           chatId:
-  //             '252395e6b5d0ae0796e05e648240f7950f7a50a80906cdf6accdf7079e311dea',
-  //         },
-  //       },
-  //     },
-  //   });
-  // };
   const acceptIncomingCall = async () => {
-    console.log(latestVideoEvent);
     await aliceVideoCall.current.approve(latestVideoEvent?.peerInfo);
     setShowIncomingVideoModal(false);
   };
   const denyIncomingCall = async () => {
+    console.log('denyIncomingCall', latestVideoEvent?.peerInfo);
     await aliceVideoCall.current.deny(latestVideoEvent?.peerInfo);
     setShowIncomingVideoModal(false);
   };
   const endCall = async () => {
-    await aliceVideoCall.current.disconnect(
-      latestVideoEvent?.peerInfo?.address
-    );
+    console.log(recipientAddress);
+    await aliceVideoCall.current.disconnect(recipientAddress);
   };
 
   return (
@@ -156,6 +145,7 @@ const VideoV2: NextPage = () => {
       {isConnected ? (
         <div>
           {showCallDisconnectedToast && <Toast message="Call ended!" />}
+          {showCallConnectedToast && <Toast message="Call Connected!" />}
           <HContainer>
             <input
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -164,22 +154,43 @@ const VideoV2: NextPage = () => {
               type="text"
             />
           </HContainer>
-          <button
-            onClick={() => {
-              requestVideoCall(recipientAddress!);
-            }}
-            disabled={!recipientAddress}
-          >
-            CALL
-          </button>
-          {showIncomingVideoModal && (
-            <IncomingVideoModal
-              callerID={'latestVideoEvent?.peerInfo.address'}
-              onAccept={acceptIncomingCall}
-              onReject={denyIncomingCall}
-            />
-          )}
+          <HContainer>
+            <button
+              onClick={() => {
+                requestVideoCall(recipientAddress!);
+              }}
+              disabled={!recipientAddress}
+            >
+              Request Video Call
+            </button>
+            <button onClick={endCall} disabled={!data.incoming[1]}>
+              End Video Call
+            </button>
+            <button
+              disabled={!data.incoming[1]}
+              onClick={() => {
+                aliceVideoCall.current?.media({ video: !data.local.video });
+              }}
+            >
+              Toggle Video
+            </button>
 
+            <button
+              disabled={!data.incoming[1]}
+              onClick={() => {
+                aliceVideoCall.current?.media({ audio: !data.local.audio });
+              }}
+            >
+              Toggle Audio
+            </button>
+            {showIncomingVideoModal && (
+              <IncomingVideoModal
+                callerID={latestVideoEvent?.peerInfo?.address}
+                onAccept={acceptIncomingCall}
+                onReject={denyIncomingCall}
+              />
+            )}
+          </HContainer>
           <HContainer>
             <VContainer>
               <h2>Local Video</h2>
