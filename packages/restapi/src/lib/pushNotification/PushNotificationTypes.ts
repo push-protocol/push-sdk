@@ -11,6 +11,8 @@ export type ChannelInfoOptions = {
   channel?: string;
   page?: number;
   limit?: number;
+  category?: number;
+  setting?: boolean;
 };
 
 export type SubscribeUnsubscribeOptions = {
@@ -21,7 +23,7 @@ export type SubscribeUnsubscribeOptions = {
 
 export type UserSetting = {
   enabled: boolean;
-  value?: number;
+  value?: number | {lower: number, upper: number};
 };
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
@@ -34,7 +36,7 @@ export enum FeedType {
 export type FeedsOptions = {
   account?: string;
   //TODO: change it to string[] once we start supporting multiple channel
-  channels?: [string];
+  channels?: string[];
   page?: number;
   limit?: number;
   raw?: boolean;
@@ -100,7 +102,7 @@ export type CreateChannelOptions = {
 
 export type NotificationSetting = {
   type: number;
-  default: number;
+  default: number | { upper: number; lower: number };
   description: string;
   data?: {
     upper: number;

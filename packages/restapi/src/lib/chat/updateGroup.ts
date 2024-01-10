@@ -14,14 +14,15 @@ import {
   IPGPHelper,
   PGPHelper,
   getConnectedUserV2Core,
-  sign,
   getAccountAddress,
   getUserDID,
-  getConnectedUserV2,
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
+import { getGroup } from './getGroup';
+import * as AES from '../chat/helpers/aes';
+import { getGroupMemberStatus } from './getGroupMemberStatus';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -87,6 +88,7 @@ export const updateGroupCore = async (
       address,
       groupDescription
     );
+
     const connectedUser = await getConnectedUserV2Core(
       wallet,
       pgpPrivateKey,
@@ -101,10 +103,56 @@ export const updateGroupCore = async (
     });
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
+
+    const groupChat = await getGroup({ chatId, env });
+
+    // Compare members array with updateGroup.members array. If they have all the same elements then return true
+    const updatedParticipants = new Set(
+      convertedMembers.map((participant) => participant.toLowerCase())
+    );
+
+    const participantStatus = await getGroupMemberStatus({
+      chatId,
+      did: connectedUser.did,
+      env,
+    });
+
+    let sameMembers = true;
+
+    groupChat.members.map((element) => {
+      if (!updatedParticipants.has(element.wallet.toLowerCase())) {
+        sameMembers = false;
+      }
+    });
+
+    let encryptedSecret: string | null = null;
+    if ((!sameMembers || !participantStatus.isMember) && !groupChat.isPublic) {
+      const secretKey = AES.generateRandomSecret(15);
+
+      const publicKeys: string[] = [];
+      // This will now only take keys of non-removed members
+      groupChat.members.map((element) => {
+        if (updatedParticipants.has(element.wallet.toLowerCase())) {
+          publicKeys.push(element.publicKey);
+        }
+      });
+
+      // This is autoJoin Case
+      if (!participantStatus.isMember) {
+        publicKeys.push(connectedUser.publicKey);
+      }
+
+      // Encrypt secret key with group members public keys
+      encryptedSecret = await pgpHelper.pgpEncrypt({
+        plainText: secretKey,
+        keys: publicKeys,
+      });
+    }
+
     const bodyToBeHashed = {
       groupName: groupName,
-      groupDescription: groupDescription,
-      groupImage: groupImage,
+      groupDescription: groupDescription == undefined ? null : groupDescription,
+      groupImage: groupImage == undefined ? null : groupImage,
       members: convertedMembers,
       admins: convertedAdmins,
       chatId: chatId,
@@ -124,6 +172,7 @@ export const updateGroupCore = async (
       convertedAdmins,
       connectedUser.did,
       verificationProof,
+      encryptedSecret,
       groupDescription,
       groupImage,
       scheduleAt,

@@ -21,6 +21,8 @@ import {
   DEFAULT_DOMAIN,
   NOTIFICATION_TYPE,
   SOURCE_TYPES,
+  VIDEO_CALL_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from './constants';
 import { ENV } from '../constants';
 import { getChannel } from '../channels/getChannel';
@@ -28,7 +30,7 @@ import { axiosPost } from '../utils/axiosUtil';
 /**
  * Validate options for some scenarios
  */
-function validateOptions(options: any) {
+function validateOptions(options: ISendNotificationInputOptions) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
   }
@@ -55,6 +57,26 @@ function validateOptions(options: any) {
     if (!options.payload) {
       throw '[Push SDK] - Error - sendNotification() - "payload" mandatory for Identity Type: Direct Payload, Minimal!';
     }
+  }
+
+  const isAdditionalMetaPayload = options.payload?.additionalMeta;
+
+  const isVideoOrSpaceType =
+    typeof options.payload?.additionalMeta === 'object' &&
+    (options.payload.additionalMeta.type ===
+      `${VIDEO_CALL_TYPE.PUSH_VIDEO}+1` ||
+      options.payload.additionalMeta.type ===
+        `${VIDEO_CALL_TYPE.PUSH_SPACE}+1`);
+
+  if (
+    isAdditionalMetaPayload &&
+    isVideoOrSpaceType &&
+    !options.chatId &&
+    !options.rules
+  ) {
+    throw new Error(
+      '[Push SDK] - Error - sendNotification() - Either chatId or rules object is required to send a additional meta notification for video or spaces'
+    );
   }
 }
 
@@ -111,6 +133,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       env = ENV.PROD,
       chatId,
+      rules,
       pgpPrivateKey,
     } = options || {};
 
@@ -161,7 +184,9 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ipfsHash,
       uuid,
       // for the pgpv2 verfication proof
-      chatId,
+      chatId:
+        rules?.access.data ?? // for backwards compatibilty with 'chatId' param
+        chatId,
       pgpPrivateKey,
     });
 
@@ -197,6 +222,21 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         recipients: recipients || '',
         channel: _channelAddress,
       }),
+      /* 
+        - If 'rules' is not provided, check if 'chatId' is available.
+        - If 'chatId' is available, create a new 'rules' object for backwards compatibility.
+        - If neither 'rules' nor 'chatId' is available, do not include 'rules' in the payload.
+      */
+      ...(rules || chatId
+        ? {
+            rules: rules ?? {
+              access: {
+                data: chatId,
+                type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+              },
+            },
+          }
+        : {}),
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;

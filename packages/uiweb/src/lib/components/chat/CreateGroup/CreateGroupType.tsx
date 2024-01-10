@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 
-import { MdCheckCircle, MdError } from 'react-icons/md';
 import styled from 'styled-components';
 
 import { ModalHeader } from '../reusables/Modal';
@@ -11,7 +10,6 @@ import { Button } from '../reusables';
 import {  ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useToast from '../reusables/NewToast';
 import {
   ConditionType,
   CriteriaStateType,
@@ -19,14 +17,11 @@ import {
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
-import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
-import { GrouInfoType as GroupInfoType } from '../types';
 
 import { ACCESS_TYPE_TITLE } from '../constants';
 import { IChatTheme } from '../exportedTypes';
-import { ProfilePicture } from '../../../config';
 
-const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
+export const GROUP_TYPE_OPTIONS: Array<OptionDescription> = [
   {
     heading: 'Public',
     subHeading: 'Anyone can view chats, even without joining',
@@ -132,67 +127,18 @@ const AddConditionSection = ({
 export const CreateGroupType = ({
   onClose,
   handlePrevious,
-  groupInputDetails,
   handleNext,
   criteriaStateManager,
+  checked = false,
+  setChecked,
+  handleAddWallets,
 }: ModalHeaderProps & GroupTypeState) => {
-  const [checked, setChecked] = useState<boolean>(true);
   const [groupEncryptionType, setGroupEncryptionType] = useState(
     GROUP_TYPE_OPTIONS[0].value
   );
 
-  const { createGatedGroup, loading } = useCreateGatedGroup();
-  const groupInfoToast = useToast();
   const theme = useContext(ThemeContext);
-
-  const getEncryptionType = () => {
-    if (groupEncryptionType === 'encrypted') {
-      return false;
-    }
-    return true;
-  };
-
-  const createGroupService = async () => {
-    const groupInfo: GroupInfoType = {
-      groupName: groupInputDetails.groupName,
-      groupDescription: groupInputDetails.groupDescription,
-      groupImage: groupInputDetails.groupImage || ProfilePicture,
-      isPublic: getEncryptionType(),
-    };
-    const rules: any = checked ? criteriaStateManager.generateRule() : {};
-    const isSuccess = await createGatedGroup(groupInfo, rules);
-    if (isSuccess === true) {
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Success',
-        toastMessage: 'Group created successfully',
-        toastType: 'SUCCESS',
-        getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
-      });
-    } else {
-      showError('Group creation failed');
-    }
-
-    onClose();
-  };
-
-  const verifyAndCreateGroup = async () => {
-    if (groupEncryptionType.trim() === '') {
-      showError('Group encryption type is not selected');
-      return;
-    }
-
-    await createGroupService();
-  };
-
-  const showError = (errorMessage: string) => {
-    groupInfoToast.showMessageToast({
-      toastTitle: 'Error',
-      toastMessage: errorMessage,
-      toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
-    });
-  };
-
+  
   return (
     <Section flexDirection="column" gap="16px">
       <ModalHeader
@@ -220,7 +166,7 @@ export const CreateGroupType = ({
             labelHeading="Gated Group"
             labelSubHeading="Turn this on for Token/NFT gating options"
             checked={checked}
-            onToggle={() => setChecked(!checked)}
+            onToggle={() => setChecked ? setChecked(!checked) : null}
           />
 
           {checked && (
@@ -254,9 +200,8 @@ export const CreateGroupType = ({
         </Section>
       </ScrollSection>
       <Section gap="16px" flexDirection="column">
-        <Button width="197px" onClick={verifyAndCreateGroup}>
-          {!loading && 'Create Group'}
-          {loading && <Spinner size="20" color="#fff" />}
+        <Button width="197px" onClick={handleAddWallets}>
+          Next
         </Button>
         <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
       </Section>

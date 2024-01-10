@@ -16,7 +16,6 @@ import {
   getFallbackETHCAIPAddress,
 } from '../helpers';
 
-
 import { PushNotificationBaseClass } from './pushNotificationBase';
 // ERROR CONSTANTS
 const ERROR_CHANNEL_NEEDED = 'Channel is needed';
@@ -45,22 +44,20 @@ export class Notification extends PushNotificationBaseClass {
     options?: FeedsOptions
   ) => {
     const {
-      account = this.account
-        ? getFallbackETHCAIPAddress(this.env!, this.account!)
-        : null,
       page = Constants.PAGINATION.INITIAL_PAGE,
       limit = Constants.PAGINATION.LIMIT,
       channels = [],
       raw = false,
     } = options || {};
     try {
+      const account = options?.account
+        ? options.account
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       // guest mode and valid address check
       this.checkUserAddressExists(account!);
-      if (!validateCAIP(account!)) {
-        throw new Error('Invalid CAIP');
-      }
-      const nonCaipAccount =
-        account?.split(':')[account?.split(':').length - 1];
+      const nonCaipAccount = this.getAddressFromCaip(account!);
       if (channels.length == 0) {
         // else return the response
         return await PUSH_USER.getFeeds({
@@ -72,15 +69,21 @@ export class Notification extends PushNotificationBaseClass {
           env: this.env,
         });
       } else {
-        return await PUSH_USER.getFeedsPerChannel({
-          user: nonCaipAccount!,
-          page: page,
-          limit: limit,
-          spam: FEED_MAP[spam],
-          raw: raw,
-          env: this.env,
-          channels: channels,
+        const promises = channels.map(async (channel) => {
+          return await PUSH_USER.getFeedsPerChannel({
+            user: nonCaipAccount!,
+            page: page,
+            limit: limit,
+            spam: FEED_MAP[spam],
+            raw: raw,
+            env: this.env,
+            channels: [channel],
+          });
         });
+
+        const results = await Promise.all(promises);
+        const feedRes = results.flat();
+        return feedRes;
       }
     } catch (error) {
       throw new Error(`Push SDK Error: API : notifcaiton::list : ${error}`);
@@ -90,11 +93,15 @@ export class Notification extends PushNotificationBaseClass {
   subscriptions = async (options?: SubscriptionOptions) => {
     try {
       const {
-        account = this.account,
         // TODO: to be used once pagination is implemeted at API level
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
       } = options || {};
+      const account = options?.account
+        ? options.account
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       this.checkUserAddressExists(account!);
       return await PUSH_USER.getSubscriptions({
         user: account!,

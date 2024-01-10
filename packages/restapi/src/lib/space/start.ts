@@ -137,18 +137,14 @@ export async function start(this: Space): Promise<void> {
 
     // const { streamKey, playbackId } = responseData;
 
-    // console.log('livepeer details', streamKey, playbackId);
-
     // this.update({ meta: playbackId });
 
     // let redirectUrl;
     // try {
-    //   console.log('Ignore the following error');
 
     //   // the redirect URL from the above GET request
     //   await axios.get(`https://livepeer.studio/webrtc/${streamKey}`);
     // } catch (err: any) {
-    //   console.log('redirectUrl error', err);
     //   redirectUrl = err.request.responseURL;
     // }
 
@@ -218,8 +214,6 @@ export async function start(this: Space): Promise<void> {
     //     new RTCSessionDescription({ type: 'answer', sdp: answerSDP })
     //   );
     // }
-
-    console.log('Live Stream started');
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${start.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${start.name} -: ${err}`);

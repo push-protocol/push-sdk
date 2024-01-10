@@ -3,7 +3,9 @@ import 'text-encoding';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
 
+import React from 'react';
 import OpenPGP from 'react-native-fast-openpgp';
+import WebViewCrypto from 'react-native-webview-crypto';
 import { ethers } from 'ethers';
 
 import * as PushApi from '@pushprotocol/restapi';
@@ -17,18 +19,6 @@ import { ChatsOptionsType } from '@pushprotocol/restapi/src/lib/chat/chats.js';
 import Constants from '@pushprotocol/restapi/src/lib/constants.js';
 import { decryptPGPKey } from '@pushprotocol/restapi/src/lib/helpers/crypto.js';
 
-// TODO:fix this
-//@ts-ignore
-crypto.getRandomValues = (input) => {
-  return input;
-};
-
-// const randomBytes = new Uint8Array(8);
-// console.log('inital', randomBytes);
-// //@ts-ignore
-// let res = crypto.getRandomValues(randomBytes);
-// console.log('got res', res);
-
 const PGPHelper: IPGPHelper = {
   async generateKeyPair() {
     let keys = await OpenPGP.generate({ keyOptions: { rsaBits: 2048 } });
@@ -39,14 +29,31 @@ const PGPHelper: IPGPHelper = {
   },
 
   async sign({ message, signingKey }) {
-    const publicKey = await OpenPGP.convertPrivateKeyToPublicKey(signingKey);
-    const signature = await OpenPGP.sign(message, publicKey, signingKey, '');
+    const signature = await OpenPGP.sign(message, signingKey, '');
     return signature.replace('\nVersion: openpgp-mobile', '');
   },
 
   async pgpEncrypt({ keys, plainText }) {
     const encryptedSecret = await OpenPGP.encrypt(plainText, keys.join('\n'));
     return encryptedSecret;
+  },
+
+  async pgpDecrypt({
+    cipherText,
+    toPrivateKeyArmored,
+  }: {
+    cipherText: any;
+    toPrivateKeyArmored: string;
+  }): Promise<string> {
+    return await OpenPGP.decrypt(cipherText, toPrivateKeyArmored, '');
+  },
+
+  async verifySignature({}: {
+    messageContent: string;
+    signatureArmored: string;
+    publicKeyArmored: string;
+  }): Promise<void> {
+    // TODO: add verification
   },
 };
 
@@ -82,6 +89,10 @@ const chats = async (options: ChatsOptionsType) => {
   return chatsList;
 };
 
+const requests = async (options: ChatsOptionsType) => {
+  return await PushApi.chat.requestsCore(options, PGPHelper);
+};
+
 const latest = async (options: LatestMessagesOptionsType) => {
   let latestMsg = await PushApi.chat.latestCore(options, PGPHelper);
   return latestMsg;
@@ -103,20 +114,22 @@ const updateGroup = async (options: ChatUpdateGroupType) => {
 };
 
 // checking if ethers works
-const genRandomAddress = async () => {
-  const privateKey =
-    '25520e97c3f31af3824ff62e350126299997322ff7d340ffd81faa7f84609ef9';
-
-  // Create an instance of Wallet using the private key
-  const wallet = new ethers.Wallet(privateKey);
-
-  // Get the address from the wallet
+const genRandomAddress = () => {
+  const wallet = ethers.Wallet.createRandom();
   const address = wallet.address;
-
   return address;
 };
 
 const profileUpgrade = PushApi.user.auth.update;
+
+const PushRNWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <React.Fragment>
+      <WebViewCrypto />
+      {children}
+    </React.Fragment>
+  );
+};
 
 export {
   PGPHelper,
@@ -132,9 +145,11 @@ export {
   createGroup,
   updateGroup,
   chats,
+  requests,
   decryptPGPKey,
   profileUpgrade,
   send,
   approve,
   Constants,
+  PushRNWrapper,
 };

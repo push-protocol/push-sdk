@@ -1,8 +1,8 @@
 import { getAPIBaseUrls, isValidETHAddress, walletToPCAIP10 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 import { axiosGet } from '../utils/axiosUtil';
+import { PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 
 export const chat = async (options: {
   account: string;
@@ -35,7 +35,7 @@ export const chat = async (options: {
         toDecrypt,
         pgpPrivateKey,
         env,
-      });
+      },PGPHelper);
       return feed;
     } else {
       return chat;

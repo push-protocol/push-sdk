@@ -40,14 +40,19 @@ const BLOCKCHAIN_NETWORK = {
   POLYGON_ZK_EVM_TESTNET: 'eip155:1442',
   POLYGON_ZK_EVM_MAINNET: 'eip155:1101',
   ARBITRUM_TESTNET: 'eip155:421613',
-  ARBITRUMONE_MAINNET: "eip155:42161"
+  ARBITRUMONE_MAINNET: 'eip155:42161',
 };
 
-export type ALIAS_CHAIN = 'POLYGON' | 'BSC' | 'OPTIMISM' | 'POLYGONZKEVM' | "ARBITRUMONE";
+export type ALIAS_CHAIN =
+  | 'POLYGON'
+  | 'BSC'
+  | 'OPTIMISM'
+  | 'POLYGONZKEVM'
+  | 'ARBITRUMONE';
 
 export const ETH_CHAIN_ID = {
   [ENV.PROD]: 1,
-  [ENV.STAGING]:11155111,
+  [ENV.STAGING]: 11155111,
   [ENV.DEV]: 11155111,
   [ENV.LOCAL]: 11155111,
 };
@@ -81,7 +86,7 @@ export const ALIAS_CHAIN_ID = {
     [ENV.STAGING]: 421613,
     [ENV.DEV]: 421613,
     [ENV.LOCAL]: 421613,
-  }
+  },
 };
 
 export const CHAIN_ID = {
@@ -106,14 +111,13 @@ export const CHAIN_NAME: { [key: number]: string } = {
   1101: 'POLYGONZKEVM',
   1442: 'POLYGONZKEVM',
   // arbitrun
-  421613:'ARBITRUN',
-  42161:'ARBITRUM'
+  421613: 'ARBITRUN',
+  42161: 'ARBITRUM',
 };
 export interface ConfigType {
   API_BASE_URL: string;
   EPNS_COMMUNICATOR_CONTRACT: string;
 }
-
 
 export const VIEM_CORE_CONFIG = {
   [ENV.PROD]: {
@@ -277,7 +281,7 @@ export const TOKEN_VIEM_NETWORK_MAP = {
   [ENV.STAGING]: sepolia,
   [ENV.DEV]: sepolia,
   [ENV.LOCAL]: sepolia,
-}
+};
 
 export const MIN_TOKEN_BALANCE = {
   [ENV.PROD]: 50,
@@ -295,7 +299,6 @@ export const CHANNEL_TYPE = {
   TIMEBOUND: 4,
   GENERAL: 2,
 };
-
 
 export const VIEM_CONFIG = {
   [ENV.PROD]: {
@@ -405,5 +408,14 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
     },
+  },
+};
+
+export const ALPHA_FEATURE_CONFIG = {
+  STABLE: {
+    feature: [] as string[],
+  },
+  ALPHA: {
+    feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2],
   },
 };
