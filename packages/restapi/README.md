@@ -2887,7 +2887,7 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
 ```typescript
 // Update keys encryption
 const aliceUpdateEncryption = await userAlice.encryption.update(
-  ENCRYPTION_VERSION.PGP_V3
+  CONSTANTS.USER.ENCRYPTION_VERSION.PGP_V3
 );
 ```
 
