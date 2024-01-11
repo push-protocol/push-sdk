@@ -22,7 +22,7 @@ import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
-import { IPGPHelper, pgpDecrypt, verifySignature } from './pgp';
+import { IPGPHelper } from './pgp';
 import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
 import { getGroup } from '../getGroup';
@@ -481,7 +481,7 @@ export const decryptAndVerifyMessage = async (
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature = message.verificationProof.split(':')[1];
-    await verifySignature({
+    await pgpHelper.verifySignature({
       messageContent: hash,
       signatureArmored: signature,
       publicKeyArmored: pgpPublicKey,
