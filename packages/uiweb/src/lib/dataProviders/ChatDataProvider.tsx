@@ -29,16 +29,16 @@ export const ChatUIProvider = ({
   env = Constants.ENV.PROD,
 }: IChatUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
-  const [pushChatSocket, setPushChatSocket] = useState<any>(null);
+  const [pushChatStream, setPushChatStream] = useState<any>(null);
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [pushUserVal, setPushUserVal] = useState<PushAPI |undefined>(pushUser);
   const [envVal, setEnvVal] = useState<ENV>(env);
   const { initializePushUser } = useInitializePushUser();
+
   const {fetchChatProfile} = useChatProfile();
 
-  const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
+  const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
-
   useEffect(() => {
     (async () => {
       resetStates();
@@ -81,8 +81,8 @@ export const ChatUIProvider = ({
   }, [signerVal, accountVal, envVal])
 
   const resetStates = () => {
-    setPushChatSocket(null);
-    setIsPushChatSocketConnected(false);
+    setPushChatStream(null);
+    setIsPushChatStreamConnected(false);
 
   };
 
@@ -95,12 +95,13 @@ export const ChatUIProvider = ({
     setAccount: setAccountVal,
     env: envVal,
     setEnv: setEnvVal,
-    pushChatSocket,
-    setPushChatSocket,
-    isPushChatSocketConnected,
-    setIsPushChatSocketConnected,
+    pushChatStream,
+    setPushChatStream,
+    isPushChatStreamConnected,
+    setIsPushChatStreamConnected,
     pushUser:pushUserVal,
     setPushUser:setPushUserVal
+
   };
 
 
