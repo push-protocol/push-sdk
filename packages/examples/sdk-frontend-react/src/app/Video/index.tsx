@@ -116,7 +116,6 @@ const VideoV2: NextPage = () => {
   }, [isPushStreamConnected, latestVideoEvent]);
 
   const requestVideoCall = async (recipient: string) => {
-    console.log('requestVideoCall', recipient);
     await aliceVideoCall.current.request([recipient]);
   };
 
@@ -130,7 +129,6 @@ const VideoV2: NextPage = () => {
     initializePushAPI();
   };
   const endCall = async () => {
-    console.log(latestVideoEvent?.peerInfo?.address);
     await aliceVideoCall.current.disconnect(
       latestVideoEvent?.peerInfo?.address
     );

@@ -34,6 +34,7 @@ const VideoV2: NextPage = () => {
     useState(false);
   const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
   const [userDeniedCallStatus, setUserDeniedCallStatus] = useState(false);
+
   const initializePushAPI = async () => {
     const userAlice = await PushAPI.initialize(signer, {
       env: CONSTANTS.ENV.DEV,
@@ -128,7 +129,6 @@ const VideoV2: NextPage = () => {
     initializePushAPI();
   };
   const endCall = async () => {
-    console.log(latestVideoEvent?.peerInfo?.address);
     await aliceVideoCall.current.disconnect(
       latestVideoEvent?.peerInfo?.address
     );
@@ -142,9 +142,15 @@ const VideoV2: NextPage = () => {
 
       {isConnected ? (
         <div>
-          {showCallDisconnectedToast && <Toast message="Call ended!" />}
-          {showCallConnectedToast && <Toast message="Call Connected!" />}
-          {userDeniedCallStatus && <Toast message="User denied call!" />}
+          {showCallDisconnectedToast && (
+            <Toast message="Call ended!" bg="black" />
+          )}
+          {showCallConnectedToast && (
+            <Toast message="Call Connected!" bg="green" />
+          )}
+          {userDeniedCallStatus && (
+            <Toast message="User denied call!" bg="red" />
+          )}
           <HContainer>
             <input
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -162,7 +168,10 @@ const VideoV2: NextPage = () => {
             >
               Request Video Call
             </button>
-            <button onClick={endCall} disabled={!data.incoming[0]}>
+            <button
+              onClick={endCall}
+              disabled={data?.incoming[0]?.status !== 3}
+            >
               End Video Call
             </button>
             <button
