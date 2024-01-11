@@ -34,6 +34,7 @@ import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
 import { generateRandomNonce } from '../helpers';
+import { INITIAL_NONCE } from '../constants';
 
 /**
  * @interface IThemeProps
@@ -58,7 +59,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [messages, setMessages] = useState<Messagetype>({
     messages: [],
     lastThreadHash: null,
-    nonce: 'INITIAL_NONCE',
+    nonce: INITIAL_NONCE
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [conversationHash, setConversationHash] = useState<string>();
