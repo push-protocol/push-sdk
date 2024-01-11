@@ -1,5 +1,11 @@
 import Constants, { ENV } from '../constants';
-import { ChatStatus, ProgressHookType, Rules, SpaceRules } from '../types';
+import {
+  ChatStatus,
+  ProgressHookType,
+  Rules,
+  SpaceData,
+  SpaceRules,
+} from '../types';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -117,4 +123,9 @@ export interface SpaceParticipantStatus {
   pending: boolean;
   role: 'SPEAKER' | 'LISTENER';
   participant: boolean;
+}
+
+export interface SpaceInitializeOptions {
+  spaceId: string;
+  setSpaceData: (fn: (data: SpaceData) => SpaceData) => void;
 }
