@@ -7,36 +7,36 @@ import {
   VideoEvent,
   VideoEventType,
 } from '@pushprotocol/restapi';
-import { useAccount, useNetwork, useSigner } from 'wagmi';
+
 import styled from 'styled-components';
 
-import { useEffect, useRef, useState } from 'react';
-import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
+import { useContext, useEffect, useRef, useState } from 'react';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import Toast from '../components/Toast';
 import VideoPlayer from '../components/VideoPlayer';
+import { EnvContext, Web3Context } from '../context';
 
 const VideoV2: NextPage = () => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { data: signer } = useSigner();
-
+  const { account, library } = useContext<any>(Web3Context);
+  const { env } = useContext<any>(EnvContext);
+  const librarySigner = library.getSigner();
   const aliceVideoCall = useRef<any>();
   const [latestVideoEvent, setLatestVideoEvent] = useState<VideoEvent | null>(
     null
   );
   const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
-  const [data, setData] = useState<VideoCallData>(initVideoCallData);
+  const [data, setData] = useState<VideoCallData>();
   const [recipientAddress, setRecipientAddress] = useState<string>();
   const [showIncomingVideoModal, setShowIncomingVideoModal] = useState(false);
   const [showCallDisconnectedToast, setShowCallDisconnectedToast] =
     useState(false);
   const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
   const [userDeniedCallStatus, setUserDeniedCallStatus] = useState(false);
+
   const initializePushAPI = async () => {
-    const userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.DEV,
+    const userAlice = await PushAPI.initialize(librarySigner, {
+      env: env,
     });
 
     const createdStream = await userAlice.initStream([
@@ -104,9 +104,10 @@ const VideoV2: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!signer) return;
+    if (!librarySigner) return;
+    console.log('env', env);
     initializePushAPI();
-  }, [signer]);
+  }, [env, library]);
 
   useEffect(() => {
     console.log('isPushStreamConnected', isPushStreamConnected);
@@ -115,6 +116,7 @@ const VideoV2: NextPage = () => {
   }, [isPushStreamConnected, latestVideoEvent]);
 
   const requestVideoCall = async (recipient: string) => {
+    console.log('requestVideoCall', recipient);
     await aliceVideoCall.current.request([recipient]);
   };
 
@@ -138,13 +140,17 @@ const VideoV2: NextPage = () => {
 
   return (
     <div>
-      <Heading>Push Video v2 SDK Demo</Heading>
-
-      {isConnected ? (
+      {account ? (
         <div>
-          {showCallDisconnectedToast && <Toast message="Call ended!" />}
-          {showCallConnectedToast && <Toast message="Call Connected!" />}
-          {userDeniedCallStatus && <Toast message="User denied call!" />}
+          {showCallDisconnectedToast && (
+            <Toast message="Call ended!" bg="black" />
+          )}
+          {showCallConnectedToast && (
+            <Toast message="Call Connected!" bg="green" />
+          )}
+          {userDeniedCallStatus && (
+            <Toast message="User denied call!" bg="red" />
+          )}
           <HContainer>
             <input
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -162,22 +168,22 @@ const VideoV2: NextPage = () => {
             >
               Request Video Call
             </button>
-            <button onClick={endCall} disabled={!data.incoming[0]}>
+            <button onClick={endCall} disabled={!data?.incoming[0]}>
               End Video Call
             </button>
             <button
-              disabled={!data.incoming[0]}
+              disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ video: !data.local.video });
+                aliceVideoCall.current?.media({ video: !data?.local.video });
               }}
             >
               Toggle Video
             </button>
 
             <button
-              disabled={!data.incoming[0]}
+              disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ audio: !data.local.audio });
+                aliceVideoCall.current?.media({ audio: !data?.local.audio });
               }}
             >
               Toggle Audio
@@ -199,12 +205,12 @@ const VideoV2: NextPage = () => {
           <HContainer>
             <VContainer>
               <h2>Local Video</h2>
-              <VideoPlayer stream={data.local.stream} isMuted={true} />
+              <VideoPlayer stream={data?.local.stream} isMuted={true} />
             </VContainer>
 
             <VContainer>
               <h2>Incoming Video</h2>
-              <VideoPlayer stream={data.incoming[0].stream} isMuted={false} />
+              <VideoPlayer stream={data?.incoming[0].stream} isMuted={false} />
             </VContainer>
           </HContainer>
         </div>
