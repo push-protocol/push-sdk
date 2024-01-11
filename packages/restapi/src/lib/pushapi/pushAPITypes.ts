@@ -69,10 +69,10 @@ export interface ParticipantStatus {
 }
 
 export interface VideoInitializeOptions {
-  socketStream: PushStream;
-  media: {
+  stream: PushStream;
+  config: {
     video?: boolean;
     audio?: boolean;
   };
-  stream?: MediaStream;
+  media?: MediaStream;
 }

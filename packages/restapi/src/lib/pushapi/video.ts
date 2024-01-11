@@ -19,10 +19,10 @@ export class Video {
   ) {}
 
   async initialize(
-    setVideoData: (fn: (data: VideoCallData) => VideoCallData) => void,
+    onChange: (fn: (data: VideoCallData) => VideoCallData) => void,
     options: VideoInitializeOptions
   ) {
-    const { socketStream, media, stream } = options;
+    const { stream, config, media } = options;
 
     if (!this.signer) {
       throw new Error('Signer is required for push video');
@@ -46,24 +46,24 @@ export class Video {
       chainId,
       pgpPrivateKey: this.decryptedPgpPvtKey!,
       env: this.env,
-      setData: setVideoData,
+      setData: onChange,
     });
 
     // Create the media stream with the provided options
     await videoV1Instance.create({
-      ...(stream && {
-        stream,
+      ...(media && {
+        stream: media,
       }),
-      ...(media?.audio && {
-        audio: media.audio,
+      ...(config?.audio && {
+        audio: config.audio,
       }),
-      ...(media?.video && {
-        video: media.video,
+      ...(config?.video && {
+        video: config.video,
       }),
     });
 
     // Setup video event handlers
-    socketStream.on(CONSTANTS.STREAM.VIDEO, (data: VideoEvent) => {
+    stream.on(CONSTANTS.STREAM.VIDEO, (data: VideoEvent) => {
       const {
         address,
         signal,
