@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
   getDomainInformation,
@@ -7,6 +6,7 @@ import {
 } from './signature.helpers';
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 
 export type SubscribeOptionsV2Type = {
   signer: SignerType;
@@ -87,7 +87,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
       message: messageInformation.data,
     };
 
-    const res = await axios.post(requestUrl, body);
+    const res = await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 

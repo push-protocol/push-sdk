@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
+import { axiosGet } from '../utils/axiosUtil';
 import { IPGPHelper, PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 
 export type RequestOptionsType = {
@@ -54,7 +54,7 @@ export const requestsCore = async (
     if (!isValidETHAddress(user)) {
       throw new Error(`Invalid address!`);
     }
-    const response = await axios.get(apiEndpoint);
+    const response = await axiosGet(apiEndpoint);
     const requests: IFeeds[] = response.data.requests;
     const updatedRequests = addDeprecatedInfo(requests);
     const Feeds: IFeeds[] = await getInboxLists({
