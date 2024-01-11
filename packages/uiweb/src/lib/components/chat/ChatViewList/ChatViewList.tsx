@@ -229,7 +229,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   const getMessagesCall = async () => {
     let threadHash;
-    if (!messages) {
+    if (!messages?.lastThreadHash) {
       threadHash = conversationHash;
     } else {
       threadHash = messages?.lastThreadHash;
