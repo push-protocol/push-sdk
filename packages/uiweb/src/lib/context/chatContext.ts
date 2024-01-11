@@ -4,6 +4,7 @@ import { createContext } from "react";
 
 
 export interface IChatDataContextValues {
+
   account: string | null;
   setAccount: React.Dispatch<React.SetStateAction<string | null>>;
   signer: SignerType | undefined;

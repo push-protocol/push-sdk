@@ -1,27 +1,29 @@
 import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
+import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import {
   ChatDataContext,
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import { SignerType } from '@pushprotocol/restapi';
+import { PushAPI, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useInitializePushUser from '../hooks/chat/useInitializePushUser';
+import useChatProfile from '../hooks/chat/useChatProfile';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
   theme?: IChatTheme;
   account?: string | null;
   signer?: SignerType | undefined;
-  pgpPrivateKey?: string | null;
+  pushUser?: PushAPI | undefined;
   env?: ENV;
 }
 
 export const ChatUIProvider = ({
   children,
-  account = '0x0000000000000000000000000000000000000000',
+  account = undefined,
+  pushUser = undefined,
   theme,
   signer = undefined,
   env = Constants.ENV.PROD,
@@ -29,9 +31,12 @@ export const ChatUIProvider = ({
   const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
   const [pushChatStream, setPushChatStream] = useState<any>(null);
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
-  const [pushUser, setPushUser] = useState<any>(null);
+  const [pushUserVal, setPushUserVal] = useState<PushAPI |undefined>(pushUser);
   const [envVal, setEnvVal] = useState<ENV>(env);
   const { initializePushUser } = useInitializePushUser();
+
+  const {fetchChatProfile} = useChatProfile();
+
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
   useEffect(() => {
@@ -39,24 +44,36 @@ export const ChatUIProvider = ({
       resetStates();
       setEnvVal(env);
 
-      if (Object.keys(signer ||{}).length) {
+      if (Object.keys(signer ||{}).length && !pushUser) {
      
           const address = await getAddressFromSigner(signer!);
           setAccountVal(address);
      
       }
+
+      else if(!signer && pushUser){
+        const profile = await fetchChatProfile({});
+        setAccountVal(profile?.wallets);
+
+      }
+      else{
+        setAccountVal(GUEST_MODE_ACCOUNT);
+
+      }
+      
       setSignerVal(signer);
+      setPushUserVal(pushUser);
     })()
 
-  }, [env, account, signer])
+  }, [env, account, signer,pushUser])
 
   useEffect(() => {
+    
       (async() => {
-        if(accountVal && envVal){
-          console.log('in initialisation')
+
+        if(accountVal && envVal && !pushUserVal){
           const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
-          console.log(pushUser)
-          setPushUser(pushUser);
+          setPushUserVal(pushUser);
         }
          
    
@@ -82,8 +99,9 @@ export const ChatUIProvider = ({
     setPushChatStream,
     isPushChatStreamConnected,
     setIsPushChatStreamConnected,
-    pushUser,
-    setPushUser
+    pushUser:pushUserVal,
+    setPushUser:setPushUserVal
+
   };
 
 

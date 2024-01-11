@@ -13,7 +13,7 @@ const useInitializePushUser = () => {
     
     const initializePushUser = useCallback(async({signer, account,env}: ProfileParams): Promise<any> => {
         try {
-            const pushUser = await PushAPI.initialize(signer!, {
+            const pushUser = await PushAPI.initialize(signer?? undefined, {
                 env: env,
                 account: account,
                 alpha: { feature: ['SCALABILITY_V2'] },
