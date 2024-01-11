@@ -6,16 +6,15 @@ import {
   VideoCallData,
   VideoEvent,
   VideoEventType,
+  VideoCallStatus,
 } from '@pushprotocol/restapi';
-
 import styled from 'styled-components';
 
 import { useContext, useEffect, useRef, useState } from 'react';
 import IncomingVideoModal from '../components/IncomingVideoModal';
-import Toast from '../components/Toast';
 import VideoPlayer from '../components/VideoPlayer';
 import { EnvContext, Web3Context } from '../context';
-
+import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 const VideoV2: NextPage = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
@@ -28,11 +27,6 @@ const VideoV2: NextPage = () => {
 
   const [data, setData] = useState<VideoCallData>();
   const [recipientAddress, setRecipientAddress] = useState<string>();
-  const [showIncomingVideoModal, setShowIncomingVideoModal] = useState(false);
-  const [showCallDisconnectedToast, setShowCallDisconnectedToast] =
-    useState(false);
-  const [showCallConnectedToast, setShowCallConnectedToast] = useState(false);
-  const [userDeniedCallStatus, setUserDeniedCallStatus] = useState(false);
 
   const initializePushAPI = async () => {
     const userAlice = await PushAPI.initialize(librarySigner, {
@@ -46,49 +40,32 @@ const VideoV2: NextPage = () => {
     ]);
 
     createdStream.on(CONSTANTS.STREAM.CONNECT, () => {
-      console.log('PUSH STREAM CONNECTED: ');
       setIsPushStreamConnected(true);
     });
 
     createdStream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-      console.log('PUSH STREAM DISCONNECTED: ');
       setIsPushStreamConnected(false);
     });
 
     createdStream.on(CONSTANTS.STREAM.VIDEO, async (data: VideoEvent) => {
-      // Handle incoming call, when the type is RequestVideo
       if (data.event === VideoEventType.RequestVideo) {
         setLatestVideoEvent(data);
-        setShowIncomingVideoModal(true);
       }
 
-      // If the received status is ApproveVideo that means we can connect the video call
       if (data.event === VideoEventType.ApproveVideo) {
-        console.log('ApproveVideo', data);
-        setShowCallConnectedToast(true);
-        setLatestVideoEvent(data);
+        alert('Video Call Connected');
       }
 
-      // If the received status is DenyVideo that means the call has ended
       if (data.event === VideoEventType.DenyVideo) {
-        // here you can do a window reload
-        console.log('DenyVideo', data);
-        setUserDeniedCallStatus(true);
-        initializePushAPI();
+        alert('User Denied the Call');
       }
 
-      // If the received status is ConnectVideo that means the call was connected
       if (data.event === VideoEventType.ConnectVideo) {
-        // can update the ui with a toast or something that the call is connected
-        console.log('ConnectVideo', data);
-        setShowCallConnectedToast(true);
+        alert('Video Call Connected');
       }
 
-      // If the received status is DisconnectVideo that means the call has ended/someone hung up after it was connected
       if (data.event === VideoEventType.DisconnectVideo) {
-        console.log('DisconnectVideo', data);
-        setShowCallDisconnectedToast(true);
-        initializePushAPI();
+        alert('Video Call ended!');
       }
     });
 
@@ -105,9 +82,9 @@ const VideoV2: NextPage = () => {
 
   useEffect(() => {
     if (!librarySigner) return;
-    console.log('env', env);
+    if (data?.incoming[0]?.status !== VideoCallStatus.UNINITIALIZED) return;
     initializePushAPI();
-  }, [env, library]);
+  }, [env, library, data?.incoming[0]?.status]);
 
   useEffect(() => {
     console.log('isPushStreamConnected', isPushStreamConnected);
@@ -121,34 +98,18 @@ const VideoV2: NextPage = () => {
 
   const acceptIncomingCall = async () => {
     await aliceVideoCall.current.approve(latestVideoEvent?.peerInfo);
-    setShowIncomingVideoModal(false);
   };
   const denyIncomingCall = async () => {
     await aliceVideoCall.current.deny(latestVideoEvent?.peerInfo);
-    setShowIncomingVideoModal(false);
-    initializePushAPI();
   };
   const endCall = async () => {
-    await aliceVideoCall.current.disconnect(
-      latestVideoEvent?.peerInfo?.address
-    );
-
-    initializePushAPI();
+    await aliceVideoCall.current.disconnect(data?.incoming[0]?.address);
   };
 
   return (
     <div>
       {account ? (
         <div>
-          {showCallDisconnectedToast && (
-            <Toast message="Call ended!" bg="black" />
-          )}
-          {showCallConnectedToast && (
-            <Toast message="Call Connected!" bg="green" />
-          )}
-          {userDeniedCallStatus && (
-            <Toast message="User denied call!" bg="red" />
-          )}
           <HContainer>
             <input
               onChange={(e) => setRecipientAddress(e.target.value)}
@@ -166,7 +127,10 @@ const VideoV2: NextPage = () => {
             >
               Request Video Call
             </button>
-            <button onClick={endCall} disabled={!data?.incoming[0]}>
+            <button
+              onClick={endCall}
+              disabled={data?.incoming[0]?.status !== 3}
+            >
               End Video Call
             </button>
             <button
@@ -186,7 +150,7 @@ const VideoV2: NextPage = () => {
             >
               Toggle Audio
             </button>
-            {showIncomingVideoModal && (
+            {data?.incoming[0].status === VideoCallStatus.RECEIVED && (
               <IncomingVideoModal
                 callerID={latestVideoEvent?.peerInfo?.address}
                 onAccept={acceptIncomingCall}
