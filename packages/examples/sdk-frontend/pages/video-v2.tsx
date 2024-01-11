@@ -72,8 +72,8 @@ const VideoV2: NextPage = () => {
     });
 
     aliceVideoCall.current = await userAlice.video.initialize(setData, {
-      socketStream: createdStream,
-      media: {
+      stream: createdStream,
+      config: {
         video: true,
         audio: true,
       },

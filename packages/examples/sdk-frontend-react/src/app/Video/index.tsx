@@ -8,7 +8,6 @@ import {
   VideoEventType,
   VideoCallStatus,
 } from '@pushprotocol/restapi';
-import { initVideoCallData } from 'packages/restapi/src/lib/video';
 
 import styled from 'styled-components';
 
@@ -16,6 +15,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
 import { EnvContext, Web3Context } from '../context';
+import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video'; // works using like this, import { initVideoCallData } from 'packages/restapi/src/lib/video';
 const VideoV2: NextPage = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
@@ -71,8 +71,8 @@ const VideoV2: NextPage = () => {
     });
 
     aliceVideoCall.current = await userAlice.video.initialize(setData, {
-      socketStream: createdStream,
-      media: {
+      stream: createdStream,
+      config: {
         video: true,
         audio: true,
       },
