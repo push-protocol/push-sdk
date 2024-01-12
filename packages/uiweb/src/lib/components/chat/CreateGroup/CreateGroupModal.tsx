@@ -117,6 +117,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const getEncryptionType = () => {
+    console.debug(groupInputDetails.groupEncryptionType, "encryptionTypeee");
     if (groupInputDetails.groupEncryptionType === 'encrypted') {
       return false;
     }
@@ -185,6 +186,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             setChecked={setChecked}
             criteriaStateManager={criteriaStateManager}
             groupInputDetails={groupInputDetails}
+            setGroupInputDetails={setGroupInputDetails}
             handleNext={handleNext}
             onClose={onClose}
             handlePrevious={handlePrevious}
@@ -261,6 +263,8 @@ export interface ModalHeaderProps {
   handleAddWallets?: () => void;
   isImageUploaded?: boolean;
   setIsImageUploaded?: React.Dispatch<React.SetStateAction<boolean>>;
+  setGroupInputDetails?: React.Dispatch<React.SetStateAction<GroupInputDetailsType>>;
+  groupInputDetails?: GroupInputDetailsType;
 }
 
 interface GroupDetailState {
