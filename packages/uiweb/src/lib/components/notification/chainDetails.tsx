@@ -7,7 +7,7 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
-import { FuseSVG } from '../../icons/FuseSvg';
+import { FuseSvg } from '../../icons/FuseSvg';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -67,12 +67,12 @@ export default {
 
   FUSE_MAINNET: {
     label: 'FUSE MAINNNET',
-    icon: createSVGIcon(<FuseSVG />, 'Fuse Mainnet'),
+    icon: createSVGIcon(<FuseSvg />, 'Fuse Mainnet'),
   },
 
   FUSE_TESTNET: {
     label: 'FUSE TESTNET',
-    icon: createSVGIcon(<FuseSVG />, 'Fuse Testnet'),
+    icon: createSVGIcon(<FuseSvg />, 'Fuse Testnet'),
   },
   THE_GRAPH: {
     label: 'THE GRAPH',
