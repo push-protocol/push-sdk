@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { MessageType, ENV } from '../constants';
 import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
@@ -14,6 +13,7 @@ import { conversationHash } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
+import { axiosPost } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
 
 /**
@@ -96,7 +96,9 @@ export const sendCore = async (
       env,
       pgpHelper
     );
-    return (await axios.post(apiEndpoint, body)).data;
+
+    const response = await axiosPost<MessageWithCID>(apiEndpoint, body);
+    return response.data;
   } catch (err) {
     console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
     throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);

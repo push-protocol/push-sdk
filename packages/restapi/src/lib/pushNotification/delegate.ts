@@ -50,18 +50,16 @@ export class Delegate extends PushNotificationBaseClass {
   add = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
-      const networkDetails = await this.getChianId(this.signer!);
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');
       }
       const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
+
       const commContract = this.createContractInstance(
         commAddress,
         config.ABIS.COMM,
@@ -82,13 +80,10 @@ export class Delegate extends PushNotificationBaseClass {
   remove = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
-      }
       if (validateCAIP(delegate)) {
         delegate = this.getAddressFromCaip(delegate);
       }
-      const networkDetails = await this.getChianId(this.signer!);
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');

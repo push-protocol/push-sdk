@@ -36,7 +36,7 @@ export enum FeedType {
 export type FeedsOptions = {
   account?: string;
   //TODO: change it to string[] once we start supporting multiple channel
-  channels?: [string];
+  channels?: string[];
   page?: number;
   limit?: number;
   raw?: boolean;
