@@ -36,7 +36,7 @@ const useFetchHistoryMessages
             limit: limit,
             env: env
           });
-          console.log(chatHistory)
+          console.info(chatHistory)
           chatHistory.reverse();
           if (chats.get(selectedChatId as string)) {
             const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
@@ -58,7 +58,7 @@ const useFetchHistoryMessages
     } catch (error: Error | any) {
       setLoading(false);
       setError(error.message);
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }

@@ -18,16 +18,16 @@ const eventlistener = async (
 ): Promise<void> => {
   stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
-      console.log('Stream Event Received');
-      console.log(data);
-      console.log('\n');
+      console.debug('Stream Event Received');
+      console.debug(data);
+      console.debug('\n');
     }
   });
 };
 
 export const runNotificationClassUseCases = async (): Promise<void> => {
   if (!process.env.WALLET_PRIVATE_KEY) {
-    console.log(
+    console.warn(
       'skipping PushAPI.channel examples, no private key passed in .env'
     );
     return;
@@ -95,53 +95,53 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   );
 
   stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
-    console.log('Stream Connected');
+    console.debug('Stream Connected');
   });
 
   await stream.connect();
 
   stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-    console.log('Stream Disconnected');
+    console.debug('Stream Disconnected');
   });
 
   // Listen Stream Events for getting websocket events
-  console.log(`Listening ${STREAM.NOTIF} Events`);
+  console.debug(`Listening ${STREAM.NOTIF} Events`);
   eventlistener(stream, STREAM.NOTIF);
-  console.log(`Listening ${STREAM.NOTIF_OPS} Events`);
+  console.debug(`Listening ${STREAM.NOTIF_OPS} Events`);
   eventlistener(stream, STREAM.NOTIF_OPS);
-  console.log('\n\n');
+  console.debug('\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.info');
+  console.debug('PushAPI.channel.info');
   const channelInfo = await userAlice.channel.info();
   if (showAPIResponse) {
-    console.log(channelInfo);
+    console.info(channelInfo);
   }
-  console.log('PushAPI.channel.info | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.info | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.search');
+  console.debug('PushAPI.channel.search');
   const searchedChannels = await userAlice.channel.search(
     'push' // search by name or address
   );
   if (showAPIResponse) {
-    console.log(searchedChannels);
+    console.info(searchedChannels);
   }
-  console.log('PushAPI.channel.search | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.search | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.subscribers');
+  console.debug('PushAPI.channel.subscribers');
   const channelSubscribers = await userAlice.channel.subscribers({
     limit: 10,
     page: 1,
   });
   if (showAPIResponse) {
-    console.log(channelSubscribers);
+    console.info(channelSubscribers);
   }
-  console.log('PushAPI.channel.subscribers | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.subscribers | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.send');
+  console.debug('PushAPI.channel.send');
   if (channelInfo) {
     const broadcastNotif = await userAlice.channel.send(['*'], {
       notification: {
@@ -168,11 +168,11 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
     );
     await delay(3000); // Delay added to log the events in order
     if (showAPIResponse) {
-      console.log(broadcastNotif, targetedNotif, subsetNotif);
+      console.info(broadcastNotif, targetedNotif, subsetNotif);
     }
-    console.log('PushAPI.channel.send | Response - 200 OK\n\n');
+    console.debug('PushAPI.channel.send | Response - 200 OK\n\n');
   } else {
-    console.log(
+    console.debug(
       'skipping PushAPI.channel.send as no channel exists with the signer\n\n'
     );
   }
@@ -181,15 +181,15 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // These Examples requires wallet to hold some ETH & PUSH
   const balance = await provider.getBalance(address);
   if (parseFloat(formatEther(balance)) < 0.001) {
-    console.log(
+    console.warn(
       'skipping PushAPI.channel examples, wallet does not have enough balance to pay fee'
     );
   }
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.create');
+  console.debug('PushAPI.channel.create');
   if (channelInfo) {
-    console.log('skipping PushAPI.channel.create as it already exists\n\n');
+    console.warn('skipping PushAPI.channel.create as it already exists\n\n');
   } else {
     const createdChannel = await userAlice.channel.create({
       name: 'Test Channel',
@@ -198,13 +198,13 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
       url: 'https://push.org',
     });
     if (showAPIResponse) {
-      console.log(createdChannel);
+      console.info(createdChannel);
     }
-    console.log('PushAPI.channel.create | Response - 200 OK\n\n');
+    console.debug('PushAPI.channel.create | Response - 200 OK\n\n');
   }
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.update');
+  console.debug('PushAPI.channel.update');
   const updatedChannel = await userAlice.channel.update({
     name: 'Updated Name',
     description: 'Testing new description',
@@ -212,109 +212,109 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
     icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
   });
   if (showAPIResponse) {
-    console.log(updatedChannel);
+    console.info(updatedChannel);
   }
-  console.log('PushAPI.channel.update | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.update | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.verify');
+  console.debug('PushAPI.channel.verify');
   // only verified channels can verify other channels (otherwise this action is skipped by sdk)
   if (channelInfo.verified_status) {
     const verifiedTrx = await userAlice.channel.verify(
       '0x35B84d6848D16415177c64D64504663b998A6ab4'
     );
     if (showAPIResponse) {
-      console.log(verifiedTrx);
+      console.info(verifiedTrx);
     }
   }
-  console.log('PushAPI.channel.verify | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.verify | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.setting');
+  console.debug('PushAPI.channel.setting');
   const channelSettingTrx = await userAlice.channel.setting([
     { type: 0, default: 1, description: 'My Notif Settings' },
   ]);
   if (showAPIResponse) {
-    console.log(channelSettingTrx);
+    console.info(channelSettingTrx);
   }
-  console.log('PushAPI.channel.setting | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.setting | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.delegate.add');
+  console.debug('PushAPI.channel.delegate.add');
   const addedDelegate = await userAlice.channel.delegate.add(
     `eip155:11155111:${randomWallet1}`
   );
 
   if (showAPIResponse) {
-    console.log(addedDelegate);
+    console.info(addedDelegate);
   }
-  console.log('PushAPI.channel.delegate.add | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.delegate.add | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.delegate.get');
+  console.debug('PushAPI.channel.delegate.get');
   const delegates = await userAlice.channel.delegate.get();
   if (showAPIResponse) {
-    console.log(delegates);
+    console.info(delegates);
   }
-  console.log('PushAPI.channel.delegate.get | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.delegate.get | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.delegate.remove');
+  console.debug('PushAPI.channel.delegate.remove');
   const removedDelegate = await userAlice.channel.delegate.remove(
     `eip155:11155111:${randomWallet1}`
   );
   if (showAPIResponse) {
-    console.log(removedDelegate);
+    console.info(removedDelegate);
   }
-  console.log('PushAPI.channel.delegate.remove | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.delegate.remove | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.channel.alias.info');
+  console.debug('PushAPI.channel.alias.info');
   const aliasInfo = await userAlice.channel.alias.info({
     alias: '0x35B84d6848D16415177c64D64504663b998A6ab4',
     aliasChain: 'POLYGON',
   });
   if (showAPIResponse) {
-    console.log(aliasInfo);
+    console.info(aliasInfo);
   }
-  console.log('PushAPI.channel.alias.info | Response - 200 OK\n\n');
+  console.debug('PushAPI.channel.alias.info | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.notification.list');
+  console.debug('PushAPI.notification.list');
   const inboxNotifications = await userAlice.notification.list('INBOX');
   const spamNotifications = await userAlice.notification.list('SPAM');
   if (showAPIResponse) {
-    console.log(inboxNotifications, spamNotifications);
+    console.info(inboxNotifications, spamNotifications);
   }
-  console.log('PushAPI.notification.list | Response - 200 OK\n\n');
+  console.debug('PushAPI.notification.list | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.notification.subscribe');
+  console.debug('PushAPI.notification.subscribe');
   const subscribeResponse = await userAlice.notification.subscribe(
     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to subscribe
   );
   if (showAPIResponse) {
-    console.log(subscribeResponse);
+    console.info(subscribeResponse);
   }
-  console.log('PushAPI.notification.subscribe | Response - 200 OK\n\n');
+  console.debug('PushAPI.notification.subscribe | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.notification.subscriptions');
+  console.debug('PushAPI.notification.subscriptions');
   const aliceSubscriptions = await userAlice.notification.subscriptions();
   if (showAPIResponse) {
-    console.log(aliceSubscriptions);
+    console.info(aliceSubscriptions);
   }
-  console.log('PushAPI.notification.subscriptions | Response - 200 OK\n\n');
+  console.debug('PushAPI.notification.subscriptions | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.notification.unsubscribe');
+  console.debug('PushAPI.notification.unsubscribe');
   const unsubscribeResponse = await userAlice.notification.unsubscribe(
     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681' // channel to unsubscribe
   );
   if (showAPIResponse) {
-    console.log(unsubscribeResponse);
+    console.info(unsubscribeResponse);
   }
-  console.log('PushAPI.notification.unsubscribe | Response - 200 OK\n\n');
+  console.debug('PushAPI.notification.unsubscribe | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
 };

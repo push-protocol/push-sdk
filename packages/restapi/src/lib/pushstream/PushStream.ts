@@ -117,7 +117,7 @@ export class PushStream extends EventEmitter {
           !shouldInitializeNotifSocket)
       ) {
         this.emit(STREAM.CONNECT);
-        console.log('Emitted STREAM.CONNECT');
+        console.debug('Emitted STREAM.CONNECT');
       }
     };
 
@@ -137,7 +137,7 @@ export class PushStream extends EventEmitter {
         } else {
           // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT ');
+          console.debug('Emitted STREAM.DISCONNECT ');
         }
       } else if (socketType === 'notif') {
         isNotifSocketConnected = false;
@@ -149,7 +149,7 @@ export class PushStream extends EventEmitter {
         } else {
           // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT');
+          console.debug('Emitted STREAM.DISCONNECT');
         }
       }
     };
@@ -172,11 +172,11 @@ export class PushStream extends EventEmitter {
         }
       } else if (!this.pushChatSocket.connected) {
         // If pushChatSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push chat socket...');
+        console.debug('Attempting to reconnect push chat socket...');
         this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushChatSocket is already connected
-        console.log('Push chat socket already connected');
+        console.debug('Push chat socket already connected');
       }
     }
 
@@ -197,11 +197,11 @@ export class PushStream extends EventEmitter {
         }
       } else if (!this.pushNotificationSocket.connected) {
         // If pushNotificationSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push notification socket...');
+        console.debug('Attempting to reconnect push notification socket...');
         this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushNotificationSocket is already connected
-        console.log('Push notification socket already connected');
+        console.debug('Push notification socket already connected');
       }
     }
 
@@ -216,7 +216,7 @@ export class PushStream extends EventEmitter {
       this.pushChatSocket.on(EVENTS.CONNECT, async () => {
         isChatSocketConnected = true;
         checkAndEmitConnectEvent();
-        console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
+        console.debug(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
       });
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
@@ -299,7 +299,7 @@ export class PushStream extends EventEmitter {
 
     if (this.pushNotificationSocket) {
       this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
-        console.log(
+        console.debug(
           `Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
         );
         isNotifSocketConnected = true;

@@ -94,13 +94,13 @@ export const getAddress = async (searchText: string, env: Env) => {
     try {
       address = await udResolver.owner(searchText);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     if (!address) {
       try {
         address = await provider.resolveName(searchText);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
 

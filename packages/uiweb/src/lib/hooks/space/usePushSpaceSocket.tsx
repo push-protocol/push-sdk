@@ -33,7 +33,7 @@ export const usePushSpaceSocket = ({
   } = useSpaceData();
 
   const addSocketEvents = useCallback(() => {
-    console.log('addSocketEvents');
+    console.debug('addSocketEvents');
     pushSpaceSocket?.on(EVENTS.CONNECT, () => {
       setIsPushSDKSocketConnected(true);
     });
@@ -54,7 +54,7 @@ export const usePushSpaceSocket = ({
     // });
 
     pushSpaceSocket?.on('SPACES_MESSAGES', async (message: any) => {
-      console.log('SPACES_MESSAGES RECEIVED', message);
+      console.debug('SPACES_MESSAGES RECEIVED', message);
       if (message?.messageCategory === 'Request' || message?.messageCategory === 'Approve') {
         /*
           - Will be executed on host's end of a live space
@@ -76,7 +76,7 @@ export const usePushSpaceSocket = ({
     });
 
     pushSpaceSocket?.on('SPACES', async (spaceInfo: SpaceDTO) => {
-      console.log('SPACES EVENT RECEIVED', spaceInfo);
+      console.debug('SPACES EVENT RECEIVED', spaceInfo);
 
       /* TODO: In future, store all space info in SpaceInfo state itself, and mySpaces, popularSpaces, requests only store spaceId
         so as to only update spaceInfo once and it should reflect at every place*/
@@ -234,7 +234,7 @@ export const usePushSpaceSocket = ({
   }, [account, env]);
 
   useEffect(() => {
-    console.log('isPushSDKSocketConnected', isPushSDKSocketConnected);
+    console.debug('isPushSDKSocketConnected', isPushSDKSocketConnected);
   }, [isPushSDKSocketConnected]);
 
   return {

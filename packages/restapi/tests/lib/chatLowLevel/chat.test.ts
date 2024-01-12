@@ -27,7 +27,7 @@ describe('Get chat', () => {
       expect(inbox).not.to.be.undefined;
       expect(inbox).not.to.be.equal({});
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   });
 });

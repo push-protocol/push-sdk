@@ -252,17 +252,17 @@ describe.skip('Private Groups', () => {
     // timeout for 1 sec
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const chats = await userAlice.chat.list('CHATS', { page: 1, limit: 1 });
-    console.log(chats);
+    console.debug(chats);
     const end = new Date().getTime();
     const duration = end - start;
-    console.log('Duration in ms : ', duration);
+    console.debug('Duration in ms : ', duration);
 
     const start1 = new Date().getTime();
     const requests = await userBob.chat.list('REQUESTS');
-    console.log(requests);
+    console.debug(requests);
     const end1 = new Date().getTime();
     const duration1 = end1 - start1;
-    console.log('Duration in ms : ', duration1);
+    console.debug('Duration in ms : ', duration1);
   });
 });
 
@@ -274,7 +274,7 @@ const joinGroupTime = async (chatId: string, userBob: PushAPI) => {
   await userBob.chat.group.join(chatId);
   const endTime = new Date();
   const duration = endTime.getTime() - startTime.getTime();
-  console.log('Duration in ms : ', duration);
+  console.debug('Duration in ms : ', duration);
   await userBob.chat.group.leave(chatId);
 };
 const sendMessageTime = async (chatId: string, userAlice: PushAPI) => {
@@ -285,7 +285,7 @@ const sendMessageTime = async (chatId: string, userAlice: PushAPI) => {
   });
   const endTime = new Date();
   const duration = endTime.getTime() - startTime.getTime();
-  console.log('Duration in ms : ', duration);
+  console.debug('Duration in ms : ', duration);
   // timeout for 2 seconds
   await new Promise((resolve) => setTimeout(resolve, 5000));
 };
@@ -317,11 +317,11 @@ const generateUsers = async (memberCount: number): Promise<string[]> => {
     users = [...users, ...batchResults];
 
     if (generationCount % 100 == 0) {
-      console.log('Generated Users : ', generationCount);
+      console.debug('Generated Users : ', generationCount);
     }
   }
 
-  console.log(
+  console.debug(
     `User Generation Completed, users generated : ${generationCount}`
   );
   return users; // 'users' is an array of strings representing accounts
@@ -338,7 +338,7 @@ const createGroupWithPendingMembers = async (
   /**
    * STEP 2: Create Public Group
    */
-  console.log('Creating Group with no members');
+  console.debug('Creating Group with no members');
   const createdGroup = await user.chat.group.create(
     `Benchmark Grp with ${memberCount} members`,
     {
@@ -349,13 +349,13 @@ const createGroupWithPendingMembers = async (
       private: true,
     }
   );
-  console.log('Created Group with no members');
+  console.debug('Created Group with no members');
 
   /**
    * STEP 3: Add Members to Group
    * Note - At max 100 members can be added at once
    */
-  console.log('Adding Members to Group');
+  console.debug('Adding Members to Group');
   let currentMemberCount = 1;
   while (currentMemberCount < memberCount) {
     const currentUsersIndex = currentMemberCount - 1;
@@ -375,6 +375,6 @@ const createGroupWithPendingMembers = async (
       accounts: membersToBeAdded,
     });
   }
-  console.log('Added Members to Group : ', currentMemberCount);
+  console.debug('Added Members to Group : ', currentMemberCount);
   return createdGroup.chatId;
 };

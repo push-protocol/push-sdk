@@ -70,7 +70,7 @@ export const ChatsFeedList = () => {
       const newFeed: ChatFeedsType = { ...chatsFeed, ...feeds };
       setChatsFeed(newFeed);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setPaginateLoading(false);
     } finally {
       setPaginateLoading(false);

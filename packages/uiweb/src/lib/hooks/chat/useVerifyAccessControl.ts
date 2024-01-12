@@ -38,7 +38,7 @@ const useVerifyAccessControl = () => {
         setLoading(false);
         setVerificationSuccessfull(false);
         setError(error.message);
-        console.log(error);
+        console.error(error);
         return;
       }
     },

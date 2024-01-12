@@ -81,8 +81,8 @@ const eventlistener = async (
 ): Promise<void> => {
   stream.on(eventName, (data: any) => {
     if (showAPIResponse) {
-      console.log('Stream Event Received');
-      console.log(data);
+      console.info('Stream Event Received');
+      console.debug(data);
       console.log('\n');
     }
   });
@@ -110,110 +110,110 @@ export const runChatClassUseCases = async (): Promise<void> => {
   );
 
   stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
-    console.log('Stream Connected');
+    console.debug('Stream Connected');
   });
 
   await stream.connect();
 
   stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-    console.log('Stream Disconnected');
+    console.debug('Stream Disconnected');
   });
 
   const userBob = await PushAPI.initialize(secondSigner, { env });
   const userKate = await PushAPI.initialize(thirdSigner, { env });
 
   // Listen stream events to receive websocket events
-  console.log(`Listening ${CONSTANTS.STREAM.CHAT} Events`);
+  console.debug(`Listening ${CONSTANTS.STREAM.CHAT} Events`);
   eventlistener(stream, CONSTANTS.STREAM.CHAT);
-  console.log(`Listening ${CONSTANTS.STREAM.CHAT_OPS} Events`);
+  console.debug(`Listening ${CONSTANTS.STREAM.CHAT_OPS} Events`);
   eventlistener(stream, CONSTANTS.STREAM.CHAT_OPS);
   console.log('\n\n');
 
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.list');
+  console.debug('PushAPI.chat.list');
   const aliceChats = await userAlice.chat.list(CONSTANTS.CHAT.LIST_TYPE.CHATS);
   const aliceRequests = await userAlice.chat.list(
     CONSTANTS.CHAT.LIST_TYPE.REQUESTS
   );
   if (showAPIResponse) {
-    console.log(aliceChats);
-    console.log(aliceRequests);
+    console.debug(aliceChats);
+    console.debug(aliceRequests);
   }
-  console.log('PushAPI.chat.list | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.list | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.latest');
+  console.debug('PushAPI.chat.latest');
   const aliceLatestChatWithBob = await userAlice.chat.latest(
     secondSignerAddress
   );
   if (showAPIResponse) {
-    console.log(aliceLatestChatWithBob);
+    console.debug(aliceLatestChatWithBob);
   }
-  console.log('PushAPI.chat.latest | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.latest | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.history');
+  console.debug('PushAPI.chat.history');
   const aliceChatHistoryWithBob = await userAlice.chat.history(
     secondSignerAddress
   );
   if (showAPIResponse) {
-    console.log(aliceChatHistoryWithBob);
+    console.debug(aliceChatHistoryWithBob);
   }
-  console.log('PushAPI.chat.history | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.history | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.send');
+  console.debug('PushAPI.chat.send');
   const aliceMessagesBob = await userAlice.chat.send(secondSignerAddress, {
     content: 'Hello Bob!',
     type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   if (showAPIResponse) {
-    console.log(aliceMessagesBob);
+    console.debug(aliceMessagesBob);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.chat.send | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.send | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.accept');
+  console.debug('PushAPI.chat.accept');
   const bobAcceptsRequest = await userBob.chat.accept(signerAddress);
   if (showAPIResponse) {
-    console.log(bobAcceptsRequest);
+    console.info(bobAcceptsRequest);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.chat.accept | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.accept | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.reject');
+  console.debug('PushAPI.chat.reject');
   await userKate.chat.send(signerAddress, {
     content: 'Sending malicious message',
     type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
   });
   const AliceRejectsRequest = await userAlice.chat.reject(thirdSignerAddress);
   if (showAPIResponse) {
-    console.log(AliceRejectsRequest);
+    console.debug(AliceRejectsRequest);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.chat.reject | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.reject | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.block');
+  console.debug('PushAPI.chat.block');
   const AliceBlocksBob = await userAlice.chat.block([secondSignerAddress]);
   if (showAPIResponse) {
-    console.log(AliceBlocksBob);
+    console.debug(AliceBlocksBob);
   }
-  console.log('PushAPI.chat.block | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.block | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.chat.unblock');
+  console.debug('PushAPI.chat.unblock');
   const AliceUnblocksBob = await userAlice.chat.unblock([secondSignerAddress]);
   if (showAPIResponse) {
-    console.log(AliceUnblocksBob);
+    console.debug(AliceUnblocksBob);
   }
-  console.log('PushAPI.chat.unblock | Response - 200 OK\n\n');
+  console.debug('PushAPI.chat.unblock | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.create');
+  console.debug('PushAPI.group.create');
   const createdGroup = await userAlice.chat.group.create(groupName, {
     description: groupDescription,
     image: groupImage,
@@ -223,82 +223,82 @@ export const runChatClassUseCases = async (): Promise<void> => {
   });
   const groupChatId = createdGroup.chatId; // to be used in other examples
   if (showAPIResponse) {
-    console.log(createdGroup);
+    console.debug(createdGroup);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.create | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.create | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.permissions');
+  console.debug('PushAPI.group.permissions');
   const grouppermissions = await userAlice.chat.group.permissions(groupChatId);
   if (showAPIResponse) {
-    console.log(grouppermissions);
+    console.debug(grouppermissions);
   }
-  console.log('PushAPI.group.permissions | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.permissions | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.info');
+  console.debug('PushAPI.group.info');
   const groupInfo = await userAlice.chat.group.info(groupChatId);
   if (showAPIResponse) {
-    console.log(groupInfo);
+    console.debug(groupInfo);
   }
-  console.log('PushAPI.group.info | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.info | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.update');
+  console.debug('PushAPI.group.update');
   const updatedGroup = await userAlice.chat.group.update(groupChatId, {
     description: 'Updated Description',
   });
   if (showAPIResponse) {
-    console.log(updatedGroup);
+    console.debug(updatedGroup);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.update | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.update | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.add');
+  console.debug('PushAPI.group.add');
   const addMember = await userAlice.chat.group.add(groupChatId, {
     role: 'MEMBER',
     accounts: [randomWallet3],
   });
   if (showAPIResponse) {
-    console.log(addMember);
+    console.info(addMember);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.add | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.add | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.remove');
+  console.debug('PushAPI.group.remove');
   const removeMember = await userAlice.chat.group.remove(groupChatId, {
     role: 'MEMBER',
     accounts: [randomWallet3],
   });
   if (showAPIResponse) {
-    console.log(removeMember);
+    console.info(removeMember);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.remove | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.remove | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.join');
+  console.debug('PushAPI.group.join');
   const joinGrp = await userBob.chat.group.join(groupChatId);
   if (showAPIResponse) {
-    console.log(joinGrp);
+    console.info(joinGrp);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.join | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.join | Response - 200 OK\n\n');
   //-------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.leave');
+  console.debug('PushAPI.group.leave');
   const leaveGrp = await userBob.chat.group.leave(groupChatId);
   if (showAPIResponse) {
-    console.log(leaveGrp);
+    console.info(leaveGrp);
   }
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.leave | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.leave | Response - 200 OK\n\n');
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
-  console.log('PushAPI.group.reject');
+  console.debug('PushAPI.group.reject');
   const sampleGrp = await userAlice.chat.group.create('Sample Grp', {
     description: groupDescription,
     image: groupImage,
@@ -308,5 +308,5 @@ export const runChatClassUseCases = async (): Promise<void> => {
   });
   await userBob.chat.group.reject(sampleGrp.chatId);
   await delay(2000); // Delay added to log the events in order
-  console.log('PushAPI.group.reject | Response - 200 OK\n\n');
+  console.debug('PushAPI.group.reject | Response - 200 OK\n\n');
 };

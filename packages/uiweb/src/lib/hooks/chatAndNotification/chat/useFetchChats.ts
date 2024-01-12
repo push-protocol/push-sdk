@@ -45,7 +45,7 @@ const useFetchChats = () => {
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
-        console.log(error);
+        console.error(error);
         return;
       } finally {
         setLoading(false);

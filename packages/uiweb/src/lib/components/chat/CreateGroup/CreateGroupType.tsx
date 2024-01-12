@@ -159,6 +159,7 @@ export const CreateGroupType = ({
             selectedValue={groupEncryptionType}
             handleClick={(newEl: string) => {
               setGroupEncryptionType(newEl);
+              console.debug(newEl);
             }}
           />
 

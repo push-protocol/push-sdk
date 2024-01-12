@@ -75,7 +75,7 @@ const ConnectButtonComp = () => {
       await activate(injected);
       localStorage.setItem('isWalletConnected', 'true');
     } catch (ex) {
-      console.log(ex);
+      console.error(ex);
     }
   }
 
@@ -84,7 +84,7 @@ const ConnectButtonComp = () => {
       deactivate();
       localStorage.setItem('isWalletConnected', 'false');
     } catch (ex) {
-      console.log(ex);
+      console.error(ex);
     }
   }
 
@@ -95,7 +95,7 @@ const ConnectButtonComp = () => {
           await activate(injected);
           localStorage.setItem('isWalletConnected', 'true');
         } catch (ex) {
-          console.log(ex);
+          console.error(ex);
         }
       }
     };

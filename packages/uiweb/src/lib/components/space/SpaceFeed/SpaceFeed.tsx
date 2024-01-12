@@ -119,7 +119,7 @@ export const SpaceFeed: React.FC<ISpaceFeedProps> = ({
     ) {
       if (spaces === mySpaces)
         spaces.currentPage &&
-          console.log('spaces.currentPage', spaces.currentPage, Date.now());
+          console.debug('spaces.currentPage', spaces.currentPage, Date.now());
       setMySpaces({
         currentPage: spaces.currentPage + 1,
         lastPage: spaces.lastPage + 1,

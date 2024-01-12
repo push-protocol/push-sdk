@@ -15,10 +15,10 @@ const ChatViewComponentTest = () => {
       <h2>Chat UI Test page</h2>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}} /> */}
       <ChatViewComponentCard>
-      {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
+      <CreateGroupModal onClose={()=>{console.debug('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/>
 
         <ChatView 
-        onVerificationFail={() => console.log("BOIIII RETURNNNSSSSS")} 
+        onVerificationFail={() => console.debug("BOIIII RETURNNNSSSSS")} 
         chatId='2f422f4e16a9610ee15e0670fd9b488712daefaee26d282d5ed3cbf75d7c3345' 
         // a72832107b8ae7624c1ec997cee8e8b2bc21db708465555c20c4d5e029210cd6
         limit={10}

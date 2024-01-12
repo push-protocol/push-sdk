@@ -20,7 +20,7 @@ const { pushUser,account } = useChatData();
         const userReadOnly = await pushUser!.info({ overrideAccount: profileId });
         return userReadOnly;
       } catch (error) {
-        console.log("error", error);
+        console.error("error", error);
         return;
       }
     },

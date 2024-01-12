@@ -35,7 +35,7 @@ let bobConnected = false;
 // Connect stream - Alice
 streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
   aliceConnected = true;
-  console.log('Alice Stream Connected');
+  console.debug('Alice Stream Connected');
 
   // Call sendMessage which checks if both Alice and Bob are connected
   // amd sends a message from Alice to Bob
@@ -45,7 +45,7 @@ streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
 // Connect stream - Bob
 streamBob.on(CONSTANTS.STREAM.CONNECT, () => {
   bobConnected = true;
-  console.log('Bob Stream Connected');
+  console.debug('Bob Stream Connected');
 
   // Call sendMessage which checks if both Alice and Bob are connected
   // amd sends a message from Alice to Bob
@@ -55,8 +55,8 @@ streamBob.on(CONSTANTS.STREAM.CONNECT, () => {
 const sendMessage = async () => {
   if (aliceConnected && bobConnected) {
     // Send a message to Bob after socket connection so that messages as an example
-    console.log('Sending message from Alice to Bob as we know Alice and Bob stream are both connected and can respond');
-    console.log('Wait few moments to get messages streaming in');
+    console.debug('Sending message from Alice to Bob as we know Alice and Bob stream are both connected and can respond');
+    console.debug('Wait few moments to get messages streaming in');
     await userAlice.chat.send(signerBob.address, {
       content: "Gm gm! It's a me... Alice!",
     });
@@ -66,18 +66,18 @@ const sendMessage = async () => {
 // Listen for chat messages - Alice
 streamAlice.on(CONSTANTS.STREAM.CHAT, (chat) => {
   if (chat.origin === 'other') { // means chat that is coming is sent by other (not self as stream emits both your and other's messages)
-    console.log('Alice received chat message', chat);
+    console.debug('Alice received chat message', chat);
   }
 });
 
 // Listen for chat messages - Bob
 streamBob.on(CONSTANTS.STREAM.CHAT, async (chat) => {
   if (chat.origin === 'other') { // means chat that is coming is sent by other (not self as stream emits both your and other's messages)
-    console.log('Bob received chat message', chat);
+    console.debug('Bob received chat message', chat);
   
     // Since Bob and Alice are not connected, approve Alice's request
     await userBob.chat.accept(chat.from);
-    console.log('Bob approved Alice, only required once per chat', chat);
+    console.debug('Bob approved Alice, only required once per chat', chat);
 
     // send response to Alice
     await userBob.chat.send(chat.from, {
@@ -92,22 +92,22 @@ streamBob.on(CONSTANTS.STREAM.CHAT, async (chat) => {
 
 // Listen for chat ops - Alice
 streamAlice.on(CONSTANTS.STREAM.CHAT_OPS, (chatops) => {
-  console.log('Alice received chat ops', chatops);
+  console.debug('Alice received chat ops', chatops);
 });
 
 // Listen for chat ops - Bob
 streamBob.on(CONSTANTS.STREAM.CHAT_OPS, (chatops) => {
-  console.log('Bob received chat ops', chatops);
+  console.debug('Bob received chat ops', chatops);
 });
 
 // Listen for disconnect - Alice
 streamAlice.on(CONSTANTS.STREAM.DISCONNECT, () => {
-  console.log('Alice disconnected');
+  console.debug('Alice disconnected');
 });
 
 // Listen for disconnect - Bob
 streamBob.on(CONSTANTS.STREAM.DISCONNECT, () => {
-  console.log('Bob disconnected');
+  console.debug('Bob disconnected');
 });
 
 // Events and methods for socket connection are set, now connect stream

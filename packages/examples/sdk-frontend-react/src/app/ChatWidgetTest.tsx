@@ -27,7 +27,7 @@ export const ChatWidgetTest = () => {
     })();
   }, [account, env]);
   const onClose = () => {
-    console.log('in here widget');
+    console.debug('in here widget');
   };
 
 

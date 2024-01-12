@@ -80,7 +80,7 @@ const SpaceFeed: NextPage = () => {
         width={width}
         height={height}
         onBannerClickHandler={(spaceId: string) => {
-          console.log('spaceId: ', spaceId);
+          console.debug('spaceId: ', spaceId);
         }}
       />
     </>

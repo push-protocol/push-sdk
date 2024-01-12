@@ -134,7 +134,7 @@ const ChannelsTest = () => {
           userAddress: isCAIP ? getCAIPAddress(env, account) : account,
           env,
           onSuccess: () => {
-            console.log('opt out success');
+            console.debug('opt out success');
             setSubscriberStatus(false);
           },
           onError: (e) => {
@@ -150,7 +150,7 @@ const ChannelsTest = () => {
           userAddress: isCAIP ? getCAIPAddress(env, account) : account,
           env,
           onSuccess: () => {
-            console.log('opt in success');
+            console.debug('opt in success');
             setSubscriberStatus(true);
           },
           onError: (e) => {

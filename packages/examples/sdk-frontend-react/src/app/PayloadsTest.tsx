@@ -335,10 +335,10 @@ const PayloadsTest = () => {
       const sdkInput =
         OPTIONS_MATRIX[notificationTypeOption][identityTypeOption];
 
-      console.log('sdkInput: ', sdkInput);
+      console.debug('sdkInput: ', sdkInput);
 
       const apiResponse = await PushAPI.payloads.sendNotification(sdkInput);
-      console.log('apiResponse: ', apiResponse);
+      console.debug('apiResponse: ', apiResponse);
       setApiStatus({
         status: apiResponse?.status,
         data: apiResponse?.config?.data,

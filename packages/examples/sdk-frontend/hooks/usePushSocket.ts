@@ -23,18 +23,18 @@ export const usePushSocket = ({ env }: PushSocketHookOptions) => {
 
   const addSocketEvents = () => {
     pushSocket?.on(EVENTS.CONNECT, () => {
-      console.log("CONNECTED: ");
+      console.debug("CONNECTED: ");
       setIsPushSocketConnected(true);
     });
 
     pushSocket?.on(EVENTS.DISCONNECT, () => {
-      console.log("DISCONNECTED: ");
+      console.debug("DISCONNECTED: ");
       setIsPushSocketConnected(false);
       setLatestFeedItem([]);
     });
 
     pushSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
-      console.log("RECEIVED FEED ITEM: ", feedItem);
+      console.debug("RECEIVED FEED ITEM: ", feedItem);
       setLatestFeedItem(feedItem);
     });
   };

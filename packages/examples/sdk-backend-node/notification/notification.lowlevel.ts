@@ -73,46 +73,46 @@ const skipExample = () => {
 
 // Push Notification - Run Notifications Use cases
 export const runNotificaitonsLowLevelUseCases = async (): Promise<void> => {
-  console.log('PushAPI.user.getFeeds');
+  console.debug('PushAPI.user.getFeeds');
   await PushAPI_user_getFeeds();
 
-  console.log('PushAPI.user.getFeeds [Spam]');
+  console.debug('PushAPI.user.getFeeds [Spam]');
   await PushAPI_user_getFeeds__spam();
 
-  console.log('PushAPI.user.getSubscriptions');
+  console.debug('PushAPI.user.getSubscriptions');
   await PushAPI_user_getSubscriptions();
 
   if (!skipExample()) {
-    console.log('PushAPI.channels.getChannel()');
+    console.debug('PushAPI.channels.getChannel()');
     await PushAPI_channels_getChannel();
 
-    console.log('PushAPI.channels.search()');
+    console.debug('PushAPI.channels.search()');
     await PushAPI_channels_search();
 
-    console.log('PushAPI.channels.subscribe()');
+    console.debug('PushAPI.channels.subscribe()');
     await PushAPI_channels_subscribe();
 
-    console.log('PushAPI.channels.unsubscribe()');
+    console.debug('PushAPI.channels.unsubscribe()');
     await PushAPI_channels_unsubscribe();
 
     // IMPORTANT: VARIOUS OTHER NOTIFICATIONS FORMAT SUPPORTED
     // EXAMPLES HERE: https://github.com/ethereum-push-notification-service/push-sdk/blob/main/packages/restapi/README.md
-    console.log(
+    console.debug(
       'PushAPI.payloads.sendNotification() [Direct Payload, Single Recipient]'
     );
     await PushAPI_payloads_sendNotification__direct_payload_single_recipient();
 
-    console.log(
+    console.debug(
       'PushAPI.payloads.sendNotification() [Direct Payload, Batch of Recipients (Subset)]'
     );
     await PushAPI_payloads_sendNotification__direct_payload_group_of_recipient_subset();
 
-    console.log(
+    console.debug(
       'PushAPI.payloads.sendNotification() [Direct Payload, All Recipients (Broadcast)]'
     );
     await PushAPI_payloads_sendNotification__direct_payload_all_recipients_brodcast();
 
-    console.log('PushAPI.channels._getSubscribers()');
+    console.debug('PushAPI.channels._getSubscribers()');
     await PushAPI_channels_getSubscribers();
 
     /**
@@ -130,9 +130,9 @@ async function PushAPI_user_getFeeds(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.user.getFeeds | Response - 200 OK');
+  console.debug('PushAPI.user.getFeeds | Response - 200 OK');
   if (!silent) {
-    console.log(notifications);
+    console.info(notifications);
   }
 }
 
@@ -144,9 +144,9 @@ async function PushAPI_user_getFeeds__spam(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.user.getFeeds [Spam] | Response - 200 OK');
+  console.debug('PushAPI.user.getFeeds [Spam] | Response - 200 OK');
   if (!silent) {
-    console.log(notifications);
+    console.info(notifications);
   }
 }
 
@@ -157,9 +157,9 @@ async function PushAPI_user_getSubscriptions(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.user.getSubscriptions | Response - 200 OK');
+  console.debug('PushAPI.user.getSubscriptions | Response - 200 OK');
   if (!silent) {
-    console.log(subscriptions);
+    console.info(subscriptions);
   }
 }
 
@@ -170,9 +170,9 @@ async function PushAPI_channels_getChannel(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.channels.getChannel | Response - 200 OK');
+  console.debug('PushAPI.channels.getChannel | Response - 200 OK');
   if (!silent) {
-    console.log(channelData);
+    console.info(channelData);
   }
 }
 
@@ -185,9 +185,9 @@ async function PushAPI_channels_search(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.channels.search | Response - 200 OK');
+  console.debug('PushAPI.channels.search | Response - 200 OK');
   if (!silent) {
-    console.log(channelsData);
+    console.info(channelsData);
   }
 }
 
@@ -198,7 +198,7 @@ async function PushAPI_channels_subscribe(silent = !showAPIResponse) {
     channelAddress: `eip155:11155111:${channelAddress}`, // channel address in CAIP
     userAddress: `eip155:11155111:${signerAddress}`, // user address in CAIP
     onSuccess: () => {
-      console.log('opt in success');
+      console.debug('opt in success');
     },
     onError: () => {
       console.error('opt in error');
@@ -206,9 +206,9 @@ async function PushAPI_channels_subscribe(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.channels.subscribe | Response - 200 OK');
+  console.debug('PushAPI.channels.subscribe | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -219,7 +219,7 @@ async function PushAPI_channels_unsubscribe(silent = !showAPIResponse) {
     channelAddress: `eip155:11155111:${channelAddress}`, // channel address in CAIP
     userAddress: `eip155:11155111:${signerAddress}`, // user address in CAIP
     onSuccess: () => {
-      console.log('opt out success');
+      console.debug('opt out success');
     },
     onError: () => {
       console.error('opt out error');
@@ -227,9 +227,9 @@ async function PushAPI_channels_unsubscribe(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.channels.unsubscribe | Response - 200 OK');
+  console.debug('PushAPI.channels.unsubscribe | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -258,9 +258,9 @@ async function PushAPI_payloads_sendNotification__direct_payload_single_recipien
     env: env as ENV,
   });
 
-  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  console.debug('PushAPI.payloads.sendNotification | Response - 204 OK');
   if (!silent) {
-    console.log(apiResponse);
+    console.info(apiResponse);
   }
 }
 
@@ -291,9 +291,9 @@ async function PushAPI_payloads_sendNotification__direct_payload_group_of_recipi
     env: env as ENV,
   });
 
-  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  console.debug('PushAPI.payloads.sendNotification | Response - 204 OK');
   if (!silent) {
-    console.log(apiResponse);
+    console.info(apiResponse);
   }
 }
 
@@ -320,9 +320,9 @@ async function PushAPI_payloads_sendNotification__direct_payload_all_recipients_
     env: env as ENV,
   });
 
-  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  console.debug('PushAPI.payloads.sendNotification | Response - 204 OK');
   if (!silent) {
-    console.log(apiResponse);
+    console.info(apiResponse);
   }
 }
 
@@ -333,9 +333,9 @@ async function PushAPI_channels_getSubscribers(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI.channels._getSubscribers | Response - 200 OK');
+  console.debug('PushAPI.channels._getSubscribers | Response - 200 OK');
   if (!silent) {
-    console.log(subscribers);
+    console.info(subscribers);
   }
 }
 
@@ -354,7 +354,7 @@ async function PushSDKSocket(silent = !showAPIResponse) {
   pushSDKSocket.connect();
 
   pushSDKSocket.on(EVENTS.CONNECT, async () => {
-    console.log('Socket Connected - will disconnect after 4 seconds');
+    console.debug('Socket Connected - will disconnect after 4 seconds');
 
     // send a notification to see the result
     await PushAPI_payloads_sendNotification__direct_payload_single_recipient(
@@ -363,14 +363,14 @@ async function PushSDKSocket(silent = !showAPIResponse) {
   });
 
   pushSDKSocket.on(EVENTS.DISCONNECT, () => {
-    console.log('Socket Disconnected');
+    console.debug('Socket Disconnected');
   });
 
   pushSDKSocket.on(EVENTS.USER_FEEDS, (feedItem) => {
     // feedItem is the notification data when that notification was received
-    console.log('Incoming Feed from Socket');
+    console.debug('Incoming Feed from Socket');
     if (!silent) {
-      console.log(feedItem);
+      console.info(feedItem);
     }
 
     // disconnect socket after this, not to be done in real implementations

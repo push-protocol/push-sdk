@@ -27,19 +27,19 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
   const addSocketEvents = async () => {
     console.warn('\n--> addChatSocketEvents');
     stream.on(CONSTANTS.STREAM.CONNECT, (err:Error) => {
-      console.log('CONNECTED: ', err);
+      console.error('CONNECTED: ', err);
       setIsSDKSocketConnected(true);
     });
     await stream.connect();
 
     stream.on(CONSTANTS.STREAM.DISCONNECT, (err:Error) => {
-      console.log('DIS-CONNECTED: ',err);
+      console.debug('DIS-CONNECTED: ',err);
       setIsSDKSocketConnected(false);
     });
 
 
 
-    console.log('\t-->will attach eachMessage event now');
+    console.debug('\t-->will attach eachMessage event now');
     stream.on(CONSTANTS.STREAM.CHAT, (message: any) => {
 
       // do stuff with data
@@ -94,7 +94,7 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
         // setEpnsSDKSocket(connectionObject);
       };
       main().catch((err) => 
-      console.log('')
+      console.error('')
       );
     }
 

@@ -117,6 +117,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const getEncryptionType = () => {
+    console.debug(groupInputDetails.groupEncryptionType, "encryptionTypeee");
     if (groupInputDetails.groupEncryptionType === 'encrypted') {
       return false;
     }

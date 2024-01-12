@@ -25,7 +25,7 @@ const useOnSubscribeToChannel = () => {
         const address = channelAddress;
 
         if (!address) return;
-        console.log(signer)
+        console.info(signer)
         const chainId = await signer?.getChainId();
 
         await PushAPI.channels.subscribe({
@@ -44,7 +44,7 @@ const useOnSubscribeToChannel = () => {
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
-        console.log(error);
+        console.error(error);
         return;
       } finally {
         setLoading(false);

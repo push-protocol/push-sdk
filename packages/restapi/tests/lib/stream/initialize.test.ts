@@ -166,10 +166,10 @@ describe('PushStream.initialize functionality', () => {
     );
 
     stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
-      console.log('Stream Connected');
+      console.debug('Stream Connected');
 
       // Send a message to Bob after socket connection so that messages as an example
-      console.log('Sending message to PushAI Bot');
+      console.debug('Sending message to PushAI Bot');
       userAlice.chat.send(pushAIWalletAddress, {
         content: "Gm gm! It's a me... Mario",
       });
@@ -178,13 +178,13 @@ describe('PushStream.initialize functionality', () => {
     await stream.connect();
 
     stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-      console.log('Stream Disconnected');
+      console.debug('Stream Disconnected');
     });
 
     // React to message payload getting recieved
     stream.on(CONSTANTS.STREAM.CHAT, (message) => {
-      console.log('Encrypted Message Received');
-      console.log(message);
+      console.debug('Encrypted Message Received');
+      console.debug(message);
       stream.disconnect();
     });
 
@@ -204,7 +204,7 @@ describe('PushStream.initialize functionality', () => {
             receivedEvents.push(data);
             eventCount++;
 
-            console.log(
+            console.debug(
               `Event ${eventCount} for ${expectedEvent}:`,
               util.inspect(JSON.stringify(data), {
                 showHidden: false,
@@ -601,10 +601,10 @@ describe('PushStream.initialize functionality', () => {
     );
 
     stream.on(CONSTANTS.STREAM.CONNECT, (a) => {
-      console.log('Stream Connected');
+      console.debug('Stream Connected');
 
       // Send a message to Bob after socket connection so that messages as an example
-      console.log('Sending message to PushAI Bot');
+      console.debug('Sending message to PushAI Bot');
       userAlice.chat.send(pushAIWalletAddress, {
         content: "Gm gm! It's a me... Mario",
       });
@@ -613,13 +613,13 @@ describe('PushStream.initialize functionality', () => {
     await stream.connect();
 
     stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-      console.log('Stream Disconnected');
+      console.debug('Stream Disconnected');
     });
 
     // React to message payload getting recieved
     stream.on(CONSTANTS.STREAM.CHAT, (message) => {
-      console.log('Encrypted Message Received');
-      console.log(message);
+      console.debug('Encrypted Message Received');
+      console.debug(message);
       stream.disconnect();
     });
 
@@ -639,7 +639,7 @@ describe('PushStream.initialize functionality', () => {
             receivedEvents.push(data);
             eventCount++;
 
-            console.log(
+            console.debug(
               `Event ${eventCount} for ${expectedEvent}:`,
               util.inspect(JSON.stringify(data), {
                 showHidden: false,

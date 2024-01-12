@@ -252,7 +252,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with no account: Should return response', async () => {
       const response = await userAlice.notification.subscriptions();
-      console.log(response);
+      console.debug(response);
       expect(response).not.null;
     });
 

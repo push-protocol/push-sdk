@@ -25,7 +25,7 @@ const useUpdateGroup = () => {
         });
         return response;
       } catch(error: Error | any) {
-        console.log("err", error);
+        console.error("err", error);
         setError(error.message);
         return error.message;
       }
@@ -42,7 +42,7 @@ const useUpdateGroup = () => {
         });
         return response;
       } catch(error: Error | any) {
-        console.log("err", error);
+        console.error("err", error);
         setError(error.message);
         return error.message;
       }

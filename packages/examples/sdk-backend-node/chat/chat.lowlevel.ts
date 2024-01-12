@@ -66,55 +66,55 @@ const groupImage =
 
 // Push Chat - Run Chat Use cases
 export const runChatLowlevelUseCases = async (): Promise<void> => {
-  console.log('PushAPI.user.create');
+  console.debug('PushAPI.user.create');
   await PushAPI_user_create();
 
-  console.log('PushAPI.user.get');
+  console.debug('PushAPI.user.get');
   await PushAPI_user_get();
 
-  console.log('PushAPI_chat_decryptPGPKey');
+  console.debug('PushAPI_chat_decryptPGPKey');
   await PushAPI_chat_decryptPGPKey();
 
-  console.log('PushAPI.chat.chats');
+  console.debug('PushAPI.chat.chats');
   await PushAPI_chat_chats();
 
-  console.log('PushAPI.chat.requests');
+  console.debug('PushAPI.chat.requests');
   await PushAPI_chat_requests();
 
-  console.log('PushAPI.chat.send');
+  console.debug('PushAPI.chat.send');
   const TargetChatId = await PushAPI_chat_send();
 
-  console.log('PushAPI.chat.approve');
+  console.debug('PushAPI.chat.approve');
   await PushAPI_chat_approve();
 
-  console.log('PushAPI chat Video call Notification');
+  console.debug('PushAPI chat Video call Notification');
   await PushAPI_chat_video_call_notification(TargetChatId);
 
-  console.log('PushAPI.chat.createGroup');
+  console.debug('PushAPI.chat.createGroup');
   const { chatId, name } = await PushAPI_chat_createGroup();
 
-  console.log('PushAPI.chat.conversationHash');
+  console.debug('PushAPI.chat.conversationHash');
   await PushAPI_chat_conversationHash();
 
-  console.log('PushAPI_chat_history');
+  console.debug('PushAPI_chat_history');
   await PushAPI_chat_history();
 
-  console.log('PushAPI.chat.latest');
+  console.debug('PushAPI.chat.latest');
   await PushAPI_chat_latest();
 
-  console.log('PushAPI.chat.updateGroup');
+  console.debug('PushAPI.chat.updateGroup');
   await PushAPI_chat_updateGroup(chatId);
 
-  console.log('PushAPI.chat.getGroupByName');
+  console.debug('PushAPI.chat.getGroupByName');
   await PushAPI_chat_getGroupByName(name);
 
-  console.log('PushAPI.chat.getGroup');
+  console.debug('PushAPI.chat.getGroup');
   await PushAPI_chat_getGroup(chatId);
 
-  console.log('PushAPI.chat.decryptConversation');
+  console.debug('PushAPI.chat.decryptConversation');
   await PushAPI_chat_decryptConversation();
 
-  console.log('Push Chat - PushSDKSocket()');
+  console.debug('Push Chat - PushSDKSocket()');
   await PushChatSDKSocket();
 };
 
@@ -130,10 +130,10 @@ async function PushAPI_user_create(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_user_create | Response - 200 OK');
+  console.debug('PushAPI_user_create | Response - 200 OK');
   if (!silent) {
-    console.log(user);
-    console.log(user_2);
+    console.debug(user);
+    console.debug(user_2);
   }
 
   return user;
@@ -146,10 +146,10 @@ async function PushAPI_user_get(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_user_get | Response - 200 OK');
+  console.debug('PushAPI_user_get | Response - 200 OK');
 
   if (!silent) {
-    console.log(user);
+    console.debug(user);
   }
 }
 
@@ -168,9 +168,9 @@ async function PushAPI_chat_decryptPGPKey(silent = !showAPIResponse) {
     signer: signer,
   });
 
-  console.log('PushAPI_chat_decryptPGPKey | Response - 200 OK');
+  console.debug('PushAPI_chat_decryptPGPKey | Response - 200 OK');
   if (!silent) {
-    console.log(pgpKey);
+    console.debug(pgpKey);
   }
 }
 
@@ -197,9 +197,9 @@ async function PushAPI_chat_chats(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_chats | Response - 200 OK');
+  console.debug('PushAPI_chat_chats | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -226,9 +226,9 @@ async function PushAPI_chat_requests(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_requests | Response - 200 OK');
+  console.debug('PushAPI_chat_requests | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -241,9 +241,9 @@ async function PushAPI_chat_conversationHash(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_conversationHash | Response - 200 OK');
+  console.debug('PushAPI_chat_conversationHash | Response - 200 OK');
   if (!silent) {
-    console.log(conversationHash);
+    console.debug(conversationHash);
   }
 }
 
@@ -279,9 +279,9 @@ async function PushAPI_chat_latest(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_latest | Response - 200 OK');
+  console.debug('PushAPI_chat_latest | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -318,9 +318,9 @@ async function PushAPI_chat_history(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_history | Response - 200 OK');
+  console.debug('PushAPI_chat_history | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -353,9 +353,9 @@ async function PushAPI_chat_send(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_send | Response - 200 OK');
+  console.debug('PushAPI_chat_send | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
   return response.chatId;
 }
@@ -385,9 +385,9 @@ async function PushAPI_chat_approve(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_approve | Response - 200 OK');
+  console.debug('PushAPI_chat_approve | Response - 200 OK');
   if (!silent) {
-    console.log(approve);
+    console.debug(approve);
   }
 }
 
@@ -423,9 +423,9 @@ async function PushAPI_chat_createGroup(
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_createGroup | Response - 200 OK');
+  console.debug('PushAPI_chat_createGroup | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
   return { chatId: response.chatId, name: response.groupName };
 }
@@ -470,9 +470,9 @@ async function PushAPI_chat_updateGroup(
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_updateGroup | Response - 200 OK');
+  console.debug('PushAPI_chat_updateGroup | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -486,9 +486,9 @@ async function PushAPI_chat_getGroupByName(
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_getGroupByName | Response - 200 OK');
+  console.debug('PushAPI_chat_getGroupByName | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -502,9 +502,9 @@ async function PushAPI_chat_getGroup(
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_getGroup | Response - 200 OK');
+  console.debug('PushAPI_chat_getGroup | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.debug(response);
   }
 }
 
@@ -549,9 +549,9 @@ async function PushAPI_chat_decryptConversation(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_chat_decryptConversation | Response - 200 OK');
+  console.debug('PushAPI_chat_decryptConversation | Response - 200 OK');
   if (!silent) {
-    console.log(decryptedChat);
+    console.debug(decryptedChat);
   }
 }
 
@@ -569,7 +569,7 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
   }
 
   pushSDKSocket.on(EVENTS.CONNECT, async () => {
-    console.log('Socket Connected - will disconnect after 4 seconds');
+    console.debug('Socket Connected - will disconnect after 4 seconds');
 
     // send a chat from other wallet to this one to see the result
     // Fetch user
@@ -595,18 +595,18 @@ async function PushChatSDKSocket(silent = !showAPIResponse) {
       pgpPrivateKey: pgpDecrpyptedPvtKey,
       env: env as ENV,
     });
-    console.log('PushAPI_chat_send | Response - 200 OK');
+    console.debug('PushAPI_chat_send | Response - 200 OK');
   });
 
   pushSDKSocket.on(EVENTS.DISCONNECT, () => {
-    console.log('Socket Disconnected');
+    console.debug('Socket Disconnected');
   });
 
   pushSDKSocket.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) => {
     // feedItem is the notification data when that notification was received
-    console.log('Incoming Push Chat message from Socket');
+    console.debug('Incoming Push Chat message from Socket');
     if (!silent) {
-      console.log(message);
+      console.debug(message);
     }
 
     // disconnect socket after this, not to be done in real implementations
@@ -666,8 +666,8 @@ async function PushAPI_chat_video_call_notification(
     env: env as ENV,
   });
 
-  console.log('PushAPI.payloads.sendNotification | Response - 204 OK');
+  console.debug('PushAPI.payloads.sendNotification | Response - 204 OK');
   if (!silent) {
-    console.log(apiResponse);
+    console.debug(apiResponse);
   }
 }

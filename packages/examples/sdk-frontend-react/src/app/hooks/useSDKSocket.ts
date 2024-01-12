@@ -28,24 +28,24 @@ export const useSDKSocket = ({
   const addSocketEvents = () => {
     console.warn('\n--> addSocketEvents');
     epnsSDKSocket?.on(EVENTS.CONNECT, () => {
-      console.log('CONNECTED: ');
+      console.debug('CONNECTED: ');
       setIsSDKSocketConnected(true);
       setLastConnectionTimestamp(new Date().toUTCString());
     });
 
     epnsSDKSocket?.on(EVENTS.DISCONNECT, () => {
-      console.log('DIS-CONNECTED: ');
+      console.debug('DIS-CONNECTED: ');
       setIsSDKSocketConnected(false);
       setFeedsSinceLastConnection([]);
       setLastConnectionTimestamp('');
     });
 
-    console.log('\t-->will attach eachFeed event now');
+    console.debug('\t-->will attach eachFeed event now');
     epnsSDKSocket?.on(EVENTS.USER_FEEDS, (feed: any) => {
       /**
        * We receive a 1 feed item.
        */
-      console.log('\n\n\n\neachFeed event: ', feed);
+      console.debug('\n\n\n\neachFeed event: ', feed);
 
       // do stuff with data
       setFeedsSinceLastConnection((oldFeeds: any) => {

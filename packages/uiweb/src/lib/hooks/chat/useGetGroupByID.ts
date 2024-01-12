@@ -18,9 +18,9 @@ const useGetGroupByID = () => {
       let group:Group;
       try {
         group = await pushUser?.chat.group.info(groupId);
-        console.log(group)
+        console.error(group)
       } catch (error) {
-        console.log(error);
+        console.error(error);
         return;
       }
       return group;

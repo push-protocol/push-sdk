@@ -13,8 +13,8 @@ const { env } = config;
 
 // Use Cases
 const start = async (): Promise<void> => {
-  console.log(`${returnHeadingLog()}`);
-  console.log(`${returnENVLog()}`);
+  console.debug(`${returnHeadingLog()}`);
+  console.debug(`${returnENVLog()}`);
 
   await runUserCases();
   await runNotificationUseCases();

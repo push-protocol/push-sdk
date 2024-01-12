@@ -29,13 +29,13 @@ const useGetGroup = () => {
           } catch (err) {
             setLoading(false);
             setError(error.message);
-            console.log(error);
+            console.error(error);
             return;
           }
         } else {
           setLoading(false);
           setError(error.message);
-          console.log(error);
+          console.error(error);
           return;
         }
       }

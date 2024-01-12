@@ -17,7 +17,7 @@ const useFetchChat = () => {
     async ({ chatId}: fetchChat) => {
       setLoading(true);
       try {
-        console.log(account)
+        console.info(account)
         const chat = await PushAPI.chat.chat({
           account: account? account : GUEST_MODE_ACCOUNT,
           toDecrypt: false,
@@ -25,12 +25,12 @@ const useFetchChat = () => {
           recipient: chatId!,
           env: env
         });
-        console.log(chat)
+        console.info(chat)
         return chat;
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);
-        console.log(error);
+        console.error(error);
         return;
       }
       finally {

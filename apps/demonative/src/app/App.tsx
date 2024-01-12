@@ -33,7 +33,7 @@ export default function App() {
         ...notifications
       ]);
     } catch (e) {
-      console.log('Error while fetching API data!');
+      console.error('Error while fetching API data!');
     }
   };
 

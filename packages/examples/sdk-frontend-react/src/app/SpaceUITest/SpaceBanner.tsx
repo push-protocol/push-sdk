@@ -19,7 +19,7 @@ export const SpaceBanner = () => {
   };
 
   const onClickHandler = (arg: string) => {
-    console.log(arg);
+    console.info(arg);
   };
 
   return (

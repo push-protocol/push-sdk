@@ -43,7 +43,7 @@ export const useSpaceNotificationSocket = ({
     notificationSocket?.on(EVENTS.USER_FEEDS, (feedItem: any) => {
       const { payload } = feedItem;
 
-      console.log(
+      console.debug(
         'USER FEEDS NOTIFICATION RECEIVED',
         payload?.data?.additionalMeta?.type,
         `${PushAPI.payloads.ADDITIONAL_META_TYPE.PUSH_SPACE}+1`
@@ -59,14 +59,14 @@ export const useSpaceNotificationSocket = ({
 
         const { callDetails, status } = receivedSpaceMetaData;
 
-        console.log('RECEIVED ADDITIONAL META DATA', receivedSpaceMetaData);
+        console.debug('RECEIVED ADDITIONAL META DATA', receivedSpaceMetaData);
 
         if (status === PushAPI.VideoCallStatus.INITIALIZED) {
           if (
             callDetails?.type ===
             PushAPI.payloads.SPACE_REQUEST_TYPE.JOIN_SPEAKER
           ) {
-            console.log(
+            console.debug(
               'ON HOST, ACCEPTING REQUEST OF AN ADDED SPEAKER TO JOIN'
             );
             // TODO: see if check for speaker is req

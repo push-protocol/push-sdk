@@ -40,7 +40,7 @@ export const ChatViewBubbles = () => {
                 env: env
             })
             setMessage(chatHistory)
-            console.log(chatHistory)
+            console.info(chatHistory)
         }
     }
 

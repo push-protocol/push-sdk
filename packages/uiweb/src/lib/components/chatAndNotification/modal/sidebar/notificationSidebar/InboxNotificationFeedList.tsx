@@ -120,7 +120,7 @@ export const InboxNotificationFeedList = () => {
 
       setInboxNotifsFeed(newFeed);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setPaginateLoading(false);
     } finally {
       setPaginateLoading(false);

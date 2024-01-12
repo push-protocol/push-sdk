@@ -21,7 +21,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
     const [selectedMinutes, setSelectedMinutes] = useState('0');
     const [selectedAMPM, setSelectedAMPM] = useState('AM');
     const [timeHumanReadable, setTimeHumanReadable] = useState(0);
-    console.log("🚀 ~ file: DateTimePicker.tsx:24 ~ timeHumanReadable:", timeHumanReadable)
+    console.debug("🚀 ~ file: DateTimePicker.tsx:24 ~ timeHumanReadable:", timeHumanReadable)
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const date = new Date(event.target.value);

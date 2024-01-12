@@ -571,7 +571,7 @@ const aliasInfo = userAlice.channel.alias.info({alias: '0xABC', aliasChain:'POLY
 
   // recevive stream of notification
   userAlice.stream.on(STREAM.NOTIF, (data: any) => {
-      console.log(data)
+      console.info(data)
   })
 ```
 
@@ -2997,7 +2997,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ```tsx
     // recevive stream related to chat
     userAlice.stream.on(STREAM.CHAT, (data: any) => {
-        console.log(data)
+        console.info(data)
     })
 ```
 
@@ -3367,7 +3367,7 @@ const aliceUpdateEncryption = await userAlice.encryption.update(
 ```tsx
     // recevive stream realated to group creation and updation
     userAlice.stream.on(STREAM.CHAT_OPS, (data: any) => {
-        console.log(data)
+        console.info(data)
     })
 ```
 
@@ -5726,7 +5726,7 @@ Allowed Options (params with * are optional)
 | senderAddress | string | - | Wallet address of the local user |
 | recipientAddress | string, string[] | - | Wallet addresses of users you want to call, single address for wallet to wallet call and array of addresses for group call |
 | chatId | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
+| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.debug('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
 | retry* | boolean | false | If we are retrying the call, only for internal use |
 
 ---
@@ -5756,7 +5756,7 @@ Allowed Options (params with * are optional)
 | senderAddress | string | - | Local peer address |
 | recipientAddress | string | - | Incoming/remote peer address |
 | chatId | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
+| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.debug('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
 | retry* | boolean | false | If we are retrying the call, only for internal use |
 
 ---

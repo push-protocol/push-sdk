@@ -50,7 +50,7 @@ export const ApproveRequestBubble = ({
         setChatFeed(updatedChatFeed);
       }
     } catch (error_: Error | any) {
-      console.log(error_.message);
+      console.error(error_.message);
     }
   };
   return (

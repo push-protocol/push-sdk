@@ -12,10 +12,10 @@ const provider = new ethers.providers.JsonRpcProvider(
 let signer;
 if (process.env.PRIVATE_KEY) {
   signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-  console.log('Using the wallet from .env: %s', signer.address);
+  console.debug('Using the wallet from .env: %s', signer.address);
 } else {
   signer = ethers.Wallet.createRandom().connect(provider);
-  console.log('Fund your wallet with eth and PUSH token: %s', signer.address);
+  console.debug('Fund your wallet with eth and PUSH token: %s', signer.address);
 }
 
 // initialise the sdk with the signer and env
@@ -46,7 +46,7 @@ const main = async () => {
       // base64 icon
       icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
     });
-    console.log("Channel created with hash: %s", createChannelRes.transactionHash);
+    console.debug("Channel created with hash: %s", createChannelRes.transactionHash);
 
     // create settings
     const settingRes = await userAlice.channel.setting([
@@ -68,12 +68,12 @@ const main = async () => {
       },
     ]);
 
-    console.log(settingRes)
+    console.debug(settingRes)
 
     // fetch channel info with the settings
     const channelInfoWithSetting = await userAlice.channel.info();
-    console.log('Channel info with settings');
-    console.log(channelInfoWithSetting);
+    console.info('Channel info with settings');
+    console.info(channelInfoWithSetting);
 
     // make bob and kate subscribe to the channel
     // bob wants to opt in to all the settings
@@ -113,13 +113,13 @@ const main = async () => {
 
     // fetch Bob's subscription
     const bobSubscriptions = await userBob.notification.subscriptions();
-    console.log("Bob's subcriptions: ");
-    console.log(bobSubscriptions);
+    console.info("Bob's subcriptions: ");
+    console.info(bobSubscriptions);
 
     // fetch Kate's subscription
     const kateSubscriptions = await userKate.notification.subscriptions();
-    console.log("Kate's subcriptions: ");
-    console.log(kateSubscriptions);
+    console.info("Kate's subcriptions: ");
+    console.info(kateSubscriptions);
 
     // Trigger broadcast for slider type
     const notifResForSlider = await userAlice.channel.send(['*'], {
@@ -155,16 +155,16 @@ const main = async () => {
 
     // List the inbox of Bob
     const bobList = await userBob.notification.list()
-    console.log("Bob's notification list")
-    console.log(bobList)
+    console.info("Bob's notification list")
+    console.info(bobList)
 
     // List down inbox of Kate
     const kateList = await userKate.notification.list()
-    console.log("Kate's notification list")
-    console.log(kateList)
+    console.info("Kate's notification list")
+    console.info(kateList)
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

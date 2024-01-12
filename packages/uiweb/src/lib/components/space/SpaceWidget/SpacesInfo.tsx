@@ -72,7 +72,7 @@ export const SpacesInfo: React.FC<ISpacesInfoProps> = (props) => {
             setLoading(true);
             const response = await PushAPI.space.update(spaceUpdate);
 
-            console.log(response);
+            console.debug(response);
         } catch (e: any) {
             console.error(e.message);
         } finally {

@@ -22,10 +22,10 @@ const EmbedTest = () => {
         },
         theme: 'light',
         onOpen: () => {
-          console.log('-> client dApp onOpen callback');
+          console.debug('-> client dApp onOpen callback');
         },
         onClose: () => {
-          console.log('-> client dApp onClose callback');
+          console.debug('-> client dApp onClose callback');
         },
       });
     }

@@ -78,7 +78,7 @@ export const SpamNotificationFeedList = () => {
 
       setSpamNotifsFeed(newFeed);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setPaginateLoading(false);
     } finally {
       setPaginateLoading(false);

@@ -57,12 +57,12 @@ function generateRandomString() {
 export default function App() {
   const handlePgp = async () => {
     let res = await PGPHelper.generateKeyPair();
-    console.log(res);
+    console.debug(res);
   };
 
   const handleEthers = async () => {
     let res = await genRandomAddress();
-    console.log(res);
+    console.debug(res);
   };
 
   const handleUserCreate = async () => {
@@ -78,10 +78,10 @@ export default function App() {
       env: Constants.ENV.DEV,
     };
 
-    console.log('create user', account);
+    console.debug('create user', account);
 
     const res = await createUser(options);
-    console.log('success', res.did);
+    console.debug('success', res.did);
   };
 
   const handleUserMsgs = async () => {
@@ -90,7 +90,7 @@ export default function App() {
     );
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
-    console.log(signer);
+    console.debug(signer);
 
     const res = await PushApi.chat.conversationHash({
       account: account,
@@ -122,9 +122,9 @@ export default function App() {
       toDecrypt: true,
       env: ENV.STAGING,
     });
-    console.log(user, 'user');
-    console.log(pgpDecryptedPvtKey, 'key');
-    console.log(chatList, 'Chatlist');
+    console.debug(user, 'user');
+    console.debug(pgpDecryptedPvtKey, 'key');
+    console.debug(chatList, 'Chatlist');
   };
 
   const handleCreateGroup = async () => {
@@ -132,7 +132,7 @@ export default function App() {
     const signer = new ethers.Wallet(pk);
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
-    console.log(signer);
+    console.debug(signer);
 
     const groupName = generateRandomString();
 
@@ -150,7 +150,7 @@ export default function App() {
       isPublic: true,
       env: ENV.DEV,
     });
-    console.log(res, 'res');
+    console.debug(res, 'res');
 
     return {
       chatId: res.chatId,
@@ -179,7 +179,7 @@ export default function App() {
       ],
       env: ENV.DEV,
     });
-    console.log(res, 'ress');
+    console.debug(res, 'ress');
   };
 
   const handleGetUser = async () => {
@@ -189,25 +189,25 @@ export default function App() {
     };
 
     const res = await get(options);
-    console.log('successfully got user', res);
+    console.debug('successfully got user', res);
   };
 
   const handleProfileUpdate = async () => {
-    console.log('updating profile...');
+    console.debug('updating profile...');
     const pk = generatePrivateKey();
 
     const signer = new ethers.Wallet(pk);
     const walletAddress = signer.address;
     const account = `eip155:${walletAddress}`;
 
-    console.log('creating user...');
+    console.debug('creating user...');
     const user = await createUser({
       account: account,
       signer: signer,
       env: Constants.ENV.DEV,
     });
 
-    console.log('decrypting pgp key...');
+    console.debug('decrypting pgp key...');
     const pgpPK = await decryptPGPKey({
       account: user.did,
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
@@ -215,7 +215,7 @@ export default function App() {
       signer: signer,
     });
 
-    console.log('updating profile...');
+    console.debug('updating profile...');
     await profileUpdate({
       account: account,
       env: Constants.ENV.DEV,
@@ -225,11 +225,11 @@ export default function App() {
         desc: 'Updated Desc',
       },
     });
-    console.log('successfully updated profile');
+    console.debug('successfully updated profile');
   };
 
   const handleProfileUpgrade = async () => {
-    console.log('upgrading profile...');
+    console.debug('upgrading profile...');
     const pk = generatePrivateKey();
     const signer = new ethers.Wallet(pk);
     const walletAddress = signer.address;
@@ -264,7 +264,7 @@ export default function App() {
       },
     });
 
-    console.log('successfully upgraded profile');
+    console.debug('successfully upgraded profile');
     return upgradedProfile;
   };
 
@@ -273,11 +273,11 @@ export default function App() {
   };
 
   const handleSend = async () => {
-    console.log('sent message!');
+    console.debug('sent message!');
   };
 
   const handleApproveRequest = async () => {
-    console.log('successfully approved request!');
+    console.debug('successfully approved request!');
   };
 
   return (

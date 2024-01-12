@@ -10,8 +10,8 @@ export interface IGetLivekitRoomProps {
 }
 
 export const getLivekitRoomToken = async ({ userType, roomId, userId }: IGetLivekitRoomProps) => {
-  console.log("🚀 ~ file: getToken.js:5 ~ getToken ~ roomId:", roomId)
-  console.log("🚀 ~ file: getToken.js:5 ~ getToken ~ userId:", userId)
+  console.debug("🚀 ~ file: getToken.js:5 ~ getToken ~ roomId:", roomId)
+  console.debug("🚀 ~ file: getToken.js:5 ~ getToken ~ userId:", userId)
   if (userType !== "sender" && userType !== "receiver") {
     throw new Error("Invalid userType. Use 'sender' or 'receiver'.");
   }

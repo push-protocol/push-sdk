@@ -39,7 +39,7 @@ const useGroupMemberUtilities = () => {
         return response;
       } catch(error: Error | any) {
         setLoading(false);
-        console.log("err", error);
+        console.error("err", error);
         setError(error.message);
         return error.message;
       }
@@ -56,7 +56,7 @@ const useGroupMemberUtilities = () => {
         return response;
       } catch(error: Error | any) {
         setLoading(false);
-        console.log("err", error);
+        console.error("err", error);
         setError(error.message);
         return error.message;
       }
@@ -73,7 +73,7 @@ const useGroupMemberUtilities = () => {
         return response;
       } catch(error: Error | any) {
         setLoading(false);
-        console.log("err", error);
+        console.error("err", error);
         setError(error.message);
         return error.message;
       }

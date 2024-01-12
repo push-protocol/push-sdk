@@ -58,10 +58,10 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
   const handleStartSpace = async () => {
     setIsLoading(!isLoading);
 
-    console.log('initializing space object');
+    console.debug('initializing space object');
     await initSpaceObject?.(spaceData?.spaceId as string);
 
-    console.log('creating audio stream');
+    console.debug('creating audio stream');
     await spacesObjectRef?.current?.createAudioStream?.();
 
     setIsLoading(!isLoading);
@@ -70,14 +70,14 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
   const handleStartSpaceLiveKit = async () => {
     setIsLoading(!isLoading);
-    console.log(spaceStatusState)
+    console.debug(spaceStatusState)
 
     await initSpaceObject?.(spaceData?.spaceId as string);
 
     setIsLoading(!isLoading);
     setIsStarted(true);
 
-    console.log(spaceStatusState)
+    console.debug(spaceStatusState)
   }
 
   const handleShareTweet = () => {
@@ -111,7 +111,7 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
       const url = shareUrl;
       await navigator.clipboard.writeText(url);
       // add a success toast here
-      console.log('URL copied to clipboard:', url);
+      console.debug('URL copied to clipboard:', url);
     } catch (error) {
       console.error('Failed to copy URL:', error);
     }
@@ -175,12 +175,12 @@ export const ScheduledWidgetContent: React.FC<ScheduledWidgetContentProps> = ({
 
       await spacesObjectRef?.current?.start?.();
 
-      console.log('SPACE STARTED');
+      console.debug('SPACE STARTED');
 
       setIsStarted(false);
 
       setSpaceStatusState && setSpaceStatusState(SpaceStatus.Live);
-      console.log(spaceStatusState)
+      console.debug(spaceStatusState)
     }
     startSpace();
   }, [isStarted]);

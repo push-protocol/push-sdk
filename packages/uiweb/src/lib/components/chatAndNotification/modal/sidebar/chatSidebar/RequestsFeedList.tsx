@@ -62,7 +62,7 @@ export const RequestsFeedList = () => {
       const newFeed: ChatFeedsType = { ...requestsFeed, ...feeds };
       setRequestsFeed(newFeed);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setPaginateLoading(false);
     } finally {
       setPaginateLoading(false);

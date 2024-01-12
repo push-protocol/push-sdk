@@ -25,12 +25,12 @@ export const usePushChatStream = () => {
     const addSocketEvents = async () => {
         console.warn('\n--> addChatSocketEvents - stream');
         pushChatStream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
-            console.log('CONNECTED - stream: ', err);
+            console.error('CONNECTED - stream: ', err);
             setIsPushChatStreamConnected(true);
         });
       
         pushChatStream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
-            console.log('DIS-CONNECTED: - stream ', err);
+            console.error('DIS-CONNECTED: - stream ', err);
             setIsPushChatStreamConnected(false);
         });
 
@@ -82,7 +82,7 @@ export const usePushChatStream = () => {
                 pushChatStream?.disconnect();
             }
             else {
-                console.log(pushChatStream)
+                console.info(pushChatStream)
                 const main = async () => {
                     const newstream = await pushUser?.initStream(
                         [
@@ -100,13 +100,13 @@ export const usePushChatStream = () => {
                             raw: true   
                         }
                     );
-                    console.log('new connection object: ---- ', newstream);
+                    console.debug('new connection object: ---- ', newstream);
                     await newstream?.connect();
                     setPushChatStream(newstream);
 
                 };
                 main().catch((err) =>
-                    console.log("error initializing the stream", err)
+                    console.error("error initializing the stream", err)
                 );
             }
 

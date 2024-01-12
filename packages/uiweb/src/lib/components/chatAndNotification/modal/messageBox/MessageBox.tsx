@@ -364,7 +364,7 @@ export const MessageBox = () => {
           setRequestsFeed(updatedRequestsfeed);
         }
       } catch (error_: Error | any) {
-        console.log(error_.message);
+        console.error(error_.message);
       }
     } else {
       return;

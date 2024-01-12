@@ -64,8 +64,8 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
     initSpaceObject,
     raisedHandInfo,
   } = useSpaceData();
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:66 ~ spaceObjectData:", spaceObjectData)
-  console.log("🚀 ~ file: LiveWidgetContent.tsx:66 ~ raisedHandInfo:", raisedHandInfo)
+  console.debug("🚀 ~ file: LiveWidgetContent.tsx:66 ~ spaceObjectData:", spaceObjectData)
+  console.debug("🚀 ~ file: LiveWidgetContent.tsx:66 ~ raisedHandInfo:", raisedHandInfo)
 
   const isMicOn = spaceObjectData?.connectionData?.local?.audio;
 
@@ -171,7 +171,7 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       await spacesObjectRef?.current?.leave?.();
       spacesObjectRef.current = null;
       setSpaceObjectData?.(PushAPI.space.initSpaceData);
-      console.log('Space left');
+      console.debug('Space left');
     }
     if (isListener) {
       spacesObjectRef.current = null;
@@ -183,17 +183,17 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   // for listener
   useEffect(() => {
     const JoinAsListner = async () => {
-      console.log('isListner', isListener);
+      console.debug('isListner', isListener);
       if (
         isListener &&
         !isHost
         // && spaceObjectData.connectionData.local.address
       ) {
-        console.log('joining as a listener');
+        console.debug('joining as a listener');
         await spacesObjectRef?.current?.join?.();
         // setSpaceWidgetId?.(spaceData?.spaceId as string);
         setIsLoading(!isLoading);
-        console.log('space joined');
+        console.debug('space joined');
       }
     };
     JoinAsListner();
@@ -202,10 +202,10 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
   // for speaker
   useEffect(() => {
     const createAudioStream = async () => {
-      console.log('isSpeaker', isSpeaker);
+      console.debug('isSpeaker', isSpeaker);
       if (isSpeaker && !spaceObjectData?.connectionData?.local?.stream) {
         // create audio stream as we'll need it to start the mesh connection
-        console.log('creating audio stream');
+        console.debug('creating audio stream');
         await spacesObjectRef?.current?.createAudioStream?.();
       }
     };
@@ -222,11 +222,11 @@ export const LiveWidgetContent: React.FC<LiveWidgetContentProps> = ({
       return;
 
     const joinSpaceAsSpeaker = async () => {
-      console.log('joining as a speaker');
+      console.debug('joining as a speaker');
       await spacesObjectRef?.current?.join?.();
       // setSpaceWidgetId?.(spaceData?.spaceId as string);
       setIsLoading(!isLoading);
-      console.log('space joined');
+      console.debug('space joined');
     };
     joinSpaceAsSpeaker();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -620,7 +620,7 @@ export const GroupInfoModal = ({
       }));
       await fetchMembers(page);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setMemberPaginationData((prev: MemberPaginationData) => ({
         ...prev,
         loading: false,

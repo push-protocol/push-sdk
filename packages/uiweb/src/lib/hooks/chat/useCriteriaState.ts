@@ -38,7 +38,7 @@ export const useCriteriaState = (
     for(let i=0; i<selectedRules.length;i++){
       const selectedRule = JSON.stringify(selectedRules[i])
       if (newRule === selectedRule){
-        console.log(newRule, " equals ", selectedRule);
+        console.debug(newRule, " equals ", selectedRule);
         
         return true
       }
@@ -50,7 +50,7 @@ export const useCriteriaState = (
       for (let j = 0;  j < _rules.length; j++) {
         const selectedRule = JSON.stringify(_rules[j])
         if (newRule === selectedRule){
-          console.log(newRule, " equals ", selectedRule);
+          console.debug(newRule, " equals ", selectedRule);
           return true
         }
       }
@@ -221,8 +221,8 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
       return []
     }
     
-    console.log(`Generating for ${JSON.stringify(rules)}`)
-    console.log("condition type",conditionTypes);
+    console.debug(`Generating for ${JSON.stringify(rules)}`)
+    console.debug("condition type",conditionTypes);
     
     return conditionTypes.map((el, idx) => ({
       [el]: rules[idx].map((_el) => _el),

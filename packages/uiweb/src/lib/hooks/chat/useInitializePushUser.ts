@@ -20,7 +20,7 @@ const useInitializePushUser = () => {
             })
             return pushUser;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return;
         }
     },

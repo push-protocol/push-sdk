@@ -202,13 +202,13 @@ const Home: NextPage = () => {
       return;
 
     const additionalMeta = payload['data']['additionalMeta'];
-    console.log('RECEIVED ADDITIONAL META', additionalMeta);
+    console.debug('RECEIVED ADDITIONAL META', additionalMeta);
     if (!additionalMeta) return;
 
     // check for PUSH_VIDEO
     if (additionalMeta.type !== `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1`) return;
     const videoCallMetaData = JSON.parse(additionalMeta.data);
-    console.log('RECIEVED VIDEO DATA', videoCallMetaData);
+    console.debug('RECIEVED VIDEO DATA', videoCallMetaData);
 
     if (videoCallMetaData.status === PushAPI.VideoCallStatus.INITIALIZED) {
       setIncomingVideoCall(videoCallMetaData);

@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 // Creating a random signer from a wallet, ideally this is the wallet you will connect
 const signer = ethers.Wallet.createRandom();
 
-console.log(`Signer address: ${signer.address} | Signer private key: ${signer.privateKey}`);
+console.debug(`Signer address: ${signer.address} | Signer private key: ${signer.privateKey}`);
 
 // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
 const userAlice = await PushAPI.initialize(signer, { env: 'staging' });
@@ -56,4 +56,4 @@ const createTokenGatedGroup = await userAlice.chat.group.create('Push Community'
   }
 });
 
-console.log("Chat created successfully!", createTokenGatedGroup);
+console.debug("Chat created successfully!", createTokenGatedGroup);

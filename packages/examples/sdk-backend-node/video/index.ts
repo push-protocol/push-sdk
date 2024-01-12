@@ -54,34 +54,34 @@ export const runVideoUseCases = async (): Promise<void> => {
     `);
 
   if (videoLocalStream === null) {
-    console.log(' No VideoStream Detected. Skipping Push Video Examples');
+    console.debug(' No VideoStream Detected. Skipping Push Video Examples');
     return;
   }
   if (skipExample()) {
-    console.log('Skipping examples as required env vars are missing');
+    console.debug('Skipping examples as required env vars are missing');
     return;
   }
 
-  console.log('new PushAPI.video.Video({...})');
+  console.debug('new PushAPI.video.Video({...})');
   videoObject = await PushAPI_video_object_init();
 
-  console.log('await videoObject.create({...})');
+  console.debug('await videoObject.create({...})');
   videoObject = await PushAPI_video_create();
 
-  console.log('await videoObject.request({...})');
+  console.debug('await videoObject.request({...})');
   videoObject = await PushAPI_video_request(); // for initiator
 
-  console.log('await videoObject.acceptRequest({...})');
+  console.debug('await videoObject.acceptRequest({...})');
   videoObject = await PushAPI_video_accept_request(); // for receiver
 
-  console.log('videoObject.connect()');
+  console.debug('videoObject.connect()');
   // should be only called inside of the USER_FEEDS event handler as shown later in PushVideoSDKSocket
   videoObject = await PushAPI_video_connect(); // for initiator
 
-  console.log('videoObject.disconnect()');
+  console.debug('videoObject.disconnect()');
   videoObject = await PushAPI_video_disconnect();
 
-  console.log('Push Video - PushSDKSocket()');
+  console.debug('Push Video - PushSDKSocket()');
   await PushVideoSDKSocket();
 };
 

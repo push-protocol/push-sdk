@@ -117,7 +117,7 @@ export const SpaceCreationWidget:React.FC<ISpaceCreateWidgetProps> = (props) => 
         try {
             setLoading(true);
             const response = await PushAPI.space.create(spaceCreate);
-            console.log(response);
+            console.info(response);
         } catch (e:any) {
             console.error(e.message);
         } finally {

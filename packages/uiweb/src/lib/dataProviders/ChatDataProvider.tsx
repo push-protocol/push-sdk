@@ -53,9 +53,9 @@ export const ChatUIProvider = ({
   useEffect(() => {
       (async() => {
         if(accountVal && envVal){
-          console.log('in initialisation')
+          console.debug('in initialisation')
           const pushUser = await initializePushUser({signer: signerVal, account: accountVal!,env:envVal});
-          console.log(pushUser)
+          console.info(pushUser)
           setPushUser(pushUser);
         }
          

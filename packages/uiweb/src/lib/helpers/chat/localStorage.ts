@@ -38,7 +38,7 @@ export const getPfp = async ({
       setPfp({ account, value: pfp });
       return pfp;
     } catch (err: Error | any) {
-      console.log(err.message);
+      console.error(err.message);
       return '';
     }
   };

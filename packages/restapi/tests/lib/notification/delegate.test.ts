@@ -84,7 +84,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await viemUser.channel.delegate.add(
         'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      console.log(res);
+      console.debug(res);
       expect(res).not.null;
     }, 100000000);
 
@@ -92,7 +92,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.add(
         '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      console.log(res);
+      console.debug(res);
       expect(res).not.null;
     }, 100000000);
 
@@ -121,7 +121,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.add(
         '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      console.log(res);
+      console.debug(res);
       expect(res).not.null;
     }, 10000000);
 
@@ -143,7 +143,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.add(
         '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      console.log(res);
+      console.debug(res);
       expect(res).not.null;
     }, 10000000);
 
@@ -188,7 +188,7 @@ describe('PushAPI.delegate functionality', () => {
       const res = await userKate.channel.delegate.remove(
         'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
-      console.log(res);
+      console.debug(res);
       expect(res).not.null;
     }, 100000000);
 

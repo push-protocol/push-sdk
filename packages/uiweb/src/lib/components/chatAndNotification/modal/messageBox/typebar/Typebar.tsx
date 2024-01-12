@@ -75,7 +75,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       if (!chatsFeed[selectedChatId as string])
         fetchRequests({ page, requestLimit });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       //handle error
     }
   };
@@ -121,7 +121,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         try {
           const TWO_MB = 1024 * 1024 * 2;
           if (file.size > TWO_MB) {
-            console.log('Files larger than 2mb is now allowed');
+            console.warn('Files larger than 2mb is now allowed');
             throw new Error('Files larger than 2mb is now allowed');
           }
           setFileUploading(true);
@@ -140,7 +140,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             sendPushMessage(JSON.stringify(fileMessageContent), messageType);
           };
         } catch (err) {
-          console.log(err);
+          console.error(err);
         } finally {
           setFileUploading(false);
         }

@@ -100,7 +100,7 @@ const NotificationsTest = () => {
         env: env,
       });
 
-      console.log('feeds: ', feeds);
+      console.debug('feeds: ', feeds);
 
       setNotifs(feeds);
     } catch (e) {
@@ -273,7 +273,7 @@ const NotificationsTest = () => {
                         url={url}
                         // optional parameters for rendering spambox
                         isSpam
-                        subscribeFn={async () => console.log('yayy spam')}
+                        subscribeFn={async () => console.debug('yayy spam')}
                         isSubscribedFn={async () => false}
                         theme={theme}
                         chainName={blockchain as chainNameType}

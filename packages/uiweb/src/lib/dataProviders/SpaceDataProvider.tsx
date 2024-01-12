@@ -140,7 +140,7 @@ export const SpacesUIProvider = ({
     chatId,
     signalData,
   }: PushAPI.video.VideoDataType) => {
-    console.log(
+    console.debug(
       'INSIDE WRAPPER ACCEPT REQUEST',
       'spacesObjectRef?.current',
       spacesObjectRef?.current
@@ -158,7 +158,7 @@ export const SpacesUIProvider = ({
     senderAddress,
     signalData,
   }: PushAPI.video.VideoDataType) => {
-    console.log(
+    console.debug(
       'INSIDE WRAPPER CONNECT',
       'spacesObjectRef?.current',
       spacesObjectRef?.current

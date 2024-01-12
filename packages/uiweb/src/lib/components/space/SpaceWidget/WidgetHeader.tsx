@@ -64,7 +64,7 @@ export const WidgetHeader: React.FC<IWidgetHeaderProps> = ({
 
   const showSpacesInfo = () => {
     setIsSpacesInfoVisible(!isSpacesInfoVisible);
-    console.log(isSpacesInfoVisible);
+    console.debug(isSpacesInfoVisible);
   };
 
   const closeSpacesInfo = () => {

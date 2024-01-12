@@ -22,10 +22,10 @@ const stream = await userAlice.initStream(
 
 // Setup responder for CONSTANTS.STREAM.CONNECT event
 stream.on(CONSTANTS.STREAM.CONNECT, () => {
-  console.log('Stream Connected');
+  console.debug('Stream Connected');
 
   // Send a message to Bob after socket connection so that messages as an example
-  console.log('Sending message to PushAI Bot');
+  console.info('Sending message to PushAI Bot');
   userAlice.chat.send(pushAIWalletAddress, {
     content: "Gm gm! It's a me... Mario",
   });
@@ -33,19 +33,19 @@ stream.on(CONSTANTS.STREAM.CONNECT, () => {
 
 // Setup responder for CONSTANTS.STREAM.DISCONNECT event
 stream.on(CONSTANTS.STREAM.DISCONNECT, () => {
-  console.log('Stream Disconnected');
+  console.debug('Stream Disconnected');
 });
 
 // Setup responder for CONSTANTS.STREAM.CHAT event
 // React to message payload getting recieved
 stream.on(CONSTANTS.STREAM.CHAT, (message) => {
-  console.log('Message Received');
-  console.log(message);
+  console.debug('Message Received');
+  console.info(message);
   if (message.origin === 'self') {
-    console.log("Message sent by your wallet, please wait for few moments for PushAI response");
+    console.info("Message sent by your wallet, please wait for few moments for PushAI response");
   }
   if (message.origin === 'other') {
-    console.log("Message received by PushAI.eth");
+    console.info("Message received by PushAI.eth");
     
     // disconnect stream
     stream.disconnect();

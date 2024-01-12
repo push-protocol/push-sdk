@@ -77,7 +77,7 @@ const useChatNotificationSocket = ({
     });
 
     pushChatNotificationSocket?.on(EVENTS.DISCONNECT, (err: any) => {
-      console.log(err);
+      console.error(err);
       setIsSDKSocketConnected(false);
     });
 
@@ -160,15 +160,15 @@ const useChatNotificationSocket = ({
             const fetchedChat: IFeeds = (await fetchChat({
               recipientAddress: chatId,
             })) as IFeeds;
-            console.log(chatId);
+            console.info(chatId);
             if (
               Object.keys(fetchedChat || {}).length &&
               checkIfIntent({ chat: fetchedChat, account })
             )
               setRequestFeed(chatId, fetchedChat);
             else setChatFeed(chatId, fetchedChat);
-            console.log('in here');
-            console.log(msg);
+            console.debug('in here');
+            console.info(msg);
             setChat(chatId, {
               messages: Array.isArray(chats.get(chatId)?.messages)
                 ? [...chats.get(chatId)!.messages, msg]

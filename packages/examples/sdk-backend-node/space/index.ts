@@ -53,44 +53,44 @@ export const runSpaceUseCases = async (): Promise<void> => {
 ╚═════╝░╚═╝░░░░░╚═╝░░╚═╝░╚════╝░╚══════╝
     `);
 
-  console.log('PushAPI.user.create');
+  console.debug('PushAPI.user.create');
   await PushAPI_user_create();
 
-  console.log('PushAPI.space.create');
+  console.debug('PushAPI.space.create');
   const spaceId = await PushAPI_space_create();
 
-  console.log('PushAPI.space.update');
+  console.debug('PushAPI.space.update');
   await PushAPI_space_update(spaceId);
 
-  console.log('PushAPI.space.get');
+  console.debug('PushAPI.space.get');
   await PushAPI_space_get(spaceId);
 
-  console.log('PushAPI.space.start');
-  console.log('PushAPI.space.stop');
+  console.debug('PushAPI.space.start');
+  console.debug('PushAPI.space.stop');
   await PushAPI_space_start_and_stop();
 
-  console.log('PushAPI.space.approve');
+  console.debug('PushAPI.space.approve');
   await PushAPI_space_approve();
 
-  console.log('PushAPI.space.addListeners');
+  console.debug('PushAPI.space.addListeners');
   await PushAPI_space_add_listeners(spaceId);
 
-  console.log('PushAPI.space.removeListeners');
+  console.debug('PushAPI.space.removeListeners');
   await PushAPI_space_remove_listeners(spaceId);
 
-  console.log('PushAPI.space.addSpeakers');
+  console.debug('PushAPI.space.addSpeakers');
   await PushAPI_space_add_speakers(spaceId);
 
-  console.log('PushAPI.space.removeSpeakers');
+  console.debug('PushAPI.space.removeSpeakers');
   await PushAPI_space_remove_speakers(spaceId);
 
-  console.log('PushAPI.space.spaces');
+  console.debug('PushAPI.space.spaces');
   await PushAPI_space_spaces();
 
-  console.log('PushAPI.space.requests');
+  console.debug('PushAPI.space.requests');
   await PushAPI_space_requests();
 
-  console.log('PushAPI.space.trending');
+  console.debug('PushAPI.space.trending');
   await PushAPI_space_trending();
 };
 
@@ -106,10 +106,10 @@ async function PushAPI_user_create(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_user_create | Response - 200 OK');
+  console.debug('PushAPI_user_create | Response - 200 OK');
   if (!silent) {
-    console.log(user);
-    console.log(user_2);
+    console.info(user);
+    console.info(user_2);
   }
 
   return user;
@@ -148,9 +148,9 @@ async function PushAPI_space_create(
     scheduleAt: start,
     scheduleEnd: end,
   });
-  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  console.debug('PushAPI_chat_createSpace | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
   return response.spaceId;
 }
@@ -201,9 +201,9 @@ async function PushAPI_space_update(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_update | Response - 200 OK');
+  console.debug('PushAPI_space_update | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -214,9 +214,9 @@ async function PushAPI_space_get(spaceId: string, silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_get | Response - 200 OK');
+  console.debug('PushAPI_space_get | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -256,9 +256,9 @@ async function PushAPI_space_start_and_stop(
     scheduleAt: start, // Sets scheduleAt to the current time + 10 min
     scheduleEnd: end, // Sets scheduleEnd to 60 minutes from now
   });
-  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  console.debug('PushAPI_chat_createSpace | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 
   const spaceId = response.spaceId;
@@ -282,9 +282,9 @@ async function PushAPI_space_start_and_stop(
       signer: signer,
     });*/
 
-  console.log('PushAPI_space_stop | Response - 200 OK');
+  console.debug('PushAPI_space_stop | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
   return spaceId;
 }
@@ -324,9 +324,9 @@ async function PushAPI_space_approve(
     scheduleAt: start, // Sets scheduleAt to the current time + 10 min
     scheduleEnd: end, // Sets scheduleEnd to 60 minutes from now
   });
-  console.log('PushAPI_chat_createSpace | Response - 200 OK');
+  console.debug('PushAPI_chat_createSpace | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 
   const spaceId = response.spaceId;
@@ -351,9 +351,9 @@ async function PushAPI_space_approve(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_approve | Response - 200 OK');
+  console.debug('PushAPI_space_approve | Response - 200 OK');
   if (!silent) {
-    console.log(approveResponse);
+    console.info(approveResponse);
   }
   return spaceId;
 }
@@ -388,9 +388,9 @@ async function PushAPI_space_add_listeners(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_addListeners | Response - 200 OK');
+  console.debug('PushAPI_space_addListeners | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -423,9 +423,9 @@ async function PushAPI_space_remove_listeners(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_addListeners | Response - 200 OK');
+  console.debug('PushAPI_space_addListeners | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 
   const response2 = await PushAPI.space.removeListeners({
@@ -436,9 +436,9 @@ async function PushAPI_space_remove_listeners(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_removeListeners | Response - 200 OK');
+  console.debug('PushAPI_space_removeListeners | Response - 200 OK');
   if (!silent) {
-    console.log(response2);
+    console.info(response2);
   }
 }
 
@@ -472,9 +472,9 @@ async function PushAPI_space_add_speakers(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_addSpeakers | Response - 200 OK');
+  console.debug('PushAPI_space_addSpeakers | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -508,9 +508,9 @@ async function PushAPI_space_remove_speakers(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_addSpeakers | Response - 200 OK');
+  console.debug('PushAPI_space_addSpeakers | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 
   const response2 = await PushAPI.space.removeSpeakers({
@@ -521,9 +521,9 @@ async function PushAPI_space_remove_speakers(
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_removeSpeakers | Response - 200 OK');
+  console.debug('PushAPI_space_removeSpeakers | Response - 200 OK');
   if (!silent) {
-    console.log(response2);
+    console.info(response2);
   }
 }
 
@@ -550,9 +550,9 @@ async function PushAPI_space_spaces(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_spaces | Response - 200 OK');
+  console.debug('PushAPI_space_spaces | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -578,9 +578,9 @@ async function PushAPI_space_requests(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_requests | Response - 200 OK');
+  console.debug('PushAPI_space_requests | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }
 
@@ -591,8 +591,8 @@ async function PushAPI_space_trending(silent = !showAPIResponse) {
     env: env as ENV,
   });
 
-  console.log('PushAPI_space_trending | Response - 200 OK');
+  console.debug('PushAPI_space_trending | Response - 200 OK');
   if (!silent) {
-    console.log(response);
+    console.info(response);
   }
 }

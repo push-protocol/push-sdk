@@ -1003,7 +1003,7 @@ await PushAPI.channels.subscribe({
   channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   userAddress: 'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
-    console.log('opt in success');
+    console.debug('opt in success');
   },
   onError: () => {
     console.error('opt in error');
@@ -1044,7 +1044,7 @@ await PushAPI.channels.unsubscribe({
   channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681', // channel address in CAIP
   userAddress: 'eip155:11155111:0x52f856A160733A860ae7DC98DC71061bE33A28b3', // user address in CAIP
   onSuccess: () => {
-    console.log('opt out success');
+    console.debug('opt out success');
   },
   onError: () => {
     console.error('opt out error');

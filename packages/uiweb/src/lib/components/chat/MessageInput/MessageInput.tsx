@@ -291,7 +291,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         try {
           const TWO_MB = 1024 * 1024 * 2;
           if (file.size > TWO_MB) {
-            console.log('Files larger than 2mb is now allowed');
+            console.warn('Files larger than 2mb is now allowed');
             throw new Error('Files larger than 2mb is now allowed');
           }
           setFileUploading(true);
@@ -310,7 +310,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             sendPushMessage(JSON.stringify(fileMessageContent), messageType);
           };
         } catch (err) {
-          console.log(err);
+          console.error(err);
         } finally {
           setFileUploading(false);
         }
@@ -343,7 +343,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setVerificationSuccessfull(false);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
