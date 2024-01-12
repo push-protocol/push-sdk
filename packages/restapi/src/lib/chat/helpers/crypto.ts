@@ -13,18 +13,16 @@ import {
 } from '../../types';
 import { get } from '../../user';
 import {
+  Signer,
   decryptPGPKey,
   decryptWithWalletRPCMethod,
   isValidETHAddress,
-  walletToPCAIP10,
-  signTypedData,
-  signMessage,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
-import { pgpDecrypt, verifySignature } from './pgp';
+import { IPGPHelper } from './pgp';
 import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
 import { getGroup } from '../getGroup';
@@ -44,6 +42,7 @@ interface IDecryptMessage {
   chainId: number;
   currentChat: IFeeds;
   inbox: IFeeds[];
+  pgpHelper:IPGPHelper;
 }
 
 export const encryptAndSign = async ({
@@ -154,10 +153,12 @@ export const decryptFeeds = async ({
   connectedUser,
   pgpPrivateKey,
   env = Constants.ENV.PROD,
+  pgpHelper,
 }: {
   feeds: IFeeds[];
   connectedUser: IUser;
   pgpPrivateKey?: string;
+  pgpHelper: PGP.IPGPHelper
   env: ENV;
 }): Promise<IFeeds[]> => {
   let otherPeer: IUser;
@@ -181,7 +182,8 @@ export const decryptFeeds = async ({
         feed.msg,
         signatureValidationPubliKey,
         pgpPrivateKey,
-        env
+        env,
+        pgpHelper
       );
     }
   }
@@ -363,7 +365,8 @@ export const getEip191Signature = async (
   const _signer = wallet?.signer;
   // EIP191 signature
 
-  const signature = await signMessage(_signer, message);
+  const pushSigner = new Signer(_signer);
+  const signature = await pushSigner.signMessage(message);
   const sigType = version === 'v1' ? 'eip191' : 'eip191v2';
   return { verificationProof: `${sigType}:${signature}` };
 };
@@ -381,17 +384,17 @@ export const getEip712Signature = async (
 
   const typeInformation = getTypeInformation();
   const _signer = wallet?.signer;
+  const pushSigner = new Signer(_signer);
   let chainId: number;
   try {
-    chainId = await _signer.getChainId();
+    chainId = await pushSigner.getChainId();
   } catch (err) {
     chainId = 1;
   }
   const domain = getDomainInformation(chainId);
 
   // sign a message using EIP712
-  const signedMessage = await signTypedData(
-    _signer,
+  const signedMessage = await pushSigner.signTypedData(
     isDomainEmpty ? {} : domain,
     typeInformation,
     { data: hash },
@@ -433,7 +436,8 @@ export const decryptAndVerifyMessage = async (
   message: IMessageIPFS | IMessageIPFSWithCID,
   pgpPublicKey: string,
   pgpPrivateKey: string,
-  env: ENV
+  env: ENV,
+  pgpHelper = PGP.PGPHelper
 ): Promise<IMessageIPFS | IMessageIPFSWithCID> => {
   /**
    * VERIFICATION
@@ -455,7 +459,7 @@ export const decryptAndVerifyMessage = async (
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature = message.verificationProof.split(':')[1];
-    await verifySignature({
+    await pgpHelper.verifySignature({
       messageContent: hash,
       signatureArmored: signature,
       publicKeyArmored: pgpPublicKey,
@@ -477,7 +481,7 @@ export const decryptAndVerifyMessage = async (
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature = message.verificationProof.split(':')[1];
-    await verifySignature({
+    await pgpHelper.verifySignature({
       messageContent: hash,
       signatureArmored: signature,
       publicKeyArmored: pgpPublicKey,
@@ -492,20 +496,20 @@ export const decryptAndVerifyMessage = async (
       };
       const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
       try {
-        await verifySignature({
+        await pgpHelper.verifySignature({
           messageContent: hash,
           signatureArmored: message.signature,
           publicKeyArmored: pgpPublicKey,
         });
       } catch (err) {
-        await verifySignature({
+        await pgpHelper.verifySignature({
           messageContent: message.messageContent,
           signatureArmored: message.signature,
           publicKeyArmored: pgpPublicKey,
         });
       }
     } else {
-      await verifySignature({
+      await pgpHelper.verifySignature({
         messageContent: message.messageContent,
         signatureArmored: message.signature,
         publicKeyArmored: pgpPublicKey,
@@ -529,7 +533,7 @@ export const decryptAndVerifyMessage = async (
         env,
       });
     }
-    const secretKey: string = await pgpDecrypt({
+    const secretKey: string = await pgpHelper.pgpDecrypt({
       cipherText: message.encryptedSecret,
       toPrivateKeyArmored: pgpPrivateKey,
     });

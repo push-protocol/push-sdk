@@ -7,7 +7,7 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
-import { FuseSVG } from '../../icons/FuseSVG';
+import { FuseSVG } from '../../icons/FuseSvg';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>

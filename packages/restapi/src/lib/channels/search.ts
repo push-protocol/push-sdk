@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { getAPIBaseUrls, getQueryParams, getLimit } from '../helpers';
 import Constants, {ENV} from '../constants';
+import { axiosGet } from '../utils/axiosUtil';
 
 /**
  *  GET /v1/channels/search/ 
@@ -34,7 +34,7 @@ export const search = async (
     query: query
   };
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-  return axios.get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => response.data.channels)
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

@@ -100,13 +100,13 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-yarn add @pushprotocol/restapi@latest ethers@^5.6
+yarn add @pushprotocol/restapi@latest ethers
 ```
 
 or
 
 ```bash
-npm install @pushprotocol/restapi@latest ethers@^5.6
+npm install @pushprotocol/restapi@latest ethers
 ```
 
 ## Import SDK
@@ -170,7 +170,7 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
@@ -707,7 +707,7 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
@@ -2887,7 +2887,7 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
 ```typescript
 // Update keys encryption
 const aliceUpdateEncryption = await userAlice.encryption.update(
-  ENCRYPTION_VERSION.PGP_V3
+  CONSTANTS.USER.ENCRYPTION_VERSION.PGP_V3
 );
 ```
 

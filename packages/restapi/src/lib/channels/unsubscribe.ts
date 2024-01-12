@@ -1,31 +1,26 @@
-import axios from "axios";
-import {
-  getCAIPAddress,
-  getConfig,
-  getCAIPDetails,
-  signTypedData
-} from '../helpers';
+import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
   getTypeInformation,
   getDomainInformation,
-  getSubscriptionMessage
+  getSubscriptionMessage,
 } from './signature.helpers';
 import Constants, {ENV} from '../constants';
 import { SignerType } from "../types";
+import { axiosPost } from "../utils/axiosUtil";
  
+
+
 export type UnSubscribeOptionsType = {
   signer: SignerType;
   channelAddress: string;
   userAddress: string;
   verifyingContractAddress?: string;
   env?: ENV;
-  onSuccess?: () => void
-  onError?: (err: Error) => void,
-}
+  onSuccess?: () => void;
+  onError?: (err: Error) => void;
+};
 
-export const unsubscribe = async (
- options: UnSubscribeOptionsType
-) => {
+export const unsubscribe = async (options: UnSubscribeOptionsType) => {
   const {
     signer,
     channelAddress,
@@ -37,7 +32,11 @@ export const unsubscribe = async (
   } = options || {};
 
   try {
-    const _channelAddress = await getCAIPAddress(env, channelAddress, 'Channel');
+    const _channelAddress = await getCAIPAddress(
+      env,
+      channelAddress,
+      'Channel'
+    );
 
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
@@ -45,11 +44,14 @@ export const unsubscribe = async (
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
     const _userAddress = await getCAIPAddress(env, userAddress, 'User');
-  
+
     const userCAIPDetails = getCAIPDetails(_userAddress);
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
 
-    const { API_BASE_URL,EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
+      env,
+      channelCAIPDetails
+    );
 
     const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/unsubscribe`;
 
@@ -60,17 +62,23 @@ export const unsubscribe = async (
     );
 
     // get type information
-    const typeInformation = getTypeInformation("Unsubscribe");
+    const typeInformation = getTypeInformation('Unsubscribe');
 
     // get message
     const messageInformation = getSubscriptionMessage(
       channelCAIPDetails.address,
       userCAIPDetails.address,
-      "Unsubscribe"
+      'Unsubscribe'
     );
 
     // sign a message using EIP712
-    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation, "Unsubscribe");
+    const pushSigner = new Signer(signer);
+    const signature = await pushSigner.signTypedData(
+      domainInformation,
+      typeInformation as any,
+      messageInformation,
+      'Unsubscribe'
+    );
 
     const verificationProof = signature; // might change
 
@@ -79,18 +87,21 @@ export const unsubscribe = async (
       message: {
         ...messageInformation,
         channel: _channelAddress,
-        unsubscriber: _userAddress
+        unsubscriber: _userAddress,
       },
     };
 
-    await axios.post(requestUrl, body);
+    await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: "success", message: "successfully opted out channel" };
+    return { status: 'success', message: 'successfully opted out channel' };
   } catch (err) {
     if (typeof onError === 'function') onError(err as Error);
 
-    return { status: "error", message: err instanceof Error ? err.message : JSON.stringify(err) };
+    return {
+      status: 'error',
+      message: err instanceof Error ? err.message : JSON.stringify(err),
+    };
   }
-}
+};

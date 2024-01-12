@@ -1,10 +1,4 @@
-import axios from 'axios';
-import {
-  getCAIPAddress,
-  getConfig,
-  getCAIPDetails,
-  signTypedData,
-} from '../helpers';
+import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
   getDomainInformation,
   getTypeInformationV2,
@@ -12,6 +6,7 @@ import {
 } from './signature.helpers';
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 
 export type SubscribeOptionsV2Type = {
   signer: SignerType;
@@ -77,8 +72,8 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
       ),
     };
     // sign a message using EIP712
-    const signature = await signTypedData(
-      signer,
+    const pushSigner = new Signer(signer);
+    const signature = await pushSigner.signTypedData(
       domainInformation,
       typeInformation,
       messageInformation,
@@ -89,22 +84,19 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
 
     const body = {
       verificationProof: `eip712v2:${verificationProof}`,
-      message:
-        messageInformation.data,
-      
+      message: messageInformation.data,
     };
 
-    const res = await axios.post(requestUrl, body);
+    const res = await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
     return { status: res.status, message: 'successfully opted into channel' };
   } catch (err: any) {
-
     if (typeof onError === 'function') onError(err as Error);
 
     return {
-      status: err?.response?.status?? '' ,
+      status: err?.response?.status ?? '',
       message: err instanceof Error ? err.message : JSON.stringify(err),
     };
   }

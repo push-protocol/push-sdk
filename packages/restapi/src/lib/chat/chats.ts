@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { getInboxLists, getUserDID, addDeprecatedInfo, IPGPHelper, PGPHelper } from './helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type ChatsOptionsType = {
   account: string;
@@ -50,7 +50,7 @@ export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chats?page=${page}&limit=${limit}`;
   const requestUrl = `${apiEndpoint}`;
   try {
-    const response = await axios.get(requestUrl);
+    const response = await axiosGet(requestUrl);
     const chats: IFeeds[] = response.data.chats;
     const updatedChats = addDeprecatedInfo(chats);
     const feeds: IFeeds[] = await getInboxLists({
@@ -59,7 +59,7 @@ export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper
       toDecrypt,
       pgpPrivateKey,
       env,
-    });
+    },pgpHelper);
     return feeds;
   } catch (err) {
     console.error(`[Push SDK] - API ${chats.name}: `, err);

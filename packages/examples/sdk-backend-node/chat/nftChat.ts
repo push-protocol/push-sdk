@@ -8,6 +8,9 @@ import {
 import { config } from '../config';
 import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 import { ethers } from 'ethers';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { createWalletClient, http } from 'viem';
+import { sepolia } from 'viem/chains';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -18,7 +21,6 @@ const nftContractAddress1 = process.env.NFT_CONTRACT_ADDRESS_1 || '';
 const nftTokenId1 = process.env.NFT_TOKEN_ID_1 || '';
 const nftHolderWalletPrivatekey1 =
   process.env.NFT_HOLDER_WALLET_PRIVATE_KEY_1 || '';
-const nftSigner1 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey1}`);
 // NFT Account structure for Push Chat : nft:eip155:{chainId}:{contractAddress}:{tokenId}
 const nftAccount1 = `nft:eip155:${nftChainId1}:${nftContractAddress1}:${nftTokenId1}`;
 // NFT Profile Password ( Used for recovery in case of NFT transfers )
@@ -29,7 +31,6 @@ const nftContractAddress2 = process.env.NFT_CONTRACT_ADDRESS_2 || '';
 const nftTokenId2 = process.env.NFT_TOKEN_ID_2 || '';
 const nftHolderWalletPrivatekey2 =
   process.env.NFT_HOLDER_WALLET_PRIVATE_KEY_2 || '';
-const nftSigner2 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey2}`);
 const nftAccount2 = `nft:eip155:${nftChainId2}:${nftContractAddress2}:${nftTokenId2}`;
 const nftProfilePassword2 = process.env.NFT_PROFILE_PASSWORD_2 || '';
 
@@ -38,13 +39,44 @@ const nftContractAddress3 = process.env.NFT_CONTRACT_ADDRESS_3 || '';
 const nftTokenId3 = process.env.NFT_TOKEN_ID_3 || '';
 const nftHolderWalletPrivatekey3 =
   process.env.NFT_HOLDER_WALLET_PRIVATE_KEY_3 || '';
-const nftSigner3 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey3}`);
 const nftAccount3 = `nft:eip155:${nftChainId3}:${nftContractAddress3}:${nftTokenId3}`;
 const nftProfilePassword3 = process.env.NFT_PROFILE_PASSWORD_3 || '';
+/****************************************************************/
 
-const randomWallet1 = ethers.Wallet.createRandom().address;
-const randomWallet2 = ethers.Wallet.createRandom().address;
-const randomWallet3 = ethers.Wallet.createRandom().address;
+/***************** SAMPLE SIGNER GENERATION *********************/
+// Uing ETHERS
+
+// const nftSigner1 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey1}`);
+// const nftSigner2 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey2}`);
+// const nftSigner3 = new ethers.Wallet(`0x${nftHolderWalletPrivatekey3}`);
+// // Dummy Wallet Addresses
+// const randomWallet1 = ethers.Wallet.createRandom().address;
+// const randomWallet2 = ethers.Wallet.createRandom().address;
+// const randomWallet3 = ethers.Wallet.createRandom().address;
+/****************************************************************/
+
+/***************** SAMPLE SIGNER GENERATION *********************/
+// Uing VIEM
+
+const nftSigner1 = createWalletClient({
+  account: privateKeyToAccount(`0x${nftHolderWalletPrivatekey1}`),
+  chain: sepolia,
+  transport: http(),
+});
+const nftSigner2 = createWalletClient({
+  account: privateKeyToAccount(`0x${nftHolderWalletPrivatekey2}`),
+  chain: sepolia,
+  transport: http(),
+});
+const nftSigner3 = createWalletClient({
+  account: privateKeyToAccount(`0x${nftHolderWalletPrivatekey3}`),
+  chain: sepolia,
+  transport: http(),
+});
+// Dummy Wallet Addresses
+const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
+const randomWallet2 = privateKeyToAccount(generatePrivateKey()).address;
+const randomWallet3 = privateKeyToAccount(generatePrivateKey()).address;
 /****************************************************************/
 
 /***************** SAMPLE GROUP DATA ****************************/
@@ -110,7 +142,7 @@ export const runNFTChatClassUseCases = async (): Promise<void> => {
   const userAlice = await PushAPI.initialize(nftSigner1, {
     env,
     account: nftAccount1,
-    versionMeta: { NFTPGP_V1: { password: nftProfilePassword1 } },
+    // versionMeta: { NFTPGP_V1: { password: nftProfilePassword1 } },
   });
 
   const stream = await userAlice.initStream(
@@ -144,13 +176,13 @@ export const runNFTChatClassUseCases = async (): Promise<void> => {
   const userBob = await await PushAPI.initialize(nftSigner2, {
     env,
     account: nftAccount2,
-    versionMeta: { NFTPGP_V1: { password: nftProfilePassword2 } },
+    // versionMeta: { NFTPGP_V1: { password: nftProfilePassword2 } },
   });
 
   const userKate = await await PushAPI.initialize(nftSigner3, {
     env,
     account: nftAccount3,
-    versionMeta: { NFTPGP_V1: { password: nftProfilePassword3 } },
+    // versionMeta: { NFTPGP_V1: { password: nftProfilePassword3 } },
   });
 
   // Listen stream events to receive websocket events

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { SVGProps } from "react"
 
-export const FuseSVG = (props: SVGProps<SVGSVGElement>) => (
+export const FuseSvg = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width={363}
     height={149}
