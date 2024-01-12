@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { getAPIBaseUrls, getCAIPWithChainId } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ALIAS_CHAIN, ALIAS_CHAIN_ID } from '../config';
+import { axiosGet } from '../utils/axiosUtil';
 
 /**
  *  GET /v1/alias/{aliasAddressinCAIP}/channel
@@ -29,8 +29,7 @@ export const getAliasInfo = async (options: GetAliasInfoOptionsType) => {
   const apiEndpoint = `${API_BASE_URL}/v1/alias`;
   const requestUrl = `${apiEndpoint}/${_alias}/channel`;
 
-  return await axios
-    .get(requestUrl)
+  return await axiosGet(requestUrl)
     .then((response) => response.data)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
