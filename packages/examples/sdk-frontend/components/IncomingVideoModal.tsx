@@ -8,7 +8,6 @@ type IncomingVideoModalProps = {
   onReject: () => void;
 };
 
-// Styled components for the CallControl component
 const IncomingVideoModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -55,7 +54,7 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-around;
 `;
-// CallControl component
+
 const IncomingVideoModal = ({
   callerID,
   onAccept,

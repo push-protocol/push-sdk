@@ -15,7 +15,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
 import { EnvContext, Web3Context } from '../context';
-import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video'; // works using like this, import { initVideoCallData } from 'packages/restapi/src/lib/video';
+import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 const VideoV2: NextPage = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
@@ -81,28 +81,33 @@ const VideoV2: NextPage = () => {
     await createdStream.connect();
   };
 
+  // Here we initialize the push video API, which is the first and important step to make video calls
   useEffect(() => {
     if (!librarySigner) return;
-    if (data?.incoming[0]?.status !== VideoCallStatus.UNINITIALIZED) return;
+    if (data?.incoming[0]?.status !== VideoCallStatus.UNINITIALIZED) return; // data?.incoming[0]?.status will have a status of VideoCallStatus.UNINITIALIZED when the video call is not initialized, call ended or denied. So we Initialize the Push API here.
     initializePushAPI();
   }, [env, library, data?.incoming[0]?.status]);
 
   useEffect(() => {
-    console.log('isPushStreamConnected', isPushStreamConnected);
-    if (isPushStreamConnected)
-      console.log('latestVideoEvent', latestVideoEvent);
-  }, [isPushStreamConnected, latestVideoEvent]);
+    console.log('isPushStreamConnected', isPushStreamConnected); // This will be true when the push stream is connected
+  }, [isPushStreamConnected]);
 
+  // This function is used to request a video call to a recipient
   const requestVideoCall = async (recipient: string) => {
     await aliceVideoCall.current.request([recipient]);
   };
 
+  // This function is used to accept the incoming video call
   const acceptIncomingCall = async () => {
     await aliceVideoCall.current.approve(latestVideoEvent?.peerInfo);
   };
+
+  // This function is used to deny the incoming video call
   const denyIncomingCall = async () => {
     await aliceVideoCall.current.deny(latestVideoEvent?.peerInfo);
   };
+
+  // This function is used to end the ongoing video call
   const endCall = async () => {
     await aliceVideoCall.current.disconnect(data?.incoming[0]?.address);
   };
@@ -137,7 +142,7 @@ const VideoV2: NextPage = () => {
             <button
               disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ video: !data?.local.video });
+                aliceVideoCall.current?.media({ video: !data?.local.video }); // This function is used to toggle the video on/off
               }}
             >
               Toggle Video
@@ -146,7 +151,7 @@ const VideoV2: NextPage = () => {
             <button
               disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ audio: !data?.local.audio });
+                aliceVideoCall.current?.media({ audio: !data?.local.audio }); // This function is used to toggle the audio on/off
               }}
             >
               Toggle Audio
