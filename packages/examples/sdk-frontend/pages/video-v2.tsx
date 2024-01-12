@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
+import Toast from '../components/Toast';
 
 const VideoV2: NextPage = () => {
   const { isConnected } = useAccount();
@@ -55,7 +56,7 @@ const VideoV2: NextPage = () => {
       }
 
       if (data.event === VideoEventType.ApproveVideo) {
-        alert('Video Call Connected');
+        console.log('Video Call Approved');
       }
 
       if (data.event === VideoEventType.DenyVideo) {
@@ -63,7 +64,7 @@ const VideoV2: NextPage = () => {
       }
 
       if (data.event === VideoEventType.ConnectVideo) {
-        alert('Video Call Connected');
+        console.log('Video Call Connected');
       }
 
       if (data.event === VideoEventType.DisconnectVideo) {
@@ -159,6 +160,11 @@ const VideoV2: NextPage = () => {
             >
               Toggle Audio
             </button>
+
+            {data?.incoming[0]?.status === VideoCallStatus.CONNECTED && (
+              <Toast message="Video Call Connected" bg="#4caf50" />
+            )}
+
             {data.incoming[0].status === VideoCallStatus.RECEIVED && (
               <IncomingVideoModal
                 callerID={latestVideoEvent?.peerInfo?.address}
