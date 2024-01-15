@@ -20,7 +20,7 @@ import {
   getFallbackETHCAIPAddress,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
-import { ethers } from 'ethers';
+import * as viem from 'viem';
 
 import { PushNotificationBaseClass } from './pushNotificationBase';
 import { Delegate } from './delegate';
@@ -83,22 +83,23 @@ export class Channel extends PushNotificationBaseClass {
    */
   subscribers = async (options?: ChannelInfoOptions) => {
     try {
-      const {
-        channel = this.account
-          ? getFallbackETHCAIPAddress(this.env!, this.account!)
-          : null,
-      } = options || {};
-
+      let channel = options?.channel
+        ? options.channel
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       this.checkUserAddressExists(channel!);
-      if (!validateCAIP(channel!)) {
-        throw new Error('Invalid CAIP');
-      }
+      channel = validateCAIP(channel!)
+        ? channel
+        : getFallbackETHCAIPAddress(this.env!, channel!);
       if (options && options.page) {
         return await PUSH_CHANNEL.getSubscribers({
           channel: channel!,
           env: this.env,
           page: options.page,
           limit: options.limit ?? 10,
+          setting: options.setting ?? false,
+          category: options.category,
         });
       } else {
         /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */
@@ -152,17 +153,6 @@ export class Channel extends PushNotificationBaseClass {
       progressHook,
     } = options || {};
     try {
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // create push token instance
       let aliasInfo;
       // validate all the parameters and length
@@ -174,11 +164,11 @@ export class Channel extends PushNotificationBaseClass {
         config.TOKEN_VIEM_NETWORK_MAP[this.env!]
       );
       const balance = await this.fetchBalance(pushTokenContract, this.account!);
-      const fees = ethers.utils.parseUnits(
+      const fees = viem.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gt(balance)) {
+      if (fees > balance) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -207,7 +197,7 @@ export class Channel extends PushNotificationBaseClass {
         this.account!,
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
-      if (!allowanceAmount.gte(fees)) {
+      if (!(allowanceAmount >= fees)) {
         progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
         const approvalRes = await this.approveToken(
           pushTokenContract,
@@ -221,7 +211,7 @@ export class Channel extends PushNotificationBaseClass {
       // generate the contract parameters
       const channelType = config.CHANNEL_TYPE['GENERAL'];
       const identity = '1+' + cid;
-      const identityBytes = ethers.utils.toUtf8Bytes(identity);
+      const identityBytes = viem.stringToBytes(identity);
       // call contract
       progressHook?.(PROGRESSHOOK['PUSH-CREATE-03'] as ProgressHookType);
       const createChannelRes = await this.createChannel(
@@ -255,17 +245,6 @@ export class Channel extends PushNotificationBaseClass {
     try {
       // create push token instance
       let aliasInfo;
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // validate all the parameters and length
       this.validateChannelParameters(options);
       // check for PUSH balance
@@ -280,12 +259,12 @@ export class Channel extends PushNotificationBaseClass {
         this.coreContract,
         this.account!
       );
-      const fees = ethers.utils.parseUnits(
+      const fees = viem.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      const totalFees = fees.mul(counter);
-      if (totalFees.gt(balance)) {
+      const totalFees = fees * counter;
+      if (totalFees > balance) {
         throw new Error('Insufficient PUSH balance');
       }
       // if alias is passed, check for the caip
@@ -316,7 +295,7 @@ export class Channel extends PushNotificationBaseClass {
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
       // if allowance is not greater than the fees, dont call approval again
-      if (!allowanceAmount.gte(totalFees)) {
+      if (!(allowanceAmount >= totalFees)) {
         progressHook?.(PROGRESSHOOK['PUSH-UPDATE-02'] as ProgressHookType);
         const approvalRes = await this.approveToken(
           pushTokenContract,
@@ -329,7 +308,7 @@ export class Channel extends PushNotificationBaseClass {
       }
       // generate the contract parameters
       const identity = '1+' + cid;
-      const identityBytes = ethers.utils.toUtf8Bytes(identity);
+      const identityBytes = viem.stringToBytes(identity);
       // call contract
       progressHook?.(PROGRESSHOOK['PUSH-UPDATE-03'] as ProgressHookType);
       const updateChannelRes = await this.updateChannel(
@@ -356,22 +335,11 @@ export class Channel extends PushNotificationBaseClass {
   verify = async (channelToBeVerified: string) => {
     try {
       this.checkSignerObjectExists();
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       if (validateCAIP(channelToBeVerified)) {
         channelToBeVerified = channelToBeVerified.split(':')[2];
       }
       // checks if it is a valid address
-      if (!ethers.utils.isAddress(channelToBeVerified)) {
+      if (!viem.isAddress(channelToBeVerified)) {
         throw new Error('Invalid channel address');
       }
       const channelDetails = await this.info(this.account);
@@ -395,18 +363,6 @@ export class Channel extends PushNotificationBaseClass {
   setting = async (configuration: NotificationSettings) => {
     try {
       this.checkSignerObjectExists();
-      //TODO: create a separate function later
-      if ('_signTypedData' in this.signer!) {
-        if (!this.signer || !this.signer.provider) {
-          throw new Error('ethers provider/signer is not provided');
-        }
-      } else if ('signTypedData' in this.signer!) {
-        if (!this.coreContract.write) {
-          throw new Error('viem signer is not provided');
-        }
-      } else {
-        throw new Error('Unsupported Signer');
-      }
       // check for PUSH balance
       const pushTokenContract = await this.createContractInstance(
         config.TOKEN[this.env!],
@@ -414,11 +370,11 @@ export class Channel extends PushNotificationBaseClass {
         config.TOKEN_VIEM_NETWORK_MAP[this.env!]
       );
       const balance = await this.fetchBalance(pushTokenContract, this.account!);
-      const fees = ethers.utils.parseUnits(
+      const fees = viem.parseUnits(
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees.gt(balance)) {
+      if (fees > balance) {
         throw new Error('Insufficient PUSH balance');
       }
       const allowanceAmount = await this.fetchAllownace(
@@ -427,7 +383,7 @@ export class Channel extends PushNotificationBaseClass {
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
       // if allowance is not greater than the fees, dont call approval again
-      if (!allowanceAmount.gte(fees)) {
+      if (!(allowanceAmount >= fees)) {
         const approveRes = await this.approveToken(
           pushTokenContract,
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,

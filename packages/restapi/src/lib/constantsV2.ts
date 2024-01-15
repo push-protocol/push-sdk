@@ -1,9 +1,13 @@
-import { ENV, MessageType } from "./constants";
-import { ChatListType } from "./pushapi/pushAPITypes";
-import { STREAM } from "./pushstream/pushStreamTypes";
-import { ConditionType, GROUP_INVITER_ROLE, GROUP_RULES_CATEGORY, GROUP_RULES_PERMISSION, GROUP_RULES_SUB_CATEGORY } from "./types";
-
-
+import { ENV, MessageType, ALPHA_FEATURES, ENCRYPTION_TYPE } from './constants';
+import { ChatListType } from './pushapi/pushAPITypes';
+import { STREAM } from './pushstream/pushStreamTypes';
+import {
+  ConditionType,
+  GROUP_INVITER_ROLE,
+  GROUP_RULES_CATEGORY,
+  GROUP_RULES_PERMISSION,
+  GROUP_RULES_SUB_CATEGORY,
+} from './types';
 
 // TODO: Change this do . type
 // TODO: Add Notif type.
@@ -25,6 +29,8 @@ const CONSTANTS = {
       },
     },
   },
+  ALPHA_FEATURES: ALPHA_FEATURES,
+  USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
 };
 
 export default CONSTANTS;

@@ -1,3 +1,4 @@
+import * as PGP from './pgp';
 import Constants, { ENV } from '../../constants';
 import { isValidCAIP10NFTAddress, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser, SpaceIFeeds } from '../../types';
@@ -30,11 +31,13 @@ type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
+  pgpHelper?: PGP.IPGPHelper;
   env?: ENV;
 };
 
 export const getInboxLists = async (
-  options: InboxListsType
+  options: InboxListsType,
+  pgpHelper = PGP.PGPHelper
 ): Promise<IFeeds[]> => {
   const {
     lists,
@@ -43,6 +46,7 @@ export const getInboxLists = async (
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
+
   const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
   const feeds: IFeeds[] = [];
   for (const list of lists) {
@@ -74,7 +78,7 @@ export const getInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
+    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper,  env });
   return feeds;
 };
 
@@ -119,7 +123,7 @@ export const getSpaceInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, env });
+    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper: PGP.PGPHelper,  env });
   return feeds;
 };
 
@@ -163,6 +167,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
     messages,
     connectedUser,
     pgpPrivateKey,
+    pgpHelper = PGP.PGPHelper,
     env = Constants.ENV.PROD,
   } = options || {};
   let otherPeer: IUser;
@@ -193,7 +198,9 @@ export const decryptConversation = async (options: DecryptConverationType) => {
         messages[i] = await decryptAndVerifyMessage(
           message,
           signatureValidationPubliKey,
-          pgpPrivateKey
+          pgpPrivateKey,
+          env,
+          pgpHelper,
         );
       }
     }

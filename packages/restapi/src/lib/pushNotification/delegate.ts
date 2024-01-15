@@ -1,4 +1,4 @@
-import  { ENV } from '../constants';
+import { ENV } from '../constants';
 import { SignerType } from '../types';
 import { ChannelInfoOptions } from './PushNotificationTypes';
 import CONFIG, * as config from '../config';
@@ -18,15 +18,21 @@ export class Delegate extends PushNotificationBaseClass {
    */
   get = async (options?: ChannelInfoOptions) => {
     try {
-      const {
-        channel = this.account
-          ? getFallbackETHCAIPAddress(this.env!, this.account!)
-          : null,
-      } = options || {};
+      // const {
+      //   channel = this.account
+      //     ? getFallbackETHCAIPAddress(this.env!, this.account!)
+      //     : null,
+      // } = options || {};
+      let channel = options?.channel
+        ? options.channel
+        : this.account
+        ? getFallbackETHCAIPAddress(this.env!, this.account!)
+        : null;
       this.checkUserAddressExists(channel!);
-      if (!validateCAIP(channel!)) {
-        throw new Error('Invalid CAIP');
-      }
+      channel = validateCAIP(channel!)
+        ? channel
+        : getFallbackETHCAIPAddress(this.env!, channel!);
+      this.checkUserAddressExists(channel!);
       return await PUSH_CHANNEL.getDelegates({
         channel: channel!,
         env: this.env,
@@ -43,28 +49,23 @@ export class Delegate extends PushNotificationBaseClass {
    */
   add = async (delegate: string) => {
     try {
-      if (!validateCAIP(delegate)) {
-        throw new Error('Invalid CAIP');
+      this.checkSignerObjectExists();
+      if (validateCAIP(delegate)) {
+        delegate = this.getAddressFromCaip(delegate);
       }
-      
-      const networkDetails = await this.getChianId(this.signer!);
-      if (networkDetails !== parseInt(delegate.split(':')[1])) {
-        return new Error('Signer and CAIP chain id doesnt match');
-      }
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');
       }
       const commAddress = CONFIG[this.env!][caip].EPNS_COMMUNICATOR_CONTRACT;
+
       const commContract = this.createContractInstance(
         commAddress,
         config.ABIS.COMM,
         config.VIEM_CONFIG[this.env!][caip].NETWORK
       );
-      const addDelegateRes = await this.addDelegator(
-        commContract,
-        delegate.split(':')[2]
-      );
+      const addDelegateRes = await this.addDelegator(commContract, delegate);
       return { transactionHash: addDelegateRes };
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : delegate::add : ${error}`);
@@ -79,17 +80,10 @@ export class Delegate extends PushNotificationBaseClass {
   remove = async (delegate: string) => {
     try {
       this.checkSignerObjectExists();
-      if (this.signer && !this.signer.provider) {
-        throw new Error('Provider is required');
+      if (validateCAIP(delegate)) {
+        delegate = this.getAddressFromCaip(delegate);
       }
-      if (!validateCAIP(delegate)) {
-        throw new Error('Invalid CAIP');
-      }
-
-      const networkDetails = await this.getChianId(this.signer!);
-      if (networkDetails !== parseInt(delegate.split(':')[1])) {
-        return new Error('Signer and CAIP chain id doesnt match');
-      }
+      const networkDetails = await this.getChainId(this.signer!);
       const caip = `eip155:${networkDetails}`;
       if (!CONFIG[this.env!][caip] || !config.VIEM_CONFIG[this.env!][caip]) {
         throw new Error('Unsupported Chainid');
@@ -102,7 +96,7 @@ export class Delegate extends PushNotificationBaseClass {
       );
       const removeDelegateRes = await this.removeDelegator(
         commContract,
-        delegate.split(':')[2]
+        delegate
       );
       return { transactionHash: removeDelegateRes };
     } catch (error) {

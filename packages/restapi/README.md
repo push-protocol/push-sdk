@@ -34,6 +34,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Stream Notifications](#stream-notifications)
   - [For Push Chat](#for-push-chat)
     - [Initialize](#initialize)
+    - [Reinitialize](#reinitialize)
     - [Fetch Info](#fetch-info)
     - [Fetch Profile Info](#fetch-profile-info)
     - [Update Profile Info](#update-profile-info)
@@ -99,13 +100,13 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-yarn add @pushprotocol/restapi@latest ethers@^5.6
+yarn add @pushprotocol/restapi@latest ethers
 ```
 
 or
 
 ```bash
-npm install @pushprotocol/restapi@latest ethers@^5.6
+npm install @pushprotocol/restapi@latest ethers
 ```
 
 ## Import SDK
@@ -169,13 +170,13 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
 | `options.account` \*                    | `string`                                          | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
 | `options.version` \*                    | `string`                                          | `ENC_TYPE_V3` | The encryption version to use for the PushAPI.                                         |
-| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: { password: string } }`               | -             | Metadata related to the encryption version, including a password if needed, and reset for resetting nft profile           |
 | `options.autoUpgrade` \*                | `boolean`                                         | `true`        | If `true`, upgrades encryption keys to the latest encryption version.                 |
 | `options.origin` \*                     | `string`                                          | -             | Specify origin or source while creating a Push Profile.                                |
 
@@ -706,7 +707,7 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
@@ -738,6 +739,23 @@ const userAlice = await PushAPI.initialize(signer, {
 | `CHAT`                | `STREAM.CHAT`          |
 | `CHAT_OPS`            | `STREAM.CHAT_OPS`      |
 
+
+---
+
+### **Reinitialize**
+
+```typescript
+// Reinitialize PushAPI for fresh start of NFT Account
+// Reinitialize only succeeds if the signer account is the owner of the NFT
+await userAlice.reinitialize({ versionMeta: { NFTPGP_V1: { password: 'NewPassword' } } });
+```
+
+## Parameters
+
+| Param                                   | Type                                              | Default       | Remarks                                                                                |
+| --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `options`                               | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.versionMeta`                   | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
 
 ---
 
@@ -2869,7 +2887,7 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
 ```typescript
 // Update keys encryption
 const aliceUpdateEncryption = await userAlice.encryption.update(
-  ENCRYPTION_VERSION.PGP_V3
+  CONSTANTS.USER.ENCRYPTION_VERSION.PGP_V3
 );
 ```
 
@@ -5599,7 +5617,7 @@ export type VideoCallData = {
     video: boolean | null; // local video status
     address: string; // local address
   };
-  incoming: [PeerData];
+  incoming: PeerData[];
 };
 
 private data: VideoCallData;
@@ -5648,14 +5666,14 @@ constructor({
   }) {}
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signer_ | SignerType | - | signer object for a user |
-| chainId* | number | - | chainId for the video call - Eth Mainnet: 1, Polygon Mainnet: 137 |
-| pgpPrivatekey* | string | - | PGP private key of the user, used while sending video call notifications |
-| env | string | 'prod' | API env - 'prod', 'staging', 'dev'|
-| setData\* | `(fn: (data: VideoCallData) => VideoCallData) => void` | - | Function to update video call data |
+| signer | SignerType | - | signer object for a user |
+| chainId | number | - | chainId for the video call - Eth Mainnet: 1, Polygon Mainnet: 137 |
+| pgpPrivatekey | string | - | PGP private key of the user, used while sending video call notifications |
+| env* | string | 'prod' | API env - 'prod', 'staging', 'dev'|
+| setData | `(fn: (data: VideoCallData) => VideoCallData) => void` | - | Function to update video call data |
 
 ---
 
@@ -5668,16 +5686,18 @@ Allowed Options (params with _ are mandatory)
 export type VideoCreateInputOptions = {
   video?: boolean;
   audio?: boolean;
+  stream?: MediaStream; // for backend use
 };
 
 async create(options: VideoCreateInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with \* are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| video | boolean | true | video status for the local stream |
-| audio | boolean | true | audio status for the local stream |
+| video* | boolean | true | video status for the local stream |
+| audio* | boolean | true | audio status for the local stream |
+| stream* | MediaStream | null | local stream, for backend use |
 
 Note - If audio, video aren't enabled in create() then they wont be available during the call respectively.
 
@@ -5691,7 +5711,7 @@ Note - If audio, video aren't enabled in create() then they wont be available du
 ```typescript
 export type VideoRequestInputOptions = {
   senderAddress: string;
-  recipientAddress: string;
+  recipientAddress: string | string[];
   chatId: string;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
@@ -5700,14 +5720,14 @@ export type VideoRequestInputOptions = {
 async request(options: VideoRequestInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| senderAddress_ | string | - | Local peer address |
-| recipientAddress* | string | - | Incoming/remote peer address |
-| chatId* | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
-| retry | boolean | false | If we are retrying the call, only for internal use |
+| senderAddress | string | - | Wallet address of the local user |
+| recipientAddress | string, string[] | - | Wallet addresses of users you want to call, single address for wallet to wallet call and array of addresses for group call |
+| chatId | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
+| retry* | boolean | false | If we are retrying the call, only for internal use |
 
 ---
 
@@ -5729,15 +5749,15 @@ export type VideoAcceptRequestInputOptions = {
 async acceptRequest(options: VideoAcceptRequestInputOptions): Promise<void> {}
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signalData_ | any | - | Signal data received from the initiator peer via psuh notification upon call request |
-| senderAddress* | string | - | Local peer address |
-| recipientAddress* | string | - | Incoming/remote peer address |
-| chatId\* | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
-| onReceiveMessage | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
-| retry | boolean | false | If we are retrying the call, only for internal use |
+| signalData | any | - | Signal data received from the initiator peer via psuh notification upon call request |
+| senderAddress | string | - | Local peer address |
+| recipientAddress | string | - | Incoming/remote peer address |
+| chatId | string | - | Unique identifier for every wallet-to-wallet push chat, will be used during verification proof generation |
+| onReceiveMessage* | `(message: string) => void` | `(message: string) => {console.log('received a meesage', message);}` | Function which will be called when the sender receives a message via webRTC data channel |
+| retry* | boolean | false | If we are retrying the call, only for internal use |
 
 ---
 
@@ -5755,11 +5775,11 @@ export type VideoConnectInputOptions = {
 connect(options: VideoConnectInputOptions): void {}
 ```
 
-Allowed Options (params with _ are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| signalData_ | any | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
-| peerAddress | string | data.incoming[0].address | Address of the receiver peer, received via push notification upon call acceptRequest |
+| signalData | any | - | Signal data received from the receiver peer via push notification upon call acceptRequest |
+| peerAddress* | string | data.incoming[0].address | Address of the receiver peer, received via push notification upon call acceptRequest |
 
 ---
 
@@ -5771,15 +5791,15 @@ Allowed Options (params with _ are mandatory)
 ```typescript
 export type VideoDisconnectOptions = {
   peerAddress: string;
-} | null;
+};
 
-disconnect(options: VideoDisconnectOptions): void {}
+disconnect(options?: VideoDisconnectOptions): void {}
 ```
 
-Allowed Options (params with \* are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
-| peerAddress | string | data.incoming[0].address | Address of the peer to be disconnected from |
+| peerAddress* | string | data.incoming[0].address | Address of the peer to be disconnected from |
 
 ---
 
@@ -5790,14 +5810,14 @@ Allowed Options (params with \* are mandatory)
 - **Note -** If video was not enabled during `create()` then it will always remain off.
 
 ```typescript
-  export type EnableVideoInputOptions = {
+export type EnableVideoInputOptions = {
   state: boolean;
 }
 
 enableVideo(options: EnableVideoInputOptions): void
 ```
 
-Allowed Options (params with \* are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | state | boolean | - | true for enable and false for disable |
@@ -5818,7 +5838,7 @@ export type EnableAudioInputOptions = {
 enableAudio(options: EnableAudioInputOptions): void
 ```
 
-Allowed Options (params with \* are mandatory)
+Allowed Options (params with * are optional)
 | Param | Type | Default | Remarks |
 |----------|---------|---------|--------------------------------------------|
 | state | boolean | - | true for enable and false for disable |

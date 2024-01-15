@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { IFeeds } from '@pushprotocol/restapi';
+import { GroupDTO, IFeeds } from '@pushprotocol/restapi';
 import { ToastContainer } from 'react-toastify';
 
 import { Section, Div, Span } from '../../reusables';
@@ -41,7 +41,7 @@ import {
 import type { FileMessageContent, IGroup } from '../../../types';
 import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
-import { checkIfAccessVerifiedGroup, checkIfMember } from '../helpers';
+import { checkIfAccessVerifiedGroup, checkIfMember, isValidETHAddress } from '../helpers';
 import { InfoContainer } from '../reusables';
 
 /**
@@ -142,6 +142,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   }, [textAreaRef, typedMessage]);
 
+  useEffect(() => {
+    if (!loading && textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, [loading, textAreaRef]);
   //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
@@ -153,6 +158,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [account]);
 
   useEffect(() => {
+    if (!isValidETHAddress(chatId)) {
     const storedTimestampJSON = localStorage.getItem(chatId);
 
     if (storedTimestampJSON) {
@@ -170,6 +176,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
       }
     }
+  }
   }, [chatId, verified, isMember, account, env]);
 
   useEffect(() => {
@@ -178,9 +185,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatFeed?.groupInformation?.chatId.toLowerCase() ===
         groupInformationSinceLastConnection.chatId.toLowerCase()
       ) {
-        const updateChatFeed = chatFeed;
-        updateChatFeed.groupInformation = groupInformationSinceLastConnection;
-        setChatFeed(updateChatFeed);
+        (async()=>{
+          const updateChatFeed = chatFeed;
+          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
+          if (group || !!Object.keys(group || {}).length){
+            updateChatFeed.groupInformation = group! as GroupDTO ;
+          
+            setChatFeed(updateChatFeed);
+          }
+         
+        })();
       }
     }
   }, [groupInformationSinceLastConnection]);
@@ -423,15 +437,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {isJoinGroup() && 'Click on the button to join the group'}
                 {isNotVerified() && (
                   <>
-                    Sending messages requires{' '}
-                    <Span
-                      color={theme.backgroundColor?.chatSentBubbleBackground}
-                    >
-                      1 PUSH Token
-                    </Span>{' '}
-                    for participation.{' '}
+                    Sending messages requires to staisfy the group rules.{' '}
                     <Link
-                      href="https://docs.push.org/developers/developer-tooling/push-sdk/sdk-packages-details/epnsproject-sdk-restapi/for-chat/group-chat#to-create-a-token-gated-group"
+                      href="https://push.org/docs/chat/build/conditional-rules-for-group/"
                       target="_blank"
                       color={theme.backgroundColor?.chatSentBubbleBackground}
                     >

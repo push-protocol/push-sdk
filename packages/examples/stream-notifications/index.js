@@ -19,9 +19,34 @@ console.log("Alternatively just leave the input empty and we will simulate a not
 // console.log('Sending notification from Wallet address: ', signer.address);
 
 // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
-const userAlice = await PushAPI.initialize({ 
-  account: `0xB59Cdc85Cacd15097ecE4C77ed9D225014b4D56D`,
-  env: CONSTANTS.ENV.PROD 
+const userAlice = await PushAPI.initialize(signer, { env: CONSTANTS.ENV.STAGING });
+
+// IMPORTANT: Setup stream events before stream.connect()
+const stream = await userAlice.initStream([
+  CONSTANTS.STREAM.CONNECT,
+  CONSTANTS.STREAM.DISCONNECT, 
+  CONSTANTS.STREAM.NOTIF
+]);
+
+// Setup responder for CONSTANTS.STREAM.CONNECT event
+stream.on(CONSTANTS.STREAM.CONNECT, async () => {
+  console.log('Stream Connected');
+
+  // stream connected, send a message
+  // Sending a test notification
+  console.log("Sending notification, you should see 'Notification recieved event' in a few moments");
+
+  if (pk.length > 0) {
+    // Send broadcast to all opted in users
+    await userAlice.channel.send(['*'], {
+      notification: { title: 'GM', body: "It's a me, Mario!!!" },
+    });
+  } else {
+    // Send targeted notification to own wallet, creating a simulated notification
+    await userAlice.channel.send([signer.address], {
+      notification: { title: 'GM', body: "It's targeted, simulated notification" },
+    });
+  }
 });
 // const channelSubs = await userAlice.channel.subscribers({
 //   channel: 'eip155:1:0x03EAAAa48ea78d1E66eA3458364d553AD981871E',

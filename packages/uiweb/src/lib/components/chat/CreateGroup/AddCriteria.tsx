@@ -21,6 +21,7 @@ import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
 
 import EthereumSvg from '../../../icons/ethereum.svg';
+import FuseSVG from '../../../icons/fuse.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
@@ -236,9 +237,16 @@ const AddCriteria = ({
     {
       id: 4,
       value: BLOCKCHAIN_NETWORK[env].ARBITRUM,
-      title: 'Arbitrim',
+      title: 'Arbitrum',
       icon: ArbitrumSvg,
       function: () => setSelectedChainValue(4),
+    },
+    {
+      id: 5,
+      value: BLOCKCHAIN_NETWORK[env].FUSE,
+      title: 'Fuse',
+      icon: FuseSVG,
+      function: () => setSelectedChainValue(5),
     },
   ];
 

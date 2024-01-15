@@ -13,8 +13,6 @@ export interface OnJoinListenerType {
 export async function onJoinListener(this: Space, options: OnJoinListenerType) {
   const { receivedAddress } = options || {};
 
-  console.log('JOIN LISTENER CALLED', 'receivedAddress', receivedAddress);
-
   // method should be called only by the host
   if (
     pCAIP10ToWallet(this.spaceSpecificData.spaceCreator) !==

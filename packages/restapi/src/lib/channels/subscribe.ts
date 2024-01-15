@@ -1,30 +1,23 @@
-import axios from "axios";
-import {
-  getCAIPAddress,
-  getConfig,
-  getCAIPDetails,
-  signTypedData
-} from '../helpers';
+import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
   getTypeInformation,
   getDomainInformation,
-  getSubscriptionMessage
+  getSubscriptionMessage,
 } from './signature.helpers';
 import Constants, {ENV} from '../constants';
 import { SignerType } from "../types";
+import { axiosPost } from "../utils/axiosUtil";
 export type SubscribeOptionsType = {
   signer: SignerType;
   channelAddress: string;
   userAddress: string;
   verifyingContractAddress?: string;
   env?: ENV;
-  onSuccess?: () => void
-  onError?: (err: Error) => void,
-}
+  onSuccess?: () => void;
+  onError?: (err: Error) => void;
+};
 
-export const subscribe = async (
- options: SubscribeOptionsType
-) => {
+export const subscribe = async (options: SubscribeOptionsType) => {
   const {
     signer,
     channelAddress,
@@ -36,7 +29,11 @@ export const subscribe = async (
   } = options || {};
 
   try {
-    const _channelAddress = await getCAIPAddress(env, channelAddress, 'Channel');
+    const _channelAddress = await getCAIPAddress(
+      env,
+      channelAddress,
+      'Channel'
+    );
 
     const channelCAIPDetails = getCAIPDetails(_channelAddress);
     if (!channelCAIPDetails) throw Error('Invalid Channel CAIP!');
@@ -44,11 +41,14 @@ export const subscribe = async (
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
     const _userAddress = await getCAIPAddress(env, userAddress, 'User');
-  
+
     const userCAIPDetails = getCAIPDetails(_userAddress);
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
 
-    const { API_BASE_URL,EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
+    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
+      env,
+      channelCAIPDetails
+    );
 
     const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/subscribe`;
 
@@ -59,17 +59,23 @@ export const subscribe = async (
     );
 
     // get type information
-    const typeInformation = getTypeInformation("Subscribe");
+    const typeInformation = getTypeInformation('Subscribe');
 
     // get message
     const messageInformation = getSubscriptionMessage(
       channelCAIPDetails.address,
       userCAIPDetails.address,
-      "Subscribe"
+      'Subscribe'
     );
 
     // sign a message using EIP712
-    const signature = await signTypedData(signer, domainInformation, typeInformation, messageInformation, "Subscribe");
+    const pushSigner = new Signer(signer);
+    const signature = await pushSigner.signTypedData(
+      domainInformation,
+      typeInformation as any,
+      messageInformation,
+      'Subscribe'
+    );
 
     const verificationProof = signature; // might change
 
@@ -78,18 +84,21 @@ export const subscribe = async (
       message: {
         ...messageInformation,
         channel: _channelAddress,
-        subscriber: _userAddress
+        subscriber: _userAddress,
       },
     };
 
-    await axios.post(requestUrl, body);
+    await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: "success", message: "successfully opted into channel" };
+    return { status: 'success', message: 'successfully opted into channel' };
   } catch (err) {
     if (typeof onError === 'function') onError(err as Error);
 
-    return { status: "error", message: err instanceof Error ? err.message : JSON.stringify(err) };
+    return {
+      status: 'error',
+      message: err instanceof Error ? err.message : JSON.stringify(err),
+    };
   }
-}
+};

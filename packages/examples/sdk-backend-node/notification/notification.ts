@@ -3,6 +3,9 @@ import { config } from '../config';
 import { ethers } from 'ethers';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
+import { privateKeyToAccount } from 'viem/accounts';
+import { createWalletClient, http, formatEther } from 'viem';
+import { sepolia } from 'viem/chains';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -32,13 +35,35 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   // Signer Generation
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc.sepolia.org' // Goerli Provider
+
+  // ETHERS V5
+  // const provider = new ethers.providers.JsonRpcProvider(
+  //   'https://rpc.sepolia.org' // Sepolia Provider
+  // );
+  // const signer = new ethers.Wallet(
+  //   `0x${process.env.WALLET_PRIVATE_KEY}`,
+  //   provider
+  // );
+  // const address = signer.address
+
+  // ETHERS V6
+  const provider = new ethers.JsonRpcProvider(
+    'https://rpc.sepolia.org' // Sepolia Provider
   );
   const signer = new ethers.Wallet(
     `0x${process.env.WALLET_PRIVATE_KEY}`,
     provider
   );
+  const address = signer.address;
+
+  // VIEM
+  // const signer = createWalletClient({
+  //   account: privateKeyToAccount(`0x${process.env.WALLET_PRIVATE_KEY}`),
+  //   chain: sepolia,
+  //   transport: http(),
+  // });
+  // const address = signer.account.address;
+
   const randomWallet1 = ethers.Wallet.createRandom().address;
   const randomWallet2 = ethers.Wallet.createRandom().address;
   // -------------------------------------------------------------------
@@ -106,7 +131,10 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   console.log('PushAPI.channel.subscribers');
-  const channelSubscribers = await userAlice.channel.subscribers();
+  const channelSubscribers = await userAlice.channel.subscribers({
+    limit: 10,
+    page: 1,
+  });
   if (showAPIResponse) {
     console.log(channelSubscribers);
   }
@@ -122,7 +150,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
       },
     });
     await delay(3000); // Delay added to log the events in order
-    const targetedNotif = await userAlice.channel.send([signer.address], {
+    const targetedNotif = await userAlice.channel.send([address], {
       notification: {
         title: 'test',
         body: 'test',
@@ -130,7 +158,7 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
     });
     await delay(3000); // Delay added to log the events in order
     const subsetNotif = await userAlice.channel.send(
-      [randomWallet1, randomWallet2, signer.address],
+      [randomWallet1, randomWallet2, address],
       {
         notification: {
           title: 'test',
@@ -151,8 +179,8 @@ export const runNotificationClassUseCases = async (): Promise<void> => {
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
   // These Examples requires wallet to hold some ETH & PUSH
-  const balance = await provider.getBalance(signer.address);
-  if (parseFloat(ethers.utils.formatEther(balance)) < 0.001) {
+  const balance = await provider.getBalance(address);
+  if (parseFloat(formatEther(balance)) < 0.001) {
     console.log(
       'skipping PushAPI.channel examples, wallet does not have enough balance to pay fee'
     );

@@ -1,10 +1,11 @@
-import { Rules } from "../types";
-import Constants, { ENV } from '../constants';
+import { Rules, VideoPeerInfo } from '../types';
+import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   filter?: {
     channels?: string[];
     chats?: string[];
+    video?: string[];
   };
   connection?: {
     auto?: boolean;
@@ -22,6 +23,7 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  VIDEO = 'STREAM.VIDEO',
   CONNECT = 'STREAM.CONNECT',
   DISCONNECT = 'STREAM.DISCONNECT',
 }
@@ -30,7 +32,6 @@ export enum NotificationEventType {
   INBOX = 'notification.inbox',
   SPAM = 'notification.spam',
 }
-
 
 export enum MessageOrigin {
   Other = 'other',
@@ -52,6 +53,17 @@ export enum GroupEventType {
   Remove = 'remove',
 }
 
+export enum VideoEventType {
+  RequestVideo = 'video.request',
+  ApproveVideo = 'video.approve',
+  DenyVideo = 'video.deny',
+  ConnectVideo = 'video.connect',
+  DisconnectVideo = 'video.disconnect',
+  // retry events
+  RetryRequestVideo = 'video.retry.request',
+  RetryApproveVideo = 'video.retry.approve'
+}
+
 export enum ProposedEventNames {
   Message = 'chat.message',
   Request = 'chat.request',
@@ -63,7 +75,6 @@ export enum ProposedEventNames {
   UpdateGroup = 'chat.group.update',
   Remove = 'chat.group.participant.remove',
 }
-
 
 export interface Profile {
   image: string;
@@ -85,9 +96,6 @@ export interface GroupMeta {
   description: string;
   image: string;
   owner: string;
-  members: GroupMember[];
-  admins: GroupMember[];
-  pending: Pending;
   private: boolean;
   rules: Rules;
 }
@@ -143,7 +151,6 @@ export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
 }
 
-
 export interface MessageEvent {
   event: MessageEventType;
   origin: MessageOrigin;
@@ -171,8 +178,6 @@ export const NOTIFICATION = {
 } as const;
 
 export type NotificationType = keyof typeof NOTIFICATION.TYPE;
-
-
 
 export interface NotificationEvent {
   event: NotificationEventType;
@@ -232,3 +237,40 @@ export interface MessageRawData {
   verificationProof: string;
   previousReference: string;
 }
+
+export interface VideoEvent {
+  event: VideoEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  peerInfo: VideoPeerInfo;
+  raw?: GroupEventRawData;
+}
+
+export enum EVENTS {
+  // Websocket
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+
+  // Notification
+  USER_FEEDS = 'userFeeds',
+  USER_SPAM_FEEDS = 'userSpamFeeds',
+
+  // Chat
+  CHAT_RECEIVED_MESSAGE = 'CHATS',
+  CHAT_GROUPS = 'CHAT_GROUPS',
+}
+
+export type SocketInputOptions = {
+  user: string;
+  env: ENV;
+  socketType?: 'notification' | 'chat';
+  apiKey?: string;
+  socketOptions?: SocketOptions;
+};
+
+type SocketOptions = {
+  autoConnect: boolean;
+  reconnectionAttempts?: number;
+  reconnectionDelayMax?: number;
+  reconnectionDelay?: number;
+};

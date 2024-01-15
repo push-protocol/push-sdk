@@ -1,4 +1,4 @@
-import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
+import { TypedDataDomain, TypedDataField } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -7,11 +7,13 @@ import {
   SPACE_DISCONNECT_TYPE,
   SPACE_INVITE_ROLES,
   SPACE_REQUEST_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from '../../lib/payloads/constants';
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
 export * from './messageTypes';
+export * from './videoTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -82,6 +84,18 @@ export type ParsedResponseType = {
   };
 };
 
+export interface VideoNotificationRules {
+  access: {
+    type: VIDEO_NOTIFICATION_ACCESS_TYPE;
+    data: {
+      chatId?: string;
+    };
+  };
+}
+
+// SendNotificationRules can be extended in the future for other use cases
+export type SendNotificationRules = VideoNotificationRules;
+
 export interface ISendNotificationInputOptions {
   senderType?: 0 | 1;
   signer: any;
@@ -136,7 +150,9 @@ export interface ISendNotificationInputOptions {
   };
   ipfsHash?: string;
   env?: ENV;
+  /** @deprecated - Use `rules` object instead */
   chatId?: string;
+  rules?: SendNotificationRules;
   pgpPrivateKey?: string;
 }
 
@@ -181,7 +197,8 @@ export interface IMessageIPFS {
   link: string | null;
   timestamp?: number;
   encType: string;
-  encryptedSecret: string;
+  encryptedSecret: string | null;
+  sessionKey?: string;
   /**
    * scope only at sdk level
    */
@@ -327,7 +344,6 @@ export enum GROUP_RULES_SUB_CATEGORY {
   GET = 'GET',
 }
 
-
 export enum GROUP_RULES_PERMISSION {
   ENTRY = 'Entry',
   CHAT = 'Chat',
@@ -354,7 +370,6 @@ export type ConditionBase = {
   subcategory?: string;
   data?: Data;
   access?: boolean;
-
 };
 
 export type Condition = ConditionBase & {
@@ -370,7 +385,6 @@ export interface Rules {
     conditions: Array<Condition | ConditionBase> | (Condition | ConditionBase);
   };
 }
-
 
 export interface SpaceRules {
   entry?: {
@@ -393,6 +407,60 @@ export interface GroupMemberStatus {
 export interface SpaceAccess {
   entry: boolean;
   rules?: SpaceRules;
+}
+
+export interface RoleCounts {
+  total: number;
+  pending: number;
+}
+
+export interface ChatMemberCounts {
+  overallCount: number;
+  adminsCount: number;
+  membersCount: number;
+  pendingCount: number;
+  approvedCount: number;
+  roles: {
+    ADMIN: RoleCounts;
+    MEMBER: RoleCounts;
+  };
+}
+
+export interface GroupParticipantCounts {
+  participants: number;
+  pending: number;
+}
+
+export interface ChatMemberProfile {
+  address: string;
+  intent: boolean;
+  role: string;
+  userInfo: UserV2;
+}
+
+export interface GroupMembersInfo {
+  totalMembersCount: number;
+  members: ChatMemberProfile[];
+}
+
+export interface UserProfile {
+  name: string | null;
+  desc: string | null;
+  picture: string | null;
+  blockedUsersList: Array<string> | null;
+  profileVerificationProof: string | null;
+}
+
+export interface UserV2 {
+  msgSent: number;
+  maxMsgPersisted: number;
+  did: string;
+  wallets: string;
+  profile: UserProfile;
+  encryptedPrivateKey: string | null;
+  publicKey: string | null;
+  verificationProof: string | null;
+  origin?: string | null;
 }
 
 export interface GroupDTO {
@@ -425,6 +493,25 @@ export interface GroupDTO {
   status?: ChatStatus | null;
   rules?: Rules | null;
   meta?: string | null;
+  sessionKey?: string;
+  encryptedSecret?: string;
+}
+
+export interface GroupInfoDTO {
+  groupName: string;
+  groupImage: string | null;
+  groupDescription: string;
+  isPublic: boolean;
+  groupCreator: string;
+  chatId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  groupType?: string;
+  status?: ChatStatus | null;
+  rules?: Rules | null;
+  meta?: string | null;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
 }
 
 export interface SpaceDTO {
@@ -577,12 +664,24 @@ export type ethersV5SignerType = {
     types: Record<string, Array<TypedDataField>>,
     value: Record<string, any>
   ) => Promise<string>;
-  getChainId: () => Promise<number>;
   getAddress: () => Promise<string>;
-  signMessage: (message: Bytes | string) => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: any;
 };
+
+export type ethersV6SignerType = {
+  signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
+  privateKey?: string;
+  provider?: any;
+};
+
 export type viemSignerType = {
   signTypedData: (args: {
     account: any;
@@ -599,11 +698,13 @@ export type viemSignerType = {
   }) => Promise<`0x${string}`>;
   account: { [key: string]: any };
   privateKey?: string;
-  provider?: providers.Provider;
-  
+  provider?: any;
 };
 
-export type SignerType = ethersV5SignerType | viemSignerType;
+export type SignerType =
+  | ethersV5SignerType
+  | ethersV6SignerType
+  | viemSignerType;
 
 export type EnvOptionsType = {
   env?: ENV;
@@ -667,8 +768,9 @@ export type MessageWithCID = {
   sigType: string;
   timestamp?: number;
   encType: string;
-  encryptedSecret: string;
+  encryptedSecret: string | null;
   verificationProof?: string;
+  sessionKey?: string;
 };
 
 export type IMediaStream = MediaStream | null;
@@ -679,6 +781,7 @@ export enum VideoCallStatus {
   RECEIVED,
   CONNECTED,
   DISCONNECTED,
+  ENDED,
   RETRY_INITIALIZED,
   RETRY_RECEIVED,
 }
@@ -723,7 +826,9 @@ export type VideoCreateInputOptions = {
 export type VideoRequestInputOptions = {
   senderAddress: string;
   recipientAddress: string | string[];
-  chatId: string;
+  /** @deprecated - Use `rules` object instead */
+  chatId?: string;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -736,7 +841,9 @@ export type VideoAcceptRequestInputOptions = {
   signalData: any;
   senderAddress: string;
   recipientAddress: string;
-  chatId: string;
+  /** @deprecated - Use `rules` object instead */
+  chatId?: string;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
