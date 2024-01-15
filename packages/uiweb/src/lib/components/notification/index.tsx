@@ -36,6 +36,8 @@ export type chainNameType =
   | 'POLYGON_ZK_EVM_MAINNET'
   | 'ARBITRUMONE_MAINNET'
   | 'ARBITRUM_TESTNET'
+  | 'FUSE_TESTNET'
+  | 'FUSE_MAINNET'
   | 'THE_GRAPH'
   | undefined;
 
