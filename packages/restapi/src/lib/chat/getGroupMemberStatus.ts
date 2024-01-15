@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
-import { GroupAccess, GroupMemberStatus } from '../types';
-import {  getUserDID } from './helpers';
+import {  GroupMemberStatus } from '../types';
+import { getUserDID } from './helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -33,15 +33,8 @@ export const getGroupMemberStatus = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/${user}/status`;
 
-    return axios
-      .get(requestUrl)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
+    const response = await axiosGet<GroupMemberStatus>(requestUrl);
+    return response.data;
   } catch (err) {
     console.error(
       `[Push SDK] - API - Error - API ${getGroupMemberStatus.name} -:  `,

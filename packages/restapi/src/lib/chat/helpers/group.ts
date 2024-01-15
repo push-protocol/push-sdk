@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { AccountEnvOptionsType, GroupDTO } from '../../types';
 import { getAPIBaseUrls } from '../../helpers';
 import Constants from '../../constants';
+import { axiosGet } from '../../utils/axiosUtil';
 
 /**
  *  GET /v1/chat/groups/<chatId>
@@ -11,8 +11,7 @@ export const getGroup = async (options: AccountEnvOptionsType, chatId: string): 
   const { env = Constants.ENV.PROD } = options || {};
   const API_BASE_URL = getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}`;
-  return axios
-    .get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => {
       return response.data;
     })
