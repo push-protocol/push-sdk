@@ -185,7 +185,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       uuid,
       // for the pgpv2 verfication proof
       chatId:
-        rules?.access.data ?? // for backwards compatibilty with 'chatId' param
+        rules?.access.data.chatId ?? // for backwards compatibilty with 'chatId' param
         chatId,
       pgpPrivateKey,
     });
@@ -231,7 +231,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         ? {
             rules: rules ?? {
               access: {
-                data: chatId,
+                data: { chatId },
                 type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
               },
             },

@@ -13,7 +13,7 @@ import {
   EnvOptionsType,
   SignerType,
   VideoCallStatus,
-  VideNotificationRules,
+  VideoNotificationRules,
 } from '../../types';
 
 interface CallDetailsType {
@@ -33,7 +33,7 @@ export interface VideoDataType {
 
 interface VideoCallInfoType extends VideoDataType, EnvOptionsType {
   callType?: VIDEO_CALL_TYPE;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
 }
 
 interface UserInfoType {
@@ -60,7 +60,7 @@ const sendVideoCallNotification = async (
     const videoData: VideoDataType = {
       recipientAddress,
       senderAddress,
-      chatId: rules?.access.data ?? chatId,
+      chatId: rules?.access.data.chatId ?? chatId,
       signalData,
       status,
       callDetails,
