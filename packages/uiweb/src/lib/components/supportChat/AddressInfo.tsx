@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SupportChatPropsContext } from '../../context';
-import { Constants } from '../../config';
-import { copyToClipboard, pCAIP10ToWallet } from '../../helpers';
+import { Constants, InfuraAPIKey, allowedNetworks } from '../../config';
+import { copyToClipboard, pCAIP10ToWallet, resolveNewEns } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
+import { ethers } from 'ethers';
 
 export const AddressInfo: React.FC = () => {
   const { supportAddress, env, theme, pushUser } = useContext<any>(SupportChatPropsContext);
@@ -11,11 +12,15 @@ export const AddressInfo: React.FC = () => {
   const [user, setUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const walletAddress = pCAIP10ToWallet(supportAddress);
+  const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
+  const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
 
   useEffect(() => {
     const getUser = async () => {
 if(pushUser){
   const user = await pushUser.info();
+ const ensNameResult = await resolveNewEns(supportAddress, provider) 
+  setEnsName(ensNameResult!)
       setUser(user);
 }
       
