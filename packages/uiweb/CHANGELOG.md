@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.1...uiweb-1.2.2) (2024-01-15)
+
+
+### Bug Fixes
+
+* Added ethersV6SignerType in uiweb signer types ([#1018](https://github.com/ethereum-push-notification-service/push-sdk/issues/1018)) ([76710d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/76710d40c688aa7a21113a36e3404e806c82cbb0))
+* Merge branch 'main' into deployment ([798f355](https://github.com/ethereum-push-notification-service/push-sdk/commit/798f35561a0cec08fb89d8121b7751ea2ed3553a))
+
+
+
 ## [1.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.0...uiweb-1.2.1) (2024-01-15)
 
 
