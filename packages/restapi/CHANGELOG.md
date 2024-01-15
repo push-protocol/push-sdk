@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.6.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.7...restapi-1.6.0) (2024-01-15)
+
+
+### Bug Fixes
+
+* Axios Wrapper and Pass SDK Version Header ([#872](https://github.com/ethereum-push-notification-service/push-sdk/issues/872)) ([a2dee2b](https://github.com/ethereum-push-notification-service/push-sdk/commit/a2dee2b9937e4cce97f3567eee309c320eec9495))
+* Merge branch 'main' into deployment ([7aad89c](https://github.com/ethereum-push-notification-service/push-sdk/commit/7aad89c94a58233f490847b0af98ebecee071790))
+* Merge branch 'main' into deployment ([a1852d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a1852d4085007810d03c9dae6f74531124a35538))
+
+
+### Features
+
+* add video SDK v2 and video stream ([#1017](https://github.com/ethereum-push-notification-service/push-sdk/issues/1017)) ([6ae974b](https://github.com/ethereum-push-notification-service/push-sdk/commit/6ae974b173055d5621d5355e9e57930d700e57c1)), closes [#952](https://github.com/ethereum-push-notification-service/push-sdk/issues/952) [#930](https://github.com/ethereum-push-notification-service/push-sdk/issues/930)
+
+
+
 ## [1.5.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.6...restapi-1.5.7) (2024-01-10)
 
 
