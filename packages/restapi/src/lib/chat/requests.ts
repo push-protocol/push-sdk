@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
+import { axiosGet } from '../utils/axiosUtil';
+import { IPGPHelper, PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
 
 export type RequestOptionsType = {
   account: string;
@@ -29,8 +29,15 @@ export type RequestOptionsType = {
  * The first time an address wants to send a message to another peer, the address sends an intent request. This first message shall not land in this peer Inbox but in its Request box.
  * This function will return all the chats that landed on the address' Request box. The user can then approve the request or ignore it for now.
  */
-export const requests = async (
+export const requests = async ( 
   options: RequestOptionsType
+): Promise<IFeeds[]> => {
+  return await requestsCore(options, PGPHelper)
+};
+
+export const requestsCore = async ( 
+  options: RequestOptionsType,
+  pgpHelper:IPGPHelper,
 ): Promise<IFeeds[]> => {
   const {
     account,
@@ -47,7 +54,7 @@ export const requests = async (
     if (!isValidETHAddress(user)) {
       throw new Error(`Invalid address!`);
     }
-    const response = await axios.get(apiEndpoint);
+    const response = await axiosGet(apiEndpoint);
     const requests: IFeeds[] = response.data.requests;
     const updatedRequests = addDeprecatedInfo(requests);
     const Feeds: IFeeds[] = await getInboxLists({
@@ -56,7 +63,7 @@ export const requests = async (
       toDecrypt,
       pgpPrivateKey,
       env,
-    });
+    },pgpHelper);
 
     return Feeds;
   } catch (err) {

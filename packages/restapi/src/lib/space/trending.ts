@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import {  SpaceIFeeds } from '../types';
 import { getTrendingSpaceInboxLists } from '../chat/helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type TrendingOptionsType = {
   page?: number;
@@ -32,7 +32,7 @@ export const trending = async (
   const apiEndpoint = `${API_BASE_URL}/v1/spaces/trending?page=${page}&limit=${limit}`;
   try {
  
-    const response = await axios.get(apiEndpoint);
+    const response = await axiosGet(apiEndpoint);
     const spaces: SpaceIFeeds[] = response.data.spaces;
     const Feeds: SpaceIFeeds[] = await getTrendingSpaceInboxLists({
       lists: spaces,

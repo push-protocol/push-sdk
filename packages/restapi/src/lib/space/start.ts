@@ -12,7 +12,6 @@ import {
 import { get } from './get';
 import { updateGroup } from '../chat/updateGroup';
 import getMergeStreamObject from './helpers/getMergeStreamObject';
-import axios from 'axios';
 
 export interface StartSpaceType extends EnvOptionsType {
   spaceId: string;

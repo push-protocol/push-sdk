@@ -21,7 +21,7 @@
         ],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "packages/examples/sdk-frontend-react/src/webpack.config.js"
       },
       "configurations": {
         "development": {

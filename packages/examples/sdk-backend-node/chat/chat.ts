@@ -11,6 +11,7 @@ import { createWalletClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
 import { STREAM } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
+import { ethers } from 'ethers';
 
 // CONFIGS
 const { env, showAPIResponse } = config;
@@ -18,29 +19,47 @@ const { env, showAPIResponse } = config;
 /***************** SAMPLE SIGNER GENERATION *********************/
 // Uing VIEM
 // Random Wallet Signers
-const signer = createWalletClient({
-  account: privateKeyToAccount(generatePrivateKey()),
-  chain: sepolia,
-  transport: http(),
-});
-const signerAddress = signer.account.address;
-const secondSigner = createWalletClient({
-  account: privateKeyToAccount(generatePrivateKey()),
-  chain: sepolia,
-  transport: http(),
-});
-const secondSignerAddress = secondSigner.account.address;
-const thirdSigner = createWalletClient({
-  account: privateKeyToAccount(generatePrivateKey()),
-  chain: sepolia,
-  transport: http(),
-});
-const thirdSignerAddress = thirdSigner.account.address;
+
+// const signer = createWalletClient({
+//   account: privateKeyToAccount(generatePrivateKey()),
+//   chain: sepolia,
+//   transport: http(),
+// });
+// const signerAddress = signer.account.address;
+// const secondSigner = createWalletClient({
+//   account: privateKeyToAccount(generatePrivateKey()),
+//   chain: sepolia,
+//   transport: http(),
+// });
+// const secondSignerAddress = secondSigner.account.address;
+// const thirdSigner = createWalletClient({
+//   account: privateKeyToAccount(generatePrivateKey()),
+//   chain: sepolia,
+//   transport: http(),
+// });
+// const thirdSignerAddress = thirdSigner.account.address;
+
+// // Dummy Wallet Addresses
+// const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
+// const randomWallet2 = privateKeyToAccount(generatePrivateKey()).address;
+// const randomWallet3 = privateKeyToAccount(generatePrivateKey()).address;
+/****************************************************************/
+
+/***************** SAMPLE SIGNER GENERATION *********************/
+// Uing ETHERS
+// Random Wallet Signers
+
+const signer = ethers.Wallet.createRandom();
+const signerAddress = signer.address;
+const secondSigner = ethers.Wallet.createRandom();
+const secondSignerAddress = secondSigner.address;
+const thirdSigner = ethers.Wallet.createRandom();
+const thirdSignerAddress = thirdSigner.address;
 
 // Dummy Wallet Addresses
-const randomWallet1 = privateKeyToAccount(generatePrivateKey()).address;
-const randomWallet2 = privateKeyToAccount(generatePrivateKey()).address;
-const randomWallet3 = privateKeyToAccount(generatePrivateKey()).address;
+const randomWallet1 = ethers.Wallet.createRandom().address;
+const randomWallet2 = ethers.Wallet.createRandom().address;
+const randomWallet3 = ethers.Wallet.createRandom().address;
 /****************************************************************/
 
 /***************** SAMPLE GROUP DATA ****************************/

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
+import { createSocketConnection } from './socketClient';
 import { ENV, PACKAGE_BUILD } from '../constants';
 import {
   GroupEventType,
@@ -7,6 +7,7 @@ import {
   NotificationEventType,
   PushStreamInitializeProps,
   STREAM,
+  EVENTS,
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
@@ -156,7 +157,7 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeChatSocket) {
       if (!this.pushChatSocket) {
         // If pushChatSocket does not exist, create a new socket connection
-        this.pushChatSocket = createSocketConnection({
+        this.pushChatSocket = await createSocketConnection({
           user: walletToPCAIP10(this.account),
           socketType: 'chat',
           socketOptions: {
@@ -182,7 +183,7 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeNotifSocket) {
       if (!this.pushNotificationSocket) {
         // If pushNotificationSocket does not exist, create a new socket connection
-        this.pushNotificationSocket = createSocketConnection({
+        this.pushNotificationSocket = await createSocketConnection({
           user: pCAIP10ToWallet(this.account),
           env: this.options?.env as ENV,
           socketOptions: {

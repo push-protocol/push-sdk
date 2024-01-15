@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   getCAIPAddress,
   getAPIBaseUrls,
@@ -7,6 +6,7 @@ import {
 } from '../helpers';
 import Constants, {ENV} from '../constants';
 import { parseApiResponse } from '../utils';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type FeedsOptionsType = {
   user: string;
@@ -40,7 +40,7 @@ export const getFeeds = async (
   };
 
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-  return axios.get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => {
       if (raw) {
         return response?.data?.feeds || [];

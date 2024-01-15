@@ -12,7 +12,6 @@ import {
   IMessageIPFS,
   GroupInfoDTO,
   ChatMemberProfile,
-  ChatMemberCounts,
   GroupParticipantCounts,
 } from '../types';
 import {
@@ -26,7 +25,7 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { getUserDID } from '../chat/helpers';
+import { PGPHelper, getUserDID } from '../chat/helpers';
 import { isValidETHAddress } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
@@ -146,6 +145,7 @@ export class Chat {
     const sendParams: ChatSendOptionsType = {
       message: options,
       to: recipient,
+      account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
@@ -161,6 +161,7 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
+      pgpHelper:PGPHelper,
       connectedUser: await this.userInstance.info(),
     });
   }
@@ -287,6 +288,7 @@ export class Chat {
       }
 
       const groupParams: PUSH_CHAT.ChatCreateGroupTypeV2 = {
+        account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         env: this.env,
@@ -325,13 +327,17 @@ export class Chat {
         chatId: string,
         options?: GetGroupParticipantsOptions
       ): Promise<{ members: ChatMemberProfile[] }> => {
-        const { page = 1, limit = 20,filter={pending:undefined,role:undefined} } = options ?? {};
+        const {
+          page = 1,
+          limit = 20,
+          filter = { pending: undefined, role: undefined },
+        } = options ?? {};
         const getGroupMembersOptions: PUSH_CHAT.FetchChatGroupInfoType = {
           chatId,
           page,
           limit,
-          pending:filter.pending,
-          role:filter.role,
+          pending: filter.pending,
+          role: filter.role,
           env: this.env,
         };
 
@@ -344,10 +350,10 @@ export class Chat {
           chatId,
           env: this.env,
         });
-         return {
-           participants: count.overallCount - count.pendingCount,
-           pending: count.pendingCount,
-         };
+        return {
+          participants: count.overallCount - count.pendingCount,
+          pending: count.pendingCount,
+        };
       },
 
       status: async (
@@ -362,7 +368,7 @@ export class Chat {
 
         return {
           pending: status.isPending,
-          role: status.isAdmin ? 'ADMIN' : 'MEMBER',
+          role: status.isAdmin ? 'admin' : 'member',
           participant: status.isMember,
         };
       },
@@ -388,6 +394,7 @@ export class Chat {
             env: this.env,
           });
     },
+
     update: async (
       chatId: string,
       options: GroupUpdateOptions

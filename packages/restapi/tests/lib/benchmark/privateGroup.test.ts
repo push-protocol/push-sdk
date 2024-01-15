@@ -28,7 +28,7 @@ describe.skip('Private Groups', () => {
     account = `eip155:${signer.address}`;
     userAlice = await PushAPI.initialize(signer, {
       env: _env,
-      featureTag: 'ALPHA',
+      alpha: { feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2] },
     });
 
     // UserBob
@@ -37,7 +37,7 @@ describe.skip('Private Groups', () => {
     account2 = `eip155:${signer2.address}`;
     userBob = await PushAPI.initialize(signer2, {
       env: _env,
-      featureTag: 'ALPHA',
+      alpha: { feature: [Constants.ALPHA_FEATURES.SCALABILITY_V2] },
     });
   });
 

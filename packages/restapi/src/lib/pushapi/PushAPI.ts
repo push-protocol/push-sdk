@@ -16,6 +16,7 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { isValidCAIP10NFTAddress } from '../helpers';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -36,6 +37,9 @@ export class PushAPI {
   public channel!: Channel;
   public notification!: Notification;
 
+  // error object to maintain errors and warnings
+  public errors: { type: 'WARN' | 'ERROR'; message: string }[];
+
   private constructor(
     env: ENV,
     account: string,
@@ -44,7 +48,8 @@ export class PushAPI {
     decryptedPgpPvtKey?: string,
     pgpPublicKey?: string,
     signer?: SignerType,
-    progressHook?: (progress: ProgressHookType) => void
+    progressHook?: (progress: ProgressHookType) => void,
+    initializationErrors?: { type: 'WARN' | 'ERROR'; message: string }[]
   ) {
     this.signer = signer;
     this.readMode = readMode;
@@ -81,6 +86,7 @@ export class PushAPI {
       this.progressHook
     );
     this.user = new User(this.account, this.env);
+    this.errors = initializationErrors || [];
   }
   // Overloaded initialize method signatures
   static async initialize(
@@ -97,7 +103,8 @@ export class PushAPI {
       if (
         args.length === 1 &&
         typeof args[0] === 'object' &&
-        'account' in args[0]
+        'account' in args[0] &&
+        typeof args[0].account === 'string'
       ) {
         // Single options object provided
         options = args[0];
@@ -141,7 +148,11 @@ export class PushAPI {
             : ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       };
 
-      const readMode = !signer;
+      let readMode = !signer;
+      const initializationErrors: {
+        type: 'WARN' | 'ERROR';
+        message: string;
+      }[] = [];
 
       // Get account
       // Derives account from signer if not provided
@@ -177,14 +188,35 @@ export class PushAPI {
 
       if (!readMode) {
         if (user && user.encryptedPrivateKey) {
-          decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
-            encryptedPGPPrivateKey: user.encryptedPrivateKey,
-            signer: signer,
-            toUpgrade: settings.autoUpgrade,
-            additionalMeta: settings.versionMeta,
-            progressHook: settings.progressHook,
-            env: settings.env,
-          });
+          try {
+            decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
+              encryptedPGPPrivateKey: user.encryptedPrivateKey,
+              signer: signer,
+              toUpgrade: settings.autoUpgrade,
+              additionalMeta: settings.versionMeta,
+              progressHook: settings.progressHook,
+              env: settings.env,
+            });
+          } catch (error) {
+            const decryptionError =
+              'Error decrypting PGP private key ...swiching to Guest mode';
+            initializationErrors.push({
+              type: 'ERROR',
+              message: decryptionError,
+            });
+            console.error(decryptionError);
+            if (isValidCAIP10NFTAddress(derivedAccount)) {
+              const nftDecryptionError =
+                'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
+
+              initializationErrors.push({
+                type: 'WARN',
+                message: nftDecryptionError,
+              });
+              console.warn(nftDecryptionError);
+            }
+            readMode = true;
+          }
           pgpPublicKey = user.publicKey;
         } else {
           const newUser = await PUSH_USER.create({
@@ -210,7 +242,8 @@ export class PushAPI {
         decryptedPGPPrivateKey,
         pgpPublicKey,
         signer,
-        settings.progressHook
+        settings.progressHook,
+        initializationErrors
       );
 
       return api;
@@ -218,6 +251,52 @@ export class PushAPI {
       console.error('Error initializing PushAPI:', error);
       throw error; // or handle it more gracefully if desired
     }
+  }
+
+  /**
+   * This method is used to reinitialize the PushAPI instance
+   * @notice - This method should only be used for fresh start of NFT accounts
+   * @notice - All data will be lost after reinitialization
+   */
+  async reinitialize(options: {
+    versionMeta: { NFTPGP_V1: { password: string } };
+  }): Promise<void> {
+    const newUser = await PUSH_USER.create({
+      env: this.env,
+      account: this.account,
+      signer: this.signer,
+      additionalMeta: options.versionMeta,
+      progressHook: this.progressHook,
+    });
+
+    this.decryptedPgpPvtKey = newUser.decryptedPrivateKey as string;
+    this.pgpPublicKey = newUser.publicKey;
+    this.readMode = false;
+    this.errors = [];
+
+    // Initialize the instances of the four classes
+    this.chat = new Chat(
+      this.account,
+      this.env,
+      this.alpha,
+      this.decryptedPgpPvtKey,
+      this.signer,
+      this.progressHook
+    );
+    this.profile = new Profile(
+      this.account,
+      this.env,
+      this.decryptedPgpPvtKey,
+      this.progressHook
+    );
+    this.encryption = new Encryption(
+      this.account,
+      this.env,
+      this.decryptedPgpPvtKey,
+      this.pgpPublicKey,
+      this.signer,
+      this.progressHook
+    );
   }
 
   async initStream(

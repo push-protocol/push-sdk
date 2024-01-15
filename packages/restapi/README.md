@@ -34,6 +34,7 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
     - [Stream Notifications](#stream-notifications)
   - [For Push Chat](#for-push-chat)
     - [Initialize](#initialize)
+    - [Reinitialize](#reinitialize)
     - [Fetch Info](#fetch-info)
     - [Fetch Profile Info](#fetch-profile-info)
     - [Update Profile Info](#update-profile-info)
@@ -99,13 +100,13 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-yarn add @pushprotocol/restapi@latest ethers@^5.6
+yarn add @pushprotocol/restapi@latest ethers
 ```
 
 or
 
 ```bash
-npm install @pushprotocol/restapi@latest ethers@^5.6
+npm install @pushprotocol/restapi@latest ethers
 ```
 
 ## Import SDK
@@ -169,13 +170,13 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
 | `options.account` \*                    | `string`                                          | -             | The account to associate with the PushAPI. If not provided, it is derived from signer. |
 | `options.version` \*                    | `string`                                          | `ENC_TYPE_V3` | The encryption version to use for the PushAPI.                                         |
-| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
+| `options.versionMeta` \*                | `{ NFTPGP_V1 ?: { password: string } }`               | -             | Metadata related to the encryption version, including a password if needed, and reset for resetting nft profile           |
 | `options.autoUpgrade` \*                | `boolean`                                         | `true`        | If `true`, upgrades encryption keys to the latest encryption version.                 |
 | `options.origin` \*                     | `string`                                          | -             | Specify origin or source while creating a Push Profile.                                |
 
@@ -706,7 +707,7 @@ const userAlice = await PushAPI.initialize(signer, {
 
 | Param                                   | Type                                              | Default       | Remarks                                                                                |
 | --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| `signer`                                | `SignerType`                                      | -             | EthersV5 or Viem Signer.                                                               |
+| `signer`                                | `SignerType`                                      | -             | Ethers or Viem Signer.                                                               |
 | `options` \*                            | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
 | `options.env` \*                        | `ENV`                                             | `staging`     | API env - 'prod', 'staging', 'dev'.                                                    |
 | `options.progressHook`\*                | `(progress: ProgressHookType) => void`            | -             | A callback function to receive progress updates during initialization.                 |
@@ -738,6 +739,23 @@ const userAlice = await PushAPI.initialize(signer, {
 | `CHAT`                | `STREAM.CHAT`          |
 | `CHAT_OPS`            | `STREAM.CHAT_OPS`      |
 
+
+---
+
+### **Reinitialize**
+
+```typescript
+// Reinitialize PushAPI for fresh start of NFT Account
+// Reinitialize only succeeds if the signer account is the owner of the NFT
+await userAlice.reinitialize({ versionMeta: { NFTPGP_V1: { password: 'NewPassword' } } });
+```
+
+## Parameters
+
+| Param                                   | Type                                              | Default       | Remarks                                                                                |
+| --------------------------------------- | ------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `options`                               | `PushAPIInitializeProps`                          | -             | Optional configuration properties for initializing the PushAPI.                        |
+| `options.versionMeta`                   | `{ NFTPGP_V1 ?: password: string }`               | -             | Metadata related to the encryption version, including a password if needed.            |
 
 ---
 
@@ -2869,7 +2887,7 @@ const aliceEncryptionInfo = await userAlice.encryption.info();
 ```typescript
 // Update keys encryption
 const aliceUpdateEncryption = await userAlice.encryption.update(
-  ENCRYPTION_VERSION.PGP_V3
+  CONSTANTS.USER.ENCRYPTION_VERSION.PGP_V3
 );
 ```
 

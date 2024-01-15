@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   getCAIPAddress,
   getAPIBaseUrls,
@@ -7,18 +6,21 @@ import {
 } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { parseApiResponse } from '../utils';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type FeedsPerChannelOptionsType = {
   user: string;
   env?: ENV;
-  channels?: [string];
+  channels?: string[];
   page?: number;
   limit?: number;
   spam?: boolean;
   raw?: boolean;
 };
 
-export const getFeedsPerChannel = async (options: FeedsPerChannelOptionsType) => {
+export const getFeedsPerChannel = async (
+  options: FeedsPerChannelOptionsType
+) => {
   const {
     user,
     env = Constants.ENV.PROD,
@@ -43,8 +45,7 @@ export const getFeedsPerChannel = async (options: FeedsPerChannelOptionsType) =>
   };
 
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
-  return axios
-    .get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => {
       if (raw) {
         return response?.data?.feeds || [];
