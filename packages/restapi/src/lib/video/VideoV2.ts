@@ -1,3 +1,4 @@
+import { produce } from 'immer';
 import { chats } from '../chat';
 import { ENV } from '../constants';
 import {
@@ -6,7 +7,11 @@ import {
   walletToPCAIP10,
 } from '../helpers';
 import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
-import { VideoNotificationRules, VideoPeerInfo } from '../types';
+import {
+  VideoCallStatus,
+  VideoNotificationRules,
+  VideoPeerInfo,
+} from '../types';
 import { Video as VideoV1 } from './Video';
 import { validatePeerInfo } from './helpers/validatePeerInfo';
 
@@ -118,12 +123,30 @@ export class VideoV2 {
       }
     }
 
+    this.videoInstance.setData((oldData) => {
+      return produce(oldData, (draft: any) => {
+        draft.local.address = this.account;
+        draft.incoming = recipients.map((recipient) => ({
+          address: pCAIP10ToWallet(recipient),
+          status: VideoCallStatus.INITIALIZED,
+        }));
+        draft.meta.chatId = rules?.access.data.chatId ?? retrievedChatId;
+      });
+    });
+
     await this.videoInstance.request({
       senderAddress: pCAIP10ToWallet(this.account),
       recipientAddress: recipients.map((recipient) =>
         pCAIP10ToWallet(recipient)
       ),
-      chatId: rules?.access.data.chatId ?? retrievedChatId,
+      rules: rules ?? {
+        access: {
+          type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+          data: {
+            chatId: retrievedChatId,
+          },
+        },
+      },
     });
   }
 
@@ -140,7 +163,7 @@ export class VideoV2 {
       senderAddress: pCAIP10ToWallet(this.account),
       recipientAddress: pCAIP10ToWallet(address),
       signalData: signal,
-      chatId: meta.rules.access.data.chatId,
+      rules: meta.rules,
     });
   }
 
