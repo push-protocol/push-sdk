@@ -10,13 +10,13 @@ import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
 import { ethers, Signer as EthersSigner } from 'ethers';
-import axios from 'axios';
 import {
   createPublicClient,
   http,
   getContract,
   WalletClient,
   Chain,
+  toHex,
 } from 'viem';
 import * as PUSH_CHANNEL from '../channels';
 import {
@@ -25,7 +25,7 @@ import {
   getFallbackETHCAIPAddress,
   validateCAIP,
 } from '../helpers';
-import * as PUSH_ALIAS from '../alias';
+import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
 
 // ERROR CONSTANTS
@@ -457,7 +457,7 @@ export class PushNotificationBaseClass {
           throw new Error('viem signer is not provided');
         }
         const createChannelPromise = contract.write.createChannelWithPUSH({
-          args: [channelType, identityBytes, fees, this.getTimeBound()],
+          args: [channelType, toHex(new Uint8Array(identityBytes)), fees, this.getTimeBound()],
         });
         createChannelRes = await createChannelPromise;
       }
@@ -501,8 +501,8 @@ export class PushNotificationBaseClass {
         if (!contract.write) {
           throw new Error('viem signer is not provided');
         }
-        const updateChannelPromise = contract.write.createChannelWithPUSH({
-          args: [account, identityBytes, fees],
+        const updateChannelPromise = contract.write.updateChannelMeta({
+          args: [account, toHex(new Uint8Array(identityBytes)), fees],
         });
         updateChannelRes = await updateChannelPromise;
       }
@@ -654,7 +654,7 @@ export class PushNotificationBaseClass {
 
   protected async uploadToIPFSViaPushNode(data: string): Promise<string> {
     try {
-      const response = await axios.post(
+      const response = await axiosPost(
         `${config.CORE_CONFIG[this.env!].API_BASE_URL}/v1/ipfs/upload`,
         { data }
       );
@@ -799,8 +799,7 @@ export class PushNotificationBaseClass {
       const API_BASE_URL = getAPIBaseUrls(this.env!);
       const apiEndpoint = `${API_BASE_URL}/v1/alias`;
       const requestUrl = `${apiEndpoint}/${address}/channel`;
-      const aliasInfo = await axios
-        .get(requestUrl)
+      const aliasInfo = await axiosGet(requestUrl)
         .then((response) => response.data)
         .catch((err) => {
           console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);

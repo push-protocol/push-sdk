@@ -113,7 +113,7 @@ describe('sendNotification functionality for video calls', () => {
       rules: {
         access: {
           type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-          data: chatId,
+          data: { chatId },
         },
       },
       notification: {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
 import {
   getDomainInformation,
@@ -7,6 +6,7 @@ import {
 } from './signature.helpers';
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 
 export type UnSubscribeOptionsV2Type = {
   signer: SignerType;
@@ -77,7 +77,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
       domainInformation,
       typeInformation,
       messageInformation,
-      'Unsubscribe'
+      'Data'
     );
 
     const verificationProof = signature; // might change
@@ -87,11 +87,11 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
       message: messageInformation.data,
     };
 
-    const res = await axios.post(requestUrl, body);
+    const res = await axiosPost(requestUrl, body);
 
     if (typeof onSuccess === 'function') onSuccess();
 
-    return { status: res.status, message: 'successfully opted into channel' };
+    return { status: res.status, message: 'successfully opted out channel' };
   } catch (err: any) {
     if (typeof onError === 'function') onError(err as Error);
 

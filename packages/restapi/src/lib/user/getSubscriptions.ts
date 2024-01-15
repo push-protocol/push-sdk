@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants, {ENV} from '../constants';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type UserSubscriptionsOptionsType = {
   user: string;
@@ -20,7 +20,7 @@ export const getSubscriptions = async (
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/subscriptions`;
   const requestUrl = `${apiEndpoint}`;
 
-  return axios.get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => response.data?.subscriptions || [])
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

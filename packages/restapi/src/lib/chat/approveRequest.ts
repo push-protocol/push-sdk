@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
@@ -11,6 +10,7 @@ import {
   IPGPHelper,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 import * as AES from '../chat/helpers/aes';
 import { getGroupInfo } from './getGroupInfo';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
@@ -165,13 +165,9 @@ export const approveCore = async (
     encryptedSecret,
   };
 
-  /**
-   * API CALL TO PUSH NODES
-   */
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
-  return axios
-    .put(apiEndpoint, body)
+  return axiosPut(apiEndpoint, body)
     .then((response) => {
       return response.data;
     })

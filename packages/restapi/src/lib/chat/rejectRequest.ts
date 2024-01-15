@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
@@ -12,6 +11,7 @@ import {
   rejectRequestPayload,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 
 interface RejectRequestOptionsType extends EnvOptionsType {
   /**
@@ -80,8 +80,7 @@ export const reject = async (
     signature
   );
 
-  return axios
-    .put(apiEndpoint, body)
+  return axiosPut(apiEndpoint, body)
     .then((response) => {
       return response.data;
     })
