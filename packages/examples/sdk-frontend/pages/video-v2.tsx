@@ -1,5 +1,8 @@
 import type { NextPage } from 'next';
+import { useEffect, useRef, useState } from 'react';
 
+import { useAccount, useSigner } from 'wagmi';
+import styled from 'styled-components';
 import {
   PushAPI,
   CONSTANTS,
@@ -7,12 +10,9 @@ import {
   VideoEvent,
   VideoEventType,
   VideoCallStatus,
+  video,
 } from '@pushprotocol/restapi';
-import { useAccount, useSigner } from 'wagmi';
-import styled from 'styled-components';
 
-import { useEffect, useRef, useState } from 'react';
-import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
 import Toast from '../components/Toast';
@@ -28,7 +28,7 @@ const VideoV2: NextPage = () => {
   );
   const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
-  const [data, setData] = useState<VideoCallData>(initVideoCallData);
+  const [data, setData] = useState<VideoCallData>(video.initVideoCallData);
   const [recipientAddress, setRecipientAddress] = useState<string>();
 
   const initializePushAPI = async () => {
@@ -201,11 +201,13 @@ const VideoV2: NextPage = () => {
 const Heading = styled.h1`
   margin: 20px 40px;
 `;
+
 const HContainer = styled.div`
   display: flex;
   gap: 20px;
   margin: 20px 40px;
 `;
+
 const VContainer = styled.div`
   display: flex;
   gap: 10px;
@@ -213,4 +215,5 @@ const VContainer = styled.div`
   width: fit-content;
   height: fit-content;
 `;
+
 export default VideoV2;

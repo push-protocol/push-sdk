@@ -1,5 +1,5 @@
-import type { NextPage } from 'next';
-
+import { useContext, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 import {
   PushAPI,
   CONSTANTS,
@@ -7,27 +7,27 @@ import {
   VideoEvent,
   VideoEventType,
   VideoCallStatus,
+  video
 } from '@pushprotocol/restapi';
 
-import styled from 'styled-components';
-
-import { useContext, useEffect, useRef, useState } from 'react';
+import { EnvContext, Web3Context } from '../context';
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
-import { EnvContext, Web3Context } from '../context';
-import { initVideoCallData } from '@pushprotocol/restapi/src/lib/video';
 import Toast from '../components/Toast';
-const VideoV2: NextPage = () => {
+
+const VideoV2 = () => {
   const { account, library } = useContext<any>(Web3Context);
   const { env } = useContext<any>(EnvContext);
+
   const librarySigner = library.getSigner();
+  
   const aliceVideoCall = useRef<any>();
+  const [data, setData] = useState<VideoCallData>(video.initVideoCallData);
   const [latestVideoEvent, setLatestVideoEvent] = useState<VideoEvent | null>(
     null
   );
   const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
-  const [data, setData] = useState<VideoCallData>(initVideoCallData);
   const [recipientAddress, setRecipientAddress] = useState<string>();
 
   const initializePushAPI = async () => {
