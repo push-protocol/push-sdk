@@ -1,4 +1,5 @@
 import Constants, { ENV } from '../constants';
+import type { PushStream } from '../pushstream/PushStream';
 import { ChatStatus, ProgressHookType, Rules } from '../types';
 
 export enum ChatListType {
@@ -65,4 +66,13 @@ export interface ParticipantStatus {
   pending: boolean;
   role: 'admin' | 'member';
   participant: boolean;
+}
+
+export interface VideoInitializeOptions {
+  stream: PushStream;
+  config: {
+    video?: boolean;
+    audio?: boolean;
+  };
+  media?: MediaStream;
 }

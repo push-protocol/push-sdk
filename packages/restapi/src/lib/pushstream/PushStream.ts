@@ -4,16 +4,18 @@ import { ENV, PACKAGE_BUILD } from '../constants';
 import {
   GroupEventType,
   MessageEventType,
+  MessageOrigin,
   NotificationEventType,
   PushStreamInitializeProps,
   STREAM,
-  EVENTS,
+  EVENTS
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
 import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { ADDITIONAL_META_TYPE } from '../payloads';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -103,7 +105,8 @@ export class PushStream extends EventEmitter {
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS);
+      this.listen.includes(STREAM.NOTIF_OPS) || 
+      this.listen.includes(STREAM.VIDEO);
 
     let isChatSocketConnected = false;
     let isNotifSocketConnected = false;
@@ -313,16 +316,33 @@ export class PushStream extends EventEmitter {
 
       this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
         try {
-          const modifiedData = DataModifier.mapToNotificationEvent(
-            data,
-            NotificationEventType.INBOX,
-            this.account === data.sender ? 'self' : 'other',
-            this.raw
-          );
+          if (
+            data.payload.data.additionalMeta?.type ===
+              `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1` &&
+            shouldEmit(STREAM.VIDEO) &&
+            this.shouldEmitVideo(data.sender)
+          ) {
+            // Video Notification
+            const modifiedData = DataModifier.mapToVideoEvent(
+              data,
+              this.account === data.sender ? MessageOrigin.Self : MessageOrigin.Other,
+              this.raw
+            );
 
-          if (this.shouldEmitChannel(modifiedData.from)) {
-            if (shouldEmit(STREAM.NOTIF)) {
-              this.emit(STREAM.NOTIF, modifiedData);
+            this.emit(STREAM.VIDEO, modifiedData);
+          } else {
+            // Channel Notification
+            const modifiedData = DataModifier.mapToNotificationEvent(
+              data,
+              NotificationEventType.INBOX,
+              this.account === data.sender ? 'self' : 'other',
+              this.raw
+            );
+
+            if (this.shouldEmitChannel(modifiedData.from)) {
+              if (shouldEmit(STREAM.NOTIF)) {
+                this.emit(STREAM.NOTIF, modifiedData);
+              }
             }
           }
         } catch (error) {
@@ -396,5 +416,16 @@ export class PushStream extends EventEmitter {
       return true;
     }
     return this.options.filter.channels.includes(dataChannelId);
+  }
+
+  private shouldEmitVideo(dataVideoId: string): boolean {
+    if (
+      !this.options.filter?.video ||
+      this.options.filter.video.length === 0 ||
+      this.options.filter.video.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.video.includes(dataVideoId);
   }
 }
