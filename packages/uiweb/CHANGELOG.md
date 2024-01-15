@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.0...uiweb-1.2.1) (2024-01-15)
+
+
+### Bug Fixes
+
+* added support for ens ([#1008](https://github.com/ethereum-push-notification-service/push-sdk/issues/1008)) ([8e2cec9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8e2cec9ecf34548f5cfb262450de4ef29ced4c80))
+* fixed chats not updating in real time for w2w ([b698948](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6989485546867bdf493172e1e6a2fce27a7701e))
+* focus back to message input after sending the message ([#1014](https://github.com/ethereum-push-notification-service/push-sdk/issues/1014)) ([3a8218e](https://github.com/ethereum-push-notification-service/push-sdk/commit/3a8218e9716a7168a3c650c7caec89fb464c8ae5))
+* Merge branch 'main' into deployment ([a1852d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a1852d4085007810d03c9dae6f74531124a35538))
+* Merge branch 'main' into deployment ([d82102c](https://github.com/ethereum-push-notification-service/push-sdk/commit/d82102c4ec62e3716af6979e32564709da75ef75))
+
+
+
 # [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.23...uiweb-1.2.0) (2023-12-26)
 
 
