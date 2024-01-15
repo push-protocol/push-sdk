@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useAccount, useSigner } from 'wagmi';
 import styled from 'styled-components';

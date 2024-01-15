@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@pushprotocol/restapi": "^1.5.5",
+    "@pushprotocol/restapi": "^1.6.0",
     "@pushprotocol/socket": "^0.5.1",
     "@pushprotocol/uiweb": "^1.1.8",
     "@rainbow-me/rainbowkit": "0.12.14",
