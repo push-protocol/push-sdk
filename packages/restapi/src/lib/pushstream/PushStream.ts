@@ -309,10 +309,12 @@ export class PushStream extends EventEmitter {
 
           if (this.shouldEmitSpace(data.spaceId)) {
             if (
-              data.eventType === SpaceEventType.JoinSpace ||
-              data.eventType === SpaceEventType.LeaveSpace ||
+              data.eventType === SpaceEventType.Join ||
+              data.eventType === SpaceEventType.Leave ||
               data.eventType === MessageEventType.Request ||
-              data.eventType === SpaceEventType.Remove
+              data.eventType === SpaceEventType.Remove || 
+              data.eventType === SpaceEventType.Start ||
+              data.eventType === SpaceEventType.Stop
             ) {
               if (shouldEmit(STREAM.SPACE)) {
                 this.emit(STREAM.SPACE, modifiedData);

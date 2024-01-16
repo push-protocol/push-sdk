@@ -57,9 +57,11 @@ export enum GroupEventType {
 export enum SpaceEventType {
   CreateSpace = 'createSpace',
   UpdateSpace = 'updateSpace',
-  JoinSpace = 'joinSpace',
-  LeaveSpace = 'leaveSpace',
+  Join = 'joinSpace',
+  Leave = 'leaveSpace',
   Remove = 'remove',
+  Stop = 'stop',
+  Start = 'start' 
 }
 
 export enum ProposedEventNames {
@@ -81,6 +83,8 @@ export enum ProposedEventNames {
   LeaveSpace = 'space.participant.leave',
   JoinSpace = 'space.participant.join',
   SpaceRemove = 'space.participant.remove',
+  StartSpace = 'space.start',
+  StopSpace = 'space.stop'
 }
 
 export interface Profile {
