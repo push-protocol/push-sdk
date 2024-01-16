@@ -151,34 +151,34 @@ export const Image = styled.img<ImageStyleProps>`
 
 
 type ButtonStyleProps = {
-  display: string;
-  lineHeight: string;
-  height: string;
-  minHeight: string;
-  flex: string;
-  flexDirection: string;
-  alignSelf: string;
-  alignItems: string;
-  justifyContent: string;
-  fontWeight: string;
-  fontSize: string;
-  color: string;
-  background: string;
-  margin: string;
-  padding: string;
-  border: string;
-  borderRadius: string;
-  position: string;
-  textDecoration: string;
-  width: string;
-  overflow: string;
-  zIndex: string;
-  cursor: string;
-  fontFamily: string;
-  hover: string;
-  hoverBackground: string;
-  hoverBorder: string;
-  hoverSVGPathStroke: string;
+  display?: string;
+  lineHeight?: string;
+  height?: string;
+  minHeight?: string;
+  flex?: string;
+  flexDirection?: string;
+  alignSelf?: string;
+  alignItems?: string;
+  justifyContent?: string;
+  fontWeight?: string;
+  fontSize?: string;
+  color?: string;
+  background?: string;
+  margin?: string;
+  padding?: string;
+  border?: string;
+  borderRadius?: string;
+  position?: string;
+  textDecoration?: string;
+  width?: string;
+  overflow?: string;
+  zIndex?: string;
+  cursor?: string;
+  fontFamily?: string;
+  hover?: string;
+  hoverBackground?: string;
+  hoverBorder?: string;
+  hoverSVGPathStroke?: string;
 };
 
 export const Button = styled.button<ButtonStyleProps>`

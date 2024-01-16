@@ -16,7 +16,7 @@ export interface IChatPreviewPayload {
 }
 
 export interface IChatPreviewProps {
-  chatPreviewPayload?: IChatPreviewPayload;
+  chatPreviewPayload: IChatPreviewPayload;
   selected?: boolean;
   setSelected?: (chatId: string) => void;
   badge?: {
@@ -27,7 +27,7 @@ export interface IChatPreviewProps {
 export interface IChatPreviewListProps {
   overrideAccount?: string;
   listType?: 'CHATS' | 'REQUESTS';
-  prefillChatPreviewList?: Array<IChatPreviewProps>;
+  prefillChatPreviewList: Array<IChatPreviewProps>;
 }
 
 export interface IChatViewListProps {

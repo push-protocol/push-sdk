@@ -4,11 +4,13 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 import { Button, Image, Section, Span, Spinner } from '../../reusables';
-import { useResolveWeb3Name } from '../../hooks';
+import { useChatData, useResolveWeb3Name } from '../../../hooks';
 
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { getAddress } from '../../../helpers';
+import { useChat } from '@livekit/components-react';
 
 /**
  * @interface IThemeProps
@@ -16,15 +18,17 @@ import { ThemeContext } from '../theme/ThemeProvider';
  */
 interface IThemeProps {
   theme?: IChatTheme;
-  blur: boolean;
+  blur?: boolean;
 }
 
 export const ChatPreview: React.FC<IChatPreviewProps> = (
   options: IChatPreviewProps
 ) => {
+  const theme = useContext(ThemeContext);
+  const {env} = useChatData();
 
   // Format address
-  const formatAddress = () => {
+  const formatAddress = async() => {
     let formattedAddress = options.chatPreviewPayload?.chatSender;
 
     if (!options.chatPreviewPayload?.chatGroup) {
@@ -32,10 +36,13 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
       if (formattedAddress.includes('eip155:')) {
         formattedAddress = formattedAddress.replace('eip155:', '');
       }
+      else if(formattedAddress.includes('.')){
+        formattedAddress = (await getAddress(formattedAddress, env))!;
+      }
     }
-    
+
     return formattedAddress;
-  }
+  };
 
   // Format date
   const formatDate = () => {
@@ -67,26 +74,33 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         minHeight="70px"
         margin="5px 5px"
         padding="5px 5px"
-        borderRadius="24px"
+        borderRadius={theme.borderRadius?.chatPreview}
+        border={theme.border?.chatPreview}
         flexDirection="row"
-        background={options.selected ? '#f5f5f5' : '#fff'}
+        background={
+          options.selected
+            ? theme.backgroundColor?.chatPreviewSelectedBackground
+            : theme.backgroundColor?.chatPreviewBackground
+        }
+        hoverBackground={theme.backgroundColor?.chatPreviewHoverBackground}
         onClick={() => {
           // set chatid as selected
-          options.setSelected(options.chatPreviewPayload?.chatId);
+          if (options?.setSelected)
+            options.setSelected(options?.chatPreviewPayload?.chatId!);
         }}
       >
         <Section
           justifyContent="start"
           flexDirection="row"
-          alignItems="center" 
+          alignItems="center"
           alignSelf="center"
-          borderRadius='50%'
-          overflow='hidden'
-          width='48px'
-          height='48px'
+          borderRadius="50%"
+          overflow="hidden"
+          width="48px"
+          height="48px"
         >
           <Image
-            src={options.chatPreviewPayload?.chatPic}
+            src={options.chatPreviewPayload?.chatPic || undefined}
             height="48px"
             width="48px"
           />
@@ -94,46 +108,39 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         <Section
           justifyContent="flex-start"
           flexDirection="column"
-          alignItems="center" 
+          alignItems="center"
           alignSelf="stretch"
-          overflow='hidden'
-          margin='0 5px'
-          flex='1'
+          overflow="hidden"
+          margin="0 5px"
+          flex="1"
         >
           <Section
             justifyContent="flex-start"
             flexDirection="row"
-            alignItems="flex-start" 
+            alignItems="flex-start"
             alignSelf="stretch"
-            overflow='hidden'
-            flex='1'
+            overflow="hidden"
+            flex="1"
           >
-            <Account>
-              {formatAddress()}
-            </Account>
-            <Dated>{formatDate()}</Dated>
+            <Account theme={theme}>{ formatAddress()}</Account>
+            <Dated theme={theme}>{formatDate()}</Dated>
           </Section>
           <Section
             justifyContent="flex-start"
             flexDirection="row"
-            alignItems="flex-start" 
+            alignItems="flex-start"
             alignSelf="stretch"
-            overflow='hidden'
-            flex='1'
+            overflow="hidden"
+            flex="1"
           >
-            <Message>
-              {options.chatPreviewPayload.chatMsg.messageContent}
+            <Message theme={theme}>
+              {options?.chatPreviewPayload?.chatMsg?.messageContent}
             </Message>
-            {!!options.badge.count && 
-              <Badge>
-                {options.badge.count}
-              </Badge>
-            }
+            {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
           </Section>
         </Section>
-        
       </Button>
-      </ChatViewListCard>
+    </ChatViewListCard>
   );
 };
 
@@ -156,14 +163,11 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   scroll-behavior: smooth;
 `;
 
-const InboxContentContainer = styled.div`
-  flex: 1;
-`;
-
 // Styled component for the name of the person in the inbox
-const Account = styled.div`
-  font-weight: bold;
-  font-size: 16px;
+const Account = styled.div<IThemeProps>`
+  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewSenderText};
+  font-size: ${(props) => props.theme.fontSize?.chatPreviewSenderText};
+  color: ${(props) => props.theme.textColor?.chatPreviewSenderText};
   flex: 1;
   align-self: stretch;
   text-align: start;
@@ -173,15 +177,17 @@ const Account = styled.div`
   margin-right: 10px;
 `;
 
-const Dated = styled.div`
-  color: #888;
-  font-size: 12px;
+const Dated = styled.div<IThemeProps>`
+  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewDateText};
+  font-size: ${(props) => props.theme.fontSize?.chatPreviewDateText};
+  color: ${(props) => props.theme.textColor?.chatPreviewDateText};
 `;
 
 // Styled component for the last message in the inbox
-const Message = styled.div`
-  color: #888;
-  font-size: 14px;
+const Message = styled.div<IThemeProps>`
+  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewMessageText};
+  font-size: ${(props) => props.theme.fontSize?.chatPreviewMessageText};
+  color: ${(props) => props.theme.textColor?.chatPreviewMessageText};
   flex: 1;
   align-self: stretch;
   text-align: start;
@@ -191,13 +197,14 @@ const Message = styled.div`
   margin-right: 10px;
 `;
 
-const Badge = styled.div`
-  background: rgb(226,8,128);
-  color: #fff;
+const Badge = styled.div<IThemeProps>`
+  background: ${(props) => props.theme.backgroundColor?.chatPreviewBadgeBackground};
+  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewBadgeText};
+  font-size: ${(props) => props.theme.fontSize?.chatPreviewBadgeText};
+  color: ${(props) => props.theme.textColor?.chatPreviewBadgeText};
   padding: 0px 8px;
   min-height: 24px;
   border-radius: 24px;
   align-self: center;
-  font-size: 12px;
-  font-weight: bold;
-`
+
+`;

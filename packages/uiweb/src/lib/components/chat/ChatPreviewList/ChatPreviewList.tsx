@@ -5,10 +5,9 @@ import {
   IChatPreviewListError,
   IChatPreviewListProps,
   IChatPreviewPayload,
-  IChatPreviewProps,
 } from '../exportedTypes';
 
-import { CONSTANTS, IFeeds, PushAPI, chat } from '@pushprotocol/restapi';
+import { CONSTANTS, IFeeds } from '@pushprotocol/restapi';
 import moment from 'moment';
 import styled from 'styled-components';
 
@@ -62,16 +61,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     env,
     signer,
     account,
-    pgpPrivateKey,
-    setPgpPrivateKey,
-    connectedProfile,
-    setConnectedProfile,
+    pushUser
   } = useChatData();
   const { fetchChatProfile } = useGetChatProfile();
-
-  // State Management
-  // set user
-  const [user, setUser] = useState<PushAPI>();
 
   // set chat preview list
   const [chatPreviewList, setChatPreviewList] = useState<IChatPreviewList>({
@@ -166,7 +158,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     items.forEach((item) => {
       // only increment if not selected
       if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-        setBadge(item.chatId, chatPreviewListMeta.badges[item.chatId] ? chatPreviewListMeta.badges[item.chatId] + 1 : 1);
+        setBadge(item.chatId!, chatPreviewListMeta.badges[item.chatId!] ? chatPreviewListMeta.badges[item.chatId!] + 1 : 1);
       }
     });
   };
@@ -176,7 +168,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     const combinedItems: IChatPreviewPayload[] = [
       ...chatPreviewList.items
     ].filter(
-      (item) => !items.includes(item.chatId)
+      (item) => !items.includes(item.chatId!)
     );
 
     setChatPreviewList((prev) => ({
@@ -186,7 +178,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // remove badge for each item
     items.forEach((item) => {
-      setBadge(item.chatId, 0);
+      setBadge(item.chatId!, 0);
     });
   };
 
@@ -194,7 +186,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   const transformStreamMessage: (item: any) => void = async (
     item: any
   ) => {
-    if (!user) {
+    if (!pushUser) {
       return;
     }
 
@@ -219,7 +211,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     //   console.log('response', response);
     // }
 
-    const latestMessage = await user?.chat
+    const latestMessage = await pushUser?.chat
       .list(type, {
         overrideAccount: overrideAccount,
         page: 1,
@@ -239,7 +231,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   const transforAcceptedRequest: (item: any) => void = async (
     item: any
   ) => {
-    if (!user) {
+    if (!pushUser) {
       return;
     }
 
@@ -308,34 +300,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
     resetBadge();
 
-    const createUser = async () => {
-      const pushUser = await PushAPI.initialize(signer, {
-        account: account,
-        env: env,
-      });
-
-      if (!pgpPrivateKey) {
-        const encryptionInfo = await pushUser.encryption.info();
-        setPgpPrivateKey(encryptionInfo.decryptedPgpPrivateKey);
-      }
-
-      if (!connectedProfile) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
-      }
-
-      setUser(pushUser);
-    };
-
-    // only create user is signer or account is present
-    if (signer || account) {
-      createUser();
-    }
   }, [account, signer, env]);
 
   // If push user changes | preloading
   useEffect(() => {
-    if (!user) {
+    if (!pushUser) {
       return;
     }
 
@@ -352,11 +321,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       errored: false,
       error: null,
     });
-  }, [user, options.listType, options.overrideAccount]);
+  }, [pushUser, options.listType, options.overrideAccount]);
 
   // If reset is called
   useEffect(() => {
-    if (!user) {
+    if (!pushUser) {
       return;
     }
 
@@ -376,7 +345,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       // store current nonce and page
       const currentNonce = chatPreviewList.nonce;
 
-      user.chat
+      pushUser.chat
         .list(type, {
           overrideAccount: overrideAccount,
           page: newpage,
@@ -452,7 +421,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       const currentNonce = chatPreviewList.nonce;
       const currentPage = newpage;
 
-      user?.chat
+      pushUser?.chat
         .list(type, {
           overrideAccount: overrideAccount,
           page: newpage,
@@ -579,7 +548,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         return (
           <ChatPreview 
             chatPreviewPayload={item} 
-            badge={chatPreviewListMeta.badges ? {count: chatPreviewListMeta.badges[item.chatId]} : {count: 0}}
+            badge={chatPreviewListMeta.badges ? {count: chatPreviewListMeta.badges[item.chatId!]} : {count: 0}}
             selected={chatPreviewListMeta.selectedChatId === item.chatId ? true : false}
             setSelected={setSelectedBadge} 
           />
