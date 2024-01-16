@@ -6,7 +6,7 @@ import { Signer as PushSigner } from '../helpers';
 import { Video as VideoV1, initVideoCallData } from '../video/Video';
 import { VideoV2 } from '../video/VideoV2';
 import { VideoInitializeOptions } from './pushAPITypes';
-import { VideoEvent, VideoEventType } from '../pushstream/pushStreamTypes';
+import { VideoEvent } from '../pushstream/pushStreamTypes';
 import { produce } from 'immer';
 import { endStream } from '../video/helpers/mediaToggle';
 
@@ -73,7 +73,7 @@ export class Video {
       const chatId = rules.access.data.chatId;
 
       // If the event is RequestVideo, update the video call 'data' state with the incoming call data
-      if (data.event === VideoEventType.RequestVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
         videoV1Instance.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = this.account;
@@ -89,7 +89,7 @@ export class Video {
       // Check if the chatId from the incoming video event matches the chatId of the current video instance
       if (chatId && chatId === videoV1Instance.data.meta.chatId) {
         // If the event is DenyVideo, destroy the local stream & reset the video call data
-        if (data.event === VideoEventType.DenyVideo) {
+        if (data.event === CONSTANTS.VIDEO.EVENT.DENY) {
           // destroy the local stream
           if (videoV1Instance.data.local.stream) {
             endStream(videoV1Instance.data.local.stream);
@@ -100,15 +100,15 @@ export class Video {
 
         // If the event is ApproveVideo or RetryApproveVideo, connect to the video
         if (
-          data.event === VideoEventType.ApproveVideo ||
-          data.event === VideoEventType.RetryApproveVideo
+          data.event === CONSTANTS.VIDEO.EVENT.APPROVE ||
+          data.event === CONSTANTS.VIDEO.EVENT.RETRY_APPROVE
         ) {
           videoV1Instance.connect({ peerAddress: address, signalData: signal });
         }
 
         // If the event is RetryRequestVideo and the current instance is the initiator, send a request
         if (
-          data.event === VideoEventType.RetryRequestVideo &&
+          data.event === CONSTANTS.VIDEO.EVENT.RETRY_REQUEST &&
           videoV1Instance.isInitiator()
         ) {
           videoV1Instance.request({
@@ -121,7 +121,7 @@ export class Video {
 
         // If the event is RetryRequestVideo and the current instance is not the initiator, accept the request
         if (
-          data.event === VideoEventType.RetryRequestVideo &&
+          data.event === CONSTANTS.VIDEO.EVENT.RETRY_REQUEST &&
           !videoV1Instance.isInitiator()
         ) {
           videoV1Instance.acceptRequest({
