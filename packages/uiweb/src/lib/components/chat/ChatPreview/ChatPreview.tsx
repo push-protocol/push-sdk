@@ -28,17 +28,17 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   const {env} = useChatData();
 
   // Format address
-  const formatAddress = async() => {
+  const formatAddress = () => {
     let formattedAddress = options.chatPreviewPayload?.chatSender;
 
     if (!options.chatPreviewPayload?.chatGroup) {
       // check and remove eip155:
-      if (formattedAddress.includes('eip155:')) {
+      if (!formattedAddress.includes('eip155:')) {
         formattedAddress = formattedAddress.replace('eip155:', '');
       }
-      else if(formattedAddress.includes('.')){
-        formattedAddress = (await getAddress(formattedAddress, env))!;
-      }
+      // else if(formattedAddress.includes('.')){
+      //   formattedAddress = (await getAddress('harsh.eth', env))!;
+      // }
     }
 
     return formattedAddress;
