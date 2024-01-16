@@ -198,7 +198,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         ? null // we take from fetching info
         : item.to[0],
       chatGroup: item.meta.group,
-      chatTimestamp: item.timestamp,
+      chatTimestamp: Number(item.timestamp),
       chatMsg: {
         messageType: item.message.type,
         messageContent: item.message.content,
@@ -215,6 +215,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     if (!pushUser) {
       return;
     }
+
+    console.log('Transforming stream message', item)
 
     // transform the item to IChatPreviewPayload
     let modItem = transformStreamToIChatPreviewPayload(item);
@@ -235,8 +237,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         const profile = await pushUser.profile.info({overrideAccount: modItem.chatSender});
         modItem.chatPic = profile.picture;
       } else {
-        const profile = await pushUser.chat.group.info(modItem.chatSender);
+        const profile = await pushUser.chat.group.info(modItem.chatId);
         modItem.chatPic = profile.groupImage;
+        modItem.chatSender = profile.groupName;
       }
     }
     // modify the chat items
