@@ -392,6 +392,10 @@ export class DataModifier {
         return ProposedEventNames.JoinSpace;
       case 'remove':
         return ProposedEventNames.SpaceRemove;
+      case 'start':
+        return ProposedEventNames.StartSpace;
+      case 'stop':
+        return ProposedEventNames.StopSpace;
       default:
         throw new Error(`Unknown current event name: ${currentEventName}`);
     }
@@ -431,6 +435,10 @@ export class DataModifier {
         return this.mapToJoinSpaceEvent(data, includeRaw);
       case 'leaveSpace':
         return this.mapToLeaveSpaceEvent(data, includeRaw);
+      case 'start':
+        return this.mapToStartSpaceEvent(data, includeRaw);
+      case 'stop':
+        return this.mapToStopSpaceEvent(data, includeRaw);
       default:
         // If the eventType is unknown, check for known messageCategories
         switch (data.messageCategory) {
@@ -694,6 +702,62 @@ export class DataModifier {
       spaceId: data.spaceId,
       from: data.from,
       to: data.to,
+      event: data.eventType,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToStartSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const eventData: BaseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: null,
+      event: data.eventType,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToStopSpaceEvent(data: any, includeRaw: boolean): any {
+    type BaseEventData = {
+      event: string;
+      origin: string;
+      timestamp: string;
+      spaceId: string;
+      from: string;
+      to: null;
+      raw?: {
+        verificationProof: string;
+      };
+    };
+
+    const eventData: BaseEventData = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      spaceId: data.spaceId,
+      from: data.from,
+      to: null,
       event: data.eventType,
     };
 
