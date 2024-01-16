@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from 'react';
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { useEffect, useState } from 'react';
 import { ENV } from '../../config';
 import { useChatData } from './useChatData';
 
@@ -19,11 +19,12 @@ export const usePushChatStream = () => {
 
 
     const [chatStream, setChatStream] = useState<any>({}) // to track any new messages
+    const [chatAcceptStream, setChatAcceptStream] = useState<any>({}) // to track any new messages
     const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
     const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
 
     const addSocketEvents = async () => {
-        console.warn('\n--> addChatSocketEvents - stream');
+        console.warn('\n--> Tying to add stream events - stream');
         pushChatStream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
             console.log('CONNECTED - stream: ', err);
             setIsPushChatStreamConnected(true);
@@ -39,7 +40,9 @@ export const usePushChatStream = () => {
         pushChatStream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
             if ((message.event === "chat.request")) {
                 setChatRequestStream(message);
-            } else {
+            } else if ((message.event === "chat.accept")) {
+                setChatAcceptStream(message);
+            } else if ((message.event === "chat.message")) {
                 setChatStream(message);
             }
 
@@ -48,11 +51,14 @@ export const usePushChatStream = () => {
             setGroupMetaStream(chatops)
         });
 
+        await pushChatStream?.connect();
+        console.debug('stream connected');
     };
 
 
 
     const removeSocketEvents = () => {
+        console.debug('removing stream events');
         pushChatStream?.disconnect();
     };
 
@@ -79,7 +85,7 @@ export const usePushChatStream = () => {
     useEffect(() => {
         if (pushUser) {
             if(pushChatStream){
-                pushChatStream?.disconnect();
+              removeSocketEvents();
             }
             else {
                 console.log(pushChatStream)
@@ -101,7 +107,6 @@ export const usePushChatStream = () => {
                         }
                     );
                     console.log('new connection object: ---- ', newstream);
-                    await newstream?.connect();
                     setPushChatStream(newstream);
 
                 };
@@ -120,7 +125,8 @@ export const usePushChatStream = () => {
 
     return {
         chatStream,
-        groupMetaStream,
         chatRequestStream,
+        chatAcceptStream,
+        groupMetaStream,
     }
 };

@@ -21,7 +21,7 @@ const ChatPreviewListTest = () => {
     <>
       <Checkbox
         id=""
-        label="Fetch Spam"
+        label="Fetch Chat Requests"
         value={chatRequests}
         onChange={handleChatRequestsCheckbox}
       />
