@@ -197,6 +197,8 @@ export type ConditionArray = ConditionData[];
 export enum ChatPreviewListErrorCodes {
   CHAT_PREVIEW_LIST_PRELOAD_ERROR = 'CPL-001',
   CHAT_PREVIEW_LIST_LOAD_ERROR = 'CPL-002',
+  CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR = 'CPL-003',
+  CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT = 'CPL-004',
 }
 
 export interface IChatPreviewListError {

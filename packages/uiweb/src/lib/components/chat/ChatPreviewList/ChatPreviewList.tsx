@@ -8,23 +8,20 @@ import {
   IChatPreviewPayload,
 } from '../exportedTypes';
 
-import { CONSTANTS, ChatListType, IFeeds, IUser } from '@pushprotocol/restapi';
-import moment from 'moment';
+import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
 import styled from 'styled-components';
-
-import { useChatData, usePushChatSocket, usePushChatStream } from '../../../hooks';
-import { Button, Section, Span, Spinner } from '../../reusables';
-
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
-
-import { ChatPreview } from '../ChatPreview';
-import { IChatTheme } from '../theme';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { getAddress, pCAIP10ToWallet } from '../../../helpers';
 import { ethers } from 'ethers';
+
+import { useChatData, usePushChatStream } from '../../../hooks';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
+import { Button, Section, Span, Spinner } from '../../reusables';
+import { ChatPreview } from '../ChatPreview';
+
+import { IChatTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { getAddress, pCAIP10ToWallet } from '../../../helpers';
 
 // Define Interfaces
 /**
@@ -95,19 +92,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
 
-  // set stream hooks
-  const {
-    acceptedRequestMessage,
-    messagesSinceLastConnection,
-    groupInformationSinceLastConnection,
-  } = usePushChatSocket();
-
-  const {
-    chatStream,
-    chatRequestStream,
-    chatAcceptStream,
-    groupMetaStream,
-  } = usePushChatStream();
+  const { chatStream, chatRequestStream, chatAcceptStream, groupMetaStream } =
+    usePushChatStream();
 
   // Helper Functions
   // Generate random nonce
@@ -196,16 +182,18 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // remove badge for each item
     items.forEach((item) => {
-      setBadge(item.chatId!, 0);
+      setBadge(item!, 0);
     });
   };
 
-  const transformStreamToIChatPreviewPayload: (item: any) => IChatPreviewPayload = (item: any) => {
+  const transformStreamToIChatPreviewPayload: (
+    item: any
+  ) => IChatPreviewPayload = (item: any) => {
     // transform the item
     const transformedItem: IChatPreviewPayload = {
       chatId: item.chatId,
       chatPic: null, // for now, we don't have a way to get pfp from stream
-      chatSender: item.meta.group  
+      chatSender: item.meta.group
         ? null // we take from fetching info
         : item.to[0],
       chatGroup: item.meta.group,
@@ -217,7 +205,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     };
 
     return transformedItem;
-  }
+  };
 
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
@@ -225,7 +213,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       return;
     }
 
-    console.log('Transforming stream message', item)
+    console.log('Transforming stream message', item);
 
     // transform the item to IChatPreviewPayload
     let modItem = transformStreamToIChatPreviewPayload(item);
@@ -234,26 +222,27 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     const chatItem = chatPreviewList.items.find(
       (chatItem) => chatItem.chatId === modItem.chatId
     );
-    
+
     // if chat item is present, take pfp an group name if request
     if (chatItem) {
       modItem.chatPic = chatItem.chatPic;
       modItem.chatSender = chatItem.chatSender;
-    }
-    else {
+    } else {
       // if not present, fetch profile
       if (!modItem.chatGroup) {
-        const profile = await pushUser.profile.info({overrideAccount: modItem.chatSender});
+        const profile = await pushUser.profile.info({
+          overrideAccount: modItem.chatSender,
+        });
         modItem.chatPic = profile.picture;
       } else {
-        const profile = await pushUser.chat.group.info(modItem.chatId);
+        const profile = await pushUser.chat.group.info(modItem.chatId!);
         modItem.chatPic = profile.groupImage;
         modItem.chatSender = profile.groupName;
       }
     }
     // modify the chat items
     addChatItems([modItem]);
-  }
+  };
 
   // Transform accepted request
   const transforAcceptedRequest: (item: any) => void = async (item: any) => {
@@ -559,7 +548,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   }, [chatAcceptStream]);
 
   //search method for a chatId
-  const handleSearch = async (currentNonce:string) => {
+  const handleSearch = async (currentNonce: string) => {
     let error;
     let searchedChat: IChatPreviewPayload = {
       chatId: undefined,
@@ -573,32 +562,38 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       },
     };
     //check if searchParamter is there
-    try{
+    try {
       if (options?.searchParamter) {
         let formattedChatId: string | null = options?.searchParamter;
         let userProfile: IUser | null = null;
         let groupProfile: Group;
-  
+
         //check if ens then convert to address
         if (formattedChatId.includes('.')) {
           const address = await getAddress(formattedChatId, env)!;
           if (address) formattedChatId = pCAIP10ToWallet(address);
           else {
-            error = 'Invalid search';
+            error = {
+              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
+              message: 'Invalid search',
+            };
           }
         }
-        console.log('format', formattedChatId);
         if (!error) {
           if (await ethers.utils.isAddress(formattedChatId)) {
             //fetch  profile
-            userProfile = await fetchChatProfile({ profileId: formattedChatId });
+            userProfile = await fetchChatProfile({
+              profileId: formattedChatId,
+            });
           } else {
             //fetch group info
             groupProfile = await getGroupByIDnew({ groupId: formattedChatId });
           }
           if (!userProfile && !groupProfile) {
-            error = 'Invalid search';
-            console.log('print error invalid search');
+            error = {
+              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
+              message: 'Invalid search',
+            };
           } else {
             searchedChat = {
               ...searchedChat,
@@ -646,11 +641,26 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           }
         }
       } else {
-        error = 'Search param is needed for listType SEARCH';
-        console.log('error search param is needed for list type search');
+        error = {
+          code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT,
+          message: 'Insufficient input for search',
+        };
       }
-    }
-    catch(e) {
+      if (error) {
+        setChatPreviewList({
+          nonce: generateRandomNonce(),
+          items: [],
+          page: 1,
+          preloading: false,
+          loading: false,
+          loaded: false,
+          reset: false,
+          resume: false,
+          errored: true,
+          error: error,
+        });
+      }
+    } catch (e) {
       // return if nonce doesn't match
       console.debug(
         `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
@@ -658,7 +668,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       if (currentNonce !== chatPreviewList.nonce) {
         return;
       }
-  
+
       setChatPreviewList({
         nonce: generateRandomNonce(),
         items: [],
@@ -675,7 +685,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         },
       });
     }
- 
   };
   console.log(chatPreviewList);
   // Attach scroll listener
@@ -736,54 +745,61 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       {chatPreviewList.errored && (
         <Section padding="10px" flexDirection="column">
           <Span margin="0 0 10px 0">{chatPreviewList.error?.message}</Span>
-          <Button
-            onClick={() => {
-              const errorCode = chatPreviewList.error
-                ? chatPreviewList.error.code
-                : ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR;
+          {!!(
+            (chatPreviewList.error?.code !==
+              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR) &&
+            (chatPreviewList.error?.code !==
+              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT)
+          ) && (
+            <Button
+              onClick={() => {
+                const errorCode = chatPreviewList.error
+                  ? chatPreviewList.error.code
+                  : ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR;
 
-              setChatPreviewList((prev) => ({
-                ...prev,
-                items:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                    ? []
-                    : prev.items,
-                page:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                    ? 1
-                    : prev.page,
-                preloading:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                    ? true
-                    : false,
-                loading:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
-                    ? true
-                    : false,
-                reset:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                    ? true
-                    : false,
-                resume:
-                  errorCode ===
-                  ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
-                    ? true
-                    : false,
-                errored: false,
-              }));
-            }}
-            background="rgb(226,8,128)"
-            color="#fff"
-            borderRadius="16px"
-            padding="4px 12px"
-          >
-            Refresh
-          </Button>
+                setChatPreviewList((prev) => ({
+                  ...prev,
+                  items:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
+                      ? []
+                      : prev.items,
+                  page:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
+                      ? 1
+                      : prev.page,
+                  preloading:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
+                      ? true
+                      : false,
+                  loading:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
+                      ? true
+                      : false,
+                  reset:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
+                      ? true
+                      : false,
+                  resume:
+                    errorCode ===
+                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
+                      ? true
+                      : false,
+                  errored: false,
+                }));
+              }}
+              background="rgb(226,8,128)"
+              color="#fff"
+              borderRadius="16px"
+              padding="4px 12px"
+            >
+              Refresh
+            </Button>
+          )}
         </Section>
       )}
 

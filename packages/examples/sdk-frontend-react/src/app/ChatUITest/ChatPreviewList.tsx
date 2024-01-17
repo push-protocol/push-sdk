@@ -41,7 +41,7 @@ const ChatPreviewListTest = () => {
           // listType={chatRequests ? "REQUESTS" : "CHATS"}
           // overrideAccount={address ? address : undefined}
           listType='SEARCH'
-          searchParamter='fabio.eth'
+          // searchParamter='fabio.eth'
         />
       </div>
     </>
