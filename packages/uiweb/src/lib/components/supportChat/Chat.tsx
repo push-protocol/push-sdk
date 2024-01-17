@@ -10,7 +10,7 @@ import {
 } from '../../context';
 import type { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
-import type { ENV} from '../../config';
+import type { ENV } from '../../config';
 import { Constants, lightTheme } from '../../config';
 import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
@@ -18,22 +18,23 @@ import { getAddressFromSigner } from '../../helpers';
 import { sign } from 'crypto';
 
 export type ChatProps = {
-account?: string;
-  signer: SignerType;
-  supportAddress: string;
+  account?: string | null;
+  signer?: SignerType | null;
+  supportAddress?: string;
   greetingMsg?: string;
   modalTitle?: string;
   theme?: ITheme;
   apiKey?: string;
   env?: ENV;
+  pushUser?: PushAPI | null
 };
 
 export type ButtonStyleProps = {
   bgColor: string;
 };
 
- export const Chat: React.FC<ChatProps> = ({
- account = null,
+export const Chat: React.FC<ChatProps> = ({
+  account = null,
   signer = null,
   supportAddress,
   greetingMsg = Constants.DEFAULT_GREETING_MSG,
@@ -64,7 +65,7 @@ export type ButtonStyleProps = {
     ];
 
     uniqueChats.sort((a, b) => {
-      
+
       return a.timestamp! > b.timestamp! ? 1 : -1;
     });
     setChats(uniqueChats);
@@ -78,12 +79,12 @@ export type ButtonStyleProps = {
     signer
   });
 
-  
+
   const chatPropsData = {
-    account : accountadd,
+    account: accountadd,
     signer,
     pushUser,
-    supportAddress : resolvedSupportAddress,
+    supportAddress: resolvedSupportAddress,
     greetingMsg,
     modalTitle,
     theme: { ...lightTheme, ...theme },
@@ -93,46 +94,46 @@ export type ButtonStyleProps = {
 
   useEffect(() => {
 
-    const getNewSupportAddress = async() => {
-       if(supportAddress.includes(".")){
-          const newAddress = await getAddress(supportAddress, env)
-setResolvedSupportAddress(newAddress!);
-    }else{
-setResolvedSupportAddress(supportAddress);
+    const getNewSupportAddress = async () => {
+      if (supportAddress?.includes(".")) {
+        const newAddress = await getAddress(supportAddress, env)
+        setResolvedSupportAddress(newAddress!);
+      } else {
+        setResolvedSupportAddress(supportAddress!);
+      }
     }
-    }
-  getNewSupportAddress(); 
-  },[supportAddress, pushUser, env])
+    getNewSupportAddress();
+  }, [supportAddress, pushUser, env])
 
 
   useEffect(() => {
     (async () => {
-      if(signer) {
+      if (signer) {
         if (!account) {
           const address = await getAddressFromSigner(signer);
           setAccountadd(address);
-          
-        }
-        else{
-          setAccountadd(account);
-          
-        }
-     
-    }
-    })();
-  },[signer])
 
- useEffect(() => {
-  (
-    async() =>{
-      if(Object.keys(signer || {}).length && accountadd){
-    const pushUser = await PushAPI.initialize(signer!, {env: env , account:accountadd!});
+        }
+        else {
+          setAccountadd(account);
+
+        }
+
+      }
+    })();
+  }, [signer])
+
+  useEffect(() => {
+    (
+      async () => {
+        if (Object.keys(signer || {}).length && accountadd) {
+          const pushUser = await PushAPI.initialize(signer!, { env: env, account: accountadd! });
           setPushUser(pushUser)
-  }
-    }
-  )()
-  
- },[signer, accountadd])
+        }
+      }
+    )()
+
+  }, [signer, accountadd])
 
   useEffect(() => {
     setChats([]);
