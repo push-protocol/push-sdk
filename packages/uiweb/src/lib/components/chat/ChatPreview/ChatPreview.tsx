@@ -7,7 +7,7 @@ import { useChatData } from '../../../hooks';
 import { Button, Image, Section } from '../../reusables';
 
 import { useChat } from '@livekit/components-react';
-import { getAddress, getAddress } from '../../../helpers';
+import { getAddress } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
