@@ -43,27 +43,38 @@
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
-    "@types/react": "~17.0.21",
-    "@types/react-native": "0.70.0",
+    "@types/react": "~18.2.25",
+    "@types/react-native": "0.72.6",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "expo-av": "13.6.0",
+    "expo-file-system": "15.6.0",
+    "expo-linear-gradient": "12.5.0",
     "jest": "^28.1.1",
     "prettier": "^2.0.5",
-    "react": "18.2.0",
-    "react-native": "0.72.6",
     "react-native-builder-bob": "^0.20.0",
     "release-it": "^15.0.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.3.3"
   },
   "resolutions": {
-    "@types/react": "17.0.21"
+    "@types/react": "18.2.25"
   },
   "peerDependencies": {
+    "expo": "*",
+    "expo-av": "*",
+    "expo-linear-gradient": "*",
     "react": "*",
     "react-native": "*"
   },
-  "packageManager": "yarn@3.6.1",
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.11",
+    "react-native-parsed-text": "^0.0.22",
+    "react-native-progress-circle": "^2.1.0",
+    "react-native-svg": "^14.1.0",
+    "react-native-youtube-iframe": "^2.3.0"
+  },
+  "packageManager": "yarn@4.0.2",
   "engines": {
     "node": ">= 18.0.0"
   },
@@ -117,7 +128,7 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "/lib"
   ],
   "prettier": {
     "quoteProps": "consistent",
