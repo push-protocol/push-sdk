@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@pushprotocol/react-native-sdk": "../../reactnative",
+    "@pushprotocol/uireactnative": "../../uireactnative",
     "browserify-zlib": "^0.1.4",
     "events": "^1.1.1",
     "expo": "^49.0.0",
