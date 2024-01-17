@@ -2,7 +2,7 @@ import React from 'react';
 import {ethers} from 'ethers';
 
 import WebViewCrypto from 'react-native-webview-crypto';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import OpenPGP from 'react-native-fast-openpgp';
 
 import {
@@ -25,7 +25,7 @@ import {
   approve,
 } from '@pushprotocol/react-native-sdk/src';
 
-import {multiply} from '@pushprotocol/uireactnative';
+import {NotificationItem} from '@pushprotocol/uireactnative';
 
 function generatePrivateKey() {
   // Define the set of characters for private key generation
@@ -321,13 +321,27 @@ export default function App() {
       <Text style={styles.button} onPress={handleApproveRequest}>
         Approve Request
       </Text>
-      <Text
-        style={styles.button}
-        onPress={() => {
-          console.log('RES is ', multiply(2, 3));
-        }}>
-        Multiply
-      </Text>
+      <View style={styles.nfItemContainer}>
+        <NotificationItem
+          key={'1'}
+          notificationTitle={'Hola Test Notification here'}
+          notificationBody={
+            "[Hello World](https://github1.com) ***Bold&Italic*** \n **Bold** \n *Italic* \n <span color='green'>green text</span> \n [PUSH website](https://push.org) \n [timestamp: 1699347011]"
+          }
+          cta={'https://github.com'}
+          app={'app'}
+          icon={'https://picsum.photos/200'}
+          // image={undefined}
+          // image={'https://picsum.photos/200'}
+          image={'https://www.youtube.com/watch?v=R8nsAhyrvTI'}
+          // image={
+          // 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+          // }
+          url={'https://github.com'}
+          theme={'light'}
+          chainName={'ARBITRUMONE_MAINNET'}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -344,6 +358,9 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     fontSize: 32,
+    margin: 10,
+  },
+  nfItemContainer: {
     margin: 10,
   },
 });

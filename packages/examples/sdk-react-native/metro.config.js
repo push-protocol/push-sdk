@@ -1,5 +1,3 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
-
 const path = require('path');
 
 const reactnativesdkPath = path.resolve(__dirname, '../../reactnative');
@@ -10,17 +8,21 @@ const thirdPartyPackages = {
   '@pushprotocol/react-native-sdk': reactnativesdkPath,
 };
 
-/**
- * Metro configuration
- * https://facebook.github.io/metro/docs/configuration
- *
- * @type {import('metro-config').MetroConfig}
- */
-const config = {
-  resolver: {
-    thirdPartyPackages,
-  },
-  watchFolders: [uireactnativePath, reactnativesdkPath],
-};
+const {getDefaultConfig} = require('expo/metro-config');
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+const projectRoot = __dirname;
+
+const config = getDefaultConfig(projectRoot);
+
+config.resolver.nodeModulesPaths = [path.resolve(projectRoot, 'node_modules')];
+config.resolver.sourceExts = ['jsx', 'js', 'json', 'ts', 'tsx', 'mjs'];
+config.resolver.thirdPartyPackages = thirdPartyPackages;
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: true,
+  },
+});
+config.watchFolders = [uireactnativePath, reactnativesdkPath];
+
+module.exports = config;

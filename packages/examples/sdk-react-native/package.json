@@ -14,12 +14,17 @@
     "@pushprotocol/react-native-sdk": "../../reactnative",
     "browserify-zlib": "^0.1.4",
     "events": "^1.1.1",
+    "expo": "^49.0.0",
+    "expo-av": "~13.4.1",
+    "expo-linear-gradient": "~12.3.0",
+    "expo-modules-core": "~1.5.12",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-fast-openpgp": "^2.6.0",
     "react-native-get-random-values": "^1.9.0",
     "react-native-randombytes": "3.6.1",
-    "react-native-webview": "^13.2.2",
+    "react-native-svg": "^14.1.0",
+    "react-native-webview": "13.2.2",
     "react-native-webview-crypto": "^0.0.25",
     "readable-stream": "^1.0.33"
   },
@@ -39,7 +44,7 @@
     "patch-package": "^8.0.0",
     "prettier": "^2.4.1",
     "react-test-renderer": "18.2.0",
-    "typescript": "4.8.4"
+    "typescript": "^5.1.3"
   },
   "engines": {
     "node": ">=16"
