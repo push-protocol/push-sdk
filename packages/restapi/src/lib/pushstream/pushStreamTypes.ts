@@ -1,10 +1,11 @@
-import { Rules } from '../types';
+import { Rules, VideoPeerInfo } from '../types';
 import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   filter?: {
     channels?: string[];
     chats?: string[];
+    video?: string[];
   };
   connection?: {
     auto?: boolean;
@@ -22,6 +23,7 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  VIDEO = 'STREAM.VIDEO',
   CONNECT = 'STREAM.CONNECT',
   DISCONNECT = 'STREAM.DISCONNECT',
 }
@@ -49,6 +51,17 @@ export enum GroupEventType {
   JoinGroup = 'joinGroup',
   LeaveGroup = 'leaveGroup',
   Remove = 'remove',
+}
+
+export enum VideoEventType {
+  REQUEST = 'video.request',
+  APPROVE = 'video.approve',
+  DENY = 'video.deny',
+  CONNECT = 'video.connect',
+  DISCONNECT = 'video.disconnect',
+  // retry events
+  RETRY_REQUEST = 'video.retry.request',
+  RETRY_APPROVE = 'video.retry.approve'
 }
 
 export enum ProposedEventNames {
@@ -223,6 +236,14 @@ export interface MessageRawData {
   sigType: string;
   verificationProof: string;
   previousReference: string;
+}
+
+export interface VideoEvent {
+  event: VideoEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  peerInfo: VideoPeerInfo;
+  raw?: GroupEventRawData;
 }
 
 export enum EVENTS {

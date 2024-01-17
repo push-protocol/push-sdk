@@ -149,9 +149,13 @@ describe('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       // create polygon mumbai provider
-      const provider = new ethers.providers.JsonRpcProvider(
-        'https://rpc-mumbai.maticvigil.com'
-      );
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          )
+        : new (ethers as any).JsonRpcProvider(
+            'https://rpc-mumbai.maticvigil.com/v1'
+          );
 
       signer2 = new ethers.Wallet(
         `0x${process.env['WALLET_PRIVATE_KEY']}`,
