@@ -1,4 +1,4 @@
-export * from './useFetchHistoryMessages';
+export * from './useFetchMessageUtilities';
 export * from './useChatData';
 
 export * from './useChatProfile';

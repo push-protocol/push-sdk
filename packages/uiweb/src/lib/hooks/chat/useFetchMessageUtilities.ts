@@ -12,18 +12,39 @@ import { useChatData } from './useChatData';
     threadHash: string;
     limit?: number;
   }
+  interface FetchLatestMessageParams {
+    chatId: string;
+    
+  }
   
 
-const useFetchHistoryMessages
+const useFetchMessageUtilities
  = () => {
   const [error, setError] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(false);
+  const [latestLoading, setLatestLoading] = useState<boolean>(false);
 
-  const { account, env,pgpPrivateKey } = useChatData();
+
+  const { account, env,pgpPrivateKey ,pushUser} = useChatData();
+  const fetchLatestMessage = useCallback(async ({chatId}:FetchLatestMessageParams) => {
+
+    setLatestLoading(true);
+    try {
+        const latestChat:IMessageIPFS[] = await pushUser?.chat.latest(chatId) as IMessageIPFS[];
+       return latestChat;
+    } catch (error: Error | any) {
+      setLatestLoading(false);
+      setError(error.message);
+      console.log(error);
+      return;
+    } finally {
+      setLatestLoading(false);
+    }
+  }, [pushUser,account,env]);
 
   const historyMessages = useCallback(async ({threadHash,limit = 10,}:HistoryMessagesParams) => {
 
-    setLoading(true);
+    setHistoryLoading(true);
     try {
         const chatHistory:IMessageIPFS[] = await PushAPI.chat.history({
             threadhash: threadHash,
@@ -36,16 +57,16 @@ const useFetchHistoryMessages
           chatHistory.reverse();
        return chatHistory;
     } catch (error: Error | any) {
-      setLoading(false);
+      setHistoryLoading(false);
       setError(error.message);
       console.log(error);
       return;
     } finally {
-      setLoading(false);
+      setHistoryLoading(false);
     }
   }, [pgpPrivateKey,account,env]);
 
-  return { historyMessages, error, loading };
+  return { historyMessages, error, historyLoading ,latestLoading,fetchLatestMessage};
 };
 
-export default useFetchHistoryMessages;
+export default useFetchMessageUtilities;

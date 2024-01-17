@@ -1,4 +1,4 @@
-import type { CONSTANTS, IMessageIPFS } from '@pushprotocol/restapi';
+import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
 import { IGroup } from '../../types';
 import { IChatTheme } from "./theme";
 
@@ -23,11 +23,13 @@ export interface IChatPreviewProps {
     count?: number;
   };
 }
+export type Group = GroupInfoDTO| GroupDTO | undefined;
 
 export interface IChatPreviewListProps {
   overrideAccount?: string;
-  listType?: 'CHATS' | 'REQUESTS';
-  prefillChatPreviewList: Array<IChatPreviewProps>;
+  listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
+  prefillChatPreviewList?: Array<IChatPreviewProps>;
+  searchParamter?: string;
 }
 
 export interface IChatViewListProps {
@@ -195,6 +197,8 @@ export type ConditionArray = ConditionData[];
 export enum ChatPreviewListErrorCodes {
   CHAT_PREVIEW_LIST_PRELOAD_ERROR = 'CPL-001',
   CHAT_PREVIEW_LIST_LOAD_ERROR = 'CPL-002',
+  CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR = 'CPL-003',
+  CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT = 'CPL-004',
 }
 
 export interface IChatPreviewListError {

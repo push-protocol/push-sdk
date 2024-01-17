@@ -3,11 +3,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { useChatData, useResolveWeb3Name } from '../../../hooks';
-import { Button, Image, Section, Span, Spinner } from '../../reusables';
+import { useChatData } from '../../../hooks';
+import { Button, Image, Section } from '../../reusables';
 
 import { useChat } from '@livekit/components-react';
-import { getAddress } from '../../../helpers';
+import { getAddress, getAddress } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -26,43 +26,55 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
 ) => {
   const theme = useContext(ThemeContext);
   const {env} = useChatData();
+  const [formattedAddress,setFormattedAddress] = useState<string>('');
 
+  useEffect(()=>{
+    (async()=>{
+    await formatAddress();
+     
+    })();
+
+
+  },[])
   // Format address
-  const formatAddress = () => {
+  const formatAddress = async() => {
     let formattedAddress = options.chatPreviewPayload?.chatSender;
 
     if (!options.chatPreviewPayload?.chatGroup) {
       // check and remove eip155:
-      if (!formattedAddress.includes('eip155:')) {
+      if (formattedAddress.includes('eip155:')) {
         formattedAddress = formattedAddress.replace('eip155:', '');
       }
-      // else if(formattedAddress.includes('.')){
-      //   formattedAddress = (await getAddress('harsh.eth', env))!;
-      // }
+      else if(formattedAddress.includes('.')){
+        formattedAddress = (await getAddress(formattedAddress, env))!;
+      }
     }
 
-    return formattedAddress;
+    setFormattedAddress( formattedAddress);
   };
 
+  
   // Format date
   const formatDate = () => {
     let formattedDate;
-    const today = moment();
-    const timestamp = moment(options.chatPreviewPayload.chatTimestamp);
-
-    if (timestamp.isSame(today, 'day')) {
-      // If the timestamp is from today, show the time
-      formattedDate = timestamp.format('HH:mm');
-    } else if (timestamp.isSame(today.subtract(1, 'day'), 'day')) {
-      // If the timestamp is from yesterday, show 'Yesterday'
-      formattedDate = 'Yesterday';
-    } else {
-      // If the timestamp is from before yesterday, show the date
-      // Use 'L' to format the date based on the locale
-      formattedDate = timestamp.format('L');
+    if(options.chatPreviewPayload.chatTimestamp){
+      const today = moment();
+      const timestamp = moment(options.chatPreviewPayload.chatTimestamp);
+      if (timestamp.isSame(today, 'day')) {
+        // If the timestamp is from today, show the time
+        formattedDate = timestamp.format('HH:mm');
+      } else if (timestamp.isSame(today.subtract(1, 'day'), 'day')) {
+        // If the timestamp is from yesterday, show 'Yesterday'
+        formattedDate = 'Yesterday';
+      } else {
+        // If the timestamp is from before yesterday, show the date
+        // Use 'L' to format the date based on the locale
+        formattedDate = timestamp.format('L');
+      }
     }
+   
 
-    return formattedDate;
+    return formattedDate??'';
   };
 
   return (
@@ -86,7 +98,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         onClick={() => {
           // set chatid as selected
           if (options?.setSelected)
-            options.setSelected(options?.chatPreviewPayload?.chatId!);
+            options.setSelected(options?.chatPreviewPayload?.chatId || '');
         }}
       >
         <Section
@@ -122,7 +134,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             overflow="hidden"
             flex="1"
           >
-            <Account theme={theme}>{ formatAddress()}</Account>
+            <Account theme={theme}>{ formattedAddress}</Account>
             <Dated theme={theme}>{formatDate()}</Dated>
           </Section>
           <Section
