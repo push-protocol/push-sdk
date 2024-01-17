@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.1...restapi-1.6.2) (2024-01-17)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([171c48f](https://github.com/ethereum-push-notification-service/push-sdk/commit/171c48f1b1a2c83a6344068bfef5149b4c64017a))
+* **video stream:** add video event type enum in CONSTANTS ([#1032](https://github.com/ethereum-push-notification-service/push-sdk/issues/1032)) ([ee392ef](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee392ef4cd2a5d35b8ac4df8bc96a3eeb3844e6c))
+
+
+
 ## [1.6.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.0...restapi-1.6.1) (2024-01-15)
 
 
