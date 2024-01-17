@@ -5,7 +5,6 @@ import {
   CONSTANTS,
   VideoCallData,
   VideoEvent,
-  VideoEventType,
   VideoCallStatus,
   video
 } from '@pushprotocol/restapi';
@@ -50,23 +49,23 @@ const VideoV2 = () => {
     });
 
     createdStream.on(CONSTANTS.STREAM.VIDEO, async (data: VideoEvent) => {
-      if (data.event === VideoEventType.RequestVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
         setLatestVideoEvent(data);
       }
 
-      if (data.event === VideoEventType.ApproveVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.APPROVE) {
         console.log('Video Call Approved');
       }
 
-      if (data.event === VideoEventType.DenyVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.DENY) {
         alert('User Denied the Call');
       }
 
-      if (data.event === VideoEventType.ConnectVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.CONNECT) {
         console.log('Video Call Connected');
       }
 
-      if (data.event === VideoEventType.DisconnectVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.DISCONNECT) {
         alert('Video Call ended!');
       }
     });
@@ -87,6 +86,7 @@ const VideoV2 = () => {
     if (!librarySigner) return;
     if (data?.incoming[0]?.status !== VideoCallStatus.UNINITIALIZED) return; // data?.incoming[0]?.status will have a status of VideoCallStatus.UNINITIALIZED when the video call is not initialized, call ended or denied. So we Initialize the Push API here.
     initializePushAPI();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [env, library, data?.incoming[0]?.status]);
 
   useEffect(() => {
