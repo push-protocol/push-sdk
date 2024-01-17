@@ -12,7 +12,7 @@ import { CONSTANTS, ChatListType, IFeeds, IUser } from '@pushprotocol/restapi';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { useChatData, usePushChatSocket } from '../../../hooks';
+import { useChatData, usePushChatSocket, usePushChatStream } from '../../../hooks';
 import { Button, Section, Span, Spinner } from '../../reusables';
 
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
@@ -101,6 +101,13 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     messagesSinceLastConnection,
     groupInformationSinceLastConnection,
   } = usePushChatSocket();
+
+  const {
+    chatStream,
+    chatRequestStream,
+    chatAcceptStream,
+    groupMetaStream,
+  } = usePushChatStream();
 
   // Helper Functions
   // Generate random nonce
@@ -193,51 +200,60 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   };
 
+  const transformStreamToIChatPreviewPayload: (item: any) => IChatPreviewPayload = (item: any) => {
+    // transform the item
+    const transformedItem: IChatPreviewPayload = {
+      chatId: item.chatId,
+      chatPic: null, // for now, we don't have a way to get pfp from stream
+      chatSender: item.meta.group  
+        ? null // we take from fetching info
+        : item.to[0],
+      chatGroup: item.meta.group,
+      chatTimestamp: Number(item.timestamp),
+      chatMsg: {
+        messageType: item.message.type,
+        messageContent: item.message.content,
+      },
+    };
+
+    return transformedItem;
+  }
+
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
     if (!pushUser) {
       return;
     }
 
-    // Really hacky approach, get list with page: 1 and limit: 1
-    // only to move forward till stream and chat api responses are updated
-    const type = options.listType
-      ? options.listType
-      : CONSTANTS.CHAT.LIST_TYPE.CHATS;
-    const overrideAccount = options.overrideAccount
-      ? options.overrideAccount
-      : undefined;
+    console.log('Transforming stream message', item)
 
-    // Testing if we can use this,
-    // Not really since no way to see if chat is coming from CHATS or REQUESTS
-    // if (item.isGroup) {
-    //   const response = await user?.chat.group.info(item.chatId);
-    //   console.log('response', response);
-    // } else {
-    //   const response = await user?.profile.info({
-    //     overrideAccount: item.fromCAIP10,
-    //   });
-    //   console.log('response', response);
-    // }
-    if (
-      type === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
-      type === CONSTANTS.CHAT.LIST_TYPE.REQUESTS
-    ) {
-      const latestMessage = await pushUser?.chat.list(type, {
-        overrideAccount: overrideAccount,
-        page: 1,
-        limit: 1,
-      });
+    // transform the item to IChatPreviewPayload
+    let modItem = transformStreamToIChatPreviewPayload(item);
 
-      if (!latestMessage) {
-        return;
-      }
-      const transformedItems = transformChatItems(latestMessage);
-
-      // modify the chat items
-      addChatItems(transformedItems);
+    // now check if this message is already present in the list
+    const chatItem = chatPreviewList.items.find(
+      (chatItem) => chatItem.chatId === modItem.chatId
+    );
+    
+    // if chat item is present, take pfp an group name if request
+    if (chatItem) {
+      modItem.chatPic = chatItem.chatPic;
+      modItem.chatSender = chatItem.chatSender;
     }
-  };
+    else {
+      // if not present, fetch profile
+      if (!modItem.chatGroup) {
+        const profile = await pushUser.profile.info({overrideAccount: modItem.chatSender});
+        modItem.chatPic = profile.picture;
+      } else {
+        const profile = await pushUser.chat.group.info(modItem.chatId);
+        modItem.chatPic = profile.groupImage;
+        modItem.chatSender = profile.groupName;
+      }
+    }
+    // modify the chat items
+    addChatItems([modItem]);
+  }
 
   // Transform accepted request
   const transforAcceptedRequest: (item: any) => void = async (item: any) => {
@@ -507,38 +523,40 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     }
   }, [chatPreviewList.loading, chatPreviewList.resume]);
 
-  // Listen to streams - incoming message
+  // Define stream objects
   useEffect(() => {
     if (
-      Object.keys(messagesSinceLastConnection).length > 0 &&
-      messagesSinceLastConnection.constructor === Object
+      Object.keys(chatStream).length > 0 &&
+      chatStream.constructor === Object
     ) {
-      console.log('Message since last connection', messagesSinceLastConnection);
-      const transformedItems = transformStreamMessage(
-        messagesSinceLastConnection
-      );
+      console.debug('Chat stream', chatStream);
+      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
+        transformStreamMessage(chatStream);
+      }
     }
-  }, [messagesSinceLastConnection]);
+  }, [chatStream]);
 
-  // Listen to streams - accepted message
   useEffect(() => {
     if (
-      Object.keys(acceptedRequestMessage).length > 0 &&
-      acceptedRequestMessage.constructor === Object
+      Object.keys(chatStream).length > 0 &&
+      chatStream.constructor === Object
     ) {
-      console.log('Accepted request message', acceptedRequestMessage);
+      console.debug('Chat request stream', chatStream);
+      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
+        transformStreamMessage(chatStream);
+      }
     }
-  }, [acceptedRequestMessage]);
+  }, [chatRequestStream]);
 
-  // Listen to streams - group information change
   useEffect(() => {
-    // if (
-    //   Object.keys(groupInformationSinceLastConnection).length > 0 &&
-    //   acceptedRequestMessage.constructor === Object
-    // ) {
-    //   console.log('Accepted request message', groupInformationSinceLastConnection);
-    // }
-  }, [groupInformationSinceLastConnection]);
+    if (
+      Object.keys(chatStream).length > 0 &&
+      chatStream.constructor === Object
+    ) {
+      console.debug('Chat accept stream', chatAcceptStream);
+      transforAcceptedRequest(chatStream);
+    }
+  }, [chatAcceptStream]);
 
   //search method for a chatId
   const handleSearch = async (currentNonce:string) => {
