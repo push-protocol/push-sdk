@@ -3,14 +3,14 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { Button, Image, Section, Span, Spinner } from '../../reusables';
 import { useChatData, useResolveWeb3Name } from '../../../hooks';
+import { Button, Image, Section, Span, Spinner } from '../../reusables';
 
+import { useChat } from '@livekit/components-react';
+import { getAddress } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { getAddress } from '../../../helpers';
-import { useChat } from '@livekit/components-react';
 
 /**
  * @interface IThemeProps
@@ -66,7 +66,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   };
 
   return (
-    <ChatViewListCard>
+    <ChatPreviewContainer>
       <Button
         display="flex"
         width="100%"
@@ -140,12 +140,12 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           </Section>
         </Section>
       </Button>
-    </ChatViewListCard>
+    </ChatPreviewContainer>
   );
 };
 
 //styles
-const ChatViewListCard = styled(Section)<IThemeProps>`
+const ChatPreviewContainer = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
