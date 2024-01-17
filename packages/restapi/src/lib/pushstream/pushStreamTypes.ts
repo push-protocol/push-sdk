@@ -54,14 +54,14 @@ export enum GroupEventType {
 }
 
 export enum VideoEventType {
-  RequestVideo = 'video.request',
-  ApproveVideo = 'video.approve',
-  DenyVideo = 'video.deny',
-  ConnectVideo = 'video.connect',
-  DisconnectVideo = 'video.disconnect',
+  REQUEST = 'video.request',
+  APPROVE = 'video.approve',
+  DENY = 'video.deny',
+  CONNECT = 'video.connect',
+  DISCONNECT = 'video.disconnect',
   // retry events
-  RetryRequestVideo = 'video.retry.request',
-  RetryApproveVideo = 'video.retry.approve'
+  RETRY_REQUEST = 'video.retry.request',
+  RETRY_APPROVE = 'video.retry.approve'
 }
 
 export enum ProposedEventNames {
