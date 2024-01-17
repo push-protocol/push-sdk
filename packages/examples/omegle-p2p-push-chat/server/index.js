@@ -1,10 +1,17 @@
 const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
-
+const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["*"],
+    credentials: true,
+  },
+});
 
 let users = [];
 
@@ -48,14 +55,44 @@ io.on("connection", (socket) => {
     // Store the wallet address and mark the user as connected
     console.log(`User connected with wallet address: ${walletAddress}`);
     socket.walletAddress = walletAddress;
-    users.push({
-      walletAddress: walletAddress,
-      id: socket.id,
-      online: true,
-      busy: false,
-      lookingForPeers: true,
-      connectedPeerId: null, // Add a property to store connected peer's ID
-    });
+    // Check if the user with the same wallet address already exists
+    const existingUser = users.find(
+      (user) => user.walletAddress === walletAddress
+    );
+    const existingSocket = users.find((user) => user.id === socket.id);
+    if (existingSocket) {
+      const userIndex = users.findIndex((user) => user.id === socket.id);
+      console.log(userIndex, socket.id);
+      users[userIndex].walletAddress = walletAddress;
+    } else if (!existingUser) {
+      // If the user doesn't exist, push the new user into the users array
+      users.push({
+        walletAddress: walletAddress,
+        id: socket.id,
+        online: true,
+        busy: false,
+        lookingForPeers: true,
+        connectedPeerId: null, // Add a property to store connected peer's ID
+      });
+    }
+  });
+  socket.on("chat_message_sent", (peerAddress) => {
+    const peerSocket = users.find((user) => user.walletAddress === peerAddress);
+
+    if (peerSocket) {
+      io.to(peerSocket.id).emit("video_call_request", socket.walletAddress);
+    }
+  });
+  socket.on("intent_accepted", (peerAddress) => {
+    console.log("intent accepted");
+    const peerSocket = users.find((user) => user.walletAddress === peerAddress);
+    if (peerSocket) {
+      io.to(peerSocket.id).emit(
+        "intent_accepted_by_peer",
+        socket.walletAddress
+      );
+      io.to(socket.id).emit("intent_accepted_by_peer", socket.walletAddress);
+    }
   });
 
   // Inside the "connect_to_peer" event handler
@@ -69,6 +106,7 @@ io.on("connection", (socket) => {
     const availableUsers = users.filter(
       (user) =>
         user.walletAddress !== walletAddress &&
+        user.walletAddress !== null &&
         user.online === true &&
         user.lookingForPeers === true &&
         user.busy === false
@@ -83,8 +121,8 @@ io.on("connection", (socket) => {
       // Now you can use the chosenItem for further processing
       console.log(chosenItem);
       // Notify both peers that they are connected
-      io.to(chosenItem.id).emit("peer_connected", walletAddress);
-      io.to(caller.id).emit("peer_connected", chosenItem.walletAddress);
+      // io.to(chosenItem.id).emit("peer_matched", walletAddress);
+      io.to(socket.id).emit("peer_matched", chosenItem.walletAddress);
       const userIndexCaller = users.findIndex(
         (user) => user.walletAddress === walletAddress
       );
@@ -103,7 +141,32 @@ io.on("connection", (socket) => {
       console.log("No valid user found.");
     }
   });
+  socket.on("user_status_toggle", (newStatus) => {
+    const userIndex = users.findIndex((user) => user.id === socket.id);
+    if (userIndex !== -1) users[userIndex].lookingForPeers = newStatus;
+  });
+  socket.on("endPeerConnection", (peerAddress) => {
+    // Handle disconnecting from a peer, if needed
 
+    if (socket.walletAddress) {
+      const userIndex = users.findIndex(
+        (user) => user.walletAddress === socket.walletAddress
+      );
+      const userIndexPeer = users.findIndex(
+        (user) => user.walletAddress === peerAddress
+      );
+      // Instead of removing the user entry, update its properties
+      if (userIndex !== -1) {
+        users[userIndex].busy = false;
+        users[userIndex].lookingForPeers = true;
+      }
+      if (userIndexPeer !== -1) {
+        users[userIndexPeer].busy = false;
+        users[userIndexPeer].lookingForPeers = true;
+      }
+      io.to(userIndexPeer.id).emit("peer_disconnected_call");
+    }
+  });
   socket.on("disconnect_peer", () => {
     // Handle disconnecting from a peer, if needed
 
@@ -132,7 +195,7 @@ function logUsers() {
       `Wallet Address: ${user.walletAddress}, Online: ${user.online}, Busy: ${user.busy}, LookingForPeer: ${user.lookingForPeers} socket: ${user.id}`
     );
   });
-  console.log("-------------------Connected Users:--------------------------");
+  console.log("-------------------------------------------------------------");
 }
 
 // Schedule the logUsers function to run every 10 seconds
