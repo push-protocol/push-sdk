@@ -130,7 +130,7 @@ export interface SpaceInitializeOptions {
   spaceId: string;
   setSpaceData: (fn: (data: SpaceData) => SpaceData) => void;
 }
-  
+
 export interface VideoInitializeOptions {
   stream: PushStream;
   config: {

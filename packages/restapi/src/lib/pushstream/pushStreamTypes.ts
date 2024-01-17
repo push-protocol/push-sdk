@@ -75,7 +75,6 @@ export enum VideoEventType {
   // retry events
   RETRY_REQUEST = 'video.retry.request',
   RETRY_APPROVE = 'video.retry.approve'
-
 }
 
 export enum ProposedEventNames {
