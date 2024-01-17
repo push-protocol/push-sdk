@@ -38,8 +38,10 @@ const ChatPreviewListTest = () => {
 
       <div style={{background: "#ffeded", border: "1px solid rgb(226,8,128)", height: "50vh"}}>
         <ChatPreviewList 
-          listType={chatRequests ? "REQUESTS" : "CHATS"}
-          overrideAccount={address ? address : undefined}
+          // listType={chatRequests ? "REQUESTS" : "CHATS"}
+          // overrideAccount={address ? address : undefined}
+          listType='SEARCH'
+          searchParamter='fabio.eth'
         />
       </div>
     </>

@@ -21,7 +21,7 @@ import {
   walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
-import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
+import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
 import { IChatViewListProps } from '../exportedTypes';
@@ -59,8 +59,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [messages, setMessages] = useState<Messagetype>();
   const [loading, setLoading] = useState<boolean>(true);
   const [conversationHash, setConversationHash] = useState<string>();
-  const { historyMessages, loading: messageLoading } =
-    useFetchHistoryMessages();
+  const { historyMessages, historyLoading: messageLoading } =
+  useFetchMessageUtilities();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
@@ -135,7 +135,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   //moniters socket changes
   useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId.includes(":") ? chatId.split(":")[1] : chatId)) {
+    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
       if (!Object.keys(messages || {}).length) {

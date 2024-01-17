@@ -1,4 +1,4 @@
-import type { CONSTANTS, IMessageIPFS } from '@pushprotocol/restapi';
+import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
 import { IGroup } from '../../types';
 import { IChatTheme } from "./theme";
 
@@ -23,11 +23,13 @@ export interface IChatPreviewProps {
     count?: number;
   };
 }
+export type Group = GroupInfoDTO| GroupDTO | undefined;
 
 export interface IChatPreviewListProps {
   overrideAccount?: string;
-  listType?: 'CHATS' | 'REQUESTS';
-  prefillChatPreviewList: Array<IChatPreviewProps>;
+  listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
+  prefillChatPreviewList?: Array<IChatPreviewProps>;
+  searchParamter?: string;
 }
 
 export interface IChatViewListProps {
