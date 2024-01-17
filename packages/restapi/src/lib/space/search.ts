@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { SpaceDTO } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 
 /**
  *  POST /v1/spaces/search
@@ -28,8 +28,7 @@ export const search = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/spaces/search`;
 
-    return axios
-      .post(requestUrl, {
+    return axiosPost(requestUrl, {
         searchTerm,
         pageNumber,
         pageSize,

@@ -16,7 +16,9 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
-import { isValidCAIP10NFTAddress, Space } from './space';
+import { Space } from './space';
+import { Video } from './video';
+import { isValidCAIP10NFTAddress } from '../helpers';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -28,8 +30,9 @@ export class PushAPI {
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
 
-  public chat: Chat;
+  public chat: Chat; // Public instances to be accessed from outside the class
   public space: Space;
+  public video: Video;
 
   public profile: Profile;
   public encryption: Encryption;
@@ -95,6 +98,13 @@ export class PushAPI {
       this.progressHook
     );
     this.user = new User(this.account, this.env);
+
+    this.video = new Video(this.account,
+      this.env,
+      this.decryptedPgpPvtKey,
+      this.signer
+    );
+    
     this.errors = initializationErrors || [];
   }
   // Overloaded initialize method signatures

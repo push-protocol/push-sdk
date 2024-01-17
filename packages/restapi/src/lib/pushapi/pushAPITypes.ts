@@ -6,6 +6,7 @@ import {
   SpaceData,
   SpaceRules,
 } from '../types';
+import type { PushStream } from '../pushstream/PushStream';
 
 export enum ChatListType {
   CHATS = 'CHATS',
@@ -128,4 +129,13 @@ export interface SpaceParticipantStatus {
 export interface SpaceInitializeOptions {
   spaceId: string;
   setSpaceData: (fn: (data: SpaceData) => SpaceData) => void;
+}
+  
+export interface VideoInitializeOptions {
+  stream: PushStream;
+  config: {
+    video?: boolean;
+    audio?: boolean;
+  };
+  media?: MediaStream;
 }

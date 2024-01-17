@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ISendNotificationInputOptions } from '../types';
 import {
   getPayloadForAPIInput,
@@ -27,6 +26,7 @@ import {
 } from './constants';
 import { ENV } from '../constants';
 import { getChannel } from '../channels/getChannel';
+import { axiosPost } from '../utils/axiosUtil';
 /**
  * Validate options for some scenarios
  */
@@ -185,7 +185,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       uuid,
       // for the pgpv2 verfication proof
       chatId:
-        rules?.access.data ?? // for backwards compatibilty with 'chatId' param
+        rules?.access.data.chatId ?? // for backwards compatibilty with 'chatId' param
         chatId,
       pgpPrivateKey,
     });
@@ -231,7 +231,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         ? {
             rules: rules ?? {
               access: {
-                data: chatId,
+                data: { chatId },
                 type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
               },
             },
@@ -240,7 +240,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     };
 
     const requestURL = `${API_BASE_URL}/v1/payloads/`;
-    return await axios.post(requestURL, apiPayload, {
+    return await axiosPost(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',
       },

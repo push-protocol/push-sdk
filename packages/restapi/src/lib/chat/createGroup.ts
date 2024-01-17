@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
@@ -14,6 +13,7 @@ import {
   getConnectedUserV2Core,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPost } from '../utils/axiosUtil';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -149,8 +149,7 @@ export const createGroupCore = async (
       rules
     );
 
-    return axios
-      .post(apiEndpoint, body)
+    return axiosPost(apiEndpoint, body)
       .then((response) => {
         return response.data;
       })

@@ -1,15 +1,11 @@
-import axios from "axios";
-import {
-  getCAIPAddress,
-  getAPIBaseUrls,
-  getCAIPDetails
-} from '../helpers';
-import Constants, {ENV} from '../constants';
+import { getCAIPAddress, getAPIBaseUrls, getCAIPDetails } from '../helpers';
+import Constants, { ENV } from '../constants';
+import { axiosPost } from '../utils/axiosUtil';
 
 export type GetSubscribersOptionsType = {
   channel: string; // plain ETH Format only
-  env?: ENV
-}
+  env?: ENV;
+};
 
 /**
  * LEGACY SDK method, kept to support old functionality
@@ -26,14 +22,10 @@ const deprecationWarning = `
 
 export const _getSubscribers = async (
   options: GetSubscribersOptionsType
-) : Promise<string[]> => {
-
+): Promise<string[]> => {
   console.warn(deprecationWarning);
 
-  const {
-    channel,
-    env = Constants.ENV.PROD,
-  } = options || {};
+  const { channel, env = Constants.ENV.PROD } = options || {};
 
   const _channelAddress = await getCAIPAddress(env, channel, 'Channel');
 
@@ -49,12 +41,9 @@ export const _getSubscribers = async (
   const body = {
     channel: channelCAIPDetails.address, // deprecated API expects ETH address format
     blockchain: chainId,
-    op: "read"
+    op: 'read',
   };
 
-  const apiResponse = await axios.post(requestUrl, body);
-
-  const { data: { subscribers = [] } } = apiResponse;
-
-  return subscribers;
-}
+  const response = await axiosPost<{ subscribers: string[] }>(requestUrl, body);
+  return response.data.subscribers;
+};

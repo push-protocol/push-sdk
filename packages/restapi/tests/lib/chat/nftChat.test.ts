@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
-import { expect } from 'chai';
 import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
 import {
@@ -11,7 +10,6 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
-import { ENCRYPTION_TYPE } from '../../../src/lib/constants';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -145,7 +143,7 @@ describe('PushAPI.chat functionality For NFT Profile', () => {
   it('should change Profile Password', async () => {
     console.log('PushAPI.encryption.update');
     const updatedEncryption = await userAlice.encryption.update(
-      ENCRYPTION_TYPE.NFTPGP_V1,
+      CONSTANTS.USER.ENCRYPTION_TYPE.NFTPGP_V1,
       {
         versionMeta: {
           NFTPGP_V1: {
@@ -160,13 +158,16 @@ describe('PushAPI.chat functionality For NFT Profile', () => {
     console.log('PushAPI.group.reject | Response - 200 OK\n\n');
 
     // revert
-    await userAlice.encryption.update(ENCRYPTION_TYPE.NFTPGP_V1, {
-      versionMeta: {
-        NFTPGP_V1: {
-          password: process.env['NFT_PROFILE_PASSWORD_1'] || '',
+    await userAlice.encryption.update(
+      CONSTANTS.USER.ENCRYPTION_TYPE.NFTPGP_V1,
+      {
+        versionMeta: {
+          NFTPGP_V1: {
+            password: process.env['NFT_PROFILE_PASSWORD_1'] || '',
+          },
         },
-      },
-    });
+      }
+    );
   });
 
   it('should list chats and requests correctly', async () => {

@@ -13,6 +13,7 @@ import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
 export * from './messageTypes';
+export * from './videoTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -83,15 +84,17 @@ export type ParsedResponseType = {
   };
 };
 
-export interface VideNotificationRules {
+export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
-    data: string;
+    data: {
+      chatId?: string;
+    };
   };
 }
 
 // SendNotificationRules can be extended in the future for other use cases
-export type SendNotificationRules = VideNotificationRules;
+export type SendNotificationRules = VideoNotificationRules;
 
 export interface ISendNotificationInputOptions {
   senderType?: 0 | 1;
@@ -807,6 +810,7 @@ export enum VideoCallStatus {
   RECEIVED,
   CONNECTED,
   DISCONNECTED,
+  ENDED,
   RETRY_INITIALIZED,
   RETRY_RECEIVED,
 }
@@ -853,7 +857,7 @@ export type VideoRequestInputOptions = {
   recipientAddress: string | string[];
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -868,7 +872,7 @@ export type VideoAcceptRequestInputOptions = {
   recipientAddress: string;
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {

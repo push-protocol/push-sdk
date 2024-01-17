@@ -38,9 +38,9 @@ export const NETWORK_DETAILS = {
 //todo: need to change o sepolia
 export const CoreContractChainId = {
   prod: 1,
-  dev: 5,
-  staging: 5,
-  local: 5,
+  dev: 11155111,
+  staging: 11155111,
+  local: 11155111,
 };
 
 
@@ -51,7 +51,8 @@ const TESTNET_NETWORK = {
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:420',
   POLYGON_ZK_EVM: 'eip155:1442',
-  ARBITRUM:'eip155:421613'
+  ARBITRUM:'eip155:421613',
+  FUSE: 'eip155:123'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -59,7 +60,8 @@ const MAINET_NETWORK = {
   BSC: 'eip155:56',
   OPTIMISM: 'eip155:10',
   POLYGON_ZK_EVM: 'eip155:1101',
-  ARBITRUM:'eip155:42161'
+  ARBITRUM:'eip155:42161',
+  FUSE: 'eip155:122'
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -75,14 +77,16 @@ export const allowedNetworks = {
     137, //for polygon mainnet
     56, // for bnb mainnet
     10, // for optimism mainnet
-    42161 // for arbitrum mainnet
+    42161, // for arbitrum mainnet
+    122 // for fuse mainnet
   ],
   dev: [
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
-    421613 // for arbitrum testnet
+    421613, // for arbitrum testnet
+    123 // for fuse testnet
   ],
   staging: [
     // 42, //for kovan
@@ -90,14 +94,16 @@ export const allowedNetworks = {
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
-    421613 // for arbitrum testnet
+    421613, // for arbitrum testnet
+    123 // for fuse testnet
   ],
   local: [
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
     420, // optimism goerli testnet
-    421613 // for arbitrum testnet
+    421613, // for arbitrum testnet
+    123 // for fuse testnet
   ]
 }
 

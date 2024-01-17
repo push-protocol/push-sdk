@@ -19,7 +19,13 @@ import {
   ProposedEventNames,
   SpaceRequestEvent,
   SpaceRemoveEvent,
+  VideoEventType,
+  MessageOrigin,
+  VideoEvent
 } from './pushStreamTypes';
+import { VideoCallStatus, VideoPeerInfo } from '../types';
+import { VideoDataType } from '../video';
+import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
 
 export class DataModifier {
   public static handleChatGroupEvent(data: any, includeRaw = false): any {
@@ -765,5 +771,74 @@ export class DataModifier {
       eventData.raw = { verificationProof: data.verificationProof };
     }
     return eventData;
+  }
+
+  public static convertToProposedNameForVideo(
+    currentVideoStatus: VideoCallStatus
+  ): VideoEventType {
+    switch (currentVideoStatus) {
+      case VideoCallStatus.INITIALIZED:
+        return VideoEventType.REQUEST;
+      case VideoCallStatus.RECEIVED:
+        return VideoEventType.APPROVE;
+      case VideoCallStatus.CONNECTED:
+        return VideoEventType.CONNECT;
+      case VideoCallStatus.ENDED:
+        return VideoEventType.DISCONNECT;
+      case VideoCallStatus.DISCONNECTED:
+        return VideoEventType.DENY;
+      case VideoCallStatus.RETRY_INITIALIZED:
+        return VideoEventType.RETRY_REQUEST;
+      case VideoCallStatus.RETRY_RECEIVED:
+        return VideoEventType.RETRY_APPROVE;
+      default:
+        throw new Error(`Unknown video call status: ${currentVideoStatus}`);
+    }
+  }
+
+  public static mapToVideoEvent(
+    data: any,
+    origin: MessageOrigin,
+    includeRaw = false
+  ): VideoEvent {
+    const { senderAddress, signalData, status, chatId }: VideoDataType =
+      JSON.parse(data.payload.data.additionalMeta?.data);
+
+    // To maintain backward compatibility, if the rules object is not present in the payload, 
+    // we create a new rules object with chatId from additionalMeta.data
+    const rules = data.payload.rules ?? {
+      access: {
+        type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
+        data: {
+          chatId,
+        },
+      },
+    };
+
+    const peerInfo: VideoPeerInfo = {
+      address: senderAddress,
+      signal: signalData,
+      meta: {
+        rules,
+      },
+    };
+
+    const videoEventType: VideoEventType =
+      DataModifier.convertToProposedNameForVideo(status);
+
+    const videoEvent: VideoEvent = {
+      event: videoEventType,
+      origin: origin,
+      timestamp: data.epoch,
+      peerInfo,
+    };
+
+    if (includeRaw) {
+      videoEvent.raw = {
+        verificationProof: data.payload.verificationProof,
+      };
+    }
+
+    return videoEvent;
   }
 }
