@@ -366,9 +366,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       },
     }));
 
-    // call onChatPreviewClick if present
-    if (options?.onChatPreviewClick) {
-      options.onChatPreviewClick(chatId);
+    // call onChatSelected if present
+    if (options?.onChatSelected) {
+      options.onChatSelected(chatId);
     }
   };
 
@@ -470,7 +470,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       (acc, cur) => acc > 0 ? 1 + cur : cur,
       0
     );
-    console.log(count);
 
     // Call onBadgeCountChange if present
     if (options?.onUnreadCountChange) {
