@@ -6,6 +6,7 @@ import {useAccount, useWalletClient} from "wagmi";
 import Modal from "./components/Modal";
 import {CONSTANTS, PushAPI, user} from "@pushprotocol/restapi";
 import Video from "./video";
+import Loader from "./components/Loader";
 
 // Initializing the socket connection to the server
 
@@ -22,6 +23,7 @@ function App() {
   const [peerMatched, setPeerMatched] = useState(false);
   const [videoCallInitiator, setVideoCallInitiator] = useState("");
   const [userActive, setUserActive] = useState(true);
+  const [incomingPeerRequest, setIncomingPeerRequest] = useState(false);
   const userAlice = useRef();
   const {data: signer} = useWalletClient();
   const {address: walletAddress, isConnected: walletConnected} = useAccount();
@@ -41,38 +43,47 @@ function App() {
   }, [signer, isPeerConnected]);
   useEffect(() => {
     socket.on("peer_matched", (peerAddress) => {
-      if (!peerAddress) {
-        setShowNoActivePeersModal(true);
-        return;
-      }
       setPeerMatched(true);
-
       checkIfChatExists(peerAddress);
       setVideoCallInitiator(walletAddress);
     });
-
-    socket.on("peer_disconnected", () => {
-      setIsPeerConnected(false);
-      setPeerWalletAddress("");
-      setShowPeerDisconnectedModal(true);
-    });
-    socket.on("no_active_peers_found", () => {
-      setShowNoActivePeersModal(true);
-    });
-    socket.on("video_call_request", async (peerAddress) => {
-      await userAlice.current.chat.accept(peerAddress);
-      socket.emit("intent_accepted", peerAddress);
+    socket.on("incoming_peer_request", () => {
+      console.log("Incoming peer request");
+      setIncomingPeerRequest(true);
     });
     socket.on("intent_accepted_by_peer", async (peerAddress) => {
       setIsPeerConnected(true);
     });
+    socket.on("chat_exists_bw_users", async (peerAddress) => {
+      setIsPeerConnected(true);
+    });
+    socket.on("no_active_peers_found", () => {
+      setShowNoActivePeersModal(true);
+    });
+    socket.on("peer_disconnected", () => {
+      setIsPeerConnected(false);
+      setIncomingPeerRequest(false);
+      setPeerWalletAddress("");
+      setShowPeerDisconnectedModal(true);
+    });
+
+    socket.on("chat_message_request", async (peerAddress) => {
+      await userAlice.current.chat.accept(peerAddress);
+      socket.emit("intent_accepted", peerAddress);
+    });
+
     socket.on("peer_disconnected_call", async (peerAddress) => {
       setIsPeerConnected(false);
+      setIncomingPeerRequest(false);
+      window.location.reload();
     });
 
     // Connect wallet to the server if connected
-    if (walletConnected !== undefined) {
+    if (walletConnected && walletAddress) {
       socket.emit("connect_wallet", walletAddress);
+    }
+    if (!walletAddress) {
+      socket.emit("wallet_disconnected");
     }
   }, [walletAddress, walletConnected]);
   const checkIfChatExists = async (peerAddress) => {
@@ -82,7 +93,7 @@ function App() {
     for (const chat of aliceChats) {
       if (chat.did.substring(7).toLowerCase() === peerAddress.toLowerCase()) {
         chatExists = true;
-        socket.emit("intent_accepted", peerAddress);
+        socket.emit("chat_exists_w_peer", peerAddress);
         break;
       }
     }
@@ -112,38 +123,50 @@ function App() {
     <div>
       <div className="hero min-h-screen bg-base-200">
         {!isPeerConnected ? (
-          <div className="hero-content text-center">
-            <div className="max-w-md">
-              <h1 className="text-5xl font-bold">Hello Anon!</h1>
-              <p className="py-6">
-                ik you're bored, fret not anon, time to make some random video
-                calls with strangersssss.
-              </p>
-              <div className="flex flex-row gap-4 justify-center">
-                <ConnectButton showBalance={false} />
-                {walletConnected && !isPeerConnected && (
-                  <button className="btn btn-primary" onClick={connectToPeer}>
-                    Connect to a Peer
-                  </button>
-                )}
+          <div>
+            {peerMatched || incomingPeerRequest ? (
+              <Loader
+                text={"Found your match!!!"}
+                text2={"Negotiating a connection"}
+              />
+            ) : (
+              <div className="hero-content text-center">
+                <div className="max-w-md">
+                  <h1 className="text-5xl font-bold">Hello Anon!</h1>
+                  <p className="py-6">
+                    ik you're bored, fret not anon, time to make some random
+                    video calls with strangersssss.
+                  </p>
+                  <div className="flex flex-row gap-4 justify-center">
+                    <ConnectButton showBalance={false} />
+                    {walletConnected && !isPeerConnected && (
+                      <button
+                        className="btn btn-primary"
+                        onClick={connectToPeer}
+                      >
+                        Connect to a Peer
+                      </button>
+                    )}
+                  </div>
+                  <div className="my-[20px]">
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-success"
+                      checked={userActive}
+                      onClick={() => {
+                        setUserActive(!userActive);
+                        socket.emit("user_status_toggle", !userActive);
+                      }}
+                    />
+                    {userActive ? (
+                      <p>Active, Connects automatically to an incoming call</p>
+                    ) : (
+                      <p>Inactive, Does not connect to an incoming call</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="my-[20px]">
-                <input
-                  type="checkbox"
-                  className="toggle toggle-success"
-                  checked={userActive}
-                  onClick={() => {
-                    setUserActive(!userActive);
-                    socket.emit("user_status_toggle", !userActive);
-                  }}
-                />
-                {userActive ? (
-                  <p>Active, Connects automatically to an incoming call</p>
-                ) : (
-                  <p>Inactive, Does not connect to an incoming call</p>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           <Video
@@ -151,11 +174,8 @@ function App() {
             userAlice={userAlice.current}
             initiator={videoCallInitiator}
             onEndCall={() => {
-              socket.emit("endPeerConnection", peerWalletAddress);
+              socket.emit("endPeerConnection");
               setIsPeerConnected(false);
-              window.location.reload();
-            }}
-            emitPeerDisconnect={() => {
               window.location.reload();
             }}
           />
@@ -184,5 +204,4 @@ function App() {
   );
 }
 
-// Exporting the App component as the default export
 export default App;

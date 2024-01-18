@@ -15,7 +15,7 @@ const Video = ({
   peerAddress,
   userAlice,
   initiator,
-  emitPeerDisconnect,
+
   onEndCall,
 }) => {
   const {data: signer} = useWalletClient();
@@ -45,7 +45,6 @@ const Video = ({
       }
       if (data.event === VideoEventType.DisconnectVideo) {
         createdStream.current.disconnect();
-        emitPeerDisconnect();
       }
     });
 
@@ -98,7 +97,7 @@ const Video = ({
           />
         ) : (
           <div>
-            <Loader />
+            <Loader text={"Breathe in"} text2={"Breathe out"} />
           </div>
         )}
       </div>

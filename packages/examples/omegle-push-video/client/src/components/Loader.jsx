@@ -1,13 +1,11 @@
 import React, {useState, useEffect} from "react";
 
-const Loader = () => {
-  const [breath, setBreath] = useState("Breathe in");
+const Loader = ({text, text2}) => {
+  const [currText, setCurrText] = useState(text);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setBreath((prevBreath) =>
-        prevBreath === "Breathe in" ? "Breathe out" : "Breathe in"
-      );
+      setCurrText((prev) => (prev === text ? text2 : text));
     }, 3000);
 
     return () => clearInterval(interval);
@@ -16,7 +14,7 @@ const Loader = () => {
   return (
     <div>
       {" "}
-      <p className="text-2xl font-bold">{breath}...</p>{" "}
+      <p className="text-2xl font-bold">{currText}...</p>{" "}
       <div className="flex items-center justify-center my-[10px]">
         <span className="loading loading-ring loading-xs"></span>
         <span className="loading loading-ring loading-sm"></span>
