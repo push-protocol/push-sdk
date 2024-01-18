@@ -22,6 +22,11 @@ import { ChatPreview } from '../ChatPreview';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { getAddress, pCAIP10ToWallet } from '../../../helpers';
+import {
+  generateRandomNonce,
+  transformChatItems,
+  transformStreamToIChatPreviewPayload,
+} from '../helpers';
 
 // Define Interfaces
 /**
@@ -63,7 +68,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   const { env, signer, account, pushUser } = useChatData();
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchLatestMessage } = useFetchMessageUtilities();
+  const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
 
   // set chat preview list
   const [chatPreviewList, setChatPreviewList] = useState<IChatPreviewList>({
@@ -96,47 +101,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     usePushChatStream();
 
   // Helper Functions
-  // Generate random nonce
-  const generateRandomNonce: () => string = () => {
-    let text = '';
-    const possible =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    for (let i = 0; i < 32; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-
-    return text;
-  };
-
-  // Transform chat payloads
-  const transformChatItems: (items: IFeeds[]) => IChatPreviewPayload[] = (
-    items: IFeeds[]
-  ) => {
-    // map but also filter to remove any duplicates which might creep in if stream sends a message
-    const transformedItems: IChatPreviewPayload[] = items
-      .map((item: IFeeds) => ({
-        chatId: item.chatId,
-        chatPic: item.groupInformation
-          ? item.groupInformation.groupImage
-          : item.profilePicture,
-        chatSender: item.groupInformation
-          ? item.groupInformation.groupName
-          : item.did,
-        chatGroup: item.groupInformation ? true : false,
-        chatTimestamp: item.msg.timestamp,
-        chatMsg: {
-          messageType: item.msg.messageType,
-          messageContent: item.msg.messageContent,
-        },
-      }))
-      .filter(
-        (item, index, self) =>
-          index === self.findIndex((t) => t.chatId === item.chatId)
-      );
-
-    return transformedItems;
-  };
 
   // Add to chat items
   const addChatItems: (items: IChatPreviewPayload[]) => void = (
@@ -186,27 +150,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   };
 
-  const transformStreamToIChatPreviewPayload: (
-    item: any
-  ) => IChatPreviewPayload = (item: any) => {
-    // transform the item
-    const transformedItem: IChatPreviewPayload = {
-      chatId: item.chatId,
-      chatPic: null, // for now, we don't have a way to get pfp from stream
-      chatSender: item.meta.group
-        ? null // we take from fetching info
-        : item.to[0],
-      chatGroup: item.meta.group,
-      chatTimestamp: Number(item.timestamp),
-      chatMsg: {
-        messageType: item.message.type,
-        messageContent: item.message.content,
-      },
-    };
-
-    return transformedItem;
-  };
-
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
     if (!pushUser) {
@@ -216,7 +159,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     console.log('Transforming stream message', item);
 
     // transform the item to IChatPreviewPayload
-    let modItem = transformStreamToIChatPreviewPayload(item);
+    const modItem = transformStreamToIChatPreviewPayload(item);
 
     // now check if this message is already present in the list
     const chatItem = chatPreviewList.items.find(
@@ -245,7 +188,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   };
 
   // Transform accepted request
-  const transforAcceptedRequest: (item: any) => void = async (item: any) => {
+  const transformAcceptedRequest: (item: any) => void = async (item: any) => {
     if (!pushUser) {
       return;
     }
@@ -256,6 +199,158 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     } else {
       // pass it as transform stream message to add
       transformStreamMessage(item);
+    }
+  };
+
+  // get type and override account
+
+  const getTypeAndAccount = () => {
+    const type = options.listType
+      ? options.listType
+      : CONSTANTS.CHAT.LIST_TYPE.CHATS;
+    const overrideAccount = options.overrideAccount
+      ? options.overrideAccount
+      : undefined;
+    return { type, overrideAccount };
+  };
+
+  //Initialise chat
+  const initializeChatList = async () => {
+    // Load chat type from options, if not present, default to CHATS
+    const { type, overrideAccount } = getTypeAndAccount();
+    const newpage = 1;
+
+    // store current nonce and page
+    const currentNonce = chatPreviewList.nonce;
+    if (type === 'SEARCH') {
+      await handleSearch(currentNonce);
+    } else {
+      const chatList = await fetchChatList({
+        type,
+        page: newpage,
+        limit: CHAT_PAGE_LIMIT,
+        overrideAccount,
+      });
+      if (chatList) {
+        // get and transform chats
+        const transformedChats = transformChatItems(chatList);
+        console.log(
+          `currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
+        );
+
+        // return if nonce doesn't match or if page is not 1
+        if (
+          currentNonce !== chatPreviewList.nonce ||
+          chatPreviewList.page !== 1
+        ) {
+          return;
+        }
+
+        setChatPreviewList((prev) => ({
+          nonce: generateRandomNonce(),
+          items: transformedChats,
+          page: 1,
+          preloading: false,
+          loading: false,
+          loaded: false,
+          reset: false,
+          resume: false,
+          errored: false,
+          error: null,
+        }));
+      } else {
+        // return if nonce doesn't match
+        console.debug(
+          `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
+        );
+        if (currentNonce !== chatPreviewList.nonce) {
+          return;
+        }
+
+        setChatPreviewList({
+          nonce: generateRandomNonce(),
+          items: [],
+          page: 1,
+          preloading: false,
+          loading: false,
+          loaded: false,
+          reset: false,
+          resume: false,
+          errored: true,
+          error: {
+            code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR,
+            message: 'No chats found',
+          },
+        });
+      }
+    }
+  };
+
+  //load more chats
+  const loadMoreChats = async () => {
+    // Load chat type from options, if not present, default to CHATS
+    const { type, overrideAccount } = getTypeAndAccount();
+    const newpage = chatPreviewList.page + 1;
+
+    // store current nonce and page
+    const currentNonce = chatPreviewList.nonce;
+    const currentPage = newpage;
+
+    if (
+      type === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
+      type === CONSTANTS.CHAT.LIST_TYPE.REQUESTS
+    ) {
+      const chatList = await fetchChatList({
+        type,
+        page: newpage,
+        limit: CHAT_PAGE_LIMIT,
+        overrideAccount,
+      });
+      if (chatList) {
+        // get and transform chats
+        const transformedChats = transformChatItems(chatList);
+
+        // return if nonce doesn't match or if page plus 1 is not the same as new page
+        if (
+          currentNonce !== chatPreviewList.nonce ||
+          chatPreviewList.page + 1 !== currentPage
+        ) {
+          return;
+        }
+
+        setChatPreviewList((prev) => ({
+          nonce: generateRandomNonce(),
+          items: [...prev.items, ...transformedChats],
+          page: newpage,
+          preloading: false,
+          loading: false,
+          loaded: transformedChats.length < CHAT_PAGE_LIMIT ? true : false,
+          reset: false,
+          resume: false,
+          errored: false,
+          error: null,
+        }));
+      } else {
+        // return if nonce doesn't match or if page plus 1 is not the same as new page
+        if (
+          currentNonce !== chatPreviewList.nonce ||
+          chatPreviewList.page + 1 !== newpage
+        ) {
+          return;
+        }
+
+        setChatPreviewList((prev) => ({
+          ...prev,
+          nonce: generateRandomNonce(),
+          reset: false,
+          resume: false,
+          errored: true,
+          error: {
+            code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR,
+            message: 'Unable to load more chats',
+          },
+        }));
+      }
     }
   };
 
@@ -350,83 +445,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     // reset badge as well
     resetBadge();
 
-    const initializeChatList = async () => {
-      // Load chat type from options, if not present, default to CHATS
-      const type = options.listType
-        ? options.listType
-        : CONSTANTS.CHAT.LIST_TYPE.CHATS;
-      const overrideAccount = options.overrideAccount
-        ? options.overrideAccount
-        : undefined;
-      const newpage = 1;
-
-      // store current nonce and page
-      const currentNonce = chatPreviewList.nonce;
-      if (type === 'SEARCH') {
-        await handleSearch(currentNonce);
-      } else {
-        pushUser.chat
-          .list(type, {
-            overrideAccount: overrideAccount,
-            page: newpage,
-            limit: CHAT_PAGE_LIMIT,
-          })
-          .then((chats: IFeeds[]) => {
-            // get and transform chats
-            const transformedChats = transformChatItems(chats);
-            console.log(
-              `currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
-            );
-
-            // return if nonce doesn't match or if page is not 1
-            if (
-              currentNonce !== chatPreviewList.nonce ||
-              chatPreviewList.page !== 1
-            ) {
-              return;
-            }
-
-            setChatPreviewList((prev) => ({
-              nonce: generateRandomNonce(),
-              items: transformedChats,
-              page: 1,
-              preloading: false,
-              loading: false,
-              loaded: false,
-              reset: false,
-              resume: false,
-              errored: false,
-              error: null,
-            }));
-          })
-          .catch((e) => {
-            // return if nonce doesn't match
-            console.debug(
-              `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
-            );
-            if (currentNonce !== chatPreviewList.nonce) {
-              return;
-            }
-
-            setChatPreviewList({
-              nonce: generateRandomNonce(),
-              items: [],
-              page: 1,
-              preloading: false,
-              loading: false,
-              loaded: false,
-              reset: false,
-              resume: false,
-              errored: true,
-              error: {
-                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR,
-                message: 'No chats found',
-              },
-            });
-          });
-      }
-    };
-
     if (chatPreviewList.reset) {
       initializeChatList();
     }
@@ -434,79 +452,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // If loading becomes active
   useEffect(() => {
-    const loadMoreChats = async () => {
-      // Load chat type from options, if not present, default to CHATS
-      const type = options.listType
-        ? options.listType
-        : CONSTANTS.CHAT.LIST_TYPE.CHATS;
-      const overrideAccount = options.overrideAccount
-        ? options.overrideAccount
-        : undefined;
-      const newpage = chatPreviewList.page + 1;
-
-      // store current nonce and page
-      const currentNonce = chatPreviewList.nonce;
-      const currentPage = newpage;
-
-      if (
-        type === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
-        type === CONSTANTS.CHAT.LIST_TYPE.REQUESTS
-      ) {
-        pushUser?.chat
-          .list(type, {
-            overrideAccount: overrideAccount,
-            page: newpage,
-            limit: CHAT_PAGE_LIMIT,
-          })
-          .then((chats: IFeeds[]) => {
-            // get and transform chats
-            const transformedChats = transformChatItems(chats);
-
-            // return if nonce doesn't match or if page plus 1 is not the same as new page
-            if (
-              currentNonce !== chatPreviewList.nonce ||
-              chatPreviewList.page + 1 !== currentPage
-            ) {
-              return;
-            }
-
-            setChatPreviewList((prev) => ({
-              nonce: generateRandomNonce(),
-              items: [...prev.items, ...transformedChats],
-              page: newpage,
-              preloading: false,
-              loading: false,
-              loaded: transformedChats.length < CHAT_PAGE_LIMIT ? true : false,
-              reset: false,
-              resume: false,
-              errored: false,
-              error: null,
-            }));
-          })
-          .catch((e) => {
-            // return if nonce doesn't match or if page plus 1 is not the same as new page
-            if (
-              currentNonce !== chatPreviewList.nonce ||
-              chatPreviewList.page + 1 !== newpage
-            ) {
-              return;
-            }
-
-            setChatPreviewList((prev) => ({
-              ...prev,
-              nonce: generateRandomNonce(),
-              reset: false,
-              resume: false,
-              errored: true,
-              error: {
-                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR,
-                message: 'Unable to load more chats',
-              },
-            }));
-          });
-      }
-    };
-
     if (chatPreviewList.loading || chatPreviewList.resume) {
       loadMoreChats();
     }
@@ -543,7 +488,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       chatStream.constructor === Object
     ) {
       console.debug('Chat accept stream', chatAcceptStream);
-      transforAcceptedRequest(chatStream);
+      transformAcceptedRequest(chatStream);
     }
   }, [chatAcceptStream]);
 
@@ -686,7 +631,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       });
     }
   };
-  console.log(chatPreviewList);
   // Attach scroll listener
   const onScroll = async () => {
     const element = listInnerRef.current;
@@ -746,10 +690,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         <Section padding="10px" flexDirection="column">
           <Span margin="0 0 10px 0">{chatPreviewList.error?.message}</Span>
           {!!(
-            (chatPreviewList.error?.code !==
-              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR) &&
-            (chatPreviewList.error?.code !==
-              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT)
+            chatPreviewList.error?.code !==
+              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR &&
+            chatPreviewList.error?.code !==
+              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT
           ) && (
             <Button
               onClick={() => {

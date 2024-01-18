@@ -1,16 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { useChatData } from '../../../hooks';
 import { Button, Image, Section } from '../../reusables';
 
-import { useChat } from '@livekit/components-react';
-import { getAddress } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { formatAddress, formatDate } from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -30,52 +28,13 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
 
   useEffect(()=>{
     (async()=>{
-    await formatAddress();
-     
+    const address = await formatAddress(options.chatPreviewPayload,env);
+    setFormattedAddress(address);
     })();
 
 
   },[])
-  // Format address
-  const formatAddress = async() => {
-    let formattedAddress = options.chatPreviewPayload?.chatSender;
 
-    if (!options.chatPreviewPayload?.chatGroup) {
-      // check and remove eip155:
-      if (formattedAddress.includes('eip155:')) {
-        formattedAddress = formattedAddress.replace('eip155:', '');
-      }
-      else if(formattedAddress.includes('.')){
-        formattedAddress = (await getAddress(formattedAddress, env))!;
-      }
-    }
-
-    setFormattedAddress( formattedAddress);
-  };
-
-  
-  // Format date
-  const formatDate = () => {
-    let formattedDate;
-    if(options.chatPreviewPayload.chatTimestamp){
-      const today = moment();
-      const timestamp = moment(options.chatPreviewPayload.chatTimestamp);
-      if (timestamp.isSame(today, 'day')) {
-        // If the timestamp is from today, show the time
-        formattedDate = timestamp.format('HH:mm');
-      } else if (timestamp.isSame(today.subtract(1, 'day'), 'day')) {
-        // If the timestamp is from yesterday, show 'Yesterday'
-        formattedDate = 'Yesterday';
-      } else {
-        // If the timestamp is from before yesterday, show the date
-        // Use 'L' to format the date based on the locale
-        formattedDate = timestamp.format('L');
-      }
-    }
-   
-
-    return formattedDate??'';
-  };
 
   return (
     <ChatPreviewContainer>
@@ -135,7 +94,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             flex="1"
           >
             <Account theme={theme}>{ formattedAddress}</Account>
-            <Dated theme={theme}>{formatDate()}</Dated>
+            <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
           </Section>
           <Section
             justifyContent="flex-start"

@@ -16,6 +16,13 @@ import { useChatData } from './useChatData';
     chatId: string;
     
   }
+  interface FetchChatListParams {
+    type: keyof typeof PushAPI.ChatListType;
+    overrideAccount?:string;
+    page:number;
+    limit:number;
+    
+  }
   
 
 const useFetchMessageUtilities
@@ -23,9 +30,30 @@ const useFetchMessageUtilities
   const [error, setError] = useState<string>();
   const [historyLoading, setHistoryLoading] = useState<boolean>(false);
   const [latestLoading, setLatestLoading] = useState<boolean>(false);
+  const [chatListLoading, setChatListLoading] = useState<boolean>(false);
 
 
   const { account, env,pgpPrivateKey ,pushUser} = useChatData();
+  const fetchChatList = useCallback(async ({type,page,limit,overrideAccount = undefined}:FetchChatListParams) => {
+
+    setChatListLoading(true);
+    try {
+        const chats = await pushUser?.chat
+        .list(type, {
+          overrideAccount: overrideAccount,
+          page: page,
+          limit: limit,
+        })
+       return chats;
+    } catch (error: Error | any) {
+      setChatListLoading(false);
+      setError(error.message);
+      console.log(error);
+      return;
+    } finally {
+      setChatListLoading(false);
+    }
+  }, [pushUser,account,env]);
   const fetchLatestMessage = useCallback(async ({chatId}:FetchLatestMessageParams) => {
 
     setLatestLoading(true);
@@ -66,7 +94,7 @@ const useFetchMessageUtilities
     }
   }, [pgpPrivateKey,account,env]);
 
-  return { historyMessages, error, historyLoading ,latestLoading,fetchLatestMessage};
+  return { historyMessages, error, historyLoading ,latestLoading,fetchLatestMessage,fetchChatList,chatListLoading};
 };
 
 export default useFetchMessageUtilities;
