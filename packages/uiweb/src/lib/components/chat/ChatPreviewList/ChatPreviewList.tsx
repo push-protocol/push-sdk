@@ -169,18 +169,18 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     // if chat item is present, take pfp an group name if request
     if (chatItem) {
       modItem.chatPic = chatItem.chatPic;
-      modItem.chatSender = chatItem.chatSender;
+      modItem.chatParticipant = chatItem.chatParticipant;
     } else {
       // if not present, fetch profile
       if (!modItem.chatGroup) {
         const profile = await pushUser.profile.info({
-          overrideAccount: modItem.chatSender,
+          overrideAccount: modItem.chatParticipant,
         });
         modItem.chatPic = profile.picture;
       } else {
         const profile = await pushUser.chat.group.info(modItem.chatId!);
         modItem.chatPic = profile.groupImage;
-        modItem.chatSender = profile.groupName;
+        modItem.chatParticipant = profile.groupName;
       }
     }
     // modify the chat items
@@ -498,7 +498,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     let searchedChat: IChatPreviewPayload = {
       chatId: undefined,
       chatPic: null,
-      chatSender: '',
+      chatParticipant: '',
       chatGroup: false,
       chatTimestamp: undefined,
       chatMsg: {
@@ -547,7 +547,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
               chatPic:
                 (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
                 null,
-              chatSender: formattedChatId!,
+              chatParticipant: formattedChatId!,
             };
             //fetch latest chat
             const latestMessage = await fetchLatestMessage({

@@ -6,7 +6,7 @@ import { IChatTheme } from "./theme";
 export interface IChatPreviewPayload {
   chatId: string | undefined;
   chatPic: string | null;
-  chatSender: string;
+  chatParticipant: string;
   chatGroup: boolean;
   chatTimestamp: number | undefined;
   chatMsg?: {

@@ -61,7 +61,7 @@ interface ITextColor {
   searchPlaceholderText?:string;
   modalHeadingText?:string;
   modalSubHeadingText?:string;
-  chatPreviewSenderText?:string;
+  chatPreviewParticipantText?:string;
   chatPreviewMessageText?:string;
   chatPreviewDateText?:string;
   chatPreviewBadgeText?:string;
@@ -78,7 +78,7 @@ interface IFont {
   chatSentBubbleTimestampText?: string;
   searchInputText?:string;
   searchPlaceholderText?:string;
-  chatPreviewSenderText?:string;
+  chatPreviewParticipantText?:string;
   chatPreviewMessageText?:string;
   chatPreviewDateText?:string;
   chatPreviewBadgeText?:string;
@@ -95,7 +95,7 @@ interface IFontWeight {
   chatSentBubbleTimestampText?: string;
   searchInputText?:string;
   searchPlaceholderText?:string;
-  chatPreviewSenderText?:string;
+  chatPreviewParticipantText?:string;
   chatPreviewMessageText?:string;
   chatPreviewDateText?:string;
   chatPreviewBadgeText?:string;
@@ -177,7 +177,7 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleTimestampText: '12px',
     searchInputText:'16px',
     searchPlaceholderText:'16px',
-    chatPreviewSenderText:'16px',
+    chatPreviewParticipantText:'16px',
     chatPreviewMessageText:'14px',
     chatPreviewDateText:'12px',
     chatPreviewBadgeText:'12px'
@@ -195,7 +195,7 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleTimestampText: '400',
     searchInputText:'400',
     searchPlaceholderText:'400',
-    chatPreviewSenderText:'600',
+    chatPreviewParticipantText:'600',
     chatPreviewMessageText:'400',
     chatPreviewDateText:'400',
     chatPreviewBadgeText:'600'
@@ -235,7 +235,7 @@ export const lightChatTheme: IChatTheme = {
     searchPlaceholderText:'rgb(101, 119, 149)',
     modalHeadingText:'#000',
     modalSubHeadingText:'rgb(101, 119, 149)',
-    chatPreviewSenderText:'#000',
+    chatPreviewParticipantText:'#000',
     chatPreviewMessageText:'#888',
     chatPreviewDateText:'#888',
     chatPreviewBadgeText:'#fff'
@@ -292,7 +292,7 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleTimestampText: '12px',
     searchInputText:'16px',
     searchPlaceholderText:'16px',
-    chatPreviewSenderText:'16px',
+    chatPreviewParticipantText:'16px',
     chatPreviewMessageText:'14px',
     chatPreviewDateText:'12px',
     chatPreviewBadgeText:'12px'
@@ -310,7 +310,7 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleTimestampText: '400',
     searchInputText:'400',
     searchPlaceholderText:'400',
-    chatPreviewSenderText:'600',
+    chatPreviewParticipantText:'600',
     chatPreviewMessageText:'400',
     chatPreviewDateText:'400',
     chatPreviewBadgeText:'600'
@@ -350,7 +350,7 @@ export const darkChatTheme: IChatTheme = {
     modalHeadingText:'#fff',
     modalSubHeadingText:'rgb(182, 188, 214)',
     buttonDisableText:'#B6BCD6',
-    chatPreviewSenderText:'#000',
+    chatPreviewParticipantText:'#000',
     chatPreviewMessageText:'#888',
     chatPreviewDateText:'#888',
     chatPreviewBadgeText:'#fff'

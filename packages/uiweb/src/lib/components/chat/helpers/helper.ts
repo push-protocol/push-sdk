@@ -125,7 +125,7 @@ export const formatAddress = async (
   chatPreviewPayload: IChatPreviewPayload,
   env: Env
 ) => {
-  let formattedAddress = chatPreviewPayload?.chatSender;
+  let formattedAddress = chatPreviewPayload?.chatParticipant;
 
   if (!chatPreviewPayload?.chatGroup) {
     // check and remove eip155:
@@ -185,7 +185,7 @@ export const generateRandomNonce: () => string = () => {
         chatPic: item.groupInformation
           ? item.groupInformation.groupImage
           : item.profilePicture,
-        chatSender: item.groupInformation
+        chatParticipant: item.groupInformation
           ? item.groupInformation.groupName
           : item.did,
         chatGroup: item.groupInformation ? true : false,
@@ -210,7 +210,7 @@ export const generateRandomNonce: () => string = () => {
     const transformedItem: IChatPreviewPayload = {
       chatId: item.chatId,
       chatPic: null, // for now, we don't have a way to get pfp from stream
-      chatSender: item.meta.group
+      chatParticipant: item.meta.group
         ? null // we take from fetching info
         : item.to[0],
       chatGroup: item.meta.group,
