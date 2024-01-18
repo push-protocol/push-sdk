@@ -26,6 +26,7 @@ export class PushStream extends EventEmitter {
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
   private listen: STREAM[];
+  private disconnected: boolean;
 
   constructor(
     account: string,
@@ -42,7 +43,7 @@ export class PushStream extends EventEmitter {
     this.raw = options.raw ?? false;
     this.options = options;
     this.listen = _listen;
-
+    this.disconnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -105,7 +106,7 @@ export class PushStream extends EventEmitter {
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS) || 
+      this.listen.includes(STREAM.NOTIF_OPS) ||
       this.listen.includes(STREAM.VIDEO);
 
     let isChatSocketConnected = false;
@@ -325,7 +326,9 @@ export class PushStream extends EventEmitter {
             // Video Notification
             const modifiedData = DataModifier.mapToVideoEvent(
               data,
-              this.account === data.sender ? MessageOrigin.Self : MessageOrigin.Other,
+              this.account === data.sender
+                ? MessageOrigin.Self
+                : MessageOrigin.Other,
               this.raw
             );
 
@@ -385,7 +388,10 @@ export class PushStream extends EventEmitter {
   }
 
   public connected(): boolean {
-    return (this.pushNotificationSocket && this.pushNotificationSocket.connected) || (this.pushChatSocket && this.pushChatSocket.connected);
+    return (
+      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
+      (this.pushChatSocket && this.pushChatSocket.connected)
+    );
   }
 
   public async disconnect(): Promise<void> {
