@@ -4,7 +4,7 @@ import {ConnectButton} from "@rainbow-me/rainbowkit";
 import {useAccount, useWalletClient} from "wagmi";
 
 import Modal from "./components/Modal";
-import {CONSTANTS, PushAPI, user} from "@pushprotocol/restapi";
+import {CONSTANTS, PushAPI} from "@pushprotocol/restapi";
 import Video from "./video";
 import Loader from "./components/Loader";
 
@@ -36,7 +36,7 @@ function App() {
     if (isPeerConnected) return;
     const initializeUserAlice = async () => {
       userAlice.current = await PushAPI.initialize(signer, {
-        env: CONSTANTS.ENV.DEV,
+        env: CONSTANTS.ENV.PROD,
       });
     };
     initializeUserAlice();
@@ -48,7 +48,6 @@ function App() {
       setVideoCallInitiator(walletAddress);
     });
     socket.on("incoming_peer_request", () => {
-      console.log("Incoming peer request");
       setIncomingPeerRequest(true);
     });
     socket.on("intent_accepted_by_peer", async (peerAddress) => {
@@ -64,17 +63,30 @@ function App() {
       setIsPeerConnected(false);
       setIncomingPeerRequest(false);
       setPeerWalletAddress("");
+      setPeerMatched(false);
       setShowPeerDisconnectedModal(true);
     });
 
     socket.on("chat_message_request", async (peerAddress) => {
-      await userAlice.current.chat.accept(peerAddress);
+      const aliceChatRequsts = await userAlice.current.chat.list("REQUESTS");
+      for (const chat of aliceChatRequsts) {
+        if (
+          chat.msg.fromDID &&
+          chat.msg.fromDID.substring(7).toLowerCase() ===
+            peerAddress.toLowerCase()
+        ) {
+          await userAlice.current.chat.accept(peerAddress);
+          break;
+        }
+      }
+
       socket.emit("intent_accepted", peerAddress);
     });
 
     socket.on("peer_disconnected_call", async (peerAddress) => {
       setIsPeerConnected(false);
       setIncomingPeerRequest(false);
+      setPeerMatched(false);
       window.location.reload();
     });
 
@@ -87,12 +99,21 @@ function App() {
     }
   }, [walletAddress, walletConnected]);
   const checkIfChatExists = async (peerAddress) => {
+    if (!userAlice.current) {
+      window.location.reload();
+      return;
+    }
     const aliceChats = await userAlice.current.chat.list("CHATS");
 
     let chatExists = false;
     for (const chat of aliceChats) {
-      if (chat.did.substring(7).toLowerCase() === peerAddress.toLowerCase()) {
+      if (
+        chat.msg.fromDID &&
+        chat.msg.fromDID.substring(7).toLowerCase() ===
+          peerAddress.toLowerCase()
+      ) {
         chatExists = true;
+
         socket.emit("chat_exists_w_peer", peerAddress);
         break;
       }
@@ -113,7 +134,6 @@ function App() {
         type: "Text",
         content: "Hi Peer, setting up a call!",
       });
-
       socket.emit("chat_message_sent", peerAddress);
     }
     setPeerWalletAddress(peerAddress);

@@ -1,8 +1,4 @@
-import {
-  CONSTANTS,
-  VideoEventType,
-  VideoCallStatus,
-} from "@pushprotocol/restapi";
+import {CONSTANTS, VideoCallStatus} from "@pushprotocol/restapi";
 import {useAccount, useWalletClient} from "wagmi";
 
 import {useEffect, useRef, useState} from "react";
@@ -11,13 +7,7 @@ import {initVideoCallData} from "@pushprotocol/restapi/src/lib/video";
 import VideoFrame from "./components/VideoFrame";
 import Loader from "./components/Loader";
 
-const Video = ({
-  peerAddress,
-  userAlice,
-  initiator,
-
-  onEndCall,
-}) => {
+const Video = ({peerAddress, userAlice, initiator, onEndCall}) => {
   const {data: signer} = useWalletClient();
   const {address: walletAddress} = useAccount();
   const aliceVideoCall = useRef();
@@ -40,10 +30,10 @@ const Video = ({
     });
 
     createdStream.current.on(CONSTANTS.STREAM.VIDEO, async (data) => {
-      if (data.event === VideoEventType.RequestVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
         await aliceVideoCall.current.approve(data?.peerInfo);
       }
-      if (data.event === VideoEventType.DisconnectVideo) {
+      if (data.event === CONSTANTS.VIDEO.EVENT.DISCONNECT) {
         createdStream.current.disconnect();
       }
     });

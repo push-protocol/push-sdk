@@ -11,16 +11,16 @@ import {
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import {configureChains, createConfig, WagmiConfig} from "wagmi";
-import {sepolia} from "wagmi/chains";
+import {mainnet} from "wagmi/chains";
 import {publicProvider} from "wagmi/providers/public";
 
 import App from "./App";
 import VideoPage from "./video";
-
-const {chains, publicClient} = configureChains([sepolia], [publicProvider()]);
+import {inject} from "@vercel/analytics";
+const {chains, publicClient} = configureChains([mainnet], [publicProvider()]);
 const {connectors} = getDefaultWallets({
-  appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
+  appName: "Bored Anons",
+  projectId: "c79671f77e15d3c16d8df828931df7a7",
   chains,
 });
 const wagmiConfig = createConfig({
@@ -44,3 +44,4 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+inject();

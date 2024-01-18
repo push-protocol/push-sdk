@@ -47,13 +47,13 @@ io.on("connection", (socket) => {
   socket.on("connect_to_peer", (walletAddress) => {
     const caller = users.find((user) => user.id === socket.id);
 
-    if (caller && caller.busy) {
+    if (caller && !caller.walletAddress && caller.busy) {
       return;
     }
 
     const availableUsers = users.filter(
       (user) =>
-        user.walletAddress !== caller.walletAddress &&
+        user.walletAddress !== walletAddress &&
         user.id !== caller.id &&
         user.walletAddress !== null &&
         user.online &&
@@ -121,35 +121,43 @@ io.on("connection", (socket) => {
 
   socket.on("chat_message_sent", (peerAddress) => {
     const peerSocket = users.find((user) => user.walletAddress === peerAddress);
-
+    const currUserSocket = users.find((user) => user.id === socket.id);
     if (peerSocket) {
-      io.to(peerSocket.id).emit("chat_message_request", socket.walletAddress);
+      io.to(peerSocket.id).emit(
+        "chat_message_request",
+        currUserSocket.walletAddress
+      );
     }
   });
   socket.on("intent_accepted", (peerAddress) => {
     const peerSocket = users.find((user) => user.walletAddress === peerAddress);
+    const currUserSocket = users.find((user) => user.id === socket.id);
     if (peerSocket) {
       io.to(peerSocket.id).emit(
         "intent_accepted_by_peer",
-        socket.walletAddress
+        currUserSocket.walletAddress
       );
       io.to(socket.id).emit("intent_accepted_by_peer", peerAddress);
     }
   });
   socket.on("chat_exists_w_peer", (peerAddress) => {
     const peerSocket = users.find((user) => user.walletAddress === peerAddress);
+    const currUserSocket = users.find((user) => user.id === socket.id);
     if (peerSocket) {
-      io.to(peerSocket.id).emit("chat_exists_bw_users", socket.walletAddress);
+      io.to(peerSocket.id).emit(
+        "chat_exists_bw_users",
+        currUserSocket.walletAddress
+      );
       io.to(socket.id).emit("chat_exists_bw_users", peerAddress);
     }
   });
 
   socket.on("endPeerConnection", () => {
-    // Handle disconnecting from a peer, if needed
+    const currUserSocket = users.find((user) => user.id === socket.id);
 
-    if (socket.walletAddress) {
+    if (currUserSocket.walletAddress) {
       const userIndex = users.findIndex(
-        (user) => user.walletAddress === socket.walletAddress
+        (user) => user.walletAddress === currUserSocket.walletAddress
       );
       const userIndexPeer = users.findIndex(
         (user) => user.id === users[userIndex].connectedPeerId
@@ -162,6 +170,7 @@ io.on("connection", (socket) => {
       if (userIndexPeer !== -1) {
         users[userIndexPeer].busy = false;
         users[userIndexPeer].lookingForPeers = true;
+        users[userIndexPeer].connectedPeerId = null;
       }
       io.to(userIndexPeer.id).emit("peer_disconnected_call");
     }
