@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.35...uiweb-0.0.1-alpha.36) (2024-01-18)
+
+
+### Bug Fixes
+
+* minor fix ([3034c2c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3034c2cb64116d7e9721da79bdbac180712342d3))
+
+
+
 ## [0.0.1-alpha.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.16...uiweb-0.0.1-alpha.17) (2024-01-18)
 
 
