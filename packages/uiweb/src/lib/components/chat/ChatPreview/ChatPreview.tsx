@@ -136,9 +136,9 @@ const ChatPreviewContainer = styled(Section)<IThemeProps>`
 
 // Styled component for the name of the person in the inbox
 const Account = styled.div<IThemeProps>`
-  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewSenderText};
-  font-size: ${(props) => props.theme.fontSize?.chatPreviewSenderText};
-  color: ${(props) => props.theme.textColor?.chatPreviewSenderText};
+  font-weight: ${(props) => props.theme.fontWeight?.chatPreviewParticipantText};
+  font-size: ${(props) => props.theme.fontSize?.chatPreviewParticipantText};
+  color: ${(props) => props.theme.textColor?.chatPreviewParticipantText};
   flex: 1;
   align-self: stretch;
   text-align: start;
