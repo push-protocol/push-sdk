@@ -203,6 +203,11 @@ export class DataModifier {
     includeRaw = false,
     eventType: MessageEventType
   ): MessageEvent {
+
+    if (data.hasIntent === false && eventType === 'message') {
+      eventType = MessageEventType.Request;
+    }
+
     const messageEvent: MessageEvent = {
       event: eventType,
       origin: data.messageOrigin,
@@ -400,19 +405,19 @@ export class DataModifier {
   ): VideoEventType {
     switch (currentVideoStatus) {
       case VideoCallStatus.INITIALIZED:
-        return VideoEventType.RequestVideo;
+        return VideoEventType.REQUEST;
       case VideoCallStatus.RECEIVED:
-        return VideoEventType.ApproveVideo;
+        return VideoEventType.APPROVE;
       case VideoCallStatus.CONNECTED:
-        return VideoEventType.ConnectVideo;
+        return VideoEventType.CONNECT;
       case VideoCallStatus.ENDED:
-        return VideoEventType.DisconnectVideo;
+        return VideoEventType.DISCONNECT;
       case VideoCallStatus.DISCONNECTED:
-        return VideoEventType.DenyVideo;
+        return VideoEventType.DENY;
       case VideoCallStatus.RETRY_INITIALIZED:
-        return VideoEventType.RetryRequestVideo;
+        return VideoEventType.RETRY_REQUEST;
       case VideoCallStatus.RETRY_RECEIVED:
-        return VideoEventType.RetryApproveVideo;
+        return VideoEventType.RETRY_APPROVE;
       default:
         throw new Error(`Unknown video call status: ${currentVideoStatus}`);
     }
@@ -426,7 +431,7 @@ export class DataModifier {
     const { senderAddress, signalData, status, chatId }: VideoDataType =
       JSON.parse(data.payload.data.additionalMeta?.data);
 
-    // To maintain backward compatibility, if the rules object is not present in the payload, 
+    // To maintain backward compatibility, if the rules object is not present in the payload,
     // we create a new rules object with chatId from additionalMeta.data
     const rules = data.payload.rules ?? {
       access: {
