@@ -9,24 +9,24 @@ import {
 } from '../exportedTypes';
 
 import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
-import styled from 'styled-components';
 import { ethers } from 'ethers';
+import styled from 'styled-components';
 
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
 
-import { IChatTheme } from '../theme';
-import { ThemeContext } from '../theme/ThemeProvider';
 import { getAddress, pCAIP10ToWallet } from '../../../helpers';
 import {
   generateRandomNonce,
   transformChatItems,
   transformStreamToIChatPreviewPayload,
 } from '../helpers';
+import { IChatTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 // Define Interfaces
 /**
@@ -365,6 +365,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         [chatId]: 0,
       },
     }));
+
+    // call onChatPreviewClick if present
+    if (options?.onChatPreviewClick) {
+      options.onChatPreviewClick(chatId);
+    }
   };
 
   // Set badge
@@ -390,6 +395,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       badges: {},
     });
   };
+
 
   // Effects
 
@@ -456,6 +462,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       loadMoreChats();
     }
   }, [chatPreviewList.loading, chatPreviewList.resume]);
+
+  // If badges count change
+  useEffect(() => {
+    // Count all badges object that are greater than 0
+    const count = Object.values(chatPreviewListMeta.badges).reduce(
+      (acc, cur) => acc > 0 ? 1 + cur : cur,
+      0
+    );
+    console.log(count);
+
+    // Call onBadgeCountChange if present
+    if (options?.onUnreadCountChange) {
+      options.onUnreadCountChange(count);
+    }
+  }, [chatPreviewListMeta.badges]);
 
   // Define stream objects
   useEffect(() => {
