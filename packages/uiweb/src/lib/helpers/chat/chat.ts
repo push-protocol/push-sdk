@@ -223,7 +223,7 @@ export const checkIfSameChat = (
   account: string,
   chatId: string
 ) => {
-  if (ethers.utils.isAddress(chatId)) {
+  if (ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
