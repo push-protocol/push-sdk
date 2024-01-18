@@ -11,3 +11,4 @@ export * from './useUpdateGroup';
 export * from './useInitializePushUser';
 export * from './usePushChatStream';
 export * from './usePushUserInfoUtilities';
+export * from './useGroupMemberUtilities';

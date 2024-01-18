@@ -1,27 +1,27 @@
 import { useContext, useRef, useState } from 'react';
 
 import styled from 'styled-components';
+import { IUser } from '@pushprotocol/restapi';
 
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
-import Dropdown, { DropdownValueType } from '../reusables/DropDown';
+import Dropdown, { DropdownValueType } from './DropDown';
 import { Section, Span } from '../../reusables/sharedStyling';
 
 import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
-import { IChatTheme, User } from '../exportedTypes';
 import { findObject } from '../helpers/helper';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
-import { ProfileContainer } from '../reusables';
+import { ProfileContainer } from '.';
 
 
 type MemberListContainerType = {
   key?: number;
-  memberData: User;
-  handleMemberList: (member: User) => void;
-  handleMembers?: (value: User[]) => void;
+  memberData: any;
+  handleMemberList: (member: IUser) => void;
+  handleMembers?: (value: IUser[]) => void;
   darkIcon: any;
   memberList?: any;
 };
@@ -114,7 +114,7 @@ export const MemberListContainer = ({
         theme={theme}
         member={{
           wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          image: memberData.profilePicture || '',
+          image: memberData.profile?.picture || '',
         }}
       />
 

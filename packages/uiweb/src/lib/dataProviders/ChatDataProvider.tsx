@@ -1,5 +1,5 @@
 import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
+import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import {
   ChatDataContext,
   IChatDataContextValues,
@@ -13,7 +13,6 @@ import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
 import useInitializePushUser from '../hooks/chat/useInitializePushUser';
 import useChatProfile from '../hooks/chat/useChatProfile';
-import { GUEST_MODE_ACCOUNT } from '../components/chat/constants';
 import usePushUserInfoUtilities from '../hooks/chat/usePushUserInfoUtilities';
 
 export interface IChatUIProviderProps {
