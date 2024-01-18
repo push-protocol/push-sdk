@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
-import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 import { useEffect, useRef, useState } from 'react';
 import { ENV } from '../../config';
 import { useChatData } from './useChatData';
@@ -20,7 +19,7 @@ export const usePushChatStream = () => {
   const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
   const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
 
-  const attachListenersAndConnect = async (stream: PushStream) => {
+  const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
       setIsPushChatStreamConnected(true);
     });
