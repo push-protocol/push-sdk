@@ -2,6 +2,40 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.14...uiweb-0.0.1-alpha.16) (2024-01-18)
+
+
+### Bug Fixes
+
+* Added ethersV6SignerType in uiweb signer types ([#1018](https://github.com/ethereum-push-notification-service/push-sdk/issues/1018)) ([76710d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/76710d40c688aa7a21113a36e3404e806c82cbb0))
+* added fuse network ([62a1381](https://github.com/ethereum-push-notification-service/push-sdk/commit/62a1381a8db13c6b8f0392771867a0bc9c147b4e))
+* added pushUser and stream ([#1023](https://github.com/ethereum-push-notification-service/push-sdk/issues/1023)) ([a6f518f](https://github.com/ethereum-push-notification-service/push-sdk/commit/a6f518feb51b0737dec4e43dc35ae16a2fbe6def))
+* added styling for the component in chat profile ([d2985ae](https://github.com/ethereum-push-notification-service/push-sdk/commit/d2985aee6f1ae56892b88ad371d08333e22b4880))
+* added support for ens ([#1008](https://github.com/ethereum-push-notification-service/push-sdk/issues/1008)) ([8e2cec9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8e2cec9ecf34548f5cfb262450de4ef29ced4c80))
+* case sensative file inclusion ([#1024](https://github.com/ethereum-push-notification-service/push-sdk/issues/1024)) ([ac7f441](https://github.com/ethereum-push-notification-service/push-sdk/commit/ac7f4417d1c8ce84cee9e1ee84046d2a080b2171))
+* changed component type and how it is rendered ([de355a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/de355a91e5cc6f91e5e07cf3d68efd7f7f5e4a76))
+* changed stream type to any ([e597fe5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e597fe54f5ae5f89b54839b8f3a9b5f42b79183e))
+* fixed build for uiweb ([#854](https://github.com/ethereum-push-notification-service/push-sdk/issues/854)) ([7e28d59](https://github.com/ethereum-push-notification-service/push-sdk/commit/7e28d5936899544c5f115c9ff6053c2328964b12))
+* fixed chats not updating in real time for w2w ([b698948](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6989485546867bdf493172e1e6a2fce27a7701e))
+* fixed create group btn not disabling and added minimum member requirement ([ea1a3a8](https://github.com/ethereum-push-notification-service/push-sdk/commit/ea1a3a848f646606ffebec50bf4e29b08946f946))
+* fixed font awesome ([#799](https://github.com/ethereum-push-notification-service/push-sdk/issues/799)) ([282dc1c](https://github.com/ethereum-push-notification-service/push-sdk/commit/282dc1cf0e52627c2e854912d6b15acc5716ccaa))
+* fixed hardcoded msg for group rules in msg input ([#925](https://github.com/ethereum-push-notification-service/push-sdk/issues/925)) ([4e7000c](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e7000c9cb60f644291b11e99826b0e79d7e0058))
+* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
+* fixed sepolia ud issues ([#851](https://github.com/ethereum-push-notification-service/push-sdk/issues/851)) ([61979e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/61979e55ac2bc50c4a7674ada0cc5035ff848087))
+* focus back to message input after sending the message ([#1014](https://github.com/ethereum-push-notification-service/push-sdk/issues/1014)) ([3a8218e](https://github.com/ethereum-push-notification-service/push-sdk/commit/3a8218e9716a7168a3c650c7caec89fb464c8ae5))
+* merged main ([e3f2760](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3f276067ebaf565511dfe22b1748546e37c0c80))
+* merged main ([fa85b3e](https://github.com/ethereum-push-notification-service/push-sdk/commit/fa85b3e91deb8dac37961608cf3a761213a6cc24))
+* scroll to bottom, loading the feed without message ([#910](https://github.com/ethereum-push-notification-service/push-sdk/issues/910)) ([0393cdf](https://github.com/ethereum-push-notification-service/push-sdk/commit/0393cdfb81a61f04eb0ab04e5f880470ea276296))
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+* workaround for socket response ([#924](https://github.com/ethereum-push-notification-service/push-sdk/issues/924)) ([f765f51](https://github.com/ethereum-push-notification-service/push-sdk/commit/f765f510e86fd038adc9353bec56cd5e0b7ef0ee))
+
+
+### Features
+
+* implemented option to pass a component in chatprofile ([4eea456](https://github.com/ethereum-push-notification-service/push-sdk/commit/4eea456637c60997ea5f3f5d8a3a917638db946f))
+
+
+
 ## [0.0.1-alpha.30](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.29...uiweb-0.0.1-alpha.30) (2023-11-13)
 
 
