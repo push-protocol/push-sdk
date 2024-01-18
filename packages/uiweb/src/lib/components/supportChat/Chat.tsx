@@ -3,7 +3,7 @@ import { PushAPI } from '@pushprotocol/restapi';
 import { ChatIcon } from '../../icons/ChatIcon';
 import { Modal } from './Modal';
 import styled from 'styled-components';
-import { handleOnChatIconClick } from '../../helpers';
+import { getAddress, handleOnChatIconClick } from '../../helpers';
 import {
   SupportChatMainStateContext,
   SupportChatPropsContext,
@@ -16,6 +16,7 @@ import { useSDKSocket } from '../../hooks/useSDKSocket';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
 import { sign } from 'crypto';
+
 export type ChatProps = {
 account?: string;
   signer: SignerType;
@@ -50,6 +51,7 @@ export type ButtonStyleProps = {
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
   const [accountadd, setAccountadd] = useState<string | null>(account)
   const [pushUser, setPushUser] = useState<PushAPI | null>(null);
+  const [resolvedSupportAddress, setResolvedSupportAddress] = useState<string>('');
   const setChatsSorted = (chats: IMessageIPFS[]) => {
 
     const chatsWithNumericTimestamps = chats.map(item => ({
@@ -72,7 +74,7 @@ export type ButtonStyleProps = {
     env,
     apiKey,
     pushUser: pushUser!,
-    supportAddress,
+    supportAddress: resolvedSupportAddress,
     signer
   });
 
@@ -81,7 +83,7 @@ export type ButtonStyleProps = {
     account : accountadd,
     signer,
     pushUser,
-    supportAddress,
+    supportAddress : resolvedSupportAddress,
     greetingMsg,
     modalTitle,
     theme: { ...lightTheme, ...theme },
@@ -89,6 +91,18 @@ export type ButtonStyleProps = {
     env,
   };
 
+  useEffect(() => {
+
+    const getNewSupportAddress = async() => {
+       if(supportAddress.includes(".")){
+          const newAddress = await getAddress(supportAddress, env)
+setResolvedSupportAddress(newAddress!);
+    }else{
+setResolvedSupportAddress(supportAddress);
+    }
+    }
+  getNewSupportAddress(); 
+  },[supportAddress, pushUser, env])
 
 
   useEffect(() => {

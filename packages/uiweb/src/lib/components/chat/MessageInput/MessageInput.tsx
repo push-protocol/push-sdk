@@ -142,6 +142,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     }
   }, [textAreaRef, typedMessage]);
 
+  useEffect(() => {
+    if (!loading && textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, [loading, textAreaRef]);
   //need to do something about fetching connectedUser in every component
   useEffect(() => {
     (async () => {
