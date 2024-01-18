@@ -3,9 +3,7 @@ import 'text-encoding';
 import 'react-native-crypto';
 import 'react-native-get-random-values';
 
-import React from 'react';
 import OpenPGP from 'react-native-fast-openpgp';
-import WebViewCrypto from 'react-native-webview-crypto';
 import { ethers } from 'ethers';
 
 import * as PushApi from '@pushprotocol/restapi';
@@ -77,13 +75,6 @@ const approve = async (options: PushApi.chat.ApproveRequestOptionsType) => {
   return await PushApi.chat.approveCore(options, PGPHelper);
 };
 
-const conversationHash = async (
-  options: PushApi.ConversationHashOptionsType
-) => {
-  let hash = await PushApi.chat.conversationHash(options);
-  return hash;
-};
-
 const chats = async (options: ChatsOptionsType) => {
   let chatsList = await PushApi.chat.chatsCore(options, PGPHelper);
   return chatsList;
@@ -122,15 +113,6 @@ const genRandomAddress = () => {
 
 const profileUpgrade = PushApi.user.auth.update;
 
-const PushRNWrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <React.Fragment>
-      <WebViewCrypto />
-      {children}
-    </React.Fragment>
-  );
-};
-
 export {
   PGPHelper,
   genRandomAddress,
@@ -139,7 +121,6 @@ export {
   profileUpdate,
   PushApi,
   ENV,
-  conversationHash,
   latest,
   history,
   createGroup,
@@ -151,5 +132,4 @@ export {
   send,
   approve,
   Constants,
-  PushRNWrapper,
 };

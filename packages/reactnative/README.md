@@ -35,7 +35,7 @@ src="https://res.cloudinary.com/drdjegqln/image/upload/v1686227558/Push-Logo-Sta
   - [Install the SDK](#install-the-sdk)
   - [Install the peer dependencies](#install-the-peer-dependencies)
   - [Nodeify the crypto packages](#nodeify-the-crypto-packages)
-  - [Wrap your app with the PushRNWrapper](#wrap-your-app-with-the-pushrnwrapper)
+  - [Add the WebViewCrypto component in your app root](#add-the-webviewcrypto-component-in-your-app-root)
   - [Start using the Push SDK in your app](#start-using-the-push-sdk-in-your-app)
 
 - [React Native SDK Features](#react-native-sdk-features)
@@ -108,15 +108,16 @@ Add postinstall script in your `package.json` file if `node_modules` are not nod
 "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack"
 ```
 
-#### Wrap your app with the PushRNWrapper
+#### Add the WebViewCrypto component in your app root
 
 ```jsx
-import { PushRNWrapper } from '@pushprotocol/react-native-sdk';
+import WebViewCrypto from 'react-native-webview-crypto';
 
 return (
-  <PushRNWrapper>
+  <>
+    <WebViewCrypto />
     <App />
-  </PushRNWrapper>
+  </>
 );
 ```
 
