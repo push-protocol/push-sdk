@@ -45,7 +45,7 @@ export interface IChatViewComponentProps {
   chatViewList?: boolean;
   chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
-  chatId: string; //need confirmation on this
+  chatId?: string; //need confirmation on this
   limit?: number;
   emoji?: boolean;
   gif?: boolean;
@@ -57,7 +57,8 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
+  welcomeComponent?:React.ReactNode;
 }
 
 export interface IChatProfile {
@@ -65,7 +66,7 @@ export interface IChatProfile {
   style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
 }
 
 export interface TwitterFeedReturnType {
