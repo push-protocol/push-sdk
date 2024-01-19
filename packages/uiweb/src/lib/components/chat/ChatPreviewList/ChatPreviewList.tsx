@@ -156,7 +156,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       return;
     }
 
-    console.log('Transforming stream message', item);
+    console.debug('Transforming stream message', item);
 
     // transform the item to IChatPreviewPayload
     const modItem = transformStreamToIChatPreviewPayload(item);
@@ -234,7 +234,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       if (chatList) {
         // get and transform chats
         const transformedChats = transformChatItems(chatList);
-        console.log(
+        console.debug(
           `currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
         );
 
@@ -492,23 +492,23 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   useEffect(() => {
     if (
-      Object.keys(chatStream).length > 0 &&
-      chatStream.constructor === Object
+      Object.keys(chatRequestStream).length > 0 &&
+      chatRequestStream.constructor === Object
     ) {
-      console.debug('Chat request stream', chatStream);
+      console.debug('Chat request stream', chatRequestStream);
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
-        transformStreamMessage(chatStream);
+        transformStreamMessage(chatRequestStream);
       }
     }
   }, [chatRequestStream]);
 
   useEffect(() => {
     if (
-      Object.keys(chatStream).length > 0 &&
-      chatStream.constructor === Object
+      Object.keys(chatAcceptStream).length > 0 &&
+      chatAcceptStream.constructor === Object
     ) {
       console.debug('Chat accept stream', chatAcceptStream);
-      transformAcceptedRequest(chatStream);
+      transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
 
