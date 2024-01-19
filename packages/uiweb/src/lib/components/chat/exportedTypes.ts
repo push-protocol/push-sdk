@@ -30,6 +30,8 @@ export interface IChatPreviewListProps {
   listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
+  onChatSelected?: (chatId: string) => void;
+  onUnreadCountChange?: (count: number) => void;
 }
 
 export interface IChatViewListProps {

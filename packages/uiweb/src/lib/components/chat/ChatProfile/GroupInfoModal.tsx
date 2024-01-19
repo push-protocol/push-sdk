@@ -8,7 +8,7 @@ import {
 } from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
-import { useChatData } from '../../../hooks';
+import { useChatData, usePushChatStream } from '../../../hooks';
 import { Section, Span, Image } from '../../reusables/sharedStyling';
 import { AddWalletContent } from './AddWalletContent';
 import { Modal, ModalHeader } from '../reusables';
@@ -42,7 +42,6 @@ import {
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import { GROUP_ROLES } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-
 
 export interface MemberPaginationData {
   page: number;
@@ -278,7 +277,6 @@ const GroupInformation = ({
   const isMobile = useMediaQuery(device.mobileL);
   const groupInfoToast = useToast();
 
-
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
   useEffect(() => {
@@ -290,8 +288,7 @@ const GroupInformation = ({
         });
         if (status && typeof status !== 'string') {
           setAccountStatus(status);
-        }
-        else{
+        } else {
           groupInfoToast.showMessageToast({
             toastTitle: 'Error',
             toastMessage: 'Error in fetching member details',
@@ -506,6 +503,39 @@ export const GroupInfoModal = ({
 
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
+  const {
+    chatAcceptStream,
+    chatRejectStream,
+    chatRequestStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream
+  } = usePushChatStream();
+
+  console.log(groupMembers);
+
+  //stream listeners
+  useEffect(() => {
+    transformAcceptedRequest(chatAcceptStream);
+  }, [chatAcceptStream]);
+  useEffect(() => {
+    transformRejectedRequest(chatRejectStream);
+  }, [chatRejectStream]);
+
+  //not sure how to get profile
+  useEffect(() => {
+    transformRejectedRequest(chatRequestStream);
+  }, [chatRequestStream]);
+  useEffect(() => {
+    transformParticipantRemove(participantRemoveStream);
+  }, [participantRemoveStream]);
+  useEffect(() => {
+    transformParticipantLeave(participantLeaveStream);
+  }, [participantLeaveStream]);
+
+  useEffect(() => {
+    //not sure how to get profile
+  }, [participantJoinStream]);
 
   useEffect(() => {
     (async () => {
@@ -515,6 +545,37 @@ export const GroupInfoModal = ({
       }
     })();
   }, []);
+  //add dependencies
+  useEffect(() => {
+    (async () => {
+      setGroupMembers((prev) => ({ ...prev, loading: true }));
+      await initialiseMemberPaginationData('pending', fetchPendingMembers);
+      await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
+      setGroupMembers((prev) => ({ ...prev, loading: false }));
+    })();
+  }, [groupInfo]);
+
+  useEffect(() => {
+    (async () => {
+      if (pendingMemberPaginationData?.page > 1)
+        await callMembers(
+          pendingMemberPaginationData?.page,
+          setPendingMemberPaginationData,
+          fetchPendingMembers
+        );
+    })();
+  }, [pendingMemberPaginationData?.page]);
+
+  useEffect(() => {
+    (async () => {
+      if (acceptedMemberPaginationData?.page > 1)
+        await callMembers(
+          acceptedMemberPaginationData?.page,
+          setAcceptedMemberPaginationData,
+          fetchAcceptedMembers
+        );
+    })();
+  }, [acceptedMemberPaginationData?.page]);
 
   //convert fetchPendingMembers and fetchAcceptedMembers to single method and show errors
   const fetchPendingMembers = async (page: number): Promise<void> => {
@@ -575,37 +636,84 @@ export const GroupInfoModal = ({
       await fetchMembers(1);
   };
 
-  //add dependencies
-  useEffect(() => {
-    (async () => {
-      setGroupMembers((prev) => ({ ...prev, loading: true }));
-      await initialiseMemberPaginationData('pending', fetchPendingMembers);
-      await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
-      setGroupMembers((prev) => ({ ...prev, loading: false }));
-    })();
-  }, [groupInfo]);
+  const removePendingMember = (items: string[]): void => {
+    setGroupMembers((prevMembers: MembersType) => ({
+      ...prevMembers,
+      pending: [...groupMembers?.pending]
+        .filter((item) => !items.includes(item.address!))
+        .slice()
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        ),
+    }));
+  };
 
-  useEffect(() => {
-    (async () => {
-      if (pendingMemberPaginationData?.page > 1)
-        await callMembers(
-          pendingMemberPaginationData?.page,
-          setPendingMemberPaginationData,
-          fetchPendingMembers
-        );
-    })();
-  }, [pendingMemberPaginationData?.page]);
+  const removeAcceptedMember = (items: string[]): void => {
+    setGroupMembers((prevMembers: MembersType) => ({
+      ...prevMembers,
+      accepted: [...groupMembers?.accepted]
+        .filter((item) => !items.includes(item.address!))
+        .slice()
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        ),
+    }));
+  };
+  const addAcceptedMember = (items: ChatMemberProfile[]): void => {
+    setGroupMembers((prevMembers: MembersType) => ({
+      ...prevMembers,
+      accepted: [...items, ...groupMembers.accepted]
+        .slice()
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.address === item.address)
+        ),
+    }));
+  };
 
-  useEffect(() => {
-    (async () => {
-      if (acceptedMemberPaginationData?.page > 1)
-        await callMembers(
-          acceptedMemberPaginationData?.page,
-          setAcceptedMemberPaginationData,
-          fetchAcceptedMembers
-        );
-    })();
-  }, [acceptedMemberPaginationData?.page]);
+  const transformAcceptedRequest = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+      let acceptedMember: ChatMemberProfile | undefined =
+        groupMembers?.pending?.find((member: ChatMemberProfile) => {
+          return member?.address === item?.from;
+        });
+      if (acceptedMember) {
+        addAcceptedMember([acceptedMember]);
+        removePendingMember([acceptedMember?.address]);
+      }
+    }
+  };
+  const transformRejectedRequest = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+      removePendingMember([item?.from]);
+    }
+  };
+  const transformParticipantRemove = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+      removeAcceptedMember(item?.to);
+      removePendingMember(item?.to);
+
+    }
+  };
+  const transformParticipantLeave = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+      removeAcceptedMember([item?.from]);
+      removePendingMember([item?.from]);
+    }
+  };
+  const transformParticipantJoin = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+     
+    }
+  };
+  const transformRequestSent = (item: any): void => {
+    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+   
+    }
+  };
+
   const callMembers = async (
     page: number,
     setMemberPaginationData: React.Dispatch<

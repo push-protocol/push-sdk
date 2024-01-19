@@ -38,9 +38,11 @@ const ChatPreviewListTest = () => {
 
       <div style={{background: "#ffeded", border: "1px solid rgb(226,8,128)", height: "50vh"}}>
         <ChatPreviewList 
-          // listType={chatRequests ? "REQUESTS" : "CHATS"}
-          // overrideAccount={address ? address : undefined}
-          listType='SEARCH'
+          listType={chatRequests ? "REQUESTS" : "CHATS"}
+          overrideAccount={address ? address : undefined}
+          onChatSelected={()=>console.log('hello onChatSelected')}
+          onUnreadCountChange={()=>console.log('hello onUnreadCountChange')}
+          // listType='SEARCH'
           // searchParamter='fabio.eth'
         />
       </div>

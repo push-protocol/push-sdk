@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
-import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/pushStreamTypes';
 import { useEffect, useRef, useState } from 'react';
 import { ENV } from '../../config';
 import { useChatData } from './useChatData';
@@ -17,10 +16,15 @@ export const usePushChatStream = () => {
 
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
+
   const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
+  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
+  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
   const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
 
-  const attachListenersAndConnect = async (stream: PushStream) => {
+  const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
       setIsPushChatStreamConnected(true);
     });
@@ -31,11 +35,21 @@ export const usePushChatStream = () => {
 
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
+      console.log(message);
       if (message.event === 'chat.request') {
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
         setChatAcceptStream(message);
-      } else if (message.event === 'chat.message') {
+      } else if (message.event === 'chat.reject') {
+        setChatRejectStream(message);
+      }
+      else if (message.event === 'chat.group.participant.remove') {
+        setParticipantRemoveStream(message);
+      }
+      else if (message.event === 'chat.group.participant.leave') {
+        setParticipantLeaveStream(message);
+      }
+       else if (message.event === 'chat.message') {
         setChatStream(message);
       }
     });
@@ -47,7 +61,7 @@ export const usePushChatStream = () => {
 
     console.debug('stream listeners attached');
   };
-  
+
   /**
    * Whenever the requisite params to create a connection object change
    *  - disconnect the old connection
@@ -75,7 +89,7 @@ export const usePushChatStream = () => {
             raw: true,
           }
         );
-          
+
         // attach listeneres
         await attachListenersAndConnect(stream);
       }
@@ -85,7 +99,6 @@ export const usePushChatStream = () => {
         await pushUser.stream?.connect();
         console.debug('Connect stream: ', pushUser);
       }
-
     };
 
     initPushUser();
@@ -105,5 +118,9 @@ export const usePushChatStream = () => {
     chatRequestStream,
     chatAcceptStream,
     groupMetaStream,
+    chatRejectStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream
   };
 };
