@@ -15,7 +15,6 @@ import {mainnet} from "wagmi/chains";
 import {publicProvider} from "wagmi/providers/public";
 
 import App from "./App";
-import VideoPage from "./video";
 import {inject} from "@vercel/analytics";
 const {chains, publicClient} = configureChains([mainnet], [publicProvider()]);
 const {connectors} = getDefaultWallets({
@@ -29,10 +28,7 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-const router = createBrowserRouter([
-  {path: "/", element: <App />},
-  {path: "/video", element: <VideoPage />},
-]);
+const router = createBrowserRouter([{path: "/", element: <App />}]);
 
 ReactDOM.render(
   <React.StrictMode>

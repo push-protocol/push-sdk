@@ -16,27 +16,14 @@ export default function VideoFrame({
 }) {
   return (
     <div>
-      <div className="w-[90%] m-auto flex flex-row justify-around gap-2">
-        <div>
-          <VideoPlayer
-            whoIs={"You"}
-            stream={data.local.stream}
-            isMuted={true}
-          />
-        </div>
+      <div className="w-[90vw] m-auto flex flex-row justify-around gap-2">
+        <VideoPlayer whoIs={"You"} stream={data.local.stream} isMuted={true} />
 
-        <div>
-          {data?.incoming[0] ? (
-            <VideoPlayer
-              whoIs={data?.incoming[0]?.address}
-              styles="overflow-hidden w-[95%] m-auto"
-              stream={data.incoming[0].stream}
-              isMuted={false}
-            />
-          ) : (
-            <div className="min-h-[30vh] h-[30vh] sm:min-h-[40vh] md:min-h-[55vh] sm:h-[40%] bg-[white]"></div>
-          )}
-        </div>
+        <VideoPlayer
+          whoIs={data?.incoming[0]?.address}
+          stream={data.incoming[0].stream}
+          isMuted={false}
+        />
       </div>
       <div className="flex gap-2 justify-center align-center md:mt-[30px] xl:mt-[20px] mt-[20px] ">
         <button

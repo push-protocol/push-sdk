@@ -1,4 +1,5 @@
 import {useEffect, useRef} from "react";
+import {truncateAddress} from "../utils";
 
 export default function VideoPlayer({stream, isMuted, whoIs}) {
   const videoRef = useRef(null);
@@ -13,12 +14,13 @@ export default function VideoPlayer({stream, isMuted, whoIs}) {
   }, [videoRef, stream]);
 
   return (
-    <div
-      className={`relative min-h-[30vh] h-[30vh] sm:min-h-[40vh] md:min-h-[55vh] sm:h-[40%]`}
-    >
-      <p className="absolute bottom-[10px] left-[20px] p-4 badge ">{whoIs}</p>
+    <div className="relative w-full aspect-[3/2] rounded-xl overflow-hidden">
+      <p className="absolute bottom-[10px] left-[20px] z-[100] p-4 badge badge-xs font-xs">
+        {whoIs === "You" ? whoIs : truncateAddress(whoIs)}
+      </p>
+
       <video
-        className="object-cover w-full h-full rounded-xl"
+        className="absolute z-[10] top-0 left-0 w-full rounded-xl"
         ref={videoRef}
         muted={isMuted}
         autoPlay

@@ -1,73 +1,82 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useReducer} from "react";
 import io from "socket.io-client";
 import {ConnectButton} from "@rainbow-me/rainbowkit";
 import {useAccount, useWalletClient} from "wagmi";
-
-import Modal from "./components/Modal";
 import {CONSTANTS, PushAPI} from "@pushprotocol/restapi";
+
+import {appReducer, actionTypes} from "./reducer";
+import Modal from "./components/Modal";
 import Video from "./video";
 import Loader from "./components/Loader";
 
-// Initializing the socket connection to the server
-
-const socket = io.connect(process.env.REACT_APP_SERVER_URL);
-
-// Main App component
 function App() {
-  // State variables
-  const [isPeerConnected, setIsPeerConnected] = useState(false);
-  const [peerWalletAddress, setPeerWalletAddress] = useState("");
-  const [showPeerDisconnectedModal, setShowPeerDisconnectedModal] =
-    useState(false);
-  const [showNoActivePeersModal, setShowNoActivePeersModal] = useState(false);
-  const [peerMatched, setPeerMatched] = useState(false);
-  const [videoCallInitiator, setVideoCallInitiator] = useState("");
-  const [userActive, setUserActive] = useState(true);
-  const [incomingPeerRequest, setIncomingPeerRequest] = useState(false);
+  const socket = useRef(null);
   const userAlice = useRef();
   const {data: signer} = useWalletClient();
   const {address: walletAddress, isConnected: walletConnected} = useAccount();
+  const [
+    {
+      isPeerConnected,
+      peerWalletAddress,
+      showPeerDisconnectedModal,
+      showNoActivePeersModal,
+      peerMatched,
+      videoCallInitiator,
+      userActive,
+      incomingPeerRequest,
+    },
+    dispatch,
+  ] = useReducer(appReducer, {
+    isPeerConnected: false,
+    peerWalletAddress: "",
+    showPeerDisconnectedModal: false,
+    showNoActivePeersModal: false,
+    peerMatched: false,
+    videoCallInitiator: "",
+    userActive: true,
+    incomingPeerRequest: false,
+  });
 
   const connectToPeer = () => {
-    socket.emit("connect_to_peer", walletAddress);
+    socket.current.emit("connect_to_peer", walletAddress);
   };
-  useEffect(() => {
-    if (!signer) return;
-    if (isPeerConnected) return;
-    const initializeUserAlice = async () => {
-      userAlice.current = await PushAPI.initialize(signer, {
-        env: CONSTANTS.ENV.PROD,
-      });
-    };
-    initializeUserAlice();
-  }, [signer, isPeerConnected]);
-  useEffect(() => {
-    socket.on("peer_matched", (peerAddress) => {
-      setPeerMatched(true);
+
+  const setupSocketListeners = () => {
+    socket.current.on("peer_matched", (peerAddress) => {
+      dispatch({type: actionTypes.SET_PEER_MATCHED, payload: true});
       checkIfChatExists(peerAddress);
-      setVideoCallInitiator(walletAddress);
+      dispatch({
+        type: actionTypes.SET_VIDEO_CALL_INITIATOR,
+        payload: walletAddress,
+      });
     });
-    socket.on("incoming_peer_request", () => {
-      setIncomingPeerRequest(true);
+    socket.current.on("incoming_peer_request", () => {
+      dispatch({type: actionTypes.SET_INCOMING_PEER_REQUEST, payload: true});
     });
-    socket.on("intent_accepted_by_peer", async (peerAddress) => {
-      setIsPeerConnected(true);
+    socket.current.on("intent_accepted_by_peer", async (peerAddress) => {
+      dispatch({type: actionTypes.SET_IS_PEER_CONNECTED, payload: true});
     });
-    socket.on("chat_exists_bw_users", async (peerAddress) => {
-      setIsPeerConnected(true);
+    socket.current.on("chat_exists_bw_users", async (peerAddress) => {
+      dispatch({type: actionTypes.SET_IS_PEER_CONNECTED, payload: true});
     });
-    socket.on("no_active_peers_found", () => {
-      setShowNoActivePeersModal(true);
+    socket.current.on("no_active_peers_found", () => {
+      dispatch({
+        type: actionTypes.SET_SHOW_NO_ACTIVE_PEERS_MODAL,
+        payload: true,
+      });
     });
-    socket.on("peer_disconnected", () => {
-      setIsPeerConnected(false);
-      setIncomingPeerRequest(false);
-      setPeerWalletAddress("");
-      setPeerMatched(false);
-      setShowPeerDisconnectedModal(true);
+    socket.current.on("peer_disconnected", () => {
+      dispatch({type: actionTypes.SET_IS_PEER_CONNECTED, payload: false});
+      dispatch({type: actionTypes.SET_INCOMING_PEER_REQUEST, payload: false});
+      dispatch({type: actionTypes.SET_PEER_WALLET_ADDRESS, payload: ""});
+      dispatch({type: actionTypes.SET_PEER_MATCHED, payload: false});
+      dispatch({
+        type: actionTypes.SET_SHOW_PEER_DISCONNECTED_MODAL,
+        payload: true,
+      });
     });
 
-    socket.on("chat_message_request", async (peerAddress) => {
+    socket.current.on("chat_message_request", async (peerAddress) => {
       const aliceChatRequsts = await userAlice.current.chat.list("REQUESTS");
       for (const chat of aliceChatRequsts) {
         if (
@@ -80,24 +89,17 @@ function App() {
         }
       }
 
-      socket.emit("intent_accepted", peerAddress);
+      socket.current.emit("intent_accepted", peerAddress);
     });
 
-    socket.on("peer_disconnected_call", async (peerAddress) => {
-      setIsPeerConnected(false);
-      setIncomingPeerRequest(false);
-      setPeerMatched(false);
+    socket.current.on("peer_disconnected_call", async (peerAddress) => {
+      dispatch({type: actionTypes.SET_IS_PEER_CONNECTED, payload: false});
+      dispatch({type: actionTypes.SET_INCOMING_PEER_REQUEST, payload: false});
+      dispatch({type: actionTypes.SET_PEER_MATCHED, payload: false});
       window.location.reload();
     });
+  };
 
-    // Connect wallet to the server if connected
-    if (walletConnected && walletAddress) {
-      socket.emit("connect_wallet", walletAddress);
-    }
-    if (!walletAddress) {
-      socket.emit("wallet_disconnected");
-    }
-  }, [walletAddress, walletConnected]);
   const checkIfChatExists = async (peerAddress) => {
     if (!userAlice.current) {
       window.location.reload();
@@ -114,7 +116,7 @@ function App() {
       ) {
         chatExists = true;
 
-        socket.emit("chat_exists_w_peer", peerAddress);
+        socket.current.emit("chat_exists_w_peer", peerAddress);
         break;
       }
     }
@@ -124,7 +126,7 @@ function App() {
         if (chat.did.substring(7).toLowerCase() === peerAddress.toLowerCase()) {
           chatExists = true;
           await userAlice.current.chat.accept(peerAddress);
-          socket.emit("intent_accepted", peerAddress);
+          socket.current.emit("intent_accepted", peerAddress);
           break;
         }
       }
@@ -132,12 +134,37 @@ function App() {
     if (!chatExists) {
       await userAlice.current.chat.send(peerAddress, {
         type: "Text",
-        content: "Hi Peer, setting up a call!",
+        content: "Hi Peer, setting up a call! from bored-anons.xyz",
       });
-      socket.emit("chat_message_sent", peerAddress);
+      socket.current.emit("chat_message_sent", peerAddress);
     }
-    setPeerWalletAddress(peerAddress);
+    dispatch({type: actionTypes.SET_PEER_WALLET_ADDRESS, payload: peerAddress});
   };
+  useEffect(() => {
+    socket.current = io.connect(process.env.REACT_APP_SERVER_URL);
+  }, []);
+
+  useEffect(() => {
+    if (!signer) return;
+    if (isPeerConnected) return;
+    const initializeUserAlice = async () => {
+      userAlice.current = await PushAPI.initialize(signer, {
+        env: CONSTANTS.ENV.PROD,
+      });
+    };
+    initializeUserAlice();
+  }, [signer, isPeerConnected]);
+
+  useEffect(() => {
+    setupSocketListeners();
+
+    if (walletConnected && walletAddress) {
+      socket.current.emit("connect_wallet", walletAddress);
+    }
+    if (!walletAddress) {
+      socket.current.emit("wallet_disconnected");
+    }
+  }, [walletAddress, walletConnected]);
 
   return (
     <div>
@@ -174,8 +201,11 @@ function App() {
                       className="toggle toggle-success"
                       checked={userActive}
                       onClick={() => {
-                        setUserActive(!userActive);
-                        socket.emit("user_status_toggle", !userActive);
+                        dispatch({
+                          type: actionTypes.SET_USER_ACTIVE,
+                          payload: !userActive,
+                        });
+                        socket.current.emit("user_status_toggle", !userActive);
                       }}
                     />
                     {userActive ? (
@@ -194,8 +224,11 @@ function App() {
             userAlice={userAlice.current}
             initiator={videoCallInitiator}
             onEndCall={() => {
-              socket.emit("endPeerConnection");
-              setIsPeerConnected(false);
+              socket.current.emit("endPeerConnection");
+              dispatch({
+                type: actionTypes.SET_IS_PEER_CONNECTED,
+                payload: false,
+              });
               window.location.reload();
             }}
           />
@@ -207,7 +240,10 @@ function App() {
         <Modal
           text={"Peer Disconnected!"}
           onClose={() => {
-            setShowPeerDisconnectedModal(false);
+            dispatch({
+              type: actionTypes.SET_SHOW_PEER_DISCONNECTED_MODAL,
+              payload: false,
+            });
           }}
         />
       )}
@@ -216,7 +252,10 @@ function App() {
         <Modal
           text={"No Active peers found!"}
           onClose={() => {
-            setShowNoActivePeersModal(false);
+            dispatch({
+              type: actionTypes.SET_SHOW_NO_ACTIVE_PEERS_MODAL,
+              payload: false,
+            });
           }}
         />
       )}
