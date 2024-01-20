@@ -92,7 +92,7 @@ import { ChatSupportTest } from './ChatSupportTest';
 import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
-
+import VideoV2 from './Video';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -317,7 +317,11 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider  env={env} theme={lightChatTheme} signer={signer}>
+                <ChatUIProvider
+                  env={env}
+                  theme={lightChatTheme}
+                  signer={signer}
+                >
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route
@@ -354,6 +358,9 @@ export function App() {
                             <Link to="/chatUI" className="nav-button">
                               CHAT UI
                             </Link>
+                            <Link to="/video" className="nav-button">
+                              VIDEO
+                            </Link>
                             <Link to="/space" className="nav-button">
                               SPACE
                             </Link>
@@ -380,6 +387,7 @@ export function App() {
                       <Route path="/chat" element={<ChatTest />} />
                       <Route path="/space" element={<SpaceTest />} />
                       <Route path="/chatUI" element={<ChatUITest />} />
+                      <Route path="/video" element={<VideoV2 />} />
                       <Route path="/spaceUI" element={<SpaceUITest />} />
                       {/* chat method  routes */}
                       <Route path="/get" element={<GetUserTest />} />
@@ -575,19 +583,14 @@ export function App() {
                       <Route
                         path="messageContainer"
                         element={<ChatViewComponentTest />}
-                        />
-                      <Route
-                        path="ChatProfile"
-                        element={<ChatProfileTest />}
-                      /> <Route
-                      path="ChatSupport"
-                      element={<ChatSupportTest />}
-                    />
-                  </Routes>
-                  {/* <ChatWidgetTest/> */}
-                  {/* <ChatWidgetTest /> */}
-                  <SpaceWidgetComponent spaceId={spaceId} />
-                </SpacesUIProvider>
+                      />
+                      <Route path="ChatProfile" element={<ChatProfileTest />} />{' '}
+                      <Route path="ChatSupport" element={<ChatSupportTest />} />
+                    </Routes>
+                    {/* <ChatWidgetTest/> */}
+                    {/* <ChatWidgetTest /> */}
+                    <SpaceWidgetComponent spaceId={spaceId} />
+                  </SpacesUIProvider>
                 </ChatUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>
