@@ -12,7 +12,7 @@ import type { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import type { ENV} from '../../config';
 import { Constants, lightTheme } from '../../config';
-import { useSDKSocket } from '../../hooks/useSDKSocket';
+import { useSupportChatStream } from '../../hooks/useSupportChatStream';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
 import { sign } from 'crypto';
@@ -69,10 +69,9 @@ export type ButtonStyleProps = {
     });
     setChats(uniqueChats);
   };
-  const socketData = useSDKSocket({
+  const socketData = useSupportChatStream({
     account: accountadd,
     env,
-    apiKey,
     pushUser: pushUser!,
     supportAddress: resolvedSupportAddress,
     signer
