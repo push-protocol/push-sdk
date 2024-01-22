@@ -35,7 +35,7 @@ export const ChatSupportTest = () => {
     <SupportChat
   
       signer={librarySigner}
-      supportAddress="richa.eth"
+      supportAddress="0x43c1A394b78490082B635526518A86ccFfA483e9"
       env={env}
       greetingMsg="How can i help you?"
       theme={lightTheme}
