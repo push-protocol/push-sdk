@@ -114,7 +114,7 @@ export const PendingMembers = ({
           flexDirection="column"
           flex="1"
           maxHeight="10rem"
-          overflow="hidden scroll"
+          overflow="hidden auto"
           justifyContent="start"
           borderRadius="16px"
         >
@@ -301,7 +301,7 @@ export const AcceptedMembers = ({
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
-        overflow="hidden scroll"
+        overflow="hidden auto"
         maxHeight="15rem"
       >
         {acceptedMembers.map((item, index) => (

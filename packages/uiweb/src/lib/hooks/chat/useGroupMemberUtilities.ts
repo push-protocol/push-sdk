@@ -51,6 +51,7 @@ const useGroupMemberUtilities = () => {
     async ({ chatId ,accountId }: fetchMemberStatusParams):Promise<ParticipantStatus | undefined>  => {
       setLoading(true);
       try {
+        console.log(chatId,accountId,pushUser)
         const response = await pushUser?.chat.group.participants.status(chatId,accountId);
           setLoading(false);
         return response;

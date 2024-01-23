@@ -176,7 +176,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               theme={theme}
               setModal={setModal}
               groupInfo={groupInfo!}
-              // setGroupInfo={setGroupInfo}
+              setGroupInfo={setGroupInfo}
               groupInfoModalBackground={groupInfoModalBackground}
               groupInfoModalPositionType={groupInfoModalPositionType}
             />

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {
   ChatMemberProfile,
   GroupParticipantCounts,
+  IUser,
   ParticipantStatus,
 } from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
@@ -42,6 +43,8 @@ import {
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import { GROUP_ROLES } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import { resolvePromisesSeq, transformIUserToChatMemberProfile } from '../helpers';
 
 export interface MemberPaginationData {
   page: number;
@@ -242,6 +245,7 @@ type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: Group;
+  setGroupInfo: React.Dispatch<React.SetStateAction<Group|null>>;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
 };
@@ -460,6 +464,7 @@ const GroupInformation = ({
 export const GroupInfoModal = ({
   theme,
   setModal,
+  setGroupInfo,
   groupInfo,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
@@ -503,13 +508,16 @@ export const GroupInfoModal = ({
 
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
+  const { fetchChatProfile } = useChatProfile();
+
   const {
     chatAcceptStream,
     chatRejectStream,
     chatRequestStream,
     participantRemoveStream,
     participantLeaveStream,
-    participantJoinStream
+    participantJoinStream,
+    groupDetailsStream,
   } = usePushChatStream();
 
   console.log(groupMembers);
@@ -522,9 +530,8 @@ export const GroupInfoModal = ({
     transformRejectedRequest(chatRejectStream);
   }, [chatRejectStream]);
 
-  //not sure how to get profile
   useEffect(() => {
-    transformRejectedRequest(chatRequestStream);
+    transformRequestSent(chatRequestStream);
   }, [chatRequestStream]);
   useEffect(() => {
     transformParticipantRemove(participantRemoveStream);
@@ -534,8 +541,15 @@ export const GroupInfoModal = ({
   }, [participantLeaveStream]);
 
   useEffect(() => {
-    //not sure how to get profile
+    (async () => {
+     await transformParticipantJoin(participantJoinStream);
+    })();
+   
   }, [participantJoinStream]);
+
+  useEffect(() => {
+    transformGroupDetails(groupDetailsStream);
+  }, [groupDetailsStream]);
 
   useEffect(() => {
     (async () => {
@@ -639,7 +653,7 @@ export const GroupInfoModal = ({
   const removePendingMember = (items: string[]): void => {
     setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
-      pending: [...groupMembers?.pending]
+      pending: [...groupMembers.pending!]
         .filter((item) => !items.includes(item.address!))
         .slice()
         .filter(
@@ -652,7 +666,7 @@ export const GroupInfoModal = ({
   const removeAcceptedMember = (items: string[]): void => {
     setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
-      accepted: [...groupMembers?.accepted]
+      accepted: [...groupMembers.accepted!]
         .filter((item) => !items.includes(item.address!))
         .slice()
         .filter(
@@ -675,7 +689,7 @@ export const GroupInfoModal = ({
 
   const transformAcceptedRequest = (item: any): void => {
     if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
-      let acceptedMember: ChatMemberProfile | undefined =
+      const acceptedMember: ChatMemberProfile | undefined =
         groupMembers?.pending?.find((member: ChatMemberProfile) => {
           return member?.address === item?.from;
         });
@@ -691,28 +705,55 @@ export const GroupInfoModal = ({
     }
   };
   const transformParticipantRemove = (item: any): void => {
-    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+    if (groupInfo?.chatId === item?.chatId) {
       removeAcceptedMember(item?.to);
       removePendingMember(item?.to);
-
     }
   };
   const transformParticipantLeave = (item: any): void => {
-    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+    if (groupInfo?.chatId === item?.chatId) {
       removeAcceptedMember([item?.from]);
       removePendingMember([item?.from]);
     }
   };
-  const transformParticipantJoin = (item: any): void => {
+  const transformParticipantJoin = async (item: any): Promise<void> => {
+    if (groupInfo?.chatId === item?.chatId) {
+      const profile = await fetchChatProfile({ profileId: item?.from });
+      const transformedProfile = transformIUserToChatMemberProfile(profile,true);
+      addAcceptedMember([transformedProfile]);
+    }
+  };
+ 
+  const transformRequestSent = async(item: any): Promise<void> => {
     if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+      const userPromises = item?.to.map((member:string) => 
+        fetchChatProfile({ profileId: member})
+        .then((userRecord) => {
+           return userRecord;
+        })
+        .catch(console.error)
+     );
+     const users = await resolvePromisesSeq(userPromises); 
+     const transformedUsers = users.map((user)=>{return transformIUserToChatMemberProfile(user,false)});
+     addAcceptedMember(transformedUsers);
+    }
+  };
+
+  const transformGroupDetails = (item: any): void => {
+    if ( groupInfo?.chatId === item?.chatId) {
+      const updatedGroupInfo = groupInfo;
+      if(updatedGroupInfo){
+        updatedGroupInfo.groupName= item?.meta?.name;
+        updatedGroupInfo.groupDescription=item?.meta?.description;
+        updatedGroupInfo.groupImage=item?.meta?.image;
+        updatedGroupInfo.groupCreator=item?.meta?.owner;
+        updatedGroupInfo.isPublic=!item?.meta?.private;
+        setGroupInfo(updatedGroupInfo);
+      }
      
     }
   };
-  const transformRequestSent = (item: any): void => {
-    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
-   
-    }
-  };
+
 
   const callMembers = async (
     page: number,
@@ -820,6 +861,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            setGroupInfo={setGroupInfo}
             groupMembers={groupMembers}
             pendingMemberPaginationData={pendingMemberPaginationData}
             setPendingMemberPaginationData={setPendingMemberPaginationData}
@@ -839,6 +881,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            setGroupInfo={setGroupInfo}
             groupMembers={groupMembers}
             pendingMemberPaginationData={pendingMemberPaginationData}
             setPendingMemberPaginationData={setPendingMemberPaginationData}

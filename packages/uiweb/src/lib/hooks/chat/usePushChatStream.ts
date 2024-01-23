@@ -22,6 +22,8 @@ export const usePushChatStream = () => {
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
   const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
+  const [groupDetailsStream, setGroupDetailsStream] = useState<any>({}); // to track if details of group changes
+
   const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
 
   const attachListenersAndConnect = async (stream: any) => {
@@ -48,6 +50,12 @@ export const usePushChatStream = () => {
       }
       else if (message.event === 'chat.group.participant.leave') {
         setParticipantLeaveStream(message);
+      }
+      else if (message.event === 'chat.group.participant.join') {
+        setParticipantJoinStream(message);
+      }
+      else if (message.event === 'chat.group.update') {
+        setGroupDetailsStream(message);
       }
        else if (message.event === 'chat.message') {
         setChatStream(message);
@@ -121,6 +129,7 @@ export const usePushChatStream = () => {
     chatRejectStream,
     participantRemoveStream,
     participantLeaveStream,
-    participantJoinStream
+    participantJoinStream,
+    groupDetailsStream
   };
 };
