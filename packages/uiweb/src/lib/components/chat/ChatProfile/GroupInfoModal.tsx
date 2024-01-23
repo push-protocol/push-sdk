@@ -403,7 +403,7 @@ const GroupInformation = ({
 
       {accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase() &&
         groupMembers?.accepted &&
-        groupMembers?.accepted?.length < 10 && (
+        groupMembers?.accepted?.length < (groupInfo?.isPublic ? 25000 : 5000) && (
           <AddWalletContainer
             theme={theme}
             onClick={() => setShowAddMoreWalletModal(true)}
@@ -716,6 +716,7 @@ export const GroupInfoModal = ({
       removePendingMember([item?.from]);
     }
   };
+  console.log(groupInfo)
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
       const profile = await fetchChatProfile({ profileId: item?.from });
