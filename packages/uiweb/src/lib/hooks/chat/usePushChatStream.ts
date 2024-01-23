@@ -28,16 +28,18 @@ export const usePushChatStream = () => {
 
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
+        console.debug(' stream connected .........',err)
       setIsPushChatStreamConnected(true);
     });
 
     stream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
+        console.debug(err)
       setIsPushChatStreamConnected(false);
     });
 
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-      console.log(message);
+      console.debug(message);
       if (message.event === 'chat.request') {
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
@@ -97,6 +99,7 @@ export const usePushChatStream = () => {
             raw: true,
           }
         );
+        console.debug(stream)
 
         // attach listeneres
         await attachListenersAndConnect(stream);

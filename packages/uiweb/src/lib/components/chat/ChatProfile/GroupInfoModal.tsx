@@ -524,30 +524,60 @@ export const GroupInfoModal = ({
 
   //stream listeners
   useEffect(() => {
+    if (
+      Object.keys(chatAcceptStream).length > 0 &&
+      chatAcceptStream.constructor === Object
+    ) 
+    console.log(chatAcceptStream)
     transformAcceptedRequest(chatAcceptStream);
   }, [chatAcceptStream]);
   useEffect(() => {
+    if (
+      Object.keys(chatRejectStream).length > 0 &&
+      chatRejectStream.constructor === Object
+    ) 
     transformRejectedRequest(chatRejectStream);
   }, [chatRejectStream]);
 
+  // useEffect(() => {
+  //   console.log(chatRequestStream)
+  //   if (
+  //     Object.keys(chatRequestStream).length > 0 &&
+  //     chatRequestStream.constructor === Object
+  //   ) 
+  //   transformRequestSent(chatRequestStream);
+  // }, [chatRequestStream]);
   useEffect(() => {
-    transformRequestSent(chatRequestStream);
-  }, [chatRequestStream]);
-  useEffect(() => {
+    if (
+      Object.keys(participantRemoveStream).length > 0 &&
+      participantRemoveStream.constructor === Object
+    ) 
     transformParticipantRemove(participantRemoveStream);
   }, [participantRemoveStream]);
   useEffect(() => {
+    if (
+      Object.keys(participantLeaveStream).length > 0 &&
+      participantLeaveStream.constructor === Object
+    ) 
     transformParticipantLeave(participantLeaveStream);
   }, [participantLeaveStream]);
 
   useEffect(() => {
     (async () => {
+      if (
+        Object.keys(participantJoinStream).length > 0 &&
+        participantJoinStream.constructor === Object
+      ) 
      await transformParticipantJoin(participantJoinStream);
     })();
    
   }, [participantJoinStream]);
 
   useEffect(() => {
+    if (
+      Object.keys(groupDetailsStream).length > 0 &&
+      groupDetailsStream.constructor === Object
+    ) 
     transformGroupDetails(groupDetailsStream);
   }, [groupDetailsStream]);
 
@@ -716,7 +746,6 @@ export const GroupInfoModal = ({
       removePendingMember([item?.from]);
     }
   };
-  console.log(groupInfo)
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
       const profile = await fetchChatProfile({ profileId: item?.from });
@@ -725,20 +754,20 @@ export const GroupInfoModal = ({
     }
   };
  
-  const transformRequestSent = async(item: any): Promise<void> => {
-    if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
-      const userPromises = item?.to.map((member:string) => 
-        fetchChatProfile({ profileId: member})
-        .then((userRecord) => {
-           return userRecord;
-        })
-        .catch(console.error)
-     );
-     const users = await resolvePromisesSeq(userPromises); 
-     const transformedUsers = users.map((user)=>{return transformIUserToChatMemberProfile(user,false)});
-     addAcceptedMember(transformedUsers);
-    }
-  };
+  // const transformRequestSent = async(item: any): Promise<void> => {
+  //   if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
+  //     const userPromises = item?.to.map((member:string) => 
+  //       fetchChatProfile({ profileId: member})
+  //       .then((userRecord) => {
+  //          return userRecord;
+  //       })
+  //       .catch(console.error)
+  //    );
+  //    const users = await resolvePromisesSeq(userPromises); 
+  //    const transformedUsers = users.map((user)=>{return transformIUserToChatMemberProfile(user,false)});
+  //    addAcceptedMember(transformedUsers);
+  //   }
+  // };
 
   const transformGroupDetails = (item: any): void => {
     if ( groupInfo?.chatId === item?.chatId) {
