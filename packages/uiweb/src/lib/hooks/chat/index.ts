@@ -8,6 +8,6 @@ export * from  './usePushSendMessage';
 export * from './useGetGroupByID';
 export * from './useAccount';
 export * from './useUpdateGroup';
-export * from './useInitializePushUser';
+export * from './useInitializeUser';
 export * from './usePushChatStream';
-export * from './usePushUserInfoUtilities';
+export * from './useUserInfoUtilities';

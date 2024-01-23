@@ -65,7 +65,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   options: IChatPreviewListProps
 ) => {
   // get hooks
-  const { env, signer, account, pushUser } = useChatData();
+  const { env, signer, account, user } = useChatData();
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
@@ -152,7 +152,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -173,12 +173,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     } else {
       // if not present, fetch profile
       if (!modItem.chatGroup) {
-        const profile = await pushUser.profile.info({
+        const profile = await user.profile.info({
           overrideAccount: modItem.chatParticipant,
         });
         modItem.chatPic = profile.picture;
       } else {
-        const profile = await pushUser.chat.group.info(modItem.chatId!);
+        const profile = await user.chat.group.info(modItem.chatId!);
         modItem.chatPic = profile.groupImage;
         modItem.chatParticipant = profile.groupName;
       }
@@ -189,7 +189,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Transform accepted request
   const transformAcceptedRequest: (item: any) => void = async (item: any) => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -418,7 +418,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // If push user changes | preloading
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -437,14 +437,14 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   }, [
     options?.searchParamter,
-    pushUser,
+    user,
     options.listType,
     options.overrideAccount,
   ]);
 
   // If reset is called
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
