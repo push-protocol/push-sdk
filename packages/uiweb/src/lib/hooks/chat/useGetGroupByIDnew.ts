@@ -11,14 +11,14 @@ interface GetGroupParams {
 const useGetGroupByIDnew = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { pushUser } = useChatData();
+  const { user } = useChatData();
 
   const getGroupByIDnew = useCallback(
     async ({ groupId }: GetGroupParams) => {
       setLoading(true);
       let group: Group;
       try {
-        group = await pushUser?.chat.group.info(groupId);
+        group = await user?.chat.group.info(groupId);
        
       } catch (error) {
         console.log(error);
@@ -26,7 +26,7 @@ const useGetGroupByIDnew = () => {
       }
       return group;
     },
-    [pushUser]
+    [user]
   );
 
   return { getGroupByIDnew, error, loading };
