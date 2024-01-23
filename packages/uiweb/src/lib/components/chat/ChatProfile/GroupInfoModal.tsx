@@ -520,7 +520,6 @@ export const GroupInfoModal = ({
     groupDetailsStream,
   } = usePushChatStream();
 
-  console.log(groupMembers);
 
   //stream listeners
   useEffect(() => {
@@ -528,7 +527,6 @@ export const GroupInfoModal = ({
       Object.keys(chatAcceptStream).length > 0 &&
       chatAcceptStream.constructor === Object
     ) 
-    console.log(chatAcceptStream)
     transformAcceptedRequest(chatAcceptStream);
   }, [chatAcceptStream]);
   useEffect(() => {
@@ -539,14 +537,6 @@ export const GroupInfoModal = ({
     transformRejectedRequest(chatRejectStream);
   }, [chatRejectStream]);
 
-  // useEffect(() => {
-  //   console.log(chatRequestStream)
-  //   if (
-  //     Object.keys(chatRequestStream).length > 0 &&
-  //     chatRequestStream.constructor === Object
-  //   ) 
-  //   transformRequestSent(chatRequestStream);
-  // }, [chatRequestStream]);
   useEffect(() => {
     if (
       Object.keys(participantRemoveStream).length > 0 &&
@@ -592,10 +582,13 @@ export const GroupInfoModal = ({
   //add dependencies
   useEffect(() => {
     (async () => {
-      setGroupMembers((prev) => ({ ...prev, loading: true }));
-      await initialiseMemberPaginationData('pending', fetchPendingMembers);
-      await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
-      setGroupMembers((prev) => ({ ...prev, loading: false }));
+      if(Object.keys(groupInfo || {}).length){
+        setGroupMembers((prev) => ({ ...prev, loading: true }));
+        await initialiseMemberPaginationData('pending', fetchPendingMembers);
+        await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
+        setGroupMembers((prev) => ({ ...prev, loading: false }));
+      }
+    
     })();
   }, [groupInfo]);
 
@@ -624,7 +617,7 @@ export const GroupInfoModal = ({
   //convert fetchPendingMembers and fetchAcceptedMembers to single method and show errors
   const fetchPendingMembers = async (page: number): Promise<void> => {
     const fetchedPendingMembers = await fetchMembers({
-      chatId: groupInfo!.chatId,
+      chatId: groupInfo!.chatId ,
       page: page,
       limit: PENDING_MEMBERS_LIMIT,
       pending: true,

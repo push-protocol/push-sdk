@@ -117,6 +117,7 @@ export const usePushChatStream = () => {
     // Return a function to clean up the effect
     return () => {
       if (pushUser && pushUser.stream) {
+
         pushUser.stream?.disconnect();
         console.debug('Disconnect stream: ', pushUser);
       }
