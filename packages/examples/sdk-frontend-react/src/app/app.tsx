@@ -93,6 +93,7 @@ import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 import VideoV2 from './Video';
+import { UserProfileTest } from './ChatUITest/UserProfileTest';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -460,6 +461,10 @@ export function App() {
                       <Route
                         path="/createGroup"
                         element={<CreateGroupTest />}
+                      />
+                        <Route
+                        path="/userProfile"
+                        element={<UserProfileTest />}
                       />
                       <Route path="/getGroup" element={<GetGroupTest />} />
                       <Route

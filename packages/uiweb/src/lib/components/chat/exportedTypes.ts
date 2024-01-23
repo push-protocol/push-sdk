@@ -8,6 +8,7 @@ export interface IChatViewListProps {
   limit?: number;
 }
 
+
 export interface IChatViewComponentProps {
   messageInput?: boolean;
   chatViewList?: boolean;

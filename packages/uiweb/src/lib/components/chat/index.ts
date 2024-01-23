@@ -6,3 +6,4 @@ export * from './ChatViewComponent'
 export * from "./MessageInput"
 export * from './theme';
 export * from "./CreateGroup";
+export * from "./UserProfile";

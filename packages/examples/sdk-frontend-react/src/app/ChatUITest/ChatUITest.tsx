@@ -26,19 +26,21 @@ const ChatUITest = () => {
 
       <Section>
         <NavMenu>
-        <Link to="/ChatProfile" className="nav-button">
+          <Link to="/ChatProfile" className="nav-button">
             CHAT PROFILE
           </Link>
           <Link to="/messageBubble" className="nav-button">
             CHAT BUBBLE
           </Link>
           <Link to="/messageList" className="nav-button">
-           CHAT VIEW LIST
+            CHAT VIEW LIST
           </Link>
           <Link to="/messageContainer" className="nav-button">
             CHAT VIEW COMPONENT
           </Link>
-       
+          <Link to="/userProfile" className="nav-button">
+            USER PROFILE COMPONENT
+          </Link>
         </NavMenu>
       </Section>
     </div>
