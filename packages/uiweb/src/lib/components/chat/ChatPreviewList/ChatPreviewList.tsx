@@ -59,7 +59,7 @@ interface IChatPreviewListMeta {
 }
 
 // Define Constants
-const CHAT_PAGE_LIMIT = 10;
+const CHAT_PAGE_LIMIT = 20;
 
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   options: IChatPreviewListProps
@@ -83,7 +83,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     errored: false,
     error: null,
   });
-
   // set chat preview list meta
   const [chatPreviewListMeta, setChatPreviewListMeta] =
     useState<IChatPreviewListMeta>({
@@ -473,6 +472,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // Call onBadgeCountChange if present
     if (options?.onUnreadCountChange) {
+
       options.onUnreadCountChange(count);
     }
   }, [chatPreviewListMeta.badges]);
@@ -784,7 +784,7 @@ const ChatPreviewListContainer = styled(Section)<IThemeProps>`
   flex-direction: column;
   width: 100%;
   justify-content: start;
-  padding: 0 2px;
+  // padding: 0 2px;
 
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};

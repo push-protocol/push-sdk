@@ -50,7 +50,7 @@ export type ButtonStyleProps = {
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
   const [accountadd, setAccountadd] = useState<string | null>(account)
-  const [pushUser, setPushUser] = useState<PushAPI | null>(null);
+  const [user, setUser] = useState<PushAPI | null>(null);
   const [resolvedSupportAddress, setResolvedSupportAddress] = useState<string>('');
   const setChatsSorted = (chats: IMessageIPFS[]) => {
 
@@ -73,7 +73,7 @@ export type ButtonStyleProps = {
     account: accountadd,
     env,
     apiKey,
-    pushUser: pushUser!,
+    user: user!,
     supportAddress: resolvedSupportAddress,
     signer
   });
@@ -82,7 +82,7 @@ export type ButtonStyleProps = {
   const chatPropsData = {
     account : accountadd,
     signer,
-    pushUser,
+    user,
     supportAddress : resolvedSupportAddress,
     greetingMsg,
     modalTitle,
@@ -102,7 +102,7 @@ setResolvedSupportAddress(supportAddress);
     }
     }
   getNewSupportAddress(); 
-  },[supportAddress, pushUser, env])
+  },[supportAddress, user, env])
 
 
   useEffect(() => {
@@ -127,7 +127,7 @@ setResolvedSupportAddress(supportAddress);
     async() =>{
       if(Object.keys(signer || {}).length && accountadd){
     const pushUser = await PushAPI.initialize(signer!, {env: env , account:accountadd!});
-          setPushUser(pushUser)
+          setUser(pushUser)
   }
     }
   )()

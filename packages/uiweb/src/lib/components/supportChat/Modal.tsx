@@ -27,7 +27,7 @@ export const Modal: React.FC = () => {
     string | null
   >(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
-  const { supportAddress, pushUser, env, account, signer, greetingMsg, theme } =
+  const { supportAddress, user, env, account, signer, greetingMsg, theme } =
     useContext<any>(SupportChatPropsContext);
   const {
     chats,
@@ -88,7 +88,7 @@ export const Modal: React.FC = () => {
     setLoading(true);
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
-      pushUser,
+      user,
       // pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
       threadHash: lastThreadHashFetched!,
@@ -107,8 +107,8 @@ export const Modal: React.FC = () => {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
       }
-      const user = await createUserIfNecessary({ account, signer, env, pushUser });
-      setConnectedUser(user);
+      const createdUser = await createUserIfNecessary({ account, signer, env, user });
+      setConnectedUser(createdUser);
       setLoading(false);
     } catch (err:any) {
       setLoading(false);
@@ -130,7 +130,7 @@ export const Modal: React.FC = () => {
   useEffect(() => {
     
     getChatCall();
-  }, [connectedUser, env, account,signer, supportAddress, pushUser]);
+  }, [connectedUser, env, account,signer, supportAddress, user]);
 
   useEffect(() => {
     scrollToBottom();
