@@ -1,7 +1,13 @@
 import { EventEmitter } from 'events';
-import { createSocketConnection } from './socketClient';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 import { ENV, PACKAGE_BUILD } from '../constants';
+import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
+import { ADDITIONAL_META_TYPE } from '../payloads';
+import { Chat } from '../pushapi/chat';
+import { ProgressHookType, SignerType } from '../types';
+import { DataModifier } from './DataModifier';
 import {
+  EVENTS,
   GroupEventType,
   MessageEventType,
   MessageOrigin,
@@ -11,12 +17,7 @@ import {
   STREAM,
   EVENTS
 } from './pushStreamTypes';
-import { DataModifier } from './DataModifier';
-import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
-import { Chat } from '../pushapi/chat';
-import { ProgressHookType, SignerType } from '../types';
-import { ALPHA_FEATURE_CONFIG } from '../config';
-import { ADDITIONAL_META_TYPE } from '../payloads';
+import { createSocketConnection } from './socketClient';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -433,6 +434,12 @@ export class PushStream extends EventEmitter {
         }
       });
     }
+
+    this.disconnected = false;
+  }
+
+  public connected(): boolean {
+    return (this.pushNotificationSocket && this.pushNotificationSocket.connected) || (this.pushChatSocket && this.pushChatSocket.connected);
   }
 
   public async disconnect(): Promise<void> {

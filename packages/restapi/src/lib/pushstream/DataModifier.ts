@@ -205,6 +205,11 @@ export class DataModifier {
     includeRaw = false,
     eventType: MessageEventType
   ): MessageEvent {
+
+    if (data.hasIntent === false && eventType === 'message') {
+      eventType = MessageEventType.Request;
+    }
+
     const messageEvent: MessageEvent = {
       event: eventType,
       origin: data.messageOrigin,
@@ -804,7 +809,7 @@ export class DataModifier {
     const { senderAddress, signalData, status, chatId }: VideoDataType =
       JSON.parse(data.payload.data.additionalMeta?.data);
 
-    // To maintain backward compatibility, if the rules object is not present in the payload, 
+    // To maintain backward compatibility, if the rules object is not present in the payload,
     // we create a new rules object with chatId from additionalMeta.data
     const rules = data.payload.rules ?? {
       access: {

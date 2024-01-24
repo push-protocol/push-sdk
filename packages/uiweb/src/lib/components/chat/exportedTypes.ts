@@ -1,6 +1,38 @@
-import type { IMessageIPFS } from '@pushprotocol/restapi';
+import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
+import { IGroup } from '../../types';
 import { IChatTheme } from "./theme";
-import { IGroup } from '../../types'
+
+
+export interface IChatPreviewPayload {
+  chatId: string | undefined;
+  chatPic: string | null;
+  chatParticipant: string;
+  chatGroup: boolean;
+  chatTimestamp: number | undefined;
+  chatMsg?: {
+    messageType: string;
+    messageContent: string | object;
+  }
+}
+
+export interface IChatPreviewProps {
+  chatPreviewPayload: IChatPreviewPayload;
+  selected?: boolean;
+  setSelected?: (chatId: string) => void;
+  badge?: {
+    count?: number;
+  };
+}
+export type Group = GroupInfoDTO| GroupDTO | undefined;
+
+export interface IChatPreviewListProps {
+  overrideAccount?: string;
+  listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
+  prefillChatPreviewList?: Array<IChatPreviewProps>;
+  searchParamter?: string;
+  onChatSelected?: (chatId: string) => void;
+  onUnreadCountChange?: (count: number) => void;
+}
 
 export interface IChatViewListProps {
   chatId: string;
@@ -13,7 +45,7 @@ export interface IChatViewComponentProps {
   chatViewList?: boolean;
   chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
-  chatId: string; //need confirmation on this
+  chatId?: string; //need confirmation on this
   limit?: number;
   emoji?: boolean;
   gif?: boolean;
@@ -25,7 +57,8 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
+  welcomeComponent?:React.ReactNode;
 }
 
 export interface IChatProfile {
@@ -33,7 +66,7 @@ export interface IChatProfile {
   style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
 }
 
 export interface TwitterFeedReturnType {
@@ -152,7 +185,7 @@ export interface ModalButtonProps {
 };
 
 
-export {IChatTheme} from './theme';
+export { IChatTheme } from './theme';
 
 export interface ConditionData {
   operator?: string;
@@ -163,3 +196,15 @@ export interface ConditionData {
 }
 
 export type ConditionArray = ConditionData[];
+
+export enum ChatPreviewListErrorCodes {
+  CHAT_PREVIEW_LIST_PRELOAD_ERROR = 'CPL-001',
+  CHAT_PREVIEW_LIST_LOAD_ERROR = 'CPL-002',
+  CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR = 'CPL-003',
+  CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT = 'CPL-004',
+}
+
+export interface IChatPreviewListError {
+  code: ChatPreviewListErrorCodes;
+  message: string;
+}

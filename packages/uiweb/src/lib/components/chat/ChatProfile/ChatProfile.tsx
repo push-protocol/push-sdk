@@ -34,6 +34,7 @@ import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import useGetChatProfile from '../../../hooks/useGetChatProfile';
 
 
 export const ChatProfile: React.FC<IChatProfile> = ({
@@ -41,12 +42,12 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   style,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
-  component=null,
+  chatProfileHelperComponent=null,
 }) => {
   const theme = useContext(ThemeContext);
   const { account, env } = useChatData();
   const { getGroupByID } = useGetGroupByID();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchChatProfile } = useGetChatProfile();
 
   const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
@@ -69,7 +70,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchChatProfile({ profileId: chatId });
+      const ChatProfile = await fetchChatProfile({ profileId: chatId,env });
       const result = await resolveNewEns(chatId, provider);
       setEnsName(result);
       setChatInfo(ChatProfile);
@@ -128,9 +129,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           margin="0 20px 0 auto"
           alignSelf="center"
         >
-          {(component && !groupInfo) && (
+          {(chatProfileHelperComponent && !groupInfo) && (
             <Section cursor='pointer' maxHeight='1.75rem' width='1.75rem' maxWidth='1.75rem' minWidth='1.75rem'>
-              {component}
+              {chatProfileHelperComponent}
             </Section>
           )}
           {(groupInfo?.rules?.chat?.conditions ||

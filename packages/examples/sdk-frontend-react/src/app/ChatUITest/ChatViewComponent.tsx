@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
+import { ChatView, CreateGroupModal, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from "@pushprotocol/uiweb";
 import { Section } from '../components/StyledComponents';
-import { CreateGroupModal, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from "@pushprotocol/uiweb";
-import { ChatView } from '@pushprotocol/uiweb';
 
 const ChatViewComponentTest = () => {
   const chatFilterList = [
@@ -12,20 +11,31 @@ const ChatViewComponentTest = () => {
 
   return (
     <div>
-      <h2>Chat UI Test page</h2>
+      <h2>Chat View Test page</h2>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}} /> */}
       <ChatViewComponentCard>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
 
         <ChatView 
-        onVerificationFail={() => console.log("BOIIII RETURNNNSSSSS")} 
-        chatId='0xf8250D363BD1F25f52F10C21188fe82c68C049c4' 
-        component={<div style={{height: "100px"}}><a href="https://github.com" target="_blank">Test</a></div>}
-        limit={10}
-         isConnected={true} 
-         groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
-         groupInfoModalPositionType={MODAL_POSITION_TYPE.RELATIVE}
-         verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}
+          onVerificationFail={() => console.log("Verification Failed")} 
+          // chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' 
+          chatProfileHelperComponent={<div style={{display: "flex"}}><a href="https://github.com" target="_blank" rel="noreferrer">Custom Comp</a></div>}
+          limit={10}
+          isConnected={true} 
+          groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
+          groupInfoModalPositionType={MODAL_POSITION_TYPE.RELATIVE}
+          verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}
+          welcomeComponent={<div style={{display: "flex",flexDirection:'column',border:'1px solid black'}}>
+            <p>Welcome</p>
+            <p>new chat</p>
+            <p>Welcome</p>
+            <p>new chat</p>
+            <p>Welcome</p>
+            <p>new chat</p>
+            <p>Welcome</p>
+         
+          </div>}
+
          />
       </ChatViewComponentCard>
     </div>
