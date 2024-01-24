@@ -18,8 +18,9 @@ const VideoV2 = () => {
   const [data, setData] = useState<TYPES.VIDEO.DATA>(
     CONSTANTS.VIDEO.DEFAULT_DATA
   );
-  const [latestVideoEvent, setLatestVideoEvent] =
-    useState<TYPES.VIDEO.EVENT | null>(null);
+  const [incomingCallerAddress, setIncomingCallerAddress] = useState<
+    string | null
+  >(null);
   const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
   const [recipientAddress, setRecipientAddress] = useState<string>();
@@ -57,7 +58,7 @@ const VideoV2 = () => {
       async (data: TYPES.VIDEO.EVENT) => {
         if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
           setLogs((prevLogs) => ['Video Call Requested', ...prevLogs]);
-          setLatestVideoEvent(data);
+          setIncomingCallerAddress(data.peerInfo.address);
         }
 
         if (data.event === CONSTANTS.VIDEO.EVENT.APPROVE) {
@@ -194,19 +195,19 @@ const VideoV2 = () => {
   // This function is used to accept the incoming video call
   const acceptIncomingCall = async () => {
     setLogs((prevLogs) => [`Accepting incoming video call`, ...prevLogs]);
-    await aliceVideoCall.current.approve(latestVideoEvent?.peerInfo);
+    await aliceVideoCall.current.approve(incomingCallerAddress);
   };
 
   // This function is used to deny the incoming video call
   const denyIncomingCall = async () => {
     setLogs((prevLogs) => [`Denying incoming video call`, ...prevLogs]);
-    await aliceVideoCall.current.deny(latestVideoEvent?.peerInfo);
+    await aliceVideoCall.current.deny(incomingCallerAddress);
   };
 
   // This function is used to end the ongoing video call
   const endCall = async () => {
     setLogs((prevLogs) => [`Ending video call`, ...prevLogs]);
-    await aliceVideoCall.current.disconnect(data?.incoming[0]?.address);
+    await aliceVideoCall.current.disconnect();
   };
 
   return (
@@ -322,7 +323,7 @@ const VideoV2 = () => {
             <button
               disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ video: !data?.local.video }); // This function is used to toggle the video on/off
+                aliceVideoCall.current?.config({ video: !data?.local.video }); // This function is used to toggle the video on/off
               }}
             >
               Toggle Video
@@ -331,7 +332,7 @@ const VideoV2 = () => {
             <button
               disabled={!data?.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ audio: !data?.local.audio }); // This function is used to toggle the audio on/off
+                aliceVideoCall.current?.config({ audio: !data?.local.audio }); // This function is used to toggle the audio on/off
               }}
             >
               Toggle Audio
@@ -343,7 +344,7 @@ const VideoV2 = () => {
 
             {data?.incoming[0].status === CONSTANTS.VIDEO.STATUS.RECEIVED && (
               <IncomingVideoModal
-                callerID={latestVideoEvent?.peerInfo?.address}
+                callerID={incomingCallerAddress}
                 onAccept={acceptIncomingCall}
                 onReject={denyIncomingCall}
               />
