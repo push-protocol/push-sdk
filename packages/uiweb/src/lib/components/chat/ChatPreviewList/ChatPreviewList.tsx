@@ -257,6 +257,27 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           errored: false,
           error: null,
         }));
+        if (
+          listInnerRef &&
+          listInnerRef?.current &&
+          listInnerRef?.current?.parentElement
+        ) {
+       
+          if (
+            listInnerRef.current.clientHeight + 25 >
+            listInnerRef.current.parentElement.clientHeight
+          ) {
+            // set loading to true
+            setChatPreviewList((prev) => ({
+              ...prev,
+              nonce: generateRandomNonce(),
+              loading: true,
+            }));
+          }
+        }
+        if (options?.onPreload) {
+          options.onPreload(transformedChats);
+        }
       } else {
         // return if nonce doesn't match
         console.debug(
@@ -329,6 +350,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           errored: false,
           error: null,
         }));
+        if (options?.onPaging) {
+          options.onPaging([...chatPreviewList.items, ...transformedChats]);
+        }
       } else {
         // return if nonce doesn't match or if page plus 1 is not the same as new page
         if (
@@ -395,7 +419,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   };
 
-
   // Effects
 
   // If account, env or signer changes
@@ -415,6 +438,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     resetBadge();
   }, [account, signer, env]);
 
+  useEffect(() => {
+    if (options?.onLoading) {
+      options?.onLoading({
+        preload: chatPreviewList.preloading,
+        loading: chatPreviewList.loading,
+        finished: chatPreviewList.loaded,
+        paging: chatPreviewList.loading || chatPreviewList.resume,
+      });
+    }
+  }, [
+    chatPreviewList.loading,
+    chatPreviewList.preloading,
+    chatPreviewList.loaded,
+    chatPreviewList.resume,
+  ]);
   // If push user changes | preloading
   useEffect(() => {
     if (!user) {
@@ -466,13 +504,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   useEffect(() => {
     // Count all badges object that are greater than 0
     const count = Object.values(chatPreviewListMeta.badges).reduce(
-      (acc, cur) => acc > 0 ? 1 + cur : cur,
+      (acc, cur) => (acc > 0 ? 1 + cur : cur),
       0
     );
 
     // Call onBadgeCountChange if present
     if (options?.onUnreadCountChange) {
-
       options.onUnreadCountChange(count);
     }
   }, [chatPreviewListMeta.badges]);

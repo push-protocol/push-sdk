@@ -42,6 +42,9 @@ const ChatPreviewListTest = () => {
           overrideAccount={address ? address : undefined}
          onChatSelected={(chatid) => { console.log("Chat id: ", chatid) }}
             onUnreadCountChange={(count) => { console.log("Count is: ", count) }}
+            onLoading={(loadingData) => { console.log("loading data: ", loadingData) }}
+            onPaging={(chats) => { console.log("paging chats are: ", chats) }}
+            onPreload={(chats) => { console.log("preload chats are: ", chats) }}
           // listType='SEARCH'
           // searchParamter='fabio.eth'
         />
