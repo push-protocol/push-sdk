@@ -16,7 +16,7 @@ const VideoV2 = () => {
 
   const aliceVideoCall = useRef<any>();
   const [data, setData] = useState<TYPES.VIDEO.DATA>(
-    CONSTANTS.VIDEO.DEFAULT_DATA
+    CONSTANTS.VIDEO.INITIAL_DATA
   );
   const [incomingCallerAddress, setIncomingCallerAddress] = useState<
     string | null

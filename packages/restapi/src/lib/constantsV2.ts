@@ -34,7 +34,7 @@ const CONSTANTS = {
   VIDEO: {
     EVENT: VideoEventType,
     STATUS: VideoCallStatus,
-    DEFAULT_DATA: initVideoCallData
+    INITIAL_DATA: initVideoCallData
   },
   ALPHA_FEATURES: ALPHA_FEATURES,
   USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
