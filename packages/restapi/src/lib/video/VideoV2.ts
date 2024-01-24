@@ -192,12 +192,12 @@ export class VideoV2 {
   }
 
   /**
-   * Enable or disable media (video, audio)
+   * Enable or disable config properties (video, audio)
    * @param {object} params - The parameters
    * @param {boolean} params.video - The video state
    * @param {boolean} params.audio - The audio state
    */
-  media({ video, audio }: { video?: boolean; audio?: boolean }) {
+  config({ video, audio }: { video?: boolean; audio?: boolean }) {
     if (typeof video === 'boolean') {
       this.videoInstance.enableVideo({ state: video });
     }
