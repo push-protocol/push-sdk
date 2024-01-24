@@ -477,8 +477,25 @@ export class Space {
       overrideAccount?: string;
     }
   ): Promise<IFeeds[]> {
-    const chatListType = mapSpaceListTypeToChatListType(type);
-    return this.chatInstance.list(chatListType, options);
+    const accountToUse = options?.overrideAccount || this.account;
+
+    const listParams = {
+      account: accountToUse,
+      pgpPrivateKey: this.decryptedPgpPvtKey,
+      page: options?.page,
+      limit: options?.limit,
+      env: this.env,
+      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+    };
+
+    switch (type) {
+      case SpaceListType.SPACES:
+        return await PUSH_SPACE.spaces(listParams);
+      case SpaceListType.REQUESTS:
+        return await PUSH_SPACE.requests(listParams);
+      default:
+        throw new Error('Invalid Space List Type');
+    }
   }
 
   async accept(spaceId: string): Promise<string> {
