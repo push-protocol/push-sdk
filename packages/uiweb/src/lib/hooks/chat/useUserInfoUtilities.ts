@@ -3,14 +3,14 @@ import { useChatData } from "./index";
 import { PushAPI } from "@pushprotocol/restapi";
 
 export interface FetchEncryptionInfoParams {
-   pushUser:PushAPI
+   user:PushAPI
 }
 
-const usePushUserInfoUtilities = () => {
-    const fetchEncryptionInfo = useCallback(async({pushUser}:FetchEncryptionInfoParams): Promise<any> => {
+const useUserInfoUtilities = () => {
+    const fetchEncryptionInfo = useCallback(async({user}:FetchEncryptionInfoParams): Promise<any> => {
         try {
      
-            const encryptionResponse = await pushUser?.encryption.info();
+            const encryptionResponse = await user?.encryption.info();
         
             return encryptionResponse;
         } catch (error) {
@@ -22,4 +22,4 @@ const usePushUserInfoUtilities = () => {
     return {fetchEncryptionInfo};
 };
 
-export default usePushUserInfoUtilities;
+export default useUserInfoUtilities;

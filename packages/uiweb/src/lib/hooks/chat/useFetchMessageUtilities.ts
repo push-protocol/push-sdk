@@ -33,12 +33,12 @@ const useFetchMessageUtilities
   const [chatListLoading, setChatListLoading] = useState<boolean>(false);
 
 
-  const { account, env,pgpPrivateKey ,pushUser} = useChatData();
+  const { account, env,pgpPrivateKey ,user} = useChatData();
   const fetchChatList = useCallback(async ({type,page,limit,overrideAccount = undefined}:FetchChatListParams) => {
 
     setChatListLoading(true);
     try {
-        const chats = await pushUser?.chat
+        const chats = await user?.chat
         .list(type, {
           overrideAccount: overrideAccount,
           page: page,
@@ -53,12 +53,12 @@ const useFetchMessageUtilities
     } finally {
       setChatListLoading(false);
     }
-  }, [pushUser,account,env]);
+  }, [user,account,env]);
   const fetchLatestMessage = useCallback(async ({chatId}:FetchLatestMessageParams) => {
 
     setLatestLoading(true);
     try {
-        const latestChat:IMessageIPFS[] = await pushUser?.chat.latest(chatId) as IMessageIPFS[];
+        const latestChat:IMessageIPFS[] = await user?.chat.latest(chatId) as IMessageIPFS[];
        return latestChat;
     } catch (error: Error | any) {
       setLatestLoading(false);
@@ -68,7 +68,7 @@ const useFetchMessageUtilities
     } finally {
       setLatestLoading(false);
     }
-  }, [pushUser,account,env]);
+  }, [user,account,env]);
 
   const historyMessages = useCallback(async ({threadHash,limit = 10,}:HistoryMessagesParams) => {
 

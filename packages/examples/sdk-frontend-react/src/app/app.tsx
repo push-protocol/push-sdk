@@ -60,7 +60,8 @@ import {
 import { ENV } from './helpers';
 import { useSDKSocket } from './hooks';
 
-import * as PushAPI from '@pushprotocol/restapi';
+import * as PushApi from '@pushprotocol/restapi';
+import { PushAPI } from "@pushprotocol/restapi";
 import {
   CHAT_THEME_OPTIONS,
   ChatUIProvider,
@@ -228,6 +229,7 @@ export function App() {
   const [env, setEnv] = useState<ENV>(ENV.PROD);
   const [isCAIP, setIsCAIP] = useState(false);
   const [signer, setSigner] = useState();
+  const [user, setUser] = useState<PushAPI>();
 
   const { SpaceWidgetComponent } = useSpaceComponents();
   const [spaceId, setSpaceId] = useState<string>('');
@@ -252,12 +254,18 @@ export function App() {
     (async () => {
       if (!account || !env || !library) return;
 
-      const user = await PushAPI.user.get({ account: account, env });
+      const user = await PushApi.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
       setSigner(librarySigner);
+      const pushUser = await PushAPI.initialize(librarySigner!, {
+        env: env,
+        account: account,
+        alpha: { feature: ['SCALABILITY_V2'] },
+    })
+    setUser(pushUser);
       if (user?.encryptedPrivateKey) {
-        pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
+        pgpPrivateKey = await PushApi.chat.decryptPGPKey({
           encryptedPGPPrivateKey: user.encryptedPrivateKey,
           account: account,
           signer: librarySigner,
@@ -319,7 +327,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider  env={env} theme={lightChatTheme} signer={signer}>
+                <ChatUIProvider  env={env} theme={lightChatTheme}  user={user}>
                   <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                     <Routes>
                       <Route

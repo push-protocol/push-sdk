@@ -11,7 +11,7 @@ export const usePushChatStream = () => {
     setPushChatStream,
     setIsPushChatStreamConnected,
     env,
-    pushUser,
+    user,
   } = useChatData();
 
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
@@ -53,14 +53,14 @@ export const usePushChatStream = () => {
    *  - create a new connection object
    */
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
-    const initPushUser = async () => {
+    const initUser = async () => {
       // create a new connection object
-      if (!pushUser.stream) {
-        const stream = await pushUser?.initStream(
+      if (!user.stream) {
+        const stream = await user?.initStream(
           [
             CONSTANTS.STREAM.CHAT,
             CONSTANTS.STREAM.CHAT_OPS,
@@ -80,24 +80,24 @@ export const usePushChatStream = () => {
       }
 
       // establish a new connection
-      if (!pushUser.stream.connected()) {
-        await pushUser.stream?.connect();
-        console.debug('Connect stream: ', pushUser);
+      if (!user.stream.connected()) {
+        await user.stream?.connect();
+        console.debug('Connect stream: ', user);
       }
 
     };
 
-    initPushUser();
+    initUser();
 
     // Return a function to clean up the effect
     return () => {
-      if (pushUser && pushUser.stream) {
-        pushUser.stream?.disconnect();
-        console.debug('Disconnect stream: ', pushUser);
+      if (user && user.stream) {
+        user.stream?.disconnect();
+        console.debug('Disconnect stream: ', user);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pushUser, env, account]);
+  }, [user, env, account]);
 
   return {
     chatStream,

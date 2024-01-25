@@ -59,13 +59,14 @@ interface IChatPreviewListMeta {
 }
 
 // Define Constants
-const CHAT_PAGE_LIMIT = 10;
+const CHAT_PAGE_LIMIT = 3;
+const SCROLL_LIMIT = 25;
 
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   options: IChatPreviewListProps
 ) => {
   // get hooks
-  const { env, signer, account, pushUser } = useChatData();
+  const { env, signer, account, user } = useChatData();
   const { fetchChatProfile } = useChatProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
@@ -83,7 +84,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     errored: false,
     error: null,
   });
-
   // set chat preview list meta
   const [chatPreviewListMeta, setChatPreviewListMeta] =
     useState<IChatPreviewListMeta>({
@@ -152,7 +152,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -173,12 +173,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     } else {
       // if not present, fetch profile
       if (!modItem.chatGroup) {
-        const profile = await pushUser.profile.info({
+        const profile = await user.profile.info({
           overrideAccount: modItem.chatParticipant,
         });
         modItem.chatPic = profile.picture;
       } else {
-        const profile = await pushUser.chat.group.info(modItem.chatId!);
+        const profile = await user.chat.group.info(modItem.chatId!);
         modItem.chatPic = profile.groupImage;
         modItem.chatParticipant = profile.groupName;
       }
@@ -189,7 +189,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Transform accepted request
   const transformAcceptedRequest: (item: any) => void = async (item: any) => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -258,6 +258,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           errored: false,
           error: null,
         }));
+
+        if (options?.onPreload) {
+          options.onPreload(transformedChats);
+        }
       } else {
         // return if nonce doesn't match
         console.debug(
@@ -330,6 +334,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           errored: false,
           error: null,
         }));
+        if (options?.onPaging) {
+          options.onPaging([...chatPreviewList.items, ...transformedChats]);
+        }
       } else {
         // return if nonce doesn't match or if page plus 1 is not the same as new page
         if (
@@ -396,7 +403,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   };
 
-
   // Effects
 
   // If account, env or signer changes
@@ -416,9 +422,24 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     resetBadge();
   }, [account, signer, env]);
 
+  useEffect(() => {
+    if (options?.onLoading) {
+      options?.onLoading({
+        preload: chatPreviewList.preloading,
+        loading: chatPreviewList.loading,
+        finished: chatPreviewList.loaded,
+        paging: chatPreviewList.loading || chatPreviewList.resume,
+      });
+    }
+  }, [
+    chatPreviewList.loading,
+    chatPreviewList.preloading,
+    chatPreviewList.loaded,
+    chatPreviewList.resume,
+  ]);
   // If push user changes | preloading
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -437,14 +458,37 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   }, [
     options?.searchParamter,
-    pushUser,
+    user,
     options.listType,
     options.overrideAccount,
   ]);
 
+  useEffect(() => {
+    if (
+      listInnerRef &&
+      listInnerRef?.current &&
+      listInnerRef?.current?.parentElement &&
+      !chatPreviewList.preloading &&
+      (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS)
+    ) {
+      if (
+        listInnerRef.current.clientHeight + SCROLL_LIMIT >
+        listInnerRef.current.parentElement.clientHeight
+      ) {
+        // set loading to true
+        setChatPreviewList((prev) => ({
+          ...prev,
+          nonce: generateRandomNonce(),
+          loading: true,
+        }));
+      }
+    }
+  }, [chatPreviewList.preloading]);
+
   // If reset is called
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
@@ -467,7 +511,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   useEffect(() => {
     // Count all badges object that are greater than 0
     const count = Object.values(chatPreviewListMeta.badges).reduce(
-      (acc, cur) => acc > 0 ? 1 + cur : cur,
+      (acc, cur) => (acc > 0 ? 1 + cur : cur),
       0
     );
 
@@ -661,7 +705,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       const scrollTop = element.scrollTop;
       const scrollBottom = scrollHeight - scrollTop - windowHeight;
       if (
-        scrollBottom <= 20 &&
+        scrollBottom <= SCROLL_LIMIT &&
         !chatPreviewList.preloading &&
         !chatPreviewList.loading &&
         !chatPreviewList.loaded &&
@@ -784,7 +828,7 @@ const ChatPreviewListContainer = styled(Section)<IThemeProps>`
   flex-direction: column;
   width: 100%;
   justify-content: start;
-  padding: 0 2px;
+  // padding: 0 2px;
 
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
