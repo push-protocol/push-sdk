@@ -1,3 +1,6 @@
+// for namespace TYPES
+/* eslint-disable @typescript-eslint/no-namespace */
+
 import { TypedDataDomain, TypedDataField } from 'ethers';
 import {
   ADDITIONAL_META_TYPE,
@@ -12,6 +15,7 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
+import { VideoEvent } from '../pushstream/pushStreamTypes';
 export * from './messageTypes';
 export * from './videoTypes';
 
@@ -872,3 +876,14 @@ export type EnableVideoInputOptions = {
 export type EnableAudioInputOptions = {
   state: boolean;
 };
+
+/**
+ * The TYPES namespace is exported from the top level of the SDK and can be used by developers to add types corresponding to SDK classes, methods in their code.
+ * For example: TYPES.VIDEO.DATA for the video state data type.
+ */
+export namespace TYPES {
+  export namespace VIDEO {
+    export type DATA = VideoCallData;
+    export type EVENT = VideoEvent;
+  }
+}
