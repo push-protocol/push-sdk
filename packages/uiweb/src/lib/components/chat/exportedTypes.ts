@@ -32,6 +32,9 @@ export interface IChatPreviewListProps {
   searchParamter?: string;
   onChatSelected?: (chatId: string) => void;
   onUnreadCountChange?: (count: number) => void;
+  onPreload?: (chats: Array<IChatPreviewPayload>) => void;
+  onPaging?: (chats: Array<IChatPreviewPayload>) => void;
+  onLoading?: (loadingData:{loading:boolean,preload:boolean,paging:boolean,finished:boolean}) => void;
 }
 
 export interface IChatViewListProps {

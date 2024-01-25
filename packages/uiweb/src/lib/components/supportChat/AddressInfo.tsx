@@ -17,11 +17,11 @@ export const AddressInfo: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-if(pushUser){
-  const user = await pushUser.info();
+if(user){
+  const fetchedUser = await user.info();
 //  const ensNameResult = await resolveNewEns(supportAddress, provider) 
 //   setEnsName(ensNameResult!)
-      setUser(user);
+      setUser(fetchedUser);
 }
       
     };
