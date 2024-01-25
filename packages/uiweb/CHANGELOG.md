@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.37...uiweb-0.0.1-alpha.38) (2024-01-25)
+
+
+### Bug Fixes
+
+* added a dynamic component for no chatId ([#1042](https://github.com/ethereum-push-notification-service/push-sdk/issues/1042)) ([85d862f](https://github.com/ethereum-push-notification-service/push-sdk/commit/85d862fc2f91a1904425f2d55d983bc0eb3a2cc5))
+* changed pushUser to user ([#1058](https://github.com/ethereum-push-notification-service/push-sdk/issues/1058)) ([8046688](https://github.com/ethereum-push-notification-service/push-sdk/commit/80466884921448e296a1b47d345426152530907a))
+
+
+
 ## [0.0.1-alpha.37](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.36...uiweb-0.0.1-alpha.37) (2024-01-19)
 
 
