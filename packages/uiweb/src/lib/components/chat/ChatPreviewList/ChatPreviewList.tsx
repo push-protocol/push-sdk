@@ -59,7 +59,8 @@ interface IChatPreviewListMeta {
 }
 
 // Define Constants
-const CHAT_PAGE_LIMIT = 20;
+const CHAT_PAGE_LIMIT = 3;
+const SCROLL_LIMIT = 25;
 
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   options: IChatPreviewListProps
@@ -257,24 +258,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
           errored: false,
           error: null,
         }));
-        if (
-          listInnerRef &&
-          listInnerRef?.current &&
-          listInnerRef?.current?.parentElement
-        ) {
-       
-          if (
-            listInnerRef.current.clientHeight + 25 >
-            listInnerRef.current.parentElement.clientHeight
-          ) {
-            // set loading to true
-            setChatPreviewList((prev) => ({
-              ...prev,
-              nonce: generateRandomNonce(),
-              loading: true,
-            }));
-          }
-        }
+
         if (options?.onPreload) {
           options.onPreload(transformedChats);
         }
@@ -478,6 +462,29 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     options.listType,
     options.overrideAccount,
   ]);
+
+  useEffect(() => {
+    if (
+      listInnerRef &&
+      listInnerRef?.current &&
+      listInnerRef?.current?.parentElement &&
+      !chatPreviewList.preloading &&
+      (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS)
+    ) {
+      if (
+        listInnerRef.current.clientHeight + SCROLL_LIMIT >
+        listInnerRef.current.parentElement.clientHeight
+      ) {
+        // set loading to true
+        setChatPreviewList((prev) => ({
+          ...prev,
+          nonce: generateRandomNonce(),
+          loading: true,
+        }));
+      }
+    }
+  }, [chatPreviewList.preloading]);
 
   // If reset is called
   useEffect(() => {
@@ -698,7 +705,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       const scrollTop = element.scrollTop;
       const scrollBottom = scrollHeight - scrollTop - windowHeight;
       if (
-        scrollBottom <= 20 &&
+        scrollBottom <= SCROLL_LIMIT &&
         !chatPreviewList.preloading &&
         !chatPreviewList.loading &&
         !chatPreviewList.loaded &&
