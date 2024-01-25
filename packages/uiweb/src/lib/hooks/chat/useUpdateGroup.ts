@@ -11,21 +11,27 @@ interface updateGroupParams {
 
 const useUpdateGroup = () => {
   const [error, setError] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [removeLoading, setRemoveLoading] = useState<boolean>(false);
+  const [modifyLoading, setModifyLoading] = useState<boolean>(false);
+
   const { account, env, pushUser } = useChatData();
 
 
   const addMember = useCallback(
     async ({ role, memberList,chatId  }: updateGroupParams) => {
-      setLoading(true);
+      setAddLoading(true);
       try {
         const response = await pushUser?.chat.group.add(chatId, {
           role: role,
           accounts: memberList,
         });
+        setAddLoading(false);
+
         return response;
       } catch(error: Error | any) {
         console.log("err", error);
+        setAddLoading(false);
         setError(error.message);
         return error.message;
       }
@@ -34,15 +40,40 @@ const useUpdateGroup = () => {
   )
   const removeMember = useCallback(
     async ({ role, memberList,chatId  }: updateGroupParams) => {
-      setLoading(true);
+      setRemoveLoading(true);
       try {
         const response = await pushUser?.chat.group.remove(chatId, {
           role: role,
           accounts: memberList,
         });
+        setRemoveLoading(false);
+
         return response;
       } catch(error: Error | any) {
         console.log("err", error);
+        setRemoveLoading(false);
+
+        setError(error.message);
+        return error.message;
+      }
+    },
+    [pushUser, env, account]
+  )
+  const modifyParticipant = useCallback(
+    async ({ role, memberList,chatId  }: updateGroupParams) => {
+      setModifyLoading(true);
+      try {
+        const response = await pushUser?.chat.group.modify(chatId, {
+          role: role,
+          accounts: memberList,
+        });
+        setModifyLoading(false);
+
+        return response;
+      } catch(error: Error | any) {
+        console.log("err", error);
+        setModifyLoading(false);
+
         setError(error.message);
         return error.message;
       }
@@ -50,7 +81,7 @@ const useUpdateGroup = () => {
     [pushUser, env, account]
   )
 
-  return { error, loading, addMember,removeMember };
+  return { error, addLoading,removeLoading,modifyLoading, addMember,removeMember,modifyParticipant };
 };
 
 export default useUpdateGroup;

@@ -22,7 +22,6 @@ import DismissAdmin from '../../../icons/dismissadmin.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
 import Remove from '../../../icons/remove.svg';
 
-
 interface ShadowedProps {
   setPosition: boolean;
 }
@@ -58,7 +57,7 @@ const SUCCESS_MESSAGE = {
   REMOVE_MEMBER: 'Removed Member successfully',
   ADD_MEMBER: 'Group Invitation sent',
   REMOVE_ADMIN: 'Admin removed successfully',
-  ADD_ADMIN: 'Removed added successfully',
+  ADD_ADMIN: 'Admin added successfully',
 };
 
 export const PendingMembers = ({
@@ -171,7 +170,14 @@ export const AcceptedMembers = ({
     string | null
   >(null);
   const dropdownRef = useRef<any>(null);
-  const { addMember, removeMember } = useUpdateGroup();
+  const {
+    addMember,
+    removeMember,
+    modifyLoading,
+    addLoading,
+    removeLoading,
+    modifyParticipant,
+  } = useUpdateGroup();
   const groupInfoToast = useToast();
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
@@ -205,30 +211,6 @@ export const AcceptedMembers = ({
     // eslint-disable-next-line no-use-before-define
   }, [isInViewportPending]);
 
-  const handleAddMember = async (role: GroupRolesKeys) => {
-    try {
-      const response = await addMember({
-        memberList: [selectedMemberAddress!],
-        chatId: chatId!,
-        role: role,
-      });
-      if (role === GROUP_ROLES.ADMIN) {
-        handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.ADD_ADMIN]);
-      }
-      if (role === GROUP_ROLES.MEMBER) {
-        handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.ADD_MEMBER]);
-      }
-    } catch (error) {
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: 'Please, try again',
-        toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
-      });
-    } finally {
-      setSelectedMemberAddress(null);
-    }
-  };
   const handleRemoveMember = async (role: GroupRolesKeys) => {
     try {
       const response = await removeMember({
@@ -254,6 +236,32 @@ export const AcceptedMembers = ({
       setSelectedMemberAddress(null);
     }
   };
+  const handleModifyParticipant = async (role: GroupRolesKeys) => {
+    try {
+      const response = await modifyParticipant({
+        memberList: [selectedMemberAddress!],
+        chatId: chatId!,
+        role: role,
+      });
+
+      if (role === GROUP_ROLES.ADMIN) {
+        handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.ADD_ADMIN]);
+      }
+      if (role === GROUP_ROLES.MEMBER) {
+        handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.REMOVE_ADMIN]);
+      }
+    } catch (error) {
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: 'Please, try again',
+        toastType: 'ERROR',
+        getToastIcon: (size) => <MdError size={size} color="red" />,
+      });
+    } finally {
+      setSelectedMemberAddress(null);
+    }
+  };
+
 
   const handleError = (response: any, errMessage: string) => {
     if (typeof response !== 'string') {
@@ -277,13 +285,13 @@ export const AcceptedMembers = ({
     id: 'dismiss_admin',
     title: 'Dismiss as admin',
     icon: DismissAdmin,
-    function: () => handleRemoveMember(GROUP_ROLES.ADMIN),
+    function: () => handleModifyParticipant(GROUP_ROLES.MEMBER),
   };
   const addAdminDropdown: DropdownValueType = {
     id: 'add_admin',
     title: 'Make group admin',
     icon: AddAdmin,
-    function: () => handleAddMember(GROUP_ROLES.ADMIN),
+    function: () => handleModifyParticipant(GROUP_ROLES.ADMIN),
   };
   const removeMemberDropdown: DropdownValueType = {
     id: 'remove_member',
@@ -294,7 +302,7 @@ export const AcceptedMembers = ({
   };
 
   useClickAway(dropdownRef, () => setSelectedMemberAddress(null));
-
+  console.debug(acceptedMembers);
   if (acceptedMembers && acceptedMembers.length) {
     return (
       <ProfileSection
@@ -309,7 +317,8 @@ export const AcceptedMembers = ({
             key={index}
             member={item}
             dropdownValues={
-              isAdmin(item) && accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
+              isAdmin(item) &&
+              accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [removeAdminDropdown, removeMemberDropdown]
                 : accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [addAdminDropdown, removeMemberDropdown]
@@ -320,8 +329,7 @@ export const AcceptedMembers = ({
             dropdownRef={dropdownRef}
           />
         ))}
-        <div ref={acceptedMemberPageRef} style={{ padding: '1px' }}>
-        </div>
+        <div ref={acceptedMemberPageRef} style={{ padding: '1px' }}></div>
         {acceptedMemberPaginationData.loading && (
           <Section>
             <Spinner size="20" />

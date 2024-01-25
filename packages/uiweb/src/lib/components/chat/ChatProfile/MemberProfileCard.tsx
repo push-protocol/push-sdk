@@ -46,7 +46,7 @@ export const MemberProfileCard = ({
     setDropdownHeight(containerHeight?.top);
   };
 
-
+console.log(isAdmin(member))
   return (
     <ProfileCardItem
       background={

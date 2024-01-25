@@ -9,7 +9,7 @@ export const convertToWalletAddressList = (
 
 export const isAdmin = (member:ChatMemberProfile):boolean=>{
 
-  if(member?.role === GROUP_ROLES.ADMIN)
+  if(member?.role === GROUP_ROLES.ADMIN.toLowerCase())
   {
     return true;
   }

@@ -66,6 +66,7 @@ export const usePushChatStream = () => {
 
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
+        console.debug(chatops)
       setGroupMetaStream(chatops);
     });
 
