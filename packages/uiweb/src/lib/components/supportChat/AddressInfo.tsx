@@ -5,15 +5,16 @@ import { Constants, ENV, InfuraAPIKey, allowedNetworks } from '../../config';
 import { copyToClipboard, pCAIP10ToWallet, resolveNewEns } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
 import { ethers } from 'ethers';
+import { ChatProps } from './Chat';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env, theme, pushUser } = useContext<any>(SupportChatPropsContext);
+  const { supportAddress, env, theme, user } = useContext<ChatProps>(SupportChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
-  const [user, setUser] = useState<any>({});
+  const [pushUser, setPushUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const walletAddress = pCAIP10ToWallet(supportAddress);
-  // const l1ChainId = (allowedNetworks[env]?.includes(1)) ? 1 : 5;
-  // const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
+  const walletAddress = pCAIP10ToWallet(supportAddress!);
+  const l1ChainId = (allowedNetworks[env!]?.includes(1)) ? 1 : 5;
+  const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
 
   useEffect(() => {
     const getUser = async () => {
@@ -21,12 +22,12 @@ if(user){
   const fetchedUser = await user.info();
 //  const ensNameResult = await resolveNewEns(supportAddress, provider) 
 //   setEnsName(ensNameResult!)
-      setUser(fetchedUser);
+setPushUser(fetchedUser);
 }
       
     };
     getUser();
-  }, [supportAddress, pushUser]);
+  }, [supportAddress, user]);
 
   return (
     <Container theme={theme}>
@@ -34,8 +35,8 @@ if(user){
         <ImgSpan>
           <Image
             src={
-              user?.profile?.picture
-                ? user?.profile.picture
+              pushUser?.profile?.picture
+                ? pushUser?.profile.picture
                 : Constants.DEFAULT_PROFILE_PICTURE
             }
             alt="address profile"
@@ -56,14 +57,14 @@ if(user){
             setIsCopied(true);
           }}
         >
-          <CopySvg stroke={theme.btnColorSecondary} />
+          <CopySvg stroke={theme?.btnColorSecondary} />
         </div>
       )}
       {isCopied && (
         <div onMouseLeave={() => setIsCopied(false)}>
           <CopySvg
-            stroke={theme.btnColorSecondary}
-            fill={theme.btnColorSecondary}
+            stroke={theme?.btnColorSecondary}
+            fill={theme?.btnColorSecondary}
           />
         </div>
       )}

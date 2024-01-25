@@ -12,21 +12,22 @@ import type { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import type { ENV} from '../../config';
 import { Constants, lightTheme } from '../../config';
-import { useSDKSocket } from '../../hooks/useSDKSocket';
+import { useSupportChatStream } from '../../hooks/useSupportChatStream';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
 import { sign } from 'crypto';
 
 export type ChatProps = {
-account?: string;
-  signer: SignerType;
-  supportAddress: string;
-  greetingMsg?: string;
-  modalTitle?: string;
-  theme?: ITheme;
-  apiKey?: string;
-  env?: ENV;
-};
+    account?: string | null;
+    signer?: SignerType | null;
+    supportAddress?: string;
+    greetingMsg?: string;
+    modalTitle?: string;
+    theme?: ITheme;
+    apiKey?: string;
+    env?: ENV;
+   user?: PushAPI | null
+  };
 
 export type ButtonStyleProps = {
   bgColor: string;
@@ -69,10 +70,9 @@ export type ButtonStyleProps = {
     });
     setChats(uniqueChats);
   };
-  const socketData = useSDKSocket({
+  const socketData = useSupportChatStream({
     account: accountadd,
     env,
-    apiKey,
     user: user!,
     supportAddress: resolvedSupportAddress,
     signer
@@ -94,11 +94,11 @@ export type ButtonStyleProps = {
   useEffect(() => {
 
     const getNewSupportAddress = async() => {
-       if(supportAddress.includes(".")){
-          const newAddress = await getAddress(supportAddress, env)
-setResolvedSupportAddress(newAddress!);
+       if(supportAddress!.includes(".")){
+          const newAddress = await getAddress(supportAddress!, env)
+          setResolvedSupportAddress(newAddress!);
     }else{
-setResolvedSupportAddress(supportAddress);
+          setResolvedSupportAddress(supportAddress!);
     }
     }
   getNewSupportAddress(); 
