@@ -34,6 +34,7 @@ import {
 import { User } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
+import { ChatInfoResponse } from '../chat';
 
 export class Chat {
   private userInstance: User;
@@ -100,7 +101,8 @@ export class Chat {
       account: this.account,
       env: this.env,
     });
-    return latestMessages.map((message) => ({ ...message, intent }));
+     const listType = intent ? 'CHATS' : 'REQUESTS';
+    return latestMessages.map((message) => ({ ...message, listType }));
   }
 
   async history(
@@ -132,9 +134,10 @@ export class Chat {
       toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
-    return intent !== undefined
-      ? historyMessages.map((message: any) => ({ ...message, intent }))
-      : historyMessages;
+    const listType = intent ? 'CHATS' : 'REQUESTS';
+
+    return historyMessages.map((message: any) => ({ ...message, listType }));
+     
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
@@ -279,6 +282,22 @@ export class Chat {
       env: this.env,
       progressHook: this.progressHook,
     });
+  }
+
+  async info(chatId: string, address: string): Promise<ChatInfoResponse> {
+    const options: PUSH_CHAT.GetChatInfoType = {
+      chatId: chatId,
+      address: address,
+      env: this.env,
+    };
+
+    try {
+      const chatInfo = await PUSH_CHAT.getChatInfo(options);
+      return chatInfo;
+    } catch (error) {
+      console.error(`Error in Chat.info: `, error);
+      throw new Error(`Error fetching chat info: ${error}`);
+    }
   }
 
   group = {
