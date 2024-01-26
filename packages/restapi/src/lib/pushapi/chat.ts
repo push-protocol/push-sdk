@@ -86,20 +86,21 @@ export class Chat {
   }
 
   async latest(target: string) {
-    const { threadHash } = await PUSH_CHAT.conversationHash({
+    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
       conversationId: target,
       account: this.account,
       env: this.env,
     });
     if (!threadHash) return {};
 
-    return await PUSH_CHAT.latest({
+    const latestMessages = await PUSH_CHAT.latest({
       threadhash: threadHash,
       toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
     });
+    return latestMessages.map((message) => ({ ...message, intent }));
   }
 
   async history(
@@ -110,13 +111,12 @@ export class Chat {
     }
   ) {
     let reference: string;
-
+    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
+      conversationId: target,
+      account: this.account,
+      env: this.env,
+    });
     if (!options?.reference) {
-      const { threadHash } = await PUSH_CHAT.conversationHash({
-        conversationId: target,
-        account: this.account,
-        env: this.env,
-      });
       reference = threadHash;
     } else {
       reference = options.reference;
@@ -124,7 +124,7 @@ export class Chat {
 
     if (!reference) return [];
 
-    return await PUSH_CHAT.history({
+    const historyMessages = await PUSH_CHAT.history({
       account: this.account,
       env: this.env,
       threadhash: reference,
@@ -132,6 +132,9 @@ export class Chat {
       toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
+    return intent !== undefined
+      ? historyMessages.map((message: any) => ({ ...message, intent }))
+      : historyMessages;
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
@@ -161,7 +164,7 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
-      pgpHelper:PGPHelper,
+      pgpHelper: PGPHelper,
       connectedUser: await this.userInstance.info(),
     });
   }
