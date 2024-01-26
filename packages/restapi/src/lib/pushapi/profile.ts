@@ -6,21 +6,11 @@ import { InfoOptions } from './pushAPITypes';
 import { LRUCache } from 'lru-cache';
 
 export class Profile {
-  private static cache = new LRUCache<string, any>({
-    max: 200,
-    maxSize: 500 * 1024, // 500KB
-    sizeCalculation: (value, key) => {
-      return typeof value === 'string'
-        ? value.length
-        : new TextEncoder().encode(JSON.stringify(value)).length;
-    },
-    ttl: 1000 * 60 * 5, // 5 minutes
-    allowStale: false,
-  });
 
   constructor(
     private account: string,
     private env: ENV,
+    private cache: LRUCache<string, any>,
     private decryptedPgpPvtKey?: string,
     private progressHook?: (progress: ProgressHookType) => void
   ) {}
@@ -29,17 +19,10 @@ export class Profile {
     const accountToUse = options?.overrideAccount || this.account;
     const cacheKey = `profile-${accountToUse}`;
 
-    console.log(`Fetching profile info for account: ${accountToUse}`);
-
     // Check if the profile is already in the cache
-    if (Profile.cache.has(cacheKey)) {
-      console.log(`Profile data for ${accountToUse} found in cache.`);
-      return Profile.cache.get(cacheKey);
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
     }
-
-    console.log(
-      `Profile data for ${accountToUse} not in cache, fetching from API.`
-    );
 
     // If not in cache, fetch from API
     const response = await PUSH_USER.get({
@@ -47,7 +30,7 @@ export class Profile {
       env: this.env,
     });
     // Cache the profile data
-    Profile.cache.set(cacheKey, response.profile);
+    this.cache.set(cacheKey, response.profile);
     return response.profile;
   }
 
@@ -55,8 +38,6 @@ export class Profile {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
-
-    console.log(`Updating profile for account: ${this.account}`);
 
     const { name, desc, picture } = options;
     const response = await PUSH_USER.profile.update({
@@ -68,10 +49,7 @@ export class Profile {
     });
 
     const cacheKey = `profile-${this.account}`;
-    Profile.cache.delete(cacheKey);
-    console.log(
-      `Profile update successful. Cache cleared for account: ${this.account}`
-    );
+    this.cache.delete(cacheKey);
 
     return response.profile;
   }
