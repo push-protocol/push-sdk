@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { ENV } from '../constants';
 import { Signer, getCAIPAddress } from '../helpers';
 import * as CryptoJS from 'crypto-js';
-
+import {aesEncryption, generateRandomNonce, encryptViaPGP, encryptViaPK} from "./encHelpers"
+import { get } from '../user';
 import {
   ISendNotificationInputOptions,
   INotificationPayload,
@@ -14,8 +15,12 @@ import {
   NOTIFICATION_TYPE,
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES,
+  NONCE_LENGTH,
+  SUPPORTED_ENC_TYPE
 } from './constants';
+import { getPublicKeyFromPushNodes } from './getPublicKey';
 import { getConnectedUser, sign } from '../chat/helpers';
+import { getSubscribers } from '../channels';
 
 export function getUUID() {
   return uuidv4();
@@ -31,9 +36,11 @@ export function getUUID() {
  */
 export function getPayloadForAPIInput(
   inputOptions: ISendNotificationInputOptions,
-  recipients: any
+  recipients: any,
+  secret?: string
 ): INotificationPayload | null {
-  if (inputOptions?.notification && inputOptions?.payload) {
+  // for unencrypted notification
+  if (inputOptions?.notification && inputOptions?.payload && !inputOptions.payload?.sectype && !secret) {
     return {
       notification: {
         title: inputOptions?.notification?.title,
@@ -75,8 +82,74 @@ export function getPayloadForAPIInput(
       recipients: recipients,
     };
   }
+  // for encrypted notification 
+  else if(inputOptions?.notification && inputOptions?.payload && inputOptions.payload.sectype && secret) {
+    return {
+      notification: {
+        title:  aesEncryption({message: inputOptions?.notification?.title?? "", secret: secret}),
+        body: aesEncryption({message:inputOptions?.notification?.body?? "", secret: secret}),
+      },
+      data: {
+        acta: aesEncryption({message:inputOptions?.payload?.cta || '', secret: secret}),
+        aimg: aesEncryption({message:inputOptions?.payload?.img || '', secret: secret}),
+        amsg: aesEncryption({message:inputOptions?.payload?.body || '', secret: secret}),
+        asub: aesEncryption({message:inputOptions?.payload?.title || '', secret}),
+        type: inputOptions?.type?.toString() || '',
+        //deprecated
+        ...(inputOptions?.expiry && { etime: inputOptions?.expiry }),
+        ...(inputOptions?.payload?.etime && {
+          etime: inputOptions?.payload?.etime,
+        }),
+        //deprecated
+        ...(inputOptions?.hidden && { hidden: inputOptions?.hidden }),
+        ...(inputOptions?.payload?.hidden && {
+          hidden: inputOptions?.payload?.hidden,
+        }),
+        ...(inputOptions?.payload?.silent && {
+          silent: inputOptions?.payload?.silent,
+        }),
+        ...(inputOptions?.payload?.sectype && {
+          sectype: inputOptions?.payload?.sectype,
+        }),
+        //deprecated
+        ...(inputOptions?.payload?.metadata && {
+          metadata: inputOptions?.payload?.metadata,
+        }),
+        ...(inputOptions?.payload?.additionalMeta && {
+          additionalMeta: inputOptions?.payload?.additionalMeta,
+        }),
+        ...(inputOptions?.payload?.index && {
+          index: inputOptions?.payload?.index,
+        }),
+      },
+      recipients: recipients,
+    };
+
+  }
 
   return null;
+}
+
+export function getWalletFromCaipPcaip(address: string): string {
+  const addressComponent = address.split(":")
+   if(addressComponent.length == 1) return address
+   return addressComponent[addressComponent.length-1]
+}
+
+export async function getAllSubscribersHelper(channel: string, env: ENV): Promise<string[]> {
+  const subscribers = [];
+  const LIMIT = 30;
+  let page = 1;
+  let hasReachedLimit = false;
+  while(!hasReachedLimit){
+    const res = await getSubscribers({channel, env, page, limit: LIMIT});
+    subscribers.push(...res.subscribers);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    hasReachedLimit = page*LIMIT > res.itemcount;
+    page++;
+  }
+
+  return subscribers;
 }
 
 /**
@@ -94,69 +167,117 @@ export async function getRecipients({
   channel: string;
   recipients?: string | string[];
   secretType?: string;
-}) {
+}):Promise<{_recipients: any, secret?: string}> {
   let addressInCAIP = '';
-
+  let recipientObject: any = {} ;
+  //TODO: add a check for valid sec type
   if (secretType) {
-    let secret = '';
+    const secret = generateRandomNonce(NONCE_LENGTH);
     // return '';
     /**
      * Currently SECRET FLOW is yet to be finalized on the backend, so will revisit this later.
      * But in secret flow we basically generate secret for the address
      * and send it in { 0xtarget: secret_generated_for_0xtarget } format for all
      */
-    if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
-      if (typeof recipients === 'string') {
-        addressInCAIP = await getCAIPAddress(env, recipients, 'Recipient');
-        secret = ''; // do secret stuff // TODO
-
-        return {
-          [addressInCAIP]: secret,
-        };
+    if(secretType== SUPPORTED_ENC_TYPE.PGPV1){
+      if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
+        if (typeof recipients === 'string') {
+          addressInCAIP = await getCAIPAddress(env, recipients, 'Recipient');
+          const pgpKeys = await get({env, account: getWalletFromCaipPcaip(recipients)})
+          if(pgpKeys){
+            const encSecret = await encryptViaPGP({text: secret, keys: [pgpKeys.publicKey]}); 
+            recipientObject =  {
+             [addressInCAIP]: {secret:`${SUPPORTED_ENC_TYPE.PGPV1}:${encSecret}`},
+           }
+          } else {
+            const publicKey = await getPublicKeyFromPushNodes(addressInCAIP, env);
+            if(publicKey){
+              const encSecret = await encryptViaPK({publicKey: publicKey, message: secret});
+              recipientObject = {
+                [addressInCAIP]: {secret:`ECDSA:${encSecret}`}
+              }
+            } else {
+              recipientObject = {
+                [addressInCAIP]: null
+              }
+            }
+          }
+        }
+      } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
+        if (Array.isArray(recipients)) {
+          for (const _rAddress of recipients) {
+            const addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
+            const pgpKeys = await get({ env, account: _rAddress });
+            if(pgpKeys){
+              const encSecret = await encryptViaPGP({text: secret, keys: [pgpKeys.publicKey]}); 
+              recipientObject[addressInCAIP] = {secret:`${SUPPORTED_ENC_TYPE.PGPV1}:${encSecret}`}
+            } else {
+              const publicKey = await getPublicKeyFromPushNodes(addressInCAIP, env);
+              if(publicKey){
+                const encSecret = await encryptViaPK({publicKey: publicKey, message: secret});
+                recipientObject[addressInCAIP] = {secret:`ECDSA: ${encSecret}`}
+              } else {
+                recipientObject[addressInCAIP] = {
+                  secret: null
+                }
+              }
+            }
+          }
+  
+        }
+      } else if (notificationType === NOTIFICATION_TYPE.BROADCAST) {
+          const subscribers = await getAllSubscribersHelper(channel, env);
+          for (const _rAddress of subscribers) {
+            const addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
+            const pgpKeys = await get({ env, account: _rAddress });
+            if(pgpKeys){
+              const encSecret = await encryptViaPGP({text: secret, keys: [pgpKeys.publicKey]}); 
+              recipientObject[addressInCAIP] = {secret:`${SUPPORTED_ENC_TYPE.PGPV1}:${encSecret}`}
+            } else {
+              const publicKey = await getPublicKeyFromPushNodes(addressInCAIP, env);
+              if(publicKey){
+                const encSecret = await encryptViaPK({publicKey: publicKey, message: secret});
+                recipientObject[addressInCAIP] = {secret:`ECDSA:${encSecret}`}
+              } else {
+                recipientObject[addressInCAIP] = {
+                  secret: null
+                }
+              }
+            }
+          }
+  
+      } else {
+        throw new Error("Push SDK: Unsupported notification type")
       }
-    } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
-      if (Array.isArray(recipients)) {
-        const recipientObject = recipients.reduce(
-          async (_recipients, _rAddress) => {
-            addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
-            secret = ''; // do secret stuff // TODO
-
-            return {
-              ..._recipients,
-              [addressInCAIP]: secret,
-            };
-          },
-          {}
-        );
-
-        return recipientObject;
-      }
+    } else if (secretType == SUPPORTED_ENC_TYPE.LITV1){
+      //
     }
+
+    return {_recipients: recipientObject, secret};
   } else {
     /**
      * NON-SECRET FLOW
      */
 
     if (notificationType === NOTIFICATION_TYPE.BROADCAST) {
-      return await getCAIPAddress(env, channel, 'Recipient');
+      return {_recipients: await  getCAIPAddress(env, channel, 'Recipient')};
     } else if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
       if (typeof recipients === 'string') {
-        return await getCAIPAddress(env, recipients, 'Recipient');
+        return {_recipients: await getCAIPAddress(env, recipients, 'Recipient')};
       }
     } else if (notificationType === NOTIFICATION_TYPE.SUBSET) {
       if (Array.isArray(recipients)) {
         if (Array.isArray(recipients)) {
-          const recipientObject: any = {};
           recipients.map(async (_rAddress: string) => {
             addressInCAIP = await getCAIPAddress(env, _rAddress, 'Recipient');
             recipientObject[addressInCAIP] = null;
           });
-          return recipientObject;
+          return {_recipients: recipientObject};
         }
       }
     }
   }
-  return recipients;
+  return {_recipients: recipients};
 }
 
 export async function getRecipientFieldForAPIPayload({
