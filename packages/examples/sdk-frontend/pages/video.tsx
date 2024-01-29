@@ -3,13 +3,16 @@ import type { NextPage } from 'next';
 import * as PushAPI from '@pushprotocol/restapi';
 import { ENV } from '@pushprotocol/restapi/src/lib/constants';
 import { produce } from 'immer';
-import { useAccount, useNetwork, useSigner } from 'wagmi';
+import { useAccount, useNetwork, useWalletClient } from 'wagmi';
 import styled from 'styled-components';
 
 import { usePushSocket } from '../hooks/usePushSocket';
 import { useEffect, useRef, useState } from 'react';
 import VideoPlayer from '../components/VideoPlayer';
-import { ADDITIONAL_META_TYPE, VIDEO_NOTIFICATION_ACCESS_TYPE } from '@pushprotocol/restapi/src/lib/payloads/constants';
+import {
+  ADDITIONAL_META_TYPE,
+  VIDEO_NOTIFICATION_ACCESS_TYPE,
+} from '@pushprotocol/restapi/src/lib/payloads/constants';
 
 interface VideoCallMetaDataType {
   recipientAddress: string;
@@ -25,7 +28,7 @@ const env = ENV.DEV;
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { data: signer } = useSigner();
+  const { data: signer } = useWalletClient();
   const { pushSocket, isPushSocketConnected, latestFeedItem } = usePushSocket({
     env,
   });
@@ -114,10 +117,10 @@ const Home: NextPage = () => {
         access: {
           type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
           data: {
-            chatId: data.meta.chatId
-          }
-        }
-      }
+            chatId: data.meta.chatId,
+          },
+        },
+      },
     });
   };
 
@@ -176,10 +179,10 @@ const Home: NextPage = () => {
             access: {
               type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
               data: {
-                chatId: data.meta.chatId
-              }
-            }
-          }
+                chatId: data.meta.chatId,
+              },
+            },
+          },
         });
       }
     })();
@@ -236,9 +239,9 @@ const Home: NextPage = () => {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
             data: {
-              chatId: data.meta.chatId
-            }
-          }
+              chatId: data.meta.chatId,
+            },
+          },
         },
         retry: true,
       });
@@ -254,9 +257,9 @@ const Home: NextPage = () => {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
             data: {
-              chatId: data.meta.chatId
-            }
-          }
+              chatId: data.meta.chatId,
+            },
+          },
         },
         retry: true,
       });

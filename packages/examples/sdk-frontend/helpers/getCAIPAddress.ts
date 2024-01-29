@@ -1,12 +1,12 @@
-import { ENV } from "@pushprotocol/restapi/src/lib/constants";
-import { ethers } from "ethers";
+import { ENV } from '@pushprotocol/restapi/src/lib/constants';
+import { isAddress } from 'viem';
 
 export interface AddressValidatorsType {
   [key: string]: ({ address }: { address: string }) => boolean;
 }
 
 export function isValidETHAddress(address: string) {
-  return ethers.utils.isAddress(address);
+  return isAddress(address);
 }
 
 const AddressValidators: AddressValidatorsType = {
@@ -16,7 +16,7 @@ const AddressValidators: AddressValidatorsType = {
 };
 
 function validateCAIP(addressInCAIP: string) {
-  const [blockchain, networkId, address] = addressInCAIP.split(":");
+  const [blockchain, networkId, address] = addressInCAIP.split(':');
 
   if (!blockchain) return false;
   if (!networkId) return false;
