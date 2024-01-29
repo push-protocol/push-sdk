@@ -11,9 +11,7 @@
   "dependencies": {
     "@pushprotocol/restapi": "^1.6.4",
     "@pushprotocol/socket": "^0.5.1",
-    "@pushprotocol/uiweb": "^1.1.8",
     "@rainbow-me/rainbowkit": "^1.3.3",
-    "ethers": "^5",
     "immer": "^10.0.2",
     "next": "^13.4.3",
     "react": "^18.2.0",
