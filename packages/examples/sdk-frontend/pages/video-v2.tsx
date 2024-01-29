@@ -3,14 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useAccount, useSigner } from 'wagmi';
 import styled from 'styled-components';
-import {
-  PushAPI,
-  CONSTANTS,
-  VideoCallData,
-  VideoEvent,
-  VideoCallStatus,
-  video,
-} from '@pushprotocol/restapi';
+import { CONSTANTS, PushAPI, TYPES } from '@pushprotocol/restapi';
 
 import IncomingVideoModal from '../components/IncomingVideoModal';
 import VideoPlayer from '../components/VideoPlayer';
@@ -22,12 +15,15 @@ const VideoV2: NextPage = () => {
   const { data: signer } = useSigner();
 
   const aliceVideoCall = useRef<any>();
-  const [latestVideoEvent, setLatestVideoEvent] = useState<VideoEvent | null>(
-    null
-  );
+
   const [isPushStreamConnected, setIsPushStreamConnected] = useState(false);
 
-  const [data, setData] = useState<VideoCallData>(video.initVideoCallData);
+  const [data, setData] = useState<TYPES.VIDEO.DATA>(
+    CONSTANTS.VIDEO.INITIAL_DATA
+  );
+  const [incomingCallerAddress, setIncomingCallerAddress] = useState<
+    string | null
+  >(null);
   const [recipientAddress, setRecipientAddress] = useState<string>();
 
   const initializePushAPI = async () => {
@@ -49,27 +45,30 @@ const VideoV2: NextPage = () => {
       setIsPushStreamConnected(false);
     });
 
-    createdStream.on(CONSTANTS.STREAM.VIDEO, async (data: VideoEvent) => {
-      if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
-        setLatestVideoEvent(data);
-      }
+    createdStream.on(
+      CONSTANTS.STREAM.VIDEO,
+      async (data: TYPES.VIDEO.EVENT) => {
+        if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
+          setIncomingCallerAddress(data.peerInfo.address);
+        }
 
-      if (data.event === CONSTANTS.VIDEO.EVENT.APPROVE) {
-        console.log('Video Call Approved');
-      }
+        if (data.event === CONSTANTS.VIDEO.EVENT.APPROVE) {
+          console.log('Video Call Approved');
+        }
 
-      if (data.event === CONSTANTS.VIDEO.EVENT.DENY) {
-        alert('User Denied the Call');
-      }
+        if (data.event === CONSTANTS.VIDEO.EVENT.DENY) {
+          alert('User Denied the Call');
+        }
 
-      if (data.event === CONSTANTS.VIDEO.EVENT.CONNECT) {
-        console.log('Video Call Connected');
-      }
+        if (data.event === CONSTANTS.VIDEO.EVENT.CONNECT) {
+          console.log('Video Call Connected');
+        }
 
-      if (data.event === CONSTANTS.VIDEO.EVENT.DISCONNECT) {
-        alert('Video Call ended!');
+        if (data.event === CONSTANTS.VIDEO.EVENT.DISCONNECT) {
+          alert('Video Call ended!');
+        }
       }
-    });
+    );
 
     aliceVideoCall.current = await userAlice.video.initialize(setData, {
       stream: createdStream,
@@ -85,13 +84,14 @@ const VideoV2: NextPage = () => {
   // Here we initialize the push video API, which is the first and important step to make video calls
   useEffect(() => {
     if (!signer) return;
-    if (data?.incoming[0]?.status !== VideoCallStatus.UNINITIALIZED) return; // data?.incoming[0]?.status will have a status of VideoCallStatus.UNINITIALIZED when the video call is not initialized, call ended or denied. So we Initialize the Push API here.
+    if (data?.incoming[0]?.status !== CONSTANTS.VIDEO.STATUS.UNINITIALIZED)
+      return; // data?.incoming[0]?.status will have a status of VideoCallStatus.UNINITIALIZED when the video call is not initialized, call ended or denied. So we Initialize the Push API here.
     initializePushAPI();
   }, [signer, data.incoming[0].status]);
 
   useEffect(() => {
     console.log('isPushStreamConnected', isPushStreamConnected); // This will be true when the push stream is connected
-  }, [isPushStreamConnected, latestVideoEvent]);
+  }, [isPushStreamConnected]);
 
   // This function is used to request a video call to a recipient
   const requestVideoCall = async (recipient: string) => {
@@ -100,17 +100,17 @@ const VideoV2: NextPage = () => {
 
   // This function is used to accept the incoming video call
   const acceptIncomingCall = async () => {
-    await aliceVideoCall.current.approve(latestVideoEvent?.peerInfo);
+    await aliceVideoCall.current.approve(incomingCallerAddress);
   };
 
   // This function is used to deny the incoming video call
   const denyIncomingCall = async () => {
-    await aliceVideoCall.current.deny(latestVideoEvent?.peerInfo);
+    await aliceVideoCall.current.deny(incomingCallerAddress);
   };
 
   // This function is used to end the ongoing video call
   const endCall = async () => {
-    await aliceVideoCall.current.disconnect(data?.incoming[0]?.address);
+    await aliceVideoCall.current.disconnect();
   };
 
   return (
@@ -145,7 +145,7 @@ const VideoV2: NextPage = () => {
             <button
               disabled={!data.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ video: !data.local.video }); // This function is used to toggle the video on/off
+                aliceVideoCall.current?.config({ video: !data.local.video }); // This function is used to toggle the video on/off
               }}
             >
               Toggle Video
@@ -154,19 +154,19 @@ const VideoV2: NextPage = () => {
             <button
               disabled={!data.incoming[0]}
               onClick={() => {
-                aliceVideoCall.current?.media({ audio: !data?.local.audio }); // This function is used to toggle the audio on/off
+                aliceVideoCall.current?.config({ audio: !data?.local.audio }); // This function is used to toggle the audio on/off
               }}
             >
               Toggle Audio
             </button>
 
-            {data?.incoming[0]?.status === VideoCallStatus.CONNECTED && (
+            {data?.incoming[0]?.status === CONSTANTS.VIDEO.STATUS.CONNECTED && (
               <Toast message="Video Call Connected" bg="#4caf50" />
             )}
 
-            {data.incoming[0].status === VideoCallStatus.RECEIVED && (
+            {data.incoming[0].status === CONSTANTS.VIDEO.STATUS.RECEIVED && (
               <IncomingVideoModal
-                callerID={latestVideoEvent?.peerInfo?.address}
+                callerID={incomingCallerAddress!}
                 onAccept={acceptIncomingCall}
                 onReject={denyIncomingCall}
               />
