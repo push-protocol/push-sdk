@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import styled from 'styled-components';
 import { CONSTANTS, PushAPI, TYPES } from '@pushprotocol/restapi';
 
@@ -12,7 +12,7 @@ import Toast from '../components/Toast';
 const VideoV2: NextPage = () => {
   const { isConnected } = useAccount();
 
-  const { data: signer } = useSigner();
+  const { data: signer } = useWalletClient();
 
   const aliceVideoCall = useRef<any>();
 
