@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { IChatTheme } from '../exportedTypes';
+import { IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, UserProfileProps } from '../exportedTypes';
 
 import { Section, Span, Image } from '../../reusables';
 import { ProfilePicture, device } from '../../../config';
@@ -15,6 +15,7 @@ import { ProfileContainer } from '../reusables';
 import { IUser } from '@pushprotocol/restapi';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { useClickAway } from '../../../hooks';
+import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
 /**
  * @interface IThemeProps
@@ -24,10 +25,14 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export const UserProfile = () => {
+export const UserProfile : React.FC<UserProfileProps> = ({
+  updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
+  updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL
+}) => {
   const { env, signer, account, pushUser } = useChatData();
-  const [profile, setProfile] = useState<IUser>();
+  const [userProfile, setUserProfile] = useState<IUser>();
   const [options, setOptions] = useState<boolean>();
+  const [showUpdateUserProfileModal,setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
 
   const theme = useContext(ThemeContext);
@@ -39,7 +44,7 @@ export const UserProfile = () => {
     (async () => {
       const user = await fetchChatProfile({});
       if (user) {
-        setProfile(user);
+        setUserProfile(user);
       }
     })();
   }, [account, pushUser]);
@@ -48,6 +53,7 @@ export const UserProfile = () => {
     setOptions(false);
   });
 
+  console.debug(userProfile)
   return (
     <Conatiner
       //   width="100%"
@@ -62,7 +68,7 @@ export const UserProfile = () => {
         theme={theme}
         member={{
           wallet: shortenText(account || '', 8, true) as string,
-          image: profile?.profile?.picture || ProfilePicture,
+          image: userProfile?.profile?.picture || ProfilePicture,
         }}
         customStyle={{ fontSize: '17px' }}
       />
@@ -80,7 +86,7 @@ export const UserProfile = () => {
         </Section>
       )}
        {options && (
-            <DropDownBar theme={theme} ref={DropdownRef}>
+            <DropDownBar theme={theme} ref={DropdownRef} onClick={()=>setShowUpdateUserProfileModal(true)}>
               <DropDownItem cursor="pointer" >
                 <Image
                   src={''}
@@ -90,9 +96,18 @@ export const UserProfile = () => {
                   cursor="pointer"
                 />
 
-                <TextItem cursor="pointer">Update Profile</TextItem>
+                <TextItem cursor="pointer" >Update Profile</TextItem>
               </DropDownItem>
             </DropDownBar>
+          )}
+           {showUpdateUserProfileModal && (
+            <UpdateUserProfileModal
+              theme={theme}
+              setModal={setShowUpdateUserProfileModal}
+              userProfile={userProfile!}
+              updateUserProfileModalBackground={updateUserProfileModalBackground}
+              updateUserProfileModalPositionType={updateUserProfileModalPositionType}
+            />
           )}
     </Conatiner>
   );

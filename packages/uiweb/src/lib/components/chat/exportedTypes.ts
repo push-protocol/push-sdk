@@ -145,6 +145,10 @@ export interface CreateGroupModalProps {
   modalPositionType?: ModalPositionType;
 };
 
+export interface UserProfileProps {
+  updateUserProfileModalBackground?: ModalBackgroundType;
+  updateUserProfileModalPositionType?: ModalPositionType;
+};
 
 export interface ModalButtonProps {
   memberListCount?: boolean;
