@@ -40,7 +40,7 @@ const ChatPreviewListTest = () => {
         <ChatPreviewList 
           listType={chatRequests ? "REQUESTS" : "CHATS"}
           overrideAccount={address ? address : undefined}
-         onChatSelected={(chatid) => { console.log("Chat id: ", chatid) }}
+         onChatSelected={(chatid,chatParticipant) => { console.log("Chat id: ", chatid,chatParticipant) }}
             onUnreadCountChange={(count) => { console.log("Count is: ", count) }}
             onLoading={(loadingData) => { console.log("loading data: ", loadingData) }}
             onPaging={(chats) => { console.log("paging chats are: ", chats) }}

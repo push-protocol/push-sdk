@@ -18,7 +18,7 @@ export interface IChatPreviewPayload {
 export interface IChatPreviewProps {
   chatPreviewPayload: IChatPreviewPayload;
   selected?: boolean;
-  setSelected?: (chatId: string) => void;
+  setSelected?: (chatId: string,chatParticipant: string) => void;
   badge?: {
     count?: number;
   };
@@ -30,7 +30,7 @@ export interface IChatPreviewListProps {
   listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
-  onChatSelected?: (chatId: string) => void;
+  onChatSelected?: (chatId: string,chatParticipant: string) => void;
   onUnreadCountChange?: (count: number) => void;
   onPreload?: (chats: Array<IChatPreviewPayload>) => void;
   onPaging?: (chats: Array<IChatPreviewPayload>) => void;

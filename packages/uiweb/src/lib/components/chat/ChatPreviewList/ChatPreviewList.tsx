@@ -363,7 +363,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Define Chat Preview List Meta Functions
   // Set selected badge
-  const setSelectedBadge: (chatId: string) => void = (chatId: string) => {
+  const setSelectedBadge: (chatId: string,chatParticipant: string) => void = (chatId: string,chatParticipant: string) => {
     // selected will reduce badge to 0
     setChatPreviewListMeta((prev) => ({
       selectedChatId: chatId,
@@ -375,7 +375,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // call onChatSelected if present
     if (options?.onChatSelected) {
-      options.onChatSelected(chatId);
+      options.onChatSelected(chatId,chatParticipant);
     }
   };
 
