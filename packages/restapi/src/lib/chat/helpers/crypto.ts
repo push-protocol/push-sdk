@@ -42,7 +42,7 @@ interface IDecryptMessage {
   chainId: number;
   currentChat: IFeeds;
   inbox: IFeeds[];
-  pgpHelper:IPGPHelper;
+  pgpHelper: IPGPHelper;
 }
 
 export const encryptAndSign = async ({
@@ -158,7 +158,7 @@ export const decryptFeeds = async ({
   feeds: IFeeds[];
   connectedUser: IUser;
   pgpPrivateKey?: string;
-  pgpHelper: PGP.IPGPHelper
+  pgpHelper: PGP.IPGPHelper;
   env: ENV;
 }): Promise<IFeeds[]> => {
   let otherPeer: IUser;
@@ -542,12 +542,19 @@ export const decryptAndVerifyMessage = async (
       secretKey,
     });
     if (message.messageObj) {
-      decryptedMessage.messageObj = JSON.parse(
-        aesDecrypt({
-          cipherText: message.messageObj as string,
-          secretKey,
-        })
-      );
+      const decryptedMessageObj = aesDecrypt({
+        cipherText: message.messageObj as string,
+        secretKey,
+      });
+      /**
+       * @dev - messageObj can be an invalid JSON string which needs to be handled
+       * @dev - swift sdk sends messageObj as invalid json string
+       */
+      try {
+        decryptedMessage.messageObj = JSON.parse(decryptedMessageObj);
+      } catch (err) {
+        decryptedMessage.messageObj = decryptedMessageObj;
+      }
     }
   } catch (err) {
     decryptedMessage.messageContent = decryptedMessage.messageObj =

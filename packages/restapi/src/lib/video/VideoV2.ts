@@ -25,6 +25,9 @@ export class VideoV2 {
 
   private videoInstance: VideoV1;
 
+  // peerInfo objects from the incoming video call requests
+  private peerInfos: {[key: string]: VideoPeerInfo};
+
   /**
    * VideoV2 constructor
    * @param {object} params - The constructor parameters
@@ -38,16 +41,19 @@ export class VideoV2 {
     account,
     decryptedPgpPvtKey,
     env,
+    peerInfos
   }: {
     videoV1Instance: VideoV1;
     account: string;
     decryptedPgpPvtKey: string;
     env: ENV;
+    peerInfos: {[key: string]: VideoPeerInfo}
   }) {
     this.videoInstance = videoV1Instance;
     this.account = account;
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.env = env;
+    this.peerInfos = peerInfos;
   }
 
   /**
@@ -152,29 +158,45 @@ export class VideoV2 {
 
   /**
    * Approve a video call
-   * @param {VideoPeerInfo} peerInfo - The peer information
+   * @param {string} [address] - The address of the peer from which the video call is to be approved
    */
-  async approve(peerInfo: VideoPeerInfo) {
-    validatePeerInfo(peerInfo);
+  async approve(address?: string) {
+    if (!address) {
+      const peerInfoAddresses = Object.keys(this.peerInfos);
+      if (peerInfoAddresses.length !== 1) {
+        throw new Error('Either no request exists or more than one request found. Please pass an address.');
+      }
+      address = peerInfoAddresses[0];
+    }
 
-    const { signal, address, meta } = peerInfo;
+    const peerInfo = this.peerInfos[walletToPCAIP10(address)];
+
+    validatePeerInfo(peerInfo);
 
     await this.videoInstance.acceptRequest({
       senderAddress: pCAIP10ToWallet(this.account),
       recipientAddress: pCAIP10ToWallet(address),
-      signalData: signal,
-      rules: meta.rules,
+      signalData: peerInfo.signal,
+      rules: peerInfo.meta.rules,
     });
   }
 
   /**
    * Deny a video call
-   * @param {VideoPeerInfo} peerInfo - The peer information
+   * @param {string} [address] - The address of the peer from which the video call is to be denied
    */
-  async deny(peerInfo: VideoPeerInfo) {
-    validatePeerInfo(peerInfo);
+  async deny(address?: string) {
+    if (!address) {
+      const peerInfoAddresses = Object.keys(this.peerInfos);
+      if (peerInfoAddresses.length !== 1) {
+        throw new Error('Either no request exists or more than one request found. Please pass an address.');
+      }
+      address = peerInfoAddresses[0];
+    }
 
-    const { address } = peerInfo;
+    const peerInfo = this.peerInfos[walletToPCAIP10(address)];
+
+    validatePeerInfo(peerInfo);
 
     await this.videoInstance.disconnect({
       peerAddress: pCAIP10ToWallet(address),
@@ -183,21 +205,18 @@ export class VideoV2 {
 
   /**
    * Disconnect from a video call
-   * @param {string} address - The address to disconnect from
    */
-  async disconnect(address: string) {
-    await this.videoInstance.disconnect({
-      peerAddress: pCAIP10ToWallet(address),
-    });
+  async disconnect() {
+    await this.videoInstance.disconnect();
   }
 
   /**
-   * Enable or disable media (video, audio)
+   * Enable or disable config properties (video, audio)
    * @param {object} params - The parameters
    * @param {boolean} params.video - The video state
    * @param {boolean} params.audio - The audio state
    */
-  media({ video, audio }: { video?: boolean; audio?: boolean }) {
+  config({ video, audio }: { video?: boolean; audio?: boolean }) {
     if (typeof video === 'boolean') {
       this.videoInstance.enableVideo({ state: video });
     }
