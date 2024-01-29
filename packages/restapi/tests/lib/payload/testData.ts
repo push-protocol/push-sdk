@@ -1,4 +1,4 @@
-import { ISendNotificationInputOptions } from '@pushprotocol/restapi';
+import { ISendNotificationInputOptions } from '../../../src/lib/types';
 import { NOTIFICATION_TYPE } from '../../../src/lib/payloads';
 
 export const TEST_PAYLOAD = {
