@@ -1,6 +1,6 @@
 import { ENV } from "../constants";
 import { getAPIBaseUrls } from "../helpers";
-import { axiosGet, axiosPost } from "../utils/axiosUtil";
+import { axiosGet } from "../utils/axiosUtil";
 
 
 export async function getPublicKeyFromPushNodes(address: string, env: ENV): Promise<string | null> {

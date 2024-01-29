@@ -101,7 +101,6 @@ export const  encryptViaPK = async(options: {publicKey: string, message: string}
     const encyptedData = await EthCrypto.encryptWithPublicKey(publickKeyWithout0x, message)
     return EthCrypto.cipher.stringify(encyptedData)
   }catch(error){
-      console.log(error)
       return null
   }
 }
