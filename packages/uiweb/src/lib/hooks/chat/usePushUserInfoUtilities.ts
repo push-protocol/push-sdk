@@ -7,7 +7,7 @@ export interface FetchEncryptionInfoParams {
 }
 
 const usePushUserInfoUtilities = () => {
-    const {} = useChatData();
+    // const {} = useChatData();
     const fetchEncryptionInfo = useCallback(async({pushUser}:FetchEncryptionInfoParams): Promise<any> => {
         try {
      
