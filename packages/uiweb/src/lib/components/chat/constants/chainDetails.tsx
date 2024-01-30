@@ -8,6 +8,7 @@ import { OptimismSvg } from "../../../icons/OptimismSvg";
 import { PolygonzkevmSvg } from "../../../icons/PolygonzkevmSvg";
 import { ArbitrumSvg } from "../../../icons/ArbitrumSvg"
 import { FuseSvg } from "../../../icons/FuseSvg"
+import { ShardeumSvg } from "../../../icons/ShardeumSVG";
 import React from "react";
 
 const createSVGIcon = (element:any, chainName: string) => {
@@ -75,5 +76,9 @@ export const NETWORK_ICON_DETAILS =  {
   122 : {
     label: 'FUSE MAINNET',
     icon: createSVGIcon(<FuseSvg/>, 'Fuse Mainnet'),
+  },
+  8082: {
+    label: 'SHARDEUM TESTNET',
+    icon: createSVGIcon(<ShardeumSvg/>, 'Shardeum Testnet'),
   }
 };

@@ -26,6 +26,7 @@ import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
 import OptimismSvg from '../../../icons/optimisim.svg';
+import ShardeumSvg from '../../../icons/shardeum.svg';
 import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
 import {
@@ -247,6 +248,13 @@ const AddCriteria = ({
       title: 'Fuse',
       icon: FuseSVG,
       function: () => setSelectedChainValue(5),
+    },
+    {
+      id: 6,
+      value: BLOCKCHAIN_NETWORK[env].SHARDEUM,
+      title: 'Shardeum',
+      icon: ShardeumSvg,
+      function: () => setSelectedChainValue(6),
     },
   ];
 

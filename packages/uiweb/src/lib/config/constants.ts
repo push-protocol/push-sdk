@@ -52,7 +52,8 @@ const TESTNET_NETWORK = {
   OPTIMISM: 'eip155:420',
   POLYGON_ZK_EVM: 'eip155:1442',
   ARBITRUM:'eip155:421613',
-  FUSE: 'eip155:123'
+  FUSE: 'eip155:123',
+  SHARDEUM: 'eip155:8082'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -61,7 +62,8 @@ const MAINET_NETWORK = {
   OPTIMISM: 'eip155:10',
   POLYGON_ZK_EVM: 'eip155:1101',
   ARBITRUM:'eip155:42161',
-  FUSE: 'eip155:122'
+  FUSE: 'eip155:122',
+  SHARDEUM: ''
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -86,7 +88,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    8082 // for shardeum testnet
   ],
   staging: [
     // 42, //for kovan
@@ -95,7 +98,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    8082 // for shardeum testnet
   ],
   local: [
     11155111, // for eth sepolia
@@ -103,7 +107,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    8082 // for shardeum testnet
   ]
 }
 

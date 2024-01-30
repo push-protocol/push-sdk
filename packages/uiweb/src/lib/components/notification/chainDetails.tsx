@@ -8,6 +8,7 @@ import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { FuseSvg } from '../../icons/FuseSvg';
+import { ShardeumSvg } from '../../icons/ShardeumSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -73,6 +74,10 @@ export default {
   FUSE_TESTNET: {
     label: 'FUSE TESTNET',
     icon: createSVGIcon(<FuseSvg />, 'Fuse Testnet'),
+  },
+  SHARDEUM_TESTNET: {
+    label: 'SHARDEUM TESTNET',
+    icon: createSVGIcon(<ShardeumSvg />, 'Fuse Testnet'),
   },
   THE_GRAPH: {
     label: 'THE GRAPH',

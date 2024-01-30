@@ -38,6 +38,7 @@ export type chainNameType =
   | 'ARBITRUM_TESTNET'
   | 'FUSE_TESTNET'
   | 'FUSE_MAINNET'
+  | 'SHARDEUM_TESTNET'
   | 'THE_GRAPH'
   | undefined;
 
