@@ -9,7 +9,7 @@ export interface FetchProfileParams {
 }
 
 const useChatProfile = () => {
-  const { pushUser } = useChatData();
+  const { user } = useChatData();
   const fetchChatProfile = useCallback(
     async ({
       profileId,
@@ -19,9 +19,9 @@ const useChatProfile = () => {
       try {
         let userReadOnly;
         if(profileId)
-         userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+         userReadOnly = await user!.info({ overrideAccount: profileId });
         else
-         userReadOnly = await pushUser!.info();
+         userReadOnly = await user!.info();
         return userReadOnly;
       } catch (error) {
         console.log(error);

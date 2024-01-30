@@ -24,7 +24,7 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey?: string;
   supportAddress: string;
-  pushUser: PushAPI;
+  user: PushAPI;
   limit: number;
   threadHash?: string;
   env?: Env;
@@ -41,10 +41,10 @@ export const handleOnChatIconClick = ({
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser | undefined> => {
-  const { pushUser } = options || {};
+  const { user } = options || {};
   let connectedUser:IUser;
-  if(pushUser){
-    connectedUser = await pushUser.info();
+  if(user){
+    connectedUser = await user.info();
     return { ...connectedUser, 
       privateKey: connectedUser!.encryptedPrivateKey,
      };
@@ -67,14 +67,14 @@ export const getChats = async (
     account,
     pgpPrivateKey,
     supportAddress,
-    pushUser,
+    user,
     threadHash = null,
     limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
   
 
-  const chats = await pushUser?.chat.history(
+  const chats = await user?.chat.history(
     supportAddress
    );
 
@@ -223,7 +223,7 @@ export const checkIfSameChat = (
   account: string,
   chatId: string
 ) => {
-  if (ethers.utils.isAddress(chatId)) {
+  if (ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&

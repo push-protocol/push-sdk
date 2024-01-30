@@ -1,11 +1,11 @@
+import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
-import * as PushAPI from '@pushprotocol/restapi';
 
-import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
 import useGetChatProfile from '../useGetChatProfile';
+import { useChatData } from './useChatData';
 
 export type PushChatSocketHookOptions = {
   account?: string | null;
@@ -51,7 +51,6 @@ const {fetchChatProfile} = useGetChatProfile();
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
    
-    
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
