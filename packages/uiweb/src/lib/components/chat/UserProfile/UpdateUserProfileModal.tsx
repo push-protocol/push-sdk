@@ -19,7 +19,7 @@ type UpdateUserProfileModalProps = {
   updateUserProfileModalBackground?: ModalBackgroundType;
   updateUserProfileModalPositionType?: ModalPositionType;
 };
-interface UserProfileType {
+export interface UserProfileType {
   name: string;
   description: string;
   picture: string;

@@ -29,7 +29,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL
 }) => {
-  const { env, signer, account, pushUser } = useChatData();
+  const { env, signer, account, user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
   const [options, setOptions] = useState<boolean>();
   const [showUpdateUserProfileModal,setShowUpdateUserProfileModal] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
         setUserProfile(user);
       }
     })();
-  }, [account, pushUser]);
+  }, [account, user]);
 
   useClickAway(DropdownRef, () => {
     setOptions(false);
@@ -72,7 +72,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
         }}
         customStyle={{ fontSize: '17px' }}
       />
-      {pushUser && (
+      {user && (
         <Section>
           <Image
             src={VerticalEllipsisIcon}
