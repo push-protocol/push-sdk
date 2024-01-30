@@ -68,7 +68,8 @@ export const ChatUIProvider = ({
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
       } else if (!signer && pushUser) {
-        const profile = await fetchChatProfile({});
+        const profile = await fetchChatProfile({pushUser});
+  
         setAccountVal(profile?.wallets);
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
@@ -82,7 +83,7 @@ export const ChatUIProvider = ({
   useEffect(() => {
     (async () => {
 
-      if (accountVal && envVal ) {
+      if (accountVal && envVal && !pushUserVal ) {
         const pushUser = await initializePushUser({
           signer: signerVal,
           account: accountVal!,
@@ -115,7 +116,7 @@ export const ChatUIProvider = ({
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account, env });
+        user = await fetchChatProfile({ profileId: account, env ,pushUser});
         if (user) setConnectedProfile(user);
       }
     })();
