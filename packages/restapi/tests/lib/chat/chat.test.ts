@@ -106,7 +106,6 @@ describe('PushAPI.chat functionality', () => {
       'Operation not allowed in read-only mode. Signer is required.'
     );
   });
-
   it('Should decrypt message ', async () => {
     await userAlice.chat.send(account2, {
       content: 'Hello',
