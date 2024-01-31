@@ -34,10 +34,7 @@ const {fetchChatProfile} = useGetChatProfile();
     setGroupInformationSinceLastConnection,
   ] = useState<any>({});
 
-  // useEffect(() => {
-  //   // console.log(pgpPrivateKey, "pgppppppppp")
-  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
-  // }, [pgpPrivateKey, connectedProfile])
+
 
   const addSocketEvents = useCallback(() => {
     console.log('addSocketEvents');
@@ -55,7 +52,9 @@ const {fetchChatProfile} = useGetChatProfile();
         return;
       }
       if (
-       ( chat.messageCategory === 'Request') &&
+      ( ( chat.messageCategory === 'Request') ||
+       (chat.messageCategory === 'Approve') ||
+       (chat.messageCategory === 'Reject') )&&
         (chat.messageContent === null) &&
         (chat.messageType === null)
       ) {

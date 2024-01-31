@@ -10,4 +10,6 @@ export * from './useAccount';
 export * from './useUpdateGroup';
 export * from './useInitializeUser';
 export * from './usePushChatStream';
+
+export * from './useGroupMemberUtilities';
 export * from './useUserInfoUtilities';

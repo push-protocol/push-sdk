@@ -66,7 +66,6 @@ export interface IChatViewComponentProps {
 
 export interface IChatProfile {
   chatId: string;
-  style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
   chatProfileHelperComponent?: React.ReactNode;

@@ -97,7 +97,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
 
-  const { chatStream, chatRequestStream, chatAcceptStream, groupMetaStream } =
+  const { chatStream, chatRequestStream, chatAcceptStream } =
     usePushChatStream();
 
   // Helper Functions

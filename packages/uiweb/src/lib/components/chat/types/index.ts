@@ -1,4 +1,28 @@
 import { DropdownValueType } from '../reusables';
+import { ChatMemberProfile, UserV2 } from '@pushprotocol/restapi';
+
+export const GROUP_ROLES = {
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER',
+} as const;
+
+export type GroupRolesKeys = (typeof GROUP_ROLES)[keyof typeof GROUP_ROLES];
+export interface ChatMemberCounts {
+  overallCount: number;
+  adminsCount: number;
+  membersCount: number;
+  pendingCount: number;
+  approvedCount: number;
+}
+
+
+export interface FetchGroupMembersResponseType  {
+  members: ChatMemberProfile[];
+}
+export interface GroupMembersType {
+  pending:ChatMemberProfile[];
+  accepted:ChatMemberProfile[];
+}
 
 export interface GrouInfoType{
   groupName: string;
