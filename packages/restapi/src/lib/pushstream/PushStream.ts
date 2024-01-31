@@ -8,7 +8,7 @@ import {
   NotificationEventType,
   PushStreamInitializeProps,
   STREAM,
-  EVENTS
+  EVENTS,
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
@@ -95,6 +95,16 @@ export class PushStream extends EventEmitter {
     return stream;
   }
 
+  public async reinit(
+    listen: STREAM[],
+    newOptions: PushStreamInitializeProps
+  ): Promise<void> {
+    this.listen = listen;
+    this.options = { ...this.options, ...newOptions };
+    await this.disconnect();
+    await this.connect();
+  }
+
   public async connect(): Promise<void> {
     const shouldInitializeChatSocket =
       !this.listen ||
@@ -105,7 +115,7 @@ export class PushStream extends EventEmitter {
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS) || 
+      this.listen.includes(STREAM.NOTIF_OPS) ||
       this.listen.includes(STREAM.VIDEO);
 
     let isChatSocketConnected = false;
@@ -325,7 +335,9 @@ export class PushStream extends EventEmitter {
             // Video Notification
             const modifiedData = DataModifier.mapToVideoEvent(
               data,
-              this.account === data.sender ? MessageOrigin.Self : MessageOrigin.Other,
+              this.account === data.sender
+                ? MessageOrigin.Self
+                : MessageOrigin.Other,
               this.raw
             );
 
@@ -394,6 +406,13 @@ export class PushStream extends EventEmitter {
       this.pushNotificationSocket.disconnect();
       //console.log('Push notification socket disconnected.');
     }
+  }
+
+  public info() {
+    return {
+      options: this.options,
+      listen: this.listen,
+    };
   }
 
   private shouldEmitChat(dataChatId: string): boolean {
